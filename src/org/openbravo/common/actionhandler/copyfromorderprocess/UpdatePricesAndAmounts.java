@@ -77,25 +77,26 @@ class UpdatePricesAndAmounts implements CopyFromOrdersProcessImplementationInter
     int pricePrecision = orderCurrency.getPricePrecision().intValue();
 
     // Price List, Price Standard and discount
-    BigDecimal priceActual = productPrice.getStandardPrice().setScale(pricePrecision,
-        RoundingMode.HALF_UP);
-    BigDecimal priceList = productPrice.getListPrice().setScale(pricePrecision,
-        RoundingMode.HALF_UP);
-    BigDecimal priceLimit = productPrice.getPriceLimit().setScale(pricePrecision,
-        RoundingMode.HALF_UP);
+    BigDecimal priceActual = productPrice.getStandardPrice()
+        .setScale(pricePrecision, RoundingMode.HALF_UP);
+    BigDecimal priceList = productPrice.getListPrice()
+        .setScale(pricePrecision, RoundingMode.HALF_UP);
+    BigDecimal priceLimit = productPrice.getPriceLimit()
+        .setScale(pricePrecision, RoundingMode.HALF_UP);
 
     BigDecimal discount = BigDecimal.ZERO;
     if (productPrice.getListPrice().compareTo(BigDecimal.ZERO) != 0) {
       // Discount = ((PL-PA)/PL)*100
-      discount = priceList.subtract(priceActual).multiply(new BigDecimal("100"))
+      discount = priceList.subtract(priceActual)
+          .multiply(new BigDecimal("100"))
           .divide(priceList, stdPrecision, RoundingMode.HALF_UP);
     }
 
     // Processing for Prices Including Taxes
     if (processingOrder.getPriceList().isPriceIncludesTax()) {
       BigDecimal grossUnitPrice = priceActual;
-      BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
-          RoundingMode.HALF_UP);
+      BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice)
+          .setScale(stdPrecision, RoundingMode.HALF_UP);
 
       // Set gross price information
       priceInformation.setGrossUnitPrice(grossUnitPrice);
@@ -150,7 +151,8 @@ class UpdatePricesAndAmounts implements CopyFromOrdersProcessImplementationInter
    *          The price list where the product price is searched.
    * @return The product price defined for the product in the price list or NULL if any.
    */
-  private ProductPrice getProductPriceInPriceList(final Product product, final PriceList priceList) {
+  private ProductPrice getProductPriceInPriceList(final Product product,
+      final PriceList priceList) {
     StringBuilder obq = new StringBuilder("");
     obq.append(" as pp ");
     obq.append(" join pp.priceListVersion plv ");
@@ -160,8 +162,8 @@ class UpdatePricesAndAmounts implements CopyFromOrdersProcessImplementationInter
     obq.append(" and (plv.validFromDate is null or plv.validFromDate <= :validFromDate)");
     obq.append(" order by plv.validFromDate desc");
 
-    OBQuery<ProductPrice> obQuery = OBDal.getInstance().createQuery(ProductPrice.class,
-        obq.toString());
+    OBQuery<ProductPrice> obQuery = OBDal.getInstance()
+        .createQuery(ProductPrice.class, obq.toString());
     obQuery.setNamedParameter("productID", product.getId());
     obQuery.setNamedParameter("priceListID", priceList.getId());
     obQuery.setNamedParameter("validFromDate", new Date());

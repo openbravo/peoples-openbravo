@@ -80,8 +80,8 @@ public class ProcessBatch extends DalBaseProcess {
             if (!"".equals(errorMsg)) {
               errorMsg = errorMsg + "<br />";
             }
-            errorMsg = errorMsg + "@FIN_JournalBatchErrorProcess@ " + journal.getDocumentNo()
-                + ". " + myMessage.getMessage();
+            errorMsg = errorMsg + "@FIN_JournalBatchErrorProcess@ " + journal.getDocumentNo() + ". "
+                + myMessage.getMessage();
           } else {
             successCont++;
           }

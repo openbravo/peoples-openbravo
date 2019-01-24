@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -500,12 +500,10 @@ OB.APRM.AddPayment.updateDifference = function (form) {
       credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0)),
       differenceItem = form.getItem('difference'),
       expectedDifferenceItem = form.getItem('expectedDifference'),
-      receivedFrom = form.getItem('received_from').getValue() || '',
       totalGLItems = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       diffAmt = actualPayment.add(credit).subtract(total),
       expectedDiffAmt = expectedPayment.add(credit).subtract(total).add(totalGLItems),
-      affectedParams = [],
-      displayLogicValues = {};
+      affectedParams = [];
   differenceItem.setValue(Number(diffAmt.toString()));
   if (expectedDiffAmt.signum() === 0) {
     expectedDifferenceItem.setValue(Number(diffAmt.toString()));
@@ -706,7 +704,7 @@ OB.APRM.AddPayment.updateGLItemsTotal = function (form, rowNum, remove) {
       glItemTotalItem = form.getItem('amount_gl_items'),
       issotrx = form.getItem('issotrx').getValue(),
       affectedParams = [],
-      amt, i, bdAmt, receivedInAmt, paidOutAmt, allRecords;
+      i, receivedInAmt, paidOutAmt, allRecords;
 
   grid.saveAllEdits();
   // allRecords should be initialized after grid.saveAllEdits()
@@ -907,7 +905,7 @@ OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeR
  */
 OB.APRM.AddPayment.orderAndRemoveDuplicates = function (val) {
   var valArray = val.replaceAll(' ', '').split(',').sort(),
-      retVal, length;
+      retVal;
 
   valArray = valArray.filter(function (elem, pos, self) {
     return self.indexOf(elem) === pos;
@@ -1115,7 +1113,6 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall, clientSideVali
       overpaymentAction = overpaymentField.getValue(),
       creditTotalItem = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0)),
       document = (view.theForm.getItem('trxtype')) ? view.theForm.getItem('trxtype').getValue() : "",
-      amountField = orderInvoiceGrid.getFieldByColumnName('amount'),
       selectedRecords = orderInvoiceGrid.getSelectedRecords(),
       writeOffLimitPreference = OB.PropertyStore.get('WriteOffLimitPreference', view.windowId),
       totalWriteOffAmount = BigDecimal.prototype.ZERO,

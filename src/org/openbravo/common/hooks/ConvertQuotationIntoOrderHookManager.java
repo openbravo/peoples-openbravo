@@ -43,7 +43,7 @@ public class ConvertQuotationIntoOrderHookManager {
    * 
    * @param order
    *          the order document with lines we are creating from Quotation
-   * */
+   */
   public void executeHooks(Order order) {
     if (convertQuotationIntoOrderHooks != null) {
       final List<ConvertQuotationIntoOrderHook> hooks = new ArrayList<>();
@@ -62,10 +62,11 @@ public class ConvertQuotationIntoOrderHookManager {
     }
   }
 
-  private class ConvertQuotationIntoOrderHookComparator implements
-      Comparator<ConvertQuotationIntoOrderHook> {
+  private class ConvertQuotationIntoOrderHookComparator
+      implements Comparator<ConvertQuotationIntoOrderHook> {
     @Override
-    public int compare(final ConvertQuotationIntoOrderHook a, final ConvertQuotationIntoOrderHook b) {
+    public int compare(final ConvertQuotationIntoOrderHook a,
+        final ConvertQuotationIntoOrderHook b) {
       if (a.getOrder() < b.getOrder()) {
         return -1;
       } else if (a.getOrder() == b.getOrder()) {

@@ -73,8 +73,8 @@ public class SE_FinancialAccount_BSAccounts extends SimpleCallout {
   }
 
   void updatePaymentMethodConfiguration(String strfinFinancialAccountId) {
-    FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-        strfinFinancialAccountId);
+    FIN_FinancialAccount account = OBDal.getInstance()
+        .get(FIN_FinancialAccount.class, strfinFinancialAccountId);
 
     // Configure clearing account for all payment methods upon clearing event
     for (FinAccPaymentMethod paymentMethod : account.getFinancialMgmtFinAccPaymentMethodList()) {

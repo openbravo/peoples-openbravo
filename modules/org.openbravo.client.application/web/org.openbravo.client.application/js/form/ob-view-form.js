@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -186,7 +186,7 @@ OB.ViewFormProperties = {
   },
 
   editRecord: function (record, preventFocus, hasChanges, focusFieldName, isLocalTime, wasEditingGrid) {
-    var timeFields, ret;
+    var ret;
     this.clearValues();
     // if editRecord is called from OBStandardView.editRecord, then the time fields have already
     //   be converted from UTC to local time
@@ -558,12 +558,10 @@ OB.ViewFormProperties = {
   },
 
   getFieldFromColumnName: function (columnName) {
-    var i, length;
+    var i;
     if (!this.fieldsByColumnName) {
       var localResult = [],
           fields = this.getFields();
-
-      length = fields.length;
 
       for (i = 0; i < fields.length; i++) {
         if (fields[i].columnName) {
@@ -577,7 +575,7 @@ OB.ViewFormProperties = {
   },
 
   getFieldFromFieldName: function (fieldName) {
-    var i, length, localResult, fields;
+    var i, localResult, fields;
     if (!this.fieldsByFieldName) {
       localResult = {};
       if (this.view && this.view.formFields && isc.isAn.Array(this.view.formFields) && this.view.formFields.length !== 0) {
@@ -587,7 +585,6 @@ OB.ViewFormProperties = {
       } else {
         fields = this.getFields();
       }
-      length = fields.length;
       for (i = 0; i < fields.length; i++) {
         if (fields[i].name) {
           // add a prefix to prevent errors when the columnname is a js reserved word
@@ -808,9 +805,9 @@ OB.ViewFormProperties = {
         calloutMessages = data.calloutMessages,
         auxInputs = data.auxiliaryInputValues,
         overwrittenAuxiliaryInputs = data.overwrittenAuxiliaryInputs,
-        prop, value, i, j, dynamicCols = data.dynamicCols,
+        prop, value, i, dynamicCols = data.dynamicCols,
         sessionAttributes = data.sessionAttributes,
-        editValues, item, section, retHiddenInputs = data.hiddenInputs;
+        editValues, retHiddenInputs = data.hiddenInputs;
 
     if (this.grid && gridEditInformation) {
       id = this.getValue(OB.Constants.ID);
@@ -1037,14 +1034,12 @@ OB.ViewFormProperties = {
     // Modifications in this method should go also in setColumnValuesInEditValues because both almost do the same
     var typeInstance;
     var assignValue;
-    var assignClassicValue;
-    var isDate, jsDateTime, isDateTime, isAbsoluteDateTime, isImage, i, valueMap = {},
-        oldValue, field = this.getFieldFromColumnName(columnName),
+    var isDate, jsDateTime, isDateTime, isAbsoluteDateTime, isImage, oldValue, field = this.getFieldFromColumnName(columnName),
         entries = columnValue.entries;
     // not a field on the form, probably a datasource field
     var propDef = this.view.getPropertyDefinitionFromDbColumnName(columnName);
     var prop = propDef ? propDef.property : null;
-    var id, identifier;
+    var identifier;
     if (!field) {
       if (!propDef) {
         return;
@@ -1086,10 +1081,8 @@ OB.ViewFormProperties = {
     oldValue = this.getValue(field.name);
     if (field.typeInstance && field.typeInstance.parseInput && field.typeInstance.editFormatter) {
       assignValue = field.typeInstance.parseInput(field.typeInstance.editFormatter(columnValue.value));
-      assignClassicValue = field.typeInstance.editFormatter(field.typeInstance.parseInput(columnValue.classicValue));
     } else {
       assignValue = columnValue.value;
-      assignClassicValue = columnValue.classicValue;
     }
 
     if (field && field.type && isc.SimpleType.getType(field.type)) {
@@ -1204,7 +1197,7 @@ OB.ViewFormProperties = {
 
   setColumnValuesInEditValues: function (columnName, columnValue, gridEditInformation) {
     // Modifications in this method should go also in processColumnValue because both almost do the same
-    var assignClassicValue, typeInstance, length, isDate;
+    var length, isDate;
 
     // no editvalues even anymore, go away
     if (!gridEditInformation) {
@@ -1353,7 +1346,7 @@ OB.ViewFormProperties = {
 
   // called explicitly onblur and when non-editable fields change
   handleItemChange: function (item) {
-    var i, length, tabId, view;
+    var i, length, view;
 
     // is used to prevent infinite loops during save
     delete this.saveFocusItemChanged;
@@ -1486,7 +1479,6 @@ OB.ViewFormProperties = {
   // in contrast to other actions which are done at blur
   // see: handleItemChange
   itemChangeActions: function (item) {
-    var i = 0;
     // special case, item change is called when the inline form is being hidden
     if (!this.view.isShowingForm && !this.view.isEditingGrid) {
       return;
@@ -1629,8 +1621,8 @@ OB.ViewFormProperties = {
   // function
   saveRow: function (parameters) {
     var savingNewRecord = this.isNew,
-        storedFocusItem, i, length, flds, form = this,
-        ficCallDone, record, recordIndex, callback, viewsNotToRefresh, autoSaveAction;
+        storedFocusItem, form = this,
+        record, recordIndex, callback, viewsNotToRefresh, autoSaveAction;
 
     if (this.getFocusItem()) {
       storedFocusItem = this.getFocusItem();
@@ -1669,7 +1661,7 @@ OB.ViewFormProperties = {
     }
 
     callback = function (resp, data, req) {
-      var index1, index2, view = form.view,
+      var view = form.view,
           localRecord, status = resp.status,
           sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId, id, eventHandlerParams = {},
           eventHandlerCallback;
@@ -2215,7 +2207,7 @@ OB.ViewFormProperties = {
 
   allRequiredFieldsSet: function () {
     var i, item, length = this.getItems().length,
-        value, undef, nullValue = null;
+        value;
     for (i = 0; i < length; i++) {
       item = this.getItems()[i];
       value = item.getValue();

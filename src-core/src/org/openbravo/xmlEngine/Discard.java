@@ -17,6 +17,7 @@ class Discard implements IDComponent {
   public Discard() {
   }
 
+  @Override
   public int type() {
     return type;
   }

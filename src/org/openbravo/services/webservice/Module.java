@@ -1,3 +1,5 @@
+// @formatter:off
+
 /**
  * Module.java
  *
@@ -75,11 +77,18 @@ public class Module  extends org.openbravo.services.webservice.Module2  implemen
     }
 
     private java.lang.Object __equalsCalc = null;
+    @Override
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof Module)) return false;
+        if (!(obj instanceof Module)) {
+          return false;
+        }
         Module other = (Module) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
+        if (obj == null) {
+          return false;
+        }
+        if (this == obj) {
+          return true;
+        }
         if (__equalsCalc != null) {
             return (__equalsCalc == obj);
         }
@@ -94,6 +103,7 @@ public class Module  extends org.openbravo.services.webservice.Module2  implemen
     }
 
     private boolean __hashCodeCalc = false;
+    @Override
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;

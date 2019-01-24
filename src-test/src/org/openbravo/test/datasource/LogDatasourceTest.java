@@ -175,8 +175,8 @@ public class LogDatasourceTest extends BaseDataSourceTestNoDal {
 
           if (searchLogger != null) {
             criteria += "{\"operator\":\"and\",\"_constructor\":\"AdvancedCriteria\",\"criteria\":["
-                + "{\"fieldName\":\"logger\",\"operator\":\"iContains\",\"value\":\""
-                + searchLogger + "\"}]}";
+                + "{\"fieldName\":\"logger\",\"operator\":\"iContains\",\"value\":\"" + searchLogger
+                + "\"}]}";
           }
         }
 

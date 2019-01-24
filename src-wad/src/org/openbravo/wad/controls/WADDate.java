@@ -33,6 +33,7 @@ public class WADDate extends WADControl {
     initialize();
   }
 
+  @Override
   public void initialize() {
     generateJSCode();
     this.button = new WADFieldButton("Calendar", getData("ColumnName"), getData("ColumnNameInp"),
@@ -51,24 +52,28 @@ public class WADDate extends WADControl {
   private void generateValidation() {
     String[] discard = { "", "", "", "" };
     String join = "";
-    if (!getData("IsMandatory").equals("Y"))
+    if (!getData("IsMandatory").equals("Y")) {
       discard[0] = "isMandatory";
-    if (getData("ValueMin").trim().equals("") && getData("ValueMax").trim().equals(""))
+    }
+    if (getData("ValueMin").trim().equals("") && getData("ValueMax").trim().equals("")) {
       discard[1] = "isValueCheck";
-    else {
+    } else {
       boolean valmin = false;
-      if (getData("ValueMin").equals(""))
+      if (getData("ValueMin").equals("")) {
         discard[2] = "isValueMin";
-      else
+      } else {
         valmin = true;
-      if (getData("ValueMax").equals(""))
+      }
+      if (getData("ValueMax").equals("")) {
         discard[3] = "isValueMax";
-      else if (valmin)
+      } else if (valmin) {
         join = " || ";
+      }
     }
 
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADDateJSValidation", discard).createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADDateJSValidation", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("valueMin", getData("ValueMin"));
     xmlDocument.setParameter("valueMax", getData("ValueMax"));
@@ -76,10 +81,12 @@ public class WADDate extends WADControl {
     setValidation(replaceHTML(xmlDocument.print()));
   }
 
+  @Override
   public String getType() {
     return "TextBox_btn";
   }
 
+  @Override
   public String editMode() {
     String textButton = "";
     String buttonClass = "";
@@ -94,8 +101,9 @@ public class WADDate extends WADControl {
       // if field is not mandatory, discard it
       discard[0] = "xxmissingSpan";
     }
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADDate", discard).createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADDate", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -105,8 +113,8 @@ public class WADDate extends WADControl {
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
     xmlDocument.setParameter("button", textButton);
 
-    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData(
-        "IsUpdateable").equals("N"));
+    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")
+        || getData("IsUpdateable").equals("N"));
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
     if (!isDisabled && getData("IsMandatory").equals("Y")) {
       xmlDocument.setParameter("required", "true");
@@ -122,6 +130,7 @@ public class WADDate extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String newMode() {
     String textButton = "";
     String buttonClass = "";
@@ -135,8 +144,9 @@ public class WADDate extends WADControl {
       // if field is not mandatory, discard it
       discard[0] = "xxmissingSpan";
     }
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADDate", discard).createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADDate", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -146,7 +156,8 @@ public class WADDate extends WADControl {
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
     xmlDocument.setParameter("button", textButton);
 
-    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));
+    boolean isDisabled = (getData("IsReadOnly").equals("Y")
+        || getData("IsReadOnlyTab").equals("Y"));
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
     if (!isDisabled && getData("IsMandatory").equals("Y")) {
       xmlDocument.setParameter("required", "true");
@@ -162,16 +173,20 @@ public class WADDate extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String toXml() {
     String[] discard = { "xx_PARAM" };
-    if (getData("IsParameter").equals("Y"))
+    if (getData("IsParameter").equals("Y")) {
       discard[0] = "xx";
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADDateXML", discard).createXmlDocument();
+    }
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADDateXML", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public boolean isDate() {
     return true;
   }

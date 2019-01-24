@@ -1,3 +1,5 @@
+// @formatter:off
+
 /**
  * ModuleInstallDetail.java
  *
@@ -112,11 +114,18 @@ public class ModuleInstallDetail  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+    @Override
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof ModuleInstallDetail)) return false;
+        if (!(obj instanceof ModuleInstallDetail)) {
+          return false;
+        }
         ModuleInstallDetail other = (ModuleInstallDetail) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
+        if (obj == null) {
+          return false;
+        }
+        if (this == obj) {
+          return true;
+        }
         if (__equalsCalc != null) {
             return (__equalsCalc == obj);
         }
@@ -138,6 +147,7 @@ public class ModuleInstallDetail  implements java.io.Serializable {
     }
 
     private boolean __hashCodeCalc = false;
+    @Override
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;

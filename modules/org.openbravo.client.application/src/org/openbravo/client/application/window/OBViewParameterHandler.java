@@ -62,7 +62,8 @@ public class OBViewParameterHandler {
     // It has to be done in advance in order to determine the dynamic parameters
     Map<Parameter, String> displayLogicMap = new HashMap<Parameter, String>();
     for (Parameter param : parameters) {
-      if (param.isActive() && param.getDisplayLogic() != null && !param.getDisplayLogic().isEmpty()) {
+      if (param.isActive() && param.getDisplayLogic() != null
+          && !param.getDisplayLogic().isEmpty()) {
         final DynamicExpressionParser parser = new DynamicExpressionParser(param.getDisplayLogic(),
             param, parameters, true);
         displayLogicMap.put(param, parser.getJSExpression());
@@ -79,8 +80,8 @@ public class OBViewParameterHandler {
     for (Parameter param : parameters) {
       if (param.isActive() && !param.isFixed() && param.getReadOnlyLogic() != null
           && !param.getReadOnlyLogic().isEmpty()) {
-        final DynamicExpressionParser parser = new DynamicExpressionParser(
-            param.getReadOnlyLogic(), param, parameters, true);
+        final DynamicExpressionParser parser = new DynamicExpressionParser(param.getReadOnlyLogic(),
+            param, parameters, true);
         readOnlyLogicMap.put(param, parser.getJSExpression());
         for (Parameter parameterExpression : parser.getParameters()) {
           if (!parametersInExpression.contains(parameterExpression)) {
@@ -96,8 +97,10 @@ public class OBViewParameterHandler {
     int pos = 1;
     for (Parameter param : parameters) {
       if (!(param.isActive()
-          && (!param.isFixed() || param.getReference().getId().equals(WINDOW_REFERENCE_ID)) && (!param
-          .getReference().getId().equals(ParameterWindowComponent.BUTTON_LIST_REFERENCE_ID)))) {
+          && (!param.isFixed() || param.getReference().getId().equals(WINDOW_REFERENCE_ID))
+          && (!param.getReference()
+              .getId()
+              .equals(ParameterWindowComponent.BUTTON_LIST_REFERENCE_ID)))) {
         continue;
       }
 
@@ -258,8 +261,7 @@ public class OBViewParameterHandler {
     }
 
     public String getTabView() {
-      String tabId = OBDal
-          .getInstance()
+      String tabId = OBDal.getInstance()
           .getSession()
           .createQuery(
               "select t.id from OBUIAPP_Parameter p join p.referenceSearchKey r join r.oBUIAPPRefWindowList rw join rw.window w join w.aDTabList t where p.id=:param",
@@ -332,8 +334,11 @@ public class OBViewParameterHandler {
       String entityName = "";
       if (uiDefinition instanceof FKSelectorUIDefinition
           && parameter.getReferenceSearchKey() != null) {
-        String idOfTheTable = parameter.getReferenceSearchKey().getOBUISELSelectorList().get(0)
-            .getTable().getId();
+        String idOfTheTable = parameter.getReferenceSearchKey()
+            .getOBUISELSelectorList()
+            .get(0)
+            .getTable()
+            .getId();
         entityName = ModelProvider.getInstance().getEntityByTableId(idOfTheTable).getName();
       }
       return entityName;
@@ -427,6 +432,7 @@ public class OBViewParameterHandler {
       return "spacer";
     }
 
+    @Override
     public String getName() {
       return "";
     }
@@ -436,30 +442,37 @@ public class OBViewParameterHandler {
 
     }
 
+    @Override
     public boolean isGrid() {
       return false;
     }
 
+    @Override
     public String getTitle() {
       return "";
     }
 
+    @Override
     public String getId() {
       return "";
     }
 
+    @Override
     public String getWidth() {
       return "";
     }
 
+    @Override
     public boolean isRequired() {
       return false;
     }
 
+    @Override
     public String getParameterProperties() {
       return "";
     }
 
+    @Override
     public String getOnChangeFunction() {
       return "";
     }

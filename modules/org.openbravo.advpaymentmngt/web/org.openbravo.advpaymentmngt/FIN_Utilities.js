@@ -3,7 +3,6 @@
   displayLogicElement, returnFormattedNumber, returnFormattedToCalc, roundNumber,
   returnCalcToFormatted, setWindowElementFocus, showJSMessage, initialize_MessageBox,
   updateData, top, getFrame*/
-
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -17,7 +16,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +36,8 @@ var frm = null,
 function isTrue(objectName) {
   return frm.elements[objectName].value === 'Y';
 }
+
+/* exported initFIN_Utilities */
 
 function initFIN_Utilities(_frm, _creditAllowed, _isCreditCheckedFromBPinGrid, _isGLItemEnabled) {
   frm = _frm;
@@ -58,6 +59,8 @@ function initFIN_Utilities(_frm, _creditAllowed, _isCreditCheckedFromBPinGrid, _
   }
   globalMaskNumeric = globalMaskNumeric || getDefaultMaskNumeric();
 }
+
+/* exported processLabels */
 
 function processLabels() {
   var receiptlbls = getElementsByName('lblR'),
@@ -97,6 +100,7 @@ function applyFormat(number) {
  * @return The converted number
  * @type String
  */
+/* exported applyFormatJSToOBMasked */
 
 function applyFormatJSToOBMasked(number, _globalMaskNumeric) {
   if (!_globalMaskNumeric) {
@@ -104,6 +108,8 @@ function applyFormatJSToOBMasked(number, _globalMaskNumeric) {
   }
   return OB.Utilities.Number.JSToOBMasked(number, _globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
 }
+
+/* exported applyFormatOBMaskedToJS */
 
 function applyFormatOBMaskedToJS(number) {
   return OB.Utilities.Number.OBMaskedToJS(number, globalDecSeparator, globalGroupSeparator);
@@ -209,6 +215,7 @@ function subtract(number1, number2) {
  * @return The result of dividing number1 to number2 using the global formats.
  * @type String
  */
+/* exported divide */
 
 function divide(number1, number2) {
   return formattedNumberOpTemp(number1, '/', number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
@@ -221,6 +228,7 @@ function divide(number1, number2) {
  * @return The result of multiplying number1 to number2 using the global formats.
  * @type String
  */
+/* exported multiply */
 
 function multiply(number1, number2) {
   return formattedNumberOpTemp(number1, '*', number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
@@ -261,7 +269,7 @@ function isBetweenZeroAndMaxValue(value, maxValue) {
 }
 
 function applyPrecisionToMask(currencyPrecision) {
-  var i, c, output, currentDecimalMask, currentPrecision;
+  var i, c, currentDecimalMask, currentPrecision;
   var toConvertDecimalMask = globalMaskNumeric;
   if (globalMaskNumeric.indexOf(globalDecSeparator) !== -1) {
     currentDecimalMask = globalMaskNumeric.substring(globalMaskNumeric.indexOf(globalDecSeparator), globalMaskNumeric.length);
@@ -346,13 +354,8 @@ function validateSelectedAmounts(recordID, existsPendingAmount, selectedAction) 
 function updateDifference() {
   var expected = (frm.inpExpectedPayment && frm.inpExpectedPayment.value) ? frm.inpExpectedPayment.value : applyFormat('0'),
       total = (frm.inpTotal && frm.inpTotal.value) ? frm.inpTotal.value : applyFormat('0'),
-      amount = total,
-      invoicedAmount = total;
+      amount = total;
   var exchangeRate = frm.inpExchangeRate;
-
-  if (isGLItemEnabled) {
-    invoicedAmount = frm.inpInvoiceAmount.value;
-  }
 
   if (frm.inpActualPayment !== null) {
     amount = frm.inpActualPayment.value;
@@ -508,6 +511,8 @@ function updateTotal() {
   updateConvertedAmounts();
 }
 
+/* exported distributeAmount */
+
 function distributeAmount(_amount) {
   var amount = applyFormat(_amount);
   var distributedAmount = 0;
@@ -588,6 +593,8 @@ function distributeAmount(_amount) {
   return true;
 }
 
+/* exported updateReadOnly */
+
 function updateReadOnly(key, mark) {
   if (mark === null) {
     mark = false;
@@ -617,6 +624,8 @@ function updateReadOnly(key, mark) {
   }
   return true;
 }
+
+/* exported updateAll */
 
 function updateAll(drivenByGrid) {
   var frm = document.frmMain;
@@ -654,6 +663,7 @@ function updateAll(drivenByGrid) {
  *        zero.
  * @return true if validations are fine.
  */
+/* exported validateSelectedPendingPayments */
 
 function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action) {
   if (allowNotSelectingPendingPayment === undefined) {
@@ -662,8 +672,7 @@ function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action
   // If no credit usage is allowed we are forced to select at least one pending payment.
   allowNotSelectingPendingPayment = isCreditAllowed && allowNotSelectingPendingPayment;
   var actualPayment = document.frmMain.inpActualPayment.value;
-  var expectedPayment = document.frmMain.inpExpectedPayment.value,
-      i;
+  var i;
   if (document.frmMain.inpUseCredit.checked) {
 /*if ( compare(expectedPayment, '<=', actualPayment) ) {
       setWindowElementFocus(document.frmMain.inpUseCredit);
@@ -722,6 +731,7 @@ function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action
  * @param innerHTML
  *     The string with the options. Example '<option value="id1">fist<option>'
  */
+/* exported createCombo */
 
 function createCombo(object, innerHTML) {
   object.innerHTML = "";
@@ -753,7 +763,9 @@ function createCombo(object, innerHTML) {
           try {
             opt.setAttribute(attrName, attrVal);
             opt.setAttributeNode(spantemp.attributes[j].cloneNode(true));
-          } catch (e) {}
+          } catch (e) {
+            // Ignore exceptions
+          }
         }
       }
       //value and text
@@ -772,6 +784,7 @@ function createCombo(object, innerHTML) {
  * Helper function to reload the opener window dynamic grid.
  * @return
  */
+/* exported reloadParentGrid */
 
 function reloadParentGrid() {
   var f, dad, layoutMDI, popup;
@@ -802,6 +815,7 @@ function reloadParentGrid() {
  * Helper function to turn a JSON string representation into an object.
  * @param jsonString
  */
+/* exported decodeJSON */
 
 function decodeJSON(jsonString) {
   try {

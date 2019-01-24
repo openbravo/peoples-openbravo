@@ -120,8 +120,8 @@ public class SelectorComponent extends BaseTemplateComponent {
       final String entityName = selectorField.getObuiselSelector().getTable().getName();
       final Entity entity = ModelProvider.getInstance().getEntity(entityName);
       final Property property = DalUtil.getPropertyFromPath(entity, selectorField.getProperty());
-      Check.isNotNull(property, "Property " + selectorField.getProperty() + " not found in Entity "
-          + entity);
+      Check.isNotNull(property,
+          "Property " + selectorField.getProperty() + " not found in Entity " + entity);
       return property.getDomainType();
     } else if (selectorField.getObuiselSelector().getTable() != null
         && selectorField.getObuiselSelector().isCustomQuery()
@@ -148,8 +148,8 @@ public class SelectorComponent extends BaseTemplateComponent {
     } else if (selectorField.getObserdsDatasourceField() != null) {
       result = selectorField.getObserdsDatasourceField().getName();
     } else {
-      throw new IllegalStateException("Selectorfield " + selectorField
-          + " has a null datasource and a null property");
+      throw new IllegalStateException(
+          "Selectorfield " + selectorField + " has a null datasource and a null property");
     }
     return result.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
   }
@@ -193,6 +193,7 @@ public class SelectorComponent extends BaseTemplateComponent {
     return hasParameter(SELECTOR_ITEM_PARAMETER);
   }
 
+  @Override
   public Module getModule() {
     return getSelector().getModule();
   }
@@ -207,17 +208,21 @@ public class SelectorComponent extends BaseTemplateComponent {
     if (getSelector().isCustomQuery()) {
       if (getSelector().getDisplayfield() != null
           && getSelector().getDisplayfield().getDisplayColumnAlias() != null) {
-        return getSelector().getDisplayfield().getDisplayColumnAlias()
+        return getSelector().getDisplayfield()
+            .getDisplayColumnAlias()
             .replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
       }
       return JsonConstants.IDENTIFIER;
     }
     if (getSelector().getDisplayfield() != null && getSelector().getDisplayfield().isShowingrid()) {
       if (getSelector().getDisplayfield().getProperty() != null) {
-        return getSelector().getDisplayfield().getProperty()
+        return getSelector().getDisplayfield()
+            .getProperty()
             .replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
       } else {
-        return getSelector().getDisplayfield().getObserdsDatasourceField().getName()
+        return getSelector().getDisplayfield()
+            .getObserdsDatasourceField()
+            .getName()
             .replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
       }
     }
@@ -242,8 +247,8 @@ public class SelectorComponent extends BaseTemplateComponent {
 
   public org.openbravo.userinterface.selector.Selector getSelector() {
     if (selector == null) {
-      selector = OBDal.getInstance().get(org.openbravo.userinterface.selector.Selector.class,
-          getId());
+      selector = OBDal.getInstance()
+          .get(org.openbravo.userinterface.selector.Selector.class, getId());
       Check.isNotNull(selector, "No selector found using id " + getId());
       Check.isTrue(selector.isActive(), "Selector " + selector + " is not active anymore");
     }
@@ -259,8 +264,8 @@ public class SelectorComponent extends BaseTemplateComponent {
   }
 
   public String getColumnName() {
-    Check.isTrue(hasParameter(SelectorConstants.PARAM_COLUMN_NAME), "The "
-        + SelectorConstants.PARAM_COLUMN_NAME + " parameter must be set");
+    Check.isTrue(hasParameter(SelectorConstants.PARAM_COLUMN_NAME),
+        "The " + SelectorConstants.PARAM_COLUMN_NAME + " parameter must be set");
     return getParameter(SelectorConstants.PARAM_COLUMN_NAME);
   }
 
@@ -268,8 +273,8 @@ public class SelectorComponent extends BaseTemplateComponent {
     if (!hasParameter(SelectorConstants.PARAM_COMBO_RELOAD)) {
       return "null";
     }
-    Check.isTrue(hasParameter(SelectorConstants.PARAM_TAB_ID), "The "
-        + SelectorConstants.PARAM_TAB_ID + " parameter must be set");
+    Check.isTrue(hasParameter(SelectorConstants.PARAM_TAB_ID),
+        "The " + SelectorConstants.PARAM_TAB_ID + " parameter must be set");
     final String tabId = getParameter(SelectorConstants.PARAM_TAB_ID);
     return "function(name){reloadComboReloads" + tabId + "(name);}";
   }
@@ -369,9 +374,11 @@ public class SelectorComponent extends BaseTemplateComponent {
    * @return true if there is at least one active field shown in grid
    */
   public String getShowSelectorGrid() {
-    if (OBDao.getFilteredCriteria(SelectorField.class,
-        Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, getSelector()),
-        Restrictions.eq(SelectorField.PROPERTY_SHOWINGRID, true)).count() > 0) {
+    if (OBDao
+        .getFilteredCriteria(SelectorField.class,
+            Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, getSelector()),
+            Restrictions.eq(SelectorField.PROPERTY_SHOWINGRID, true))
+        .count() > 0) {
       return Boolean.TRUE.toString();
     }
     return Boolean.FALSE.toString();
@@ -491,7 +498,8 @@ public class SelectorComponent extends BaseTemplateComponent {
 
   public List<OutSelectorField> getOutFields() {
     List<OutSelectorField> outFields = new ArrayList<OutSelectorField>();
-    final List<SelectorField> sortedFields = new ArrayList<SelectorField>(getActiveSelectorFields());
+    final List<SelectorField> sortedFields = new ArrayList<SelectorField>(
+        getActiveSelectorFields());
 
     final String tabId = getParameter(SelectorConstants.PARAM_TAB_ID);
 
@@ -520,8 +528,8 @@ public class SelectorComponent extends BaseTemplateComponent {
               final OutSelectorField outField = new OutSelectorField();
               outField.setOutFieldName(getPropertyOrDataSourceField(selectorField));
               outField.setTabFieldName(getPropertyOrDataSourceField(selectorField));
-              outField.setOutSuffix((selectorField.getSuffix() == null ? "" : selectorField
-                  .getSuffix()));
+              outField.setOutSuffix(
+                  (selectorField.getSuffix() == null ? "" : selectorField.getSuffix()));
               outFields.add(outField);
             }
             for (Field associatedField : outFieldTargetFields) {
@@ -532,11 +540,11 @@ public class SelectorComponent extends BaseTemplateComponent {
                 final OutSelectorField outField = new OutSelectorField();
                 outField.setOutFieldName(getPropertyOrDataSourceField(selectorField));
                 if (getParameter("isSelectorItem") != null) {
-                  final Property property = KernelUtils.getInstance().getPropertyFromColumn(
-                      associatedField.getColumn(), false);
+                  final Property property = KernelUtils.getInstance()
+                      .getPropertyFromColumn(associatedField.getColumn(), false);
                   outField.setTabFieldName(property.getName());
-                  UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
-                      associatedField.getColumn().getId());
+                  UIDefinition uiDef = UIDefinitionController.getInstance()
+                      .getUIDefinition(associatedField.getColumn().getId());
                   if (uiDef instanceof NumberUIDefinition) {
                     String formatStr = ((NumberUIDefinition) uiDef).getFormat();
                     setOutFieldFormat(outField, formatStr);
@@ -545,8 +553,8 @@ public class SelectorComponent extends BaseTemplateComponent {
                   // classic mode
                   outField.setTabFieldName(associatedField.getColumn().getName());
                 }
-                outField.setOutSuffix((selectorField.getSuffix() == null ? "" : selectorField
-                    .getSuffix()));
+                outField.setOutSuffix(
+                    (selectorField.getSuffix() == null ? "" : selectorField.getSuffix()));
                 outFields.add(outField);
               }
             }
@@ -590,8 +598,10 @@ public class SelectorComponent extends BaseTemplateComponent {
       final Criterion isOutFieldConstraint = Restrictions.eq(SelectorField.PROPERTY_ISOUTFIELD,
           true);
       final Criterion hasSuffixConstraint = Restrictions.isNotNull(SelectorField.PROPERTY_SUFFIX);
-      List<SelectorField> fields = OBDao.getFilteredCriteria(SelectorField.class,
-          selectorConstraint, isOutFieldConstraint, hasSuffixConstraint).list();
+      List<SelectorField> fields = OBDao
+          .getFilteredCriteria(SelectorField.class, selectorConstraint, isOutFieldConstraint,
+              hasSuffixConstraint)
+          .list();
       for (final SelectorField field : fields) {
         hiddenInputs.put(columnName + field.getSuffix(),
             getElementString.replaceAll("@id@", columnName + field.getSuffix()));
@@ -627,16 +637,16 @@ public class SelectorComponent extends BaseTemplateComponent {
   private List<LocalSelectorField> getSelectorFields(boolean pickList, boolean popupGrid) {
     final List<LocalSelectorField> result = new ArrayList<LocalSelectorField>();
 
-    final List<SelectorField> sortedFields = new ArrayList<SelectorField>(getActiveSelectorFields());
+    final List<SelectorField> sortedFields = new ArrayList<SelectorField>(
+        getActiveSelectorFields());
     Collections.sort(sortedFields, new SelectorFieldComparator());
 
     for (SelectorField selectorField : sortedFields) {
       if (popupGrid && !selectorField.isShowingrid()) {
         continue;
       }
-      if (pickList
-          && (!selectorField.isShowInPicklist() || selectorField.equals(getSelector()
-              .getDisplayfield()))) {
+      if (pickList && (!selectorField.isShowInPicklist()
+          || selectorField.equals(getSelector().getDisplayfield()))) {
         continue;
       }
       final LocalSelectorField localSelectorField = new LocalSelectorField();
@@ -685,8 +695,8 @@ public class SelectorComponent extends BaseTemplateComponent {
         + SelectorField.PROPERTY_OBUISELSELECTOR + "=:selector and "
         + SelectorFieldTrl.PROPERTY_LANGUAGEID + ".id=:userLanguageId ";
 
-    final OBQuery<SelectorFieldTrl> qry = OBDal.getInstance().createQuery(SelectorFieldTrl.class,
-        whereClause);
+    final OBQuery<SelectorFieldTrl> qry = OBDal.getInstance()
+        .createQuery(SelectorFieldTrl.class, whereClause);
     qry.setNamedParameter("selector", getSelector());
     qry.setNamedParameter("userLanguageId", userLanguageId);
     selectorFieldTrls = qry.list();
@@ -733,8 +743,9 @@ public class SelectorComponent extends BaseTemplateComponent {
     }
 
     public void setTabFieldName(String tabFieldName) {
-      this.tabFieldName = tabFieldName != null ? tabFieldName.replace(DalUtil.DOT,
-          DalUtil.FIELDSEPARATOR) : tabFieldName;
+      this.tabFieldName = tabFieldName != null
+          ? tabFieldName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
+          : tabFieldName;
     }
 
     public String getOutFieldName() {
@@ -742,8 +753,9 @@ public class SelectorComponent extends BaseTemplateComponent {
     }
 
     public void setOutFieldName(String outFieldName) {
-      this.outFieldName = outFieldName != null ? outFieldName.replace(DalUtil.DOT,
-          DalUtil.FIELDSEPARATOR) : outFieldName;
+      this.outFieldName = outFieldName != null
+          ? outFieldName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
+          : outFieldName;
     }
 
     public void setOutSuffix(String suffix) {
@@ -886,8 +898,8 @@ public class SelectorComponent extends BaseTemplateComponent {
             && selectorField.getProperty() != null) {
           final String entityName = selectorField.getObuiselSelector().getTable().getName();
           final Entity entity = ModelProvider.getInstance().getEntity(entityName);
-          final Property property = DalUtil
-              .getPropertyFromPath(entity, selectorField.getProperty());
+          final Property property = DalUtil.getPropertyFromPath(entity,
+              selectorField.getProperty());
           if (property != null) {
             column = OBDal.getInstance().get(Column.class, property.getColumnId());
           }
@@ -1059,8 +1071,8 @@ public class SelectorComponent extends BaseTemplateComponent {
         && selectorField.getReference() != null) {
       return UIDefinitionController.getInstance().getUIDefinition(selectorField.getReference());
     } else if (selectorField.getObserdsDatasourceField().getReference() != null) {
-      return UIDefinitionController.getInstance().getUIDefinition(
-          selectorField.getObserdsDatasourceField().getReference());
+      return UIDefinitionController.getInstance()
+          .getUIDefinition(selectorField.getObserdsDatasourceField().getReference());
     }
     return null;
   }

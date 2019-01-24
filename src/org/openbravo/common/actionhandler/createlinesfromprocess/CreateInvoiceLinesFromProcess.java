@@ -28,6 +28,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -44,8 +46,6 @@ import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class CreateInvoiceLinesFromProcess {
   private static final Logger log = LogManager.getLogger();
@@ -97,7 +97,8 @@ public class CreateInvoiceLinesFromProcess {
 
   private void validateAndSetLinesFromClassOrThrowException(
       final Class<? extends BaseOBObject> clazz) {
-    if (clazz.isAssignableFrom(OrderLine.class) || clazz.isAssignableFrom(ShipmentInOutLine.class)) {
+    if (clazz.isAssignableFrom(OrderLine.class)
+        || clazz.isAssignableFrom(ShipmentInOutLine.class)) {
       this.linesFromClass = clazz;
     } else {
       throw new OBException("CreateLinesFromProccessInvalidDocumentType");
@@ -133,8 +134,8 @@ public class CreateInvoiceLinesFromProcess {
     final JSONArray linesToProcess = new JSONArray();
     for (int index = 0; index < selectedLinesParam.length(); index++) {
       JSONObject selectedLine = selectedLinesParam.getJSONObject(index);
-      BaseOBObject copiedLine = OBDal.getInstance().get(linesFromClass,
-          selectedLine.getString("id"));
+      BaseOBObject copiedLine = OBDal.getInstance()
+          .get(linesFromClass, selectedLine.getString("id"));
       List<JSONObject> relatedInOutLinesNotAlreadyInvoiced = getRelatedInOutLinesNotAlreadyInvoiced(
           selectedLine, copiedLine);
       if (relatedInOutLinesNotAlreadyInvoiced != null
@@ -156,7 +157,8 @@ public class CreateInvoiceLinesFromProcess {
         .isOrderLineWithRelatedShipmentReceiptLines(copiedLine, selectedLine);
     List<JSONObject> relatedInOutLinesNotAlreadyInvoiced = null;
     if (isOrderLineWithRelatedShipmentReceiptLines) {
-      relatedInOutLinesNotAlreadyInvoiced = getRelatedNotInvoicedInOutLinesAsJSONObjects((OrderLine) copiedLine);
+      relatedInOutLinesNotAlreadyInvoiced = getRelatedNotInvoicedInOutLinesAsJSONObjects(
+          (OrderLine) copiedLine);
     }
     return relatedInOutLinesNotAlreadyInvoiced;
   }
@@ -165,14 +167,12 @@ public class CreateInvoiceLinesFromProcess {
     final List<JSONObject> relatedShipmentLinesToOrderLine = new ArrayList<>();
     for (InOutLineData shipmentInOutLineData : CreateLinesFromUtil
         .getRelatedNotInvoicedInOutLines(orderLine)) {
-      relatedShipmentLinesToOrderLine.add(getInOutLineJson((OrderLine) orderLine,
-          shipmentInOutLineData));
-      OBDal
-          .getInstance()
+      relatedShipmentLinesToOrderLine
+          .add(getInOutLineJson((OrderLine) orderLine, shipmentInOutLineData));
+      OBDal.getInstance()
           .getSession()
-          .evict(
-              OBDal.getInstance().getProxy(ShipmentInOutLine.class,
-                  shipmentInOutLineData.getShipmentInOutLineId()));
+          .evict(OBDal.getInstance()
+              .getProxy(ShipmentInOutLine.class, shipmentInOutLineData.getShipmentInOutLineId()));
     }
     return relatedShipmentLinesToOrderLine;
   }
@@ -201,8 +201,8 @@ public class CreateInvoiceLinesFromProcess {
     int createdInvoiceLinesCount = 0;
     for (int index = 0; index < linesToProcess.length(); index++) {
       JSONObject selectedLineJS = linesToProcess.getJSONObject(index);
-      BaseOBObject createdFromLine = OBDal.getInstance().get(linesFromClass,
-          selectedLineJS.getString("id"));
+      BaseOBObject createdFromLine = OBDal.getInstance()
+          .get(linesFromClass, selectedLineJS.getString("id"));
       InvoiceLine newInvoiceLine = createLineFromSelectedLineAndRunHooks(currentInvoice,
           createdFromLine, selectedLineJS);
       currentInvoice.getInvoiceLineList().add(newInvoiceLine);
@@ -271,8 +271,8 @@ public class CreateInvoiceLinesFromProcess {
     }
   }
 
-  private static class CreateLinesFromHookComparator implements
-      Comparator<CreateLinesFromProcessHook> {
+  private static class CreateLinesFromHookComparator
+      implements Comparator<CreateLinesFromProcessHook> {
     @Override
     public int compare(CreateLinesFromProcessHook a, CreateLinesFromProcessHook b) {
       return a.getOrder() < b.getOrder() ? -1 : a.getOrder() == b.getOrder() ? 0 : 1;

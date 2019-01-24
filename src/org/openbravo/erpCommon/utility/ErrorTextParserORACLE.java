@@ -52,11 +52,12 @@ import org.openbravo.data.FieldProvider;
 class ErrorTextParserORACLE extends ErrorTextParser {
   private static final Logger log4j = LogManager.getLogger();
 
+  @Override
   String[] getColumnNamesForConstraint(String constraintName) {
     try {
       String query = "column_name as columnname from user_cons_columns where upper(constraint_name) = upper(?)";
-      ErrorTextParserData[] cols = ErrorTextParserData.selectColumnNamesForConstraint(
-          getConnection(), query, constraintName);
+      ErrorTextParserData[] cols = ErrorTextParserData
+          .selectColumnNamesForConstraint(getConnection(), query, constraintName);
       String[] res = new String[cols.length];
       for (int i = 0; i < cols.length; i++) {
         res[i] = cols[i].columnname;
@@ -77,18 +78,21 @@ class ErrorTextParserORACLE extends ErrorTextParser {
    * 
    * @see org.openbravo.erpCommon.utility.ErrorTextParser#parse()
    */
+  @Override
   public OBError parse() throws Exception {
-    if (getMessage().equals(""))
+    if (getMessage().equals("")) {
       return null;
-    else if (getConnection() == null)
+    } else if (getConnection() == null) {
       return null;
+    }
     OBError myError = null;
     OBError myCodeError = null;
     int errorCode = 0;
     String errorCodeText = "";
     String myMessage = getMessage();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Message: " + myMessage);
+    }
 
     // BEGIN Checking if it's a DB error
     int pos = myMessage.indexOf("ORA-");
@@ -102,8 +106,9 @@ class ErrorTextParserORACLE extends ErrorTextParser {
         errorCode = 0;
         errorCodeText = "";
       }
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Error code: " + Integer.toString(errorCode));
+      }
       if (errorCode != 0) {
         FieldProvider fldMessage = Utility.locateMessage(getConnection(),
             Integer.toString(errorCode), getLanguage());
@@ -130,8 +135,9 @@ class ErrorTextParserORACLE extends ErrorTextParser {
               toTranslate);
           // in case some backward slashes are not properly removed, remove them
           messageAux = messageAux.replaceAll("\\\\", "");
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("Message parsed: " + messageAux);
+          }
           myError.setMessage(messageAux);
           return myError;
         }
@@ -141,16 +147,20 @@ class ErrorTextParserORACLE extends ErrorTextParser {
       pos = myMessage.indexOf("(", pos + 4);
       if (pos != -1) {
         int finalPos = myMessage.indexOf(")", pos + 1);
-        if (finalPos == -1)
+        if (finalPos == -1) {
           finalPos = myMessage.length();
+        }
         String objectName = myMessage.substring(pos + 1, finalPos);
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Object name: " + objectName);
+        }
         pos = objectName.indexOf(".");
-        if (pos != -1)
+        if (pos != -1) {
           objectName = objectName.substring(pos + 1);
-        if (log4j.isDebugEnabled())
+        }
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Object real name: " + objectName);
+        }
         ErrorTextParserData[] constraintData = ErrorTextParserData.select(getConnection(),
             objectName);
         // BEGIN Specific parse for CONSTRAINT DB objects
@@ -173,11 +183,13 @@ class ErrorTextParserORACLE extends ErrorTextParser {
         } else if (errorCode == 1400 || errorCode == 1407) {
           pos = objectName.indexOf(".");
           String tableName = objectName.substring(0, pos);
-          if (tableName.startsWith("\""))
+          if (tableName.startsWith("\"")) {
             tableName = tableName.substring(1, tableName.length() - 1);
+          }
           String columnName = objectName.substring(pos + 1);
-          if (columnName.startsWith("\""))
+          if (columnName.startsWith("\"")) {
             columnName = columnName.substring(1, columnName.length() - 1);
+          }
           myError = new OBError();
           myError.setType("Error");
 
@@ -201,9 +213,10 @@ class ErrorTextParserORACLE extends ErrorTextParser {
       // END Getting DB object name
     }
     // END Checking if it's a DB error
-    if (myCodeError != null)
+    if (myCodeError != null) {
       return myCodeError;
-    else
+    } else {
       return myError;
+    }
   }
 }

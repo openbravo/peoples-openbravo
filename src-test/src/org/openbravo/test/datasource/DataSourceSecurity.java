@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.AfterClass;
@@ -51,8 +53,6 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.service.json.JsonConstants;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Test cases to ensure that mechanism of security DataSource access is working properly.
@@ -104,19 +104,18 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
 
   private enum JSONObjectURL {
     // Move node in Account Tree
-    MOVEMENT_NODE(
-        "?_skinVersion=Default&_create=true&Constants_FIELDSEPARATOR=$&_new=true"
-            + "&_contextUrl=http://localhost:8080/openbravo&Constants_IDENTIFIER=_identifier"
-            + "&_startRow=0&_endRow=200&referencedTableId=188&parentRecordId=56E65CF592BD4DAF8A8A879810646266&tabId=132"
-            + "&_selectedProperties=['searchKey','name','elementLevel','accountType','showValueCondition','summaryLevel']"
-            + "&@FinancialMgmtElement.client@=23C59575B9CF467C9620760EB255B389"
-            + "&@FinancialMgmtElement.id@=56E65CF592BD4DAF8A8A879810646266"
-            + "&@FinancialMgmtElement.organization@=B843C30461EA4501935CB1D125C9C25A&@FinancialMgmtElement.type@=A"
-            + "&@FinancialMgmtElementValue.organization@=B843C30461EA4501935CB1D125C9C25A"
-            + "&@FinancialMgmtElementValue.client@=23C59575B9CF467C9620760EB255B389"
-            + "&@FinancialMgmtElementValue.accountingElement@=56E65CF592BD4DAF8A8A879810646266"
-            + "&@FinancialMgmtElementValue.id@=A45B7570F9BE4A69A3BF53CFEBB29FC0&dropIndex=2"
-            + "&nextNodeId=FF30CF29CE614360AF85020438BFE328&isc_dataFormat=json&prevNodeId=C3FE5804602E481FAEDCA5D4D71B6CF",
+    MOVEMENT_NODE("?_skinVersion=Default&_create=true&Constants_FIELDSEPARATOR=$&_new=true"
+        + "&_contextUrl=http://localhost:8080/openbravo&Constants_IDENTIFIER=_identifier"
+        + "&_startRow=0&_endRow=200&referencedTableId=188&parentRecordId=56E65CF592BD4DAF8A8A879810646266&tabId=132"
+        + "&_selectedProperties=['searchKey','name','elementLevel','accountType','showValueCondition','summaryLevel']"
+        + "&@FinancialMgmtElement.client@=23C59575B9CF467C9620760EB255B389"
+        + "&@FinancialMgmtElement.id@=56E65CF592BD4DAF8A8A879810646266"
+        + "&@FinancialMgmtElement.organization@=B843C30461EA4501935CB1D125C9C25A&@FinancialMgmtElement.type@=A"
+        + "&@FinancialMgmtElementValue.organization@=B843C30461EA4501935CB1D125C9C25A"
+        + "&@FinancialMgmtElementValue.client@=23C59575B9CF467C9620760EB255B389"
+        + "&@FinancialMgmtElementValue.accountingElement@=56E65CF592BD4DAF8A8A879810646266"
+        + "&@FinancialMgmtElementValue.id@=A45B7570F9BE4A69A3BF53CFEBB29FC0&dropIndex=2"
+        + "&nextNodeId=FF30CF29CE614360AF85020438BFE328&isc_dataFormat=json&prevNodeId=C3FE5804602E481FAEDCA5D4D71B6CF",
         createJsonObjectForNodeMovement()), //
     NO_APPLIED("", "");
 
@@ -293,8 +292,8 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
             put("@FinancialMgmtElement.organization@", "B843C30461EA4501935CB1D125C9C25A");
           }
         }), //
-    StockReservations("2F5B70D7F12E4F5C8FE20D6F17D69ECF", JSONObjectURL.NO_APPLIED,
-        OPERATION_FETCH, new HashMap<String, String>() {
+    StockReservations("2F5B70D7F12E4F5C8FE20D6F17D69ECF", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,
+        new HashMap<String, String>() {
           {
             // Manage Stock from Stock Reservations
             put("@MaterialMgmtReservation.id@", ID_TESTING);
@@ -355,9 +354,11 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     for (RoleType type : RoleType.values()) {
       int accessForAdminOnly = type == RoleType.ADMIN_ROLE ? JsonConstants.RPCREQUEST_STATUS_SUCCESS
           : JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR;
-      int accessForAdminAndSystemOnly = (type == RoleType.NO_ACCESS_ROLE || type == RoleType.EMPLOYEE_ROLE) ? JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR
-          : JsonConstants.RPCREQUEST_STATUS_SUCCESS;
-      int accessForAdminAndSystemAndEmployee = type == RoleType.NO_ACCESS_ROLE ? JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR
+      int accessForAdminAndSystemOnly = (type == RoleType.NO_ACCESS_ROLE
+          || type == RoleType.EMPLOYEE_ROLE) ? JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR
+              : JsonConstants.RPCREQUEST_STATUS_SUCCESS;
+      int accessForAdminAndSystemAndEmployee = type == RoleType.NO_ACCESS_ROLE
+          ? JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR
           : JsonConstants.RPCREQUEST_STATUS_SUCCESS;
 
       testCases.add(new Object[] { type, DataSource.Order, accessForAdminOnly });
@@ -377,9 +378,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
       // QueryList ds is accessible if current role has access to widgetId
       testCases.add(new Object[] { type, DataSource.QueryList,
           JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR });
-      testCases.add(new Object[] {
-          type,
-          DataSource.PropertySelector,
+      testCases.add(new Object[] { type, DataSource.PropertySelector,
           type == RoleType.SYSTEM_ROLE ? JsonConstants.RPCREQUEST_STATUS_SUCCESS
               : JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR });
 
@@ -392,16 +391,16 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
       testCases.add(new Object[] { type, DataSource.Note, accessForAdminAndSystemOnly });
 
       // Selector into a datasource into a P&E Window.
-      testCases.add(new Object[] { type, DataSource.SelectorGLItemDatasource,
-          accessForAdminAndSystemOnly });
+      testCases.add(
+          new Object[] { type, DataSource.SelectorGLItemDatasource, accessForAdminAndSystemOnly });
 
       // Moving a tree node : https://issues.openbravo.com/view.php?id=32833
       testCases.add(new Object[] { type, DataSource.AccountTreeMovement, accessForAdminOnly });
 
       // Testing a problem detected in how permissions for the entities of the selectors with Search
       // parent reference are calculated. See issue https://issues.openbravo.com/view.php?id=34823
-      testCases.add(new Object[] { type, DataSource.ProductStockView,
-          accessForAdminAndSystemAndEmployee });
+      testCases.add(
+          new Object[] { type, DataSource.ProductStockView, accessForAdminAndSystemAndEmployee });
     }
     // testing a problem detected in how properties are initialized.
     testCases.add(new Object[] { RoleType.ADMIN_ROLE, DataSource.ProductByPriceAndWarehouse,
@@ -425,8 +424,8 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     OBDal.getInstance().save(noAccessRole);
 
     RoleOrganization noAcessRoleOrg = OBProvider.getInstance().get(RoleOrganization.class);
-    noAcessRoleOrg.setOrganization((Organization) OBDal.getInstance().getProxy(
-        Organization.ENTITY_NAME, ESP_ORG));
+    noAcessRoleOrg.setOrganization(
+        (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, ESP_ORG));
     noAcessRoleOrg.setRole(noAccessRole);
     OBDal.getInstance().save(noAcessRoleOrg);
 
@@ -437,8 +436,8 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     OBDal.getInstance().save(noAccessRoleUser);
 
     // Create product generic for manage variants
-    Product productToClone = OBDal.getInstance().get(Product.class,
-        "DA7FC1BB3BA44EC48EC1AB9C74168CED");
+    Product productToClone = OBDal.getInstance()
+        .get(Product.class, "DA7FC1BB3BA44EC48EC1AB9C74168CED");
     Product product = (Product) DalUtil.copy(productToClone, false);
     product.setId(ID_TESTING);
     product.setNewOBObject(true);
@@ -493,8 +492,9 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
 
   private JSONObject updateDataSource() throws Exception {
     String parameters = addCsrfTokenToParameters(dataSource.urlAndJson.content);
-    String responseUpdate = doRequest("/org.openbravo.service.datasource/" + dataSource.ds
-        + dataSource.urlAndJson.url, parameters, 200, "PUT", "application/json");
+    String responseUpdate = doRequest(
+        "/org.openbravo.service.datasource/" + dataSource.ds + dataSource.urlAndJson.url,
+        parameters, 200, "PUT", "application/json");
 
     return new JSONObject(responseUpdate).getJSONObject("response");
   }

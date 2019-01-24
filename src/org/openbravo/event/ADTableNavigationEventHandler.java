@@ -42,8 +42,8 @@ import org.openbravo.model.ad.ui.Field;
  */
 
 public class ADTableNavigationEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      TableNavigation.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(TableNavigation.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -51,8 +51,7 @@ public class ADTableNavigationEventHandler extends EntityPersistenceEventObserve
     return entities;
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     updateTableId(event);
   }
 
@@ -68,8 +67,8 @@ public class ADTableNavigationEventHandler extends EntityPersistenceEventObserve
       String tableId = targetEntity.getTableId();
       Table table = OBDal.getInstance().get(Table.class, tableId);
 
-      final Entity tableNavigationEntity = ModelProvider.getInstance().getEntity(
-          TableNavigation.ENTITY_NAME);
+      final Entity tableNavigationEntity = ModelProvider.getInstance()
+          .getEntity(TableNavigation.ENTITY_NAME);
       final Property tableNavigationTableProperty = tableNavigationEntity
           .getProperty(TableNavigation.PROPERTY_TABLE);
       event.setCurrentState(tableNavigationTableProperty, table);

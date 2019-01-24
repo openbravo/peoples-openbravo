@@ -33,6 +33,7 @@ import org.openbravo.utils.FormatUtilities;
 @SuppressWarnings("serial")
 public abstract class CalloutHelper extends HttpSecureAppServlet {
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
@@ -41,15 +42,17 @@ public abstract class CalloutHelper extends HttpSecureAppServlet {
   abstract void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
       String windowId) throws IOException, ServletException;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (!vars.commandIn("DEFAULT")) {
       String strTabId = vars.getStringParameter("inpTabId");
       String strWindowId = vars.getStringParameter("inpwindowId");
       printPage(response, vars, strTabId, strWindowId);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   String generateArray(FieldProvider[] data) {
@@ -58,16 +61,21 @@ public abstract class CalloutHelper extends HttpSecureAppServlet {
 
   String generateArray(FieldProvider[] data, String selected) {
     StringBuffer strArray = new StringBuffer();
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       strArray.append("null");
-    else {
+    } else {
       strArray.append("new Array(");
       for (int i = 0; i < data.length; i++) {
-        strArray.append("\nnew Array(\"").append(data[i].getField("id")).append("\", \"")
-            .append(FormatUtilities.replaceJS(data[i].getField("name"))).append("\",")
-            .append(data[i].getField("id").equals(selected) ? "\"true\"" : "\"false\"").append(")");
-        if (i < data.length - 1)
+        strArray.append("\nnew Array(\"")
+            .append(data[i].getField("id"))
+            .append("\", \"")
+            .append(FormatUtilities.replaceJS(data[i].getField("name")))
+            .append("\",")
+            .append(data[i].getField("id").equals(selected) ? "\"true\"" : "\"false\"")
+            .append(")");
+        if (i < data.length - 1) {
           strArray.append(", \n");
+        }
       }
       strArray.append(")");
     }

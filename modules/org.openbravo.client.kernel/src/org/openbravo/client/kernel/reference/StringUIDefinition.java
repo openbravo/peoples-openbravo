@@ -83,6 +83,7 @@ public class StringUIDefinition extends UIDefinition {
         + super.getGridFieldProperties(field);
   }
 
+  @Override
   public String getFieldProperties(Field field) {
     String fieldProperties = super.getFieldProperties(field);
     if (field != null && field.getColumn() != null) {

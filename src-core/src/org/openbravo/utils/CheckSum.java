@@ -34,8 +34,9 @@ public class CheckSum {
 
   public CheckSum(String dir) {
     obDir = dir.replace("\\", "/");
-    if (!obDir.endsWith("/"))
+    if (!obDir.endsWith("/")) {
       obDir += "/";
+    }
     properties = new Properties();
     File propertiesFile = new File(obDir + "/config/checksums");
     if (propertiesFile.exists()) {
@@ -50,6 +51,7 @@ public class CheckSum {
   private void getCheckSum(MessageDigest cs, File f) throws Exception {
     if (f.isDirectory()) {
       File[] list = f.listFiles(new FilenameFilter() {
+        @Override
         public boolean accept(File file, String s) {
           return !s.equals(".svn") && !s.endsWith(".orig");
         }
@@ -57,13 +59,15 @@ public class CheckSum {
 
       // sort files alphabetically to ensure the order does not change from one checksum to another
       Arrays.sort(list, new Comparator<File>() {
+        @Override
         public int compare(final File f1, final File f2) {
           return f1.toString().compareTo(f2.toString());
         }
       });
 
-      for (File element : list)
+      for (File element : list) {
         getCheckSum(cs, element);
+      }
     } else {
 
       FileInputStream is = new FileInputStream(f);
@@ -82,8 +86,9 @@ public class CheckSum {
     MessageDigest cs = MessageDigest.getInstance("MD5");
     for (String fileName : files) {
       File file = new File(fileName);
-      if (file.exists())
+      if (file.exists()) {
         getCheckSum(cs, file);
+      }
     }
     return new BigInteger(1, cs.digest()).toString(16);
   }

@@ -43,6 +43,7 @@ public class DateDomainType extends BasePrimitiveDomainType {
   /**
    * @return class of the {@link Date}
    */
+  @Override
   public Class<?> getPrimitiveType() {
     return Date.class;
   }

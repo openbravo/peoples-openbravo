@@ -75,8 +75,8 @@ public class ImportEntrySizeTest extends OBBaseTest {
       OBDal.getInstance().save(importEntry);
       importEntryId = importEntry.getId();
 
-      final ImportEntryArchive importEntryArchive = OBProvider.getInstance().get(
-          ImportEntryArchive.class);
+      final ImportEntryArchive importEntryArchive = OBProvider.getInstance()
+          .get(ImportEntryArchive.class);
       importEntryArchive.setId(importEntry.getId());
       importEntryArchive.setNewOBObject(true);
       importEntryArchive.setJsonInfo(json);
@@ -90,8 +90,8 @@ public class ImportEntrySizeTest extends OBBaseTest {
 
     // read and check
     ImportEntry importEntry = OBDal.getInstance().get(ImportEntry.class, importEntryId);
-    ImportEntryArchive importEntryArchive = OBDal.getInstance().get(ImportEntryArchive.class,
-        importEntryId);
+    ImportEntryArchive importEntryArchive = OBDal.getInstance()
+        .get(ImportEntryArchive.class, importEntryId);
 
     // remove to clean the db before checking
     OBDal.getInstance().remove(importEntryArchive);

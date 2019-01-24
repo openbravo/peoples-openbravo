@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -165,8 +165,7 @@ isc.OBListItem.addProperties({
 
   // prevent ids from showing up
   mapValueToDisplay: function (value) {
-    var i, ret = this.Super('mapValueToDisplay', arguments),
-        result;
+    var ret = this.Super('mapValueToDisplay', arguments);
 
     // the datasource should handle it
     if (this.optionDataSource) {
@@ -177,13 +176,6 @@ isc.OBListItem.addProperties({
       // handle multi-select
       if (isc.isA.Array(value)) {
         this.lastSelectedValue = value;
-        for (i = 0; i < value.length; i++) {
-          if (i > 0) {
-            result += this.multipleValueSeparator;
-          }
-          // encode or and and
-          result += OB.Utilities.encodeSearchOperator(this.Super('mapValueToDisplay', value[i]));
-        }
       } else if (this.valueMap[value]) {
         this.lastSelectedValue = value;
         return this.valueMap[value].unescapeHTML();

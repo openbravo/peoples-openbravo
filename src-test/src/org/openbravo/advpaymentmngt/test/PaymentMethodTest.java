@@ -73,9 +73,9 @@ public class PaymentMethodTest extends OBBaseTest {
 
   @Test
   public void testAddPaymentMethodValid4() {
-    TestUtility.insertPaymentMethod("APRM_PAYMENT_METHOD_4", STANDARD_DESCRIPTION, true, true,
-        true, MANUAL_EXECUTION, null, false, null, null, null, true, true, true, MANUAL_EXECUTION,
-        null, false, null, null, null, true, false);
+    TestUtility.insertPaymentMethod("APRM_PAYMENT_METHOD_4", STANDARD_DESCRIPTION, true, true, true,
+        MANUAL_EXECUTION, null, false, null, null, null, true, true, true, MANUAL_EXECUTION, null,
+        false, null, null, null, true, false);
   }
 
   // Requisite: at least one Execution Process created
@@ -84,9 +84,8 @@ public class PaymentMethodTest extends OBBaseTest {
     TestUtility.insertPaymentMethod("APRM_PAYMENT_METHOD_5", STANDARD_DESCRIPTION, true, false,
         false, AUTOMATIC_EXECUTION, /* getOneInstance(PaymentExecutionProcess.class) */null, false,
         IN_TRANSIT_ACCOUNT, DEPOSIT_ACCOUNT, CLEARED_ACCOUNT, true, false, false,
-        AUTOMATIC_EXECUTION,
-        /* getOneInstance(PaymentExecutionProcess.class) */null, false, IN_TRANSIT_ACCOUNT,
-        WITHDRAWN_ACCOUNT, CLEARED_ACCOUNT, true, false);
+        AUTOMATIC_EXECUTION, /* getOneInstance(PaymentExecutionProcess.class) */null, false,
+        IN_TRANSIT_ACCOUNT, WITHDRAWN_ACCOUNT, CLEARED_ACCOUNT, true, false);
   }
 
   /**
@@ -94,8 +93,8 @@ public class PaymentMethodTest extends OBBaseTest {
    */
   @Test
   public void testDeletePaymentMethod() {
-    final OBCriteria<FIN_PaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
-        FIN_PaymentMethod.class);
+    final OBCriteria<FIN_PaymentMethod> obCriteria = OBDal.getInstance()
+        .createCriteria(FIN_PaymentMethod.class);
     obCriteria.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_DESCRIPTION, STANDARD_DESCRIPTION));
     final List<FIN_PaymentMethod> paymentMethods = obCriteria.list();
     for (FIN_PaymentMethod pm : paymentMethods) {

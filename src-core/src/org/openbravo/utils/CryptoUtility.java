@@ -22,8 +22,8 @@ import javax.servlet.ServletException;
 
 /** Basic utilities to encrypt/decrypt Strings. */
 public class CryptoUtility {
-  private static final SecretKey KEY = new SecretKeySpec(new byte[] { 100, 25, 28, -122, -26, 94,
-      -3, -72 }, "DES");
+  private static final SecretKey KEY = new SecretKeySpec(
+      new byte[] { 100, 25, 28, -122, -26, 94, -3, -72 }, "DES");
   private static final String TRANSFORMATION = "DES/ECB/PKCS5Padding";
 
   /**

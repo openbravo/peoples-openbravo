@@ -56,6 +56,7 @@ import org.openbravo.service.json.DataToJsonConverter;
  */
 public class CloneOrderActionHandler extends BaseActionHandler {
 
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     final DataToJsonConverter jsonConverter = new DataToJsonConverter();
     JSONObject json = null;
@@ -105,8 +106,8 @@ public class CloneOrderActionHandler extends BaseActionHandler {
     objCloneOrder.setSummedLineAmount(BigDecimal.ZERO);
 
     // Calling Clone Order Hook
-    WeldUtils.getInstanceFromStaticBeanManager(CloneOrderHookCaller.class).executeHook(
-        objCloneOrder);
+    WeldUtils.getInstanceFromStaticBeanManager(CloneOrderHookCaller.class)
+        .executeHook(objCloneOrder);
 
     // save the cloned order object
     OBDal.getInstance().save(objCloneOrder);
@@ -125,8 +126,8 @@ public class CloneOrderActionHandler extends BaseActionHandler {
     List<OrderLine> orderLinesCreatedFromExplodedBOM = new ArrayList<>();
 
     for (OrderLine ordLine : objOrder.getOrderLineList()) {
-      String strPriceVersionId = getPriceListVersion(objOrder.getPriceList().getId(), objOrder
-          .getClient().getId());
+      String strPriceVersionId = getPriceListVersion(objOrder.getPriceList().getId(),
+          objOrder.getClient().getId());
       BigDecimal bdPriceList = getPriceList(ordLine.getProduct().getId(), strPriceVersionId);
       OrderLine objCloneOrdLine = (OrderLine) DalUtil.copy(ordLine, false);
       objCloneOrdLine.setReservedQuantity(new BigDecimal("0"));
@@ -169,8 +170,8 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       String whereClause = " as plv left outer join plv.priceList pl where plv.active='Y' and plv.active='Y' and "
           + " pl.id = :priceList and plv.client.id = :clientId order by plv.validFromDate desc";
 
-      OBQuery<PriceListVersion> ppriceListVersion = OBDal.getInstance().createQuery(
-          PriceListVersion.class, whereClause);
+      OBQuery<PriceListVersion> ppriceListVersion = OBDal.getInstance()
+          .createQuery(PriceListVersion.class, whereClause);
       ppriceListVersion.setNamedParameter("priceList", priceList);
       ppriceListVersion.setNamedParameter("clientId", clientId);
 
@@ -191,8 +192,8 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       parameters.add(strProductID);
       parameters.add(strPriceVersionId);
       final String procedureName = "M_BOM_PriceList";
-      bdPriceList = (BigDecimal) CallStoredProcedure.getInstance().call(procedureName, parameters,
-          null);
+      bdPriceList = (BigDecimal) CallStoredProcedure.getInstance()
+          .call(procedureName, parameters, null);
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -202,12 +203,12 @@ public class CloneOrderActionHandler extends BaseActionHandler {
 
   private List<OrderlineServiceRelation> cloneProductServiceRelation(final OrderLine ordLine,
       OrderLine objCloneOrdLine) {
-    List<OrderlineServiceRelation> cloneServiceRelation = new ArrayList<>(ordLine
-        .getOrderlineServiceRelationList().size());
+    List<OrderlineServiceRelation> cloneServiceRelation = new ArrayList<>(
+        ordLine.getOrderlineServiceRelationList().size());
     for (OrderlineServiceRelation orderLineServiceRelation : ordLine
         .getOrderlineServiceRelationList()) {
-      OrderlineServiceRelation lineServiceRelation = (OrderlineServiceRelation) DalUtil.copy(
-          orderLineServiceRelation, false);
+      OrderlineServiceRelation lineServiceRelation = (OrderlineServiceRelation) DalUtil
+          .copy(orderLineServiceRelation, false);
       lineServiceRelation.setOrderlineRelated(orderLineServiceRelation.getOrderlineRelated());
       lineServiceRelation.setSalesOrderLine(objCloneOrdLine);
       cloneServiceRelation.add(lineServiceRelation);
@@ -221,8 +222,8 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       final Map<String, OrderLine> mapOriginalOrderLineWithCloneOrderLine,
       final List<OrderlineServiceRelation> orderLinesServiceRelation) {
     for (OrderlineServiceRelation lineServiceRelation : orderLinesServiceRelation) {
-      OrderLine clonedOrderLine = mapOriginalOrderLineWithCloneOrderLine.get(lineServiceRelation
-          .getOrderlineRelated().getId());
+      OrderLine clonedOrderLine = mapOriginalOrderLineWithCloneOrderLine
+          .get(lineServiceRelation.getOrderlineRelated().getId());
       lineServiceRelation.setOrderlineRelated(clonedOrderLine);
       OBDal.getInstance().save(lineServiceRelation);
     }
@@ -242,7 +243,8 @@ public class CloneOrderActionHandler extends BaseActionHandler {
   public static BigDecimal getLineNetAmt(final String strOrderId) {
     BigDecimal bdLineNetAmt = new BigDecimal("0");
     final String readLineNetAmtHql = " select (coalesce(ol.lineNetAmount,0) + coalesce(ol.freightAmount,0) + coalesce(ol.chargeAmount,0)) as LineNetAmt from OrderLine ol where ol.salesOrder.id=:orderId";
-    final Query<BigDecimal> readLineNetAmtQry = OBDal.getInstance().getSession()
+    final Query<BigDecimal> readLineNetAmtQry = OBDal.getInstance()
+        .getSession()
         .createQuery(readLineNetAmtHql, BigDecimal.class);
     readLineNetAmtQry.setParameter("orderId", strOrderId);
 

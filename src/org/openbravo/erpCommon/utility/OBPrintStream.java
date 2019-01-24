@@ -134,8 +134,8 @@ class OBPrintStream extends PrintStream {
       rt = "@END@"; // to force end
     } else {
       switch (showType) {
-      case TEXT_HTML:
-        rt = rt.replace("\n", "<br/>");
+        case TEXT_HTML:
+          rt = rt.replace("\n", "<br/>");
       }
     }
     return rt;

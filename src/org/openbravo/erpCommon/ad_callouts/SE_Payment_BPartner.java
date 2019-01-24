@@ -56,8 +56,8 @@ public class SE_Payment_BPartner extends SimpleCallout {
     }
 
     if (paymentMethod != null && financialAccount != null) {
-      final OBCriteria<FinAccPaymentMethod> apmCriteria = OBDal.getInstance().createCriteria(
-          FinAccPaymentMethod.class);
+      final OBCriteria<FinAccPaymentMethod> apmCriteria = OBDal.getInstance()
+          .createCriteria(FinAccPaymentMethod.class);
       apmCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
       apmCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, financialAccount));
       apmCriteria.setFilterOnActive(false);
@@ -67,21 +67,21 @@ public class SE_Payment_BPartner extends SimpleCallout {
           info.addResult("inpfinPaymentmethodId", paymentMethod.getId());
           info.addResult("inpfinFinancialAccountId", financialAccount.getId());
         } else if (!financialAccount.isActive() && !accPaymentMethod.isActive()) {
-          info.addResult(
-              "WARNING",
+          info.addResult("WARNING",
               String.format(
                   Utility.messageBD(new DalConnectionProvider(), "finnac_paymet_inact",
-                      vars.getLanguage()), financialAccount.getIdentifier(),
-                  paymentMethod.getIdentifier()));
+                      vars.getLanguage()),
+                  financialAccount.getIdentifier(), paymentMethod.getIdentifier()));
         } else if (!financialAccount.isActive()) {
-          info.addResult(
-              "WARNING",
-              String.format(Utility.messageBD(new DalConnectionProvider(), "finnac_inact",
-                  vars.getLanguage()), financialAccount.getIdentifier()));
-        } else if (!accPaymentMethod.isActive()) {
           info.addResult("WARNING", String.format(
-              Utility.messageBD(new DalConnectionProvider(), "paymet_inact", vars.getLanguage()),
-              paymentMethod.getIdentifier(), financialAccount.getIdentifier()));
+              Utility.messageBD(new DalConnectionProvider(), "finnac_inact", vars.getLanguage()),
+              financialAccount.getIdentifier()));
+        } else if (!accPaymentMethod.isActive()) {
+          info.addResult("WARNING",
+              String.format(
+                  Utility.messageBD(new DalConnectionProvider(), "paymet_inact",
+                      vars.getLanguage()),
+                  paymentMethod.getIdentifier(), financialAccount.getIdentifier()));
         }
       } else {
         log4j.info("No default info for the selected business partner");
@@ -92,9 +92,8 @@ public class SE_Payment_BPartner extends SimpleCallout {
     if ((!strcBpartnerId.equals(""))
         && (FIN_Utility.isBlockedBusinessPartner(strcBpartnerId, "Y".equals(strisreceipt), 4))) {
       // If the Business Partner is blocked for this document, show an information message.
-      info.addResult("MESSAGE",
-          OBMessageUtils.messageBD("ThebusinessPartner") + " " + bpartner.getIdentifier() + " "
-              + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
+      info.addResult("MESSAGE", OBMessageUtils.messageBD("ThebusinessPartner") + " "
+          + bpartner.getIdentifier() + " " + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
     }
   }
 }

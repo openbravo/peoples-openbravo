@@ -22,11 +22,11 @@ package org.openbravo.erpCommon.ad_callouts;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Sets the proposed value from the sequence associated to the referenced inventory type. The
@@ -42,7 +42,8 @@ public class SE_RefInventory_RefInvType extends SimpleCallout {
       OBContext.setAdminMode(true);
       final String referencedInventoryTypeId = info.getStringParameter("inpmRefinventoryTypeId",
           IsIDFilter.instance);
-      final String proposedValue = getNextProposedValueWithoutUpdatingSequence(referencedInventoryTypeId);
+      final String proposedValue = getNextProposedValueWithoutUpdatingSequence(
+          referencedInventoryTypeId);
       info.addResult("inpvalue", proposedValue);
     } catch (Exception logAndIgnore) {
       log.warn("Unexpected error in callout " + this.getClass().getName(), logAndIgnore);
@@ -51,9 +52,10 @@ public class SE_RefInventory_RefInvType extends SimpleCallout {
     }
   }
 
-  private String getNextProposedValueWithoutUpdatingSequence(final String referencedInventoryTypeId) {
-    final String nextProposedValue = ReferencedInventoryUtil.getProposedValueFromSequenceOrNull(
-        referencedInventoryTypeId, false);
+  private String getNextProposedValueWithoutUpdatingSequence(
+      final String referencedInventoryTypeId) {
+    final String nextProposedValue = ReferencedInventoryUtil
+        .getProposedValueFromSequenceOrNull(referencedInventoryTypeId, false);
     return StringUtils.isBlank(nextProposedValue) ? "" : "<" + nextProposedValue + ">";
   }
 }

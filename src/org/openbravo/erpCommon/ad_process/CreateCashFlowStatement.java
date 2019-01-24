@@ -45,13 +45,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class CreateCashFlowStatement extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     String process = CreateCashFlowStatementData.processId(this, "GenerateCashFlowStatement");
@@ -61,8 +63,9 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
       OBError myError = process(response, vars);
       vars.setMessage("CreateCashFlowStatement", myError);
       printPage(response, vars, process);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private OBError process(HttpServletResponse response, VariablesSecureApp vars) {
@@ -100,22 +103,25 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strProcessId)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: process CreateCashFlowStatement");
+    }
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/CreateCashFlowStatement").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/CreateCashFlowStatement")
+        .createXmlDocument();
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -166,29 +172,34 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
   private void insertCFS(Connection conn, HttpServletResponse response, VariablesSecureApp vars,
       String strPaymentId, String strFactAcctId, String strAmount, String strAccount, int level)
       throws ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: CreateCashFlowStatement");
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("strPaymentId - " + strPaymentId + " - strFactAcctId - " + strFactAcctId
           + " - strAmount - " + strAmount);
+    }
     CreateCashFlowStatementData[] data = CreateCashFlowStatementData.selectPaymentInfo(this,
         strPaymentId);
 
-    if (log4j.isDebugEnabled() && ((data != null && data.length != 0)))
+    if (log4j.isDebugEnabled() && ((data != null && data.length != 0))) {
       log4j.debug("cInvoiceId - " + data[0].cInvoiceId + " - cOrderId - " + data[0].cOrderId
           + " - cSettlementGenerateId - " + data[0].cSettlementGenerateId + " - ismanual - "
           + data[0].ismanual);
+    }
     if (data == null || data.length == 0) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("CreateCashFlowStatement - NO PAYMENT");
+      }
       String strFactAcctCFS = SequenceIdData.getUUID();
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
+      }
       CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId,
           vars.getClient(), vars.getOrg(), vars.getUser(), strAccount, strAmount, null);
     } else {
-      CreateCashFlowStatementData[] writeOff = CreateCashFlowStatementData.selectPaymentWriteOff(
-          this, strPaymentId, data[0].cSettlementCancelId);
+      CreateCashFlowStatementData[] writeOff = CreateCashFlowStatementData
+          .selectPaymentWriteOff(this, strPaymentId, data[0].cSettlementCancelId);
       if (writeOff != null && writeOff.length > 0) {
         String strFactAcctCFS = SequenceIdData.getUUID();
         CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId,
@@ -196,58 +207,70 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
             writeOff[0].amount, writeOff[0].id);
       }
       if (!(data[0].cInvoiceId).equals("")) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("CreateCashFlowStatement - INVOICE - " + data[0].cInvoiceId);
-        CreateCashFlowStatementData[] statements = CreateCashFlowStatementData.selectStatements(
-            this, "318", data[0].cInvoiceId);
+        }
+        CreateCashFlowStatementData[] statements = CreateCashFlowStatementData
+            .selectStatements(this, "318", data[0].cInvoiceId);
         String strTotal = CreateCashFlowStatementData.selectSumStatements(this, "318",
             data[0].cInvoiceId);
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("strTotal - " + strTotal + " - strAmount - " + strAmount);
+        }
         if (strTotal == null || strTotal.equals("")) {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("CreateCashFlowStatement - NOT POSTED INVOICE");
+          }
           String strOrderAccount = CreateCashFlowStatementData.selectOrderAccount(this);
           String strFactAcctCFS = SequenceIdData.getUUID();
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
+          }
           CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId,
               vars.getClient(), vars.getOrg(), vars.getUser(), strOrderAccount, strAmount, null);
         } else {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("CreateCashFlowStatement - POSTED INVOICE");
+          }
           String strRatio = calculateRatio(strTotal, strAmount);
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("strRatio - " + strRatio);
+          }
           for (int i = 0; i < statements.length; i++) {
             String strFactAcctCFS = SequenceIdData.getUUID();
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - "
                   + multiply(statements[i].amount, strRatio));
+            }
             CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId,
                 vars.getClient(), vars.getOrg(), vars.getUser(), statements[i].accountId,
                 multiply(statements[i].amount, strRatio), statements[i].id);
           }
         }
       } else if (!(data[0].cOrderId).equals("")) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("CreateCashFlowStatement - ORDER");
+        }
         String strOrderAccount = CreateCashFlowStatementData.selectOrderAccount(this);
         String strFactAcctCFS = SequenceIdData.getUUID();
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
+        }
         CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId,
             vars.getClient(), vars.getOrg(), vars.getUser(), strOrderAccount, strAmount, null);
       } else if (!(data[0].cSettlementGenerateId).equals("")) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("CreateCashFlowStatement - SETTLEMENT_GENERATE");
+        }
         if ((data[0].ismanual).equals("Y")) {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("CreateCashFlowStatement - SETTLEMENT_GENERATE MANUAL");
-          if (log4j.isDebugEnabled())
-            log4j.debug("CreateCashFlowStatement - SETTLEMENT_GENERATE - "
-                + data[0].cSettlementGenerateId + " - SETTLEMENT_CANCEL - "
-                + data[0].cSettlementCancelId);
+          }
+          if (log4j.isDebugEnabled()) {
+            log4j.debug(
+                "CreateCashFlowStatement - SETTLEMENT_GENERATE - " + data[0].cSettlementGenerateId
+                    + " - SETTLEMENT_CANCEL - " + data[0].cSettlementCancelId);
+          }
           CreateCashFlowStatementData[] glItems = CreateCashFlowStatementData
               .selectGLItemsSettlementGenerate(this, data[0].cSettlementGenerateId, strPaymentId);
           String strTotal = CreateCashFlowStatementData.selectSumGLItemsGenerate(this,
@@ -260,37 +283,41 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
           }
           for (int j = 0; j < glItems.length; j++) {
             String strNewAmount = multiply(calculateRatio(strTotal, strAmount), glItems[j].amount);
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("CreateCashFlowStatement - Inserting glItem - " + (j + 1)
                   + " - strNewAmount - " + strNewAmount);
+            }
             String strFactAcctCFS = SequenceIdData.getUUID();
             CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId,
                 vars.getClient(), vars.getOrg(), vars.getUser(), glItems[j].account, strNewAmount,
                 glItems[j].id);
           }
         } else {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("CreateCashFlowStatement - SETTLEMENT_GENERATE NOT MANUAL");
+          }
           CreateCashFlowStatementData[] canceledPayments = CreateCashFlowStatementData
               .selectCancelledPayments(this, data[0].cSettlementGenerateId);
           if (canceledPayments == null || canceledPayments.length == 0) {
             String strPaymentAccount = CreateCashFlowStatementData.selectPaymentAccount(this);
             String strFactAcctCFS = SequenceIdData.getUUID();
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
-            CreateCashFlowStatementData
-                .insertStatements(conn, this, strFactAcctCFS, strFactAcctId, vars.getClient(),
-                    vars.getOrg(), vars.getUser(), strPaymentAccount, strAmount, null);
+            }
+            CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId,
+                vars.getClient(), vars.getOrg(), vars.getUser(), strPaymentAccount, strAmount,
+                null);
           } else {
             String strTotal = CreateCashFlowStatementData.selectSumGeneratedPayments(this,
                 data[0].cSettlementGenerateId);
             for (int j = 0; j < canceledPayments.length; j++) {
               String strNewAmount = multiply(calculateRatio(strTotal, strAmount),
                   canceledPayments[j].amount);
-              if (log4j.isDebugEnabled())
+              if (log4j.isDebugEnabled()) {
                 log4j.debug("CreateCashFlowStatement - Rellamada - strNewAmount - " + strNewAmount
                     + " - Payment - " + canceledPayments[j].id + " - strFactAcctId - "
                     + strFactAcctId);
+              }
               insertCFS(conn, response, vars, canceledPayments[j].id, strFactAcctId, strNewAmount,
                   strAccount, (level + 1));
             }
@@ -300,37 +327,43 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
     }
     if (level == 0) { // We make up for the difference with the higher value
       // in absolute terms
-      if (log4j.isDebugEnabled())
-        log4j
-            .debug("CreateCashFlowStatement - Compensamos la diferencia con el valor mas alto en terminos absolutos");
+      if (log4j.isDebugEnabled()) {
+        log4j.debug(
+            "CreateCashFlowStatement - Compensamos la diferencia con el valor mas alto en terminos absolutos");
+      }
       String strDifference = CreateCashFlowStatementData.selectCheckDifference(conn, this,
           strFactAcctId);
-      CreateCashFlowStatementData[] records = CreateCashFlowStatementData.selectGetMaxId(conn,
-          this, strFactAcctId);
+      CreateCashFlowStatementData[] records = CreateCashFlowStatementData.selectGetMaxId(conn, this,
+          strFactAcctId);
       if (records != null && records.length > 0) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("CreateCashFlowStatement - updateDifference - strDifference - "
               + strDifference + " - records[0].id - " + records[0].id);
+        }
         CreateCashFlowStatementData.updateDifference(conn, this, strDifference, records[0].id);
       }
     }
   }
 
   private String calculateRatio(String strTotal, String strAmt) {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("CreateCashFlowStatement - calculateRatio - strTotal - " + strTotal
           + " - strAmt - " + strAmt);
+    }
     if (strTotal == null || strAmt == null || strTotal.equals("0") || strAmt.equals("0")
-        || strTotal.equals("") || strAmt.equals(""))
+        || strTotal.equals("") || strAmt.equals("")) {
       return "0";
+    }
     BigDecimal total = new BigDecimal(strTotal);
     BigDecimal amt = new BigDecimal(strAmt);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("CreateCashFlowStatement - calculateRatio - strTotal - " + strTotal
           + " - strAmt - " + strAmt);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("CreateCashFlowStatement - calculateRatio - total - " + total.doubleValue()
           + " - amt - " + amt.doubleValue());
+    }
     String strRatio = "";
     try {
       amt = amt.divide(total, 200, RoundingMode.HALF_UP);
@@ -339,15 +372,17 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
       e.printStackTrace();
       log4j.warn("Servlet CreateCashFlowStatement - calculateRatio - Exception");
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("CreateCashFlowStatement - calculateRatio - strRatio - " + strRatio);
+    }
     return strRatio;
   } // end of getServletInfo() method
 
   private String multiply(String strOP1, String strOP2) {
-    if (log4j.isDebugEnabled())
-      log4j.debug("CreateCashFlowStatement - multiply - strOP1 - " + strOP1 + " - strOP2 - "
-          + strOP2);
+    if (log4j.isDebugEnabled()) {
+      log4j.debug(
+          "CreateCashFlowStatement - multiply - strOP1 - " + strOP1 + " - strOP2 - " + strOP2);
+    }
     BigDecimal op1 = new BigDecimal(strOP1);
     BigDecimal op2 = new BigDecimal(strOP2);
     op1 = op1.setScale(200);
@@ -362,6 +397,7 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
     return strResult;
   } // end of getServletInfo() method
 
+  @Override
   public String getServletInfo() {
     return "Servlet CreateCashFlowStatement";
   } // end of getServletInfo() method

@@ -87,8 +87,8 @@ public class ComputedColumnsTest extends OBBaseTest {
     setTestUserContext();
 
     // filtering by computed column through proxy
-    OBQuery<Order> qOrder = OBDal.getInstance().createQuery(Order.class,
-        "as o where o._computedColumns.deliveryStatus = 100");
+    OBQuery<Order> qOrder = OBDal.getInstance()
+        .createQuery(Order.class, "as o where o._computedColumns.deliveryStatus = 100");
 
     qOrder.count();
   }
@@ -123,8 +123,8 @@ public class ComputedColumnsTest extends OBBaseTest {
     setTestUserContext();
 
     // try to filter in HQL directly by computed column...
-    OBQuery<Order> qOrder = OBDal.getInstance().createQuery(Order.class,
-        "as o where o.deliveryStatus = 100");
+    OBQuery<Order> qOrder = OBDal.getInstance()
+        .createQuery(Order.class, "as o where o.deliveryStatus = 100");
 
     boolean thrown = false;
     try {

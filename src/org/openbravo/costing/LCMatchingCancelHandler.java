@@ -21,6 +21,8 @@ package org.openbravo.costing;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -31,8 +33,6 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class LCMatchingCancelHandler extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();

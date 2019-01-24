@@ -31,6 +31,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -45,8 +47,6 @@ import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.model.ad.utility.FileType;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -290,7 +290,8 @@ public class ReportingUtils {
   public static void exportJR(String jasperFilePath, ExportType expType,
       Map<String, Object> parameters, File target, boolean addProcessDefinitionParameters,
       ConnectionProvider connectionProvider, JRDataSource data,
-      Map<Object, Object> additionalExportParameters, boolean compileSubreports) throws OBException {
+      Map<Object, Object> additionalExportParameters, boolean compileSubreports)
+      throws OBException {
     exportJR(jasperFilePath, expType, parameters, target, addProcessDefinitionParameters,
         connectionProvider, data, additionalExportParameters);
   }
@@ -330,29 +331,30 @@ public class ReportingUtils {
   public static void saveReport(JasperPrint jasperPrint, ExportType expType,
       Map<Object, Object> exportParameters, File target) throws JRException {
     switch (expType) {
-    case CSV:
-      saveCsvReportToFile(jasperPrint, target);
-      break;
-    case HTML:
-      if (log.isDebugEnabled())
-        log.debug("JR: Print HTML");
-      saveHTMLReportToFile(jasperPrint, exportParameters, target);
-      break;
-    case PDF:
-      JasperExportManager.exportReportToPdfFile(jasperPrint, target.getAbsolutePath());
-      break;
-    case TXT:
-      saveTxtReportToFile(jasperPrint, target);
-      break;
-    case XLS:
-      saveExcelReportToFile(new JRXlsExporter(), jasperPrint, exportParameters, target);
-      break;
-    case XLSX:
-      saveExcelReportToFile(new JRXlsxExporter(), jasperPrint, exportParameters, target);
-      break;
-    case XML:
-      JasperExportManager.exportReportToXmlFile(jasperPrint, target.getAbsolutePath(), true);
-      break;
+      case CSV:
+        saveCsvReportToFile(jasperPrint, target);
+        break;
+      case HTML:
+        if (log.isDebugEnabled()) {
+          log.debug("JR: Print HTML");
+        }
+        saveHTMLReportToFile(jasperPrint, exportParameters, target);
+        break;
+      case PDF:
+        JasperExportManager.exportReportToPdfFile(jasperPrint, target.getAbsolutePath());
+        break;
+      case TXT:
+        saveTxtReportToFile(jasperPrint, target);
+        break;
+      case XLS:
+        saveExcelReportToFile(new JRXlsExporter(), jasperPrint, exportParameters, target);
+        break;
+      case XLSX:
+        saveExcelReportToFile(new JRXlsxExporter(), jasperPrint, exportParameters, target);
+        break;
+      case XML:
+        JasperExportManager.exportReportToXmlFile(jasperPrint, target.getAbsolutePath(), true);
+        break;
     }
   }
 
@@ -374,31 +376,32 @@ public class ReportingUtils {
   public static void saveReport(JasperPrint jasperPrint, ExportType expType,
       Map<Object, Object> exportParameters, OutputStream outputStream) throws JRException {
     switch (expType) {
-    case CSV:
-      saveCsvReportToOutputStream(jasperPrint, outputStream);
-      break;
-    case HTML:
-      if (log.isDebugEnabled())
-        log.debug("JR: Print HTML");
-      saveHTMLReportToOutputStream(jasperPrint, exportParameters, outputStream);
-      break;
-    case PDF:
-      savePDFReportToOutputStream(jasperPrint, exportParameters, outputStream);
-      break;
-    case TXT:
-      saveTxtReportToOutputStream(jasperPrint, outputStream);
-      break;
-    case XLS:
-      saveExcelReportToOutputStream(new JRXlsExporter(), jasperPrint, exportParameters,
-          outputStream);
-      break;
-    case XLSX:
-      saveExcelReportToOutputStream(new JRXlsxExporter(), jasperPrint, exportParameters,
-          outputStream);
-      break;
-    case XML:
-      JasperExportManager.exportReportToXmlStream(jasperPrint, outputStream);
-      break;
+      case CSV:
+        saveCsvReportToOutputStream(jasperPrint, outputStream);
+        break;
+      case HTML:
+        if (log.isDebugEnabled()) {
+          log.debug("JR: Print HTML");
+        }
+        saveHTMLReportToOutputStream(jasperPrint, exportParameters, outputStream);
+        break;
+      case PDF:
+        savePDFReportToOutputStream(jasperPrint, exportParameters, outputStream);
+        break;
+      case TXT:
+        saveTxtReportToOutputStream(jasperPrint, outputStream);
+        break;
+      case XLS:
+        saveExcelReportToOutputStream(new JRXlsExporter(), jasperPrint, exportParameters,
+            outputStream);
+        break;
+      case XLSX:
+        saveExcelReportToOutputStream(new JRXlsxExporter(), jasperPrint, exportParameters,
+            outputStream);
+        break;
+      case XML:
+        JasperExportManager.exportReportToXmlStream(jasperPrint, outputStream);
+        break;
     }
   }
 
@@ -557,7 +560,8 @@ public class ReportingUtils {
     SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(file);
 
     if (exportParameters != null && exportParameters.size() > 0) {
-      SimpleXlsReportConfiguration exportConfiguration = getXlsConfigurationFromExportParameters(exportParameters);
+      SimpleXlsReportConfiguration exportConfiguration = getXlsConfigurationFromExportParameters(
+          exportParameters);
       excelExporter.setConfiguration(exportConfiguration);
     } else {
       SimpleXlsReportConfiguration reportExportConfiguration = new SimpleXlsReportConfiguration();
@@ -592,7 +596,8 @@ public class ReportingUtils {
         outputStream);
 
     if (exportParameters != null && exportParameters.size() > 0) {
-      SimpleXlsReportConfiguration exportConfiguration = getXlsConfigurationFromExportParameters(exportParameters);
+      SimpleXlsReportConfiguration exportConfiguration = getXlsConfigurationFromExportParameters(
+          exportParameters);
       excelExporter.setConfiguration(exportConfiguration);
     } else {
       SimpleXlsReportConfiguration reportExportConfiguration = new SimpleXlsReportConfiguration();
@@ -686,8 +691,8 @@ public class ReportingUtils {
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
    */
-  private static void saveCsvReportToOutputStream(JasperPrint jasperPrint, OutputStream outputStream)
-      throws JRException {
+  private static void saveCsvReportToOutputStream(JasperPrint jasperPrint,
+      OutputStream outputStream) throws JRException {
     final JRCsvExporter csvExporter = new JRCsvExporter();
     SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
     SimpleWriterExporterOutput exporterOutput = new SimpleWriterExporterOutput(outputStream);
@@ -765,8 +770,8 @@ public class ReportingUtils {
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
    */
-  private static void saveTxtReportToOutputStream(JasperPrint jasperPrint, OutputStream outputStream)
-      throws JRException {
+  private static void saveTxtReportToOutputStream(JasperPrint jasperPrint,
+      OutputStream outputStream) throws JRException {
     final JRTextExporter textExporter = new JRTextExporter();
     SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
     SimpleWriterExporterOutput exporterOutput = new SimpleWriterExporterOutput(outputStream);
@@ -1135,18 +1140,18 @@ public class ReportingUtils {
     parameters.put(JASPER_PARAM_HBSESSION, OBDal.getReadOnlyInstance().getSession());
     parameters.put(JASPER_PARAM_OBCONTEXT, OBContext.getOBContext());
 
-    FormatDefinition amountFormat = UIDefinitionController.getInstance().getFormatDefinition(
-        "amount", UIDefinitionController.NORMALFORMAT_QUALIFIER);
+    FormatDefinition amountFormat = UIDefinitionController.getInstance()
+        .getFormatDefinition("amount", UIDefinitionController.NORMALFORMAT_QUALIFIER);
     addFormatParameter(parameters, amountFormat, "AMOUNTFORMAT");
 
-    FormatDefinition generalQtyFormat = UIDefinitionController.getInstance().getFormatDefinition(
-        "generalQty", UIDefinitionController.SHORTFORMAT_QUALIFIER);
+    FormatDefinition generalQtyFormat = UIDefinitionController.getInstance()
+        .getFormatDefinition("generalQty", UIDefinitionController.SHORTFORMAT_QUALIFIER);
     addFormatParameter(parameters, generalQtyFormat, "QUANTITYFORMAT");
 
     String strClientId = OBContext.getOBContext().getCurrentClient().getId();
     parameters.put("Current_Client_ID", strClientId);
-    String strOrgs = StringCollectionUtils.commaSeparated(OBContext.getOBContext()
-        .getReadableOrganizations());
+    String strOrgs = StringCollectionUtils
+        .commaSeparated(OBContext.getOBContext().getReadableOrganizations());
     parameters.put("Readable_Organizations", strOrgs);
   }
 
@@ -1158,7 +1163,8 @@ public class ReportingUtils {
 
     final DecimalFormat numberFormat = new DecimalFormat(
         correctMaskForGrouping(reportFormat.getFormat(), reportFormat.getDecimalSymbol(),
-            reportFormat.getGroupingSymbol()), dfs);
+            reportFormat.getGroupingSymbol()),
+        dfs);
     parameters.put(parameterName, numberFormat);
   }
 
@@ -1169,10 +1175,12 @@ public class ReportingUtils {
    *          Map of parameters where the date format configuration is put.
    */
   private static void setReportFormatFactory(Map<String, Object> parameters) {
-    String javaDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String javaDateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
-    if (log.isDebugEnabled())
+    if (log.isDebugEnabled()) {
       log.debug("creating the format factory: " + javaDateFormat);
+    }
     final JRFormatFactory jrFormatFactory = new JRFormatFactory();
     jrFormatFactory.setDatePattern(javaDateFormat);
     parameters.put(JRParameter.REPORT_FORMAT_FACTORY, jrFormatFactory);
@@ -1376,8 +1384,8 @@ public class ReportingUtils {
       } else if (ExportType.XML.hasExtension(action)) {
         return ExportType.XML;
       } else {
-        throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_UnsupportedAction",
-            new String[] { action }));
+        throw new OBException(
+            OBMessageUtils.getI18NMessage("OBUIAPP_UnsupportedAction", new String[] { action }));
       }
     }
 
@@ -1410,8 +1418,8 @@ public class ReportingUtils {
         // file name should end with the extension
         return false;
       }
-      final String tmpFileNameWithoutExtension = tmpFileName.substring(0, tmpFileName.length()
-          - getExtension().length() - 1);
+      final String tmpFileNameWithoutExtension = tmpFileName.substring(0,
+          tmpFileName.length() - getExtension().length() - 1);
 
       // temp file must be a valid uuid
       return tmpFileNameWithoutExtension.matches("[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}");

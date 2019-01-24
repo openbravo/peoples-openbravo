@@ -44,8 +44,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -108,8 +109,8 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strDate, String strcBpartnerId, String strmWarehouseId) throws IOException,
-      ServletException {
+      String strDate, String strcBpartnerId, String strmWarehouseId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
@@ -117,8 +118,9 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
 
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportGuaranteeDateJR").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportGuaranteeDateJR")
+        .createXmlDocument();
 
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportGuaranteeDateJR", false,
@@ -164,9 +166,9 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
         ReportGuaranteeDateData.selectBpartner(readOnlyCP, strcBpartnerId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "M_Warehouse_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportGuaranteeDateJR"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportGuaranteeDateJR"), 0);
+          "M_Warehouse_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGuaranteeDateJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGuaranteeDateJR"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportGuaranteeDateJR",
           strmWarehouseId);
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
@@ -179,6 +181,7 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportGuaranteeDateJR. This Servlet was made by Jon Alegria";
   } // end of getServletInfo() method

@@ -47,19 +47,19 @@ public class SL_Order_Tax extends SimpleCallout {
 
     // Organization Location, Tax
     String orgLocationID = SLOrderProductData.getOrgLocationId(this,
-        Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), "'" + strADOrgID
-            + "'");
+        Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()),
+        "'" + strADOrgID + "'");
     if (StringUtils.isEmpty(orgLocationID)) {
-      info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this,
-          "NoLocationNoTaxCalculated", info.vars.getLanguage())));
+      info.showMessage(FormatUtilities.replaceJS(
+          Utility.messageBD(this, "NoLocationNoTaxCalculated", info.vars.getLanguage())));
     } else {
       SLOrderTaxData[] data = SLOrderTaxData.select(this, strCOrderId);
       if (data != null && data.length > 0) {
         try {
           String strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID,
-              strMWarehouseID, (StringUtils.isEmpty(data[0].billtoId) ? strCBPartnerLocationID
-                  : data[0].billtoId), strCBPartnerLocationID, data[0].cProjectId, StringUtils
-                  .equals(strIsSOTrx, "Y"));
+              strMWarehouseID,
+              (StringUtils.isEmpty(data[0].billtoId) ? strCBPartnerLocationID : data[0].billtoId),
+              strCBPartnerLocationID, data[0].cProjectId, StringUtils.equals(strIsSOTrx, "Y"));
           if (StringUtils.isNotEmpty(strCTaxID)) {
             info.addResult("inpcTaxId", strCTaxID);
           }

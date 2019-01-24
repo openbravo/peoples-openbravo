@@ -126,9 +126,9 @@ public interface DataSourceService {
   public void checkFetchDatasourceAccess(Map<String, String> parameter) throws OBSecurityException;
 
   /**
-   * This method allows to implement a security access to a DataSource when it is used add(), update()
-   * or remove() methods. It can be overridden in specific DataSources to apply a particular
-   * security mechanism.
+   * This method allows to implement a security access to a DataSource when it is used add(),
+   * update() or remove() methods. It can be overridden in specific DataSources to apply a
+   * particular security mechanism.
    *
    * @throws OBSecurityException
    *           is thrown if current role does not have access.

@@ -26,11 +26,13 @@ class FunctionAddTemplate extends FunctionTemplate {
     super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
   }
 
+  @Override
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      if (log4jFunctionAddTemplate.isDebugEnabled())
+      if (log4jFunctionAddTemplate.isDebugEnabled()) {
         log4jFunctionAddTemplate.debug("New FunctionAddValue");
+      }
       functionValue = new FunctionAddValue(this, xmlDocument);
     }
     return functionValue;

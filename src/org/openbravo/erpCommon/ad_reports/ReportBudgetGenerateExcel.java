@@ -44,8 +44,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -82,8 +83,8 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
           "ReportBudgetGenerateExcel|inpMonthId", IsIDFilter.instance);
       String strAccount = vars.getRequestGlobalVariable("paramAccountSelect",
           "ReportBudgetGenerateExcel|cAccountId", IsIDFilter.instance);
-      String strcAcctSchemaId = vars
-          .getStringParameter("inpcAcctSchemaId", "", IsIDFilter.instance);
+      String strcAcctSchemaId = vars.getStringParameter("inpcAcctSchemaId", "",
+          IsIDFilter.instance);
 
       printPageDataExcel(response, vars, strBPartner, strBPGroup, strProduct, strProdCategory,
           strUser1, strUser2, strCostcenter, strSalesRegion, strCampaign, strActivity, strProject,
@@ -101,8 +102,9 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       log4j.debug("Output: dataSheet");
     }
     XmlDocument xmlDocument = null;
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcel").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcel")
+        .createXmlDocument();
 
     // Use ReadOnly Connection Provider
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
@@ -141,18 +143,17 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     // When showing window, field "accounts" is empty
     xmlDocument.setData("cAccount", "liststructure", ReportBudgetGenerateExcelData.set());
-    xmlDocument
-        .setParameter("accounts", Utility.arrayDobleEntrada("arrAccounts",
-            ReportBudgetGenerateExcelData.selectAccounts(readOnlyCP, vars.getLanguage(), Utility
-                .getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
-                Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportBudgetGenerateExcel"))));
+    xmlDocument.setParameter("accounts", Utility.arrayDobleEntrada("arrAccounts",
+        ReportBudgetGenerateExcelData.selectAccounts(readOnlyCP, vars.getLanguage(),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportBudgetGenerateExcel"))));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_ACCTSCHEMA_ID", "", "C_AcctSchema validation", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportBudgetGenerateExcel"), Utility.getContext(readOnlyCP,
-              vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
-      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
-          "ReportBudgetGenerateExcel", "");
+          "C_ACCTSCHEMA_ID", "", "C_AcctSchema validation",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportBudgetGenerateExcel",
+          "");
       xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -161,11 +162,11 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_BP_Group_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportBudgetGenerateExcel"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportBudgetGenerateExcel"), 0);
-      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
-          "ReportBudgetGenerateExcel", "");
+          "C_BP_Group_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportBudgetGenerateExcel",
+          "");
       xmlDocument.setData("reportCBPGroupId", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -174,11 +175,11 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportBudgetGenerateExcel"), Utility.getContext(readOnlyCP,
-              vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
-      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
-          "ReportBudgetGenerateExcel", "");
+          "M_Product_Category_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportBudgetGenerateExcel",
+          "");
       xmlDocument.setData("reportM_PRODUCTCATEGORY", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -187,11 +188,11 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "User1_ID",
-          "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportBudgetGenerateExcel"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportBudgetGenerateExcel"), 0);
-      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
-          "ReportBudgetGenerateExcel", "");
+          "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportBudgetGenerateExcel",
+          "");
       xmlDocument.setData("reportUser1", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -200,11 +201,11 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "User2_ID",
-          "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportBudgetGenerateExcel"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportBudgetGenerateExcel"), 0);
-      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
-          "ReportBudgetGenerateExcel", "");
+          "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportBudgetGenerateExcel",
+          "");
       xmlDocument.setData("reportUser2", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -213,11 +214,11 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Costcenter_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportBudgetGenerateExcel"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportBudgetGenerateExcel"), 0);
-      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
-          "ReportBudgetGenerateExcel", "");
+          "C_Costcenter_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportBudgetGenerateExcel",
+          "");
       xmlDocument.setData("reportCCostcenterId", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -226,11 +227,11 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_SalesRegion_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportBudgetGenerateExcel"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportBudgetGenerateExcel"), 0);
-      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
-          "ReportBudgetGenerateExcel", "");
+          "C_SalesRegion_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportBudgetGenerateExcel",
+          "");
       xmlDocument.setData("reportCSalesRegionId", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -239,11 +240,11 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Campaign_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportBudgetGenerateExcel"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportBudgetGenerateExcel"), 0);
-      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
-          "ReportBudgetGenerateExcel", "");
+          "C_Campaign_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportBudgetGenerateExcel",
+          "");
       xmlDocument.setData("reportCCampaignId", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -252,11 +253,11 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Activity_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportBudgetGenerateExcel"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportBudgetGenerateExcel"), 0);
-      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
-          "ReportBudgetGenerateExcel", "");
+          "C_Activity_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportBudgetGenerateExcel",
+          "");
       xmlDocument.setData("reportCActivityId", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -265,11 +266,11 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Project_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportBudgetGenerateExcel"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportBudgetGenerateExcel"), 0);
-      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
-          "ReportBudgetGenerateExcel", "");
+          "C_Project_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportBudgetGenerateExcel",
+          "");
       xmlDocument.setData("reportCProjectId", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -280,8 +281,8 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_Org_ID",
           "", "", Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportBudgetGenerateExcel"),
           Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
-      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
-          "ReportBudgetGenerateExcel", "");
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportBudgetGenerateExcel",
+          "");
       xmlDocument.setData("reportTrxOrg", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -324,7 +325,8 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_BPARTNER', TO_CHAR(C_BPARTNER_ID), '")
           .append(vars.getLanguage())
           .append("') AS PARTNER, C_BPARTNER_ID FROM C_BPARTNER WHERE C_BPARTNER_ID IN ")
-          .append(strBPartner).append(") BP");
+          .append(strBPartner)
+          .append(") BP");
     } else {
       columns.append("' ' AS PARTNER, ");
     }
@@ -332,7 +334,8 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       columns.append("PARTNERGROUP, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_BP_GROUP', TO_CHAR(C_BP_GROUP_ID), '")
           .append(vars.getLanguage())
-          .append("') AS PARTNERGROUP FROM C_BP_GROUP WHERE C_BP_GROUP_ID IN ").append(strBPGroup)
+          .append("') AS PARTNERGROUP FROM C_BP_GROUP WHERE C_BP_GROUP_ID IN ")
+          .append(strBPGroup)
           .append(") PG");
     } else {
       columns.append("' ' AS PARTNERGROUP, ");
@@ -342,34 +345,39 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('M_PRODUCT', TO_CHAR(M_PRODUCT_ID), '")
           .append(vars.getLanguage())
           .append("') AS PRODUCT, M_PRODUCT_ID FROM M_PRODUCT WHERE M_PRODUCT_ID IN ")
-          .append(strProduct).append(") PROD");
+          .append(strProduct)
+          .append(") PROD");
     } else {
       columns.append("' ' AS PRODUCT, ");
     }
     if (StringUtils.isNotEmpty(strProdCategory)) {
       columns.append("PRODCATEGORY, ");
-      tables
-          .append(
-              ", (SELECT AD_COLUMN_IDENTIFIER('M_PRODUCT_CATEGORY', TO_CHAR(M_PRODUCT_CATEGORY_ID), '")
+      tables.append(
+          ", (SELECT AD_COLUMN_IDENTIFIER('M_PRODUCT_CATEGORY', TO_CHAR(M_PRODUCT_CATEGORY_ID), '")
           .append(vars.getLanguage())
           .append("') AS PRODCATEGORY FROM M_PRODUCT_CATEGORY WHERE M_PRODUCT_CATEGORY_ID IN ")
-          .append(strProdCategory).append(") PRODCAT");
+          .append(strProdCategory)
+          .append(") PRODCAT");
     } else {
       columns.append("' ' AS PRODCATEGORY, ");
     }
     if (StringUtils.isNotEmpty(strUser1)) {
       columns.append("USER1, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('USER1', TO_CHAR(USER1_ID), '")
-          .append(vars.getLanguage()).append("') AS USER1 FROM USER1 WHERE USER1_ID IN ")
-          .append(strUser1).append(") USER1");
+          .append(vars.getLanguage())
+          .append("') AS USER1 FROM USER1 WHERE USER1_ID IN ")
+          .append(strUser1)
+          .append(") USER1");
     } else {
       columns.append("' ' AS USER1, ");
     }
     if (StringUtils.isNotEmpty(strUser2)) {
       columns.append("USER2, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('USER2', TO_CHAR(USER2_ID), '")
-          .append(vars.getLanguage()).append("') AS USER2 FROM USER2 WHERE USER2_ID IN ")
-          .append(strUser2).append(") USER2");
+          .append(vars.getLanguage())
+          .append("') AS USER2 FROM USER2 WHERE USER2_ID IN ")
+          .append(strUser2)
+          .append(") USER2");
     } else {
       columns.append("' ' AS USER2, ");
     }
@@ -378,7 +386,8 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_COSTCENTER', TO_CHAR(C_COSTCENTER_ID), '")
           .append(vars.getLanguage())
           .append("') AS COSTCENTER FROM C_COSTCENTER WHERE C_COSTCENTER_ID IN ")
-          .append(strCostcenter).append(") COSTCENTER");
+          .append(strCostcenter)
+          .append(") COSTCENTER");
     } else {
       columns.append("' ' AS COSTCENTER, ");
     }
@@ -387,7 +396,8 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_SALESREGION', TO_CHAR(C_SALESREGION_ID), '")
           .append(vars.getLanguage())
           .append("') AS SALESREGION FROM C_SALESREGION WHERE C_SALESREGION_ID IN ")
-          .append(strSalesRegion).append(") SALEREG");
+          .append(strSalesRegion)
+          .append(") SALEREG");
     } else {
       columns.append("' ' AS SALESREGION, ");
     }
@@ -395,7 +405,8 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       columns.append("CAMPAIGN, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_CAMPAIGN', TO_CHAR(C_CAMPAIGN_ID), '")
           .append(vars.getLanguage())
-          .append("') AS CAMPAIGN FROM C_CAMPAIGN WHERE C_CAMPAIGN_ID IN ").append(strCampaign)
+          .append("') AS CAMPAIGN FROM C_CAMPAIGN WHERE C_CAMPAIGN_ID IN ")
+          .append(strCampaign)
           .append(") CAMP");
     } else {
       columns.append("' ' AS CAMPAIGN, ");
@@ -404,7 +415,8 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       columns.append("ACTIVITY, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_ACTIVITY', TO_CHAR(C_ACTIVITY_ID), '")
           .append(vars.getLanguage())
-          .append("') AS ACTIVITY FROM C_ACTIVITY WHERE C_ACTIVITY_ID IN ").append(strActivity)
+          .append("') AS ACTIVITY FROM C_ACTIVITY WHERE C_ACTIVITY_ID IN ")
+          .append(strActivity)
           .append(") ACT");
     } else {
       columns.append("' ' AS ACTIVITY, ");
@@ -412,24 +424,30 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
     if (StringUtils.isNotEmpty(strProject)) {
       columns.append("PROJECT, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_PROJECT', TO_CHAR(C_PROJECT_ID), '")
-          .append(vars.getLanguage()).append("') AS PROJECT FROM C_PROJECT WHERE C_PROJECT_ID IN ")
-          .append(strProject).append(") PROJ");
+          .append(vars.getLanguage())
+          .append("') AS PROJECT FROM C_PROJECT WHERE C_PROJECT_ID IN ")
+          .append(strProject)
+          .append(") PROJ");
     } else {
       columns.append("' ' AS PROJECT, ");
     }
     if (StringUtils.isNotEmpty(strTrxOrg)) {
       columns.append("TRXORG, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('AD_ORG', TO_CHAR(AD_ORG_ID), '")
-          .append(vars.getLanguage()).append("') AS TRXORG FROM AD_ORG WHERE AD_ORG_ID IN ")
-          .append(strTrxOrg).append(") TORG");
+          .append(vars.getLanguage())
+          .append("') AS TRXORG FROM AD_ORG WHERE AD_ORG_ID IN ")
+          .append(strTrxOrg)
+          .append(") TORG");
     } else {
       columns.append("' ' AS TRXORG, ");
     }
     if (StringUtils.isNotEmpty(strMonth)) {
       columns.append("MONTH, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('AD_MONTH', TO_CHAR(AD_MONTH_ID), '")
-          .append(vars.getLanguage()).append("') AS MONTH FROM AD_MONTH WHERE  AD_MONTH_ID IN ")
-          .append(strMonth).append(") MTH");
+          .append(vars.getLanguage())
+          .append("') AS MONTH FROM AD_MONTH WHERE  AD_MONTH_ID IN ")
+          .append(strMonth)
+          .append(") MTH");
     } else {
       columns.append("' ' AS MONTH, ");
     }
@@ -441,22 +459,24 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
           .append(", (SELECT AD_COLUMN_IDENTIFIER('C_ELEMENTVALUE', TO_CHAR(C_ELEMENTVALUE_ID), '")
           .append(vars.getLanguage())
           .append("' ) AS VALIDCOMBINATION FROM C_ELEMENTVALUE WHERE C_ELEMENTVALUE_ID = '")
-          .append(strAccount).append("') VCOMB");
+          .append(strAccount)
+          .append("') VCOMB");
     } else {
       columns.append("' ' AS VALIDCOMBINATION, ");
     }
     if (StringUtils.isNotEmpty(strcAcctSchemaId)) {
       columns.append("ACCOUNTSCHEMA, CURRENCY ");
-      tables
-          .append(", (SELECT AD_COLUMN_IDENTIFIER('C_ACCTSCHEMA', TO_CHAR(C_ACCTSCHEMA_ID), '")
+      tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_ACCTSCHEMA', TO_CHAR(C_ACCTSCHEMA_ID), '")
           .append(vars.getLanguage())
           .append(
               "' ) AS ACCOUNTSCHEMA, ISO_CODE AS CURRENCY FROM C_ACCTSCHEMA, C_CURRENCY WHERE C_ACCTSCHEMA.C_CURRENCY_ID=C_CURRENCY.C_CURRENCY_ID AND C_ACCTSCHEMA_ID = '")
-          .append(strcAcctSchemaId).append("') ACSCH");
+          .append(strcAcctSchemaId)
+          .append("') ACSCH");
     } else {
       columns.append("' ' AS ACCOUNTSCHEMA, CURRENCY");
       tables.append(", (SELECT ISO_CODE AS CURRENCY FROM C_CURRENCY WHERE C_CURRENCY_ID = '")
-          .append(vars.getSessionValue("$C_CURRENCY_ID")).append("') CUR");
+          .append(vars.getSessionValue("$C_CURRENCY_ID"))
+          .append("') CUR");
     }
 
     response.setContentType("application/xls; charset=UTF-8");
@@ -467,8 +487,8 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
     ReportBudgetGenerateExcelData[] data = ReportBudgetGenerateExcelData.select(readOnlyCP,
         columns.toString(), tables.toString());
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelExportXLS")
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelExportXLS")
         .createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");

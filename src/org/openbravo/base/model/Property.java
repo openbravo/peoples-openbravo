@@ -295,8 +295,8 @@ public class Property {
   }
 
   public boolean isBoolean() {
-    return isPrimitive()
-        && (getPrimitiveType().getName().compareTo("boolean") == 0 || Boolean.class == getPrimitiveType());
+    return isPrimitive() && (getPrimitiveType().getName().compareTo("boolean") == 0
+        || Boolean.class == getPrimitiveType());
   }
 
   public Entity getEntity() {
@@ -393,11 +393,9 @@ public class Property {
    * @return the java-valid default
    */
   public String getFormattedDefaultValue() {
-    Check
-        .isTrue(
-            isPrimitive() || isCompositeId() || isOneToMany(),
-            "Default value is only supported for composite ids, primitive types, and one-to-many properties: property "
-                + this);
+    Check.isTrue(isPrimitive() || isCompositeId() || isOneToMany(),
+        "Default value is only supported for composite ids, primitive types, and one-to-many properties: property "
+            + this);
     if (isCompositeId()) {
       return "new Id()";
     }
@@ -408,8 +406,7 @@ public class Property {
 
     if (defaultValue == null && isBoolean()) {
       if (getName().equalsIgnoreCase("active")) {
-        log.debug("Property "
-            + this
+        log.debug("Property " + this
             + " is probably the active column but does not have a default value set, supplying default value Y");
         defaultValue = "Y";
       } else {
@@ -504,8 +501,7 @@ public class Property {
   public Object getActualDefaultValue() {
     if (defaultValue == null && isBoolean()) {
       if (getName().equalsIgnoreCase("isactive")) {
-        log.debug("Property "
-            + this
+        log.debug("Property " + this
             + " is probably the active column but does not have a default value set, supplying default value Y");
         setDefaultValue("Y");
       } else {
@@ -1250,8 +1246,8 @@ public class Property {
    *          it is the property in the trl table that holds the translation for this property
    */
   void setTranslatable(Property translationProperty) {
-    log.debug("Setting translatable for " + this.getEntity().getTableName() + "."
-        + this.getColumnName());
+    log.debug(
+        "Setting translatable for " + this.getEntity().getTableName() + "." + this.getColumnName());
 
     if (translationProperty == null) {
       log.warn(this.getEntity().getTableName() + "." + this.getColumnName()

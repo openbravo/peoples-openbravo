@@ -35,10 +35,12 @@ class TagValue implements XmlComponentValue {
 
   }
 
+  @Override
   public String print() {
     String character = "";
-    if (tagTemplate.tag().equals("DIVFO") || tagTemplate.tag().endsWith("_TMP"))
+    if (tagTemplate.tag().equals("DIVFO") || tagTemplate.tag().endsWith("_TMP")) {
       return "";
+    }
     character = "<" + tagTemplate.tag();
     for (AttributeItemValue attribute : attributeVectorValue) {
       if (attribute.attributeItemTemplate.attributeBoolean) {
@@ -59,9 +61,11 @@ class TagValue implements XmlComponentValue {
     return character;
   }
 
+  @Override
   public String printPrevious() {
-    if (tagTemplate.tag().equals("DIVFO"))
+    if (tagTemplate.tag().equals("DIVFO")) {
       return "";
+    }
     String character = "<" + tagTemplate.tag();
     for (AttributeItemValue attribute : attributeVectorValue) {
       character = character + attribute.printPrevious();
@@ -71,10 +75,12 @@ class TagValue implements XmlComponentValue {
   }
 
   // in this class don´t have sense the prints Simple
+  @Override
   public String printSimple() {
     return print();
   }
 
+  @Override
   public String printPreviousSimple() {
     return printPrevious();
   }

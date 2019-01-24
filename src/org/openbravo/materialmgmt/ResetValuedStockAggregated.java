@@ -71,15 +71,15 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
       result.put("retryExecution", true);
 
       JSONObject msg = new JSONObject();
-      Organization legalEntity = OBDal.getInstance().get(Organization.class,
-          params.getString("ad_org_id"));
+      Organization legalEntity = OBDal.getInstance()
+          .get(Organization.class, params.getString("ad_org_id"));
 
       // Remove existing data in Aggregated Table
       deleteAggregatedValuesFromDate(null, legalEntity);
 
       // Get Closed Periods that need to be aggregated
-      List<Period> periodList = getClosedPeriodsToAggregate(new Date(), legalEntity.getClient()
-          .getId(), legalEntity.getId());
+      List<Period> periodList = getClosedPeriodsToAggregate(new Date(),
+          legalEntity.getClient().getId(), legalEntity.getId());
 
       DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
       Date startingDate = formatter.parse("01-01-0000");
@@ -92,7 +92,8 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
 
       for (Period period : periodList) {
         long startPeriod = System.currentTimeMillis();
-        if (noAggregatedDataForPeriod(period) && costingRuleDefindedForPeriod(legalEntity, period)) {
+        if (noAggregatedDataForPeriod(period)
+            && costingRuleDefindedForPeriod(legalEntity, period)) {
           insertValuesIntoValuedStockAggregated(legalEntity, period, startingDate);
           startingDate = period.getEndingDate();
         }
@@ -151,14 +152,13 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
       queryDelete.setParameter("dateFrom", dateFrom);
       queryDelete.setParameterList("orgs", orgs);
       int deleted = queryDelete.executeUpdate();
-      log4j.debug("[ResetValuedStockAggregated] No. of records deleted from aggregated table: "
-          + deleted);
+      log4j.debug(
+          "[ResetValuedStockAggregated] No. of records deleted from aggregated table: " + deleted);
 
     } catch (ParseException e) {
-      log4j
-          .error(
-              "Error in deleteAggregatedValuesFromDate() method of ResetValuedStockAggregated class",
-              e);
+      log4j.error(
+          "Error in deleteAggregatedValuesFromDate() method of ResetValuedStockAggregated class",
+          e);
     }
   }
 
@@ -166,8 +166,8 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
    * Return true if there is not Aggregated data for the selected Period
    */
   public static boolean noAggregatedDataForPeriod(Period period) {
-    OBCriteria<ValuedStockAggregated> obc = OBDal.getInstance().createCriteria(
-        ValuedStockAggregated.class);
+    OBCriteria<ValuedStockAggregated> obc = OBDal.getInstance()
+        .createCriteria(ValuedStockAggregated.class);
     obc.add(Restrictions.eq(ValuedStockAggregated.PROPERTY_PERIOD, period));
     return obc.list().isEmpty();
   }
@@ -185,24 +185,23 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
       List<CostingRule> costingRulesList = getCostingRules(legalEntity, period.getStartingDate(),
           period.getEndingDate());
       for (CostingRule costingRule : costingRulesList) {
-        String crStartingDate = costingRule.getStartingDate() == null ? null : OBDateUtils
-            .formatDate(costingRule.getStartingDate());
-        String crEndingDate = costingRule.getEndingDate() == null ? null : OBDateUtils
-            .formatDate(costingRule.getEndingDate());
+        String crStartingDate = costingRule.getStartingDate() == null ? null
+            : OBDateUtils.formatDate(costingRule.getStartingDate());
+        String crEndingDate = costingRule.getEndingDate() == null ? null
+            : OBDateUtils.formatDate(costingRule.getEndingDate());
         GenerateValuedStockAggregatedData.insertData(OBDal.getInstance().getConnection(),
             new DalConnectionProvider(), legalEntity.getId(), period.getId(),
             OBDateUtils.formatDate(period.getStartingDate()),
             OBDateUtils.formatDate(period.getEndingDate()), legalEntity.getCurrency().getId(),
-            costingRule.getId(),
-            startingDate == null ? null : OBDateUtils.formatDate(startingDate), crStartingDate,
-            crEndingDate, legalEntity.getClient().getId(), orgIds, legalEntity.getId());
+            costingRule.getId(), startingDate == null ? null : OBDateUtils.formatDate(startingDate),
+            crStartingDate, crEndingDate, legalEntity.getClient().getId(), orgIds,
+            legalEntity.getId());
       }
 
     } catch (ServletException e) {
-      log4j
-          .error(
-              "Error in insertValuesIntoValuedStockAggregated() method of ResetValuedStockAggregated class",
-              e);
+      log4j.error(
+          "Error in insertValuesIntoValuedStockAggregated() method of ResetValuedStockAggregated class",
+          e);
     }
   }
 
@@ -219,8 +218,8 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
     where.append(" ((cr.startingDate < :endingDate or cr.startingDate is null)");
     where.append(" and (cr.endingDate >= :endingDate or cr.endingDate is null)))");
 
-    OBQuery<CostingRule> query = OBDal.getInstance().createQuery(CostingRule.class,
-        where.toString());
+    OBQuery<CostingRule> query = OBDal.getInstance()
+        .createQuery(CostingRule.class, where.toString());
     query.setNamedParameter("org", legalEntity);
     query.setNamedParameter("startingDate", startingDate);
     query.setNamedParameter("endingDate", endingDate);
@@ -237,8 +236,8 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
     where.append(" and");
     where.append(" (cr.endingDate is null or cr.endingDate >= :startingDate)");
 
-    OBQuery<CostingRule> query = OBDal.getInstance().createQuery(CostingRule.class,
-        where.toString());
+    OBQuery<CostingRule> query = OBDal.getInstance()
+        .createQuery(CostingRule.class, where.toString());
     query.setNamedParameter("org", legalEntity);
     query.setNamedParameter("endingDate", period.getEndingDate());
     query.setNamedParameter("startingDate", period.getEndingDate());
@@ -253,7 +252,8 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
       String organizationID) {
 
     Organization org = OBDal.getInstance().get(Organization.class, organizationID);
-    Organization legalEntity = OBContext.getOBContext().getOrganizationStructureProvider(clientId)
+    Organization legalEntity = OBContext.getOBContext()
+        .getOrganizationStructureProvider(clientId)
         .getLegalEntity(org);
 
     Date firstNotClosedPeriodStartingDate = getStartingDateFirstNotClosedPeriod(legalEntity);
@@ -283,8 +283,8 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
   private static Date getLastDateToFromAggregatedTable(Organization legalEntity) {
     Date dateTo = null;
 
-    OBCriteria<ValuedStockAggregated> obc = OBDal.getInstance().createCriteria(
-        ValuedStockAggregated.class);
+    OBCriteria<ValuedStockAggregated> obc = OBDal.getInstance()
+        .createCriteria(ValuedStockAggregated.class);
     obc.add(Restrictions.eq(ValuedStockAggregated.PROPERTY_ORGANIZATION, legalEntity));
     obc.setProjection(Projections.max(ValuedStockAggregated.PROPERTY_ENDINGDATE));
     try {
@@ -294,10 +294,9 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
         dateTo = (Date) formatter.parse("01-01-0001");
       }
     } catch (Exception e) {
-      log4j
-          .error(
-              "Error in getDateToFromLastAggregatedPeriod() method of ResetValuedStockAggregated class",
-              e);
+      log4j.error(
+          "Error in getDateToFromLastAggregatedPeriod() method of ResetValuedStockAggregated class",
+          e);
     }
     return dateTo;
   }
@@ -313,33 +312,34 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
     select.append(" from FinancialMgmtPeriod p");
     select.append(" where p.periodType = 'S'");
     select.append(" and   ( 'C' <> (select case");
-    select
-        .append("                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'O') then 'O'");
-    select
-        .append("                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'C') then 'C'");
-    select
-        .append("                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'P') then 'P'");
-    select
-        .append("                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'N') then 'N'");
+    select.append(
+        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'O') then 'O'");
+    select.append(
+        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'C') then 'C'");
+    select.append(
+        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'P') then 'P'");
+    select.append(
+        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'N') then 'N'");
     select.append("                   else 'M' end");
     select.append("                 from FinancialMgmtPeriodControl pc");
     select.append("                 where pc.period = p)");
     select.append("    and 'P' <> (select case");
-    select
-        .append("                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'O') then 'O'");
-    select
-        .append("                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'C') then 'C'");
-    select
-        .append("                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'P') then 'P'");
-    select
-        .append("                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'N') then 'N'");
+    select.append(
+        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'O') then 'O'");
+    select.append(
+        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'C') then 'C'");
+    select.append(
+        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'P') then 'P'");
+    select.append(
+        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'N') then 'N'");
     select.append("                   else 'M' end");
     select.append("                 from FinancialMgmtPeriodControl pc");
     select.append("                 where pc.period = p)");
     select.append("       )");
     select.append(" and p.organization in (:org)");
 
-    Query<Date> trxQry = OBDal.getInstance().getSession()
+    Query<Date> trxQry = OBDal.getInstance()
+        .getSession()
         .createQuery(select.toString(), Date.class);
     trxQry.setParameter("org", legalEntity);
     trxQry.setMaxResults(1);
@@ -353,10 +353,9 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
         startingDate = (Date) formatter.parse("01-01-9999");
       }
     } catch (Exception e) {
-      log4j
-          .error(
-              "Error in getStartingDateFirstNotClosedPeriod() method of ResetValuedStockAggregated class",
-              e);
+      log4j.error(
+          "Error in getStartingDateFirstNotClosedPeriod() method of ResetValuedStockAggregated class",
+          e);
     }
     return startingDate;
   }

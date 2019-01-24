@@ -62,6 +62,7 @@ public class DalContextListener implements ServletContextListener {
    * @see DalLayerInitializer
    * @see OBPropertiesProvider
    */
+  @Override
   public void contextInitialized(ServletContextEvent event) {
     // this allows the sessionfactory controller to use jndi
     SessionFactoryController.setRunningInWebContainer(true);
@@ -93,6 +94,7 @@ public class DalContextListener implements ServletContextListener {
     DalLayerInitializer.getInstance().initialize(true);
   }
 
+  @Override
   public void contextDestroyed(ServletContextEvent event) {
     ModelProvider.setInstance(null);
     SessionFactoryController.setInstance(null);

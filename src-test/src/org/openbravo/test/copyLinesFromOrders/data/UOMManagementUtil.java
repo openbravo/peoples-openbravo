@@ -78,8 +78,8 @@ public class UOMManagementUtil {
     final Module uomPreferenceModule = getModuleOfUOMPreference();
     setModuleInDevelopmentFlag(uomPreferenceModule, true);
 
-    Preferences
-        .setPreferenceValue("UomManagement", value, true, null, null, null, null, null, null);
+    Preferences.setPreferenceValue("UomManagement", value, true, null, null, null, null, null,
+        null);
     OBDal.getInstance().flush();
 
     OBCriteria<Preference> qPref = OBDal.getInstance().createCriteria(Preference.class);
@@ -95,7 +95,8 @@ public class UOMManagementUtil {
 
   private Module getModuleOfUOMPreference() {
     try {
-      return Preferences.getPreferences("UomManagement", true, null, null, null, null, null).get(0)
+      return Preferences.getPreferences("UomManagement", true, null, null, null, null, null)
+          .get(0)
           .getModule();
     } catch (Exception notFound) {
       return null;

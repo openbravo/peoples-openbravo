@@ -50,8 +50,8 @@ public class LeaveAsCredit implements FIN_PaymentExecutionProcess {
           OBDal.getInstance().flush();
         }
         // Add schedule detail for credit amount
-        FIN_PaymentScheduleDetail creditScheduleDetail = dao.getNewPaymentScheduleDetail(
-            payment.getOrganization(), payment.getGeneratedCredit());
+        FIN_PaymentScheduleDetail creditScheduleDetail = dao
+            .getNewPaymentScheduleDetail(payment.getOrganization(), payment.getGeneratedCredit());
         // Add payment detail for credit amount schedule detail
         dao.getNewPaymentDetail(payment, creditScheduleDetail, payment.getGeneratedCredit(),
             BigDecimal.ZERO, false, null);

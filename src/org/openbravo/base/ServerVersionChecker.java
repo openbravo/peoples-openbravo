@@ -25,8 +25,8 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Checks Openbravo is deployed on a supported Server version, in case it is not, an error message

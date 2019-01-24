@@ -50,6 +50,7 @@ class FunctionTemplate implements XmlComponentTemplate, IDComponent {
     this.arg2Template = arg2;
   }
 
+  @Override
   public int type() {
     return FUNCTION;
   }
@@ -99,6 +100,7 @@ class FunctionTemplate implements XmlComponentTemplate, IDComponent {
     return functionValue;
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
     return createFunctionValue(xmlDocument);
   }

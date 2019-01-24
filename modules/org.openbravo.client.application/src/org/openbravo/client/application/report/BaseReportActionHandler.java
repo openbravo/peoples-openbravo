@@ -35,6 +35,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -72,8 +74,6 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.userinterface.selector.reference.FKMultiSelectorUIDefinition;
 import org.openbravo.utils.FileUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 import net.sf.jasperreports.engine.JRDataSource;
 
@@ -132,11 +132,11 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     } catch (Exception e) {
       log.error("Error generating report id: {}", parameters.get("reportId"), e);
       Throwable uiException = DbUtility.getUnderlyingSQLException(e);
-      return getResponseBuilder()
-          .retryExecution()
+      return getResponseBuilder().retryExecution()
           .showResultsInProcessView()
           .showMsgInProcessView(MessageType.ERROR,
-              OBMessageUtils.translateError(uiException.getMessage()).getMessage()).build();
+              OBMessageUtils.translateError(uiException.getMessage()).getMessage())
+          .build();
     }
   }
 
@@ -178,18 +178,19 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     } else if (strFileName.endsWith("." + ExportType.XLSX.getExtension())) {
       expType = ExportType.XLSX;
     } else {
-      throw new IllegalArgumentException("Trying to download report file with unsupported type "
-          + strFileName);
+      throw new IllegalArgumentException(
+          "Trying to download report file with unsupported type " + strFileName);
     }
 
     handleReportResponse(request, expType, strFileName, tmpFileName, true);
   }
 
   private void handleReportResponse(HttpServletRequest request, ExportType expType,
-      String strFileName, String tmpFileName, boolean includeReportAsAttachment) throws IOException {
+      String strFileName, String tmpFileName, boolean includeReportAsAttachment)
+      throws IOException {
     if (!expType.isValidTemporaryFileName(tmpFileName)) {
-      throw new IllegalArgumentException("Trying to download report with invalid name "
-          + strFileName);
+      throw new IllegalArgumentException(
+          "Trying to download report with invalid name " + strFileName);
     }
     final String tmpDirectory = ReportingUtils.getTempFolder();
     final File file = new File(tmpDirectory, tmpFileName);
@@ -256,27 +257,27 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       JSONObject jsonContent) throws JSONException, OBException {
     String strJRPath = "";
     switch (expType) {
-    case XLS:
-    case XLSX:
-      if (report.isUsePDFAsXLSTemplate()) {
+      case XLS:
+      case XLSX:
+        if (report.isUsePDFAsXLSTemplate()) {
+          strJRPath = report.getPDFTemplate();
+        } else {
+          strJRPath = report.getXLSTemplate();
+        }
+        break;
+      case HTML:
+        if (report.isUsePDFAsHTMLTemplate()) {
+          strJRPath = report.getPDFTemplate();
+        } else {
+          strJRPath = report.getHTMLTemplate();
+        }
+        break;
+      case PDF:
         strJRPath = report.getPDFTemplate();
-      } else {
-        strJRPath = report.getXLSTemplate();
-      }
-      break;
-    case HTML:
-      if (report.isUsePDFAsHTMLTemplate()) {
-        strJRPath = report.getPDFTemplate();
-      } else {
-        strJRPath = report.getHTMLTemplate();
-      }
-      break;
-    case PDF:
-      strJRPath = report.getPDFTemplate();
-      break;
-    default:
-      throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_UnsupportedAction",
-          new String[] { expType.getExtension() }));
+        break;
+      default:
+        throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_UnsupportedAction",
+            new String[] { expType.getExtension() }));
     }
     if (StringUtils.isEmpty(strJRPath)) {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoJRTemplateFound"));
@@ -305,8 +306,8 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
   private void doGenerateReport(JSONObject result, Map<String, Object> parameters,
       JSONObject jsonContent, String action) throws JSONException, OBException {
     JSONObject params = jsonContent.getJSONObject("_params");
-    final ReportDefinition report = OBDal.getInstance().get(ReportDefinition.class,
-        parameters.get("reportId"));
+    final ReportDefinition report = OBDal.getInstance()
+        .get(ReportDefinition.class, parameters.get("reportId"));
 
     doValidations(report, parameters, jsonContent);
     final ExportType expType = getExportType(action);
@@ -366,8 +367,8 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
 
   private String getResultTabTitle(ReportDefinition report) {
     Process processDefinition = report.getProcessDefintion();
-    return (String) processDefinition.get(Process.PROPERTY_NAME, OBContext.getOBContext()
-        .getLanguage());
+    return (String) processDefinition.get(Process.PROPERTY_NAME,
+        OBContext.getOBContext().getLanguage());
   }
 
   /**
@@ -406,18 +407,22 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       }
 
       DomainType baseDomainType = ModelProvider.getInstance()
-          .getReference(param.getReference().getId()).getDomainType();
+          .getReference(param.getReference().getId())
+          .getDomainType();
       DomainType domainType = null;
       if (param.getReferenceSearchKey() != null) {
         domainType = ModelProvider.getInstance()
-            .getReference(param.getReferenceSearchKey().getId()).getDomainType();
+            .getReference(param.getReferenceSearchKey().getId())
+            .getDomainType();
       }
 
       if (baseDomainType instanceof ForeignKeyDomainType) {
         Entity referencedEntity = ((ForeignKeyDomainType) domainType)
-            .getForeignKeyColumn(param.getDBColumnName()).getProperty().getEntity();
-        UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-            param.getReference());
+            .getForeignKeyColumn(param.getDBColumnName())
+            .getProperty()
+            .getEntity();
+        UIDefinition uiDefinition = UIDefinitionController.getInstance()
+            .getUIDefinition(param.getReference());
         JSONObject def = new JSONObject();
 
         if (uiDefinition instanceof FKMultiSelectorUIDefinition) {
@@ -525,10 +530,11 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
   private String getReportFileName(ReportDefinition report, Map<String, Object> parameters,
       ExportType expType) {
     final SimpleDateFormat dateFormat = new SimpleDateFormat(OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties().getProperty("dateTimeFormat.java"));
-    return getSafeFilename(report.getProcessDefintion().getName() + "-"
-        + dateFormat.format(new Date()))
-        + "." + expType.getExtension();
+        .getOpenbravoProperties()
+        .getProperty("dateTimeFormat.java"));
+    return getSafeFilename(
+        report.getProcessDefintion().getName() + "-" + dateFormat.format(new Date())) + "."
+        + expType.getExtension();
   }
 
   private static String getSafeFilename(String name) {
@@ -603,8 +609,8 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
         localExportParameters = new HashMap<Object, Object>();
         final String localAddress = HttpBaseUtils
             .getLocalAddress(RequestContext.get().getRequest());
-        localExportParameters.put(ReportingUtils.IMAGES_URI, localAddress
-            + "/servlets/image?image={0}");
+        localExportParameters.put(ReportingUtils.IMAGES_URI,
+            localAddress + "/servlets/image?image={0}");
       }
       ReportingUtils.exportJR(jrTemplatePath, expType, jrParameters,
           new File(ReportingUtils.getTempFolder(), strFileName), true,

@@ -216,12 +216,13 @@ public class OBContextTest extends OBBaseTest {
     OBContext originalCtx = OBContext.getOBContext();
     Path serializedPath = serializeContext(originalCtx);
     OBContext deserialized = deserializeContext(serializedPath);
-    assertThat("Role ID is kept", deserialized.getRole().getId(), is(originalCtx.getRole().getId()));
+    assertThat("Role ID is kept", deserialized.getRole().getId(),
+        is(originalCtx.getRole().getId()));
   }
 
   @Test
-  public void clientVisibilityIsCorrectAfterDeserialization() throws IOException,
-      ClassNotFoundException {
+  public void clientVisibilityIsCorrectAfterDeserialization()
+      throws IOException, ClassNotFoundException {
     OBContext originalCtx = OBContext.getOBContext();
     Path serializedPath = serializeContext(originalCtx);
     OBContext deserialized = deserializeContext(serializedPath);
@@ -230,8 +231,8 @@ public class OBContextTest extends OBBaseTest {
   }
 
   @Test
-  public void organizationVisibilityIsCorrectAfterDeserialization() throws IOException,
-      ClassNotFoundException {
+  public void organizationVisibilityIsCorrectAfterDeserialization()
+      throws IOException, ClassNotFoundException {
     OBContext originalCtx = OBContext.getOBContext();
     Path serializedPath = serializeContext(originalCtx);
     OBContext deserialized = deserializeContext(serializedPath);

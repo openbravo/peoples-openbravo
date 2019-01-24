@@ -93,7 +93,9 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
           }
           if (WINDOW_REFERENCE_ID.equals(param.getReference().getId())) {
             if (param.getReferenceSearchKey().getOBUIAPPRefWindowList().size() > 0) {
-              final Window window = param.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0)
+              final Window window = param.getReferenceSearchKey()
+                  .getOBUIAPPRefWindowList()
+                  .get(0)
                   .getWindow();
               final Tab tab = window.getADTabList().get(0);
               final String entityName = tab.getTable().getName();
@@ -104,8 +106,8 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
                 if (field.getObuiappDefaultExpression() != null) {
                   String rawDefaultExpression = field.getObuiappDefaultExpression();
                   Object defaultExpression;
-                  fixedParameters.put("filterExpressionColumnName", field.getColumn()
-                      .getDBColumnName());
+                  fixedParameters.put("filterExpressionColumnName",
+                      field.getColumn().getDBColumnName());
                   defaultExpression = ParameterUtils.getJSExpressionResult(fixedParameters,
                       (HttpSession) parameters.get(KernelConstants.HTTP_SESSION),
                       rawDefaultExpression);
@@ -120,8 +122,8 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
                     }
                     if (property != null && property.getTargetEntity() != null
                         && !property.isOneToMany()) {
-                      final BaseOBObject bob = OBDal.getInstance().get(
-                          property.getTargetEntity().getName(), defaultExpression);
+                      final BaseOBObject bob = OBDal.getInstance()
+                          .get(property.getTargetEntity().getName(), defaultExpression);
                       defaultExpression = bob.getIdentifier();
                     }
                   }
@@ -133,10 +135,10 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
                       gridJson.put(fieldName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR),
                           defaultExpression);
                     } else {
-                      gridJson.put(
-                          entity.getPropertyByColumnName(field.getColumn().getDBColumnName())
-                              .getName().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR),
-                          defaultExpression);
+                      gridJson
+                          .put(entity.getPropertyByColumnName(field.getColumn().getDBColumnName())
+                              .getName()
+                              .replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR), defaultExpression);
                     }
                   }
                 }

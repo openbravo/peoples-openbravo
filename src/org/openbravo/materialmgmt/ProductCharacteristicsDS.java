@@ -29,6 +29,8 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -56,8 +58,6 @@ import org.openbravo.userinterface.selector.CustomQuerySelectorDatasource;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorConstants;
 import org.openbravo.userinterface.selector.SelectorField;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Manual datasource that creates a tree of characteristics with their values. Intended to be used
@@ -120,8 +120,8 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     final OBContext obContext = OBContext.getOBContext();
     try {
-      Entity entityToCheck = ModelProvider.getInstance().getEntityByTableId(
-          PRODUCT_CHARACTERISTICS_TABLE_ID);
+      Entity entityToCheck = ModelProvider.getInstance()
+          .getEntityByTableId(PRODUCT_CHARACTERISTICS_TABLE_ID);
       obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
     } catch (OBSecurityException e) {
       handleExceptionUnsecuredDSAccess(e);
@@ -141,8 +141,8 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     if (!addMissingNodes && dsIdentifier != null) {
       parentGridEntity = ModelProvider.getInstance().getEntity(dsIdentifier, false);
       if (parentGridEntity != null) {
-        final DataEntityQueryService queryService = OBProvider.getInstance().get(
-            DataEntityQueryService.class);
+        final DataEntityQueryService queryService = OBProvider.getInstance()
+            .get(DataEntityQueryService.class);
 
         queryService.setEntityName(parentGridEntity.getName());
         queryService.setFilterOnReadableOrganizations(true);
@@ -203,14 +203,14 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     hqlBuilder.append(this.getClientOrgFilter());
 
     if (StringUtils.isNotBlank(gridWhereClause) && parentGridEntity != null) {
-      hqlBuilder.append(" and exists (from ProductCharacteristicValue pcv, " + parentGridEntity
-          + gridWhereClause + "  and pcv.characteristicValue = v and pcv.product = " + productPath
-          + ")");
+      hqlBuilder.append(
+          " and exists (from ProductCharacteristicValue pcv, " + parentGridEntity + gridWhereClause
+              + "  and pcv.characteristicValue = v and pcv.product = " + productPath + ")");
 
     } else if (StringUtils.isNotBlank(customSelectorWhereClause)) {
-      hqlBuilder.append(" and exists (from ProductCharacteristicValue pcv, "
-          + customSelectorWhereClause + "  and pcv.characteristicValue = v and pcv.product = "
-          + productPath + ")");
+      hqlBuilder
+          .append(" and exists (from ProductCharacteristicValue pcv, " + customSelectorWhereClause
+              + "  and pcv.characteristicValue = v and pcv.product = " + productPath + ")");
 
     } else if (parentGridEntity != null) {
       hqlBuilder.append(" and exists (from ProductCharacteristicValue pcv, " + parentGridEntity
@@ -249,8 +249,9 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
       for (int i = 0; i < selectorParameters.size(); i++) {
         qTree.setParameter(CustomQuerySelectorDatasource.ALIAS_PREFIX + Integer.toString(i),
             selectorParameters.get(i));
-        log.debug("Param {}:{}", CustomQuerySelectorDatasource.ALIAS_PREFIX + Integer.toString(i)
-            + " ", selectorParameters.get(i));
+        log.debug("Param {}:{}",
+            CustomQuerySelectorDatasource.ALIAS_PREFIX + Integer.toString(i) + " ",
+            selectorParameters.get(i));
       }
     } else if (addMissingNodes) {
       qTree.setParameterList("missingNodes", missingNodes);
@@ -270,10 +271,8 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
         characteristic.put("_identifier", node[CHAR_NAME]);
         characteristic.put("showOpenIcon", true);
         characteristic.put("isCharacteristic", true);
-        characteristic
-            .put(
-                "icon",
-                "../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/form/sectionItem-ico.png");
+        characteristic.put("icon",
+            "../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/form/sectionItem-ico.png");
         // TODO: skinnable icon
         responseData.put(characteristic);
         allNodes.add(charId);
@@ -327,8 +326,8 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
 
     // Role in OBContext has not organization list initialized, force reload to attach to current
     // DAL's session
-    Role currentRole = OBDal.getInstance().get(Role.class,
-        OBContext.getOBContext().getRole().getId());
+    Role currentRole = OBDal.getInstance()
+        .get(Role.class, OBContext.getOBContext().getRole().getId());
 
     // Adding organizations in the trees of all granted ones
     for (RoleOrganization org : currentRole.getADRoleOrganizationList()) {

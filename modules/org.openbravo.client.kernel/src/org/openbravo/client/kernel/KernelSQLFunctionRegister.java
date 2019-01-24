@@ -38,18 +38,18 @@ public class KernelSQLFunctionRegister implements SQLFunctionRegister {
   @Override
   public Map<String, SQLFunction> getSQLFunctions() {
     Map<String, SQLFunction> sqlFunctions = new HashMap<>();
-    sqlFunctions.put("ad_org_getcalendarowner", new StandardSQLFunction("ad_org_getcalendarowner",
-        StandardBasicTypes.STRING));
-    sqlFunctions.put("ad_org_getperiodcontrolallow", new StandardSQLFunction(
-        "ad_org_getperiodcontrolallow", StandardBasicTypes.STRING));
+    sqlFunctions.put("ad_org_getcalendarowner",
+        new StandardSQLFunction("ad_org_getcalendarowner", StandardBasicTypes.STRING));
+    sqlFunctions.put("ad_org_getperiodcontrolallow",
+        new StandardSQLFunction("ad_org_getperiodcontrolallow", StandardBasicTypes.STRING));
     sqlFunctions.put("get_uuid", new StandardSQLFunction("get_uuid", StandardBasicTypes.STRING));
-    sqlFunctions.put("m_isparent_ch_value", new StandardSQLFunction("m_isparent_ch_value",
-        StandardBasicTypes.STRING));
-    sqlFunctions.put("m_getjsondescription", new StandardSQLFunction("m_getjsondescription",
-        StandardBasicTypes.STRING));
+    sqlFunctions.put("m_isparent_ch_value",
+        new StandardSQLFunction("m_isparent_ch_value", StandardBasicTypes.STRING));
+    sqlFunctions.put("m_getjsondescription",
+        new StandardSQLFunction("m_getjsondescription", StandardBasicTypes.STRING));
     sqlFunctions.put("now", new NoArgSQLFunction("now", StandardBasicTypes.TIMESTAMP));
-    sqlFunctions.put("to_timestamp", new StandardSQLFunction("to_timestamp",
-        StandardBasicTypes.TIMESTAMP));
+    sqlFunctions.put("to_timestamp",
+        new StandardSQLFunction("to_timestamp", StandardBasicTypes.TIMESTAMP));
     return sqlFunctions;
   }
 }

@@ -35,8 +35,8 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
  * Unbox more quantity than reserved one. Part of the reservation is still in box. Box and Unbox
  * movements will have 2 lines
  */
-public class ReferencedInventoryPartialUnboxPartialReservation2MovementLinesUnboxTest extends
-    ReferencedInventoryUnboxReservationTest {
+public class ReferencedInventoryPartialUnboxPartialReservation2MovementLinesUnboxTest
+    extends ReferencedInventoryUnboxReservationTest {
   @Rule
   public ParameterCdiTestRule<ParamsUnboxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsUnboxReservationTest>(
       Arrays.asList(new ParamsUnboxReservationTest[] {
@@ -67,7 +67,7 @@ public class ReferencedInventoryPartialUnboxPartialReservation2MovementLinesUnbo
   @Override
   void assertsGoodsMovementNumberOfLines(final InternalMovement boxMovement,
       final int expectedNumberOfLines) {
-    assertThat("Box and Unbox Movement has two line", boxMovement
-        .getMaterialMgmtInternalMovementLineList().size(), equalTo(2));
+    assertThat("Box and Unbox Movement has two line",
+        boxMovement.getMaterialMgmtInternalMovementLineList().size(), equalTo(2));
   }
 }

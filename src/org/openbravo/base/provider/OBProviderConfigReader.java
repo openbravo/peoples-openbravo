@@ -98,7 +98,7 @@ class OBProviderConfigReader {
   }
 
   private void checkName(Element elem, String expectedName) {
-    Check.isTrue(elem.getName().equals(expectedName), "The element should have the name: "
-        + expectedName + " but is has name " + elem.getName());
+    Check.isTrue(elem.getName().equals(expectedName),
+        "The element should have the name: " + expectedName + " but is has name " + elem.getName());
   }
 }

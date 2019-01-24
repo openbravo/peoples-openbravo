@@ -49,8 +49,8 @@ public class InsertAcces extends HttpSecureAppServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -69,49 +69,56 @@ public class InsertAcces extends HttpSecureAppServlet {
       final String strType = vars.getStringParameter("inpType");
 
       String strWindowPath = Utility.getTabURL(strTab, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       final OBError myMessage = getPrintPage(response, vars, strKey, strModule, strType);
       vars.setMessage(strTab, myMessage);
       // vars.setSessionValue(strWindow + "|" + strTabName + ".message",
       // messageResult);
       printPageClosePopUp(response, vars, strWindowPath);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
 
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
-      String windowId, String strProcessId, String strMessage, String strTab) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      String windowId, String strProcessId, String strMessage, String strTab)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Button insert acces");
+    }
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
     final String lang = vars.getLanguage();
-    if (lang.equals("en_US"))
+    if (lang.equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
     final String[] discard = { "" };
-    if (strHelp.equals(""))
+    if (strHelp.equals("")) {
       discard[0] = new String("helpDiscard");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/InsertAcces", discard).createXmlDocument();
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/InsertAcces", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("key", strKey);
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    if (lang.equals("en_US"))
+    if (lang.equals("en_US")) {
       xmlDocument.setData("reportModules_S", "liststructure", ModuleComboData.select(this));
-    else
-      xmlDocument
-          .setData("reportModules_S", "liststructure", ModuleComboData.selectTrl(this, lang));
+    } else {
+      xmlDocument.setData("reportModules_S", "liststructure",
+          ModuleComboData.selectTrl(this, lang));
+    }
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);
@@ -135,8 +142,8 @@ public class InsertAcces extends HttpSecureAppServlet {
     out.close();
   }
 
-  private OBError getPrintPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strKey, String strModule, String strType) throws IOException, ServletException {
+  private OBError getPrintPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+      String strModule, String strType) throws IOException, ServletException {
     OBError myMessage = null;
     myMessage = new OBError();
     myMessage.setTitle("");
@@ -160,23 +167,24 @@ public class InsertAcces extends HttpSecureAppServlet {
 
   private void generateAcces(VariablesSecureApp vars, InsertAccesData[] accesData, String roleid,
       String indice, String strType) throws ServletException {
-    log4j.error("longitud accesdata: " + accesData.length + " indice: " + indice + " roleid: "
-        + roleid);
+    log4j.error(
+        "longitud accesdata: " + accesData.length + " indice: " + indice + " roleid: " + roleid);
     for (int i = 0; i < accesData.length; i++) {
       if (accesData[i].parentId.equals(indice)) {
-        if (accesData[i].issummary.equals("Y"))
+        if (accesData[i].issummary.equals("Y")) {
           generateAcces(vars, accesData, roleid, accesData[i].nodeId, strType);
-        else {
+        } else {
           if (accesData[i].action.equals("W")
-              && (InsertAccesData.selectWindow(this, roleid, accesData[i].adwindowid) == null || InsertAccesData
-                  .selectWindow(this, roleid, accesData[i].adwindowid).equals(""))
+              && (InsertAccesData.selectWindow(this, roleid, accesData[i].adwindowid) == null
+                  || InsertAccesData.selectWindow(this, roleid, accesData[i].adwindowid).equals(""))
               && (strType.equals("W") || strType.equals(""))) {
             log4j.error("Action: " + accesData[i].action + " window: " + accesData[i].adwindowid);
             InsertAccesData.insertWindow(this, accesData[i].adwindowid, roleid, vars.getClient(),
                 "0", vars.getUser());
             if (!accesData[i].printreport.equals("")
-                && (InsertAccesData.selectProcess(this, roleid, accesData[i].printreport) == null || InsertAccesData
-                    .selectProcess(this, roleid, accesData[i].printreport).equals(""))) {
+                && (InsertAccesData.selectProcess(this, roleid, accesData[i].printreport) == null
+                    || InsertAccesData.selectProcess(this, roleid, accesData[i].printreport)
+                        .equals(""))) {
               log4j.error("Action window print report: " + accesData[i].printreport);
               InsertAccesData.insertProcess(this, accesData[i].printreport, roleid,
                   vars.getClient(), "0", vars.getUser());
@@ -194,8 +202,8 @@ public class InsertAcces extends HttpSecureAppServlet {
             if (buttons != null && buttons.length > 0) {
               for (int j = 0; j < buttons.length; j++) {
                 if (InsertAccesData.selectProcess(this, roleid, buttons[j].adprocessid) == null
-                    || InsertAccesData.selectProcess(this, roleid, buttons[j].adprocessid).equals(
-                        "")) {
+                    || InsertAccesData.selectProcess(this, roleid, buttons[j].adprocessid)
+                        .equals("")) {
                   log4j.error("Action window button: " + buttons[j].adprocessid);
                   InsertAccesData.insertProcess(this, buttons[j].adprocessid, roleid,
                       vars.getClient(), "0", vars.getUser());
@@ -203,22 +211,24 @@ public class InsertAcces extends HttpSecureAppServlet {
               }
             }
           } else if (accesData[i].action.equals("P")
-              && (InsertAccesData.selectProcess(this, roleid, accesData[i].adprocessid) == null || InsertAccesData
-                  .selectProcess(this, roleid, accesData[i].adprocessid).equals(""))
+              && (InsertAccesData.selectProcess(this, roleid, accesData[i].adprocessid) == null
+                  || InsertAccesData.selectProcess(this, roleid, accesData[i].adprocessid)
+                      .equals(""))
               && (strType.equals("P") || strType.equals(""))) {
             log4j.error("Action: " + accesData[i].action + " process: " + accesData[i].adprocessid);
             InsertAccesData.insertProcess(this, accesData[i].adprocessid, roleid, vars.getClient(),
                 "0", vars.getUser());
           } else if (accesData[i].action.equals("R")
-              && (InsertAccesData.selectProcess(this, roleid, accesData[i].adprocessid) == null || InsertAccesData
-                  .selectProcess(this, roleid, accesData[i].adprocessid).equals(""))
+              && (InsertAccesData.selectProcess(this, roleid, accesData[i].adprocessid) == null
+                  || InsertAccesData.selectProcess(this, roleid, accesData[i].adprocessid)
+                      .equals(""))
               && (strType.equals("R") || strType.equals(""))) {
             log4j.error("Action: " + accesData[i].action + " report: " + accesData[i].adprocessid);
             InsertAccesData.insertProcess(this, accesData[i].adprocessid, roleid, vars.getClient(),
                 "0", vars.getUser());
           } else if (accesData[i].action.equals("X")
-              && (InsertAccesData.selectForm(this, roleid, accesData[i].adformid) == null || InsertAccesData
-                  .selectForm(this, roleid, accesData[i].adformid).equals(""))
+              && (InsertAccesData.selectForm(this, roleid, accesData[i].adformid) == null
+                  || InsertAccesData.selectForm(this, roleid, accesData[i].adformid).equals(""))
               && (strType.equals("X") || strType.equals(""))) {
             log4j.error("Action: " + accesData[i].action + " form: " + accesData[i].adformid);
             InsertAccesData.insertForm(this, accesData[i].adformid, roleid, vars.getClient(), "0",

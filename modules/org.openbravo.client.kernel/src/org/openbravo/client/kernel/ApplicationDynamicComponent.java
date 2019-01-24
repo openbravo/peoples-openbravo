@@ -59,7 +59,8 @@ public class ApplicationDynamicComponent extends SessionDynamicTemplateComponent
   }
 
   public Set<Entity> getAccessibleEntities() {
-    final Set<Entity> entities = OBContext.getOBContext().getEntityAccessChecker()
+    final Set<Entity> entities = OBContext.getOBContext()
+        .getEntityAccessChecker()
         .getReadableEntities();
     entities.addAll(OBContext.getOBContext().getEntityAccessChecker().getWritableEntities());
     return entities;
@@ -115,7 +116,8 @@ public class ApplicationDynamicComponent extends SessionDynamicTemplateComponent
   }
 
   public String getInstancePurpose() {
-    final String purpose = OBDal.getInstance().get(SystemInformation.class, "0")
+    final String purpose = OBDal.getInstance()
+        .get(SystemInformation.class, "0")
         .getInstancePurpose();
     if (purpose == null) {
       return "";
@@ -162,8 +164,8 @@ public class ApplicationDynamicComponent extends SessionDynamicTemplateComponent
 
     if (ak.isTrial()) {
       strVersion += " - ";
-      strVersion += Utility.messageBD(new DalConnectionProvider(false), "OPSTrial", OBContext
-          .getOBContext().getLanguage().getLanguage());
+      strVersion += Utility.messageBD(new DalConnectionProvider(false), "OPSTrial",
+          OBContext.getOBContext().getLanguage().getLanguage());
     }
 
     strVersion += " - ";

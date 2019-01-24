@@ -85,8 +85,9 @@ public class CompiledReportsCacheTest extends WeldBaseTest {
   }
 
   private String getReportPath() {
-    Path basePath = Paths.get(OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("source.path"), "src/org/openbravo/erpReports/C_OrderJR_new.jrxml");
+    Path basePath = Paths.get(
+        OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("source.path"),
+        "src/org/openbravo/erpReports/C_OrderJR_new.jrxml");
     return basePath.toString();
   }
 }

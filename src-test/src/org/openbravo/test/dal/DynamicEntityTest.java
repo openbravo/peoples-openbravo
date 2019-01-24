@@ -87,8 +87,8 @@ public class DynamicEntityTest extends OBBaseTest {
     assertEquals(obContext.getUser().getId(), bog.getUpdatedBy().getId());
 
     // first delete the related accounts
-    final OBCriteria<CategoryAccounts> obc2 = OBDal.getInstance().createCriteria(
-        CategoryAccounts.class);
+    final OBCriteria<CategoryAccounts> obc2 = OBDal.getInstance()
+        .createCriteria(CategoryAccounts.class);
     obc2.add(Restrictions.eq(CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY, bpgs.get(0)));
     final List<CategoryAccounts> bogas = obc2.list();
     for (final CategoryAccounts bga : bogas) {
@@ -147,8 +147,8 @@ public class DynamicEntityTest extends OBBaseTest {
         // cast to the parent of all openbravo objects
         final BaseOBObject referencedObject = (BaseOBObject) value;
         // assumes that the id is always a primitive type
-        log.debug(indent + "<" + p.getName() + ">" + referencedObject.getId() + "</" + p.getName()
-            + ">");
+        log.debug(
+            indent + "<" + p.getName() + ">" + referencedObject.getId() + "</" + p.getName() + ">");
       }
     }
 

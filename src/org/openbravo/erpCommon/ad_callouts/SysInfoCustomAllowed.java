@@ -43,8 +43,9 @@ public class SysInfoCustomAllowed extends SimpleCallout {
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
-    boolean customAllowed = info.getStringParameter("inpcustomizationAllowed",
-        new ValueListFilter("Y", "N", "")).equals("Y");
+    boolean customAllowed = info
+        .getStringParameter("inpcustomizationAllowed", new ValueListFilter("Y", "N", ""))
+        .equals("Y");
     if (customAllowed) {
       BaseComponent.nullifyModuleCache();
     }

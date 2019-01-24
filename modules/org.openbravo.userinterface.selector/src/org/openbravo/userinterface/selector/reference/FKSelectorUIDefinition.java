@@ -63,8 +63,8 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
         if (prop.isPrimitive()) {
           json.put("identifier", json.getString("value"));
         } else {
-          final BaseOBObject target = OBDal.getInstance().get(prop.getTargetEntity().getName(),
-              json.getString("value"));
+          final BaseOBObject target = OBDal.getInstance()
+              .get(prop.getTargetEntity().getName(), json.getString("value"));
           if (target != null) {
             final Selector selector = getSelector(field);
             final SelectorField displayField = selector.getDisplayfield();
@@ -84,6 +84,7 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
     }
   }
 
+  @Override
   public Map<String, Object> getDataSourceParameters() {
     final Map<String, Object> params = new HashMap<String, Object>();
     final Reference reference = OBDal.getInstance().get(Reference.class, getReference().getId());
@@ -113,6 +114,7 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
     }
   }
 
+  @Override
   public String getFieldProperties(Field field) {
     if (field == null) {
       return super.getFieldProperties(field);
@@ -124,8 +126,8 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
     final String tableId = field.getColumn().getTable().getId();
 
     Property property = null;
-    if (!ApplicationConstants.TABLEBASEDTABLE.equals(field.getColumn().getTable()
-        .getDataOriginType())) {
+    if (!ApplicationConstants.TABLEBASEDTABLE
+        .equals(field.getColumn().getTable().getDataOriginType())) {
       property = DalUtil.getPropertyByTableId(tableId, columnName);
     } else {
       property = DalUtil.getProperty(tableName, columnName);

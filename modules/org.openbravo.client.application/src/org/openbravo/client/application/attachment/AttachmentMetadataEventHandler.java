@@ -81,8 +81,8 @@ public class AttachmentMetadataEventHandler extends EntityPersistenceEventObserv
    */
   private boolean checkDuplicates(Parameter parameter) {
     OBCriteria<Parameter> critParam = OBDal.getInstance().createCriteria(Parameter.class);
-    critParam.add(Restrictions.eq(Parameter.PROPERTY_ATTACHMENTMETHOD,
-        parameter.getAttachmentMethod()));
+    critParam
+        .add(Restrictions.eq(Parameter.PROPERTY_ATTACHMENTMETHOD, parameter.getAttachmentMethod()));
     critParam.add(Restrictions.eq(Parameter.PROPERTY_DBCOLUMNNAME, parameter.getDBColumnName()));
     critParam.add(Restrictions.ne(Parameter.PROPERTY_ID, parameter.getId()));
     critParam.setMaxResults(1);

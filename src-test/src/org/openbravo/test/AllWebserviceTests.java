@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,7 @@ import org.openbravo.test.datasource.HQLDataSourceTest;
 import org.openbravo.test.datasource.LinkToParentTreeDataSourceTest;
 import org.openbravo.test.datasource.LogDatasourceTest;
 import org.openbravo.test.datasource.NonIdForeignKeyFilters;
+import org.openbravo.test.datasource.OpenRecordAfterLogin;
 import org.openbravo.test.datasource.OrganizationSelectorDataSourceTest;
 import org.openbravo.test.datasource.OtherDatasourceRequests;
 import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
@@ -67,7 +68,7 @@ import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-DataSourceWhereParameter.class, //
+    DataSourceWhereParameter.class, //
     WSReadTest.class, //
     WSUpdateTest.class, //
     PerformanceTest.class, //
@@ -99,6 +100,7 @@ DataSourceWhereParameter.class, //
     OtherDatasourceRequests.class, //
     NonIdForeignKeyFilters.class, //
     ResetCookieOnLogin.class, //
+    OpenRecordAfterLogin.class, //
     ETagGeneration.class, //
     TestSelectorDefaultFilterActionHandler.class, //
     SummaryFieldRequestTest.class, //

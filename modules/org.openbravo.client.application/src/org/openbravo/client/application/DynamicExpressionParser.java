@@ -45,7 +45,8 @@ import org.openbravo.model.ad.ui.Tab;
  * <p>
  * The transformation of @Expression@ is the following:
  * <ul>
- * <li>@ColumnName@ are transformed into property name, e.g. @DocStatus@ into <b>documentStatus</b></li>
+ * <li>@ColumnName@ are transformed into property name, e.g. @DocStatus@ into
+ * <b>documentStatus</b></li>
  * <li>@AuxiliarInput@ is transformed just removes the <b>@</b>, e.g. @FinancialManagementDep@ into
  * <b>FinancialManagementDep</b></li>
  * </ul>
@@ -55,7 +56,7 @@ public class DynamicExpressionParser {
 
   private static final String[][] COMPARATIONS = { //
 
-  { "==", " === " }, //
+      { "==", " === " }, //
       { "=", " === " }, //
 
       { "!", " !== " }, //
@@ -227,8 +228,8 @@ public class DynamicExpressionParser {
           for (String sv : sessionVariablesToLoad) {
             sessionAttributesInExpression.add(sv);
           }
-          parsedDisplay = DimensionDisplayUtility.computeAccountingDimensionDisplayLogic(
-              this.process, this.parameter);
+          parsedDisplay = DimensionDisplayUtility
+              .computeAccountingDimensionDisplayLogic(this.process, this.parameter);
         }
       } else {
         List<String> sessionVariablesToLoad = DimensionDisplayUtility
@@ -243,8 +244,8 @@ public class DynamicExpressionParser {
       if (!"".equals(parsedDisplay)) {
         parsedDisplay = "(" + parsedDisplay + ")";
       }
-      jsCode = new StringBuffer(jsCode.toString().replace(DimensionDisplayUtility.DIM_DISPLAYLOGIC,
-          parsedDisplay));
+      jsCode = new StringBuffer(
+          jsCode.toString().replace(DimensionDisplayUtility.DIM_DISPLAYLOGIC, parsedDisplay));
     }
 
   }
@@ -265,6 +266,7 @@ public class DynamicExpressionParser {
   /**
    * @see DynamicExpressionParser#getJSExpression()
    */
+  @Override
   public String toString() {
     return getJSExpression();
   }
@@ -328,8 +330,9 @@ public class DynamicExpressionParser {
       // Extracts the value
       String valueWithoutBrackets = matcher.group(1);
       // Transforms the value
-      String transformedValueWithoutBrackets = exprToJSMap.get(valueWithoutBrackets) != null ? exprToJSMap
-          .get(valueWithoutBrackets) : valueWithoutBrackets;
+      String transformedValueWithoutBrackets = exprToJSMap.get(valueWithoutBrackets) != null
+          ? exprToJSMap.get(valueWithoutBrackets)
+          : valueWithoutBrackets;
       // Re-encloses the value
       transformedValueWithBrackets = value.replace(valueWithoutBrackets,
           transformedValueWithoutBrackets);
@@ -369,20 +372,22 @@ public class DynamicExpressionParser {
    * This method is a different reimplementation of an equivalent method in WadUtility
    */
   private DisplayLogicElement getDisplayLogicTextTranslate(String token) {
-    if (token == null || token.trim().equals(""))
+    if (token == null || token.trim().equals("")) {
       return new DisplayLogicElement("", false);
+    }
     List<Field> fields;
     List<AuxiliaryInput> auxIns;
     if (parameterDisplayLogic) {
       for (Parameter param : parameters) {
         if (token.equalsIgnoreCase(param.getDBColumnName())) {
           parametersInExpression.add(param);
-          UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
-              param.getReference());
+          UIDefinition uiDef = UIDefinitionController.getInstance()
+              .getUIDefinition(param.getReference());
           if (uiDef.getDomainType() instanceof DateDomainType) {
             return new DisplayLogicElement(
                 "OB.Utilities.Date.JSToOB(OB.Utilities.getValue(currentValues,'" + token
-                    + "'),OB.Format.date)", uiDef instanceof YesNoUIDefinition);
+                    + "'),OB.Format.date)",
+                uiDef instanceof YesNoUIDefinition);
           }
           return new DisplayLogicElement("OB.Utilities.getValue(currentValues,'" + token + "')",
               uiDef instanceof YesNoUIDefinition);
@@ -404,21 +409,23 @@ public class DynamicExpressionParser {
         if (tabField.getColumn() == null) {
           continue;
         }
-        if (token.equalsIgnoreCase(tabField.getColumn().getDBColumnName()) && !tabLevelDisplayLogic) {
+        if (token.equalsIgnoreCase(tabField.getColumn().getDBColumnName())
+            && !tabLevelDisplayLogic) {
           fieldsInExpression.add(tabField);
           final String fieldName = KernelUtils.getInstance()
-              .getPropertyFromColumn(tabField.getColumn()).getName();
+              .getPropertyFromColumn(tabField.getColumn())
+              .getName();
 
-          UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
-              tabField.getColumn().getId());
+          UIDefinition uiDef = UIDefinitionController.getInstance()
+              .getUIDefinition(tabField.getColumn().getId());
           if (uiDef.getDomainType() instanceof DateDomainType) {
             return new DisplayLogicElement(
                 "OB.Utilities.Date.JSToOB(OB.Utilities.getValue(currentValues,'" + fieldName
-                    + "'),OB.Format.date)", uiDef instanceof YesNoUIDefinition);
+                    + "'),OB.Format.date)",
+                uiDef instanceof YesNoUIDefinition);
           }
 
-          return new DisplayLogicElement(
-              "OB.Utilities.getValue(currentValues,'" + fieldName + "')",
+          return new DisplayLogicElement("OB.Utilities.getValue(currentValues,'" + fieldName + "')",
               uiDef instanceof YesNoUIDefinition);
         } else if (tabLevelDisplayLogic) {
           if (!otherTokensInExpression.contains(token)) {
@@ -444,16 +451,17 @@ public class DynamicExpressionParser {
       if (ancestorField != null) {
         // If the token is the name of an ancestor tab field, it must to converted to its inp format
         convertedToken = "inp" + Sqlc.TransformaNombreColumna(token);
-        UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
-            ancestorField.getColumn().getId());
+        UIDefinition uiDef = UIDefinitionController.getInstance()
+            .getUIDefinition(ancestorField.getColumn().getId());
         // ... in that case, the left part is a boolean if that field is a YesNoUIDefinition
         isBoolean = (uiDef instanceof YesNoUIDefinition);
       }
 
     }
     sessionAttributesInExpression.add(convertedToken);
-    return new DisplayLogicElement(TOKEN_PREFIX
-        + (convertedToken.startsWith("#") ? convertedToken.replace("#", "_") : convertedToken),
+    return new DisplayLogicElement(
+        TOKEN_PREFIX
+            + (convertedToken.startsWith("#") ? convertedToken.replace("#", "_") : convertedToken),
         isBoolean);
   }
 

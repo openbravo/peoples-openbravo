@@ -36,8 +36,8 @@ import org.openbravo.service.json.JsonConstants;
  * Transformer to enable Property Fields in Return to Customer and Return to Vendor P&amp;E grids
  */
 @ComponentProvider.Qualifier("CDB9DC9655F24DF8AB41AA0ADBD04390")
-public class ReturnFromCustomerVendorPropertyFieldsTransformer extends
-    ReturnToFromCustomerVendorHQLTransformer {
+public class ReturnFromCustomerVendorPropertyFieldsTransformer
+    extends ReturnToFromCustomerVendorHQLTransformer {
   private static final String COMMA = ",";
 
   @Override

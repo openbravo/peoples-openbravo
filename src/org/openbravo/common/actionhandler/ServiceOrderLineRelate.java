@@ -23,6 +23,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
@@ -44,8 +46,6 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class ServiceOrderLineRelate extends BaseProcessActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -62,7 +62,8 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       jsonRequest = new JSONObject(content);
       log.debug("{}", jsonRequest);
 
-      JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+      JSONArray selectedLines = jsonRequest.getJSONObject("_params")
+          .getJSONObject("grid")
           .getJSONArray("_selection");
 
       final String tabId = jsonRequest.getString("inpTabId");
@@ -82,12 +83,12 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
 
       OrderLine secondOrderline = null;
 
-      final Client serviceProductClient = (Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME,
-          jsonRequest.getString("inpadClientId"));
-      final Organization serviceProductOrg = (Organization) OBDal.getInstance().getProxy(
-          Organization.ENTITY_NAME, jsonRequest.getString("inpadOrgId"));
-      OrderLine mainOrderLine = (OrderLine) OBDal.getInstance().getProxy(OrderLine.ENTITY_NAME,
-          jsonRequest.getString("inpcOrderlineId"));
+      final Client serviceProductClient = (Client) OBDal.getInstance()
+          .getProxy(Client.ENTITY_NAME, jsonRequest.getString("inpadClientId"));
+      final Organization serviceProductOrg = (Organization) OBDal.getInstance()
+          .getProxy(Organization.ENTITY_NAME, jsonRequest.getString("inpadOrgId"));
+      OrderLine mainOrderLine = (OrderLine) OBDal.getInstance()
+          .getProxy(OrderLine.ENTITY_NAME, jsonRequest.getString("inpcOrderlineId"));
       final Product serviceProduct = mainOrderLine.getProduct();
       final String orderId = mainOrderLine.getSalesOrder().getId();
       final Long lineNo = ServicePriceUtils.getNewLineNo(orderId);
@@ -100,10 +101,10 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       // Delete existing rows
       StringBuffer where = new StringBuffer();
       where.append(" as rol");
-      where.append(" where " + OrderlineServiceRelation.PROPERTY_SALESORDERLINE
-          + ".id = :orderLineId");
-      OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance().createQuery(
-          OrderlineServiceRelation.class, where.toString());
+      where.append(
+          " where " + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + ".id = :orderLineId");
+      OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance()
+          .createQuery(OrderlineServiceRelation.class, where.toString());
 
       rol.setNamedParameter("orderLineId", mainOrderLine.getId());
       rol.setMaxResult(1000);
@@ -115,8 +116,8 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       }
       OBDal.getInstance().flush();
 
-      mainOrderLine = (OrderLine) OBDal.getInstance().getProxy(OrderLine.ENTITY_NAME,
-          jsonRequest.getString("inpcOrderlineId"));
+      mainOrderLine = (OrderLine) OBDal.getInstance()
+          .getProxy(OrderLine.ENTITY_NAME, jsonRequest.getString("inpcOrderlineId"));
 
       boolean positiveLines = false;
       boolean negativeLines = false;
@@ -163,8 +164,8 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       for (int i = 0; i < selectedLines.length(); i++) {
         JSONObject selectedLine = selectedLines.getJSONObject(i);
         log.debug("{}", selectedLine);
-        final OrderLine orderLine = (OrderLine) OBDal.getInstance().getProxy(OrderLine.ENTITY_NAME,
-            selectedLine.getString(OrderLine.PROPERTY_ID));
+        final OrderLine orderLine = (OrderLine) OBDal.getInstance()
+            .getProxy(OrderLine.ENTITY_NAME, selectedLine.getString(OrderLine.PROPERTY_ID));
 
         // Check if deferred sale is allowed for the service, does not apply for returns
         if (!RFC_ORDERLINE_TAB_ID.equals(tabId)) {
@@ -194,29 +195,30 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
         olsr.setOrganization(serviceProductOrg);
         olsr.setOrderlineRelated(orderLine);
         if ((lineQuantity.compareTo(BigDecimal.ZERO) < 0 && positiveLines && !existingLinesNegative)
-            || (lineQuantity.compareTo(BigDecimal.ZERO) > 0 && existingLinesNegative && negativeLines)) {
+            || (lineQuantity.compareTo(BigDecimal.ZERO) > 0 && existingLinesNegative
+                && negativeLines)) {
           olsr.setSalesOrderLine(secondOrderline);
         } else {
           olsr.setSalesOrderLine(mainOrderLine);
         }
         if (lineQuantity.compareTo(BigDecimal.ZERO) < 0) {
           if (negativeLinesIsAfterDiscounts) {
-            olsr.setAmount(lineAmount.multiply(signum).setScale(
-                mainOrderLine.getCurrency().getPricePrecision().intValue(), RoundingMode.HALF_UP));
+            olsr.setAmount(lineAmount.multiply(signum)
+                .setScale(mainOrderLine.getCurrency().getPricePrecision().intValue(),
+                    RoundingMode.HALF_UP));
           } else {
-            olsr.setAmount(lineAmount
-                .add(lineDiscount)
+            olsr.setAmount(lineAmount.add(lineDiscount)
                 .multiply(signum)
                 .setScale(mainOrderLine.getCurrency().getPricePrecision().intValue(),
                     RoundingMode.HALF_UP));
           }
         } else {
           if (positiveLinesIsAfterDiscounts) {
-            olsr.setAmount(lineAmount.multiply(signum).setScale(
-                mainOrderLine.getCurrency().getPricePrecision().intValue(), RoundingMode.HALF_UP));
+            olsr.setAmount(lineAmount.multiply(signum)
+                .setScale(mainOrderLine.getCurrency().getPricePrecision().intValue(),
+                    RoundingMode.HALF_UP));
           } else {
-            olsr.setAmount(lineAmount
-                .add(lineDiscount)
+            olsr.setAmount(lineAmount.add(lineDiscount)
                 .multiply(signum)
                 .setScale(mainOrderLine.getCurrency().getPricePrecision().intValue(),
                     RoundingMode.HALF_UP));
@@ -232,8 +234,9 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
 
       // Update orderlines
 
-      BigDecimal baseProductPrice = ServicePriceUtils.getProductPrice(mainOrderLine.getSalesOrder()
-          .getOrderDate(), mainOrderLine.getSalesOrder().getPriceList(), serviceProduct);
+      BigDecimal baseProductPrice = ServicePriceUtils.getProductPrice(
+          mainOrderLine.getSalesOrder().getOrderDate(),
+          mainOrderLine.getSalesOrder().getPriceList(), serviceProduct);
 
       BigDecimal firstLineQuantity = BigDecimal.ZERO;
       BigDecimal secondLineQuantity = BigDecimal.ZERO;
@@ -310,8 +313,8 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       try {
         jsonRequest = new JSONObject();
         String message = OBMessageUtils.parseTranslation(new DalConnectionProvider(false),
-            RequestContext.get().getVariablesSecureApp(), OBContext.getOBContext().getLanguage()
-                .getLanguage(), e.getMessage());
+            RequestContext.get().getVariablesSecureApp(),
+            OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
         errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("text", message);
@@ -339,10 +342,10 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
     BigDecimal serviceAmount = ServicePriceUtils.getServiceAmount(mainOrderLine, lineAmount,
         lineDiscount, linePrice, lineQuantity, lineUnitDiscount);
 
-    BigDecimal servicePrice = baseProductPrice.add(serviceAmount.divide(lineQuantity, currency
-        .getPricePrecision().intValue(), RoundingMode.HALF_UP));
-    serviceAmount = serviceAmount.add(baseProductPrice.multiply(lineQuantity)).setScale(
-        currency.getPricePrecision().intValue(), RoundingMode.HALF_UP);
+    BigDecimal servicePrice = baseProductPrice.add(serviceAmount.divide(lineQuantity,
+        currency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
+    serviceAmount = serviceAmount.add(baseProductPrice.multiply(lineQuantity))
+        .setScale(currency.getPricePrecision().intValue(), RoundingMode.HALF_UP);
 
     if (mainOrderLine.getSalesOrder().isPriceIncludesTax()) {
       mainOrderLine.setGrossUnitPrice(servicePrice);
@@ -361,9 +364,10 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
     mainOrderLine.setOrderedQuantity(lineQuantity.multiply(signum));
 
     // Calculate discount
-    BigDecimal discount = listPrice.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : listPrice
-        .subtract(servicePrice).multiply(new BigDecimal("100"))
-        .divide(listPrice, currency.getPricePrecision().intValue(), RoundingMode.HALF_EVEN);
+    BigDecimal discount = listPrice.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
+        : listPrice.subtract(servicePrice)
+            .multiply(new BigDecimal("100"))
+            .divide(listPrice, currency.getPricePrecision().intValue(), RoundingMode.HALF_EVEN);
     mainOrderLine.setDiscount(discount);
     OBDal.getInstance().save(mainOrderLine);
   }
@@ -371,10 +375,10 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
   private boolean existsNegativeLines(OrderLine mainOrderLine) {
     StringBuffer where = new StringBuffer();
     where.append(" as olsr");
-    where.append(" where olsr." + OrderlineServiceRelation.PROPERTY_SALESORDERLINE
-        + " = :salesorderline");
-    OBQuery<OrderlineServiceRelation> olsrQry = OBDal.getInstance().createQuery(
-        OrderlineServiceRelation.class, where.toString());
+    where.append(
+        " where olsr." + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + " = :salesorderline");
+    OBQuery<OrderlineServiceRelation> olsrQry = OBDal.getInstance()
+        .createQuery(OrderlineServiceRelation.class, where.toString());
     olsrQry.setNamedParameter("salesorderline", mainOrderLine);
     olsrQry.setMaxResult(1);
     OrderlineServiceRelation osr = olsrQry.uniqueResult();

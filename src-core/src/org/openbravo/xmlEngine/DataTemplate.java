@@ -60,8 +60,8 @@ class DataTemplate implements XmlComponentTemplate {
     return addField(name, null, null, null);
   }
 
-  public FieldTemplate addField(String name, DecimalFormat formatOutput,
-      DecimalFormat formatSimple, Vector<ReplaceElement> vecReplace) {
+  public FieldTemplate addField(String name, DecimalFormat formatOutput, DecimalFormat formatSimple,
+      Vector<ReplaceElement> vecReplace) {
     log4jDataTemplate.debug("(addField) Crear FieldTemplate:" + name);
     // FieldComponent fieldComponent = new
     // FieldComponent(name.trim().toUpperCase(), this);
@@ -140,6 +140,7 @@ class DataTemplate implements XmlComponentTemplate {
     return dataValue;
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
     DataValue dataValue = xmlDocument.hasDataValue.get(strName);
     if (dataValue == null) {

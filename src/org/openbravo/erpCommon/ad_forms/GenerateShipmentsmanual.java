@@ -46,14 +46,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class GenerateShipmentsmanual extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     OBError myMessage = null;
 
     if (vars.commandIn("DEFAULT")) {
-      String strDateFrom = vars.getGlobalVariable("inpDateFrom",
-          "GenerateShipmentsmanual|DateFrom", "");
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "GenerateShipmentsmanual|DateFrom",
+          "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "GenerateShipmentsmanual|DateTo", "");
       String strC_BPartner_ID = vars.getGlobalVariable("inpcBpartnerId",
           "GenerateShipmentsmanual|C_BPartner_ID", "");
@@ -97,20 +98,23 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
       }
       GenerateShipmentsmanualData.updateReset(this, strSalesOrder);
 
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug(myMessage.getMessage());
+      }
       // new message system
       vars.setMessage("GenerateShipmentsmanual", myMessage);
       response.sendRedirect(strDireccion + request.getServletPath());
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strAD_Org_ID, String strDateFrom, String strDateTo)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     String discard[] = { "sectionDetail" };
@@ -119,12 +123,14 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
     GenerateShipmentsmanualData[] data = null;
     String strTreeOrg = GenerateShipmentsmanualData.treeOrg(this, vars.getClient());
     if (strC_BPartner_ID.equals("") && strAD_Org_ID.equals("")) {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_forms/GenerateShipmentsmanual", discard).createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_forms/GenerateShipmentsmanual", discard)
+          .createXmlDocument();
       data = GenerateShipmentsmanualData.set();
     } else {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_forms/GenerateShipmentsmanual").createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_forms/GenerateShipmentsmanual")
+          .createXmlDocument();
       data = GenerateShipmentsmanualData.select(this, vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", "GenerateShipmentsmanual"),
           Utility.getContext(this, vars, "#User_Org", "GenerateShipmentsmanual"), strC_BPartner_ID,
@@ -180,9 +186,9 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "AD_Org Security validation", Utility.getContext(this, vars, "#User_Org",
-              "GenerateShipmentsmanual"), Utility.getContext(this, vars, "#User_Client",
-              "GenerateShipmentsmanual"), 0);
+          "AD_Org Security validation",
+          Utility.getContext(this, vars, "#User_Org", "GenerateShipmentsmanual"),
+          Utility.getContext(this, vars, "#User_Client", "GenerateShipmentsmanual"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "GenerateShipmentsmanual",
           strAD_Org_ID);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
@@ -195,6 +201,7 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "GenerateShipmentsmanual Servlet. This Servlet was made by Wad constructor";
   } // end of getServletInfo() method

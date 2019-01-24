@@ -49,8 +49,8 @@ public class ExportReferenceData extends HttpSecureAppServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       vars.getGlobalVariable("inpProcessId", "ExportReferenceData|AD_Process_ID");
@@ -66,17 +66,20 @@ public class ExportReferenceData extends HttpSecureAppServlet {
       String strKey = vars.getRequestGlobalVariable("inpKey", "ExportReferenceData|AD_DataSet_ID");
 
       String strWindowPath = Utility.getTabURL(strTab, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       OBError myError = processButton(vars, strKey);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug(myError.getMessage());
+      }
       vars.setMessage(strTab, myError);
       log4j.warn("********** strWindowPath - " + strWindowPath);
       printPageClosePopUp(response, vars, strWindowPath);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private OBError processButton(VariablesSecureApp vars, String strKey) {
@@ -91,21 +94,24 @@ public class ExportReferenceData extends HttpSecureAppServlet {
         return myError;
       }
       ExportReferenceDataData[] data = ExportReferenceDataData.selectDataset(this, strKey);
-      if (data == null || data.length == 0)
+      if (data == null || data.length == 0) {
         return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+      }
       ExportReferenceDataData[] module = ExportReferenceDataData.selectModule(this,
           data[0].adModuleId);
 
-      final String xml = DataExportService.getInstance().exportDataSetToXML(myDataset,
-          data[0].adModuleId, new java.util.HashMap<String, Object>());
+      final String xml = DataExportService.getInstance()
+          .exportDataSetToXML(myDataset, data[0].adModuleId,
+              new java.util.HashMap<String, Object>());
       File myFolder = new File(vars.getSessionValue("#sourcePath")
           + (data[0].adModuleId.equals("0") ? "" : "/modules/" + module[0].javapackage)
           + "/referencedata/standard");
       File myFile = new File(vars.getSessionValue("#sourcePath")
           + (data[0].adModuleId.equals("0") ? "" : "/modules/" + module[0].javapackage)
           + "/referencedata/standard/" + Utility.wikifiedName(data[0].name) + ".xml");
-      if (!myFolder.exists())
+      if (!myFolder.exists()) {
         myFolder.mkdirs();
+      }
 
       FileOutputStream myOutputStream = new FileOutputStream(myFile);
       myOutputStream.write(xml.getBytes("UTF-8"));
@@ -128,11 +134,13 @@ public class ExportReferenceData extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDataSetID)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Button process Copy from Settlement");
+    }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/ExportReferenceData").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/ExportReferenceData")
+        .createXmlDocument();
 
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");

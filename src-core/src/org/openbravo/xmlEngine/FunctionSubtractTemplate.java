@@ -26,11 +26,13 @@ class FunctionSubtractTemplate extends FunctionTemplate {
     super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
   }
 
+  @Override
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      if (log4jFunctionSubtractTemplate.isDebugEnabled())
+      if (log4jFunctionSubtractTemplate.isDebugEnabled()) {
         log4jFunctionSubtractTemplate.debug("New FunctionSubtractValue");
+      }
       functionValue = new FunctionSubtractValue(this, xmlDocument);
     }
     return functionValue;

@@ -50,11 +50,13 @@ public class WADSelector extends WADControl {
 
       validation.append("  if (inputValue(frm." + inpName + ") === null || inputValue(frm."
           + inpName + ")===\"\") {\n");
-      // validation.append("  if (sc_").append(getData("ColumnName")).append(
+      // validation.append(" if (sc_").append(getData("ColumnName")).append(
       // ".selectorField.getSelectedRecord()===null) {\n");
       if (getData("IsDisplayed").equals("Y"))
-        validation.append("    setWindowElementFocus(sc_").append(getData("ColumnName"))
-            .append(".selectorField").append(");\n");
+        validation.append("    setWindowElementFocus(sc_")
+            .append(getData("ColumnName"))
+            .append(".selectorField")
+            .append(");\n");
       validation.append("    showJSMessage(1);\n");
       validation.append("    return false;\n");
       validation.append("  }\n");
@@ -133,15 +135,16 @@ public class WADSelector extends WADControl {
     final boolean isDisabled = (getData("IsReadOnly").equals("Y")
         || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
 
-    final XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/userinterface/selector/wad/WADSelector", discard).createXmlDocument();
+    final XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/userinterface/selector/wad/WADSelector", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
     xmlDocument.setParameter("selectorLink", generateSelectorLink(isDisabled));
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-    xmlDocument.setParameter("selectorVariable", "<script>var sc_" + getData("ColumnName")
-        + " = null;</script>");
+    xmlDocument.setParameter("selectorVariable",
+        "<script>var sc_" + getData("ColumnName") + " = null;</script>");
 
     return replaceHTML(xmlDocument.print());
   }
@@ -156,15 +159,16 @@ public class WADSelector extends WADControl {
     final boolean isDisabled = getData("IsReadOnly").equals("Y")
         || getData("IsReadOnlyTab").equals("Y");
 
-    final XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/userinterface/selector/wad/WADSelector", discard).createXmlDocument();
+    final XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/userinterface/selector/wad/WADSelector", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
     xmlDocument.setParameter("selectorLink", generateSelectorLink(isDisabled));
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-    xmlDocument.setParameter("selectorVariable", "<script>var sc_" + getData("ColumnName")
-        + " = null;</script>");
+    xmlDocument.setParameter("selectorVariable",
+        "<script>var sc_" + getData("ColumnName") + " = null;</script>");
 
     return replaceHTML(xmlDocument.print());
   }

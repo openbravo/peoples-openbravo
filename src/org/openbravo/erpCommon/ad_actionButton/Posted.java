@@ -47,15 +47,18 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class Posted extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Posted: doPost");
+    }
 
     final String generalLedgerJournalReport_ID = "800000";
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -69,14 +72,14 @@ public class Posted extends HttpSecureAppServlet {
       String strPath = vars.getGlobalVariable("inpPath", "Posted|path",
           strDireccion + request.getServletPath());
       String strWindowId = vars.getGlobalVariable("inpWindowId", "Posted|windowId", "");
-      String strForcedTableId = vars.getGlobalVariable("inpforcedTableId", strWindowId
-          + "|FORCED_TABLE_ID", "");
+      String strForcedTableId = vars.getGlobalVariable("inpforcedTableId",
+          strWindowId + "|FORCED_TABLE_ID", "");
       String strTabName = vars.getGlobalVariable("inpTabName", "Posted|tabName", "");
       String strModify = "N";
       if (strPosted.equals("Y")) {
         final Table table = OBDal.getInstance().get(Table.class, strTableId);
-        final OBCriteria<AccountingFact> fact = OBDal.getInstance().createCriteria(
-            AccountingFact.class);
+        final OBCriteria<AccountingFact> fact = OBDal.getInstance()
+            .createCriteria(AccountingFact.class);
         fact.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, strKey));
         fact.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, table));
         fact.add(Restrictions.eq(AccountingFact.PROPERTY_MODIFY, true));
@@ -97,8 +100,9 @@ public class Posted extends HttpSecureAppServlet {
       vars.getRequestGlobalVariable("inpTabName", "Posted|tabName");
       String strEliminar = vars.getStringParameter("inpEliminar", "N");
 
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("SAVE, strPosted: " + strPosted + " Elim " + strEliminar);
+      }
 
       if (!"Y".equals(strPosted)) {
         OBError messageResult = processButton(vars, strKey, strTableId);
@@ -116,8 +120,8 @@ public class Posted extends HttpSecureAppServlet {
             String title;
             OBContext.setAdminMode();
             try {
-              Process genLedJour = OBDal.getInstance().get(Process.class,
-                  generalLedgerJournalReport_ID);
+              Process genLedJour = OBDal.getInstance()
+                  .get(Process.class, generalLedgerJournalReport_ID);
               if (genLedJour != null) {
                 title = genLedJour.getIdentifier();
               } else {
@@ -146,16 +150,19 @@ public class Posted extends HttpSecureAppServlet {
             }
 
             if (data2.length == 1) {
-              printPageClosePopUp(response, vars, strDireccion
-                  + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
-                  + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
-                  + "&inpAccSchemas=" + accSchemas + "&posted=Y", title);
+              printPageClosePopUp(response, vars,
+                  strDireccion
+                      + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
+                      + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
+                      + "&inpAccSchemas=" + accSchemas + "&posted=Y",
+                  title);
             } else if (data2.length > 1) {
-              printPageClosePopUp(response, vars, strDireccion
-                  + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
-                  + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
-                  + "&inpAccSchemas=" + accSchemas + "&posted=Y", title + " - "
-                  + data2[0].schemaName);
+              printPageClosePopUp(response, vars,
+                  strDireccion
+                      + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
+                      + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
+                      + "&inpAccSchemas=" + accSchemas + "&posted=Y",
+                  title + " - " + data2[0].schemaName);
             } else {
               printPageClosePopUp(response, vars);
             }
@@ -178,8 +185,8 @@ public class Posted extends HttpSecureAppServlet {
             String title;
             OBContext.setAdminMode();
             try {
-              Process genLedJour = OBDal.getInstance().get(Process.class,
-                  generalLedgerJournalReport_ID);
+              Process genLedJour = OBDal.getInstance()
+                  .get(Process.class, generalLedgerJournalReport_ID);
               if (genLedJour != null) {
                 title = genLedJour.getIdentifier();
               } else {
@@ -208,21 +215,25 @@ public class Posted extends HttpSecureAppServlet {
             }
 
             if (data2.length == 1) {
-              printPageClosePopUp(response, vars, strDireccion
-                  + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
-                  + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
-                  + "&inpAccSchemas=" + accSchemas + "&posted=Y", title);
+              printPageClosePopUp(response, vars,
+                  strDireccion
+                      + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
+                      + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
+                      + "&inpAccSchemas=" + accSchemas + "&posted=Y",
+                  title);
             } else {
-              printPageClosePopUp(response, vars, strDireccion
-                  + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
-                  + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
-                  + "&inpAccSchemas=" + accSchemas + "&posted=Y", title + " - "
-                  + data2[0].schemaName);
+              printPageClosePopUp(response, vars,
+                  strDireccion
+                      + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable="
+                      + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org
+                      + "&inpAccSchemas=" + accSchemas + "&posted=Y",
+                  title + " - " + data2[0].schemaName);
             }
           }
         } else {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("SAVE, delete");
+          }
           long start = System.currentTimeMillis();
           OBError myMessage = new OBError();
           myMessage.setType("Success");
@@ -231,37 +242,37 @@ public class Posted extends HttpSecureAppServlet {
           try {
             HashMap<String, Integer> hm = ResetAccounting.delete(data[0].client, data[0].org,
                 strTableId, strKey, "", "");
-            myMessage.setMessage(Utility.parseTranslation(
-                this,
-                vars,
-                vars.getLanguage(),
-                "@UnpostedDocuments@ = " + hm.get("updated") + ", @DeletedEntries@ = "
-                    + hm.get("deleted")));
+            myMessage.setMessage(
+                Utility.parseTranslation(this, vars, vars.getLanguage(), "@UnpostedDocuments@ = "
+                    + hm.get("updated") + ", @DeletedEntries@ = " + hm.get("deleted")));
           } catch (OBException e) {
             myMessage.setType("Error");
-            myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
-                e.getMessage()));
+            myMessage.setMessage(
+                Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
           }
           log4j.debug("Total deleting /milis: " + (System.currentTimeMillis() - start));
           vars.setMessage(strTabId, myMessage);
           printPageClosePopUp(response, vars);
         }
       }
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private OBError processButton(VariablesSecureApp vars, String strKey, String strTableId)
       throws ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("ProcessButton strKey: " + strKey + "strTableId: " + strTableId);
+    }
     String strOrg;
     Connection con = null;
     OBError myMessage = null;
 
     strOrg = PostedData.selectDocOrg(this, PostedData.selectTableName(this, strTableId), strKey);
-    if (strOrg == null)
+    if (strOrg == null) {
       strOrg = "0";
+    }
 
     try {
       con = getTransactionConnection();
@@ -297,37 +308,43 @@ public class Posted extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String windowId, String strTab, String strProcessId, String strTableId,
-      String strForcedTableId, String strPath, String strTabName, String strPosted, String strModify)
-      throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+      String strForcedTableId, String strPath, String strTabName, String strPosted,
+      String strModify) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Button process Posted");
+    }
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
 
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
     String[] discard = { "", "" };
-    if (strHelp.equals(""))
+    if (strHelp.equals("")) {
       discard[0] = new String("helpDiscard");
-    if (!"Y".equals(strPosted))
+    }
+    if (!"Y".equals(strPosted)) {
       discard[1] = new String("selEliminar");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/Posted", discard).createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/Posted", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("key", strKey);
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("process", strProcessId);
-    if ("".equals(strForcedTableId) || strForcedTableId == null)
+    if ("".equals(strForcedTableId) || strForcedTableId == null) {
       xmlDocument.setParameter("table", strTableId);
-    else
+    } else {
       xmlDocument.setParameter("table", strForcedTableId);
+    }
     xmlDocument.setParameter("posted", strPosted);
     xmlDocument.setParameter("path", strPath);
     xmlDocument.setParameter("tabname", strTabName);
@@ -356,6 +373,7 @@ public class Posted extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet Posted";
   } // end of getServletInfo() method

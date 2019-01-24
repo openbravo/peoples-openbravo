@@ -46,6 +46,7 @@ public class DateTimeUIDefinition extends DateUIDefinition {
     return "OBDateTimeItem";
   }
 
+  @Override
   protected String getClientFormatObject() {
     return "OB.Format.dateTime";
   }
@@ -70,8 +71,8 @@ public class DateTimeUIDefinition extends DateUIDefinition {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(date);
 
-    int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET) + calendar
-        .get(Calendar.DST_OFFSET));
+    int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET)
+        + calendar.get(Calendar.DST_OFFSET));
     calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
     localTimeColumnValue = getClassicFormat().format(calendar.getTime(), new StringBuffer(),
         new FieldPosition(0));

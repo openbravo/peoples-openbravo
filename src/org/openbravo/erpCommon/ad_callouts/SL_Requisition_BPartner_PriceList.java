@@ -54,9 +54,9 @@ public class SL_Requisition_BPartner_PriceList extends SimpleCallout {
           BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, strBPartner);
           // If the Business Partner is blocked for this document, show an information message.
           if (FIN_Utility.isBlockedBusinessPartner(strBPartner, false, 1)) {
-            info.showMessage(OBMessageUtils.messageBD("ThebusinessPartner") + " "
-                + bPartner.getIdentifier() + " "
-                + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
+            info.showMessage(
+                OBMessageUtils.messageBD("ThebusinessPartner") + " " + bPartner.getIdentifier()
+                    + " " + OBMessageUtils.messageBD("BusinessPartnerBlocked"));
           }
           // Set Price List and Currency for business partner in Requisition or RequisitionLine
           if (bPartner.getPurchasePricelist() != null) {

@@ -44,8 +44,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportInvoicesJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
@@ -118,8 +119,8 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
       data = ReportInvoicesData.select(readOnlyCP, strCurrencyId,
           Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportInvoices"),
           Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportInvoices"),
-          strC_BpGroup_ID, strM_Product_Category_ID, strC_BPartner_ID, strM_Product_ID,
-          strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDocumentNo,
+          strC_BpGroup_ID, strM_Product_Category_ID, strC_BPartner_ID, strM_Product_ID, strDateFrom,
+          DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDocumentNo,
           (StringUtils.equals(strOrder, "PurchaseOrder")) ? "" : "sales",
           (StringUtils.equals(strOrder, "PurchaseOrder")) ? "purchase" : "");
     } catch (ServletException ex) {
@@ -159,8 +160,8 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
         .createXmlDocument();
 
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportInvoicesJR", false, "",
-        "", "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportInvoicesJR", false, "", "",
+        "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
@@ -170,8 +171,8 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(),
-          "ReportInvoicesJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(), "ReportInvoicesJR.html",
+          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(), "ReportInvoicesJR.html",
           strReplaceWith);
@@ -212,9 +213,9 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_BP_Group_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportInvoices"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportInvoices"), 0);
+          "C_BP_Group_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportInvoices"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportInvoices"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportInvoices",
           strC_BpGroup_ID);
       xmlDocument.setData("reportC_Bp_Group", "liststructure", comboTableData.select(false));
@@ -225,13 +226,13 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportInvoices"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportInvoices"), 0);
+          "M_Product_Category_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportInvoices"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportInvoices"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportInvoices",
           strM_Product_Category_ID);
-      xmlDocument
-          .setData("reportM_Product_Category", "liststructure", comboTableData.select(false));
+      xmlDocument.setData("reportM_Product_Category", "liststructure",
+          comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -240,9 +241,9 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportInvoices"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportInvoices"), 0);
+          "C_Currency_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportInvoices"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportInvoices"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportInvoices",
           strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -255,6 +256,7 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportInvoices. This Servlet was made by Pablo Sarobe";
   } // end of getServletInfo() method

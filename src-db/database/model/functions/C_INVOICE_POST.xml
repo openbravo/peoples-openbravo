@@ -792,6 +792,14 @@ IF (NOT FINISH_PROCESS) THEN
             Processed='Y',
             Updated=now()
         WHERE C_Invoice_ID=v_Record_ID;
+        -- Update M_Inout isCompletelyInvoiced flag as No when voiding the invoice.
+        UPDATE M_InOut
+        SET iscompletelyinvoiced = 'N'
+        WHERE iscompletelyinvoiced = 'Y'
+          AND EXISTS (SELECT 1 FROM M_INOUTLINE l
+                      LEFT JOIN c_invoiceline il ON l.m_inoutline_id = il.m_inoutline_id
+                      WHERE il.c_invoice_id = v_Record_ID
+                        AND l.M_InOut_ID = M_InOut.M_InOut_ID);
         -- Update reversal invoice dates
         IF (v_voiddate_inv IS NOT NULL) THEN
           UPDATE C_INVOICE SET DateInvoiced = v_voiddate_inv WHERE C_Invoice_ID=v_RInvoice_ID;

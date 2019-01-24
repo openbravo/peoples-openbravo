@@ -74,6 +74,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
   private AdvPaymentMngtDao dao;
   private static final RequestFilter filterYesNo = new ValueListFilter("Y", "N", "");
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -104,8 +105,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strDocumentType = vars.getStringParameter("inpDocumentType", "");
       String strSelectedPaymentDetails = vars.getInStringParameter("inpScheduledPaymentDetailId",
           IsIDFilter.instance);
-      Boolean showAlternativePM = "Y".equals(vars.getStringParameter("inpAlternativePaymentMethod",
-          filterYesNo));
+      Boolean showAlternativePM = "Y"
+          .equals(vars.getStringParameter("inpAlternativePaymentMethod", filterYesNo));
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
 
       printGrid(response, vars, strBPfromInvoiceId, strCurrencyId, strInvoiceId, strOrgId,
@@ -129,7 +130,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strInvoiceId = vars.getRequestGlobalVariable("inpcInvoiceId", "");
       refreshFinancialAccountCombo(response, vars, strPaymentMethodId, strFinancialAccountId,
-          strOrgId, strCurrencyId, isReceipt, strPaymentDate, conversionRatePrecision, strInvoiceId);
+          strOrgId, strCurrencyId, isReceipt, strPaymentDate, conversionRatePrecision,
+          strInvoiceId);
     } else if (vars.commandIn("FILLFINANCIALACCOUNT")) {
       String strFinancialAccountId = vars.getRequestGlobalVariable("inpFinancialAccount", "");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
@@ -148,8 +150,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
     } else if (vars.commandIn("EXCHANGERATE")) {
       final String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
-      final String strFinancialAccountCurrencyId = vars.getRequestGlobalVariable(
-          "inpFinancialAccountCurrencyId", "");
+      final String strFinancialAccountCurrencyId = vars
+          .getRequestGlobalVariable("inpFinancialAccountCurrencyId", "");
       final String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
       final String strPaymentDate = vars.getRequestGlobalVariable("inpPaymentDate", "");
       Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
@@ -160,8 +162,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     } else if (vars.commandIn("BPARTNERBLOCK")) {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strReceivedFromId = vars.getRequiredStringParameter("inpBusinessPartnerId");
-      BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-          strReceivedFromId);
+      BusinessPartner businessPartner = OBDal.getInstance()
+          .get(BusinessPartner.class, strReceivedFromId);
       if (FIN_Utility.isBlockedBusinessPartner(businessPartner.getId(), isReceipt, 4)) {
         businessPartnerBlocked(response, vars, businessPartner.getIdentifier());
       }
@@ -180,8 +182,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strFinancialAccountId = vars.getRequiredStringParameter("inpFinancialAccount");
       String strPaymentAmount = vars.getRequiredNumericParameter("inpActualPayment");
       String strPaymentDate = vars.getRequiredStringParameter("inpPaymentDate");
-      String strSelectedScheduledPaymentDetailIds = vars.getRequiredInParameter(
-          "inpScheduledPaymentDetailId", IsIDFilter.instance);
+      String strSelectedScheduledPaymentDetailIds = vars
+          .getRequiredInParameter("inpScheduledPaymentDetailId", IsIDFilter.instance);
       String strOrgId = vars.getRequiredStringParameter("inpadOrgId");
       String strDifferenceAction = "";
       String strDifference = vars.getNumericParameter("inpDifference", "0");
@@ -195,18 +197,18 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strReferenceNo = vars.getStringParameter("inpReferenceNo", "");
       String paymentCurrencyId = vars.getRequiredStringParameter("inpCurrencyId");
-      BigDecimal exchangeRate = new BigDecimal(vars.getRequiredNumericParameter("inpExchangeRate",
-          "1"));
-      BigDecimal convertedAmount = new BigDecimal(vars.getRequiredNumericParameter(
-          "inpActualConverted", strPaymentAmount));
-      BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-          strReceivedFromId);
-      PriceList priceList = isReceipt ? businessPartner.getPriceList() : businessPartner
-          .getPurchasePricelist();
-      FIN_FinancialAccount finAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          strFinancialAccountId);
-      FIN_PaymentMethod finPaymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-          strPaymentMethodId);
+      BigDecimal exchangeRate = new BigDecimal(
+          vars.getRequiredNumericParameter("inpExchangeRate", "1"));
+      BigDecimal convertedAmount = new BigDecimal(
+          vars.getRequiredNumericParameter("inpActualConverted", strPaymentAmount));
+      BusinessPartner businessPartner = OBDal.getInstance()
+          .get(BusinessPartner.class, strReceivedFromId);
+      PriceList priceList = isReceipt ? businessPartner.getPriceList()
+          : businessPartner.getPurchasePricelist();
+      FIN_FinancialAccount finAccount = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, strFinancialAccountId);
+      FIN_PaymentMethod finPaymentMethod = OBDal.getInstance()
+          .get(FIN_PaymentMethod.class, strPaymentMethodId);
       boolean paymentDocumentEnabled = getDocumentConfirmation(this, finAccount, finPaymentMethod,
           isReceipt, strPaymentAmount, true);
       OBError message = null;
@@ -214,13 +216,13 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       // removed when new security implementation is done
       OBContext.setAdminMode();
       try {
-        if (isUseCredit
-            && !paymentCurrencyId
-                .equals((priceList != null) ? priceList.getCurrency().getId() : "")) {
+        if (isUseCredit && !paymentCurrencyId
+            .equals((priceList != null) ? priceList.getCurrency().getId() : "")) {
           String errorMsg = String.format(
               Utility.parseTranslation(this, vars, vars.getLanguage(), "@APRM_CreditCurrency@"),
-              priceList != null ? priceList.getCurrency().getISOCode() : Utility.parseTranslation(
-                  this, vars, vars.getLanguage(), "@APRM_CreditNoPricelistCurrency@"));
+              priceList != null ? priceList.getCurrency().getISOCode()
+                  : Utility.parseTranslation(this, vars, vars.getLanguage(),
+                      "@APRM_CreditNoPricelistCurrency@"));
           message = new OBError();
           message.setType("Error");
           message.setTitle("Error");
@@ -237,26 +239,24 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
           parameters.add(strOrgId);
           parameters.add((isReceipt ? "ARR" : "APP"));
           // parameters.add(null);
-          String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
-              parameters, null);
+          String strDocTypeId = (String) CallStoredProcedure.getInstance()
+              .call("AD_GET_DOCTYPE", parameters, null);
           boolean documentEnabled = true;
           String strDocBaseType = parameters.get(2).toString();
           boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(Invoice.TABLE_NAME,
               strInvoiceId, Invoice.TABLE_NAME + "_ID", "LE");
 
-          if ((strAction.equals("PRD") || strAction.equals("PPW") || FIN_Utility
-              .isAutomaticDepositWithdrawn(finAccount, finPaymentMethod, isReceipt))
+          if ((strAction.equals("PRD") || strAction.equals("PPW")
+              || FIN_Utility.isAutomaticDepositWithdrawn(finAccount, finPaymentMethod, isReceipt))
               && new BigDecimal(strPaymentAmount).compareTo(BigDecimal.ZERO) != 0) {
-            documentEnabled = paymentDocumentEnabled
-                || getDocumentConfirmation(this, finAccount, finPaymentMethod, isReceipt,
-                    strPaymentAmount, false);
+            documentEnabled = paymentDocumentEnabled || getDocumentConfirmation(this, finAccount,
+                finPaymentMethod, isReceipt, strPaymentAmount, false);
           } else {
             documentEnabled = paymentDocumentEnabled;
           }
 
-          if (documentEnabled
-              && !FIN_Utility.isPeriodOpen(vars.getClient(), strDocBaseType, strOrgId,
-                  strPaymentDate) && orgLegalWithAccounting) {
+          if (documentEnabled && !FIN_Utility.isPeriodOpen(vars.getClient(), strDocBaseType,
+              strOrgId, strPaymentDate) && orgLegalWithAccounting) {
             final OBError myMessage = Utility.translateError(this, vars, vars.getLanguage(),
                 Utility.messageBD(this, "PeriodNotAvailable", vars.getLanguage()));
             vars.setMessage(strTabId, myMessage);
@@ -287,8 +287,9 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
                 (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
             String strNewPaymentMessage = Utility.parseTranslation(this, vars, vars.getLanguage(),
                 "@PaymentCreated@" + " " + payment.getDocumentNo()) + ".";
-            if (!"Error".equalsIgnoreCase(message.getType()))
+            if (!"Error".equalsIgnoreCase(message.getType())) {
               message.setMessage(strNewPaymentMessage + " " + message.getMessage());
+            }
             if (strDifferenceAction.equals("refund")) {
               Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
               FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
@@ -298,12 +299,11 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
               if (newPayment && !"Error".equalsIgnoreCase(auxMessage.getType())) {
                 final String strNewRefundPaymentMessage = Utility.parseTranslation(this, vars,
                     vars.getLanguage(),
-                    "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo())
-                    + ".";
+                    "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo()) + ".";
                 message.setMessage(strNewRefundPaymentMessage + " " + message.getMessage());
                 if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) != 0) {
-                  payment.setDescription(payment.getDescription() + strNewRefundPaymentMessage
-                      + "\n");
+                  payment
+                      .setDescription(payment.getDescription() + strNewRefundPaymentMessage + "\n");
                   OBDal.getInstance().save(payment);
                   OBDal.getInstance().flush();
                 }
@@ -324,8 +324,9 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       }
 
       String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       vars.setMessage(strTabId, message);
       printPageClosePopUp(response, vars, strWindowPath);
@@ -347,8 +348,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     boolean confirmation = false;
     OBContext.setAdminMode();
     try {
-      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
-          FinAccPaymentMethod.class);
+      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance()
+          .createCriteria(FinAccPaymentMethod.class);
       obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, finAccount));
       obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, finPaymentMethod));
       obCriteria.setFilterOnReadableClients(false);
@@ -370,22 +371,25 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
         }
       }
       for (FIN_FinancialAccountAccounting account : accounts) {
-        if (confirmation)
+        if (confirmation) {
           return confirmation;
+        }
         if (isReceipt) {
-          if (("INT").equals(uponUse) && account.getInTransitPaymentAccountIN() != null)
+          if (("INT").equals(uponUse) && account.getInTransitPaymentAccountIN() != null) {
             confirmation = true;
-          else if (("DEP").equals(uponUse) && account.getDepositAccount() != null)
+          } else if (("DEP").equals(uponUse) && account.getDepositAccount() != null) {
             confirmation = true;
-          else if (("CLE").equals(uponUse) && account.getClearedPaymentAccount() != null)
+          } else if (("CLE").equals(uponUse) && account.getClearedPaymentAccount() != null) {
             confirmation = true;
+          }
         } else {
-          if (("INT").equals(uponUse) && account.getFINOutIntransitAcct() != null)
+          if (("INT").equals(uponUse) && account.getFINOutIntransitAcct() != null) {
             confirmation = true;
-          else if (("WIT").equals(uponUse) && account.getWithdrawalAccount() != null)
+          } else if (("WIT").equals(uponUse) && account.getWithdrawalAccount() != null) {
             confirmation = true;
-          else if (("CLE").equals(uponUse) && account.getClearedPaymentAccountOUT() != null)
+          } else if (("CLE").equals(uponUse) && account.getClearedPaymentAccountOUT() != null) {
             confirmation = true;
+          }
         }
         // For payments with Amount ZERO always create an entry as no transaction will be created
         if (isPayment) {
@@ -404,27 +408,29 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strBPfromInvoice, String strBPfromInvoiceId, String strCurrencyId,
-      String strInvoiceId, String strOrgId, String strWindowId, String strTabId, boolean isReceipt,
+      String strBPfromInvoice, String strBPfromInvoiceId, String strCurrencyId, String strInvoiceId,
+      String strOrgId, String strWindowId, String strTabId, boolean isReceipt,
       int conversionRatePrecision) throws IOException, ServletException {
 
     log4j.debug("Output: Add Payment button pressed on Sales Invoice window");
     dao = new AdvPaymentMngtDao();
     BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strBPfromInvoiceId);
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentFromInvoice").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentFromInvoice")
+        .createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
 
-    if (isReceipt)
+    if (isReceipt) {
       xmlDocument.setParameter("title",
           Utility.messageBD(this, "APRM_AddPaymentIn", vars.getLanguage()));
-    else
+    } else {
       xmlDocument.setParameter("title",
           Utility.messageBD(this, "APRM_AddPaymentOut", vars.getLanguage()));
+    }
     xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paymentDate", DateTimeData.today(this));
     xmlDocument.setParameter("businessPartner", strBPfromInvoice);
@@ -437,10 +443,9 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
     try {
       OBContext.setAdminMode(true);
-      xmlDocument.setParameter(
-          "credit",
-          dao.getCustomerCredit(bp, isReceipt,
-              OBDal.getInstance().get(Organization.class, strOrgId)).toString());
+      xmlDocument.setParameter("credit", dao
+          .getCustomerCredit(bp, isReceipt, OBDal.getInstance().get(Organization.class, strOrgId))
+          .toString());
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -451,8 +456,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     parameters.add(strOrgId);
     parameters.add((isReceipt ? "ARR" : "APP"));
     // parameters.add(null);
-    String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
-        parameters, null);
+    String strDocTypeId = (String) CallStoredProcedure.getInstance()
+        .call("AD_GET_DOCTYPE", parameters, null);
     String strDocNo = Utility.getDocumentNo(this, vars, "AddPaymentFromInvoice", "FIN_Payment",
         strDocTypeId, strDocTypeId, false, false);
     xmlDocument.setParameter("documentNumber", "<" + strDocNo + ">");
@@ -543,8 +548,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
           .getFinancialAccountCurrency(strFinancialAccountId);
       if (financialAccountCurrency != null) {
         xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
-        xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
-            .getStandardPrecision().toString());
+        xmlDocument.setParameter("financialAccountCurrencyPrecision",
+            financialAccountCurrency.getStandardPrecision().toString());
       }
       BigDecimal exchangeRate = findExchangeRate(vars, paymentCurrency, financialAccountCurrency,
           new Date(), OBDal.getInstance().get(Organization.class, strOrgId),
@@ -608,8 +613,9 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     dao = new AdvPaymentMngtDao();
     String[] discard = { "businessPartnerName" };
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid", discard)
+        .createXmlDocument();
 
     Invoice inv = dao.getObject(Invoice.class, strInvoiceId);
 
@@ -641,8 +647,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
   }
 
   private void refreshPaymentMethodCombo(HttpServletResponse response, String srtPaymentMethod,
-      String strFinancialAccountId, String strOrgId, boolean isReceipt) throws IOException,
-      ServletException {
+      String strFinancialAccountId, String strOrgId, boolean isReceipt)
+      throws IOException, ServletException {
     log4j.debug("Callout: Financial Account has changed to" + strFinancialAccountId);
 
     String paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(srtPaymentMethod,
@@ -740,23 +746,24 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       throws IOException, ServletException {
     log4j.debug("Callout: Financial Account has changed to" + strFinancialAccountId);
 
-    FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-        strPaymentMethod);
-    FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-        strFinancialAccountId);
+    FIN_PaymentMethod paymentMethod = OBDal.getInstance()
+        .get(FIN_PaymentMethod.class, strPaymentMethod);
+    FIN_FinancialAccount financialAccount = OBDal.getInstance()
+        .get(FIN_FinancialAccount.class, strFinancialAccountId);
     FinAccPaymentMethod finAccPaymentMethod = null;
 
     for (FinAccPaymentMethod finAccPaymentMethodItem : financialAccount
         .getFinancialMgmtFinAccPaymentMethodList()) {
-      if (finAccPaymentMethodItem.getPaymentMethod().getId()
+      if (finAccPaymentMethodItem.getPaymentMethod()
+          .getId()
           .equalsIgnoreCase(paymentMethod.getId())) {
         finAccPaymentMethod = finAccPaymentMethodItem;
       }
     }
     String processOprtionsComboHtml = null;
 
-    boolean forcedFinancialAccountTransaction = isReceipt ? finAccPaymentMethod
-        .isAutomaticDeposit() : finAccPaymentMethod.isAutomaticWithdrawn();
+    boolean forcedFinancialAccountTransaction = isReceipt ? finAccPaymentMethod.isAutomaticDeposit()
+        : finAccPaymentMethod.isAutomaticWithdrawn();
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
@@ -794,8 +801,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
         if (conversionRateDoc == null) {
           exchangeRate = null;
         } else {
-          exchangeRate = conversionRateDoc.getRate().setScale(conversionRatePrecision,
-              RoundingMode.HALF_UP);
+          exchangeRate = conversionRateDoc.getRate()
+              .setScale(conversionRatePrecision, RoundingMode.HALF_UP);
         }
 
       }
@@ -805,8 +812,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
         if (conversionRate == null) {
           exchangeRate = null;
         } else {
-          exchangeRate = conversionRate.getMultipleRateBy().setScale(conversionRatePrecision,
-              RoundingMode.HALF_UP);
+          exchangeRate = conversionRate.getMultipleRateBy()
+              .setScale(conversionRatePrecision, RoundingMode.HALF_UP);
         }
       }
     }
@@ -814,10 +821,10 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
   }
 
   private boolean checkDocumentConversionRate(String documentId) {
-    OBCriteria<ConversionRateDoc> conversionRateDocCriteria = OBDal.getInstance().createCriteria(
-        ConversionRateDoc.class);
-    conversionRateDocCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, OBDal
-        .getInstance().get(Invoice.class, documentId)));
+    OBCriteria<ConversionRateDoc> conversionRateDocCriteria = OBDal.getInstance()
+        .createCriteria(ConversionRateDoc.class);
+    conversionRateDocCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE,
+        OBDal.getInstance().get(Invoice.class, documentId)));
     if (conversionRateDocCriteria.count() > 0) {
       return true;
     } else {
@@ -839,6 +846,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     return FieldProviderFactory.getFieldProviderArray(result);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the payment proposal";
     // end of getServletInfo() method
@@ -853,8 +861,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
    * @param strFinAccId
    *          . Indicates the financial account id for the transaction.
    * @param strPmtMethodId
-   *          . Indicates the payment method id for the transaction.
-   * @return. Returns boolean value based on the automatic deposit or automatic withdrawn value.
+   *          . Indicates the payment method id for the transaction. @return. Returns boolean value
+   *          based on the automatic deposit or automatic withdrawn value.
    */
   private Boolean isForcedFinancialAccountTransaction(boolean isReceipt, String strFinAccId,
       String strPmtMethodId) {
@@ -862,8 +870,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
         strFinAccId);
     FIN_PaymentMethod finPmtMethod = new AdvPaymentMngtDao().getObject(FIN_PaymentMethod.class,
         strPmtMethodId);
-    OBCriteria<FinAccPaymentMethod> psdFilter = OBDal.getInstance().createCriteria(
-        FinAccPaymentMethod.class);
+    OBCriteria<FinAccPaymentMethod> psdFilter = OBDal.getInstance()
+        .createCriteria(FinAccPaymentMethod.class);
     psdFilter.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, finAcc));
     psdFilter.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, finPmtMethod));
     for (FinAccPaymentMethod paymentMethod : psdFilter.list()) {

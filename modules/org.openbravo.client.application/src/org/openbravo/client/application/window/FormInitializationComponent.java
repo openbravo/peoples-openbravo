@@ -150,8 +150,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<String> jsExcuteCode = new ArrayList<String>();
       Map<String, Object> hiddenInputs = new HashMap<String, Object>();
 
-      boolean databaseBasedTable = ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable()
-          .getDataOriginType());
+      boolean databaseBasedTable = ApplicationConstants.TABLEBASEDTABLE
+          .equals(tab.getTable().getDataOriginType());
 
       log.debug("Form Initialization Component Execution. Tab Name: " + tab.getWindow().getName()
           + "." + tab.getName() + " Tab Id:" + tab.getId());
@@ -192,27 +192,27 @@ public class FormInitializationComponent extends BaseActionHandler {
       // NEW mode auxiliary inputs are not recomputed if they were previously calculated by callouts
       // (within in the same request)
       if (jsContent.has("overwrittenAuxiliaryInputs") && "CHANGE".equals(mode)) {
-        overwrittenAuxiliaryInputs = convertJSONArray(jsContent
-            .getJSONArray("overwrittenAuxiliaryInputs"));
+        overwrittenAuxiliaryInputs = convertJSONArray(
+            jsContent.getJSONArray("overwrittenAuxiliaryInputs"));
       }
 
       // If the table is not based in a db table, don't try to create a BaseOBObject
       if (databaseBasedTable) {
         // create the row from the json content then
         if (row == null) {
-          final JsonToDataConverter fromJsonConverter = OBProvider.getInstance().get(
-              JsonToDataConverter.class);
+          final JsonToDataConverter fromJsonConverter = OBProvider.getInstance()
+              .get(JsonToDataConverter.class);
 
           // create a new json object using property names:
           final JSONObject convertedJson = new JSONObject();
-          final Entity entity = ModelProvider.getInstance().getEntityByTableName(
-              tab.getTable().getDBTableName());
+          final Entity entity = ModelProvider.getInstance()
+              .getEntityByTableName(tab.getTable().getDBTableName());
           for (Property property : entity.getProperties()) {
             if (property.getColumnName() != null) {
               final String inpName = "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
               if (jsContent.has(inpName)) {
-                final UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
-                    property.getColumnId());
+                final UIDefinition uiDef = UIDefinitionController.getInstance()
+                    .getUIDefinition(property.getColumnId());
                 Object jsonValue = jsContent.get(inpName);
                 if (jsonValue instanceof String) {
                   jsonValue = uiDef.createFromClassicString((String) jsonValue);
@@ -231,11 +231,12 @@ public class FormInitializationComponent extends BaseActionHandler {
           row = fromJsonConverter.toBaseOBObject(convertedJson);
           row.setNewOBObject(true);
         } else {
-          final Entity entity = ModelProvider.getInstance().getEntityByTableName(
-              tab.getTable().getDBTableName());
+          final Entity entity = ModelProvider.getInstance()
+              .getEntityByTableName(tab.getTable().getDBTableName());
           for (Property property : entity.getProperties()) {
             if (property.isId()) {
-              setSessionValue(tab.getWindow().getId() + "|" + property.getColumnName(), row.getId());
+              setSessionValue(tab.getWindow().getId() + "|" + property.getColumnName(),
+                  row.getId());
             }
           }
         }
@@ -256,8 +257,8 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // Calculation of validation dependencies
       long t3 = System.currentTimeMillis();
-      computeListOfColumnsSortedByValidationDependencies(mode, tab, allColumns,
-          columnsInValidation, changeEventCols, changedColumn);
+      computeListOfColumnsSortedByValidationDependencies(mode, tab, allColumns, columnsInValidation,
+          changeEventCols, changedColumn);
 
       // Computation of the Auxiliary Input values
       long t4 = System.currentTimeMillis();
@@ -283,7 +284,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (mode.equals("NEW") || mode.equals("CHANGE")) {
         // In the case of NEW mode, we compute auxiliary inputs again to take into account that
         // auxiliary inputs could depend on a default value
-        computeAuxiliaryInputs(mode, tab, allColumnsInTab, columnValues, overwrittenAuxiliaryInputs);
+        computeAuxiliaryInputs(mode, tab, allColumnsInTab, columnValues,
+            overwrittenAuxiliaryInputs);
       }
 
       if (changedCols.size() > 0) {
@@ -375,14 +377,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
     }
     if (!"".equals(heavyCols)) {
-      log.warn("Warning: In the window "
-          + tab.getWindow().getName()
-          + ", in tab "
-          + tab.getName()
-          + " the combo fields "
-          + heavyCols
-          + " contain more than "
-          + maxEntries
+      log.warn("Warning: In the window " + tab.getWindow().getName() + ", in tab " + tab.getName()
+          + " the combo fields " + heavyCols + " contain more than " + maxEntries
           + " entries, and this could cause bad performance in the application. Possible fixes include changing these columns from a combo into a Selector, or adding a validation to reduce the number of entries in the combo.");
     }
   }
@@ -416,8 +412,8 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private int computeNoteCount(Tab tab, String rowId) {
-    OBQuery<Note> obq = OBDal.getInstance().createQuery(Note.class,
-        " table.id=:tableId and record=:recordId");
+    OBQuery<Note> obq = OBDal.getInstance()
+        .createQuery(Note.class, " table.id=:tableId and record=:recordId");
     obq.setFilterOnReadableOrganization(false);
     obq.setNamedParameter("tableId", tab.getTable().getId());
     obq.setNamedParameter("recordId", rowId);
@@ -493,8 +489,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (aTab.getDisplayLogic() != null && aTab.isActive()) {
             final DynamicExpressionParser parser = new DynamicExpressionParser(
                 aTab.getDisplayLogic(), aTab);
-            setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab.getWindow()
-                .getId());
+            setSessionAttributesFromParserResult(parser, sessionAttributesMap,
+                tab.getWindow().getId());
           }
         }
 
@@ -515,16 +511,16 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (field.getDisplayLogic() != null && field.isDisplayed() && field.isActive()) {
             final DynamicExpressionParser parser = new DynamicExpressionParser(
                 field.getDisplayLogic(), tab, cachedStructures, field);
-            setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab.getWindow()
-                .getId());
+            setSessionAttributesFromParserResult(parser, sessionAttributesMap,
+                tab.getWindow().getId());
           }
           // We also add session attributes from readonly logic fields
           if (field.getColumn().getReadOnlyLogic() != null && field.isDisplayed()
               && field.isActive()) {
-            final DynamicExpressionParser parser = new DynamicExpressionParser(field.getColumn()
-                .getReadOnlyLogic(), tab, cachedStructures);
-            setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab.getWindow()
-                .getId());
+            final DynamicExpressionParser parser = new DynamicExpressionParser(
+                field.getColumn().getReadOnlyLogic(), tab, cachedStructures);
+            setSessionAttributesFromParserResult(parser, sessionAttributesMap,
+                tab.getWindow().getId());
           }
 
         }
@@ -575,11 +571,11 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
         if (attrName.startsWith("#")) {
           attribute = attrName.substring(1, attrName.length());
-          attrValue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-              .getVariablesSecureApp(), attribute, windowId);
+          attrValue = Utility.getContext(new DalConnectionProvider(false),
+              RequestContext.get().getVariablesSecureApp(), attribute, windowId);
         } else {
-          attrValue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-              .getVariablesSecureApp(), attrName, windowId);
+          attrValue = Utility.getContext(new DalConnectionProvider(false),
+              RequestContext.get().getVariablesSecureApp(), attrName, windowId);
         }
         sessionAttributesMap.put(attrName.startsWith("#") ? attrName.replace("#", "_") : attrName,
             attrValue);
@@ -589,8 +585,8 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private boolean isNotActiveOrVisible(Field field, List<String> visibleProperties) {
-    return ((visibleProperties == null || !visibleProperties.contains("inp"
-        + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())))
+    return ((visibleProperties == null || !visibleProperties
+        .contains("inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())))
         && !field.isDisplayed() && !field.isShowInGridView() && !field.isShownInStatusBar())
         || !field.isActive();
   }
@@ -618,9 +614,8 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       String colName = null;
       if (field.getProperty() != null && !field.getProperty().isEmpty()) {
-        colName = "_propertyField_"
-            + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
-            + field.getColumn().getDBColumnName();
+        colName = "_propertyField_" + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "")
+            + "_" + field.getColumn().getDBColumnName();
       } else {
         colName = field.getColumn().getDBColumnName();
       }
@@ -670,13 +665,13 @@ public class FormInitializationComponent extends BaseActionHandler {
             if (field.getColumn().isLinkToParentColumn() && parentRecord != null
                 && referencedEntityIsParent(parentRecord, field)) {
               // If the column is link to the parent tab, we set its value as the parent id
-              RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
-                  parentId);
+              RequestContext.get()
+                  .setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col), parentId);
               value = uiDef.getFieldProperties(field, true);
             } else if (field.getColumn().getDBColumnName().equalsIgnoreCase("IsActive")) {
               // The Active column is always set to 'true' on new records
-              RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
-                  "Y");
+              RequestContext.get()
+                  .setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col), "Y");
               value = uiDef.getFieldProperties(field, true);
             } else {
               // Else, the default is used
@@ -698,9 +693,8 @@ public class FormInitializationComponent extends BaseActionHandler {
               }
             }
           }
-        } else if (mode.equals("EDIT")
-            || (mode.equals("CHANGE") && (forceComboReload || changeEventCols
-                .contains(changedColumn)))) {
+        } else if (mode.equals("EDIT") || (mode.equals("CHANGE")
+            && (forceComboReload || changeEventCols.contains(changedColumn)))) {
           // On EDIT mode, the values are computed through the UIDefinition (the values have been
           // previously set in the RequestContext)
           // This is also done this way on CHANGE mode where a combo reload is needed
@@ -709,30 +703,25 @@ public class FormInitializationComponent extends BaseActionHandler {
             // compute the combo.
             // If a column is mandatory then the combo needs to be computed, because the selected
             // value can depend on the computation if there is no default value
-            log.debug("field: "
-                + field
-                + " - getFieldPropertiesWithoutCombo: hasVisibleProperties: "
-                + (visibleProperties != null)
-                + ", &contains: "
-                + (visibleProperties != null && visibleProperties.contains("inp"
-                    + Sqlc.TransformaNombreColumna(col))) + ", isDisplayed=" + field.isDisplayed()
-                + ", isShowInGridView=" + field.isShowInGridView() + ", isShownInStatusBar="
-                + field.isShowInGridView() + ", hasDefaultValue="
-                + (field.getColumn().getDefaultValue() != null) + ", isMandatory="
-                + field.getColumn().isMandatory());
+            log.debug(
+                "field: " + field + " - getFieldPropertiesWithoutCombo: hasVisibleProperties: "
+                    + (visibleProperties != null) + ", &contains: "
+                    + (visibleProperties != null
+                        && visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col)))
+                    + ", isDisplayed=" + field.isDisplayed() + ", isShowInGridView="
+                    + field.isShowInGridView() + ", isShownInStatusBar=" + field.isShowInGridView()
+                    + ", hasDefaultValue=" + (field.getColumn().getDefaultValue() != null)
+                    + ", isMandatory=" + field.getColumn().isMandatory());
             uiDef.getFieldPropertiesWithoutCombo(field, true);
           } else {
-            log.debug("field: "
-                + field
-                + " - getFieldProperties: hasVisibleProperties: "
-                + (visibleProperties != null)
-                + ", &contains: "
-                + (visibleProperties != null && visibleProperties.contains("inp"
-                    + Sqlc.TransformaNombreColumna(col))) + ", isDisplayed=" + field.isDisplayed()
-                + ", isShowInGridView=" + field.isShowInGridView() + ", isShownInStatusBar="
-                + field.isShowInGridView() + ", hasDefaultValue="
-                + (field.getColumn().getDefaultValue() != null) + ", isMandatory="
-                + field.getColumn().isMandatory());
+            log.debug("field: " + field + " - getFieldProperties: hasVisibleProperties: "
+                + (visibleProperties != null) + ", &contains: "
+                + (visibleProperties != null
+                    && visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col)))
+                + ", isDisplayed=" + field.isDisplayed() + ", isShowInGridView="
+                + field.isShowInGridView() + ", isShownInStatusBar=" + field.isShowInGridView()
+                + ", hasDefaultValue=" + (field.getColumn().getDefaultValue() != null)
+                + ", isMandatory=" + field.getColumn().isMandatory());
             if (isNotActiveOrVisible(field, visibleProperties)) {
               log.debug("Only first combo record in " + mode + " mode for column " + col);
               value = uiDef.getFieldPropertiesFirstRecord(field, true);
@@ -775,8 +764,8 @@ public class FormInitializationComponent extends BaseActionHandler {
         if (value != null) {
           jsonobject = new JSONObject(value);
           if (mode.equals("CHANGE")) {
-            String oldValue = RequestContext.get().getRequestParameter(
-                "inp" + Sqlc.TransformaNombreColumna(col));
+            String oldValue = RequestContext.get()
+                .getRequestParameter("inp" + Sqlc.TransformaNombreColumna(col));
             String newValue = jsonobject.has("classicValue") ? jsonobject.getString("classicValue")
                 : (jsonobject.has("value") ? jsonobject.getString("value") : null);
             if (newValue == null || newValue.equals("null")) {
@@ -813,8 +802,8 @@ public class FormInitializationComponent extends BaseActionHandler {
               && (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION"))) {
 
             if (field.getColumn().isStoredInSession() || field.getColumn().isKeyColumn()) {
-              setSessionValue(tab.getWindow().getId() + "|"
-                  + field.getColumn().getDBColumnName().toUpperCase(),
+              setSessionValue(
+                  tab.getWindow().getId() + "|" + field.getColumn().getDBColumnName().toUpperCase(),
                   jsonobject.has("classicValue") ? jsonobject.get("classicValue") : null);
             }
           }
@@ -843,14 +832,16 @@ public class FormInitializationComponent extends BaseActionHandler {
       JSONObject value = columnValues.get(inpColName);
       String classicValue;
       try {
-        classicValue = (value == null || !value.has("classicValue")) ? "" : value
-            .getString("classicValue");
+        classicValue = (value == null || !value.has("classicValue")) ? ""
+            : value.getString("classicValue");
       } catch (JSONException e) {
-        throw new OBException(
-            "Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
+        throw new OBException("Couldn't get data for column " + field.getColumn().getDBColumnName(),
+            e);
       }
-      if (((mode.equals("NEW") && !classicValue.equals("") && (uiDef instanceof EnumUIDefinition || uiDef instanceof ForeignKeyUIDefinition)) || (mode
-          .equals("CHANGE") && changedCols.contains(field.getColumn().getDBColumnName()) && changedColumn != null))
+      if (((mode.equals("NEW") && !classicValue.equals("")
+          && (uiDef instanceof EnumUIDefinition || uiDef instanceof ForeignKeyUIDefinition))
+          || (mode.equals("CHANGE") && changedCols.contains(field.getColumn().getDBColumnName())
+              && changedColumn != null))
           && field.getColumn().isValidateOnNew()) {
         if (field.getColumn().getCallout() != null) {
           addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
@@ -905,14 +896,14 @@ public class FormInitializationComponent extends BaseActionHandler {
         JSONObject jsonobject = null;
         if (value != null) {
           jsonobject = new JSONObject(value);
-          columnValues
-              .put("inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()),
-                  jsonobject);
+          columnValues.put(
+              "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()),
+              jsonobject);
           setRequestContextParameter(field, jsonobject);
         }
       } catch (Exception e) {
-        throw new OBException(
-            "Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
+        throw new OBException("Couldn't get data for column " + field.getColumn().getDBColumnName(),
+            e);
       }
     }
 
@@ -946,9 +937,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
 
       columnValues.put("inp" + Sqlc.TransformaNombreColumna(auxIn.getName()), jsonObj);
-      RequestContext.get().setRequestParameter(
-          "inp" + Sqlc.TransformaNombreColumna(auxIn.getName()),
-          value == null || value.equals("null") ? null : value.toString());
+      RequestContext.get()
+          .setRequestParameter("inp" + Sqlc.TransformaNombreColumna(auxIn.getName()),
+              value == null || value.equals("null") ? null : value.toString());
 
       if (mode.equals("NEW") && containsIgnoreCase(allColumns, auxIn.getName())) {
         // auxiliary input used to calculate default value for a field, let's obtain the complete
@@ -1000,8 +991,9 @@ public class FormInitializationComponent extends BaseActionHandler {
     // See issue https://issues.openbravo.com/view.php?id=29667
     if (parentId != null && parentTab != null
         && ApplicationConstants.TABLEBASEDTABLE.equals(parentTab.getTable().getDataOriginType())) {
-      parentRecord = OBDal.getInstance().get(
-          ModelProvider.getInstance().getEntityByTableName(parentTab.getTable().getDBTableName())
+      parentRecord = OBDal.getInstance()
+          .get(ModelProvider.getInstance()
+              .getEntityByTableName(parentTab.getTable().getDBTableName())
               .getName(), parentId);
     }
     if (parentTab != null && parentRecord != null) {
@@ -1012,8 +1004,8 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private void setValuesInRequest(String mode, Tab tab, BaseOBObject row, JSONObject jsContent) {
 
-    boolean tableBasedTable = ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable()
-        .getDataOriginType());
+    boolean tableBasedTable = ApplicationConstants.TABLEBASEDTABLE
+        .equals(tab.getTable().getDataOriginType());
 
     List<Field> fields = getADFieldList(tab.getId());
     // If the table is based on a datasource it is not possible to initialize the values from the
@@ -1073,7 +1065,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                   jsContent.get(inpColName));
               // convert to a valid classic string
               value = UIDefinitionController.getInstance()
-                  .getUIDefinition(field.getColumn().getId()).convertToClassicString(propValue);
+                  .getUIDefinition(field.getColumn().getId())
+                  .convertToClassicString(propValue);
             } else {
               value = (String) jsonValue;
             }
@@ -1137,9 +1130,8 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       String colName = null;
       if (field.getProperty() != null && !field.getProperty().isEmpty()) {
-        colName = "_propertyField_"
-            + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
-            + field.getColumn().getDBColumnName();
+        colName = "_propertyField_" + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "")
+            + "_" + field.getColumn().getDBColumnName();
         columns.add(colName);
       } else {
         colName = field.getColumn().getDBColumnName();
@@ -1309,22 +1301,24 @@ public class FormInitializationComponent extends BaseActionHandler {
             currentValue = ((BaseOBObject) currentValue).getId();
           }
         } else {
-          currentValue = UIDefinitionController.getInstance().getUIDefinition(prop.getColumnId())
+          currentValue = UIDefinitionController.getInstance()
+              .getUIDefinition(prop.getColumnId())
               .convertToClassicString(currentValue);
         }
         if (currentValue != null && currentValue.equals("null")) {
           currentValue = null;
         }
         if (currentValue == null) {
-          RequestContext.get().setRequestParameter(
-              "inp" + Sqlc.TransformaNombreColumna(columnName), null);
+          RequestContext.get()
+              .setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName), null);
         } else {
-          RequestContext.get().setRequestParameter(
-              "inp" + Sqlc.TransformaNombreColumna(columnName), currentValue.toString());
+          RequestContext.get()
+              .setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName),
+                  currentValue.toString());
         }
       } else {
-        RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName),
-            null);
+        RequestContext.get()
+            .setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName), null);
       }
     } catch (Exception ignore) {
       String msg = "Could not get value for column: " + columnName + " - tab: " + tab;
@@ -1349,7 +1343,8 @@ public class FormInitializationComponent extends BaseActionHandler {
               value = ((BaseOBObject) value).getId();
             }
           } else {
-            value = UIDefinitionController.getInstance().getUIDefinition(col.getId())
+            value = UIDefinitionController.getInstance()
+                .getUIDefinition(col.getId())
                 .convertToClassicString(value);
           }
           setSessionValue(tab.getWindow().getId() + "|" + col.getDBColumnName(), value);
@@ -1391,11 +1386,12 @@ public class FormInitializationComponent extends BaseActionHandler {
       } else {
         fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
       }
-      RequestContext.get().setRequestParameter(
-          fieldId,
-          jsonObj.has("classicValue") && jsonObj.get("classicValue") != null
-              && !jsonObj.getString("classicValue").equals("null") ? jsonObj
-              .getString("classicValue") : null);
+      RequestContext.get()
+          .setRequestParameter(fieldId,
+              jsonObj.has("classicValue") && jsonObj.get("classicValue") != null
+                  && !jsonObj.getString("classicValue").equals("null")
+                      ? jsonObj.getString("classicValue")
+                      : null);
     } catch (JSONException e) {
       log.error("Couldn't read JSON parameter for column " + field.getColumn().getDBColumnName());
     }
@@ -1485,8 +1481,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
 
         if (!(calloutObject instanceof HttpServlet) && !(calloutObject instanceof SimpleCallout)) {
-          log.info("Callout "
-              + calloutClassName
+          log.info("Callout " + calloutClassName
               + " only allows reference instances of type SimpleCallout and HttpServlet but the callout is an instance of "
               + calloutObject.getClass().getName());
           continue;
@@ -1588,13 +1583,12 @@ public class FormInitializationComponent extends BaseActionHandler {
             // We don't do anything, this is a harmless js response
           } else {
             JSONObject message = new JSONObject();
-            message.put("text", Utility.messageBD(new DalConnectionProvider(false),
-                "OBUIAPP_ExecuteInCallout", RequestContext.get().getVariablesSecureApp()
-                    .getLanguage()));
+            message.put("text",
+                Utility.messageBD(new DalConnectionProvider(false), "OBUIAPP_ExecuteInCallout",
+                    RequestContext.get().getVariablesSecureApp().getLanguage()));
             message.put("severity", "TYPE_ERROR");
             messages.add(message);
-            log.warn("Callout "
-                + calloutClassName
+            log.warn("Callout " + calloutClassName
                 + " returned EXECUTE command which is no longer supported, it should be fixed. Window-tab: "
                 + tab.getWindow().getName() + " - " + tab.getName());
           }
@@ -1619,17 +1613,18 @@ public class FormInitializationComponent extends BaseActionHandler {
                 String oldValue = request.getRequestParameter(colId);
                 // We set the new value in the request, so that the JSONObject is computed
                 // with the new value
-                UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
-                    col.getId());
-                if (el instanceof String || !(uiDef.getDomainType() instanceof PrimitiveDomainType)) {
+                UIDefinition uiDef = UIDefinitionController.getInstance()
+                    .getUIDefinition(col.getId());
+                if (el instanceof String
+                    || !(uiDef.getDomainType() instanceof PrimitiveDomainType)) {
                   request.setRequestParameter(colId, el == null ? null : el.toString());
                 } else {
                   request.setRequestParameter(colId, uiDef.convertToClassicString(el));
                 }
                 String jsonStr = uiDef.getFieldProperties(inpFields.get(name), true);
                 JSONObject jsonobj = new JSONObject(jsonStr);
-                if (el == null
-                    && (uiDef instanceof ForeignKeyUIDefinition || uiDef instanceof EnumUIDefinition)) {
+                if (el == null && (uiDef instanceof ForeignKeyUIDefinition
+                    || uiDef instanceof EnumUIDefinition)) {
                   // Special case for null values for combos: we must clean the combo values
                   jsonobj.put(CalloutConstants.VALUE, "");
                   jsonobj.put(CalloutConstants.CLASSIC_VALUE, "");
@@ -1651,7 +1646,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                         jsonobj.getString(CalloutConstants.CLASSIC_VALUE));
                   }
                 } else {
-                  log.debug("Column value didn't change. We do not attempt to execute any additional callout");
+                  log.debug(
+                      "Column value didn't change. We do not attempt to execute any additional callout");
                 }
               }
               if (changed && col.getCallout() != null) {
@@ -1709,8 +1705,8 @@ public class FormInitializationComponent extends BaseActionHandler {
    * @return true if it is should be fired.
    */
   private boolean isShouldBeFired(String calloutClassName, Column col) {
-    return !calloutClassName.equals(col.getCallout().getADModelImplementationList().get(0)
-        .getJavaClassName());
+    return !calloutClassName
+        .equals(col.getCallout().getADModelImplementationList().get(0).getJavaClassName());
   }
 
   private void addCalloutToList(Column col, List<String> listOfCallouts,
@@ -1720,7 +1716,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       log.info("The callout of the column " + col.getDBColumnName()
           + " doesn't have a corresponding model object, and therefore cannot be executed.");
     } else {
-      String calloutClassNameToCall = col.getCallout().getADModelImplementationList().get(0)
+      String calloutClassNameToCall = col.getCallout()
+          .getADModelImplementationList()
+          .get(0)
           .getJavaClassName();
       listOfCallouts.add(calloutClassNameToCall);
       lastFieldChangedList.add("inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()));
@@ -1759,8 +1757,9 @@ public class FormInitializationComponent extends BaseActionHandler {
         continue;
       }
       for (String depCol : columnsInValidation.get(col)) {
-        if (containsIgnoreCase(sortedColumns, depCol))
+        if (containsIgnoreCase(sortedColumns, depCol)) {
           return col;
+        }
       }
     }
 
@@ -1778,11 +1777,13 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
       boolean allColsSorted = true;
       for (String depCol : columnsInValidation.get(col)) {
-        if (!containsIgnoreCase(sortedColumns, depCol))
+        if (!containsIgnoreCase(sortedColumns, depCol)) {
           allColsSorted = false;
+        }
       }
-      if (allColsSorted)
+      if (allColsSorted) {
         return col;
+      }
     }
 
     return null;
@@ -1831,7 +1832,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           String strAux = token.substring(0, i);
           token = token.substring(i + 1);
           if (!columns.contains(strAux)) {
-            if (!strAux.equalsIgnoreCase(column) && possibleColumns.contains(strAux.toUpperCase())) {
+            if (!strAux.equalsIgnoreCase(column)
+                && possibleColumns.contains(strAux.toUpperCase())) {
               columns.add(strAux);
             }
           }
@@ -1862,8 +1864,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           for (String parameter : params) {
             String value = "";
             if (parameter.substring(0, 1).equals("#")) {
-              value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-                  .getVariablesSecureApp(), parameter, windowId);
+              value = Utility.getContext(new DalConnectionProvider(false),
+                  RequestContext.get().getVariablesSecureApp(), parameter, windowId);
             } else {
               String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
               value = RequestContext.get().getRequestParameter(fieldId);
@@ -1880,16 +1882,17 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
       } else if (code.startsWith("@")) {
         String codeWithoutAt = code.substring(1, code.length() - 1);
-        fvalue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-            .getVariablesSecureApp(), codeWithoutAt, windowId);
+        fvalue = Utility.getContext(new DalConnectionProvider(false),
+            RequestContext.get().getVariablesSecureApp(), codeWithoutAt, windowId);
       } else {
         fvalue = code;
       }
       return fvalue;
     } catch (Exception e) {
-      log.error("Error while computing auxiliary input parameter: " + auxIn.getName()
-          + " from tab: " + auxIn.getTab().getName() + " of window: "
-          + auxIn.getTab().getWindow().getName(), e);
+      log.error(
+          "Error while computing auxiliary input parameter: " + auxIn.getName() + " from tab: "
+              + auxIn.getTab().getName() + " of window: " + auxIn.getTab().getWindow().getName(),
+          e);
     }
     return null;
   }

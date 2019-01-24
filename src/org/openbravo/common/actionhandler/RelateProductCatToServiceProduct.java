@@ -21,6 +21,8 @@ package org.openbravo.common.actionhandler;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.provider.OBProvider;
@@ -34,8 +36,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCategory;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class RelateProductCatToServiceProduct extends BaseProcessActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -50,7 +50,8 @@ public class RelateProductCatToServiceProduct extends BaseProcessActionHandler {
       log.debug("{}", jsonRequest);
 
       JSONArray selectedLines = jsonRequest.getJSONObject("_params")
-          .getJSONObject("servicesRelatedProductCat").getJSONArray("_selection");
+          .getJSONObject("servicesRelatedProductCat")
+          .getJSONArray("_selection");
       if (selectedLines.length() == 0) {
         errorMessage.put("severity", "error");
         errorMessage.put("title", OBMessageUtils.messageBD("NotSelected"));
@@ -58,19 +59,20 @@ public class RelateProductCatToServiceProduct extends BaseProcessActionHandler {
         return jsonRequest;
       }
 
-      final Product serviceProduct = (Product) OBDal.getInstance().getProxy(Product.ENTITY_NAME,
-          jsonRequest.getString("inpmProductId"));
-      final Client serviceProductClient = (Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME,
-          jsonRequest.getString("inpadClientId"));
-      final Organization serviceProductOrg = (Organization) OBDal.getInstance().getProxy(
-          Organization.ENTITY_NAME, jsonRequest.getString("inpadOrgId"));
+      final Product serviceProduct = (Product) OBDal.getInstance()
+          .getProxy(Product.ENTITY_NAME, jsonRequest.getString("inpmProductId"));
+      final Client serviceProductClient = (Client) OBDal.getInstance()
+          .getProxy(Client.ENTITY_NAME, jsonRequest.getString("inpadClientId"));
+      final Organization serviceProductOrg = (Organization) OBDal.getInstance()
+          .getProxy(Organization.ENTITY_NAME, jsonRequest.getString("inpadOrgId"));
 
       for (int i = 0; i < selectedLines.length(); i++) {
         JSONObject selectedLine = selectedLines.getJSONObject(i);
         log.debug("{}", selectedLine);
 
-        final ProductCategory productCategory = (ProductCategory) OBDal.getInstance().getProxy(
-            ProductCategory.ENTITY_NAME, selectedLine.getString(ProductCategory.PROPERTY_ID));
+        final ProductCategory productCategory = (ProductCategory) OBDal.getInstance()
+            .getProxy(ProductCategory.ENTITY_NAME,
+                selectedLine.getString(ProductCategory.PROPERTY_ID));
 
         ServiceProductCategory sp = OBProvider.getInstance().get(ServiceProductCategory.class);
         sp.setClient(serviceProductClient);

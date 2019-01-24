@@ -35,8 +35,8 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
  * Box storage details that are over reserved (allocated and non-allocated reservation). The box
  * movement will only have 2 lines.
  */
-public class ReferencedInventoryBoxOverReservation2MovementLinesTest extends
-    ReferencedInventoryBoxTest {
+public class ReferencedInventoryBoxOverReservation2MovementLinesTest
+    extends ReferencedInventoryBoxTest {
 
   @Rule
   public ParameterCdiTestRule<ParamsBoxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsBoxReservationTest>(
@@ -61,7 +61,7 @@ public class ReferencedInventoryBoxOverReservation2MovementLinesTest extends
   @Override
   void assertsGoodsMovementNumberOfLines(final InternalMovement boxMovement,
       final int expectedNumberOfLines) {
-    assertThat("Box Movement has two line", boxMovement.getMaterialMgmtInternalMovementLineList()
-        .size(), equalTo(2));
+    assertThat("Box Movement has two line",
+        boxMovement.getMaterialMgmtInternalMovementLineList().size(), equalTo(2));
   }
 }

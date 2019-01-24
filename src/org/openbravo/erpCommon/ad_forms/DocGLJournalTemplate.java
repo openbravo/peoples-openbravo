@@ -47,8 +47,8 @@ public abstract class DocGLJournalTemplate {
    *          acct schema
    * @return Fact
    */
-  public abstract Fact createFact(DocGLJournal docGLJournal, AcctSchema as,
-      ConnectionProvider conn, Connection con, VariablesSecureApp vars) throws ServletException;
+  public abstract Fact createFact(DocGLJournal docGLJournal, AcctSchema as, ConnectionProvider conn,
+      Connection con, VariablesSecureApp vars) throws ServletException;
 
   public String getServletInfo() {
     return "Servlet for the accounting";

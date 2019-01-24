@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -282,7 +282,7 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   },
 
   setValue: function (value) {
-    var ret, dateText, oldValue, newArguments = arguments;
+    var ret, oldValue, newArguments = arguments;
 
     oldValue = this.getValue();
     if (Object.prototype.toString.call(newArguments[0]) === '[object String]' && !this.hasSeparator(newArguments[0])) {

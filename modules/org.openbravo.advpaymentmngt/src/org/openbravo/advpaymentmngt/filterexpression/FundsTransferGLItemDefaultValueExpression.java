@@ -21,6 +21,8 @@ package org.openbravo.advpaymentmngt.filterexpression;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.query.Query;
@@ -29,8 +31,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * This class returns the default value for the GL Item Parameter of the Funds Transfer Process in
@@ -90,7 +90,8 @@ public class FundsTransferGLItemDefaultValueExpression implements FilterExpressi
     hql.append(" and p.aPRMGlitem is not null ");
     hql.append(" order by t.levelno asc ");
 
-    Query<GLItem> query = OBDal.getInstance().getSession()
+    Query<GLItem> query = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), GLItem.class);
     query.setParameter("organizationId", organization.getId());
     query.setMaxResults(1);

@@ -40,8 +40,9 @@ public abstract class PortalEmailBody extends BaseTemplateComponent {
   public String getUrl() {
     String url = "";
     try {
-      url = Preferences.getPreferenceValue("PortalURL", true, OBContext.getOBContext()
-          .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), null, null, null);
+      url = Preferences.getPreferenceValue("PortalURL", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), null, null, null);
     } catch (PropertyException e) {
       // no preference set, ignore it
     }
@@ -51,8 +52,9 @@ public abstract class PortalEmailBody extends BaseTemplateComponent {
   public String getContactEmail() {
     String email = "";
     try {
-      email = Preferences.getPreferenceValue("PortalContactEmail", true, OBContext.getOBContext()
-          .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), null, null, null);
+      email = Preferences.getPreferenceValue("PortalContactEmail", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), null, null, null);
     } catch (PropertyException e) {
       // no preference set, ignore it
     }

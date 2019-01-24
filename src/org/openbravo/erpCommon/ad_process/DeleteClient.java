@@ -43,13 +43,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class DeleteClient extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -60,8 +62,9 @@ public class DeleteClient extends HttpSecureAppServlet {
       String strClient = vars.getRequestGlobalVariable("inpClientId", "DeleteClient|inpClientId");
       processButton(vars, strClient);
       response.sendRedirect(strDireccion + request.getServletPath());
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private void processButton(VariablesSecureApp vars, String strClient) throws ServletException {
@@ -95,25 +98,29 @@ public class DeleteClient extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strClient)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Delete Client");
+    }
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "", strProcessId = "800147";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
 
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
     String[] discard = { "" };
-    if (strHelp.equals(""))
+    if (strHelp.equals("")) {
       discard[0] = new String("helpDiscard");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/DeleteClient", discard).createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/DeleteClient", discard)
+        .createXmlDocument();
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "DeleteClient", false, "", "", "",
         false, "ad_process", strReplaceWith, false, true);
@@ -121,10 +128,8 @@ public class DeleteClient extends HttpSecureAppServlet {
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument
-        .setParameter("alertMsg",
-            "ALERT_MSG=\"" + Utility.messageBD(this, "GoingToDeleteClient", vars.getLanguage())
-                + "\";");
+    xmlDocument.setParameter("alertMsg", "ALERT_MSG=\""
+        + Utility.messageBD(this, "GoingToDeleteClient", vars.getLanguage()) + "\";");
     xmlDocument.setParameter("question",
         Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");

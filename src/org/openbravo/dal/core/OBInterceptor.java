@@ -173,8 +173,7 @@ public class OBInterceptor extends EmptyInterceptor {
     // this can happen when someone has set the id of an object but has not set the
     // new object to true
     if (previousState == null) {
-      log.warn("The object "
-          + entity
+      log.warn("The object " + entity
           + " is detected as not new (is its id != null?) but it does not have a current state in the database. "
           + "This can happen when the id is set but not setNewObject(true); has been called.");
       return false;
@@ -304,16 +303,15 @@ public class OBInterceptor extends EmptyInterceptor {
         boolean skipCrossOrgCheck = obContext.isInCrossOrgAdministratorMode()
             && bob.getEntity().getProperty(propertyNames[i]).isAllowedCrossOrgReference();
 
-        if (!skipCrossOrgCheck
-            && !obObject.getEntity().isVirtualEntity()
-            && !obContext.getOrganizationStructureProvider(o1.getClient().getId()).isInNaturalTree(
-                o1, o2)) {
-          throw new OBSecurityException("Entity " + bob.getIdentifier() + " ("
-              + bob.getEntityName() + ") with organization " + o1.getIdentifier()
-              + " references an entity " + ((BaseOBObject) currentState[i]).getIdentifier()
-              + " through its property " + propertyNames[i] + " but this referenced entity"
-              + " belongs to an organization " + o2.getIdentifier()
-              + " which is not part of the natural tree of " + o1.getIdentifier());
+        if (!skipCrossOrgCheck && !obObject.getEntity().isVirtualEntity()
+            && !obContext.getOrganizationStructureProvider(o1.getClient().getId())
+                .isInNaturalTree(o1, o2)) {
+          throw new OBSecurityException("Entity " + bob.getIdentifier() + " (" + bob.getEntityName()
+              + ") with organization " + o1.getIdentifier() + " references an entity "
+              + ((BaseOBObject) currentState[i]).getIdentifier() + " through its property "
+              + propertyNames[i] + " but this referenced entity" + " belongs to an organization "
+              + o2.getIdentifier() + " which is not part of the natural tree of "
+              + o1.getIdentifier());
         }
       }
     }
@@ -370,8 +368,8 @@ public class OBInterceptor extends EmptyInterceptor {
       // Client and organization in context could have been created in another session, use proxies
       // to set them. Note DalUtil.getId won't help here as objects are already loaded in memory
       client = OBDal.getInstance().getProxy(Client.class, obContext.getCurrentClient().getId());
-      org = OBDal.getInstance().getProxy(Organization.class,
-          obContext.getCurrentOrganization().getId());
+      org = OBDal.getInstance()
+          .getProxy(Organization.class, obContext.getCurrentOrganization().getId());
     }
     final Date currentDate = new Date();
     for (int i = 0; i < propertyNames.length; i++) {
@@ -430,6 +428,7 @@ public class OBInterceptor extends EmptyInterceptor {
   }
 
   // after flushing an object is not new anymore
+  @Override
   @SuppressWarnings({ "rawtypes" })
   public void postFlush(Iterator entities) {
     while (entities.hasNext()) {

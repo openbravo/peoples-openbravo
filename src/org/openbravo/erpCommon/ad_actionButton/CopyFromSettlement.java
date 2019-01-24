@@ -37,21 +37,23 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class CopyFromSettlement extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       vars.getGlobalVariable("inpProcessId", "CopyFromSettlement|AD_Process_ID");
       String strWindowId = vars.getGlobalVariable("inpwindowId", "CopyFromSettlement|Window_ID");
       vars.getGlobalVariable("inpTabId", "CopyFromSettlement|Tab_ID");
-      String strSettlement = vars.getGlobalVariable("inpcSettlementId", strWindowId + "|"
-          + "C_Settlement_ID");
+      String strSettlement = vars.getGlobalVariable("inpcSettlementId",
+          strWindowId + "|" + "C_Settlement_ID");
       log4j.warn("***************  strSettlement - " + strSettlement);
       printPage(response, vars);
     } else if (vars.commandIn("FIND")) {
@@ -60,8 +62,8 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
       String strDocumentNo = vars.getStringParameter("inpDocumentNo");
       String strDescription = vars.getStringParameter("inpDescription");
       String strWindow = vars.getGlobalVariable("inpwindowId", "CopyFromSettlement|Window_ID");
-      String strSettlement = vars.getGlobalVariable("inpcSettlementId", strWindow + "|"
-          + "C_Settlement_ID");
+      String strSettlement = vars.getGlobalVariable("inpcSettlementId",
+          strWindow + "|" + "C_Settlement_ID");
       printPage(response, vars, strDescription, strDocumentNo, strDateFrom, strDateTo,
           strSettlement, strWindow);
     } else if (vars.commandIn("FIND2")) {
@@ -80,17 +82,20 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
           "CopyFromSettlement|C_SettlementFrom_ID");
 
       String strWindowPath = Utility.getTabURL(strTab, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       OBError myError = processButton(vars, strSettlement, strKey);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug(myError.getMessage());
+      }
       vars.setMessage(strTab, myError);
       log4j.warn("********** strWindowPath - " + strWindowPath);
       printPageClosePopUp(response, vars, strWindowPath);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private OBError processButton(VariablesSecureApp vars, String strSettlement, String strKey) {
@@ -198,15 +203,17 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     return myError;
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Button process Copy from Settlement");
+    }
 
     String[] discard = { "sectionDetail", "sectionDetail2" };
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CopyFromSettlement", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CopyFromSettlement", discard)
+        .createXmlDocument();
 
     String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
 
@@ -229,8 +236,9 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strSetDescription, String strDocumentNo, String strDateFrom, String strDateTo,
       String strSettlement, String strWindow) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Button process Copy from Settlement");
+    }
 
     String[] discard = { "", "" };
 
@@ -239,17 +247,18 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     String myStrSetDescription = (strSetDescription == null || strSetDescription.equals("")) ? "%"
         : strSetDescription;
 
-    CopyFromSettlementData[] data = CopyFromSettlementData.selectRelation(this,
-        myStrSetDescription, myStrDocumentNo,
-        Utility.getContext(this, vars, "#User_Org", strWindow),
+    CopyFromSettlementData[] data = CopyFromSettlementData.selectRelation(this, myStrSetDescription,
+        myStrDocumentNo, Utility.getContext(this, vars, "#User_Org", strWindow),
         Utility.getContext(this, vars, "#User_Client", strWindow), strDateFrom, strDateTo);
 
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       discard[0] = new String("sectionDetail");
+    }
     discard[1] = new String("sectionDetail2");
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CopyFromSettlement", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CopyFromSettlement", discard)
+        .createXmlDocument();
     String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", strDateFormat);
@@ -272,8 +281,8 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strSettlement, String strSettlementFrom, String strWindow) throws IOException,
-      ServletException {
+      String strSettlement, String strSettlementFrom, String strWindow)
+      throws IOException, ServletException {
 
     String strDateFrom = vars.getStringParameter("inpDateFrom");
     String strDateTo = vars.getStringParameter("inpDateTo");
@@ -292,17 +301,20 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
         myStrDocumentNo, Utility.getContext(this, vars, "#User_Org", strWindow),
         Utility.getContext(this, vars, "#User_Client", strWindow), strDateFrom, strDateTo);
 
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       discard[0] = new String("sectionDetail");
+    }
 
     CopyFromSettlementData[] data2 = CopyFromSettlementData.selectDebtPaymentBalancingF4(this,
         strDateFormat, vars.getLanguage(), strSettlementFrom);
 
-    if (data2 == null || data2.length == 0)
+    if (data2 == null || data2.length == 0) {
       discard[1] = new String("sectionDetail2");
+    }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CopyFromSettlement", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CopyFromSettlement", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", strDateFormat);
@@ -327,6 +339,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet Copy from settlement";
   } // end of getServletInfo() method

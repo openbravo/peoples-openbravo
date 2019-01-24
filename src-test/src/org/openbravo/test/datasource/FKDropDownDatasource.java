@@ -52,8 +52,9 @@ public class FKDropDownDatasource extends BaseDataSourceTestNoDal {
     params.put("_operationType", "fetch");
     params.put("_startRow", "0");
     params.put("_endRow", "75");
-    JSONObject resp = new JSONObject(doRequest("/org.openbravo.service.datasource/Organization",
-        params, 200, "POST")).getJSONObject("response");
+    JSONObject resp = new JSONObject(
+        doRequest("/org.openbravo.service.datasource/Organization", params, 200, "POST"))
+            .getJSONObject("response");
 
     assertThat("response status", resp.getInt("status"), is(0));
     assertThat("number of rows", resp.getInt("totalRows"), greaterThan(0));

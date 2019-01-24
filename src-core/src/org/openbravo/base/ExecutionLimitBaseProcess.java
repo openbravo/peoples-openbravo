@@ -138,12 +138,13 @@ public abstract class ExecutionLimitBaseProcess {
 
   protected File getPropertiesFile() {
     File fProp = null;
-    if (new File(PATH_CONFIG).exists())
+    if (new File(PATH_CONFIG).exists()) {
       fProp = new File(PATH_CONFIG);
-    else if (new File("../" + PATH_CONFIG).exists())
+    } else if (new File("../" + PATH_CONFIG).exists()) {
       fProp = new File("../" + PATH_CONFIG);
-    else if (new File("../../" + PATH_CONFIG).exists())
+    } else if (new File("../../" + PATH_CONFIG).exists()) {
       fProp = new File("../../" + PATH_CONFIG);
+    }
     if (fProp == null) {
       log4j.error("Could not find Openbravo.properties");
     }

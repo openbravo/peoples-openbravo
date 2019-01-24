@@ -63,8 +63,9 @@ public class Menu extends HttpSecureAppServlet {
   public Menu() {
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final String queryString = request.getQueryString();
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String targetmenu = getTargetMenu(vars, queryString);
@@ -72,9 +73,10 @@ public class Menu extends HttpSecureAppServlet {
     // successfull login, redirect to the startpage if any
     if (!OBContext.getOBContext().isAdminContext() && request.getParameter("noprefs") == null) {
       try {
-        final String startPage = Preferences.getPreferenceValue("StartPage", true, OBContext
-            .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-            OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+        final String startPage = Preferences.getPreferenceValue("StartPage", true,
+            OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), null);
         // redirect if the startpage is there and if it is not the same as the standard
         if (startPage != null && !startPage.endsWith("/security/Menu.html")) {
           if (queryString != null && queryString.length() > 0) {
@@ -162,7 +164,8 @@ public class Menu extends HttpSecureAppServlet {
    * @return The URL string used for the right frame of the application
    * @throws ServletException
    */
-  private String getTargetMenu(VariablesSecureApp vars, String queryString) throws ServletException {
+  private String getTargetMenu(VariablesSecureApp vars, String queryString)
+      throws ServletException {
 
     final String[] allowedCommands = { "", "DEFAULT", "NEW", "EDIT", "GRID", "DIRECT" };
     final ValueListFilter listFilter = new ValueListFilter(allowedCommands);
@@ -173,8 +176,8 @@ public class Menu extends HttpSecureAppServlet {
 
     if (qString != null && qString.contains("url") && url != null && !url.equals("")) {
       if (!url.startsWith("/")) {
-        log4j
-            .error("Invalid deep-link URL: URL parameter is relative to application context, must start with slash");
+        log4j.error(
+            "Invalid deep-link URL: URL parameter is relative to application context, must start with slash");
         return "";
       }
       // Removing "url=" from query string
@@ -214,8 +217,8 @@ public class Menu extends HttpSecureAppServlet {
         final Window window = OBDal.getInstance().get(Window.class, windowId);
 
         if (!tab.getWindow().equals(window)) {
-          log4j.error("Invalid deep-link URL: tab " + tabId + " doesn't belong to window "
-              + windowId);
+          log4j.error(
+              "Invalid deep-link URL: tab " + tabId + " doesn't belong to window " + windowId);
           return "";
         }
       } else {

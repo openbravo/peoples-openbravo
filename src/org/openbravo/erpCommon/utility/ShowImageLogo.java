@@ -40,8 +40,9 @@ public class ShowImageLogo extends HttpBaseServlet {
    * Receiving an logo parameter and organization id, it looks in database for the corresponding
    * logo and displays it
    */
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     ImageUtils.outputImageResource(request, response, "logo");
 

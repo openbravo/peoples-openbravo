@@ -42,13 +42,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ImportBankFile extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -68,7 +70,8 @@ public class ImportBankFile extends HttpSecureAppServlet {
       FIN_BankStatementImport bsi = null;
       try {
         bsi = (FIN_BankStatementImport) Class.forName(bff.getJavaClassName())
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
       } catch (Exception e) {
         log4j.error("Error while creating new instance for FIN_BankStatementImport - " + e, e);
       }
@@ -80,12 +83,14 @@ public class ImportBankFile extends HttpSecureAppServlet {
         message = new OBError();
         message.setType("Error");
         message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-        message.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
-            "@APRM_WrongBankFileFormat@") + ": " + bff.getJavaClassName());
+        message.setMessage(
+            Utility.parseTranslation(this, vars, vars.getLanguage(), "@APRM_WrongBankFileFormat@")
+                + ": " + bff.getJavaClassName());
       }
 
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       vars.setMessage(strTabId, message);
       printPageClosePopUp(response, vars, strWindowPath);
@@ -100,20 +105,23 @@ public class ImportBankFile extends HttpSecureAppServlet {
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
 
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
     String[] discard = { "" };
-    if (strHelp.equals(""))
+    if (strHelp.equals("")) {
       discard[0] = new String("helpDiscard");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/ImportBankFile", discard).createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/ImportBankFile", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("key", strKey);
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -126,9 +134,9 @@ public class ImportBankFile extends HttpSecureAppServlet {
     boolean isAnyFileFormatInstalled = false;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "FIN_BANKFILE_FORMAT_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ImportBankFile"), Utility.getContext(this, vars, "#User_Client", "ImportBankFile"),
-          0);
+          "FIN_BANKFILE_FORMAT_ID", "", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ImportBankFile"),
+          Utility.getContext(this, vars, "#User_Client", "ImportBankFile"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ImportBankFile", "");
       FieldProvider[] fileFormatCombo = comboTableData.select(false);
       isAnyFileFormatInstalled = fileFormatCombo.length > 0;
@@ -142,13 +150,14 @@ public class ImportBankFile extends HttpSecureAppServlet {
     if (isDefault) {
       if (!isAnyFileFormatInstalled) {
         String strWindowPath = Utility.getTabURL(tabId, "R", true);
-        if (strWindowPath.equals(""))
+        if (strWindowPath.equals("")) {
           strWindowPath = strDefaultServlet;
+        }
         OBError message = new OBError();
         message.setType("Warning");
         message.setTitle(Utility.messageBD(this, "APRM_NoBankFileAvailable", vars.getLanguage()));
-        message.setMessage(Utility.messageBD(this, "APRM_NoBankFileAvailableInfo",
-            vars.getLanguage()));
+        message.setMessage(
+            Utility.messageBD(this, "APRM_NoBankFileAvailableInfo", vars.getLanguage()));
         vars.setMessage(tabId, message);
         printPageClosePopUp(response, vars, strWindowPath);
         return;
@@ -161,14 +170,16 @@ public class ImportBankFile extends HttpSecureAppServlet {
       OBError myMessage = new OBError();
       myMessage.setTitle("");
       log4j.debug("ImportBankFile - before setMessage");
-      if (strMessage == null || strMessage.equals(""))
+      if (strMessage == null || strMessage.equals("")) {
         myMessage.setType("Success");
-      else
+      } else {
         myMessage.setType("Error");
+      }
       if (strMessage != null && !strMessage.equals("")) {
         myMessage.setMessage(strMessage);
-      } else
+      } else {
         Utility.translateError(this, vars, vars.getLanguage(), "Success");
+      }
       log4j.debug("ImportBankFile - Message Type: " + myMessage.getType());
       vars.setMessage("ImportBankFile", myMessage);
       log4j.debug("ImportBankFile - after setMessage");
@@ -185,6 +196,7 @@ public class ImportBankFile extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the importation of files from banks";
   } // end of getServletInfo() method

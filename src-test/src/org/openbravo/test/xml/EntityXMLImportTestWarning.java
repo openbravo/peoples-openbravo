@@ -141,9 +141,9 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     xml = xml.replaceAll("</name>", "t</name>");
     xml = xml.replaceAll("</id>", "new</id>");
     setSystemAdministratorContext();
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, "B9C7088AB859483A9B1FB342AC2BE17A"), xml); // FIXME
+    final ImportResult ir = DataImportService.getInstance()
+        .importDataFromXML(OBDal.getInstance().get(Client.class, TEST_CLIENT_ID),
+            OBDal.getInstance().get(Organization.class, "B9C7088AB859483A9B1FB342AC2BE17A"), xml); // FIXME
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
@@ -152,8 +152,8 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     } else {
       assertTrue(ir.getWarningMessages() != null);
       assertTrue(ir.getWarningMessages().indexOf("Updating entity") != -1);
-      assertTrue(ir.getWarningMessages().indexOf(
-          "eventhough it does not belong to the target organization ") != -1);
+      assertTrue(ir.getWarningMessages()
+          .indexOf("eventhough it does not belong to the target organization ") != -1);
     }
     // force a rollback, so that the db is not changed
     rollback();

@@ -56,6 +56,7 @@ public class AcctServerProcess extends DalBaseProcess {
 
   static Logger log4j = LogManager.getLogger();
 
+  @Override
   public void doExecute(ProcessBundle bundle) throws Exception {
 
     logger = bundle.getLogger();
@@ -79,7 +80,8 @@ public class AcctServerProcess extends DalBaseProcess {
    * 
    * @throws ServletException
    */
-  private void processClient(VariablesSecureApp vars, ProcessBundle bundle) throws ServletException {
+  private void processClient(VariablesSecureApp vars, ProcessBundle bundle)
+      throws ServletException {
     VariablesSecureApp localVars = vars;
     final String processId = bundle.getProcessId();
     final String pinstanceId = bundle.getPinstanceId();
@@ -107,7 +109,8 @@ public class AcctServerProcess extends DalBaseProcess {
           }
           return;
         }
-        localVars = new VariablesSecureApp(dataOrg[0].adUserId, ctx.getClient(), dataOrg[0].adOrgId);
+        localVars = new VariablesSecureApp(dataOrg[0].adUserId, ctx.getClient(),
+            dataOrg[0].adOrgId);
       } catch (final ServletException ex) {
         log4j.error(ex.getMessage());
         return;
@@ -160,8 +163,9 @@ public class AcctServerProcess extends DalBaseProcess {
     String strTableDesc;
     for (int i = 0; i < tables.length; i++) {
       final AcctServer acct = AcctServer.get(tables[i], localVars.getClient(), strOrg, connection);
-      if (acct == null)
+      if (acct == null) {
         continue;
+      }
       acct.setBatchSize(BATCH_SIZE);
       // Sets execution as background
       acct.setBackground(true);
@@ -171,15 +175,17 @@ public class AcctServerProcess extends DalBaseProcess {
       while (acct.checkDocuments(strDateFrom, strDateTo)) {
 
         if (total == 0) {
-          if (isDirect)
+          if (isDirect) {
             addLog("@DL_ACCOUNTING@ - " + strTableDesc, false);
-          else
+          } else {
             addLog("Accounting - " + strTableDesc, false);
+          }
         } else {
-          if (isDirect)
+          if (isDirect) {
             addLog("@DL_COUNTED@ " + total + " - " + strTableDesc, false);
-          else
+          } else {
             addLog("Counted " + total + " - " + strTableDesc, false);
+          }
         }
 
         try {
@@ -224,7 +230,10 @@ public class AcctServerProcess extends DalBaseProcess {
       if (generalLog) {
         this.message.append(tmp.toString()).append(" - ").append(msg).append("<br>");
       }
-      lastLog.append("<span>").append(tmp.toString()).append(" - ").append(msg)
+      lastLog.append("<span>")
+          .append(tmp.toString())
+          .append(" - ")
+          .append(msg)
           .append("</span><br>");
     }
   }

@@ -73,7 +73,8 @@ public class DataPoolSelectionWindowInjector implements ExtraWindowSettingsInjec
   }
 
   private boolean readOnlyPoolIsNotAvailable() {
-    return !OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    return !OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .containsKey(RO_POOL_URL_PROPERTIES_KEY);
   }
 }

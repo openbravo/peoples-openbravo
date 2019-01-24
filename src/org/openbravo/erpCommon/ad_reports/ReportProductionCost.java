@@ -43,8 +43,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportProductionCost extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
@@ -86,8 +87,8 @@ public class ReportProductionCost extends HttpSecureAppServlet {
         log4j.debug("***************************+: " + strLevel);
       }
 
-      printPageOpen(request, response, vars, strdateFrom, strdateTo, strmProductId, strId,
-          strLevel, strCurrencyId);
+      printPageOpen(request, response, vars, strdateFrom, strdateTo, strmProductId, strId, strLevel,
+          strCurrencyId);
     } else {
       pageError(response);
     }
@@ -101,13 +102,14 @@ public class ReportProductionCost extends HttpSecureAppServlet {
     }
     String discard[] = { "discard" };
     String strLevel = "0";
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportProductionCost").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProductionCost")
+        .createXmlDocument();
 
     // Use ReadOnly Connection Provider
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportProductionCost", false,
-        "", "", "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportProductionCost", false, "",
+        "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
 
     String strConvRateErrorMsg = "";
@@ -168,9 +170,9 @@ public class ReportProductionCost extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-                "ReportProductionCost"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-                "ReportProductionCost"), 0);
+            "C_Currency_ID", "", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductionCost"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductionCost"), 0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportProductionCost",
             strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -340,8 +342,9 @@ public class ReportProductionCost extends HttpSecureAppServlet {
       }
     }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportProductionCostSubreport", discard)
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProductionCostSubreport",
+            discard)
         .createXmlDocument();
     xmlDocument.setData("structureMaterial", dataMaterial);
     xmlDocument.setData("structureMachine", dataMachine);
@@ -356,6 +359,7 @@ public class ReportProductionCost extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportProductionCost.";
   } // end of getServletInfo() method

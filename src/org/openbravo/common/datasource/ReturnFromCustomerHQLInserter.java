@@ -25,8 +25,8 @@ import org.openbravo.service.datasource.hql.HqlInserter;
 
 @HQLInserterQualifier.Qualifier(tableId = "CDB9DC9655F24DF8AB41AA0ADBD04390", injectionId = "0")
 /**
- * HQL Inserter for the HQL table shared by the Return From Customer and Return To Vendor P&E windows
- * It is used to exclude the discounts for the Return From Customer P&E window
+ * HQL Inserter for the HQL table shared by the Return From Customer and Return To Vendor P&E
+ * windows It is used to exclude the discounts for the Return From Customer P&E window
  *
  */
 public class ReturnFromCustomerHQLInserter extends HqlInserter {

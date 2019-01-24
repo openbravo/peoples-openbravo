@@ -22,6 +22,8 @@ package org.openbravo.common.actionhandler;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -33,8 +35,6 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Action handler for boxing storage details into a Referenced Inventory
@@ -65,7 +65,8 @@ public class ReferencedInventoryBoxHandler extends BaseProcessActionHandler {
 
         return getResponseBuilder()
             .showMsgInProcessView(MessageType.ERROR, OBMessageUtils.messageBD("Error"),
-                StringUtils.isBlank(message) ? ex.toString() : message, true).retryExecution()
+                StringUtils.isBlank(message) ? ex.toString() : message, true)
+            .retryExecution()
             .build();
       } catch (Exception ignore) {
         logger.warn("Exception trying to build error message", ignore);
@@ -74,11 +75,14 @@ public class ReferencedInventoryBoxHandler extends BaseProcessActionHandler {
       OBContext.restorePreviousMode();
     }
 
-    return getResponseBuilder().showMsgInView(MessageType.SUCCESS,
-        OBMessageUtils.messageBD("Success"), OBMessageUtils.messageBD("Success")).build();
+    return getResponseBuilder()
+        .showMsgInView(MessageType.SUCCESS, OBMessageUtils.messageBD("Success"),
+            OBMessageUtils.messageBD("Success"))
+        .build();
   }
 
-  private ReferencedInventory getReferencedInventory(final JSONObject request) throws JSONException {
+  private ReferencedInventory getReferencedInventory(final JSONObject request)
+      throws JSONException {
     final String refInventoryId = request.getString("inpmRefinventoryId");
     return OBDal.getInstance().getProxy(ReferencedInventory.class, refInventoryId);
   }
@@ -92,7 +96,8 @@ public class ReferencedInventoryBoxHandler extends BaseProcessActionHandler {
     try {
       final JSONObject params = request.getJSONObject("_params");
       final String newStorageBinId = params.getString(PARAM_NEWSTORAGEBIN);
-      return StringUtils.isBlank(newStorageBinId) || StringUtils.equals(newStorageBinId, "null") ? null
+      return StringUtils.isBlank(newStorageBinId) || StringUtils.equals(newStorageBinId, "null")
+          ? null
           : newStorageBinId;
     } catch (JSONException noParameterFound) {
       return null;

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -240,7 +240,6 @@ isc.OBToolbar.addClassProperties({
     sortPosition: 50,
     prompt: OB.I18N.getLabel('OBUIAPP_CancelEdit'),
     updateState: function () {
-      var recordWithValidationErrorsSelected = false;
       if (this.view.isShowingForm) {
         this.setDisabled(false);
       } else {
@@ -714,8 +713,7 @@ isc.OBToolbar.addProperties({
   // NOTE: new buttons should implement the updateState method.
   //
   updateButtonState: function (noSetSession, changeEvent, forceUpdate) {
-    var me = this,
-        isActiveTab = false;
+    var me = this;
     if (forceUpdate || (this.view && this.view.isActiveView && this.view.isActiveView())) {
       this.fireOnPause('updateButtonState', function () {
         me.pausedUpdateButtonState(noSetSession, changeEvent);
@@ -1465,7 +1463,7 @@ isc.OBToolbar.addProperties({
   rightMembersShortcuts: [],
 
   defineRightMembersShortcuts: function () {
-    var i, j, k, id, character, position, length, titleLength;
+    var i, j, k, length, titleLength;
 
     function isAssignedCharacter(character, me) {
       var n, length;

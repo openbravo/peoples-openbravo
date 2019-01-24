@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -38,8 +40,6 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Process in charge of updating the product characteristics
@@ -74,8 +74,8 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
         Product product = OBDal.getInstance().get(Product.class, productId);
 
         // Retrieves all the product invariant characteristics
-        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance().createCriteria(
-            ProductCharacteristic.class);
+        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
+            .createCriteria(ProductCharacteristic.class);
         criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, product));
         criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_VARIANT, false));
 
@@ -87,9 +87,9 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
           // Retrieves the current selected value
           OBCriteria<ProductCharacteristicValue> criteriaSelectedValue = OBDal.getInstance()
               .createCriteria(ProductCharacteristicValue.class);
-          criteriaSelectedValue.add(Restrictions.eq(
-              ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
-              characteristic.getCharacteristic()));
+          criteriaSelectedValue
+              .add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
+                  characteristic.getCharacteristic()));
           criteriaSelectedValue.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT,
               characteristic.getProduct()));
           ProductCharacteristicValue selectedValue = (ProductCharacteristicValue) criteriaSelectedValue
@@ -117,8 +117,8 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
           productChar.put("valueMap", productCharValuesValueMap);
           productCharArray.put(productChar);
           if (characteristic.getCharacteristicSubset() != null) {
-            productChar
-                .put("productCharSubsetId", characteristic.getCharacteristicSubset().getId());
+            productChar.put("productCharSubsetId",
+                characteristic.getCharacteristicSubset().getId());
           } else {
             productChar.put("productCharSubsetId", NO_SUBSET);
           }
@@ -139,10 +139,10 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
           String updatedValueId = updatedValues.getString(characteristicId);
           String strProdChValueId = existingProdChValues.getString(characteristicId);
           Characteristic ch = OBDal.getInstance().get(Characteristic.class, characteristicId);
-          CharacteristicValue charValue = OBDal.getInstance().get(CharacteristicValue.class,
-              updatedValueId);
-          ProductCharacteristicValue prodCharValue = OBDal.getInstance().get(
-              ProductCharacteristicValue.class, strProdChValueId);
+          CharacteristicValue charValue = OBDal.getInstance()
+              .get(CharacteristicValue.class, updatedValueId);
+          ProductCharacteristicValue prodCharValue = OBDal.getInstance()
+              .get(ProductCharacteristicValue.class, strProdChValueId);
           if (prodCharValue == null && charValue != null) {
             prodCharValue = OBProvider.getInstance().get(ProductCharacteristicValue.class);
             prodCharValue.setCharacteristic(ch);

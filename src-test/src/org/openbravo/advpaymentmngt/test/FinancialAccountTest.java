@@ -52,8 +52,8 @@ public class FinancialAccountTest extends OBBaseTest {
   public void testAddFinancialAccountValid1() {
     TestUtility.insertFinancialAccount("APRM_FINANCIAL_ACCOUNT_1", STANDARD_DESCRIPTION,
         getOneInstance(Currency.class), CASH, false, getOneInstance(Location.class),
-        getOneInstance(BusinessPartner.class), null, null, null, null, null, null, null, null,
-        null, BigDecimal.ZERO, BigDecimal.ZERO, null, true, false);
+        getOneInstance(BusinessPartner.class), null, null, null, null, null, null, null, null, null,
+        BigDecimal.ZERO, BigDecimal.ZERO, null, true, false);
   }
 
   // Pre-requisite: at least one Matching Algorithm created
@@ -79,10 +79,10 @@ public class FinancialAccountTest extends OBBaseTest {
    */
   @Test
   public void testAddFinancialAccountNotValid1() {
-    TestUtility.insertFinancialAccount("APRM_FINANCIAL_ACCOUNT_4", STANDARD_DESCRIPTION, null,
-        BANK, false, getOneInstance(Location.class), getOneInstance(BusinessPartner.class), "2054",
-        null, null, null, null, null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO, null,
-        false, false);
+    TestUtility.insertFinancialAccount("APRM_FINANCIAL_ACCOUNT_4", STANDARD_DESCRIPTION, null, BANK,
+        false, getOneInstance(Location.class), getOneInstance(BusinessPartner.class), "2054", null,
+        null, null, null, null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO, null, false,
+        false);
   }
 
   /**
@@ -90,8 +90,8 @@ public class FinancialAccountTest extends OBBaseTest {
    */
   @Test
   public void testDeleteFinancialAccounts() {
-    final OBCriteria<FIN_FinancialAccount> obCriteria = OBDal.getInstance().createCriteria(
-        FIN_FinancialAccount.class);
+    final OBCriteria<FIN_FinancialAccount> obCriteria = OBDal.getInstance()
+        .createCriteria(FIN_FinancialAccount.class);
     obCriteria
         .add(Restrictions.eq(FIN_FinancialAccount.PROPERTY_DESCRIPTION, STANDARD_DESCRIPTION));
     final List<FIN_FinancialAccount> finAccs = obCriteria.list();

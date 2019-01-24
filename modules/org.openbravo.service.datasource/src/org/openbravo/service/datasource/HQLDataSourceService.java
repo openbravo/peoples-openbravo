@@ -33,6 +33,8 @@ import javax.persistence.Tuple;
 import javax.persistence.TupleElement;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
 import org.hibernate.query.Query;
@@ -64,8 +66,6 @@ import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class HQLDataSourceService extends ReadOnlyDataSourceService {
   public static final String PROPERTY_FIELD_SEPARATOR = "___";
@@ -110,8 +110,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         dsProperty.setMandatory(column.isMandatory());
         dsProperty.setUpdatable(column.isUpdatable());
         Reference reference = column.getReference();
-        final UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-            reference);
+        final UIDefinition uiDefinition = UIDefinitionController.getInstance()
+            .getUIDefinition(reference);
         if (uiDefinition instanceof IDUIDefinition) {
           dsProperty.setId(true);
           dsProperty.setName("id");
@@ -122,15 +122,15 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         dsProperty.setPrimitive(!(uiDefinition instanceof ForeignKeyUIDefinition));
         dsProperty.setUIDefinition(uiDefinition);
         if (dsProperty.isPrimitive()) {
-          dsProperty.setPrimitiveObjectType(((PrimitiveDomainType) uiDefinition.getDomainType())
-              .getPrimitiveType());
+          dsProperty.setPrimitiveObjectType(
+              ((PrimitiveDomainType) uiDefinition.getDomainType()).getPrimitiveType());
           dsProperty.setNumericType(uiDefinition instanceof NumberUIDefinition);
           if (uiDefinition instanceof EnumUIDefinition) {
-            Set<String> allowedValues = DataSourceProperty.getAllowedValues(column
-                .getReferenceSearchKey());
+            Set<String> allowedValues = DataSourceProperty
+                .getAllowedValues(column.getReferenceSearchKey());
             dsProperty.setAllowedValues(allowedValues);
-            dsProperty.setValueMap(DataSourceProperty.createValueMap(allowedValues, column
-                .getReferenceSearchKey().getId()));
+            dsProperty.setValueMap(DataSourceProperty.createValueMap(allowedValues,
+                column.getReferenceSearchKey().getId()));
           }
         }
         dataSourceProperties.add(dsProperty);
@@ -415,8 +415,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       if (insertedCode == null) {
         insertedCode = DUMMY_INSERTION_POINT_REPLACEMENT;
       }
-      String insertionPointId = INSERTION_POINT_GENERIC_ID.replace(
-          INSERTION_POINT_INDEX_PLACEHOLDER, Integer.toString(index));
+      String insertionPointId = INSERTION_POINT_GENERIC_ID
+          .replace(INSERTION_POINT_INDEX_PLACEHOLDER, Integer.toString(index));
       updatedHqlQuery = updatedHqlQuery.replace(insertionPointId, insertedCode);
       index++;
     }
@@ -485,8 +485,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private HqlInserter getHqlInserter(int index, Map<String, String> parameters) {
     HqlInserter inserter = null;
     Table table = getTableFromParameters(parameters);
-    for (HqlInserter inj : hqlInserters.select(new HQLInserterQualifier.Selector(table.getId(),
-        Integer.toString(index)))) {
+    for (HqlInserter inj : hqlInserters
+        .select(new HQLInserterQualifier.Selector(table.getId(), Integer.toString(index)))) {
       if (inserter == null) {
         inserter = inj;
       } else if (inj.getPriority(parameters) < inserter.getPriority(parameters)) {
@@ -495,7 +495,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         log.warn(
             "Trying to get hql inserter for the insertion point {} of the table with id {}, there are more than one instance with same priority",
             INSERTION_POINT_GENERIC_ID.replace(INSERTION_POINT_INDEX_PLACEHOLDER,
-                Integer.toString(index)), table.getId());
+                Integer.toString(index)),
+            table.getId());
       }
     }
     return inserter;
@@ -608,7 +609,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
 
     // client filter
     additionalFilter.append(entityAlias + ".client.id in ('0', '")
-        .append(OBContext.getOBContext().getCurrentClient().getId()).append("')");
+        .append(OBContext.getOBContext().getCurrentClient().getId())
+        .append("')");
 
     // organization filter
     final String orgs = DataSourceUtils.getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
@@ -693,8 +695,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
     String propertyName = null;
     if (orderByClause.endsWith("$_identifier")) {
-      propertyName = orderByClause.substring(0, orderByClause.length()
-          - ("$identifier".length() + 1));
+      propertyName = orderByClause.substring(0,
+          orderByClause.length() - ("$identifier".length() + 1));
     } else {
       propertyName = orderByClause;
     }

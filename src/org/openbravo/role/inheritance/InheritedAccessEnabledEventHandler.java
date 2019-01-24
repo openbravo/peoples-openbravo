@@ -97,7 +97,8 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
   }
 
   private void doAction(String action, BaseOBObject bob) {
-    String entityClassName = ModelProvider.getInstance().getEntity(bob.getEntity().getName())
+    String entityClassName = ModelProvider.getInstance()
+        .getEntity(bob.getEntity().getName())
         .getClassName();
     InheritedAccessEnabled access = (InheritedAccessEnabled) bob;
     Role role = manager.getRole(access, entityClassName);

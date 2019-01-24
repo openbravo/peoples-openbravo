@@ -56,8 +56,8 @@ public class SL_Invoice_Conversion extends SimpleCallout {
       strMultiplyRate = "1";
       if (StringUtils.isNotEmpty(strMProductUOMID)) {
         // Set message when no UOM Conversion exists
-        info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this, "NoUOMConversion",
-            info.vars.getLanguage())));
+        info.showMessage(FormatUtilities
+            .replaceJS(Utility.messageBD(this, "NoUOMConversion", info.vars.getLanguage())));
       }
     }
 

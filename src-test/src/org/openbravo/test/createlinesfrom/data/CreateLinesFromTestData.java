@@ -60,8 +60,9 @@ public abstract class CreateLinesFromTestData {
   public abstract Boolean isSales();
 
   public Order createOrder() {
-    Order order = OBDal.getInstance().get(Order.class,
-        isSales() ? CLFTestDataConstants.SALESORDER_ID : CLFTestDataConstants.PURCHASEORDER_ID);
+    Order order = OBDal.getInstance()
+        .get(Order.class,
+            isSales() ? CLFTestDataConstants.SALESORDER_ID : CLFTestDataConstants.PURCHASEORDER_ID);
     Order clonedOrder = (Order) DalUtil.copy(order, false);
     updateOrderHeader(clonedOrder);
     OBDal.getInstance().save(clonedOrder);
@@ -88,8 +89,9 @@ public abstract class CreateLinesFromTestData {
   }
 
   public Invoice createInvoiceHeader() {
-    Invoice invoice = OBDal.getInstance().get(Invoice.class,
-        isSales() ? CLFTestDataConstants.SALESINVOICE_ID : CLFTestDataConstants.PURCHASEINVOICE_ID);
+    Invoice invoice = OBDal.getInstance()
+        .get(Invoice.class, isSales() ? CLFTestDataConstants.SALESINVOICE_ID
+            : CLFTestDataConstants.PURCHASEINVOICE_ID);
     Invoice clonedInvoice = (Invoice) DalUtil.copy(invoice, false);
     String documentNo = FIN_Utility.getDocumentNo(clonedInvoice.getOrganization(), "ARI",
         Invoice.TABLE_NAME);
@@ -123,8 +125,8 @@ public abstract class CreateLinesFromTestData {
   protected void assertDraftOrderLines(OrderLine orderLine, OrderLineData lineData) {
     assertThat(
         getTestNumber() + ". Wrong Order Line ordered quantity = " + orderLine.getOrderedQuantity()
-            + ". Was expected " + lineData.getOrderedQuantity(), orderLine.getOrderedQuantity(),
-        comparesEqualTo(lineData.getOrderedQuantity()));
+            + ". Was expected " + lineData.getOrderedQuantity(),
+        orderLine.getOrderedQuantity(), comparesEqualTo(lineData.getOrderedQuantity()));
   }
 
   public void assertCompletedOrder(Order order) {
@@ -139,9 +141,10 @@ public abstract class CreateLinesFromTestData {
   }
 
   protected void assertCompletedOrderLines(OrderLine orderLine, OrderLineData lineData) {
-    assertThat(getTestNumber() + ". Wrong Ordered Quantity = " + orderLine.getOrderedQuantity()
-        + ". Was expected " + lineData.getOrderedQuantity(), orderLine.getOrderedQuantity(),
-        comparesEqualTo(lineData.getOrderedQuantity()));
+    assertThat(
+        getTestNumber() + ". Wrong Ordered Quantity = " + orderLine.getOrderedQuantity()
+            + ". Was expected " + lineData.getOrderedQuantity(),
+        orderLine.getOrderedQuantity(), comparesEqualTo(lineData.getOrderedQuantity()));
   }
 
   public void assertDraftInvoice(Invoice invoice) {
@@ -156,16 +159,16 @@ public abstract class CreateLinesFromTestData {
   }
 
   protected void assertDraftInvoiceLines(InvoiceLine invoiceLine, InvoiceLineData lineData) {
-    assertThat(
-        getTestNumber() + ". Wrong Invoice Line invoiced quantity = "
-            + invoiceLine.getInvoicedQuantity() + ". Was expected "
-            + lineData.getInvoicedQuantity(), invoiceLine.getInvoicedQuantity(),
-        comparesEqualTo(lineData.getInvoicedQuantity()));
+    assertThat(getTestNumber() + ". Wrong Invoice Line invoiced quantity = "
+        + invoiceLine.getInvoicedQuantity() + ". Was expected " + lineData.getInvoicedQuantity(),
+        invoiceLine.getInvoicedQuantity(), comparesEqualTo(lineData.getInvoicedQuantity()));
 
-    String orderLineIdentifier = invoiceLine.getSalesOrderLine() != null ? invoiceLine
-        .getSalesOrderLine().getIdentifier() : "";
-    assertThat(getTestNumber() + ". Wrong Invoice Line order line identifier = "
-        + orderLineIdentifier + ". Was expected " + lineData.getOrderLineIdentifier(),
+    String orderLineIdentifier = invoiceLine.getSalesOrderLine() != null
+        ? invoiceLine.getSalesOrderLine().getIdentifier()
+        : "";
+    assertThat(
+        getTestNumber() + ". Wrong Invoice Line order line identifier = " + orderLineIdentifier
+            + ". Was expected " + lineData.getOrderLineIdentifier(),
         orderLineIdentifier, comparesEqualTo(lineData.getOrderLineIdentifier()));
   }
 
@@ -181,32 +184,33 @@ public abstract class CreateLinesFromTestData {
   }
 
   protected void assertCompletedInvoiceLines(InvoiceLine invoiceLine, InvoiceLineData lineData) {
-    assertThat(
-        getTestNumber() + ". Wrong Invoice Line invoiced quantity = "
-            + invoiceLine.getInvoicedQuantity() + ". Was expected "
-            + lineData.getInvoicedQuantity(), invoiceLine.getInvoicedQuantity(),
-        comparesEqualTo(lineData.getInvoicedQuantity()));
+    assertThat(getTestNumber() + ". Wrong Invoice Line invoiced quantity = "
+        + invoiceLine.getInvoicedQuantity() + ". Was expected " + lineData.getInvoicedQuantity(),
+        invoiceLine.getInvoicedQuantity(), comparesEqualTo(lineData.getInvoicedQuantity()));
 
     // Check orderline identifier
-    String orderLineIdentifier = invoiceLine.getSalesOrderLine() != null ? invoiceLine
-        .getSalesOrderLine().getIdentifier() : "";
-    assertThat(getTestNumber() + ". Wrong Invoice Line order line identifier = "
-        + orderLineIdentifier + ". Was expected " + lineData.getOrderLineIdentifier(),
+    String orderLineIdentifier = invoiceLine.getSalesOrderLine() != null
+        ? invoiceLine.getSalesOrderLine().getIdentifier()
+        : "";
+    assertThat(
+        getTestNumber() + ". Wrong Invoice Line order line identifier = " + orderLineIdentifier
+            + ". Was expected " + lineData.getOrderLineIdentifier(),
         orderLineIdentifier, comparesEqualTo(lineData.getOrderLineIdentifier()));
 
     // Check shipment/receipt identifier
-    String shipmentInOutLineIdentifier = invoiceLine.getGoodsShipmentLine() != null ? invoiceLine
-        .getGoodsShipmentLine().getIdentifier() : "";
+    String shipmentInOutLineIdentifier = invoiceLine.getGoodsShipmentLine() != null
+        ? invoiceLine.getGoodsShipmentLine().getIdentifier()
+        : "";
     assertThat(
         getTestNumber() + ". Wrong Invoice Line shipment/receipt line identifier = "
             + shipmentInOutLineIdentifier + ". Was expected "
-            + lineData.getShipmentInOutLineIdentifier(), shipmentInOutLineIdentifier,
-        comparesEqualTo(lineData.getShipmentInOutLineIdentifier()));
+            + lineData.getShipmentInOutLineIdentifier(),
+        shipmentInOutLineIdentifier, comparesEqualTo(lineData.getShipmentInOutLineIdentifier()));
   }
 
   protected void updateOrderHeader(Order order) {
-    String documentNo = FIN_Utility.getDocumentNo(order.getOrganization(), order.getDocumentType()
-        .getDocumentCategory(), Order.TABLE_NAME);
+    String documentNo = FIN_Utility.getDocumentNo(order.getOrganization(),
+        order.getDocumentType().getDocumentCategory(), Order.TABLE_NAME);
     order.setDocumentNo(documentNo);
     order.setSummedLineAmount(BigDecimal.ZERO);
     order.setGrandTotalAmount(BigDecimal.ZERO);
@@ -221,19 +225,20 @@ public abstract class CreateLinesFromTestData {
   }
 
   public ShipmentInOut createShipmentInOut() {
-    ShipmentInOut shipmentInOut = OBDal.getInstance().get(ShipmentInOut.class,
-        isSales() ? CLFTestDataConstants.GOODS_SHIPMENT_ID : CLFTestDataConstants.GOODS_RECEIPT_ID);
+    ShipmentInOut shipmentInOut = OBDal.getInstance()
+        .get(ShipmentInOut.class, isSales() ? CLFTestDataConstants.GOODS_SHIPMENT_ID
+            : CLFTestDataConstants.GOODS_RECEIPT_ID);
     ShipmentInOut clonedShipmentInOut = (ShipmentInOut) DalUtil.copy(shipmentInOut, false);
     updateShipmentHeader(clonedShipmentInOut);
     OBDal.getInstance().save(clonedShipmentInOut);
 
-    ShipmentInOutLine shipmentInOutLine = shipmentInOut.getMaterialMgmtShipmentInOutLineList().get(
-        0);
+    ShipmentInOutLine shipmentInOutLine = shipmentInOut.getMaterialMgmtShipmentInOutLineList()
+        .get(0);
 
     for (int i = 0; i < shipmentInOutLineData.size(); i++) {
       ShipmentInOutLineData lineData = shipmentInOutLineData.get(i);
-      ShipmentInOutLine clonedShipmentInOutLine = (ShipmentInOutLine) DalUtil.copy(
-          shipmentInOutLine, false);
+      ShipmentInOutLine clonedShipmentInOutLine = (ShipmentInOutLine) DalUtil
+          .copy(shipmentInOutLine, false);
 
       clonedShipmentInOutLine.setLineNo((long) ((i + 1) * 10));
       updateShipmentLine(clonedShipmentInOutLine, lineData);
@@ -269,8 +274,8 @@ public abstract class CreateLinesFromTestData {
     shipmentInOutLine.setUOM(product.getUOM());
     shipmentInOutLine.setMovementQuantity(lineData.getMovementQuantity());
 
-    AttributeSetInstance instance = OBDal.getInstance().get(AttributeSetInstance.class,
-        CLFTestDataConstants.RMA_ATTRIBUTESET);
+    AttributeSetInstance instance = OBDal.getInstance()
+        .get(AttributeSetInstance.class, CLFTestDataConstants.RMA_ATTRIBUTESET);
     shipmentInOutLine.setAttributeSetValue(instance);
   }
 
@@ -292,8 +297,8 @@ public abstract class CreateLinesFromTestData {
     assertThat(
         getTestNumber() + ". Wrong ShipmentInOut Line Movement Quantity = "
             + shipmentInOutLine.getMovementQuantity() + ". Was expected "
-            + lineData.getMovementQuantity(), shipmentInOutLine.getMovementQuantity(),
-        comparesEqualTo(lineData.getMovementQuantity()));
+            + lineData.getMovementQuantity(),
+        shipmentInOutLine.getMovementQuantity(), comparesEqualTo(lineData.getMovementQuantity()));
   }
 
   public void assertCompletedShipmentInOut(ShipmentInOut shipmentInOut) {
@@ -315,7 +320,7 @@ public abstract class CreateLinesFromTestData {
     assertThat(
         getTestNumber() + ". Wrong ShipmentInOut Line Movement Quantity = "
             + shipmentInOutLine.getMovementQuantity() + ". Was expected "
-            + lineData.getMovementQuantity(), shipmentInOutLine.getMovementQuantity(),
-        comparesEqualTo(lineData.getMovementQuantity()));
+            + lineData.getMovementQuantity(),
+        shipmentInOutLine.getMovementQuantity(), comparesEqualTo(lineData.getMovementQuantity()));
   }
 }

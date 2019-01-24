@@ -81,8 +81,8 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
       final boolean isForceAttribute) throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType();
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils.createReferencedInventory(
-        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
+    final ReferencedInventory refInv = ReferencedInventoryTestUtils
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
     final Product product = ReferencedInventoryTestUtils.cloneProduct(productId);
     ReferencedInventoryTestUtils.receiveProduct(product, RECEIVEDQTY_10, attributeSetInstanceId);
@@ -105,8 +105,8 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     OBDal.getInstance().refresh(refInv);
     assertsGoodsMovementIsProcessed(boxMovement);
     assertsGoodsMovementNumberOfLines(boxMovement, 1);
-    assertsReferencedInventoryIsNotEmptyAndHasRightQtyAndProduct(toBinId, qtyInBox, refInv,
-        product, storageDetail);
+    assertsReferencedInventoryIsNotEmptyAndHasRightQtyAndProduct(toBinId, qtyInBox, refInv, product,
+        storageDetail);
 
     if (isPartialBoxing(qtyInBox)) {
       final List<StorageDetail> storageDetails = ReferencedInventoryTestUtils
@@ -131,14 +131,15 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
       final StorageDetail originalStorageDetail) {
     assertThat("Referenced Inventory is not empty", refInv.getMaterialMgmtStorageDetailList(),
         not(empty()));
-    assertThat("Referenced Inventory has one record", refInv.getMaterialMgmtStorageDetailList()
-        .size(), equalTo(1));
-    assertThat("Referenced Inventory has right product", refInv.getMaterialMgmtStorageDetailList()
-        .get(0).getProduct().getId(), equalTo(product.getId()));
-    assertThat("Referenced Inventory has right quantity", refInv.getMaterialMgmtStorageDetailList()
-        .get(0).getQuantityOnHand(), equalTo(qtyInBox));
-    assertThat("Referenced Inventory is in the right bin", refInv
-        .getMaterialMgmtStorageDetailList().get(0).getStorageBin().getId(), equalTo(toBinId));
+    assertThat("Referenced Inventory has one record",
+        refInv.getMaterialMgmtStorageDetailList().size(), equalTo(1));
+    assertThat("Referenced Inventory has right product",
+        refInv.getMaterialMgmtStorageDetailList().get(0).getProduct().getId(),
+        equalTo(product.getId()));
+    assertThat("Referenced Inventory has right quantity",
+        refInv.getMaterialMgmtStorageDetailList().get(0).getQuantityOnHand(), equalTo(qtyInBox));
+    assertThat("Referenced Inventory is in the right bin",
+        refInv.getMaterialMgmtStorageDetailList().get(0).getStorageBin().getId(), equalTo(toBinId));
   }
 
   void assertsAttributeSetIsValid(final ReferencedInventory refInv,
@@ -148,10 +149,11 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     assertThat("Storage Detail attribute set is not zero", attributeSetValue.getId(),
         not(equalTo("0")));
 
-    assertThat("New attribute set is related to the referenced inventory", attributeSetValue
-        .getReferencedInventory().getId(), equalTo(refInv.getId()));
-    assertThat("New attribute set is related to cloned one", ReferencedInventoryUtil
-        .getParentAttributeSetInstance(boxedStorageDetail).getId(), equalTo(originalAttributeId));
+    assertThat("New attribute set is related to the referenced inventory",
+        attributeSetValue.getReferencedInventory().getId(), equalTo(refInv.getId()));
+    assertThat("New attribute set is related to cloned one",
+        ReferencedInventoryUtil.getParentAttributeSetInstance(boxedStorageDetail).getId(),
+        equalTo(originalAttributeId));
     assertThat("New attribute set description contains referenced inventory string",
         attributeSetValue.getDescription(),
         endsWith(ReferencedInventoryUtil.REFERENCEDINVENTORYPREFIX + refInv.getSearchKey()
@@ -179,8 +181,8 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
             sd.getReferencedInventory(), nullValue());
         assertThat("Storage detail qty is original - boxed", RECEIVEDQTY_10.subtract(qtyInBox),
             equalTo(sd.getQuantityOnHand()));
-        assertThat("Second storage detail is in old bin", originalStorageBinId, equalTo(sd
-            .getStorageBin().getId()));
+        assertThat("Second storage detail is in old bin", originalStorageBinId,
+            equalTo(sd.getStorageBin().getId()));
       }
     }
   }
@@ -193,9 +195,8 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
 
   private void assertsNewReservationAllocatedFlag(final BigDecimal reservationQty,
       final boolean isAllocated, ReferencedInventory refInv) {
-    for (StorageDetail sd : ReferencedInventoryTestUtils
-        .getAvailableStorageDetailsOrderByQtyOnHand(refInv.getMaterialMgmtStorageDetailList()
-            .get(0).getProduct())) {
+    for (StorageDetail sd : ReferencedInventoryTestUtils.getAvailableStorageDetailsOrderByQtyOnHand(
+        refInv.getMaterialMgmtStorageDetailList().get(0).getProduct())) {
       for (ReservationStock rs : ReservationUtils.getReservationStockFromStorageDetail(sd)) {
         assertThat("Allocated flag is properly set", isAllocated, equalTo(rs.isAllocated()));
       }
@@ -214,8 +215,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
           assertThat("No reservation linked to boxed storage detail", sd.getReservedQty(),
               equalTo(BigDecimal.ZERO));
         } else {
-          assertThat("Expected reservation qty linked to boxed storage detail",
-              sd.getReservedQty(),
+          assertThat("Expected reservation qty linked to boxed storage detail", sd.getReservedQty(),
               equalTo(reservationQty.subtract(RECEIVEDQTY_10.subtract(qtyInBox))));
         }
       } else {
@@ -225,8 +225,8 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
               sd.getReservedQty(), equalTo(reservationQty));
         } else {
           assertThat("Expected reservation qty linked to not boxed storage detail",
-              sd.getReservedQty(), equalTo(reservationQty.subtract(reservationQty
-                  .subtract(RECEIVEDQTY_10.subtract(qtyInBox)))));
+              sd.getReservedQty(), equalTo(reservationQty
+                  .subtract(reservationQty.subtract(RECEIVEDQTY_10.subtract(qtyInBox)))));
         }
       }
     }

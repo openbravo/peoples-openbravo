@@ -408,7 +408,8 @@ public class DalUtil {
    * @see #repairReferences(Map)
    */
   public static BaseOBObject copyToTarget(BaseOBObject source, BaseOBObject target,
-      boolean copyChildren, Map<BaseOBObject, BaseOBObject> fromTo, List<String> notCopiedProperties) {
+      boolean copyChildren, Map<BaseOBObject, BaseOBObject> fromTo,
+      List<String> notCopiedProperties) {
 
     fromTo.put(source, target);
     for (final Property p : source.getEntity().getProperties()) {
@@ -464,8 +465,9 @@ public class DalUtil {
   // TODO: this can be done nicer with an annotation but then
   // jdk1.5 is a prerequisite
   public static String getEntityName(Object o) {
-    if (o instanceof HibernateProxy)
+    if (o instanceof HibernateProxy) {
       return getEntityName(((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass());
+    }
     return getEntityName(o.getClass());
   }
 
@@ -498,14 +500,16 @@ public class DalUtil {
    */
   public static Serializable getReferencedPropertyValue(Property referencingProperty,
       Object referedObject) {
-    Check.isTrue(referencingProperty.getReferencedProperty() != null, "This property "
-        + referencingProperty + " does not have a referenced Property");
+    Check.isTrue(referencingProperty.getReferencedProperty() != null,
+        "This property " + referencingProperty + " does not have a referenced Property");
     final Property referencedProperty = referencingProperty.getReferencedProperty();
     if (referencedProperty.isId()) {
-      if (referedObject instanceof HibernateProxy)
+      if (referedObject instanceof HibernateProxy) {
         return ((HibernateProxy) referedObject).getHibernateLazyInitializer().getIdentifier();
-      if (referedObject instanceof BaseOBObject)
+      }
+      if (referedObject instanceof BaseOBObject) {
         return (Serializable) ((BaseOBObject) referedObject).getId();
+      }
     } else if (referedObject instanceof BaseOBObject) {
       return (Serializable) ((BaseOBObject) referedObject).get(referencedProperty.getName());
     }

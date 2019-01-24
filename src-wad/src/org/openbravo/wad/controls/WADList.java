@@ -32,6 +32,7 @@ public class WADList extends WADControl {
     initialize();
   }
 
+  @Override
   public void initialize() {
     generateJSCode();
   }
@@ -43,7 +44,8 @@ public class WADList extends WADControl {
       text.append(")==null || inputValue(frm.inp");
       text.append(getData("ColumnNameInp"));
       text.append(")==\"\") {\n");
-      text.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp"))
+      text.append("    setWindowElementFocus(frm.inp")
+          .append(getData("ColumnNameInp"))
           .append(");\n");
       text.append("    showJSMessage(1);\n");
       text.append("    return false;\n");
@@ -57,41 +59,49 @@ public class WADList extends WADControl {
     setCalloutJS();
   }
 
+  @Override
   public String getType() {
     return "Combo";
   }
 
+  @Override
   public String editMode() {
     String[] discard = { "" };
-    if (getData("IsMandatory").equals("Y"))
+    if (getData("IsMandatory").equals("Y")) {
       discard[0] = "fieldBlankSection";
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADList", discard).createXmlDocument();
+    }
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADList", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     String length = getData("DisplayLength");
-    if (!length.endsWith("%"))
+    if (!length.endsWith("%")) {
       length += "px";
+    }
     xmlDocument.setParameter("size", getData("CssSize"));
 
     String auxClassName = "";
-    if (getData("IsMandatory").equals("Y"))
+    if (getData("IsMandatory").equals("Y")) {
       auxClassName += "Key";
-    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"))
+    }
+    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")) {
       auxClassName += "ReadOnly";
-    else if (getData("IsUpdateable").equals("N"))
+    } else if (getData("IsUpdateable").equals("N")) {
       auxClassName += "NoUpdatable";
+    }
     xmlDocument.setParameter("myClass", auxClassName);
 
     if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")
-        || getData("IsUpdateable").equals("N"))
+        || getData("IsUpdateable").equals("N")) {
       xmlDocument.setParameter("disabled", "Y");
-    else
+    } else {
       xmlDocument.setParameter("disabled", "N");
-    // if (getData("IsMandatory").equals("Y"))
-    // xmlDocument.setParameter("required", "Y");
-    // else xmlDocument.setParameter("required", "N");
+      // if (getData("IsMandatory").equals("Y"))
+      // xmlDocument.setParameter("required", "Y");
+      // else xmlDocument.setParameter("required", "N");
+    }
 
     StringBuffer text = new StringBuffer();
     if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")
@@ -104,34 +114,41 @@ public class WADList extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String newMode() {
     String[] discard = { "" };
-    if (getData("IsMandatory").equals("Y"))
+    if (getData("IsMandatory").equals("Y")) {
       discard[0] = "fieldBlankSection";
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADList", discard).createXmlDocument();
+    }
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADList", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     String length = getData("DisplayLength");
-    if (!length.endsWith("%"))
+    if (!length.endsWith("%")) {
       length += "px";
+    }
     xmlDocument.setParameter("size", getData("CssSize"));
 
     String auxClassName = "";
-    if (getData("IsMandatory").equals("Y"))
+    if (getData("IsMandatory").equals("Y")) {
       auxClassName += "Key";
-    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"))
+    }
+    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")) {
       auxClassName += "ReadOnly";
+    }
     xmlDocument.setParameter("myClass", auxClassName);
 
-    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"))
+    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")) {
       xmlDocument.setParameter("disabled", "Y");
-    else
+    } else {
       xmlDocument.setParameter("disabled", "N");
-    // if (getData("IsMandatory").equals("Y"))
-    // xmlDocument.setParameter("required", "Y");
-    // else xmlDocument.setParameter("required", "N");
+      // if (getData("IsMandatory").equals("Y"))
+      // xmlDocument.setParameter("required", "Y");
+      // else xmlDocument.setParameter("required", "N");
+    }
 
     StringBuffer text = new StringBuffer();
     if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")) {
@@ -143,6 +160,7 @@ public class WADList extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String toXml() {
     StringBuffer text = new StringBuffer();
     if (getData("IsParameter").equals("Y")) {
@@ -151,7 +169,8 @@ public class WADList extends WADControl {
       if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")
           || getData("IsUpdateable").equals("N")) {
         text.append("\n<PARAMETER id=\"report").append(getData("ColumnName"));
-        text.append("_S\" name=\"report").append(getData("ColumnName"))
+        text.append("_S\" name=\"report")
+            .append(getData("ColumnName"))
             .append("_S\" attribute=\"onchange\" replace=\"xx\"/>");
       }
     } else {
@@ -170,7 +189,8 @@ public class WADList extends WADControl {
       text.append("\" name=\"report").append(getData("ColumnName"));
       text.append("\" report=\"org/openbravo/erpCommon/reference/List\">\n");
       text.append("  <ARGUMENT name=\"parameterListSelected\" withId=\"")
-          .append(getData("ColumnName")).append("\"/>\n");
+          .append(getData("ColumnName"))
+          .append("\"/>\n");
       text.append("</SUBREPORT>");
     }
     return text.toString();

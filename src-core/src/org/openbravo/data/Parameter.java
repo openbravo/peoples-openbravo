@@ -30,8 +30,9 @@ class Parameter {
     this.strName = strName;
     this.strDefault = strDefault;
     this.strInOut = strInOut;
-    if (strOptional != null)
+    if (strOptional != null) {
       boolOptional = true;
+    }
     type = java.sql.Types.VARCHAR;
     this.strAfter = strAfter;
     this.strText = strText;

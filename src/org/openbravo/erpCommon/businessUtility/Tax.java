@@ -32,8 +32,8 @@ public class Tax {
 
   public static String get(ConnectionProvider conn, String M_Product_ID, String shipDate,
       String AD_Org_ID, String M_Warehouse_ID, String billC_BPartner_Location_ID,
-      String shipC_BPartner_Location_ID, String C_Project_ID, boolean IsSOTrx) throws IOException,
-      ServletException {
+      String shipC_BPartner_Location_ID, String C_Project_ID, boolean IsSOTrx)
+      throws IOException, ServletException {
     log4jTax.debug("Tax.get");
     return Tax.get(conn, M_Product_ID, shipDate, AD_Org_ID, M_Warehouse_ID,
         billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID, IsSOTrx, "");
@@ -41,8 +41,8 @@ public class Tax {
 
   public static String get(ConnectionProvider conn, String M_Product_ID, String shipDate,
       String AD_Org_ID, String M_Warehouse_ID, String billC_BPartner_Location_ID,
-      String shipC_BPartner_Location_ID, String C_Project_ID, boolean IsSOTrx, boolean forcedCashVAT)
-      throws IOException, ServletException {
+      String shipC_BPartner_Location_ID, String C_Project_ID, boolean IsSOTrx,
+      boolean forcedCashVAT) throws IOException, ServletException {
     log4jTax.debug("Tax.get (forcedCashVAT without account_id)");
     return Tax.get(conn, M_Product_ID, shipDate, AD_Org_ID, M_Warehouse_ID,
         billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID, IsSOTrx, "",
@@ -55,8 +55,8 @@ public class Tax {
       throws IOException, ServletException {
     log4jTax.debug("Tax.get");
     return TaxData.taxGet(conn, M_Product_ID, shipDate, AD_Org_ID, M_Warehouse_ID,
-        billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID,
-        (IsSOTrx ? "Y" : "N"), account_id);
+        billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID, (IsSOTrx ? "Y" : "N"),
+        account_id);
   }
 
   public static String get(ConnectionProvider conn, String M_Product_ID, String shipDate,
@@ -65,8 +65,8 @@ public class Tax {
       boolean forcedCashVAT) throws IOException, ServletException {
     log4jTax.debug("Tax.get (forcedCashVAT with account_id)");
     return TaxData.taxGet(conn, M_Product_ID, shipDate, AD_Org_ID, M_Warehouse_ID,
-        billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID,
-        (IsSOTrx ? "Y" : "N"), account_id, (forcedCashVAT ? "Y" : "N"));
+        billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID, (IsSOTrx ? "Y" : "N"),
+        account_id, (forcedCashVAT ? "Y" : "N"));
   }
 
   public static String get(ConnectionProvider conn, String M_Product_ID, String shipDate,
@@ -79,12 +79,14 @@ public class Tax {
   }
 
   public static String checkNumeric(String data) {
-    if (data == null || data.length() == 0)
+    if (data == null || data.length() == 0) {
       return "";
+    }
     StringBuffer sb = new StringBuffer();
     for (int i = 0; i < data.length(); i++) {
-      if (Character.isDigit(data.charAt(i)))
+      if (Character.isDigit(data.charAt(i))) {
         sb.append(data.charAt(i));
+      }
     }
     return sb.toString();
   }
@@ -99,8 +101,9 @@ public class Tax {
   }
 
   public static String validateCreditCardNumber(String creditCardNumber, String creditCardType) {
-    if (creditCardNumber == null || creditCardType == null)
+    if (creditCardNumber == null || creditCardType == null) {
       return "CreditCardNumberError";
+    }
     String ccStartList = "";
     String ccLengthList = "";
     // FIXME: If we know that creditCardType is M and assign some vars, why
@@ -143,11 +146,13 @@ public class Tax {
     boolean ccLengthOK = false;
     StringTokenizer st = new StringTokenizer(ccLengthList, ",", false);
     do {
-      if (!st.hasMoreTokens() || ccLengthOK)
+      if (!st.hasMoreTokens() || ccLengthOK) {
         break;
+      }
       int l = Integer.parseInt(st.nextToken());
-      if (ccLength == l)
+      if (ccLength == l) {
         ccLengthOK = true;
+      }
     } while (true);
     if (!ccLengthOK) {
       return "CreditCardNumberError";
@@ -155,10 +160,12 @@ public class Tax {
     boolean ccIdentified = false;
     st = new StringTokenizer(ccStartList, ",", false);
     do {
-      if (!st.hasMoreTokens() || ccIdentified)
+      if (!st.hasMoreTokens() || ccIdentified) {
         break;
-      if (ccNumber.startsWith(st.nextToken()))
+      }
+      if (ccNumber.startsWith(st.nextToken())) {
         ccIdentified = true;
+      }
     } while (true);
     String check = validateCreditCardNumber(ccNumber, "");
     if (check.length() != 0) {

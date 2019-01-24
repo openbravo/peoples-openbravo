@@ -25,6 +25,8 @@ import java.util.Set;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -41,14 +43,12 @@ import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.importprocess.ImportEntryManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class ProductCharacteristicValueEventHandler extends EntityPersistenceEventObserver {
   private static final int IMPORT_ENTRY_SIZE = 100;
   private static Logger logger = LogManager.getLogger();
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      ProductCharacteristicValue.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(ProductCharacteristicValue.ENTITY_NAME) };
   private static ThreadLocal<Set<String>> prodchvalueUpdated = new ThreadLocal<Set<String>>();
   @Inject
   ImportEntryManager importEntryManager;

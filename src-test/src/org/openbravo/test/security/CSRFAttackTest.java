@@ -71,10 +71,9 @@ public class CSRFAttackTest extends BaseDataSourceTestDal {
 
   private boolean requestCreateProduct(String params) {
     try {
-      JSONObject response = new JSONObject(
-          this.doRequest(
-              "/org.openbravo.service.datasource/Product?windowId=140&tabId=180&moduleId=0&_operationType=update&_noActiveFilter=true&sendOriginalIDBack=true&_extraProperties=&Constants_FIELDSEPARATOR=%24&_className=OBViewDataSource&Constants_IDENTIFIER=_identifier&isc_dataFormat=json",
-              params, 200, "POST", "application/json")).getJSONObject("response");
+      JSONObject response = new JSONObject(this.doRequest(
+          "/org.openbravo.service.datasource/Product?windowId=140&tabId=180&moduleId=0&_operationType=update&_noActiveFilter=true&sendOriginalIDBack=true&_extraProperties=&Constants_FIELDSEPARATOR=%24&_className=OBViewDataSource&Constants_IDENTIFIER=_identifier&isc_dataFormat=json",
+          params, 200, "POST", "application/json")).getJSONObject("response");
 
       return isResponseOk(response);
     } catch (Exception e) {

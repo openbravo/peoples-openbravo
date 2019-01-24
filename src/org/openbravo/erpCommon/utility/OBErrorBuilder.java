@@ -47,8 +47,8 @@ public class OBErrorBuilder {
 
     // XXX don't we have any AssetUtils class in OB ?
     if (type == null || type.isEmpty() || messageText.length == 0) {
-      throw new IllegalArgumentException(String.format(
-          "Illegal arguments provided: type [%s], textMessages [%s]", type, messageText));
+      throw new IllegalArgumentException(String
+          .format("Illegal arguments provided: type [%s], textMessages [%s]", type, messageText));
     }
 
     if (message == null) {
@@ -57,8 +57,8 @@ public class OBErrorBuilder {
       newMessage.setType(type);
       return newMessage;
     } else {
-      message.setMessage(constructTextMessage(message.getMessage(),
-          constructTextMessage(messageText)));
+      message.setMessage(
+          constructTextMessage(message.getMessage(), constructTextMessage(messageText)));
       // change message type if needed
       final MessageType curType = MessageType.valueOf(message.getType());
       final MessageType newType = MessageType.valueOf(type);

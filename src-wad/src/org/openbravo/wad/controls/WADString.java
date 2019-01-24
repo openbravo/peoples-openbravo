@@ -34,24 +34,30 @@ public class WADString extends WADControl {
     initialize();
   }
 
+  @Override
   public void initialize() {
     generateJSCode();
     this.button = new WADFieldButton("Password", getData("ColumnName"), getData("ColumnNameInp"),
-        getData("Name"), "openServletNewWindow('BUTTON" + getData("ColumnName") + "', false, '"
-            + getData("TabName") + "_Edition.html', 'BUTTON', null, "
-            + getData("IsAutosave").equals("Y") + ", 300, 600);");
+        getData("Name"),
+        "openServletNewWindow('BUTTON" + getData("ColumnName") + "', false, '" + getData("TabName")
+            + "_Edition.html', 'BUTTON', null, " + getData("IsAutosave").equals("Y")
+            + ", 300, 600);");
   }
 
   private void generateJSCode() {
     addImport("ValidationTextBox", "../../../../../web/js/default/ValidationTextBox.js");
     StringBuffer validation = new StringBuffer();
     if (getData("IsMandatory").equals("Y")) {
-      validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp"))
-          .append(")==null || inputValue(frm.inp").append(getData("ColumnNameInp"))
+      validation.append("  if (inputValue(frm.inp")
+          .append(getData("ColumnNameInp"))
+          .append(")==null || inputValue(frm.inp")
+          .append(getData("ColumnNameInp"))
           .append(")==\"\") {\n");
-      if (getData("IsDisplayed").equals("Y"))
-        validation.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp"))
+      if (getData("IsDisplayed").equals("Y")) {
+        validation.append("    setWindowElementFocus(frm.inp")
+            .append(getData("ColumnNameInp"))
             .append(");\n");
+      }
       validation.append("    showJSMessage(1);\n");
       validation.append("    return false;\n");
       validation.append("  }\n");
@@ -60,10 +66,12 @@ public class WADString extends WADControl {
     setCalloutJS();
   }
 
+  @Override
   public String getType() {
     return "TextBox_btn";
   }
 
+  @Override
   public String editMode() {
     XmlDocument xmlDocument = null;
     String textButton = "";
@@ -81,17 +89,19 @@ public class WADString extends WADControl {
         textButton = this.button.toString();
         buttonClass = this.button.getType();
       }
-      xmlDocument = getReportEngine().readXmlTemplate(
-          "org/openbravo/wad/controls/WADStringEncrypted", discard).createXmlDocument();
-      xmlDocument
-          .setParameter("hasButton", (textButton.equals("") ? "TextButton_ContentCell" : ""));
+      xmlDocument = getReportEngine()
+          .readXmlTemplate("org/openbravo/wad/controls/WADStringEncrypted", discard)
+          .createXmlDocument();
+      xmlDocument.setParameter("hasButton",
+          (textButton.equals("") ? "TextButton_ContentCell" : ""));
       xmlDocument.setParameter("hasButton2", (buttonClass.equals("") ? "0" : "1"));
       xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
       xmlDocument.setParameter("button", textButton);
       isDisabled = true;
     } else {
-      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADString",
-          discard).createXmlDocument();
+      xmlDocument = getReportEngine()
+          .readXmlTemplate("org/openbravo/wad/controls/WADString", discard)
+          .createXmlDocument();
       xmlDocument.setParameter("type", type);
     }
 
@@ -100,9 +110,10 @@ public class WADString extends WADControl {
     xmlDocument.setParameter("size", (textButton.equals("") ? "" : "btn_") + getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
 
-    if (!isDisabled)
-      isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData(
-          "IsUpdateable").equals("N"));
+    if (!isDisabled) {
+      isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")
+          || getData("IsUpdateable").equals("N"));
+    }
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
     if (isDisabled) {
       xmlDocument.setParameter("required", "false");
@@ -121,6 +132,7 @@ public class WADString extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String newMode() {
     XmlDocument xmlDocument = null;
     String textButton = "";
@@ -137,17 +149,19 @@ public class WADString extends WADControl {
         textButton = this.button.toString();
         buttonClass = this.button.getType();
       }
-      xmlDocument = getReportEngine().readXmlTemplate(
-          "org/openbravo/wad/controls/WADStringEncrypted", discard).createXmlDocument();
-      xmlDocument
-          .setParameter("hasButton", (textButton.equals("") ? "TextButton_ContentCell" : ""));
+      xmlDocument = getReportEngine()
+          .readXmlTemplate("org/openbravo/wad/controls/WADStringEncrypted", discard)
+          .createXmlDocument();
+      xmlDocument.setParameter("hasButton",
+          (textButton.equals("") ? "TextButton_ContentCell" : ""));
       xmlDocument.setParameter("hasButton2", (buttonClass.equals("") ? "0" : "1"));
       xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
       xmlDocument.setParameter("button", textButton);
       isDisabled = true;
     } else {
-      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADString",
-          discard).createXmlDocument();
+      xmlDocument = getReportEngine()
+          .readXmlTemplate("org/openbravo/wad/controls/WADString", discard)
+          .createXmlDocument();
     }
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
@@ -155,8 +169,9 @@ public class WADString extends WADControl {
     xmlDocument.setParameter("size", (textButton.equals("") ? "" : "btn_") + getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
 
-    if (!isDisabled)
+    if (!isDisabled) {
       isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));
+    }
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
     if (isDisabled) {
       xmlDocument.setParameter("required", "false");

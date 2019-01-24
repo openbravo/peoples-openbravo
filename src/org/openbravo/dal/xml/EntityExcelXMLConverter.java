@@ -75,12 +75,14 @@ public class EntityExcelXMLConverter implements OBNotSingleton {
   private void initialize() throws Exception {
     listRefTranslations.clear();
 
-    String dateFormatStr = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormatStr = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     dateFormatStr = dateFormatStr.replace("MM", "M");
     dateFormatStr = dateFormatStr.replace("dd", "d");
 
-    String dateTimeFormatStr = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateTimeFormatStr = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateTimeFormat.java");
     dateTimeFormatStr = dateTimeFormatStr.replace("MM", "M");
     dateTimeFormatStr = dateTimeFormatStr.replace("dd", "d");
@@ -117,16 +119,16 @@ public class EntityExcelXMLConverter implements OBNotSingleton {
       final AttributesImpl rootAttrs = new AttributesImpl();
       rootAttrs.addAttribute("", "", "xmlns:xsi", "CDATA", XMLConstants.XSI_NAMESPACE);
 
-      xmlHandler.startElement(XMLConstants.OPENBRAVO_NAMESPACE, XMLConstants.OB_ROOT_ELEMENT, "ob:"
-          + XMLConstants.OB_ROOT_ELEMENT, rootAttrs);
+      xmlHandler.startElement(XMLConstants.OPENBRAVO_NAMESPACE, XMLConstants.OB_ROOT_ELEMENT,
+          "ob:" + XMLConstants.OB_ROOT_ELEMENT, rootAttrs);
 
       for (BaseOBObject bob : toProcess) {
         export(bob);
         getOutput().flush();
       }
 
-      xmlHandler.endElement("http://www.openbravo.com", XMLConstants.OB_ROOT_ELEMENT, "ob:"
-          + XMLConstants.OB_ROOT_ELEMENT);
+      xmlHandler.endElement("http://www.openbravo.com", XMLConstants.OB_ROOT_ELEMENT,
+          "ob:" + XMLConstants.OB_ROOT_ELEMENT);
       xmlHandler.endDocument();
     } catch (Exception e) {
       throw new EntityXMLException(e);

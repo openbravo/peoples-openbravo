@@ -25,6 +25,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -33,8 +35,6 @@ import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class AddPaymentReadOnlyLogicsExpression implements FilterExpression {
   private static final Logger log = LogManager.getLogger();
@@ -57,24 +57,24 @@ public class AddPaymentReadOnlyLogicsExpression implements FilterExpression {
       Parameters param = Parameters.getParameter(strCurrentParam);
       try {
         switch (param) {
-        case PaymentDocumentNo:
-          return handler.getPaymentDocumentNoReadOnlyLogic(requestMap) ? "Y" : "N";
-        case ReceivedFrom:
-          return handler.getReceivedFromReadOnlyLogic(requestMap) ? "Y" : "N";
-        case PaymentMethod:
-          return handler.getPaymentMethodReadOnlyLogic(requestMap) ? "Y" : "N";
-        case ActualPayment:
-          return handler.getActualPaymentReadOnlyLogic(requestMap) ? "Y" : "N";
-        case ConvertedAmount:
-          return handler.getConvertedAmountReadOnlyLogic(requestMap) ? "Y" : "N";
-        case PaymentDate:
-          return handler.getPaymentDateReadOnlyLogic(requestMap) ? "Y" : "N";
-        case FinancialAccount:
-          return handler.getFinancialAccountReadOnlyLogic(requestMap) ? "Y" : "N";
-        case ConversionRate:
-          return handler.getConversionRateReadOnlyLogic(requestMap) ? "Y" : "N";
-        case Currency:
-          return handler.getCurrencyReadOnlyLogic(requestMap) ? "Y" : "N";
+          case PaymentDocumentNo:
+            return handler.getPaymentDocumentNoReadOnlyLogic(requestMap) ? "Y" : "N";
+          case ReceivedFrom:
+            return handler.getReceivedFromReadOnlyLogic(requestMap) ? "Y" : "N";
+          case PaymentMethod:
+            return handler.getPaymentMethodReadOnlyLogic(requestMap) ? "Y" : "N";
+          case ActualPayment:
+            return handler.getActualPaymentReadOnlyLogic(requestMap) ? "Y" : "N";
+          case ConvertedAmount:
+            return handler.getConvertedAmountReadOnlyLogic(requestMap) ? "Y" : "N";
+          case PaymentDate:
+            return handler.getPaymentDateReadOnlyLogic(requestMap) ? "Y" : "N";
+          case FinancialAccount:
+            return handler.getFinancialAccountReadOnlyLogic(requestMap) ? "Y" : "N";
+          case ConversionRate:
+            return handler.getConversionRateReadOnlyLogic(requestMap) ? "Y" : "N";
+          case Currency:
+            return handler.getCurrencyReadOnlyLogic(requestMap) ? "Y" : "N";
         }
       } catch (Exception e) {
         log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(),
@@ -118,11 +118,15 @@ public class AddPaymentReadOnlyLogicsExpression implements FilterExpression {
   }
 
   private enum Parameters {
-    PaymentDocumentNo("payment_documentno_readonly_logic"), ReceivedFrom(
-        "received_from_readonly_logic"), PaymentMethod("payment_method_readonly_logic"), ActualPayment(
-        "actual_payment_readonly_logic"), ConvertedAmount("converted_amount_readonly_logic"), PaymentDate(
-        "payment_date_readonly_logic"), FinancialAccount("fin_financial_account_id_readonly_logic"), ConversionRate(
-        "conversion_rate_readonly_logic"), Currency("c_currency_id_readonly_logic");
+    PaymentDocumentNo("payment_documentno_readonly_logic"),
+    ReceivedFrom("received_from_readonly_logic"),
+    PaymentMethod("payment_method_readonly_logic"),
+    ActualPayment("actual_payment_readonly_logic"),
+    ConvertedAmount("converted_amount_readonly_logic"),
+    PaymentDate("payment_date_readonly_logic"),
+    FinancialAccount("fin_financial_account_id_readonly_logic"),
+    ConversionRate("conversion_rate_readonly_logic"),
+    Currency("c_currency_id_readonly_logic");
 
     private String columnname;
 

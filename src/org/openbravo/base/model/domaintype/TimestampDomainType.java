@@ -36,6 +36,7 @@ public class TimestampDomainType extends BasePrimitiveDomainType {
   /**
    * @return class of the {@link Timestamp}
    */
+  @Override
   public Class<?> getPrimitiveType() {
     return Timestamp.class;
   }

@@ -53,6 +53,7 @@ public class ModuleReferenceDataClientTree extends ModuleTree {
   /**
    * sets to data the root tree
    */
+  @Override
   public void setRootTree() {
     try {
       data = ModuleReferenceDataClientTreeData.select(conn, (lang.equals("") ? "en_US" : lang));
@@ -65,6 +66,7 @@ public class ModuleReferenceDataClientTree extends ModuleTree {
     }
   }
 
+  @Override
   protected void setLevel(int level) {
     super.setLevel(level);
 
@@ -79,11 +81,12 @@ public class ModuleReferenceDataClientTree extends ModuleTree {
    * 
    * @param nodeId
    */
+  @Override
   public void setSubTree(String nodeId, String level) {
     setIsSubTree(true);
     try {
-      data = ModuleReferenceDataClientTreeData.selectSubTree(conn, (lang.equals("") ? "en_US"
-          : lang), nodeId);
+      data = ModuleReferenceDataClientTreeData.selectSubTree(conn,
+          (lang.equals("") ? "en_US" : lang), nodeId);
       // addLinks();
       setLevel(Integer.valueOf(level).intValue());
       setIcons();
@@ -99,21 +102,27 @@ public class ModuleReferenceDataClientTree extends ModuleTree {
    * @param node
    * @return a HTML String with the description for the given node
    */
+  @Override
   public String getHTMLDescription(String node) {
     try {
 
       ModuleReferenceDataClientTreeData[] moduleReferenceDataClientTreeData = ModuleReferenceDataClientTreeData
           .selectDescription(conn, lang, node);
       String discard[] = { "" };
-      if (moduleReferenceDataClientTreeData != null && moduleReferenceDataClientTreeData.length > 0 && moduleReferenceDataClientTreeData[0].linkname != null
-          && !moduleReferenceDataClientTreeData[0].linkname.equals(""))
-        moduleReferenceDataClientTreeData[0].statusName = "";
       if (moduleReferenceDataClientTreeData != null && moduleReferenceDataClientTreeData.length > 0
-          && (moduleReferenceDataClientTreeData[0].updateAvailable == null || moduleReferenceDataClientTreeData[0].updateAvailable.equals("")))
+          && moduleReferenceDataClientTreeData[0].linkname != null
+          && !moduleReferenceDataClientTreeData[0].linkname.equals("")) {
+        moduleReferenceDataClientTreeData[0].statusName = "";
+      }
+      if (moduleReferenceDataClientTreeData != null && moduleReferenceDataClientTreeData.length > 0
+          && (moduleReferenceDataClientTreeData[0].updateAvailable == null
+              || moduleReferenceDataClientTreeData[0].updateAvailable.equals(""))) {
         discard[0] = "update";
+      }
 
-      XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/modules/ModuleTreeDescription", discard).createXmlDocument();
+      XmlDocument xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/modules/ModuleTreeDescription", discard)
+          .createXmlDocument();
       xmlDocument.setData("structureDesc", moduleReferenceDataClientTreeData);
       return xmlDocument.print();
 

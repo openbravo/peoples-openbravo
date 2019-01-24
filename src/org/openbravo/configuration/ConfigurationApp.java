@@ -149,6 +149,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This is the main method that is invoked by ant setup task.
    * 
    */
+  @Override
   public void execute() {
     Project p = getProject();
     if (isNonInteractive) {
@@ -183,51 +184,51 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private void runSetupWizard(Project p) {
     while (mainFlowOption != EXIT_APP) {
       switch (mainFlowOption) {
-      case WELCOME:
-        showWelcome(p);
-        showAndAcceptLicense(p);
-        break;
-      case MAIN_MENU:
-        showMainMenu(p);
-        break;
-      case SELECT_OPTION_MAIN_MENU:
-        selectOptionMainMenu(p);
-        break;
-      case STEP_BY_STEP:
-        configureStepByStep(p);
-        break;
-      case PREVIEW_CONFIGURATION_PROPERTIES:
-        previewConfigurationOptions(p);
-        break;
-      case ASKING_CHANGE_OPTION:
-        askForChangeAnOption(p);
-        break;
-      case CHANGE_AN_OPTION:
-        changeAnOptionFirst(p);
-        break;
-      case CHANGE_OPTIONS_ORACLE:
-        changeAllOptionsDatabase(p, optionOracle);
-        break;
-      case CHANGE_OPTIONS_POSTGRESQL:
-        changeAllOptionsDatabase(p, optionPostgreSQL);
-        break;
-      case FINAL_MENU:
-        showFinalMenu(p);
-        break;
-      case CHANGE_AN_OPTION_DB:
-        changeAnOptionDatabase(p);
-        break;
-      case WRITE_PROPERTIES:
-        // All options have been selected... configure Openbravo.properties file.
-        setValuesInOpenbravoProperties(p);
-        // Configure common.component file.
-        setValuesInCommonComponent(p);
-        break;
-      case FINISH_CONFIGURATION:
-        finishConfigurationProcess(p);
-        break;
-      case CONFIRM_EXIT:
-        reConfirmExit(p);
+        case WELCOME:
+          showWelcome(p);
+          showAndAcceptLicense(p);
+          break;
+        case MAIN_MENU:
+          showMainMenu(p);
+          break;
+        case SELECT_OPTION_MAIN_MENU:
+          selectOptionMainMenu(p);
+          break;
+        case STEP_BY_STEP:
+          configureStepByStep(p);
+          break;
+        case PREVIEW_CONFIGURATION_PROPERTIES:
+          previewConfigurationOptions(p);
+          break;
+        case ASKING_CHANGE_OPTION:
+          askForChangeAnOption(p);
+          break;
+        case CHANGE_AN_OPTION:
+          changeAnOptionFirst(p);
+          break;
+        case CHANGE_OPTIONS_ORACLE:
+          changeAllOptionsDatabase(p, optionOracle);
+          break;
+        case CHANGE_OPTIONS_POSTGRESQL:
+          changeAllOptionsDatabase(p, optionPostgreSQL);
+          break;
+        case FINAL_MENU:
+          showFinalMenu(p);
+          break;
+        case CHANGE_AN_OPTION_DB:
+          changeAnOptionDatabase(p);
+          break;
+        case WRITE_PROPERTIES:
+          // All options have been selected... configure Openbravo.properties file.
+          setValuesInOpenbravoProperties(p);
+          // Configure common.component file.
+          setValuesInCommonComponent(p);
+          break;
+        case FINISH_CONFIGURATION:
+          finishConfigurationProcess(p);
+          break;
+        case CONFIRM_EXIT:
+          reConfirmExit(p);
       }
     }
     closeExitProgram(p);
@@ -257,14 +258,15 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     File file = new File(COMMON_COMPONENT);
     // Get new context name to replace.
     String contextDeploy = replaceProperties.get(PREFIX_CONTEXT_NAME);
-    if (!(searchOptionsProperties(file, PREFIX_COMMON_COMPONENT_DEPLOY, p).equals(
-        contextDeploy + SUFFIX_COMMON_COMPONENT_DEPLOY) && searchOptionsProperties(file,
-        PREFIX_COMMON_COMPONENT_CONTEXT, p).equals(contextDeploy + SUFFIX_COMMON_COMPONENT_CONTEXT))) {
+    if (!(searchOptionsProperties(file, PREFIX_COMMON_COMPONENT_DEPLOY, p)
+        .equals(contextDeploy + SUFFIX_COMMON_COMPONENT_DEPLOY)
+        && searchOptionsProperties(file, PREFIX_COMMON_COMPONENT_CONTEXT, p)
+            .equals(contextDeploy + SUFFIX_COMMON_COMPONENT_CONTEXT))) {
       // Update new contextDeploy in common_component file: context-root and deploy-name
-      replaceGeneralProperty(COMMON_COMPONENT, PREFIX_COMMON_COMPONENT_DEPLOY, contextDeploy
-          + SUFFIX_COMMON_COMPONENT_DEPLOY, p);
-      replaceGeneralProperty(COMMON_COMPONENT, PREFIX_COMMON_COMPONENT_CONTEXT, contextDeploy
-          + SUFFIX_COMMON_COMPONENT_CONTEXT, p);
+      replaceGeneralProperty(COMMON_COMPONENT, PREFIX_COMMON_COMPONENT_DEPLOY,
+          contextDeploy + SUFFIX_COMMON_COMPONENT_DEPLOY, p);
+      replaceGeneralProperty(COMMON_COMPONENT, PREFIX_COMMON_COMPONENT_CONTEXT,
+          contextDeploy + SUFFIX_COMMON_COMPONENT_CONTEXT, p);
     }
   }
 
@@ -474,20 +476,20 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       }
     } while (!menuOptionOk);
     switch (optionConfigure) {
-    case 1:
-      // Accept
-      mainFlowOption = WRITE_PROPERTIES;
-      break;
-    case 2:
-      // Preview configuration
-      mainFlowOption = PREVIEW_CONFIGURATION_PROPERTIES;
-      break;
-    case 3:
-      // Reconfirm exit
-      mainFlowOption = CONFIRM_EXIT;
-      break;
-    default:
-      p.log("Choose a real option: ");
+      case 1:
+        // Accept
+        mainFlowOption = WRITE_PROPERTIES;
+        break;
+      case 2:
+        // Preview configuration
+        mainFlowOption = PREVIEW_CONFIGURATION_PROPERTIES;
+        break;
+      case 3:
+        // Reconfirm exit
+        mainFlowOption = CONFIRM_EXIT;
+        break;
+      default:
+        p.log("Choose a real option: ");
     }
   }
 
@@ -603,14 +605,14 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
     if (chosenDatabase.equals(ORACLE)) {
       for (ConfigureOption previewOptionsLast : optionOracle) {
-        printOptionWithStyle(numberOption, previewOptionsLast.getAskInfo() + " "
-            + previewOptionsLast.getChosenOption(), p);
+        printOptionWithStyle(numberOption,
+            previewOptionsLast.getAskInfo() + " " + previewOptionsLast.getChosenOption(), p);
         numberOption = numberOption + 1;
       }
     } else if (chosenDatabase.equals(POSTGRE_SQL)) {
       for (ConfigureOption previewOptionsLast : optionPostgreSQL) {
-        printOptionWithStyle(numberOption, previewOptionsLast.getAskInfo() + " "
-            + previewOptionsLast.getChosenOption(), p);
+        printOptionWithStyle(numberOption,
+            previewOptionsLast.getAskInfo() + " " + previewOptionsLast.getChosenOption(), p);
         numberOption = numberOption + 1;
       }
     }
@@ -750,9 +752,9 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This method prints a message.
    */
   static void printMessage(String message, Project p) {
-    p.log("---------------------------------------------------------------------------- \n"
-        + message
-        + "\n----------------------------------------------------------------------------");
+    p.log(
+        "---------------------------------------------------------------------------- \n" + message
+            + "\n----------------------------------------------------------------------------");
   }
 
   /**
@@ -791,7 +793,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private static void showWelcome(Project p1) {
     Scanner inp = new Scanner(System.in);
     printMessage("Welcome to the Openbravo ERP Setup Wizard.", p1);
-    p1.log("Please read the following License Agreement. You must accept the terms of this\n agreement before continuing with the installation.");
+    p1.log(
+        "Please read the following License Agreement. You must accept the terms of this\n agreement before continuing with the installation.");
     p1.log("Press [Enter] to continue:");
     inp.nextLine();
     inp.close();
@@ -828,14 +831,14 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     replaceProperties.put(PREFIX_SOURCE_PATH, getUserDir());
 
     if (dateFormat.substring(0, 1).equals("D")) {
-      replaceProperties.put(PREFIX_DATE_FORMAT_JAVA, "dd" + dateSeparator + "MM" + dateSeparator
-          + "yyyy");
+      replaceProperties.put(PREFIX_DATE_FORMAT_JAVA,
+          "dd" + dateSeparator + "MM" + dateSeparator + "yyyy");
     } else if (dateFormat.substring(0, 1).equals("M")) {
-      replaceProperties.put(PREFIX_DATE_FORMAT_JAVA, "MM" + dateSeparator + "dd" + dateSeparator
-          + "yyyy");
+      replaceProperties.put(PREFIX_DATE_FORMAT_JAVA,
+          "MM" + dateSeparator + "dd" + dateSeparator + "yyyy");
     } else if (dateFormat.substring(0, 1).equals("Y")) {
-      replaceProperties.put(PREFIX_DATE_FORMAT_JAVA, "yyyy" + dateSeparator + "MM" + dateSeparator
-          + "dd");
+      replaceProperties.put(PREFIX_DATE_FORMAT_JAVA,
+          "yyyy" + dateSeparator + "MM" + dateSeparator + "dd");
     }
 
     if (timeFormat.equals("12h")) {
@@ -863,24 +866,24 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
 
     if (dateFormat.substring(0, 1).equals("D")) {
-      replaceProperties.put(PREFIX_DATE_FORMAT_SQL, "DD" + dateSeparator + "MM" + dateSeparator
-          + "YYYY");
+      replaceProperties.put(PREFIX_DATE_FORMAT_SQL,
+          "DD" + dateSeparator + "MM" + dateSeparator + "YYYY");
     } else if (dateFormat.substring(0, 1).equals("M")) {
-      replaceProperties.put(PREFIX_DATE_FORMAT_SQL, "MM" + dateSeparator + "DD" + dateSeparator
-          + "YYYY");
+      replaceProperties.put(PREFIX_DATE_FORMAT_SQL,
+          "MM" + dateSeparator + "DD" + dateSeparator + "YYYY");
     } else if (dateFormat.substring(0, 1).equals("Y")) {
-      replaceProperties.put(PREFIX_DATE_FORMAT_SQL, "YYYY" + dateSeparator + "MM" + dateSeparator
-          + "DD");
+      replaceProperties.put(PREFIX_DATE_FORMAT_SQL,
+          "YYYY" + dateSeparator + "MM" + dateSeparator + "DD");
     }
     if (dateFormat.substring(0, 1).equals("D")) {
-      replaceProperties.put(PREFIX_DATE_FORMAT_JS, "%d" + dateSeparator + "%m" + dateSeparator
-          + "%Y");
+      replaceProperties.put(PREFIX_DATE_FORMAT_JS,
+          "%d" + dateSeparator + "%m" + dateSeparator + "%Y");
     } else if (dateFormat.substring(0, 1).equals("M")) {
-      replaceProperties.put(PREFIX_DATE_FORMAT_JS, "%m" + dateSeparator + "%d" + dateSeparator
-          + "%Y");
+      replaceProperties.put(PREFIX_DATE_FORMAT_JS,
+          "%m" + dateSeparator + "%d" + dateSeparator + "%Y");
     } else if (dateFormat.substring(0, 1).equals("Y")) {
-      replaceProperties.put(PREFIX_DATE_FORMAT_JS, "%Y" + dateSeparator + "%m" + dateSeparator
-          + "%d");
+      replaceProperties.put(PREFIX_DATE_FORMAT_JS,
+          "%Y" + dateSeparator + "%m" + dateSeparator + "%d");
     }
     replaceProperties.put(PREFIX_DATE_TIME_FORMAT_SQL, "DD-MM-YYYY HH24:MI:SS");
 
@@ -916,18 +919,18 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       }
       replaceProperties.put(PREFIX_DB_RDBMS, "ORACLE");
       replaceProperties.put(PREFIX_DB_DRIVER, "oracle.jdbc.driver.OracleDriver");
-      replaceProperties.put(PREFIX_DB_URL, "jdbc:oracle:thin:@" + serverBBDD + ":" + portBBDD + ":"
-          + nameBBDD);
+      replaceProperties.put(PREFIX_DB_URL,
+          "jdbc:oracle:thin:@" + serverBBDD + ":" + portBBDD + ":" + nameBBDD);
     } else if (database.equals(POSTGRE_SQL)) {
       if (dateFormat.substring(0, 1).equals("D")) {
-        replaceProperties.put(PREFIX_DB_SESSION, "select update_dateFormat('DD" + dateSeparator
-            + "MM" + dateSeparator + "YYYY')");
+        replaceProperties.put(PREFIX_DB_SESSION,
+            "select update_dateFormat('DD" + dateSeparator + "MM" + dateSeparator + "YYYY')");
       } else if (dateFormat.substring(0, 1).equals("M")) {
-        replaceProperties.put(PREFIX_DB_SESSION, "select update_dateFormat('MM" + dateSeparator
-            + "DD" + dateSeparator + "YYYY')");
+        replaceProperties.put(PREFIX_DB_SESSION,
+            "select update_dateFormat('MM" + dateSeparator + "DD" + dateSeparator + "YYYY')");
       } else if (dateFormat.substring(0, 1).equals("Y")) {
-        replaceProperties.put(PREFIX_DB_SESSION, "select update_dateFormat('YYYY" + dateSeparator
-            + "MM" + dateSeparator + "DD')");
+        replaceProperties.put(PREFIX_DB_SESSION,
+            "select update_dateFormat('YYYY" + dateSeparator + "MM" + dateSeparator + "DD')");
       }
       String serverBBDD = "", portBBDD = "";
       for (ConfigureOption optionLastForReplace : optionPostgreSQL) {
@@ -962,7 +965,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * @param changeOption
    *          Value to write in Openbravo.properties
    */
-  private static void replaceOptionsProperties(String searchOption, String changeOption, Project p) {
+  private static void replaceOptionsProperties(String searchOption, String changeOption,
+      Project p) {
     try {
       File fileR = new File(OPENBRAVO_PROPERTIES);
       if (!fileR.exists()) {
@@ -971,8 +975,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         fileCopyTemplate(OPENBRAVO_PROPERTIES + ".template", OPENBRAVO_PROPERTIES, p);
       }
       // Modify Openbravo.properties file if PostgreSQL's options have been disabled.
-      if (!searchOptionsProperties(fileR, PREFIX_DB_RDBMS, p).equals(
-          replaceProperties.get(PREFIX_DB_RDBMS))) {
+      if (!searchOptionsProperties(fileR, PREFIX_DB_RDBMS, p)
+          .equals(replaceProperties.get(PREFIX_DB_RDBMS))) {
         changeOraclePostgresql(p);
       }
       // write new changeOption in OPENBRAVO_PROPERTIES_AUX
@@ -1122,8 +1126,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     optChoosen.add("MMDDYYYY");
     optChoosen.add("YYYYMMDD");
     ConfigureOption o0 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
-    String compareDateformat = searchOptionsProperties(fileO, PREFIX_DATE_FORMAT_SQL, p).substring(
-        0, 1);
+    String compareDateformat = searchOptionsProperties(fileO, PREFIX_DATE_FORMAT_SQL, p)
+        .substring(0, 1);
     if (compareDateformat.equalsIgnoreCase("d")) {
       o0.setChosenString("DDMMYYYY");
     } else if (compareDateformat.equalsIgnoreCase("m")) {

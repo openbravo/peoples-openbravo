@@ -76,8 +76,8 @@ public class AllDataAllowedOrganizationsTest extends OBBaseTest {
         }
         final OrganizationEnabled orgEnabled = (OrganizationEnabled) o;
         final ClientEnabled clientEnabled = (ClientEnabled) o;
-        final OrganizationStructureProvider orgProvider = orgStructureProviders.get(clientEnabled
-            .getClient().getId());
+        final OrganizationStructureProvider orgProvider = orgStructureProviders
+            .get(clientEnabled.getClient().getId());
         for (Property property : entity.getProperties()) {
           // a many-to-one
           if (!property.isPrimitive() && !property.isOneToMany()) {

@@ -45,8 +45,8 @@ public class SL_Project_Type extends SimpleCallout {
       FieldProvider[] data = null;
       try {
         comboTableData = new ComboTableData(info.vars, this, "19", "C_ProjectType_ID", "", "",
-            Utility.getReferenceableOrg(info.vars, orgId), Utility.getContext(this, info.vars,
-                "#User_Client", windowId), 0);
+            Utility.getReferenceableOrg(info.vars, orgId),
+            Utility.getContext(this, info.vars, "#User_Client", windowId), 0);
         comboTableData.fillParameters(null, windowId, "");
         data = comboTableData.select(false);
       } catch (Exception ex) {

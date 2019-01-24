@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,8 +27,8 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
 (function (w) {
 
   w.closeSearch = function (action, value, display, parameters, wait) {
-    var length, i, hiddenInputName, targetFld = isc.OBSearchItem.openSearchItem,
-        currentValue = targetFld.getValue();
+    var length, i, hiddenInputName, targetFld = isc.OBSearchItem.openSearchItem;
+
     if (action === 'SAVE') {
       if (!targetFld.valueMap) {
         targetFld.valueMap = {};
@@ -181,10 +181,9 @@ isc.OBSearchItem.addProperties({
   },
 
   openSearchWindow: function (url, parameters, strValueID) {
-    var height, width, top, left;
-    var complementsNS4 = '';
+    var height, width;
     var auxField = '';
-    var hidden, i;
+    var i;
     var displayedValue = '';
 
     if (this.valueMap && this.valueMap[this.getValue()]) {
@@ -198,8 +197,6 @@ isc.OBSearchItem.addProperties({
       height = (screen.height - 100);
       width = 900;
     }
-    top = parseInt((screen.height - height) / 2, 10);
-    left = parseInt((screen.width - width) / 2, 10);
 
     if (isc.OBSearchItem.openedWindow) {
       if (isc.OBSearchItem.openedWindow.closeClick) {
@@ -225,9 +222,6 @@ isc.OBSearchItem.addProperties({
         //          gIsMultiLineSearch = true;
         //        }
         auxField += parameters[i] + '=' + ((parameters[i + 1] !== null) ? encodeURIComponent(parameters[i + 1]) : '');
-        if (parameters[i] === 'Command') {
-          hidden = true;
-        }
         i++;
       }
     }

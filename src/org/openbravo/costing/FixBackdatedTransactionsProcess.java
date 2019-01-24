@@ -67,8 +67,8 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
       if (jsonparams.has("fixbackdatedfrom")
           && !jsonparams.getString("fixbackdatedfrom").equals("null")) {
         try {
-          final String repairedfixbackdatedfrom = JsonUtils.convertFromXSDToJavaFormat(jsonparams
-              .getString("fixbackdatedfrom"));
+          final String repairedfixbackdatedfrom = JsonUtils
+              .convertFromXSDToJavaFormat(jsonparams.getString("fixbackdatedfrom"));
           fixbackdatedfrom = JsonUtils.createDateTimeFormat().parse(repairedfixbackdatedfrom);
         } catch (ParseException ignore) {
         }
@@ -85,8 +85,8 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
           throw new OBException(
               OBMessageUtils.parseTranslation("@FixBackdateFromBeforeStartingDate2@"));
         }
-        CostAdjustmentProcess.doGetAlgorithmAdjustmentImp(rule.getCostingAlgorithm()
-            .getJavaClassName());
+        CostAdjustmentProcess
+            .doGetAlgorithmAdjustmentImp(rule.getCostingAlgorithm().getJavaClassName());
 
         OrganizationStructureProvider osp = OBContext.getOBContext()
             .getOrganizationStructureProvider(rule.getClient().getId());
@@ -139,8 +139,8 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
           JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
 
           if (message.get("severity") != "success") {
-            throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@")
-                + ": " + costAdjHeader.getDocumentNo() + " - " + message.getString("text"));
+            throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
+                + costAdjHeader.getDocumentNo() + " - " + message.getString("text"));
           }
 
           msg.setType((String) message.get("severity"));
@@ -186,15 +186,16 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
     select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
     select.append(" where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     select.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    select.append(" and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " >= (:startDate)");
+    select.append(
+        " and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= (:startDate)");
     if (endDate != null) {
-      select.append(" and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " < (:endDate)");
+      select.append(
+          " and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < (:endDate)");
     }
     select.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
 
-    Query<MaterialTransaction> stockLinesQry = OBDal.getInstance().getSession()
+    Query<MaterialTransaction> stockLinesQry = OBDal.getInstance()
+        .getSession()
         .createQuery(select.toString(), MaterialTransaction.class);
     stockLinesQry.setParameterList("orgs", childOrgs);
     stockLinesQry.setParameter("startDate", startDate);

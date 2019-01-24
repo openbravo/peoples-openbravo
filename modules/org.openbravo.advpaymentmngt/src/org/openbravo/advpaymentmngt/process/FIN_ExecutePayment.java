@@ -72,25 +72,31 @@ public class FIN_ExecutePayment {
     this.dao = new AdvPaymentMngtDao();
     this.executionProcess = _executionProcess;
     setConstantParameters();
-    if (_parameters == null)
+    if (_parameters == null) {
       setDefaultParameters();
-    else
+    } else {
       this.parameters = _parameters;
+    }
     this.paymentRun = dao.getNewPaymentRun(sourceType, executionProcess, organization);
     Set<FIN_Payment> paymentSet = new HashSet<FIN_Payment>(payments);
-    for (FIN_Payment payment : paymentSet)
+    for (FIN_Payment payment : paymentSet) {
       dao.getNewPaymentRunPayment(paymentRun, payment);
+    }
     final List<PaymentExecutionProcessParameter> allParameters = executionProcess
         .getFinancialMgmtPaymentExecutionProcessParameterList();
-    for (PaymentExecutionProcessParameter parameter : allParameters)
-      if ("IN".equals(parameter.getParameterType()))
+    for (PaymentExecutionProcessParameter parameter : allParameters) {
+      if ("IN".equals(parameter.getParameterType())) {
         dao.getNewPaymentRunParameter(paymentRun, parameter,
             parameters.get(parameter.getSearchKey()));
-      else if ("CONSTANT".equals(parameter.getParameterType()))
+      } else if ("CONSTANT".equals(parameter.getParameterType())) {
         dao.getNewPaymentRunParameter(paymentRun, parameter, parameter.getDefaultTextValue());
+      }
+    }
     try {
       this.paymentExecutionProcess = (FIN_PaymentExecutionProcess) Class
-          .forName(executionProcess.getJavaClassName()).getDeclaredConstructor().newInstance();
+          .forName(executionProcess.getJavaClassName())
+          .getDeclaredConstructor()
+          .newInstance();
     } catch (InstantiationException e) {
       throw new NoExecutionProcessFoundException(e);
     } catch (IllegalAccessException e) {
@@ -131,9 +137,8 @@ public class FIN_ExecutePayment {
                 } else if (psd.getOrderPaymentSchedule() != null) {
                   bPartner = psd.getOrderPaymentSchedule().getOrder().getBusinessPartner();
                 }
-                if (bPartner != null
-                    && FIN_Utility.isBlockedBusinessPartner(bPartner.getId(), payment.isReceipt(),
-                        4)) {
+                if (bPartner != null && FIN_Utility.isBlockedBusinessPartner(bPartner.getId(),
+                    payment.isReceipt(), 4)) {
                   // If the Business Partner is blocked for Payments, the Payment will not be
                   // completed.
                   OBError error = new OBError();
@@ -159,8 +164,9 @@ public class FIN_ExecutePayment {
             paymentRunPayment.setMessage("@APRM_PaymentInExecution@");
             OBDal.getInstance().save(paymentRunPayment);
             OBDal.getInstance().flush();
-          } else
+          } else {
             dao.setPaymentExecuting(paymentRunPayment.getPayment(), true);
+          }
         }
 
         OBError result = paymentExecutionProcess.execute(paymentRun);
@@ -169,8 +175,9 @@ public class FIN_ExecutePayment {
             .getFinancialMgmtPaymentRunPaymentList()) {
           if (dao.isPaymentBeingExecuted(paymentRunPayment.getPayment())) {
             dao.setPaymentExecuting(paymentRunPayment.getPayment(), false);
-            if ("S".equals(paymentRunPayment.getResult()))
+            if ("S".equals(paymentRunPayment.getResult())) {
               dao.removeFromExecutionPending(paymentRunPayment.getPayment());
+            }
           }
 
           FIN_Payment payment = paymentRunPayment.getPayment();
@@ -184,7 +191,8 @@ public class FIN_ExecutePayment {
 
           if ("S".equals(paymentRunPayment.getResult())) {
             if ("PPW".equals(paymentRun.getSourceOfTheExecution())) {
-              FIN_PaymentProposal pp = getPaymentProposalFromPayment(paymentRunPayment.getPayment());
+              FIN_PaymentProposal pp = getPaymentProposalFromPayment(
+                  paymentRunPayment.getPayment());
               pp.setStatus("PPM");
               OBDal.getInstance().save(pp);
               OBDal.getInstance().flush();
@@ -197,15 +205,18 @@ public class FIN_ExecutePayment {
                   if (pd.getGLItem() != null || psd.isInvoicePaid()) {
 
                     if (FIN_Utility.isAutomaticDepositWithdrawn(paymentRunPayment.getPayment())
-                        && paymentRunPayment.getPayment().getAmount().compareTo(BigDecimal.ZERO) != 0
-                        && !StringUtils.equals(internalParameters.get("comingFrom"), "TRANSACTION")) {
+                        && paymentRunPayment.getPayment()
+                            .getAmount()
+                            .compareTo(BigDecimal.ZERO) != 0
+                        && !StringUtils.equals(internalParameters.get("comingFrom"),
+                            "TRANSACTION")) {
                       FIN_FinaccTransaction transaction = FIN_Utility.getFinAccTransaction(payment);
                       if (transaction == null) {
-                        transaction = TransactionsDao.createFinAccTransaction(paymentRunPayment
-                            .getPayment());
+                        transaction = TransactionsDao
+                            .createFinAccTransaction(paymentRunPayment.getPayment());
                       }
-                      VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get()
-                          .getRequest());
+                      VariablesSecureApp vars = new VariablesSecureApp(
+                          RequestContext.get().getRequest());
                       OBError processTransactionError = processTransaction(vars,
                           new DalConnectionProvider(), "P", transaction);
                       if (processTransactionError != null
@@ -252,20 +263,25 @@ public class FIN_ExecutePayment {
   private void setDefaultParameters() {
     final List<PaymentExecutionProcessParameter> allParameters = executionProcess
         .getFinancialMgmtPaymentExecutionProcessParameterList();
-    for (PaymentExecutionProcessParameter parameter : allParameters)
-      if ("IN".equals(parameter.getParameterType()))
-        if ("CHECK".equals(parameter.getInputType()))
+    for (PaymentExecutionProcessParameter parameter : allParameters) {
+      if ("IN".equals(parameter.getParameterType())) {
+        if ("CHECK".equals(parameter.getInputType())) {
           constantParameters.put(parameter.getSearchKey(), parameter.getDefaultValueForFlag());
-        else if ("TEXT".equals(parameter.getInputType()))
+        } else if ("TEXT".equals(parameter.getInputType())) {
           constantParameters.put(parameter.getSearchKey(), parameter.getDefaultTextValue());
+        }
+      }
+    }
   }
 
   private void setConstantParameters() {
     final List<PaymentExecutionProcessParameter> allParameters = executionProcess
         .getFinancialMgmtPaymentExecutionProcessParameterList();
-    for (PaymentExecutionProcessParameter parameter : allParameters)
-      if ("CONSTANT".equals(parameter.getParameterType()))
+    for (PaymentExecutionProcessParameter parameter : allParameters) {
+      if ("CONSTANT".equals(parameter.getParameterType())) {
         constantParameters.put(parameter.getSearchKey(), parameter.getDefaultTextValue());
+      }
+    }
   }
 
   /**

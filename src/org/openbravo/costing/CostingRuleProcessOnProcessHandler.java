@@ -111,14 +111,15 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
     CostingUtilsData[] data = null;
     Date movementDateInPeriodClosed = null;
     try {
-      String strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      String strDateFormat = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("dateFormat.java");
       final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
       String strDateFrom = dateFormat.format(CostingUtils.getCostingRuleStartingDate(rule));
 
       data = CostingUtilsData.selectTransactionsInClosedPeriod(new DalConnectionProvider(false),
-          Utility.getInStrSet(naturalOrgs), strDateFrom, Utility.getInStrSet(childOrgs), rule
-              .getClient().getId(), rule.getOrganization().getId());
+          Utility.getInStrSet(naturalOrgs), strDateFrom, Utility.getInStrSet(childOrgs),
+          rule.getClient().getId(), rule.getOrganization().getId());
 
       if (data != null && data.length > 0) {
         movementDateInPeriodClosed = OBDateUtils.getDate(data[0].mindatemovement);
@@ -137,8 +138,8 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
     where.append("   and cr." + CostingRule.PROPERTY_VALIDATED + " = true");
     where.append("   order by cr." + CostingRule.PROPERTY_STARTINGDATE + " desc");
 
-    OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
-        where.toString());
+    OBQuery<CostingRule> crQry = OBDal.getInstance()
+        .createQuery(CostingRule.class, where.toString());
     crQry.setFilterOnReadableOrganization(false);
     crQry.setNamedParameter("ruleOrg", rule.getOrganization());
     crQry.setMaxResult(1);

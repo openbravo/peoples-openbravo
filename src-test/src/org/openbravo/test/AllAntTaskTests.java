@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -113,6 +113,7 @@ import org.openbravo.test.services.ServicesTest3;
 import org.openbravo.test.system.CryptoUtilities;
 import org.openbravo.test.system.ErrorTextParserIntegrationTest;
 import org.openbravo.test.system.ErrorTextParserTest;
+import org.openbravo.test.system.ImportEntryBuilderTest;
 import org.openbravo.test.system.ImportEntrySizeTest;
 import org.openbravo.test.system.Issue29934Test;
 import org.openbravo.test.system.Sessions;
@@ -120,6 +121,7 @@ import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.system.TestInfrastructure;
 import org.openbravo.test.taxes.TaxesTest;
+import org.openbravo.test.views.ConfigurableTransactionalFilters;
 import org.openbravo.test.views.GCSequenceNumberTests;
 import org.openbravo.test.views.SortingFilteringGridConfiguration;
 import org.openbravo.test.views.ViewGeneration;
@@ -144,7 +146,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-// dal
+    // dal
     DalComplexQueryRequisitionTest.class, //
     DalComplexQueryTestOrderLine.class, //
     DalPerformanceInventoryLineTest.class, //
@@ -210,6 +212,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     TestInfrastructure.class, //
     Issue29934Test.class, //
     ImportEntrySizeTest.class, //
+    ImportEntryBuilderTest.class, //
     CryptoUtilities.class, //
     Sessions.class, //
     OBContextTest.class, //
@@ -285,7 +288,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     // grid configuration
     ViewGenerationWithDifferentConfigLevelTest.class, //
     GCSequenceNumberTests.class, //
-    SortingFilteringGridConfiguration.class,
+    SortingFilteringGridConfiguration.class, //
+    ConfigurableTransactionalFilters.class,
 
     // jasper
     JasperReportsCompilation.class, //

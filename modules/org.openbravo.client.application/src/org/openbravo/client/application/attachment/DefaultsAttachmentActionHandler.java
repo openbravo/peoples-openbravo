@@ -26,6 +26,8 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.Parameter;
@@ -39,8 +41,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.ad.utility.Attachment;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * This ActionHandler is invoked when opening a Attachment window. It is in charge of computing
@@ -88,8 +88,8 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
 
         if ("edit".equals(action)) {
           // Calculate stored value.
-          OBCriteria<ParameterValue> parameterValueCriteria = OBDal.getInstance().createCriteria(
-              ParameterValue.class);
+          OBCriteria<ParameterValue> parameterValueCriteria = OBDal.getInstance()
+              .createCriteria(ParameterValue.class);
           parameterValueCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
           parameterValueCriteria.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER, param));
           ParameterValue parameterValue = (ParameterValue) parameterValueCriteria.uniqueResult();

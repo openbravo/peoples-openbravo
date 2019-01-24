@@ -25,10 +25,12 @@ public class WADCheckSumTask extends Task {
   protected String obDir;
   protected String type;
 
+  @Override
   public void execute() {
     CheckSum cs = new CheckSum(obDir);
-    if (type == null || type.equals(""))
+    if (type == null || type.equals("")) {
       type = "md5.wad";
+    }
     cs.calculateCheckSum(type);
   }
 

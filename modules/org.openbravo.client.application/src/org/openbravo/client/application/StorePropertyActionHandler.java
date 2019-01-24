@@ -48,6 +48,7 @@ import org.openbravo.portal.PortalAccessible;
 public class StorePropertyActionHandler extends BaseActionHandler implements PortalAccessible {
   private static final Logger log = LogManager.getLogger();
 
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     OBContext.setAdminMode();
     try {

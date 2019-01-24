@@ -31,14 +31,14 @@ import org.openbravo.dal.service.OBDal;
  * Box storage details that are over reserved (allocated and non-allocated reservation). The box
  * movement will only have 1 line.
  */
-public class ReferencedInventoryBoxOverReservation1MovementLineTest extends
-    ReferencedInventoryBoxTest {
+public class ReferencedInventoryBoxOverReservation1MovementLineTest
+    extends ReferencedInventoryBoxTest {
 
   @Rule
   public ParameterCdiTestRule<ParamsBoxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsBoxReservationTest>(
       Arrays.asList(new ParamsBoxReservationTest[] {
-          new ParamsBoxReservationTest("Box 3 units where 5 where reserved (over reservation)",
-              "3", "5"),
+          new ParamsBoxReservationTest("Box 3 units where 5 where reserved (over reservation)", "3",
+              "5"),
           new ParamsBoxReservationTest("Box 4 units where 10 where reserved (over reservation)",
               "4", "10") }));
 

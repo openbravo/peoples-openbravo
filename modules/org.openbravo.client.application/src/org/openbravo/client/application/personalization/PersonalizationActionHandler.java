@@ -70,6 +70,7 @@ public class PersonalizationActionHandler extends BaseActionHandler {
   @Inject
   private OBViewFieldHandler fieldHandler;
 
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
 
     try {
@@ -79,8 +80,8 @@ public class PersonalizationActionHandler extends BaseActionHandler {
       }
       if (!parameters.containsKey(PERSONALIZATIONID) && !parameters.containsKey(TABID)
           && !parameters.containsKey(WINDOWID)) {
-        throw new IllegalStateException("Mandatory parameter " + TABID + "/" + WINDOWID
-            + " not present");
+        throw new IllegalStateException(
+            "Mandatory parameter " + TABID + "/" + WINDOWID + " not present");
       }
       final String action = (String) parameters.get(ACTION);
       final String tabId = (String) parameters.get(TABID);
@@ -89,8 +90,8 @@ public class PersonalizationActionHandler extends BaseActionHandler {
       Boolean saveAsNewPreference = false;
       String personalizationID = (String) parameters.get(PERSONALIZATIONID);
       if (action.equals(ACTION_DELETE)) {
-        final UIPersonalization uiPersonalization = OBDal.getInstance().get(
-            UIPersonalization.class, personalizationID);
+        final UIPersonalization uiPersonalization = OBDal.getInstance()
+            .get(UIPersonalization.class, personalizationID);
         if (uiPersonalization != null) {
           // is null if already removed
           OBDal.getInstance().remove(uiPersonalization);
@@ -105,8 +106,8 @@ public class PersonalizationActionHandler extends BaseActionHandler {
         hql.append(" and p.property = :property");
         params.put("property", "OBUIAPP_DefaultSavedView");
 
-        OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class,
-            hql.toString());
+        OBQuery<Preference> qPref = OBDal.getInstance()
+            .createQuery(Preference.class, hql.toString());
         qPref.setNamedParameters(params);
         List<Preference> preferences = qPref.list();
 
@@ -125,14 +126,17 @@ public class PersonalizationActionHandler extends BaseActionHandler {
         if ("false".equals(applyLevelInformation) && personalizationID != null) {
           // If we don't have to apply the level information and the personalization is being
           // updated, use the original level information
-          final UIPersonalization uiPersonalization = OBDal.getInstance().get(
-              UIPersonalization.class, personalizationID);
-          clientID = uiPersonalization.getVisibleAtClient() != null ? uiPersonalization
-              .getVisibleAtClient().getId() : null;
-          orgID = uiPersonalization.getVisibleAtOrganization() != null ? uiPersonalization
-              .getVisibleAtOrganization().getId() : null;
-          roleID = uiPersonalization.getVisibleAtRole() != null ? uiPersonalization
-              .getVisibleAtRole().getId() : null;
+          final UIPersonalization uiPersonalization = OBDal.getInstance()
+              .get(UIPersonalization.class, personalizationID);
+          clientID = uiPersonalization.getVisibleAtClient() != null
+              ? uiPersonalization.getVisibleAtClient().getId()
+              : null;
+          orgID = uiPersonalization.getVisibleAtOrganization() != null
+              ? uiPersonalization.getVisibleAtOrganization().getId()
+              : null;
+          roleID = uiPersonalization.getVisibleAtRole() != null
+              ? uiPersonalization.getVisibleAtRole().getId()
+              : null;
           userID = uiPersonalization.getUser() != null ? uiPersonalization.getUser().getId() : null;
         }
 

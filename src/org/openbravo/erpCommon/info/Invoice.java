@@ -51,13 +51,15 @@ public class Invoice extends HttpSecureAppServlet {
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -67,8 +69,9 @@ public class Invoice extends HttpSecureAppServlet {
       if (!strWindowId.equals("")) {
         vars.setSessionValue("Invoice.isSOTrx", (strSOTrx.equals("") ? "N" : strSOTrx));
       }
-      if (!strNameValue.equals(""))
+      if (!strNameValue.equals("")) {
         vars.setSessionValue("Invoice.name", strNameValue + "%");
+      }
       printPage(response, vars, strNameValue, strWindowId);
     } else if (vars.commandIn("KEY")) {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "Invoice.name");
@@ -84,8 +87,9 @@ public class Invoice extends HttpSecureAppServlet {
           Utility.getSelectorOrgs(this, vars, strOrg), strSOTrx, strKeyValue + "%");
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
-      } else
+      } else {
         printPage(response, vars, strKeyValue, strWindowId);
+      }
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
@@ -110,8 +114,8 @@ public class Invoice extends HttpSecureAppServlet {
       String strBpartnerId = vars.getGlobalVariable("inpBpartnerId", "Invoice.inpBpartnerId", "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "Invoice.inpDateFrom", "");
       String strFechaTo = vars.getGlobalVariable("inpDateTo", "Invoice.inpDateTo", "");
-      String strDescription = vars
-          .getGlobalVariable("inpDescription", "Invoice.inpDescription", "");
+      String strDescription = vars.getGlobalVariable("inpDescription", "Invoice.inpDescription",
+          "");
       String strCal1 = vars.getNumericGlobalVariable("inpCal1", "Invoice.inpCal1", "");
       String strCalc2 = vars.getNumericGlobalVariable("inpCal2", "Invoice.inpCal2", "");
       String strOrder = vars.getGlobalVariable("inpOrder", "Invoice.inpOrder", "");
@@ -124,18 +128,20 @@ public class Invoice extends HttpSecureAppServlet {
       String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
       String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
 
-      printGridData(response, vars, strName, strBpartnerId, strDateFrom, strFechaTo,
-          strDescription, strCal1, strCalc2, strOrder, strSOTrx, strOrg, strSortCols, strSortDirs,
-          strOffset, strPageSize, strNewFilter);
+      printGridData(response, vars, strName, strBpartnerId, strDateFrom, strFechaTo, strDescription,
+          strCal1, strCalc2, strOrder, strSOTrx, strOrg, strSortCols, strSortDirs, strOffset,
+          strPageSize, strNewFilter);
 
-    } else
+    } else {
       pageError(response);
+    }
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strNameValue, String strWindow) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strNameValue,
+      String strWindow) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: business partners seeker Frame Set");
+    }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Invoice")
         .createXmlDocument();
     String strSOTrx = vars.getSessionValue("Invoice.isSOTrx");
@@ -157,8 +163,8 @@ public class Invoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     StringBuffer total = new StringBuffer();
     total.append("keyArray = new Array(\n");
-    total
-        .append("new keyArrayItem(\"ENTER\", \"openSearch(null, null, '../Invoice.html', 'SELECTOR_INVOICE', false, 'frmMain', 'inpNewcInvoiceId', 'inpNewcInvoiceId_DES', document.frmMain.inpNewcInvoiceId_DES.value, 'Command', 'KEY', 'WindowID', '");
+    total.append(
+        "new keyArrayItem(\"ENTER\", \"openSearch(null, null, '../Invoice.html', 'SELECTOR_INVOICE', false, 'frmMain', 'inpNewcInvoiceId', 'inpNewcInvoiceId_DES', document.frmMain.inpNewcInvoiceId_DES.value, 'Command', 'KEY', 'WindowID', '");
     total.append(strWindow).append("');\", \"inpNewcInvoiceId_DES\", \"null\")\n");
     total.append(");\n");
     total.append("enableShortcuts();\n");
@@ -173,10 +179,12 @@ public class Invoice extends HttpSecureAppServlet {
 
   private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       InvoiceData[] data) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Invoice seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/SearchUniqueKeyResponse").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/SearchUniqueKeyResponse")
+        .createXmlDocument();
 
     xmlDocument.setParameter("script", generateResult(data));
     response.setContentType("text/html; charset=UTF-8");
@@ -187,10 +195,12 @@ public class Invoice extends HttpSecureAppServlet {
 
   private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page structure");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure")
+        .createXmlDocument();
 
     SQLReturnObject[] data = getHeaders(vars);
     String type = "Hidden";
@@ -205,8 +215,9 @@ public class Invoice extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(xmlDocument.print());
+    }
     out.println(xmlDocument.print());
     out.close();
   }
@@ -257,8 +268,9 @@ public class Invoice extends HttpSecureAppServlet {
       String strNewFilter) throws IOException, ServletException {
 
     String localStrNewFilter = strNewFilter;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pint page rows");
+    }
 
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
@@ -331,32 +343,38 @@ public class Invoice extends HttpSecureAppServlet {
         } else {
           type = myError.getType();
           title = myError.getTitle();
-          if (!myError.getMessage().startsWith("<![CDATA["))
+          if (!myError.getMessage().startsWith("<![CDATA[")) {
             description = "<![CDATA[" + myError.getMessage() + "]]>";
-          else
+          } else {
             description = myError.getMessage();
+          }
         }
       } catch (Exception e) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Error obtaining rows data");
+        }
         type = "Error";
         title = "Error";
-        if (e.getMessage().startsWith("<![CDATA["))
+        if (e.getMessage().startsWith("<![CDATA[")) {
           description = "<![CDATA[" + e.getMessage() + "]]>";
-        else
+        } else {
           description = e.getMessage();
+        }
         e.printStackTrace();
       }
     }
 
     DecimalFormat df = Utility.getFormat(vars, "priceEdition");
 
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -364,7 +382,8 @@ public class Invoice extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+    strRowsData.append("  <rows numRows=\"")
+        .append(strNumRows)
         .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
@@ -378,18 +397,28 @@ public class Invoice extends HttpSecureAppServlet {
               || columnname.equalsIgnoreCase("openamt")) {
             strRowsData.append(df.format(new BigDecimal(data[j].getField(columnname))));
           } else if ((data[j].getField(columnname)) != null) {
-            if (headers[k].getField("adReferenceId").equals("32"))
+            if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
-                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
-                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
-                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            }
+            strRowsData.append(data[j].getField(columnname)
+                .replaceAll("<b>", "")
+                .replaceAll("<B>", "")
+                .replaceAll("</b>", "")
+                .replaceAll("</B>", "")
+                .replaceAll("<i>", "")
+                .replaceAll("<I>", "")
+                .replaceAll("</i>", "")
+                .replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;")
+                .replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;")
+                .replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
-            } else
+            } else {
               strRowsData.append("&nbsp;");
+            }
           }
           strRowsData.append("]]></td>\n");
         }
@@ -402,13 +431,15 @@ public class Invoice extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strRowsData.toString());
+    }
     out.print(strRowsData.toString());
     out.close();
 
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the business partners seeker";
   } // end of getServletInfo() method

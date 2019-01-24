@@ -50,8 +50,8 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   public void testNoStorageDetailsProvidedToBox() throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType();
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils.createReferencedInventory(
-        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
+    final ReferencedInventory refInv = ReferencedInventoryTestUtils
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
     thrown.expect(OBException.class);
     thrown.expectMessage(equalTo(OBMessageUtils.messageBD("NotSelected")));
@@ -62,8 +62,8 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   public void testNegativeStorageDetailProvidedToBox() throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType();
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils.createReferencedInventory(
-        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
+    final ReferencedInventory refInv = ReferencedInventoryTestUtils
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
     final JSONObject storageDetailJS = new JSONObject();
     storageDetailJS.put("id", ReferencedInventoryTestUtils.getAnyStorageDetail());
@@ -72,8 +72,8 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     storageDetailsJS.put(storageDetailJS);
 
     thrown.expect(OBException.class);
-    thrown.expectMessage(containsString(String.format(
-        OBMessageUtils.messageBD("RefInv_NegativeQty"), "")));
+    thrown.expectMessage(
+        containsString(String.format(OBMessageUtils.messageBD("RefInv_NegativeQty"), "")));
     new BoxProcessor(refInv, storageDetailsJS, null).createAndProcessGoodsMovement();
   }
 
@@ -81,8 +81,8 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   public void testZeroQtyStorageDetailProvidedToBox() throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType();
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils.createReferencedInventory(
-        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
+    final ReferencedInventory refInv = ReferencedInventoryTestUtils
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
     final JSONObject storageDetailJS = new JSONObject();
     storageDetailJS.put("id", ReferencedInventoryTestUtils.getAnyStorageDetail());
@@ -91,8 +91,8 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     storageDetailsJS.put(storageDetailJS);
 
     thrown.expect(OBException.class);
-    thrown.expectMessage(containsString(String.format(
-        OBMessageUtils.messageBD("RefInv_NegativeQty"), "")));
+    thrown.expectMessage(
+        containsString(String.format(OBMessageUtils.messageBD("RefInv_NegativeQty"), "")));
     new BoxProcessor(refInv, storageDetailsJS, null).createAndProcessGoodsMovement();
   }
 
@@ -112,8 +112,8 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
 
     final ReferencedInventory refInv2 = ReferencedInventoryTestUtils.createReferencedInventory(
         ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInv1.getReferencedInventoryType());
-    final JSONArray storageDetailsJS = ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(
-        storageDetail, BigDecimal.ONE);
+    final JSONArray storageDetailsJS = ReferencedInventoryTestUtils
+        .getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE);
 
     thrown.expect(OBException.class);
     thrown.expectMessage(containsString(" is already linked to the referenced inventory "));
@@ -125,9 +125,10 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final ReferencedInventory refInv = testBox(ReferencedInventoryTestUtils.BIN_SPAIN_L02,
         ReferencedInventoryTestUtils.PRODUCT_TSHIRT_ID, null, BigDecimal.ONE);
     final List<StorageDetail> storageDetails = ReferencedInventoryTestUtils
-        .getAvailableStorageDetailsOrderByQtyOnHand(refInv.getMaterialMgmtStorageDetailList().get(0).getProduct());
-    final JSONArray storageDetailsJS = ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(
-        storageDetails.get(1), new BigDecimal("3"));
+        .getAvailableStorageDetailsOrderByQtyOnHand(
+            refInv.getMaterialMgmtStorageDetailList().get(0).getProduct());
+    final JSONArray storageDetailsJS = ReferencedInventoryTestUtils
+        .getStorageDetailsToBoxJSArray(storageDetails.get(1), new BigDecimal("3"));
 
     thrown.expect(OBException.class);
     thrown.expectMessage(containsString(" referenced inventory is also located in bin: "));
@@ -139,8 +140,8 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   public void testBoxMandatoryNewStorageBinParameter() throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType();
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils.createReferencedInventory(
-        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
+    final ReferencedInventory refInv = ReferencedInventoryTestUtils
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
     final Product product = ReferencedInventoryTestUtils
         .cloneProduct(ReferencedInventoryTestUtils.PRODUCT_TSHIRT_ID);
@@ -152,7 +153,8 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
 
     thrown.expect(OBException.class);
     thrown.expectMessage(equalTo(OBMessageUtils.messageBD("NewStorageBinParameterMandatory")));
-    new BoxProcessor(refInv, ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(
-        storageDetail, BigDecimal.ONE), null).createAndProcessGoodsMovement();
+    new BoxProcessor(refInv,
+        ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE),
+        null).createAndProcessGoodsMovement();
   }
 }

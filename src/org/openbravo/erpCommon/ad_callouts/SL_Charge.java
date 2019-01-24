@@ -37,8 +37,8 @@ public class SL_Charge extends SimpleCallout {
     String strCChargeID = info.getStringParameter("inpcChargeId", IsIDFilter.instance);
 
     // Charge Amount
-    String chargeAmt = StringUtils.isEmpty(strCChargeID) ? "0" : SLChargeData.chargeAmt(this,
-        strCChargeID);
+    String chargeAmt = StringUtils.isEmpty(strCChargeID) ? "0"
+        : SLChargeData.chargeAmt(this, strCChargeID);
     info.addResult("inpchargeamt", chargeAmt);
   }
 }

@@ -40,28 +40,33 @@ class ToolBar_Link implements HTMLElement {
     this.image = new ToolBar_Image(this.base_direction, this.name, this.description);
   }
 
+  @Override
   public String getWidth() {
     return "2%";
   }
 
+  @Override
   public String elementType() {
     return "BUTTON";
   }
 
+  @Override
   public String toString() {
     StringBuffer toolbar = new StringBuffer();
     toolbar.append("<a href=\"");
     toolbar.append(href);
     toolbar.append("\" onClick=\"");
     toolbar.append(click);
-    if ((click != null && !click.equals("")) || href == null || href.equals("") || href.equals("#"))
+    if ((click != null && !click.equals("")) || href == null || href.equals("")
+        || href.equals("#")) {
       toolbar.append("return false;");
+    }
     toolbar.append("\" ");
     toolbar.append(" onMouseOver=\"window.status='");
     toolbar.append(description);
     toolbar.append("';return true;\" ");
-    toolbar
-        .append("onMouseOut=\"window.status='';return true;\" onclick=\"this.hideFocus=true\" onblur=\"this.hideFocus=false\" ");
+    toolbar.append(
+        "onMouseOut=\"window.status='';return true;\" onclick=\"this.hideFocus=true\" onblur=\"this.hideFocus=false\" ");
     toolbar.append("id=\"linkButton").append(name).append("\">");
     toolbar.append(image);
     toolbar.append("</a>");

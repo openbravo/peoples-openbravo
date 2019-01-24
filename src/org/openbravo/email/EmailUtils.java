@@ -53,15 +53,16 @@ public class EmailUtils {
       if (organization != null) {
         OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance()
             .createCriteria(EmailServerConfiguration.class);
-        mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_ORGANIZATION,
-            organization));
-        mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_CLIENT, OBContext.getOBContext().getCurrentClient()));
+        mailConfigCriteria
+            .add(Restrictions.eq(EmailServerConfiguration.PROPERTY_ORGANIZATION, organization));
+        mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_CLIENT,
+            OBContext.getOBContext().getCurrentClient()));
 
         List<EmailServerConfiguration> mailConfigList = null;
         mailConfigList = mailConfigCriteria.list();
         // A client can define several organization, so uniqueRequlst can not be used
         if (mailConfigList.size() != 0) {
-        	emailConfiguration = mailConfigList.get(0);
+          emailConfiguration = mailConfigList.get(0);
         }
 
         if (organization.getId().equals("0")) {

@@ -31,6 +31,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Rule;
 import org.junit.Test;
@@ -76,8 +78,6 @@ import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData6;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData7;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData8;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData9;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check Cancel and Replace development
@@ -118,8 +118,7 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       PARAMS);
 
   /** This field will take the values defined by parameterValuesRule field. */
-  private @ParameterCdiTest
-  CancelAndReplaceTestData parameter;
+  private @ParameterCdiTest CancelAndReplaceTestData parameter;
 
   /**
    * Verifies Cancel and Replace functionality API. Clone and existing Order. Click on Cancel and
@@ -137,8 +136,8 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       Order order = OBDal.getInstance().get(Order.class, SALESORDER_ID);
       Order oldOrder = (Order) DalUtil.copy(order, false);
       oldOrder.setDocumentNo("C&R Test " + parameter.getTestNumber());
-      oldOrder.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
-          parameter.getBpartnerId()));
+      oldOrder.setBusinessPartner(
+          OBDal.getInstance().get(BusinessPartner.class, parameter.getBpartnerId()));
       oldOrder.setSummedLineAmount(BigDecimal.ZERO);
       oldOrder.setGrandTotalAmount(BigDecimal.ZERO);
       oldOrder.setProcessed(false);
@@ -187,46 +186,51 @@ public class CancelAndReplaceTest extends WeldBaseTest {
 
       boolean createNettingGoodsShipment = false;
       try {
-        createNettingGoodsShipment = ("Y").equals(Preferences.getPreferenceValue(
-            CancelAndReplaceUtils.CREATE_NETTING_SHIPMENT, true, OBContext.getOBContext()
-                .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-                .getOBContext().getUser(), null, null));
+        createNettingGoodsShipment = ("Y")
+            .equals(Preferences.getPreferenceValue(CancelAndReplaceUtils.CREATE_NETTING_SHIPMENT,
+                true, OBContext.getOBContext().getCurrentClient(),
+                OBContext.getOBContext().getCurrentOrganization(),
+                OBContext.getOBContext().getUser(), null, null));
       } catch (PropertyException e1) {
         createNettingGoodsShipment = false;
       }
 
       if (parameter.getActivateNettingGoodsShipmentPref() && !createNettingGoodsShipment) {
         Preferences.setPreferenceValue(CancelAndReplaceUtils.CREATE_NETTING_SHIPMENT, "Y", true,
-            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                .getCurrentOrganization(), OBContext.getOBContext().getUser(), null, null, null);
+            OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            null, null, null);
       } else if (!parameter.getActivateNettingGoodsShipmentPref() && createNettingGoodsShipment) {
         Preferences.setPreferenceValue(CancelAndReplaceUtils.CREATE_NETTING_SHIPMENT, "N", true,
-            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                .getCurrentOrganization(), OBContext.getOBContext().getUser(), null, null, null);
+            OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            null, null, null);
       }
 
       boolean associateShipmentToNewReceipt = false;
       try {
         associateShipmentToNewReceipt = ("Y").equals(Preferences.getPreferenceValue(
-            CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, true, OBContext
-                .getOBContext().getCurrentClient(), OBContext.getOBContext()
-                .getCurrentOrganization(), OBContext.getOBContext().getUser(), null, null));
+            CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, true,
+            OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            null, null));
       } catch (PropertyException e1) {
         associateShipmentToNewReceipt = false;
       }
 
       if (parameter.getActivateAssociateNettingGoodsShipmentPref()) {
         if (!associateShipmentToNewReceipt) {
-          Preferences.setPreferenceValue(
-              CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, "Y", true, OBContext
-                  .getOBContext().getCurrentClient(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), null, null, null);
+          Preferences.setPreferenceValue(CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET,
+              "Y", true, OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              null, null, null);
         }
       } else if (!parameter.getActivateAssociateNettingGoodsShipmentPref()
           && associateShipmentToNewReceipt) {
         Preferences.setPreferenceValue(CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET,
-            "N", true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                .getCurrentOrganization(), OBContext.getOBContext().getUser(), null, null, null);
+            "N", true, OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            null, null, null);
       }
 
       // Create the new replacement order
@@ -315,30 +319,32 @@ public class CancelAndReplaceTest extends WeldBaseTest {
           closeTo(parameter.getNewOrderLineDeliveredQuantity(), BigDecimal.ZERO));
 
       // Get Shipment lines of old order line
-      OBCriteria<ShipmentInOutLine> oldOrderLineShipments = OBDal.getInstance().createCriteria(
-          ShipmentInOutLine.class);
-      oldOrderLineShipments.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
-          oldOrderLine));
+      OBCriteria<ShipmentInOutLine> oldOrderLineShipments = OBDal.getInstance()
+          .createCriteria(ShipmentInOutLine.class);
+      oldOrderLineShipments
+          .add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, oldOrderLine));
 
       // Get Shipment lines of inverse order line
-      OBCriteria<ShipmentInOutLine> inverseOrderLineShipments = OBDal.getInstance().createCriteria(
-          ShipmentInOutLine.class);
-      inverseOrderLineShipments.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
-          inverseOrderLine));
+      OBCriteria<ShipmentInOutLine> inverseOrderLineShipments = OBDal.getInstance()
+          .createCriteria(ShipmentInOutLine.class);
+      inverseOrderLineShipments
+          .add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, inverseOrderLine));
 
       // Get Shipment lines of new order line
-      OBCriteria<ShipmentInOutLine> newOrderLineShipments = OBDal.getInstance().createCriteria(
-          ShipmentInOutLine.class);
-      newOrderLineShipments.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
-          newOrderLine));
+      OBCriteria<ShipmentInOutLine> newOrderLineShipments = OBDal.getInstance()
+          .createCriteria(ShipmentInOutLine.class);
+      newOrderLineShipments
+          .add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, newOrderLine));
 
-      assertThat("Wrong Old Orderline Goods shipment lines", new BigDecimal(oldOrderLineShipments
-          .list().size()), closeTo(parameter.getOldOrderLineShipmentLines(), BigDecimal.ZERO));
-      assertThat("Wrong Inverse Orderline Goods shipment lines", new BigDecimal(
-          inverseOrderLineShipments.list().size()),
+      assertThat("Wrong Old Orderline Goods shipment lines",
+          new BigDecimal(oldOrderLineShipments.list().size()),
+          closeTo(parameter.getOldOrderLineShipmentLines(), BigDecimal.ZERO));
+      assertThat("Wrong Inverse Orderline Goods shipment lines",
+          new BigDecimal(inverseOrderLineShipments.list().size()),
           closeTo(parameter.getInverseOrderLineShipmentLines(), BigDecimal.ZERO));
-      assertThat("Wrong New Orderline Goods shipment lines", new BigDecimal(newOrderLineShipments
-          .list().size()), closeTo(parameter.getNewOrderLineShipmentLines(), BigDecimal.ZERO));
+      assertThat("Wrong New Orderline Goods shipment lines",
+          new BigDecimal(newOrderLineShipments.list().size()),
+          closeTo(parameter.getNewOrderLineShipmentLines(), BigDecimal.ZERO));
 
     } catch (Exception e) {
       log.error("Error when executing: " + parameter.getTestDescription(), e);
@@ -362,8 +368,8 @@ public class CancelAndReplaceTest extends WeldBaseTest {
     ShipmentInOut shipment = OBDal.getInstance().get(ShipmentInOut.class, M_INOUT_ID);
     ShipmentInOut oldShipment = (ShipmentInOut) DalUtil.copy(shipment, false);
     oldShipment.setDocumentNo("C&R Test " + parameter.getTestNumber());
-    oldShipment.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
-        parameter.getBpartnerId()));
+    oldShipment.setBusinessPartner(
+        OBDal.getInstance().get(BusinessPartner.class, parameter.getBpartnerId()));
     oldShipment.setId(SequenceIdData.getUUID());
     oldShipment.setNewOBObject(true);
     oldShipment.setMovementDate(new Date());
@@ -387,8 +393,9 @@ public class CancelAndReplaceTest extends WeldBaseTest {
     oldGoodsShipmentLine.setMovementQuantity(parameter.getOldOrderDeliveredQuantity());
 
     if (prod.getAttributeSet() != null
-        && (prod.getUseAttributeSetValueAs() == null || !"F".equals(prod
-            .getUseAttributeSetValueAs())) && prod.getAttributeSet().isRequireAtLeastOneValue()) {
+        && (prod.getUseAttributeSetValueAs() == null
+            || !"F".equals(prod.getUseAttributeSetValueAs()))
+        && prod.getAttributeSet().isRequireAtLeastOneValue()) {
       // Set fake AttributeSetInstance to transaction line for netting shipment as otherwise it
       // will return an error when the product has an attribute set and
       // "Is Required at Least One Value" property of the attribute set is "Y"
@@ -425,8 +432,8 @@ public class CancelAndReplaceTest extends WeldBaseTest {
 
     // Get the payment schedule of the order
     FIN_PaymentSchedule paymentSchedule = null;
-    OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteria = OBDal.getInstance().createCriteria(
-        FIN_PaymentSchedule.class);
+    OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteria = OBDal.getInstance()
+        .createCriteria(FIN_PaymentSchedule.class);
     paymentScheduleCriteria.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER, oldOrder));
     paymentScheduleCriteria.setMaxResults(1);
     paymentSchedule = (FIN_PaymentSchedule) paymentScheduleCriteria.uniqueResult();
@@ -434,11 +441,11 @@ public class CancelAndReplaceTest extends WeldBaseTest {
     // Get the payment schedule detail of the order
     OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleDetailCriteria = OBDal.getInstance()
         .createCriteria(FIN_PaymentScheduleDetail.class);
-    paymentScheduleDetailCriteria.add(Restrictions.eq(
-        FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
+    paymentScheduleDetailCriteria.add(
+        Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
     // There should be only one with null paymentDetails
-    paymentScheduleDetailCriteria.add(Restrictions
-        .isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+    paymentScheduleDetailCriteria
+        .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
     List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = paymentScheduleDetailCriteria
         .list();
 
@@ -452,9 +459,10 @@ public class CancelAndReplaceTest extends WeldBaseTest {
     if (oldOrder.getBusinessPartner().getAccount() != null) {
       financialAccount = oldOrder.getBusinessPartner().getAccount();
     } else {
-      financialAccount = FIN_Utility.getFinancialAccountPaymentMethod(
-          oldOrder.getPaymentMethod().getId(), null, true, oldOrder.getCurrency().getId(),
-          oldOrder.getOrganization().getId()).getAccount();
+      financialAccount = FIN_Utility
+          .getFinancialAccountPaymentMethod(oldOrder.getPaymentMethod().getId(), null, true,
+              oldOrder.getCurrency().getId(), oldOrder.getOrganization().getId())
+          .getAccount();
     }
 
     // Create the payment

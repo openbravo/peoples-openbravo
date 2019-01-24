@@ -38,8 +38,8 @@ public class SessionActive extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
-      IOException {
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+      throws ServletException, IOException {
     doOptions(req, resp);
     String sessionId = req.getParameter("id");
     boolean result = IsIDFilter.instance.accept(sessionId);

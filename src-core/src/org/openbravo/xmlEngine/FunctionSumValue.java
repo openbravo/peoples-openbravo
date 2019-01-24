@@ -25,6 +25,7 @@ class FunctionSumValue extends FunctionValue {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     if (functionTemplate.formatOutput != null) {
       return functionTemplate.formatOutput.format(sum);
@@ -33,6 +34,7 @@ class FunctionSumValue extends FunctionValue {
     }
   }
 
+  @Override
   public String printSimple() {
     if (functionTemplate.formatSimple != null) {
       return functionTemplate.formatSimple.format(sum);
@@ -41,6 +43,7 @@ class FunctionSumValue extends FunctionValue {
     }
   }
 
+  @Override
   public void acumulate() {
     log4jFunctionSumValue.debug("Accumulate: " + fieldValue.print());
     if (fieldValue.print() != "") {
@@ -48,6 +51,7 @@ class FunctionSumValue extends FunctionValue {
     }
   }
 
+  @Override
   public void init() {
     sum = BigDecimal.ZERO;
   }

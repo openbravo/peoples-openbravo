@@ -81,8 +81,10 @@ public class CashflowForecastReportActionHandler extends BaseReportActionHandler
       JSONObject params = jsonContent.getJSONObject(_PARAMS);
       DateDomainType dateDomainType = new DateDomainType();
       Date datePlanned = (Date) dateDomainType.createFromString(params.getString(DATE_PLANNED2));
-      String strDatePlanned = DateFormatUtils.format(datePlanned, OBPropertiesProvider
-          .getInstance().getOpenbravoProperties().getProperty(DATE_FORMAT_JAVA));
+      String strDatePlanned = DateFormatUtils.format(datePlanned,
+          OBPropertiesProvider.getInstance()
+              .getOpenbravoProperties()
+              .getProperty(DATE_FORMAT_JAVA));
       String strFinancialAccountId = params.getString(FINANCIAL_ACCOUNT_ID).equals("null") ? ""
           : params.getString(FINANCIAL_ACCOUNT_ID);
       boolean breakByDate = params.getBoolean(BREAK_BY_DATE2);
@@ -178,13 +180,16 @@ public class CashflowForecastReportActionHandler extends BaseReportActionHandler
 
   private FieldProvider[] unifyData(CashflowForecastData[][] dataToUnify) {
     int length = 0;
-    for (int i = 0; i < dataToUnify.length; i++)
+    for (int i = 0; i < dataToUnify.length; i++) {
       length += dataToUnify[i].length;
+    }
     FieldProvider[] result = new FieldProvider[length];
     int index = 0;
-    for (int i = 0; i < dataToUnify.length; i++)
-      for (int j = 0; j < dataToUnify[i].length; j++)
+    for (int i = 0; i < dataToUnify.length; i++) {
+      for (int j = 0; j < dataToUnify[i].length; j++) {
         result[index++] = dataToUnify[i][j];
+      }
+    }
     return result;
   }
 

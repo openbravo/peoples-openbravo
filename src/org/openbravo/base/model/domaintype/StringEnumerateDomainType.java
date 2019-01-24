@@ -32,6 +32,7 @@ public class StringEnumerateDomainType extends BaseEnumerateDomainType<String> {
    * 
    * @return class of {@link String}.
    */
+  @Override
   public Class<?> getPrimitiveType() {
     return String.class;
   }

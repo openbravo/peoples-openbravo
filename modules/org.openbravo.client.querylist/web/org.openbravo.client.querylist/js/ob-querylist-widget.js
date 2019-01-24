@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -104,8 +104,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   },
 
   createWindowContents: function () {
-    var layout, url, params = {},
-        showFilter = (this.viewMode === 'maximized');
+    var layout, showFilter = (this.viewMode === 'maximized');
 
     layout = isc.VStack.create({
       height: '100%',
@@ -344,8 +343,7 @@ isc.OBQueryListGrid.addProperties({
 
   getWidgetTotalRows: function (dsResponse, data, dsRequest) {
     if (this.widget.viewMode === 'widget' && !this.widget.parameters.showAll) {
-      var criteria = dsResponse.clientContext.criteria || {},
-          requestProperties = {};
+      var requestProperties = {};
       requestProperties.showPrompt = false;
       requestProperties.clientContext = {
         grid: this
@@ -372,7 +370,7 @@ isc.OBQueryListGrid.addProperties({
   },
 
   getSummaryRowFetchRequestConfig: function () {
-    var fld, i, summary = this.getSummarySettings(),
+    var summary = this.getSummarySettings(),
         config = this.Super('getSummaryRowFetchRequestConfig', arguments);
     if (summary) {
       config.params = config.params || {};

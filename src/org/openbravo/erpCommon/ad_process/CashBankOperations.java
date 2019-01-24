@@ -44,13 +44,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class CashBankOperations extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -71,15 +73,17 @@ public class CashBankOperations extends HttpSecureAppServlet {
           strOrgTrx);
       vars.setMessage("CashBankOperations", myMessage);
       printPage(response, vars);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private OBError process(VariablesSecureApp vars, String strCashFrom, String strCashTo,
       String strBankFrom, String strBankTo, String strPaymentRuleFrom, String strPaymentRuleTo,
       String strAmount, String strMovementDate, String strDescription, String strOrgTrx) {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Save: CashBankOperations");
+    }
     Connection con = null;
     OBError myMessage = null;
     String strSettlementDocumentNo = "";
@@ -101,19 +105,13 @@ public class CashBankOperations extends HttpSecureAppServlet {
             strCashCurrency);
         String strDebtPaymentId = SequenceIdData.getUUID();
 
-        CashBankOperationsData.insertDebtpayment(
-            con,
-            this,
-            strDebtPaymentId,
-            vars.getClient(),
-            strOrgTrx,
-            vars.getUser(),
-            "Y",
-            strSettlement,
+        CashBankOperationsData.insertDebtpayment(con, this, strDebtPaymentId, vars.getClient(),
+            strOrgTrx, vars.getUser(), "Y", strSettlement,
             strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
                 + Utility.messageBD(this, "Cash", vars.getLanguage())
-                + CashBankOperationsData.selectCashBook(this, strCashTo), strBPartner,
-            strCashCurrency, "", "", strCashTo, strPaymentRuleTo, strAmount, strMovementDate, "");
+                + CashBankOperationsData.selectCashBook(this, strCashTo),
+            strBPartner, strCashCurrency, "", "", strCashTo, strPaymentRuleTo, strAmount,
+            strMovementDate, "");
         insertCash(vars, strCashTo, strAmount, strMovementDate, strCashCurrency, strDescription,
             strDebtPaymentId, strOrgTrx, con);
 
@@ -133,20 +131,13 @@ public class CashBankOperations extends HttpSecureAppServlet {
             strBankCurrency);
         String strDebtPaymentId = SequenceIdData.getUUID();
 
-        CashBankOperationsData.insertDebtpayment(
-            con,
-            this,
-            strDebtPaymentId,
-            vars.getClient(),
-            strOrgTrx,
-            vars.getUser(),
-            "N",
-            strSettlement,
+        CashBankOperationsData.insertDebtpayment(con, this, strDebtPaymentId, vars.getClient(),
+            strOrgTrx, vars.getUser(), "N", strSettlement,
             strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
                 + Utility.messageBD(this, "Cash", vars.getLanguage())
-                + CashBankOperationsData.selectCashBook(this, strCashFrom), strBPartner,
-            strCashCurrency, "", "", strCashFrom, strPaymentRuleFrom, strAmount, strMovementDate,
-            "");
+                + CashBankOperationsData.selectCashBook(this, strCashFrom),
+            strBPartner, strCashCurrency, "", "", strCashFrom, strPaymentRuleFrom, strAmount,
+            strMovementDate, "");
 
         insertCash(vars, strCashFrom, negate(strAmount), strMovementDate, strCashCurrency,
             strDescription, strDebtPaymentId, strOrgTrx, con);
@@ -166,38 +157,25 @@ public class CashBankOperations extends HttpSecureAppServlet {
             strCashCurrency);
         String strDebtPaymentId = SequenceIdData.getUUID();
 
-        CashBankOperationsData.insertDebtpayment(
-            con,
-            this,
-            strDebtPaymentId,
-            vars.getClient(),
-            strOrgTrx,
-            vars.getUser(),
-            "N",
-            strSettlement,
+        CashBankOperationsData.insertDebtpayment(con, this, strDebtPaymentId, vars.getClient(),
+            strOrgTrx, vars.getUser(), "N", strSettlement,
             strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
                 + Utility.messageBD(this, "Cash", vars.getLanguage())
-                + CashBankOperationsData.selectCashBook(this, strCashFrom), strBPartner,
-            strCashCurrency, "", "", strCashFrom, strPaymentRuleFrom, strAmount, strMovementDate,
-            "");
+                + CashBankOperationsData.selectCashBook(this, strCashFrom),
+            strBPartner, strCashCurrency, "", "", strCashFrom, strPaymentRuleFrom, strAmount,
+            strMovementDate, "");
         insertCash(vars, strCashFrom, negate(strAmount), strMovementDate, strCashCurrency,
             strDescription, strDebtPaymentId, strOrgTrx, con);
 
         strDebtPaymentId = SequenceIdData.getUUID();
 
-        CashBankOperationsData.insertDebtpayment(
-            con,
-            this,
-            strDebtPaymentId,
-            vars.getClient(),
-            strOrgTrx,
-            vars.getUser(),
-            "Y",
-            strSettlement,
+        CashBankOperationsData.insertDebtpayment(con, this, strDebtPaymentId, vars.getClient(),
+            strOrgTrx, vars.getUser(), "Y", strSettlement,
             strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
                 + Utility.messageBD(this, "Cash", vars.getLanguage())
-                + CashBankOperationsData.selectCashBook(this, strCashTo), strBPartner,
-            strCashCurrency, "", "", strCashTo, strPaymentRuleTo, strAmount, strMovementDate, "");
+                + CashBankOperationsData.selectCashBook(this, strCashTo),
+            strBPartner, strCashCurrency, "", "", strCashTo, strPaymentRuleTo, strAmount,
+            strMovementDate, "");
         insertCash(vars, strCashTo, strAmount, strMovementDate, strCashCurrency, strDescription,
             strDebtPaymentId, strOrgTrx, con);
         CashBankOperationsData.updateSettlement(con, this, strSettlement);
@@ -263,28 +241,32 @@ public class CashBankOperations extends HttpSecureAppServlet {
     return strCashLine;
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: process CashBankOperations");
+    }
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "", strProcessId = "800082";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
     String[] discard = { "" };
-    if (strHelp.equals(""))
+    if (strHelp.equals("")) {
       discard[0] = new String("helpDiscard");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/CashBankOperations").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/CashBankOperations")
+        .createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "CashBankOperations", false, "", "",
-        "", false, "ad_process", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "CashBankOperations", false, "", "", "",
+        false, "ad_process", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
@@ -297,26 +279,22 @@ public class CashBankOperations extends HttpSecureAppServlet {
     xmlDocument.setParameter("datedisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("datesaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
 
-    xmlDocument.setParameter(
-        "arrayBank",
-        Utility.arrayDobleEntrada(
-            "arrBank",
+    xmlDocument.setParameter("arrayBank",
+        Utility.arrayDobleEntrada("arrBank",
             CashBankOperationsData.selectBankDouble(this,
                 Utility.getContext(this, vars, "#User_Org", "CashBankOperations"),
                 Utility.getContext(this, vars, "#User_Client", "CashBankOperations"))));
-    xmlDocument.setParameter(
-        "arrayCash",
-        Utility.arrayDobleEntrada(
-            "arrCash",
+    xmlDocument.setParameter("arrayCash",
+        Utility.arrayDobleEntrada("arrCash",
             CashBankOperationsData.selectCashDouble(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Org", "CashBankOperations"),
                 Utility.getContext(this, vars, "#User_Client", "CashBankOperations"))));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "AD_Org is transactions allowed", Utility.getContext(this, vars, "#User_Org",
-              "CashBankOperations"), Utility.getContext(this, vars, "#User_Client",
-              "CashBankOperations"), 0);
+          "AD_Org is transactions allowed",
+          Utility.getContext(this, vars, "#User_Org", "CashBankOperations"),
+          Utility.getContext(this, vars, "#User_Client", "CashBankOperations"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "CreateAccountingReport", "");
       xmlDocument.setData("reportAD_ORG", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -358,10 +336,9 @@ public class CashBankOperations extends HttpSecureAppServlet {
      * comboTableData = null; } catch (Exception ex) { throw new ServletException(ex); }
      */
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "CashBankOperations"), Utility.getContext(this, vars, "#User_Client",
-              "CashBankOperations"), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "All_Payment Rule",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "CashBankOperations"),
+          Utility.getContext(this, vars, "#User_Client", "CashBankOperations"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "CashBankOperations", "");
       xmlDocument.setData("reportPaymentRuleFrom", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -370,10 +347,9 @@ public class CashBankOperations extends HttpSecureAppServlet {
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "CashBankOperations"), Utility.getContext(this, vars, "#User_Client",
-              "CashBankOperations"), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "All_Payment Rule",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "CashBankOperations"),
+          Utility.getContext(this, vars, "#User_Client", "CashBankOperations"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "CashBankOperations", "");
       xmlDocument.setData("reportPaymentRuleTo", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -413,6 +389,7 @@ public class CashBankOperations extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet CashBankOperations";
   } // end of getServletInfo() method

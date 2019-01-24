@@ -23,14 +23,17 @@ class FunctionOrderValue extends FunctionValue {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     return Integer.toString(order);
   }
 
+  @Override
   public void acumulate() {
     ;
   }
 
+  @Override
   public void init() {
     order++;
   }

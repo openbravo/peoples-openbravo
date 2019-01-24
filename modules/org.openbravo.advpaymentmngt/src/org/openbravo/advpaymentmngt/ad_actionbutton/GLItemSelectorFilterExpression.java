@@ -22,13 +22,13 @@ package org.openbravo.advpaymentmngt.ad_actionbutton;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.utility.Utility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class GLItemSelectorFilterExpression implements FilterExpression {
   private static final String INPAD_ORG_ID_PARAM = "inpadOrgId";
@@ -40,8 +40,8 @@ public class GLItemSelectorFilterExpression implements FilterExpression {
     try {
       final JSONObject context = new JSONObject(requestMap);
       final String orgId = getOrganizationIdFromContext(context);
-      String orgList = Utility.getInStrSet(OBContext.getOBContext()
-          .getOrganizationStructureProvider().getNaturalTree(orgId));
+      String orgList = Utility.getInStrSet(
+          OBContext.getOBContext().getOrganizationStructureProvider().getNaturalTree(orgId));
       if (!orgList.isEmpty()) {
         StringBuilder whereClause = new StringBuilder();
         whereClause.append("e.organization.id in (" + orgList + ")");

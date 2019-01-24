@@ -38,8 +38,9 @@ public class BusinessPartnerVendorFilterExpression implements FilterExpression {
       }
     } else {
       try {
-        result = (String) ParameterUtils.getJSExpressionResult(_requestMap, RequestContext.get()
-            .getSession(), "if (OB.isSalesTransaction() == false) { 'true' } else {''}");
+        result = (String) ParameterUtils.getJSExpressionResult(_requestMap,
+            RequestContext.get().getSession(),
+            "if (OB.isSalesTransaction() == false) { 'true' } else {''}");
         return result;
       } catch (Exception e) {
         log.error(

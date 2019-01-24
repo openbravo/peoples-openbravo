@@ -66,15 +66,16 @@ public class WebServiceUtil implements OBSingleton {
    * 
    * @param t
    *          the Throwable used to set the error message
-   * @return the xml error String, e.g. {@literal <error><message>An error occurred</message></error>}
+   * @return the xml error String, e.g.
+   *         {@literal <error><message>An error occurred</message></error>}
    */
   public String createErrorXML(Throwable t) {
     Throwable x = t;
     final StringBuilder sb = new StringBuilder(t.getMessage());
 
     // prevent infinite cycling
-    while (x.getCause() != null
-        || (x instanceof BatchUpdateException && ((BatchUpdateException) x).getNextException() != null)) {
+    while (x.getCause() != null || (x instanceof BatchUpdateException
+        && ((BatchUpdateException) x).getNextException() != null)) {
       final Throwable prevX = x;
       if (x instanceof BatchUpdateException) {
         x = ((BatchUpdateException) x).getNextException();

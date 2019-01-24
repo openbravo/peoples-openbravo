@@ -114,14 +114,15 @@ public class AgingDao {
 
     try {
       // Amounts coming from normal PSD (non credit)
-      dataSR = AgingDaoData.select(connectionProvider, showDoubtfulDebt ? "Y" : "N", OBDateUtils
-          .formatDate(currentDate), convCurrency.getId(), OBDateUtils.formatDate(convertToDate(
-          currentDate, strcolumn1)),
-          OBDateUtils.formatDate(convertToDate(currentDate, strcolumn2)), OBDateUtils
-              .formatDate(convertToDate(currentDate, strcolumn3)), OBDateUtils
-              .formatDate(convertToDate(currentDate, strcolumn4)), Utility
-              .getInStrSet(organizations), strcBpartnerId, StringUtils.equals(recOrPay,
-              "RECEIVABLES") ? "Y" : "N", excludeVoids ? "excludeVoids" : "", pgLimit, oraLimit);
+      dataSR = AgingDaoData.select(connectionProvider, showDoubtfulDebt ? "Y" : "N",
+          OBDateUtils.formatDate(currentDate), convCurrency.getId(),
+          OBDateUtils.formatDate(convertToDate(currentDate, strcolumn1)),
+          OBDateUtils.formatDate(convertToDate(currentDate, strcolumn2)),
+          OBDateUtils.formatDate(convertToDate(currentDate, strcolumn3)),
+          OBDateUtils.formatDate(convertToDate(currentDate, strcolumn4)),
+          Utility.getInStrSet(organizations), strcBpartnerId,
+          StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y" : "N",
+          excludeVoids ? "excludeVoids" : "", pgLimit, oraLimit);
       log4j.debug("Query: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
       int i = 0;
@@ -139,8 +140,8 @@ public class AgingDao {
           agingBalanceData.get(strBusinessPartnerId).addAmount(psdAmt, intScope);
           agingBalanceData.get(strBusinessPartnerId).addDoubtfulDebt(psddd);
         } else { // if there is the first time the Business Partner is inserted
-          agingBalanceData.put(strBusinessPartnerId, new AgingData(strBusinessPartnerId, strBpName,
-              psdAmt, intScope));
+          agingBalanceData.put(strBusinessPartnerId,
+              new AgingData(strBusinessPartnerId, strBpName, psdAmt, intScope));
         }
 
         i++;
@@ -154,10 +155,11 @@ public class AgingDao {
       // Credits: In this section the Credits are going to be processed.
       init = System.currentTimeMillis();
       // Query for credit payments
-      dataCreditSR = AgingDaoData.selectCredit(connectionProvider, convCurrency.getId(), Utility
-          .getInStrSet(organizations), Utility.getInStrSet(new HashSet<String>(paidStatus)),
-          OBDateUtils.formatDate(currentDate), StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y"
-              : "N", strcBpartnerId, pgLimit, oraLimit);
+      dataCreditSR = AgingDaoData.selectCredit(connectionProvider, convCurrency.getId(),
+          Utility.getInStrSet(organizations), Utility.getInStrSet(new HashSet<String>(paidStatus)),
+          OBDateUtils.formatDate(currentDate),
+          StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y" : "N", strcBpartnerId, pgLimit,
+          oraLimit);
       log4j.debug("Credit Query: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
       i = 0;
@@ -171,9 +173,10 @@ public class AgingDao {
           agingBalanceData.get(strBusinessPartnerId).addCredit(creditLeft);
         } else {
           // if there is the first time the Business Partner is inserted
-          agingBalanceData.put(strBusinessPartnerId, new AgingData(strBusinessPartnerId, strBpName,
-              BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-              BigDecimal.ZERO, creditLeft, BigDecimal.ZERO));
+          agingBalanceData.put(strBusinessPartnerId,
+              new AgingData(strBusinessPartnerId, strBpName, BigDecimal.ZERO, BigDecimal.ZERO,
+                  BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, creditLeft,
+                  BigDecimal.ZERO));
         }
 
         i++;
@@ -237,13 +240,14 @@ public class AgingDao {
     try {
       // Amounts coming from normal PSD (non credit)
       dataSR = AgingDaoData.selectDetail(connectionProvider, convCurrency.getId(),
-          showDoubtfulDebt ? "Y" : "N", OBDateUtils.formatDate(currentDate), OBDateUtils
-              .formatDate(convertToDate(currentDate, strcolumn1)), OBDateUtils
-              .formatDate(convertToDate(currentDate, strcolumn2)), OBDateUtils
-              .formatDate(convertToDate(currentDate, strcolumn3)), OBDateUtils
-              .formatDate(convertToDate(currentDate, strcolumn4)), Utility
-              .getInStrSet(organizations), strcBpartnerId, StringUtils.equals(recOrPay,
-              "RECEIVABLES") ? "Y" : "N", excludeVoid ? "excludeVoids" : "", pgLimit, oraLimit);
+          showDoubtfulDebt ? "Y" : "N", OBDateUtils.formatDate(currentDate),
+          OBDateUtils.formatDate(convertToDate(currentDate, strcolumn1)),
+          OBDateUtils.formatDate(convertToDate(currentDate, strcolumn2)),
+          OBDateUtils.formatDate(convertToDate(currentDate, strcolumn3)),
+          OBDateUtils.formatDate(convertToDate(currentDate, strcolumn4)),
+          Utility.getInStrSet(organizations), strcBpartnerId,
+          StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y" : "N",
+          excludeVoid ? "excludeVoids" : "", pgLimit, oraLimit);
 
       log4j.debug("Query Detail: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
@@ -278,10 +282,11 @@ public class AgingDao {
 
       final List<String> paidStatus = FIN_Utility.getListPaymentConfirmed();
       // Query for credit payments
-      dataCreditSR = AgingDaoData.selectCredit(connectionProvider, convCurrency.getId(), Utility
-          .getInStrSet(organizations), Utility.getInStrSet(new HashSet<String>(paidStatus)),
-          OBDateUtils.formatDate(currentDate), StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y"
-              : "N", strcBpartnerId, pgLimit, oraLimit);
+      dataCreditSR = AgingDaoData.selectCredit(connectionProvider, convCurrency.getId(),
+          Utility.getInStrSet(organizations), Utility.getInStrSet(new HashSet<String>(paidStatus)),
+          OBDateUtils.formatDate(currentDate),
+          StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y" : "N", strcBpartnerId, pgLimit,
+          oraLimit);
       log4j.debug("Credit Query: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
       i = 0;
@@ -311,14 +316,15 @@ public class AgingDao {
       // Sorting and transform to field provider
       init = System.currentTimeMillis();
       Collections.sort(hashMapList, new Comparator<HashMap<String, String>>() {
+        @Override
         public int compare(HashMap<String, String> a, HashMap<String, String> b) {
           int compare = a.get("BPARTNERNAME").compareToIgnoreCase(b.get("BPARTNERNAME"));
           if (compare == 0) {
             compare = a.get("BPARTNER").compareToIgnoreCase(b.get("BPARTNER"));
             if (compare == 0) {
               try {
-                compare = OBDateUtils.getDate(a.get("INVOICE_DATE")).compareTo(
-                    OBDateUtils.getDate(b.get("INVOICE_DATE")));
+                compare = OBDateUtils.getDate(a.get("INVOICE_DATE"))
+                    .compareTo(OBDateUtils.getDate(b.get("INVOICE_DATE")));
                 if (compare == 0) {
                   compare = a.get("INVOICE_NUMBER").compareToIgnoreCase(b.get("INVOICE_NUMBER"));
                 }
@@ -392,27 +398,27 @@ public class AgingDao {
    */
   private void setFieldsIntoFieldProvider(FieldProvider[] data, List<AgingData> agingBalanceData) {
     for (int i = 0; i < data.length; i++) {
-      FieldProviderFactory.setField(data[i], "amount0", agingBalanceData.get(i).getcurrent()
-          .toString());
-      FieldProviderFactory.setField(data[i], "amount1", agingBalanceData.get(i).getamount1()
-          .toString());
-      FieldProviderFactory.setField(data[i], "amount2", agingBalanceData.get(i).getamount2()
-          .toString());
-      FieldProviderFactory.setField(data[i], "amount3", agingBalanceData.get(i).getamount3()
-          .toString());
-      FieldProviderFactory.setField(data[i], "amount4", agingBalanceData.get(i).getamount4()
-          .toString());
-      FieldProviderFactory.setField(data[i], "amount5", agingBalanceData.get(i).getamount5()
-          .toString());
-      FieldProviderFactory
-          .setField(data[i], "Total", agingBalanceData.get(i).getTotal().toString());
-      FieldProviderFactory.setField(data[i], "credit", agingBalanceData.get(i).getCredit()
-          .toString());
+      FieldProviderFactory.setField(data[i], "amount0",
+          agingBalanceData.get(i).getcurrent().toString());
+      FieldProviderFactory.setField(data[i], "amount1",
+          agingBalanceData.get(i).getamount1().toString());
+      FieldProviderFactory.setField(data[i], "amount2",
+          agingBalanceData.get(i).getamount2().toString());
+      FieldProviderFactory.setField(data[i], "amount3",
+          agingBalanceData.get(i).getamount3().toString());
+      FieldProviderFactory.setField(data[i], "amount4",
+          agingBalanceData.get(i).getamount4().toString());
+      FieldProviderFactory.setField(data[i], "amount5",
+          agingBalanceData.get(i).getamount5().toString());
+      FieldProviderFactory.setField(data[i], "Total",
+          agingBalanceData.get(i).getTotal().toString());
+      FieldProviderFactory.setField(data[i], "credit",
+          agingBalanceData.get(i).getCredit().toString());
       FieldProviderFactory.setField(data[i], "net", agingBalanceData.get(i).getNet().toString());
-      FieldProviderFactory.setField(data[i], "doubtfulDebt", agingBalanceData.get(i)
-          .getDoubtfulDebt().toString());
-      FieldProviderFactory.setField(data[i], "percentage", agingBalanceData.get(i).getPercentage()
-          .toString());
+      FieldProviderFactory.setField(data[i], "doubtfulDebt",
+          agingBalanceData.get(i).getDoubtfulDebt().toString());
+      FieldProviderFactory.setField(data[i], "percentage",
+          agingBalanceData.get(i).getPercentage().toString());
       FieldProviderFactory.setField(data[i], "BPartner", agingBalanceData.get(i).getBPartner());
       FieldProviderFactory.setField(data[i], "BPartnerID", agingBalanceData.get(i).getBPartnerID());
     }
@@ -422,8 +428,8 @@ public class AgingDao {
     if (doubtfulDebtAmount.compareTo(BigDecimal.ZERO) == 0) {
       return BigDecimal.ZERO;
     }
-    return doubtfulDebtAmount.divide(totalAmount, 5, RoundingMode.HALF_UP).multiply(
-        new BigDecimal("100"));
+    return doubtfulDebtAmount.divide(totalAmount, 5, RoundingMode.HALF_UP)
+        .multiply(new BigDecimal("100"));
   }
 
 }

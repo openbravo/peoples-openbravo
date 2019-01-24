@@ -46,8 +46,8 @@ class QueryListUtils {
     try {
       final List<JSONObject> jsonFields = new ArrayList<JSONObject>();
       if (!widgetClass.getOBCQLWidgetQueryList().isEmpty()) {
-        for (OBCQL_QueryColumn column : QueryListUtils.getColumns(widgetClass
-            .getOBCQLWidgetQueryList().get(0))) {
+        for (OBCQL_QueryColumn column : QueryListUtils
+            .getColumns(widgetClass.getOBCQLWidgetQueryList().get(0))) {
           final JSONObject field = new JSONObject();
           final Reference reference;
           if (column.getReferenceSearchKey() != null) {
@@ -55,8 +55,8 @@ class QueryListUtils {
           } else {
             reference = column.getReference();
           }
-          final UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-              reference);
+          final UIDefinition uiDefinition = UIDefinitionController.getInstance()
+              .getUIDefinition(reference);
           field.put("name", column.getDisplayExpression());
           field.put("type", uiDefinition.getName());
           if (uiDefinition.getName().equals("_id_10")) {
@@ -127,16 +127,17 @@ class QueryListUtils {
   }
 
   public static List<OBCQL_QueryColumn> getColumns(OBCQL_WidgetQuery query) {
-    OBCriteria<OBCQL_QueryColumn> obcColumns = OBDal.getInstance().createCriteria(
-        OBCQL_QueryColumn.class);
+    OBCriteria<OBCQL_QueryColumn> obcColumns = OBDal.getInstance()
+        .createCriteria(OBCQL_QueryColumn.class);
     obcColumns.add(Restrictions.eq(OBCQL_QueryColumn.PROPERTY_WIDGETQUERY, query));
     obcColumns.addOrderBy(OBCQL_QueryColumn.PROPERTY_SEQUENCENUMBER, true);
     return obcColumns.list();
   }
 
   enum IncludeIn {
-    WidgetView(new String[] { "W" }), MaximizedView(new String[] { "W", "M" }), ExportedFile(
-        new String[] { "W", "M", "E" });
+    WidgetView(new String[] { "W" }),
+    MaximizedView(new String[] { "W", "M" }),
+    ExportedFile(new String[] { "W", "M", "E" });
 
     private String[] includedValues;
 

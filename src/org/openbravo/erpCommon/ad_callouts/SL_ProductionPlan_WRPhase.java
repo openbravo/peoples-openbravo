@@ -51,7 +51,8 @@ public class SL_ProductionPlan_WRPhase extends SimpleCallout {
     // Estimated Time
     BigDecimal estimatedTime = BigDecimal.ZERO;
     BigDecimal qtyWRPhase = new BigDecimal(data[0].quantity);
-    if (StringUtils.isNotEmpty(data[0].estimatedtime) && qtyWRPhase.compareTo(BigDecimal.ZERO) != 0) {
+    if (StringUtils.isNotEmpty(data[0].estimatedtime)
+        && qtyWRPhase.compareTo(BigDecimal.ZERO) != 0) {
       estimatedTime = new BigDecimal(data[0].estimatedtime).divide(qtyWRPhase).multiply(quantity);
     }
     info.addResult("inpestimatedtime", estimatedTime);

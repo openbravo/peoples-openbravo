@@ -165,14 +165,13 @@ public class SessionInfo {
     if (ExternalConnectionPool.getInstance() == null) {
       return false;
     }
-    return JDBC_CONNECTION_POOL_CLASS_NAME.equals(ExternalConnectionPool.getInstance().getClass()
-        .getName());
+    return JDBC_CONNECTION_POOL_CLASS_NAME
+        .equals(ExternalConnectionPool.getInstance().getClass().getName());
   }
 
   private static boolean adContextInfoExists(Connection conn) {
     boolean alreadyExists = false;
-    try (PreparedStatement psQuery = getPreparedStatement(
-        conn,
+    try (PreparedStatement psQuery = getPreparedStatement(conn,
         "select count(*) from information_schema.tables where table_name='ad_context_info' and table_type = 'LOCAL TEMPORARY'");
         ResultSet rs = psQuery.executeQuery()) {
       alreadyExists = rs.next() && !rs.getString(1).equals("0");
@@ -242,16 +241,15 @@ public class SessionInfo {
       }
 
       if (log4j.isDebugEnabled()) {
-        log4j.debug("saving DB context info " + SessionInfo.getUserId() + " - "
-            + SessionInfo.getSessionId() + " - " + SessionInfo.getProcessType() + " - "
-            + SessionInfo.getProcessId());
+        log4j.debug(
+            "saving DB context info " + SessionInfo.getUserId() + " - " + SessionInfo.getSessionId()
+                + " - " + SessionInfo.getProcessType() + " - " + SessionInfo.getProcessId());
       }
 
       psCleanUp = getPreparedStatement(conn, "delete from ad_context_info");
       psCleanUp.executeUpdate();
 
-      psInsert = getPreparedStatement(
-          conn,
+      psInsert = getPreparedStatement(conn,
           "insert into ad_context_info (ad_user_id, ad_session_id, processType, processId) values (?, ?, ?, ?)");
       psInsert.setString(1, SessionInfo.getUserId());
       psInsert.setString(2, SessionInfo.getSessionId());
@@ -316,8 +314,8 @@ public class SessionInfo {
 
     try {
       log4j.trace("preparedStatement requested");
-      ps = conn
-          .prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+      ps = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
+          ResultSet.CONCUR_READ_ONLY);
     } catch (SQLException e) {
       log4j.error("getPreparedStatement: " + sql, e);
       try {

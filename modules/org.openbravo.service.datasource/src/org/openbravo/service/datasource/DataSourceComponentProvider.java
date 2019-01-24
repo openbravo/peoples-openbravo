@@ -69,6 +69,7 @@ public class DataSourceComponentProvider extends BaseComponentProvider {
    * @see org.openbravo.client.kernel.ComponentProvider#getComponent(java.lang.String,
    * java.lang.String, java.util.Map)
    */
+  @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
     final DataSourceComponent dataSourceComponent = getComponent(DataSourceComponent.class);
     dataSourceComponent.setParameters(parameters);
@@ -96,6 +97,7 @@ public class DataSourceComponentProvider extends BaseComponentProvider {
   /**
    * @return the package name of the module to which this provider belongs
    */
+  @Override
   public String getModulePackageName() {
     return this.getClass().getPackage().getName();
   }

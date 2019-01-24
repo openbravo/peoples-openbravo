@@ -113,9 +113,9 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
     final String xml = getXML(Greeting.class);
     // insert in org 1000001
     setUserContext(QA_TEST_ADMIN_USER_ID);
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
+    final ImportResult ir = DataImportService.getInstance()
+        .importDataFromXML(OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+            OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     assertEquals(cnt, ir.getInsertedObjects().size());
     assertEquals(0, ir.getUpdatedObjects().size());
     if (ir.hasErrorOccured()) {
@@ -136,9 +136,9 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
     final String xml = getXML(Greeting.class);
     setUserContext(QA_TEST_ADMIN_USER_ID);
     // insert in org 1000002
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
+    final ImportResult ir = DataImportService.getInstance()
+        .importDataFromXML(OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+            OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     assertEquals(0, ir.getInsertedObjects().size());
     assertEquals(0, ir.getUpdatedObjects().size());
     if (ir.hasErrorOccured()) {
@@ -159,9 +159,9 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
 
     String xml = getXML(Greeting.class);
     xml = xml.replaceAll(">Greeting", ">Greetings");
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
+    final ImportResult ir = DataImportService.getInstance()
+        .importDataFromXML(OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+            OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     assertEquals(0, ir.getInsertedObjects().size());
     assertEquals(DATA_SET_SIZE, ir.getUpdatedObjects().size());
     if (ir.hasErrorOccured()) {
@@ -225,9 +225,9 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
     createTestData();
 
     final String xml = getXML(clz);
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBContext.getOBContext().getCurrentClient(),
-        OBContext.getOBContext().getCurrentOrganization(), xml);
+    final ImportResult ir = DataImportService.getInstance()
+        .importDataFromXML(OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), xml);
     assertTrue(ir.getInsertedObjects().size() == 0);
     assertTrue(ir.getUpdatedObjects().size() == 0);
     OBDal.getInstance().commitAndClose();

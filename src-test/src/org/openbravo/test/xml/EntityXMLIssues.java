@@ -132,8 +132,8 @@ public class EntityXMLIssues extends XMLBaseTest {
     assertEquals(1, ir.getInsertedObjects().size());
     // there is a warning that the uom is created in org *, that's fine
     assertTrue(ir.getWarningMessages() != null);
-    assertTrue(ir.getWarningMessages().indexOf(
-        "eventhough it does not belong to the target organization") != -1);
+    assertTrue(ir.getWarningMessages()
+        .indexOf("eventhough it does not belong to the target organization") != -1);
     final BaseOBObject bob = ir.getInsertedObjects().get(0);
     assertEquals(id, bob.getId());
 
@@ -161,9 +161,9 @@ public class EntityXMLIssues extends XMLBaseTest {
     String xml = getXML(Collections.singletonList(column));
     xml = xml.replace("60</length>", "61.0</length>");
     assertTrue(xml.contains("<length>61.0</length>"));
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "0"),
-        OBDal.getInstance().get(Organization.class, "0"), xml);
+    final ImportResult ir = DataImportService.getInstance()
+        .importDataFromXML(OBDal.getInstance().get(Client.class, "0"),
+            OBDal.getInstance().get(Organization.class, "0"), xml);
     assertTrue(ir.getWarningMessages() == null);
     assertTrue(ir.getErrorMessages() == null);
     assertTrue(column.getLength() == 61);

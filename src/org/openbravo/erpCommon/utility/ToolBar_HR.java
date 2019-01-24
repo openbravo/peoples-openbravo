@@ -23,14 +23,17 @@ class ToolBar_HR implements HTMLElement {
   public ToolBar_HR() {
   }
 
+  @Override
   public String getWidth() {
     return "";
   }
 
+  @Override
   public String elementType() {
     return "HR";
   }
 
+  @Override
   public String toString() {
     return "<hr>";
   }

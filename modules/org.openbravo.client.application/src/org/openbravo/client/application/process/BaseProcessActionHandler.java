@@ -106,8 +106,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       Process process = OBDal.getInstance().get(Process.class, processId);
       String updatedContent = content;
       if (process.isGridlegacy()) {
-        log.warn("Process "
-            + process.getName()
+        log.warn("Process " + process.getName()
             + " is marked as Grid Legacy, you should consider migrating it to prevent parameter conversion");
 
         JSONObject jsonRequest = new JSONObject(content);
@@ -118,7 +117,8 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
             for (Parameter param : process.getOBUIAPPParameterList()) {
               if (GRID_REFERENCE_ID.equals(param.getReference().getId())) {
                 if (gridParameter != null) {
-                  log.error("Error while trying to conver parameters to legacy mode. There are more than one grid parameter. Not converting it.");
+                  log.error(
+                      "Error while trying to conver parameters to legacy mode. There are more than one grid parameter. Not converting it.");
                   shouldConvert = false;
                 } else {
                   gridParameter = param;
@@ -188,9 +188,9 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       if (!checkPermission) {
         try {
           checkPermission = Preferences.YES.equals(Preferences.getPreferenceValue("SecuredProcess",
-              true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), window));
+              true, OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), window));
         } catch (PropertyException e) {
           // do nothing, property is not set so securedProcess is false
         }
@@ -216,8 +216,8 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
   }
 
   /**
-   * The request map is &lt;String, Object&gt; because includes the HTTP request and HTTP session, is not
-   * required to handle process parameters
+   * The request map is &lt;String, Object&gt; because includes the HTTP request and HTTP session,
+   * is not required to handle process parameters
    * 
    * @deprecated use {@link BaseProcessActionHandler#fixRequestMap(Map, JSONObject)}
    */

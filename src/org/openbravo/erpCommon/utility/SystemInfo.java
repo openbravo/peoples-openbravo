@@ -144,138 +144,138 @@ public class SystemInfo {
 
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
       switch (i) {
-      case SYSTEM_IDENTIFIER:
-        systemInfo.put(i, getSystemIdentifier(conn));
-        break;
-      case MAC_IDENTIFIER:
-        systemInfo.put(i, calculateMacIdentifier());
-        break;
-      case DB_IDENTIFIER:
-        systemInfo.put(i, getDBIdentifier(conn));
-        break;
-      case DATABASE:
-        // already handled
-        break;
-      case DATABASE_VERSION:
-        systemInfo.put(i, getDatabaseVersion(conn));
-        break;
-      case WEBSERVER:
-        systemInfo.put(i, getWebserver()[0]);
-        break;
-      case WEBSERVER_VERSION:
-        systemInfo.put(i, getWebserver()[1]);
-        break;
-      case SERVLET_CONTAINER:
-        systemInfo.put(i, ServerVersionChecker.getServerName());
-        break;
-      case SERVLET_CONTAINER_VERSION:
-        systemInfo.put(i, ServerVersionChecker.getServerVersion());
-        break;
-      case ANT_VERSION:
-        systemInfo.put(i, getVersion(SystemInfoData.selectAntVersion(conn)));
-        break;
-      case OB_VERSION:
-        OBVersion version = OBVersion.getInstance();
-        systemInfo.put(i, version.getVersionNumber() + version.getMP());
-        break;
-      case OB_INSTALL_MODE:
-        systemInfo.put(i, SystemInfoData.selectObInstallMode(conn));
-        break;
-      case NUM_REGISTERED_USERS:
-        systemInfo.put(i, SystemInfoData.selectNumRegisteredUsers(conn));
-        break;
-      case ISHEARTBEATACTIVE:
-        systemInfo.put(i, SystemInfoData.selectIsheartbeatactive(conn));
-        break;
-      case ISPROXYREQUIRED:
-        systemInfo.put(i, SystemInfoData.selectIsproxyrequired(conn));
-        break;
-      case PROXY_SERVER:
-        systemInfo.put(i, SystemInfoData.selectProxyServer(conn));
-        break;
-      case PROXY_PORT:
-        systemInfo.put(i, SystemInfoData.selectProxyPort(conn));
-        break;
-      case OPERATING_SYSTEM:
-        String os = System.getProperty("os.name");
-        if (os.length() > 60) {
-          os = os.substring(0, 57) + "...";
-        }
-        systemInfo.put(i, os);
-        break;
-      case OPERATING_SYSTEM_VERSION:
-        systemInfo.put(i, System.getProperty("os.version"));
-        break;
-      case JAVA_VERSION:
-        systemInfo.put(i, System.getProperty("java.version"));
-        break;
-      case MODULES:
-        systemInfo.put(i, getModules());
-        break;
-      case OBPS_INSTANCE:
-        systemInfo.put(i, getOBPSInstance());
-        break;
-      case INSTANCE_NUMBER:
-        systemInfo.put(i, getOBPSIntanceNumber());
-        break;
-      case FIRST_LOGIN:
-        systemInfo.put(i, formatDate(firstLogin));
-        break;
-      case LAST_LOGIN:
-        systemInfo.put(i, formatDate(lastLogin));
-        break;
-      case TOTAL_LOGINS:
-        systemInfo.put(i, numberOfLogins.toString());
-        break;
-      case AVG_CONCURRENT_USERS:
-        systemInfo.put(i, avgUsers.toString());
-        break;
-      case MAX_CONCURRENT_USERS:
-        systemInfo.put(i, Integer.toString(maxUsers));
-        break;
-      case PERC_TIME_USAGE:
-        systemInfo.put(i, usagePercentageTime.toString());
-        break;
-      case TOTAL_LOGINS_LAST_MOTH:
-        systemInfo.put(i, Integer.toString(numberOfLoginsThisMonth));
-        break;
-      case WS_CALLS_MAX:
-        systemInfo.put(i, Long.toString(maxDayWsLogins));
-        break;
-      case WS_CALLS_AVG:
-        systemInfo.put(i, avgWsLogins.toString());
-        break;
-      case WSR_CALLS_MAX:
-        systemInfo.put(i, Long.toString(maxDayRejectedWsLogins));
-        break;
-      case WSR_CALLS_AVG:
-        systemInfo.put(i, avgRejectedWsLogins.toString());
-        break;
-      case WSC_CALLS_MAX:
-        systemInfo.put(i, Long.toString(maxDayWsCLogins));
-        break;
-      case WSC_CALLS_AVG:
-        systemInfo.put(i, avgWsCLogins.toString());
-        break;
-      case NUMBER_OF_CLIENTS:
-        systemInfo.put(i, getNumberOfClients());
-        break;
-      case NUMBER_OF_ORGS:
-        systemInfo.put(i, getNumberOfOrgs());
-        break;
-      case USAGE_AUDIT:
-        systemInfo.put(i, isUsageAuditEnabled() ? "true" : "false");
-        break;
-      case INSTANCE_PURPOSE:
-        String instancePurpose = sysInfo.getInstancePurpose();
-        systemInfo.put(i, instancePurpose == null ? "U" : instancePurpose);
-        break;
-      case REJECTED_LOGINS_DUE_CONC_USERS:
-        systemInfo.put(i, Integer.toString(numberOfRejectedLoginsDueConcUsersThisMonth));
-        break;
-      case CUSTOM_QUERY_ENABLED:
-        systemInfo.put(i, sysInfo.isEnableCustomQueries() ? "Y" : "N");
-        break;
+        case SYSTEM_IDENTIFIER:
+          systemInfo.put(i, getSystemIdentifier(conn));
+          break;
+        case MAC_IDENTIFIER:
+          systemInfo.put(i, calculateMacIdentifier());
+          break;
+        case DB_IDENTIFIER:
+          systemInfo.put(i, getDBIdentifier(conn));
+          break;
+        case DATABASE:
+          // already handled
+          break;
+        case DATABASE_VERSION:
+          systemInfo.put(i, getDatabaseVersion(conn));
+          break;
+        case WEBSERVER:
+          systemInfo.put(i, getWebserver()[0]);
+          break;
+        case WEBSERVER_VERSION:
+          systemInfo.put(i, getWebserver()[1]);
+          break;
+        case SERVLET_CONTAINER:
+          systemInfo.put(i, ServerVersionChecker.getServerName());
+          break;
+        case SERVLET_CONTAINER_VERSION:
+          systemInfo.put(i, ServerVersionChecker.getServerVersion());
+          break;
+        case ANT_VERSION:
+          systemInfo.put(i, getVersion(SystemInfoData.selectAntVersion(conn)));
+          break;
+        case OB_VERSION:
+          OBVersion version = OBVersion.getInstance();
+          systemInfo.put(i, version.getVersionNumber() + version.getMP());
+          break;
+        case OB_INSTALL_MODE:
+          systemInfo.put(i, SystemInfoData.selectObInstallMode(conn));
+          break;
+        case NUM_REGISTERED_USERS:
+          systemInfo.put(i, SystemInfoData.selectNumRegisteredUsers(conn));
+          break;
+        case ISHEARTBEATACTIVE:
+          systemInfo.put(i, SystemInfoData.selectIsheartbeatactive(conn));
+          break;
+        case ISPROXYREQUIRED:
+          systemInfo.put(i, SystemInfoData.selectIsproxyrequired(conn));
+          break;
+        case PROXY_SERVER:
+          systemInfo.put(i, SystemInfoData.selectProxyServer(conn));
+          break;
+        case PROXY_PORT:
+          systemInfo.put(i, SystemInfoData.selectProxyPort(conn));
+          break;
+        case OPERATING_SYSTEM:
+          String os = System.getProperty("os.name");
+          if (os.length() > 60) {
+            os = os.substring(0, 57) + "...";
+          }
+          systemInfo.put(i, os);
+          break;
+        case OPERATING_SYSTEM_VERSION:
+          systemInfo.put(i, System.getProperty("os.version"));
+          break;
+        case JAVA_VERSION:
+          systemInfo.put(i, System.getProperty("java.version"));
+          break;
+        case MODULES:
+          systemInfo.put(i, getModules());
+          break;
+        case OBPS_INSTANCE:
+          systemInfo.put(i, getOBPSInstance());
+          break;
+        case INSTANCE_NUMBER:
+          systemInfo.put(i, getOBPSIntanceNumber());
+          break;
+        case FIRST_LOGIN:
+          systemInfo.put(i, formatDate(firstLogin));
+          break;
+        case LAST_LOGIN:
+          systemInfo.put(i, formatDate(lastLogin));
+          break;
+        case TOTAL_LOGINS:
+          systemInfo.put(i, numberOfLogins.toString());
+          break;
+        case AVG_CONCURRENT_USERS:
+          systemInfo.put(i, avgUsers.toString());
+          break;
+        case MAX_CONCURRENT_USERS:
+          systemInfo.put(i, Integer.toString(maxUsers));
+          break;
+        case PERC_TIME_USAGE:
+          systemInfo.put(i, usagePercentageTime.toString());
+          break;
+        case TOTAL_LOGINS_LAST_MOTH:
+          systemInfo.put(i, Integer.toString(numberOfLoginsThisMonth));
+          break;
+        case WS_CALLS_MAX:
+          systemInfo.put(i, Long.toString(maxDayWsLogins));
+          break;
+        case WS_CALLS_AVG:
+          systemInfo.put(i, avgWsLogins.toString());
+          break;
+        case WSR_CALLS_MAX:
+          systemInfo.put(i, Long.toString(maxDayRejectedWsLogins));
+          break;
+        case WSR_CALLS_AVG:
+          systemInfo.put(i, avgRejectedWsLogins.toString());
+          break;
+        case WSC_CALLS_MAX:
+          systemInfo.put(i, Long.toString(maxDayWsCLogins));
+          break;
+        case WSC_CALLS_AVG:
+          systemInfo.put(i, avgWsCLogins.toString());
+          break;
+        case NUMBER_OF_CLIENTS:
+          systemInfo.put(i, getNumberOfClients());
+          break;
+        case NUMBER_OF_ORGS:
+          systemInfo.put(i, getNumberOfOrgs());
+          break;
+        case USAGE_AUDIT:
+          systemInfo.put(i, isUsageAuditEnabled() ? "true" : "false");
+          break;
+        case INSTANCE_PURPOSE:
+          String instancePurpose = sysInfo.getInstancePurpose();
+          systemInfo.put(i, instancePurpose == null ? "U" : instancePurpose);
+          break;
+        case REJECTED_LOGINS_DUE_CONC_USERS:
+          systemInfo.put(i, Integer.toString(numberOfRejectedLoginsDueConcUsersThisMonth));
+          break;
+        case CUSTOM_QUERY_ENABLED:
+          systemInfo.put(i, sysInfo.isEnableCustomQueries() ? "Y" : "N");
+          break;
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -283,20 +283,23 @@ public class SystemInfo {
   }
 
   public final static synchronized String getSystemIdentifier() throws ServletException {
-    if (systemIdentifier == null)
+    if (systemIdentifier == null) {
       systemIdentifier = getSystemIdentifier(new DalConnectionProvider());
+    }
     return systemIdentifier;
   }
 
   public final static synchronized String getDBIdentifier() {
-    if (databaseIdentifier == null)
+    if (databaseIdentifier == null) {
       databaseIdentifier = getDBIdentifier(new DalConnectionProvider());
+    }
     return databaseIdentifier;
   }
 
   public final static synchronized String getMacAddress() {
-    if (macAddress == null)
+    if (macAddress == null) {
       macAddress = calculateMacIdentifier();
+    }
     return macAddress;
   }
 
@@ -545,8 +548,8 @@ public class SystemInfo {
         modInfo.add(mod.getName());
 
         if (usageAuditEnabled) {
-          OBCriteria<SessionUsageAudit> qUsage = OBDal.getInstance().createCriteria(
-              SessionUsageAudit.class);
+          OBCriteria<SessionUsageAudit> qUsage = OBDal.getInstance()
+              .createCriteria(SessionUsageAudit.class);
           qUsage.setFilterOnReadableClients(false);
           qUsage.setFilterOnReadableOrganization(false);
           qUsage.add(Restrictions.eq(SessionUsageAudit.PROPERTY_MODULE, mod));
@@ -599,8 +602,9 @@ public class SystemInfo {
    */
   private static String getVersion(String str) {
     String version = "";
-    if (str == null)
+    if (str == null) {
       return "";
+    }
     Pattern pattern = Pattern.compile("((\\d+\\.)+)\\d+");
     Matcher matcher = pattern.matcher(str);
     if (matcher.find()) {
@@ -648,7 +652,8 @@ public class SystemInfo {
     hql.append("       max(s.creationDate) as lastLogin, ");
     hql.append("       count(*) as totalLogins");
     hql.append("  from ADSession s");
-    Query<Object[]> q = OBDal.getInstance().getSession()
+    Query<Object[]> q = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), Object[].class);
     if (q.list().size() != 0) {
       Object[] logInfo = q.list().get(0);
@@ -720,11 +725,12 @@ public class SystemInfo {
       }
       calculateNumberOfRejectedLoginsDueConcurrentUsersLastMonth(startOfPeriod);
 
-      BigDecimal totalTime = new BigDecimal(now.getTimeInMillis() - startOfPeriod.getTimeInMillis());
+      BigDecimal totalTime = new BigDecimal(
+          now.getTimeInMillis() - startOfPeriod.getTimeInMillis());
       if (totalUsageTime.compareTo(BigDecimal.ZERO) != 0) {
         avgUsers = usersPeriod.divide(totalUsageTime, 3, RoundingMode.HALF_DOWN);
-        usagePercentageTime = totalUsageTime.divide(totalTime, 5, RoundingMode.HALF_DOWN).multiply(
-            new BigDecimal(100));
+        usagePercentageTime = totalUsageTime.divide(totalTime, 5, RoundingMode.HALF_DOWN)
+            .multiply(new BigDecimal(100));
       }
       log4j.debug("max:" + maxUsers + " total:" + totalUsageTime + " "
           + usagePercentageTime.toString() + "% avg usr:" + avgUsers.toString());
@@ -738,8 +744,8 @@ public class SystemInfo {
           maxDayWsLogins = dayWsLogins;
         }
       }
-      avgWsLogins = BigDecimal.valueOf(totalWsLogins).divide(BigDecimal.valueOf(30), 3,
-          RoundingMode.HALF_DOWN);
+      avgWsLogins = BigDecimal.valueOf(totalWsLogins)
+          .divide(BigDecimal.valueOf(30), 3, RoundingMode.HALF_DOWN);
       log4j.debug("WS Calls: total:" + totalWsLogins + " - max:" + maxDayWsLogins + " - avg:"
           + avgWsLogins.toString());
 
@@ -752,8 +758,8 @@ public class SystemInfo {
           maxDayRejectedWsLogins = dayRWsLogins;
         }
       }
-      avgRejectedWsLogins = BigDecimal.valueOf(totalRejectedWsLogins).divide(
-          BigDecimal.valueOf(30), 3, RoundingMode.HALF_DOWN);
+      avgRejectedWsLogins = BigDecimal.valueOf(totalRejectedWsLogins)
+          .divide(BigDecimal.valueOf(30), 3, RoundingMode.HALF_DOWN);
       log4j.debug("WS Rejected Calls: total:" + totalRejectedWsLogins + " - max:"
           + maxDayRejectedWsLogins + " - avg:" + avgRejectedWsLogins.toString());
 
@@ -766,8 +772,8 @@ public class SystemInfo {
           maxDayWsCLogins = dayWsCLogins;
         }
       }
-      avgWsCLogins = BigDecimal.valueOf(totalWsCLogins).divide(BigDecimal.valueOf(30), 3,
-          RoundingMode.HALF_DOWN);
+      avgWsCLogins = BigDecimal.valueOf(totalWsCLogins)
+          .divide(BigDecimal.valueOf(30), 3, RoundingMode.HALF_DOWN);
       log4j.debug("WSC Calls: total:" + totalWsCLogins + " - max:" + maxDayWsCLogins + " - avg:"
           + avgWsCLogins.toString());
 
@@ -840,25 +846,48 @@ public class SystemInfo {
   }
 
   public enum Item {
-    SYSTEM_IDENTIFIER("systemIdentifier", true), MAC_IDENTIFIER("macId", true), DB_IDENTIFIER(
-        "dbIdentifier", true), OPERATING_SYSTEM("os", false), OPERATING_SYSTEM_VERSION("osVersion",
-        false), DATABASE("db", false), DATABASE_VERSION("dbVersion", false), WEBSERVER("webserver",
-        false), WEBSERVER_VERSION("webserverVersion", false), SERVLET_CONTAINER("servletContainer",
-        false), SERVLET_CONTAINER_VERSION("servletContainerVersion", false), ANT_VERSION(
-        "antVersion", false), OB_VERSION("obVersion", false), OB_INSTALL_MODE("obInstallMode",
-        false), NUM_REGISTERED_USERS("numRegisteredUsers", false), ISHEARTBEATACTIVE(
-        "isheartbeatactive", true), ISPROXYREQUIRED("isproxyrequired", false), PROXY_SERVER(
-        "proxyServer", false), PROXY_PORT("proxyPort", false), JAVA_VERSION("javaVersion", false), MODULES(
-        "modules", false), OBPS_INSTANCE("obpsId", false), FIRST_LOGIN("firstLogin", false), LAST_LOGIN(
-        "lastLogin", false), TOTAL_LOGINS("totalLogins", false), TOTAL_LOGINS_LAST_MOTH(
-        "loginsMoth", false), MAX_CONCURRENT_USERS("maxUsers", false), AVG_CONCURRENT_USERS(
-        "avgUsers", false), PERC_TIME_USAGE("timeUsage", false), NUMBER_OF_CLIENTS("clientNum",
-        false), NUMBER_OF_ORGS("orgNum", false), USAGE_AUDIT("usageAudit", false), INSTANCE_PURPOSE(
-        "instancePurpose", false), REJECTED_LOGINS_DUE_CONC_USERS("rejectedLoginsDueConcUsers",
-        false), INSTANCE_NUMBER("instanceNo", false), CUSTOM_QUERY_ENABLED("enabledCustomQuery",
-        false), WS_CALLS_MAX("wsCallsMax", false), WS_CALLS_AVG("wsCallsAvg", false), WSC_CALLS_MAX(
-        "wscCallsMax", false), WSC_CALLS_AVG("wscCallsAvg", false), WSR_CALLS_MAX(
-        "wsRejectedCallsMax", false), WSR_CALLS_AVG("wsRejectedCallsAvg", false);
+    SYSTEM_IDENTIFIER("systemIdentifier", true),
+    MAC_IDENTIFIER("macId", true),
+    DB_IDENTIFIER("dbIdentifier", true),
+    OPERATING_SYSTEM("os", false),
+    OPERATING_SYSTEM_VERSION("osVersion", false),
+    DATABASE("db", false),
+    DATABASE_VERSION("dbVersion", false),
+    WEBSERVER("webserver", false),
+    WEBSERVER_VERSION("webserverVersion", false),
+    SERVLET_CONTAINER("servletContainer", false),
+    SERVLET_CONTAINER_VERSION("servletContainerVersion", false),
+    ANT_VERSION("antVersion", false),
+    OB_VERSION("obVersion", false),
+    OB_INSTALL_MODE("obInstallMode", false),
+    NUM_REGISTERED_USERS("numRegisteredUsers", false),
+    ISHEARTBEATACTIVE("isheartbeatactive", true),
+    ISPROXYREQUIRED("isproxyrequired", false),
+    PROXY_SERVER("proxyServer", false),
+    PROXY_PORT("proxyPort", false),
+    JAVA_VERSION("javaVersion", false),
+    MODULES("modules", false),
+    OBPS_INSTANCE("obpsId", false),
+    FIRST_LOGIN("firstLogin", false),
+    LAST_LOGIN("lastLogin", false),
+    TOTAL_LOGINS("totalLogins", false),
+    TOTAL_LOGINS_LAST_MOTH("loginsMoth", false),
+    MAX_CONCURRENT_USERS("maxUsers", false),
+    AVG_CONCURRENT_USERS("avgUsers", false),
+    PERC_TIME_USAGE("timeUsage", false),
+    NUMBER_OF_CLIENTS("clientNum", false),
+    NUMBER_OF_ORGS("orgNum", false),
+    USAGE_AUDIT("usageAudit", false),
+    INSTANCE_PURPOSE("instancePurpose", false),
+    REJECTED_LOGINS_DUE_CONC_USERS("rejectedLoginsDueConcUsers", false),
+    INSTANCE_NUMBER("instanceNo", false),
+    CUSTOM_QUERY_ENABLED("enabledCustomQuery", false),
+    WS_CALLS_MAX("wsCallsMax", false),
+    WS_CALLS_AVG("wsCallsAvg", false),
+    WSC_CALLS_MAX("wscCallsMax", false),
+    WSC_CALLS_AVG("wscCallsAvg", false),
+    WSR_CALLS_MAX("wsRejectedCallsMax", false),
+    WSR_CALLS_AVG("wsRejectedCallsAvg", false);
 
     private String label;
     private boolean isIdInfo;

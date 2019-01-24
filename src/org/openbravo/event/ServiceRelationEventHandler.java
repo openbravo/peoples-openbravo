@@ -41,8 +41,8 @@ import org.openbravo.model.common.order.OrderlineServiceRelation;
 import org.openbravo.model.common.plm.Product;
 
 public class ServiceRelationEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      OrderlineServiceRelation.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(OrderlineServiceRelation.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -54,8 +54,8 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     if (!isValidEvent(event)) {
       return;
     }
-    final Entity orderLineRelationEntity = ModelProvider.getInstance().getEntity(
-        OrderlineServiceRelation.ENTITY_NAME);
+    final Entity orderLineRelationEntity = ModelProvider.getInstance()
+        .getEntity(OrderlineServiceRelation.ENTITY_NAME);
     final Property solProperty = orderLineRelationEntity
         .getProperty(OrderlineServiceRelation.PROPERTY_SALESORDERLINE);
     final Property amountProperty = orderLineRelationEntity
@@ -74,8 +74,8 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     if (!isValidEvent(event)) {
       return;
     }
-    final Entity orderLineRelationEntity = ModelProvider.getInstance().getEntity(
-        OrderlineServiceRelation.ENTITY_NAME);
+    final Entity orderLineRelationEntity = ModelProvider.getInstance()
+        .getEntity(OrderlineServiceRelation.ENTITY_NAME);
     final Property solProperty = orderLineRelationEntity
         .getProperty(OrderlineServiceRelation.PROPERTY_SALESORDERLINE);
     final Property amountProperty = orderLineRelationEntity
@@ -96,8 +96,8 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     if (!isValidEvent(event)) {
       return;
     }
-    final Entity orderLineRelationEntity = ModelProvider.getInstance().getEntity(
-        OrderlineServiceRelation.ENTITY_NAME);
+    final Entity orderLineRelationEntity = ModelProvider.getInstance()
+        .getEntity(OrderlineServiceRelation.ENTITY_NAME);
     final Property solProperty = orderLineRelationEntity
         .getProperty(OrderlineServiceRelation.PROPERTY_SALESORDERLINE);
     final Property amountProperty = orderLineRelationEntity
@@ -125,18 +125,18 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     BigDecimal currentPrice = currentqty.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
         : currentAmount.divide(currentqty, currency.getPricePrecision().intValue(),
             RoundingMode.HALF_UP);
-    BigDecimal oldPrice = oldQuantity.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : oldAmount
-        .divide(oldQuantity, currency.getPricePrecision().intValue(), RoundingMode.HALF_UP);
-    BigDecimal baseProductPrice = ServicePriceUtils.getProductPrice(currentOrderLine
-        .getSalesOrder().getOrderDate(), currentOrderLine.getSalesOrder().getPriceList(),
-        currentOrderLine.getProduct());
-    BigDecimal serviceAmount = ServicePriceUtils.getServiceAmount(
-        currentOrderLine,
-        dbAmount.add(currentAmount.subtract(oldAmount)).setScale(
-            currency.getPricePrecision().intValue(), RoundingMode.HALF_UP),
+    BigDecimal oldPrice = oldQuantity.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
+        : oldAmount.divide(oldQuantity, currency.getPricePrecision().intValue(),
+            RoundingMode.HALF_UP);
+    BigDecimal baseProductPrice = ServicePriceUtils.getProductPrice(
+        currentOrderLine.getSalesOrder().getOrderDate(),
+        currentOrderLine.getSalesOrder().getPriceList(), currentOrderLine.getProduct());
+    BigDecimal serviceAmount = ServicePriceUtils.getServiceAmount(currentOrderLine,
+        dbAmount.add(currentAmount.subtract(oldAmount))
+            .setScale(currency.getPricePrecision().intValue(), RoundingMode.HALF_UP),
         null,
-        dbPrice.add(currentPrice.subtract(oldPrice)).setScale(
-            currency.getPricePrecision().intValue(), RoundingMode.HALF_UP),
+        dbPrice.add(currentPrice.subtract(oldPrice))
+            .setScale(currency.getPricePrecision().intValue(), RoundingMode.HALF_UP),
         dbQuantity.add(currentqty.subtract(oldQuantity)), null);
     Product service = currentOrderLine.getProduct();
 
@@ -161,10 +161,10 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     }
     currentOrderLine.setOrderedQuantity(serviceQty);
 
-    BigDecimal servicePrice = baseProductPrice.add(serviceAmount.divide(serviceQty, currency
-        .getPricePrecision().intValue(), RoundingMode.HALF_UP));
-    serviceAmount = serviceAmount.add(baseProductPrice.multiply(serviceQty)).setScale(
-        currency.getPricePrecision().intValue(), RoundingMode.HALF_UP);
+    BigDecimal servicePrice = baseProductPrice.add(serviceAmount.divide(serviceQty,
+        currency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
+    serviceAmount = serviceAmount.add(baseProductPrice.multiply(serviceQty))
+        .setScale(currency.getPricePrecision().intValue(), RoundingMode.HALF_UP);
     if (currentOrderLine.getSalesOrder().isPriceIncludesTax()) {
       currentOrderLine.setGrossUnitPrice(servicePrice);
       currentOrderLine.setLineGrossAmount(serviceAmount);
@@ -179,9 +179,10 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     currentOrderLine.setTaxableAmount(serviceAmount);
 
     // Calculate discount
-    BigDecimal discount = listPrice.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : listPrice
-        .subtract(servicePrice).multiply(new BigDecimal("100"))
-        .divide(listPrice, currency.getPricePrecision().intValue(), RoundingMode.HALF_EVEN);
+    BigDecimal discount = listPrice.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
+        : listPrice.subtract(servicePrice)
+            .multiply(new BigDecimal("100"))
+            .divide(listPrice, currency.getPricePrecision().intValue(), RoundingMode.HALF_EVEN);
     currentOrderLine.setDiscount(discount);
     OBDal.getInstance().save(currentOrderLine);
   }

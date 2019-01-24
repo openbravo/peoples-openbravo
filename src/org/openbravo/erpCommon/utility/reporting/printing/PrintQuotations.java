@@ -32,13 +32,15 @@ public class PrintQuotations extends PrintController {
   // weghalen en melden dat het document
   // niet ge-emailed kan worden
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     DocumentType documentType = DocumentType.QUOTATION;
@@ -48,12 +50,14 @@ public class PrintQuotations extends PrintController {
     String strDocumentId = null;
 
     strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpcOrderId_R");
-    if (strDocumentId.equals(""))
+    if (strDocumentId.equals("")) {
       strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpcOrderId");
+    }
 
     post(request, response, vars, documentType, sessionValuePrefix, strDocumentId);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that processes the print action";
   } // End of getServletInfo() method

@@ -32,13 +32,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ErrorConnection extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("RECONNECT")) {
@@ -50,16 +52,19 @@ public class ErrorConnection extends HttpSecureAppServlet {
         return;
       }
       response.sendRedirect(strDireccion + globalParameters.loginServlet);
-    } else
+    } else {
       printPage(response, vars);
+    }
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Error connection");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/ErrorConnection").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/ErrorConnection")
+        .createXmlDocument();
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -67,6 +72,7 @@ public class ErrorConnection extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the connection error window";
   } // end of getServletInfo() method

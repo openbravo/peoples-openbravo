@@ -62,13 +62,16 @@ import org.openbravo.database.SessionInfo;
 
 public class DalRequestFilter implements Filter {
 
+  @Override
   public void init(FilterConfig fConfig) throws ServletException {
     DalLayerInitializer.getInstance().initialize(true);
   }
 
+  @Override
   public void destroy() {
   }
 
+  @Override
   public void doFilter(final ServletRequest request, final ServletResponse response,
       final FilterChain chain) throws IOException, ServletException {
     final DalThreadHandler dth = new DalThreadHandler() {

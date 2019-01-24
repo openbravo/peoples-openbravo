@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -50,8 +52,6 @@ import org.openbravo.test.createlinesfrom.data.CLFTestDataPO_02;
 import org.openbravo.test.createlinesfrom.data.CLFTestDataSO_01;
 import org.openbravo.test.createlinesfrom.data.CreateLinesFromTestData;
 import org.openbravo.test.createlinesfrom.data.InvoiceLineData;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check Create Lines From Orders/Shipments/Receipts process
@@ -203,8 +203,8 @@ public class CreateLinesFromTest extends WeldBaseTest {
     final List<Object> params = new ArrayList<Object>();
     params.add(null);
     params.add(invoice.getId());
-    CallStoredProcedure.getInstance().call(INVOICE_COMPLETE_PROCEDURE_NAME, params, null, true,
-        false);
+    CallStoredProcedure.getInstance()
+        .call(INVOICE_COMPLETE_PROCEDURE_NAME, params, null, true, false);
     OBDal.getInstance().refresh(invoice);
     return invoice;
   }
@@ -227,14 +227,16 @@ public class CreateLinesFromTest extends WeldBaseTest {
         line.put("product$_identifier", orderLine.getProduct().getIdentifier());
         line.put("lineNo", orderLine.getLineNo());
         line.put("orderedQuantity", orderLine.getOrderedQuantity().toString());
-        line.put("operativeQuantity", orderLine.getOperativeQuantity() == null ? orderLine
-            .getOrderedQuantity().toString() : orderLine.getOperativeQuantity().toString());
+        line.put("operativeQuantity",
+            orderLine.getOperativeQuantity() == null ? orderLine.getOrderedQuantity().toString()
+                : orderLine.getOperativeQuantity().toString());
         line.put("id", orderLine.getId());
         line.put("salesOrder", order.getId());
         line.put("operativeUOM", orderLine.getOperativeUOM() == null ? orderLine.getUOM().getId()
             : orderLine.getOperativeUOM().getId());
-        line.put("operativeUOM$_identifier", orderLine.getOperativeUOM() == null ? orderLine
-            .getUOM().getIdentifier() : orderLine.getOperativeUOM().getIdentifier());
+        line.put("operativeUOM$_identifier",
+            orderLine.getOperativeUOM() == null ? orderLine.getUOM().getIdentifier()
+                : orderLine.getOperativeUOM().getIdentifier());
         line.put("orderQuantity", "");
         selectedLines.put(line);
       } catch (JSONException e) {
@@ -258,7 +260,8 @@ public class CreateLinesFromTest extends WeldBaseTest {
             shipmentInOut.getBusinessPartner().getName(), shipmentInOutLine.getLineNo(),
             shipmentInOutLine.getProduct().getName(), shipmentInOutLine.getMovementQuantity());
 
-        this.data.getInvoiceLineData().get(i)
+        this.data.getInvoiceLineData()
+            .get(i)
             .setShipmentInOutLineIdentifier(shipmentInOutLineIdentifier);
 
         JSONObject line = new JSONObject();
@@ -269,15 +272,16 @@ public class CreateLinesFromTest extends WeldBaseTest {
         line.put("lineNo", shipmentInOutLine.getLineNo());
         line.put("movementQuantity", shipmentInOutLine.getMovementQuantity().toString());
         line.put("operativeQuantity",
-            shipmentInOutLine.getOperativeQuantity() == null ? shipmentInOutLine
-                .getMovementQuantity().toString() : shipmentInOutLine.getOperativeQuantity()
-                .toString());
+            shipmentInOutLine.getOperativeQuantity() == null
+                ? shipmentInOutLine.getMovementQuantity().toString()
+                : shipmentInOutLine.getOperativeQuantity().toString());
         line.put("id", shipmentInOutLine.getId());
-        line.put("operativeUOM", shipmentInOutLine.getOperativeUOM() == null ? shipmentInOutLine
-            .getUOM().getId() : shipmentInOutLine.getOperativeUOM().getId());
+        line.put("operativeUOM",
+            shipmentInOutLine.getOperativeUOM() == null ? shipmentInOutLine.getUOM().getId()
+                : shipmentInOutLine.getOperativeUOM().getId());
         line.put("operativeUOM$_identifier",
-            shipmentInOutLine.getOperativeUOM() == null ? shipmentInOutLine.getUOM()
-                .getIdentifier() : shipmentInOutLine.getOperativeUOM().getIdentifier());
+            shipmentInOutLine.getOperativeUOM() == null ? shipmentInOutLine.getUOM().getIdentifier()
+                : shipmentInOutLine.getOperativeUOM().getIdentifier());
         line.put("orderQuantity", "");
         selectedLines.put(line);
       } catch (JSONException e) {
@@ -292,8 +296,8 @@ public class CreateLinesFromTest extends WeldBaseTest {
     final List<Object> params = new ArrayList<Object>();
     params.add(null);
     params.add(shipmentInOut.getId());
-    CallStoredProcedure.getInstance().call(SHIPMENT_INOUT_COMPLETE_PROCEDURE_NAME, params, null,
-        true, false);
+    CallStoredProcedure.getInstance()
+        .call(SHIPMENT_INOUT_COMPLETE_PROCEDURE_NAME, params, null, true, false);
     OBDal.getInstance().refresh(shipmentInOut);
     return shipmentInOut;
   }

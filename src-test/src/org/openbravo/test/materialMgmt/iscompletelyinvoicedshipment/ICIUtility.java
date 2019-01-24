@@ -55,9 +55,8 @@ public class ICIUtility {
    * </ul>
    */
   public static void setTestContextSpain() {
-    OBContext.setOBContext(ICIConstants.OPENBRAVO_USER_ID,
-        ICIConstants.FNB_INT_GROUP_ADMIN_ROLE_ID, ICIConstants.FNB_GROUP_CLIENT_ID,
-        ICIConstants.FNB_ESPANA_ORG_ID);
+    OBContext.setOBContext(ICIConstants.OPENBRAVO_USER_ID, ICIConstants.FNB_INT_GROUP_ADMIN_ROLE_ID,
+        ICIConstants.FNB_GROUP_CLIENT_ID, ICIConstants.FNB_ESPANA_ORG_ID);
   }
 
   /**
@@ -259,8 +258,8 @@ public class ICIUtility {
       ShipmentInOut shipment = OBProvider.getInstance().get(ShipmentInOut.class);
       shipment.setClient(parameters.getOrder().getClient());
       shipment.setOrganization(parameters.getOrder().getOrganization());
-      DocumentType mmShipment = OBDal.getInstance().get(DocumentType.class,
-          ICIConstants.SHIPMENT_DOCTYPE_ID);
+      DocumentType mmShipment = OBDal.getInstance()
+          .get(DocumentType.class, ICIConstants.SHIPMENT_DOCTYPE_ID);
       shipment.setDocumentType(mmShipment);
       shipment.setDocumentNo(FIN_Utility.getDocumentNo(parameters.getOrder().getOrganization(),
           ICIConstants.GOODS_SHIPMENT_DOCBASETYPE, ICIConstants.M_INOUT_TABLE));
@@ -284,7 +283,8 @@ public class ICIUtility {
    * Creates and saves a new {@link ShipmentInOutLine} with the default parameters for the automated
    * tests
    */
-  public static ShipmentInOutLine createNewShipmentLineWithDefaultParameters(ShipmentInOut shipment) {
+  public static ShipmentInOutLine createNewShipmentLineWithDefaultParameters(
+      ShipmentInOut shipment) {
     ICIShipmentLineParameters shipmentLineParameters = new ICIShipmentLineParameters(shipment);
     ShipmentInOutLine shipmentLine = ICIUtility.createShipmentLine(shipmentLineParameters);
     return shipmentLine;
@@ -324,8 +324,8 @@ public class ICIUtility {
     try {
       Process process = null;
       process = OBDal.getInstance().get(Process.class, processId);
-      final ProcessInstance pinstance = CallProcess.getInstance().call(process,
-          document.getId().toString(), null);
+      final ProcessInstance pinstance = CallProcess.getInstance()
+          .call(process, document.getId().toString(), null);
       return (pinstance.getResult() == 0L);
     } finally {
       OBContext.restorePreviousMode();

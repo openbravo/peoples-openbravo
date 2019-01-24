@@ -42,8 +42,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportBudgetExportExcel extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -91,11 +92,12 @@ public class ReportBudgetExportExcel extends HttpSecureAppServlet {
     data = ReportBudgetGenerateExcelData.selectLines(this, vars.getLanguage(), strBudgetId);
 
     if (data.length != 0 && StringUtils.equals(data[0].exportactual, "Y")) {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelXLS").createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelXLS")
+          .createXmlDocument();
     } else {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelExportXLS")
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelExportXLS")
           .createXmlDocument();
     }
 
@@ -108,6 +110,7 @@ public class ReportBudgetExportExcel extends HttpSecureAppServlet {
 
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportBudgetGenerateExcel.";
   } // end of getServletInfo() method

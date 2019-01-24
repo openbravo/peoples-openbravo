@@ -42,8 +42,8 @@ import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.erpCommon.utility.poc.EmailManager;
 import org.openbravo.erpCommon.utility.poc.EmailInfo;
+import org.openbravo.erpCommon.utility.poc.EmailManager;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
@@ -70,6 +70,7 @@ public class AlertProcess implements Process {
   private static final String CLIENT_ORG_SEPARATOR = "-";
   private static String LANGUAGE = null;
 
+  @Override
   public void execute(ProcessBundle bundle) throws Exception {
 
     logger = bundle.getLogger();
@@ -110,7 +111,8 @@ public class AlertProcess implements Process {
         + "select 1 from ad_alert a where a.ad_alertrule_id = ? "
         + "and a.referencekey_id = aaa.referencekey_id and coalesce(a.status, 'NEW') != 'SOLVED')";
 
-    String dateTimeFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateTimeFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateTimeFormat.java");
 
     ResultSet result;
@@ -126,8 +128,8 @@ public class AlertProcess implements Process {
         AlertProcessData objectAlertProcessData = new AlertProcessData();
         objectAlertProcessData.adClientId = UtilSql.getValue(result, "ad_client_id");
         objectAlertProcessData.adOrgId = UtilSql.getValue(result, "ad_org_id");
-        objectAlertProcessData.created = UtilSql
-            .getDateTimeValue(result, "created", dateTimeFormat);
+        objectAlertProcessData.created = UtilSql.getDateTimeValue(result, "created",
+            dateTimeFormat);
         objectAlertProcessData.createdby = UtilSql.getValue(result, "createdby");
         objectAlertProcessData.updated = UtilSql.getValue(result, "updated");
         objectAlertProcessData.updatedby = UtilSql.getValue(result, "updatedby");
@@ -142,8 +144,8 @@ public class AlertProcess implements Process {
       result.close();
     } catch (SQLException e) {
       log4j.error("SQL error in query: " + strSql + "Exception:" + e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
+      throw new ServletException(
+          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
     } catch (Exception ex) {
       log4j.error("Exception in query: " + strSql + "Exception:" + ex);
       throw new ServletException("@CODE=@" + ex.getMessage());
@@ -165,7 +167,8 @@ public class AlertProcess implements Process {
       String recordId, String referenceKey, String description, String user, String role)
       throws ServletException {
 
-    String dateTimeFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateTimeFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateTimeFormat.sql");
 
     // These fields are foreign keys that might be null
@@ -222,8 +225,8 @@ public class AlertProcess implements Process {
       updateCount = st.executeUpdate();
     } catch (SQLException e) {
       log4j.error("SQL error in query: " + strSql + "Exception:" + e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
+      throw new ServletException(
+          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
     } catch (Exception ex) {
       log4j.error("Exception in query: " + strSql + "Exception:" + ex);
       throw new ServletException("@CODE=@" + ex.getMessage());
@@ -275,8 +278,8 @@ public class AlertProcess implements Process {
             + alert[i].created + "\n");
 
         insertAlert(conn, adAlertId, alert[i].adClientId, alert[i].adOrgId, alert[i].created,
-            alert[i].createdby, alertRule.adAlertruleId, alert[i].recordId,
-            alert[i].referencekeyId, alert[i].description, alert[i].adUserId, alert[i].adRoleId);
+            alert[i].createdby, alertRule.adAlertruleId, alert[i].recordId, alert[i].referencekeyId,
+            alert[i].description, alert[i].adUserId, alert[i].adRoleId);
         insertions++;
 
         String messageLine = "\n\nAlert: " + alert[i].description + "\nRecord: "
@@ -301,7 +304,8 @@ public class AlertProcess implements Process {
 
         final String adClientId = alertRule.adClientId;
         final String adOrgId = alertRule.adOrgId;
-        final String deprecatedMailHost = OBDal.getInstance().get(Client.class, adClientId)
+        final String deprecatedMailHost = OBDal.getInstance()
+            .get(Client.class, adClientId)
             .getMailHost();
         boolean isDeprecatedMode = false;
         if (deprecatedMailHost != null && !"".equals(deprecatedMailHost)) {
@@ -320,8 +324,8 @@ public class AlertProcess implements Process {
             // Getting the SMTP server parameters
             OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance()
                 .createCriteria(EmailServerConfiguration.class);
-            mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_CLIENT, OBDal
-                .getInstance().get(Client.class, adClientId)));
+            mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_CLIENT,
+                OBDal.getInstance().get(Client.class, adClientId)));
             mailConfigCriteria.setFilterOnReadableClients(false);
             mailConfigCriteria.setFilterOnReadableOrganization(false);
             final List<EmailServerConfiguration> mailConfigList = mailConfigCriteria.list();
@@ -353,8 +357,8 @@ public class AlertProcess implements Process {
 
               OBCriteria<AlertRecipient> alertRecipientsCriteria = OBDal.getInstance()
                   .createCriteria(AlertRecipient.class);
-              alertRecipientsCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_ALERTRULE, OBDal
-                  .getInstance().get(AlertRule.class, alertRule.adAlertruleId)));
+              alertRecipientsCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_ALERTRULE,
+                  OBDal.getInstance().get(AlertRule.class, alertRule.adAlertruleId)));
               alertRecipientsCriteria.setFilterOnReadableClients(false);
               alertRecipientsCriteria.setFilterOnReadableOrganization(false);
 
@@ -375,8 +379,8 @@ public class AlertProcess implements Process {
                 if (currentAlertRecipient.getUserContact() != null) {
                   usersList.add(currentAlertRecipient.getUserContact());
                 } else {
-                  OBCriteria<UserRoles> userRolesCriteria = OBDal.getInstance().createCriteria(
-                      UserRoles.class);
+                  OBCriteria<UserRoles> userRolesCriteria = OBDal.getInstance()
+                      .createCriteria(UserRoles.class);
                   userRolesCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_ROLE,
                       currentAlertRecipient.getRole()));
                   userRolesCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_CLIENT,
@@ -400,12 +404,13 @@ public class AlertProcess implements Process {
                 final StringBuilder finalMessage = new StringBuilder();
                 for (String currentClientAndOrg : messageByClientOrg.keySet()) {
                   String[] clientAndOrg = currentClientAndOrg.split(CLIENT_ORG_SEPARATOR);
-                  Organization orgEntity = OBDal.getInstance().get(Organization.class,
-                      clientAndOrg[1]);
+                  Organization orgEntity = OBDal.getInstance()
+                      .get(Organization.class, clientAndOrg[1]);
                   if (currentAlertRecipient.getClient().getId().equals(clientAndOrg[0])) {
                     for (RoleOrganization roleOrganization : currentAlertRecipient.getRole()
                         .getADRoleOrganizationList()) {
-                      if (OBContext.getOBContext().getOrganizationStructureProvider()
+                      if (OBContext.getOBContext()
+                          .getOrganizationStructureProvider()
                           .isInNaturalTree(roleOrganization.getOrganization(), orgEntity)) {
                         finalMessage.append(messageByClientOrg.get(currentClientAndOrg));
                         break;
@@ -424,8 +429,9 @@ public class AlertProcess implements Process {
                     continue;
                   }
                   final Client targetUserClient = targetUser.getClient();
-                  final String targetUserClientLanguage = (targetUserClient.getLanguage() != null ? targetUserClient
-                      .getLanguage().getLanguage() : null);
+                  final String targetUserClientLanguage = (targetUserClient.getLanguage() != null
+                      ? targetUserClient.getLanguage().getLanguage()
+                      : null);
                   final String targetUserEmail = targetUser.getEmail();
                   if (targetUserEmail == null) {
                     continue;
@@ -449,13 +455,13 @@ public class AlertProcess implements Process {
 
                   alreadySentToList.add(targetUserEmail);
 
-                  final EmailInfo email = new EmailInfo.Builder()
-                      .setRecipientTO(targetUserEmail)
+                  final EmailInfo email = new EmailInfo.Builder().setRecipientTO(targetUserEmail)
                       .setSubject("[OB Alert] " + alertRule.name)
-                      .setContent(
-                          Utility.messageBD(conn, "AlertMailHead", targetUserClientLanguage) + "\n"
-                              + finalMessage).setContentType("text/plain; charset=utf-8")
-                      .setSentDate(new Date()).build();
+                      .setContent(Utility.messageBD(conn, "AlertMailHead", targetUserClientLanguage)
+                          + "\n" + finalMessage)
+                      .setContentType("text/plain; charset=utf-8")
+                      .setSentDate(new Date())
+                      .build();
 
                   emailsToSendList.add(email);
                 }
@@ -488,8 +494,8 @@ public class AlertProcess implements Process {
             for (int i = 0; i < mail.length; i++) {
               String head = Utility.messageBD(conn, "AlertMailHead", mail[i].adLanguage) + "\n";
               org.openbravo.erpCommon.businessUtility.EMail email = new org.openbravo.erpCommon.businessUtility.EMail(
-                  null, mail[i].smtphost, mail[i].mailfrom, mail[i].mailto, "[OB Alert] "
-                      + alertRule.name, head + msg);
+                  null, mail[i].smtphost, mail[i].mailfrom, mail[i].mailto,
+                  "[OB Alert] " + alertRule.name, head + msg);
               String pwd = "";
               try {
                 pwd = FormatUtilities.encryptDecrypt(mail[i].requestuserpw, false);
@@ -507,8 +513,8 @@ public class AlertProcess implements Process {
                   logger.log("Error sending mail.");
                 }
               } else {
-                logger
-                    .log("Sending email skipped. Check email password settings in Client configuration.\n");
+                logger.log(
+                    "Sending email skipped. Check email password settings in Client configuration.\n");
               }
             }
           }

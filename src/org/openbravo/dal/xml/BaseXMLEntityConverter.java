@@ -301,8 +301,8 @@ public class BaseXMLEntityConverter implements OBNotSingleton {
   protected void checkDanglingObjects() {
 
     // clone the resolved entities
-    final List<BaseOBObject> resolvedValues = new ArrayList<BaseOBObject>(getEntityResolver()
-        .getData().values());
+    final List<BaseOBObject> resolvedValues = new ArrayList<BaseOBObject>(
+        getEntityResolver().getData().values());
 
     // remove the to-insert objects from the resolvedEntities
     resolvedValues.removeAll(getToInsert());
@@ -360,8 +360,8 @@ public class BaseXMLEntityConverter implements OBNotSingleton {
     }
     errorMessages.append(msg);
     if (noOfErrors++ > 20) {
-      throw new EntityXMLException("Too many errors, exiting import, error messages:\n"
-          + errorMessages);
+      throw new EntityXMLException(
+          "Too many errors, exiting import, error messages:\n" + errorMessages);
     }
   }
 

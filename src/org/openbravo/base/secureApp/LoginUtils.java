@@ -133,8 +133,7 @@ public class LoginUtils {
       throws ServletException {
     boolean valid = SeguridadData.isRoleClient(conn, role, client);
     if (!valid) {
-      log4j.error(
-          "Login client is not in role clients list. Role: " + role + ", Client: " + client,
+      log4j.error("Login client is not in role clients list. Role: " + role + ", Client: " + client,
           new Exception("stack trace"));
     }
     return valid;
@@ -144,8 +143,9 @@ public class LoginUtils {
       throws ServletException {
     boolean valid = SeguridadData.isLoginRoleOrg(conn, role, org);
     if (!valid) {
-      log4j.error("Login organization is not in role organizations list. Role: " + role + ", Org: "
-          + org, new Exception("stack trace"));
+      log4j.error(
+          "Login organization is not in role organizations list. Role: " + role + ", Org: " + org,
+          new Exception("stack trace"));
     }
     return valid;
   }
@@ -154,8 +154,9 @@ public class LoginUtils {
 
     OBContext.setAdminMode();
     try {
-      OBQuery<RoleOrganization> query = OBDal.getInstance().createQuery(RoleOrganization.class,
-          "WHERE role.id = :roleId ORDER BY client.id, organization.id");
+      OBQuery<RoleOrganization> query = OBDal.getInstance()
+          .createQuery(RoleOrganization.class,
+              "WHERE role.id = :roleId ORDER BY client.id, organization.id");
       query.setNamedParameter("roleId", strRol);
       query.setFilterOnReadableClients(false);
       query.setFilterOnReadableOrganization(false);
@@ -263,8 +264,8 @@ public class LoginUtils {
       client = OBDal.getInstance().get(Client.class, strCliente);
       isAccountingDimensionConfigCentrally = client.isAcctdimCentrallyMaintained();
 
-      vars.setSessionValue("#AccessibleOrgTree",
-          StringCollectionUtils.commaSeparated(OBContext.getOBContext().getReadableOrganizations()));
+      vars.setSessionValue("#AccessibleOrgTree", StringCollectionUtils
+          .commaSeparated(OBContext.getOBContext().getReadableOrganizations()));
     } catch (Exception e) {
       log4j.warn("Error while setting Organzation tree to session " + e);
       return false;
@@ -302,7 +303,8 @@ public class LoginUtils {
         // Get General Ledger of context organizations
         if (ArrayUtils.isEmpty(attr)) {
           String[] orgList = Utility.getContext(conn, vars, "#User_Org", "LoginHandler")
-              .replace("'", "").split(",");
+              .replace("'", "")
+              .split(",");
           for (String orgId : orgList) {
             if (!StringUtils.equals(orgId, strOrg)) {
               acctSchemaId = OBLedgerUtils.getOrgLedger(orgId);
@@ -322,10 +324,10 @@ public class LoginUtils {
           AttributeData[] orgCurrency = AttributeData.selectOrgCurrency(conn, strOrg, strCliente);
           if (orgCurrency.length > 0) {
             vars.setSessionValue("$C_Currency_ID", orgCurrency[0].cCurrencyId);
-          } else
+          } else {
             vars.setSessionValue("$C_Currency_ID", attr[0].attribute);
-          vars.setSessionValue(
-              "#StdPrecision",
+          }
+          vars.setSessionValue("#StdPrecision",
               AttributeData.selectStdPrecision(conn, attr[0].attribute,
                   Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
                   Utility.getContext(conn, vars, "#User_Org", "LoginHandler")));
@@ -370,8 +372,9 @@ public class LoginUtils {
             String value = DefaultValuesData.select(conn, ds[i].columnname, ds[i].tablename,
                 Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
                 Utility.getContext(conn, vars, "#AccessibleOrgTree", "LoginHandler"));
-            if (ds[i].tablename.equals("C_DocType"))
+            if (ds[i].tablename.equals("C_DocType")) {
               vars.setSessionValue("#C_DocTypeTarget_ID", value);
+            }
             vars.setSessionValue("#" + ds[i].columnname, value);
           }
         }
@@ -396,8 +399,8 @@ public class LoginUtils {
             vars.setSessionValue("#TextDirection", "LTR");
           } else {
             OBContext.setOBContext(currentContext);
-            log4j
-                .error("Can't detect direction of language: ltr? rtl? parameter isRTL missing in call to LoginUtils.getStringParameter");
+            log4j.error(
+                "Can't detect direction of language: ltr? rtl? parameter isRTL missing in call to LoginUtils.getStringParameter");
             return false;
           }
         }
@@ -421,8 +424,8 @@ public class LoginUtils {
    * Obtains defaults defined for a user and throws DefaultValidationException in case they are not
    * correct.
    */
-  public static RoleDefaults getLoginDefaults(String strUserAuth, String role, ConnectionProvider cp)
-      throws ServletException, DefaultValidationException {
+  public static RoleDefaults getLoginDefaults(String strUserAuth, String role,
+      ConnectionProvider cp) throws ServletException, DefaultValidationException {
     String strRole = role;
     if (strRole.equals("")) {
       // use default role
@@ -466,12 +469,13 @@ public class LoginUtils {
    * Validates if a selected default value is null or empty String
    * 
    * @throws DefaultValidationException
-   * */
+   */
   private static void validateDefault(String strValue, String strKey, String strError)
       throws DefaultValidationException {
-    if (strValue == null || strValue.equals(""))
+    if (strValue == null || strValue.equals("")) {
       throw new DefaultValidationException("Unable to read default " + strError + " for:" + strKey,
           strError);
+    }
   }
 
   /**
@@ -508,22 +512,26 @@ public class LoginUtils {
         final Node NumberNode = listOfNumbers.item(s);
         if (NumberNode.getNodeType() == Node.ELEMENT_NODE) {
           final Element NumberElement = (Element) NumberNode;
-          final String strNumberName = NumberElement.getAttributes().getNamedItem("name")
+          final String strNumberName = NumberElement.getAttributes()
+              .getNamedItem("name")
               .getNodeValue();
           // store in session all the formats
-          final String strFormatOutput = NumberElement.getAttributes().getNamedItem("formatOutput")
+          final String strFormatOutput = NumberElement.getAttributes()
+              .getNamedItem("formatOutput")
               .getNodeValue();
           formatMap.put(strNumberName, strFormatOutput);
           vars.setSessionValue("#FormatOutput|" + strNumberName, strFormatOutput);
-          vars.setSessionValue("#DecimalSeparator|" + strNumberName, NumberElement.getAttributes()
-              .getNamedItem("decimal").getNodeValue());
-          vars.setSessionValue("#GroupSeparator|" + strNumberName, NumberElement.getAttributes()
-              .getNamedItem("grouping").getNodeValue());
+          vars.setSessionValue("#DecimalSeparator|" + strNumberName,
+              NumberElement.getAttributes().getNamedItem("decimal").getNodeValue());
+          vars.setSessionValue("#GroupSeparator|" + strNumberName,
+              NumberElement.getAttributes().getNamedItem("grouping").getNodeValue());
           // set the numberFormat to be used in the renderJR function
           if (strNumberName.equals(formatNameforJrxml)) {
-            strDecimalSeparator = NumberElement.getAttributes().getNamedItem("decimal")
+            strDecimalSeparator = NumberElement.getAttributes()
+                .getNamedItem("decimal")
                 .getNodeValue();
-            strGroupingSeparator = NumberElement.getAttributes().getNamedItem("grouping")
+            strGroupingSeparator = NumberElement.getAttributes()
+                .getNamedItem("grouping")
                 .getNodeValue();
             strNumberFormat = strFormatOutput;
           }
@@ -620,8 +628,8 @@ public class LoginUtils {
     String strWarehouse;
     if (!strRole.equals("0")) {
       // Pick the warehouse using the given organization
-      strWarehouse = DefaultOptionsData.getDefaultWarehouse(connectionProvider, strClient, "'"
-          + strOrg + "'");
+      strWarehouse = DefaultOptionsData.getDefaultWarehouse(connectionProvider, strClient,
+          "'" + strOrg + "'");
       if (strWarehouse == null || strWarehouse.isEmpty()) {
         // If no warehouse for the default organization is available, pick using using the
         // accessible tree

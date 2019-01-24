@@ -27,6 +27,8 @@ import java.util.Map;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -44,8 +46,6 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.service.datasource.DataSourceService;
 import org.openbravo.service.datasource.DataSourceServiceProvider;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * This event handler listens to events that are fired in all the tables with the flag isTree

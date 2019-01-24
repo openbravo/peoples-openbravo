@@ -87,17 +87,18 @@ public class Fact {
     m_acctSchema = acctSchema;
     m_postingType = defaultPostingType;
     //
-    log4jFact.debug("Fact[" + m_doc.DocumentNo + "," + "AcctSchema["
-        + m_acctSchema.m_C_AcctSchema_ID + "-" + m_acctSchema.m_Name + ",PostType=" + m_postingType
-        + "]");
+    log4jFact
+        .debug("Fact[" + m_doc.DocumentNo + "," + "AcctSchema[" + m_acctSchema.m_C_AcctSchema_ID
+            + "-" + m_acctSchema.m_Name + ",PostType=" + m_postingType + "]");
   } // Fact
 
   /**
    * Dispose
    */
   public void dispose() {
-    for (int i = 0; i < m_lines.size(); i++)
+    for (int i = 0; i < m_lines.size(); i++) {
       ((FactLine) m_lines.get(i)).dispose();
+    }
     m_lines.clear();
     m_lines = null;
   } // dispose
@@ -177,7 +178,8 @@ public class Fact {
    */
   public FactLine createLine(DocLine docLine, Account account, String C_Currency_ID,
       String debitAmt, String creditAmt, String Fact_Acct_Group_ID, String SeqNo,
-      String DocBaseType, String conversionDate, BigDecimal conversionRate, ConnectionProvider conn) {
+      String DocBaseType, String conversionDate, BigDecimal conversionRate,
+      ConnectionProvider conn) {
 
     String localConversionDate = conversionDate;
     String localCreditAmt = creditAmt;
@@ -185,12 +187,14 @@ public class Fact {
     String strNegate = "";
     try {
       strNegate = AcctServerData.selectNegate(conn, m_acctSchema.m_C_AcctSchema_ID, DocBaseType);
-      if (strNegate.equals(""))
+      if (strNegate.equals("")) {
         strNegate = AcctServerData.selectDefaultNegate(conn, m_acctSchema.m_C_AcctSchema_ID);
+      }
     } catch (ServletException e) {
     }
-    if (strNegate.equals(""))
+    if (strNegate.equals("")) {
       strNegate = "Y";
+    }
     BigDecimal DebitAmt = new BigDecimal(localDebitAmt.equals("") ? "0.00" : localDebitAmt);
     BigDecimal CreditAmt = new BigDecimal(localCreditAmt.equals("") ? "0.00" : localCreditAmt);
     if (DebitAmt.compareTo(BigDecimal.ZERO) == 0 && CreditAmt.compareTo(BigDecimal.ZERO) == 0) {
@@ -200,10 +204,10 @@ public class Fact {
       BigDecimal convertedDebitAmt = BigDecimal.ZERO;
       BigDecimal convertedCreditAmt = BigDecimal.ZERO;
       if ("GLJ".equals(DocBaseType) && docLine != null) {
-        convertedDebitAmt = StringUtils.isBlank(docLine.m_AmtAcctDr) ? ZERO : new BigDecimal(
-            docLine.m_AmtAcctDr);
-        convertedCreditAmt = StringUtils.isBlank(docLine.m_AmtAcctCr) ? ZERO : new BigDecimal(
-            docLine.m_AmtAcctCr);
+        convertedDebitAmt = StringUtils.isBlank(docLine.m_AmtAcctDr) ? ZERO
+            : new BigDecimal(docLine.m_AmtAcctDr);
+        convertedCreditAmt = StringUtils.isBlank(docLine.m_AmtAcctCr) ? ZERO
+            : new BigDecimal(docLine.m_AmtAcctCr);
       }
 
       if (DebitAmt.compareTo(ZERO) < 0) {
@@ -235,9 +239,10 @@ public class Fact {
             convertedCreditAmt.toString());
       }
 
-      if (strNegate.equals("N") && (DebitAmt.compareTo(ZERO) < 0 || CreditAmt.compareTo(ZERO) < 0)) {
-        return createLine(docLine, account, C_Currency_ID, CreditAmt.abs().toString(), DebitAmt
-            .abs().toString(), Fact_Acct_Group_ID, SeqNo, DocBaseType, conn);
+      if (strNegate.equals("N")
+          && (DebitAmt.compareTo(ZERO) < 0 || CreditAmt.compareTo(ZERO) < 0)) {
+        return createLine(docLine, account, C_Currency_ID, CreditAmt.abs().toString(),
+            DebitAmt.abs().toString(), Fact_Acct_Group_ID, SeqNo, DocBaseType, conn);
       }
     }
 
@@ -252,8 +257,8 @@ public class Fact {
     }
     //
     log4jFact.debug("createLine - Fact_Acct_Group_ID = " + Fact_Acct_Group_ID);
-    FactLine line = new FactLine(m_doc.AD_Table_ID, m_doc.Record_ID, docLine == null ? ""
-        : docLine.m_TrxLine_ID, Fact_Acct_Group_ID, SeqNo, DocBaseType);
+    FactLine line = new FactLine(m_doc.AD_Table_ID, m_doc.Record_ID,
+        docLine == null ? "" : docLine.m_TrxLine_ID, Fact_Acct_Group_ID, SeqNo, DocBaseType);
     log4jFact.debug("createLine - line.m_Fact_Acct_Group_ID = " + line.m_Fact_Acct_Group_ID);
     log4jFact.debug("Object created");
     line.setDocumentInfo(m_doc, docLine);
@@ -266,8 +271,9 @@ public class Fact {
     log4jFact.debug("C_Currency_ID: " + C_Currency_ID + " - debitAmt: " + localDebitAmt
         + " - creditAmt: " + localCreditAmt);
     // Amounts - one needs to be both not zero
-    if (!line.setAmtSource(C_Currency_ID, localDebitAmt, localCreditAmt))
+    if (!line.setAmtSource(C_Currency_ID, localDebitAmt, localCreditAmt)) {
       return null;
+    }
     if (localConversionDate == null || localConversionDate.isEmpty()) {
       localConversionDate = m_doc.DateAcct;
     }
@@ -286,8 +292,9 @@ public class Fact {
       return null;
     }
     // Optionally overwrite Acct Amount
-    if (docLine != null && !docLine.m_AmtAcctDr.equals("") && !docLine.m_AmtAcctCr.equals(""))
+    if (docLine != null && !docLine.m_AmtAcctDr.equals("") && !docLine.m_AmtAcctCr.equals("")) {
       line.setAmtAcct(docLine.m_AmtAcctDr, docLine.m_AmtAcctCr);
+    }
     // Info
     line.setJournalInfo(m_doc.GL_Category_ID);
     line.setPostingType(m_postingType);
@@ -339,21 +346,23 @@ public class Fact {
    * @return FactLine
    */
   public FactLine createLine(DocLine docLine, Account accountDr, Account accountCr,
-      String C_Currency_ID, String Amt, String Fact_Acct_Group_ID, String SeqNo,
-      String DocBaseType, ConnectionProvider conn) {
+      String C_Currency_ID, String Amt, String Fact_Acct_Group_ID, String SeqNo, String DocBaseType,
+      ConnectionProvider conn) {
     BigDecimal m_Amt = ZERO;
     try {
-      if (!Amt.equals(""))
+      if (!Amt.equals("")) {
         m_Amt = new BigDecimal(Amt);
+      }
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-    if (m_Amt.compareTo(ZERO) < 0)
+    if (m_Amt.compareTo(ZERO) < 0) {
       return createLine(docLine, accountCr, C_Currency_ID, "", m_Amt.abs().toString(),
           Fact_Acct_Group_ID, SeqNo, DocBaseType, conn);
-    else
-      return createLine(docLine, accountDr, C_Currency_ID, m_Amt.toString(), "",
-          Fact_Acct_Group_ID, SeqNo, DocBaseType, conn);
+    } else {
+      return createLine(docLine, accountDr, C_Currency_ID, m_Amt.toString(), "", Fact_Acct_Group_ID,
+          SeqNo, DocBaseType, conn);
+    }
   } // createLine
 
   /**
@@ -373,17 +382,19 @@ public class Fact {
       String Fact_Acct_Group_ID, String SeqNo, String DocBaseType, ConnectionProvider conn) {
     BigDecimal m_Amt = ZERO;
     try {
-      if (!Amt.equals(""))
+      if (!Amt.equals("")) {
         m_Amt = new BigDecimal(Amt);
+      }
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-    if (m_Amt.compareTo(ZERO) < 0)
+    if (m_Amt.compareTo(ZERO) < 0) {
       return createLine(docLine, account, C_Currency_ID, "", m_Amt.abs().toString(),
           Fact_Acct_Group_ID, SeqNo, DocBaseType, conn);
-    else
+    } else {
       return createLine(docLine, account, C_Currency_ID, Amt.toString(), "", Fact_Acct_Group_ID,
           SeqNo, DocBaseType, conn);
+    }
   } // createLine
 
   /**
@@ -394,14 +405,16 @@ public class Fact {
   public boolean isSourceBalanced() {
     log4jFact.debug("Starting isSourceBalanced");
     // No lines -> balanded
-    if (m_lines == null || m_lines.size() == 0)
+    if (m_lines == null || m_lines.size() == 0) {
       return true;
+    }
     BigDecimal balance = getSourceBalance();
     boolean retValue = balance.compareTo(ZERO) == 0;
-    if (retValue)
+    if (retValue) {
       log4jFact.debug("isSourceBalanced - ");
-    else
+    } else {
       log4jFact.warn("isSourceBalanced NO - Balance=" + balance);
+    }
     return retValue;
   } // isSourceBalanced
 
@@ -428,8 +441,9 @@ public class Fact {
    * @return FactLine
    */
   public FactLine balanceSource(ConnectionProvider conn) {
-    if (!m_acctSchema.isSuspenseBalancing() || m_doc.MultiCurrency)
+    if (!m_acctSchema.isSuspenseBalancing() || m_doc.MultiCurrency) {
       return null;
+    }
     if (m_lines.size() == 0) {
       log4jFact.error("balanceSouce failed.");
       return null;
@@ -445,11 +459,12 @@ public class Fact {
     line.setJournalInfo(m_doc.GL_Category_ID);
     line.setPostingType(m_postingType);
     // Amount
-    if (diff.compareTo(ZERO) < 0) // negative balance => DR
+    if (diff.compareTo(ZERO) < 0) {
       line.setAmtSource(m_doc.C_Currency_ID, diff.abs().toString(), ZERO.toString());
-    else
+    } else {
       // positive balance => CR
       line.setAmtSource(m_doc.C_Currency_ID, ZERO.toString(), diff.toString());
+    }
     // Convert
     line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct,
         m_acctSchema.getCurrencyRateType(), conn);
@@ -484,8 +499,9 @@ public class Fact {
       throws ServletException {
     // save Lines
     log4jFact.debug(" Fact - save() - m_lines.size - " + m_lines.size());
-    if (m_lines.size() == 0)
+    if (m_lines.size() == 0) {
       return true;
+    }
     Set<String> recordID2Set = new HashSet<String>();
     for (int i = 0; i < m_lines.size(); i++) {
       FactLine fl = (FactLine) m_lines.get(i);
@@ -517,8 +533,8 @@ public class Fact {
 
     List<String> recordID2List = new ArrayList<String>(recordID2Set);
     for (int i = 0; i < recordID2SetSize; i += maxSize) {
-      recordIDSetList.add(new HashSet<String>(recordID2List.subList(i,
-          Math.min(recordID2SetSize, i + maxSize))));
+      recordIDSetList.add(
+          new HashSet<String>(recordID2List.subList(i, Math.min(recordID2SetSize, i + maxSize))));
     }
     return recordIDSetList;
   }
@@ -529,16 +545,18 @@ public class Fact {
    * @return true if segments are balanced
    */
   public boolean isSegmentBalanced(ConnectionProvider conn) {
-    if (m_lines.size() == 0)
+    if (m_lines.size() == 0) {
       return true;
+    }
 
     ArrayList<Object> elementList = m_acctSchema.m_elementList;
     int size = elementList.size();
     // check all balancing segments
     for (int i = 0; i < size; i++) {
       AcctSchemaElement ase = (AcctSchemaElement) elementList.get(i);
-      if (ase.m_balanced.equals("Y") && !isSegmentBalanced(ase.m_segmentType, conn))
+      if (ase.m_balanced.equals("Y") && !isSegmentBalanced(ase.m_segmentType, conn)) {
         return false;
+      }
     }
     return true;
   } // isSegmentBalanced
@@ -561,8 +579,9 @@ public class Fact {
         String key = line.getAD_Org_ID(conn);
         BigDecimal bal = line.getSourceBalance();
         BigDecimal oldBal = map.get(key);
-        if (oldBal != null)
+        if (oldBal != null) {
           bal = bal.add(oldBal);
+        }
         map.put(key, bal);
         // log4jFact.debug("Add Key=" + key + ", Bal=" + bal + " <- " +
         // line);
@@ -573,8 +592,8 @@ public class Fact {
         BigDecimal bal = values.next();
         if (bal.compareTo(ZERO) != 0) {
           map.clear();
-          log4jFact.warn("isSegmentBalanced (" + segmentType + ") NO - " + toString()
-              + ", Balance=" + bal);
+          log4jFact.warn(
+              "isSegmentBalanced (" + segmentType + ") NO - " + toString() + ", Balance=" + bal);
           return false;
         }
       }
@@ -587,8 +606,8 @@ public class Fact {
   } // isSegmentBalanced
 
   /**
-   * Balance all segments. - For all balancing segments - For all segment values - If balance &lt;&gt; 0
-   * create dueTo/dueFrom line overwriting the segment value
+   * Balance all segments. - For all balancing segments - For all segment values - If balance
+   * &lt;&gt; 0 create dueTo/dueFrom line overwriting the segment value
    */
   public void balanceSegments(ConnectionProvider conn) {
     log4jFact.debug("balanceSegments");
@@ -598,8 +617,9 @@ public class Fact {
     // check all balancing segments
     for (int i = 0; i < size; i++) {
       AcctSchemaElement ase = (AcctSchemaElement) elementList.get(i);
-      if (ase.m_balanced.equals("Y"))
+      if (ase.m_balanced.equals("Y")) {
         balanceSegment(ase.m_segmentType, conn);
+      }
     }
   } // balanceSegments
 
@@ -611,8 +631,9 @@ public class Fact {
    */
   private void balanceSegment(String segmentType, ConnectionProvider conn) {
     // no lines -> balanced
-    if (m_lines.size() == 0)
+    if (m_lines.size() == 0) {
       return;
+    }
     log4jFact.debug("balanceSegment (" + segmentType + ") - ");
     // Org
     if (segmentType.equals(AcctSchemaElement.SEGMENT_Org)) {
@@ -623,8 +644,9 @@ public class Fact {
         String key = line.getAD_Org_ID(conn);
         BigDecimal bal = line.getSourceBalance();
         BigDecimal oldBal = map.get(key);
-        if (oldBal != null)
+        if (oldBal != null) {
           bal = bal.add(oldBal);
+        }
         map.put(key, bal);
       }
       // Create entry for non-zero element
@@ -657,8 +679,8 @@ public class Fact {
               m_acctSchema.getCurrencyRateType(), conn);
           line.setAD_Org_ID(key);
           log4jFact.debug("balanceSegment (" + segmentType + ") - ");
-          log4jFact.debug("************* fact - balanceSegment - m_lines.size() - "
-              + m_lines.size() + " - line.ad_org_id - " + line.getAD_Org_ID(conn));
+          log4jFact.debug("************* fact - balanceSegment - m_lines.size() - " + m_lines.size()
+              + " - line.ad_org_id - " + line.getAD_Org_ID(conn));
           m_lines.add(line);
         }
       }
@@ -673,14 +695,16 @@ public class Fact {
    */
   public boolean isAcctBalanced() {
     // no lines -> balanced
-    if (m_lines == null || m_lines.size() == 0)
+    if (m_lines == null || m_lines.size() == 0) {
       return true;
+    }
     BigDecimal balance = getAcctBalance();
     boolean retValue = balance.compareTo(ZERO) == 0;
-    if (retValue)
+    if (retValue) {
       log4jFact.debug("isAcctBalanced - ");
-    else
+    } else {
       log4jFact.warn("isAcctBalanced NO - Balance=" + balance);
+    }
     return retValue;
   } // isAcctBalanced
 
@@ -728,10 +752,11 @@ public class Fact {
       line.setAmtSource(m_doc.C_Currency_ID, ZERO.toString(), ZERO.toString());
       line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct,
           m_acctSchema.getCurrencyRateType(), conn);
-      if (diff.compareTo(ZERO) < 0)
+      if (diff.compareTo(ZERO) < 0) {
         line.setAmtAcct(diff.abs().toString(), ZERO.toString());
-      else
+      } else {
         line.setAmtAcct(ZERO.toString(), diff.abs().toString());
+      }
       line.setAccount(m_acctSchema, m_acctSchema.getCurrencyBalancing_Acct());
       log4jFact.debug("balanceAccounting - " + line.toString());
       log4jFact
@@ -756,14 +781,15 @@ public class Fact {
           PLline = l;
         }
       }
-      if (BSline != null)
+      if (BSline != null) {
         line = BSline;
-      else
+      } else {
         line = PLline;
+      }
 
-      if (line == null)
+      if (line == null) {
         log4jFact.error("balanceAccounting - No Line found");
-      else {
+      } else {
         log4jFact.debug("Adjusting Amt=" + diff.toString() + "; Line=" + line.toString());
         line.currencyCorrect(diff);
         log4jFact.debug("balanceAccounting - " + line.toString());

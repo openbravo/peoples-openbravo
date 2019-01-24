@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2018 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -193,8 +193,7 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
  * Set quantity
  */
 OB.RM.RMShipmentSelectionChange = function (grid, record, state) {
-  var contextInfo = null,
-      orderLine = record.orderLine,
+  var orderLine = record.orderLine,
       shippedQty = BigDecimal.prototype.ZERO,
       selectedRecords = grid.getSelectedRecords(),
       pending = new BigDecimal(String(record.pending)),

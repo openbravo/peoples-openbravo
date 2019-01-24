@@ -33,22 +33,27 @@ class CharacterComponent implements XmlComponentTemplate, XmlComponentValue {
     character = character + ">";
   }
 
+  @Override
   public String print() {
     return character;
   }
 
+  @Override
   public String printPrevious() {
     return character;
   }
 
+  @Override
   public String printSimple() {
     return character;
   }
 
+  @Override
   public String printPreviousSimple() {
     return character;
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
     return this; // this class is constant, therefore the XmlComponentValue
     // is it.

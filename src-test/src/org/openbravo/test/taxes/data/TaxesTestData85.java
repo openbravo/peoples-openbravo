@@ -45,8 +45,8 @@ public class TaxesTestData85 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes1 = new HashMap<String, String[]>();
-    lineTaxes1.put(TaxDataConstants.TAX_VAT_20, new String[] { "5.42", "1.08", "5.42", "1.08",
-        "10.83", "2.17", "10.83", "2.17" });
+    lineTaxes1.put(TaxDataConstants.TAX_VAT_20,
+        new String[] { "5.42", "1.08", "5.42", "1.08", "10.83", "2.17", "10.83", "2.17" });
     line1.setLinetaxes(lineTaxes1);
 
     // Amounts for line level are provided
@@ -71,16 +71,16 @@ public class TaxesTestData85 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes2 = new HashMap<String, String[]>();
-    lineTaxes2.put(TaxDataConstants.TAX_VAT_20, new String[] { "4.92", "0.98", "4.92", "0.98",
-        "9.83", "1.97", "9.83", "1.97" });
+    lineTaxes2.put(TaxDataConstants.TAX_VAT_20,
+        new String[] { "4.92", "0.98", "4.92", "0.98", "9.83", "1.97", "9.83", "1.97" });
     line2.setLinetaxes(lineTaxes2);
 
     // Amounts for line level are provided
     // {totalGrossDraftAfterInsert, totalNetDraftAfterInsert, totalGrossCompletedAfterInsert,
     // totalNetCompletedAfterInsert, totalGrossDraftAfterUpdate, totalNetDraftAfterUpdate,
     // totalGrossCompletedAfterUpdate, totalNetCompletedAfterUpdate}
-    String[] lineAmounts2 = new String[] { "5.90", "4.92", "5.90", "4.92", "11.80", "9.83",
-        "11.80", "9.83" };
+    String[] lineAmounts2 = new String[] { "5.90", "4.92", "5.90", "4.92", "11.80", "9.83", "11.80",
+        "9.83" };
     line2.setLineAmounts(lineAmounts2);
 
     // Add lines
@@ -91,16 +91,16 @@ public class TaxesTestData85 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> taxes = new HashMap<String, String[]>();
-    taxes.put(TaxDataConstants.TAX_VAT_20, new String[] { "10.34", "2.06", "10.34", "2.06",
-        "20.66", "4.14", "20.66", "4.14" });
+    taxes.put(TaxDataConstants.TAX_VAT_20,
+        new String[] { "10.34", "2.06", "10.34", "2.06", "20.66", "4.14", "20.66", "4.14" });
     setDoctaxes(taxes);
 
     // Amounts for document level are provided
     // {totalGrossDraftAfterInsert, totalNetDraftAfterInsert, totalGrossCompletedAfterInsert,
     // totalNetCompletedAfterInsert, totalGrossDraftAfterUpdate, totalNetDraftAfterUpdate,
     // totalGrossCompletedAfterUpdate, totalNetCompletedAfterUpdate}
-    String[] amounts = new String[] { "12.40", "10.34", "12.40", "10.34", "24.80", "20.66",
-        "24.80", "20.66" };
+    String[] amounts = new String[] { "12.40", "10.34", "12.40", "10.34", "24.80", "20.66", "24.80",
+        "20.66" };
     setDocAmounts(amounts);
 
   }

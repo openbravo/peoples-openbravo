@@ -43,8 +43,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportShipmentEditionJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -73,8 +74,9 @@ public class ReportShipmentEditionJR extends HttpSecureAppServlet {
       log4j.debug("Output: dataSheet");
     }
     XmlDocument xmlDocument = null;
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportShipmentFilterJR").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportShipmentFilterJR")
+        .createXmlDocument();
 
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportShipmentFilterJR", false,
@@ -124,9 +126,9 @@ public class ReportShipmentEditionJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("projectName", "");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "M_Warehouse_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ShipmentFilter"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ShipmentFilter"), 0);
+          "M_Warehouse_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ShipmentFilter"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ShipmentFilter"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ShipmentFilter", "");
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -172,6 +174,7 @@ public class ReportShipmentEditionJR extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet PurchaseOrderFilter. This Servlet was made by Jon Alegría";
   } // end of getServletInfo() method

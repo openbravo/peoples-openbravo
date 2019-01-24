@@ -37,32 +37,38 @@ public class ExtractModuleTask extends DalInitializingTask {
   /**
    * Initialize DAL only in case RD exportation is active
    */
+  @Override
   public void execute() {
-    if (exportRD)
+    if (exportRD) {
       super.execute();
-    else
+    } else {
       doExecute();
+    }
   }
 
   @Override
   public void doExecute() {
     try {
-      if (destDir == null || destDir.equals(""))
+      if (destDir == null || destDir.equals("")) {
         destDir = getProject().getBaseDir().toString();
-      if (obDir == null || obDir.equals(""))
+      }
+      if (obDir == null || obDir.equals("")) {
         obDir = getProject().getBaseDir().toString();
-      if (propertiesFile == null || propertiesFile.equals(""))
+      }
+      if (propertiesFile == null || propertiesFile.equals("")) {
         propertiesFile = obDir + "/config/Openbravo.properties";
+      }
 
       ExtractModule em = new ExtractModule(propertiesFile, obDir);
       em.setDestDir(destDir);
       em.setExportReferenceData(exportRD);
       em.setAddAllDependencies(addAllDependencies);
 
-      if (moduleID != null && !moduleID.equals(""))
+      if (moduleID != null && !moduleID.equals("")) {
         em.extract(moduleID);
-      else
+      } else {
         em.extractName(moduleName);
+      }
     } catch (Exception e) {
       throw new BuildException(e);
     }

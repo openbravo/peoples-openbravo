@@ -40,10 +40,10 @@ public class SL_RequisitionOrder_Order extends SimpleCallout {
         IsIDFilter.instance);
 
     // Set Quantity
-    BigDecimal qtyRequired = new BigDecimal(SLRequisitionOrderOrderData.getRequired(this,
-        strRequisitionLineId));
-    BigDecimal qtyOrderLine = new BigDecimal(SLRequisitionOrderOrderData.getOrderLine(this,
-        strOrderLineId));
+    BigDecimal qtyRequired = new BigDecimal(
+        SLRequisitionOrderOrderData.getRequired(this, strRequisitionLineId));
+    BigDecimal qtyOrderLine = new BigDecimal(
+        SLRequisitionOrderOrderData.getOrderLine(this, strOrderLineId));
     BigDecimal reqOrder = qtyRequired.compareTo(qtyOrderLine) > 0 ? qtyOrderLine : qtyRequired;
     info.addResult("inpqty", reqOrder);
   }

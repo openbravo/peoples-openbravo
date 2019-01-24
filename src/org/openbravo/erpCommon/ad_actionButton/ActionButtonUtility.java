@@ -67,19 +67,20 @@ public class ActionButtonUtility {
       }
     }
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("DocAction - generating combo elements for table: " + strTable
           + " - actual status: " + strDocStatus);
+    }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, conn, "LIST", "DocAction",
-          strReference, validationRule, Utility.getContext(conn, vars, "#AccessibleOrgTree",
-              "ActionButtonUtility"), Utility.getContext(conn, vars, "#User_Client",
-              "ActionButtonUtility"), 0);
+          strReference, validationRule,
+          Utility.getContext(conn, vars, "#AccessibleOrgTree", "ActionButtonUtility"),
+          Utility.getContext(conn, vars, "#User_Client", "ActionButtonUtility"), 0);
       Utility.fillSQLParameters(conn, vars, null, comboTableData, "ActionButtonUtility", "");
       ld = comboTableData.select(false);
       comboTableData = null;
-      isQuotation = "Y".equals(vars.getGlobalVariable("inpisQuotation", windowId + "|isQuotation",
-          "N"));
+      isQuotation = "Y"
+          .equals(vars.getGlobalVariable("inpisQuotation", windowId + "|isQuotation", "N"));
 
     } catch (Exception e) {
       return null;
@@ -160,15 +161,17 @@ public class ActionButtonUtility {
       }
 
       data = new SQLReturnObject[v.size()];
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("DocAction - total combo elements: " + data.length);
+      }
       int ind1 = 0, ind2 = 0;
       while (ind1 < ld.length && ind2 < v.size()) {
         for (int j = 0; j < v.size(); j++) {
           SQLReturnObject sqlro = v.get(j);
           if (sqlro.getField("ID").equals(ld[ind1].getField("ID"))) {
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("DocAction - Element: " + ind1 + " - ID: " + sqlro.getField("ID"));
+            }
             data[ind2] = sqlro;
             data[ind2].setData("NAME", ld[ind1].getField("NAME"));
             data[ind2].setData("DESCRIPTION", ld[ind1].getField("DESCRIPTION"));
@@ -196,9 +199,9 @@ public class ActionButtonUtility {
     FieldProvider[] ld = null;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, conn, "LIST", "ProjectAction",
-          strReference, "", Utility.getContext(conn, vars, "#AccessibleOrgTree",
-              "ActionButtonUtility"), Utility.getContext(conn, vars, "#User_Client",
-              "ActionButtonUtility"), 0);
+          strReference, "",
+          Utility.getContext(conn, vars, "#AccessibleOrgTree", "ActionButtonUtility"),
+          Utility.getContext(conn, vars, "#User_Client", "ActionButtonUtility"), 0);
       Utility.fillSQLParameters(conn, vars, null, comboTableData, "ActionButtonUtility", "");
       ld = comboTableData.select(false);
       comboTableData = null;

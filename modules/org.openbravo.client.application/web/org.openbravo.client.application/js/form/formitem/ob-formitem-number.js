@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -131,15 +131,6 @@ isc.OBNumberItem.addProperties({
      * replaceAt(obj.value, '', caretPosition); setCaretToPos(obj,
      * caretPosition);},5); }
      */
-    var inpMaxlength = this.length;
-    var inpLength = this.getElementValue().length;
-    var isInpMaxLength = false;
-    if (inpMaxlength === null) {
-      isInpMaxLength = false;
-    } else if (inpLength >= inpMaxlength) {
-      isInpMaxLength = true;
-    }
-
     if (navigator.userAgent.toUpperCase().indexOf('OPERA') !== -1 && keyCode === 78) {
       keyCode = 110;
     }
@@ -427,7 +418,7 @@ isc.OBNumberItem.addProperties({
   },
 
   blur: function () {
-    var value, roundedValue, textRoundedValue, isFormula = false;
+    var value, isFormula = false;
 
     // Make sure the number is rounded using the number of decimal digits specified in the number typeInstance
     if (isc.isA.String(this.getValue())) {
@@ -485,7 +476,7 @@ isc.OBNumberItem.addProperties({
 
 // Use our custom validator for float and integers
 isc.OBNumberItem.validateCondition = function (item, validator, value) {
-  var undef, ret, type;
+  var undef, type;
 
   if (!item.typeInstance) {
     // this happens when data is validated which is returned from the system
@@ -549,7 +540,6 @@ isc.OBNumberFilterItem.addProperties({
 
   parseValueExpressions: function (value, fieldName, operator) {
     var ret, strValue;
-
 
     // smartclient's implementation of parseValueExpressions does not work properly of the formitem value is 0
     // this can be circumvented by passing a string instead of a number (the original value is not modified)

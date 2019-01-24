@@ -20,6 +20,8 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -28,11 +30,10 @@ import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.gl.GLJournal;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class SimpleGLJournalEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(GLJournal.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(GLJournal.ENTITY_NAME) };
 
   protected Logger logger = LogManager.getLogger();
 
@@ -54,8 +55,8 @@ public class SimpleGLJournalEventHandler extends EntityPersistenceEventObserver 
       final GLJournal simpleGLJournal = (GLJournal) event.getTargetInstance();
 
       if (simpleGLJournal.getFinancialMgmtGLJournalLineList().size() > 0) {
-        throw new OBException(OBMessageUtils.getI18NMessage("MultiGeneralLedgerCheckValidation",
-            null));
+        throw new OBException(
+            OBMessageUtils.getI18NMessage("MultiGeneralLedgerCheckValidation", null));
       }
     }
 

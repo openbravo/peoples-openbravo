@@ -48,6 +48,7 @@ public class TreeDomainType extends BaseForeignKeyDomainType {
     return listOfClasses;
   }
 
+  @Override
   public void initialize() {
 
     Session session = ModelProvider.getInstance().getSession();
@@ -105,8 +106,8 @@ public class TreeDomainType extends BaseForeignKeyDomainType {
   @Override
   public Column getForeignKeyColumn(String columnName) {
     while (!column.isKey() && column.getDomainType() instanceof ForeignKeyDomainType) {
-      column = ((ForeignKeyDomainType) column.getDomainType()).getForeignKeyColumn(column
-          .getColumnName());
+      column = ((ForeignKeyDomainType) column.getDomainType())
+          .getForeignKeyColumn(column.getColumnName());
       tableName = column.getTable().getName();
     }
     return column;

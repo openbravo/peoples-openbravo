@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,10 +34,6 @@
       message: 'openbravo and isc objects are required'
     };
   }
-
-  // cache object references locally
-  var ISC = isc,
-      alertmgr; // Local reference to RemoveCallManager instance
 
   function AlertManager() {}
 
@@ -103,7 +99,7 @@
 
   // Initialize AlertManager object and let it call the system every so-many
   // secs.
-  alertmgr = OB.AlertManager = new AlertManager();
+  OB.AlertManager = new AlertManager();
 
   // call it ones to update the pings and start the timer
   OB.AlertManager.call();

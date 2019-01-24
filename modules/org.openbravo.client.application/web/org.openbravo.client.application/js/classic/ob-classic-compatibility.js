@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -205,7 +205,7 @@
           useSimpleHttp: true,
           actionURL: actionURL
         };
-        var request = rpcMgr.sendRequest(reqObj);
+        rpcMgr.sendRequest(reqObj);
       }
       fetchSendDirectLink(action, form);
     },

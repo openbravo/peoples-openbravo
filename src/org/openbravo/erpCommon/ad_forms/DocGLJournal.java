@@ -46,18 +46,21 @@ public class DocGLJournal extends AcctServer {
    * @param AD_Client_ID
    *          client
    */
-  public DocGLJournal(String AD_Client_ID, String AD_Org_ID, ConnectionProvider connectionProvider) {
+  public DocGLJournal(String AD_Client_ID, String AD_Org_ID,
+      ConnectionProvider connectionProvider) {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
-    if (log4jDocGLJournal.isDebugEnabled())
+    if (log4jDocGLJournal.isDebugEnabled()) {
       log4jDocGLJournal.debug("- DocGLJournal - OBJECT CREATED.");
+    }
   }
 
   public String m_PostingType = Fact.POST_Actual;
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID, String Id)
       throws ServletException {
-    AcctSchema docAcctSchema = new AcctSchema(conn, DocGLJournalData.selectAcctSchema(conn,
-        aD_Client_ID, Id));
+    AcctSchema docAcctSchema = new AcctSchema(conn,
+        DocGLJournalData.selectAcctSchema(conn, aD_Client_ID, Id));
     ArrayList<Object> list = new ArrayList<Object>();
     list.add(docAcctSchema);
     AcctSchema[] retValue = new AcctSchema[list.size()];
@@ -71,6 +74,7 @@ public class DocGLJournal extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     loadDocumentType(); // lines require doc type
     m_PostingType = data[0].getField("PostingType");
@@ -137,6 +141,7 @@ public class DocGLJournal extends AcctServer {
    * 
    * @return positive amount, if total invoice is bigger than lines
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
     StringBuffer sb = new StringBuffer(" [");
@@ -161,17 +166,20 @@ public class DocGLJournal extends AcctServer {
    *          acct schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocGLJournalTemplate newTemplate = (DocGLJournalTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocGLJournalTemplate - " + e);
@@ -187,14 +195,15 @@ public class DocGLJournal extends AcctServer {
       try {
         Account account;
         for (int i = 0; i < p_lines.length; i++) {
-          if (Float.parseFloat(p_lines[i].getAmtSourceDr()) > Float.parseFloat(p_lines[i]
-              .getAmtSourceCr())) {
+          if (Float.parseFloat(p_lines[i].getAmtSourceDr()) > Float
+              .parseFloat(p_lines[i].getAmtSourceCr())) {
             account = ((DocLine_GLJournal) p_lines[i]).getAccount("1", as, conn);
           } else {
             account = ((DocLine_GLJournal) p_lines[i]).getAccount("2", as, conn);
           }
           fact.createLine(p_lines[i], account, C_Currency_ID, p_lines[i].getAmtSourceDr(),
-              p_lines[i].getAmtSourceCr(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+              p_lines[i].getAmtSourceCr(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              conn);
         }
       } finally {
         OBContext.restorePreviousMode();
@@ -257,10 +266,11 @@ public class DocGLJournal extends AcctServer {
    * 
    * not used
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     final String STATUS_VOIDED = "VO";
-    if (STATUS_VOIDED.equals(OBDal.getInstance().get(GLJournal.class, strRecordId)
-        .getDocumentStatus())) {
+    if (STATUS_VOIDED
+        .equals(OBDal.getInstance().get(GLJournal.class, strRecordId).getDocumentStatus())) {
       setStatus(STATUS_DocumentDisabled);
       return false;
     }
@@ -309,6 +319,7 @@ public class DocGLJournal extends AcctServer {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

@@ -28,9 +28,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
@@ -42,11 +39,15 @@ import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
+
 public class ReportCashflowForecast extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -76,8 +77,9 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
           "ReportCashflowForecast|BreakDate");
 
       printPageDataPdf(response, vars, strBankAccount, strDateFrom, strBreakDate, false);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars,
@@ -95,8 +97,8 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
       String strBaseDesign = getBaseDesignPath(strLanguage);
       JasperReport jasperReportLines;
       try {
-        jasperReportLines = ReportingUtils.compileReport(strBaseDesign
-            + "/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_sub.jrxml");
+        jasperReportLines = ReportingUtils.compileReport(
+            strBaseDesign + "/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_sub.jrxml");
       } catch (JRException e) {
         log4j.error("Error Compiling report ", e);
         throw new ServletException(e.getMessage());
@@ -127,7 +129,8 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
               vars.getRequestGlobalVariable("inpcBankAccountId", "ReportCashflowForecast|AcctNo"),
               strDateMax, "BANKACCOUNT,DATEPLANNED,ISRECEIPT desc,INVOICENO ");
         }
-        String strReportName = (("on".equals(strBreakDate)) ? "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_perDay.jrxml"
+        String strReportName = (("on".equals(strBreakDate))
+            ? "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_perDay.jrxml"
             : "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast.jrxml");
         renderJR(vars, response, strReportName, "pdf", parameters, dataDetail, null);
       } catch (Exception e) {
@@ -142,17 +145,18 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
     String[] discard = { "", "" };
     XmlDocument xmlDocument = null;
 
-    if (showDefault)
+    if (showDefault) {
       discard[0] = "subrpt";
-    else {
-      if (strBreakDate.equals(""))
+    } else {
+      if (strBreakDate.equals("")) {
         discard[0] = "reportAccountDate";
-      else
+      } else {
         discard[0] = "reportAccount";
+      }
     }
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportCashflowForecast", false, "",
-        "", "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportCashflowForecast", false, "", "",
+        "", false, "ad_reports", strReplaceWith, false, true);
 
     // ReportCashflowForecastData[] dataSummary =
     // ReportCashflowForecastData.select(this,Utility.getContext(this, vars,
@@ -175,36 +179,43 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"));
       data = new ReportCashflowForecastData[dataAcct.length][];
 
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("length: " + dataAcct.length + " - bankaccount:" + strBankAccount);
+      }
       if (dataAcct.length == 0) {
         discard[0] = "reportAccountDate";
         discard[1] = "reportAccount";
       } else {
         for (int i = 0; i < dataAcct.length; i++) {
-          if (strBreakDate.equals(""))
+          if (strBreakDate.equals("")) {
             dataDetail = ReportCashflowForecastData.selectLines(this, vars.getSqlDateFormat(),
                 vars.getLanguage(), dataAcct[i].cBankaccountId, strDateMax, "2 DESC, 1");
-          else
+          } else {
             dataDetail = ReportCashflowForecastData.selectLines(this, vars.getSqlDateFormat(),
                 vars.getLanguage(), dataAcct[i].cBankaccountId, strDateMax, "1,2 DESC");
-          if (log4j.isDebugEnabled())
+          }
+          if (log4j.isDebugEnabled()) {
             log4j.debug("length: " + dataAcct.length + " bankacct:" + dataAcct[i].cBankaccountId
                 + " lenght:" + dataDetail.length);
+          }
           data[i] = dataDetail;
         }
       }
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportCashflowForecast", discard).createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportCashflowForecast", discard)
+          .createXmlDocument();
 
       xmlDocument.setData("structureDetail", dataAcct);
-      if (strBreakDate.equals(""))
+      if (strBreakDate.equals("")) {
         xmlDocument.setDataArray("reportAcct", "structureAccount", data);
-      else
+      } else {
         xmlDocument.setDataArray("reportAcctDate", "structureAccount", data);
-    } else
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportCashflowForecast", discard).createXmlDocument();
+      }
+    } else {
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportCashflowForecast", discard)
+          .createXmlDocument();
+    }
 
     // ReportCashflowForecastData.select(this,Utility.getContext(this, vars,
     // "#User_Client", "ReportBank"), Utility.getContext(this, vars,
@@ -212,9 +223,7 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
 
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
-    xmlDocument.setData(
-        "reportC_ACCOUNTNUMBER",
-        "liststructure",
+    xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure",
         AccountNumberComboData.select(this, vars.getLanguage(),
             Utility.getContext(this, vars, "#User_Client", "ReportCashflowForecast"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashflowForecast")));
@@ -237,9 +246,8 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportCashflowForecast.html", classInfo.id, classInfo.type, strReplaceWith,
-          tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportCashflowForecast.html",
+          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportCashflowForecast.html",
           strReplaceWith);
@@ -266,6 +274,7 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportCashflowForecast";
   } // end of the getServletInfo() method

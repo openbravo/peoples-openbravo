@@ -44,6 +44,7 @@ public class AbsoluteDateTimeUIDefinition extends DateUIDefinition {
     return "OBAbsoluteDateTimeItem";
   }
 
+  @Override
   protected String getClientFormatObject() {
     return "OB.Format.dateTime";
   }

@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;
@@ -35,8 +37,6 @@ import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalSessionFactory;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Initializes and provides the session factory to the rest of the application. There are subclasses
@@ -135,8 +135,9 @@ public abstract class SessionFactoryController {
    * Creates a new Hibernate Configuration, generates a mapping and initializes the SessionFactory.
    */
   public void initialize() {
-    if (sessionFactory != null)
+    if (sessionFactory != null) {
       return;
+    }
 
     log.debug("Initializing session factory");
 
@@ -170,8 +171,8 @@ public abstract class SessionFactoryController {
 
       registerSqlFunctions();
 
-      final DalSessionFactory dalSessionFactory = OBProvider.getInstance().get(
-          DalSessionFactory.class);
+      final DalSessionFactory dalSessionFactory = OBProvider.getInstance()
+          .get(DalSessionFactory.class);
       SessionFactory delegateSessionFactory = configuration.buildSessionFactory();
       dalSessionFactory.setDelegateSessionFactory(delegateSessionFactory);
 
@@ -213,7 +214,8 @@ public abstract class SessionFactoryController {
 
   public void closeHibernatePool() {
     ConnectionProvider hibernatePool = sessionFactory.getSessionFactoryOptions()
-        .getServiceRegistry().getService(ConnectionProvider.class);
+        .getServiceRegistry()
+        .getService(ConnectionProvider.class);
     if (hibernatePool != null && hibernatePool instanceof DriverManagerConnectionProviderImpl) {
       ((DriverManagerConnectionProviderImpl) hibernatePool).stop();
     }

@@ -143,7 +143,9 @@ public class OBDal implements OBNotSingleton {
    * @see #disableActiveFilter()
    */
   public void enableActiveFilter() {
-    SessionHandler.getInstance().getSession(poolName).enableFilter("activeFilter")
+    SessionHandler.getInstance()
+        .getSession(poolName)
+        .enableFilter("activeFilter")
         .setParameter("activeParam", "Y");
   }
 
@@ -164,7 +166,9 @@ public class OBDal implements OBNotSingleton {
    * @return true if the active filter is enabled, false if it is disabled
    */
   public boolean isActiveFilterEnabled() {
-    return SessionHandler.getInstance().getSession(poolName).getEnabledFilter("activeFilter") != null;
+    return SessionHandler.getInstance()
+        .getSession(poolName)
+        .getEnabledFilter("activeFilter") != null;
   }
 
   /**
@@ -195,8 +199,8 @@ public class OBDal implements OBNotSingleton {
       flush();
     }
 
-    final Connection connection = ((SessionImplementor) SessionHandler.getInstance().getSession(
-        poolName)).connection();
+    final Connection connection = ((SessionImplementor) SessionHandler.getInstance()
+        .getSession(poolName)).connection();
     return connection;
   }
 
@@ -297,7 +301,8 @@ public class OBDal implements OBNotSingleton {
     setClientOrganization(obj);
     if (!OBContext.getOBContext().isInAdministratorMode()) {
       if (obj instanceof BaseOBObject) {
-        OBContext.getOBContext().getEntityAccessChecker()
+        OBContext.getOBContext()
+            .getEntityAccessChecker()
             .checkWritable(((BaseOBObject) obj).getEntity());
       }
       SecurityChecker.getInstance().checkWriteAccess(obj);
@@ -433,7 +438,8 @@ public class OBDal implements OBNotSingleton {
    *          the HQL where and orderby clause
    * @return the query object
    */
-  public <T extends BaseOBObject> OBQuery<T> createQuery(Class<T> fromClz, String whereOrderByClause) {
+  public <T extends BaseOBObject> OBQuery<T> createQuery(Class<T> fromClz,
+      String whereOrderByClause) {
     return createQuery(fromClz, whereOrderByClause, new HashMap<String, Object>());
   }
 
@@ -671,7 +677,8 @@ public class OBDal implements OBNotSingleton {
     if (o instanceof OrganizationEnabled) {
       final OrganizationEnabled oe = (OrganizationEnabled) o;
       if (oe.getOrganization() == null) {
-        oe.setOrganization(getProxy(Organization.class, obContext.getCurrentOrganization().getId()));
+        oe.setOrganization(
+            getProxy(Organization.class, obContext.getCurrentOrganization().getId()));
       }
     }
   }
@@ -753,8 +760,8 @@ public class OBDal implements OBNotSingleton {
   public <T extends BaseOBObject> T getObjectLockForNoKeyUpdate(T object) {
     Entity entity = object.getEntity();
 
-    Check.isTrue(entity.getIdProperties().size() == 1, "Expected entity with a single ID. "
-        + entity + " has " + entity.getIdProperties().size());
+    Check.isTrue(entity.getIdProperties().size() == 1,
+        "Expected entity with a single ID. " + entity + " has " + entity.getIdProperties().size());
 
     String rdbms = new DalConnectionProvider(false).getRDBMS();
     String lockType = "ORACLE".equals(rdbms) ? "UPDATE" : "NO KEY UPDATE";

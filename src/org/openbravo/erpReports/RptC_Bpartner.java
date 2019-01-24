@@ -52,14 +52,16 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class RptC_Bpartner extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       String strcBpartnerId = vars.getSessionValue("RptC_Bpartner.inpcBpartnerId_R");
-      if (strcBpartnerId.equals(""))
+      if (strcBpartnerId.equals("")) {
         strcBpartnerId = vars.getSessionValue("RptC_Bpartner.inpcBpartnerId");
+      }
       printPageDataSheet(response, vars, strcBpartnerId);
     } else if (vars.commandIn("OPEN")) {
       String strcBpartnerId = vars.getRequiredStringParameter("inpcBpartnerId");
@@ -69,14 +71,16 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
       String strcBpartnerId = vars.getRequiredStringParameter("inpcBpartnerId");
       String strmTypeDocument = vars.getRequiredStringParameter("inpTypeDocument");
       printPageAjaxDocumentResponse(response, vars, strcBpartnerId, strmTypeDocument);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strcBpartnerId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     String discard[] = { "", "", "", "", "", "", "", "", "", "", "", "", "" };
@@ -92,13 +96,11 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
           strcBpartnerId);
       RptCBpartnerData[] dataDiscount = RptCBpartnerData.selectDiscount(this, strcBpartnerId);
 
-      Client c = OBDal.getInstance().get(Client.class,
-          OBContext.getOBContext().getCurrentClient().getId());
+      Client c = OBDal.getInstance()
+          .get(Client.class, OBContext.getOBContext().getCurrentClient().getId());
       BusinessPartner bp = OBDal.getInstance()
-          .get(
-              BusinessPartner.class,
-              strcBpartnerId.substring(strcBpartnerId.indexOf("'") + 1,
-                  strcBpartnerId.lastIndexOf("'")));
+          .get(BusinessPartner.class, strcBpartnerId.substring(strcBpartnerId.indexOf("'") + 1,
+              strcBpartnerId.lastIndexOf("'")));
 
       RptCBpartnerSalesData[] dataPaymentsIn = RptCBpartnerSalesData.selectPayments(this,
           "PAYMENTIN", c.getCurrency().getId(), c.getId(), bp.getOrganization().getId(), "Y",
@@ -210,15 +212,17 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
 
   private void printPageAjaxResponse(HttpServletResponse response, VariablesSecureApp vars,
       String strcBpartnerId, String strmProductTemplate) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: ajaxreponse");
+    }
     XmlDocument xmlDocument = null;
 
     RptCBpartnerData[] data = RptCBpartnerData.selectTemplateDetail(this, strcBpartnerId,
         strmProductTemplate);
 
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       data = RptCBpartnerData.set();
+    }
 
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerTemplateLines")
         .createXmlDocument();
@@ -234,8 +238,9 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
 
   private void printPageAjaxDocumentResponse(HttpServletResponse response, VariablesSecureApp vars,
       String strcBpartnerId, String strmTypeDocument) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: ajaxreponse");
+    }
 
     try {
       OBContext.setAdminMode(true);
@@ -249,29 +254,31 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
 
       if (strmTypeDocument.equals("INVOICE")) {
         data = RptCBpartnerSalesData.selectInvoiceperiod(this, strcBpartnerId);
-        xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpReports/RptC_BpartnerPeriodInvoice").createXmlDocument();
+        xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerPeriodInvoice")
+            .createXmlDocument();
         xmlDocument.setData("structurePeriod", dataPeriod);
-        if (data == null || data.length == 0)
+        if (data == null || data.length == 0) {
           data = RptCBpartnerSalesData.set();
+        }
       }
       if (strmTypeDocument.equals("ORDER")) {
         data = RptCBpartnerSalesData.selectOrderperiod(this, strcBpartnerId);
-        xmlDocument = xmlEngine
-            .readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerPeriodSales")
+        xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerPeriodSales")
             .createXmlDocument();
         xmlDocument.setData("structurePeriod", dataPeriod);
-        if (data == null || data.length == 0)
+        if (data == null || data.length == 0) {
           data = RptCBpartnerSalesData.set();
+        }
       }
       if (strmTypeDocument.equals("INOUT")) {
         data = RptCBpartnerSalesData.selectInoutperiod(this, strcBpartnerId);
-        xmlDocument = xmlEngine
-            .readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerPeriodInout")
+        xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerPeriodInout")
             .createXmlDocument();
         xmlDocument.setData("structurePeriod", dataPeriod);
-        if (data == null || data.length == 0)
+        if (data == null || data.length == 0) {
           data = RptCBpartnerSalesData.set();
+        }
       }
       if (strmTypeDocument.equals("ABC")) {
         data = RptCBpartnerSalesData.selectABCactualdetail(this, DateTimeData.sysdateYear(this),
@@ -286,12 +293,12 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
             .createXmlDocument();
       }
 
-      Client c = OBDal.getInstance().get(Client.class,
-          OBContext.getOBContext().getCurrentClient().getId());
+      Client c = OBDal.getInstance()
+          .get(Client.class, OBContext.getOBContext().getCurrentClient().getId());
 
       if (strmTypeDocument.equals("PAYMENTIN")) {
-        data = RptCBpartnerSalesData.selectPaymentsdetail(this, vars.getLanguage(), c.getCurrency()
-            .getId(), "Y", strcBpartnerId);
+        data = RptCBpartnerSalesData.selectPaymentsdetail(this, vars.getLanguage(),
+            c.getCurrency().getId(), "Y", strcBpartnerId);
         xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerPaymentsIn")
             .createXmlDocument();
         orderHM = getLinkParameters("70E57DEA195843729FF303C9A71EBCA3", "Y");
@@ -308,10 +315,9 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
         xmlDocument.setParameter("keyParameterSI", invoiceHM.get("keyParameter"));
       }
       if (strmTypeDocument.equals("PAYMENTOUT")) {
-        data = RptCBpartnerSalesData.selectPaymentsdetail(this, vars.getLanguage(), c.getCurrency()
-            .getId(), "N", strcBpartnerId);
-        xmlDocument = xmlEngine
-            .readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerPaymentsOut")
+        data = RptCBpartnerSalesData.selectPaymentsdetail(this, vars.getLanguage(),
+            c.getCurrency().getId(), "N", strcBpartnerId);
+        xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_BpartnerPaymentsOut")
             .createXmlDocument();
         orderHM = getLinkParameters("70E57DEA195843729FF303C9A71EBCA3", "N");
         xmlDocument.setParameter("tabIdPO", orderHM.get("tabId"));
@@ -340,9 +346,10 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
 
   public BigDecimal getCustomerCredit(BusinessPartner bp, boolean isReceipt) {
     BigDecimal creditAmount = BigDecimal.ZERO;
-    for (FIN_Payment payment : getCustomerPaymentsWithCredit(bp, isReceipt))
-      creditAmount = creditAmount.add(payment.getGeneratedCredit()).subtract(
-          payment.getUsedCredit());
+    for (FIN_Payment payment : getCustomerPaymentsWithCredit(bp, isReceipt)) {
+      creditAmount = creditAmount.add(payment.getGeneratedCredit())
+          .subtract(payment.getUsedCredit());
+    }
     return creditAmount;
   }
 
@@ -412,6 +419,7 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
     return hmValues;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet RptC_Bpartner. This Servlet was made by Pablo Sarobe";
   } // End of getServletInfo() method

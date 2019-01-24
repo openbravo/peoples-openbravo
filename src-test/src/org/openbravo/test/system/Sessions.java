@@ -33,12 +33,12 @@ import java.util.concurrent.Future;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jboss.arquillian.container.weld.ee.embedded_1_1.mock.MockHttpSession;
 import org.junit.Test;
 import org.openbravo.erpCommon.security.SessionListener;
 import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /** Test cases covering Session management */
 public class Sessions {
@@ -48,7 +48,8 @@ public class Sessions {
 
   /** Covers bug #37893 */
   @Test
-  public void canCreateAndCheckSessionsInParallel() throws InterruptedException, ExecutionException {
+  public void canCreateAndCheckSessionsInParallel()
+      throws InterruptedException, ExecutionException {
     log.info("Starting {} threads to create {} sessions each", NUMBER_OF_THREADS,
         NUMBER_OF_SESSIONS_PER_THREAD);
     SessionListener sl = new SessionListener();

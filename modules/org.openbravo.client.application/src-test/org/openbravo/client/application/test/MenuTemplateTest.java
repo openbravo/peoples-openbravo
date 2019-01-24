@@ -22,13 +22,13 @@ import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.MainLayoutComponent;
 import org.openbravo.client.kernel.JSCompressor;
 import org.openbravo.client.kernel.JSLintChecker;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests the generating of the menu through a template, menu is part of the MainLayoutComponent, so

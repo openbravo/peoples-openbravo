@@ -30,6 +30,7 @@ public class WADPAttribute extends WADSearch {
     initialize();
   }
 
+  @Override
   public void initialize() {
     addImport("searchs", "../../../../../web/js/searchs.js");
     generateJSCode();
@@ -41,12 +42,16 @@ public class WADPAttribute extends WADSearch {
   private void generateJSCode() {
     StringBuffer validation = new StringBuffer();
     if (getData("IsMandatory").equals("Y")) {
-      validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp"))
-          .append(")==null || inputValue(frm.inp").append(getData("ColumnNameInp"))
+      validation.append("  if (inputValue(frm.inp")
+          .append(getData("ColumnNameInp"))
+          .append(")==null || inputValue(frm.inp")
+          .append(getData("ColumnNameInp"))
           .append(")==\"\") {\n");
-      if (getData("IsDisplayed").equals("Y"))
-        validation.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp"))
+      if (getData("IsDisplayed").equals("Y")) {
+        validation.append("    setWindowElementFocus(frm.inp")
+            .append(getData("ColumnNameInp"))
             .append("_R);\n");
+      }
       validation.append("    showJSMessage(1);\n");
       validation.append("    return false;\n");
       validation.append("  }\n");
@@ -62,16 +67,20 @@ public class WADPAttribute extends WADSearch {
       StringBuffer commandScript = new StringBuffer();
       StringBuffer text = new StringBuffer();
       commandScript.append("openPAttribute(null, null, '../info/AttributeSetInstance.html', ");
-      commandScript.append("null, true, 'frmMain', 'inp").append(getData("ColumnNameInp"))
+      commandScript.append("null, true, 'frmMain', 'inp")
+          .append(getData("ColumnNameInp"))
           .append("', ");
       commandScript.append("'inp").append(getData("ColumnNameInp")).append("_R', ");
-      commandScript.append("inputValue(document.frmMain.inp").append(getData("ColumnNameInp"))
+      commandScript.append("inputValue(document.frmMain.inp")
+          .append(getData("ColumnNameInp"))
           .append("_R), ");
       commandScript.append("'inpIDValue', inputValue(document.frmMain.inp")
-          .append(getData("ColumnNameInp")).append("), ");
+          .append(getData("ColumnNameInp"))
+          .append("), ");
       commandScript.append("'WindowID', inputValue(document.frmMain.inpwindowId), ");
       commandScript.append("'inpKeyValue', inputValue(document.frmMain.inp")
-          .append(getData("ColumnNameInp")).append("), ");
+          .append(getData("ColumnNameInp"))
+          .append("), ");
       commandScript.append("'inpwindowId', inputValue(document.frmMain.inpwindowId), ");
       commandScript.append("'inpProduct', inputValue(document.frmMain.inpmProductId)");
       text.append(commandScript).append(", 'Command', 'KEY'");

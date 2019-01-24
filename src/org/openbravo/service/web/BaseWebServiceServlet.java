@@ -120,8 +120,8 @@ public class BaseWebServiceServlet extends HttpServlet {
       } finally {
         final boolean sessionCreated = !sessionExists && null != request.getSession(false);
         if (sessionCreated && AuthenticationManager.isStatelessRequest(request)) {
-          log.warn("Stateless request, still a session was created " + request.getRequestURL()
-              + " " + request.getQueryString());
+          log.warn("Stateless request, still a session was created " + request.getRequestURL() + " "
+              + request.getQueryString());
         }
 
         HttpSession session = request.getSession(false);
@@ -190,8 +190,8 @@ public class BaseWebServiceServlet extends HttpServlet {
           log.error("User " + OBContext.getOBContext().getUser() + " with role "
               + OBContext.getOBContext().getRole()
               + " is trying to access to non granted web service " + request.getRequestURL());
-          throw new OBSecurityException("Web Services are not granted to "
-              + OBContext.getOBContext().getRole() + " role");
+          throw new OBSecurityException(
+              "Web Services are not granted to " + OBContext.getOBContext().getRole() + " role");
         }
       }
       super.service(request, response);

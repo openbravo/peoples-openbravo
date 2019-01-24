@@ -45,6 +45,7 @@ public class ClientImportProcessor implements EntityXMLProcessor {
   /**
    * @see EntityXMLProcessor#process(List, List)
    */
+  @Override
   public void process(List<BaseOBObject> newObjects, List<BaseOBObject> updatedObjects) {
 
     // - Client.name
@@ -74,6 +75,7 @@ public class ClientImportProcessor implements EntityXMLProcessor {
    * 
    * @see EntityXMLProcessor#replaceValue(BaseOBObject, Property, Object)
    */
+  @Override
   public Object replaceValue(BaseOBObject owner, Property property, Object importedValue) {
     return importedValue;
   }

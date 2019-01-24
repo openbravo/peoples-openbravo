@@ -83,44 +83,45 @@ public class Report implements Serializable {
 
   private TemplateInfo templateInfo;
 
-  public Report(DocumentType documentType, String documentId, String strLanguage,
-      String templateId, boolean multiReport, OutputTypeEnum outputTypeString)
+  public Report(DocumentType documentType, String documentId, String strLanguage, String templateId,
+      boolean multiReport, OutputTypeEnum outputTypeString)
       throws ReportingException, ServletException {
     this(DalConnectionProvider.getReadOnlyConnectionProvider(), documentType, documentId,
         strLanguage, templateId, multiReport, outputTypeString);
   }
 
-  public Report(ConnectionProvider connectionProvider, DocumentType documentType,
-      String documentId, String strLanguage, String templateId, boolean multiReport,
-      OutputTypeEnum outputTypeString) throws ReportingException, ServletException {
+  public Report(ConnectionProvider connectionProvider, DocumentType documentType, String documentId,
+      String strLanguage, String templateId, boolean multiReport, OutputTypeEnum outputTypeString)
+      throws ReportingException, ServletException {
     _DocumentType = documentType;
     _DocumentId = documentId;
     outputType = outputTypeString;
     ReportData[] reportData = null;
 
     switch (_DocumentType) {
-    case QUOTATION: // Retrieve quotation information
-      reportData = ReportData.getOrderInfo(connectionProvider, documentId);
-      break;
-    case SALESORDER: // Retrieve order information
-      reportData = ReportData.getOrderInfo(connectionProvider, documentId);
-      break;
+      case QUOTATION: // Retrieve quotation information
+        reportData = ReportData.getOrderInfo(connectionProvider, documentId);
+        break;
+      case SALESORDER: // Retrieve order information
+        reportData = ReportData.getOrderInfo(connectionProvider, documentId);
+        break;
 
-    case SALESINVOICE: // Retrieve invoice information
-      reportData = ReportData.getInvoiceInfo(connectionProvider, documentId);
-      break;
+      case SALESINVOICE: // Retrieve invoice information
+        reportData = ReportData.getInvoiceInfo(connectionProvider, documentId);
+        break;
 
-    case SHIPMENT: // Retrieve shipment information
-      reportData = ReportData.getShipmentInfo(connectionProvider, documentId);
-      break;
+      case SHIPMENT: // Retrieve shipment information
+        reportData = ReportData.getShipmentInfo(connectionProvider, documentId);
+        break;
 
-    case PAYMENT: // Retrieve payment information
-      reportData = ReportData.getPaymentInfo(connectionProvider, documentId);
-      break;
+      case PAYMENT: // Retrieve payment information
+        reportData = ReportData.getPaymentInfo(connectionProvider, documentId);
+        break;
 
-    default:
-      throw new ReportingException(Utility.messageBD(connectionProvider, "UnknownDocumentType",
-          strLanguage) + _DocumentType);
+      default:
+        throw new ReportingException(
+            Utility.messageBD(connectionProvider, "UnknownDocumentType", strLanguage)
+                + _DocumentType);
     }
 
     multiReports = multiReport;
@@ -141,13 +142,15 @@ public class Report implements Serializable {
       _MaxDueDate = reportData[0].getField("maxduedate");
       _DocDescription = reportData[0].getField("docdesc");
       _ContactName = reportData[0].getField("contact_name");
-      templateInfo = new TemplateInfo(connectionProvider, docTypeId, orgId, strLanguage, templateId);
+      templateInfo = new TemplateInfo(connectionProvider, docTypeId, orgId, strLanguage,
+          templateId);
 
       _Filename = generateReportFileName();
       _targetDirectory = null;
-    } else
-      throw new ReportingException(Utility.messageBD(connectionProvider, "NoDataReport",
-          strLanguage) + documentId);
+    } else {
+      throw new ReportingException(
+          Utility.messageBD(connectionProvider, "NoDataReport", strLanguage) + documentId);
+    }
 
   }
 
@@ -159,10 +162,10 @@ public class Report implements Serializable {
     // Generate the target report filename
     final String dateStamp = Utility.formatDate(new Date(), "yyyyMMdd-HHmmss");
     String reportFilename = templateInfo.getReportFilename();
-    reportFilename = reportFilename
-        .replaceAll("@our_ref@", Matcher.quoteReplacement(_OurReference));
-    reportFilename = reportFilename
-        .replaceAll("@cus_ref@", Matcher.quoteReplacement(_CusReference));
+    reportFilename = reportFilename.replaceAll("@our_ref@",
+        Matcher.quoteReplacement(_OurReference));
+    reportFilename = reportFilename.replaceAll("@cus_ref@",
+        Matcher.quoteReplacement(_CusReference));
     reportFilename = reportFilename.replaceAll("@cus_nam@", Matcher.quoteReplacement(_ContactName));
     reportFilename = reportFilename.replaceAll("@bp_nam@", Matcher.quoteReplacement(_BPartnerName));
     reportFilename = reportFilename.replaceAll("@doc_date@", Matcher.quoteReplacement(_DocDate));
@@ -181,8 +184,9 @@ public class Report implements Serializable {
     // only characters, numbers and "." are accepted. Others will be changed for "_"
     reportFilename = reportFilename.replaceAll("[^A-Za-z0-9\\.]", "_");
     reportFilename = reportFilename + "." + dateStamp + ".pdf";
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("target report filename: " + reportFilename);
+    }
 
     if (multiReports && outputType.equals(OutputTypeEnum.PRINT)) {
       reportFilename = UUID.randomUUID().toString() + "_" + reportFilename;

@@ -86,8 +86,8 @@ public class GenerateAggregatedDataBackground extends DalBaseProcess {
       for (Organization legalEntity : legalEntities) {
 
         // Get Closed Periods that need to be aggregated
-        List<Period> periodList = ResetValuedStockAggregated.getClosedPeriodsToAggregate(
-            new Date(), legalEntity.getClient().getId(), legalEntity.getId());
+        List<Period> periodList = ResetValuedStockAggregated.getClosedPeriodsToAggregate(new Date(),
+            legalEntity.getClient().getId(), legalEntity.getId());
 
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         Date startingDate = formatter.parse("01-01-0000");
@@ -113,12 +113,12 @@ public class GenerateAggregatedDataBackground extends DalBaseProcess {
           contPeriodNumber++;
           log4j.debug("[GenerateAggregatedDataBackground] Periods processed: " + contPeriodNumber
               + " of " + totalNumberOfPeriods);
-          log4j.debug("[GenerateAggregatedDataBackground] Time to process period: "
-              + elapsedTimePeriod);
+          log4j.debug(
+              "[GenerateAggregatedDataBackground] Time to process period: " + elapsedTimePeriod);
         }
         long elapsedTime = (System.currentTimeMillis() - start);
-        log4j.debug("[GenerateAggregatedDataBackground] Time to process all periods: "
-            + elapsedTime);
+        log4j.debug(
+            "[GenerateAggregatedDataBackground] Time to process all periods: " + elapsedTime);
       }
 
       logger.logln(OBMessageUtils.messageBD("Success"));
@@ -127,8 +127,9 @@ public class GenerateAggregatedDataBackground extends DalBaseProcess {
 
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      String message = OBMessageUtils.parseTranslation(bundle.getConnection(), bundle.getContext()
-          .toVars(), OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
+      String message = OBMessageUtils.parseTranslation(bundle.getConnection(),
+          bundle.getContext().toVars(), OBContext.getOBContext().getLanguage().getLanguage(),
+          e.getMessage());
       result.setMessage(message);
       result.setType("Error");
       result.setTitle(OBMessageUtils.messageBD("Error"));

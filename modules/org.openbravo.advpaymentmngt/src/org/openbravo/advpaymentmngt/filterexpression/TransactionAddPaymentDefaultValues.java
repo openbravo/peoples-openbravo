@@ -39,6 +39,7 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
 
   private static final long SEQUENCE = 100l;
 
+  @Override
   protected long getSeq() {
     return SEQUENCE;
   }
@@ -71,10 +72,12 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   private String convertToSafeDecimalString(String bigdecimalString) {
     String localBigdecimalString = bigdecimalString;
     localBigdecimalString = localBigdecimalString.replaceAll("[^\\d,\\.]++", "");
-    if (localBigdecimalString.matches(".+\\.\\d+,\\d+$"))
+    if (localBigdecimalString.matches(".+\\.\\d+,\\d+$")) {
       return localBigdecimalString.replaceAll("\\.", "").replaceAll(",", ".");
-    if (localBigdecimalString.matches(".+,\\d+\\.\\d+$"))
+    }
+    if (localBigdecimalString.matches(".+,\\d+\\.\\d+$")) {
       return localBigdecimalString.replaceAll(",", "");
+    }
     return localBigdecimalString.replaceAll(",", ".");
   }
 
@@ -262,8 +265,8 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
     if (context.has("depositamt") && context.has("withdrawalamt")
         && context.get("depositamt") != JSONObject.NULL
         && context.get("withdrawalamt") != JSONObject.NULL) {
-      return new BigDecimal(convertToSafeDecimalString(context.getString("depositamt"))).subtract(
-          new BigDecimal(convertToSafeDecimalString(context.getString("withdrawalamt"))))
+      return new BigDecimal(convertToSafeDecimalString(context.getString("depositamt")))
+          .subtract(new BigDecimal(convertToSafeDecimalString(context.getString("withdrawalamt"))))
           .toString();
     }
     if (context.has("inpdepositamt") && context.has("inppaymentamt")

@@ -69,8 +69,9 @@ public class Alert {
   }
 
   public boolean save(ConnectionProvider conn) {
-    if (alertRuleId == 0 || description == null || description.equals(""))
+    if (alertRuleId == 0 || description == null || description.equals("")) {
       return false;
+    }
 
     try {
       AlertData[] data = null;

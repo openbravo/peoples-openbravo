@@ -52,8 +52,8 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
   public void execute(ProcessBundle bundle) throws Exception {
     OBError msg = new OBError();
     msg.setType("Success");
-    msg.setTitle(Utility.messageBD(bundle.getConnection(), "Success", bundle.getContext()
-        .getLanguage()));
+    msg.setTitle(
+        Utility.messageBD(bundle.getConnection(), "Success", bundle.getContext().getLanguage()));
 
     try {
       // retrieve custom params
@@ -61,13 +61,13 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
 
       // retrieve standard params
       final String recordID = (String) bundle.getParams().get("FIN_Bankstatement_ID");
-      final FIN_BankStatement bankStatement = OBDal.getInstance().get(FIN_BankStatement.class,
-          recordID);
+      final FIN_BankStatement bankStatement = OBDal.getInstance()
+          .get(FIN_BankStatement.class, recordID);
       final VariablesSecureApp vars = bundle.getContext().toVars();
       final ConnectionProvider conProvider = bundle.getConnection();
       final String language = bundle.getContext().getLanguage();
-      final boolean isForceProcess = "2DDE7D3618034C38A4462B7F3456C28D".equals(bundle
-          .getProcessId());
+      final boolean isForceProcess = "2DDE7D3618034C38A4462B7F3456C28D"
+          .equals(bundle.getProcessId());
 
       bankStatement.setProcessNow(true);
       OBDal.getInstance().save(bankStatement);
@@ -89,7 +89,8 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
               } else {
                 msg.setType("Warning");
                 msg.setTitle(FIN_Utility.messageBD("Warning"));
-                String pattern = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+                String pattern = OBPropertiesProvider.getInstance()
+                    .getOpenbravoProperties()
                     .getProperty("dateFormat.java");
                 msg.setMessage(msg.getMessage()
                     + FIN_Utility.messageBD("APRM_BankStatementLineWrongDateWarning")
@@ -120,8 +121,8 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
         if ("Y".equals(bankStatement.getPosted())) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, language, "@PostedDocument@"
-              + ": " + bankStatement.getIdentifier()));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+              "@PostedDocument@" + ": " + bankStatement.getIdentifier()));
           bundle.setResult(msg);
           return;
         }
@@ -154,8 +155,8 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
     } catch (Exception e) {
       log.error("Error while executing FIN_BankStatementProcess", e);
       msg.setType("Error");
-      msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
+      msg.setTitle(
+          Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext().getLanguage()));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
@@ -172,15 +173,15 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
     whereClause.append(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT);
     whereClause.append("." + FIN_BankStatement.PROPERTY_ACCOUNT + " = :account");
     parameters.put("account", bankstatement.getAccount());
-    whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BANKSTATEMENT
-        + " <> :bankStatement");
+    whereClause
+        .append(" and bsl." + FIN_BankStatementLine.PROPERTY_BANKSTATEMENT + " <> :bankStatement");
     parameters.put("bankStatement", bankstatement);
     whereClause.append(" and bsl.bankStatement.processed = 'Y'");
     whereClause.append(" order by bsl." + FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE);
     whereClause.append(" desc");
 
-    final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance().createQuery(
-        FIN_BankStatementLine.class, whereClause.toString(), parameters);
+    final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance()
+        .createQuery(FIN_BankStatementLine.class, whereClause.toString(), parameters);
     obData.setMaxResult(1);
     FIN_BankStatementLine line = obData.uniqueResult();
     if (line != null) {
@@ -202,15 +203,16 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
     OBContext.setAdminMode();
     Date minDate = new Date();
     try {
-      final OBCriteria<FIN_BankStatementLine> obc = OBDal.getInstance().createCriteria(
-          FIN_BankStatementLine.class);
+      final OBCriteria<FIN_BankStatementLine> obc = OBDal.getInstance()
+          .createCriteria(FIN_BankStatementLine.class);
       obc.createAlias(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, "bs");
       obc.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_ID, bankStatement.getId()));
       obc.addOrderBy(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE, true);
       obc.setMaxResults(1);
       final List<FIN_BankStatementLine> bst = obc.list();
-      if (bst.size() == 0)
+      if (bst.size() == 0) {
         return minDate;
+      }
       minDate = bst.get(0).getTransactionDate();
     } finally {
       OBContext.restorePreviousMode();
@@ -231,8 +233,8 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
       Date bankStatementLineMinDate) {
     OBContext.setAdminMode();
     try {
-      final OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance().createCriteria(
-          FIN_Reconciliation.class);
+      final OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance()
+          .createCriteria(FIN_Reconciliation.class);
       obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, account));
       obc.add(Restrictions.ge(FIN_Reconciliation.PROPERTY_ENDINGDATE, bankStatementLineMinDate));
       obc.setMaxResults(1);

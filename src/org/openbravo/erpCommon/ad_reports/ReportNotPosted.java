@@ -45,8 +45,9 @@ public class ReportNotPosted extends HttpSecureAppServlet {
 
   // static Category log4j = Category.getInstance(ReportNotPosted.class);
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -80,8 +81,8 @@ public class ReportNotPosted extends HttpSecureAppServlet {
 
     // Use ReadOnly Connection Provider
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-    String orgIds = StringCollectionUtils.commaSeparated(OBContext.getOBContext()
-        .getReadableOrganizations());
+    String orgIds = StringCollectionUtils
+        .commaSeparated(OBContext.getOBContext().getReadableOrganizations());
 
     ReportNotPostedData[] data = ReportNotPostedData.select(readOnlyCP, vars.getLanguage(),
         vars.getClient(), orgIds, strDateFrom, strDateTo);
@@ -142,6 +143,7 @@ public class ReportNotPosted extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportNotPosted. This Servlet was made by Juan Pablo Calvente";
   } // end of the getServletInfo() method

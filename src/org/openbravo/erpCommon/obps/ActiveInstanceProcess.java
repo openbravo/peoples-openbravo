@@ -90,9 +90,8 @@ public class ActiveInstanceProcess implements Process {
       }
     }
 
-    if (localActivation
-        || (result.length == 2 && result[0] != null && result[1] != null && result[0]
-            .equals("@Success@"))) {
+    if (localActivation || (result.length == 2 && result[0] != null && result[1] != null
+        && result[0].equals("@Success@"))) {
       // now we have the activation key, lets save it
       String activationKey;
       if (localActivation) {
@@ -174,8 +173,7 @@ public class ActiveInstanceProcess implements Process {
           .setNotInDevelopment();
     } else {
       // executing from ant activate.instance task
-      OBDal
-          .getInstance()
+      OBDal.getInstance()
           .getSession()
           .createQuery(
               "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
@@ -222,8 +220,9 @@ public class ActiveInstanceProcess implements Process {
     if (!activate) {
       content += "&cancel=Y";
     }
-    if (instanceNo != null && !instanceNo.equals(""))
+    if (instanceNo != null && !instanceNo.equals("")) {
       content += "&instanceNo=" + instanceNo;
+    }
 
     try {
       OBContext.setAdminMode();

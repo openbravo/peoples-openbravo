@@ -71,8 +71,9 @@ public class BuildTask {
       ant.setProperty("module", unnappliedModules);
     }
     log.info("Executing tasks:");
-    for (String task : tasks)
+    for (String task : tasks) {
       log.info(task);
+    }
     log.info("Modules to be applied: " + unnappliedModules);
     ant.runTask(tasks);
     ant.closeLogFile();
@@ -89,8 +90,9 @@ public class BuildTask {
     String rt = "";
     int i = 0;
     while (rs.next()) {
-      if (i > 0)
+      if (i > 0) {
         rt += ",";
+      }
       rt += rs.getString(1);
       i++;
     }

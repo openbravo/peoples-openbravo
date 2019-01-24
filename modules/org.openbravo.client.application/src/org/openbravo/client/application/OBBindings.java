@@ -26,6 +26,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.OBClassLoader;
@@ -35,8 +37,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.json.JsonUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * JS - Java binding to use in JavaScript expressions.
@@ -209,8 +209,8 @@ public class OBBindings {
       long localTime = ((Double) m.invoke(d, "getTime", null)).longValue();
       return new Date(localTime);
     } catch (Exception ex) {
-      log.error("Error getting javascript date from object {} of class {}", d, d.getClass()
-          .getName());
+      log.error("Error getting javascript date from object {} of class {}", d,
+          d.getClass().getName());
       throw new OBException(ex.getMessage(), ex);
     }
   }
@@ -251,8 +251,8 @@ public class OBBindings {
     Calendar localTime = Calendar.getInstance();
     localTime.setTime(UTCTime);
 
-    int gmtMillisecondOffset = (localTime.get(Calendar.ZONE_OFFSET) + localTime
-        .get(Calendar.DST_OFFSET));
+    int gmtMillisecondOffset = (localTime.get(Calendar.ZONE_OFFSET)
+        + localTime.get(Calendar.DST_OFFSET));
     localTime.add(Calendar.MILLISECOND, gmtMillisecondOffset);
 
     return localTime.getTime();
@@ -284,12 +284,14 @@ public class OBBindings {
     FilterExpression expr;
     try {
       try {
-        expr = (FilterExpression) WeldUtils.getInstanceFromStaticBeanManager(Class
-            .forName(className));
+        expr = (FilterExpression) WeldUtils
+            .getInstanceFromStaticBeanManager(Class.forName(className));
       } catch (IllegalArgumentException e) {
         // try with OBClassLoader in case package is excluded by Weld
-        expr = (FilterExpression) OBClassLoader.getInstance().loadClass(className)
-            .getDeclaredConstructor().newInstance();
+        expr = (FilterExpression) OBClassLoader.getInstance()
+            .loadClass(className)
+            .getDeclaredConstructor()
+            .newInstance();
       }
       return expr.getExpression(requestMap);
     } catch (Exception e) {

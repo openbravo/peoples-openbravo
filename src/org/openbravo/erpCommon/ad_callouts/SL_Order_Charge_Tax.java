@@ -48,22 +48,23 @@ public class SL_Order_Charge_Tax extends SimpleCallout {
     String strIsSOTrx = Utility.getContext(this, info.vars, "isSOTrx", info.getWindowId());
 
     // Charge Amount
-    String chargeAmt = StringUtils.isEmpty(strCChargeID) ? "0" : SLChargeData.chargeAmt(this,
-        strCChargeID);
+    String chargeAmt = StringUtils.isEmpty(strCChargeID) ? "0"
+        : SLChargeData.chargeAmt(this, strCChargeID);
     info.addResult("inpchargeamt", chargeAmt);
 
     // Tax
     SLOrderTaxData[] data = SLOrderTaxData.select(this, strCOrderId);
-    if (data != null && data.length > 0)
+    if (data != null && data.length > 0) {
       try {
         String strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID,
-            strMWarehouseID, (StringUtils.isEmpty(data[0].billtoId) ? strCBPartnerLocationID
-                : data[0].billtoId), strCBPartnerLocationID, data[0].cProjectId, StringUtils
-                .equals(strIsSOTrx, "Y"));
+            strMWarehouseID,
+            (StringUtils.isEmpty(data[0].billtoId) ? strCBPartnerLocationID : data[0].billtoId),
+            strCBPartnerLocationID, data[0].cProjectId, StringUtils.equals(strIsSOTrx, "Y"));
         info.addResult("inpcTaxId", strCTaxID);
       } catch (IOException e) {
         log4j.error(e.getMessage());
         e.printStackTrace();
       }
+    }
   }
 }

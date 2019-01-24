@@ -45,6 +45,7 @@ public abstract class ModuleScript extends ExecutionLimitBaseProcess {
   /**
    * This method returns the name of the class.
    */
+  @Override
   protected String getTypeName() {
     return MODULE_SCRIPT;
   }
@@ -66,8 +67,8 @@ public abstract class ModuleScript extends ExecutionLimitBaseProcess {
   }
 
   protected void handleError(Throwable t) {
-    log4j.error(
-        "Error executing moduleScript " + this.getClass().getName() + ": " + t.getMessage(), t);
+    log4j.error("Error executing moduleScript " + this.getClass().getName() + ": " + t.getMessage(),
+        t);
     throw new BuildException("Execution of moduleScript " + this.getClass().getName() + "failed.");
   }
 }

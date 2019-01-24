@@ -63,8 +63,7 @@ isc.OBGrid.addProperties({
   //prevent multi-line content to show strangely
   //https://issues.openbravo.com/view.php?id=17531, https://issues.openbravo.com/view.php?id=24878
   formatDisplayValue: function (value, record, rowNum, colNum) {
-    var fld = this.getFields()[colNum],
-        index;
+    var index;
 
     if (this.inCellHoverHTML || !isc.isA.String(value)) {
       return value;
@@ -97,9 +96,8 @@ isc.OBGrid.addProperties({
   cellHoverHTML: function (record, rowNum, colNum) {
 
     var ret, field = this.getField(colNum),
-        cellErrors, msg = '',
-        prefix = '',
-        i, func = this.getGridSummaryFunction(field),
+        cellErrors, prefix = '',
+        func = this.getGridSummaryFunction(field),
         isGroupOrSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
 
     if (!record) {

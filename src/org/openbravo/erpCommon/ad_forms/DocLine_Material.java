@@ -92,7 +92,8 @@ public class DocLine_Material extends DocLine {
    * @param as
    */
 
-  public String getProductCosts(String date, AcctSchema as, ConnectionProvider conn, Connection con) {
+  public String getProductCosts(String date, AcctSchema as, ConnectionProvider conn,
+      Connection con) {
     if (transaction != null && transaction.getTransactionCost() != null
         && CostingStatus.getInstance().isMigrated()) {
       BigDecimal sign = new BigDecimal(new BigDecimal(getQty()).signum());
@@ -106,8 +107,8 @@ public class DocLine_Material extends DocLine {
             .getOrganizationStructureProvider(p_productInfo.m_AD_Client_ID)
             .getLegalEntity(OBDal.getInstance().get(Organization.class, m_AD_Org_ID));
         return p_productInfo.getProductDefaultCosts(date, null, legalEntity, getWarehouse(),
-            legalEntity.getCurrency() != null ? legalEntity.getCurrency() : legalEntity.getClient()
-                .getCurrency());
+            legalEntity.getCurrency() != null ? legalEntity.getCurrency()
+                : legalEntity.getClient().getCurrency());
       } catch (OBException e) {
         log4jDocLine_Material.error("No standard cost found for product: "
             + OBDal.getInstance().get(Product.class, m_M_Product_ID).getIdentifier()
@@ -139,6 +140,7 @@ public class DocLine_Material extends DocLine {
     this.m_breakdownqty = breakdownqty;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

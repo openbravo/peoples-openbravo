@@ -40,7 +40,8 @@ public class CheckOptionalFilterCallout extends SimpleCallout {
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
-    String lastChanged = null, lastChangedValue = null, obcqlQueryColumnId = null, HQL = null, parsedMessage = null;
+    String lastChanged = null, lastChangedValue = null, obcqlQueryColumnId = null, HQL = null,
+        parsedMessage = null;
 
     // retrieving the last changed value
     lastChanged = info.getStringParameter("inpLastFieldChanged", null);
@@ -51,16 +52,16 @@ public class CheckOptionalFilterCallout extends SimpleCallout {
       if ("Y".equals(lastChangedValue)) {
         obcqlQueryColumnId = info.getStringParameter("inpobcqlQueryColumnId", null);
         if (OBDal.getInstance().exists("OBCQL_QueryColumn", obcqlQueryColumnId)) {
-          OBCQL_QueryColumn obcql_QueryColumn = OBDal.getInstance().get(OBCQL_QueryColumn.class,
-              obcqlQueryColumnId);
+          OBCQL_QueryColumn obcql_QueryColumn = OBDal.getInstance()
+              .get(OBCQL_QueryColumn.class, obcqlQueryColumnId);
           HQL = obcql_QueryColumn.getWidgetQuery().getHQL();
 
           // check whether HQL contains @optional_filters@
           if (StringUtils.isNotEmpty(HQL)) {
             if (!HQL.contains(OPTIONAL_FILTERS)) {
               // translate message before display
-              parsedMessage = Utility.messageBD(this, warningMessage, OBContext.getOBContext()
-                  .getLanguage().getId());
+              parsedMessage = Utility.messageBD(this, warningMessage,
+                  OBContext.getOBContext().getLanguage().getId());
               info.addResult("WARNING", parsedMessage);
             }
           }

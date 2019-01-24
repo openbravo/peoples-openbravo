@@ -31,8 +31,9 @@ public class Logout extends HttpSecureAppServlet {
   public Logout() {
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     logout(request, response);
   }

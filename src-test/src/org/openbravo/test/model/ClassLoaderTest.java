@@ -95,8 +95,8 @@ public class ClassLoaderTest extends OBBaseTest {
     final Object[] in = { "L", "F" };
 
     // Checking listener and filters classes
-    OBCriteria<ModelImplementation> obc = OBDal.getInstance().createCriteria(
-        ModelImplementation.class);
+    OBCriteria<ModelImplementation> obc = OBDal.getInstance()
+        .createCriteria(ModelImplementation.class);
     obc.add(Restrictions.in(ModelImplementation.PROPERTY_OBJECTTYPE, in));
 
     // these don't need to implement Servlet
@@ -113,23 +113,23 @@ public class ClassLoaderTest extends OBBaseTest {
     checkClasses("Manual Servlet", obc.list(), notFoundClasses, notServletClasses);
 
     // Checking servlets associated to forms
-    OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(ModelImplementation.class,
-        "objectType = 'S' and specialForm is not null and specialForm.active = true");
+    OBQuery<ModelImplementation> obq = OBDal.getInstance()
+        .createQuery(ModelImplementation.class,
+            "objectType = 'S' and specialForm is not null and specialForm.active = true");
 
     checkClasses("Form", obq.list(), notFoundClasses, notServletClasses);
 
     // Check servlets associated to processes/reports
-    obq = OBDal
-        .getInstance()
-        .createQuery(
-            ModelImplementation.class,
+    obq = OBDal.getInstance()
+        .createQuery(ModelImplementation.class,
             "objectType = 'S' and process is not null and process.active = true and process.uIPattern = 'M' and process.report = false");
 
     checkClasses("Process", obq.list(), notFoundClasses, notServletClasses);
 
     // Checking servlets associated to tabs
-    obq = OBDal.getInstance().createQuery(ModelImplementation.class,
-        "objectType = 'S' and tab is not null and tab.active = true and tab.window.active = true");
+    obq = OBDal.getInstance()
+        .createQuery(ModelImplementation.class,
+            "objectType = 'S' and tab is not null and tab.active = true and tab.window.active = true");
 
     checkClasses("Tab", obq.list(), notFoundClasses, notServletClasses);
   }

@@ -45,8 +45,7 @@ import org.openbravo.service.json.JsonConstants;
  * This class is used to implement Openbravo ERP servlet callouts in a simple manner.
  * <p>
  * To develop a new servlet callout based on this class you only have to create a new java class
- * that extends the method:
- * <blockquote>
+ * that extends the method: <blockquote>
  * 
  * <pre>
  * protected void execute(CalloutInfo info) throws ServletException;
@@ -55,8 +54,7 @@ import org.openbravo.service.json.JsonConstants;
  * </blockquote>
  * <p>
  * In this method you can develop the logic of the callout and use the info object of class
- * {@link CalloutInfo} to access window fields,
- * database and other methods
+ * {@link CalloutInfo} to access window fields, database and other methods
  * 
  * @author aro
  */
@@ -84,8 +82,8 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
    * 
    * @return JSONObject with the values updated by the SimpleCallout.
    */
-  public JSONObject executeSimpleCallout(RequestContext request) throws ServletException,
-      JSONException {
+  public JSONObject executeSimpleCallout(RequestContext request)
+      throws ServletException, JSONException {
     // prepare values for callout
     VariablesSecureApp vars = new VariablesSecureApp(request.getRequest());
     CalloutInfo info = new CalloutInfo(vars);
@@ -301,8 +299,8 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     }
 
     private boolean isComboWithoutSelectedEntry() throws JSONException {
-      return (result.isNull(currentElement) ? true : !result.getJSONObject(currentElement).has(
-          CalloutConstants.VALUE));
+      return (result.isNull(currentElement) ? true
+          : !result.getJSONObject(currentElement).has(CalloutConstants.VALUE));
     }
 
     private JSONArray getComboEntries() throws JSONException {
@@ -369,8 +367,8 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
      * Adds a default document number to the result.
      */
     void addDocumentNo() {
-      String strTableNameId = getStringParameter("inpkeyColumnId", new RegexFilter(
-          "[a-zA-Z0-9_]*_ID"));
+      String strTableNameId = getStringParameter("inpkeyColumnId",
+          new RegexFilter("[a-zA-Z0-9_]*_ID"));
       String strDocType_Id = getStringParameter("inpcDoctypeId", IsIDFilter.instance);
       String strTableName = strTableNameId.substring(0, strTableNameId.length() - 3);
       String strDocumentNo = Utility.getDocumentNo(new DalConnectionProvider(false), vars,

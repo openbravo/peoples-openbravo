@@ -42,8 +42,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportWarehouseControl extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -56,8 +57,8 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportWarehouseControl|DateFrom");
-      String strDateTo = vars
-          .getRequestGlobalVariable("inpDateTo", "ReportWarehouseControl|DateTo");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
+          "ReportWarehouseControl|DateTo");
       String strReferential = vars.getRequestGlobalVariable("inpReferential",
           "ReportWarehouseControl|Referential");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strReferential);
@@ -67,8 +68,8 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strReferential) throws IOException,
-      ServletException {
+      String strDateFrom, String strDateTo, String strReferential)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
@@ -92,22 +93,24 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
       data = ReportWarehouseControlData.select(readOnlyCP,
           Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportWarehouseControl"),
           Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
-          strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strReferential,
-          pgLimit, oraLimit);
+          strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strReferential, pgLimit,
+          oraLimit);
     }
 
     if (data == null || data.length == 0 || vars.commandIn("DEFAULT")) {
       String discard[] = { "sectionDescription" };
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportWarehouseControl", discard).createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportWarehouseControl", discard)
+          .createXmlDocument();
       data = ReportWarehouseControlData.set();
       if (log4j.isDebugEnabled()) {
         log4j.debug("DEFAULT INPUT");
       }
     } else {
       String discard[] = { "discard" };
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportWarehouseControl", discard).createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportWarehouseControl", discard)
+          .createXmlDocument();
     }
 
     ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportWarehouseControl", false,
@@ -165,6 +168,7 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportWarehouseControl. This Servlet was made by Jon Alegria";
   }

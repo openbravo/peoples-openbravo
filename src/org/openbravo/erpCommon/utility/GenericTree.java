@@ -32,9 +32,9 @@ import org.openbravo.xmlEngine.XmlEngine;
  * 
  * <br>
  * Usage<br>
-
- * This class cannot be directly used, instead a subclass implementing the abstract
- * method must be used.
+ * 
+ * This class cannot be directly used, instead a subclass implementing the abstract method must be
+ * used.
  * 
  * The purpose is to set the toHml directly in the HTML where the tree is going to be displayed,
  * additionally genericTree.js must be imported in that page. These java classes will show the tree
@@ -174,18 +174,22 @@ public abstract class GenericTree {
    * @return a String with the HTML with all the structure for the tree.
    */
   public String toHtml() {
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       return "";
+    }
 
     XmlDocument xmlDocument;
     if (!isSubTree) {
       String[] discard = { "" };
-      if (!showNotifications)
+      if (!showNotifications) {
         discard[0] = "notifArea";
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/GenericTreeHeader",
-          discard).createXmlDocument();
-      XmlDocument xmlDocumentTree = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/utility/GenericTree").createXmlDocument();
+      }
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/utility/GenericTreeHeader", discard)
+          .createXmlDocument();
+      XmlDocument xmlDocumentTree = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/utility/GenericTree")
+          .createXmlDocument();
       xmlDocumentTree.setData("structureTree", data);
       xmlDocument.setParameter("inpTreeClass", this.getClass().getName());
       xmlDocument.setParameter("tree", xmlDocumentTree.print());
@@ -194,8 +198,9 @@ public abstract class GenericTree {
     } else {
       String[] discard = { "inpNodes_xx" }; // remove check-box for
       // subtree nodes
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/GenericTree",
-          discard).createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/utility/GenericTree", discard)
+          .createXmlDocument();
       xmlDocument.setData("structureTree", data);
     }
     return xmlDocument.print();
@@ -211,8 +216,9 @@ public abstract class GenericTree {
   }
 
   public String descriptionToHtml() {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/GenericTreeDescription").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/GenericTreeDescription")
+        .createXmlDocument();
     xmlDocument.setParameter("genericDescriptionSize", genericDescriptionSize);
     return xmlDocument.print();
   }
@@ -223,8 +229,9 @@ public abstract class GenericTree {
    * @param l
    */
   protected void setLevel(int l) {
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       return;
+    }
     for (int i = 0; i < data.length; i++) {
       // endline: set the spotted right line with angles
       if (!isSubTree && i == 0) {
@@ -245,8 +252,8 @@ public abstract class GenericTree {
         parentID = getParent(parentID);
         String divClass = "Tree_" + (isLastLevelNode(parentID) ? "LastParent" : "MiddleParent")
             + "_Spots";
-        FieldProviderFactory.setField(data[i], "leveltree", "<div class=\"" + divClass
-            + "\"></div>" + data[i].getField("leveltree"));
+        FieldProviderFactory.setField(data[i], "leveltree",
+            "<div class=\"" + divClass + "\"></div>" + data[i].getField("leveltree"));
       }
 
       // Position: this is in order to be able to use keyboard to navigate

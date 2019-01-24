@@ -51,6 +51,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     return WeldUtils.getInstanceFromStaticBeanManager(clz);
   }
 
+  @Override
   public Module getModule() {
     if (module != null) {
       return module;
@@ -82,6 +83,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
    * @see KernelConstants#RESOURCE_LANGUAGE_PARAMETER
    * @see KernelUtils#getVersionParameters(Module)
    */
+  @Override
   public String getVersionParameters(String resource) {
     return KernelUtils.getInstance().getVersionParameters(getModule());
   }
@@ -93,6 +95,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     return this.getClass().getPackage().getName();
   }
 
+  @Override
   public List<String> getTestResources() {
     return null;
   }
@@ -169,7 +172,8 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     return componentResource;
   }
 
-  protected ComponentResource createStyleSheetResource(String path, boolean includeAlsoInClassicMode) {
+  protected ComponentResource createStyleSheetResource(String path,
+      boolean includeAlsoInClassicMode) {
     final ComponentResource componentResource = new ComponentResource();
     componentResource.setType(ComponentResourceType.Stylesheet);
     componentResource.setPath(path);
@@ -191,6 +195,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
   /**
    * Implemented here for backward compatibility, calls the {@link #getGlobalResources()}
    */
+  @Override
   public List<ComponentResource> getGlobalComponentResources() {
     final List<ComponentResource> globalResources = new ArrayList<>();
     for (String globalResource : getGlobalResources()) {
@@ -214,8 +219,8 @@ public abstract class BaseComponentProvider implements ComponentProvider {
 
     public static final String APP_OB3 = "OB3";
     public static final String APP_CLASSIC = "CLASSIC";
-    public static final List<String> ALL_CORE_APPS = Arrays.asList(new String[] { APP_OB3,
-        APP_CLASSIC });
+    public static final List<String> ALL_CORE_APPS = Arrays
+        .asList(new String[] { APP_OB3, APP_CLASSIC });
 
     private ComponentResourceType type;
     private String path;
@@ -244,6 +249,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
       this.path = path;
     }
 
+    @Override
     public String toString() {
       return type + " " + path;
     }

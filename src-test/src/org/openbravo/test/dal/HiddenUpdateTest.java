@@ -23,6 +23,8 @@ import static org.junit.Assert.fail;
 
 import java.io.Serializable;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.boot.Metadata;
@@ -44,8 +46,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.test.base.OBBaseTest;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Test for updates which can happen behind the scenes (but should not happen) if properties are
@@ -116,8 +116,9 @@ public class HiddenUpdateTest extends OBBaseTest {
   private class LocalSessionFactoryController extends DalSessionFactoryController {
     @Override
     public Configuration buildConfiguration() {
-      return new Configuration(new BootstrapServiceRegistryBuilder().applyIntegrator(
-          LocalMetadataExtractorIntegrator.getInstance()).build());
+      return new Configuration(new BootstrapServiceRegistryBuilder()
+          .applyIntegrator(LocalMetadataExtractorIntegrator.getInstance())
+          .build());
     }
 
     @Override

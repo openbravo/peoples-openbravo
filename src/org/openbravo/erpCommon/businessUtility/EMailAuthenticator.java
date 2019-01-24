@@ -39,15 +39,18 @@ public class EMailAuthenticator extends Authenticator {
     }
   }
 
+  @Override
   protected PasswordAuthentication getPasswordAuthentication() {
     return m_pass;
   }
 
+  @Override
   public String toString() {
-    if (m_pass == null)
+    if (m_pass == null) {
       return "EMailAuthenticator[]";
-    else
+    } else {
       return "EMailAuthenticator[" + m_pass.getUserName() + "/" + m_pass.getPassword() + "]";
+    }
   }
 
 }

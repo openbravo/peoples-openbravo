@@ -45,15 +45,15 @@ public class ADOrgPersistInfoCornerCaseOrgTest extends OBBaseTest {
 
   private void runTest(String orgId) {
     assertEquals("AD_Org_GetCalendarOwner for " + orgId + " Organization",
-        ADOrgPersistInfoUtility.runFunction(
-            ADOrgPersistInfoConstants.FUNCTION_AD_ORG_GETCALENDAROWNERTN, orgId),
-        ADOrgPersistInfoUtility.runFunction(
-            ADOrgPersistInfoConstants.FUNCTION_AD_ORG_GETCALENDAROWNER, orgId));
+        ADOrgPersistInfoUtility
+            .runFunction(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_GETCALENDAROWNERTN, orgId),
+        ADOrgPersistInfoUtility
+            .runFunction(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_GETCALENDAROWNER, orgId));
 
     assertEquals("AD_Org_GetPeriodControlAllow for " + orgId + " Organization",
-        ADOrgPersistInfoUtility.runFunction(
-            ADOrgPersistInfoConstants.FUNCTION_AD_ORG_GETPERIODCONTROLALLOWTN, orgId),
-        ADOrgPersistInfoUtility.runFunction(
-            ADOrgPersistInfoConstants.FUNCTION_AD_ORG_GETPERIODCONTROLALLOW, orgId));
+        ADOrgPersistInfoUtility
+            .runFunction(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_GETPERIODCONTROLALLOWTN, orgId),
+        ADOrgPersistInfoUtility
+            .runFunction(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_GETPERIODCONTROLALLOW, orgId));
   }
 }

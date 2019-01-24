@@ -33,33 +33,37 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class OpenPentaho extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String adProcessId = vars.getStringParameter("inpadProcessId");
     String pentahoServer = vars.getSessionValue("#pentahoServer");
     String userRole = vars.getSessionValue("#AD_ROLE_ID");
-    if (!hasGeneralAccess(vars, "P", adProcessId))
+    if (!hasGeneralAccess(vars, "P", adProcessId)) {
       bdError(request, response, "AccessTableNoView", vars.getLanguage());
-    else if (pentahoServer.equals(""))
+    } else if (pentahoServer.equals("")) {
       bdError(request, response, "NoPentahoServerDefined", vars.getLanguage());
-    else {
+    } else {
       String source = OpenPentahoData.selectSource(this, adProcessId);
-      if (source.equals(""))
+      if (source.equals("")) {
         bdError(request, response, "NoSourceDefined", vars.getLanguage());
-      else
+      } else {
         printPageDataSheet(response, vars, pentahoServer, source, adProcessId, userRole);
+      }
     }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String pentahoServer, String source, String adProcessId, String userRole) throws IOException,
-      ServletException {
+      String pentahoServer, String source, String adProcessId, String userRole)
+      throws IOException, ServletException {
     String localSource = source;
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/OpenPentaho").createXmlDocument();
-    if (!localSource.startsWith("/"))
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/OpenPentaho")
+        .createXmlDocument();
+    if (!localSource.startsWith("/")) {
       localSource = "/" + localSource;
+    }
     localSource = localSource + ((localSource.indexOf("?") != -1) ? "&" : "?") + "ob_role='"
         + userRole + "'";
     xmlDocument.setParameter("paramURL", pentahoServer + localSource);

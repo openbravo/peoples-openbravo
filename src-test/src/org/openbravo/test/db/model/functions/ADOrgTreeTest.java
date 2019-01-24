@@ -267,8 +267,9 @@ public class ADOrgTreeTest extends Ad_isorgincludedTest {
     for (final String client : allClients) {
       for (final String organizationChild : allOrganizations) {
         for (final String organizationParent : allOrganizations) {
-          assertEquals("Failed combination with parameters: " + organizationChild + ", "
-              + organizationParent + ", " + client,
+          assertEquals(
+              "Failed combination with parameters: " + organizationChild + ", " + organizationParent
+                  + ", " + client,
               isOrgIncludedLegacy(organizationChild, organizationParent, client),
               isOrgIncluded(organizationChild, organizationParent, client));
           i++;
@@ -307,11 +308,14 @@ public class ADOrgTreeTest extends Ad_isorgincludedTest {
       log.info("AD_IsOrgIncluded_TreeNode time: " + hqlLegacyTime);
 
       assertEquals(hqlCount, hqlLegacyCount);
-      assertTrue("ad_isorgincluded_treenode ( " + hqlLegacyTime
-          + ") should be slower than ad_isorgincluded (" + hqlTime + ")", hqlLegacyTime > hqlTime);
+      assertTrue(
+          "ad_isorgincluded_treenode ( " + hqlLegacyTime
+              + ") should be slower than ad_isorgincluded (" + hqlTime + ")",
+          hqlLegacyTime > hqlTime);
       // Set to 2 to be conservative (in local testing about 2,70x)
-      assertTrue("ad_isorgincluded_treenode ( " + hqlLegacyTime
-          + ") should be much slower than ad_isorgincluded (" + hqlTime + ")",
+      assertTrue(
+          "ad_isorgincluded_treenode ( " + hqlLegacyTime
+              + ") should be much slower than ad_isorgincluded (" + hqlTime + ")",
           hqlLegacyTime > hqlTime * 2);
       log.info(String.format("Performance gain: %.2fx", (double) hqlLegacyTime / hqlTime));
     } finally {
@@ -366,11 +370,12 @@ public class ADOrgTreeTest extends Ad_isorgincludedTest {
 
     assertTrue(Arrays.equals(result, resultLegacy));
     // Set to < 50 ms to be conservative (in local testing about -5ms)
-    assertTrue("ad_isorgincluded_treenode ( " + legacyTime
-        + ") should be more or less equal than ad_isorgincluded (" + time + ")",
+    assertTrue(
+        "ad_isorgincluded_treenode ( " + legacyTime
+            + ") should be more or less equal than ad_isorgincluded (" + time + ")",
         time - legacyTime < 50);
-    log.info("Difference actual (" + time + ") - legacy (" + legacyTime + ") = "
-        + (time - legacyTime));
+    log.info(
+        "Difference actual (" + time + ") - legacy (" + legacyTime + ") = " + (time - legacyTime));
   }
 
   private List<OrganizationTree> getOrganizationTreeRecords(final String newOrgId,
@@ -386,8 +391,8 @@ public class ADOrgTreeTest extends Ad_isorgincludedTest {
       whereClause += " and parentOrganization.id = :parentOrgId ";
       parameters.put("parentOrgId", parentOrgId);
     }
-    OBQuery<OrganizationTree> query = OBDal.getInstance().createQuery(OrganizationTree.class,
-        whereClause);
+    OBQuery<OrganizationTree> query = OBDal.getInstance()
+        .createQuery(OrganizationTree.class, whereClause);
     query.setNamedParameters(parameters);
     return query.list();
   }
@@ -401,8 +406,8 @@ public class ADOrgTreeTest extends Ad_isorgincludedTest {
     int i = 1;
     while (i < totalOrgs) {
       for (int j = 0; i < totalOrgs && j < maxLevel; j++) {
-        strParentOrg = createOrganization("Test" + number + "_" + i + "_" + j,
-            ORGTYPE_ORGANIZATION, strParentOrg);
+        strParentOrg = createOrganization("Test" + number + "_" + i + "_" + j, ORGTYPE_ORGANIZATION,
+            strParentOrg);
         i++;
       }
       strParentOrg = superParent;
@@ -413,8 +418,8 @@ public class ADOrgTreeTest extends Ad_isorgincludedTest {
 
   private String createOrganization(String newOrgName, String newOrgType, String strParentOrg) {
     InitialOrgSetup initialOrg = new InitialOrgSetup(OBContext.getOBContext().getCurrentClient());
-    initialOrg.createOrganization(newOrgName, "", newOrgType, strParentOrg, "", "", "", false,
-        null, "", false, false, false, false, false);
+    initialOrg.createOrganization(newOrgName, "", newOrgType, strParentOrg, "", "", "", false, null,
+        "", false, false, false, false, false);
     OBDal.getInstance().get(Organization.class, initialOrg.getOrgId()).setSummaryLevel(true);
     return initialOrg.getOrgId();
   }
@@ -422,8 +427,8 @@ public class ADOrgTreeTest extends Ad_isorgincludedTest {
   private void setAsReady(final String orgId, final String isCascade) {
     final Map<String, String> parameters = new HashMap<String, String>(1);
     parameters.put("Cascade", isCascade);
-    final ProcessInstance pinstance = CallProcess.getInstance().call("AD_Org_Ready", orgId,
-        parameters);
+    final ProcessInstance pinstance = CallProcess.getInstance()
+        .call("AD_Org_Ready", orgId, parameters);
     if (pinstance.getResult() == 0L) {
       throw new RuntimeException(pinstance.getErrorMsg());
     }

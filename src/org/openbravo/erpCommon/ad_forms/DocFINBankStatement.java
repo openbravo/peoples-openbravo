@@ -86,13 +86,13 @@ public class DocFINBankStatement extends AcctServer {
     OBContext.setAdminMode();
     try {
       whereClause.append(" as astdt ");
-      whereClause.append(" where astdt.acctschemaTable.accountingSchema.id = '"
-          + as.m_C_AcctSchema_ID + "'");
+      whereClause.append(
+          " where astdt.acctschemaTable.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
       whereClause.append(" and astdt.acctschemaTable.table.id = '" + AD_Table_ID + "'");
       whereClause.append(" and astdt.documentCategory = '" + DocumentType + "'");
 
-      final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance().createQuery(
-          AcctSchemaTableDocType.class, whereClause.toString());
+      final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance()
+          .createQuery(AcctSchemaTableDocType.class, whereClause.toString());
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
       if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
@@ -107,17 +107,20 @@ public class DocFINBankStatement extends AcctServer {
         whereClause2.append(" where ast.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
         whereClause2.append(" and ast.table.id = '" + AD_Table_ID + "'");
 
-        final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance().createQuery(
-            AcctSchemaTable.class, whereClause2.toString());
+        final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance()
+            .createQuery(AcctSchemaTable.class, whereClause2.toString());
         final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
         if (acctSchemaTables != null && acctSchemaTables.size() > 0
-            && acctSchemaTables.get(0).getCreatefactTemplate() != null)
+            && acctSchemaTables.get(0).getCreatefactTemplate() != null) {
           strClassname = acctSchemaTables.get(0).getCreatefactTemplate().getClassname();
+        }
       }
       if (!strClassname.equals("")) {
         try {
           DocFINBankStatementTemplate newTemplate = (DocFINBankStatementTemplate) Class
-              .forName(strClassname).getDeclaredConstructor().newInstance();
+              .forName(strClassname)
+              .getDeclaredConstructor()
+              .newInstance();
           return newTemplate.createFact(this, as, conn, con, vars);
         } catch (Exception e) {
           log4j.error("Error while creating new instance for DocFINBankStatementTemplate - " + e);
@@ -150,6 +153,7 @@ public class DocFINBankStatement extends AcctServer {
     return retValue;
   } // getBalance
 
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String Id) {
     FIN_BankStatement bankStatement = OBDal.getInstance().get(FIN_BankStatement.class, Id);
     for (FIN_FinancialAccountAccounting faa : bankStatement.getAccount()
@@ -175,20 +179,21 @@ public class DocFINBankStatement extends AcctServer {
       FieldProviderFactory.setField(data[0], "AD_Client_ID", bankStatement.getClient().getId());
       FieldProviderFactory.setField(data[0], "AD_Org_ID", bankStatement.getOrganization().getId());
       FieldProviderFactory.setField(data[0], "FIN_BankStatement_ID", bankStatement.getId());
-      FieldProviderFactory.setField(data[0], "C_Currency_ID", bankStatement.getAccount()
-          .getCurrency().getId());
-      FieldProviderFactory.setField(data[0], "C_Doctype_ID", bankStatement.getDocumentType()
-          .getId());
+      FieldProviderFactory.setField(data[0], "C_Currency_ID",
+          bankStatement.getAccount().getCurrency().getId());
+      FieldProviderFactory.setField(data[0], "C_Doctype_ID",
+          bankStatement.getDocumentType().getId());
       FieldProviderFactory.setField(data[0], "DocumentNo", bankStatement.getDocumentNo());
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      String dateFormat = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       FieldProviderFactory.setField(data[0], "statementDate",
           outputFormat.format(bankStatement.getTransactionDate()));
       FieldProviderFactory.setField(data[0], "Posted", bankStatement.getPosted());
       FieldProviderFactory.setField(data[0], "Processed", bankStatement.isProcessed() ? "Y" : "N");
-      FieldProviderFactory
-          .setField(data[0], "Processing", bankStatement.isProcessNow() ? "Y" : "N");
+      FieldProviderFactory.setField(data[0], "Processing",
+          bankStatement.isProcessNow() ? "Y" : "N");
     } finally {
       OBContext.restorePreviousMode();
 
@@ -196,33 +201,35 @@ public class DocFINBankStatement extends AcctServer {
     setObjectFieldProvider(data);
   }
 
-  public Account getAccount(ConnectionProvider conn, FIN_FinancialAccount finAccount,
-      AcctSchema as, boolean isTransitAccount) throws ServletException {
+  public Account getAccount(ConnectionProvider conn, FIN_FinancialAccount finAccount, AcctSchema as,
+      boolean isTransitAccount) throws ServletException {
     String strValidCombinationId = "";
     OBContext.setAdminMode();
     try {
-      OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
-          FIN_FinancialAccountAccounting.class);
+      OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance()
+          .createCriteria(FIN_FinancialAccountAccounting.class);
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Restrictions.eq(
-          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
-          OBDal.getInstance().get(
-              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-              as.m_C_AcctSchema_ID)));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance()
+              .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+                  as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
       accounts.setFilterOnReadableOrganization(false);
       List<FIN_FinancialAccountAccounting> accountList = accounts.list();
-      if (accountList == null || accountList.size() == 0)
+      if (accountList == null || accountList.size() == 0) {
         return null;
-      if (isTransitAccount)
+      }
+      if (isTransitAccount) {
         strValidCombinationId = accountList.get(0).getFINTransitoryAcct() == null ? ""
             : accountList.get(0).getFINTransitoryAcct().getId();
-      else
-        strValidCombinationId = accountList.get(0).getFINAssetAcct() == null ? "" : accountList
-            .get(0).getFINAssetAcct().getId();
-      if (strValidCombinationId.equals(""))
+      } else {
+        strValidCombinationId = accountList.get(0).getFINAssetAcct() == null ? ""
+            : accountList.get(0).getFINAssetAcct().getId();
+      }
+      if (strValidCombinationId.equals("")) {
         return null;
+      }
     } finally {
       OBContext.restorePreviousMode();
     }

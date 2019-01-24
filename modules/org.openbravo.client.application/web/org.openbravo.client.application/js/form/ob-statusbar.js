@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -76,7 +76,7 @@ isc.OBStatusBarIconButton.addProperties({
 
   doAction: function () {
     var invalidFormState = this.view.viewForm.hasChanged && !this.view.viewForm.validateForm(),
-        rowNum, newRowNum, newRecord, theButtonBar, i, length;
+        theButtonBar, i, length;
     if (this.buttonType === 'previous') {
       if (invalidFormState) {
         return;

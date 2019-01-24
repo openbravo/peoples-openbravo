@@ -238,7 +238,8 @@ public class PaymentReportDao {
         strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
         strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
         strOverdue, strBAZero, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit,
-        strPaymentDateFrom, strPaymentDateTo, strExpectedDateFrom, strExpectedDateTo, "", strOutput);
+        strPaymentDateFrom, strPaymentDateTo, strExpectedDateFrom, strExpectedDateTo, "",
+        strOutput);
   }
 
   FieldProvider[] getPaymentReport(VariablesSecureApp vars, String strOrg, String strInclSubOrg,
@@ -255,7 +256,8 @@ public class PaymentReportDao {
     StringBuilder hsqlScript = new StringBuilder();
     final Map<String, Object> parameters = new HashMap<>();
 
-    String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormatString = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatString);
     Currency transCurrency;
@@ -287,23 +289,24 @@ public class PaymentReportDao {
           || StringUtils.contains(strOrdCrit, "APRM_FATS_BPARTNER")
           || StringUtils.equalsIgnoreCase(strGroupCrit, "FINPR_BPartner_Category")
           || StringUtils.contains(strOrdCrit, "FINPR_BPartner_Category")
-          || (StringUtils.isNotEmpty(strcBPGroupIdIN) && (StringUtils.equals(strcNoBusinessPartner,
-              "include") || StringUtils.equals(strcNoBusinessPartner, "exclude")))) {
+          || (StringUtils.isNotEmpty(strcBPGroupIdIN)
+              && (StringUtils.equals(strcNoBusinessPartner, "include")
+                  || StringUtils.equals(strcNoBusinessPartner, "exclude")))) {
         hsqlScript.append(" left join pay.businessPartner as paybp");
         hsqlScript.append(" left join inv.businessPartner as invbp");
         if (StringUtils.equalsIgnoreCase(strGroupCrit, "FINPR_BPartner_Category")
             || StringUtils.contains(strOrdCrit, "FINPR_BPartner_Category")
-            || (StringUtils.isNotEmpty(strcBPGroupIdIN) && (StringUtils.equals(
-                strcNoBusinessPartner, "include") || StringUtils.equals(strcNoBusinessPartner,
-                "exclude")))) {
+            || (StringUtils.isNotEmpty(strcBPGroupIdIN)
+                && (StringUtils.equals(strcNoBusinessPartner, "include")
+                    || StringUtils.equals(strcNoBusinessPartner, "exclude")))) {
           hsqlScript.append(" left join paybp.businessPartnerCategory as paybpc");
           hsqlScript.append(" left join invbp.businessPartnerCategory as invbpc");
         }
       } else if (StringUtils.isNotEmpty(strFinancialAccountId)) {
         hsqlScript.append(" left join inv.businessPartner as invbp");
       }
-      hsqlScript
-          .append(" where (fpsd.paymentDetails is not null or fpsd.invoicePaymentSchedule is not null)");
+      hsqlScript.append(
+          " where (fpsd.paymentDetails is not null or fpsd.invoicePaymentSchedule is not null)");
 
       // organization + include sub-organization
       if (StringUtils.isEmpty(strOrg) || StringUtils.equals(strOrg, "0")) {
@@ -320,7 +323,8 @@ public class PaymentReportDao {
           hsqlScript.append(" and fpsd.");
           hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION);
           hsqlScript.append(".id in ('");
-          Set<String> orgChildTree = OBContext.getOBContext().getOrganizationStructureProvider()
+          Set<String> orgChildTree = OBContext.getOBContext()
+              .getOrganizationStructureProvider()
               .getChildTree(strOrg, true);
           Iterator<String> orgChildTreeIter = orgChildTree.iterator();
           while (orgChildTreeIter.hasNext()) {
@@ -512,8 +516,8 @@ public class PaymentReportDao {
       // financial account
       if (StringUtils.isNotEmpty(strFinancialAccountId)) {
         hsqlScript.append(" and  (pay is not null and ");
-        hsqlScript
-            .append("(select case when trans is not null then trans.account.id else payment.account.id end from FIN_Finacc_Transaction trans right outer join trans.finPayment payment where payment=pay)");
+        hsqlScript.append(
+            "(select case when trans is not null then trans.account.id else payment.account.id end from FIN_Finacc_Transaction trans right outer join trans.finPayment payment where payment=pay)");
 
         hsqlScript.append(" = '");
         hsqlScript.append(strFinancialAccountId);
@@ -592,8 +596,8 @@ public class PaymentReportDao {
       if (StringUtils.equals(strOutput, "HTML")) {
         int maxRecords = 1000;
         final Session sessionCount = OBDal.getReadOnlyInstance().getSession();
-        final Query<Long> queryCount = sessionCount.createQuery(
-            "select count(*)" + hsqlScript.toString(), Long.class);
+        final Query<Long> queryCount = sessionCount
+            .createQuery("select count(*)" + hsqlScript.toString(), Long.class);
         for (Entry<String, Object> entry : parameters.entrySet()) {
           queryCount.setParameter(entry.getKey(), entry.getValue());
         }
@@ -605,8 +609,8 @@ public class PaymentReportDao {
       }
 
       final StringBuilder firstLineQuery = new StringBuilder();
-      firstLineQuery
-          .append("select fpsd.id, (select a.sequenceNumber from ADList a where a.reference.id = '575BCB88A4694C27BC013DE9C73E6FE7' and a.searchKey = coalesce(pay.status, 'RPAP')) as a");
+      firstLineQuery.append(
+          "select fpsd.id, (select a.sequenceNumber from ADList a where a.reference.id = '575BCB88A4694C27BC013DE9C73E6FE7' and a.searchKey = coalesce(pay.status, 'RPAP')) as a");
       hsqlScript = firstLineQuery.append(hsqlScript);
 
       hsqlScript.append(" order by ");
@@ -637,8 +641,8 @@ public class PaymentReportDao {
         hsqlScript.append("), ");
       } else if (StringUtils.equalsIgnoreCase(strGroupCrit, "ACCS_ACCOUNT_ID_D")) {
         hsqlScript.append(" coalesce(");
-        hsqlScript
-            .append(" (select trans.account.name from FIN_Finacc_Transaction trans left outer join trans.finPayment payment where payment.id=pay.id),");
+        hsqlScript.append(
+            " (select trans.account.name from FIN_Finacc_Transaction trans left outer join trans.finPayment payment where payment.id=pay.id),");
         hsqlScript.append(" pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_ACCOUNT);
         hsqlScript.append(".name, 'Awaiting Payment'");
@@ -687,8 +691,8 @@ public class PaymentReportDao {
           }
           if (StringUtils.equalsIgnoreCase(strOrdCritList[i], "ACCS_ACCOUNT_ID_D")) {
             hsqlScript.append(", coalesce(");
-            hsqlScript
-                .append(" (select trans.account.name from FIN_Finacc_Transaction trans left outer join trans.finPayment payment where payment.id=pay.id),");
+            hsqlScript.append(
+                " (select trans.account.name from FIN_Finacc_Transaction trans left outer join trans.finPayment payment where payment.id=pay.id),");
             hsqlScript.append(" pay.");
             hsqlScript.append(FIN_Payment.PROPERTY_ACCOUNT);
             hsqlScript.append(".name)");
@@ -742,8 +746,8 @@ public class PaymentReportDao {
       int i = 0;
       while (scroller.next()) {
         i++;
-        FIN_PaymentScheduleDetail fpsd = OBDal.getReadOnlyInstance().get(
-            FIN_PaymentScheduleDetail.class, scroller.get(0));
+        FIN_PaymentScheduleDetail fpsd = OBDal.getReadOnlyInstance()
+            .get(FIN_PaymentScheduleDetail.class, scroller.get(0));
 
         // make a empty FieldProvider instead of saving link to DAL-object
         FieldProvider data = FieldProviderFactory.getFieldProvider(null);
@@ -751,7 +755,9 @@ public class PaymentReportDao {
         if (i % 100 == 0) {
           OBDal.getReadOnlyInstance().getSession().clear();
         }
-        OBDal.getReadOnlyInstance().getSession().buildLockRequest(LockOptions.NONE)
+        OBDal.getReadOnlyInstance()
+            .getSession()
+            .buildLockRequest(LockOptions.NONE)
             .lock(FIN_PaymentScheduleDetail.ENTITY_NAME, fpsd);
 
         // search for fin_finacc_transaction for this payment
@@ -760,8 +766,8 @@ public class PaymentReportDao {
         Invoice invoice = null;
         if (fpsd.getPaymentDetails() != null) {
           payment = fpsd.getPaymentDetails().getFinPayment();
-          OBCriteria<FIN_FinaccTransaction> trxQuery = OBDal.getReadOnlyInstance().createCriteria(
-              FIN_FinaccTransaction.class);
+          OBCriteria<FIN_FinaccTransaction> trxQuery = OBDal.getReadOnlyInstance()
+              .createCriteria(FIN_FinaccTransaction.class);
           trxQuery.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_FINPAYMENT, payment));
           // uniqueness guaranteed via unique constraint in db
           trx = (FIN_FinaccTransaction) trxQuery.uniqueResult();
@@ -777,8 +783,8 @@ public class PaymentReportDao {
             FieldProviderFactory.setField(data, "BPARTNER", "");
           } else {
             // bp_group -- bp_category
-            FieldProviderFactory.setField(data, "BP_GROUP", bp.getBusinessPartnerCategory()
-                .getName());
+            FieldProviderFactory.setField(data, "BP_GROUP",
+                bp.getBusinessPartnerCategory().getName());
             // bpartner
             FieldProviderFactory.setField(data, "BPARTNER", bp.getName());
           }
@@ -787,8 +793,8 @@ public class PaymentReportDao {
           transCurrency = payment.getCurrency();
           FieldProviderFactory.setField(data, "TRANS_CURRENCY", transCurrency.getISOCode());
           // paymentMethod
-          FieldProviderFactory.setField(data, "PAYMENT_METHOD", payment.getPaymentMethod()
-              .getIdentifier());
+          FieldProviderFactory.setField(data, "PAYMENT_METHOD",
+              payment.getPaymentMethod().getIdentifier());
 
           // payment
           FieldProviderFactory.setField(data, "PAYMENT",
@@ -808,9 +814,9 @@ public class PaymentReportDao {
           FieldProviderFactory.setField(data, "PAYMENT_Y_N", "");
           // financialAccount
           FieldProviderFactory.setField(data, "FINANCIAL_ACCOUNT",
-              !payment.getFINFinaccTransactionList().isEmpty() ? payment
-                  .getFINFinaccTransactionList().get(0).getAccount().getName() : payment
-                  .getAccount().getName());
+              !payment.getFINFinaccTransactionList().isEmpty()
+                  ? payment.getFINFinaccTransactionList().get(0).getAccount().getName()
+                  : payment.getAccount().getName());
           // status
           FieldProviderFactory.setField(data, "STATUS", translateRefList(payment.getStatus()));
           FieldProviderFactory.setField(data, "STATUS_CODE", payment.getStatus());
@@ -832,16 +838,16 @@ public class PaymentReportDao {
         } else {
 
           // bp_group -- bp_category
-          FieldProviderFactory.setField(data, "BP_GROUP", invoice.getBusinessPartner()
-              .getBusinessPartnerCategory().getName());
+          FieldProviderFactory.setField(data, "BP_GROUP",
+              invoice.getBusinessPartner().getBusinessPartnerCategory().getName());
           // bpartner
           FieldProviderFactory.setField(data, "BPARTNER", invoice.getBusinessPartner().getName());
           // transCurrency
           transCurrency = invoice.getCurrency();
           FieldProviderFactory.setField(data, "TRANS_CURRENCY", transCurrency.getISOCode());
           // paymentMethod
-          FieldProviderFactory.setField(data, "PAYMENT_METHOD", fpsd.getInvoicePaymentSchedule()
-              .getFinPaymentmethod().getIdentifier());
+          FieldProviderFactory.setField(data, "PAYMENT_METHOD",
+              fpsd.getInvoicePaymentSchedule().getFinPaymentmethod().getIdentifier());
           // payment
           FieldProviderFactory.setField(data, "PAYMENT", "");
           // payment_id
@@ -892,16 +898,16 @@ public class PaymentReportDao {
             // salesPerson
             FieldProviderFactory.setField(data, "SALES_PERSON", "");
             // invoiceNumber.
-            FieldProviderFactory.setField(data, "INVOICE_NUMBER", invoices.size() > 1 ? "**"
-                + getInvoicesDocNos(invoices) : "");
+            FieldProviderFactory.setField(data, "INVOICE_NUMBER",
+                invoices.size() > 1 ? "**" + getInvoicesDocNos(invoices) : "");
             // payment plan id
             FieldProviderFactory.setField(data, "PAYMENT_PLAN_ID", "");
             // payment plan yes / no
             FieldProviderFactory.setField(data, "PAYMENT_PLAN_Y_N",
                 invoices.size() != 1 ? "Display:none" : "");
             // payment plan yes / no
-            FieldProviderFactory.setField(data, "NOT_PAYMENT_PLAN_Y_N", invoices.size() > 1 ? ""
-                : "Display:none");
+            FieldProviderFactory.setField(data, "NOT_PAYMENT_PLAN_Y_N",
+                invoices.size() > 1 ? "" : "Display:none");
             // invoiceDate
             FieldProviderFactory.setField(data, "INVOICE_DATE", "");
             // dueDate.
@@ -958,18 +964,17 @@ public class PaymentReportDao {
             final int stdPrecission = convRate.getToCurrency().getStandardPrecision().intValue();
             if (isReceipt) {
               FieldProviderFactory.setField(data, "TRANS_AMOUNT", transAmount.toString());
-              FieldProviderFactory.setField(
-                  data,
-                  "BASE_AMOUNT",
+              FieldProviderFactory.setField(data, "BASE_AMOUNT",
                   transAmount.multiply(convRate.getMultipleRateBy())
-                      .setScale(stdPrecission, RoundingMode.HALF_UP).toString());
+                      .setScale(stdPrecission, RoundingMode.HALF_UP)
+                      .toString());
             } else {
               FieldProviderFactory.setField(data, "TRANS_AMOUNT", transAmount.negate().toString());
-              FieldProviderFactory.setField(
-                  data,
-                  "BASE_AMOUNT",
+              FieldProviderFactory.setField(data, "BASE_AMOUNT",
                   transAmount.multiply(convRate.getMultipleRateBy())
-                      .setScale(stdPrecission, RoundingMode.HALF_UP).negate().toString());
+                      .setScale(stdPrecission, RoundingMode.HALF_UP)
+                      .negate()
+                      .toString());
             }
           } else {
             String message = transCurrency.getISOCode() + " -> " + baseCurrency.getISOCode() + " "
@@ -1012,8 +1017,8 @@ public class PaymentReportDao {
         }
         if (convRate != null) {
           final int stdPrecission = convRate.getToCurrency().getStandardPrecision().intValue();
-          balance = balance.multiply(convRate.getMultipleRateBy()).setScale(stdPrecission,
-              RoundingMode.HALF_UP);
+          balance = balance.multiply(convRate.getMultipleRateBy())
+              .setScale(stdPrecission, RoundingMode.HALF_UP);
         }
         FieldProviderFactory.setField(data, "BALANCE", balance.toString());
 
@@ -1032,9 +1037,8 @@ public class PaymentReportDao {
           previousPaymentId = payment.getId();
           previousFPSDInvoiceId = null;
         } else if (finPaymDetail == null && fpsd.getInvoicePaymentSchedule() != null) {
-          mustGroup = previousPaymentId == null
-              && StringUtils.equalsIgnoreCase(fpsd.getInvoicePaymentSchedule().getId(),
-                  previousFPSDInvoiceId);
+          mustGroup = previousPaymentId == null && StringUtils
+              .equalsIgnoreCase(fpsd.getInvoicePaymentSchedule().getId(), previousFPSDInvoiceId);
           previousPaymentId = null;
           previousFPSDInvoiceId = fpsd.getInvoicePaymentSchedule().getId();
         } else {
@@ -1051,32 +1055,32 @@ public class PaymentReportDao {
             if (StringUtils.equalsIgnoreCase(previousRow.getField("ISRECEIPT"), "Y")) {
               FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.toString());
             } else {
-              FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.negate()
-                  .toString());
+              FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT",
+                  amountSum.negate().toString());
             }
             FieldProviderFactory.setField(previousRow, "BALANCE", balanceSum.toString());
             if (previousConvRate == null) {
               if (StringUtils.equalsIgnoreCase(previousRow.getField("ISRECEIPT"), "Y")) {
                 FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.toString());
               } else {
-                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.negate()
-                    .toString());
+                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
+                    amountSum.negate().toString());
               }
             } else {
-              final int stdPrecission = previousConvRate.getToCurrency().getStandardPrecision()
+              final int stdPrecission = previousConvRate.getToCurrency()
+                  .getStandardPrecision()
                   .intValue();
               if (StringUtils.equalsIgnoreCase(previousRow.getField("ISRECEIPT"), "Y")) {
-                FieldProviderFactory.setField(
-                    previousRow,
-                    "BASE_AMOUNT",
+                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
                     amountSum.multiply(previousConvRate.getMultipleRateBy())
-                        .setScale(stdPrecission, RoundingMode.HALF_UP).toString());
+                        .setScale(stdPrecission, RoundingMode.HALF_UP)
+                        .toString());
               } else {
-                FieldProviderFactory.setField(
-                    previousRow,
-                    "BASE_AMOUNT",
+                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
                     amountSum.multiply(previousConvRate.getMultipleRateBy())
-                        .setScale(stdPrecission, RoundingMode.HALF_UP).negate().toString());
+                        .setScale(stdPrecission, RoundingMode.HALF_UP)
+                        .negate()
+                        .toString());
               }
             }
 
@@ -1160,24 +1164,24 @@ public class PaymentReportDao {
           if (StringUtils.equalsIgnoreCase(previousRow.getField("ISRECEIPT"), "Y")) {
             FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.toString());
           } else {
-            FieldProviderFactory
-                .setField(previousRow, "BASE_AMOUNT", amountSum.negate().toString());
+            FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
+                amountSum.negate().toString());
           }
         } else {
-          final int stdPrecission = previousConvRate.getToCurrency().getStandardPrecision()
+          final int stdPrecission = previousConvRate.getToCurrency()
+              .getStandardPrecision()
               .intValue();
           if (StringUtils.equalsIgnoreCase(previousRow.getField("ISRECEIPT"), "Y")) {
-            FieldProviderFactory.setField(
-                previousRow,
-                "BASE_AMOUNT",
+            FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
                 amountSum.multiply(previousConvRate.getMultipleRateBy())
-                    .setScale(stdPrecission, RoundingMode.HALF_UP).toString());
+                    .setScale(stdPrecission, RoundingMode.HALF_UP)
+                    .toString());
           } else {
-            FieldProviderFactory.setField(
-                previousRow,
-                "BASE_AMOUNT",
+            FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
                 amountSum.multiply(previousConvRate.getMultipleRateBy())
-                    .setScale(stdPrecission, RoundingMode.HALF_UP).negate().toString());
+                    .setScale(stdPrecission, RoundingMode.HALF_UP)
+                    .negate()
+                    .toString());
           }
         }
 
@@ -1263,7 +1267,8 @@ public class PaymentReportDao {
    */
   private FieldProvider createFieldProviderForTransaction(FIN_FinaccTransaction transaction,
       String strGroupCrit, String strConvertCurrency, String strConversionDate) throws OBException {
-    String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormatString = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatString);
     BigDecimal transAmount = null;
@@ -1274,19 +1279,19 @@ public class PaymentReportDao {
 
     // bp_group -- bp_category
     if (transaction.getBusinessPartner() != null) {
-      FieldProviderFactory.setField(transactionData, "BP_GROUP", transaction.getBusinessPartner()
-          .getBusinessPartnerCategory().getName());
+      FieldProviderFactory.setField(transactionData, "BP_GROUP",
+          transaction.getBusinessPartner().getBusinessPartnerCategory().getName());
       // bpartner
-      FieldProviderFactory.setField(transactionData, "BPARTNER", transaction.getBusinessPartner()
-          .getName());
+      FieldProviderFactory.setField(transactionData, "BPARTNER",
+          transaction.getBusinessPartner().getName());
     } else {
       // bp_group -- bp_category & bpartner
       FieldProviderFactory.setField(transactionData, "BP_GROUP", "");
       FieldProviderFactory.setField(transactionData, "BPARTNER", "");
     }
     // transCurrency
-    FieldProviderFactory.setField(transactionData, "TRANS_CURRENCY", transaction.getCurrency()
-        .getISOCode());
+    FieldProviderFactory.setField(transactionData, "TRANS_CURRENCY",
+        transaction.getCurrency().getISOCode());
     // paymentMethod
     FieldProviderFactory.setField(transactionData, "PAYMENT_METHOD", "");
     // payment
@@ -1303,8 +1308,8 @@ public class PaymentReportDao {
     // payment yes / no
     FieldProviderFactory.setField(transactionData, "PAYMENT_Y_N", "Display:None");
     // financialAccount
-    FieldProviderFactory.setField(transactionData, "FINANCIAL_ACCOUNT", transaction.getAccount()
-        .getName());
+    FieldProviderFactory.setField(transactionData, "FINANCIAL_ACCOUNT",
+        transaction.getAccount().getName());
     // status
     FieldProviderFactory.setField(transactionData, "STATUS",
         translateRefList(transaction.getStatus()));
@@ -1352,8 +1357,8 @@ public class PaymentReportDao {
 
     Currency baseCurrency = OBDal.getReadOnlyInstance().get(Currency.class, strConvertCurrency);
 
-    boolean sameCurrency = StringUtils.equalsIgnoreCase(baseCurrency.getISOCode(), transaction
-        .getCurrency().getISOCode());
+    boolean sameCurrency = StringUtils.equalsIgnoreCase(baseCurrency.getISOCode(),
+        transaction.getCurrency().getISOCode());
 
     if (!sameCurrency) {
       convRate = this.getConversionRate(transaction.getCurrency(), baseCurrency, strConversionDate);
@@ -1361,14 +1366,13 @@ public class PaymentReportDao {
       if (convRate != null) {
         final int stdPrecission = convRate.getToCurrency().getStandardPrecision().intValue();
         FieldProviderFactory.setField(transactionData, "TRANS_AMOUNT", transAmount.toString());
-        FieldProviderFactory.setField(
-            transactionData,
-            "BASE_AMOUNT",
+        FieldProviderFactory.setField(transactionData, "BASE_AMOUNT",
             transAmount.multiply(convRate.getMultipleRateBy())
-                .setScale(stdPrecission, RoundingMode.HALF_UP).toString());
+                .setScale(stdPrecission, RoundingMode.HALF_UP)
+                .toString());
       } else {
-        String message = transaction.getCurrency().getISOCode() + " -> "
-            + baseCurrency.getISOCode() + " " + strConversionDate;
+        String message = transaction.getCurrency().getISOCode() + " -> " + baseCurrency.getISOCode()
+            + " " + strConversionDate;
 
         throw new OBException(message);
       }
@@ -1421,7 +1425,9 @@ public class PaymentReportDao {
     String strProject = "";
     if (transaction.getBusinessPartner() != null) {
       bpName = transaction.getBusinessPartner().getName().toString();
-      bpCategory = transaction.getBusinessPartner().getBusinessPartnerCategory().getName()
+      bpCategory = transaction.getBusinessPartner()
+          .getBusinessPartnerCategory()
+          .getName()
           .toString();
     }
     if (transaction.getProject() != null) {
@@ -1474,11 +1480,15 @@ public class PaymentReportDao {
           isBefore = true;
         }
       } else if (StringUtils.equalsIgnoreCase(strGroupCrit, "INS_CURRENCY")) {
-        if (transaction.getCurrency().getISOCode().toString()
+        if (transaction.getCurrency()
+            .getISOCode()
+            .toString()
             .compareTo(data.getField("TRANS_CURRENCY")) == 0) {
           isBefore = isBeforeStatusAndOrder(transaction, data, strOrdCrit, bpName, bpCategory,
               strProject);
-        } else if (transaction.getCurrency().getISOCode().toString()
+        } else if (transaction.getCurrency()
+            .getISOCode()
+            .toString()
             .compareTo(data.getField("TRANS_CURRENCY")) < 0) {
           isBefore = true;
         }
@@ -1540,9 +1550,8 @@ public class PaymentReportDao {
         int posData = projectList.indexOf(data.getField("PROJECT"));
         int pos = projectList.indexOf(strProject);
 
-        isBefore = isBefore
-            || (((pos < posData) || StringUtils.isEmpty(data.getField("PROJECT"))) && StringUtils
-                .isNotEmpty(strProject));
+        isBefore = isBefore || (((pos < posData) || StringUtils.isEmpty(data.getField("PROJECT")))
+            && StringUtils.isNotEmpty(strProject));
       }
       if (strOrdCritList[i].contains("FINPR_BPartner_Category")) {
         if (bpCategoryList == null) {
@@ -1551,9 +1560,8 @@ public class PaymentReportDao {
         int posData = bpCategoryList.indexOf(data.getField("BP_GROUP"));
         int pos = bpCategoryList.indexOf(bpCategory);
 
-        isBefore = isBefore
-            || (((pos < posData) || StringUtils.isEmpty(data.getField("BP_GROUP"))) && StringUtils
-                .isNotEmpty(bpCategory));
+        isBefore = isBefore || (((pos < posData) || StringUtils.isEmpty(data.getField("BP_GROUP")))
+            && StringUtils.isNotEmpty(bpCategory));
       }
       if (strOrdCritList[i].contains("APRM_FATS_BPARTNER")) {
         if (bpList == null) {
@@ -1562,14 +1570,14 @@ public class PaymentReportDao {
         int posData = bpList.indexOf(data.getField("BPARTNER"));
         int pos = bpList.indexOf(bpName);
 
-        isBefore = isBefore
-            || (((pos < posData) || StringUtils.isEmpty(data.getField("BPARTNER"))) && StringUtils
-                .isNotEmpty(bpName));
+        isBefore = isBefore || (((pos < posData) || StringUtils.isEmpty(data.getField("BPARTNER")))
+            && StringUtils.isNotEmpty(bpName));
       }
       if (strOrdCritList[i].contains("INS_CURRENCY")) {
-        isBefore = isBefore
-            || (transaction.getCurrency().getISOCode().toString()
-                .compareTo(data.getField("TRANS_CURRENCY")) < 0);
+        isBefore = isBefore || (transaction.getCurrency()
+            .getISOCode()
+            .toString()
+            .compareTo(data.getField("TRANS_CURRENCY")) < 0);
       }
       if (StringUtils.equalsIgnoreCase(strOrdCritList[i], "DueDate")) {
         Date dataDate = FIN_Utility.getDate(data.getField("DUE_DATE"));
@@ -1582,8 +1590,8 @@ public class PaymentReportDao {
         int posData = acctList.indexOf(data.getField("FINANCIAL_ACCOUNT"));
         int pos = acctList.indexOf(transaction.getAccount().getName());
         isBefore = isBefore
-            || (((pos < posData) || StringUtils.isEmpty(data.getField("FINANCIAL_ACCOUNT"))) && StringUtils
-                .isNotEmpty(transaction.getAccount().getName()));
+            || (((pos < posData) || StringUtils.isEmpty(data.getField("FINANCIAL_ACCOUNT")))
+                && StringUtils.isNotEmpty(transaction.getAccount().getName()));
       }
       return isBefore;
     } else {
@@ -1630,10 +1638,14 @@ public class PaymentReportDao {
               strProject);
         }
       } else if (strOrdCritList[i].contains("INS_CURRENCY")) {
-        if (transaction.getCurrency().getISOCode().toString()
+        if (transaction.getCurrency()
+            .getISOCode()
+            .toString()
             .compareTo(data.getField("TRANS_CURRENCY")) < 0) {
           isBefore = true;
-        } else if (transaction.getCurrency().getISOCode().toString()
+        } else if (transaction.getCurrency()
+            .getISOCode()
+            .toString()
             .compareTo(data.getField("TRANS_CURRENCY")) == 0) {
           isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, bpName, bpCategory,
               strProject);
@@ -1689,8 +1701,8 @@ public class PaymentReportDao {
     try {
       OBCriteria<List> obCriteria = OBDal.getReadOnlyInstance().createCriteria(List.class);
       obCriteria.createAlias(List.PROPERTY_REFERENCE, "r", JoinType.LEFT_OUTER_JOIN);
-      obCriteria.add(Restrictions.ilike("r."
-          + org.openbravo.model.ad.domain.Reference.PROPERTY_NAME, "FIN_Payment status"));
+      obCriteria.add(Restrictions.ilike(
+          "r." + org.openbravo.model.ad.domain.Reference.PROPERTY_NAME, "FIN_Payment status"));
       obCriteria.add(Restrictions.in(List.PROPERTY_SEARCHKEY, strStatus));
       obCriteria.addOrderBy(List.PROPERTY_SEQUENCENUMBER, true);
       obCriteria.addOrderBy(List.PROPERTY_SEARCHKEY, true);
@@ -1719,15 +1731,16 @@ public class PaymentReportDao {
     String localStrfinPaymSt = strfinPaymSt;
     Organization[] organizations;
     if (StringUtils.equalsIgnoreCase(strInclSubOrg, "include")) {
-      Set<String> orgChildTree = OBContext.getOBContext().getOrganizationStructureProvider()
+      Set<String> orgChildTree = OBContext.getOBContext()
+          .getOrganizationStructureProvider()
           .getChildTree(strOrg, true);
       organizations = getOrganizations(orgChildTree);
     } else {
       organizations = new Organization[1];
       organizations[0] = OBDal.getReadOnlyInstance().get(Organization.class, strOrg);
     }
-    java.util.List<BusinessPartner> bPartners = OBDao.getOBObjectListFromString(
-        BusinessPartner.class, strcBPartnerIdIN);
+    java.util.List<BusinessPartner> bPartners = OBDao
+        .getOBObjectListFromString(BusinessPartner.class, strcBPartnerIdIN);
     java.util.List<Project> projects = OBDao.getOBObjectListFromString(Project.class,
         strcProjectIdIN);
     OBContext.setAdminMode(true);
@@ -1746,8 +1759,8 @@ public class PaymentReportDao {
           JoinType.LEFT_OUTER_JOIN);
       obCriteriaTrans.add(Restrictions.isNull(FIN_FinaccTransaction.PROPERTY_FINPAYMENT));
       obCriteriaTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_PROCESSED, true));
-      obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_ORGANIZATION,
-          (Object[]) organizations));
+      obCriteriaTrans.add(
+          Restrictions.in(FIN_FinaccTransaction.PROPERTY_ORGANIZATION, (Object[]) organizations));
 
       // Empty Business Partner included
       if (StringUtils.equals(strcNoBusinessPartner, "include")) {
@@ -1761,9 +1774,10 @@ public class PaymentReportDao {
 
         // BPartner Category
         if (StringUtils.isNotEmpty(strcBPGroupIdIN)) {
-          obCriteriaTrans.add(Restrictions.or(Restrictions.eq("bp."
-              + BusinessPartner.PROPERTY_BUSINESSPARTNERCATEGORY, strcBPGroupIdIN), Restrictions
-              .isNull(FIN_FinaccTransaction.PROPERTY_BUSINESSPARTNER)));
+          obCriteriaTrans.add(Restrictions.or(
+              Restrictions.eq("bp." + BusinessPartner.PROPERTY_BUSINESSPARTNERCATEGORY,
+                  strcBPGroupIdIN),
+              Restrictions.isNull(FIN_FinaccTransaction.PROPERTY_BUSINESSPARTNER)));
         }
 
         // Empty Business Partner excluded
@@ -1771,19 +1785,19 @@ public class PaymentReportDao {
 
         // BPartners
         if (!bPartners.isEmpty()) {
-          obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_BUSINESSPARTNER,
-              bPartners));
+          obCriteriaTrans
+              .add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_BUSINESSPARTNER, bPartners));
         }
 
         // BPartner Category
         if (StringUtils.isNotEmpty(strcBPGroupIdIN)) {
-          obCriteriaTrans.add(Restrictions.eq("bp."
-              + BusinessPartner.PROPERTY_BUSINESSPARTNERCATEGORY, strcBPGroupIdIN));
+          obCriteriaTrans.add(Restrictions
+              .eq("bp." + BusinessPartner.PROPERTY_BUSINESSPARTNERCATEGORY, strcBPGroupIdIN));
         }
 
         if (bPartners.isEmpty() && StringUtils.isEmpty(strcBPGroupIdIN)) {
-          obCriteriaTrans.add(Restrictions
-              .isNotNull(FIN_FinaccTransaction.PROPERTY_BUSINESSPARTNER));
+          obCriteriaTrans
+              .add(Restrictions.isNotNull(FIN_FinaccTransaction.PROPERTY_BUSINESSPARTNER));
         }
 
         // Only empty Business Partners
@@ -1793,8 +1807,8 @@ public class PaymentReportDao {
 
       // Financial Account
       if (StringUtils.isNotEmpty(strFinancialAccountId)) {
-        obCriteriaTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_ACCOUNT, OBDal
-            .getReadOnlyInstance().get(FIN_FinancialAccount.class, strFinancialAccountId)));
+        obCriteriaTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_ACCOUNT,
+            OBDal.getReadOnlyInstance().get(FIN_FinancialAccount.class, strFinancialAccountId)));
       }
 
       // Document Date, Payment Date & Due Date
@@ -1825,16 +1839,18 @@ public class PaymentReportDao {
 
       // Amount
       if (StringUtils.isNotEmpty(strAmountFrom)) {
-        obCriteriaTrans.add(Restrictions.or(Restrictions.ge(
-            FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT, new BigDecimal(strAmountFrom)),
-            Restrictions.ge(FIN_FinaccTransaction.PROPERTY_PAYMENTAMOUNT, new BigDecimal(
-                strAmountFrom))));
+        obCriteriaTrans.add(Restrictions.or(
+            Restrictions.ge(FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT,
+                new BigDecimal(strAmountFrom)),
+            Restrictions.ge(FIN_FinaccTransaction.PROPERTY_PAYMENTAMOUNT,
+                new BigDecimal(strAmountFrom))));
       }
       if (StringUtils.isNotEmpty(strAmountTo)) {
-        obCriteriaTrans.add(Restrictions.or(Restrictions.le(
-            FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT, new BigDecimal(strAmountTo)),
-            Restrictions.le(FIN_FinaccTransaction.PROPERTY_PAYMENTAMOUNT, new BigDecimal(
-                strAmountTo))));
+        obCriteriaTrans.add(Restrictions.or(
+            Restrictions.le(FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT,
+                new BigDecimal(strAmountTo)),
+            Restrictions.le(FIN_FinaccTransaction.PROPERTY_PAYMENTAMOUNT,
+                new BigDecimal(strAmountTo))));
       }
 
       // Projects
@@ -1855,8 +1871,8 @@ public class PaymentReportDao {
 
       // Currency
       if (StringUtils.isNotEmpty(strcCurrency)) {
-        obCriteriaTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_CURRENCY, OBDal
-            .getReadOnlyInstance().get(Currency.class, strcCurrency)));
+        obCriteriaTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_CURRENCY,
+            OBDal.getReadOnlyInstance().get(Currency.class, strcCurrency)));
       }
 
       // payment type
@@ -1932,21 +1948,21 @@ public class PaymentReportDao {
     long currentTime = 0;
     // project
     if (paymentSchedule.getInvoice().getProject() != null) {
-      FieldProviderFactory.setField(data, "PROJECT", paymentSchedule.getInvoice().getProject()
-          .getIdentifier());
+      FieldProviderFactory.setField(data, "PROJECT",
+          paymentSchedule.getInvoice().getProject().getIdentifier());
     } else {
       FieldProviderFactory.setField(data, "PROJECT", "");
     }
     // salesPerson
     if (paymentSchedule.getInvoice().getSalesRepresentative() != null) {
-      FieldProviderFactory.setField(data, "SALES_PERSON", paymentSchedule.getInvoice()
-          .getSalesRepresentative().getIdentifier());
+      FieldProviderFactory.setField(data, "SALES_PERSON",
+          paymentSchedule.getInvoice().getSalesRepresentative().getIdentifier());
     } else {
       FieldProviderFactory.setField(data, "SALES_PERSON", "");
     }
     // invoiceNumber
-    FieldProviderFactory.setField(data, "INVOICE_NUMBER", (creditPaysInvoice ? "*" : "")
-        + paymentSchedule.getInvoice().getDocumentNo());
+    FieldProviderFactory.setField(data, "INVOICE_NUMBER",
+        (creditPaysInvoice ? "*" : "") + paymentSchedule.getInvoice().getDocumentNo());
     // payment plan id
     FieldProviderFactory.setField(data, "PAYMENT_PLAN_ID", paymentSchedule.getId());
     // payment plan yes / no
@@ -1957,8 +1973,8 @@ public class PaymentReportDao {
     invoicedDate = paymentSchedule.getInvoice().getInvoiceDate();
     FieldProviderFactory.setField(data, "INVOICE_DATE", dateFormat.format(invoicedDate).toString());
     // dueDate
-    FieldProviderFactory.setField(data, "DUE_DATE", dateFormat.format(paymentSchedule.getDueDate())
-        .toString());
+    FieldProviderFactory.setField(data, "DUE_DATE",
+        dateFormat.format(paymentSchedule.getDueDate()).toString());
     // expectedDate
     FieldProviderFactory.setField(data, "EXPECTED_DATE",
         dateFormat.format(paymentSchedule.getExpectedDate()).toString());
@@ -1967,10 +1983,15 @@ public class PaymentReportDao {
     FieldProviderFactory.setField(data, "PLANNED_DSO", String.valueOf(plannedDSO));
     // currentDSO
     if (fIN_PaymentScheduleDetail.getPaymentDetails() != null) {
-      currentDSO = (((fIN_PaymentScheduleDetail.getPaymentDetails().getFinPayment()
-          .getPaymentDate() != null) ? fIN_PaymentScheduleDetail.getPaymentDetails()
-          .getFinPayment().getPaymentDate().getTime() : 0) - invoicedDate.getTime())
-          / milisecDayConv;
+      currentDSO = (((fIN_PaymentScheduleDetail.getPaymentDetails()
+          .getFinPayment()
+          .getPaymentDate() != null)
+              ? fIN_PaymentScheduleDetail.getPaymentDetails()
+                  .getFinPayment()
+                  .getPaymentDate()
+                  .getTime()
+              : 0)
+          - invoicedDate.getTime()) / milisecDayConv;
     } else {
       currentTime = System.currentTimeMillis();
       currentDSO = (currentTime - invoicedDate.getTime()) / milisecDayConv;
@@ -1985,8 +2006,8 @@ public class PaymentReportDao {
     OBContext.setAdminMode(true);
     try {
       Date conversionDateObj = FIN_Utility.getDate(conversionDate);
-      final OBCriteria<ConversionRate> obcConvRate = OBDal.getReadOnlyInstance().createCriteria(
-          ConversionRate.class);
+      final OBCriteria<ConversionRate> obcConvRate = OBDal.getReadOnlyInstance()
+          .createCriteria(ConversionRate.class);
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY, transCurrency));
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, baseCurrency));
       obcConvRate.add(Restrictions.le(ConversionRate.PROPERTY_VALIDFROMDATE, conversionDateObj));
@@ -2163,7 +2184,8 @@ public class PaymentReportDao {
     }
   }
 
-  public java.util.List<FIN_PaymentSchedule> getInvoicePaymentSchedules(FIN_Payment credit_payment) {
+  public java.util.List<FIN_PaymentSchedule> getInvoicePaymentSchedules(
+      FIN_Payment credit_payment) {
     final StringBuilder sql = new StringBuilder();
     sql.append(" select ps ");
     sql.append(" from FIN_Payment_Credit pc, FIN_Payment_Detail_V pdv, ");
@@ -2248,8 +2270,8 @@ public class PaymentReportDao {
     Organization[] organizations = new Organization[strOrgFamily.size()];
     int i = 0;
     while (orgChildTreeIter.hasNext()) {
-      organizations[i] = OBDal.getReadOnlyInstance().get(Organization.class,
-          orgChildTreeIter.next());
+      organizations[i] = OBDal.getReadOnlyInstance()
+          .get(Organization.class, orgChildTreeIter.next());
       i++;
     }
     return organizations;

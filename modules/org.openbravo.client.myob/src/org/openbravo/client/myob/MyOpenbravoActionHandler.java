@@ -228,12 +228,12 @@ public class MyOpenbravoActionHandler extends BaseActionHandler implements Porta
       log.debug(">> process widget id: " + newWidgetInstanceId + " colNum: " + newColNum
           + " rowNum: " + newRowNum);
       if (StringUtils.isNotEmpty(newWidgetInstanceId)) {
-        WidgetInstance retrievedWidgetInstance = OBDal.getInstance().get(WidgetInstance.class,
-            newWidgetInstanceId);
+        WidgetInstance retrievedWidgetInstance = OBDal.getInstance()
+            .get(WidgetInstance.class, newWidgetInstanceId);
         log.debug(">> existing widget, colNum: " + retrievedWidgetInstance.getColumnPosition()
             + " rowNum: " + retrievedWidgetInstance.getSequenceInColumn());
-        isOpenbravoTypeInstance = (retrievedWidgetInstance.getRelativePriority() != null && retrievedWidgetInstance
-            .getRelativePriority().compareTo(0L) == 0);
+        isOpenbravoTypeInstance = (retrievedWidgetInstance.getRelativePriority() != null
+            && retrievedWidgetInstance.getRelativePriority().compareTo(0L) == 0);
 
         currentWidgetInstances.remove(retrievedWidgetInstance);
         // Widget modified, check for colNum and rowNum changes.
@@ -252,8 +252,8 @@ public class MyOpenbravoActionHandler extends BaseActionHandler implements Porta
         WidgetInstance newWidgetInstance = OBProvider.getInstance().get(WidgetInstance.class);
         newWidgetInstance.setColumnPosition(newColNum);
         newWidgetInstance.setSequenceInColumn(newRowNum);
-        newWidgetInstance.setWidgetClass(OBDal.getInstance().get(WidgetClass.class,
-            widget.getString("widgetClassId")));
+        newWidgetInstance.setWidgetClass(
+            OBDal.getInstance().get(WidgetClass.class, widget.getString("widgetClassId")));
         if (!isAdminMode) {
           newWidgetInstance.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
           newWidgetInstance.setVisibleAtRole(role);
@@ -263,18 +263,18 @@ public class MyOpenbravoActionHandler extends BaseActionHandler implements Porta
           newWidgetInstance.setRelativePriority(1L);
         } else if (availableAtLevel.equals("CLIENT")) {
           newWidgetInstance.setRelativePriority(2L);
-          newWidgetInstance.setClient(OBDal.getInstance().get(Client.class,
-              availableAtLevelValue[0]));
+          newWidgetInstance
+              .setClient(OBDal.getInstance().get(Client.class, availableAtLevelValue[0]));
           newWidgetInstance.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
         } else if (availableAtLevel.equals("ORG")) {
           newWidgetInstance.setRelativePriority(3L);
-          newWidgetInstance.setOrganization(OBDal.getInstance().get(Organization.class,
-              availableAtLevelValue[0]));
+          newWidgetInstance.setOrganization(
+              OBDal.getInstance().get(Organization.class, availableAtLevelValue[0]));
         } else if (availableAtLevel.equals("ROLE")) {
           newWidgetInstance.setRelativePriority(4L);
           newWidgetInstance.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
-          newWidgetInstance.setVisibleAtRole(OBDal.getInstance().get(Role.class,
-              availableAtLevelValue[0]));
+          newWidgetInstance
+              .setVisibleAtRole(OBDal.getInstance().get(Role.class, availableAtLevelValue[0]));
         }
         OBDal.getInstance().save(newWidgetInstance);
         widget.put("dbInstanceId", newWidgetInstance.getId());
@@ -284,7 +284,8 @@ public class MyOpenbravoActionHandler extends BaseActionHandler implements Porta
         // Process parameter values
         processParameters(newWidgetInstance);
       }
-      if (isOpenbravoTypeInstance && maxOpenbravoTypeInstanceRow[newColNum.intValue()] < newRowNum) {
+      if (isOpenbravoTypeInstance
+          && maxOpenbravoTypeInstanceRow[newColNum.intValue()] < newRowNum) {
         maxOpenbravoTypeInstanceRow[newColNum.intValue()] = newRowNum;
       } else if (!isOpenbravoTypeInstance
           && minNotOpenbravoTypeInstanceRow[newColNum.intValue()] != null
@@ -315,8 +316,8 @@ public class MyOpenbravoActionHandler extends BaseActionHandler implements Porta
           OBDal.getInstance().save(widgetInstance);
         } else {
           // Remove all instances of the widget instance that is to be removed
-          OBQuery<WidgetInstance> widgetInstanceQuery = OBDal.getInstance().createQuery(
-              WidgetInstance.class, "copiedFrom='" + widgetInstance.getId() + "'");
+          OBQuery<WidgetInstance> widgetInstanceQuery = OBDal.getInstance()
+              .createQuery(WidgetInstance.class, "copiedFrom='" + widgetInstance.getId() + "'");
           widgetInstanceQuery.setFilterOnActive(false);
           for (WidgetInstance copiedWidgetInstance : widgetInstanceQuery.list()) {
             OBDal.getInstance().remove(copiedWidgetInstance);

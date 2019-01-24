@@ -22,6 +22,8 @@ import java.util.Date;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -34,12 +36,10 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class ConversionRateEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      ConversionRate.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(ConversionRate.ENTITY_NAME) };
 
   protected Logger logger = LogManager.getLogger();
 
@@ -77,8 +77,8 @@ public class ConversionRateEventHandler extends EntityPersistenceEventObserver {
   }
 
   // Check if exists another record using this currencyFrom - currencyTo in the same dates
-  private boolean existsRecord(String id, Client client, Currency currencyFrom,
-      Currency currencyTo, Date validFrom, Date validTo) {
+  private boolean existsRecord(String id, Client client, Currency currencyFrom, Currency currencyTo,
+      Date validFrom, Date validTo) {
     StringBuilder hql = new StringBuilder();
     hql.append(" SELECT t." + ConversionRate.PROPERTY_ID);
     hql.append(" FROM " + ConversionRate.ENTITY_NAME + " as t");
@@ -90,10 +90,11 @@ public class ConversionRateEventHandler extends EntityPersistenceEventObserver {
         + ConversionRate.PROPERTY_VALIDTODATE);
     hql.append(" OR :validTo between t." + ConversionRate.PROPERTY_VALIDFROMDATE + " AND t."
         + ConversionRate.PROPERTY_VALIDTODATE + ")");
-    hql.append(" OR (:validFrom < t." + ConversionRate.PROPERTY_VALIDFROMDATE
-        + " AND :validTo > t." + ConversionRate.PROPERTY_VALIDTODATE + "))");
+    hql.append(" OR (:validFrom < t." + ConversionRate.PROPERTY_VALIDFROMDATE + " AND :validTo > t."
+        + ConversionRate.PROPERTY_VALIDTODATE + "))");
 
-    final Query<String> query = OBDal.getInstance().getSession()
+    final Query<String> query = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), String.class);
     query.setParameter("id", id);
     query.setParameter("client", client);

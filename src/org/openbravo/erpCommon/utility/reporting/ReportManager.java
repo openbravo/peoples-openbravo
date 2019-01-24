@@ -73,11 +73,13 @@ public class ReportManager {
     _prefix = prefix;
 
     // Strip of ending slash character
-    if (_strBaseDesignPath.endsWith("/"))
+    if (_strBaseDesignPath.endsWith("/")) {
       _strBaseDesignPath = _strBaseDesignPath.substring(0, _strBaseDesignPath.length() - 1);
-    if (_strDefaultDesignPath.endsWith("/"))
-      _strDefaultDesignPath = _strDefaultDesignPath
-          .substring(0, _strDefaultDesignPath.length() - 1);
+    }
+    if (_strDefaultDesignPath.endsWith("/")) {
+      _strDefaultDesignPath = _strDefaultDesignPath.substring(0,
+          _strDefaultDesignPath.length() - 1);
+    }
   }
 
   public JasperPrint processReport(Report report, VariablesSecureApp variables)
@@ -100,13 +102,11 @@ public class ReportManager {
 
     String salesOrder = report.getCheckSalesOrder();
     if (salesOrder != null && salesOrder.equals("Y")) {
-      designParameters.put(
-          "DOCUMENT_NAME",
+      designParameters.put("DOCUMENT_NAME",
           Utility.messageBD(_connectionProvider, "Sales", language) + " "
               + Utility.messageBD(_connectionProvider, "Invoice", language));
     } else {
-      designParameters.put(
-          "DOCUMENT_NAME",
+      designParameters.put("DOCUMENT_NAME",
           Utility.messageBD(_connectionProvider, "Purchase", language) + " "
               + Utility.messageBD(_connectionProvider, "Invoice", language));
     }
@@ -132,8 +132,9 @@ public class ReportManager {
 
   public void setTargetDirectory(Report report) {
     final File targetDirectory = new File(getAttachmentPath() + "/" + getTempReportDir());
-    if (!targetDirectory.exists())
+    if (!targetDirectory.exists()) {
       targetDirectory.mkdirs();
+    }
     report.setTargetDirectory(targetDirectory);
   }
 
@@ -168,11 +169,12 @@ public class ReportManager {
   }
 
   public File createAttachmentForReport(ConnectionProvider connectionProvider, Report report,
-      String tableId, VariablesSecureApp vars, String textForAttachment) throws ReportingException,
-      IOException {
-    if (report.isAttached())
-      throw new ReportingException(Utility.messageBD(connectionProvider, "AttachmentExists",
-          vars.getLanguage()));
+      String tableId, VariablesSecureApp vars, String textForAttachment)
+      throws ReportingException, IOException {
+    if (report.isAttached()) {
+      throw new ReportingException(
+          Utility.messageBD(connectionProvider, "AttachmentExists", vars.getLanguage()));
+    }
 
     final JasperPrint jasperPrint = processReport(report, vars);
     saveReport(report, jasperPrint);
@@ -187,8 +189,8 @@ public class ReportManager {
       temporaryAttachFolder.mkdirs();
     }
     FileUtils.copyFileToDirectory(sourceFile, temporaryAttachFolder, true);
-    final File attachFile = new File(temporaryAttachFolder.getAbsolutePath() + File.separator
-        + sourceFile.getName());
+    final File attachFile = new File(
+        temporaryAttachFolder.getAbsolutePath() + File.separator + sourceFile.getName());
 
     AttachImplementationManager aim = WeldUtils
         .getInstanceFromStaticBeanManager(AttachImplementationManager.class);

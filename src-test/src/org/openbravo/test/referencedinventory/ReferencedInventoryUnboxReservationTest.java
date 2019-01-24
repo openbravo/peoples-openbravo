@@ -32,10 +32,9 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
  */
 public abstract class ReferencedInventoryUnboxReservationTest extends ReferencedInventoryUnboxTest {
 
-  protected TestUnboxOutputParams testUnboxReservation(final String toBinId,
-      final String productId, final String attributeSetInstanceId, final BigDecimal qtyToBox,
-      final BigDecimal qtyToUnbox, final BigDecimal reservationQty, final boolean isAllocated)
-      throws Exception {
+  protected TestUnboxOutputParams testUnboxReservation(final String toBinId, final String productId,
+      final String attributeSetInstanceId, final BigDecimal qtyToBox, final BigDecimal qtyToUnbox,
+      final BigDecimal reservationQty, final boolean isAllocated) throws Exception {
     final TestUnboxOutputParams outParams = super.testUnbox(toBinId, productId,
         attributeSetInstanceId, qtyToUnbox, reservationQty, isAllocated);
     assertsStorageDetailsQtyAndReservationQty(qtyToBox, qtyToUnbox, outParams, reservationQty);
@@ -54,14 +53,13 @@ public abstract class ReferencedInventoryUnboxReservationTest extends Referenced
             equalTo(sd.getQuantityOnHand()));
         if (hasUnboxedReservedQty(qtyToUnbox, reservationQty)) {
           assertThat("Storage Detail reserved qty is expected one", sd.getReservedQty(),
-              equalTo(reservationQty.subtract(reservationQty.subtract(RECEIVEDQTY_10
-                  .subtract(qtyToUnbox)))));
+              equalTo(reservationQty
+                  .subtract(reservationQty.subtract(RECEIVEDQTY_10.subtract(qtyToUnbox)))));
         } else {
-          assertThat(
-              "Qty in box reserved is expected one",
-              sd.getReservedQty(),
-              equalTo((qtyToBox.subtract(qtyToUnbox)).compareTo(reservationQty) < 0 ? reservationQty
-                  .subtract(qtyToBox.subtract(qtyToUnbox)) : reservationQty));
+          assertThat("Qty in box reserved is expected one", sd.getReservedQty(),
+              equalTo((qtyToBox.subtract(qtyToUnbox)).compareTo(reservationQty) < 0
+                  ? reservationQty.subtract(qtyToBox.subtract(qtyToUnbox))
+                  : reservationQty));
         }
       } else {
         // Out box
@@ -79,7 +77,8 @@ public abstract class ReferencedInventoryUnboxReservationTest extends Referenced
   protected boolean hasUnboxedReservedQty(final BigDecimal qtyToUnbox,
       final BigDecimal reservationQty) {
     return reservationQty != null
-    // If available qty not reserved is lower than qty to unbox then I need to unbox reserved qty
+        // If available qty not reserved is lower than qty to unbox then I need to unbox reserved
+        // qty
         && (RECEIVEDQTY_10.subtract(reservationQty)).compareTo(qtyToUnbox) < 0;
   }
 

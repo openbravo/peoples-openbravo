@@ -66,6 +66,7 @@ public class DocInOut extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String stradClientId, String Id)
       throws ServletException {
     setObjectFieldProvider(DocInOutData.selectRegistro(conn, stradClientId, Id));
@@ -76,6 +77,7 @@ public class DocInOut extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     C_Currency_ID = NO_CURRENCY;
     log4jDocInOut.debug("loadDocumentDetails - C_Currency_ID : " + C_Currency_ID);
@@ -123,10 +125,11 @@ public class DocInOut extends AcctServer {
       } finally {
         OBContext.restorePreviousMode();
       }
-      if (docLine.m_M_Product_ID.equals(""))
+      if (docLine.m_M_Product_ID.equals("")) {
         log4jDocInOut.debug(" - No Product - ignored");
-      else
+      } else {
         list.add(docLine);
+      }
     }
     // Return Array
     DocLine[] dl = new DocLine[list.size()];
@@ -139,6 +142,7 @@ public class DocInOut extends AcctServer {
    * 
    * @return Zero (always balanced)
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
     return retValue;
@@ -163,17 +167,20 @@ public class DocInOut extends AcctServer {
    *          accounting schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocInOutTemplate newTemplate = (DocInOutTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocInOutTemplate - " + e);
@@ -216,9 +223,8 @@ public class DocInOut extends AcctServer {
           }
           Product product = OBDal.getInstance().get(Product.class, line.m_M_Product_ID);
           if (cogsAccount == null) {
-            org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal
-                .getInstance().get(
-                    org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+            org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance()
+                .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                     as.m_C_AcctSchema_ID);
             if (matReturn) {
               log4j.error("No Account COGS Return for product: " + product.getName()
@@ -230,9 +236,8 @@ public class DocInOut extends AcctServer {
           }
           Account assetAccount = line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn);
           if (assetAccount == null) {
-            org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal
-                .getInstance().get(
-                    org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+            org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance()
+                .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                     as.m_C_AcctSchema_ID);
             log4j.error("No Account Asset for product: " + product.getName()
                 + " in accounting schema: " + schema.getName());
@@ -268,9 +273,9 @@ public class DocInOut extends AcctServer {
                 + line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn));
             log4jDocInOut.debug("(MatShipment) - DR costs: " + costs);
           }
-          BigDecimal b_Costs = new BigDecimal(costs).multiply(
-              new BigDecimal(line.getBreakdownQty())).divide(new BigDecimal(line.m_qty),
-              standardPrecision, RoundingMode.HALF_UP);
+          BigDecimal b_Costs = new BigDecimal(costs)
+              .multiply(new BigDecimal(line.getBreakdownQty()))
+              .divide(new BigDecimal(line.m_qty), standardPrecision, RoundingMode.HALF_UP);
           String strCosts = b_Costs.toString();
           if (b_Costs.compareTo(BigDecimal.ZERO) == 0 && !CostingStatus.getInstance().isMigrated()
               && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
@@ -332,8 +337,8 @@ public class DocInOut extends AcctServer {
             // If the Product is checked as book using PO Price, the Price of the Purchase Order
             // will
             // be used to create the FactAcct Line
-            ShipmentInOutLine inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-                line.m_TrxLine_ID);
+            ShipmentInOutLine inOutLine = OBDal.getInstance()
+                .get(ShipmentInOutLine.class, line.m_TrxLine_ID);
             OrderLine ol = inOutLine.getSalesOrderLine();
             if (ol == null) {
               Map<String, String> parameters = new HashMap<String, String>();
@@ -345,8 +350,8 @@ public class DocInOut extends AcctServer {
             costCurrency = ol.getCurrency();
             C_Currency_ID = costCurrency.getId();
             costs = ol.getUnitPrice().multiply(new BigDecimal(line.getBreakdownQty())).toString();
-            BigDecimal b_Costs = new BigDecimal(costs).setScale(costCurrency.getStandardPrecision()
-                .intValue(), RoundingMode.HALF_UP);
+            BigDecimal b_Costs = new BigDecimal(costs)
+                .setScale(costCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
             strCosts = b_Costs.toString();
           } else {
             // If the Product is not checked as book using PO Price, the Cost of the
@@ -370,12 +375,12 @@ public class DocInOut extends AcctServer {
               }
             }
             costs = line.getProductCosts(DateAcct, as, conn, con);
-            BigDecimal b_Costs = new BigDecimal(costs).multiply(
-                new BigDecimal(line.getBreakdownQty())).divide(new BigDecimal(line.m_qty),
-                costCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
+            BigDecimal b_Costs = new BigDecimal(costs)
+                .multiply(new BigDecimal(line.getBreakdownQty()))
+                .divide(new BigDecimal(line.m_qty), costCurrency.getStandardPrecision().intValue(),
+                    RoundingMode.HALF_UP);
             strCosts = b_Costs.toString();
-            if (b_Costs.compareTo(BigDecimal.ZERO) == 0
-                && !CostingStatus.getInstance().isMigrated()
+            if (b_Costs.compareTo(BigDecimal.ZERO) == 0 && !CostingStatus.getInstance().isMigrated()
                 && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
               Map<String, String> parameters = getInvalidCostParameters(product.getIdentifier(),
                   DateAcct);
@@ -391,18 +396,16 @@ public class DocInOut extends AcctServer {
           Account notInvoicedReceiptsAccount = getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts,
               as, conn);
           if (notInvoicedReceiptsAccount == null) {
-            org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal
-                .getInstance().get(
-                    org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+            org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance()
+                .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                     as.m_C_AcctSchema_ID);
             log4j.error("No Account Not Invoiced Receipts for product: " + product.getName()
                 + " in accounting schema: " + schema.getName());
           }
           Account assetAccount = line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn);
           if (assetAccount == null) {
-            org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal
-                .getInstance().get(
-                    org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+            org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance()
+                .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                     as.m_C_AcctSchema_ID);
             log4j.error("No Account Asset for product: " + product.getName()
                 + " in accounting schema: " + schema.getName());
@@ -489,11 +492,13 @@ public class DocInOut extends AcctServer {
    * 
    * not used
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     try {
       DocLineInOutData[] data = DocLineInOutData.select(conn, Record_ID);
       ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strRecordId);
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      String dateFormat = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       String strDateAcct = outputFormat.format(inOut.getAccountingDate());
@@ -504,8 +509,8 @@ public class DocInOut extends AcctServer {
           OBContext.setAdminMode(false);
           try {
             // Get related M_Transaction_ID
-            ShipmentInOutLine inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-                data[i].mInoutlineId);
+            ShipmentInOutLine inOutLine = OBDal.getInstance()
+                .get(ShipmentInOutLine.class, data[i].mInoutlineId);
             if (inOutLine.getProduct() == null) {
               continue;
             }
@@ -538,24 +543,25 @@ public class DocInOut extends AcctServer {
                 HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils
                     .getEmptyDimensions();
                 if (inOutLine.getStorageBin() == null) {
-                  costDimensions.put(CostDimension.Warehouse, inOutLine.getShipmentReceipt()
-                      .getWarehouse());
+                  costDimensions.put(CostDimension.Warehouse,
+                      inOutLine.getShipmentReceipt().getWarehouse());
                 } else {
-                  costDimensions.put(CostDimension.Warehouse, inOutLine.getStorageBin()
-                      .getWarehouse());
+                  costDimensions.put(CostDimension.Warehouse,
+                      inOutLine.getStorageBin().getWarehouse());
                 }
                 if (!CostingUtils.hasStandardCostDefinition(inOutLine.getProduct(), legalEntity,
                     inOut.getAccountingDate(), costDimensions)) {
-                  Map<String, String> parameters = getInvalidCostParameters(inOutLine.getProduct()
-                      .getIdentifier(), DateAcct);
+                  Map<String, String> parameters = getInvalidCostParameters(
+                      inOutLine.getProduct().getIdentifier(), DateAcct);
                   setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
                   throw new IllegalStateException();
                 } else {
                   Currency currency = legalEntity.getCurrency() != null ? legalEntity.getCurrency()
                       : legalEntity.getClient().getCurrency();
-                  trxCost = CostingUtils.getStandardCost(inOutLine.getProduct(), legalEntity,
-                      inOut.getAccountingDate(), costDimensions, currency).multiply(
-                      new BigDecimal(data[i].breakdownqty));
+                  trxCost = CostingUtils
+                      .getStandardCost(inOutLine.getProduct(), legalEntity,
+                          inOut.getAccountingDate(), costDimensions, currency)
+                      .multiply(new BigDecimal(data[i].breakdownqty));
                 }
               }
             }
@@ -572,13 +578,13 @@ public class DocInOut extends AcctServer {
           trxCost = new BigDecimal(ProductInfoData.selectProductAverageCost(conn,
               data[i].getField("mProductId"), strDateAcct));
           if (trxCost == null || trxCost.signum() == 0) {
-            ShipmentInOutLine inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-                data[i].mInoutlineId);
+            ShipmentInOutLine inOutLine = OBDal.getInstance()
+                .get(ShipmentInOutLine.class, data[i].mInoutlineId);
             if (inOutLine.getProduct() == null) {
               continue;
             }
-            Map<String, String> parameters = getInvalidCostParameters(inOutLine.getProduct()
-                .getIdentifier(), strDateAcct);
+            Map<String, String> parameters = getInvalidCostParameters(
+                inOutLine.getProduct().getIdentifier(), strDateAcct);
             setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
             throw new IllegalStateException();
           }
@@ -599,6 +605,7 @@ public class DocInOut extends AcctServer {
     return true;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

@@ -98,10 +98,10 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
     // Check security: continue only if the widget instance is visible for current user/role
     OBContext.setAdminMode(true);
     try {
-      WidgetClass widgetClass = OBDal.getInstance().get(WidgetClass.class,
-          parameters.get("widgetId"));
-      WidgetInstance wi = OBDal.getInstance().get(WidgetInstance.class,
-          parameters.get("widgetInstanceId"));
+      WidgetClass widgetClass = OBDal.getInstance()
+          .get(WidgetClass.class, parameters.get("widgetId"));
+      WidgetInstance wi = OBDal.getInstance()
+          .get(WidgetInstance.class, parameters.get("widgetInstanceId"));
 
       boolean accessibleWidgetInForm = false;
       if (wi == null) {
@@ -133,10 +133,12 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
   }
 
   private boolean isAccessibleWidget(WidgetInstance wi, String userId, String roleId) {
-    boolean visibleAtUser = wi.getVisibleAtUser() != null ? wi.getVisibleAtUser().getId()
-        .equals(userId) : true;
-    boolean visibleAtRole = wi.getVisibleAtRole() != null ? wi.getVisibleAtRole().getId()
-        .equals(roleId) : true;
+    boolean visibleAtUser = wi.getVisibleAtUser() != null
+        ? wi.getVisibleAtUser().getId().equals(userId)
+        : true;
+    boolean visibleAtRole = wi.getVisibleAtRole() != null
+        ? wi.getVisibleAtRole().getId().equals(roleId)
+        : true;
     return visibleAtUser || visibleAtRole;
   }
 
@@ -161,14 +163,14 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
 
     OBContext.setAdminMode();
     try {
-      WidgetClass widgetClass = OBDal.getInstance().get(WidgetClass.class,
-          parameters.get("widgetId"));
+      WidgetClass widgetClass = OBDal.getInstance()
+          .get(WidgetClass.class, parameters.get("widgetId"));
 
       boolean isExport = "true".equals(parameters.get("exportToFile"));
       boolean showAll = "true".equals(parameters.get("showAll"));
       String viewMode = parameters.get("viewMode");
-      List<OBCQL_QueryColumn> columns = QueryListUtils.getColumns(widgetClass
-          .getOBCQLWidgetQueryList().get(0));
+      List<OBCQL_QueryColumn> columns = QueryListUtils
+          .getColumns(widgetClass.getOBCQLWidgetQueryList().get(0));
 
       // handle complex criteria
       try {
@@ -176,8 +178,8 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
         for (int i = 0; i < criterias.length(); i++) {
           final JSONObject criteria = criterias.getJSONObject(i);
           parameters.put(criteria.getString("fieldName"), criteria.getString("value"));
-          parameters
-              .put(criteria.getString("fieldName") + OPERATOR, criteria.getString("operator"));
+          parameters.put(criteria.getString("fieldName") + OPERATOR,
+              criteria.getString("operator"));
         }
       } catch (JSONException e) {
         // Ignore exception.
@@ -217,8 +219,10 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
       }
 
       if (!isExport && "widget".equals(viewMode) && !showAll) {
-        int rowsNumber = Integer.parseInt((parameters.get("rowsNumber") != null && !parameters.get(
-            "rowsNumber").equals("null")) ? parameters.get("rowsNumber") : "10");
+        int rowsNumber = Integer.parseInt(
+            (parameters.get("rowsNumber") != null && !parameters.get("rowsNumber").equals("null"))
+                ? parameters.get("rowsNumber")
+                : "10");
         widgetQuery.setMaxResults(rowsNumber);
       } else if (!isExport) {
         if (startRow > 0) {
@@ -272,9 +276,8 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
           }
           summaryData.put("isGridSummary", true);
         } catch (Exception e) {
-          log.error(
-              "Exception fetching summary columns of the widget " + widgetClass.getWidgetTitle()
-                  + ". \n Query = " + HQL, e);
+          log.error("Exception fetching summary columns of the widget "
+              + widgetClass.getWidgetTitle() + ". \n Query = " + HQL, e);
         }
         result.add(summaryData);
 
@@ -284,8 +287,8 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
           final Map<String, Object> data = new LinkedHashMap<>();
 
           for (OBCQL_QueryColumn column : columns) {
-            UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-                column.getReference());
+            UIDefinition uiDefinition = UIDefinitionController.getInstance()
+                .getUIDefinition(column.getReference());
             DomainType domainType = uiDefinition.getDomainType();
             for (TupleElement<?> tupleElement : tuple.getElements()) {
               String alias = tupleElement.getAlias();
@@ -347,14 +350,14 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
       } else {
         // sort by multiple columns
         for (String field : fieldList) {
-          sortByClause = field.startsWith("-") ? sortByClause.concat(field.substring(1,
-              field.length()))
-              + " desc " : sortByClause.concat(field);
+          sortByClause = field.startsWith("-")
+              ? sortByClause.concat(field.substring(1, field.length())) + " desc "
+              : sortByClause.concat(field);
         }
       }
       int sortByIndex = hqlString.toLowerCase().indexOf("order by");
-      hqlString = hqlString.substring(0, sortByIndex + "order by".length() + 1) + sortByClause
-          + "," + hqlString.substring(sortByIndex + "order by".length() + 1);
+      hqlString = hqlString.substring(0, sortByIndex + "order by".length() + 1) + sortByClause + ","
+          + hqlString.substring(sortByIndex + "order by".length() + 1);
     } else {
       hqlString = hqlString.concat(" order by " + sortByClause);
     }
@@ -417,14 +420,15 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
   }
 
   private String getWhereClauseLeftPart(OBCQL_WidgetQuery widgetQuery, String summaryFieldName) {
-    OBCriteria<OBCQL_QueryColumn> columnCriteria = OBDal.getInstance().createCriteria(
-        OBCQL_QueryColumn.class);
+    OBCriteria<OBCQL_QueryColumn> columnCriteria = OBDal.getInstance()
+        .createCriteria(OBCQL_QueryColumn.class);
     columnCriteria.add(Restrictions.eq(OBCQL_QueryColumn.PROPERTY_WIDGETQUERY, widgetQuery));
-    columnCriteria.add(Restrictions.eq(OBCQL_QueryColumn.PROPERTY_DISPLAYEXPRESSION,
-        summaryFieldName));
+    columnCriteria
+        .add(Restrictions.eq(OBCQL_QueryColumn.PROPERTY_DISPLAYEXPRESSION, summaryFieldName));
     OBCQL_QueryColumn queryColumn = (OBCQL_QueryColumn) columnCriteria.uniqueResult();
-    return (queryColumn != null && queryColumn.getWhereClauseLeftPart() != null ? queryColumn
-        .getWhereClauseLeftPart() : "");
+    return (queryColumn != null && queryColumn.getWhereClauseLeftPart() != null
+        ? queryColumn.getWhereClauseLeftPart()
+        : "");
   }
 
   /**
@@ -469,8 +473,8 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
   }
 
   private boolean isAccessibleWidgetInForm(WidgetClass widgetClass) {
-    OBCriteria<WidgetReference> widgetInFormCriteria = OBDal.getInstance().createCriteria(
-        WidgetReference.class);
+    OBCriteria<WidgetReference> widgetInFormCriteria = OBDal.getInstance()
+        .createCriteria(WidgetReference.class);
     widgetInFormCriteria.add(Restrictions.eq(WidgetReference.PROPERTY_WIDGETCLASS, widgetClass));
     List<Window> windowList = new ArrayList<>();
     List<WidgetReference> widgetInFormList = widgetInFormCriteria.list();
@@ -488,10 +492,10 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
       // The widget is not embedded in any window
       return false;
     } else {
-      OBCriteria<WindowAccess> accessibleWindowCriteria = OBDal.getInstance().createCriteria(
-          WindowAccess.class);
-      accessibleWindowCriteria.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, OBContext
-          .getOBContext().getRole()));
+      OBCriteria<WindowAccess> accessibleWindowCriteria = OBDal.getInstance()
+          .createCriteria(WindowAccess.class);
+      accessibleWindowCriteria
+          .add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, OBContext.getOBContext().getRole()));
       accessibleWindowCriteria.add(Restrictions.in(WindowAccess.PROPERTY_WINDOW, windowList));
       int count = accessibleWindowCriteria.count();
       // If the widget is embedded in at least one window accessible by the user, return true
@@ -518,7 +522,8 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
       return false;
     } else {
       DomainType domainType = ModelProvider.getInstance()
-          .getReference(parameterToCheck.getReference().getId()).getDomainType();
+          .getReference(parameterToCheck.getReference().getId())
+          .getDomainType();
       return domainType.getClass().equals(DateDomainType.class);
     }
   }
@@ -606,7 +611,8 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
   private String getWhereClause(String value, OBCQL_QueryColumn column,
       SimpleDateFormat xmlDateFormat, String operator) {
     String whereClause = "";
-    DomainType domainType = ModelProvider.getInstance().getReference(column.getReference().getId())
+    DomainType domainType = ModelProvider.getInstance()
+        .getReference(column.getReference().getId())
         .getDomainType();
     if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
         || domainType.getClass().equals(LongDomainType.class)) {
@@ -638,6 +644,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
     return whereClause;
   }
 
+  @Override
   public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {
     // note datasource properties are not cached as the component is
     // re-used within one request thread
@@ -648,8 +655,8 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
           .get(QueryListWidgetProvider.WIDGETCLASS_PARAMETER);
 
       if (!widgetClass.getOBCQLWidgetQueryList().isEmpty()) {
-        for (OBCQL_QueryColumn column : QueryListUtils.getColumns(widgetClass
-            .getOBCQLWidgetQueryList().get(0))) {
+        for (OBCQL_QueryColumn column : QueryListUtils
+            .getColumns(widgetClass.getOBCQLWidgetQueryList().get(0))) {
           Reference reference = column.getReference();
           if (column.getReferenceSearchKey() != null) {
             reference = column.getReferenceSearchKey();
@@ -661,14 +668,14 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
           dsProperty.setMandatory(false);
           dsProperty.setAuditInfo(false);
           dsProperty.setUpdatable(false);
-          final UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-              reference);
+          final UIDefinition uiDefinition = UIDefinitionController.getInstance()
+              .getUIDefinition(reference);
           dsProperty.setBoolean(uiDefinition instanceof YesNoUIDefinition);
           dsProperty.setPrimitive(!(uiDefinition instanceof ForeignKeyUIDefinition));
           dsProperty.setUIDefinition(uiDefinition);
           if (dsProperty.isPrimitive()) {
-            dsProperty.setPrimitiveObjectType(((PrimitiveDomainType) uiDefinition.getDomainType())
-                .getPrimitiveType());
+            dsProperty.setPrimitiveObjectType(
+                ((PrimitiveDomainType) uiDefinition.getDomainType()).getPrimitiveType());
             dsProperty.setNumericType(uiDefinition instanceof NumberUIDefinition);
 
             if (uiDefinition instanceof EnumUIDefinition) {
@@ -677,11 +684,11 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
                     + " column " + column.getDisplayExpression()
                     + " is of enum type but does not define sub reference.");
               } else {
-                Set<String> allowedValues = DataSourceProperty.getAllowedValues(column
-                    .getReferenceSearchKey());
+                Set<String> allowedValues = DataSourceProperty
+                    .getAllowedValues(column.getReferenceSearchKey());
                 dsProperty.setAllowedValues(allowedValues);
-                dsProperty.setValueMap(DataSourceProperty.createValueMap(allowedValues, column
-                    .getReferenceSearchKey().getId()));
+                dsProperty.setValueMap(DataSourceProperty.createValueMap(allowedValues,
+                    column.getReferenceSearchKey().getId()));
               }
             }
           }
@@ -694,6 +701,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
     }
   }
 
+  @Override
   protected void sort(String sortBy, List<Map<String, Object>> data) {
     Collections.sort(data, new DataComparator(sortBy));
   }

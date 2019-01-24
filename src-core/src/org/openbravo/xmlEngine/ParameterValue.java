@@ -50,6 +50,7 @@ class ParameterValue implements XmlComponentValue {
     this.strValue = replace(strValue);
   }
 
+  @Override
   public String print() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.print();
@@ -73,6 +74,7 @@ class ParameterValue implements XmlComponentValue {
     return parameterTemplate.formatOutput.format(total);
   }
 
+  @Override
   public String printPrevious() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.printPrevious();
@@ -81,6 +83,7 @@ class ParameterValue implements XmlComponentValue {
     }
   }
 
+  @Override
   public String printSimple() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.printSimple();
@@ -89,6 +92,7 @@ class ParameterValue implements XmlComponentValue {
     }
   }
 
+  @Override
   public String printPreviousSimple() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.printPreviousSimple();

@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.junit.Test;
@@ -59,8 +61,6 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.test.base.OBBaseTest;
 import org.openbravo.test.taxes.data.*;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check taxes computation
@@ -425,17 +425,19 @@ public class TaxesTest extends OBBaseTest {
     Order testOrder = (Order) DalUtil.copy(order, false);
     String documentNo = isPriceIncludingTaxes ? "PriceIncludingTaxes" : "PriceExcludingTaxes";
     testOrder.setDocumentNo(documentNo + " " + testNumber);
-    testOrder.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class,
-        isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
+    testOrder.setBusinessPartner(OBDal.getInstance()
+        .getProxy(BusinessPartner.class,
+            isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
     testOrder.setSummedLineAmount(BigDecimal.ZERO);
     testOrder.setGrandTotalAmount(BigDecimal.ZERO);
     testOrder.setPriceIncludesTax(isPriceIncludingTaxes);
-    testOrder.setPriceList(OBDal.getInstance().getProxy(
-        PriceList.class,
-        isPriceIncludingTaxes ? isSales ? PRICEINCLUDINGTAXES_PRICELIST_SALES
-            : PRICEINCLUDINGTAXES_PRICELIST_PURCHASE
-            : isSales ? PRICEEXCLUDINGTAXES_PRICELIST_SALES
-                : PRICEEXCLUDINGTAXES_PRICELIST_PURCHASE));
+    testOrder.setPriceList(OBDal.getInstance()
+        .getProxy(PriceList.class,
+            isPriceIncludingTaxes
+                ? isSales ? PRICEINCLUDINGTAXES_PRICELIST_SALES
+                    : PRICEINCLUDINGTAXES_PRICELIST_PURCHASE
+                : isSales ? PRICEEXCLUDINGTAXES_PRICELIST_SALES
+                    : PRICEEXCLUDINGTAXES_PRICELIST_PURCHASE));
     OBDal.getInstance().save(testOrder);
 
     OrderLine orderLine = order.getOrderLineList().get(0);
@@ -446,8 +448,9 @@ public class TaxesTest extends OBBaseTest {
       if (product.getPricingDiscountList().isEmpty()) {
         OrderLine testOrderLine = (OrderLine) DalUtil.copy(orderLine, false);
         testOrderLine.setLineNo((i + 1) * 10L);
-        testOrderLine.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class,
-            isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
+        testOrderLine.setBusinessPartner(OBDal.getInstance()
+            .getProxy(BusinessPartner.class,
+                isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
         testOrderLine.setProduct(product);
         testOrderLine.setUOM(product.getUOM());
         testOrderLine.setOrderedQuantity(linesData[i].getQuantity());
@@ -462,8 +465,8 @@ public class TaxesTest extends OBBaseTest {
           testOrderLine.setStandardPrice(linesData[i].getPrice());
         }
         testOrderLine.setTax(OBDal.getInstance().getProxy(TaxRate.class, linesData[i].getTaxid()));
-        testOrderLine.setLineGrossAmount(linesData[i].getQuantity().multiply(
-            linesData[i].getPrice()));
+        testOrderLine
+            .setLineGrossAmount(linesData[i].getQuantity().multiply(linesData[i].getPrice()));
         testOrderLine
             .setLineNetAmount(linesData[i].getQuantity().multiply(linesData[i].getPrice()));
 
@@ -498,23 +501,25 @@ public class TaxesTest extends OBBaseTest {
   }
 
   private Invoice createInvoice(boolean isSales) {
-    Invoice invoice = OBDal.getInstance().get(Invoice.class,
-        isSales ? SALESINVOICE_ID : PURCHASEINVOICE_ID);
+    Invoice invoice = OBDal.getInstance()
+        .get(Invoice.class, isSales ? SALESINVOICE_ID : PURCHASEINVOICE_ID);
     Invoice testInvoice = (Invoice) DalUtil.copy(invoice, false);
     String documentNo = isPriceIncludingTaxes ? "PriceIncludingTaxes" : "PriceExcludingTaxes";
     testInvoice.setDocumentNo(documentNo + " " + testNumber);
     testInvoice.setDescription(testDescription);
-    testInvoice.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class,
-        isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
+    testInvoice.setBusinessPartner(OBDal.getInstance()
+        .getProxy(BusinessPartner.class,
+            isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
     testInvoice.setSummedLineAmount(BigDecimal.ZERO);
     testInvoice.setGrandTotalAmount(BigDecimal.ZERO);
     testInvoice.setPriceIncludesTax(isPriceIncludingTaxes);
-    testInvoice.setPriceList(OBDal.getInstance().getProxy(
-        PriceList.class,
-        isPriceIncludingTaxes ? isSales ? PRICEINCLUDINGTAXES_PRICELIST_SALES
-            : PRICEINCLUDINGTAXES_PRICELIST_PURCHASE
-            : isSales ? PRICEEXCLUDINGTAXES_PRICELIST_SALES
-                : PRICEEXCLUDINGTAXES_PRICELIST_PURCHASE));
+    testInvoice.setPriceList(OBDal.getInstance()
+        .getProxy(PriceList.class,
+            isPriceIncludingTaxes
+                ? isSales ? PRICEINCLUDINGTAXES_PRICELIST_SALES
+                    : PRICEINCLUDINGTAXES_PRICELIST_PURCHASE
+                : isSales ? PRICEEXCLUDINGTAXES_PRICELIST_SALES
+                    : PRICEEXCLUDINGTAXES_PRICELIST_PURCHASE));
     OBDal.getInstance().save(testInvoice);
 
     InvoiceLine invoiceLine = invoice.getInvoiceLineList().get(0);
@@ -525,8 +530,9 @@ public class TaxesTest extends OBBaseTest {
       if (product.getPricingDiscountList().isEmpty()) {
         InvoiceLine testInvoiceLine = (InvoiceLine) DalUtil.copy(invoiceLine, false);
         testInvoiceLine.setLineNo((i + 1) * 10L);
-        testInvoiceLine.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class,
-            isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
+        testInvoiceLine.setBusinessPartner(OBDal.getInstance()
+            .getProxy(BusinessPartner.class,
+                isSales ? BPartnerDataConstants.CUSTOMER_A : BPartnerDataConstants.VENDOR_A));
         testInvoiceLine.setProduct(product);
         testInvoiceLine.setUOM(product.getUOM());
         testInvoiceLine.setInvoicedQuantity(linesData[i].getQuantity());
@@ -543,8 +549,8 @@ public class TaxesTest extends OBBaseTest {
             .setTax(OBDal.getInstance().getProxy(TaxRate.class, linesData[i].getTaxid()));
         testInvoiceLine
             .setGrossAmount(linesData[i].getQuantity().multiply(linesData[i].getPrice()));
-        testInvoiceLine.setLineNetAmount(linesData[i].getQuantity().multiply(
-            linesData[i].getPrice()));
+        testInvoiceLine
+            .setLineNetAmount(linesData[i].getQuantity().multiply(linesData[i].getPrice()));
 
         testInvoiceLine.setInvoice(testInvoice);
         testInvoice.getInvoiceLineList().add(testInvoiceLine);
@@ -555,8 +561,8 @@ public class TaxesTest extends OBBaseTest {
       }
 
       else {
-        InvoiceDiscount testInvoiceDiscount = (InvoiceDiscount) DalUtil
-            .copy(invoiceDiscount, false);
+        InvoiceDiscount testInvoiceDiscount = (InvoiceDiscount) DalUtil.copy(invoiceDiscount,
+            false);
         testInvoiceDiscount.setDiscount(product.getPricingDiscountList().get(0));
         invoiceDiscount.setLineNo((i + 1) * 10L);
 
@@ -596,10 +602,10 @@ public class TaxesTest extends OBBaseTest {
         testOrderLine.setListPrice(linesData[i].getPriceUpdated());
         testOrderLine.setStandardPrice(linesData[i].getPriceUpdated());
       }
-      testOrderLine.setLineGrossAmount(linesData[i].getQuantityUpdated().multiply(
-          linesData[i].getPriceUpdated()));
-      testOrderLine.setLineNetAmount(linesData[i].getQuantityUpdated().multiply(
-          linesData[i].getPriceUpdated()));
+      testOrderLine.setLineGrossAmount(
+          linesData[i].getQuantityUpdated().multiply(linesData[i].getPriceUpdated()));
+      testOrderLine.setLineNetAmount(
+          linesData[i].getQuantityUpdated().multiply(linesData[i].getPriceUpdated()));
 
       OBDal.getInstance().save(testOrderLine);
       OBDal.getInstance().flush();
@@ -633,10 +639,10 @@ public class TaxesTest extends OBBaseTest {
         testInvoiceLine.setListPrice(linesData[i].getPriceUpdated());
         testInvoiceLine.setStandardPrice(linesData[i].getPriceUpdated());
       }
-      testInvoiceLine.setGrossAmount(linesData[i].getQuantityUpdated().multiply(
-          linesData[i].getPriceUpdated()));
-      testInvoiceLine.setLineNetAmount(linesData[i].getQuantityUpdated().multiply(
-          linesData[i].getPriceUpdated()));
+      testInvoiceLine.setGrossAmount(
+          linesData[i].getQuantityUpdated().multiply(linesData[i].getPriceUpdated()));
+      testInvoiceLine.setLineNetAmount(
+          linesData[i].getQuantityUpdated().multiply(linesData[i].getPriceUpdated()));
 
       OBDal.getInstance().save(testInvoiceLine);
       OBDal.getInstance().flush();
@@ -749,8 +755,8 @@ public class TaxesTest extends OBBaseTest {
     final List<Object> params = new ArrayList<Object>();
     params.add(null);
     params.add(testInvoice.getId());
-    CallStoredProcedure.getInstance().call(INVOICE_COMPLETE_PROCEDURE_NAME, params, null, true,
-        false);
+    CallStoredProcedure.getInstance()
+        .call(INVOICE_COMPLETE_PROCEDURE_NAME, params, null, true, false);
     OBDal.getInstance().refresh(testInvoice);
     return testInvoice;
   }
@@ -781,21 +787,22 @@ public class TaxesTest extends OBBaseTest {
         log.debug(linetax.getTaxAmount().toString());
 
         if (!linesData[i].getLineTaxes().containsKey(linetax.getTax().getId())) {
-          assertTrue(testDescription + ". Tax Should not be present: "
-              + linetax.getTax().getIdentifier(), false);
+          assertTrue(
+              testDescription + ". Tax Should not be present: " + linetax.getTax().getIdentifier(),
+              false);
         }
 
         // Assert line taxes
-        BigDecimal expectedTaxableAmount = new BigDecimal(isUpdated ? (isCompleted ? linesData[i]
-            .getLineTaxes().get(linetax.getTax().getId())[6] : linesData[i].getLineTaxes().get(
-            linetax.getTax().getId())[4]) : (isCompleted ? linesData[i].getLineTaxes().get(
-            linetax.getTax().getId())[2] : linesData[i].getLineTaxes()
-            .get(linetax.getTax().getId())[0]));
-        BigDecimal expectedTaxAmount = new BigDecimal(isUpdated ? (isCompleted ? linesData[i]
-            .getLineTaxes().get(linetax.getTax().getId())[7] : linesData[i].getLineTaxes().get(
-            linetax.getTax().getId())[5]) : (isCompleted ? linesData[i].getLineTaxes().get(
-            linetax.getTax().getId())[3] : linesData[i].getLineTaxes()
-            .get(linetax.getTax().getId())[1]));
+        BigDecimal expectedTaxableAmount = new BigDecimal(isUpdated
+            ? (isCompleted ? linesData[i].getLineTaxes().get(linetax.getTax().getId())[6]
+                : linesData[i].getLineTaxes().get(linetax.getTax().getId())[4])
+            : (isCompleted ? linesData[i].getLineTaxes().get(linetax.getTax().getId())[2]
+                : linesData[i].getLineTaxes().get(linetax.getTax().getId())[0]));
+        BigDecimal expectedTaxAmount = new BigDecimal(isUpdated
+            ? (isCompleted ? linesData[i].getLineTaxes().get(linetax.getTax().getId())[7]
+                : linesData[i].getLineTaxes().get(linetax.getTax().getId())[5])
+            : (isCompleted ? linesData[i].getLineTaxes().get(linetax.getTax().getId())[3]
+                : linesData[i].getLineTaxes().get(linetax.getTax().getId())[1]));
         assertThat("Wrong taxable amount for line in document",
             round(linetax.getTaxableAmount(), round, stdPrecision),
             comparesEqualTo(expectedTaxableAmount));
@@ -811,14 +818,12 @@ public class TaxesTest extends OBBaseTest {
       }
 
       // Assert line amounts
-      BigDecimal expectedGrossAmount = new BigDecimal(
-          isUpdated ? (isCompleted ? linesData[i].getLineAmounts()[6]
-              : linesData[i].getLineAmounts()[4]) : (isCompleted ? linesData[i].getLineAmounts()[2]
-              : linesData[i].getLineAmounts()[0]));
-      BigDecimal expectedNetAmount = new BigDecimal(
-          isUpdated ? (isCompleted ? linesData[i].getLineAmounts()[7]
-              : linesData[i].getLineAmounts()[5]) : (isCompleted ? linesData[i].getLineAmounts()[3]
-              : linesData[i].getLineAmounts()[1]));
+      BigDecimal expectedGrossAmount = new BigDecimal(isUpdated
+          ? (isCompleted ? linesData[i].getLineAmounts()[6] : linesData[i].getLineAmounts()[4])
+          : (isCompleted ? linesData[i].getLineAmounts()[2] : linesData[i].getLineAmounts()[0]));
+      BigDecimal expectedNetAmount = new BigDecimal(isUpdated
+          ? (isCompleted ? linesData[i].getLineAmounts()[7] : linesData[i].getLineAmounts()[5])
+          : (isCompleted ? linesData[i].getLineAmounts()[3] : linesData[i].getLineAmounts()[1]));
       assertThat("Wrong Order line Gross Amount", testOrderLine.getLineGrossAmount(),
           comparesEqualTo(expectedGrossAmount));
       assertThat("Wrong Order line Net Amount", testOrderLine.getLineNetAmount(),
@@ -842,19 +847,21 @@ public class TaxesTest extends OBBaseTest {
       log.debug(tax.getTaxAmount().toString());
 
       if (!docTaxes.containsKey(tax.getTax().getId())) {
-        assertTrue(
-            testDescription + ". Tax Should not be present: " + tax.getTax().getIdentifier(), false);
+        assertTrue(testDescription + ". Tax Should not be present: " + tax.getTax().getIdentifier(),
+            false);
       }
 
       // Assert header taxes
-      BigDecimal expectedTaxableAmount = new BigDecimal(isUpdated ? (isCompleted ? docTaxes.get(tax
-          .getTax().getId())[6] : docTaxes.get(tax.getTax().getId())[4])
-          : (isCompleted ? docTaxes.get(tax.getTax().getId())[2] : docTaxes.get(tax.getTax()
-              .getId())[0]));
-      BigDecimal expectedTaxAmount = new BigDecimal(isUpdated ? (isCompleted ? docTaxes.get(tax
-          .getTax().getId())[7] : docTaxes.get(tax.getTax().getId())[5])
-          : (isCompleted ? docTaxes.get(tax.getTax().getId())[3] : docTaxes.get(tax.getTax()
-              .getId())[1]));
+      BigDecimal expectedTaxableAmount = new BigDecimal(isUpdated
+          ? (isCompleted ? docTaxes.get(tax.getTax().getId())[6]
+              : docTaxes.get(tax.getTax().getId())[4])
+          : (isCompleted ? docTaxes.get(tax.getTax().getId())[2]
+              : docTaxes.get(tax.getTax().getId())[0]));
+      BigDecimal expectedTaxAmount = new BigDecimal(isUpdated
+          ? (isCompleted ? docTaxes.get(tax.getTax().getId())[7]
+              : docTaxes.get(tax.getTax().getId())[5])
+          : (isCompleted ? docTaxes.get(tax.getTax().getId())[3]
+              : docTaxes.get(tax.getTax().getId())[1]));
       assertThat("Wrong taxable amount for document",
           round(tax.getTaxableAmount(), round, stdPrecision),
           comparesEqualTo(expectedTaxableAmount));
@@ -870,10 +877,12 @@ public class TaxesTest extends OBBaseTest {
     }
 
     // Assert header amounts
-    BigDecimal expectedGrossAmount = new BigDecimal(isUpdated ? (isCompleted ? docAmounts[6]
-        : docAmounts[4]) : (isCompleted ? docAmounts[2] : docAmounts[0]));
-    BigDecimal expectedNetAmount = new BigDecimal(isUpdated ? (isCompleted ? docAmounts[7]
-        : docAmounts[5]) : (isCompleted ? docAmounts[3] : docAmounts[1]));
+    BigDecimal expectedGrossAmount = new BigDecimal(
+        isUpdated ? (isCompleted ? docAmounts[6] : docAmounts[4])
+            : (isCompleted ? docAmounts[2] : docAmounts[0]));
+    BigDecimal expectedNetAmount = new BigDecimal(
+        isUpdated ? (isCompleted ? docAmounts[7] : docAmounts[5])
+            : (isCompleted ? docAmounts[3] : docAmounts[1]));
     assertThat("Wrong Order GrandTotal", testOrder.getGrandTotalAmount(),
         comparesEqualTo(expectedGrossAmount));
     assertThat("Wrong Order TotalLines", testOrder.getSummedLineAmount(),
@@ -889,17 +898,12 @@ public class TaxesTest extends OBBaseTest {
       BigDecimal grossAmount = testOrderLine.getLineGrossAmount();
 
       if (isPriceIncludingTaxes) {
-        assertThat(
-            "Line Gross Price * Line Quantity <> Line Gross Amount",
-            grossAmount,
-            comparesEqualTo(testOrderLine.getGrossUnitPrice().multiply(
-                testOrderLine.getOrderedQuantity())));
+        assertThat("Line Gross Price * Line Quantity <> Line Gross Amount", grossAmount,
+            comparesEqualTo(
+                testOrderLine.getGrossUnitPrice().multiply(testOrderLine.getOrderedQuantity())));
       } else {
-        assertThat(
-            "Line Net Price * Line Quantity <> Line Net Amount",
-            netAmount,
-            comparesEqualTo(testOrderLine.getUnitPrice().multiply(
-                testOrderLine.getOrderedQuantity())));
+        assertThat("Line Net Price * Line Quantity <> Line Net Amount", netAmount, comparesEqualTo(
+            testOrderLine.getUnitPrice().multiply(testOrderLine.getOrderedQuantity())));
       }
 
       netSum = netSum.add(netAmount);
@@ -951,21 +955,22 @@ public class TaxesTest extends OBBaseTest {
         log.debug(linetax.getTaxAmount().toString());
 
         if (!linesData[i].getLineTaxes().containsKey(linetax.getTax().getId())) {
-          assertTrue(testDescription + ". Tax Should not be present: "
-              + linetax.getTax().getIdentifier(), false);
+          assertTrue(
+              testDescription + ". Tax Should not be present: " + linetax.getTax().getIdentifier(),
+              false);
         }
 
         // Assert line taxes
-        BigDecimal expectedTaxableAmount = new BigDecimal(isUpdated ? (isCompleted ? linesData[i]
-            .getLineTaxes().get(linetax.getTax().getId())[6] : linesData[i].getLineTaxes().get(
-            linetax.getTax().getId())[4]) : (isCompleted ? linesData[i].getLineTaxes().get(
-            linetax.getTax().getId())[2] : linesData[i].getLineTaxes()
-            .get(linetax.getTax().getId())[0]));
-        BigDecimal expectedTaxAmount = new BigDecimal(isUpdated ? (isCompleted ? linesData[i]
-            .getLineTaxes().get(linetax.getTax().getId())[7] : linesData[i].getLineTaxes().get(
-            linetax.getTax().getId())[5]) : (isCompleted ? linesData[i].getLineTaxes().get(
-            linetax.getTax().getId())[3] : linesData[i].getLineTaxes()
-            .get(linetax.getTax().getId())[1]));
+        BigDecimal expectedTaxableAmount = new BigDecimal(isUpdated
+            ? (isCompleted ? linesData[i].getLineTaxes().get(linetax.getTax().getId())[6]
+                : linesData[i].getLineTaxes().get(linetax.getTax().getId())[4])
+            : (isCompleted ? linesData[i].getLineTaxes().get(linetax.getTax().getId())[2]
+                : linesData[i].getLineTaxes().get(linetax.getTax().getId())[0]));
+        BigDecimal expectedTaxAmount = new BigDecimal(isUpdated
+            ? (isCompleted ? linesData[i].getLineTaxes().get(linetax.getTax().getId())[7]
+                : linesData[i].getLineTaxes().get(linetax.getTax().getId())[5])
+            : (isCompleted ? linesData[i].getLineTaxes().get(linetax.getTax().getId())[3]
+                : linesData[i].getLineTaxes().get(linetax.getTax().getId())[1]));
         assertThat("Wrong taxable amount for line in document",
             round(linetax.getTaxableAmount(), round, stdPrecision),
             comparesEqualTo(expectedTaxableAmount));
@@ -981,14 +986,12 @@ public class TaxesTest extends OBBaseTest {
       }
 
       // Assert line amounts
-      BigDecimal expectedGrossAmount = new BigDecimal(
-          isUpdated ? (isCompleted ? linesData[i].getLineAmounts()[6]
-              : linesData[i].getLineAmounts()[4]) : (isCompleted ? linesData[i].getLineAmounts()[2]
-              : linesData[i].getLineAmounts()[0]));
-      BigDecimal expectedNetAmount = new BigDecimal(
-          isUpdated ? (isCompleted ? linesData[i].getLineAmounts()[7]
-              : linesData[i].getLineAmounts()[5]) : (isCompleted ? linesData[i].getLineAmounts()[3]
-              : linesData[i].getLineAmounts()[1]));
+      BigDecimal expectedGrossAmount = new BigDecimal(isUpdated
+          ? (isCompleted ? linesData[i].getLineAmounts()[6] : linesData[i].getLineAmounts()[4])
+          : (isCompleted ? linesData[i].getLineAmounts()[2] : linesData[i].getLineAmounts()[0]));
+      BigDecimal expectedNetAmount = new BigDecimal(isUpdated
+          ? (isCompleted ? linesData[i].getLineAmounts()[7] : linesData[i].getLineAmounts()[5])
+          : (isCompleted ? linesData[i].getLineAmounts()[3] : linesData[i].getLineAmounts()[1]));
       assertThat("Wrong Invoice line Gross Amount", testInvoiceLine.getGrossAmount(),
           comparesEqualTo(expectedGrossAmount));
       assertThat("Wrong Invoice line Net Amount", testInvoiceLine.getLineNetAmount(),
@@ -1012,19 +1015,21 @@ public class TaxesTest extends OBBaseTest {
       log.debug(tax.getTaxAmount().toString());
 
       if (!docTaxes.containsKey(tax.getTax().getId())) {
-        assertTrue(
-            testDescription + ". Tax Should not be present: " + tax.getTax().getIdentifier(), false);
+        assertTrue(testDescription + ". Tax Should not be present: " + tax.getTax().getIdentifier(),
+            false);
       }
 
       // Assert header taxes
-      BigDecimal expectedTaxableAmount = new BigDecimal(isUpdated ? (isCompleted ? docTaxes.get(tax
-          .getTax().getId())[6] : docTaxes.get(tax.getTax().getId())[4])
-          : (isCompleted ? docTaxes.get(tax.getTax().getId())[2] : docTaxes.get(tax.getTax()
-              .getId())[0]));
-      BigDecimal expectedTaxAmount = new BigDecimal(isUpdated ? (isCompleted ? docTaxes.get(tax
-          .getTax().getId())[7] : docTaxes.get(tax.getTax().getId())[5])
-          : (isCompleted ? docTaxes.get(tax.getTax().getId())[3] : docTaxes.get(tax.getTax()
-              .getId())[1]));
+      BigDecimal expectedTaxableAmount = new BigDecimal(isUpdated
+          ? (isCompleted ? docTaxes.get(tax.getTax().getId())[6]
+              : docTaxes.get(tax.getTax().getId())[4])
+          : (isCompleted ? docTaxes.get(tax.getTax().getId())[2]
+              : docTaxes.get(tax.getTax().getId())[0]));
+      BigDecimal expectedTaxAmount = new BigDecimal(isUpdated
+          ? (isCompleted ? docTaxes.get(tax.getTax().getId())[7]
+              : docTaxes.get(tax.getTax().getId())[5])
+          : (isCompleted ? docTaxes.get(tax.getTax().getId())[3]
+              : docTaxes.get(tax.getTax().getId())[1]));
       assertThat("Wrong taxable amount for document",
           round(tax.getTaxableAmount(), round, stdPrecision),
           comparesEqualTo(expectedTaxableAmount));
@@ -1040,10 +1045,12 @@ public class TaxesTest extends OBBaseTest {
     }
 
     // Assert header amounts
-    BigDecimal expectedGrossAmount = new BigDecimal(isUpdated ? (isCompleted ? docAmounts[6]
-        : docAmounts[4]) : (isCompleted ? docAmounts[2] : docAmounts[0]));
-    BigDecimal expectedNetAmount = new BigDecimal(isUpdated ? (isCompleted ? docAmounts[7]
-        : docAmounts[5]) : (isCompleted ? docAmounts[3] : docAmounts[1]));
+    BigDecimal expectedGrossAmount = new BigDecimal(
+        isUpdated ? (isCompleted ? docAmounts[6] : docAmounts[4])
+            : (isCompleted ? docAmounts[2] : docAmounts[0]));
+    BigDecimal expectedNetAmount = new BigDecimal(
+        isUpdated ? (isCompleted ? docAmounts[7] : docAmounts[5])
+            : (isCompleted ? docAmounts[3] : docAmounts[1]));
     assertThat("Wrong Invoice GrandTotal", testInvoice.getGrandTotalAmount(),
         comparesEqualTo(expectedGrossAmount));
     assertThat("Wrong Invoice TotalLines", testInvoice.getSummedLineAmount(),
@@ -1059,17 +1066,12 @@ public class TaxesTest extends OBBaseTest {
       BigDecimal grossAmount = testInvoiceLine.getGrossAmount();
 
       if (isPriceIncludingTaxes) {
-        assertThat(
-            "Line Gross Price * Line Quantity <> Line Gross Amount",
-            grossAmount,
-            comparesEqualTo(testInvoiceLine.getGrossUnitPrice().multiply(
-                testInvoiceLine.getInvoicedQuantity())));
+        assertThat("Line Gross Price * Line Quantity <> Line Gross Amount", grossAmount,
+            comparesEqualTo(testInvoiceLine.getGrossUnitPrice()
+                .multiply(testInvoiceLine.getInvoicedQuantity())));
       } else {
-        assertThat(
-            "Line Net Price * Line Quantity <> Line Net Amount",
-            netAmount,
-            comparesEqualTo(testInvoiceLine.getUnitPrice().multiply(
-                testInvoiceLine.getInvoicedQuantity())));
+        assertThat("Line Net Price * Line Quantity <> Line Net Amount", netAmount, comparesEqualTo(
+            testInvoiceLine.getUnitPrice().multiply(testInvoiceLine.getInvoicedQuantity())));
       }
 
       netSum = netSum.add(netAmount);

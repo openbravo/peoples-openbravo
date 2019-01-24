@@ -39,6 +39,7 @@ public abstract class BaseEnumerateDomainType<E extends Object> extends BasePrim
   /**
    * @return the set of enumerate values
    */
+  @Override
   public Set<E> getEnumerateValues() {
     return enumerateValues;
   }
@@ -50,18 +51,21 @@ public abstract class BaseEnumerateDomainType<E extends Object> extends BasePrim
   /**
    * @return class of {@link Object}.
    */
+  @Override
   public Class<?> getPrimitiveType() {
     return Object.class;
   }
 
+  @Override
   public void checkIsValidValue(Property property, Object value) throws ValidationException {
     super.checkIsValidValue(property, value);
 
     if (!getEnumerateValues().contains(value)) {
       final ValidationException ve = new ValidationException();
-      ve.addMessage(property, "Property " + property + ", value (" + value
-          + ") is not allowed, it should be one of the following values: " + getEnumerateValues()
-          + " but it is value " + value);
+      ve.addMessage(property,
+          "Property " + property + ", value (" + value
+              + ") is not allowed, it should be one of the following values: "
+              + getEnumerateValues() + " but it is value " + value);
       throw ve;
     }
   }

@@ -88,7 +88,8 @@ public class DocumentNumberGeneration extends OBBaseTest {
   public void twoDalCallsSequential() throws InterruptedException, ExecutionException {
     List<DocumentNumberGetter> threads = new ArrayList<DocumentNumberGetter>();
     threads.add(new DALDocumentNumberGetter().setThreadNo(1).commitTrx(commitTrx));
-    threads.add(new DALDocumentNumberGetter().setThreadNo(2).waitBeforeStartMs(WAIT_MS + 100)
+    threads.add(new DALDocumentNumberGetter().setThreadNo(2)
+        .waitBeforeStartMs(WAIT_MS + 100)
         .commitTrx(commitTrx));
     test(threads);
   }

@@ -42,12 +42,13 @@ public class FIN_DoubtfulDebtProcess implements org.openbravo.scheduling.Process
   private static AdvPaymentMngtDao dao;
   private static final Logger log4j = LogManager.getLogger();
 
+  @Override
   public void execute(ProcessBundle bundle) throws Exception {
     dao = new AdvPaymentMngtDao();
     OBError msg = new OBError();
     msg.setType("Success");
-    msg.setTitle(Utility.messageBD(bundle.getConnection(), "Success", bundle.getContext()
-        .getLanguage()));
+    msg.setTitle(
+        Utility.messageBD(bundle.getConnection(), "Success", bundle.getContext().getLanguage()));
 
     OBContext.setAdminMode(false);
     try {
@@ -67,7 +68,8 @@ public class FIN_DoubtfulDebtProcess implements org.openbravo.scheduling.Process
       // ***********************
       if (strAction.equals("P")) {
         // Check payment exists
-        if (doubtfulDebt.getFINPaymentSchedule().getOutstandingAmount()
+        if (doubtfulDebt.getFINPaymentSchedule()
+            .getOutstandingAmount()
             .compareTo(doubtfulDebt.getAmount()) < 0) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(conProvider, "Error", language));
@@ -97,7 +99,8 @@ public class FIN_DoubtfulDebtProcess implements org.openbravo.scheduling.Process
           bundle.setResult(msg);
           return;
         }
-        if (doubtfulDebt.getFINPaymentSchedule().getOutstandingAmount()
+        if (doubtfulDebt.getFINPaymentSchedule()
+            .getOutstandingAmount()
             .compareTo(doubtfulDebt.getAmount()) < 0) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(conProvider, "Error", language));
@@ -108,8 +111,8 @@ public class FIN_DoubtfulDebtProcess implements org.openbravo.scheduling.Process
           bundle.setResult(msg);
           return;
         }
-        updateDoubtfulDebtScheduleDetails(doubtfulDebt.getFINPaymentSchedule(), doubtfulDebt
-            .getAmount().negate());
+        updateDoubtfulDebtScheduleDetails(doubtfulDebt.getFINPaymentSchedule(),
+            doubtfulDebt.getAmount().negate());
         doubtfulDebt.setProcessed(false);
         OBDal.getInstance().save(doubtfulDebt);
         OBDal.getInstance().flush();
@@ -122,8 +125,8 @@ public class FIN_DoubtfulDebtProcess implements org.openbravo.scheduling.Process
       OBDal.getInstance().rollbackAndClose();
       log4j.error("FIN_DoubtfulDebtProcess error: " + e.getMessage(), e);
       msg.setType("Error");
-      msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
+      msg.setTitle(
+          Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext().getLanguage()));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
     } finally {
@@ -150,7 +153,8 @@ public class FIN_DoubtfulDebtProcess implements org.openbravo.scheduling.Process
     }
   }
 
-  private BigDecimal getDifferenceOfAmountsOrZero(BigDecimal debtAmountAux, FIN_PaymentScheduleDetail psd) {
+  private BigDecimal getDifferenceOfAmountsOrZero(BigDecimal debtAmountAux,
+      FIN_PaymentScheduleDetail psd) {
     return debtAmountAux.subtract(psd.getAmount()).compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO
         : debtAmountAux.subtract(psd.getAmount());
   }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -400,8 +400,7 @@ isc.OBUserProfile.addProperties({
   },
 
   createPwdForm: function () {
-    var me = this,
-        newPasswordField, pwdForm, confirmPasswordField, currentPasswordField, pwdButtonLayout, pwdFormLayout, pwdSaveButton, passwordFieldProperties;
+    var newPasswordField, pwdForm, confirmPasswordField, currentPasswordField, pwdButtonLayout, pwdFormLayout, pwdSaveButton, passwordFieldProperties;
 
     // now create the fields for the password form
     passwordFieldProperties = {

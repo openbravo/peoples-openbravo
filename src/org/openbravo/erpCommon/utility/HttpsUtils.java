@@ -50,8 +50,8 @@ public class HttpsUtils {
     try {
       String s = null;
       StringBuilder sb = new StringBuilder();
-      br = new BufferedReader(new InputStreamReader(sendSecureHttpsConnection(conn, data)
-          .getInputStream()));
+      br = new BufferedReader(
+          new InputStreamReader(sendSecureHttpsConnection(conn, data).getInputStream()));
       while ((s = br.readLine()) != null) {
         sb.append(s + "\n");
       }
@@ -82,8 +82,8 @@ public class HttpsUtils {
     }
   }
 
-  public static String sendSecure(URL url, String data) throws GeneralSecurityException,
-      IOException {
+  public static String sendSecure(URL url, String data)
+      throws GeneralSecurityException, IOException {
     HttpsURLConnection conn = getHttpsConn(url);
     return sendSecure(conn, data);
   }
@@ -96,8 +96,8 @@ public class HttpsUtils {
 
   }
 
-  public static HttpsURLConnection getHttpsConn(URL url) throws KeyStoreException,
-      GeneralSecurityException, IOException {
+  public static HttpsURLConnection getHttpsConn(URL url)
+      throws KeyStoreException, GeneralSecurityException, IOException {
     return (HttpsURLConnection) url.openConnection();
   }
 

@@ -129,8 +129,8 @@ public class KernelUtils {
         return property;
       }
     }
-    throw new IllegalArgumentException("Column " + column
-        + " does not have a corresponding property in the model");
+    throw new IllegalArgumentException(
+        "Column " + column + " does not have a corresponding property in the model");
   }
 
   /**
@@ -411,8 +411,8 @@ public class KernelUtils {
     Tab targetTab = null;
     String tabId = null;
     try {
-      tabId = KernelUtilsData.getParentTab(connection, tab.getWindow().getId(), tab.getTabLevel()
-          .toString(), tab.getSequenceNumber().toString());
+      tabId = KernelUtilsData.getParentTab(connection, tab.getWindow().getId(),
+          tab.getTabLevel().toString(), tab.getSequenceNumber().toString());
       if (tabId != null) {
         targetTab = adcs != null ? adcs.getTab(tabId) : OBDal.getInstance().get(Tab.class, tabId);
       }

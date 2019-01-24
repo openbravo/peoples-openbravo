@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,8 +45,8 @@ isc.OBEventHandlerRegistry.addProperties({
 
   // Overrides call function in order to implement the asynchronous execution of the actions.
   call: function (params) {
-    var callResult, entries = this.getEntries(params.tabId, params.actionType),
-        actions, i;
+    var entries = this.getEntries(params.tabId, params.actionType),
+        actions;
 
     if (params.callback && !isc.isA.Function(params.callback)) {
       return;

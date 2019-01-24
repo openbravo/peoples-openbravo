@@ -52,10 +52,12 @@ public class DocLandedCost extends AcctServer {
    * @param AD_Client_ID
    *          AD_Client_ID
    */
-  public DocLandedCost(String AD_Client_ID, String AD_Org_ID, ConnectionProvider connectionProvider) {
+  public DocLandedCost(String AD_Client_ID, String AD_Org_ID,
+      ConnectionProvider connectionProvider) {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn,
       @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocLandedCostData.selectRegistro(conn, AD_Client_ID, Id));
@@ -66,6 +68,7 @@ public class DocLandedCost extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     C_Currency_ID = NO_CURRENCY;
 
@@ -126,6 +129,7 @@ public class DocLandedCost extends AcctServer {
    * 
    * @return Zero (always balanced)
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
     return retValue;
@@ -150,17 +154,20 @@ public class DocLandedCost extends AcctServer {
    *          accounting schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocLandedCostTemplate newTemplate = (DocLandedCostTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocLandedCostTemplate - " + e);
@@ -185,10 +192,11 @@ public class DocLandedCost extends AcctServer {
       amtCredit = amount.toString();
 
       // If transaction uses Standard Algorithm IPD account will be used, else Asset account
-      LCReceiptLineAmt landedCostReceiptLine = OBDal.getInstance().get(LCReceiptLineAmt.class,
-          line.m_TrxLine_ID);
+      LCReceiptLineAmt landedCostReceiptLine = OBDal.getInstance()
+          .get(LCReceiptLineAmt.class, line.m_TrxLine_ID);
       MaterialTransaction transaction = landedCostReceiptLine.getGoodsShipmentLine()
-          .getMaterialMgmtMaterialTransactionList().get(0);
+          .getMaterialMgmtMaterialTransactionList()
+          .get(0);
       Account account = null;
       if (StringUtils.equals(transaction.getCostingAlgorithm().getJavaClassName(),
           "org.openbravo.costing.StandardAlgorithm")) {
@@ -283,15 +291,15 @@ public class DocLandedCost extends AcctServer {
           Account_ID = data[0].accountId;
         }
       } else {
-        log4jDocLandedCost.warn("getLandedCostAccount - NO account for landed cost type "
-            + dataAcctType[0].name);
+        log4jDocLandedCost
+            .warn("getLandedCostAccount - NO account for landed cost type " + dataAcctType[0].name);
         return null;
       }
 
       // No account
       if (Account_ID.equals("")) {
-        log4jDocLandedCost.warn("getLandedCostAccount - NO account for landed cost type ="
-            + dataAcctType[0].name);
+        log4jDocLandedCost.warn(
+            "getLandedCostAccount - NO account for landed cost type =" + dataAcctType[0].name);
         return null;
       }
       // Return Account
@@ -307,10 +315,12 @@ public class DocLandedCost extends AcctServer {
    * 
    * not used
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

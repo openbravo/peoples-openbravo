@@ -37,6 +37,7 @@ class FieldTemplate implements XmlComponentTemplate, IDComponent {
     this.vecReplace = vecReplace;
   }
 
+  @Override
   public int type() {
     return type;
   }
@@ -65,6 +66,7 @@ class FieldTemplate implements XmlComponentTemplate, IDComponent {
     return fieldValue;
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
     return createFieldValue(xmlDocument);
   }

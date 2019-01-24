@@ -142,12 +142,15 @@ public class AccDefUtility {
       }
       if (isSOTRX && product.isDeferredRevenue()) {
         if (CURRENT_MONTH.equals(product.getDefaultPeriod())) {
-          startingPeriodId = AccDefUtility.getCurrentPeriod(invoice.getAccountingDate(),
-              AccDefUtility.getCalendar(invoice.getOrganization())).getId();
+          startingPeriodId = AccDefUtility
+              .getCurrentPeriod(invoice.getAccountingDate(),
+                  AccDefUtility.getCalendar(invoice.getOrganization()))
+              .getId();
         } else if (NEXT_MONTH.equals(product.getDefaultPeriod())) {
-          startingPeriodId = AccDefUtility.getNextPeriod(
-              AccDefUtility.getCurrentPeriod(invoice.getAccountingDate(),
-                  AccDefUtility.getCalendar(invoice.getOrganization()))).getId();
+          startingPeriodId = AccDefUtility
+              .getNextPeriod(AccDefUtility.getCurrentPeriod(invoice.getAccountingDate(),
+                  AccDefUtility.getCalendar(invoice.getOrganization())))
+              .getId();
         }
         if (startingPeriodId != null && !"".equals(startingPeriodId)) {
           planType = product.getRevenuePlanType();
@@ -155,12 +158,15 @@ public class AccDefUtility {
         }
       } else if (!isSOTRX && product.isDeferredexpense()) {
         if (CURRENT_MONTH.equals(product.getDefaultPeriodExpense())) {
-          startingPeriodId = AccDefUtility.getCurrentPeriod(invoice.getAccountingDate(),
-              AccDefUtility.getCalendar(invoice.getOrganization())).getId();
+          startingPeriodId = AccDefUtility
+              .getCurrentPeriod(invoice.getAccountingDate(),
+                  AccDefUtility.getCalendar(invoice.getOrganization()))
+              .getId();
         } else if (NEXT_MONTH.equals(product.getDefaultPeriodExpense())) {
-          startingPeriodId = AccDefUtility.getNextPeriod(
-              AccDefUtility.getCurrentPeriod(invoice.getAccountingDate(),
-                  AccDefUtility.getCalendar(invoice.getOrganization()))).getId();
+          startingPeriodId = AccDefUtility
+              .getNextPeriod(AccDefUtility.getCurrentPeriod(invoice.getAccountingDate(),
+                  AccDefUtility.getCalendar(invoice.getOrganization())))
+              .getId();
         }
         if (startingPeriodId != null && !"".equals(startingPeriodId)) {
           planType = product.getExpplantype();

@@ -53,9 +53,11 @@ public class ReservationUtils {
     if (!soLine.getSalesOrder().isSalesTransaction()) {
       throw new OBException(OBMessageUtils.messageBD("cannotReservePurchaseOrder", false));
     }
-    if (soLine.getOrderedQuantity().subtract(soLine.getDeliveredQuantity())
+    if (soLine.getOrderedQuantity()
+        .subtract(soLine.getDeliveredQuantity())
         .compareTo(BigDecimal.ZERO) == 0) {
-      throw new OBException(OBMessageUtils.messageBD("cannotReserveDeliveredSalesOrderLine", false));
+      throw new OBException(
+          OBMessageUtils.messageBD("cannotReserveDeliveredSalesOrderLine", false));
     }
 
     OBDal.getInstance().flush();
@@ -80,8 +82,8 @@ public class ReservationUtils {
     CSResponse cs = null;
     try {
       cs = ReservationUtilsData.reserveStockAuto(OBDal.getInstance().getConnection(false),
-          new DalConnectionProvider(false), reservation.getId(), OBContext.getOBContext().getUser()
-              .getId());
+          new DalConnectionProvider(false), reservation.getId(),
+          OBContext.getOBContext().getUser().getId());
     } catch (ServletException e) {
       String message = OBMessageUtils.translateError(e.getMessage()).getMessage();
       throw new OBException(message, e);
@@ -122,9 +124,9 @@ public class ReservationUtils {
     CSResponse cs = null;
     try {
       cs = ReservationUtilsData.reserveStockManual(OBDal.getInstance().getConnection(false),
-          new DalConnectionProvider(false), reservation.getId(), strType, obObject.getId()
-              .toString(), quantity.toString(), OBContext.getOBContext().getUser().getId(),
-          allocated);
+          new DalConnectionProvider(false), reservation.getId(), strType,
+          obObject.getId().toString(), quantity.toString(),
+          OBContext.getOBContext().getUser().getId(), allocated);
     } catch (ServletException e) {
       String message = OBMessageUtils.translateError(e.getMessage()).getMessage();
       throw new OBException(message, e);
@@ -160,8 +162,8 @@ public class ReservationUtils {
     Map<String, String> parameters = new HashMap<String, String>();
     parameters.put("RES_Action", action);
 
-    final ProcessInstance pinstance = CallProcess.getInstance().call(process, reservation.getId(),
-        parameters);
+    final ProcessInstance pinstance = CallProcess.getInstance()
+        .call(process, reservation.getId(), parameters);
 
     return OBMessageUtils.getProcessInstanceMessage(pinstance);
   }
@@ -235,11 +237,13 @@ public class ReservationUtils {
     hql.append("              join rs.reservation r");
     hql.append("              where r.product = :product");
     hql.append("              and coalesce(rs.storageBin, r.storageBin) = :storageBin");
-    hql.append("              and coalesce(rs.attributeSetValue, r.attributeSetValue) = :attributeSetValue");
+    hql.append(
+        "              and coalesce(rs.attributeSetValue, r.attributeSetValue) = :attributeSetValue");
     hql.append("              and r.uOM = :uom");
     hql.append("              and rs.quantity > rs.released)");
 
-    Query<Object> query = OBDal.getInstance().getSession()
+    Query<Object> query = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), Object.class);
     query.setParameter("product", storageDetail.getProduct());
     query.setParameter("storageBin", storageDetail.getStorageBin());
@@ -268,7 +272,8 @@ public class ReservationUtils {
     hql.append(" and r.uOM = :uom");
     hql.append(" and rs.quantity > rs.released");
 
-    Query<ReservationStock> query = OBDal.getInstance().getSession()
+    Query<ReservationStock> query = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), ReservationStock.class);
     query.setParameter("product", storageDetail.getProduct());
     query.setParameter("storageBin", storageDetail.getStorageBin());

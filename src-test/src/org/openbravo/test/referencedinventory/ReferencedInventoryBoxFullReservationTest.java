@@ -35,10 +35,9 @@ public class ReferencedInventoryBoxFullReservationTest extends ReferencedInvento
 
   @Rule
   public ParameterCdiTestRule<ParamsBoxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsBoxReservationTest>(
-      Arrays
-          .asList(new ParamsBoxReservationTest[] { new ParamsBoxReservationTest(
-              " Full Box (10 units of 10 units) of a storage details with a previous reservation of these 10 units.",
-              "10", "10") }));
+      Arrays.asList(new ParamsBoxReservationTest[] { new ParamsBoxReservationTest(
+          " Full Box (10 units of 10 units) of a storage details with a previous reservation of these 10 units.",
+          "10", "10") }));
 
   private @ParameterCdiTest ParamsBoxReservationTest params;
 

@@ -353,8 +353,8 @@ public abstract class ImportEntryProcessor {
           ImportEntry localImportEntry;
           try {
             // reload the importEntry
-            localImportEntry = OBDal.getInstance().get(ImportEntry.class,
-                queuedImportEntry.importEntryId);
+            localImportEntry = OBDal.getInstance()
+                .get(ImportEntry.class, queuedImportEntry.importEntryId);
 
             // check if already processed, if so skip it
             if (localImportEntry == null || !"Initial".equals(localImportEntry.getImportStatus())) {
@@ -376,8 +376,8 @@ public abstract class ImportEntryProcessor {
           processEntry(localImportEntry);
 
           if (logger.isDebugEnabled()) {
-            logger.debug("Finished Processing entry " + localImportEntry.getIdentifier() + " "
-                + typeOfData);
+            logger.debug(
+                "Finished Processing entry " + localImportEntry.getIdentifier() + " " + typeOfData);
           }
 
           // don't use the import entry anymore, touching methods on it
@@ -399,9 +399,8 @@ public abstract class ImportEntryProcessor {
           }
 
           if (TriggerHandler.getInstance().isDisabled()) {
-            logger
-                .error("Triggers disabled at end of processing an entry, this is a coding error, "
-                    + "call TriggerHandler.enable in your code. Triggers are enabled again for now!");
+            logger.error("Triggers disabled at end of processing an entry, this is a coding error, "
+                + "call TriggerHandler.enable in your code. Triggers are enabled again for now!");
             TriggerHandler.getInstance().enable();
             OBDal.getInstance().commitAndClose();
           }
@@ -505,9 +504,10 @@ public abstract class ImportEntryProcessor {
     protected void setVariablesSecureApp(OBContext obContext) {
       OBContext.setAdminMode(true);
       try {
-        final VariablesSecureApp variablesSecureApp = new VariablesSecureApp(obContext.getUser()
-            .getId(), obContext.getCurrentClient().getId(), obContext.getCurrentOrganization()
-            .getId(), obContext.getRole().getId(), obContext.getLanguage().getLanguage());
+        final VariablesSecureApp variablesSecureApp = new VariablesSecureApp(
+            obContext.getUser().getId(), obContext.getCurrentClient().getId(),
+            obContext.getCurrentOrganization().getId(), obContext.getRole().getId(),
+            obContext.getLanguage().getLanguage());
         RequestContext.get().setVariableSecureApp(variablesSecureApp);
       } finally {
         OBContext.restorePreviousMode();

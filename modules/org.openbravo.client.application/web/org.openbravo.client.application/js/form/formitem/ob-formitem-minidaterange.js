@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2018 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -167,8 +167,7 @@ isc.OBRelativeDateItem.addProperties({
       selectionRange = this.quantityField.getSelectionRange();
     }
 
-    var value = this.valueField.getValue(),
-        quantity = this.quantityField.getValue();
+    var value = this.valueField.getValue();
 
     var showQuantity = (value && isc.isA.String(value) && this.relativePresets[value]);
 
@@ -420,7 +419,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   expandSingleValue: function () {
     var newValue = this.parseValue(),
         oldValue = this.mapValueToDisplay(),
-        dateValue, editRow;
+        dateValue;
 
     if (!this.singleDateMode) {
       return;

@@ -37,13 +37,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class CopyFromGLJournal extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -51,8 +53,8 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
       String strTab = vars.getRequiredStringParameter("inpTabId");
       String strWindowId = vars.getStringParameter("inpwindowId");
       String strKeyColumnId = vars.getStringParameter("inpkeyColumnId");
-      String strKey = vars.getGlobalVariable("inpglJournalbatchId", strWindowId + "|"
-          + strKeyColumnId);
+      String strKey = vars.getGlobalVariable("inpglJournalbatchId",
+          strWindowId + "|" + strKeyColumnId);
       String strDescription = vars.getStringParameter("inpDescription", "");
       String strDocumentNo = vars.getStringParameter("inpDocumentNo", "");
       printPage(response, vars, strDescription, strDocumentNo, strWindow, strTab, strKey);
@@ -68,8 +70,9 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
       String strTab = vars.getStringParameter("inpTabId");
 
       String strWindowPath = Utility.getTabURL(strTab, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       String strKey = vars.getRequiredStringParameter("inpglJournalbatchId");
       String strGLJournalBatch = vars.getStringParameter("inpClave");
@@ -78,17 +81,20 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
       vars.setMessage(strTab, myError);
 
       printPageClosePopUp(response, vars, strWindowPath);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private OBError processButton(VariablesSecureApp vars, String strKey, String strGLJournalBatch,
       String windowId) {
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Save: GLJournal");
-    if (strGLJournalBatch.equals(""))
+    }
+    if (strGLJournalBatch.equals("")) {
       return new OBError();
+    }
     ;
     Connection conn = null;
 
@@ -103,13 +109,14 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
         try {
           if (CopyFromGLJournalData.insertGLJournal(conn, this, strSequence, vars.getClient(),
               data[i].adOrgId, vars.getUser(), data[i].cAcctschemaId, data[i].cDoctypeId, "DR",
-              "CO", data[i].isapproved, data[i].isprinted, data[i].description,
-              data[i].postingtype, data[i].glCategoryId, data[i].datedoc, data[i].dateacct,
-              data[i].cPeriodId, data[i].cCurrencyId, data[i].currencyratetype,
-              data[i].currencyrate, strKey, data[i].controlamt, strDocumentNo, "N", "N", "N",
-              data[i].user1Id, data[i].user2Id, data[i].cCampaignId, data[i].cProjectId,
-              data[i].aAssetId, data[i].cCostcenterId, data[i].cBpartnerId, data[i].mProductId) == 0)
+              "CO", data[i].isapproved, data[i].isprinted, data[i].description, data[i].postingtype,
+              data[i].glCategoryId, data[i].datedoc, data[i].dateacct, data[i].cPeriodId,
+              data[i].cCurrencyId, data[i].currencyratetype, data[i].currencyrate, strKey,
+              data[i].controlamt, strDocumentNo, "N", "N", "N", data[i].user1Id, data[i].user2Id,
+              data[i].cCampaignId, data[i].cProjectId, data[i].aAssetId, data[i].cCostcenterId,
+              data[i].cBpartnerId, data[i].mProductId) == 0) {
             log4j.warn("Save: GLJournal record " + i + " not inserted. Sequence = " + strSequence);
+          }
         } catch (ServletException ex) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           releaseRollbackConnection(conn);
@@ -120,22 +127,23 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
         for (int j = 0; dataLines != null && j < dataLines.length; j++) {
           String strLineSequence = SequenceIdData.getUUID();
           try {
-            if (CopyFromGLJournalData.insertGLJournalLine(conn, this, strLineSequence, vars
-                .getClient(), dataLines[j].adOrgId, vars.getUser(), strSequence, dataLines[j].line,
-                dataLines[j].isgenerated, dataLines[j].description, dataLines[j].amtsourcedr,
-                dataLines[j].amtsourcecr, dataLines[j].cCurrencyId, dataLines[j].currencyratetype,
-                dataLines[j].currencyrate, dataLines[j].amtacctdr, dataLines[j].amtacctcr,
-                dataLines[j].cUomId, dataLines[j].qty, dataLines[j].cValidcombinationId,
-                dataLines[j].user1Id, dataLines[j].user2Id, dataLines[j].cCampaignId,
-                dataLines[j].cProjectId, dataLines[j].cActivityId, dataLines[j].cSalesregionId,
-                dataLines[j].mProductId, dataLines[j].cBpartnerId, dataLines[j].aAssetId,
-                dataLines[j].cCostcenterId, dataLines[j].openItems,
+            if (CopyFromGLJournalData.insertGLJournalLine(conn, this, strLineSequence,
+                vars.getClient(), dataLines[j].adOrgId, vars.getUser(), strSequence,
+                dataLines[j].line, dataLines[j].isgenerated, dataLines[j].description,
+                dataLines[j].amtsourcedr, dataLines[j].amtsourcecr, dataLines[j].cCurrencyId,
+                dataLines[j].currencyratetype, dataLines[j].currencyrate, dataLines[j].amtacctdr,
+                dataLines[j].amtacctcr, dataLines[j].cUomId, dataLines[j].qty,
+                dataLines[j].cValidcombinationId, dataLines[j].user1Id, dataLines[j].user2Id,
+                dataLines[j].cCampaignId, dataLines[j].cProjectId, dataLines[j].cActivityId,
+                dataLines[j].cSalesregionId, dataLines[j].mProductId, dataLines[j].cBpartnerId,
+                dataLines[j].aAssetId, dataLines[j].cCostcenterId, dataLines[j].openItems,
                 dataLines[j].finFinancialAccountId, dataLines[j].finPaymentmethodId,
                 dataLines[j].cGlitemId,
                 (dataLines[j].paymentdate.isEmpty()) ? dataLines[j].paymentdate : data[i].dateacct,
-                null) == 0)
+                null) == 0) {
               log4j.warn("Save: GLJournalLine record " + j + " not inserted. Sequence = "
                   + strLineSequence);
+            }
           } catch (ServletException ex) {
             myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
@@ -164,10 +172,12 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strDescription, String strDocumentNo, String strWindow, String strTab, String strKey)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Button process copy GLJournalBatch details");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/CopyFromGLJournal").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/CopyFromGLJournal")
+        .createXmlDocument();
     CopyFromGLJournalData[] data = CopyFromGLJournalData.selectFrom(this, strDescription,
         strDocumentNo, vars.getClient(),
         Utility.getContext(this, vars, "#User_Org", "CopyFromGLJournal"), strKey);
@@ -193,6 +203,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet Project set Type";
   } // end of getServletInfo() method

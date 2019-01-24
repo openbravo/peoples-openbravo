@@ -36,8 +36,8 @@ public class ShowLogFile extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     final VariablesSecureApp vars = new VariablesSecureApp(request);
     String filePath = vars.getStringParameter("filePath");
@@ -49,8 +49,9 @@ public class ShowLogFile extends HttpSecureAppServlet {
     }
     File file = new File(vars.getSessionValue("#sourcePath") + "/log/" + filePath + "-apply.log");
 
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/ShowLogFile").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/ShowLogFile")
+        .createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());

@@ -184,6 +184,7 @@ public class Entity {
     }
 
     Collections.sort(identifierProperties, new Comparator<Property>() {
+      @Override
       public int compare(Property p1, Property p2) {
         if (p1.getSeqno() == null && p2.getSeqno() == null) {
           return 0;
@@ -240,8 +241,8 @@ public class Entity {
   void initializeComputedColumns(Table t, Entity e) {
     setTableName(t.getTableName() + "_CC");
     setTableId(t.getId() + "_CC");
-    setClassName(e.getPackageName() + "." + e.getSimpleClassName()
-        + COMPUTED_COLUMNS_CLASS_APPENDIX);
+    setClassName(
+        e.getPackageName() + "." + e.getSimpleClassName() + COMPUTED_COLUMNS_CLASS_APPENDIX);
     setName(e.getSimpleClassName() + COMPUTED_COLUMNS_CLASS_APPENDIX);
     setDeletable(false);
     setMutable(false);
@@ -257,8 +258,8 @@ public class Entity {
 
     for (final Column c : t.getColumns()) {
       if (!(c.isKey() || c.getSqlLogic() != null
-          || "AD_Client_ID".equalsIgnoreCase(c.getColumnName()) || "AD_Org_ID".equalsIgnoreCase(c
-          .getColumnName()))) {
+          || "AD_Client_ID".equalsIgnoreCase(c.getColumnName())
+          || "AD_Org_ID".equalsIgnoreCase(c.getColumnName()))) {
         continue;
       }
       final Property p = new Property();
@@ -511,8 +512,8 @@ public class Entity {
    * @throws CheckException
    */
   public void checkIsValidProperty(String propertyName) {
-    Check.isNotNull(propertiesByName.get(propertyName), "Property " + propertyName
-        + " not defined for entity " + this);
+    Check.isNotNull(propertiesByName.get(propertyName),
+        "Property " + propertyName + " not defined for entity " + this);
   }
 
   /**

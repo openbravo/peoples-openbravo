@@ -82,7 +82,8 @@ public class ProcessSchedulingTest extends WeldBaseTest {
 
   @Test
   public void parseTranslationInBackgroundDalBaseProcess() throws Exception {
-    String translation = (String) executeBackgroundProcessWithResult(ParseTranslationDalBaseProcess.class);
+    String translation = (String) executeBackgroundProcessWithResult(
+        ParseTranslationDalBaseProcess.class);
     assertThat("Process status", translation, equalTo(TRANSLATION));
   }
 

@@ -28,10 +28,12 @@ public class DocLine_LandedCost extends DocLine {
   private String warehouseId;
   private String landedCostTypeId;
 
+  @Override
   public void setAmount(String amt) {
     trxAmt = amt;
   } // setAmounts
 
+  @Override
   public String getAmount() {
     return trxAmt;
   } // setAmounts
@@ -52,6 +54,7 @@ public class DocLine_LandedCost extends DocLine {
     return landedCostTypeId;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

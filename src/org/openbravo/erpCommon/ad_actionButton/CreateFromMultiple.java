@@ -41,13 +41,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class CreateFromMultiple extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       vars.getGlobalVariable("inpmInoutId", "CreateFromMultiple|mInoutId");
@@ -96,21 +98,25 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       OBError myMessage = saveMethod(vars, strKey, strWindowId, strSOTrx);
 
       String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       vars.setMessage(strTabId, myMessage);
       printPageClosePopUp(response, vars, strWindowPath);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private void printPage_FS(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: FrameSet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_FS").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_FS")
+        .createXmlDocument();
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -118,8 +124,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
   }
 
   void callPrintPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
-      String strWindowId, String strSOTrx, String strTabId, String strProcessId,
-      String strBpartner, String strmWarehouseId) throws IOException, ServletException {
+      String strWindowId, String strSOTrx, String strTabId, String strProcessId, String strBpartner,
+      String strmWarehouseId) throws IOException, ServletException {
     if (strSOTrx.equals("Y")) { // Shipment
       printPageShipment(response, vars, strKey, strWindowId, strTabId, strSOTrx, strProcessId,
           strBpartner, strmWarehouseId);
@@ -133,23 +139,27 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       String strKey, String strWindowId, String strTabId, String strSOTrx, String strProcessId,
       String strBpartner, String strmWarehouseId) throws IOException, ServletException {
     String localStrmWarehouseId = strmWarehouseId;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Receipt");
+    }
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
     String[] discard = { "" };
-    if (strHelp.equals(""))
+    if (strHelp.equals("")) {
       discard[0] = new String("helpDiscard");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt", discard)
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt",
+            discard)
         .createXmlDocument();
 
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -166,8 +176,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "C_UOM_ID", "", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(
-              this, vars, "#User_Client", strWindowId), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       xmlDocument.setData("reportC_UOM_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -176,11 +186,11 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Warehouse_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+      ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Warehouse_ID", "", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
           Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
-      Utility
-          .fillSQLParameters(this, vars, null, comboTableData, strWindowId, localStrmWarehouseId);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId,
+          localStrmWarehouseId);
       xmlDocument.setData("reportM_WAREHOUSE_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -189,8 +199,9 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
 
     CreateFromMultipleReceiptData[] dataW = CreateFromMultipleReceiptData
         .selectAccessibleWarehouses(this, vars.getRole(), vars.getClient());
-    if (localStrmWarehouseId.equals("") && dataW != null && dataW.length > 0)
+    if (localStrmWarehouseId.equals("") && dataW != null && dataW.length > 0) {
       localStrmWarehouseId = dataW[0].id;
+    }
     xmlDocument.setData("reportM_LOCATOR_X", "liststructure",
         CreateFromMultipleReceiptData.selectM_Locator_X(this, localStrmWarehouseId));
 
@@ -203,8 +214,9 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
   protected void printPageShipment(HttpServletResponse response, VariablesSecureApp vars,
       String strKey, String strWindowId, String strTabId, String strSOTrx, String strProcessId,
       String strBpartner, String strmWarehouseId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Shipment");
+    }
     String[] discard = { "" };
     String strProduct = vars.getStringParameter("inpmProductId");
     // String strWarehouse = vars.getStringParameter("inpmWarehouseId");
@@ -221,8 +233,9 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
           strProduct, strmWarehouseId, strX, strY, strZ,
           Utility.getContext(this, vars, "#User_Client", strWindowId));
     }
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Shipment", discard)
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Shipment",
+            discard)
         .createXmlDocument();
 
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -244,8 +257,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     xmlDocument.setParameter("z", strZ);
 
     try {
-      ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Warehouse_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+      ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Warehouse_ID", "", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
           Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strmWarehouseId);
       xmlDocument.setData("reportM_WAREHOUSE_ID", "liststructure", comboTableData.select(false));
@@ -264,16 +277,18 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
 
   OBError saveMethod(VariablesSecureApp vars, String strKey, String strWindowId, String strSOTrx)
       throws IOException, ServletException {
-    if (strSOTrx.equals("Y"))
+    if (strSOTrx.equals("Y")) {
       return saveShipment(vars, strKey, strWindowId);
-    else
+    } else {
       return saveReceipt(vars, strKey, strWindowId);
+    }
   }
 
   protected OBError saveReceipt(VariablesSecureApp vars, String strKey, String strWindowId)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Save: Receipt");
+    }
     String strProduct = vars.getRequiredStringParameter("inpmProductId");
     String strAtributo = vars.getStringParameter("inpmAttributesetinstanceId");
     String strQty = vars.getNumericParameter("inpmovementqty");
@@ -297,8 +312,9 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       if (locators != null && locators.length > 0) {
         for (count = 0; count < total; count++) {
           String strM_Locator_ID = (count > locators.length - 1) ? "" : locators[count].mLocatorId;
-          if (strM_Locator_ID.equals(""))
+          if (strM_Locator_ID.equals("")) {
             break;
+          }
           String strSequence = SequenceIdData.getUUID();
           try {
             CreateFromMultipleReceiptData.insert(conn, this, strSequence, vars.getClient(),
@@ -332,18 +348,21 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
 
   protected OBError saveShipment(VariablesSecureApp vars, String strKey, String strWindowId)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Save: Shipment");
+    }
     String strStorageDetail = vars.getInStringParameter("inpmStorageDetailId", IsIDFilter.instance);
-    if (strStorageDetail.equals(""))
+    if (strStorageDetail.equals("")) {
       return null;
+    }
     OBError myMessage = null;
     Connection conn = null;
     int count = 0;
     try {
       conn = this.getTransactionConnection();
-      if (strStorageDetail.startsWith("("))
+      if (strStorageDetail.startsWith("(")) {
         strStorageDetail = strStorageDetail.substring(1, strStorageDetail.length() - 1);
+      }
       if (!strStorageDetail.equals("")) {
         strStorageDetail = Replace.replace(strStorageDetail, "'", "");
         StringTokenizer st = new StringTokenizer(strStorageDetail, ",", false);
@@ -383,6 +402,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     return myMessage;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the button of Create From Multiple";
   } // end of getServletInfo() method

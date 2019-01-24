@@ -98,75 +98,74 @@ public class ExecutionLimitsTest {
 
   @Parameters(name = "{index}: ''{5}'' -- moduleId: {0} - version limits: [{1}-{2}] - on install: {3} - should execute: {4}")
   public static Collection<Object[]> data() {
-    return Arrays
-        .asList(new Object[][] {
-            // BuildValidation test. Boundaries smaller than currentVersion
-            { "0", "3.0.8000", "3.0.9000", false, false, Type.BUILD_VALIDATION,
-                "Should not be executed. Update from 3.0.10000." },
-            { "0", null, "3.0.9000", false, false, Type.BUILD_VALIDATION,
-                "Should not be executed. Update from 3.0.10000." },
-            { "0", "3.0.8000", null, false, true, Type.BUILD_VALIDATION,
-                "Should be executed. Update from 3.0.10000." },
+    return Arrays.asList(new Object[][] {
+        // BuildValidation test. Boundaries smaller than currentVersion
+        { "0", "3.0.8000", "3.0.9000", false, false, Type.BUILD_VALIDATION,
+            "Should not be executed. Update from 3.0.10000." },
+        { "0", null, "3.0.9000", false, false, Type.BUILD_VALIDATION,
+            "Should not be executed. Update from 3.0.10000." },
+        { "0", "3.0.8000", null, false, true, Type.BUILD_VALIDATION,
+            "Should be executed. Update from 3.0.10000." },
 
-            // BuildValidation: boundaries contain currentVersion
-            { "0", "3.0.9000", "3.0.11000", false, true, Type.BUILD_VALIDATION,
-                "Should be executed. Update from 3.0.10000." },
-            { "0", null, "3.0.11000", false, true, Type.BUILD_VALIDATION,
-                "Should be executed. Update from 3.0.10000." },
-            { "0", "3.0.9000", null, false, true, Type.BUILD_VALIDATION,
-                "Should be executed. Update from 3.0.10000." },
+        // BuildValidation: boundaries contain currentVersion
+        { "0", "3.0.9000", "3.0.11000", false, true, Type.BUILD_VALIDATION,
+            "Should be executed. Update from 3.0.10000." },
+        { "0", null, "3.0.11000", false, true, Type.BUILD_VALIDATION,
+            "Should be executed. Update from 3.0.10000." },
+        { "0", "3.0.9000", null, false, true, Type.BUILD_VALIDATION,
+            "Should be executed. Update from 3.0.10000." },
 
-            // BuildValidation: boundaries bigger than currentVersion
-            { "0", "3.0.11000", "3.0.12000", false, false, Type.BUILD_VALIDATION,
-                "Should not be executed. Update from 3.0.10000." },
-            { "0", null, "3.0.12000", false, true, Type.BUILD_VALIDATION,
-                "Should be executed. Update from 3.0.10000." },
-            { "0", "3.0.11000", null, false, false, Type.BUILD_VALIDATION,
-                "Should not be executed. Update from 3.0.10000." },
+        // BuildValidation: boundaries bigger than currentVersion
+        { "0", "3.0.11000", "3.0.12000", false, false, Type.BUILD_VALIDATION,
+            "Should not be executed. Update from 3.0.10000." },
+        { "0", null, "3.0.12000", false, true, Type.BUILD_VALIDATION,
+            "Should be executed. Update from 3.0.10000." },
+        { "0", "3.0.11000", null, false, false, Type.BUILD_VALIDATION,
+            "Should not be executed. Update from 3.0.10000." },
 
-            // BuildValidation: Same currentVersion than versions
-            { "0", "3.0.10000", "3.0.11000", false, false, Type.BUILD_VALIDATION,
-                "Should not be executed. Update from 3.0.10000." },
-            { "0", "3.0.9000", "3.0.10000", false, false, Type.BUILD_VALIDATION,
-                "Should not be executed. Update from 3.0.10000." },
-            { "0", null, "3.0.10000", false, false, Type.BUILD_VALIDATION,
-                "Should not be executed. Update from 3.0.10000." },
-            { "0", "3.0.10000", null, false, false, Type.BUILD_VALIDATION,
-                "Should not be executed. Update from 3.0.10000." },
+        // BuildValidation: Same currentVersion than versions
+        { "0", "3.0.10000", "3.0.11000", false, false, Type.BUILD_VALIDATION,
+            "Should not be executed. Update from 3.0.10000." },
+        { "0", "3.0.9000", "3.0.10000", false, false, Type.BUILD_VALIDATION,
+            "Should not be executed. Update from 3.0.10000." },
+        { "0", null, "3.0.10000", false, false, Type.BUILD_VALIDATION,
+            "Should not be executed. Update from 3.0.10000." },
+        { "0", "3.0.10000", null, false, false, Type.BUILD_VALIDATION,
+            "Should not be executed. Update from 3.0.10000." },
 
-            // BuildValidation: Force onInstall cases
-            { "NEW", null, null, true, true, Type.BUILD_VALIDATION,
-                "New module should be executed on install." },
-            { "NEW", null, null, false, false, Type.BUILD_VALIDATION,
-                "New module should not be executed on install." },
+        // BuildValidation: Force onInstall cases
+        { "NEW", null, null, true, true, Type.BUILD_VALIDATION,
+            "New module should be executed on install." },
+        { "NEW", null, null, false, false, Type.BUILD_VALIDATION,
+            "New module should not be executed on install." },
 
-            // BuildValidation: Incorrect boundaries definition
-            { "0", "3.0.9000", "3.0.8000", true, false, Type.BUILD_VALIDATION,
-                "Should not be executed. Incorrect definition" },
+        // BuildValidation: Incorrect boundaries definition
+        { "0", "3.0.9000", "3.0.8000", true, false, Type.BUILD_VALIDATION,
+            "Should not be executed. Incorrect definition" },
 
-            // ModuleScript test
-            { "AAA", null, null, true, true, Type.MODULE_SCRIPT,
-                "New module should be executed on install" },
-            { "AAA", null, null, false, false, Type.MODULE_SCRIPT,
-                "New module should not be executed on install" },
+        // ModuleScript test
+        { "AAA", null, null, true, true, Type.MODULE_SCRIPT,
+            "New module should be executed on install" },
+        { "AAA", null, null, false, false, Type.MODULE_SCRIPT,
+            "New module should not be executed on install" },
 
-            // ModuleScript: fromVersion defined without toVersion
-            { "0", "3.0.9000", null, true, true, Type.MODULE_SCRIPT,
-                "Minimum version does not affect, is lower than current one, should execute" },
-            { "0", "3.0.20000", null, true, false, Type.MODULE_SCRIPT,
-                "Minimum version is higher than current one, should not execute (issue does not exist yet)" },
+        // ModuleScript: fromVersion defined without toVersion
+        { "0", "3.0.9000", null, true, true, Type.MODULE_SCRIPT,
+            "Minimum version does not affect, is lower than current one, should execute" },
+        { "0", "3.0.20000", null, true, false, Type.MODULE_SCRIPT,
+            "Minimum version is higher than current one, should not execute (issue does not exist yet)" },
 
-            // ModuleScript: toVersion defined without fromVersion
-            { "0", null, "3.0.9000", true, false, Type.MODULE_SCRIPT,
-                "Updating from newer, should not execute (issue was already fixed)" },
-            { "0", null, "3.0.20000", true, true, Type.MODULE_SCRIPT,
-                "Updating from older, should execute (issue was not yet fixed)" },
+        // ModuleScript: toVersion defined without fromVersion
+        { "0", null, "3.0.9000", true, false, Type.MODULE_SCRIPT,
+            "Updating from newer, should not execute (issue was already fixed)" },
+        { "0", null, "3.0.20000", true, true, Type.MODULE_SCRIPT,
+            "Updating from older, should execute (issue was not yet fixed)" },
 
-            // ModuleScript: both boundaries defined
-            { "0", "3.0.20000", "3.0.9000", true, false, Type.MODULE_SCRIPT, "Incorrect definition" },
-            { "0", "3.0.8000", "3.0.20000", true, true, Type.MODULE_SCRIPT, "---" },
-            { "0", "3.0.8000", "3.0.9000", true, false, Type.MODULE_SCRIPT, "---" },
-            { "0", "3.0.15000", "3.0.20000", true, false, Type.MODULE_SCRIPT, "---" } });
+        // ModuleScript: both boundaries defined
+        { "0", "3.0.20000", "3.0.9000", true, false, Type.MODULE_SCRIPT, "Incorrect definition" },
+        { "0", "3.0.8000", "3.0.20000", true, true, Type.MODULE_SCRIPT, "---" },
+        { "0", "3.0.8000", "3.0.9000", true, false, Type.MODULE_SCRIPT, "---" },
+        { "0", "3.0.15000", "3.0.20000", true, false, Type.MODULE_SCRIPT, "---" } });
   }
 
   /** Executes the buildValidation or ModuleScript with current version boundaries */
@@ -201,7 +200,7 @@ public class ExecutionLimitsTest {
         return null;
       }
       return new ExecutionLimits(moduleId, //
-          fromVersion == null ? null : new OpenbravoVersion(fromVersion),//
+          fromVersion == null ? null : new OpenbravoVersion(fromVersion), //
           toVersion == null ? null : new OpenbravoVersion(toVersion));
     }
 
@@ -227,7 +226,7 @@ public class ExecutionLimitsTest {
         return null;
       }
       return new ModuleScriptExecutionLimits(moduleId, //
-          fromVersion == null ? null : new OpenbravoVersion(fromVersion),//
+          fromVersion == null ? null : new OpenbravoVersion(fromVersion), //
           toVersion == null ? null : new OpenbravoVersion(toVersion));
     }
 

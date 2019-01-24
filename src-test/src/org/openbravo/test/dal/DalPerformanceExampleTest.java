@@ -126,8 +126,8 @@ public class DalPerformanceExampleTest extends OBBaseTest {
       bp.setName(name);
       bp.setSearchKey(name);
 
-      final Category category = (Category) OBDal.getInstance().getProxy(Category.ENTITY_NAME,
-          TEST_BP_CATEGORY_ID);
+      final Category category = (Category) OBDal.getInstance()
+          .getProxy(Category.ENTITY_NAME, TEST_BP_CATEGORY_ID);
       bp.setBusinessPartnerCategory(category);
       OBDal.getInstance().save(bp);
       if ((i % 100) == 0) {
@@ -147,8 +147,8 @@ public class DalPerformanceExampleTest extends OBBaseTest {
   public void testShowProxy() {
     setTestUserContext();
 
-    final OBQuery<BusinessPartner> bpQuery = OBDal.getInstance().createQuery(BusinessPartner.class,
-        "");
+    final OBQuery<BusinessPartner> bpQuery = OBDal.getInstance()
+        .createQuery(BusinessPartner.class, "");
     bpQuery.setMaxResult(1);
     // read one business partner
     final BusinessPartner bp = bpQuery.list().get(0);
@@ -178,16 +178,16 @@ public class DalPerformanceExampleTest extends OBBaseTest {
   public void testShowObjectGraph() {
     setTestUserContext();
 
-    final OBQuery<BusinessPartner> bpQuery = OBDal.getInstance().createQuery(BusinessPartner.class,
-        "");
+    final OBQuery<BusinessPartner> bpQuery = OBDal.getInstance()
+        .createQuery(BusinessPartner.class, "");
     bpQuery.setMaxResult(1);
     // read one business partner
     final BusinessPartner bp = bpQuery.list().get(0);
     final Category category = bp.getBusinessPartnerCategory();
 
     // now load the category directly
-    final OBQuery<Category> categoryQuery = OBDal.getInstance().createQuery(Category.class,
-        "id=:id");
+    final OBQuery<Category> categoryQuery = OBDal.getInstance()
+        .createQuery(Category.class, "id=:id");
     categoryQuery.setFilterOnActive(false);
     categoryQuery.setFilterOnReadableClients(false);
     categoryQuery.setFilterOnReadableOrganization(false);
@@ -225,8 +225,8 @@ public class DalPerformanceExampleTest extends OBBaseTest {
     setTestUserContext();
     {
       int i = 0;
-      final OBQuery<BusinessPartner> bpQuery = OBDal.getInstance().createQuery(
-          BusinessPartner.class, "");
+      final OBQuery<BusinessPartner> bpQuery = OBDal.getInstance()
+          .createQuery(BusinessPartner.class, "");
       bpQuery.setMaxResult(1000);
       final ScrollableResults scroller = bpQuery.scroll(ScrollMode.FORWARD_ONLY);
       while (scroller.next()) {
@@ -253,7 +253,8 @@ public class DalPerformanceExampleTest extends OBBaseTest {
       final String queryStr = "from BusinessPartner as bp left join bp.businessPartnerCategory where bp.organization.id "
           + OBDal.getInstance().getReadableOrganizationsInClause();
 
-      final Query<Object[]> qry = OBDal.getInstance().getSession()
+      final Query<Object[]> qry = OBDal.getInstance()
+          .getSession()
           .createQuery(queryStr, Object[].class);
       qry.setMaxResults(1000);
       final ScrollableResults scroller = qry.scroll(ScrollMode.FORWARD_ONLY);
@@ -279,7 +280,9 @@ public class DalPerformanceExampleTest extends OBBaseTest {
   public void testDML() {
     // for example add an a to all categories
     String hqlVersionedUpdate = "update BusinessPartnerCategory set name = CONCAT(name, 'a') where name <> null";
-    int updatedEntities = OBDal.getInstance().getSession().createQuery(hqlVersionedUpdate)
+    int updatedEntities = OBDal.getInstance()
+        .getSession()
+        .createQuery(hqlVersionedUpdate)
         .executeUpdate();
     System.err.println(updatedEntities);
   }
