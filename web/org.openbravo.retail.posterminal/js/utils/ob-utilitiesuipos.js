@@ -812,3 +812,11 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
     });
   }
 };
+
+OB.UTIL.hideStoreFilter = function (filterOptions) {
+  _.each(filterOptions, function (prop) {
+    if (prop.name === 'store') {
+      prop.filter = OB.MobileApp.model.attributes.store.length > 2;
+    }
+  }, this);
+};

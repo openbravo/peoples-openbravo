@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2018 Openbravo S.L.U.
+ * Copyright (C) 2017-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -20,18 +20,21 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.mobile.core.servercontroller.MobileServerController;
 import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
 import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
+import org.openbravo.model.common.enterprise.Organization;
 
 public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
   public static final Logger log = LogManager.getLogger();
@@ -95,9 +98,10 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     hqlPaidReceipts.append("from Order as ord ");
     hqlPaidReceipts.append("where $filtersCriteria and $hqlCriteria ");
     hqlPaidReceipts.append(orderTypeHql);
-    hqlPaidReceipts.append(" and ord.client.id =  $clientId and ord.$orgId");
-    hqlPaidReceipts.append(
-        " and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
+    hqlPaidReceipts.append(" and ord.client.id =  $clientId");
+    hqlPaidReceipts.append(getOganizationFilter(jsonsent));
+    hqlPaidReceipts
+        .append(" and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
     hqlPaidReceipts.append(" and ord.documentStatus <> 'CA' ");
     if (!isVerifiedReturns && !isPayOpenTicket) {
       // verified returns is already filtering by delivered = true
@@ -113,7 +117,43 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
   }
 
   protected static String getOrderTypeFilter(JSONObject jsonsent) {
-    String orderType = "";
+    return getColumnFilterValue(jsonsent, "orderType");
+  }
+
+  protected static String getOganizationFilter(JSONObject jsonsent) throws JSONException {
+
+    String documentNo = getColumnFilterValue(jsonsent, "documentNo");
+    String crossStoreFilter = getColumnFilterValue(jsonsent, "store");
+
+    if (!StringUtils.isEmpty(crossStoreFilter)) {
+      return StringUtils.EMPTY;
+    }
+
+    OBPOSApplications pOSTerminal = POSUtils.getTerminal(jsonsent.optString("terminalName"));
+    Organization myOrg = pOSTerminal.getOrganization().getOrganizationInformationList().get(0)
+        .getOrganization();
+    String crossStoreOrgId = myOrg.getOBPOSCrossStoreOrganization() != null ? myOrg
+        .getOBPOSCrossStoreOrganization().getId() : "";
+
+    final StringBuilder orgFilter = new StringBuilder();
+
+    if (!StringUtils.isEmpty(documentNo) && !StringUtils.isEmpty(crossStoreOrgId)) {
+
+      String crossStoreOrg = StringCollectionUtils.commaSeparated(
+          POSUtils.getOrgListByCrossStoreId(crossStoreOrgId), true);
+
+      orgFilter.append(" and ord.organization.id in (");
+      orgFilter.append(crossStoreOrg);
+      orgFilter.append(")");
+    } else {
+      orgFilter.append(" and ord.$orgId");
+    }
+
+    return orgFilter.toString();
+  }
+
+  protected static String getColumnFilterValue(JSONObject jsonsent, final String columnFilter) {
+    String columnValue = "";
     try {
       if (jsonsent.has("remoteFilters")) {
         JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
@@ -122,8 +162,8 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
           JSONArray columns = filter.getJSONArray("columns");
           for (int j = 0; j < columns.length(); j++) {
             String column = columns.getString(j);
-            if ("orderType".equals(column)) {
-              orderType = filter.getString("value");
+            if (columnFilter.equals(column)) {
+              columnValue = filter.getString("value");
               break;
             }
           }
@@ -132,7 +172,7 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     } catch (Exception e) {
       // Ignored
     }
-    return orderType;
+    return columnValue;
   }
 
   @Override

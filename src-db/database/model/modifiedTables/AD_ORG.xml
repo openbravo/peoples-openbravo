@@ -113,6 +113,13 @@
         <default><![CDATA[-]]></default>
         <onCreateDefault><![CDATA['-']]></onCreateDefault>
       </column>
+      <column name="EM_OBPOS_CROSS_STORE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_ORG" name="EM_OBPOS_CROSS_STORE">
+        <reference local="EM_OBPOS_CROSS_STORE" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_CANCRCPTEMP">
         <reference local="EM_OBPOS_CANC_RPT_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>

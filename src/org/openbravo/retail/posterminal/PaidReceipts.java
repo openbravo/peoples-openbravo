@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -210,6 +210,9 @@ public class PaidReceipts extends JSONProcessSimple {
           OBCriteria<OrderLineTax> qTaxes = OBDal.getInstance().createCriteria(OrderLineTax.class);
           qTaxes.add(Restrictions.eq(OrderLineTax.PROPERTY_SALESORDERLINE + ".id",
               (String) paidReceiptLine.getString("lineId")));
+          if (jsonsent.has("crossStore")) {
+            qTaxes.setFilterOnReadableOrganization(false);
+          }
           qTaxes.addOrder(Order.asc(OrderLineTax.PROPERTY_LINENO));
           JSONArray taxes = new JSONArray();
           for (OrderLineTax tax : qTaxes.list()) {
@@ -232,6 +235,9 @@ public class PaidReceipts extends JSONProcessSimple {
               .createCriteria(OrderLineOffer.class);
           qPromotions.add(Restrictions.eq(OrderLineOffer.PROPERTY_SALESORDERLINE + ".id",
               (String) paidReceiptLine.getString("lineId")));
+          if (jsonsent.has("crossStore")) {
+            qPromotions.setFilterOnReadableOrganization(false);
+          }
           qPromotions.addOrder(Order.asc(OrderLineOffer.PROPERTY_LINENO));
           JSONArray promotions = new JSONArray();
           boolean hasPromotions = false;

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2018 Openbravo S.L.U.
+ * Copyright (C) 2017-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -30,10 +30,16 @@ enyo.kind({
     if (!this.initialized) {
       this.inherited(arguments);
       this.getFilterSelectorTableHeader().clearFilter();
+      var store = _.find(OB.Model.OrderFilter.getProperties(), function (prop) {
+        return prop.name === 'store';
+      }, this);
+      store.preset.id = OB.MobileApp.model.get('terminal').organization;
+      store.preset.name = 'This Store (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')';
     }
   },
   init: function (model) {
     this.model = model;
+    this.crossStoreInfo = false;
   }
 });
 
@@ -48,6 +54,13 @@ enyo.kind({
       style: 'float: left; width: 100%; padding: 5px; ',
       components: [{
         style: 'padding-bottom: 3px',
+        components: [{
+          style: 'float: left; padding-left:105px; font-weight: bold; color: blue',
+          name: 'store'
+        }, {
+          style: 'clear: both;'
+        }]
+      }, {
         components: [{
           style: 'float: left; width: 100px;',
           name: 'date'
@@ -84,6 +97,12 @@ enyo.kind({
     orderType = OB.MobileApp.model.get('orderType').find(function (ot) {
       return ot.id === me.model.get('orderType');
     }).name;
+
+    if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo) {
+      this.$.store.setContent(this.model.get('orgId') === OB.MobileApp.model.get('terminal').organization ? 'This Store (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')' : this.model.get('store'));
+    } else {
+      this.$.store.setContent('');
+    }
 
     this.$.date.setContent(OB.I18N.formatDate(orderDate));
     this.$.documentNo.setContent(this.model.get('documentNo'));
@@ -307,8 +326,16 @@ enyo.kind({
     this.receiptList = new Backbone.Collection();
     this.$[this.getNameOfReceiptsListItemPrinter()].setCollection(this.receiptList);
   },
-  actionPrePrint: function () {
-
+  actionPrePrint: function (data) {
+    this.owner.owner.crossStoreInfo = false;
+    if (data && data.length > 0) {
+      _.each(data.models, function (model) {
+        if (OB.MobileApp.model.get('terminal').organization !== model.attributes.orgId) {
+          this.owner.owner.crossStoreInfo = true;
+          return;
+        }
+      }, this);
+    }
   }
 });
 
@@ -342,7 +369,8 @@ enyo.kind({
       function loadOrder(model) {
         OB.UTIL.showLoading(true);
         process.exec({
-          orderid: model.get('id')
+          orderid: model.get('id'),
+          crossStore: OB.MobileApp.model.get('terminal').organization !== model.get('orgId') ? model.get('orgId') : null
         }, function (data) {
           if (data && data[0]) {
             if (me.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -376,8 +404,25 @@ enyo.kind({
         });
         return true;
       }
-      OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder, undefined, undefined, true);
-      return true;
+
+      if (this.owner.owner.crossStoreInfo && OB.MobileApp.model.get('terminal').organization !== model.get('orgId')) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStoreReturn'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [model.get('documentNo'), model.get('store')]), [{
+          label: OB.I18N.getLabel('OBMOBC_Continue'),
+          isConfirmButton: true,
+          action: function () {
+            OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder, undefined, undefined, true);
+            return true;
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          action: function () {
+            OB.POS.navigate('retail.pointofsale');
+          }
+        }]);
+      } else {
+        OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder, undefined, undefined, true);
+        return true;
+      }
     }, this);
 
     this.setDefaultFilters([{
@@ -413,7 +458,19 @@ enyo.kind({
     this.model = model;
     this.inherited(arguments);
     this.receiptList.on('click', function (model) {
-      OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, 'orderSelector');
+      if (this.owner.owner.crossStoreInfo && OB.MobileApp.model.get('terminal').organization !== model.get('orgId')) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStorePayment'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [model.get('documentNo'), model.get('store')]), [{
+          label: OB.I18N.getLabel('OBMOBC_Continue'),
+          isConfirmButton: true,
+          action: function () {
+            OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, 'orderSelector');
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
+      } else {
+        OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, 'orderSelector');
+      }
     }, this);
   }
 });
@@ -482,6 +539,7 @@ enyo.kind({
   model: OB.Model.OrderFilter,
   initComponents: function () {
     this.inherited(arguments);
+    OB.UTIL.hideStoreFilter(OB.Model.OrderFilter.getProperties());
     this.setFilters(OB.Model.OrderFilter.getProperties());
   }
 });
@@ -492,6 +550,7 @@ enyo.kind({
   model: OB.Model.VReturnsFilter,
   initComponents: function () {
     this.inherited(arguments);
+    OB.UTIL.hideStoreFilter(OB.Model.VReturnsFilter.getProperties());
     this.setFilters(OB.Model.VReturnsFilter.getProperties());
   }
 });
