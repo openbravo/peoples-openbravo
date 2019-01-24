@@ -52,7 +52,8 @@ public class ServicesModifyTaxCopyConfiguration extends BaseProcessActionHandler
       log.debug("{}", jsonRequest);
 
       final JSONArray selectedLines = jsonRequest.getJSONObject("_params")
-          .getJSONObject("servicesModifyTax").getJSONArray("_selection");
+          .getJSONObject("servicesModifyTax")
+          .getJSONArray("_selection");
       if (selectedLines.length() == 0) {
         errorMessage.put(SEVERITY, "error");
         errorMessage.put("title", OBMessageUtils.messageBD("NotSelected"));
@@ -60,15 +61,15 @@ public class ServicesModifyTaxCopyConfiguration extends BaseProcessActionHandler
         return jsonRequest;
       }
 
-      final Product serviceProduct = OBDal.getInstance().getProxy(Product.class,
-          jsonRequest.getString("inpmProductId"));
+      final Product serviceProduct = OBDal.getInstance()
+          .getProxy(Product.class, jsonRequest.getString("inpmProductId"));
 
       for (int i = 0; i < selectedLines.length(); i++) {
         final JSONObject selectedLine = selectedLines.getJSONObject(i);
         log.debug("{}", selectedLine);
 
-        final Product targetProduct = OBDal.getInstance().getProxy(Product.class,
-            selectedLine.getString(Product.PROPERTY_ID));
+        final Product targetProduct = OBDal.getInstance()
+            .getProxy(Product.class, selectedLine.getString(Product.PROPERTY_ID));
         appendConfig(serviceProduct, targetProduct);
       }
 
@@ -104,12 +105,12 @@ public class ServicesModifyTaxCopyConfiguration extends BaseProcessActionHandler
     hqlQueryDelete.setParameter("productId", targetProduct.getId());
     hqlQueryDelete.executeUpdate();
     // Add new configuration
-    OBCriteria<ProductServiceLinked> obc = OBDal.getInstance().createCriteria(
-        ProductServiceLinked.class);
+    OBCriteria<ProductServiceLinked> obc = OBDal.getInstance()
+        .createCriteria(ProductServiceLinked.class);
     obc.add(Restrictions.eq(ProductServiceLinked.PROPERTY_PRODUCT, sourceProduct));
     for (ProductServiceLinked sourceProductServiceLinked : obc.list()) {
-      ProductServiceLinked targetProductServiceLinked = OBProvider.getInstance().get(
-          ProductServiceLinked.class);
+      ProductServiceLinked targetProductServiceLinked = OBProvider.getInstance()
+          .get(ProductServiceLinked.class);
       targetProductServiceLinked.setOrganization(targetProduct.getOrganization());
       targetProductServiceLinked.setProduct(targetProduct);
       targetProductServiceLinked

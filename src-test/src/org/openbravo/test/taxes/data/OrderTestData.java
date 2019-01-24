@@ -34,9 +34,10 @@ public class OrderTestData {
   private final List<OrderLineTestData> lines;
   private final List<OrderLineRelTestData> relations;
 
-  public OrderTestData(final String customer, final String location, final String priceList, final String expectedNet,
-      final String expectedGross, final String expectedNet2, final String expectedGross2,
-      final List<OrderLineTestData> lines, final List<OrderLineRelTestData> relations) {
+  public OrderTestData(final String customer, final String location, final String priceList,
+      final String expectedNet, final String expectedGross, final String expectedNet2,
+      final String expectedGross2, final List<OrderLineTestData> lines,
+      final List<OrderLineRelTestData> relations) {
     this.customer = customer;
     this.location = location;
     this.priceList = priceList;
@@ -48,9 +49,9 @@ public class OrderTestData {
     this.relations = relations;
   }
 
-  public OrderTestData(final String customer, final String location, final String priceList, final String expectedNet,
-      final String expectedGross, final String expectedNet2, final String expectedGross2,
-      final List<OrderLineTestData> lines) {
+  public OrderTestData(final String customer, final String location, final String priceList,
+      final String expectedNet, final String expectedGross, final String expectedNet2,
+      final String expectedGross2, final List<OrderLineTestData> lines) {
     this(customer, location, priceList, expectedNet, expectedGross, expectedNet2, expectedGross2,
         lines, new ArrayList<OrderLineRelTestData>());
   }

@@ -89,66 +89,51 @@ public class ModifyTaxesTest extends OBBaseTest {
   @Parameters(name = "idx:{0} name:{1}")
   public static Collection<Object[]> params() {
     return Arrays.asList(new Object[][] { //
-            {
-                "0001",
-                "Modify Taxes. Test 1.",
-                new OrderTestData(
-                    //
-                    CUSTOMER_A, LOCATION_CUSTOMER_A, PRICELIST_SALES, "13.00", "14.63", "13.00",
-                    "14.11", //
-                    Arrays.asList(
-                        //
-                        new OrderLineTestData(PRODUCT_FGA, TAX_VAT3, "1.00", "3.00", TAX_VAT21,
-                            "3.00", "0.00", TAX_VAT3PLUS05, "3.00", "0.00"), //
-                        new OrderLineTestData(PRODUCT_INST001, TAX_VAT10, "1.00", "10.00",
-                            TAX_VAT10, "10.00", "0.00", TAX_VAT10, "10.00", "0.00")), //
-                    Arrays.asList(new OrderLineRelTestData(1, 0))) }, //
-            {
-                "0002",
-                "Modify Taxes. Test 2. Including taxes.",
-                new OrderTestData(
-                    //
-                    CUSTOMER_A, LOCATION_CUSTOMER_A, PRICELIST_INCTAXES, "12.00", "13.52", "11.99",
-                    "13.00", //
-                    Arrays.asList(
-                        //
-                        new OrderLineTestData(PRODUCT_FGA, TAX_VAT3, "1.00", "3.00", TAX_VAT21,
-                            "2.91", "3.52", TAX_VAT3PLUS05, "2.90", "3.00"), new OrderLineTestData(
-                            PRODUCT_INST001, TAX_VAT10, "1.00", "10.00", TAX_VAT10, "9.09",
-                            "10.00", TAX_VAT10, "9.09", "10.00")), Arrays
-                        .asList(new OrderLineRelTestData(1, 0))) }, //
-            {
-                "0003",
-                "Modify Taxes. Test 3.",
-                new OrderTestData(
-                    //
-                    CUSTOMER_A, LOCATION_CUSTOMER_A, PRICELIST_SALES, "16.00", "17.18", "16.00",
-                    "17.18", //
-                    Arrays.asList(
-                        //
-                        new OrderLineTestData(PRODUCT_FGA, TAX_VAT3, "2.00", "3.00", TAX_VAT3,
-                            "6.00", "0.00", TAX_VAT3, "6.00", "0.00"), //
-                        new OrderLineTestData(PRODUCT_INST002, TAX_VAT10, "1.00", "10.00",
-                            TAX_VAT10, "10.00", "0.00", TAX_VAT10, "10.00", "0.00")), //
-                    Arrays.asList(new OrderLineRelTestData(1, 0))) }, //
-            {
-                "0004",
-                "Modify Taxes. Test 4. Including taxes.",
-                new OrderTestData(
-                    //
-                    CUSTOMER_A, LOCATION_CUSTOMER_A, PRICELIST_INCTAXES, "14.92", "16.00", "14.92",
-                    "16.00", //
-                    Arrays.asList(
-                        //
-                        new OrderLineTestData(PRODUCT_FGA, TAX_VAT3, "2.00", "3.00", TAX_VAT3,
-                            "5.83", "6.00", TAX_VAT3, "5.83", "6.00"), //
-                        new OrderLineTestData(PRODUCT_INST002, TAX_VAT10, "1.00", "10.00",
-                            TAX_VAT10, "9.09", "10.00", TAX_VAT10, "9.09", "10.00")), //
-                    Arrays.asList(new OrderLineRelTestData(1, 0))) }, //
-        });
+        { "0001", "Modify Taxes. Test 1.", new OrderTestData(
+            //
+            CUSTOMER_A, LOCATION_CUSTOMER_A, PRICELIST_SALES, "13.00", "14.63", "13.00", "14.11", //
+            Arrays.asList(
+                //
+                new OrderLineTestData(PRODUCT_FGA, TAX_VAT3, "1.00", "3.00", TAX_VAT21, "3.00",
+                    "0.00", TAX_VAT3PLUS05, "3.00", "0.00"), //
+                new OrderLineTestData(PRODUCT_INST001, TAX_VAT10, "1.00", "10.00", TAX_VAT10,
+                    "10.00", "0.00", TAX_VAT10, "10.00", "0.00")), //
+            Arrays.asList(new OrderLineRelTestData(1, 0))) }, //
+        { "0002", "Modify Taxes. Test 2. Including taxes.", new OrderTestData(
+            //
+            CUSTOMER_A, LOCATION_CUSTOMER_A, PRICELIST_INCTAXES, "12.00", "13.52", "11.99", "13.00", //
+            Arrays.asList(
+                //
+                new OrderLineTestData(PRODUCT_FGA, TAX_VAT3, "1.00", "3.00", TAX_VAT21, "2.91",
+                    "3.52", TAX_VAT3PLUS05, "2.90", "3.00"),
+                new OrderLineTestData(PRODUCT_INST001, TAX_VAT10, "1.00", "10.00", TAX_VAT10,
+                    "9.09", "10.00", TAX_VAT10, "9.09", "10.00")),
+            Arrays.asList(new OrderLineRelTestData(1, 0))) }, //
+        { "0003", "Modify Taxes. Test 3.", new OrderTestData(
+            //
+            CUSTOMER_A, LOCATION_CUSTOMER_A, PRICELIST_SALES, "16.00", "17.18", "16.00", "17.18", //
+            Arrays.asList(
+                //
+                new OrderLineTestData(PRODUCT_FGA, TAX_VAT3, "2.00", "3.00", TAX_VAT3, "6.00",
+                    "0.00", TAX_VAT3, "6.00", "0.00"), //
+                new OrderLineTestData(PRODUCT_INST002, TAX_VAT10, "1.00", "10.00", TAX_VAT10,
+                    "10.00", "0.00", TAX_VAT10, "10.00", "0.00")), //
+            Arrays.asList(new OrderLineRelTestData(1, 0))) }, //
+        { "0004", "Modify Taxes. Test 4. Including taxes.", new OrderTestData(
+            //
+            CUSTOMER_A, LOCATION_CUSTOMER_A, PRICELIST_INCTAXES, "14.92", "16.00", "14.92", "16.00", //
+            Arrays.asList(
+                //
+                new OrderLineTestData(PRODUCT_FGA, TAX_VAT3, "2.00", "3.00", TAX_VAT3, "5.83",
+                    "6.00", TAX_VAT3, "5.83", "6.00"), //
+                new OrderLineTestData(PRODUCT_INST002, TAX_VAT10, "1.00", "10.00", TAX_VAT10,
+                    "9.09", "10.00", TAX_VAT10, "9.09", "10.00")), //
+            Arrays.asList(new OrderLineRelTestData(1, 0))) }, //
+    });
   }
 
-  public ModifyTaxesTest(final String testNumber, final String testDescription, final OrderTestData data) {
+  public ModifyTaxesTest(final String testNumber, final String testDescription,
+      final OrderTestData data) {
     this.testNumber = testNumber;
     this.testDescription = testDescription;
     this.data = data;
@@ -161,8 +146,8 @@ public class ModifyTaxesTest extends OBBaseTest {
 
     final Order order = OBProvider.getInstance().get(Order.class);
     order.setDocumentNo("MTTEST/" + testNumber);
-    order.setBusinessPartner(OBDal.getInstance()
-        .getProxy(BusinessPartner.class, data.getCustomer()));
+    order.setBusinessPartner(
+        OBDal.getInstance().getProxy(BusinessPartner.class, data.getCustomer()));
     order.setPartnerAddress(OBDal.getInstance().getProxy(Location.class, data.getLocation()));
     order.setCurrency(OBDal.getInstance().getProxy(Currency.class, EURO_ID));
     order.setPaymentTerms(OBDal.getInstance().getProxy(PaymentTerm.class, PAYMENT_TERM));
@@ -190,8 +175,8 @@ public class ModifyTaxesTest extends OBBaseTest {
       OrderLine orderLine = OBProvider.getInstance().get(OrderLine.class);
       Product product1 = OBDal.getInstance().get(Product.class, linedata.getProduct());
       orderLine.setLineNo(10L * (long) ++index);
-      orderLine.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class,
-          data.getCustomer()));
+      orderLine.setBusinessPartner(
+          OBDal.getInstance().getProxy(BusinessPartner.class, data.getCustomer()));
       orderLine.setPartnerAddress(OBDal.getInstance().getProxy(Location.class, data.getLocation()));
       orderLine.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, WAREHOUSE_SPAIN));
       orderLine.setOrderDate(DF.parse("2018-01-01"));
@@ -217,8 +202,8 @@ public class ModifyTaxesTest extends OBBaseTest {
 
     List<OrderlineServiceRelation> allrelations = new ArrayList<>();
     for (OrderLineRelTestData rel : data.getRelations()) {
-      OrderlineServiceRelation relation = OBProvider.getInstance().get(
-          OrderlineServiceRelation.class);
+      OrderlineServiceRelation relation = OBProvider.getInstance()
+          .get(OrderlineServiceRelation.class);
       relation.setQuantity(new BigDecimal(data.getLines().get(rel.getLineRelated()).getQuantity()));
       relation
           .setAmount(new BigDecimal(data.getLines().get(rel.getLineRelated()).getExpectedNet()));
@@ -242,13 +227,13 @@ public class ModifyTaxesTest extends OBBaseTest {
 
     index = 0;
     for (OrderLineTestData linedata : data.getLines()) {
-      assertThat(testDescription + " Line " + Long.toString(index) + " Tax", alllines.get(index)
-          .getTax().getId(), comparesEqualTo(linedata.getExpectedTax()));
-      assertThat(testDescription + " Line " + Long.toString(index) + " LineNetAmount", alllines
-          .get(index).getLineNetAmount(),
+      assertThat(testDescription + " Line " + Long.toString(index) + " Tax",
+          alllines.get(index).getTax().getId(), comparesEqualTo(linedata.getExpectedTax()));
+      assertThat(testDescription + " Line " + Long.toString(index) + " LineNetAmount",
+          alllines.get(index).getLineNetAmount(),
           comparesEqualTo(new BigDecimal(linedata.getExpectedNet())));
-      assertThat(testDescription + " Line " + Long.toString(index) + " LineGrossAmount", alllines
-          .get(index).getLineGrossAmount(),
+      assertThat(testDescription + " Line " + Long.toString(index) + " LineGrossAmount",
+          alllines.get(index).getLineGrossAmount(),
           comparesEqualTo(new BigDecimal(linedata.getExpectedGross())));
       index++;
     }
@@ -271,13 +256,13 @@ public class ModifyTaxesTest extends OBBaseTest {
 
     index = 0;
     for (OrderLineTestData linedata : data.getLines()) {
-      assertThat(testDescription + " Line " + Long.toString(index) + " Tax", alllines.get(index)
-          .getTax().getId(), comparesEqualTo(linedata.getExpectedTax2()));
-      assertThat(testDescription + " Line " + Long.toString(index) + " LineNetAmount", alllines
-          .get(index).getLineNetAmount(),
+      assertThat(testDescription + " Line " + Long.toString(index) + " Tax",
+          alllines.get(index).getTax().getId(), comparesEqualTo(linedata.getExpectedTax2()));
+      assertThat(testDescription + " Line " + Long.toString(index) + " LineNetAmount",
+          alllines.get(index).getLineNetAmount(),
           comparesEqualTo(new BigDecimal(linedata.getExpectedNet2())));
-      assertThat(testDescription + " Line " + Long.toString(index) + " LineGrossAmount", alllines
-          .get(index).getLineGrossAmount(),
+      assertThat(testDescription + " Line " + Long.toString(index) + " LineGrossAmount",
+          alllines.get(index).getLineGrossAmount(),
           comparesEqualTo(new BigDecimal(linedata.getExpectedGross2())));
       index++;
     }

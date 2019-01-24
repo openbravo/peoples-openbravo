@@ -53,7 +53,8 @@ public class RelateProductCatTaxToServiceProduct extends BaseProcessActionHandle
       log.debug("{}", jsonRequest);
 
       final JSONArray selectedLines = jsonRequest.getJSONObject("_params")
-          .getJSONObject("relateProdCatNewTax").getJSONArray("_selection");
+          .getJSONObject("relateProdCatNewTax")
+          .getJSONArray("_selection");
       if (selectedLines.length() == 0) {
         errorMessage.put(SEVERITY, "error");
         errorMessage.put("title", OBMessageUtils.messageBD("NotSelected"));
@@ -61,23 +62,24 @@ public class RelateProductCatTaxToServiceProduct extends BaseProcessActionHandle
         return jsonRequest;
       }
 
-      final Product serviceProduct = OBDal.getInstance().getProxy(Product.class,
-          jsonRequest.getString("inpmProductId"));
-      final Client serviceProductClient = OBDal.getInstance().getProxy(Client.class,
-          jsonRequest.getString("inpadClientId"));
-      final Organization serviceProductOrg = OBDal.getInstance().getProxy(Organization.class,
-          jsonRequest.getString("inpadOrgId"));
+      final Product serviceProduct = OBDal.getInstance()
+          .getProxy(Product.class, jsonRequest.getString("inpmProductId"));
+      final Client serviceProductClient = OBDal.getInstance()
+          .getProxy(Client.class, jsonRequest.getString("inpadClientId"));
+      final Organization serviceProductOrg = OBDal.getInstance()
+          .getProxy(Organization.class, jsonRequest.getString("inpadOrgId"));
 
       for (int i = 0; i < selectedLines.length(); i++) {
         final JSONObject selectedLine = selectedLines.getJSONObject(i);
         log.debug("{}", selectedLine);
 
-        final ProductCategory productCategory = OBDal.getInstance().getProxy(ProductCategory.class,
-            selectedLine.getString(ProductCategory.PROPERTY_ID));
-        final TaxCategory taxCategory = OBDal.getInstance().getProxy(TaxCategory.class,
-            selectedLine.getString("taxCategory"));
+        final ProductCategory productCategory = OBDal.getInstance()
+            .getProxy(ProductCategory.class, selectedLine.getString(ProductCategory.PROPERTY_ID));
+        final TaxCategory taxCategory = OBDal.getInstance()
+            .getProxy(TaxCategory.class, selectedLine.getString("taxCategory"));
 
-        ProductServiceLinked productServiceLinked = OBProvider.getInstance().get(ProductServiceLinked.class);
+        ProductServiceLinked productServiceLinked = OBProvider.getInstance()
+            .get(ProductServiceLinked.class);
         productServiceLinked.setClient(serviceProductClient);
         productServiceLinked.setOrganization(serviceProductOrg);
         productServiceLinked.setProduct(serviceProduct);

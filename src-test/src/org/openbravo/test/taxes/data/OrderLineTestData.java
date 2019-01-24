@@ -32,9 +32,10 @@ public class OrderLineTestData {
   private final String expectedNet2;
   private final String expectedGross2;
 
-  public OrderLineTestData(final String product, final String tax, final String quantity, final String price,
-      final String expectedTax, final String expectedNet, final String expectedGross, final String expectedTax2,
-      final String expectedNet2, final String expectedGross2) {
+  public OrderLineTestData(final String product, final String tax, final String quantity,
+      final String price, final String expectedTax, final String expectedNet,
+      final String expectedGross, final String expectedTax2, final String expectedNet2,
+      final String expectedGross2) {
     super();
     this.product = product;
     this.tax = tax;
