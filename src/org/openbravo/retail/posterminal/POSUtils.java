@@ -80,8 +80,8 @@ public class POSUtils {
     try {
       OBContext.setAdminMode(false);
 
-      OBQuery<OBPOSApplications> obq = OBDal.getInstance().createQuery(OBPOSApplications.class,
-          "searchKey = :value");
+      OBQuery<OBPOSApplications> obq = OBDal.getInstance()
+          .createQuery(OBPOSApplications.class, "searchKey = :value");
       obq.setNamedParameter("value", searchKey);
 
       List<OBPOSApplications> posApps = obq.list();
@@ -104,8 +104,8 @@ public class POSUtils {
     try {
       OBContext.setAdminMode(false);
 
-      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-          posTerminalId);
+      OBPOSApplications posTerminal = OBDal.getInstance()
+          .get(OBPOSApplications.class, posTerminalId);
 
       return posTerminal;
 
@@ -252,14 +252,12 @@ public class POSUtils {
       SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
       Query<PriceListVersion> priceListVersionQuery = OBDal.getInstance()
           .getSession()
-          .createQuery(
-              "from PricingPriceListVersion AS plv "
-                  + "where plv.priceList.id ='"
-                  + priceListId
-                  + "' and plv.active=true and plv.validFromDate = (select max(pplv.validFromDate) "
-                  + "from PricingPriceListVersion as pplv where pplv.active=true and pplv.priceList.id = '"
-                  + priceListId + "' and to_char(pplv.validFromDate,'yyyy-mm-dd') <= '"
-                  + format.format(terminalDate) + "' )", PriceListVersion.class);
+          .createQuery("from PricingPriceListVersion AS plv " + "where plv.priceList.id ='"
+              + priceListId
+              + "' and plv.active=true and plv.validFromDate = (select max(pplv.validFromDate) "
+              + "from PricingPriceListVersion as pplv where pplv.active=true and pplv.priceList.id = '"
+              + priceListId + "' and to_char(pplv.validFromDate,'yyyy-mm-dd') <= '"
+              + format.format(terminalDate) + "' )", PriceListVersion.class);
       for (PriceListVersion plv : priceListVersionQuery.list()) {
         return plv;
       }
@@ -299,8 +297,8 @@ public class POSUtils {
     try {
       OBContext.setAdminMode(false);
       OBPOSApplications posterminal = getTerminalById(posterminalId);
-      TerminalType terminalType = OBDal.getInstance().get(TerminalType.class,
-          posterminal.getObposTerminaltype().getId());
+      TerminalType terminalType = OBDal.getInstance()
+          .get(TerminalType.class, posterminal.getObposTerminaltype().getId());
       if (terminalType.getObretcoProductlist() != null) {
         return terminalType.getObretcoProductlist();
       } else {
@@ -322,8 +320,8 @@ public class POSUtils {
   }
 
   public static int getLastDocumentNumberForPOS(String searchKey, List<String> documentTypeIds) {
-    OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance().createCriteria(
-        OBPOSApplications.class);
+    OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance()
+        .createCriteria(OBPOSApplications.class);
     termCrit.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, searchKey));
     // obpos_applications.value has unique constraint
     OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
@@ -414,8 +412,8 @@ public class POSUtils {
 
   public static int getLastDocumentNumberQuotationForPOS(String searchKey,
       List<String> documentTypeIds) {
-    OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance().createCriteria(
-        OBPOSApplications.class);
+    OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance()
+        .createCriteria(OBPOSApplications.class);
     termCrit.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, searchKey));
     // obpos_applications.value has unique constraint
     OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
@@ -502,9 +500,10 @@ public class POSUtils {
     return maxDocNo;
   }
 
-  public static int getLastDocumentNumberReturnForPOS(String searchKey, List<String> documentTypeIds) {
-    OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance().createCriteria(
-        OBPOSApplications.class);
+  public static int getLastDocumentNumberReturnForPOS(String searchKey,
+      List<String> documentTypeIds) {
+    OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance()
+        .createCriteria(OBPOSApplications.class);
     termCrit.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, searchKey));
     // obpos_applications.value has unique constraint
     OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
@@ -625,8 +624,9 @@ public class POSUtils {
     OBContext.setAdminMode(false);
     try {
       Organization org = pOSTerminal.getOrganization();
-      OBQuery<OrgWarehouse> warehouses = OBDal.getInstance().createQuery(OrgWarehouse.class,
-          " e where e.organization=:org and e.warehouse.active=true order by priority, id");
+      OBQuery<OrgWarehouse> warehouses = OBDal.getInstance()
+          .createQuery(OrgWarehouse.class,
+              " e where e.organization=:org and e.warehouse.active=true order by priority, id");
       warehouses.setNamedParameter("org", org);
       List<OrgWarehouse> warehouseList = warehouses.list();
       if (warehouseList.size() == 0) {
@@ -727,14 +727,12 @@ public class POSUtils {
       @SuppressWarnings("rawtypes")
       Query currencyRateQuery = OBDal.getInstance()
           .getSession()
-          .createQuery(
-              "select obpos_currency_rate(coalesce(c, p.paymentMethod.currency), "
-                  + "p.obposApplications.organization.currency,"
-                  + " null, null, p.obposApplications.client.id, "
-                  + "p.obposApplications.organization.id) as rate, obpos_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate"
-                  + " from OBPOS_App_Payment as p left join p.financialAccount as f "
-                  + "left join f.currency as c where p.obposApplications.id ='" + posTerminalId
-                  + "'");
+          .createQuery("select obpos_currency_rate(coalesce(c, p.paymentMethod.currency), "
+              + "p.obposApplications.organization.currency,"
+              + " null, null, p.obposApplications.client.id, "
+              + "p.obposApplications.organization.id) as rate, obpos_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate"
+              + " from OBPOS_App_Payment as p left join p.financialAccount as f "
+              + "left join f.currency as c where p.obposApplications.id ='" + posTerminalId + "'");
 
       currencyRateQuery.list(); // No need to get the result, just execute the query
 
@@ -760,11 +758,10 @@ public class POSUtils {
   public static void setDefaultPaymentType(JSONObject jsonorder, Order order) {
     try {
       OBQuery<OBPOSAppPayment> paymentQuery = OBDal.getInstance()
-          .createQuery(
-              OBPOSAppPayment.class,
+          .createQuery(OBPOSAppPayment.class,
               "as e where e.obposApplications.organization = :organization and e.financialAccount.currency = :currency order by e.id");
-      Organization organization = OBDal.getInstance().get(Organization.class,
-          jsonorder.getString("organization"));
+      Organization organization = OBDal.getInstance()
+          .get(Organization.class, jsonorder.getString("organization"));
       paymentQuery.setNamedParameter("organization", organization);
       paymentQuery.setNamedParameter("currency", order.getOrganization().getCurrency());
       paymentQuery.setMaxResult(1);
@@ -772,11 +769,10 @@ public class POSUtils {
 
       if (defaultPaymentType != null) {
         JSONObject paymentTypeValues = new JSONObject();
-        paymentTypeValues.put("paymentMethodId", defaultPaymentType.getPaymentMethod()
-            .getPaymentMethod()
-            .getId());
-        paymentTypeValues.put("financialAccountId", defaultPaymentType.getFinancialAccount()
-            .getId());
+        paymentTypeValues.put("paymentMethodId",
+            defaultPaymentType.getPaymentMethod().getPaymentMethod().getId());
+        paymentTypeValues.put("financialAccountId",
+            defaultPaymentType.getFinancialAccount().getId());
         jsonorder.put("defaultPaymentType", paymentTypeValues);
       } else {
         throw new OBException(OBMessageUtils.messageBD("OBPOS_NoPaymentMethodInStore"));
@@ -801,9 +797,8 @@ public class POSUtils {
               + "from Characteristic as ch " //
               + "where ch.obposFilteronwebpos ='Y' and ch.client.id = :client ", Long.class);
 
-      queryNumberOfChToFilterInWebPos.setParameter("client", OBContext.getOBContext()
-          .getCurrentClient()
-          .getId());
+      queryNumberOfChToFilterInWebPos.setParameter("client",
+          OBContext.getOBContext().getCurrentClient().getId());
 
       result = queryNumberOfChToFilterInWebPos.uniqueResult();
     } catch (Exception e) {
@@ -817,8 +812,8 @@ public class POSUtils {
 
   public static boolean cashupErrorsExistInTerminal(String posId) {
     OBPOSApplications terminal = OBDal.getInstance().getProxy(OBPOSApplications.class, posId);
-    OBCriteria<OBPOSErrors> errorsInPOSWindow = OBDal.getInstance().createCriteria(
-        OBPOSErrors.class);
+    OBCriteria<OBPOSErrors> errorsInPOSWindow = OBDal.getInstance()
+        .createCriteria(OBPOSErrors.class);
     errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
     errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
     errorsInPOSWindow.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
@@ -826,8 +821,8 @@ public class POSUtils {
     if (errorsInPOSWindow.list().size() > 0) {
       return true;
     }
-    OBCriteria<ImportEntry> errorsInImportEntry = OBDal.getInstance().createCriteria(
-        ImportEntry.class);
+    OBCriteria<ImportEntry> errorsInImportEntry = OBDal.getInstance()
+        .createCriteria(ImportEntry.class);
     errorsInImportEntry.add(Restrictions.eq(ImportEntry.PROPERTY_OBPOSPOSTERMINAL, terminal));
     errorsInImportEntry.add(Restrictions.eq(ImportEntry.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
     errorsInImportEntry.add(Restrictions.eq(ImportEntry.PROPERTY_IMPORTSTATUS, "Error"));
@@ -843,8 +838,8 @@ public class POSUtils {
 
     boolean isSynchronizeModeActive;
     try {
-      isSynchronizeModeActive = "Y".equals(Preferences.getPreferenceValue(
-          "OBMOBC_SynchronizedMode", true, OBContext.getOBContext().getCurrentClient(),
+      isSynchronizeModeActive = "Y".equals(Preferences.getPreferenceValue("OBMOBC_SynchronizedMode",
+          true, OBContext.getOBContext().getCurrentClient(),
           OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), null));
     } catch (PropertyNotFoundException prop) {

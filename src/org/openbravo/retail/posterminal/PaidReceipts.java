@@ -95,8 +95,9 @@ public class PaidReceipts extends JSONProcessSimple {
           .getName();
       if (MobileServerController.getInstance().isThisAStoreServer()
           && ORIGIN_CENTRAL.equals(jsonsent.optString("originServer"))) {
-        return MobileServerRequestExecutor.getInstance().executeCentralRequest(
-            MobileServerUtils.OBWSPATH + PaidReceipts.class.getName(), jsonsent);
+        return MobileServerRequestExecutor.getInstance()
+            .executeCentralRequest(MobileServerUtils.OBWSPATH + PaidReceipts.class.getName(),
+                jsonsent);
       }
     }
     JSONObject result = new JSONObject();
@@ -108,9 +109,8 @@ public class PaidReceipts extends JSONProcessSimple {
       final DateFormat parseDateFormat = (DateFormat) POSUtils.dateFormatUTC.clone();
       parseDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
       final DateFormat paymentDateFormat = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
-      paymentDateFormat.setTimeZone(TimeZone.getTimeZone(Calendar.getInstance()
-          .getTimeZone()
-          .getID()));
+      paymentDateFormat
+          .setTimeZone(TimeZone.getTimeZone(Calendar.getInstance().getTimeZone().getID()));
 
       String orderid = jsonsent.getString("orderid");
       if (jsonsent.has("pos") && jsonsent.getString("pos") != null) {
@@ -152,7 +152,8 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONArray listpaidReceiptsLines = new JSONArray();
 
         // get the details of each line
-        HQLPropertyList hqlPropertiesLines = ModelExtensionUtils.getPropertyExtensions(extensionsLines);
+        HQLPropertyList hqlPropertiesLines = ModelExtensionUtils
+            .getPropertyExtensions(extensionsLines);
         String hqlPaidReceiptsLines = "select " + hqlPropertiesLines.getHqlSelect() + //
             "  from OrderLine as ordLine " + //
             "  left join ordLine.returnReason as returnReason " + //
@@ -174,9 +175,9 @@ public class PaidReceipts extends JSONProcessSimple {
           paidReceiptLine.put("priceIncludesTax", paidReceipt.getBoolean("priceIncludesTax"));
 
           // get shipmentLines for returns
-          HQLPropertyList hqlPropertiesShipLines = ModelExtensionUtils.getPropertyExtensions(extensionsShipLines);
-          String hqlPaidReceiptsShipLines = "select "
-              + hqlPropertiesShipLines.getHqlSelect() //
+          HQLPropertyList hqlPropertiesShipLines = ModelExtensionUtils
+              .getPropertyExtensions(extensionsShipLines);
+          String hqlPaidReceiptsShipLines = "select " + hqlPropertiesShipLines.getHqlSelect() //
               + " from MaterialMgmtShipmentInOutLine as m where salesOrderLine.id= :salesOrderLineId "
               + " and m.shipmentReceipt.isnettingshipment = false";
           OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
@@ -227,8 +228,8 @@ public class PaidReceipts extends JSONProcessSimple {
           paidReceiptLine.put("taxes", taxes);
 
           // promotions per line
-          OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance().createCriteria(
-              OrderLineOffer.class);
+          OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance()
+              .createCriteria(OrderLineOffer.class);
           qPromotions.add(Restrictions.eq(OrderLineOffer.PROPERTY_SALESORDERLINE + ".id",
               (String) paidReceiptLine.getString("lineId")));
           qPromotions.addOrder(Order.asc(OrderLineOffer.PROPERTY_LINENO));
@@ -241,8 +242,8 @@ public class PaidReceipts extends JSONProcessSimple {
             }
 
             JSONObject jsonPromo = new JSONObject();
-            String name = promotion.getPriceAdjustment().getPrintName() != null ? promotion.getPriceAdjustment()
-                .getPrintName()
+            String name = promotion.getPriceAdjustment().getPrintName() != null
+                ? promotion.getPriceAdjustment().getPrintName()
                 : promotion.getPriceAdjustment().getName();
             jsonPromo.put("ruleId", promotion.getPriceAdjustment().getId());
             jsonPromo.put("discountType", promotion.getPriceAdjustment().getDiscountType().getId());
@@ -264,8 +265,8 @@ public class PaidReceipts extends JSONProcessSimple {
           BigDecimal lineAmount;
           if (hasPromotions) {
             // When it has promotions, show line amount without them as they are shown after it
-            lineAmount = (new BigDecimal(paidReceiptLine.optString("quantity")).multiply(new BigDecimal(
-                paidReceiptLine.optString("unitPrice"))));
+            lineAmount = (new BigDecimal(paidReceiptLine.optString("quantity"))
+                .multiply(new BigDecimal(paidReceiptLine.optString("unitPrice"))));
           } else {
             lineAmount = new BigDecimal(paidReceiptLine.optString("lineGrossAmount"));
           }
@@ -274,7 +275,8 @@ public class PaidReceipts extends JSONProcessSimple {
           paidReceiptLine.put("promotions", promotions);
 
           // Related lines
-          HQLPropertyList hqlPropertiesRelatedLines = ModelExtensionUtils.getPropertyExtensions(extensionsRelatedLines);
+          HQLPropertyList hqlPropertiesRelatedLines = ModelExtensionUtils
+              .getPropertyExtensions(extensionsRelatedLines);
           String hqlPaidReceiptsRelatedLines = "SELECT " //
               + hqlPropertiesRelatedLines.getHqlSelect() //
               + " FROM OrderlineServiceRelation AS olsr " //
@@ -290,7 +292,8 @@ public class PaidReceipts extends JSONProcessSimple {
               .createQuery(hqlPaidReceiptsRelatedLines);
           paidReceiptsRelatedLinesQuery.setParameter("salesOrderLineId",
               paidReceiptLine.getString("lineId"));
-          JSONArray relatedLines = hqlPropertiesRelatedLines.getJSONArray(paidReceiptsRelatedLinesQuery);
+          JSONArray relatedLines = hqlPropertiesRelatedLines
+              .getJSONArray(paidReceiptsRelatedLinesQuery);
 
           if (relatedLines.length() > 0) {
             for (int r = 0; r < relatedLines.length(); r++) {
@@ -326,9 +329,9 @@ public class PaidReceipts extends JSONProcessSimple {
         }
         paidReceipt.put("receiptLines", listpaidReceiptsLines);
 
-        HQLPropertyList hqlPropertiesPayments = ModelExtensionUtils.getPropertyExtensions(extensionsPayments);
-        String hqlPaymentsIn = "select "
-            + hqlPropertiesPayments.getHqlSelect()
+        HQLPropertyList hqlPropertiesPayments = ModelExtensionUtils
+            .getPropertyExtensions(extensionsPayments);
+        String hqlPaymentsIn = "select " + hqlPropertiesPayments.getHqlSelect()
             + "from FIN_Payment_ScheduleDetail as scheduleDetail "
             + "join scheduleDetail.paymentDetails as paymentDetail "
             + "join paymentDetail.finPayment as finPayment "
@@ -395,10 +398,11 @@ public class PaidReceipts extends JSONProcessSimple {
               // FIXME: Multicurrency problem, amount always in terminal currency
               BigDecimal objPaymentTrx = BigDecimal.ZERO;
               if (objectIn.getDouble("amount") == objectIn.getDouble("paymentAmount")) {
-                objPaymentTrx = BigDecimal.valueOf(objectIn.getDouble("financialTransactionAmount"));
+                objPaymentTrx = BigDecimal
+                    .valueOf(objectIn.getDouble("financialTransactionAmount"));
               } else {
-                objPaymentTrx = BigDecimal.valueOf(objectIn.getDouble("amount")).multiply(
-                    BigDecimal.valueOf(objectType.getDouble("mulrate")));
+                objPaymentTrx = BigDecimal.valueOf(objectIn.getDouble("amount"))
+                    .multiply(BigDecimal.valueOf(objectType.getDouble("mulrate")));
               }
               paidReceiptPayment.put("amount", objPaymentTrx);
               paidReceiptPayment.put("paymentAmount",
@@ -477,10 +481,11 @@ public class PaidReceipts extends JSONProcessSimple {
               // FIXME: Multicurrency problem, amount always in terminal currency
               BigDecimal objPaymentTrx = BigDecimal.ZERO;
               if (objectIn.getDouble("amount") == objectIn.getDouble("paymentAmount")) {
-                objPaymentTrx = BigDecimal.valueOf(objectIn.getDouble("financialTransactionAmount"));
+                objPaymentTrx = BigDecimal
+                    .valueOf(objectIn.getDouble("financialTransactionAmount"));
               } else {
-                objPaymentTrx = BigDecimal.valueOf(objectIn.getDouble("amount")).multiply(
-                    BigDecimal.valueOf(paymentsType.getDouble("mulrate")));
+                objPaymentTrx = BigDecimal.valueOf(objectIn.getDouble("amount"))
+                    .multiply(BigDecimal.valueOf(paymentsType.getDouble("mulrate")));
               }
               paidReceiptPayment.put("amount", objPaymentTrx);
               paidReceiptPayment.put("paymentAmount",
@@ -537,9 +542,8 @@ public class PaidReceipts extends JSONProcessSimple {
           jsonObjTaxes.put("net", objTaxInfo[2]);
           jsonObjTaxes.put("amount", objTaxInfo[3]);
           jsonObjTaxes.put("name", objTaxInfo[4]);
-          jsonObjTaxes.put("gross",
-              new BigDecimal((String) objTaxInfo[2].toString()).add(new BigDecimal(
-                  (String) objTaxInfo[3].toString())));
+          jsonObjTaxes.put("gross", new BigDecimal((String) objTaxInfo[2].toString())
+              .add(new BigDecimal((String) objTaxInfo[3].toString())));
           jsonObjTaxes.put("cascade", objTaxInfo[5]);
           jsonObjTaxes.put("docTaxAmount", objTaxInfo[6]);
           jsonObjTaxes.put("lineNo", objTaxInfo[7]);

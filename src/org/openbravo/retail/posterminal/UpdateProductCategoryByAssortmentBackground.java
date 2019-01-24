@@ -46,8 +46,8 @@ public class UpdateProductCategoryByAssortmentBackground extends DalBaseProcess 
     try {
       OBContext.setAdminMode(false);
       isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e) {
       log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
@@ -64,12 +64,12 @@ public class UpdateProductCategoryByAssortmentBackground extends DalBaseProcess 
 
       OBContext.setAdminMode(true);
       try {
-        OBCriteria<OBRETCOProductList> assortmentList = OBDal.getInstance().createCriteria(
-            OBRETCOProductList.class);
+        OBCriteria<OBRETCOProductList> assortmentList = OBDal.getInstance()
+            .createCriteria(OBRETCOProductList.class);
         assortmentList.add(Restrictions.eq(OBRETCOProductList.PROPERTY_CLIENT, client));
         if (!org.getId().equals("0")) {
-          assortmentList.add(Restrictions.in(OBRETCOProductList.PROPERTY_ORGANIZATION + ".id",
-              orgtree));
+          assortmentList
+              .add(Restrictions.in(OBRETCOProductList.PROPERTY_ORGANIZATION + ".id", orgtree));
         }
         for (OBRETCOProductList assortment : assortmentList.list()) {
           assortment.getOBRETCOProductcategoryList().clear();
@@ -100,11 +100,11 @@ public class UpdateProductCategoryByAssortmentBackground extends DalBaseProcess 
             int i = 0;
             while (scroll.next()) {
               final String productCategoryId = (String) scroll.get()[0];
-              final ProductCategory productCategory = OBDal.getInstance().get(
-                  ProductCategory.class, productCategoryId);
+              final ProductCategory productCategory = OBDal.getInstance()
+                  .get(ProductCategory.class, productCategoryId);
 
-              final OBRETCOProductcategory productCategoryElement = OBProvider.getInstance().get(
-                  OBRETCOProductcategory.class);
+              final OBRETCOProductcategory productCategoryElement = OBProvider.getInstance()
+                  .get(OBRETCOProductcategory.class);
               productCategoryElement.setClient(assortment.getClient());
               productCategoryElement.setOrganization(assortment.getOrganization());
               productCategoryElement.setProductCategory(productCategory);

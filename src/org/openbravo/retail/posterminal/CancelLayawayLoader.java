@@ -45,13 +45,15 @@ public class CancelLayawayLoader extends OrderLoader {
     boolean useOrderDocumentNoForRelatedDocs = false;
 
     try {
-      useOrderDocumentNoForRelatedDocs = "Y".equals(Preferences.getPreferenceValue(
-          "OBPOS_UseOrderDocumentNoForRelatedDocs", true, OBContext.getOBContext()
-              .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+      useOrderDocumentNoForRelatedDocs = "Y"
+          .equals(Preferences.getPreferenceValue("OBPOS_UseOrderDocumentNoForRelatedDocs", true,
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e1) {
       log.error(
-          "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
+          "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(),
+          e1);
     }
 
     try {
@@ -69,7 +71,8 @@ public class CancelLayawayLoader extends OrderLoader {
       // Do not allow to do a CL in the case that the order was not updated
       final JSONObject canceledOrder = json.getJSONObject("canceledorder");
       final Order oldOrder = OBDal.getInstance().get(Order.class, canceledOrder.getString("id"));
-      final String loaded = canceledOrder.has("loaded") ? canceledOrder.getString("loaded") : null, updated = OBMOBCUtils.convertToUTCDateComingFromServer(oldOrder.getUpdated());
+      final String loaded = canceledOrder.has("loaded") ? canceledOrder.getString("loaded") : null,
+          updated = OBMOBCUtils.convertToUTCDateComingFromServer(oldOrder.getUpdated());
       if (loaded == null || loaded.compareTo(updated) != 0) {
         throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
             "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
@@ -95,8 +98,8 @@ public class CancelLayawayLoader extends OrderLoader {
 
       inverseOrder.setCancelledorder(oldOrder);
 
-      final OBCriteria<OrderLine> orderLineCriteria = OBDal.getInstance().createCriteria(
-          OrderLine.class);
+      final OBCriteria<OrderLine> orderLineCriteria = OBDal.getInstance()
+          .createCriteria(OrderLine.class);
       orderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, oldOrder));
       orderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_OBPOSISDELETED, false));
       for (final OrderLine orderLine : orderLineCriteria.list()) {

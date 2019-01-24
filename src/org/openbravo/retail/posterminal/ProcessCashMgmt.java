@@ -43,8 +43,8 @@ import org.openbravo.retail.config.CashManagementEvents;
 import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "FIN_Finacc_Transaction")
-public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
-    DataSynchronizationImportProcess {
+public class ProcessCashMgmt extends POSDataSynchronizationProcess
+    implements DataSynchronizationImportProcess {
 
   private static final Logger log = LogManager.getLogger();
 
@@ -66,12 +66,11 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
 
     UpdateCashup.getAndUpdateCashUp(jsoncashup.getString("id"), jsoncashup, cashUpDate);
 
-    OBPOSAppPayment paymentMethod = OBDal.getInstance().get(OBPOSAppPayment.class,
-        jsonsent.getString("paymentMethodId"));
-    OBContext.setOBContext(jsonsent.getString("userId"),
-        OBContext.getOBContext().getRole().getId(), OBContext.getOBContext()
-            .getCurrentClient()
-            .getId(), paymentMethod.getObposApplications().getOrganization().getId());
+    OBPOSAppPayment paymentMethod = OBDal.getInstance()
+        .get(OBPOSAppPayment.class, jsonsent.getString("paymentMethodId"));
+    OBContext.setOBContext(jsonsent.getString("userId"), OBContext.getOBContext().getRole().getId(),
+        OBContext.getOBContext().getCurrentClient().getId(),
+        paymentMethod.getObposApplications().getOrganization().getId());
     String description = jsonsent.getString("description");
     if (description.length() > 60) {
       description = description.substring(0, 60);
@@ -86,10 +85,8 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     String cashupId = jsonsent.getString("cashup_id");
     OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
     if (cashup == null) {
-      throw new OBException(
-          "The cashup with ID '"
-              + jsonsent.getString("cashup_id")
-              + "' does not exists in the system. Please synchronize it first and then process this entry.");
+      throw new OBException("The cashup with ID '" + jsonsent.getString("cashup_id")
+          + "' does not exists in the system. Please synchronize it first and then process this entry.");
     }
     TerminalTypePaymentMethod terminalPaymentMethod = paymentMethod.getPaymentMethod();
     // Save cash up events for payment method status
@@ -97,11 +94,12 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
 
     OBCriteria<OBPOSPaymentMethodCashup> paymentMethodCashupQuery = OBDal.getInstance()
         .createCriteria(OBPOSPaymentMethodCashup.class);
-    paymentMethodCashupQuery.add(Restrictions.eq(OBPOSPaymentMethodCashup.PROPERTY_PAYMENTTYPE
-        + ".id", paymentMethod.getId()));
-    paymentMethodCashupQuery.add(Restrictions.eq(OBPOSPaymentMethodCashup.PROPERTY_CASHUP + ".id",
-        cashup.getId()));
-    OBPOSPaymentMethodCashup paymentmethodcashup = (OBPOSPaymentMethodCashup) paymentMethodCashupQuery.uniqueResult();
+    paymentMethodCashupQuery.add(Restrictions
+        .eq(OBPOSPaymentMethodCashup.PROPERTY_PAYMENTTYPE + ".id", paymentMethod.getId()));
+    paymentMethodCashupQuery
+        .add(Restrictions.eq(OBPOSPaymentMethodCashup.PROPERTY_CASHUP + ".id", cashup.getId()));
+    OBPOSPaymentMethodCashup paymentmethodcashup = (OBPOSPaymentMethodCashup) paymentMethodCashupQuery
+        .uniqueResult();
     paymentcashupEvent = OBProvider.getInstance().get(OBPOSPaymentcashupEvents.class);
     paymentcashupEvent.setObposPaymentmethodcashup(paymentmethodcashup);
     paymentcashupEvent.setName(description);
@@ -146,13 +144,15 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
             && !"null".equals(jsonsent.get("timezoneOffset"))) {
           timezoneOffset = (long) Double.parseDouble(jsonsent.getString("timezoneOffset"));
         } else {
-          timezoneOffset = -((Calendar.getInstance().get(Calendar.ZONE_OFFSET) + Calendar.getInstance()
-              .get(Calendar.DST_OFFSET)) / (60 * 1000));
-          log.error("Error processing cash close (1): error retrieving the timezoneOffset. Using the current timezoneOffset");
+          timezoneOffset = -((Calendar.getInstance().get(Calendar.ZONE_OFFSET)
+              + Calendar.getInstance().get(Calendar.DST_OFFSET)) / (60 * 1000));
+          log.error(
+              "Error processing cash close (1): error retrieving the timezoneOffset. Using the current timezoneOffset");
         }
         cashMgmtTrxDate = OBMOBCUtils.calculateClientDatetime(strCashMgmtTrxDate, timezoneOffset);
       } else {
-        log.debug("Error processing cash close (2): error retrieving cashUp date. Using current server date");
+        log.debug(
+            "Error processing cash close (2): error retrieving cashUp date. Using current server date");
       }
       cashMgmtTrxDate = OBMOBCUtils.stripTime(cashMgmtTrxDate);
 
@@ -196,11 +196,13 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
             transaction.getForeignCurrency(), transaction.getId(), transaction.getEntity());
         if (newConversionRateDocSec == null) {
           ConversionRate convRate = FinancialUtils.getConversionRate(transaction.getCreationDate(),
-              transaction.getCurrency(), transaction.getForeignCurrency(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getCurrentClient());
+              transaction.getCurrency(), transaction.getForeignCurrency(),
+              OBContext.getOBContext().getCurrentOrganization(),
+              OBContext.getOBContext().getCurrentClient());
           newConversionRateDocSec = OBProvider.getInstance().get(ConversionRateDoc.class);
           newConversionRateDocSec.setClient(OBContext.getOBContext().getCurrentClient());
-          newConversionRateDocSec.setOrganization(OBContext.getOBContext().getCurrentOrganization());
+          newConversionRateDocSec
+              .setOrganization(OBContext.getOBContext().getCurrentOrganization());
           newConversionRateDocSec.setCurrency(transaction.getCurrency());
           newConversionRateDocSec.setToCurrency(transaction.getForeignCurrency());
           newConversionRateDocSec.setRate(convRate.getDivideRateBy());
@@ -211,18 +213,19 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
         }
       }
 
-      CashManagementEvents event = OBDal.getInstance().get(CashManagementEvents.class,
-          cashManagementReasonId);
+      CashManagementEvents event = OBDal.getInstance()
+          .get(CashManagementEvents.class, cashManagementReasonId);
 
       if (event != null) {
         FIN_FinancialAccount secondAccount = event.getFinancialAccount();
 
-        FIN_FinaccTransaction secondTransaction = OBProvider.getInstance().get(
-            FIN_FinaccTransaction.class);
+        FIN_FinaccTransaction secondTransaction = OBProvider.getInstance()
+            .get(FIN_FinaccTransaction.class);
         secondTransaction.setCurrency(secondAccount.getCurrency());
         secondTransaction.setObposAppCashup(cashup);
         secondTransaction.setAccount(secondAccount);
-        secondTransaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(event.getFinancialAccount()) + 10);
+        secondTransaction
+            .setLineNo(TransactionsDao.getTransactionMaxLineNo(event.getFinancialAccount()) + 10);
         secondTransaction.setGLItem(glItemSecondary);
         // The second transaction describes the opposite movement of the first transaction.
         // If the first is a deposit, the second is a drop
@@ -257,12 +260,13 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
           if (newConversionRateDocSec == null) {
             ConversionRate convRate = FinancialUtils.getConversionRate(
                 secondTransaction.getCreationDate(), secondTransaction.getCurrency(),
-                secondTransaction.getForeignCurrency(), OBContext.getOBContext()
-                    .getCurrentOrganization(), OBContext.getOBContext().getCurrentClient());
+                secondTransaction.getForeignCurrency(),
+                OBContext.getOBContext().getCurrentOrganization(),
+                OBContext.getOBContext().getCurrentClient());
             newConversionRateDocSec = OBProvider.getInstance().get(ConversionRateDoc.class);
             newConversionRateDocSec.setClient(OBContext.getOBContext().getCurrentClient());
-            newConversionRateDocSec.setOrganization(OBContext.getOBContext()
-                .getCurrentOrganization());
+            newConversionRateDocSec
+                .setOrganization(OBContext.getOBContext().getCurrentOrganization());
             newConversionRateDocSec.setCurrency(secondTransaction.getCurrency());
             newConversionRateDocSec.setToCurrency(secondTransaction.getForeignCurrency());
             newConversionRateDocSec.setRate(convRate.getDivideRateBy());

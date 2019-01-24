@@ -86,8 +86,8 @@ public class SaveDataActionHandler extends BaseActionHandler {
 
         JSONObject result = syncProcess.exec(data, true);
 
-        if (result.get(JsonConstants.RESPONSE_STATUS).equals(
-            JsonConstants.RPCREQUEST_STATUS_FAILURE)) {
+        if (result.get(JsonConstants.RESPONSE_STATUS)
+            .equals(JsonConstants.RPCREQUEST_STATUS_FAILURE)) {
           errorb = true;
 
           OBContext.setAdminMode(true);
@@ -104,8 +104,8 @@ public class SaveDataActionHandler extends BaseActionHandler {
           }
         } else {
           // Execute post process hooks.
-          for (ImportEntryPostProcessor importEntryPostProcessor : importEntryPostProcessors.select(new ImportEntryProcessorSelector(
-              type))) {
+          for (ImportEntryPostProcessor importEntryPostProcessor : importEntryPostProcessors
+              .select(new ImportEntryProcessorSelector(type))) {
             importEntryPostProcessor.afterProcessing(entry);
           }
 
@@ -126,8 +126,9 @@ public class SaveDataActionHandler extends BaseActionHandler {
       if (errorb) {
         JSONObject result = new JSONObject();
         try {
-          result.put("message", Utility.messageBD(new DalConnectionProvider(false),
-              "OBPOS_ErrorWhileSaving", RequestContext.get().getVariablesSecureApp().getLanguage()));
+          result.put("message",
+              Utility.messageBD(new DalConnectionProvider(false), "OBPOS_ErrorWhileSaving",
+                  RequestContext.get().getVariablesSecureApp().getLanguage()));
         } catch (JSONException e) {
           // won't happen
         }
@@ -135,10 +136,9 @@ public class SaveDataActionHandler extends BaseActionHandler {
       } else {
         JSONObject result = new JSONObject();
         try {
-          result.put("message", Utility.messageBD(new DalConnectionProvider(false),
-              "OBPOS_OrderSavedSuccessfully", RequestContext.get()
-                  .getVariablesSecureApp()
-                  .getLanguage()));
+          result.put("message",
+              Utility.messageBD(new DalConnectionProvider(false), "OBPOS_OrderSavedSuccessfully",
+                  RequestContext.get().getVariablesSecureApp().getLanguage()));
         } catch (JSONException e) {
           // won't happen
         }

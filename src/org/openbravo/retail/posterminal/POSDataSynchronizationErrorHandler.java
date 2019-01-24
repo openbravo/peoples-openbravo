@@ -67,15 +67,15 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
     }
 
     if (cashupId != null) {
-      OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance().createCriteria(
-          OBPOSAppTermStatHist.class);
+      OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance()
+          .createCriteria(OBPOSAppTermStatHist.class);
       termStatHistCriteria.add(Restrictions.eq(OBPOSAppTermStatHist.PROPERTY_CASHUP,
           OBDal.getInstance().get(OBPOSAppCashup.class, cashupId)));
       terminalStatusHistory = (OBPOSAppTermStatHist) termStatHistCriteria.uniqueResult();
     } else {
       if (posTerminalId != null) {
-        OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance().createCriteria(
-            OBPOSAppTermStatHist.class);
+        OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance()
+            .createCriteria(OBPOSAppTermStatHist.class);
         termStatHistCriteria.add(Restrictions.eq(OBPOSAppTermStatHist.PROPERTY_POSTERMINAL,
             OBDal.getInstance().get(OBPOSApplications.class, posTerminalId)));
         termStatHistCriteria.addOrderBy(OBPOSAppTermStatHist.PROPERTY_CREATIONDATE, false);
@@ -87,7 +87,8 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
     }
 
     if (terminalStatusHistory != null) {
-      terminalStatusHistory.setErrorswhileimporting(terminalStatusHistory.getErrorswhileimporting() + 1L);
+      terminalStatusHistory
+          .setErrorswhileimporting(terminalStatusHistory.getErrorswhileimporting() + 1L);
     } else {
       log.debug("There is no record for Terminal Status History.");
     }
@@ -111,7 +112,8 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
     errorEntry.setOrderstatus("N");
     errorEntry.setJsoninfo(jsonRecord.toString());
     errorEntry.setTypeofdata(entity.getName());
-    errorEntry.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class, posTerminalId));
+    errorEntry
+        .setObposApplications(OBDal.getInstance().get(OBPOSApplications.class, posTerminalId));
     OBDal.getInstance().save(errorEntry);
 
     // save order_id, order_id from verified return in error line
@@ -124,8 +126,8 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
         for (int i = 0; i < orderlines.length(); i++) {
           JSONObject jsonOrderLine = orderlines.optJSONObject(i);
           if (jsonOrderLine != null && jsonOrderLine.has("originalOrderLineId")) {
-            OrderLine orderLine = OBDal.getInstance().get(OrderLine.class,
-                jsonOrderLine.optString("originalOrderLineId"));
+            OrderLine orderLine = OBDal.getInstance()
+                .get(OrderLine.class, jsonOrderLine.optString("originalOrderLineId"));
             recordIdList.add(orderLine.getSalesOrder().getId());
           }
         }

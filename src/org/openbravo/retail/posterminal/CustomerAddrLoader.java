@@ -36,8 +36,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "BusinessPartnerLocation")
-public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
-    DataSynchronizationImportProcess {
+public class CustomerAddrLoader extends POSDataSynchronizationProcess
+    implements DataSynchronizationImportProcess {
 
   private static final Logger log = LogManager.getLogger();
 
@@ -55,8 +55,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
     OBContext.setAdminMode(false);
     try {
       Location location = null;
-      BusinessPartner customer = OBDal.getInstance().get(BusinessPartner.class,
-          jsonCustomerAddr.getString("bpartner"));
+      BusinessPartner customer = OBDal.getInstance()
+          .get(BusinessPartner.class, jsonCustomerAddr.getString("bpartner"));
       location = getCustomerAddress(jsonCustomerAddr.getString("id"));
 
       if (location.getId() == null) {
@@ -99,8 +99,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
     Location newLocation = OBProvider.getInstance().get(Location.class);
     try {
       Entity locationEntity = ModelProvider.getInstance().getEntity(Location.class);
-      Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
-          org.openbravo.model.common.geography.Location.class);
+      Entity baseLocationEntity = ModelProvider.getInstance()
+          .getEntity(org.openbravo.model.common.geography.Location.class);
       final org.openbravo.model.common.geography.Location rootLocation = OBProvider.getInstance()
           .get(org.openbravo.model.common.geography.Location.class);
 
@@ -115,8 +115,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
       }
 
       if (jsonCustomerAddr.has("countryId")) {
-        rootLocation.setCountry(OBDal.getInstance().get(Country.class,
-            jsonCustomerAddr.getString("countryId")));
+        rootLocation.setCountry(
+            OBDal.getInstance().get(Country.class, jsonCustomerAddr.getString("countryId")));
       } else {
         String errorMessage = "Country ID is a mandatory field to create a new customer address from Web Pos";
         log.error(errorMessage);
@@ -170,7 +170,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
       JSONObject jsonCustomerAddr) throws JSONException {
     try {
       if (location != null) {
-        final org.openbravo.model.common.geography.Location rootLocation = location.getLocationAddress();
+        final org.openbravo.model.common.geography.Location rootLocation = location
+            .getLocationAddress();
 
         if (jsonCustomerAddr.has("name") && jsonCustomerAddr.getString("name") != null) {
           if (jsonCustomerAddr.getString("name").equals("")) {
@@ -181,12 +182,12 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
         }
         rootLocation.setPostalCode(jsonCustomerAddr.getString("postalCode"));
         rootLocation.setCityName(jsonCustomerAddr.getString("cityName"));
-        rootLocation.setCountry(OBDal.getInstance().get(Country.class,
-            jsonCustomerAddr.getString("countryId")));
+        rootLocation.setCountry(
+            OBDal.getInstance().get(Country.class, jsonCustomerAddr.getString("countryId")));
         location.setInvoiceToAddress(jsonCustomerAddr.getBoolean("isBillTo"));
         location.setShipToAddress(jsonCustomerAddr.getBoolean("isShipTo"));
-        Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
-            org.openbravo.model.common.geography.Location.class);
+        Entity baseLocationEntity = ModelProvider.getInstance()
+            .getEntity(org.openbravo.model.common.geography.Location.class);
         JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, rootLocation, jsonCustomerAddr);
 
         Entity bpLocationEntity = ModelProvider.getInstance().getEntity(Location.class);

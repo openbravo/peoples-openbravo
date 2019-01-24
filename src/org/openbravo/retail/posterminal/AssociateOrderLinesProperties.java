@@ -22,7 +22,7 @@ public class AssociateOrderLinesProperties extends ModelExtension {
   public List<HQLProperty> getHQLProperties(Object params) {
 
     return Arrays.asList(
-    //
+        //
         new HQLProperty("salesOrder.id", "orderId"), //
         new HQLProperty("salesOrder.documentNo", "documentNo"), //
         new HQLProperty("salesOrder.orderDate", "orderDate"), //

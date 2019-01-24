@@ -109,8 +109,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       approvalType = new JSONArray(request.getParameter("approvalType"));
     }
 
-    OBCriteria<OBPOSApplications> terminalCriteria = OBDal.getInstance().createCriteria(
-        OBPOSApplications.class);
+    OBCriteria<OBPOSApplications> terminalCriteria = OBDal.getInstance()
+        .createCriteria(OBPOSApplications.class);
     terminalCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalName));
     terminalCriteria.setFilterOnReadableOrganization(false);
     terminalCriteria.setFilterOnReadableClients(false);
@@ -131,15 +131,11 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       String hqlUser = "select distinct user.name, user.username, user.id, user.firstName, user.lastName "
           + "from ADUser user, ADUserRoles userRoles, ADRole role, "
           + "ADFormAccess formAccess, OBPOS_Applications terminal "
-          + "where user.active = true and "
-          + "userRoles.active = true and "
-          + "role.active = true and "
-          + "formAccess.active = true and "
-          + "user.username is not null and "
-          + "user.password is not null and "
+          + "where user.active = true and " + "userRoles.active = true and "
+          + "role.active = true and " + "formAccess.active = true and "
+          + "user.username is not null and " + "user.password is not null and "
           + "exists (from ADRoleOrganization ro where ro.role = role and ro.organization = terminal.organization) and "
-          + "("
-          + extraFilter
+          + "(" + extraFilter
           + "exists(from OBPOS_TerminalAccess ta where ta.userContact = user and ta.pOSTerminal=terminal)) and "
           + "terminal.searchKey = :theTerminalSearchKey and "
           + "user.id = userRoles.userContact.id and userRoles.role.id = role.id and "
@@ -192,10 +188,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         String imageData = "none";
 
         for (Object[] qryImageObjectItem : qryImage.list()) {
-          imageData = "data:"
-              + qryImageObjectItem[0].toString()
-              + ";base64,"
-              + org.apache.commons.codec.binary.Base64.encodeBase64String((byte[]) qryImageObjectItem[1]);
+          imageData = "data:" + qryImageObjectItem[0].toString() + ";base64,"
+              + org.apache.commons.codec.binary.Base64
+                  .encodeBase64String((byte[]) qryImageObjectItem[1]);
         }
         item.put("image", imageData);
 
@@ -210,9 +205,10 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     try {
       OBContext.setAdminMode(false);
       final String value = Preferences.getPreferenceValue(
-          "OBPOS_FILTER_USER_ONLY_BY_TERMINAL_ACCESS", true, OBContext.getOBContext()
-              .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+          "OBPOS_FILTER_USER_ONLY_BY_TERMINAL_ACCESS", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null);
       return "Y".equals(value);
     } catch (Exception e) {
       return false;
@@ -229,8 +225,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     if (OBContext.getOBContext().getUser().getId().equals("0")) {
       final VariablesSecureApp vars = new VariablesSecureApp(request);
       final String terminalSearchKey = vars.getStringParameter("terminalName");
-      OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
-          OBPOSApplications.class);
+      OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
+          .createCriteria(OBPOSApplications.class);
       qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalSearchKey));
       qApp.setFilterOnReadableOrganization(false);
       qApp.setFilterOnReadableClients(false);
@@ -239,8 +235,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         OBPOSApplications terminal = apps.get(0);
         RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
 
-        result.put("appCaption", terminal.getIdentifier() + " - "
-            + terminal.getOrganization().getIdentifier());
+        result.put("appCaption",
+            terminal.getIdentifier() + " - " + terminal.getOrganization().getIdentifier());
       }
     }
     return result;
@@ -265,9 +261,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     List<OBPOSApplications> apps = qApp.list();
     if (apps.size() == 1) {
       OBPOSApplications terminal = ((OBPOSApplications) apps.get(0));
-      if (terminal.isLinked()
-          && (!(terminal.getCurrentCacheSession().equals(cacheSessionId) && terminal.getTerminalKey()
-              .equals(terminalKeyIdentifier)))) {
+      if (terminal.isLinked() && (!(terminal.getCurrentCacheSession().equals(cacheSessionId)
+          && terminal.getTerminalKey().equals(terminalKeyIdentifier)))) {
         result.put("exception", "OBPOS_TerminalAlreadyLinked");
         return result;
       }
@@ -280,16 +275,16 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       } catch (AuthenticationException ae) {
         ConnectionProvider cp = new DalConnectionProvider(false);
         Client systemClient = OBDal.getInstance().get(Client.class, "0");
-        throw new AuthenticationException(Utility.messageBD(cp, ae.getMessage(),
-            systemClient.getLanguage().getLanguage()));
+        throw new AuthenticationException(
+            Utility.messageBD(cp, ae.getMessage(), systemClient.getLanguage().getLanguage()));
       } catch (Exception e) {
         throw new AuthenticationException(e.getMessage());
       }
 
       if (userId != null && !userId.isEmpty()) {
         // Terminal access will be checked to ensure that the user has access to the terminal
-        OBQuery<TerminalAccess> accessCrit = OBDal.getInstance().createQuery(TerminalAccess.class,
-            "where userContact.id='" + userId + "'");
+        OBQuery<TerminalAccess> accessCrit = OBDal.getInstance()
+            .createQuery(TerminalAccess.class, "where userContact.id='" + userId + "'");
         accessCrit.setFilterOnReadableClients(false);
         accessCrit.setFilterOnReadableOrganization(false);
         List<TerminalAccess> accessList = accessCrit.list();
@@ -324,8 +319,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
           result.put("terminalName", terminal.getSearchKey());
           result.put("terminalKeyIdentifier", terminal.getTerminalKey());
-          result.put("appCaption", terminal.getIdentifier() + " - "
-              + terminal.getOrganization().getIdentifier());
+          result.put("appCaption",
+              terminal.getIdentifier() + " - " + terminal.getOrganization().getIdentifier());
           result.put("servers", getServers(terminal));
           result.put("services", getServices());
           result.put("processes", getProcesses());
@@ -372,8 +367,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     JSONObject properties = (JSONObject) result.get("properties");
     if (terminalName != null) {
       OBPOSApplications terminal = null;
-      OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
-          OBPOSApplications.class);
+      OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
+          .createCriteria(OBPOSApplications.class);
       qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalName));
       qApp.setFilterOnReadableOrganization(false);
       qApp.setFilterOnReadableClients(false);
@@ -383,8 +378,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         properties.put("servers", getServers(terminal));
       }
     }
-    properties.put("templateVersion", OBPOSPrintTemplateReader.getInstance()
-        .getPrintTemplatesIdentifier());
+    properties.put("templateVersion",
+        OBPOSPrintTemplateReader.getInstance().getPrintTemplatesIdentifier());
 
     String terminalAuthenticationValue = "";
     String maxAllowedTimeInOfflineValue = "";
@@ -434,8 +429,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       result.put("offlineSessionTimeExpiration", offlineSessionTimeExpirationValue);
     } catch (PropertyException e) {
       result.put("offlineSessionTimeExpiration", 60);
-      result.put(currentPropertyToLaunchError,
-          OBMessageUtils.messageBD("OBPOS_errorWhileReadingOfflineSessionTimeExpirationPreference"));
+      result.put(currentPropertyToLaunchError, OBMessageUtils
+          .messageBD("OBPOS_errorWhileReadingOfflineSessionTimeExpirationPreference"));
     }
     return result;
   }
@@ -447,9 +442,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       return respArray;
     }
 
-    OBQuery<MobileServerDefinition> servers = OBDal.getInstance().createQuery(
-        MobileServerDefinition.class,
-        "client.id=:clientId order by " + MobileServerDefinition.PROPERTY_PRIORITY);
+    OBQuery<MobileServerDefinition> servers = OBDal.getInstance()
+        .createQuery(MobileServerDefinition.class,
+            "client.id=:clientId order by " + MobileServerDefinition.PROPERTY_PRIORITY);
     servers.setFilterOnReadableClients(false);
     servers.setFilterOnReadableOrganization(false);
     servers.setNamedParameter("clientId", terminal.getClient().getId());
@@ -481,8 +476,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
   @Override
   public String getDefaultDecimalSymbol() {
-    String decimalSymbol = (String) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
-        .getCurrentOrganization(), Organization.PROPERTY_OBPOSFORMATDECIMAL);
+    String decimalSymbol = (String) POSUtils.getPropertyInOrgTree(
+        OBContext.getOBContext().getCurrentOrganization(),
+        Organization.PROPERTY_OBPOSFORMATDECIMAL);
     if (StringUtils.isEmpty(decimalSymbol)) {
       return super.getDefaultDecimalSymbol();
     } else {
@@ -492,8 +488,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
   @Override
   public String getDefaultGroupingSymbol() {
-    String groupSymbol = (String) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
-        .getCurrentOrganization(), Organization.PROPERTY_OBPOSFORMATGROUP);
+    String groupSymbol = (String) POSUtils.getPropertyInOrgTree(
+        OBContext.getOBContext().getCurrentOrganization(), Organization.PROPERTY_OBPOSFORMATGROUP);
     if (StringUtils.isEmpty(groupSymbol)) {
       return super.getDefaultGroupingSymbol();
     } else {
@@ -503,8 +499,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
   @Override
   public String getDateFormat() {
-    String dateFormat = (String) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
-        .getCurrentOrganization(), Organization.PROPERTY_OBPOSDATEFORMAT);
+    String dateFormat = (String) POSUtils.getPropertyInOrgTree(
+        OBContext.getOBContext().getCurrentOrganization(), Organization.PROPERTY_OBPOSDATEFORMAT);
     if (StringUtils.isEmpty(dateFormat)) {
       return super.getDateFormat();
     } else {

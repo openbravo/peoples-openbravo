@@ -35,8 +35,8 @@ public class UpdateCashupReport extends ModuleScript {
 
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null, new OpenbravoVersion(1, 8,
-        2700));
+    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
+        new OpenbravoVersion(1, 8, 2700));
   }
 
 }

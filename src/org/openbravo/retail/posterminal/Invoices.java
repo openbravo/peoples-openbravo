@@ -90,7 +90,8 @@ public class Invoices extends JSONProcessSimple {
         JSONArray listinvoicesLines = new JSONArray();
 
         // get the details of each line
-        HQLPropertyList hqlPropertiesLines = ModelExtensionUtils.getPropertyExtensions(extensionsLines);
+        HQLPropertyList hqlPropertiesLines = ModelExtensionUtils
+            .getPropertyExtensions(extensionsLines);
         String hqlInvoicesLines = "select " + hqlPropertiesLines.getHqlSelect() //
             + " from InvoiceLine as invLine" //
             + " where invLine.invoice.id=:invoiceId" //
@@ -107,8 +108,8 @@ public class Invoices extends JSONProcessSimple {
           invoiceLine.put("priceIncludesTax", invoice.getBoolean("priceIncludesTax"));
 
           // promotions per line
-          OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance().createCriteria(
-              OrderLineOffer.class);
+          OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance()
+              .createCriteria(OrderLineOffer.class);
           qPromotions.add(Restrictions.eq(OrderLineOffer.PROPERTY_SALESORDERLINE + ".id",
               (String) invoiceLine.getString("orderlineId")));
           qPromotions.addOrder(Order.asc(OrderLineOffer.PROPERTY_LINENO));
@@ -121,8 +122,8 @@ public class Invoices extends JSONProcessSimple {
             }
 
             JSONObject jsonPromo = new JSONObject();
-            String name = promotion.getPriceAdjustment().getPrintName() != null ? promotion.getPriceAdjustment()
-                .getPrintName()
+            String name = promotion.getPriceAdjustment().getPrintName() != null
+                ? promotion.getPriceAdjustment().getPrintName()
                 : promotion.getPriceAdjustment().getName();
             jsonPromo.put("ruleId", promotion.getPriceAdjustment().getId());
             jsonPromo.put("name", name);
@@ -139,8 +140,8 @@ public class Invoices extends JSONProcessSimple {
           BigDecimal lineAmount;
           if (hasPromotions) {
             // When it has promotions, show line amount without them as they are shown after it
-            lineAmount = (new BigDecimal(invoiceLine.optString("quantity")).multiply(new BigDecimal(
-                invoiceLine.optString("unitPrice"))));
+            lineAmount = (new BigDecimal(invoiceLine.optString("quantity"))
+                .multiply(new BigDecimal(invoiceLine.optString("unitPrice"))));
           } else {
             lineAmount = new BigDecimal(invoiceLine.optString("linegrossamount"));
           }
@@ -149,8 +150,8 @@ public class Invoices extends JSONProcessSimple {
           invoiceLine.put("promotions", promotions);
 
           // taxes per line
-          OBCriteria<InvoiceLineTax> qTaxes = OBDal.getInstance().createCriteria(
-              InvoiceLineTax.class);
+          OBCriteria<InvoiceLineTax> qTaxes = OBDal.getInstance()
+              .createCriteria(InvoiceLineTax.class);
           qTaxes.add(Restrictions.eq(InvoiceLineTax.PROPERTY_INVOICELINE + ".id",
               (String) invoiceLine.getString("lineId")));
           qTaxes.addOrder(Order.asc(InvoiceLineTax.PROPERTY_LINENO));
@@ -174,7 +175,8 @@ public class Invoices extends JSONProcessSimple {
         }
         invoice.put("receiptLines", listinvoicesLines);
 
-        HQLPropertyList hqlPropertiesPayments = ModelExtensionUtils.getPropertyExtensions(extensionsPayments);
+        HQLPropertyList hqlPropertiesPayments = ModelExtensionUtils
+            .getPropertyExtensions(extensionsPayments);
         String hqlPaymentsIn = "select " + hqlPropertiesPayments.getHqlSelect()
             + "from FIN_Payment_ScheduleDetail as scheduleDetail "
             + "join scheduleDetail.paymentDetails as paymentDetail "
@@ -223,9 +225,9 @@ public class Invoices extends JSONProcessSimple {
             JSONObject objectType = (JSONObject) listPaymentsType.get(j);
             if (objectIn.get("account").equals(objectType.get("account"))) {
               JSONObject invoicePayment = new JSONObject();
-              invoicePayment.put("amount", new BigDecimal((String) objectIn.get("amount")
-                  .toString()).multiply(new BigDecimal((String) objectType.get("mulrate")
-                  .toString())));
+              invoicePayment.put("amount",
+                  new BigDecimal((String) objectIn.get("amount").toString())
+                      .multiply(new BigDecimal((String) objectType.get("mulrate").toString())));
               invoicePayment.put("paymentDate", objectIn.get("paymentDate"));
               if (objectIn.has("paymentData")) {
                 invoicePayment.put("paymentData", objectIn.get("paymentData"));
@@ -267,9 +269,9 @@ public class Invoices extends JSONProcessSimple {
               paymentsType.put("openDrawer", "N");
 
               JSONObject invoicePayment = new JSONObject();
-              invoicePayment.put("amount", new BigDecimal((String) objectIn.get("amount")
-                  .toString()).multiply(new BigDecimal((String) paymentsType.get("mulrate")
-                  .toString())));
+              invoicePayment.put("amount",
+                  new BigDecimal((String) objectIn.get("amount").toString())
+                      .multiply(new BigDecimal((String) paymentsType.get("mulrate").toString())));
               invoicePayment.put("paymentDate", objectIn.get("paymentDate"));
               if (objectIn.has("paymentData")) {
                 invoicePayment.put("paymentData", objectIn.get("paymentData"));
@@ -306,9 +308,8 @@ public class Invoices extends JSONProcessSimple {
           jsonObjTaxes.put("net", objTaxInfo[2]);
           jsonObjTaxes.put("amount", objTaxInfo[3]);
           jsonObjTaxes.put("name", objTaxInfo[4]);
-          jsonObjTaxes.put("gross",
-              new BigDecimal((String) objTaxInfo[2].toString()).add(new BigDecimal(
-                  (String) objTaxInfo[3].toString())));
+          jsonObjTaxes.put("gross", new BigDecimal((String) objTaxInfo[2].toString())
+              .add(new BigDecimal((String) objTaxInfo[3].toString())));
           jsonObjTaxes.put("cascade", objTaxInfo[5]);
           jsonObjTaxes.put("docTaxAmount", objTaxInfo[6]);
           jsonObjTaxes.put("lineNo", objTaxInfo[7]);

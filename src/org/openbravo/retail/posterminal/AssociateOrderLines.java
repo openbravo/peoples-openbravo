@@ -103,18 +103,22 @@ public class AssociateOrderLines extends ProcessHQLQuery {
 
     if ("N".equals(paramValues.get("includeProductCategories"))) {
       hqlPendingLines.append(" AND EXISTS");
-      hqlPendingLines.append(" (FROM ServiceProductCategory AS spc WHERE spc.productCategory=p.productCategory AND spc.product.id = :productId ) ");
+      hqlPendingLines.append(
+          " (FROM ServiceProductCategory AS spc WHERE spc.productCategory=p.productCategory AND spc.product.id = :productId ) ");
     } else if ("Y".equals(paramValues.get("includeProductCategories"))) {
       hqlPendingLines.append(" AND NOT EXISTS");
-      hqlPendingLines.append(" (FROM ServiceProductCategory AS spc WHERE spc.productCategory=p.productCategory AND spc.product.id = :productId )");
+      hqlPendingLines.append(
+          " (FROM ServiceProductCategory AS spc WHERE spc.productCategory=p.productCategory AND spc.product.id = :productId )");
     }
 
     if ("N".equals(paramValues.get("includeProducts"))) {
       hqlPendingLines.append(" AND EXISTS");
-      hqlPendingLines.append(" (FROM ServiceProduct AS spc WHERE spc.relatedProduct=p.id AND spc.product.id = :productId )");
+      hqlPendingLines.append(
+          " (FROM ServiceProduct AS spc WHERE spc.relatedProduct=p.id AND spc.product.id = :productId )");
     } else if ("Y".equals(paramValues.get("includeProducts"))) {
       hqlPendingLines.append(" AND NOT EXISTS");
-      hqlPendingLines.append("  (FROM ServiceProduct AS spc WHERE spc.relatedProduct=p.id AND spc.product.id = :productId )");
+      hqlPendingLines.append(
+          "  (FROM ServiceProduct AS spc WHERE spc.relatedProduct=p.id AND spc.product.id = :productId )");
     }
 
     Iterator<?> it = paramValues.entrySet().iterator();
@@ -134,7 +138,8 @@ public class AssociateOrderLines extends ProcessHQLQuery {
     }
 
     if ((jsonsent.has("orderByClause") && jsonsent.get("orderByClause") != JSONObject.NULL)
-        || (jsonsent.has("orderByProperties") && jsonsent.get("orderByProperties") != JSONObject.NULL)) {
+        || (jsonsent.has("orderByProperties")
+            && jsonsent.get("orderByProperties") != JSONObject.NULL)) {
       hqlPendingLines.append(" $orderByCriteria");
     }
 
@@ -178,8 +183,9 @@ public class AssociateOrderLines extends ProcessHQLQuery {
       JSONObject result = new JSONObject("{" + w.toString() + "}");
       if (MobileServerController.getInstance().isThisAStoreServer()
           && result.optLong("totalRows") == 0) {
-        JSONObject centralResult = MobileServerRequestExecutor.getInstance().executeCentralRequest(
-            MobileServerUtils.OBWSPATH + AssociateOrderLines.class.getName(), jsonsent);
+        JSONObject centralResult = MobileServerRequestExecutor.getInstance()
+            .executeCentralRequest(MobileServerUtils.OBWSPATH + AssociateOrderLines.class.getName(),
+                jsonsent);
         data = centralResult.toString().substring(1, centralResult.toString().length() - 1);
       }
     } catch (JSONException e) {

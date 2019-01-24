@@ -46,8 +46,8 @@ public class UseonWebPOSFICExtension implements FICExtension {
       try {
         Map<String, String> map = new HashMap<String, String>();
         map.put("characteristic", charac.getName());
-        msg.put("text", OBMessageUtils.parseTranslation(
-            OBMessageUtils.messageBD("EM_OBPOS_DISCCHARACWARNING"), map));
+        msg.put("text", OBMessageUtils
+            .parseTranslation(OBMessageUtils.messageBD("EM_OBPOS_DISCCHARACWARNING"), map));
         msg.put("severity", "TYPE_WARNING");
       } catch (JSONException ignore) {
       }

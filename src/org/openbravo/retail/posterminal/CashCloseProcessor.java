@@ -126,13 +126,12 @@ public class CashCloseProcessor {
           .add(foreignDifference);
       if (reconciliationTotal.compareTo(new BigDecimal(0)) != 0) {
 
-        if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")
-            && BigDecimal.valueOf(
-                cashCloseObj.getJSONObject("paymentMethod").getDouble("amountToKeep")).compareTo(
-                new BigDecimal(0)) != 0) {
+        if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep") && BigDecimal
+            .valueOf(cashCloseObj.getJSONObject("paymentMethod").getDouble("amountToKeep"))
+            .compareTo(new BigDecimal(0)) != 0) {
 
-          BigDecimal amountToKeep = BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
-              .getDouble("amountToKeep"));
+          BigDecimal amountToKeep = BigDecimal
+              .valueOf(cashCloseObj.getJSONObject("paymentMethod").getDouble("amountToKeep"));
           reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
         }
         if (reconciliationTotal.compareTo(BigDecimal.ZERO) != 0) {
@@ -198,13 +197,12 @@ public class CashCloseProcessor {
     return next;
   }
 
-  private void associateTransactions(OBPOSAppPayment paymentType,
-      FIN_Reconciliation reconciliation, String cashUpId, JSONArray cashMgmtIds,
-      List<String> slaveCashupIds) {
+  private void associateTransactions(OBPOSAppPayment paymentType, FIN_Reconciliation reconciliation,
+      String cashUpId, JSONArray cashMgmtIds, List<String> slaveCashupIds) {
     slaveCashupIds.add(cashUpId);
-    OBQuery<FIN_FinaccTransaction> transactionsQuery = OBDal.getInstance().createQuery(
-        FIN_FinaccTransaction.class,
-        "where obposAppCashup.id in :slaveCashupIds and account.id=:account");
+    OBQuery<FIN_FinaccTransaction> transactionsQuery = OBDal.getInstance()
+        .createQuery(FIN_FinaccTransaction.class,
+            "where obposAppCashup.id in :slaveCashupIds and account.id=:account");
     transactionsQuery.setNamedParameter("slaveCashupIds", slaveCashupIds);
     transactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount().getId());
     associateTransactionsFromQuery(transactionsQuery, reconciliation);
@@ -235,8 +233,8 @@ public class CashCloseProcessor {
       OBPOSAppPayment paymentType) throws JSONException {
 
     BigDecimal startingBalance;
-    OBCriteria<FIN_Reconciliation> reconciliationsForAccount = OBDal.getInstance().createCriteria(
-        FIN_Reconciliation.class);
+    OBCriteria<FIN_Reconciliation> reconciliationsForAccount = OBDal.getInstance()
+        .createCriteria(FIN_Reconciliation.class);
     reconciliationsForAccount.add(Restrictions.eq("account", account));
     reconciliationsForAccount.addOrderBy("creationDate", false);
     reconciliationsForAccount.setMaxResults(1);
@@ -254,14 +252,14 @@ public class CashCloseProcessor {
     }
     reconciliation.setAccount(account);
     reconciliation.setOrganization(posTerminal.getOrganization());
-    reconciliation.setDocumentType(posTerminal.getObposTerminaltype()
-        .getDocumentTypeForReconciliations());
+    reconciliation
+        .setDocumentType(posTerminal.getObposTerminaltype().getDocumentTypeForReconciliations());
     reconciliation.setDocumentNo("99999999temp");
     reconciliation.setEndingDate(currentDate);
     reconciliation.setTransactionDate(currentDate);
     if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")) {
-      reconciliation.setEndingBalance(BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
-          .getDouble("amountToKeep")));
+      reconciliation.setEndingBalance(BigDecimal
+          .valueOf(cashCloseObj.getJSONObject("paymentMethod").getDouble("amountToKeep")));
     } else {
       reconciliation.setEndingBalance(new BigDecimal(0));
     }
@@ -382,8 +380,8 @@ public class CashCloseProcessor {
       parameters.add(terminal.getOrganization().getId());
 
       String procedureName = "obpos_currency_rate";
-      conversionRate = (BigDecimal) CallStoredProcedure.getInstance().call(procedureName,
-          parameters, null);
+      conversionRate = (BigDecimal) CallStoredProcedure.getInstance()
+          .call(procedureName, parameters, null);
     }
 
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
@@ -400,8 +398,9 @@ public class CashCloseProcessor {
               RoundingMode.HALF_EVEN));
       transaction.setTransactionType("BPW");
     } else {
-      transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(
-          accountTo.getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_EVEN));
+      transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate)
+          .setScale(accountTo.getCurrency().getStandardPrecision().intValue(),
+              RoundingMode.HALF_EVEN));
       transaction.setTransactionType("BPD");
     }
     transaction.setProcessed(true);
