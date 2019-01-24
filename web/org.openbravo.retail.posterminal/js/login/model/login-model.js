@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -629,7 +629,7 @@
         return;
       }
 
-      var i, paymentcashcurrency, paymentcash, paymentlegacy, max, me = this,
+      var i, paymentcashcurrency, paymentcash, paymentlegacy, max,
           defaultpaymentcash, defaultpaymentcashcurrency;
 
       if (!OB.UTIL.isSupportedBrowser()) {
@@ -827,7 +827,6 @@
       OB.debug("next process: renderTerminalMain");
       //MASTER DATA REFRESH
       var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc,
-          minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal,
           lastTotalRefresh = OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
           lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
           now = new Date().getTime(),
@@ -847,7 +846,6 @@
       }
       // Transform minIncRefresh and minTotalRefresh to miliseconds
       minIncRefresh = (minIncRefresh > 99999 ? 99999 : minIncRefresh) * 60 * 1000;
-      minTotalRefresh = minTotalRefresh * 60 * 1000;
 
       // Calculate the incremental interval in miliseconds
       intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
@@ -936,8 +934,7 @@
     },
 
     preLogoutActions: function (finalCallback) {
-      var criteria = {},
-          model;
+      var criteria = {};
       var me = this;
 
       function removeOneModel(model, collection, callback) {
@@ -956,7 +953,6 @@
       }
 
       function success(collection) {
-        var i, j, removeCallback;
         if (collection.length > 0) {
           _.each(collection.models, function (model) {
             model.set('ignoreCheckIfIsActiveOrder', true);
@@ -1376,6 +1372,7 @@
   // from this point, OB.MobileApp.model will be available
   // the initialization is done to a dummy variable to allow the model to be extendable
   var initializeOBModelTerminal = new OB.Model.POSTerminal();
+  initializeOBModelTerminal.isUserCacheAvailable();
 
   OB.POS = {
     modelterminal: OB.MobileApp.model,

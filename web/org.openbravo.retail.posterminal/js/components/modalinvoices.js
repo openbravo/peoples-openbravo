@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -118,9 +118,7 @@ enyo.kind({
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
-        toMatch = 0,
-        re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.InvoicesHeader'),
-        negativeLines;
+        processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.InvoicesHeader');
     me.filters = inEvent.filters;
     var limit = OB.Model.Order.prototype.dataLimit;
     this.clearAction();
@@ -290,8 +288,7 @@ enyo.kind({
     this.$.printInvoices.setDisabled(value);
   },
   printInvoiceAction: function () {
-    var selectedInvoices = [],
-        me = this,
+    var me = this,
         process = new OB.DS.Process('org.openbravo.retail.posterminal.OpenInvoices'),
         checkedInvoices = _.compact(this.parent.parent.parent.parent.$.body.$.listInvoices.invoicesList.map(function (e) {
         if (e.get('checked')) {

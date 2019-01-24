@@ -224,8 +224,7 @@ enyo.kind({
   },
   voidOrder: function (inSender, inEvent) {
     var me = this,
-        model = inEvent.originator.model,
-        i;
+        model = inEvent.originator.model;
 
     if (OB.MobileApp.model.get('isMultiOrderState')) {
       if (OB.MobileApp.model.multiOrders.checkMultiOrderPayment()) {
@@ -285,8 +284,7 @@ enyo.kind({
     }]);
   },
   voidAllOrders: function (inSender, inEvent) {
-    var me = this,
-        i;
+    var me = this;
 
     if (OB.MobileApp.model.get('isMultiOrderState')) {
       if (OB.MobileApp.model.multiOrders.checkMultiOrderPayment()) {

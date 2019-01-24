@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -110,9 +110,8 @@ enyo.kind({
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
-        i, j, whereClause = '',
+        i, j,
         params = [],
-        products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products,
         productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent,
         forceRemote = false;
     var productFilterText, productCategory, productCharacteristicModel, resetValueList, characteristic = [];
@@ -170,8 +169,7 @@ enyo.kind({
 
     productCategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.getProductCategoryFilter(forceRemote);
     if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) && !forceRemote) {
-      var sql, productsIdsList, chFilterQuery = "",
-          num, brandStr;
+      var sql, num, brandStr;
       sql = "select distinct(id), name, characteristic_id, parent, summaryLevel from m_ch_value chv where  chv.characteristic_id = ?";
       sql += " and ((chv.summaryLevel = 'false' and (exists (select 1 from M_Product_Ch_Value mpchv, M_Product p where mpchv.M_Product_ID = p.M_Product_ID and chv.id = mpchv.m_ch_value_id";
       params.push(this.parent.parent.characteristic.get('id'));
@@ -254,7 +252,6 @@ enyo.kind({
       var productFilter = {},
           criteria = {},
           brandfilter = {},
-          chFilter = {},
           productText, characteristicfilter = {
           columns: ['characteristic_id'],
           operator: 'equals',

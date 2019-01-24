@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -23,7 +23,6 @@
     remote: 'OBPOS_remote.customer',
     paginationById: true,
     saveCustomerAddr: function (callback, callbackError) {
-      var nameLength, newSk;
       if (!this.get('isBillTo') && !this.get('isShipTo')) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_shippedOrInvoicedNotChekedOff'));
         if (callbackError instanceof Function) {
@@ -53,7 +52,6 @@
       //search data in local DB and load it to this
       var me = this;
       OB.Dal.get(OB.Model.BPLocation, CusAddrId, function (customerAddr) { //OB.Dal.find success
-        var successCallback, errorCallback;
         if (!customerAddr || customerAddr.length === 0) {
           me.clearModelWith(null);
           userCallback(me);
@@ -66,7 +64,6 @@
     loadModel: function (customerAddr, userCallback) {
       //search data in local DB and load it to this
       var me = this;
-      var successCallback, errorCallback;
       if (!customerAddr || customerAddr.length === 0) {
         me.clearModelWith(null);
         userCallback(me);
@@ -83,8 +80,6 @@
       this.clearModelWith(null);
     },
     clearModelWith: function (cusToLoad) {
-      var me = this,
-          undf;
       if (cusToLoad === null) {
 
         OB.UTIL.clone(new OB.Model.BPLocation(), this);

@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _, $ */
+/*global enyo, Backbone, _ */
 
 enyo.kind({
   name: 'SelectPrintersLine',
@@ -144,7 +144,7 @@ enyo.kind({
     var printers = OB.POS.modelterminal.get('hardwareURL');
 
     // Add Main URL
-    var editline = this.printerscontainer.createComponent({
+    this.printerscontainer.createComponent({
       kind: 'SelectPrintersLine',
       name: 'printerMain',
       printerscontainer: this.printerscontainer,
@@ -250,7 +250,7 @@ enyo.kind({
     var printers = OB.POS.modelterminal.get('hardwareURL');
 
     // Add Main URL
-    var editline = this.printerscontainer.createComponent({
+    this.printerscontainer.createComponent({
       kind: 'SelectPrintersLine',
       name: 'PDFprinterMain',
       printerscontainer: this.printerscontainer,

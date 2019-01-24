@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -331,7 +331,7 @@
 
         // the line net price is calculated by doing price*price/(price*rate), as it is done in
         // the database function c_get_net_price_from_gross
-        var linenet, roundedLinePriceNet, linepricenet, pricenet, discountedNet, pricenetcascade, discountedLinePriceNet, roundedDiscountedLinePriceNet;
+        var linenet, roundedLinePriceNet, linepricenet, pricenet, discountedNet, discountedLinePriceNet, roundedDiscountedLinePriceNet;
         if (discountedGross === 0) {
           linenet = 0;
           linepricenet = new BigDecimal('0');
@@ -701,7 +701,6 @@
           }
 
           var originalNet = OB.DEC.div(totalGross, linerate);
-          var taxAmount;
           var auxNet;
           _.forEach(taxRates, function (taxRate) {
             auxNet = originalNet;

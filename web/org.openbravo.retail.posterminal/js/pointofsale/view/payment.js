@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -139,7 +139,6 @@ enyo.kind({
     }
   },
   maxLimitAmountError: function (inSender, inEvent) {
-    var maxHeight;
     if (inEvent.show) {
       this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [OB.I18N.formatCurrencyWithSymbol(inEvent.maxLimitAmount, inEvent.currency, inEvent.symbolAtRight)]));
       this.$.errorMaxlimitamount.show();
@@ -337,7 +336,6 @@ enyo.kind({
   }],
 
   receiptChanged: function () {
-    var me = this;
     this.$.payments.setCollection(this.receipt.get('payments'));
     this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
     this.receipt.on('change:bp', function (model) {
@@ -398,7 +396,6 @@ enyo.kind({
         this.$.layawayaction.hide();
         return;
       }
-      var payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
       this.updateLayawayAction();
       this.updateCreditSalesAction();
     }, this);
@@ -616,7 +613,6 @@ enyo.kind({
         rate = OB.DEC.One,
         precision = null,
         symbolAtRight = true,
-        isCashType = true,
         receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== paymentstatus.totalAmt,
         pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentAmount, paymentstatus.pendingAmt), paymentstatus.totalAmt);
 
@@ -629,7 +625,6 @@ enyo.kind({
       rate = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].mulrate;
       precision = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].obposPosprecision;
       symbolAtRight = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].currencySymbolAtTheRight;
-      isCashType = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].paymentMethod.iscash;
     }
     if (OB.DEC.compare(this.receipt.getChange()) > 0) {
       this.calculateChange(OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')], this.receipt.getChange());
@@ -786,7 +781,6 @@ enyo.kind({
         symbolAtRight = true,
         rate = OB.DEC.One,
         precision = null,
-        isCashType = true,
         selectedPayment, paymentStatus = multiOrders.getPaymentStatus(),
         prepaymentAmount = multiOrders.get('obposPrepaymentamt'),
         receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== OB.DEC.add(multiOrders.get('total'), multiOrders.get('existingPayment')) && multiOrders.get('amountToLayaway') === 0,
@@ -808,7 +802,6 @@ enyo.kind({
       rate = selectedPayment.mulrate;
       precision = selectedPayment.obposPosprecision;
       symbolAtRight = selectedPayment.currencySymbolAtTheRight;
-      isCashType = selectedPayment.paymentMethod.iscash;
     }
 
     //Update styles based on the prepayment amount
@@ -1095,10 +1088,7 @@ enyo.kind({
     }
 
     var change = this.model.getChange();
-    var currentcash = selectedPayment.currentCash;
-    var cashIsPresent = false;
     var alternativeCashPayment;
-    var alternativePaymentInfo;
     if (change && change > 0) {
       if (!selectedPayment.paymentMethod.iscash && paymentstatus.payments.length > 0) {
         alternativeCashPayment = _.find(paymentstatus.payments.models, function (item) {
@@ -1106,13 +1096,6 @@ enyo.kind({
             return item;
           }
         });
-        if (alternativeCashPayment) {
-          alternativePaymentInfo = _.find(OB.MobileApp.model.get('payments'), function (defPayment) {
-            if (defPayment.payment.searchKey === alternativeCashPayment.get('kind')) {
-              return defPayment;
-            }
-          });
-        }
         if (!alternativeCashPayment) {
           this.$.onlycashpaymentmethod.show();
           return false;
@@ -1463,7 +1446,6 @@ enyo.kind({
     this.$.allAttributesNeedValue.setContent(OB.I18N.getLabel('OBPOS_AllAttributesNeedValue'));
   },
   init: function (model) {
-    var me = this;
     this.model = model;
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
       this.$.donebutton.show();
@@ -1567,7 +1549,6 @@ enyo.kind({
     this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
     this.model.get('order').on('change:openDrawer', function () {
       this.drawerpreference = this.model.get('order').get('openDrawer');
-      var me = this;
 
       if (this.drawerpreference) {
         this.drawerOpened = false;
@@ -2221,10 +2202,6 @@ enyo.kind({
       });
       //    } else if (this.model.get('order').get('orderType') === 1) {
     } else if (paymentstatus.isReturn) {
-      var actualCredit;
-      var creditLimit = this.model.get('order').get('bp').get('creditLimit');
-      var creditUsed = this.model.get('order').get('bp').get('creditUsed');
-      var totalPending = paymentstatus.pendingAmt;
       this.doShowPopup({
         popup: 'modalEnoughCredit',
         args: {

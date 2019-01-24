@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2018 Openbravo S.L.U.
+ * Copyright (C) 2016-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -208,7 +208,6 @@ enyo.kind({
     return true;
   },
   create: function () {
-    var me = this;
     this.inherited(arguments);
     this.model.set('renderCmp', this, {
       silent: true
@@ -525,8 +524,7 @@ enyo.kind({
     this.$.orderSelector.$.tlimit.hide();
     this.$.renderLoading.show();
 
-    var criteria = [],
-        limit;
+    var criteria = [];
 
     if (inEvent.orderby) {
       criteria._orderByClause = inEvent.orderby.name + ' ' + inEvent.orderby.direction + ', lineNo asc';
@@ -535,11 +533,6 @@ enyo.kind({
     }
 
     criteria.forceRemote = true;
-    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.order', true)) {
-      limit = filterModel.prototype.dataLimit;
-    } else {
-      limit = filterModel.prototype.remoteDataLimit ? filterModel.prototype.remoteDataLimit : filterModel.prototype.dataLimit;
-    }
     criteria.remoteFilters = [];
     criteria.remoteFilters.push({
       columns: 'productId',
@@ -590,8 +583,7 @@ enyo.kind({
   ordersList: null,
 
   init: function (model) {
-    var me = this,
-        terminal = OB.POS.modelterminal.get('terminal');
+    var me = this;
     this.ordersList = new Backbone.Collection();
     this.$.orderSelector.setCollection(this.ordersList);
     this.ordersList.on('verifyAssociateTicketsButton', function (item) {
@@ -622,7 +614,6 @@ enyo.kind({
     kind: 'OB.UI.ListOrders'
   },
   executeOnShow: function () {
-    var orderLinesToExclude = [];
     if (!this.initialized || (!OB.UTIL.isNullOrUndefined(this.args) && !OB.UTIL.isNullOrUndefined(this.args.receipt))) {
       this.inherited(arguments);
       this.selectedLine = this.args.selectedLines[0];

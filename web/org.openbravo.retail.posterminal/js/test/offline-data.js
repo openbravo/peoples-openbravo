@@ -7,16 +7,10 @@
  ************************************************************************************
  */
 
-/*global _,$,Backbone,test,asyncTest,ok,expect,module,console,start,equals */
+/*global _,Backbone,asyncTest,ok,expect,module,console,start,equals */
 
 module('Offline');
 
-function errorCallback() {
-  OB.error(arguments);
-}
-
-var clientId = '23C59575B9CF467C9620760EB255B389';
-var orgId = 'E443A31992CB4635AFCAEABE7183CE85';
 var dsProducts = new OB.DS.DataSource(new OB.DS.Request(OB.Model.Product));
 
 asyncTest('Load and cache products - WebSQL', function() {

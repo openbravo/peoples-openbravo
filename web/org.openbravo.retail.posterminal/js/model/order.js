@@ -661,14 +661,6 @@
       var saveAndTriggerEvents = function (gross, save) {
           var now = new Date();
           me.set('timezoneOffset', now.getTimezoneOffset());
-          var net = me.get('lines').reduce(function (memo, e) {
-            var netLine = e.get('discountedNet');
-            if (netLine) {
-              return OB.DEC.add(memo, netLine);
-            } else {
-              return memo;
-            }
-          }, OB.DEC.Zero);
           //total qty
           var qty = me.get('lines').reduce(function (memo, e) {
             var qtyLine = e.getQty();
@@ -2115,7 +2107,7 @@
         if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
           OB.UTIL.RfidController.removeEpcLine(line);
         }
-        var text, lines, indexes, relations, rl, rls, i;
+        var text, lines, relations, i;
 
         me.get('lines').remove(line);
 
@@ -2409,7 +2401,6 @@
           productHavingSameAttribute = false,
           productHasAttribute = p.get('hasAttributes'),
           attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true),
-          isQuotationAndAttributeAllowed = p.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true),
           productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(p);
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
@@ -2729,7 +2720,6 @@
         return true;
       }
       var lines = this.get('lines');
-      var isQuotationAndAttributeAllowed = product.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true);
       var i;
       for (i = 0; i < lines.length; i++) {
         var currentline = lines.at(i);
@@ -2761,8 +2751,7 @@
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasServices');
           var params = {},
-              date = new Date(),
-              i, prod, synchId;
+              date = new Date();
           params.terminalTime = date;
           params.terminalTimeOffset = date.getTimezoneOffset();
           process.exec({
@@ -3011,7 +3000,6 @@
               args: {
                 callback: function (attributeValue) {
                   if (!OB.UTIL.isNullOrUndefined(attributeValue)) {
-                    var i;
                     if (_.isEmpty(attributeValue)) {
                       // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
                       attributeValue = null;
@@ -3095,8 +3083,7 @@
      */
     mergeLines: function (line) {
       var p = line.get('product'),
-          lines = this.get('lines'),
-          merged = false;
+          lines = this.get('lines');
       lines.forEach(function (l) {
         if (l === line) {
           return;
@@ -3108,7 +3095,6 @@
             promotions: null
           });
           lines.remove(l);
-          merged = true;
         }
       }, this);
     },
@@ -3372,7 +3358,6 @@
 
     removePromotion: function (line, rule) {
       var promotions = line.get('promotions'),
-          ruleId = rule.id,
           discountinstance = rule.discountinstance,
           removed = false,
           res = [],
@@ -3400,7 +3385,7 @@
 
     //Attrs is an object of attributes that will be set in order line
     createLine: function (p, units, options, attrs) {
-      var newline, me = this;
+      var me = this;
 
       function createLineAux(p, units, options, attrs, me) {
         if (me.validateAllowSalesWithReturn(units, ((options && options.allowLayawayWithReturn) || false))) {
@@ -3656,12 +3641,6 @@
       var me = this,
           undef;
       var i, oldbp = this.get('bp');
-
-      var errorSaveData = function (callback) {
-          if (callback) {
-            callback();
-          }
-          };
 
       var finishSaveData = function (callback) {
           // set the undo action
@@ -4197,9 +4176,9 @@
     },
 
     cancelAndReplaceOrder: function (context, deferredLines) {
-      var documentseq, documentseqstr, idMap = {},
+      var idMap = {},
           me = this,
-          i, splittedDocNo = [],
+          splittedDocNo = [],
           terminalDocNoPrefix, newDocNo = '',
           cancelAndReplaceSeparator = OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator || '-';
 
@@ -4336,8 +4315,7 @@
     },
 
     checkNotProcessedPayments: function (callback) {
-      var me = this,
-          notPrePayments;
+      var notPrePayments;
       notPrePayments = _.filter(this.get('payments').models, function (payment) {
         return !payment.get('isPrePayment');
       });
@@ -4977,7 +4955,7 @@
     addPayment: function (payment, callback) {
       var execution = OB.UTIL.ProcessController.start('addPayment');
       var me = this,
-          payments, total, i, max, p, order, paymentSign, finalCallback, precision;
+          payments, i, max, p, order, paymentSign, finalCallback, precision;
 
       if (this.get('isPaid') && !payment.get('isReversePayment') && OB.DEC.abs(this.getPrePaymentQty()) >= OB.DEC.abs(this.getTotal()) && !this.isNewReversed()) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
@@ -5015,7 +4993,6 @@
       };
 
       payments = this.get('payments');
-      total = OB.DEC.abs(this.getTotal());
       precision = this.getPrecision(payment);
       if (this.get('prepaymentChangeMode')) {
         this.unset('prepaymentChangeMode');
@@ -5419,7 +5396,7 @@
     },
     fillPromotionsStandard: function (groupedOrder, isFirstTime) {
       var me = this,
-          copiedPromo, linesToMerge, idx, linesToCreate = [],
+          copiedPromo, linesToMerge, linesToCreate = [],
           qtyToReduce, lineToEdit, lineProm, linesToReduce, linesCreated = false;
 
       //reset pendingQtyOffer value of each promotion
@@ -5757,9 +5734,6 @@
           });
 
           var groupedPromos = gli.get('promotions');
-          var promoManual = _.find(groupedPromos, function (promo) {
-            return promo.manual;
-          });
           _.forEach(groupedPromos, function (promotion) {
             if (!promotion.manual) {
               var promoAmt = 0,
@@ -6145,8 +6119,7 @@
       }
 
       function markOrderAsDeleted(model, orderList, callback) {
-        var me = this,
-            creationDate;
+        var creationDate;
         if (model.get('creationDate')) {
           creationDate = new Date(model.get('creationDate'));
         } else {
@@ -6304,10 +6277,9 @@
     },
     generateInvoice: function (callback) {
       var receiptShouldBeInvoiced = false,
-          line, me = this,
-          invoice, isQuotation = this.get('isQuotation'),
+          me = this,
+          invoice,
           isDeleted = this.get('obposIsDeleted'),
-          paidReceipt = (this.get('orderType') === 0 || this.get('orderType') === 1) && this.get('isPaid'),
           receiptShouldBeShipped = false,
           deliveredNotInvoicedLine;
 
@@ -6367,7 +6339,7 @@
               qtyToDeliver = !OB.UTIL.isNullOrUndefined(ol.get('obposQtytodeliver')) ? ol.get('obposQtytodeliver') : ol.get('qty'),
               qtyPendingToDeliver = OB.DEC.sub(qtyToDeliver, ol.getDeliveredQuantity()),
               qtyToInvoice = OB.DEC.Zero,
-              lineToInvoice, promotionAmt = OB.DEC.Zero;
+              lineToInvoice;
           if (me.get('bp').get('invoiceTerms') === 'D') {
             if (qtyPendingToDeliver !== 0) {
               if (OB.DEC.compare(OB.DEC.sub(OB.DEC.abs(qtyPendingToDeliver), OB.DEC.abs(qtyPendingToBeInvoiced))) === 1) {
@@ -7046,8 +7018,7 @@
     },
 
     addPaidReceipt: function (model, callback) {
-      var me = this,
-          synchId = null;
+      var me = this;
       enyo.$.scrim.show();
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         this.doRemoteBPSettings(model.get('bp'));
@@ -7135,13 +7106,7 @@
       });
     },
     deleteCurrent: function (forceCreateNew) {
-      var i, max, me = this,
-          successCallback = function () {
-          return true;
-          },
-          errorCallback = function () {
-          OB.UTIL.showError('Error removing');
-          };
+      var me = this;
       if (!this.current) {
         return;
       }
@@ -7622,7 +7587,7 @@
     },
     addPayment: function (payment, callback) {
       var me = this,
-          i, max, p, order, payments, total, finalCallback, precision;
+          i, max, p, order, payments, finalCallback, precision;
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
@@ -7645,7 +7610,6 @@
       };
 
       payments = this.get('payments');
-      total = OB.DEC.abs(this.getTotal());
       precision = this.getPrecision(payment);
       order = this;
       if (this.get('prepaymentChangeMode')) {

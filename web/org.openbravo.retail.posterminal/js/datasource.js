@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, $, Backbone, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, Promise */
+/*global OB, Backbone, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, Promise */
 
 // HWServer: TODO: this should be implemented in HW Manager module
 OB.DS.HWResource = function (res) {
@@ -425,7 +425,6 @@ OB.DS.HWServer.prototype._send = function (data, callback, device) {
   }
 
   if (sendurl) {
-    var me = this;
     var ajaxRequest = new enyo.Ajax({
       url: sendurl + '/printer',
       cacheBust: false,

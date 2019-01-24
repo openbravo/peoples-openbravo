@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -25,7 +25,7 @@
     }, this);
 
     OB.DATA.updateDefaultCustomerLocations = function (customerAddr) {
-      var i, bp, foundAddress, locations, addToLocations;
+      var i, foundAddress, locations, addToLocations;
       addToLocations = function (bp) {
         foundAddress = false;
         locations = bp.get('locations');
@@ -49,7 +49,7 @@
     };
 
     OB.DATA.executeCustomerAddressSave = function (customerAddr, callback, callbackError) {
-      var customerAddrList, customerAddrId = customerAddr.get('id'),
+      var customerAddrId = customerAddr.get('id'),
           isNew = false,
           bpLocToSave = new OB.Model.ChangedBPlocation(),
           customerAddrListToChange, updateLocally, me = this;
@@ -84,7 +84,7 @@
         bpLocToSave.set('isbeingprocessed', 'Y');
         bpLocToSave.set('json', JSON.stringify(customerAddr.serializeToJSON()));
         OB.Dal.save(bpLocToSave, function () {
-          var successCallback, errorCallback, List;
+          var successCallback, errorCallback;
           successCallback = function () {
             if (callback) {
               callback();
@@ -124,7 +124,7 @@
           bpLocToSave.set('isbeingprocessed', 'Y');
           OB.Dal.save(bpLocToSave, function () {
             bpLocToSave.set('json', customerAddr.serializeToJSON());
-            var successCallback, errorCallback, List;
+            var successCallback, errorCallback;
             successCallback = function () {
               if (callback) {
                 callback();

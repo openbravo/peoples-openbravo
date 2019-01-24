@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -189,7 +189,6 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       }
 
       if (param === 'date') {
-        var date = new Date();
         translatedParams.push(OB.Utilities.Date.JSToOB(new Date(), 'yyyy-MM-dd') + ' 00:00:00.000');
       } else {
         translatedParams.push(model.get(paraTrl.property).id ? model.get(paraTrl.property).id : model.get(paraTrl.property));
@@ -201,11 +200,9 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   createActions: function (evt) {
     var line = evt.get('line'),
         receipt = evt.get('receipt'),
-        bpId = receipt.get('bp').id,
-        productId = line.get('product').id,
         actionQueue = this.get('actionQueue'),
         me = this,
-        criteria, t0 = new Date().getTime(),
+        criteria,
         whereClause = "WHERE ( " + OB.Model.Discounts.computeStandardFilter(receipt) // 
          + " AND M_OFFER_TYPE_ID NOT IN (" + OB.Model.Discounts.getManualPromotions() + ")" //
          + " AND ((EM_OBDISC_ROLE_SELECTION = 'Y' AND NOT EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID " + " AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "')) OR (EM_OBDISC_ROLE_SELECTION = 'N' " //
@@ -384,11 +381,9 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     if (this.get('eventQueue').filter(function (p) {
       return p.get('receipt') === evt.get('receipt');
     }).length === 0) {
-      var line = evt.get('line'),
-          order = evt.get('receipt'),
+      var order = evt.get('receipt'),
           manualPromotions = [],
-          afterManualPromo = [],
-          appliedPack;
+          afterManualPromo = [];
       _.each(order.get('lines').models, function (line) {
         manualPromotions = line.get('manualPromotions') || [];
         afterManualPromo = _.filter(manualPromotions, function (promo) {
