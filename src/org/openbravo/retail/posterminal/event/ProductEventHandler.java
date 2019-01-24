@@ -53,8 +53,8 @@ public class ProductEventHandler extends EntityPersistenceEventObserver {
   private void validateServiceProduct(Product product) {
     if (StringUtils.equals(product.getProductType(), "S") && product.isObposShowstock()) {
       throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
-          "OBPOS_errorStockScreenOnServiceProduct", OBContext.getOBContext().getLanguage()
-              .getLanguage()));
+          "OBPOS_errorStockScreenOnServiceProduct",
+          OBContext.getOBContext().getLanguage().getLanguage()));
     }
   }
 }

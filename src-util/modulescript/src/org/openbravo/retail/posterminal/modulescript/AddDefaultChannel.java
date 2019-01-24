@@ -25,26 +25,27 @@ import org.openbravo.modulescript.OpenbravoVersion;
 
 public class AddDefaultChannel extends ModuleScript {
   private static final String RETAIL_MODULE_ID = "FF808181326CC34901326D53DBCF0018";
+
   @Override
-  // Adds system level default channel 'Brick and mortar'. It is already contained in a dataset. 
-  // When updating instances the dataset is not properly loaded when constraints are enabled. 
+  // Adds system level default channel 'Brick and mortar'. It is already contained in a dataset.
+  // When updating instances the dataset is not properly loaded when constraints are enabled.
   // This module script fixes that problem.
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
 
-      if(!"293AB6FFE1B74DD89071AEB8B308403B".equals(AddDefaultChannelData.selectChannel(cp))){
-    	  AddDefaultChannelData.insertChannel(cp);
+      if (!"293AB6FFE1B74DD89071AEB8B308403B".equals(AddDefaultChannelData.selectChannel(cp))) {
+        AddDefaultChannelData.insertChannel(cp);
       }
 
     } catch (Exception e) {
       handleError(e);
     }
   }
-  
+
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits(RETAIL_MODULE_ID, null, 
-        new OpenbravoVersion(1,2,5900));
+    return new ModuleScriptExecutionLimits(RETAIL_MODULE_ID, null,
+        new OpenbravoVersion(1, 2, 5900));
   }
 }

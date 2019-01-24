@@ -32,16 +32,15 @@ public class CCSelectWarehouseQueryTransformer extends HqlQueryTransformer {
    *          query, the named parameters must be added to this map
    * @return the transformed hql query
    */
+  @Override
   public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     String organizationId = vars.getStringParameter("@Organization.id@");
-    String transformedHql = hqlQuery
-        .replaceAll(
-            "where e.client",
-            "where not exists (select 1 from OBPOS_OrgWarehouseExtra as oww where oww.organization.id = :OBPOS_replace_org_id and oww.warehouse.id = e.id and oww.warehouseType <> :warehouseType)"
-                + " and not exists (select 1 from OrganizationWarehouse as oww where oww.organization.id = :OBPOS_replace_org_id and oww.warehouse.id = e.id)"
-                + " and e.client");
+    String transformedHql = hqlQuery.replaceAll("where e.client",
+        "where not exists (select 1 from OBPOS_OrgWarehouseExtra as oww where oww.organization.id = :OBPOS_replace_org_id and oww.warehouse.id = e.id and oww.warehouseType <> :warehouseType)"
+            + " and not exists (select 1 from OrganizationWarehouse as oww where oww.organization.id = :OBPOS_replace_org_id and oww.warehouse.id = e.id)"
+            + " and e.client");
     queryNamedParameters.put("OBPOS_replace_org_id", organizationId);
     queryNamedParameters.put("warehouseType", POSConstants.CROSS_CHANNEL);
     return transformedHql;

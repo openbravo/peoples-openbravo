@@ -40,22 +40,22 @@ public class PaidReceiptsFilterProperties extends ModelExtension {
         add(new HQLProperty("ord.grandTotalAmount", "totalamountTo"));
         String orderTypeFilter = PaidReceiptsFilter.getOrderTypeFilter((JSONObject) params);
         switch (orderTypeFilter) {
-        case "ORD":
-          add(new HQLProperty("to_char('ORD')", "orderType"));
-          break;
-        case "LAY":
-          add(new HQLProperty("to_char('LAY')", "orderType"));
-          break;
-        case "QT":
-          add(new HQLProperty("to_char('QT')", "orderType"));
-          break;
-        case "RET":
-          add(new HQLProperty("to_char('RET')", "orderType"));
-          break;
-        default:
-          add(new HQLProperty("(case when ord.documentType.return = true then 'RET'"
-              + " when ord.documentType.sOSubType = 'OB' then 'QT'"
-              + " when ord.obposIslayaway = true then 'LAY' else 'ORD' end)", "orderType"));
+          case "ORD":
+            add(new HQLProperty("to_char('ORD')", "orderType"));
+            break;
+          case "LAY":
+            add(new HQLProperty("to_char('LAY')", "orderType"));
+            break;
+          case "QT":
+            add(new HQLProperty("to_char('QT')", "orderType"));
+            break;
+          case "RET":
+            add(new HQLProperty("to_char('RET')", "orderType"));
+            break;
+          default:
+            add(new HQLProperty("(case when ord.documentType.return = true then 'RET'"
+                + " when ord.documentType.sOSubType = 'OB' then 'QT'"
+                + " when ord.obposIslayaway = true then 'LAY' else 'ORD' end)", "orderType"));
 
         }
       }

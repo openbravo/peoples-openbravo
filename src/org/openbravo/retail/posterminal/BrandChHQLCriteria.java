@@ -16,6 +16,7 @@ import org.openbravo.mobile.core.process.HQLCriteriaProcess;
 @ApplicationScoped
 @Qualifier("BChar_Filter")
 public class BrandChHQLCriteria extends HQLCriteriaProcess {
+  @Override
   @Deprecated
   public String getHQLFilter() {
     return null;

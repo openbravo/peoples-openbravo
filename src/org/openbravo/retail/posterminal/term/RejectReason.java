@@ -23,8 +23,8 @@ public class RejectReason extends QueryTerminalProperty {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    return Arrays
-        .asList(new String[] { "from RejectReason where active = 'Y' and $readableSimpleCriteria and $activeCriteria order by name" });
+    return Arrays.asList(new String[] {
+        "from RejectReason where active = 'Y' and $readableSimpleCriteria and $activeCriteria order by name" });
   }
 
   @Override

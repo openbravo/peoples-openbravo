@@ -39,24 +39,26 @@ import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
 @DataSynchronization(entity = "OBPOS_App_Cashup")
-public class ProcessCashClose extends POSDataSynchronizationProcess implements
-    DataSynchronizationImportProcess {
+public class ProcessCashClose extends POSDataSynchronizationProcess
+    implements DataSynchronizationImportProcess {
 
   private static final Logger log = LogManager.getLogger();
   JSONObject jsonResponse = new JSONObject();
 
+  @Override
   protected String getImportQualifier() {
     return "OBPOS_App_Cashup";
   }
 
+  @Override
   public JSONObject saveRecord(JSONObject jsonCashup) throws Exception {
     String cashUpId = jsonCashup.getString("id");
     JSONObject jsonData = new JSONObject();
     Date cashUpDate = new Date();
-    OBPOSApplications posTerminal = OBDal.getInstance().get(
-        OBPOSApplications.class,
-        jsonCashup.has("posTerminal") ? jsonCashup.getString("posTerminal") : jsonCashup
-            .getString("posterminal"));
+    OBPOSApplications posTerminal = OBDal.getInstance()
+        .get(OBPOSApplications.class,
+            jsonCashup.has("posTerminal") ? jsonCashup.getString("posTerminal")
+                : jsonCashup.getString("posterminal"));
 
     // get and prepare the cashUpDate
     if (jsonCashup.has("cashUpDate") && jsonCashup.get("cashUpDate") != null
@@ -73,13 +75,15 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
           && StringUtils.isNotEmpty(jsonCashup.getString("timezoneOffset"))) {
         timezoneOffset = Long.parseLong(jsonCashup.getString("timezoneOffset"));
       } else {
-        timezoneOffset = -((Calendar.getInstance().get(Calendar.ZONE_OFFSET) + Calendar
-            .getInstance().get(Calendar.DST_OFFSET)) / (60 * 1000));
-        log.error("Error processing cash close (1): error retrieving the timezoneOffset. Using the current timezoneOffset");
+        timezoneOffset = -((Calendar.getInstance().get(Calendar.ZONE_OFFSET)
+            + Calendar.getInstance().get(Calendar.DST_OFFSET)) / (60 * 1000));
+        log.error(
+            "Error processing cash close (1): error retrieving the timezoneOffset. Using the current timezoneOffset");
       }
       cashUpDate = OBMOBCUtils.calculateServerDatetime(strCashUpDate, timezoneOffset);
     } else {
-      log.debug("Error processing cash close (2): error retrieving cashUp date. Using current server date");
+      log.debug(
+          "Error processing cash close (2): error retrieving cashUp date. Using current server date");
     }
 
     OBPOSAppCashup cashUp = UpdateCashup.getAndUpdateCashUp(cashUpId, jsonCashup, cashUpDate);
@@ -96,11 +100,11 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         cashupApproval.setApprovalType("OBPOS_CashupCountDiff");
         cashupApproval.setApprovalMessage(jsonApprovals.getString("message"));
         if (jsonApprovals.has("approvalReason")) {
-          cashupApproval.setApprovalReason(OBDal.getInstance().get(OBPOSApprovalReason.class,
-              jsonApprovals.getString("approvalReason")));
+          cashupApproval.setApprovalReason(OBDal.getInstance()
+              .get(OBPOSApprovalReason.class, jsonApprovals.getString("approvalReason")));
         }
-        cashupApproval.setSupervisor(OBDal.getInstance().get(User.class,
-            jsonApprovals.getString("supervisor")));
+        cashupApproval.setSupervisor(
+            OBDal.getInstance().get(User.class, jsonApprovals.getString("supervisor")));
         OBDal.getInstance().save(cashupApproval);
       }
 
@@ -115,8 +119,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       } else if (posTerminal.isMaster()) {
         // Reconciliation and invoices of slaves
         String query = OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + ".id = :parantCashupId";
-        OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance().createQuery(
-            OBPOSAppCashup.class, query);
+        OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance()
+            .createQuery(OBPOSAppCashup.class, query);
         appCashupQuery.setNamedParameter("parantCashupId", cashUpId);
         List<OBPOSAppCashup> slaveCashupList = appCashupQuery.list();
         List<String> slaveCashupIds = new ArrayList<String>();
@@ -223,8 +227,9 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
   }
 
   private OBPOSPaymentMethodCashup getPaymentMethodCashup(String cashUpId, String searchKey) {
-    final OBQuery<OBPOSPaymentMethodCashup> obQuery = OBDal.getInstance().createQuery(
-        OBPOSPaymentMethodCashup.class, "cashUp.id = :cashUpId and searchKey = :searchKey");
+    final OBQuery<OBPOSPaymentMethodCashup> obQuery = OBDal.getInstance()
+        .createQuery(OBPOSPaymentMethodCashup.class,
+            "cashUp.id = :cashUpId and searchKey = :searchKey");
     obQuery.setNamedParameter("cashUpId", cashUpId);
     obQuery.setNamedParameter("searchKey", searchKey);
     final List<OBPOSPaymentMethodCashup> paymentMethodCashupList = obQuery.list();
@@ -244,11 +249,11 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         // Skip share payment method on slave terminals
         continue;
       }
-      final OBCriteria<FIN_Reconciliation> recconciliations = OBDal.getInstance().createCriteria(
-          FIN_Reconciliation.class);
+      final OBCriteria<FIN_Reconciliation> recconciliations = OBDal.getInstance()
+          .createCriteria(FIN_Reconciliation.class);
       recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_DOCUMENTSTATUS, "DR"));
-      recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT,
-          payment.getFinancialAccount()));
+      recconciliations
+          .add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, payment.getFinancialAccount()));
       for (final FIN_Reconciliation r : recconciliations.list()) {
         // will end up in the pos error window
         throw new OBException(

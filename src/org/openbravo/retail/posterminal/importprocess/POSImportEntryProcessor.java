@@ -40,8 +40,8 @@ public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
 
   private static final Logger log = LogManager.getLogger();
 
-  private static final Entity IMPORT_ENTRY_ENTITY = ModelProvider.getInstance().getEntity(
-      ImportEntry.ENTITY_NAME);
+  private static final Entity IMPORT_ENTRY_ENTITY = ModelProvider.getInstance()
+      .getEntity(ImportEntry.ENTITY_NAME);
 
   private static final Entity[] ENTITIES = { IMPORT_ENTRY_ENTITY };
   private static final Property STATUSPROPERTY = IMPORT_ENTRY_ENTITY
@@ -95,8 +95,8 @@ public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
 
       // as we are loading proxy the posTerminal object will always be not null
       // even in case of an invalid id, therefore the check on "null" above
-      final OBPOSApplications posTerminal = OBDal.getInstance().getProxy(OBPOSApplications.class,
-          posTerminalId);
+      final OBPOSApplications posTerminal = OBDal.getInstance()
+          .getProxy(OBPOSApplications.class, posTerminalId);
       event.setCurrentState(POSTERMINAL_PROPERTY, posTerminal);
 
       // determine the organization without reading the pos terminal
@@ -104,22 +104,23 @@ public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
       Organization organization = null;
       final JSONObject content = new JSONObject(importEntry.getJsonInfo());
       if (content.has("organization") && content.get("organization") instanceof String) {
-        organization = OBDal.getInstance().getProxy(Organization.class,
-            content.getString("organization"));
+        organization = OBDal.getInstance()
+            .getProxy(Organization.class, content.getString("organization"));
       } else if (content.has("data") && content.get("data") instanceof JSONArray) {
         final JSONArray data = content.getJSONArray("data");
         if (data.length() > 0 && data.get(0) instanceof JSONObject) {
           final JSONObject json = data.getJSONObject(0);
           if (json.has("organization") && json.get("organization") instanceof String) {
-            organization = OBDal.getInstance().getProxy(Organization.class,
-                json.getString("organization"));
+            organization = OBDal.getInstance()
+                .getProxy(Organization.class, json.getString("organization"));
           }
         }
       }
       // not found read it from the posterminal which will get loaded
       if (organization == null) {
-        log.warn("Not possible to determine organization from json, reading the org from posterminal "
-            + content);
+        log.warn(
+            "Not possible to determine organization from json, reading the org from posterminal "
+                + content);
         organization = posTerminal.getOrganization();
       }
       event.setCurrentState(ORGANIZATION_PROPERTY, organization);

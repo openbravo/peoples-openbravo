@@ -17,9 +17,10 @@ import org.openbravo.modulescript.ModuleScriptExecutionLimits;
 import org.openbravo.modulescript.OpenbravoVersion;
 
 public class InitializeProposalTypeforServices extends ModuleScript {
-  
+
   private static final Logger log4j = LogManager.getLogger();
   private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
+
   @Override
   // Initialize Proposal Type for Services Linked to Products.
   // This update is necessary due to EM_OBPOS_LINKPROD_PROPTYPE_CHK constraint in M_PRODUCT table.
@@ -27,13 +28,12 @@ public class InitializeProposalTypeforServices extends ModuleScript {
     try {
       ConnectionProvider cp = getConnectionProvider();
       int count = InitializeProposalTypeforServicesData.initializeProposalType(cp);
-      log4j.debug("Updated " + count + " M_Product records EM_OBPOS_PROPOSAL_TYPE");        
+      log4j.debug("Updated " + count + " M_Product records EM_OBPOS_PROPOSAL_TYPE");
     } catch (Exception e) {
       handleError(e);
     }
   }
-  
-  
+
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     // The module script needs to be executed only when updating from a version
@@ -41,7 +41,7 @@ public class InitializeProposalTypeforServices extends ModuleScript {
     return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
         new OpenbravoVersion(1, 8, 1903));
   }
-  
+
   @Override
   protected boolean executeOnInstall() {
     return true;

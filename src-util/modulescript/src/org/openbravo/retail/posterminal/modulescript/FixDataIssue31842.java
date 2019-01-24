@@ -22,7 +22,7 @@ public class FixDataIssue31842 extends ModuleScript {
 
   private static final Logger log4j = LogManager.getLogger();
   private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
-  
+
   @Override
   public void execute() {
     try {
@@ -32,8 +32,7 @@ public class FixDataIssue31842 extends ModuleScript {
       handleError(e);
     }
   }
-  
-  
+
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     // The module script needs to be executed only when updating from a version
@@ -41,13 +40,12 @@ public class FixDataIssue31842 extends ModuleScript {
     return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
         new OpenbravoVersion(1, 8, 1903));
   }
-  
+
   @Override
   protected boolean executeOnInstall() {
     return false;
   }
-  
-  
+
   public static void main(String[] args) {
     FixDataIssue31842 t = new FixDataIssue31842();
     t.execute();

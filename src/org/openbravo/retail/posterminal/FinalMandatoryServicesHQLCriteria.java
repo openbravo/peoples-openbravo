@@ -18,6 +18,7 @@ import org.openbravo.mobile.core.process.HQLCriteriaProcess;
 @Qualifier("Final_Services")
 public class FinalMandatoryServicesHQLCriteria extends HQLCriteriaProcess {
 
+  @Override
   public String getHQLFilter(String params) {
     return " (product.productType = 'S' and product.obposProposalType = 'FMA') ";
   }

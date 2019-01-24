@@ -131,8 +131,8 @@ public class InvoiceUtils {
     final OrderLine orderLine = lineReferences.get(numIter);
     final JSONObject jsonInvoiceLine = invoicelines.getJSONObject(numIter);
     final BigDecimal qtyToInvoice = BigDecimal.valueOf(jsonInvoiceLine.getDouble("qty"));
-    final BigDecimal lineGrossAmount = BigDecimal.valueOf(jsonInvoiceLine
-        .getDouble("lineGrossAmount"));
+    final BigDecimal lineGrossAmount = BigDecimal
+        .valueOf(jsonInvoiceLine.getDouble("lineGrossAmount"));
     final BigDecimal lineNetAmount = BigDecimal.valueOf(jsonInvoiceLine.getDouble("net"));
 
     if (orderLine.getObposQtyDeleted() != null
@@ -140,8 +140,8 @@ public class InvoiceUtils {
       return;
     }
 
-    boolean deliveredQtyEqualsToMovementQty = movementQtyTotal.compareTo(orderLine
-        .getOrderedQuantity()) == 0;
+    boolean deliveredQtyEqualsToMovementQty = movementQtyTotal
+        .compareTo(orderLine.getOrderedQuantity()) == 0;
 
     if (jsonInvoiceLine.has("description")
         && StringUtils.length(jsonInvoiceLine.getString("description")) > 255) {
@@ -158,8 +158,8 @@ public class InvoiceUtils {
         invoiceLine, jsoninvoice, jsoninvoice.getLong("timezoneOffset"));
     invoiceLine.set("creationDate", invoice.getCreationDate());
     invoiceLine.setLineNo((long) lineNo);
-    invoiceLine.setDescription(jsonInvoiceLine.has("description") ? jsonInvoiceLine
-        .getString("description") : "");
+    invoiceLine.setDescription(
+        jsonInvoiceLine.has("description") ? jsonInvoiceLine.getString("description") : "");
 
     BigDecimal movQty = null;
     if (inOutLine != null && inOutLine.getMovementQuantity() != null) {
@@ -180,31 +180,33 @@ public class InvoiceUtils {
       // if there are several shipments line to the same orderline, in the last line of the invoice
       // of this sales order line, the line net amt will be the pending line net amount
       if (numLines > actualLine || (numLines == actualLine && !deliveredQtyEqualsToMovementQty)) {
-        invoiceLine.setLineNetAmount(orderLine.getUnitPrice().multiply(qty)
-            .setScale(pricePrecision, RoundingMode.HALF_UP));
-        invoiceLine.setGrossAmount(orderLine.getGrossUnitPrice().multiply(qty)
+        invoiceLine.setLineNetAmount(
+            orderLine.getUnitPrice().multiply(qty).setScale(pricePrecision, RoundingMode.HALF_UP));
+        invoiceLine.setGrossAmount(orderLine.getGrossUnitPrice()
+            .multiply(qty)
             .setScale(pricePrecision, RoundingMode.HALF_UP));
       } else {
         BigDecimal partialGrossAmount = BigDecimal.ZERO;
         BigDecimal partialLineNetAmount = BigDecimal.ZERO;
         for (InvoiceLine il : invoice.getInvoiceLineList()) {
-          if (il.getSalesOrderLine() != null && il.getSalesOrderLine().getId() == orderLine.getId()) {
+          if (il.getSalesOrderLine() != null
+              && il.getSalesOrderLine().getId() == orderLine.getId()) {
             partialGrossAmount = partialGrossAmount.add(il.getGrossAmount());
             partialLineNetAmount = partialLineNetAmount.add(il.getLineNetAmount());
           }
         }
-        invoiceLine.setLineNetAmount(lineNetAmount.subtract(partialLineNetAmount).setScale(
-            pricePrecision, RoundingMode.HALF_UP));
-        invoiceLine.setGrossAmount(lineGrossAmount.subtract(partialGrossAmount).setScale(
-            pricePrecision, RoundingMode.HALF_UP));
+        invoiceLine.setLineNetAmount(lineNetAmount.subtract(partialLineNetAmount)
+            .setScale(pricePrecision, RoundingMode.HALF_UP));
+        invoiceLine.setGrossAmount(lineGrossAmount.subtract(partialGrossAmount)
+            .setScale(pricePrecision, RoundingMode.HALF_UP));
       }
     } else {
       invoiceLine.setLineNetAmount(lineNetAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
       invoiceLine.setGrossAmount(lineGrossAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
     }
     invoiceLine.setInvoicedQuantity(qty);
-    orderLine.setInvoicedQuantity((orderLine.getInvoicedQuantity() != null ? orderLine
-        .getInvoicedQuantity().add(qty) : qty));
+    orderLine.setInvoicedQuantity(
+        (orderLine.getInvoicedQuantity() != null ? orderLine.getInvoicedQuantity().add(qty) : qty));
     invoiceLine.setInvoice(invoice);
     invoiceLine.setSalesOrderLine(orderLine);
     invoiceLine.setGoodsShipmentLine(inOutLine);
@@ -221,8 +223,8 @@ public class InvoiceUtils {
       String taxId = itKeys.next();
       JSONObject jsoninvoiceTax = taxes.getJSONObject(taxId);
       InvoiceLineTax invoicelinetax = OBProvider.getInstance().get(InvoiceLineTax.class);
-      TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
-          ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
+      TaxRate tax = (TaxRate) OBDal.getInstance()
+          .getProxy(ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
       invoicelinetax.setTax(tax);
 
       final BigDecimal taxNetAmt = BigDecimal.valueOf(jsoninvoiceTax.getDouble("net"));
@@ -233,10 +235,10 @@ public class InvoiceUtils {
         // if there are several shipments line to the same orderline, in the last line of the
         // splited lines, the tax amount will be calculated as the pending tax amount
         if (numLines > actualLine || (numLines == actualLine && !deliveredQtyEqualsToMovementQty)) {
-          invoicelinetax.setTaxableAmount(taxNetAmt.multiply(ratio).setScale(pricePrecision,
-              RoundingMode.HALF_UP));
-          invoicelinetax.setTaxAmount(taxAmt.multiply(ratio).setScale(pricePrecision,
-              RoundingMode.HALF_UP));
+          invoicelinetax.setTaxableAmount(
+              taxNetAmt.multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
+          invoicelinetax
+              .setTaxAmount(taxAmt.multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
           totalTaxAmount = totalTaxAmount.add(invoicelinetax.getTaxAmount());
         } else {
           BigDecimal partialTaxableAmount = BigDecimal.ZERO;
@@ -249,10 +251,10 @@ public class InvoiceUtils {
               partialTaxAmount = partialTaxAmount.add(ilt.getTaxAmount());
             }
           }
-          invoicelinetax.setTaxableAmount(taxNetAmt.subtract(partialTaxableAmount).setScale(
-              pricePrecision, RoundingMode.HALF_UP));
-          invoicelinetax.setTaxAmount(taxAmt.subtract(partialTaxAmount).setScale(pricePrecision,
-              RoundingMode.HALF_UP));
+          invoicelinetax.setTaxableAmount(taxNetAmt.subtract(partialTaxableAmount)
+              .setScale(pricePrecision, RoundingMode.HALF_UP));
+          invoicelinetax.setTaxAmount(
+              taxAmt.subtract(partialTaxAmount).setScale(pricePrecision, RoundingMode.HALF_UP));
         }
       } else {
         invoicelinetax.setTaxableAmount(taxNetAmt.setScale(pricePrecision, RoundingMode.HALF_UP));
@@ -285,10 +287,12 @@ public class InvoiceUtils {
 
         if (hasActualAmt) {
           promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt"))
-              .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
+              .multiply(ratio)
+              .setScale(pricePrecision, RoundingMode.HALF_UP));
         } else {
           promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("amt"))
-              .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
+              .multiply(ratio)
+              .setScale(pricePrecision, RoundingMode.HALF_UP));
         }
         promotion.setLineNo((long) ((p + 1) * 10));
         promotion.setId(OBMOBCUtils.getUUIDbyString(invoiceLine.getId() + p));
@@ -302,8 +306,9 @@ public class InvoiceUtils {
 
   private void createInvoiceLines(Invoice invoice, Order order, JSONObject jsoninvoice,
       JSONArray invoicelines, ArrayList<OrderLine> lineReferences) throws JSONException {
-    int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
-        .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
+    int pricePrecision = order.getCurrency().getObposPosprecision() == null
+        ? order.getCurrency().getPricePrecision().intValue()
+        : order.getCurrency().getObposPosprecision().intValue();
 
     boolean multipleShipmentsLines = false;
     int lineNo = 0;
@@ -313,10 +318,11 @@ public class InvoiceUtils {
       BigDecimal movementQtyTotal = BigDecimal.ZERO;
       final List<ShipmentInOutLine> iolNotInvoicedList = new ArrayList<>();
       for (final ShipmentInOutLine iol : iolList) {
-        final OBCriteria<InvoiceLine> invoiceLineCriteria = OBDal.getInstance().createCriteria(
-            InvoiceLine.class);
-        invoiceLineCriteria.add(Restrictions.eq(InvoiceLine.PROPERTY_GOODSSHIPMENTLINE + "."
-            + ShipmentInOutLine.PROPERTY_ID, iol.getId()));
+        final OBCriteria<InvoiceLine> invoiceLineCriteria = OBDal.getInstance()
+            .createCriteria(InvoiceLine.class);
+        invoiceLineCriteria.add(Restrictions.eq(
+            InvoiceLine.PROPERTY_GOODSSHIPMENTLINE + "." + ShipmentInOutLine.PROPERTY_ID,
+            iol.getId()));
         final List<InvoiceLine> invoiceLineList = invoiceLineCriteria.list();
         if (invoiceLineList.size() == 0) {
           iolNotInvoicedList.add(iol);
@@ -348,10 +354,11 @@ public class InvoiceUtils {
           createInvoiceLine(invoice, order, jsoninvoice, invoicelines, lineReferences, i,
               pricePrecision, iol, lineNo, iolNotInvoicedList.size(), numIter, movementQtyTotal);
         }
-        final BigDecimal qtyToInvoice = BigDecimal.valueOf(invoicelines.getJSONObject(i).getDouble(
-            "qty"));
+        final BigDecimal qtyToInvoice = BigDecimal
+            .valueOf(invoicelines.getJSONObject(i).getDouble("qty"));
         final BigDecimal orderedQty = lineReferences.get(i).getOrderedQuantity();
-        if (qtyToInvoice.compareTo(orderedQty) == 0 && movementQtyTotal.compareTo(orderedQty) == -1) {
+        if (qtyToInvoice.compareTo(orderedQty) == 0
+            && movementQtyTotal.compareTo(orderedQty) == -1) {
           lineNo = lineNo + 10;
           createInvoiceLine(invoice, order, jsoninvoice, invoicelines, lineReferences, i,
               pricePrecision, null, lineNo, iolNotInvoicedList.size(),
@@ -374,8 +381,9 @@ public class InvoiceUtils {
       invoice.setId(jsoninvoice.getString("id"));
       invoice.setNewOBObject(true);
     }
-    int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
-        .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
+    int pricePrecision = order.getCurrency().getObposPosprecision() == null
+        ? order.getCurrency().getPricePrecision().intValue()
+        : order.getCurrency().getObposPosprecision().intValue();
 
     String description = null;
     if (jsoninvoice.has("Invoice.description")) {
@@ -415,20 +423,20 @@ public class InvoiceUtils {
     invoice.setDocumentAction("RE");
     invoice.setAPRMProcessinvoice("RE");
     invoice.setSalesOrder(order);
-    invoice.setPartnerAddress(OBDal.getInstance().getProxy(Location.class,
-        jsoninvoice.getJSONObject("bp").getString("locId")));
+    invoice.setPartnerAddress(OBDal.getInstance()
+        .getProxy(Location.class, jsoninvoice.getJSONObject("bp").getString("locId")));
     invoice.setProcessed(true);
     invoice.setPaymentMethod(order.getPaymentMethod());
     invoice.setPaymentTerms(order.getPaymentTerms());
-    invoice.setGrandTotalAmount(BigDecimal.valueOf(jsoninvoice.getDouble("gross")).setScale(
-        pricePrecision, RoundingMode.HALF_UP));
-    invoice.setSummedLineAmount(BigDecimal.valueOf(jsoninvoice.getDouble("net")).setScale(
-        pricePrecision, RoundingMode.HALF_UP));
+    invoice.setGrandTotalAmount(BigDecimal.valueOf(jsoninvoice.getDouble("gross"))
+        .setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoice.setSummedLineAmount(BigDecimal.valueOf(jsoninvoice.getDouble("net"))
+        .setScale(pricePrecision, RoundingMode.HALF_UP));
     invoice.setTotalPaid(BigDecimal.ZERO);
-    invoice.setOutstandingAmount((BigDecimal.valueOf(jsoninvoice.getDouble("gross"))).setScale(
-        pricePrecision, RoundingMode.HALF_UP));
-    invoice.setDueAmount((BigDecimal.valueOf(jsoninvoice.getDouble("gross"))).setScale(
-        pricePrecision, RoundingMode.HALF_UP));
+    invoice.setOutstandingAmount((BigDecimal.valueOf(jsoninvoice.getDouble("gross")))
+        .setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoice.setDueAmount((BigDecimal.valueOf(jsoninvoice.getDouble("gross")))
+        .setScale(pricePrecision, RoundingMode.HALF_UP));
     invoice.setUserContact(order.getUserContact());
 
     // Create invoice tax lines
@@ -440,18 +448,18 @@ public class InvoiceUtils {
       String taxId = itKeys.next();
       JSONObject jsoninvoiceTax = taxes.getJSONObject(taxId);
       InvoiceTax invoiceTax = OBProvider.getInstance().get(InvoiceTax.class);
-      TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
-          ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
+      TaxRate tax = (TaxRate) OBDal.getInstance()
+          .getProxy(ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
       invoiceTax.setTax(tax);
-      invoiceTax.setTaxableAmount(BigDecimal.valueOf(jsoninvoiceTax.getDouble("net")).setScale(
-          pricePrecision, RoundingMode.HALF_UP));
-      invoiceTax.setTaxAmount(BigDecimal.valueOf(jsoninvoiceTax.getDouble("amount")).setScale(
-          pricePrecision, RoundingMode.HALF_UP));
+      invoiceTax.setTaxableAmount(BigDecimal.valueOf(jsoninvoiceTax.getDouble("net"))
+          .setScale(pricePrecision, RoundingMode.HALF_UP));
+      invoiceTax.setTaxAmount(BigDecimal.valueOf(jsoninvoiceTax.getDouble("amount"))
+          .setScale(pricePrecision, RoundingMode.HALF_UP));
       invoiceTax.setInvoice(invoice);
       invoiceTax.setLineNo((long) ((i + 1) * 10));
       invoiceTax.setRecalculate(true);
-      invoiceTax.setId(OBMOBCUtils.getUUIDbyString(invoiceTax.getInvoice().getId()
-          + invoiceTax.getLineNo()));
+      invoiceTax.setId(
+          OBMOBCUtils.getUUIDbyString(invoiceTax.getInvoice().getId() + invoiceTax.getLineNo()));
       invoiceTax.setNewOBObject(true);
       i++;
       invoice.getInvoiceTaxList().add(invoiceTax);
@@ -460,9 +468,9 @@ public class InvoiceUtils {
   }
 
   private void updateTaxes(Invoice invoice) throws JSONException {
-    int pricePrecision = invoice.getCurrency().getObposPosprecision() == null ? invoice
-        .getCurrency().getPricePrecision().intValue() : invoice.getCurrency()
-        .getObposPosprecision().intValue();
+    int pricePrecision = invoice.getCurrency().getObposPosprecision() == null
+        ? invoice.getCurrency().getPricePrecision().intValue()
+        : invoice.getCurrency().getObposPosprecision().intValue();
     for (InvoiceTax taxInv : invoice.getInvoiceTaxList()) {
       BigDecimal taxAmt = BigDecimal.ZERO;
       BigDecimal taxableAmt = BigDecimal.ZERO;
@@ -486,8 +494,8 @@ public class InvoiceUtils {
 
     final BigDecimal gross = invoice.getGrandTotalAmount();
     final FIN_PaymentSchedule paymentSchedule = order.getFINPaymentScheduleList().get(0);
-    final FIN_PaymentSchedule paymentScheduleInvoice = OBProvider.getInstance().get(
-        FIN_PaymentSchedule.class);
+    final FIN_PaymentSchedule paymentScheduleInvoice = OBProvider.getInstance()
+        .get(FIN_PaymentSchedule.class);
     paymentScheduleInvoice.setCurrency(order.getCurrency());
     paymentScheduleInvoice.setInvoice(invoice);
     paymentScheduleInvoice.setFinPaymentmethod(order.getPaymentMethod());
@@ -503,18 +511,18 @@ public class InvoiceUtils {
 
     final OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleCriteria = OBDal.getInstance()
         .createCriteria(FIN_PaymentScheduleDetail.class);
-    paymentScheduleCriteria.add(Restrictions.eq(
-        FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
-    paymentScheduleCriteria.add(Restrictions
-        .isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
-    paymentScheduleCriteria.add(Restrictions
-        .isNotNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+    paymentScheduleCriteria.add(
+        Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
+    paymentScheduleCriteria
+        .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
+    paymentScheduleCriteria
+        .add(Restrictions.isNotNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
     if (gross.compareTo(BigDecimal.ZERO) != -1) {
-      paymentScheduleCriteria.addOrder(org.hibernate.criterion.Order
-          .asc(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT));
+      paymentScheduleCriteria
+          .addOrder(org.hibernate.criterion.Order.asc(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT));
     } else {
-      paymentScheduleCriteria.addOrder(org.hibernate.criterion.Order
-          .desc(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT));
+      paymentScheduleCriteria
+          .addOrder(org.hibernate.criterion.Order.desc(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT));
     }
     final List<FIN_PaymentScheduleDetail> paymentScheduleList = paymentScheduleCriteria.list();
     BigDecimal paidAmt = BigDecimal.ZERO;
@@ -530,11 +538,13 @@ public class InvoiceUtils {
     for (final FIN_PaymentScheduleDetail psd : paymentScheduleList) {
       if (psd.getPaymentDetails().getFinPayment().getReversedPayment() != null) {
         for (final FIN_PaymentScheduleDetail psd2 : paymentScheduleList) {
-          if (psd.getPaymentDetails().getFinPayment().getId()
+          if (psd.getPaymentDetails()
+              .getFinPayment()
+              .getId()
               .equals(psd.getPaymentDetails().getFinPayment().getReversedPayment().getId())) {
             reversalPSDList.add(psd2);
-            reverseRelation.put(psd.getPaymentDetails().getFinPayment().getId(), psd
-                .getPaymentDetails().getFinPayment().getReversedPayment().getId());
+            reverseRelation.put(psd.getPaymentDetails().getFinPayment().getId(),
+                psd.getPaymentDetails().getFinPayment().getReversedPayment().getId());
             break;
           }
         }
@@ -552,10 +562,12 @@ public class InvoiceUtils {
         break;
       }
 
-      if (finalSettlementDate == null
-          || (psd.getPaymentDetails() != null
-              && psd.getPaymentDetails().getFinPayment().getPaymentDate() != null && psd
-              .getPaymentDetails().getFinPayment().getPaymentDate().compareTo(finalSettlementDate) > 0)) {
+      if (finalSettlementDate == null || (psd.getPaymentDetails() != null
+          && psd.getPaymentDetails().getFinPayment().getPaymentDate() != null
+          && psd.getPaymentDetails()
+              .getFinPayment()
+              .getPaymentDate()
+              .compareTo(finalSettlementDate) > 0)) {
         finalSettlementDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();
       }
       // Do not consider as paid amount if the payment is in a not valid status
@@ -564,10 +576,9 @@ public class InvoiceUtils {
       int amtSign = amtToDistribute.signum();
       FIN_PaymentScheduleDetail reversalPSD = null;
       if (psd.getPaymentDetails().getFinPayment().getReversedPayment() != null) {
-        reversalPSD = OBDal.getInstance().get(
-            FIN_PaymentScheduleDetail.class,
-            reverseRelation.get(psd.getPaymentDetails().getFinPayment().getReversedPayment()
-                .getId()));
+        reversalPSD = OBDal.getInstance()
+            .get(FIN_PaymentScheduleDetail.class, reverseRelation
+                .get(psd.getPaymentDetails().getFinPayment().getReversedPayment().getId()));
       }
       if ((amtSign >= 0 && psd.getAmount().compareTo(amtToDistribute) <= 0)
           || (amtSign == -1 && psd.getAmount().compareTo(amtToDistribute) >= 0)) {
@@ -607,12 +618,12 @@ public class InvoiceUtils {
     if (remainingAmt.compareTo(BigDecimal.ZERO) != 0) {
       final OBCriteria<FIN_PaymentScheduleDetail> remainingPSDCriteria = OBDal.getInstance()
           .createCriteria(FIN_PaymentScheduleDetail.class);
-      remainingPSDCriteria.add(Restrictions.eq(
-          FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
       remainingPSDCriteria.add(Restrictions
-          .isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
-      remainingPSDCriteria.add(Restrictions
-          .isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+          .eq(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
+      remainingPSDCriteria
+          .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
+      remainingPSDCriteria
+          .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
       remainingPSDCriteria.setMaxResults(1);
       final FIN_PaymentScheduleDetail remainingPSD = (FIN_PaymentScheduleDetail) remainingPSDCriteria
           .uniqueResult();
@@ -621,13 +632,13 @@ public class InvoiceUtils {
           // The PSD must be splitted in two PSD, one that belongs to the invoice with the
           // remaining amount for the invoice and the other only to the order with the remaining
           // amount for the order that not belongs to an invoice
-          FIN_AddPayment.createPSD(remainingPSD.getAmount().subtract(remainingAmt),
-              paymentSchedule, null, order.getOrganization(), order.getBusinessPartner());
+          FIN_AddPayment.createPSD(remainingPSD.getAmount().subtract(remainingAmt), paymentSchedule,
+              null, order.getOrganization(), order.getBusinessPartner());
           remainingPSD.setAmount(remainingAmt);
         }
         remainingPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
-        paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
-            remainingPSD);
+        paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList()
+            .add(remainingPSD);
         OBDal.getInstance().save(remainingPSD);
 
         // Generate credit for the remaining to pay in the invoice
@@ -640,8 +651,8 @@ public class InvoiceUtils {
           OBDal.getInstance().flush();
           OBContext.setAdminMode(false);
           try {
-            order.getBusinessPartner().setCreditUsed(
-                order.getBusinessPartner().getCreditUsed().add(creditGenerated));
+            order.getBusinessPartner()
+                .setCreditUsed(order.getBusinessPartner().getCreditUsed().add(creditGenerated));
             OBDal.getInstance().flush();
           } finally {
             OBContext.restorePreviousMode();
@@ -653,7 +664,9 @@ public class InvoiceUtils {
     paymentScheduleInvoice.setOutstandingAmount(gross.subtract(paidAmt));
     paymentScheduleInvoice.setPaidAmount(paidAmt);
 
-    if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class).hasProperty("origDueDate")) {
+    if (ModelProvider.getInstance()
+        .getEntity(FIN_PaymentSchedule.class)
+        .hasProperty("origDueDate")) {
       // This property is checked and set this way to force compatibility with both MP13, MP14
       // and later releases of Openbravo. This property is mandatory and must be set. Check
       // issue
@@ -679,9 +692,9 @@ public class InvoiceUtils {
   }
 
   private BigDecimal convertCurrencyInvoice(Invoice invoice, BigDecimal amt) {
-    int pricePrecision = invoice.getCurrency().getObposPosprecision() == null ? invoice
-        .getCurrency().getPricePrecision().intValue() : invoice.getCurrency()
-        .getObposPosprecision().intValue();
+    int pricePrecision = invoice.getCurrency().getObposPosprecision() == null
+        ? invoice.getCurrency().getPricePrecision().intValue()
+        : invoice.getCurrency().getObposPosprecision().intValue();
     List<Object> parameters = new ArrayList<Object>();
     List<Class<?>> types = new ArrayList<Class<?>>();
     parameters.add(amt.setScale(pricePrecision, RoundingMode.HALF_UP));
@@ -701,8 +714,8 @@ public class InvoiceUtils {
     parameters.add('A');
     types.add(Character.class);
 
-    return (BigDecimal) CallStoredProcedure.getInstance().call("c_currency_convert_precision",
-        parameters, types);
+    return (BigDecimal) CallStoredProcedure.getInstance()
+        .call("c_currency_convert_precision", parameters, types);
   }
 
   public void createPaymentTerms(Order order, Invoice invoice) {
@@ -710,10 +723,10 @@ public class InvoiceUtils {
     final FIN_PaymentSchedule paymentScheduleInvoice = invoice.getFINPaymentScheduleList().get(0);
     final OBCriteria<FIN_PaymentScheduleDetail> remainingPSDCriteria = OBDal.getInstance()
         .createCriteria(FIN_PaymentScheduleDetail.class);
-    remainingPSDCriteria.add(Restrictions.eq(
-        FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
-    remainingPSDCriteria.add(Restrictions.eq(
-        FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE, paymentScheduleInvoice));
+    remainingPSDCriteria.add(
+        Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
+    remainingPSDCriteria.add(Restrictions
+        .eq(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE, paymentScheduleInvoice));
     remainingPSDCriteria
         .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
     remainingPSDCriteria.setMaxResults(1);
@@ -724,17 +737,17 @@ public class InvoiceUtils {
       // There's something remaining to pay, so is necessary to check the payment terms. In case
       // that the remaining must be paid in different terms, the different PS must be created
       // for each term
-      final OBCriteria<PaymentTermLine> lineCriteria = OBDal.getInstance().createCriteria(
-          PaymentTermLine.class);
-      lineCriteria.add(Restrictions.eq(PaymentTermLine.PROPERTY_PAYMENTTERMS,
-          order.getPaymentTerms()));
+      final OBCriteria<PaymentTermLine> lineCriteria = OBDal.getInstance()
+          .createCriteria(PaymentTermLine.class);
+      lineCriteria
+          .add(Restrictions.eq(PaymentTermLine.PROPERTY_PAYMENTTERMS, order.getPaymentTerms()));
       lineCriteria.add(Restrictions.eq(PaymentTermLine.PROPERTY_ACTIVE, true));
       lineCriteria.addOrderBy(PaymentTermLine.PROPERTY_LINENO, true);
       List<PaymentTermLine> termLineList = lineCriteria.list();
       if (termLineList.size() > 0) {
-        final int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order
-            .getCurrency().getPricePrecision().intValue() : order.getCurrency()
-            .getObposPosprecision().intValue();
+        final int pricePrecision = order.getCurrency().getObposPosprecision() == null
+            ? order.getCurrency().getPricePrecision().intValue()
+            : order.getCurrency().getObposPosprecision().intValue();
         final BigDecimal gross = invoice.getGrandTotalAmount();
         final BigDecimal remainingAmt = remainingPSD.getAmount();
         BigDecimal pendingGrossAmount = remainingAmt;
@@ -745,14 +758,17 @@ public class InvoiceUtils {
           }
           BigDecimal amount = BigDecimal.ZERO;
           if (paymentTermLine.isExcludeTax()) {
-            amount = (invoice.getSummedLineAmount().multiply(paymentTermLine.getPercentageDue()
-                .divide(BigDecimal.valueOf(100)))).setScale(pricePrecision, RoundingMode.HALF_UP);
+            amount = (invoice.getSummedLineAmount()
+                .multiply(paymentTermLine.getPercentageDue().divide(BigDecimal.valueOf(100))))
+                    .setScale(pricePrecision, RoundingMode.HALF_UP);
           } else if (!paymentTermLine.isRest()) {
-            amount = (remainingAmt.multiply(paymentTermLine.getPercentageDue().divide(
-                BigDecimal.valueOf(100)))).setScale(pricePrecision, RoundingMode.HALF_UP);
+            amount = (remainingAmt
+                .multiply(paymentTermLine.getPercentageDue().divide(BigDecimal.valueOf(100))))
+                    .setScale(pricePrecision, RoundingMode.HALF_UP);
           } else {
-            amount = (pendingGrossAmount.multiply(paymentTermLine.getPercentageDue().divide(
-                BigDecimal.valueOf(100)))).setScale(pricePrecision, RoundingMode.HALF_UP);
+            amount = (pendingGrossAmount
+                .multiply(paymentTermLine.getPercentageDue().divide(BigDecimal.valueOf(100))))
+                    .setScale(pricePrecision, RoundingMode.HALF_UP);
             pendingGrossAmount = BigDecimal.ZERO;
           }
 
@@ -793,8 +809,8 @@ public class InvoiceUtils {
               // The PS is paid, so is not taken into account by the payment terms
               // Set the PS as fully paid (the remaining amount is now in the other PS)
               paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
-              final BigDecimal amountToInvoice = paymentScheduleInvoice.getAmount().subtract(
-                  remainingAmt);
+              final BigDecimal amountToInvoice = paymentScheduleInvoice.getAmount()
+                  .subtract(remainingAmt);
               paymentScheduleInvoice.setPaidAmount(amountToInvoice);
               paymentScheduleInvoice.setAmount(amountToInvoice);
               for (final FIN_PaymentScheduleDetail invoicePSD : paymentScheduleInvoice
@@ -807,7 +823,8 @@ public class InvoiceUtils {
           }
           int pendingSign = remainingAmt.signum();
           if ((pendingSign >= 0 && remainingPSD.getAmount().compareTo(invoicePS.getAmount()) <= 0)
-              || (pendingSign == -1 && remainingPSD.getAmount().compareTo(invoicePS.getAmount()) >= 0)) {
+              || (pendingSign == -1
+                  && remainingPSD.getAmount().compareTo(invoicePS.getAmount()) >= 0)) {
             remainingPSD.setInvoicePaymentSchedule(invoicePS);
           } else {
             // The remaining PSD must be splitted
@@ -863,7 +880,9 @@ public class InvoiceUtils {
     pymtSchedule.setPaidAmount(amount.subtract(outstandingAmount));
     pymtSchedule.setDueDate(dueDate);
     pymtSchedule.setExpectedDate(dueDate);
-    if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class).hasProperty("origDueDate")) {
+    if (ModelProvider.getInstance()
+        .getEntity(FIN_PaymentSchedule.class)
+        .hasProperty("origDueDate")) {
       pymtSchedule.set("origDueDate", dueDate);
     }
     invoice.getFINPaymentScheduleList().add(pymtSchedule);
@@ -894,16 +913,16 @@ public class InvoiceUtils {
       }
     } else if (paymentTermLine != null) {
       daysToAdd = paymentTermLine.getOverduePaymentDaysRule();
-      monthOffset = paymentTermLine.getOffsetMonthDue() == null ? 0 : paymentTermLine
-          .getOffsetMonthDue();
+      monthOffset = paymentTermLine.getOffsetMonthDue() == null ? 0
+          : paymentTermLine.getOffsetMonthDue();
       dayToPay = paymentTermLine.getOverduePaymentDayRule();
       if (paymentTermLine.isFixedDueDate()) {
-        maturityDate1 = paymentTermLine.getMaturityDate1() == null ? 0 : paymentTermLine
-            .getMaturityDate1();
-        maturityDate2 = paymentTermLine.getMaturityDate2() == null ? 0 : paymentTermLine
-            .getMaturityDate2();
-        maturityDate3 = paymentTermLine.getMaturityDate3() == null ? 0 : paymentTermLine
-            .getMaturityDate3();
+        maturityDate1 = paymentTermLine.getMaturityDate1() == null ? 0
+            : paymentTermLine.getMaturityDate1();
+        maturityDate2 = paymentTermLine.getMaturityDate2() == null ? 0
+            : paymentTermLine.getMaturityDate2();
+        maturityDate3 = paymentTermLine.getMaturityDate3() == null ? 0
+            : paymentTermLine.getMaturityDate3();
       }
     } else {
       return calculatedDueDate.getTime();

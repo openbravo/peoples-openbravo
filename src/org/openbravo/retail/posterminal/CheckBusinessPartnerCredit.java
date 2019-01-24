@@ -31,8 +31,8 @@ public class CheckBusinessPartnerCredit extends JSONProcessSimple {
       String businessPartnerId = jsonsent.getString("businessPartnerId");
       Double doubleTotalPending = jsonsent.getDouble("totalPending");
       BigDecimal totalPending = new BigDecimal(doubleTotalPending);
-      BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-          businessPartnerId);
+      BusinessPartner businessPartner = OBDal.getInstance()
+          .get(BusinessPartner.class, businessPartnerId);
       BigDecimal creditLimit = businessPartner.getCreditLimit();
       BigDecimal creditUsed = businessPartner.getCreditUsed();
       BigDecimal actualCredit = creditLimit.subtract(creditUsed);

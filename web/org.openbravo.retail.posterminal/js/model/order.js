@@ -827,7 +827,9 @@
             return;
           } else {
             if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
-              executeCallback(me.get('calculateReceiptCallbacks'), function () {
+              var calculateReceiptCallbacks = me.get('calculateReceiptCallbacks').slice(0);
+              me.unset('calculateReceiptCallbacks');
+              executeCallback(calculateReceiptCallbacks, function () {
                 me.calculatingReceipt = false;
                 OB.MobileApp.view.waterfall('calculatedReceipt');
                 me.trigger('calculatedReceipt');
@@ -4854,7 +4856,11 @@
       if (loadedFromBackend) {
         isNegative = OB.DEC.compare(this.getGross()) === -1;
       } else {
-        isNegative = processedPaymentsAmount > this.getGross();
+        if (OB.DEC.compare(this.getGross()) === -1) {
+          isNegative = processedPaymentsAmount >= this.getGross();
+        } else {
+          isNegative = processedPaymentsAmount > this.getGross();
+        }
       }
       if (OB.UTIL.isNullOrUndefined(this.get('isNegative')) || this.get('isNegative') !== isNegative) {
         this.set('isNegative', isNegative);
@@ -5754,7 +5760,7 @@
             return promo.manual;
           });
           _.forEach(groupedPromos, function (promotion) {
-            if (!promoManual) {
+            if (!promotion.manual) {
               var promoAmt = 0,
                   promotionQtyOffer = promotion.pendingQtyOffer || promotion.qtyOffer,
                   promoQtyoffer = promotionQtyOffer;
@@ -5765,7 +5771,7 @@
                 var qtyOffer = 0;
                 var qtyToCheck = line.get('qty');
                 _.forEach(line.get('promotions'), function (promot) {
-                  if (!promot.applyNext || (promot.hidden !== promotion.hidden && promot.discountType === promotion.discountType)) {
+                  if (promot.hidden !== promotion.hidden && promot.discountType === promotion.discountType) {
                     samePromos.push(promot);
                   }
                 });
@@ -5789,6 +5795,8 @@
                     clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal((promotion.displayedTotalAmount || 0) * (clonedPromotion.obdiscQtyoffer / promotionQtyOffer)));
                   } else {
                     clonedPromotion.amt = 0;
+                    clonedPromotion.fullAmt = 0;
+                    clonedPromotion.displayedTotalAmount = 0;
                   }
                   clonedPromotion.pendingQtyoffer = line.get('qty') - clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.qtyOffer = clonedPromotion.obdiscQtyoffer;
@@ -5797,12 +5805,7 @@
                   if (!line.get('promotions')) {
                     line.set('promotions', []);
                   }
-
-                  if (clonedPromotion.pendingQtyoffer && clonedPromotion.pendingQtyoffer > 0) {
-                    line.get('promotions').push(clonedPromotion);
-                  } else {
-                    line.get('promotions').push(clonedPromotion);
-                  }
+                  line.get('promotions').push(clonedPromotion);
                   line.trigger('change');
                   promoQtyoffer -= clonedPromotion.obdiscQtyoffer;
                   promoAmt += clonedPromotion.amt;
@@ -6163,22 +6166,25 @@
           model.get('lines').at(i).set('lineGrossAmount', 0);
         }
         model.set('hasbeenpaid', 'Y');
-        OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
-          receipt: model,
-          model: model
-        }, function (args) {
-          model.set('json', JSON.stringify(model.serializeToJSON()));
-          OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
-            model.save(function () {
-              if (orderList) {
-                orderList.deleteCurrent();
-                orderList.synchronizeCurrentOrder();
-              }
-              model.setIsCalculateGrossLockState(false);
-              if (callback && callback instanceof Function) {
-                callback();
-              }
-            });
+        OB.Dal.transaction(function (tx) {
+          OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
+            receipt: model,
+            model: model,
+            tx: tx
+          }, function (args) {
+            model.set('json', JSON.stringify(model.serializeToJSON()));
+            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
+              model.save(function () {
+                if (orderList) {
+                  orderList.deleteCurrent();
+                  orderList.synchronizeCurrentOrder();
+                }
+                model.setIsCalculateGrossLockState(false);
+                if (callback && callback instanceof Function) {
+                  callback();
+                }
+              });
+            }, tx);
           });
         });
       }

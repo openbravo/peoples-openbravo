@@ -486,48 +486,50 @@
                 receipts: model.get('multiOrders').get('multiOrdersList').models,
                 syncSuccess: true
               }, function (args) {
-                OB.UTIL.calculateCurrentCash();
-                _.each(model.get('multiOrders').get('multiOrdersList').models, function (theReceipt) {
-                  var invoice = theReceipt.get('calculatedInvoice');
+                OB.Dal.transaction(function (tx) {
+                  OB.UTIL.calculateCurrentCash(null, tx);
+                  _.each(model.get('multiOrders').get('multiOrdersList').models, function (theReceipt) {
+                    var invoice = theReceipt.get('calculatedInvoice');
 
-                  me.context.get('multiOrders').trigger('print', theReceipt, {
-                    offline: true
-                  });
-
-                  if (invoice && invoice.get('id')) {
-                    var invoiceToPrint = OB.UTIL.clone(invoice);
-                    _.each(invoice.get('lines').models, function (invoiceLine) {
-                      invoiceLine.unset('product');
-                    });
-                    me.context.get('multiOrders').trigger('print', invoiceToPrint, {
+                    me.context.get('multiOrders').trigger('print', theReceipt, {
                       offline: true
                     });
+
+                    if (invoice && invoice.get('id')) {
+                      var invoiceToPrint = OB.UTIL.clone(invoice);
+                      _.each(invoice.get('lines').models, function (invoiceLine) {
+                        invoiceLine.unset('product');
+                      });
+                      me.context.get('multiOrders').trigger('print', invoiceToPrint, {
+                        offline: true
+                      });
+                    }
+
+                    me.context.get('multiOrders').trigger('integrityOk', theReceipt);
+                    OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), theReceipt.get('returnnoSuffix'), null, tx);
+                    me.context.get('orderList').current = theReceipt;
+                    me.context.get('orderList').deleteCurrent();
+                  });
+
+                  //this logic executed when all orders are ready to be sent
+                  if (syncCallback instanceof Function) {
+                    syncCallback();
                   }
 
-                  me.context.get('multiOrders').trigger('integrityOk', theReceipt);
-                  OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), theReceipt.get('returnnoSuffix'));
-                  me.context.get('orderList').current = theReceipt;
-                  me.context.get('orderList').deleteCurrent();
+                  model.get('multiOrders').resetValues();
+                  me.context.get('leftColumnViewManager').setOrderMode();
+                  OB.UTIL.showLoading(false);
+                  //Select printers pop up can be showed after multiorders execution 
+                  if (OB.MobileApp.view.openedPopup === null) {
+                    enyo.$.scrim.hide();
+                  }
+                  if (me.hasInvLayaways) {
+                    OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+                    me.hasInvLayaways = false;
+                  }
+                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
+                  model.get('multiOrders').trigger('checkOpenDrawer');
                 });
-
-                //this logic executed when all orders are ready to be sent
-                if (syncCallback instanceof Function) {
-                  syncCallback();
-                }
-
-                model.get('multiOrders').resetValues();
-                me.context.get('leftColumnViewManager').setOrderMode();
-                OB.UTIL.showLoading(false);
-                //Select printers pop up can be showed after multiorders execution 
-                if (OB.MobileApp.view.openedPopup === null) {
-                  enyo.$.scrim.hide();
-                }
-                if (me.hasInvLayaways) {
-                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-                  me.hasInvLayaways = false;
-                }
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
-                model.get('multiOrders').trigger('checkOpenDrawer');
               });
             }, function () {
               OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncMultiReceipt', {

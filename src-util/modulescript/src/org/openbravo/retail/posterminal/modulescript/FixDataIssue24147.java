@@ -27,6 +27,7 @@ import org.openbravo.modulescript.OpenbravoVersion;
 
 public class FixDataIssue24147 extends ModuleScript {
   private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
+
   @Override
   // Inserting m_inoutline_id for invoicelines which have this field as null
   public void execute() {
@@ -40,7 +41,7 @@ public class FixDataIssue24147 extends ModuleScript {
       handleError(e);
     }
   }
-  
+
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     // The module script needs to be executed only when updating from a version
@@ -48,7 +49,7 @@ public class FixDataIssue24147 extends ModuleScript {
     return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
         new OpenbravoVersion(1, 7, 1020));
   }
-  
+
   @Override
   protected boolean executeOnInstall() {
     return false;

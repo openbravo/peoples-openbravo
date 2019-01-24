@@ -40,29 +40,36 @@ public class POSCurrencyPrecision extends SimpleCallout {
       final int stdPrecision = Integer.parseInt(paramStandardPOSPrecision);
       if (stdPrecision < 0) {
         info.addResult("inpstdprecision", DEFAULT_CURRENCY_STANDARD_PRECISION);
-        info.addResult("ERROR", Utility.messageBD(this, "OBPOS_CALLOUT_CurrencyPOSPrecisionNegative",
-            info.vars.getLanguage()));
+        info.addResult("ERROR", Utility.messageBD(this,
+            "OBPOS_CALLOUT_CurrencyPOSPrecisionNegative", info.vars.getLanguage()));
       } else {
-        int isoCurrencyPrecision = ISOCurrencyPrecision.getCurrencyPrecisionInISO4217Spec(paramISOCode);
+        int isoCurrencyPrecision = ISOCurrencyPrecision
+            .getCurrencyPrecisionInISO4217Spec(paramISOCode);
         if (stdPrecision > isoCurrencyPrecision) {
-          info.addResult("WARNING", String.format(
-              Utility.messageBD(this, "OBPOS_CALLOUT_CurrencyPOSPrecisionHigherThanISOSpec",
-                  info.vars.getLanguage()), stdPrecision, isoCurrencyPrecision, paramISOCode));
+          info.addResult("WARNING",
+              String
+                  .format(
+                      Utility.messageBD(this, "OBPOS_CALLOUT_CurrencyPOSPrecisionHigherThanISOSpec",
+                          info.vars.getLanguage()),
+                      stdPrecision, isoCurrencyPrecision, paramISOCode));
         }
       }
       // Check Price Precision if POS precision is empty
-    } else if (StringUtils.isNotEmpty(paramStandardPricePrecision) && StringUtils.isNotEmpty(paramISOCode)) {
+    } else if (StringUtils.isNotEmpty(paramStandardPricePrecision)
+        && StringUtils.isNotEmpty(paramISOCode)) {
       final int stdPrecision = Integer.parseInt(paramStandardPricePrecision);
       if (stdPrecision < 0) {
         info.addResult("inpstdprecision", DEFAULT_CURRENCY_STANDARD_PRECISION);
-        info.addResult("ERROR",Utility.messageBD(this, "OBPOS_CALLOUT_CurrencyPricePrecisionNegative",
-            info.vars.getLanguage()));
+        info.addResult("ERROR", Utility.messageBD(this,
+            "OBPOS_CALLOUT_CurrencyPricePrecisionNegative", info.vars.getLanguage()));
       } else {
-        int isoCurrencyPrecision = ISOCurrencyPrecision.getCurrencyPrecisionInISO4217Spec(paramISOCode);
+        int isoCurrencyPrecision = ISOCurrencyPrecision
+            .getCurrencyPrecisionInISO4217Spec(paramISOCode);
         if (stdPrecision > isoCurrencyPrecision) {
-          info.addResult("WARNING", String.format(
-              Utility.messageBD(this, "OBPOS_CALLOUT_CurrencyPricePrecisionHigherThanISOSpec",
-                  info.vars.getLanguage()), stdPrecision, isoCurrencyPrecision, paramISOCode));
+          info.addResult("WARNING",
+              String.format(Utility.messageBD(this,
+                  "OBPOS_CALLOUT_CurrencyPricePrecisionHigherThanISOSpec", info.vars.getLanguage()),
+                  stdPrecision, isoCurrencyPrecision, paramISOCode));
         }
       }
     }

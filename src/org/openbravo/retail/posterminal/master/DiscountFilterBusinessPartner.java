@@ -45,8 +45,7 @@ public class DiscountFilterBusinessPartner extends Discount {
   protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
     HQLPropertyList regularDiscFilBPPropertyExtensionHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-    String hql = "select"
-        + regularDiscFilBPPropertyExtensionHQLProperties.getHqlSelect()
+    String hql = "select" + regularDiscFilBPPropertyExtensionHQLProperties.getHqlSelect()
         + "from PricingAdjustmentBusinessPartner bp where  $filtersCriteria AND ((bp.$incrementalUpdateCriteria) "
         + jsonsent.get("operator") + " (bp.priceAdjustment.$incrementalUpdateCriteria)) ";
 

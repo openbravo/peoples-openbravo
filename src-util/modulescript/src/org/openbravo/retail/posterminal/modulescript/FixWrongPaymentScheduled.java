@@ -27,12 +27,14 @@ import org.openbravo.modulescript.OpenbravoVersion;
 
 public class FixWrongPaymentScheduled extends ModuleScript {
   private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
+
   @Override
   // Inserting m_inoutline_id for invoicelines which have this field as null
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      CallableStatement cs = cp.getConnection().prepareCall("{call OBPOS_fixwrongpaymentscheduled()}");
+      CallableStatement cs = cp.getConnection()
+          .prepareCall("{call OBPOS_fixwrongpaymentscheduled()}");
       cs.execute();
       cs.close();
     } catch (Exception e) {
@@ -40,8 +42,7 @@ public class FixWrongPaymentScheduled extends ModuleScript {
       handleError(e);
     }
   }
-  
-  
+
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     // The module script needs to be executed only when updating from a version
@@ -49,7 +50,7 @@ public class FixWrongPaymentScheduled extends ModuleScript {
     return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
         new OpenbravoVersion(1, 7, 1150));
   }
-  
+
   @Override
   protected boolean executeOnInstall() {
     return false;
