@@ -204,6 +204,9 @@ public class PaidReceipts extends JSONProcessSimple {
           OBCriteria<OrderLineTax> qTaxes = OBDal.getInstance().createCriteria(OrderLineTax.class);
           qTaxes.add(Restrictions.eq(OrderLineTax.PROPERTY_SALESORDERLINE + ".id",
               (String) paidReceiptLine.getString("lineId")));
+          if (jsonsent.has("crossStore")) {
+            qTaxes.setFilterOnReadableOrganization(false);
+          }
           qTaxes.addOrder(Order.asc(OrderLineTax.PROPERTY_LINENO));
           JSONArray taxes = new JSONArray();
           for (OrderLineTax tax : qTaxes.list()) {
@@ -226,6 +229,9 @@ public class PaidReceipts extends JSONProcessSimple {
               OrderLineOffer.class);
           qPromotions.add(Restrictions.eq(OrderLineOffer.PROPERTY_SALESORDERLINE + ".id",
               (String) paidReceiptLine.getString("lineId")));
+          if (jsonsent.has("crossStore")) {
+            qPromotions.setFilterOnReadableOrganization(false);
+          }
           qPromotions.addOrder(Order.asc(OrderLineOffer.PROPERTY_LINENO));
           JSONArray promotions = new JSONArray();
           boolean hasPromotions = false;

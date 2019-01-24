@@ -364,7 +364,8 @@ enyo.kind({
       function loadOrder(model) {
         OB.UTIL.showLoading(true);
         process.exec({
-          orderid: model.get('id')
+          orderid: model.get('id'),
+          crossStore: OB.MobileApp.model.get('terminal').organization !== model.get('orgId') ? model.get('orgId') : null
         }, function (data) {
           if (data && data[0]) {
             if (me.model.get('leftColumnViewManager').isMultiOrder()) {

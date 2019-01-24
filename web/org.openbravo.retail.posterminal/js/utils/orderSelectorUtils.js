@@ -109,7 +109,8 @@
       OB.UTIL.showLoading(true);
       process.exec({
         orderid: order.get('id'),
-        originServer: currentOriginServer
+        originServer: currentOriginServer,
+        crossStore: OB.MobileApp.model.get('terminal').organization !== order.get('orgId') ? order.get('orgId') : null
       }, function (data) {
         if (data && data.exception) {
           errorCallback(true, data.exception.message, true);

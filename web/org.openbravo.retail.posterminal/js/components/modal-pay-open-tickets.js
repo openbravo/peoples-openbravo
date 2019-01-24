@@ -499,7 +499,8 @@ enyo.kind({
         });
       } else {
         process.exec({
-          orderid: iter.id
+          orderid: iter.id,
+          crossStore: OB.MobileApp.model.get('terminal').organization !== iter.get('orgId') ? iter.get('orgId') : null
         }, function (data) {
           if (data) {
             me.owner.owner.model.get('orderList').newPaidReceipt(data[0], function (order) {
