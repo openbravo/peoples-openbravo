@@ -44,9 +44,9 @@ public class ProductProperties extends ModelExtension {
       {
         try {
           if ("Y".equals(Preferences.getPreferenceValue("OBPOS_retail.productImages", true,
-              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), null))) {
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null))) {
             add(new HQLProperty("product.image.id", "imgId"));
           } else {
             add(new HQLProperty("img.bindaryData", "img"));
@@ -114,9 +114,9 @@ public class ProductProperties extends ModelExtension {
           String trlName;
           try {
             boolean isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product",
-                true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                    .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                    .getOBContext().getRole(), null));
+                true, OBContext.getOBContext().getCurrentClient(),
+                OBContext.getOBContext().getCurrentOrganization(),
+                OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
 
             if (OBContext.hasTranslationInstalled() && !isRemote) {
               trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"

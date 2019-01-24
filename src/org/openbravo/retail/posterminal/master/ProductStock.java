@@ -56,22 +56,17 @@ public class ProductStock extends ProcessHQLQuery {
           false);
       HQLPropertyList regularProductStockHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions);
-      return Collections
-          .singletonList("SELECT "
-              + regularProductStockHQLProperties.getHqlSelect() //
-              + "FROM MaterialMgmtStorageDetail AS storagedetail " //
-              + "JOIN storagedetail.storageBin AS locator " //
-              + "WHERE EXISTS (" //
-              + "  SELECT 1 "
-              + regularProductHql
-              + " AND pli.product.id = storagedetail.product.id) " //
-              + "AND EXISTS ( " //
-              + "  SELECT 1 " //
-              + "  FROM OrganizationWarehouse ow " //
-              + "  WHERE ow.organization.id = :orgId"
-              + "  AND ow.warehouse.id = locator.warehouse.id) " //
-              + "GROUP BY storagedetail.product.id, storagedetail.product.searchKey, locator.warehouse.id " //
-              + "ORDER BY storagedetail.product.id, storagedetail.product.searchKey, locator.warehouse.id ");
+      return Collections.singletonList("SELECT " + regularProductStockHQLProperties.getHqlSelect() //
+          + "FROM MaterialMgmtStorageDetail AS storagedetail " //
+          + "JOIN storagedetail.storageBin AS locator " //
+          + "WHERE EXISTS (" //
+          + "  SELECT 1 " + regularProductHql + " AND pli.product.id = storagedetail.product.id) " //
+          + "AND EXISTS ( " //
+          + "  SELECT 1 " //
+          + "  FROM OrganizationWarehouse ow " //
+          + "  WHERE ow.organization.id = :orgId" + "  AND ow.warehouse.id = locator.warehouse.id) " //
+          + "GROUP BY storagedetail.product.id, storagedetail.product.searchKey, locator.warehouse.id " //
+          + "ORDER BY storagedetail.product.id, storagedetail.product.searchKey, locator.warehouse.id ");
     } finally {
       OBContext.restorePreviousMode();
     }
