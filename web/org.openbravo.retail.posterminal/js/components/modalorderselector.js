@@ -30,6 +30,11 @@ enyo.kind({
     if (!this.initialized) {
       this.inherited(arguments);
       this.getFilterSelectorTableHeader().clearFilter();
+      var store = _.find(OB.Model.OrderFilter.getProperties(), function (prop) {
+        return prop.name === 'store';
+      }, this);
+      store.preset.id = OB.MobileApp.model.get('terminal').organization;
+      store.preset.name = 'This Store (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')';
     }
   },
   init: function (model) {
