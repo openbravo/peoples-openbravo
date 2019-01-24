@@ -92,8 +92,9 @@ public class Terminal extends JSONProcessSimple {
       List<String> doctypeIds = new ArrayList<String>();
 
       doctypeIds.add(organization.getObposCDoctype().getId());
-      if (pOSTerminal.getReturndocnoPrefix() == null)
+      if (pOSTerminal.getReturndocnoPrefix() == null) {
         doctypeIds.add(organization.getObposCDoctyperet().getId());
+      }
 
       int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(pOSTerminal.getSearchKey(),
           doctypeIds);

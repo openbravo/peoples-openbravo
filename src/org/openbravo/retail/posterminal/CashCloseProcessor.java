@@ -47,8 +47,6 @@ import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
-
-
 public class CashCloseProcessor {
 
   private static final Logger logger = LogManager.getLogger();
@@ -236,8 +234,8 @@ public class CashCloseProcessor {
       OBPOSAppPayment paymentType) throws JSONException {
 
     BigDecimal startingBalance;
-    OBCriteria<FIN_Reconciliation> reconciliationsForAccount = OBDal.getInstance().createCriteria(
-        FIN_Reconciliation.class);
+    OBCriteria<FIN_Reconciliation> reconciliationsForAccount = OBDal.getInstance()
+        .createCriteria(FIN_Reconciliation.class);
     Organization organization = posTerminal.getOrganization();
     reconciliationsForAccount.add(Restrictions.eq("account", account));
     reconciliationsForAccount.addOrderBy("creationDate", false);

@@ -118,31 +118,31 @@ public class OrderGroupingProcessor {
     TerminalType terminalType = posTerminal.getObposTerminaltype();
     Organization organization = posTerminal.getOrganization();
     if (organization.getObposCDoctype().getDocumentTypeForInvoice() == null) {
-      throw new OBException(String.format(OBMessageUtils
-          .messageBD("OBPOS_DocTypeInvValidationOnCashup"), organization.getObposCDoctype()
-          .getName()));
+      throw new OBException(
+          String.format(OBMessageUtils.messageBD("OBPOS_DocTypeInvValidationOnCashup"),
+              organization.getObposCDoctype().getName()));
     }
 
     if (terminalType.isSeparateinvoiceforreturns()
         && organization.getObposCDoctyperet().getDocumentTypeForInvoice() == null) {
-      throw new OBException(String.format(OBMessageUtils
-          .messageBD("OBPOS_DocTypeInvValidationOnCashup"), organization.getObposCDoctyperet()
-          .getName()));
+      throw new OBException(
+          String.format(OBMessageUtils.messageBD("OBPOS_DocTypeInvValidationOnCashup"),
+              organization.getObposCDoctyperet().getName()));
     }
 
     final String strExecutionId = SequenceIdData.getUUID().substring(0, 30);
 
     if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
       // Extend sql to separate invoices for sales and returns
-      final String strSeparateInvoiceForReturnsHeaderParameter1 = posTerminal
-          .getObposTerminaltype().isSeparateinvoiceforreturns() ? "org.em_obpos_c_doctype_id, org.em_obpos_c_doctype_id"
-          : "org.em_obpos_c_doctype_id";
-      final String strSeparateInvoiceForReturnsHeaderParameter2 = posTerminal
-          .getObposTerminaltype().isSeparateinvoiceforreturns() ? "and o.c_doctype_id = dt.c_doctype_id"
-          : "";
+      final String strSeparateInvoiceForReturnsHeaderParameter1 = posTerminal.getObposTerminaltype()
+          .isSeparateinvoiceforreturns() ? "org.em_obpos_c_doctype_id, org.em_obpos_c_doctype_id"
+              : "org.em_obpos_c_doctype_id";
+      final String strSeparateInvoiceForReturnsHeaderParameter2 = posTerminal.getObposTerminaltype()
+          .isSeparateinvoiceforreturns() ? "and o.c_doctype_id = dt.c_doctype_id" : "";
       final String strSeparateInvoiceForReturnsLines = posTerminal.getObposTerminaltype()
-          .isSeparateinvoiceforreturns() ? "and o.c_doctype_id = dt.c_doctype_id and dt.c_doctypeinvoice_id = i.c_doctype_id"
-          : "and org.em_obpos_c_doctype_id = dt.c_doctype_id";
+          .isSeparateinvoiceforreturns()
+              ? "and o.c_doctype_id = dt.c_doctype_id and dt.c_doctypeinvoice_id = i.c_doctype_id"
+              : "and org.em_obpos_c_doctype_id = dt.c_doctype_id";
 
       // insert invoice headers
       OrderGroupingProcessorData.insertHeaderGrouping(conn, strUserId, strExecutionId,

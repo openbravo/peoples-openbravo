@@ -62,12 +62,7 @@ public class CashCloseReport extends JSONProcessSimple {
     Query<Object[]> salesTaxesQuery = OBDal.getInstance()
         .getSession()
         .createQuery(hqlTaxes, Object[].class);
-<<<<<<< local
     salesTaxesQuery.setParameter("docTypeId", organization.getObposCDoctype().getId());
-=======
-    salesTaxesQuery.setParameter("docTypeId",
-        terminal.getObposTerminaltype().getDocumentType().getId());
->>>>>>> other
     salesTaxesQuery.setParameter("applicationId", posTerminalId);
     JSONArray salesTaxes = new JSONArray();
     BigDecimal totalSalesTax = BigDecimal.ZERO;

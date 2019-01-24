@@ -97,14 +97,14 @@ public class InitialValidations {
     DocumentType documentType;
     DocumentType returnDocumentType;
     if (organization.getObposCDoctype() == null) {
-      throw new OBException(String.format(OBMessageUtils.messageBD("OBPOS_DocType"),
-          organization.getName()));
+      throw new OBException(
+          String.format(OBMessageUtils.messageBD("OBPOS_DocType"), organization.getName()));
     } else {
       documentType = organization.getObposCDoctype();
     }
     if (organization.getObposCDoctyperet() == null) {
-      throw new OBException(String.format(OBMessageUtils.messageBD("OBPOS_DocTypeReturn"),
-          organization.getName()));
+      throw new OBException(
+          String.format(OBMessageUtils.messageBD("OBPOS_DocTypeReturn"), organization.getName()));
     } else {
       returnDocumentType = organization.getObposCDoctyperet();
     }
@@ -121,13 +121,13 @@ public class InitialValidations {
           OBMessageUtils.messageBD("OBPOS_DocTypeShipmentNotConfigured"), documentType.getName()));
     }
     if (returnDocumentType.getDocumentTypeForInvoice() == null) {
-      throw new OBException(String.format(
-          OBMessageUtils.messageBD("OBPOS_DocTypeReturnInvoiceNotConfigured"),
-          returnDocumentType.getName()));
+      throw new OBException(
+          String.format(OBMessageUtils.messageBD("OBPOS_DocTypeReturnInvoiceNotConfigured"),
+              returnDocumentType.getName()));
     } else if (returnDocumentType.getDocumentTypeForShipment() == null) {
-      throw new OBException(String.format(
-          OBMessageUtils.messageBD("OBPOS_DocTypeReturnShipmentNotConfigured"),
-          returnDocumentType.getName()));
+      throw new OBException(
+          String.format(OBMessageUtils.messageBD("OBPOS_DocTypeReturnShipmentNotConfigured"),
+              returnDocumentType.getName()));
     }
 
     String whereclausePM = " as e where e.obposApplications=:terminal and e.financialAccount is not null "
