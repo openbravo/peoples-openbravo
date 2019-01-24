@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -106,7 +107,7 @@ public abstract class WidgetProvider {
   private static final String MENU_ITEMS = "menuItems";
   private static final Long WIDGET_HEADER_HEIGHT = 35L;
 
-  private Map<String, Object> parameters = new HashMap<String, Object>();
+  private Map<String, Object> widgetParameters = new HashMap<>();
 
   // note this is only set if the widgetprovider is created through the MyOBUtils class
   private JSONObject widgetClassDefinition;
@@ -141,11 +142,11 @@ public abstract class WidgetProvider {
       aboutFieldDefinitions.put(MODULEJPACKAGE, widgetClass.getModule().getJavaPackage());
       aboutFieldDefinitions.put(MODULETYPE, widgetClass.getModule().getType());
 
-      String moduleDBPrefixList = "";
+      StringBuilder moduleDBPrefixList = new StringBuilder();
       for (ModuleDBPrefix moduleDBPrefix : widgetClass.getModule().getModuleDBPrefixList()) {
-        moduleDBPrefixList += moduleDBPrefix.getName() + " ";
+        moduleDBPrefixList.append(moduleDBPrefix.getName() + " ");
       }
-      aboutFieldDefinitions.put(MODULEDBPREFIX, moduleDBPrefixList);
+      aboutFieldDefinitions.put(MODULEDBPREFIX, moduleDBPrefixList.toString());
       aboutFieldDefinitions.put(MODULELICENSETYPE, widgetClass.getModule().getLicenseType());
       aboutFieldDefinitions.put(MODULEUPDATEINFO,
           widgetClass.getModule().getUpdateInformation() == null ? ""
@@ -168,7 +169,7 @@ public abstract class WidgetProvider {
           widgetClass.getAuthorUrl() == null ? "" : widgetClass.getAuthorUrl());
 
       final JSONObject defaultParameters = new JSONObject();
-      final List<JSONObject> fieldDefinitions = new ArrayList<JSONObject>();
+      final List<JSONObject> fieldDefinitions = new ArrayList<>();
       for (Parameter parameter : widgetClass.getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
         // fixed parameters are not part of the fielddefinitions
         if (parameter.isFixed()) {
@@ -248,23 +249,23 @@ public abstract class WidgetProvider {
     jsonObject.put(HEIGHT, widgetClassDefinition.get(HEIGHT));
     jsonObject.put(PRIORITY, widgetInstance.getRelativePriority());
 
-    final JSONObject widgetParameters = new JSONObject();
+    final JSONObject widgetParams = new JSONObject();
     for (ParameterValue parameterValue : widgetInstance
         .getOBUIAPPParameterValueEMObkmoWidgetInstanceIDList()) {
-      widgetParameters.put(parameterValue.getParameter().getDBColumnName(),
+      widgetParams.put(parameterValue.getParameter().getDBColumnName(),
           ParameterUtils.getParameterValue(parameterValue));
     }
 
     // Include fixed parameters in the definition.
     for (Parameter parameter : widgetInstance.getWidgetClass()
         .getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
-      if (!widgetParameters.has(parameter.getDBColumnName()) && parameter.isFixed()) {
-        widgetParameters.put(parameter.getDBColumnName(),
+      if (!widgetParams.has(parameter.getDBColumnName()) && parameter.isFixed()) {
+        widgetParams.put(parameter.getDBColumnName(),
             ParameterUtils.getParameterFixedValue(getStringParameters(getParameters()), parameter));
 
       }
     }
-    jsonObject.put(PARAMETERS, widgetParameters);
+    jsonObject.put(PARAMETERS, widgetParams);
   }
 
   public String getClientSideWidgetClassName() {
@@ -291,20 +292,20 @@ public abstract class WidgetProvider {
   }
 
   public Map<String, Object> getParameters() {
-    return parameters;
+    return widgetParameters;
   }
 
   public void setParameters(Map<String, Object> parameters) {
-    this.parameters = parameters;
+    this.widgetParameters = parameters;
   }
 
-  private Map<String, String> getStringParameters(Map<String, Object> _parameters) {
-    Map<String, String> stringParameters = new HashMap<String, String>();
-    final Iterator<String> keys = _parameters.keySet().iterator();
+  private Map<String, String> getStringParameters(Map<String, Object> params) {
+    Map<String, String> stringParameters = new HashMap<>();
+    final Iterator<String> keys = params.keySet().iterator();
     while (keys.hasNext()) {
       final String keyName = keys.next();
-      if (_parameters.get(keyName) instanceof String) {
-        stringParameters.put(keyName, (String) _parameters.get(keyName));
+      if (params.get(keyName) instanceof String) {
+        stringParameters.put(keyName, (String) params.get(keyName));
       }
     }
     return stringParameters;
@@ -349,20 +350,8 @@ public abstract class WidgetProvider {
         .getADReferencedTableList()
         .get(0);
     final Entity entity = ModelProvider.getInstance().getEntity(refTable.getTable().getName());
-
-    Property displayProperty = null;
-    // for now always display the identifier
-    // if (false && refTable.getDisplayedColumn() != null) {
-    // final String displayColId = refTable.getDisplayedColumn().getId();
-    // for (Property prop : entity.getProperties()) {
-    // if (prop.getColumnId().equals(displayColId)) {
-    // displayProperty = prop;
-    // break;
-    // }
-    // }
-    // }
-
     final String orderBy;
+
     if (refTable.getHqlorderbyclause() != null) {
       orderBy = refTable.getHqlorderbyclause();
     } else {
@@ -380,13 +369,12 @@ public abstract class WidgetProvider {
         : "") + " order by " + orderBy;
     final OBQuery<BaseOBObject> obQuery = OBDal.getInstance()
         .createQuery(entity.getName(), whereOrderByClause);
-    final List<JSONObject> values = new ArrayList<JSONObject>();
+    final List<JSONObject> values = new ArrayList<>();
     for (BaseOBObject bob : obQuery.list()) {
       final JSONObject dataJSONObject = new JSONObject();
       dataJSONObject.put(JsonConstants.ID, bob.getId());
-      dataJSONObject.put(JsonConstants.IDENTIFIER,
-          (displayProperty != null ? bob.getValue(displayProperty.getName())
-              : bob.getIdentifier()));
+      // for now always display the identifier
+      dataJSONObject.put(JsonConstants.IDENTIFIER, bob.getIdentifier());
       values.add(dataJSONObject);
     }
     return values;
@@ -399,8 +387,8 @@ public abstract class WidgetProvider {
     final Map<String, String> valueMap = createValueMap(
         (Set<String>) enumDomainType.getEnumerateValues(), enumUIDefinition.getReference().getId());
     final JSONObject valueMapJSONObject = new JSONObject();
-    for (String key : valueMap.keySet()) {
-      valueMapJSONObject.put(key, valueMap.get(key));
+    for (Entry<String, String> entry : valueMap.entrySet()) {
+      valueMapJSONObject.put(entry.getKey(), entry.getValue());
     }
     return valueMapJSONObject;
   }
@@ -449,6 +437,7 @@ public abstract class WidgetProvider {
     try {
       widgetClassId = widgetClassDefinition.getString(WIDGETCLASSID);
     } catch (JSONException ignore) {
+      // should not happen if the WidgetProvider instance is initialized properly
     }
     return widgetClassId;
   }
@@ -458,10 +447,7 @@ public abstract class WidgetProvider {
   }
 
   private boolean getBooleanValueFromString(String value) {
-    if ("true".equals(value) || "Y".equals(value) || "'Y'".equals(value)) {
-      return true;
-    }
-    return false;
+    return "true".equals(value) || "Y".equals(value) || "'Y'".equals(value);
   }
 
   /**
