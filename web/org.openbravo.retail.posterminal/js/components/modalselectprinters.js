@@ -204,15 +204,9 @@ enyo.kind({
   },
 
   cleanBuffers: function () {
-    while (this.hideCallbackArray.length !== 0) {
-      this.hideCallbackArray.pop();
-    }
-    while (this.cancellCallbackArray.length !== 0) {
-      this.cancellCallbackArray.pop();
-    }
-    while (this.successCallbackArray.length !== 0) {
-      this.successCallbackArray.pop();
-    }
+    this.hideCallbackArray.length = 0;
+    this.cancellCallbackArray.length = 0;
+    this.successCallbackArray.length = 0;
   }
 });
 
@@ -350,14 +344,8 @@ enyo.kind({
   },
 
   cleanBuffers: function () {
-    while (this.hideCallbackArray.length !== 0) {
-      this.hideCallbackArray.pop();
-    }
-    while (this.cancellCallbackArray.length !== 0) {
-      this.cancellCallbackArray.pop();
-    }
-    while (this.successCallbackArray.length !== 0) {
-      this.successCallbackArray.pop();
-    }
+    this.hideCallbackArray.length = 0;
+    this.cancellCallbackArray.length = 0;
+    this.successCallbackArray.length = 0;
   }
 });

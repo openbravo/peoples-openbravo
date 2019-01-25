@@ -113,7 +113,6 @@ public class AutoRegisterHWM implements WebService {
       hardwaremng.setHasPDFPrinter(pdfPrinter);
     }
     OBDal.getInstance().save(hardwaremng);
-    OBDal.getInstance().flush();
     return hardwaremng;
   }
 
