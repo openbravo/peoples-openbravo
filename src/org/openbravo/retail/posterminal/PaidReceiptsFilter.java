@@ -100,8 +100,8 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     hqlPaidReceipts.append(orderTypeHql);
     hqlPaidReceipts.append(" and ord.client.id =  $clientId");
     hqlPaidReceipts.append(getOganizationFilter(jsonsent));
-    hqlPaidReceipts
-        .append(" and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
+    hqlPaidReceipts.append(
+        " and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
     hqlPaidReceipts.append(" and ord.documentStatus <> 'CA' ");
     if (!isVerifiedReturns && !isPayOpenTicket) {
       // verified returns is already filtering by delivered = true
@@ -130,17 +130,20 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     }
 
     OBPOSApplications pOSTerminal = POSUtils.getTerminal(jsonsent.optString("terminalName"));
-    Organization myOrg = pOSTerminal.getOrganization().getOrganizationInformationList().get(0)
+    Organization myOrg = pOSTerminal.getOrganization()
+        .getOrganizationInformationList()
+        .get(0)
         .getOrganization();
-    String crossStoreOrgId = myOrg.getOBPOSCrossStoreOrganization() != null ? myOrg
-        .getOBPOSCrossStoreOrganization().getId() : "";
+    String crossStoreOrgId = myOrg.getOBPOSCrossStoreOrganization() != null
+        ? myOrg.getOBPOSCrossStoreOrganization().getId()
+        : "";
 
     final StringBuilder orgFilter = new StringBuilder();
 
     if (!StringUtils.isEmpty(documentNo) && !StringUtils.isEmpty(crossStoreOrgId)) {
 
-      String crossStoreOrg = StringCollectionUtils.commaSeparated(
-          POSUtils.getOrgListByCrossStoreId(crossStoreOrgId), true);
+      String crossStoreOrg = StringCollectionUtils
+          .commaSeparated(POSUtils.getOrgListByCrossStoreId(crossStoreOrgId), true);
 
       orgFilter.append(" and ord.organization.id in (");
       orgFilter.append(crossStoreOrg);
