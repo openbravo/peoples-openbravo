@@ -12,48 +12,48 @@
   <SqlMethod name="validateDocumentType" type="preparedStatement" return="multiple">
       <Sql><![CDATA[
           select *
-          from(select count (a.ad_org_id) ,org.name
+          from(select count (a.ad_org_id) as countnum, org.name
                from (select distinct (t.c_doctype_id) , t.ad_org_id 
                      from obpos_terminaltype t where t.isactive='Y') a , ad_org org
                      where org.ad_org_id=a.ad_org_id
                      group by a.ad_org_id, org.name)b
-                     where b.count > 1
+                     where b.countnum > 1
         ]]>
       </Sql>
   </SqlMethod>
   <SqlMethod name="validateDocumentTypeReturns" type="preparedStatement" return="multiple">
       <Sql><![CDATA[
           select *
-          from(select count (a.ad_org_id) ,org.name
+          from(select count (a.ad_org_id) as countnum, org.name
                from (select distinct (t.c_doctyperet_id) , t.ad_org_id 
                      from obpos_terminaltype t where t.isactive='Y') a , ad_org org
                      where org.ad_org_id=a.ad_org_id
                      group by a.ad_org_id, org.name)b
-                     where b.count > 1
+                     where b.countnum > 1
         ]]>
       </Sql>
   </SqlMethod>
   <SqlMethod name="validateDocumentTypeReconciliation" type="preparedStatement" return="multiple">
       <Sql><![CDATA[
           select *
-          from(select count (a.ad_org_id) ,org.name
+          from(select count (a.ad_org_id) as countnum, org.name
                from (select distinct (t.c_doctyperecon_id) , t.ad_org_id 
                      from obpos_terminaltype t where t.isactive='Y') a , ad_org org
                      where org.ad_org_id=a.ad_org_id
                      group by a.ad_org_id, org.name)b
-                     where b.count > 1
+                     where b.countnum > 1
         ]]>
       </Sql>
   </SqlMethod>
     <SqlMethod name="validateDocumentTypeQuotations" type="preparedStatement" return="multiple">
       <Sql><![CDATA[
           select *
-          from(select count (a.ad_org_id) ,org.name
+          from(select count (a.ad_org_id) as countnum, org.name
                from (select distinct (t.c_doctyperecon_id) , t.ad_org_id 
                      from obpos_terminaltype t where t.isactive='Y') a , ad_org org
                      where org.ad_org_id=a.ad_org_id
                      group by a.ad_org_id, org.name)b
-                     where b.count > 1
+                     where b.countnum > 1
         ]]>
       </Sql>
   </SqlMethod>
