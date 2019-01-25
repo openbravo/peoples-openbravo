@@ -17,6 +17,7 @@
 # ************************************************************************
 
 set -e
+set -o nounset
 
 source ./modules/org.openbravo.client.kernel/jscheck/check-dependencies
 

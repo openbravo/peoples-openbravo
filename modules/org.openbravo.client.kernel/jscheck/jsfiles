@@ -32,7 +32,7 @@ function readPatternsFromFile {
     if [[ -f $1 ]]; then
         while read pattern; do
             if [[ ! -z ${pattern} ]]; then
-                excludedPatterns+=("$2$pattern")
+                excludedPatterns+=("'"${2}${pattern}"'")
             fi
         done < "$1"
     fi
@@ -43,7 +43,7 @@ function readPatternsFromFile {
 #Return the module name except for client.kernel module as its rules should be global
 function getPrefixFromModulePath {
     if [[ $(basename $1) != "org.openbravo.client.kernel" ]]; then
-        echo "*$(basename $1)"
+        echo "*$(basename $1)/"
     else
         echo ""
     fi
@@ -67,7 +67,7 @@ fi
 
 FIND_CMD="find $1 -name '*.js'"
 for expr in "${EXCLUDED[@]}"; do
-    FIND_CMD+=" -and ! -path '$expr'"
+    FIND_CMD+=" -and ! -path $expr"
 done
 
 eval ${FIND_CMD}
