@@ -137,7 +137,7 @@ enyo.kind({
     this.owner.owner.crossStoreInfo = false;
     if (data && data.length > 0) {
       _.each(data.models, function (model) {
-        if (OB.MobileApp.model.get('terminal').organization !== model.attributes.id) {
+        if (OB.MobileApp.model.get('terminal').organization !== model.attributes.organization) {
           this.owner.owner.crossStoreInfo = true;
           return;
         }
@@ -259,7 +259,7 @@ enyo.kind({
   },
   tap: function () {
     this.inherited(arguments);
-    if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo && OB.MobileApp.model.get('terminal').organization !== this.model.get('orgId') && !this.model.get('checked')) {
+    if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo && OB.MobileApp.model.get('terminal').organization !== this.model.get('organization') && !this.model.get('checked')) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStorePayment'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [this.model.get('documentNo'), this.model.get('store')]), [{
         label: OB.I18N.getLabel('OBMOBC_Continue'),
         isConfirmButton: true,
@@ -310,7 +310,7 @@ enyo.kind({
     var returnLabel = '';
     this.inherited(arguments);
     if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo) {
-      this.$.store.setContent(this.model.get('orgId') === OB.MobileApp.model.get('terminal').organization ? 'This Store (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')' : this.model.get('store'));
+      this.$.store.setContent(this.model.get('organization') === OB.MobileApp.model.get('terminal').organization ? 'This Store (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')' : this.model.get('store'));
     } else {
       this.$.store.setContent('');
     }
@@ -505,7 +505,7 @@ enyo.kind({
       } else {
         process.exec({
           orderid: iter.id,
-          crossStore: OB.MobileApp.model.get('terminal').organization !== iter.get('orgId') ? iter.get('orgId') : null
+          crossStore: OB.MobileApp.model.get('terminal').organization !== iter.get('organization') ? iter.get('organization') : null
         }, function (data) {
           if (data) {
             me.owner.owner.model.get('orderList').newPaidReceipt(data[0], function (order) {
