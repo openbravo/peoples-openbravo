@@ -24,9 +24,7 @@
       <Sql>
         <![CDATA[
         update ad_org  o                    
-        set em_obpos_c_doctype_id= subquery.c_doctype_id                    
-        from (select distinct (t.c_doctype_id) , t.ad_org_id from obpos_terminaltype t where t.isactive='Y') AS subquery                 
-        where o.ad_org_id=subquery.ad_org_id                  
+		set em_obpos_c_doctype_id=  (select distinct (t.c_doctype_id) from obpos_terminaltype t where t.isactive='Y' and  o.ad_org_id=t.ad_org_id)                   
         ]]>
       </Sql>
   </SqlMethod>
@@ -35,9 +33,7 @@
       <Sql>
         <![CDATA[
         update ad_org  o                    
-        set em_obpos_c_doctyperet_id= subquery.c_doctyperet_id                  
-        from (select distinct (t.c_doctyperet_id) , t.ad_org_id from obpos_terminaltype t where t.isactive='Y') AS subquery                  
-        where o.ad_org_id=subquery.ad_org_id                                     
+		set em_obpos_c_doctyperet_id=  (select distinct (t.c_doctyperet_id) from obpos_terminaltype t where t.isactive='Y' and  o.ad_org_id=t.ad_org_id)                                
         ]]>
       </Sql>
   </SqlMethod>
@@ -46,9 +42,7 @@
       <Sql>
         <![CDATA[
         update ad_org  o                    
-        set em_obpos_c_doctyperecon_id= subquery.c_doctyperecon_id                  
-        from (select distinct (t.c_doctyperecon_id) , t.ad_org_id from obpos_terminaltype t  where t.isactive='Y') AS subquery                    
-        where o.ad_org_id=subquery.ad_org_id                                                     
+		set em_obpos_c_doctyperecon_id=  (select distinct (t.c_doctyperecon_id) from obpos_terminaltype t where t.isactive='Y' and  o.ad_org_id=t.ad_org_id)                              
         ]]>
       </Sql>
   </SqlMethod>
@@ -57,9 +51,7 @@
       <Sql>
         <![CDATA[
         update ad_org  o                    
-        set em_obpos_c_doctypequot_id= subquery.c_doctypequot_id                    
-        from (select distinct (t.c_doctypequot_id) , t.ad_org_id from obpos_terminaltype t where t.isactive='Y') AS subquery                 
-        where o.ad_org_id=subquery.ad_org_id                    
+		set em_obpos_c_doctypequot_id=  (select distinct (t.c_doctypequot_id) from obpos_terminaltype t where t.isactive='Y' and  o.ad_org_id=t.ad_org_id)          
         ]]>
       </Sql>
   </SqlMethod>
