@@ -6235,6 +6235,22 @@
             } else {
               removeReceiptFromDatabase(receipt, callback);
             }
+          } else if (receipt.has('lines') && receipt.get('lines').length === 0 && receipt.get('isEditable') && !receipt.get('isQuotation')) {
+            if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && orderList) {
+              var model = _.find(orderList.models, function (model) {
+                return model.get('id') === receipt.get('id');
+              });
+              if (model) {
+                orderList.saveCurrent();
+                orderList.load(model);
+              }
+              orderList.deleteCurrent();
+              if (callback && callback instanceof Function) {
+                callback();
+              }
+            } else {
+              removeReceiptFromDatabase(receipt, callback);
+            }
           } else {
             removeReceiptFromDatabase(receipt, callback);
           }
