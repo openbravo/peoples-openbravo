@@ -160,6 +160,7 @@ public class ProductProperties extends ModelExtension {
             add(new HQLProperty("product.obposProposalType", "proposalType"));
             add(new HQLProperty("product.obposIsmultiselectable", "availableForMultiline"));
             add(new HQLProperty("product.linkedToProduct", "isLinkedToProduct"));
+            add(new HQLProperty("product.modifyTax", "modifyTax"));
             add(new HQLProperty("product.allowDeferredSell", "allowDeferredSell"));
             add(new HQLProperty("product.deferredSellMaxDays", "deferredSellMaxDays"));
             add(new HQLProperty("product.quantityRule", "quantityRule"));
