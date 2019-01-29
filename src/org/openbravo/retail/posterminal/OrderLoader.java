@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -1327,12 +1327,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
         if (paymentType.getPaymentMethod().getOverpaymentLimit() == null || writeoffAmt
             .compareTo(new BigDecimal(paymentType.getPaymentMethod().getOverpaymentLimit())) <= 0) {
-          processPayments(paymentSchedule, order, paymentType, payment, tempWriteoffAmt, jsonorder,
-              account);
+          processPayments(paymentSchedule, order, posTerminal, paymentType, payment,
+              tempWriteoffAmt, jsonorder, account);
           writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
         } else {
-          processPayments(paymentSchedule, order, paymentType, payment, BigDecimal.ZERO, jsonorder,
-              account);
+          processPayments(paymentSchedule, order, posTerminal, paymentType, payment,
+              BigDecimal.ZERO, jsonorder, account);
         }
       }
     }
@@ -1350,8 +1350,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
   }
 
   private void processPayments(FIN_PaymentSchedule paymentSchedule, Order order,
-      OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt, JSONObject jsonorder,
-      FIN_FinancialAccount account) throws Exception {
+      OBPOSApplications posTerminal, OBPOSAppPayment paymentType, JSONObject payment,
+      BigDecimal writeoffAmt, JSONObject jsonorder, FIN_FinancialAccount account) throws Exception {
     OBContext.setAdminMode(true);
     try {
       int pricePrecision = order.getCurrency().getObposPosprecision() == null
@@ -1572,13 +1572,16 @@ public class OrderLoader extends POSDataSynchronizationProcess
           : OBMOBCUtils.stripTime(new Date());
 
       // insert the payment
+      final Organization paymentOrganization = StringUtils
+          .equals(posTerminal.getOrganization().getId(), order.getOrganization().getId())
+              ? posTerminal.getOrganization()
+              : posTerminal.getOrganization().getOBPOSCrossStoreOrganization();
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(),
           account == null ? paymentType.getFinancialAccount() : account,
-          (downRounding ? amount : amountRounded).toString(), calculatedDate,
-          order.getOrganization(), null, paymentScheduleDetailList, paymentAmountMap, false, false,
-          order.getCurrency(), mulrate, origAmountRounded, true,
-          payment.has("id") ? payment.getString("id") : null);
+          (downRounding ? amount : amountRounded).toString(), calculatedDate, paymentOrganization,
+          null, paymentScheduleDetailList, paymentAmountMap, false, false, order.getCurrency(),
+          mulrate, origAmountRounded, true, payment.has("id") ? payment.getString("id") : null);
 
       // Associate a GLItem with the overpayment amount to the payment which generates the
       // overpayment
