@@ -1354,10 +1354,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       BigDecimal writeoffAmt, JSONObject jsonorder, FIN_FinancialAccount account) throws Exception {
     OBContext.setAdminMode(true);
     try {
-      final Organization paymentOrganization = StringUtils
-          .equals(posTerminal.getOrganization().getId(), order.getOrganization().getId())
-              ? posTerminal.getOrganization()
-              : posTerminal.getOrganization().getOBPOSCrossStoreOrganization();
+      final Organization paymentOrganization = getPaymentOrganization(order, posTerminal);
       int pricePrecision = order.getCurrency().getObposPosprecision() == null
           ? order.getCurrency().getPricePrecision().intValue()
           : order.getCurrency().getObposPosprecision().intValue();
@@ -1664,6 +1661,24 @@ public class OrderLoader extends POSDataSynchronizationProcess
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  // If payment is registered in a store different than the store where order was created, return
+  // cross store organization, otherwise return terminal organization
+  private Organization getPaymentOrganization(final Order order,
+      final OBPOSApplications posTerminal) {
+    final Organization crossOrganization = posTerminal.getOrganization()
+        .getOBPOSCrossStoreOrganization();
+    if (crossOrganization == null) {
+      return posTerminal.getOrganization();
+    }
+
+    if (!StringUtils.equals(order.getOrganization().getId(),
+        posTerminal.getOrganization().getId())) {
+      return posTerminal.getOrganization().getOBPOSCrossStoreOrganization();
+    }
+
+    return posTerminal.getOrganization();
   }
 
   private void sortPSDByInvoice(List<FIN_PaymentScheduleDetail> psdList) {
