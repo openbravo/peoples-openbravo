@@ -18,6 +18,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -37,6 +38,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -210,6 +212,7 @@ public class CashCloseProcessor {
 
   private void associateTransactionsFromQuery(OBQuery<FIN_FinaccTransaction> transactionQuery,
       FIN_Reconciliation reconciliation) {
+    final Organization reconciliationOrganization = reconciliation.getOrganization();
     ScrollableResults transactions = transactionQuery.scroll(ScrollMode.FORWARD_ONLY);
     try {
       while (transactions.next()) {
@@ -221,6 +224,13 @@ public class CashCloseProcessor {
         // as cleared
         if (transaction.getFinPayment() != null) {
           transaction.getFinPayment().setStatus("RPPC");
+        }
+
+        if (StringUtils.equals(reconciliation.getOrganization().getId(),
+            reconciliationOrganization.getId())
+            && !StringUtils.equals(reconciliation.getOrganization().getId(),
+                transaction.getOrganization().getId())) {
+          reconciliation.setOrganization(transaction.getOrganization());
         }
       }
     } finally {
