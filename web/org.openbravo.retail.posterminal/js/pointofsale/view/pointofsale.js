@@ -1330,10 +1330,6 @@ enyo.kind({
       originator.removeClass('btn-icon-loading');
       originator.addClass('btn-icon-clearPayment');
     }
-    this.leftToolbarDisabled(inSender, {
-      status: false,
-      disableButtonNew: true
-    });
   },
   removeMultiOrders: function (inSender, inEvent) {
     var me = this,

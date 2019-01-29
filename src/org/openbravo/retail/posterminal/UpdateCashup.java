@@ -215,37 +215,43 @@ public class UpdateCashup {
     if (jsonCashup.has("cashPaymentMethodInfo")) {
       JSONArray paymentCashupInfo = jsonCashup.getJSONArray("cashPaymentMethodInfo");
       for (int i = 0; i < paymentCashupInfo.length(); ++i) {
+        boolean createPaymentMethods = false;
         JSONObject payment = paymentCashupInfo.getJSONObject(i);
         if ((payment.has("newPaymentMethod")
             && payment.getString("newPaymentMethod").equals("true"))
             || (payment.has("usedInCurrentTrx")
                 && payment.getString("usedInCurrentTrx").equals("true"))) {
-          // Set Amount To Keep
-          if (jsonCashup.has("cashCloseInfo")) {
-            // Get the paymentMethod id
-            JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
-            for (int j = 0; j < cashCloseInfo.length(); ++j) {
-              JSONObject paymentMethod = cashCloseInfo.getJSONObject(j);
-              if (paymentMethod.getString("paymentTypeId")
-                  .equals(payment.getString("paymentMethodId"))) {
-                payment.put("amountToKeep",
-                    paymentMethod.getJSONObject("paymentMethod").getString("amountToKeep"));
-                BigDecimal expected = BigDecimal.ZERO;
-                BigDecimal difference = BigDecimal.ZERO;
-                BigDecimal rate = new BigDecimal(payment.getString("rate"));
-                if (rate.compareTo(BigDecimal.ONE) == 0) {
-                  expected = new BigDecimal(paymentMethod.getString("expected"));
-                  difference = new BigDecimal(paymentMethod.getString("difference"));
-                } else if (paymentMethod.has("foreignExpected")) {
-                  expected = new BigDecimal(paymentMethod.getString("foreignExpected"));
-                  difference = new BigDecimal(paymentMethod.has("foreignDifference")
-                      ? paymentMethod.getString("foreignDifference")
-                      : paymentMethod.getString("difference"));
-                }
-                payment.put("totalCounted", expected.add(difference));
+          createPaymentMethods = true;
+        }
+
+        // Set Amount To Keep
+        if (jsonCashup.has("cashCloseInfo")) {
+          // Get the paymentMethod id
+          JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
+          for (int j = 0; j < cashCloseInfo.length(); ++j) {
+            JSONObject paymentMethod = cashCloseInfo.getJSONObject(j);
+            if (paymentMethod.getString("paymentTypeId")
+                .equals(payment.getString("paymentMethodId"))) {
+              payment.put("amountToKeep",
+                  paymentMethod.getJSONObject("paymentMethod").getString("amountToKeep"));
+              BigDecimal expected = BigDecimal.ZERO;
+              BigDecimal difference = BigDecimal.ZERO;
+              BigDecimal rate = new BigDecimal(payment.getString("rate"));
+              if (rate.compareTo(BigDecimal.ONE) == 0) {
+                expected = new BigDecimal(paymentMethod.getString("expected"));
+                difference = new BigDecimal(paymentMethod.getString("difference"));
+              } else if (paymentMethod.has("foreignExpected")) {
+                expected = new BigDecimal(paymentMethod.getString("foreignExpected"));
+                difference = new BigDecimal(paymentMethod.has("foreignDifference")
+                    ? paymentMethod.getString("foreignDifference")
+                    : paymentMethod.getString("difference"));
               }
+              payment.put("totalCounted", expected.add(difference));
+              createPaymentMethods = true;
             }
           }
+        }
+        if (createPaymentMethods) {
           createPaymentMethodCashUp(cashup, payment);
         }
       }

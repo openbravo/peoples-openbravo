@@ -802,17 +802,6 @@
       this.calculatingReceipt = true;
       var execution = OB.UTIL.ProcessController.start('calculateReceipt');
       this.addToListOfCallbacks(callback);
-      var executeCallback;
-      executeCallback = function (listOfCallbacks, callback) {
-        if (listOfCallbacks.length === 0) {
-          callback();
-          listOfCallbacks = null;
-          return;
-        }
-        var callbackToExe = listOfCallbacks.shift();
-        callbackToExe();
-        executeCallback(listOfCallbacks, callback);
-      };
       var me = this;
       this.on('applyPromotionsFinished', function () {
         me.off('applyPromotionsFinished');
@@ -826,22 +815,34 @@
             me.calculateReceipt();
             return;
           } else {
-            if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
-              var calculateReceiptCallbacks = me.get('calculateReceiptCallbacks').slice(0);
-              me.unset('calculateReceiptCallbacks');
-              executeCallback(calculateReceiptCallbacks, function () {
+            var finishCalculateReceipt = function (callback) {
                 me.calculatingReceipt = false;
                 OB.MobileApp.view.waterfall('calculatedReceipt');
                 me.trigger('calculatedReceipt');
                 OB.UTIL.ProcessController.finish('calculateReceipt', execution);
                 me.trigger('updatePending');
+                if (callback && callback instanceof Function) {
+                  callback();
+                }
+                };
+            if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
+              var calculateReceiptCallbacks = me.get('calculateReceiptCallbacks').slice(0);
+              me.unset('calculateReceiptCallbacks');
+              finishCalculateReceipt(function () {
+                var executeCallback;
+                executeCallback = function (listOfCallbacks) {
+                  if (listOfCallbacks.length === 0) {
+                    listOfCallbacks = null;
+                    return;
+                  }
+                  var callbackToExe = listOfCallbacks.shift();
+                  callbackToExe();
+                  executeCallback(listOfCallbacks);
+                };
+                executeCallback(calculateReceiptCallbacks);
               });
             } else {
-              me.calculatingReceipt = false;
-              OB.MobileApp.view.waterfall('calculatedReceipt');
-              me.trigger('calculatedReceipt');
-              OB.UTIL.ProcessController.finish('calculateReceipt', execution);
-              me.trigger('updatePending');
+              finishCalculateReceipt();
             }
           }
         });
@@ -5762,7 +5763,7 @@
           _.forEach(groupedPromos, function (promotion) {
             if (!promotion.manual) {
               var promoAmt = 0,
-                  promotionQtyOffer = promotion.pendingQtyOffer || promotion.qtyOffer,
+                  promotionQtyOffer = promotion.lineQtyOffer || promotion.qtyOffer,
                   promoQtyoffer = promotionQtyOffer;
 
               _.forEach(linesToApply.models, function (line) {
@@ -5801,6 +5802,7 @@
                   clonedPromotion.pendingQtyoffer = line.get('qty') - clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.qtyOffer = clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.qtyOfferReserved = clonedPromotion.obdiscQtyoffer;
+                  clonedPromotion.lineQtyOffer = clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.doNotMerge = true;
                   if (!line.get('promotions')) {
                     line.set('promotions', []);
@@ -6231,6 +6233,22 @@
               receipt.setIsCalculateReceiptLockState(false);
               receipt.setIsCalculateGrossLockState(false);
               markOrderAsDeleted(receipt, orderList, callback);
+            } else {
+              removeReceiptFromDatabase(receipt, callback);
+            }
+          } else if (receipt.has('lines') && receipt.get('lines').length === 0 && receipt.get('isEditable') && !receipt.get('isQuotation')) {
+            if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && orderList) {
+              var model = _.find(orderList.models, function (model) {
+                return model.get('id') === receipt.get('id');
+              });
+              if (model) {
+                orderList.saveCurrent();
+                orderList.load(model);
+              }
+              orderList.deleteCurrent();
+              if (callback && callback instanceof Function) {
+                callback();
+              }
             } else {
               removeReceiptFromDatabase(receipt, callback);
             }
