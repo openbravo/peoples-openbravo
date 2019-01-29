@@ -36,7 +36,7 @@ enyo.kind({
         appendCatComma = false,
         existingServices, lineIdList, trancheValues = [],
         totalAmountSelected = 0,
-        minimumSelected = 999999999999, // Safe maximum value
+        minimumSelected = 999999999999,
         maximumSelected = 0;
 
     if (this.productList && this.productList.length > 0) {
@@ -171,7 +171,7 @@ enyo.kind({
     var me = this,
         prodList, catList, lineIdList, existingServices, trancheValues = [],
         totalAmountSelected = 0,
-        minimumSelected = 999999999999, // Safe maximum value
+        minimumSelected = 999999999999,
         maximumSelected = 0;
     if (this.orderlineList && this.orderlineList.length > 0) {
       prodList = this.orderlineList.map(function (line) {
@@ -282,7 +282,7 @@ enyo.kind({
   },
   calculateTranche: function (line, trancheValues) {
     var totalAmountSelected = 0,
-        minimumSelected = 999999999999, // Safe maximum value
+        minimumSelected = 999999999999,
         maximumSelected = 0;
     if (trancheValues && trancheValues.length === 3) {
       totalAmountSelected = trancheValues[0];
