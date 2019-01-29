@@ -71,22 +71,3 @@ for expr in "${EXCLUDED[@]}"; do
 done
 
 eval ${FIND_CMD}
-#echo "executed $FIND_CMD"
-# Find js files
-
-#find $1 -name '*.js' -and ! -path '*isomorphic*' \
-#-and ! -path '*qunit*' -and ! -path '*docs*' \
-#-and ! -path '*LAB*' -and ! -path '*benchmark*' \
-#-and ! -path '*unittest*' \
-#-and ! -path '*postest*' \
-#-and ! -path '*xmla4js*' \
-#-and ! -path '*VAADIN*' \
-#-and ! -path '*saiku*' \
-#-and ! -path '*libs*' \
-#-and ! -path '*lib*' \
-#-and ! -path '*enyo*' \
-#-and ! -path '*smartclient*' \
-#-and ! -path '*scopeleaks*' \
-#-and ! -path '*BigDecimal*' \
-#-and ! -path '*AppDynamics*' \
-#-and ! -path '*node_modules*'

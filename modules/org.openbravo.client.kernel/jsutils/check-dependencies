@@ -46,7 +46,7 @@ function installNodePackagesIfNeededFromModules {
     fi
 }
 
-if [ -d ../../modules ] ; then
+if [[ -d ../../modules ]] ; then
     installNodePackagesIfNeededFromModules
 else
     installNodePackagesIfNeeded

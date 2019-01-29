@@ -16,8 +16,10 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
+#
+# Mercurial pre-commit hook for checking js file formatting in project root
+#
 set -e
-# Mercurial pre-commit hook for js formatter
 
 replaceparam=$1
 if [ "$replaceparam" != "replace" ] ; then
@@ -29,7 +31,8 @@ fi
 for changedfile in $(hg st -ma)
 do
   if [ -f "$changedfile" -a -n "$(echo $changedfile | awk '/.js$/ && ! /^web/')" ]; then
-    source ./modules/org.openbravo.client.kernel/jsformatter/jsformatter $changedfile $replaceparam
+    filefullpath="$(pwd)/${changedfile}"
+    source ./modules/org.openbravo.client.kernel/jsformatter/jsformatter ${filefullpath} ${replaceparam}
   fi
 done
 exit $ERROR

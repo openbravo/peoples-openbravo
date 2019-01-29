@@ -16,6 +16,9 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
+#
+# Check formatting to all js files from the project root
+#
 set -e
 replaceparam=$1
 
@@ -28,7 +31,7 @@ else
 fi
  echo "-----------------------------------------------"
  echo ""
-files=$(./modules/org.openbravo.client.kernel/jscheck/jsfiles $(pwd)/modules)
+files=$(./modules/org.openbravo.client.kernel/jsutils/jsfiles $(pwd)/modules)
 
 for changedfile in echo $files; do
   if [ -f "$changedfile" -a -n "$(echo $changedfile | awk '/.js$/')" ]; then

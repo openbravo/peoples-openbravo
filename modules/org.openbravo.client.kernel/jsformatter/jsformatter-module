@@ -16,13 +16,16 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
+#
+# Script used by other scripts to pass the linter to the list of js files given as arguments from a module directory.
+# Note that received paths must be absolute or relative to modules/org.openbravo.client.kernel.
+#
 set -e
-set -o nounset
 
-source ../org.openbravo.client.kernel/jscheck/check-dependencies
+source ../org.openbravo.client.kernel/jsutils/check-dependencies
 
-changedfile="$(pwd)/$1"
-replaceparam=$2
+changedfile="$1"
+replaceparam="$2"
 npm run jsformatter -s --prefix ../org.openbravo.client.kernel -- "$changedfile" > "$changedfile.prettier"
 if ! diff -u "$changedfile" "$changedfile.prettier"; then
   if [ "$replaceparam" != "replace" ] ; then
@@ -38,4 +41,8 @@ if ! diff -u "$changedfile" "$changedfile.prettier"; then
     echo "Formatter --> File formatted: $changedfile";
   fi
 fi
-rm -rf "$changedfile.prettier"
+
+if [[ -n "$changedfile" ]]; then
+    rm -rf "$changedfile.prettier"
+fi
+

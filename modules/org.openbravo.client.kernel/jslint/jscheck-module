@@ -17,26 +17,7 @@
 # ************************************************************************
 
 #
-# Check formatting to all js files in a module
+# Check linting to all js files in a module
 #
-set -e
-replaceparam=$1
-
- echo ""
- echo "***********************************************"
-if [ "$replaceparam" != "replace" ] ; then
- echo "Performing formatting check on all js resources"
-else
- echo "Performing formatting replacement on all js resources"
-fi
- echo "***********************************************"
- echo ""
 files=$(../org.openbravo.client.kernel/jsutils/jsfiles $(pwd))
-
-for changedfile in echo $files;
-do
-  if [ -f "$changedfile" -a -n "$(echo $changedfile | awk '/.js$/')" ]; then
-  source ../org.openbravo.client.kernel/jsformatter/jsformatter-module $changedfile $replaceparam
-  fi
-done
-exit $ERROR
+echo $files | xargs -n 250 ../org.openbravo.client.kernel/jslint/jslint-module || exit 1
