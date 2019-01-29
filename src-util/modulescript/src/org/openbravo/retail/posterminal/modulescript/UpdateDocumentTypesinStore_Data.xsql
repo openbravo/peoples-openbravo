@@ -51,7 +51,7 @@
       <Sql>
         <![CDATA[
         update ad_org  o                    
-		set em_obpos_c_doctypequot_id=  (select distinct (t.c_doctypequot_id) from obpos_terminaltype t where t.isactive='Y' and  o.ad_org_id=t.ad_org_id)          
+		set em_obpos_c_doctypequot_id=  (select distinct (t.c_doctypequot_id) from obpos_terminaltype t where t.isactive='Y' and t.c_doctypequot_id is not null and o.ad_org_id=t.ad_org_id)          
         ]]>
       </Sql>
   </SqlMethod>

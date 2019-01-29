@@ -49,8 +49,8 @@
       <Sql><![CDATA[
           select *
           from(select count (a.ad_org_id) as countnum, org.name
-               from (select distinct (t.c_doctyperecon_id) , t.ad_org_id 
-                     from obpos_terminaltype t where t.isactive='Y') a , ad_org org
+               from (select distinct (t.c_doctypequot_id) , t.ad_org_id 
+                     from obpos_terminaltype t where t.isactive='Y' and t.c_doctypequot_id is not null ) a , ad_org org
                      where org.ad_org_id=a.ad_org_id
                      group by a.ad_org_id, org.name)b
                      where b.countnum > 1
