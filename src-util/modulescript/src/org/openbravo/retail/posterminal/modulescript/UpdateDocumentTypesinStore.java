@@ -45,7 +45,7 @@ public class UpdateDocumentTypesinStore extends ModuleScript {
 
   @Override
   protected boolean executeOnInstall() {
-    return true;
+    return false;
   }
 
 }
