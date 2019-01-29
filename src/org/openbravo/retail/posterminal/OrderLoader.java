@@ -1354,9 +1354,14 @@ public class OrderLoader extends POSDataSynchronizationProcess
       BigDecimal writeoffAmt, JSONObject jsonorder, FIN_FinancialAccount account) throws Exception {
     OBContext.setAdminMode(true);
     try {
+      final Organization paymentOrganization = StringUtils
+          .equals(posTerminal.getOrganization().getId(), order.getOrganization().getId())
+              ? posTerminal.getOrganization()
+              : posTerminal.getOrganization().getOBPOSCrossStoreOrganization();
       int pricePrecision = order.getCurrency().getObposPosprecision() == null
           ? order.getCurrency().getPricePrecision().intValue()
           : order.getCurrency().getObposPosprecision().intValue();
+
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
           .setScale(pricePrecision, RoundingMode.HALF_UP);
       // Round change variables
@@ -1550,7 +1555,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
       }
 
-      DocumentType paymentDocType = getPaymentDocumentType(order.getOrganization());
+      DocumentType paymentDocType = getPaymentDocumentType(paymentOrganization);
       Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
 
       String paymentDocNo;
@@ -1572,10 +1577,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
           : OBMOBCUtils.stripTime(new Date());
 
       // insert the payment
-      final Organization paymentOrganization = StringUtils
-          .equals(posTerminal.getOrganization().getId(), order.getOrganization().getId())
-              ? posTerminal.getOrganization()
-              : posTerminal.getOrganization().getOBPOSCrossStoreOrganization();
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(),
           account == null ? paymentType.getFinancialAccount() : account,
