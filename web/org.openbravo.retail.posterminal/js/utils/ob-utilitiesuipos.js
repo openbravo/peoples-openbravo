@@ -751,7 +751,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
   function calculatePercentageAmount(product, amount, percentage, partialPrice, callback) {
     var newprice, oldprice = (partialPrice ? 0 : product.get('listPrice'));
     newprice = OB.DEC.add(oldprice, (amount * percentage / 100));
-    callback(line, newprice);
+    callback(newprice);
   }
 
   function calculateRangePriceAmount(product, range, partialPrice, callback, errorCallback) {
@@ -779,7 +779,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
           newprice;
       if (price && price.length > 0) {
         newprice = OB.Utilities.Number.roundJSNumber(oldprice + price.at(0).get('listPrice'), 2);
-        callback(line, newprice);
+        callback(newprice);
       } else {
         errorCallback('OBPOS_ErrorPriceRuleRangePriceNotFound');
       }
