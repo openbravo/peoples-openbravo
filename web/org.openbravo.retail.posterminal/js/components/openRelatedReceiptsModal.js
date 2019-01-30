@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, moment, _ */
+/*global OB, enyo, Backbone, _ */
 
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
@@ -162,8 +162,7 @@ enyo.kind({
     this.execCallback = inEvent.executeCallback;
   },
   executeOnShow: function () {
-    var me = this,
-        lineNum = 0,
+    var lineNum = 0,
         model, i;
     this.selectedOrders = JSON.parse(JSON.stringify(this.args.models));
     this.execCallback = true;
@@ -212,7 +211,7 @@ enyo.kind({
 
     for (i = 1; i < this.args.models.length; i++) {
       model = this.args.models[i];
-      var lineEnyoObject = this.$.bodyContent.$.attributes.createComponent({
+      this.$.bodyContent.$.attributes.createComponent({
         kind: 'OB.UI.RelatedReceipt',
         name: 'line' + lineNum,
         order: model

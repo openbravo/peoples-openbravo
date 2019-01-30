@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, _, enyo */
+/*global OB, _ */
 
 (function () {
 
@@ -22,9 +22,7 @@
           paidAmount = receipt.getPaymentWithSign(),
           prepaymentAmount = receipt.get('obposPrepaymentamt');
       if (!paymentStatus.isNegative && paidAmount < prepaymentAmount && payment.get('isCash')) {
-        var pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentAmount, paymentStatus.pendingAmt), paymentStatus.totalAmt),
-            receiptHasPrepaymentAmount = prepaymentAmount && prepaymentAmount !== paymentStatus.totalAmt,
-            paymentAmount, newPaidAmount;
+        var paymentAmount, newPaidAmount;
 
         if (payment.get('rate') && payment.get('rate') !== '1') {
           paymentAmount = OB.DEC.div(payment.get('amount'), payment.get('mulrate'));

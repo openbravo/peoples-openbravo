@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -350,7 +350,6 @@ enyo.kind({
   name: 'OB.UI.BPLocDetailsContextMenuItem',
   i18NLabel: 'OBPOS_BPViewDetails',
   selectItem: function (bploc) {
-    var me = this;
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });
@@ -379,7 +378,6 @@ enyo.kind({
   name: 'OB.UI.BPLocEditContextMenuItem',
   i18NLabel: 'OBPOS_BPEdit',
   selectItem: function (bploc) {
-    var me = this;
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });

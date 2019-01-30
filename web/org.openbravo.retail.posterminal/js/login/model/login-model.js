@@ -635,8 +635,7 @@
         return;
       }
 
-      var i, paymentcashcurrency, paymentcash, paymentlegacy, max, me = this,
-          defaultpaymentcash, defaultpaymentcashcurrency;
+      var i, paymentcashcurrency, paymentcash, paymentlegacy, max, defaultpaymentcash, defaultpaymentcashcurrency;
 
       if (!OB.UTIL.isSupportedBrowser()) {
         OB.MobileApp.model.renderLogin();
@@ -833,7 +832,6 @@
       OB.debug("next process: renderTerminalMain");
       //MASTER DATA REFRESH
       var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc,
-          minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal,
           lastTotalRefresh = OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
           lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
           now = new Date().getTime(),
@@ -853,7 +851,6 @@
       }
       // Transform minIncRefresh and minTotalRefresh to miliseconds
       minIncRefresh = (minIncRefresh > 99999 ? 99999 : minIncRefresh) * 60 * 1000;
-      minTotalRefresh = minTotalRefresh * 60 * 1000;
 
       // Calculate the incremental interval in miliseconds
       intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
@@ -942,8 +939,7 @@
     },
 
     preLogoutActions: function (finalCallback) {
-      var criteria = {},
-          model;
+      var criteria = {};
       var me = this;
 
       function removeOneModel(model, collection, callback) {
@@ -962,7 +958,6 @@
       }
 
       function success(collection) {
-        var i, j, removeCallback;
         if (collection.length > 0) {
           _.each(collection.models, function (model) {
             model.set('ignoreCheckIfIsActiveOrder', true);
@@ -1382,6 +1377,7 @@
   // from this point, OB.MobileApp.model will be available
   // the initialization is done to a dummy variable to allow the model to be extendable
   var initializeOBModelTerminal = new OB.Model.POSTerminal();
+  initializeOBModelTerminal.isUserCacheAvailable();
 
   OB.POS = {
     modelterminal: OB.MobileApp.model,

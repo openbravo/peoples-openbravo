@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2018 Openbravo S.L.U.
+ * Copyright (C) 2016-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, moment, _ */
+/*global OB, enyo, Backbone, _ */
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalRemoveAssociations_btnApply',
@@ -222,7 +222,8 @@ enyo.kind({
         relatedLine.bpName = me.args.receipt.get('bp').get('name');
         relatedLine.qty = line.get('qty');
       }
-      var lineEnyoObject = me.$.bodyContent.$.attributes.createComponent({
+
+      me.$.bodyContent.$.attributes.createComponent({
         kind: 'OB.UI.AssociatedOrderLine',
         name: 'line' + lineNum,
         newAttribute: relatedLine

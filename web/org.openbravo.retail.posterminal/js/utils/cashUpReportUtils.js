@@ -106,7 +106,7 @@
         // group and sum the taxes
         cashuptaxes = [];
         order.get('lines').each(function (line, taxIndex) {
-          var taxLines, taxLine;
+          var taxLines;
           taxLines = line.get('taxLines');
           if (orderType === 1 || (line.get('qty') < 0 && !order.get('cancelLayaway') && !order.get('voidLayaway'))) {
             taxOrderType = '1';
@@ -201,7 +201,6 @@
   }
 
   OB.UTIL.cashUpReport = function (receipt, callback, tx) {
-    var auxPay, orderType, taxOrderType, taxAmount, gross;
     if (!Array.isArray(receipt)) {
       receipt = [receipt];
     }
@@ -748,7 +747,6 @@
     }
   };
   OB.UTIL.calculateCurrentCash = function (callback, tx, lastCashup) {
-    var me = this;
 
     OB.Dal.findInTransaction(tx, OB.Model.CashUp, {
       'isprocessed': 'N'
@@ -756,7 +754,6 @@
       OB.Dal.findInTransaction(tx, OB.Model.PaymentMethodCashUp, {
         'cashup_id': cashUp.length === 1 ? cashUp.at(0).get('id') : (lastCashup ? lastCashup.get('id') : null)
       }, function (payMthds) { //OB.Dal.find success
-        var payMthdsCash;
         _.each(OB.MobileApp.model.get('payments'), function (paymentType, index) {
           var cash = 0,
               auxPay = payMthds.filter(function (payMthd) {
@@ -770,7 +767,6 @@
           auxPay.set('paymentMethod', paymentType.paymentMethod);
           auxPay.set('id', paymentType.payment.id);
           var startingCash = auxPay.get('startingCash'),
-              rate = auxPay.get('rate'),
               totalSales = auxPay.get('totalSales'),
               totalReturns = auxPay.get('totalReturns'),
               totalDeps = auxPay.get('totalDeposits'),

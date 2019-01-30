@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -23,12 +23,11 @@
     }, this);
 
     OB.DATA.executeCustomerSave = function (customer, callback) {
-      var customersList, customerId = customer.get('id'),
+      var customerId = customer.get('id'),
           isNew = false,
           bpToSave = new OB.Model.ChangedBusinessPartners(),
-          bpLocation, bpLocToSave = new OB.Model.BPLocation(),
-          bpShipLocToSave = new OB.Model.BPLocation(),
-          customersListToChange, updateLocally, finalCallback;
+          bpLocToSave = new OB.Model.BPLocation(),
+          updateLocally, finalCallback;
 
       var setBPLocationProperty = function (location, customer, sucesscallback) {
           if (!OB.UTIL.isNullOrUndefined(location) && !OB.UTIL.isNullOrUndefined(customer)) {
@@ -182,7 +181,6 @@
               OB.Dal.save(bpLocToSave, function () {
                 //check if shipping address is different
                 if (customer.get('locId') !== customer.get('shipLocId')) {
-                  bpShipLocToSave = new OB.Model.BPLocation();
                   bpLocToSave.set('id', customer.get('shipLocId'));
                   setBPLocationProperty(bpLocToSave, customer, function () {
                     OB.Dal.save(bpLocToSave, function () {}, function () {

@@ -379,11 +379,17 @@ public class Product extends ProcessHQLQuery {
 
   protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
       JSONObject jsonsent, boolean useGetForProductImages) {
-    return getRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages,
-        false);
+    return Product.createRegularProductHql(isRemote, isMultipricelist, jsonsent,
+        useGetForProductImages, false);
   }
 
   protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
+      JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList) {
+    return Product.createRegularProductHql(isRemote, isMultipricelist, jsonsent,
+        useGetForProductImages, allowNoPriceInMainPriceList);
+  }
+
+  public static String createRegularProductHql(boolean isRemote, boolean isMultipricelist,
       JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList) {
 
     String hql = "FROM OBRETCO_Prol_Product as pli ";
@@ -415,6 +421,32 @@ public class Product extends ProcessHQLQuery {
     }
 
     return hql;
+  }
+
+  public static Map<String, Object> createRegularProductValues(JSONObject jsonsent)
+      throws JSONException {
+    try {
+      OBContext.setAdminMode(true);
+      final Date terminalDate = OBMOBCUtils.calculateServerDate(
+          jsonsent.getJSONObject("parameters").getString("terminalTime"),
+          jsonsent.getJSONObject("parameters")
+              .getJSONObject("terminalTimeOffset")
+              .getLong("value"));
+      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      final OBRETCOProductList productList = POSUtils
+          .getProductListByPosterminalId(jsonsent.getString("pos"));
+      final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
+          terminalDate);
+
+      Map<String, Object> paramValues = new HashMap<String, Object>();
+      paramValues.put("productListId", productList.getId());
+      paramValues.put("orgId", orgId);
+      paramValues.put("priceListVersionId", priceListVersion.getId());
+
+      return paramValues;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   @Override

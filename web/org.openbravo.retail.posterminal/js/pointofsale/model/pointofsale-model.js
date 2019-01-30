@@ -45,6 +45,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     generatedModel: true,
     modelName: 'DiscountFilterCharacteristic'
   },
+  OB.Model.ProductServiceLinked, //
   OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.Brand, OB.Model.ProductCharacteristicValue, OB.Model.CharacteristicValue, OB.Model.Characteristic, OB.Model.ReturnReason, OB.Model.CashUp, OB.Model.OfflinePrinter, OB.Model.PaymentMethodCashUp, OB.Model.TaxCashUp, OB.Model.Country],
 
   loadUnpaidOrders: function (loadUnpaidOrdersCallback) {
@@ -267,7 +268,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     // create the orderList and expose it
     var orderList = new OB.Collection.OrderList(receipt);
     OB.MobileApp.model.orderList = orderList;
-    var auxReceiptList = [];
 
     // changing this initialization order may break the loading
     this.set('order', receipt);
@@ -461,8 +461,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     this.get('multiOrders').on('paymentAccepted', function () {
       var multiorders = this.get('multiOrders');
-
-      var ordersLength = multiorders.get('multiOrdersList').length;
       var auxRcpt, auxP;
 
       OB.UTIL.showLoading(true);
@@ -1100,8 +1098,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                     OB.UTIL.localStorage.setItem('hardwareManagerRevision', hwmRevision);
                   }
                   if (data && data.javaInfo) {
-                    // Max database string size: 300
-                    var hwmJavaInfo = data.javaInfo.length > 300 ? data.javaInfo.substring(0, 296).concat('...') : data.javaInfo;
                     OB.UTIL.localStorage.setItem('hardwareManagerJavaInfo', data.javaInfo);
                   }
                   // Now that templates has been initialized, print welcome message
@@ -1203,11 +1199,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
    * in backend for audit purposes.
    */
   approvedRequest: function (approved, supervisor, approvalType, callback) {
-    var newApprovals, approvals, approval, i, date, callbackFunc, hasPermission = false,
+    var newApprovals, approvals, approval, i, callbackFunc, hasPermission = false,
         saveApproval, executeHook, request, me = this;
 
     saveApproval = function (order, silent) {
-      date = new Date().getTime();
       newApprovals = [];
 
       approvals = order.get('approvals') || [];

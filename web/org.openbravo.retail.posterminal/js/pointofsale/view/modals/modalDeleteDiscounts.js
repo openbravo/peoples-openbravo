@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -175,7 +175,6 @@ enyo.kind({
   callbackExecutor: function (inSender, inEvent) {
     var receipt = this.args.receipt,
         linePromotions, selectedLines = this.args.selectedLines,
-        manualPromotions = receipt.get('orderManualPromotions'),
         i, j, k;
 
     for (i = 0; i < this.promotionsList.length; i++) {
@@ -208,7 +207,6 @@ enyo.kind({
   executeOnShow: function () {
     this.promotionsList = [];
     var me = this,
-        totalAmount = 0,
         i;
     this.$.bodyContent.$.attributes.destroyComponents();
     this.$.header.destroyComponents();
