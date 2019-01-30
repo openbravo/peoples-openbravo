@@ -31,7 +31,7 @@ public class DocumentTypesinStore extends BuildValidation {
       ConnectionProvider cp = getConnectionProvider();
       DocumentTypesinStoreData[] dataDocType = DocumentTypesinStoreData.validateDocumentType(cp);
       for (int i = 0; i < dataDocType.length; i++) {
-        String msg = "\nPlease, review the configuration of Document Types in the store "
+        String msg = "\nPlease, review the configuration of Document Types for Orders in the store "
             + dataDocType[i].name
             + " . You have more that one Document Type for the same type in the store.";
         errors.add(msg);

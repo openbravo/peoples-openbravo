@@ -3424,7 +3424,7 @@ In case this value is not set, it will be defaulted to the one defined in Openbr
 <!--407D61F357BC44C0B30DE7AA1C96C03B-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--407D61F357BC44C0B30DE7AA1C96C03B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--407D61F357BC44C0B30DE7AA1C96C03B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--407D61F357BC44C0B30DE7AA1C96C03B-->  <NAME><![CDATA[Document Type]]></NAME>
+<!--407D61F357BC44C0B30DE7AA1C96C03B-->  <NAME><![CDATA[Document Type for Orders]]></NAME>
 <!--407D61F357BC44C0B30DE7AA1C96C03B-->  <DESCRIPTION><![CDATA[A value defining what sequence and process setup are used to handle this document.]]></DESCRIPTION>
 <!--407D61F357BC44C0B30DE7AA1C96C03B-->  <HELP><![CDATA[The Document Type determines document sequence and processing rules]]></HELP>
 <!--407D61F357BC44C0B30DE7AA1C96C03B-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
