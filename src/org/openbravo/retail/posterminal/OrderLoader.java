@@ -1352,9 +1352,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
   private void processPayments(FIN_PaymentSchedule paymentSchedule, Order order,
       OBPOSApplications posTerminal, OBPOSAppPayment paymentType, JSONObject payment,
       BigDecimal writeoffAmt, JSONObject jsonorder, FIN_FinancialAccount account) throws Exception {
-    OBContext.setAdminMode(true);
+    final boolean isCrossStore = isCrossStore(order, posTerminal);
+    OBContext.setAdminMode(!isCrossStore);
     try {
-      final Organization paymentOrganization = getPaymentOrganization(order, posTerminal);
+      final Organization paymentOrganization = getPaymentOrganization(posTerminal, isCrossStore);
       int pricePrecision = order.getCurrency().getObposPosprecision() == null
           ? order.getCurrency().getPricePrecision().intValue()
           : order.getCurrency().getObposPosprecision().intValue();
@@ -1660,25 +1661,21 @@ public class OrderLoader extends POSDataSynchronizationProcess
     } finally {
       OBContext.restorePreviousMode();
     }
-
   }
 
-  // If payment is registered in a store different than the store where order was created, return
-  // cross store organization, otherwise return terminal organization
-  private Organization getPaymentOrganization(final Order order,
-      final OBPOSApplications posTerminal) {
+  private Organization getPaymentOrganization(final OBPOSApplications posTerminal,
+      final boolean isCrossStore) {
+    return isCrossStore ? posTerminal.getOrganization().getOBPOSCrossStoreOrganization()
+        : posTerminal.getOrganization();
+  }
+
+  // Returns true if order was created in a store different than the store of current terminal
+  private boolean isCrossStore(final Order order, final OBPOSApplications posTerminal) {
     final Organization crossOrganization = posTerminal.getOrganization()
         .getOBPOSCrossStoreOrganization();
-    if (crossOrganization == null) {
-      return posTerminal.getOrganization();
-    }
 
-    if (!StringUtils.equals(order.getOrganization().getId(),
-        posTerminal.getOrganization().getId())) {
-      return posTerminal.getOrganization().getOBPOSCrossStoreOrganization();
-    }
-
-    return posTerminal.getOrganization();
+    return crossOrganization != null && !StringUtils.equals(order.getOrganization().getId(),
+        posTerminal.getOrganization().getId());
   }
 
   private void sortPSDByInvoice(List<FIN_PaymentScheduleDetail> psdList) {
