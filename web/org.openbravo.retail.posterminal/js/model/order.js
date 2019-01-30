@@ -4075,7 +4075,8 @@
       var me = this,
           fullyPaid = this.isFullyPaid() || this.get('payOnCredit'),
           receiptCompleted = this.get('completeTicket') || this.get('payOnCredit'),
-          prePaid = !fullyPaid && this.get('completeTicket');
+          prePaid = !fullyPaid && this.get('completeTicket'),
+          isCrossStore = this.get('organization') !== OB.MobileApp.model.get('terminal').organization;
       if (fullyPaid || prePaid) {
         _.each(this.get('lines').models, function (line) {
           if (fullyPaid) {
@@ -4087,7 +4088,9 @@
         });
       }
       _.each(this.get('lines').models, function (line) {
-        if (!line.has('obposQtytodeliver')) {
+        if (isCrossStore) {
+          line.set('obposQtytodeliver', line.getDeliveredQuantity());
+        } else if (!line.has('obposQtytodeliver')) {
           if (receiptCompleted) {
             if (line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct')) {
               if (line.get('qty') > 0) {
@@ -6551,7 +6554,8 @@
           orderQty = 0,
           NoFoundProduct = true,
           NoFoundCustomer = true,
-          isLoadedPartiallyFromBackend = false;
+          isLoadedPartiallyFromBackend = false,
+          crossStore;
 
       // Each payment that has been reverted stores the id of the reversal payment
       // Web POS, instead of that, need to have the information of the payment reverted on the reversal payment
@@ -6633,9 +6637,9 @@
       bpLocId = model.bpLocId;
       bpBillLocId = model.bpBillLocId;
       bpId = model.bp;
-      if(OB.MobileApp.model.get('store').length > 2){
-    	  crossStore = order.attributes.organization;  
-      }      
+      if (OB.MobileApp.model.get('store').length > 2) {
+        crossStore = order.get('organization');
+      }
       var bpartnerForProduct = function (bp) {
           var loadProducts = function () {
               var linepos = 0,
