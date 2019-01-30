@@ -51,11 +51,3 @@ if [[ -d ../../modules ]] ; then
 else
     installNodePackagesIfNeeded
 fi
-
-#if [ -d src-wad ] ; then
-#  echo "inside pi"
-#elif [ "$(ls | grep -v -E 'referencedata|src|src-db|src-util|web')" != "$(ls)" ] ; then
-#  echo "in a ob module"
-#else
-#  echo "other repo, no needed jslint"
-#fi

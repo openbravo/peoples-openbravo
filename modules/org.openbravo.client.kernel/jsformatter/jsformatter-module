@@ -17,8 +17,8 @@
 # ************************************************************************
 
 #
-# Script used by other scripts to pass the linter to the list of js files given as arguments from a module directory.
-# Note that received paths must be absolute or relative to modules/org.openbravo.client.kernel.
+# Script used by other scripts to pass the formatter to a single js file given as argument from a module directory.
+# Note that received path must be absolute or relative to modules/org.openbravo.client.kernel.
 #
 set -e
 

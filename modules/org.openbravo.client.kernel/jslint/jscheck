@@ -20,4 +20,6 @@
 # Check linting to all js files from the project root
 #
 files=$(./modules/org.openbravo.client.kernel/jsutils/jsfiles $(pwd)/modules)
+# Npm run script arguments max length is much lower than the length supported by bash commands
+# Grouping the arguments in smaller chunks
 echo $files | xargs -n 250 ./modules/org.openbravo.client.kernel/jslint/jslint || exit 1

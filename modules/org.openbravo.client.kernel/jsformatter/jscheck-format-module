@@ -39,4 +39,4 @@ do
   source ../org.openbravo.client.kernel/jsformatter/jsformatter-module $changedfile $replaceparam
   fi
 done
-exit $ERROR
+exit ${ERROR}

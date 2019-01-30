@@ -51,7 +51,7 @@ function getPrefixFromModulePath {
 
 EXCLUDED=()
 if [[ -d "$DIR/../../modules" ]]; then
-    # Modules will use the exclusion list defined in core (org.openbravo.client.kernel) and its own
+    # Modules will use the exclusion list defined in core (org.openbravo.client.kernel) and their own
     EXCLUDED+=($(readPatternsFromFile "../org.openbravo.client.kernel/.jsexclude"))
     EXCLUDED+=($(readPatternsFromFile "./.jsexclude"))
 elif [[ -d "$DIR/../modules" ]]; then

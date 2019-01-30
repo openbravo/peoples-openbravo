@@ -38,4 +38,4 @@ for changedfile in echo $files; do
     source ./modules/org.openbravo.client.kernel/jsformatter/jsformatter $changedfile $replaceparam
   fi
 done
-exit $ERROR
+exit ${ERROR}
