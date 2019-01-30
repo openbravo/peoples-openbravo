@@ -131,7 +131,8 @@
     preset: {
       id: '',
       name: ''
-    }
+    },
+    separatorIndex: 2
   }]);
 
 }());
