@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -230,16 +230,6 @@ enyo.kind({
         me.doSetMultiSelectionItems({
           selection: selection
         });
-        };
-
-    var actionRemoveProduct = function (keyboard, value) {
-        if (!me.validateReceipt(keyboard, true)) {
-          return true;
-        }
-        if (keyboard.line) {
-          keyboard.receipt.removeUnit(keyboard.line, value);
-          keyboard.receipt.trigger('scan');
-        }
         };
 
     // action bindable to a command that completely deletes a product from the order list

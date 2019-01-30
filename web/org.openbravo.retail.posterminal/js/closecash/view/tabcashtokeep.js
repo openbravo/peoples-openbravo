@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, $ */
+/*global enyo */
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, _, $ */
+/*global OB, enyo, _ */
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.Button',
@@ -596,7 +596,6 @@ OB.POS.registerWindow({
   approvalType: 'OBPOS_approval.cashup',
   rfidState: false,
   navigateTo: function (args, successCallback, errorCallback) {
-    var me = this;
     // Cannot navigate to the cashup window in case of being a seller terminal
     if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NavigationNotAllowedHeader'), OB.I18N.getLabel('OBPOS_CannotNavigateToCashUp'), [{

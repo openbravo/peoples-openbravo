@@ -167,7 +167,6 @@ enyo.kind({
   },
   i18nLabel: 'OBPOS_LblReceiptLayaway',
   tap: function () {
-    var receiptAllowed = true;
     if (this.disabled) {
       return true;
     }
@@ -266,7 +265,7 @@ enyo.kind({
   },
   displayLogic: function () {
     var me = this,
-        isPaidReceipt, isLayaway, isReturn, haspayments, receiptLines, receipt;
+        isPaidReceipt, isReturn, receiptLines, receipt;
 
     receipt = this.model.get('order');
 
@@ -325,8 +324,7 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    var receipt = model.get('order'),
-        me = this;
+    var receipt = model.get('order');
 
     receipt.on('change:isLayaway change:isPaid change:orderType change:documentType', function (model) {
       this.updateLabel(model);

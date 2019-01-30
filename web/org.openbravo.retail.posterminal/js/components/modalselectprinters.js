@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _, $ */
+/*global enyo, Backbone, _ */
 
 enyo.kind({
   name: 'SelectPrintersLine',
@@ -147,7 +147,7 @@ enyo.kind({
     var printers = OB.POS.modelterminal.get('hardwareURL');
 
     // Add Main URL
-    var editline = this.printerscontainer.createComponent({
+    this.printerscontainer.createComponent({
       kind: 'SelectPrintersLine',
       name: 'printerMain',
       printerscontainer: this.printerscontainer,
@@ -287,7 +287,7 @@ enyo.kind({
     var printers = OB.POS.modelterminal.get('hardwareURL');
 
     // Add Main URL
-    var editline = this.printerscontainer.createComponent({
+    this.printerscontainer.createComponent({
       kind: 'SelectPrintersLine',
       name: 'PDFprinterMain',
       printerscontainer: this.printerscontainer,

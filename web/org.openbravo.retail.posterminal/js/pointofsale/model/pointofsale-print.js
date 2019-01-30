@@ -124,7 +124,6 @@
           mainReport: args.template,
           subReports: args.template.subreports
         }, function (result) {
-          var myreceipt = receipt;
           if (result && result.exception) {
             // callbacks definition
             var successfunc = function () {
@@ -165,115 +164,6 @@
             });
           }
         });
-      }
-
-      function printFiles(receipt, args) {
-        var filesArray = [],
-            callbackGetFiles, callbackGetBinaryData, recursivePrintFiles, i = 0;
-
-        if (receipt.get('isPaid') || receipt.isFullyPaid() || (receipt.isLayaway() && receipt.get('payment') > 0)) {
-
-          recursivePrintFiles = function () {
-            if (filesArray.length > 0) {
-              OB.POS.hwserver._printFile({
-                name: filesArray[i].name,
-                printer: filesArray[i].printer,
-                document: filesArray[i].document
-              }, function (result) {
-                if (result && result.exception) {
-                  // callbacks definition
-                  var successfunc = function () {
-                      me.isRetry = true;
-                      me.print(receipt, printargs);
-                      if (args.callback) {
-                        args.callback();
-                      }
-                      return true;
-                      };
-                  var hidefunc = function () {
-                      me.isRetry = false;
-                      if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
-                        OB.Dal.save(new OB.Model.OfflinePrinter({
-                          data: result.data,
-                          sendfunction: '_sendFile'
-                        }));
-                      }
-                      if (args.callback) {
-                        args.callback();
-                      }
-                      };
-                  var cancelfunc = function () {
-                      me.isRetry = false;
-                      };
-                  OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, cancelfunc, true, 'OBPOS_MsgPDFPrintAgain');
-                } else {
-                  me.isRetry = false;
-                  i++;
-                  if (i < filesArray.length) {
-                    recursivePrintFiles();
-                  } else {
-                    // Success. Try to print the pending receipts.
-                    OB.Model.OfflinePrinter.printPendingJobs();
-                    if (args.callback) {
-                      args.callback();
-                    }
-                  }
-                }
-              });
-            }
-          };
-
-          callbackGetFiles = _.after(receipt.get('lines').length, function () {
-            recursivePrintFiles();
-          });
-
-          _.each(receipt.get('lines').models, function (line) {
-            var criteria = {},
-                productId = line.get('product').id;
-            if (line.get('qty') > 0) {
-              if (OB.MobileApp.model.hasPermission('OBPOS_remote.obposfiles', true)) {
-                criteria.remoteFilters = [{
-                  columns: ['product'],
-                  operator: 'equals',
-                  value: productId,
-                  isId: true
-                }];
-              } else {
-                criteria.product = productId;
-              }
-              OB.Dal.find(OB.Model.OBPOSProdFiles, criteria, function (productFiles) {
-                if (productFiles.length > 0) {
-                  callbackGetBinaryData = _.after(productFiles.length, function () {
-                    callbackGetFiles();
-                  });
-
-                  _.each(productFiles.models, function (productFile) {
-                    var printer = 1;
-                    OB.Dal.get(OB.Model.OBPOSFiles, productFile.get('posfile'), function (posFile) {
-                      if (productFile.get('printer')) {
-                        printer = productFile.get('printer');
-                      }
-                      filesArray.push({
-                        name: posFile.get('name'),
-                        printer: printer,
-                        document: posFile.get('binaryData')
-                      });
-                      callbackGetBinaryData();
-                    }, function () {
-                      OB.error(arguments);
-                    });
-                  });
-                } else {
-                  callbackGetFiles();
-                }
-              }, function () {
-                OB.error(arguments);
-              });
-            } else {
-              callbackGetFiles();
-            }
-          });
-        }
       }
 
       if (args.cancelOperation && args.cancelOperation === true) {
@@ -383,7 +273,6 @@
               OB.POS.hwserver.print(args.template, {
                 order: receipt
               }, function (result, printedReceipt) {
-                var myreceipt = receipt;
                 if (result && result.exception) {
                   // callbacks definition
                   var successfunc = function () {
@@ -441,7 +330,6 @@
                 OB.POS.hwserver.print(args.template, {
                   order: receipt
                 }, function (result) {
-                  var myreceipt = receipt;
                   if (result && result.exception) {
                     // callbacks definition
                     var successfunc = function () {

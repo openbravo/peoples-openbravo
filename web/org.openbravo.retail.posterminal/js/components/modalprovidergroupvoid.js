@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global enyo, $, _, Promise */
+/*global enyo, _, Promise */
 
 
 enyo.kind({
@@ -78,8 +78,6 @@ enyo.kind({
   startVoid: function () {
 
     var payment = this.args.payment;
-    var amount = payment.get('amount');
-    var provider = payment.get('paymentData').provider;
     var providerinstance = this.args.providerinstance;
 
     var receipt = this.args.receipt;

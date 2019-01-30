@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -10,6 +10,87 @@
 /*global OB, Promise, _, BigDecimal */
 
 (function () {
+
+  function getTaxCategory(params) {
+    // { receipt, line }
+    return new Promise(function (resolve, reject) {
+
+      var i, j, k;
+
+      function findSuccess(data) {
+        for (k = 0; k < data.length; k++) {
+          var linked = data.at(k);
+          if (params.line.get('product').get('productCategory') === linked.get('productCategory')) {
+            // Found a linked configuration that matches productCategory of the product line
+            // resolving the linked configuration tax category
+            // this is the use case for the *Services can change product tax* functionality.
+            params.taxCategory = linked.get('taxCategory');
+            if (!params.line.get('taxChangedPrice')) {
+              params.line.changePrice = true;
+            }
+            resolve(params);
+            return;
+          }
+        }
+        // Not found a linked configuration that matches productCategory of the product line
+        // resolving product tax category
+        params.taxCategory = params.line.get('product').get('taxCategory');
+        if (params.line.get('taxChangedPrice')) {
+          params.line.changeBackPrice = true;
+        }
+        resolve(params);
+      }
+
+      if (params.line.get('originalTaxCategory')) {
+        // The taxes calculation is locked so use the originalTaxCategory
+        params.taxCategory = params.line.get('originalTaxCategory');
+        if (params.line.get('taxChangedPrice')) {
+          params.line.changeBackPrice = true;
+        }
+        resolve(params);
+        return;
+      }
+
+      for (i = 0; i < params.receipt.get('lines').length; i++) {
+        var l = params.receipt.get('lines').at(i);
+        if (l.get('relatedLines')) {
+          for (j = 0; j < l.get('relatedLines').length; j++) {
+            var rell = l.get('relatedLines')[j];
+            if (rell.orderlineId === params.line.get('id')) {
+              if (l.get('product').get('modifyTax')) {
+                // product has a service with *modifyTax* flag activated
+                // Lets look for the service lnked product category configuration
+                // This is the async part of this function.
+                var product = l.get('product').get('id');
+                var criteria = {
+                  'product': product
+                };
+                if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+                  var remoteCriteria = [{
+                    columns: ['product'],
+                    operator: 'equals',
+                    value: product
+                  }];
+                  criteria.remoteFilters = remoteCriteria;
+                }
+                OB.Dal.findUsingCache('ProductServiceLinked', OB.Model.ProductServiceLinked, criteria, findSuccess, reject, {
+                  modelsAffectedByCache: ['ProductServiceLinked']
+                });
+                return;
+              }
+            }
+          }
+        }
+      }
+      // Not found a service linked with *modifyTax* flag activated.
+      // resolving product tax Category
+      params.taxCategory = params.line.get('product').get('taxCategory');
+      if (params.line.get('taxChangedPrice')) {
+        params.line.changeBackPrice = true;
+      }
+      resolve(params);
+    });
+  }
 
   function navigateTaxesTree(taxrates, taxid, iteratee) {
     _.each(taxrates, function (tax) {
@@ -208,7 +289,7 @@
         } else {
           sql = "select c_tax.c_tax_id, c_tax.name,  c_tax.description, c_tax.taxindicator, c_tax.validfrom, c_tax.issummary, c_tax.rate, c_tax.parent_tax_id, (case when c_tax.c_country_id = '" + fromCountryOrg + "' then c_tax.c_country_id else tz.from_country_id end) as c_country_id, (case when c_tax.c_region_id = '" + fromRegionOrg + "' then c_tax.c_region_id else tz.from_region_id end) as c_region_id, (case when c_tax.to_country_id = '" + bplCountryId + "' then c_tax.to_country_id else tz.to_country_id end) as to_country_id, (case when c_tax.to_region_id = '" + bplRegionId + "' then c_tax.to_region_id else tz.to_region_id end)  as to_region_id, c_tax.c_taxcategory_id, c_tax.isdefault, c_tax.istaxexempt, c_tax.sopotype, c_tax.cascade, c_tax.c_bp_taxcategory_id,  c_tax.line, c_tax.iswithholdingtax, c_tax.isnotaxable, c_tax.deducpercent, c_tax.originalrate, c_tax.istaxundeductable,  c_tax.istaxdeductable, c_tax.isnovat, c_tax.baseamount, c_tax.c_taxbase_id, c_tax.doctaxamount, c_tax.iscashvat,  c_tax._identifier,  c_tax._idx,  (case when (c_tax.to_country_id = '" + bplCountryId + "' or tz.to_country_id= '" + bplCountryId + "') then 0 else 1 end) as orderCountryTo,  (case when (c_tax.to_region_id = '" + bplRegionId + "' or tz.to_region_id = '" + bplRegionId + "') then 0 else 1 end) as orderRegionTo,  (case when coalesce(c_tax.c_country_id, tz.from_country_id) is null then 1 else 0 end) as orderCountryFrom,  (case when coalesce(c_tax.c_region_id, tz.from_region_id) is null then 1 else 0 end) as orderRegionFrom  from c_tax left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id  where c_tax.sopotype in ('B', 'S') ";
         }
-        if (bpIsExempt) {
+        if (line.has('originalTaxExempt') ? line.get('originalTaxExempt') : bpIsExempt) {
           sql = sql + " and c_tax.istaxexempt = 'true'";
         } else {
           sql = sql + " and c_tax.c_taxCategory_id = '" + taxCategory + "'";
@@ -218,7 +299,12 @@
             sql = sql + " and c_tax.c_bp_taxcategory_id is null";
           }
         }
-        sql = sql + " and c_tax.validFrom <= date()";
+        if (line.get('originalOrderDate')) {
+          // The taxes calculation is locked so use the originalOrderDate
+          sql = sql + " and c_tax.validFrom <= '" + line.get('originalOrderDate') + "'";
+        } else {
+          sql = sql + " and c_tax.validFrom <= date()";
+        }
         if (!bplCountryId) {
           sql = sql + " and (c_tax.to_country_id = bpl.countryId   or tz.to_country_id = bpl.countryId   or (c_tax.to_country_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id = bpl.countryId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id is null))))";
           sql = sql + " and (c_tax.to_region_id = bpl.regionId   or tz.to_region_id = bpl.regionId  or (c_tax.to_region_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id = bpl.regionId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id is null))))";
@@ -246,7 +332,13 @@
       });
       };
 
-  var calcProductTaxesIncPrice = function (receipt, line, taxCategory, orggross, discountedGross) {
+  var calcProductTaxesIncPrice = function (params) {
+
+      var receipt = params.receipt;
+      var line = params.line;
+      var taxCategory = params.taxCategory;
+      var orggross = params.orggross;
+      var discountedGross = params.discountedGross;
 
       return findTaxesCollection(receipt, line, taxCategory).then(function (coll) {
 
@@ -331,7 +423,7 @@
 
         // the line net price is calculated by doing price*price/(price*rate), as it is done in
         // the database function c_get_net_price_from_gross
-        var linenet, roundedLinePriceNet, linepricenet, pricenet, discountedNet, pricenetcascade, discountedLinePriceNet, roundedDiscountedLinePriceNet;
+        var linenet, roundedLinePriceNet, linepricenet, pricenet, discountedNet, discountedLinePriceNet, roundedDiscountedLinePriceNet;
         if (discountedGross === 0) {
           linenet = 0;
           linepricenet = new BigDecimal('0');
@@ -538,6 +630,8 @@
   var calcLineTaxesIncPrice = function (receipt, line) {
 
       // Initialize line properties
+      delete line.changePrice;
+      delete line.changeBackPrice;
       line.set({
         'taxLines': {},
         'tax': null,
@@ -546,7 +640,8 @@
         'net': OB.DEC.Zero,
         'pricenet': OB.DEC.Zero,
         'discountedNet': OB.DEC.Zero,
-        'linerate': OB.DEC.One
+        'linerate': OB.DEC.One,
+        'lineratePrev': line.get('linerate')
       }, {
         silent: true
       });
@@ -582,7 +677,13 @@
               line.set('linerateWithPrecision', []);
               return Promise.all(_.map(data, function (productbom) {
                 line.get('bomGross').push(productbom.bomdiscountedgross);
-                return calcProductTaxesIncPrice(receipt, line, productbom.bomtaxcategory, productbom.bomgross, productbom.bomdiscountedgross);
+                return calcProductTaxesIncPrice({
+                  receipt: receipt,
+                  line: line,
+                  taxCategory: productbom.bomtaxcategory,
+                  orggross: productbom.bomgross,
+                  discountedGross: productbom.bomdiscountedgross
+                });
               }));
             });
           });
@@ -590,7 +691,14 @@
           // Not BOM, calculate taxes based on the line product
           line.set('sortedTaxCollection', []);
           line.set('linerateWithPrecision', []);
-          return calcProductTaxesIncPrice(receipt, line, product.get('taxCategory'), orggross, discountedGross);
+
+          return getTaxCategory({
+            receipt: receipt,
+            line: line,
+            orggross: orggross,
+            discountedGross: discountedGross
+          }) //
+          .then(calcProductTaxesIncPrice);
         }
       }).then(function () {
         // Calculate linerate
@@ -701,7 +809,6 @@
           }
 
           var originalNet = OB.DEC.div(totalGross, linerate);
-          var taxAmount;
           var auxNet;
           _.forEach(taxRates, function (taxRate) {
             auxNet = originalNet;
@@ -787,7 +894,14 @@
       });
       };
 
-  var calcProductTaxesExcPrice = function (receipt, line, taxCategory, linepricenet, linenet, discountedprice, discountedNet) {
+  var calcProductTaxesExcPrice = function (params) {
+      var receipt = params.receipt;
+      var line = params.line;
+      var taxCategory = params.taxCategory;
+      var linepricenet = params.linepricenet;
+      var linenet = params.linenet;
+      var discountedprice = params.discountedprice;
+      var discountedNet = params.discountedNet;
 
       return findTaxesCollection(receipt, line, taxCategory).then(function (coll) {
 
@@ -918,10 +1032,13 @@
 
   var calcLineTaxesExcPrice = function (receipt, line) {
 
+      delete line.changePrice;
+      delete line.changeBackPrice;
       line.set({
         'pricenet': line.get('price'),
         'net': OB.DEC.mul(line.get('price'), line.get('qty')),
         'linerate': OB.DEC.One,
+        'lineratePrev': line.get('linerate'),
         'tax': null,
         'taxUndo': line.get('tax') ? line.get('tax') : line.get('taxUndo'),
         'taxAmount': OB.DEC.Zero,
@@ -997,13 +1114,29 @@
                 distributeBOM(data, 'bomlinepricenet', linepricenet);
 
                 return Promise.all(_.map(data, function (productbom) {
-                  return calcProductTaxesExcPrice(receipt, line, productbom.bomtaxcategory, productbom.bomlinepricenet, productbom.bomnet, line.get('qty') === 0 ? new BigDecimal('0') : new BigDecimal(String(productbom.bomdiscountednet)).divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP), productbom.bomdiscountednet);
+                  return calcProductTaxesExcPrice({
+                    receipt: receipt,
+                    line: line,
+                    taxCategory: productbom.bomtaxcategory,
+                    linepricenet: productbom.bomlinepricenet,
+                    linenet: productbom.bomnet,
+                    discountedprice: line.get('qty') === 0 ? new BigDecimal('0') : new BigDecimal(String(productbom.bomdiscountednet)).divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP),
+                    discountedNet: productbom.bomdiscountednet
+                  });
                 }));
               });
             });
           } else {
             // Not BOM, calculate taxes based on the line product
-            return calcProductTaxesExcPrice(receipt, line, product.get('taxCategory'), linepricenet, linenet, discountedprice, discountedNet);
+            return getTaxCategory({
+              receipt: receipt,
+              line: line,
+              linepricenet: linepricenet,
+              linenet: linenet,
+              discountedprice: discountedprice,
+              discountedNet: discountedNet
+            }) //
+            .then(calcProductTaxesExcPrice);
           }
         });
       }
@@ -1093,7 +1226,35 @@
   // Just calc the right function depending on prices including or excluding taxes
   var calcTaxes = function (receipt) {
       if (receipt.get('priceIncludesTax')) {
-        return calcTaxesIncPrice(receipt);
+        return calcTaxesIncPrice(receipt).then(function () {
+
+          // Does any receipt line require a price change?
+          var recalculate = false;
+          receipt.get('lines').forEach(function (line) {
+            if (line.changePrice) {
+              line.set({
+                'price': OB.DEC.mul(OB.DEC.div(line.get('price'), line.get('lineratePrev')), line.get('linerate')),
+                'taxChangedPrice': line.get('price')
+              }, {
+                silent: true
+              });
+              recalculate = true;
+            } else if (line.changeBackPrice) {
+              line.set('price', line.get('taxChangedPrice'), {
+                silent: true
+              });
+              line.unset('taxChangedPrice', {
+                silent: true
+              });
+              recalculate = true;
+            }
+          });
+
+          // Recalculate taxes based on the new price...
+          if (recalculate) {
+            return calcTaxesIncPrice(receipt);
+          }
+        });
       } else {
         return calcTaxesExcPrice(receipt);
       }
