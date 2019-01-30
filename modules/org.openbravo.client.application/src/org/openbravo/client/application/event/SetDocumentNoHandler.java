@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,7 +47,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  * 
  * @author mtaal
  */
-public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
+class SetDocumentNoHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = null;
   private static Property[] documentNoProperties = null;
   private static Property[] documentTypeProperties = null;
@@ -112,11 +112,11 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
   @Override
   protected synchronized Entity[] getObservedEntities() {
     if (entities == null) {
-      List<Entity> entityList = new ArrayList<Entity>();
-      List<Property> documentNoPropertyList = new ArrayList<Property>();
-      List<Property> documentTypePropertyList = new ArrayList<Property>();
-      List<Property> documentTypeTargetPropertyList = new ArrayList<Property>();
-      List<Property> processedPropertyList = new ArrayList<Property>();
+      List<Entity> entityList = new ArrayList<>();
+      List<Property> documentNoPropertyList = new ArrayList<>();
+      List<Property> documentTypePropertyList = new ArrayList<>();
+      List<Property> documentTypeTargetPropertyList = new ArrayList<>();
+      List<Property> processedPropertyList = new ArrayList<>();
       for (Entity entity : ModelProvider.getInstance().getModel()) {
         for (Property prop : entity.getProperties()) {
           if (prop.isUsedSequence()) {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-1015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,8 +24,6 @@ import java.util.List;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -39,11 +37,10 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationAcctSchema;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 
-public class GeneralLedgerOrganizationHandler extends EntityPersistenceEventObserver {
+class GeneralLedgerOrganizationHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(Organization.ENTITY_NAME) };
-  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -71,7 +68,7 @@ public class GeneralLedgerOrganizationHandler extends EntityPersistenceEventObse
         orgSchema.setFilterOnActive(false);
         orgSchema.add(Restrictions.eq(OrganizationAcctSchema.PROPERTY_ORGANIZATION, organization));
         List<OrganizationAcctSchema> orgSchemalist = orgSchema.list();
-        ArrayList<String> idlist = new ArrayList<String>();
+        ArrayList<String> idlist = new ArrayList<>();
 
         boolean exist = false;
 
@@ -87,7 +84,7 @@ public class GeneralLedgerOrganizationHandler extends EntityPersistenceEventObse
             exist = true;
             continue;
           }
-          if (orgAcctSchema.getOrganizationClosingList().size() == 0) {
+          if (orgAcctSchema.getOrganizationClosingList().isEmpty()) {
             OBDal.getInstance().remove(orgAcctSchema);
           } else {
             orgAcctSchema.setActive(false);

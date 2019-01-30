@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -44,12 +44,13 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.importprocess.ImportEntryManager;
 
-public class ProductCharacteristicValueEventHandler extends EntityPersistenceEventObserver {
+class ProductCharacteristicValueEventHandler extends EntityPersistenceEventObserver {
   private static final int IMPORT_ENTRY_SIZE = 100;
   private static Logger logger = LogManager.getLogger();
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(ProductCharacteristicValue.ENTITY_NAME) };
-  private static ThreadLocal<Set<String>> prodchvalueUpdated = new ThreadLocal<Set<String>>();
+  private static ThreadLocal<Set<String>> prodchvalueUpdated = new ThreadLocal<>();
+
   @Inject
   ImportEntryManager importEntryManager;
 
@@ -95,7 +96,7 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
           || event.getTransaction().getStatus() == TransactionStatus.ROLLED_BACK) {
         return;
       }
-      ArrayList<String> products = new ArrayList<String>(productList);
+      ArrayList<String> products = new ArrayList<>(productList);
       int productCount = productList.size();
       for (int i = 0; i < productCount; i += IMPORT_ENTRY_SIZE) {
         int currentLimit = (i + IMPORT_ENTRY_SIZE) < productCount ? (i + IMPORT_ENTRY_SIZE)
@@ -117,7 +118,7 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
   private void addProductToList(ProductCharacteristicValue pchv) {
     Set<String> productList = prodchvalueUpdated.get();
     if (productList == null) {
-      productList = new HashSet<String>();
+      productList = new HashSet<>();
     }
     productList.add(pchv.getProduct().getId());
     prodchvalueUpdated.set(productList);

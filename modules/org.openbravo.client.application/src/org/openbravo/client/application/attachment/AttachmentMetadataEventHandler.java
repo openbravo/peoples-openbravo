@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,7 +38,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
  * same column name. This event handlers checks that no new metadatas with an existing columnname
  * are added or edited.
  */
-public class AttachmentMetadataEventHandler extends EntityPersistenceEventObserver {
+class AttachmentMetadataEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Parameter.class) };
 
   @Override

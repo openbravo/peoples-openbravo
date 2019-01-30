@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,13 +41,13 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.common.enterprise.Organization;
 
-public class RoleEventHandler extends EntityPersistenceEventObserver {
+class RoleEventHandler extends EntityPersistenceEventObserver {
   private static final String InitialOrgSetup_CLASSNAME = "org.openbravo.erpCommon.businessUtility.InitialOrgSetup";
   private static final String InitialClientSetup_CLASSNAME = "org.openbravo.erpCommon.businessUtility.InitialClientSetup";
 
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Role.ENTITY_NAME) };
 
-  protected Logger logger = LogManager.getLogger();
+  private static final Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -87,7 +87,7 @@ public class RoleEventHandler extends EntityPersistenceEventObserver {
 
   // Get org access list
   private List<RoleOrganization> getRoleOrganizationList(Role role) throws Exception {
-    List<RoleOrganization> roleOrganizationList = new ArrayList<RoleOrganization>();
+    List<RoleOrganization> roleOrganizationList = new ArrayList<>();
 
     // Client or System level: Only * [isOrgAdmin=N]
     if (StringUtils.equals(role.getUserLevel(), " C")

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,7 +40,7 @@ import org.openbravo.model.ad.access.Role;
  * {@link InheritedAccessEnabled} interface. This handler takes care of propagating the changes
  * according to the affected role inheritance settings.
  */
-public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventObserver {
+class InheritedAccessEnabledEventHandler extends EntityPersistenceEventObserver {
   private static final String SAVE = "save";
   private static final String UPDATE = "update";
   private static final String DELETE = "delete";
@@ -62,7 +62,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
    *          the new event
    */
   public void onSave(@Observes EntityNewEvent event) {
-    if (!isInheritedAccessEnabled(event)) {
+    if (!isValidEvent(event)) {
       return;
     }
     doAction(SAVE, event.getTargetInstance());
@@ -76,7 +76,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
    *          the update event
    */
   public void onUpdate(@Observes EntityUpdateEvent event) {
-    if (!isInheritedAccessEnabled(event)) {
+    if (!isValidEvent(event)) {
       return;
     }
     doAction(UPDATE, event.getTargetInstance());
@@ -90,7 +90,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
    *          the delete event
    */
   public void onDelete(@Observes EntityDeleteEvent event) {
-    if (!isInheritedAccessEnabled(event)) {
+    if (!isValidEvent(event)) {
       return;
     }
     doAction(DELETE, event.getTargetInstance());
@@ -107,7 +107,7 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
       manager.propagateNewAccess(role, access, entityClassName);
     } else if (UPDATE.equals(action) && isTemplate) {
       manager.propagateUpdatedAccess(role, access, entityClassName);
-    } else if (DELETE.equals(action) && notDeletingParent(role, access)) {
+    } else if (DELETE.equals(action) && notDeletingParent(role)) {
       if (access.getInheritedFrom() != null) {
         Utility.throwErrorMessage("NotDeleteInheritedAccess");
       }
@@ -119,19 +119,16 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     }
   }
 
-  private boolean isInheritedAccessEnabled(EntityPersistenceEvent event) {
+  @Override
+  protected boolean isValidEvent(EntityPersistenceEvent event) {
     // Disable event handlers if data is being imported
     if (TriggerHandler.getInstance().isDisabled()) {
       return false;
     }
-    if (event.getTargetInstance() instanceof InheritedAccessEnabled) {
-      return true;
-    } else {
-      return false;
-    }
+    return event.getTargetInstance() instanceof InheritedAccessEnabled;
   }
 
-  private boolean notDeletingParent(Role role, InheritedAccessEnabled access) {
+  private boolean notDeletingParent(Role role) {
     if (role == null) {
       return true;
     }

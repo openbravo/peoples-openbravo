@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -44,7 +44,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 
-public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
+class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME) };
 
@@ -110,7 +110,7 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     }
     FIN_Payment pay = OBDal.getInstance().get(FIN_Payment.class, event.getTargetInstance().getId());
     List<FIN_PaymentDetail> pdList = pay.getFINPaymentDetailList();
-    if (pdList.size() > 0) {
+    if (!pdList.isEmpty()) {
       String language = OBContext.getOBContext().getLanguage().getLanguage();
       ConnectionProvider conn = new DalConnectionProvider(false);
       throw new OBException(Utility.messageBD(conn, "ForeignKeyViolation", language));
@@ -172,7 +172,7 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     }
 
     int rowCount;
-    final StringBuffer hql = new StringBuffer();
+    final StringBuilder hql = new StringBuilder();
     hql.append("update APRM_PendingPaymentInvoice ");
     hql.append("set paymentExecutionProcess.id = :paymentExecutionProcessId ");
     hql.append("where paymentExecutionProcess.id <> :paymentExecutionProcessId ");
@@ -197,7 +197,7 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     }
 
     int rowCount;
-    final StringBuffer hql = new StringBuffer();
+    final StringBuilder hql = new StringBuilder();
     hql.append("delete from APRM_PendingPaymentInvoice ");
     hql.append("where payment.id = :paymentId ");
 

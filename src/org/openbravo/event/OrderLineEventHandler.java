@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2018 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,8 +20,6 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -31,10 +29,9 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.OrderLine;
 
-public class OrderLineEventHandler extends EntityPersistenceEventObserver {
+class OrderLineEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME) };
-  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -53,7 +50,7 @@ public class OrderLineEventHandler extends EntityPersistenceEventObserver {
     try {
       OBContext.setAdminMode(true);
       final OrderLine thisLine = (OrderLine) event.getTargetInstance();
-      final StringBuffer hql = new StringBuffer();
+      final StringBuilder hql = new StringBuilder();
       hql.append(" update from OrderLine ol ");
       hql.append(" set ol.sOPOReference.id = null ");
       hql.append(" where ol.sOPOReference.id = :thisLine ");

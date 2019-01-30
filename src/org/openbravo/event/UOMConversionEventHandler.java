@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,8 +20,6 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -36,11 +34,9 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.common.uom.UOMConversion;
 
-public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
+class UOMConversionEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(UOMConversion.ENTITY_NAME) };
-
-  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -89,14 +85,11 @@ public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
 
       // If changing from inactive to active, check if exists another record using this uomFrom -
       // uomTo
-      if (uomConversion.isActive()) {
-        if (existsRecord(uomConversion.getClient(), uomConversion.getUOM(),
-            uomConversion.getToUOM())) {
-          throw new OBException(String.format(OBMessageUtils.messageBD("CannotInsertUOMConversion"),
-              uomConversion.getUOM().getName(), uomConversion.getToUOM().getName()));
-        }
+      if (uomConversion.isActive() && existsRecord(uomConversion.getClient(),
+          uomConversion.getUOM(), uomConversion.getToUOM())) {
+        throw new OBException(String.format(OBMessageUtils.messageBD("CannotInsertUOMConversion"),
+            uomConversion.getUOM().getName(), uomConversion.getToUOM().getName()));
       }
-
     }
 
     // Check if MultipleRateBy or DivideRateBy have changed
@@ -127,11 +120,7 @@ public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
       query.setParameter("client", client);
     }
     query.setMaxResults(1);
-    if (query.list().size() > 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return !query.list().isEmpty();
   }
 
 }

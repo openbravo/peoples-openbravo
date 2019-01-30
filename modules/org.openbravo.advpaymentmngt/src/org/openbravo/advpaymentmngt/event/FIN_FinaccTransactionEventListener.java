@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -36,11 +36,11 @@ import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 
-public class FIN_FinaccTransactionEventListener extends EntityPersistenceEventObserver {
+class FIN_FinaccTransactionEventListener extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(FIN_FinaccTransaction.ENTITY_NAME) };
-  protected Logger logger = LogManager.getLogger();
+  private static Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {

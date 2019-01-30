@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -32,8 +32,8 @@ import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.financialmgmt.gl.GLJournalLine;
 
-public class GLJournalLineEventHandler extends EntityPersistenceEventObserver {
-  protected Logger logger = LogManager.getLogger();
+class GLJournalLineEventHandler extends EntityPersistenceEventObserver {
+  private static Logger logger = LogManager.getLogger();
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(GLJournalLine.ENTITY_NAME) };
 
