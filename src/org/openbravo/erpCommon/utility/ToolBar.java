@@ -18,7 +18,8 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import org.openbravo.database.ConnectionProvider;
@@ -38,12 +39,11 @@ public class ToolBar {
   private boolean isFrame = false;
   private boolean isRelation = false;
   private boolean email = false;
+  private Map<String, HTMLElement> buttons = new HashMap<>();
 
   public void setEmail(boolean email) {
     this.email = email;
   }
-
-  Hashtable<String, HTMLElement> buttons = new Hashtable<String, HTMLElement>();
 
   /**
    * Constructor used by the grid view of all generated windows.
@@ -136,11 +136,8 @@ public class ToolBar {
   }
 
   public void removeElement(String name) {
-    try {
-      if (buttons != null && !buttons.isEmpty()) {
-        buttons.remove(name);
-      }
-    } catch (final NullPointerException ignored) {
+    if (name != null) {
+      buttons.remove(name);
     }
   }
 
@@ -170,9 +167,7 @@ public class ToolBar {
               + (isSrcWindow ? "" : "_Relation") + ".html', '_self', null, false);"
           : "";
     } else {
-      String action = "";
-
-      return action + "submitCommandForm('" + (name.equals("REFRESH") ? "DEFAULT" : name) + "', "
+      return "submitCommandForm('" + (name.equals("REFRESH") ? "DEFAULT" : name) + "', "
           + (name.equals("NEW") && (this.grid_id.equals("")) ? "true" : "false") + ", null, '"
           + servlet_action + (isSrcWindow ? "" : "_Relation") + ".html', '"
           + (isFrame ? "_parent" : "_self") + "', null, " + (debug ? "true" : "false") + ");";
@@ -203,18 +198,12 @@ public class ToolBar {
     buttons.put("SEPARATOR5", new ToolBar_Space(base_direction));
 
     buttons.put("SEPARATOR6", new ToolBar_Space(base_direction));
-    // buttons.put("PREVIOUS_RELATION", new ToolBar_Button(base_direction,
-    // "PreviousRange", Utility.messageBD(conn, "GotoPreviousRange",
-    // language), getButtonScript("PREVIOUS_RELATION")));
     buttons.put("PREVIOUS_RELATION",
         new ToolBar_Button(base_direction, "Previous",
             Utility.messageBD(conn, "GotoPreviousRange", language),
             getButtonScript("PREVIOUS_RELATION")));
     buttons.put("PREVIOUS_RELATION_DISABLED", new ToolBar_Button(base_direction,
         "PreviousRangeDisabled", Utility.messageBD(conn, "GotoPreviousRange", language), ""));
-    // buttons.put("NEXT_RELATION", new ToolBar_Button(base_direction,
-    // "NextRange", Utility.messageBD(conn, "GotoNextRange", language),
-    // getButtonScript("NEXT_RELATION")));
     buttons.put("NEXT_RELATION", new ToolBar_Button(base_direction, "Next",
         Utility.messageBD(conn, "GotoNextRange", language), getButtonScript("NEXT_RELATION")));
     buttons.put("NEXT_RELATION_DISABLED", new ToolBar_Button(base_direction, "NextRangeDisabled",
@@ -272,11 +261,10 @@ public class ToolBar {
       buttons.put("EMAIL", new ToolBar_Button(base_direction, "Email",
           Utility.messageBD(conn, "Email", language), pdf));
     }
-    if (!excelScript.equals("") && excelScript != null) {
+    if (!excelScript.equals("")) {
       buttons.put("EXCEL", new ToolBar_Button(base_direction, "Excel",
           Utility.messageBD(conn, "ExportExcel", language), excelScript));
     }
-
   }
 
   public void prepareSimpleExcelToolBarTemplate(String excelScript) {
@@ -287,15 +275,13 @@ public class ToolBar {
     removeElement("NEXT_RELATION");
     removeElement("NEXT_RELATION_DISABLED");
 
-    if (!excelScript.equals("") && excelScript != null) {
+    if (!excelScript.equals("")) {
       buttons.put("EXCEL", new ToolBar_Button(base_direction, "Excel",
           Utility.messageBD(conn, "ExportExcel", language), excelScript));
     }
-
   }
 
   public void prepareQueryTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
-
     if (!hasPrevious) {
       removeElement("PREVIOUS_RELATION");
     } else {
@@ -306,7 +292,6 @@ public class ToolBar {
     } else {
       removeElement("NEXT_RELATION_DISABLED");
     }
-
   }
 
   private String transformElementsToString(HTMLElement element, Vector<String> vecLastType) {
@@ -348,62 +333,58 @@ public class ToolBar {
     final StringBuffer toolbar = new StringBuffer();
     toolbar.append("<table class=\"Main_ContentPane_ToolBar Main_ToolBar_bg\" id=\"tdToolBar\">\n");
     toolbar.append("<tr>\n");
-    if (buttons != null) {
-      final Vector<String> lastType = new Vector<String>(0);
+    final Vector<String> lastType = new Vector<String>(0);
 
-      // In case of using new UI, add in toolbar grid and edition buttons
-      if (Utility.isNewUI() && !isSrcWindow) {
-        buttons.put("FORM_VIEW",
-            new ToolBar_Button(base_direction, "Edition",
-                Utility.messageBD(conn, "Form View", language), getButtonScript("FORM_VIEW"),
-                !isRelation, "Edition" + (isNew ? "_new" : "")));
-        buttons.put("GRID_VIEW",
-            new ToolBar_Button(base_direction, "Relation",
-                Utility.messageBD(conn, "Grid View", language), getButtonScript("GRID_VIEW"),
-                isRelation));
-        buttons.put("SEPARATOR_NEWUI", new ToolBar_Space(base_direction));
-        toolbar.append(transformElementsToString(buttons.get("FORM_VIEW"), lastType));
-        toolbar.append(transformElementsToString(buttons.get("GRID_VIEW"), lastType));
-        toolbar.append(transformElementsToString(buttons.get("SEPARATOR_NEWUI"), lastType));
-      }
-
-      toolbar.append(transformElementsToString(buttons.get("FIND"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("SEPARATOR2"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("SEPARATOR3"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("SEPARATOR4"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("REFRESH"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("EXCEL"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("EMAIL"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("SEPARATOR5"), lastType));
-      // toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr
-      // id=\"bookmark\"></nobr></td>\n"
-      // );
-      if (isRelation) {
-        toolbar.append("<td width=\"1\"><img src=\"")
-            .append(base_direction)
-            .append("/images/blank.gif\" style=\"width: 7px;\" border=\"0\">");
-        toolbar.append("<td width=\"1\"><img src=\"")
-            .append(base_direction)
-            .append("/images/blank.gif\" class=\"Main_ToolBar_textlabel_bg_left\" border=\"0\">");
-        toolbar.append("</td>\n");
-        toolbar.append("<td class=\"Main_ToolBar_textlabel_bg_body\">\n");
-        toolbar.append("<div id=\"bookmark\">\n");
-        toolbar.append("</div>\n");
-        toolbar.append("</td>\n");
-        toolbar.append("<td width=\"1\" class=\"Main_ToolBar_textlabel_bg_right\">");
-        toolbar.append("<div style=\"padding: 0; margin: 0; border: 0; width: 9px;\" />");
-        toolbar.append("</td>\n");
-      }
-      toolbar.append(transformElementsToString(buttons.get("SEPARATOR6"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("PREVIOUS_RELATION"), lastType));
-      toolbar
-          .append(transformElementsToString(buttons.get("PREVIOUS_RELATION_DISABLED"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("NEXT_RELATION"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("NEXT_RELATION_DISABLED"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("SEPARATOR7"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("HR1"), lastType));
+    // In case of using new UI, add in toolbar grid and edition buttons
+    if (Utility.isNewUI() && !isSrcWindow) {
+      buttons.put("FORM_VIEW",
+          new ToolBar_Button(base_direction, "Edition",
+              Utility.messageBD(conn, "Form View", language), getButtonScript("FORM_VIEW"),
+              !isRelation, "Edition" + (isNew ? "_new" : "")));
+      buttons.put("GRID_VIEW",
+          new ToolBar_Button(base_direction, "Relation",
+              Utility.messageBD(conn, "Grid View", language), getButtonScript("GRID_VIEW"),
+              isRelation));
+      buttons.put("SEPARATOR_NEWUI", new ToolBar_Space(base_direction));
+      toolbar.append(transformElementsToString(buttons.get("FORM_VIEW"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("GRID_VIEW"), lastType));
+      toolbar.append(transformElementsToString(buttons.get("SEPARATOR_NEWUI"), lastType));
     }
+
+    toolbar.append(transformElementsToString(buttons.get("FIND"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("SEPARATOR2"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("SEPARATOR3"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("SEPARATOR4"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("REFRESH"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("EXCEL"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("EMAIL"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("SEPARATOR5"), lastType));
+
+    if (isRelation) {
+      toolbar.append("<td width=\"1\"><img src=\"")
+          .append(base_direction)
+          .append("/images/blank.gif\" style=\"width: 7px;\" border=\"0\">");
+      toolbar.append("<td width=\"1\"><img src=\"")
+          .append(base_direction)
+          .append("/images/blank.gif\" class=\"Main_ToolBar_textlabel_bg_left\" border=\"0\">");
+      toolbar.append("</td>\n");
+      toolbar.append("<td class=\"Main_ToolBar_textlabel_bg_body\">\n");
+      toolbar.append("<div id=\"bookmark\">\n");
+      toolbar.append("</div>\n");
+      toolbar.append("</td>\n");
+      toolbar.append("<td width=\"1\" class=\"Main_ToolBar_textlabel_bg_right\">");
+      toolbar.append("<div style=\"padding: 0; margin: 0; border: 0; width: 9px;\" />");
+      toolbar.append("</td>\n");
+    }
+
+    toolbar.append(transformElementsToString(buttons.get("SEPARATOR6"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("PREVIOUS_RELATION"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("PREVIOUS_RELATION_DISABLED"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("NEXT_RELATION"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("NEXT_RELATION_DISABLED"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("SEPARATOR7"), lastType));
+    toolbar.append(transformElementsToString(buttons.get("HR1"), lastType));
     toolbar.append("</tr>\n");
     toolbar.append("</table>\n");
     return toolbar.toString();
