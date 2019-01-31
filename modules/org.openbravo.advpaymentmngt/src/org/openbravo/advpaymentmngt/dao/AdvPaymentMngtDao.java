@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -560,7 +560,8 @@ public class AdvPaymentMngtDao {
       BigDecimal writeoffAmount, boolean isRefund, GLItem glitem, boolean doFlush,
       String paymentId) {
     try {
-      OBContext.setAdminMode(true);
+      // Don't check organization access to allow Cross Store payments
+      OBContext.setAdminMode(false);
       final FIN_PaymentDetail newPaymentDetail = OBProvider.getInstance()
           .get(FIN_PaymentDetail.class);
       if (paymentId != null) {
@@ -2017,7 +2018,7 @@ public class AdvPaymentMngtDao {
       boolean isReceipt, Currency currency) {
 
     try {
-      OBContext.setAdminMode(true);
+      OBContext.setAdminMode(false);
 
       final Organization legalEntity = FIN_Utility.getLegalEntityOrg(org);
       Set<String> orgIds = OBContext.getOBContext()
@@ -2137,7 +2138,7 @@ public class AdvPaymentMngtDao {
       final BusinessPartner businessPartner, final BigDecimal amount, final Currency currency,
       final boolean isReceipt, final Date toDate) {
     try {
-      OBContext.setAdminMode(true);
+      OBContext.setAdminMode(false);
       OBCriteria<FIN_Payment> obcFinPayment = OBDal.getInstance().createCriteria(FIN_Payment.class);
       obcFinPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_PROCESSED, true));
       obcFinPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_BUSINESSPARTNER, businessPartner));
