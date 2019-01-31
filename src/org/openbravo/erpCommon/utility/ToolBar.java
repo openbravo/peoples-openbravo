@@ -121,10 +121,12 @@ public class ToolBar {
     this.servlet_action = _action;
     this.isNew = _isNew;
     this.keyfield = _keyINP;
-    if (_gridID != null)
+    if (_gridID != null) {
       this.grid_id = _gridID;
-    if (_PDFName != null)
+    }
+    if (_PDFName != null) {
       this.pdf = _PDFName;
+    }
     this.isDirectPrint = _isDirectPrinting;
     this.base_direction = _baseDirection;
     this.debug = _debug;
@@ -135,8 +137,9 @@ public class ToolBar {
 
   public void removeElement(String name) {
     try {
-      if (buttons != null && !buttons.isEmpty())
+      if (buttons != null && !buttons.isEmpty()) {
         buttons.remove(name);
+      }
     } catch (final NullPointerException ignored) {
     }
   }
@@ -145,33 +148,27 @@ public class ToolBar {
     if (name.equals("EXCEL")) {
       return "openExcel('" + servlet_action + "_Excel.xls?Command=RELATION_XLS', '_blank');";
     } else if (name.equals("PRINT")) {
-      return "openPDFSession('"
-          + pdf
-          + "', '"
-          + (isDirectPrint ? "Printing" : "")
-          + "', "
-          + keyfield
-          + ".name, "
-          + ((grid_id == null || grid_id.equals("")) ? "null" : "dijit.byId('" + grid_id
-              + "').getSelectedRows()") + ", "
-          + ((grid_id == null || grid_id.equals("")) ? "true" : "null") + ");";
+      return "openPDFSession('" + pdf + "', '" + (isDirectPrint ? "Printing" : "") + "', "
+          + keyfield + ".name, "
+          + ((grid_id == null || grid_id.equals("")) ? "null"
+              : "dijit.byId('" + grid_id + "').getSelectedRows()")
+          + ", " + ((grid_id == null || grid_id.equals("")) ? "true" : "null") + ");";
     } else if (name.equals("EMAIL")) {
-      return "openPDFSession('"
-          + pdf.replaceAll("print.html", "send.html")
-          + "', '"
-          + (isDirectPrint ? "Printing" : "")
-          + "', "
-          + keyfield
-          + ".name, "
-          + ((grid_id == null || grid_id.equals("")) ? "null" : "dijit.byId('" + grid_id
-              + "').getSelectedRows()") + ", "
-          + ((grid_id == null || grid_id.equals("")) ? "true" : "null") + ");";
+      return "openPDFSession('" + pdf.replaceAll("print.html", "send.html") + "', '"
+          + (isDirectPrint ? "Printing" : "") + "', " + keyfield + ".name, "
+          + ((grid_id == null || grid_id.equals("")) ? "null"
+              : "dijit.byId('" + grid_id + "').getSelectedRows()")
+          + ", " + ((grid_id == null || grid_id.equals("")) ? "true" : "null") + ");";
     } else if (name.equals("GRID_VIEW")) {
-      return !isRelation ? "submitCommandForm('RELATION', isUserChanges, null, '" + servlet_action
-          + (isSrcWindow ? "" : "_Relation") + ".html', '_self', null, true);" : "";
+      return !isRelation
+          ? "submitCommandForm('RELATION', isUserChanges, null, '" + servlet_action
+              + (isSrcWindow ? "" : "_Relation") + ".html', '_self', null, true);"
+          : "";
     } else if (name.equals("FORM_VIEW")) {
-      return isRelation ? "submitCommandForm('EDIT', true, null, '" + servlet_action
-          + (isSrcWindow ? "" : "_Relation") + ".html', '_self', null, false);" : "";
+      return isRelation
+          ? "submitCommandForm('EDIT', true, null, '" + servlet_action
+              + (isSrcWindow ? "" : "_Relation") + ".html', '_self', null, false);"
+          : "";
     } else {
       String action = "";
 
@@ -183,32 +180,25 @@ public class ToolBar {
   }
 
   private void createAllButtons() {
-    buttons.put("FIND",
-        new ToolBar_Button(base_direction, "Find", Utility.messageBD(conn, "Find", language),
-            getButtonScript("FIND")));
+    buttons.put("FIND", new ToolBar_Button(base_direction, "Find",
+        Utility.messageBD(conn, "Find", language), getButtonScript("FIND")));
     buttons.put("SEPARATOR2", new ToolBar_Space(base_direction));
     buttons.put("SEPARATOR3", new ToolBar_Space(base_direction));
     buttons.put("SEPARATOR4", new ToolBar_Space(base_direction));
 
     if (Utility.isNewUI()) {
-      buttons.put(
-          "REFRESH",
-          new ToolBar_Button(base_direction, "Refresh", Utility
-              .messageBD(conn, "Refresh", language), getButtonScript("REFRESH")));
+      buttons.put("REFRESH", new ToolBar_Button(base_direction, "Refresh",
+          Utility.messageBD(conn, "Refresh", language), getButtonScript("REFRESH")));
     }
 
-    buttons.put(
-        "EXCEL",
-        new ToolBar_Button(base_direction, "Excel", Utility
-            .messageBD(conn, "ExportExcel", language), getButtonScript("EXCEL")));
+    buttons.put("EXCEL", new ToolBar_Button(base_direction, "Excel",
+        Utility.messageBD(conn, "ExportExcel", language), getButtonScript("EXCEL")));
 
     if (pdf != null && !pdf.equals("") && !pdf.equals("..")) {
-      buttons.put("PRINT",
-          new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language),
-              getButtonScript("PRINT")));
-      buttons.put("EMAIL",
-          new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn, "Email", language),
-              getButtonScript("EMAIL")));
+      buttons.put("PRINT", new ToolBar_Button(base_direction, "Print",
+          Utility.messageBD(conn, "Print", language), getButtonScript("PRINT")));
+      buttons.put("EMAIL", new ToolBar_Button(base_direction, "Email",
+          Utility.messageBD(conn, "Email", language), getButtonScript("EMAIL")));
     }
     buttons.put("SEPARATOR5", new ToolBar_Space(base_direction));
 
@@ -216,19 +206,17 @@ public class ToolBar {
     // buttons.put("PREVIOUS_RELATION", new ToolBar_Button(base_direction,
     // "PreviousRange", Utility.messageBD(conn, "GotoPreviousRange",
     // language), getButtonScript("PREVIOUS_RELATION")));
-    buttons.put(
-        "PREVIOUS_RELATION",
-        new ToolBar_Button(base_direction, "Previous", Utility.messageBD(conn, "GotoPreviousRange",
-            language), getButtonScript("PREVIOUS_RELATION")));
+    buttons.put("PREVIOUS_RELATION",
+        new ToolBar_Button(base_direction, "Previous",
+            Utility.messageBD(conn, "GotoPreviousRange", language),
+            getButtonScript("PREVIOUS_RELATION")));
     buttons.put("PREVIOUS_RELATION_DISABLED", new ToolBar_Button(base_direction,
         "PreviousRangeDisabled", Utility.messageBD(conn, "GotoPreviousRange", language), ""));
     // buttons.put("NEXT_RELATION", new ToolBar_Button(base_direction,
     // "NextRange", Utility.messageBD(conn, "GotoNextRange", language),
     // getButtonScript("NEXT_RELATION")));
-    buttons.put(
-        "NEXT_RELATION",
-        new ToolBar_Button(base_direction, "Next", Utility.messageBD(conn, "GotoNextRange",
-            language), getButtonScript("NEXT_RELATION")));
+    buttons.put("NEXT_RELATION", new ToolBar_Button(base_direction, "Next",
+        Utility.messageBD(conn, "GotoNextRange", language), getButtonScript("NEXT_RELATION")));
     buttons.put("NEXT_RELATION_DISABLED", new ToolBar_Button(base_direction, "NextRangeDisabled",
         Utility.messageBD(conn, "GotoNextRange", language), ""));
 
@@ -251,15 +239,13 @@ public class ToolBar {
     removeElement("EMAIL");
     removeElement("PRINT");
     if (pdf != null && !pdf.equals("") && !pdf.equals("..")) {
-      buttons.put("PRINT",
-          new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language),
-              pdf));
+      buttons.put("PRINT", new ToolBar_Button(base_direction, "Print",
+          Utility.messageBD(conn, "Print", language), pdf));
 
     }
     if (email) {
-      buttons.put("EMAIL",
-          new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn, "Email", language),
-              pdf));
+      buttons.put("EMAIL", new ToolBar_Button(base_direction, "Email",
+          Utility.messageBD(conn, "Email", language), pdf));
     }
   }
 
@@ -278,21 +264,18 @@ public class ToolBar {
     removeElement(hasNext ? "NEXT_RELATION_DISABLED" : "NEXT_RELATION");
 
     if (pdf != null && !pdf.equals("") && !pdf.equals("..")) {
-      buttons.put("PRINT",
-          new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language),
-              pdf));
+      buttons.put("PRINT", new ToolBar_Button(base_direction, "Print",
+          Utility.messageBD(conn, "Print", language), pdf));
 
     }
     if (email) {
-      buttons.put("EMAIL",
-          new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn, "Email", language),
-              pdf));
+      buttons.put("EMAIL", new ToolBar_Button(base_direction, "Email",
+          Utility.messageBD(conn, "Email", language), pdf));
     }
-    if (!excelScript.equals("") && excelScript != null)
-      buttons.put(
-          "EXCEL",
-          new ToolBar_Button(base_direction, "Excel", Utility.messageBD(conn, "ExportExcel",
-              language), excelScript));
+    if (!excelScript.equals("") && excelScript != null) {
+      buttons.put("EXCEL", new ToolBar_Button(base_direction, "Excel",
+          Utility.messageBD(conn, "ExportExcel", language), excelScript));
+    }
 
   }
 
@@ -304,49 +287,56 @@ public class ToolBar {
     removeElement("NEXT_RELATION");
     removeElement("NEXT_RELATION_DISABLED");
 
-    if (!excelScript.equals("") && excelScript != null)
-      buttons.put(
-          "EXCEL",
-          new ToolBar_Button(base_direction, "Excel", Utility.messageBD(conn, "ExportExcel",
-              language), excelScript));
+    if (!excelScript.equals("") && excelScript != null) {
+      buttons.put("EXCEL", new ToolBar_Button(base_direction, "Excel",
+          Utility.messageBD(conn, "ExportExcel", language), excelScript));
+    }
 
   }
 
   public void prepareQueryTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
 
-    if (!hasPrevious)
+    if (!hasPrevious) {
       removeElement("PREVIOUS_RELATION");
-    else
+    } else {
       removeElement("PREVIOUS_RELATION_DISABLED");
-    if (!hasNext)
+    }
+    if (!hasNext) {
       removeElement("NEXT_RELATION");
-    else
+    } else {
       removeElement("NEXT_RELATION_DISABLED");
+    }
 
   }
 
   private String transformElementsToString(HTMLElement element, Vector<String> vecLastType) {
     Vector<String> localVecLastType = vecLastType;
-    if (element == null)
+    if (element == null) {
       return "";
-    if (localVecLastType == null)
+    }
+    if (localVecLastType == null) {
       localVecLastType = new Vector<String>(0);
+    }
     final StringBuffer sbElement = new StringBuffer();
     String lastType = "";
-    if (localVecLastType.size() > 0)
+    if (localVecLastType.size() > 0) {
       lastType = localVecLastType.elementAt(0);
-    if (lastType.equals("SPACE") && element.elementType().equals("SPACE"))
+    }
+    if (lastType.equals("SPACE") && element.elementType().equals("SPACE")) {
       return "";
+    }
     sbElement.append("<td ");
-    if (element.elementType().equals("SPACE"))
+    if (element.elementType().equals("SPACE")) {
       sbElement.append("class=\"Main_ToolBar_Separator_cell\" ");
-    else if (!element.elementType().equals("HR"))
+    } else if (!element.elementType().equals("HR")) {
       sbElement.append("width=\"").append(element.getWidth()).append("\" ");
-    else
+    } else {
       sbElement.append("class=\"Main_ToolBar_Space\"");
+    }
     sbElement.append(">");
-    if (!element.elementType().equals("HR"))
+    if (!element.elementType().equals("HR")) {
       sbElement.append(element);
+    }
     sbElement.append("</td>\n");
     localVecLastType.clear();
     localVecLastType.addElement(element.elementType());
@@ -363,15 +353,14 @@ public class ToolBar {
 
       // In case of using new UI, add in toolbar grid and edition buttons
       if (Utility.isNewUI() && !isSrcWindow) {
-        buttons.put(
-            "FORM_VIEW",
-            new ToolBar_Button(base_direction, "Edition", Utility.messageBD(conn, "Form View",
-                language), getButtonScript("FORM_VIEW"), !isRelation, "Edition"
-                + (isNew ? "_new" : "")));
-        buttons.put(
-            "GRID_VIEW",
-            new ToolBar_Button(base_direction, "Relation", Utility.messageBD(conn, "Grid View",
-                language), getButtonScript("GRID_VIEW"), isRelation));
+        buttons.put("FORM_VIEW",
+            new ToolBar_Button(base_direction, "Edition",
+                Utility.messageBD(conn, "Form View", language), getButtonScript("FORM_VIEW"),
+                !isRelation, "Edition" + (isNew ? "_new" : "")));
+        buttons.put("GRID_VIEW",
+            new ToolBar_Button(base_direction, "Relation",
+                Utility.messageBD(conn, "Grid View", language), getButtonScript("GRID_VIEW"),
+                isRelation));
         buttons.put("SEPARATOR_NEWUI", new ToolBar_Space(base_direction));
         toolbar.append(transformElementsToString(buttons.get("FORM_VIEW"), lastType));
         toolbar.append(transformElementsToString(buttons.get("GRID_VIEW"), lastType));
@@ -387,12 +376,15 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType));
       toolbar.append(transformElementsToString(buttons.get("EMAIL"), lastType));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR5"), lastType));
-      // toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n"
+      // toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr
+      // id=\"bookmark\"></nobr></td>\n"
       // );
       if (isRelation) {
-        toolbar.append("<td width=\"1\"><img src=\"").append(base_direction)
+        toolbar.append("<td width=\"1\"><img src=\"")
+            .append(base_direction)
             .append("/images/blank.gif\" style=\"width: 7px;\" border=\"0\">");
-        toolbar.append("<td width=\"1\"><img src=\"").append(base_direction)
+        toolbar.append("<td width=\"1\"><img src=\"")
+            .append(base_direction)
             .append("/images/blank.gif\" class=\"Main_ToolBar_textlabel_bg_left\" border=\"0\">");
         toolbar.append("</td>\n");
         toolbar.append("<td class=\"Main_ToolBar_textlabel_bg_body\">\n");
@@ -405,7 +397,8 @@ public class ToolBar {
       }
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR6"), lastType));
       toolbar.append(transformElementsToString(buttons.get("PREVIOUS_RELATION"), lastType));
-      toolbar.append(transformElementsToString(buttons.get("PREVIOUS_RELATION_DISABLED"), lastType));
+      toolbar
+          .append(transformElementsToString(buttons.get("PREVIOUS_RELATION_DISABLED"), lastType));
       toolbar.append(transformElementsToString(buttons.get("NEXT_RELATION"), lastType));
       toolbar.append(transformElementsToString(buttons.get("NEXT_RELATION_DISABLED"), lastType));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR7"), lastType));
