@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -27,7 +27,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import javax.persistence.PersistenceException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
@@ -73,7 +76,7 @@ import org.openbravo.test.base.OBBaseTest;
 
 public class TestUtility extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(TestUtility.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static FIN_FinancialAccount insertFinancialAccount(String name, String description,
       Currency currency, String type, boolean isDefault, Location location,
@@ -83,8 +86,8 @@ public class TestUtility extends OBBaseTest {
       MatchingAlgorithm matchingAlgorithm, boolean isValid, boolean checkIfExist) {
 
     if (checkIfExist) {
-      final OBCriteria<FIN_FinancialAccount> obc = OBDal.getInstance().createCriteria(
-          FIN_FinancialAccount.class);
+      final OBCriteria<FIN_FinancialAccount> obc = OBDal.getInstance()
+          .createCriteria(FIN_FinancialAccount.class);
       obc.add(Restrictions.eq(FIN_FinancialAccount.PROPERTY_NAME, name));
       if (obc.list() != null && obc.list().size() > 0) {
         return obc.list().get(0);
@@ -131,15 +134,17 @@ public class TestUtility extends OBBaseTest {
       OBDal.getInstance().rollbackAndClose();
     }
 
-    if (isValid)
+    if (isValid) {
       assertFalse("Not inserted a valid financial account:" + name, exception);
-    else
+    } else {
       assertTrue("Inserted a non-valid financial account:" + name, exception);
+    }
 
-    if (exception)
+    if (exception) {
       return null;
-    else
+    } else {
       return finAcc;
+    }
   }
 
   public static FIN_PaymentMethod insertPaymentMethod(String name, String description,
@@ -153,8 +158,8 @@ public class TestUtility extends OBBaseTest {
       boolean checkIfExist) {
 
     if (checkIfExist) {
-      final OBCriteria<FIN_PaymentMethod> obc = OBDal.getInstance().createCriteria(
-          FIN_PaymentMethod.class);
+      final OBCriteria<FIN_PaymentMethod> obc = OBDal.getInstance()
+          .createCriteria(FIN_PaymentMethod.class);
       obc.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_NAME, name));
       if (obc.list() != null && obc.list().size() > 0) {
         return obc.list().get(0);
@@ -204,15 +209,17 @@ public class TestUtility extends OBBaseTest {
       OBDal.getInstance().rollbackAndClose();
     }
 
-    if (isValid)
+    if (isValid) {
       assertFalse("Not inserted a valid payment method:" + name, exception);
-    else
+    } else {
       assertTrue("Inserted a non-valid payment method:" + name, exception);
+    }
 
-    if (exception)
+    if (exception) {
       return null;
-    else
+    } else {
       return paymentMethod;
+    }
   }
 
   public static FinAccPaymentMethod associatePaymentMethod(FIN_FinancialAccount account,
@@ -246,7 +253,7 @@ public class TestUtility extends OBBaseTest {
       // force dal commit to throw exception
       OBDal.getInstance().save(accountPay);
       OBDal.getInstance().flush();
-    } catch (org.hibernate.exception.GenericJDBCException e) {
+    } catch (PersistenceException e) {
       log.error(e);
       exception = true;
       OBDal.getInstance().rollbackAndClose();
@@ -254,10 +261,11 @@ public class TestUtility extends OBBaseTest {
 
     assertFalse("Not associated a valid payment method to the financial account", exception);
 
-    if (exception)
+    if (exception) {
       return null;
-    else
+    } else {
       return accountPay;
+    }
 
   }
 
@@ -417,13 +425,12 @@ public class TestUtility extends OBBaseTest {
     HashMap<String, BigDecimal> paidAmount = new HashMap<String, BigDecimal>();
     paidAmount.put(scheduleDetails.get(0).getId(), amount);
 
-    FIN_Payment payment = FIN_AddPayment
-        .savePayment(null, invoice.isSalesTransaction(),
-            FIN_Utility.getDocumentType(invoice.getOrganization(), "ARR"),
-            FIN_Utility.getDocumentNo(invoice.getOrganization(), "APP", "FIN_Payment"),
-            invoice.getBusinessPartner(), invoice.getPaymentMethod(), account, amount.toString(),
-            new Date(), invoice.getOrganization(), null, scheduleDetails, paidAmount, isWriteOff,
-            false);
+    FIN_Payment payment = FIN_AddPayment.savePayment(null, invoice.isSalesTransaction(),
+        FIN_Utility.getDocumentType(invoice.getOrganization(), "ARR"),
+        FIN_Utility.getDocumentNo(invoice.getOrganization(), "APP", "FIN_Payment"),
+        invoice.getBusinessPartner(), invoice.getPaymentMethod(), account, amount.toString(),
+        new Date(), invoice.getOrganization(), null, scheduleDetails, paidAmount, isWriteOff,
+        false);
 
     return payment;
   }
@@ -450,8 +457,9 @@ public class TestUtility extends OBBaseTest {
 
   public static void processPayment(FIN_Payment payment, String strDocAction) throws Exception {
     VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-        OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId());
+        OBContext.getOBContext().getCurrentClient().getId(),
+        OBContext.getOBContext().getCurrentOrganization().getId(),
+        OBContext.getOBContext().getRole().getId());
 
     FIN_AddPayment.processPayment(vars, getConnectionProviderMy(), strDocAction, payment);
   }
@@ -473,8 +481,9 @@ public class TestUtility extends OBBaseTest {
     FIN_Payment refundPayment = null;
     try {
       VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-          OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-              .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId());
+          OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentOrganization().getId(),
+          OBContext.getOBContext().getRole().getId());
       refundPayment = FIN_AddPayment.createRefundPayment(getConnectionProviderMy(), vars, payment,
           refundAmount.negate());
     } finally {
@@ -483,11 +492,12 @@ public class TestUtility extends OBBaseTest {
     return refundPayment;
   }
 
-  public static void processPaymentProposal(FIN_PaymentProposal paymentProposal, String strDocAction)
-      throws Exception {
+  public static void processPaymentProposal(FIN_PaymentProposal paymentProposal,
+      String strDocAction) throws Exception {
     VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-        OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId());
+        OBContext.getOBContext().getCurrentClient().getId(),
+        OBContext.getOBContext().getCurrentOrganization().getId(),
+        OBContext.getOBContext().getRole().getId());
 
     FIN_AddPayment.processPaymentProposal(vars, getConnectionProviderMy(), strDocAction,
         paymentProposal.getId());
@@ -557,7 +567,8 @@ public class TestUtility extends OBBaseTest {
   private static ConnectionProvider getConnectionProviderMy() {
     try {
       final String propFile = OBConfigFileProvider.getInstance().getFileLocation();
-      final ConnectionProvider conn = new ConnectionProviderImpl(propFile + "/Openbravo.properties");
+      final ConnectionProvider conn = new ConnectionProviderImpl(
+          propFile + "/Openbravo.properties");
       return conn;
     } catch (PoolNotFoundException e) {
       throw new IllegalStateException(e);

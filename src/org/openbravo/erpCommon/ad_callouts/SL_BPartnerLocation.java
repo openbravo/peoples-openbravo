@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,8 +22,9 @@ package org.openbravo.erpCommon.ad_callouts;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
@@ -33,7 +34,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.geography.Location;
 
 public class SL_BPartnerLocation extends SimpleCallout {
-  private static Logger log = Logger.getLogger(SL_BPartnerLocation.class);
+  private static Logger log = LogManager.getLogger();
 
   private static final RequestFilter filterYesNo = new ValueListFilter("Y", "N");
 
@@ -48,7 +49,8 @@ public class SL_BPartnerLocation extends SimpleCallout {
    * <li>More than 1 country set as Tax Location</li>
    * <li>Other country is declared as Tax Location and the user is trying to set a new country as
    * Tax Location</li>
-   * <li>The business partner has several countries and neither of them is declared as Tax Location</li>
+   * <li>The business partner has several countries and neither of them is declared as Tax
+   * Location</li>
    * </ul>
    * 
    */
@@ -70,10 +72,12 @@ public class SL_BPartnerLocation extends SimpleCallout {
             "where bpl.businessPartner.id = :bPartnerId " + //
             "and bpl.taxLocation = true " + //
             "and c.id <> :countryId "; //
-        Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-        query.setString("bPartnerId", bPartnerId);
-        query.setString("countryId", location.getCountry().getId());
-        int otherCountriesTaxLocationYes = ((Long) query.list().get(0)).intValue();
+        Query<Long> query = OBDal.getInstance()
+            .getSession()
+            .createQuery(hql.toString(), Long.class);
+        query.setParameter("bPartnerId", bPartnerId);
+        query.setParameter("countryId", location.getCountry().getId());
+        int otherCountriesTaxLocationYes = query.list().get(0).intValue();
 
         if (otherCountriesTaxLocationYes > 1) {
           // Detected several countries defined as Tax Location
@@ -91,10 +95,10 @@ public class SL_BPartnerLocation extends SimpleCallout {
               "inner join ad.country as c " + //
               "where bpl.businessPartner.id = :bPartnerId " + //
               "and c.id <> :countryId "; //
-          query = OBDal.getInstance().getSession().createQuery(hql.toString());
-          query.setString("bPartnerId", bPartnerId);
-          query.setString("countryId", location.getCountry().getId());
-          int otherCountries = ((Long) query.list().get(0)).intValue();
+          query = OBDal.getInstance().getSession().createQuery(hql.toString(), Long.class);
+          query.setParameter("bPartnerId", bPartnerId);
+          query.setParameter("countryId", location.getCountry().getId());
+          int otherCountries = query.list().get(0).intValue();
 
           if (otherCountries > 0) {
             hql = "" + //
@@ -105,10 +109,10 @@ public class SL_BPartnerLocation extends SimpleCallout {
                 "where bpl.businessPartner.id = :bPartnerId " + //
                 "and c.id = :countryId " + //
                 "and bpl.taxLocation = true ";
-            query = OBDal.getInstance().getSession().createQuery(hql.toString());
-            query.setString("bPartnerId", bPartnerId);
-            query.setString("countryId", location.getCountry().getId());
-            int thisCountryTaxLocationYes = ((Long) query.list().get(0)).intValue();
+            query = OBDal.getInstance().getSession().createQuery(hql.toString(), Long.class);
+            query.setParameter("bPartnerId", bPartnerId);
+            query.setParameter("countryId", location.getCountry().getId());
+            int thisCountryTaxLocationYes = query.list().get(0).intValue();
 
             if (thisCountryTaxLocationYes == 0) {
               // Detected several countries, neither of them defined as Tax Location

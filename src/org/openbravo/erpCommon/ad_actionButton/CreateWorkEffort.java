@@ -26,7 +26,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -46,7 +47,7 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class CreateWorkEffort implements org.openbravo.scheduling.Process {
 
-  private static final Logger log4j = Logger.getLogger(CreateWorkEffort.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -61,7 +62,8 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
     try {
 
       // ConvertVariables
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      String dateFormat = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("dateFormat.java");
 
       SimpleDateFormat dateformater = new SimpleDateFormat(dateFormat);
@@ -81,10 +83,10 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
       // Search Phases To Be Created
       WorkRequirement workReq = OBDal.getInstance().get(WorkRequirement.class, strWorkRequirement);
 
-      OBCriteria<WorkRequirementOperation> workReqOpCriteria = OBDal.getInstance().createCriteria(
-          WorkRequirementOperation.class);
-      workReqOpCriteria.add(Restrictions.eq(WorkRequirementOperation.PROPERTY_WORKREQUIREMENT,
-          workReq));
+      OBCriteria<WorkRequirementOperation> workReqOpCriteria = OBDal.getInstance()
+          .createCriteria(WorkRequirementOperation.class);
+      workReqOpCriteria
+          .add(Restrictions.eq(WorkRequirementOperation.PROPERTY_WORKREQUIREMENT, workReq));
       workReqOpCriteria.add(Restrictions.le(WorkRequirementOperation.PROPERTY_STARTINGDATE, date));
       workReqOpCriteria.add(Restrictions.eq(WorkRequirementOperation.PROPERTY_CLOSED, false));
       workReqOpCriteria.addOrderBy(WorkRequirementOperation.PROPERTY_SEQUENCENUMBER, true);
@@ -95,21 +97,21 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
       for (WorkRequirementOperation wrOp : workReqOpList) {
         // Check if exits one not processed;
 
-        OBCriteria<ProductionPlan> productionPlanCriteria = OBDal.getInstance().createCriteria(
-            ProductionPlan.class);
+        OBCriteria<ProductionPlan> productionPlanCriteria = OBDal.getInstance()
+            .createCriteria(ProductionPlan.class);
         productionPlanCriteria.add(Restrictions.eq(ProductionPlan.PROPERTY_WRPHASE, wrOp));
         productionPlanCriteria.createAlias(ProductionPlan.PROPERTY_PRODUCTION, "pro");
-        productionPlanCriteria.add(Restrictions.eq("pro."
-            + ProductionTransaction.PROPERTY_MOVEMENTDATE, date));
-        productionPlanCriteria.add(Restrictions.eq("pro."
-            + ProductionTransaction.PROPERTY_PROCESSED, false));
+        productionPlanCriteria
+            .add(Restrictions.eq("pro." + ProductionTransaction.PROPERTY_MOVEMENTDATE, date));
+        productionPlanCriteria
+            .add(Restrictions.eq("pro." + ProductionTransaction.PROPERTY_PROCESSED, false));
         List<ProductionPlan> pplanList = productionPlanCriteria.list();
 
         if (pplanList.isEmpty()) {
           counter++;
           // Create ProductionTransaction
-          ProductionTransaction productionTransaction = OBProvider.getInstance().get(
-              ProductionTransaction.class);
+          ProductionTransaction productionTransaction = OBProvider.getInstance()
+              .get(ProductionTransaction.class);
           productionTransaction.setClient(wrOp.getClient());
           productionTransaction.setOrganization(wrOp.getOrganization());
           productionTransaction.setMovementDate(date);
@@ -141,7 +143,8 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
             BigDecimal estimatedTime = BigDecimal.ZERO;
             if (wrOp.getEstimatedTime() != null && wrOp.getQuantity() != null
                 && wrOp.getQuantity().compareTo(BigDecimal.ZERO) != 0) {
-              estimatedTime = wrOp.getEstimatedTime().multiply(requiredQty)
+              estimatedTime = wrOp.getEstimatedTime()
+                  .multiply(requiredQty)
                   .divide(wrOp.getQuantity(), RoundingMode.HALF_UP);
             }
             productionPlan.setEstimatedTime(new BigDecimal(estimatedTime.longValue()));
@@ -166,10 +169,10 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
           // Get CostCenterVersion
           OBCriteria<CostcenterVersion> costcenterVersionCriteria = OBDal.getInstance()
               .createCriteria(CostcenterVersion.class);
-          costcenterVersionCriteria.add(Restrictions.eq(CostcenterVersion.PROPERTY_COSTCENTER, wrOp
-              .getActivity().getCostCenter()));
-          costcenterVersionCriteria.add(Restrictions.lt(CostcenterVersion.PROPERTY_VALIDFROMDATE,
-              date));
+          costcenterVersionCriteria.add(Restrictions.eq(CostcenterVersion.PROPERTY_COSTCENTER,
+              wrOp.getActivity().getCostCenter()));
+          costcenterVersionCriteria
+              .add(Restrictions.lt(CostcenterVersion.PROPERTY_VALIDFROMDATE, date));
           costcenterVersionCriteria.addOrderBy(CostcenterVersion.PROPERTY_VALIDFROMDATE, false);
           List<CostcenterVersion> costcenterVersionList = costcenterVersionCriteria.list();
           if (!costcenterVersionList.isEmpty()) {
@@ -213,10 +216,12 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
       msg.setType("Error");
       if (e instanceof org.hibernate.exception.GenericJDBCException) {
         msg.setMessage(((org.hibernate.exception.GenericJDBCException) e).getSQLException()
-            .getNextException().getMessage());
+            .getNextException()
+            .getMessage());
       } else if (e instanceof org.hibernate.exception.ConstraintViolationException) {
         msg.setMessage(((org.hibernate.exception.ConstraintViolationException) e).getSQLException()
-            .getNextException().getMessage());
+            .getNextException()
+            .getMessage());
       } else {
         msg.setMessage(e.getMessage());
       }

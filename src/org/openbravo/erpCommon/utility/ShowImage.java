@@ -46,8 +46,9 @@ public class ShowImage extends HttpSecureAppServlet {
   /**
    * Receiving an id parameter it looks in database for the image with that id and displays it
    */
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     ImageUtils.outputImageResource(request, response, "standard");
   }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,6 +49,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.password.PasswordStrengthChecker;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -59,11 +61,15 @@ import org.openbravo.utils.FormatUtilities;
 @ApplicationScoped
 public class UserInfoWidgetActionHandler extends BaseActionHandler implements PortalAccessible {
 
+  @Inject
+  private PasswordStrengthChecker passwordStrengthChecker;
+
   /*
    * (non-Javadoc)
    * 
    * @see org.openbravo.client.kernel.BaseActionHandler#execute(Map, String)
    */
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     final String command = (String) parameters.get(ApplicationConstants.COMMAND);
     OBContext.setAdminMode();
@@ -87,48 +93,43 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
   protected JSONObject executeChangePasswordCommand(Map<String, Object> parameters, String content)
       throws Exception {
     // do some checking
-    final User user = OBDal.getInstance().get(User.class,
-        OBContext.getOBContext().getUser().getId());
+    final User user = OBDal.getInstance()
+        .get(User.class, OBContext.getOBContext().getUser().getId());
     final JSONObject json = new JSONObject(content);
     final String currentPwd = json.getString("currentPwd");
     final String newPwd = json.getString("newPwd");
     final String confirmPwd = json.getString("confirmPwd");
 
     if (!user.getPassword().equals(FormatUtilities.sha1Base64(currentPwd))) {
-      final JSONObject result = new JSONObject();
-      result.put("result", "error");
-      final JSONArray fields = new JSONArray();
-      final JSONObject field = new JSONObject();
-      field.put("field", "currentPwd");
-      field.put("messageCode", "UINAVBA_CurrentPwdIncorrect");
-      fields.put(field);
-      result.put("fields", fields);
-      return result;
+      return createErrorResponse("currentPwd", "UINAVBA_CurrentPwdIncorrect");
+    }
+    if (currentPwd.equals(newPwd)) {
+      return createErrorResponse("newPwd", "CPDifferentPassword");
     }
     if (newPwd == null || newPwd.trim().length() == 0) {
-      final JSONObject result = new JSONObject();
-      result.put("result", "error");
-      final JSONArray fields = new JSONArray();
-      final JSONObject field = new JSONObject();
-      field.put("field", "currentPwd");
-      field.put("messageCode", "UINAVBA_IncorrectPwd");
-      fields.put(field);
-      result.put("fields", fields);
-      return result;
+      return createErrorResponse("currentPwd", "UINAVBA_IncorrectPwd");
     }
     if (!newPwd.equals(confirmPwd)) {
-      final JSONObject result = new JSONObject();
-      final JSONArray fields = new JSONArray();
-      final JSONObject field = new JSONObject();
-      field.put("field", "currentPwd");
-      field.put("messageCode", "UINAVBA_UnequalPwd");
-      fields.put(field);
-      result.put("fields", fields);
-      return result;
+      return createErrorResponse("currentPwd", "UINAVBA_UnequalPwd");
+    }
+    if (!passwordStrengthChecker.isStrongPassword(newPwd)) {
+      return createErrorResponse("newPwd", "CPPasswordNotStrongEnough");
     }
     user.setPassword(FormatUtilities.sha1Base64(newPwd));
     OBDal.getInstance().flush();
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
+  }
+
+  private JSONObject createErrorResponse(String fieldName, String messageKey) throws JSONException {
+    final JSONObject response = new JSONObject();
+    response.put("result", "error");
+    final JSONArray fields = new JSONArray();
+    final JSONObject field = new JSONObject();
+    field.put("field", fieldName);
+    field.put("messageCode", messageKey);
+    fields.put(field);
+    response.put("fields", fields);
+    return response;
   }
 
   protected JSONObject executeSaveCommand(Map<String, Object> parameters, String content)
@@ -187,18 +188,17 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       defaultRoleProperty = User.PROPERTY_DEFAULTROLE;
     }
 
-    new UserSessionSetter().resetSession(request, isDefault, OBContext.getOBContext().getUser()
-        .getId(), roleId, clientId, orgId, languageId, warehouseId, defaultRoleProperty,
-        setOnlyRole);
+    new UserSessionSetter().resetSession(request, isDefault,
+        OBContext.getOBContext().getUser().getId(), roleId, clientId, orgId, languageId,
+        warehouseId, defaultRoleProperty, setOnlyRole);
 
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
   }
 
   private String pickLanguage() {
-    final OBQuery<Language> languages = OBDal.getInstance().createQuery(
-        Language.class,
-        "(" + Language.PROPERTY_SYSTEMLANGUAGE + "=true or " + Language.PROPERTY_BASELANGUAGE
-            + "=true)");
+    final OBQuery<Language> languages = OBDal.getInstance()
+        .createQuery(Language.class, "(" + Language.PROPERTY_SYSTEMLANGUAGE + "=true or "
+            + Language.PROPERTY_BASELANGUAGE + "=true)");
     languages.setFilterOnReadableClients(false);
     languages.setFilterOnReadableOrganization(false);
     List<Language> languagesList = languages.list();
@@ -225,6 +225,9 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
   // ugly inheriting from HttpSecureAppServlet because it provides a number of methods...
   private static class UserSessionSetter extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
+    private static final String TEXT_DIRECTION = "#TextDirection";
+    private static final String SESSION_ID = "#AD_Session_ID";
+    private static final String AUTHENTICATED_USER = "#Authenticated_user";
 
     private void resetSession(HttpServletRequest request, boolean isDefault, String userId,
         String roleId, String clientId, String organizationId, String languageId,
@@ -232,9 +235,9 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       final VariablesSecureApp vars = new VariablesSecureApp(request); // refresh
       final Language language = OBDal.getInstance().get(Language.class, languageId);
       if (language.isRTLLanguage()) {
-        vars.setSessionValue("#TextDirection", "RTL");
+        vars.setSessionValue(TEXT_DIRECTION, "RTL");
       } else {
-        vars.setSessionValue("#TextDirection", "LTR");
+        vars.setSessionValue(TEXT_DIRECTION, "LTR");
       }
 
       if (isDefault) {
@@ -254,23 +257,22 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       }
 
       if (clientId == null || organizationId == null || roleId == null) {
-        throw new IllegalArgumentException("Illegal values for client/org or role " + clientId
-            + "/" + organizationId + "/" + roleId);
+        throw new IllegalArgumentException("Illegal values for client/org or role " + clientId + "/"
+            + organizationId + "/" + roleId);
       }
 
       // Clear session variables maintaining session and user
-      String sessionID = vars.getSessionValue("#AD_Session_ID");
-      String sessionUser = (String) request.getSession(true).getAttribute("#Authenticated_user");
+      String sessionID = vars.getSessionValue(SESSION_ID);
+      String sessionUser = (String) request.getSession(true).getAttribute(AUTHENTICATED_USER);
       vars.clearSession(false);
-      vars.setSessionValue("#AD_Session_ID", sessionID);
-      request.getSession(true).setAttribute("#Authenticated_user", sessionUser);
+      vars.setSessionValue(SESSION_ID, sessionID);
+      request.getSession(true).setAttribute(AUTHENTICATED_USER, sessionUser);
 
       OBDal.getInstance().flush();
-      boolean result = LoginUtils
-          .fillSessionArguments(new DalConnectionProvider(false), vars, userId,
-              toSaveStr(language.getLanguage()), (language.isRTLLanguage() ? "Y" : "N"),
-              toSaveStr(roleId), toSaveStr(clientId), toSaveStr(organizationId),
-              toSaveStr(warehouseId));
+      boolean result = LoginUtils.fillSessionArguments(new DalConnectionProvider(false), vars,
+          userId, toSaveStr(language.getLanguage()), (language.isRTLLanguage() ? "Y" : "N"),
+          toSaveStr(roleId), toSaveStr(clientId), toSaveStr(organizationId),
+          toSaveStr(warehouseId));
       if (!result) {
         throw new IllegalArgumentException("Error when saving default values");
       }

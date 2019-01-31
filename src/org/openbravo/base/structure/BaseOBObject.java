@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,9 +20,10 @@
 package org.openbravo.base.structure;
 
 import java.io.Serializable;
-import java.util.List;
 
-import org.hibernate.criterion.Restrictions;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.BaseOBObjectDef;
 import org.openbravo.base.model.Entity;
@@ -34,7 +35,6 @@ import org.openbravo.base.util.CheckException;
 import org.openbravo.base.validation.ValidationException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Language;
 
@@ -48,12 +48,11 @@ import org.openbravo.model.ad.system.Language;
  * @author mtaal
  */
 
-public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, DynamicEnabled,
-    OBNotSingleton, Serializable {
+public abstract class BaseOBObject
+    implements BaseOBObjectDef, Identifiable, DynamicEnabled, OBNotSingleton, Serializable {
   public static final String ID = "id";
 
-  private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
-      .getLogger(BaseOBObject.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final long serialVersionUID = 1L;
 
@@ -126,40 +125,16 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
     if (p.isTranslatable() && OBContext.hasTranslationInstalled()) {
       if (!hasLookedForTrl) {
         hasLookedForTrl = true;
-        OBContext.setAdminMode(true);
         try {
-          @SuppressWarnings("unchecked")
-          List<BaseOBObject> trl = OBDal.getInstance().getSession()
-              .createFilter(this.get(p.getTrlOneToManyProperty().getName()), "where language = ?")
-              .setParameter(0, language).list();
-
-          if (!trl.isEmpty()) {
-            dataTrl = trl.get(0);
+          if (id != null && p.getTrlParentProperty() != null) {
+            BaseOBObject translation = getTranslation(p.getTrlParentProperty(), language, id);
+            if (translation != null) {
+              dataTrl = translation;
+            }
           }
         } catch (Throwable t) {
-          // Log error but do not fail here
-          log.debug("Error looking for translation of " + p + " in Session. Looking in Object.", t);
-
-          try {
-            if (id != null) {
-              if (p.getTrlParentProperty() != null) {
-                // check whether translation is available in the object and not stored in session
-                OBCriteria<BaseOBObject> trlList = OBDal.getInstance().createCriteria(
-                    p.getEntity().getName() + "Trl");
-                trlList.add(Restrictions.eq(p.getTrlParentProperty().getName(), OBDal.getInstance()
-                    .get(p.getEntity().toString(), id)));
-                trlList.add(Restrictions.eq("language", language));
-                if (trlList.count() > 0) {
-                  dataTrl = trlList.list().get(0);
-                }
-              }
-            }
-          } catch (Throwable t1) {
-            // continue using base language
-            log.debug("Error looking for translation of " + p + ". Using base value", t);
-          }
-        } finally {
-          OBContext.restorePreviousMode();
+          // continue using base language
+          log.debug("Error looking for translation of " + p + ". Using base value", t);
         }
       }
 
@@ -169,6 +144,20 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
     }
 
     return data[p.getIndexInEntity()];
+  }
+
+  private BaseOBObject getTranslation(Property trlParentProperty, Language language, String id) {
+    StringBuilder hql = new StringBuilder();
+    hql.append("select trl from " + trlParentProperty.getEntity() + " as trl ");
+    hql.append("where trl." + trlParentProperty.getName() + ".id = :id ");
+    hql.append("and trl.language = :language and trl.active = true");
+    Query<BaseOBObject> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql.toString(), BaseOBObject.class);
+    query.setParameter("id", id);
+    query.setParameter("language", language);
+    query.setMaxResults(1);
+    return query.uniqueResult();
   }
 
   private void setDataValue(String propName, Object value) {
@@ -185,16 +174,20 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
     data[p.getIndexInEntity()] = value;
   }
 
+  @Override
   public Object getId() {
     return get(ID);
   }
 
+  @Override
   public void setId(Object id) {
     set(ID, id);
   }
 
+  @Override
   public abstract String getEntityName();
 
+  @Override
   public String getIdentifier() {
     return IdentifierProvider.getInstance().getIdentifier(this);
   }
@@ -209,6 +202,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
    *          the name of the {@link Property Property} for which the value is requested
    * @throws OBSecurityException
    */
+  @Override
   public Object get(String propName) {
     return get(propName, null);
   }
@@ -271,6 +265,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
    * @throws OBSecurityException
    *           , ValidationException
    */
+  @Override
   public void set(String propName, Object value) {
     final Property p = getEntity().getProperty(propName);
     p.checkIsValidValue(value);
@@ -290,11 +285,9 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
       }
 
       if (isDerivedReadable && !p.allowDerivedRead()) {
-        throw new OBSecurityException(
-            "Entity "
-                + getEntity()
-                + " is not directly readable, only id and identifier properties are readable, property "
-                + p + " is neither of these.");
+        throw new OBSecurityException("Entity " + getEntity()
+            + " is not directly readable, only id and identifier properties are readable, property "
+            + p + " is neither of these.");
       }
     }
   }
@@ -329,6 +322,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
    * 
    * @return the Entity of this object
    */
+  @Override
   public Entity getEntity() {
     if (model == null) {
       model = ModelProvider.getInstance().getEntity(getEntityName());

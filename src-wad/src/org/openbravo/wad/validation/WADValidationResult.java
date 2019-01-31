@@ -24,14 +24,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Contains information of all the warnings and errors detected during the WAD validation
  * 
  */
 class WADValidationResult {
-  private static final Logger log = Logger.getLogger(WADValidationResult.class);
+  private static final Logger log = LogManager.getLogger();
 
   /*
    * Whitelist of modules for which all validation problems will be ignored and not reported. So far
@@ -46,12 +47,17 @@ class WADValidationResult {
    * 
    */
   public enum WADValidationType {
-    SQL("SQL"), MISSING_IDENTIFIER("Missing Identifier"), MISSING_KEY("Missing Key Column"), MODEL_OBJECT(
-        "Model Object"), MODEL_OBJECT_MAPPING("HTML Mapping"), COLUMN_NAME("Column Naming"), AUXILIARINPUT(
-        "Auxiliary Input Name"), MULTIPLE_KEYS("Multiple Key Columns in Table"), BASEREFERENCE_WITH_PARENT(
-        "Base Reference with Parent Reference"), PROCESS_WITHOUT_CLASS(
-        "Standard UI Processes without class"), TABS_WITH_MULTIPLE_FIELDS_FOR_SAME_COLUMN(
-        "Tabs with multiple fields for same column");
+    SQL("SQL"),
+    MISSING_IDENTIFIER("Missing Identifier"),
+    MISSING_KEY("Missing Key Column"),
+    MODEL_OBJECT("Model Object"),
+    MODEL_OBJECT_MAPPING("HTML Mapping"),
+    COLUMN_NAME("Column Naming"),
+    AUXILIARINPUT("Auxiliary Input Name"),
+    MULTIPLE_KEYS("Multiple Key Columns in Table"),
+    BASEREFERENCE_WITH_PARENT("Base Reference with Parent Reference"),
+    PROCESS_WITHOUT_CLASS("Standard UI Processes without class"),
+    TABS_WITH_MULTIPLE_FIELDS_FOR_SAME_COLUMN("Tabs with multiple fields for same column");
 
     private String description;
 

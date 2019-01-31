@@ -23,6 +23,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.DalUtil;
@@ -38,11 +40,9 @@ import org.openbravo.model.manufacturing.processplan.ProcessPlan;
 import org.openbravo.model.manufacturing.processplan.Version;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CopyProcessPlanVersion extends BaseProcessActionHandler {
-  final static private Logger log = LoggerFactory.getLogger(CopyProcessPlanVersion.class);
+  final static private Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -62,19 +62,22 @@ public class CopyProcessPlanVersion extends BaseProcessActionHandler {
 
       for (Operation manufacturingOpern : objVersion.getManufacturingOperationList()) {
         // Check
-        if (!obContext.getOrganizationStructureProvider(
-            processPlan.getOrganization().getClient().getId()).isInNaturalTree(
-            processPlan.getOrganization(), manufacturingOpern.getActivity().getOrganization())) {
+        if (!obContext
+            .getOrganizationStructureProvider(processPlan.getOrganization().getClient().getId())
+            .isInNaturalTree(processPlan.getOrganization(),
+                manufacturingOpern.getActivity().getOrganization())) {
           dataInconsistency = true;
           message = "There is an inconsistency with Activity "
               + manufacturingOpern.getActivity().getIdentifier() + " for organization "
               + processPlan.getOrganization().getIdentifier();
           break;
         }
-        for (OperationProduct opernProd : manufacturingOpern.getManufacturingOperationProductList()) {
-          if (!obContext.getOrganizationStructureProvider(
-              processPlan.getOrganization().getClient().getId()).isInNaturalTree(
-              processPlan.getOrganization(), opernProd.getProduct().getOrganization())) {
+        for (OperationProduct opernProd : manufacturingOpern
+            .getManufacturingOperationProductList()) {
+          if (!obContext
+              .getOrganizationStructureProvider(processPlan.getOrganization().getClient().getId())
+              .isInNaturalTree(processPlan.getOrganization(),
+                  opernProd.getProduct().getOrganization())) {
             dataInconsistency = true;
             message = "There is an inconsistency with Product "
                 + opernProd.getProduct().getIdentifier() + " for Organization "
@@ -182,8 +185,8 @@ public class CopyProcessPlanVersion extends BaseProcessActionHandler {
    * Call AD_Sequence_Doc
    */
   private String callAdSequenceDoc(Version objCloneVersion) {
-    return Utility.getDocumentNo(new DalConnectionProvider(false), objCloneVersion.getClient()
-        .getId(), "MA_ProcessPlan_Version", true);
+    return Utility.getDocumentNo(new DalConnectionProvider(false),
+        objCloneVersion.getClient().getId(), "MA_ProcessPlan_Version", true);
   }
 
   /**

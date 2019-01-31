@@ -22,14 +22,14 @@ package org.openbravo.advpaymentmngt.actionHandler;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Handler in Match Statement window | Add new transaction, that controls the Payment field on
@@ -37,8 +37,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class AddTransactionOnChangePaymentActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(AddTransactionOnChangePaymentActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {

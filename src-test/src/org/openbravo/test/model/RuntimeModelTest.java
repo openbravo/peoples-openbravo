@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,11 +28,11 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.classic.Session;
-import org.hibernate.criterion.Order;
+import org.hibernate.query.Query;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.model.Column;
@@ -57,7 +57,7 @@ import org.openbravo.test.base.OBBaseTest;
 
 public class RuntimeModelTest extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(RuntimeModelTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   // cached list of all tables & columns as used by several tests
   private List<Table> allTables;
@@ -135,8 +135,9 @@ public class RuntimeModelTest extends OBBaseTest {
     for (final Entity e : ModelProvider.getInstance().getModel()) {
       log.debug("tablename: " + e.getTableName() + " -- classname: " + e.getClassName()
           + " -- mappingname: " + e.getName());
-      for (final Property p : e.getProperties())
+      for (final Property p : e.getProperties()) {
         log.debug("property: " + p.getColumnName() + " -- mapping: " + p.getName());
+      }
     }
     assertNotNull(ModelProvider.getInstance().getModel());
   }
@@ -193,22 +194,26 @@ public class RuntimeModelTest extends OBBaseTest {
       if (!t.isView() && t.getPrimaryKeyColumns().size() > 1) {
         log.debug("Table: " + t.getId() + " - " + t.getTableName());
         log.debug("  Columns : ");
-        for (final Column c : t.getColumns())
+        for (final Column c : t.getColumns()) {
           log.debug(c.getColumnName() + ", ");
+        }
         log.debug("\n");
         log.debug("    Keys: ");
-        for (final Column c : t.getPrimaryKeyColumns())
+        for (final Column c : t.getPrimaryKeyColumns()) {
           log.debug(c.getColumnName() + ", ");
+        }
         log.debug("\n");
         log.debug("    Identifiers: ");
-        for (final Column c : t.getIdentifierColumns())
+        for (final Column c : t.getIdentifierColumns()) {
           log.debug(c.getColumnName() + ", ");
+        }
         log.debug("\n");
         total++;
       }
     }
-    if (total != 0)
+    if (total != 0) {
       log.debug(total + " tables with more than one primary key");
+    }
     assertEquals(0, total);
   }
 
@@ -216,13 +221,15 @@ public class RuntimeModelTest extends OBBaseTest {
   public void testIdentifiers() {
     final ArrayList<String> tables = new ArrayList<String>();
     for (final Table t : allTables) {
-      if (!t.isView() && t.isActive() && t.getIdentifierColumns().size() == 0)
+      if (!t.isView() && t.isActive() && t.getIdentifierColumns().size() == 0) {
         tables.add(t.getTableName());
+      }
     }
     if (tables.size() != 0) {
       log.debug(tables.size() + " tables without Identifier columns");
-      for (final String tableName : tables)
+      for (final String tableName : tables) {
         log.debug(tableName);
+      }
     }
     assertEquals(0, tables.size());
   }
@@ -238,7 +245,8 @@ public class RuntimeModelTest extends OBBaseTest {
             || Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(property.getName())) {
           continue;
         }
-        assertNotNull("Property " + property + " does not have a columnid ", property.getColumnId());
+        assertNotNull("Property " + property + " does not have a columnid ",
+            property.getColumnId());
       }
     }
   }
@@ -287,9 +295,10 @@ public class RuntimeModelTest extends OBBaseTest {
       }
     }
 
-    if (columns.size() != 0)
+    if (columns.size() != 0) {
       log.debug(columns.size() + " columns set as *isParent* and are *primitive type*: "
           + columns.toString());
+    }
     assertEquals(0, columns.size());
   }
 
@@ -308,10 +317,11 @@ public class RuntimeModelTest extends OBBaseTest {
       }
     }
 
-    if (columns.size() != 0)
+    if (columns.size() != 0) {
       log.debug(columns.size()
           + " columns set as *isParent* with reference *TABLE* and don't have table defined : "
           + columns.toString());
+    }
     assertEquals(0, columns.size());
   }
 
@@ -324,18 +334,20 @@ public class RuntimeModelTest extends OBBaseTest {
     for (final Table t : allTables) {
       for (final Column c : t.getColumns()) {
         if (c.isParent() && c.getReference().getId().equals(Reference.TABLEDIR)) {
-          final String obNamingConvention = c.getColumnName().substring(
-              c.getColumnName().length() - 3);
-          if (!obNamingConvention.equals("_ID"))
+          final String obNamingConvention = c.getColumnName()
+              .substring(c.getColumnName().length() - 3);
+          if (!obNamingConvention.equals("_ID")) {
             columns.add(t.getTableName() + " - " + c.getColumnName());
+          }
         }
       }
     }
 
-    if (columns.size() != 0)
+    if (columns.size() != 0) {
       log.debug(columns.size()
           + " columns set as *isParent* with reference *TABLEDIR* and column name don't finish with _ID: "
           + columns.toString());
+    }
     assertEquals(0, columns.size());
   }
 
@@ -374,10 +386,11 @@ public class RuntimeModelTest extends OBBaseTest {
     try {
       final List<Table> tables = ModelProvider.getInstance().list(session, Table.class);
       // read the columns in one query and assign them to the table
-      final Criteria c = session.createCriteria(Column.class);
-      c.addOrder(Order.asc("position"));
-      @SuppressWarnings("unchecked")
-      final List<Column> cols = c.list();
+      StringBuilder hql = new StringBuilder();
+      hql.append("SELECT c FROM " + Column.class.getName() + " AS c");
+      hql.append(" ORDER BY c.position ASC");
+      Query<Column> query = session.createQuery(hql.toString(), Column.class);
+      final List<Column> cols = query.list();
       for (final Column column : cols) {
         final Table table = column.getTable();
         table.getColumns().add(column);

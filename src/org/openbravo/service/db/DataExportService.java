@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -53,7 +54,7 @@ import org.openbravo.service.dataset.DataSetService;
  * @author Martin Taal
  */
 public class DataExportService implements OBSingleton {
-  private static final Logger log = Logger.getLogger(DataExportService.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Name of the dataset used for client export.
@@ -115,7 +116,8 @@ public class DataExportService implements OBSingleton {
    * @see #CLIENT_DATA_SET_NAME
    * @see #CLIENT_ID_PARAMETER_NAME
    */
-  public void exportClientToXML(Map<String, Object> parameters, boolean exportAuditInfo, Writer out) {
+  public void exportClientToXML(Map<String, Object> parameters, boolean exportAuditInfo,
+      Writer out) {
     DataSet dataSet = null;
     OBContext.setAdminMode();
     try {
@@ -127,8 +129,8 @@ public class DataExportService implements OBSingleton {
       dataSet = obc.list().get(0);
 
       // read the client
-      final Client client = OBDal.getInstance().get(Client.class,
-          parameters.get(CLIENT_ID_PARAMETER_NAME));
+      final Client client = OBDal.getInstance()
+          .get(Client.class, parameters.get(CLIENT_ID_PARAMETER_NAME));
 
       // the export part may not be run as superuser
       log.debug("Exporting dataset " + dataSet.getName());
@@ -147,8 +149,8 @@ public class DataExportService implements OBSingleton {
 
       final Set<BaseOBObject> toExport = new LinkedHashSet<BaseOBObject>();
       for (final DataSetTable dt : dts) {
-        final List<BaseOBObject> list = DataSetService.getInstance().getExportableObjects(dt, null,
-            parameters);
+        final List<BaseOBObject> list = DataSetService.getInstance()
+            .getExportableObjects(dt, null, parameters);
         toExport.addAll(list);
       }
 
@@ -172,7 +174,8 @@ public class DataExportService implements OBSingleton {
    *          module id in the AD_REF_DATA_LOADED table
    * @return the XML string containing the data of the dataset
    */
-  public String exportDataSetToXML(DataSet dataSet, String moduleId, Map<String, Object> parameters) {
+  public String exportDataSetToXML(DataSet dataSet, String moduleId,
+      Map<String, Object> parameters) {
 
     log.debug("Exporting dataset " + dataSet.getName());
 
@@ -199,8 +202,8 @@ public class DataExportService implements OBSingleton {
       if (dt.isActive()) {
         final Boolean isbo = dt.isBusinessObject();
         exc.setOptionIncludeChildren(isbo != null && isbo.booleanValue());
-        final List<BaseOBObject> list = DataSetService.getInstance().getExportableObjects(dt,
-            moduleId, parameters);
+        final List<BaseOBObject> list = DataSetService.getInstance()
+            .getExportableObjects(dt, moduleId, parameters);
         toExport.addAll(list);
       }
     }

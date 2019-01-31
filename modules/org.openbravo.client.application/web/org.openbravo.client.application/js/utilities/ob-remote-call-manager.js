@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,8 +32,7 @@
   }
 
   // cache object references locally
-  var ISC = isc,
-      rcmgr; // Local reference to RemoveCallManager instance
+  var ISC = isc; // Local reference to RemoveCallManager instance
 
   function RemoteCallManager() {}
 
@@ -92,5 +91,5 @@
   };
 
   // Initialize RemoteCallManager object
-  rcmgr = OB.RemoteCallManager = new RemoteCallManager();
+  OB.RemoteCallManager = new RemoteCallManager();
 }(OB, isc));

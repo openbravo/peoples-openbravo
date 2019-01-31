@@ -51,8 +51,8 @@ public class CloneOrderHookCaller {
   }
 
   private void executeHooks(Order order) throws Exception {
-    for (Iterator<CloneOrderHook> processIterator = cloneOrderHookProcess.iterator(); processIterator
-        .hasNext();) {
+    for (Iterator<CloneOrderHook> processIterator = cloneOrderHookProcess
+        .iterator(); processIterator.hasNext();) {
       CloneOrderHook process = processIterator.next();
       process.exec(order);
     }

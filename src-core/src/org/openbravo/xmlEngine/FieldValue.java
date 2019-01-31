@@ -15,7 +15,8 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.utils.Replace;
 
 class FieldValue implements XmlComponentValue {
@@ -23,7 +24,7 @@ class FieldValue implements XmlComponentValue {
   private String fieldValue;
   private String previousFieldValue;
 
-  static Logger log4jFieldValue = Logger.getLogger(FieldValue.class);
+  static Logger log4jFieldValue = LogManager.getLogger();
 
   public FieldValue(FieldTemplate fieldTemplate, XmlDocument xmlDocument) {
     this.fieldTemplate = fieldTemplate;
@@ -64,17 +65,17 @@ class FieldValue implements XmlComponentValue {
     previousFieldValue = fieldValue;
   }
 
+  @Override
   public String print() {
     BigDecimal total = BigDecimal.ZERO;
-    if (fieldValue == null || fieldValue.equals("") || fieldValue.equalsIgnoreCase("NULL"))
+    if (fieldValue == null || fieldValue.equals("") || fieldValue.equalsIgnoreCase("NULL")) {
       return ""; // if the string is empty then Double.parseDouble cannot
-    // be done
-    else if (fieldTemplate.formatOutput != null) {
+    } else if (fieldTemplate.formatOutput != null) {
       try {
         total = new BigDecimal(fieldValue);
       } catch (Exception e) {
-        log4jFieldValue.error("FieldValue.print() - Could not parse to double the string: "
-            + fieldValue + "\n" + e);
+        log4jFieldValue.error(
+            "FieldValue.print() - Could not parse to double the string: " + fieldValue + "\n" + e);
       }
       return fieldTemplate.formatOutput.format(total);
     } else {
@@ -82,31 +83,33 @@ class FieldValue implements XmlComponentValue {
     }
   }
 
+  @Override
   public String printSimple() {
-    if (fieldValue == null || fieldValue.equals(""))
+    if (fieldValue == null || fieldValue.equals("")) {
       return ""; // if the string is empty then Double.parseDouble cannot
-    // be done
-    else if (fieldTemplate.formatSimple != null) {
+    } else if (fieldTemplate.formatSimple != null) {
       return fieldTemplate.formatSimple.format(new BigDecimal(fieldValue));
     } else {
       return fieldValue;
     }
   }
 
+  @Override
   public String printPrevious() {
-    if (previousFieldValue == null || previousFieldValue.equals(""))
+    if (previousFieldValue == null || previousFieldValue.equals("")) {
       return "";
-    else if (fieldTemplate.formatOutput != null) {
+    } else if (fieldTemplate.formatOutput != null) {
       return fieldTemplate.formatOutput.format(new BigDecimal(previousFieldValue));
     } else {
       return previousFieldValue;
     }
   }
 
+  @Override
   public String printPreviousSimple() {
-    if (previousFieldValue == null || previousFieldValue.equals(""))
+    if (previousFieldValue == null || previousFieldValue.equals("")) {
       return "";
-    else if (fieldTemplate.formatSimple != null) {
+    } else if (fieldTemplate.formatSimple != null) {
       return fieldTemplate.formatSimple.format(new BigDecimal(previousFieldValue));
     } else {
       return previousFieldValue;

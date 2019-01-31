@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2017 Openbravo SLU
+* All portions are Copyright (C) 2008-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -29,6 +29,12 @@
   v_IsRecursive AD_Org.IsActive%TYPE:='N';
   v_isperiodcontrol AD_Org.IsPeriodControlAllowed%TYPE;
   v_calendar_id AD_Org.C_Calendar_ID%TYPE;
+
+  v_PeriodControlAllowed_Org_ID AD_Org.AD_PeriodControlAllowed_Org_ID%TYPE;
+  v_CalendarOwner_Org_ID AD_Org.AD_CalendarOwner_Org_ID%TYPE;
+  v_InheritedCalendar_ID AD_Org.AD_InheritedCalendar_ID%TYPE;
+  v_LegalEntity_Org_ID AD_Org.AD_LegalEntity_Org_ID%TYPE;
+  v_BusinessUnit_Org_ID AD_Org.AD_BusinessUnit_Org_ID%TYPE;
 
   v_num NUMBER; 
   TYPE RECORD IS REF CURSOR;
@@ -149,6 +155,49 @@ BEGIN
         where (oc.ad_client_id = op.ad_client_id or op.ad_org_id = '0')
         and oc.ad_org_id = Cur_Org.AD_Org_ID
         and ad_isorgincluded_treenode(oc.ad_org_id, op.ad_org_id, oc.ad_client_id) > 0;
+
+        -- Get Persist Information for organization
+        BEGIN
+          v_PeriodControlAllowed_Org_ID := ad_org_getperiodcontrolallowtn(Cur_Org.AD_Org_ID);
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+          v_PeriodControlAllowed_Org_ID := NULL;
+        END;
+        BEGIN
+          v_CalendarOwner_Org_ID := ad_org_getcalendarownertn(Cur_Org.AD_Org_ID);
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+          v_CalendarOwner_Org_ID := NULL;
+        END;
+        IF(v_CalendarOwner_Org_ID IS NOT NULL) THEN
+          BEGIN
+            SELECT c_calendar_id
+            INTO v_InheritedCalendar_ID
+            FROM AD_ORG
+            WHERE AD_ORG_ID = v_CalendarOwner_Org_ID;
+          EXCEPTION WHEN NO_DATA_FOUND THEN
+            v_InheritedCalendar_ID := NULL;
+          END;
+        ELSE
+          v_InheritedCalendar_ID := NULL;
+        END IF;
+        BEGIN
+          v_LegalEntity_Org_ID := ad_get_org_le_bu_treenode(Cur_Org.AD_Org_ID, 'LE');
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+          v_LegalEntity_Org_ID := NULL;
+        END;
+        BEGIN
+          v_BusinessUnit_Org_ID := ad_get_org_le_bu_treenode(Cur_Org.AD_Org_ID, 'BU');
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+          v_BusinessUnit_Org_ID := NULL;
+        END;
+
+        -- Set Persist Org Information. Variables usage avoids mutating table in Oracle
+        UPDATE AD_ORG
+        SET AD_PeriodControlAllowed_Org_ID = v_PeriodControlAllowed_Org_ID,
+            AD_CalendarOwner_Org_ID = v_CalendarOwner_Org_ID,
+            AD_InheritedCalendar_ID = v_InheritedCalendar_ID,
+            AD_LegalEntity_Org_ID = v_LegalEntity_Org_ID,
+            AD_BusinessUnit_Org_ID = v_BusinessUnit_Org_ID
+        WHERE AD_ORG_ID=Cur_Org.AD_Org_ID;
       END LOOP;
     ELSE 
       INSERT INTO ad_org_tree
@@ -167,6 +216,49 @@ BEGIN
       where (oc.ad_client_id = op.ad_client_id or op.ad_org_id = '0')
       and oc.ad_org_id = v_Record_ID
       and ad_isorgincluded_treenode(oc.ad_org_id, op.ad_org_id, oc.ad_client_id) > 0;
+
+      -- Get Persist Information for organization
+      BEGIN
+        v_PeriodControlAllowed_Org_ID := ad_org_getperiodcontrolallowtn(v_Record_ID);
+      EXCEPTION WHEN NO_DATA_FOUND THEN
+        v_PeriodControlAllowed_Org_ID := NULL;
+      END;
+      BEGIN
+        v_CalendarOwner_Org_ID := ad_org_getcalendarownertn(v_Record_ID);
+      EXCEPTION WHEN NO_DATA_FOUND THEN
+        v_CalendarOwner_Org_ID := NULL;
+      END;
+      IF(v_CalendarOwner_Org_ID IS NOT NULL) THEN
+        BEGIN
+          SELECT c_calendar_id
+          INTO v_InheritedCalendar_ID
+          FROM AD_ORG
+          WHERE AD_ORG_ID = v_CalendarOwner_Org_ID;
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+          v_InheritedCalendar_ID := NULL;
+        END;
+      ELSE
+        v_InheritedCalendar_ID := NULL;
+      END IF;
+      BEGIN
+        v_LegalEntity_Org_ID := ad_get_org_le_bu_treenode(v_Record_ID, 'LE');
+      EXCEPTION WHEN NO_DATA_FOUND THEN
+        v_LegalEntity_Org_ID := NULL;
+      END;
+      BEGIN
+        v_BusinessUnit_Org_ID := ad_get_org_le_bu_treenode(v_Record_ID, 'BU');
+      EXCEPTION WHEN NO_DATA_FOUND THEN
+        v_BusinessUnit_Org_ID := NULL;
+      END;
+
+      -- Set Persist Org Information. Variables usage avoids mutating table in Oracle
+      UPDATE AD_ORG
+      SET AD_PeriodControlAllowed_Org_ID = v_PeriodControlAllowed_Org_ID,
+          AD_CalendarOwner_Org_ID = v_CalendarOwner_Org_ID,
+          AD_InheritedCalendar_ID = v_InheritedCalendar_ID,
+          AD_LegalEntity_Org_ID = v_LegalEntity_Org_ID,
+          AD_BusinessUnit_Org_ID = v_BusinessUnit_Org_ID
+      WHERE AD_ORG_ID = v_Record_ID;
     END IF;
     
     -- Create PeriodControl for the organization

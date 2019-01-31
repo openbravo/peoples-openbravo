@@ -3,7 +3,8 @@ package org.openbravo.userinterface.skin.s250to300Comp.modulescript;
 
 import java.sql.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 
@@ -12,7 +13,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.data.UtilSql;
 
 class DefaultSkinData implements FieldProvider {
-static Logger log4j = Logger.getLogger(DefaultSkinData.class);
+static Logger log4j = LogManager.getLogger();
   private String InitRecordNumber="0";
   public String t;
 

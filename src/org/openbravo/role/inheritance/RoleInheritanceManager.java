@@ -32,6 +32,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
@@ -44,8 +46,6 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleInheritance;
 import org.openbravo.role.inheritance.access.AccessTypeInjector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class contains all the methods required to manage the Role Inheritance functionality. It is
@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public class RoleInheritanceManager {
 
-  private static final Logger log = LoggerFactory.getLogger(RoleInheritanceManager.class);
+  private static final Logger log = LogManager.getLogger();
   private static final int ACCESS_NOT_CHANGED = 0;
   private static final int ACCESS_UPDATED = 1;
   private static final int ACCESS_CREATED = 2;
@@ -120,8 +120,8 @@ public class RoleInheritanceManager {
     try {
       OBContext.setAdminMode(false);
       // copy the new access
-      final InheritedAccessEnabled newAccess = (InheritedAccessEnabled) DalUtil.copy(
-          (BaseOBObject) parentAccess, false);
+      final InheritedAccessEnabled newAccess = (InheritedAccessEnabled) DalUtil
+          .copy((BaseOBObject) parentAccess, false);
       injector.setParent(newAccess, parentAccess, role);
       newAccess.setInheritedFrom(injector.getRole(parentAccess));
       OBDal.getInstance().save(newAccess);
@@ -366,8 +366,8 @@ public class RoleInheritanceManager {
     long t = System.currentTimeMillis();
     List<RoleInheritance> inheritanceList = getRoleInheritancesList(role);
     List<String> inheritanceRoleIdList = getRoleInheritancesInheritFromIdList(inheritanceList);
-    CalculationResult counters = calculateAccesses(inheritanceList, inheritanceRoleIdList,
-        injector, false);
+    CalculationResult counters = calculateAccesses(inheritanceList, inheritanceRoleIdList, injector,
+        false);
     log.debug("recalculate access for role {} time: {}", role, (System.currentTimeMillis() - t));
     log.debug("accesses created: {}, accesses updated: {}", counters.getCreated(),
         counters.getUpdated());
@@ -465,7 +465,8 @@ public class RoleInheritanceManager {
           // access with the first one available (highest sequence number)
           List<Role> inheritFromList = getRoleInheritancesInheritFromList(childRole, role, false);
           for (Role inheritFrom : inheritFromList) {
-            InheritedAccessEnabled inheritFromAccess = getAccess(inheritFrom, injector, iaeToDelete);
+            InheritedAccessEnabled inheritFromAccess = getAccess(inheritFrom, injector,
+                iaeToDelete);
             if (inheritFromAccess != null) {
               updateRoleAccess(iaeToDelete, inheritFromAccess, injector);
               updated = true;
@@ -521,7 +522,8 @@ public class RoleInheritanceManager {
    */
   private CalculationResult calculateAccesses(List<RoleInheritance> inheritanceList,
       List<String> inheritanceInheritFromIdList, AccessTypeInjector injector, boolean doFlush) {
-    return calculateAccesses(inheritanceList, inheritanceInheritFromIdList, null, injector, doFlush);
+    return calculateAccesses(inheritanceList, inheritanceInheritFromIdList, null, injector,
+        doFlush);
   }
 
   /**
@@ -546,8 +548,8 @@ public class RoleInheritanceManager {
       AccessTypeInjector injector, boolean doFlush) {
     int[] counters = new int[] { 0, 0, 0 };
     for (RoleInheritance roleInheritance : inheritanceList) {
-      for (InheritedAccessEnabled inheritedAccess : injector.getAccessList(roleInheritance
-          .getInheritFrom())) {
+      for (InheritedAccessEnabled inheritedAccess : injector
+          .getAccessList(roleInheritance.getInheritFrom())) {
         if (!injector.isInheritable(inheritedAccess)) {
           continue;
         }
@@ -589,10 +591,11 @@ public class RoleInheritanceManager {
     Role role = roleInheritance.getRole();
     InheritedAccessEnabled access = getAccess(role, injector, inheritedAccess);
     if (access != null) {
-      String currentInheritedFromId = access.getInheritedFrom() != null ? access.getInheritedFrom()
-          .getId() : "";
-      if (!StringUtils.isEmpty(currentInheritedFromId)
-          && isPrecedent(inheritanceInheritFromIdList, currentInheritedFromId, newInheritedFromId)) {
+      String currentInheritedFromId = access.getInheritedFrom() != null
+          ? access.getInheritedFrom().getId()
+          : "";
+      if (!StringUtils.isEmpty(currentInheritedFromId) && isPrecedent(inheritanceInheritFromIdList,
+          currentInheritedFromId, newInheritedFromId)) {
         updateRoleAccess(access, inheritedAccess, injector);
         log.debug("Updated access of class {} for role {}", injector.getClassName(), role);
         return ACCESS_UPDATED;
@@ -616,7 +619,8 @@ public class RoleInheritanceManager {
    *          The second role to check its priority
    * @return true if the first role is precedent to the second role, false otherwise
    */
-  private boolean isPrecedent(List<String> inheritanceInheritFromIdList, String role1, String role2) {
+  private boolean isPrecedent(List<String> inheritanceInheritFromIdList, String role1,
+      String role2) {
     if (inheritanceInheritFromIdList.indexOf(role1) == -1) {
       // Not found, need to override (this can happen on delete or on update)
       return true;
@@ -654,8 +658,8 @@ public class RoleInheritanceManager {
    */
   List<RoleInheritance> getRoleInheritancesList(Role role, Role excludedInheritFrom,
       boolean seqNoAscending) {
-    final OBCriteria<RoleInheritance> obCriteria = OBDal.getInstance().createCriteria(
-        RoleInheritance.class);
+    final OBCriteria<RoleInheritance> obCriteria = OBDal.getInstance()
+        .createCriteria(RoleInheritance.class);
     obCriteria.add(Restrictions.eq(RoleInheritance.PROPERTY_ROLE, role));
     if (excludedInheritFrom != null) {
       obCriteria.add(Restrictions.ne(RoleInheritance.PROPERTY_INHERITFROM, excludedInheritFrom));
@@ -701,8 +705,8 @@ public class RoleInheritanceManager {
   private List<RoleInheritance> getUpdatedRoleInheritancesList(RoleInheritance inheritance,
       boolean deleting) {
     final ArrayList<RoleInheritance> roleInheritancesList = new ArrayList<RoleInheritance>();
-    final OBCriteria<RoleInheritance> obCriteria = OBDal.getInstance().createCriteria(
-        RoleInheritance.class);
+    final OBCriteria<RoleInheritance> obCriteria = OBDal.getInstance()
+        .createCriteria(RoleInheritance.class);
     obCriteria.add(Restrictions.eq(RoleInheritance.PROPERTY_ROLE, inheritance.getRole()));
     obCriteria.add(Restrictions.ne(RoleInheritance.PROPERTY_ID, inheritance.getId()));
     obCriteria.addOrderBy(RoleInheritance.PROPERTY_SEQUENCENUMBER, true);

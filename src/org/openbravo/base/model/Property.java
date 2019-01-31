@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.expression.Evaluator;
 import org.openbravo.base.model.domaintype.AbsoluteDateTimeDomainType;
 import org.openbravo.base.model.domaintype.AbsoluteTimeDomainType;
@@ -51,7 +52,7 @@ import org.openbravo.base.validation.ValidationException;
  */
 // TODO: consider subclasses for different types of properties
 public class Property {
-  private static final Logger log = Logger.getLogger(Property.class);
+  private static final Logger log = LogManager.getLogger();
 
   private boolean oneToOne;
   private boolean oneToMany;
@@ -120,7 +121,6 @@ public class Property {
   private String displayProperty;
 
   private Property trlParentProperty;
-  private Property trlOneToManyProperty;
 
   private Integer seqno;
   private boolean usedSequence;
@@ -295,8 +295,8 @@ public class Property {
   }
 
   public boolean isBoolean() {
-    return isPrimitive()
-        && (getPrimitiveType().getName().compareTo("boolean") == 0 || Boolean.class == getPrimitiveType());
+    return isPrimitive() && (getPrimitiveType().getName().compareTo("boolean") == 0
+        || Boolean.class == getPrimitiveType());
   }
 
   public Entity getEntity() {
@@ -393,11 +393,9 @@ public class Property {
    * @return the java-valid default
    */
   public String getFormattedDefaultValue() {
-    Check
-        .isTrue(
-            isPrimitive() || isCompositeId() || isOneToMany(),
-            "Default value is only supported for composite ids, primitive types, and one-to-many properties: property "
-                + this);
+    Check.isTrue(isPrimitive() || isCompositeId() || isOneToMany(),
+        "Default value is only supported for composite ids, primitive types, and one-to-many properties: property "
+            + this);
     if (isCompositeId()) {
       return "new Id()";
     }
@@ -408,8 +406,7 @@ public class Property {
 
     if (defaultValue == null && isBoolean()) {
       if (getName().equalsIgnoreCase("active")) {
-        log.debug("Property "
-            + this
+        log.debug("Property " + this
             + " is probably the active column but does not have a default value set, supplying default value Y");
         defaultValue = "Y";
       } else {
@@ -504,8 +501,7 @@ public class Property {
   public Object getActualDefaultValue() {
     if (defaultValue == null && isBoolean()) {
       if (getName().equalsIgnoreCase("isactive")) {
-        log.debug("Property "
-            + this
+        log.debug("Property " + this
             + " is probably the active column but does not have a default value set, supplying default value Y");
         setDefaultValue("Y");
       } else {
@@ -1250,8 +1246,8 @@ public class Property {
    *          it is the property in the trl table that holds the translation for this property
    */
   void setTranslatable(Property translationProperty) {
-    log.debug("Setting translatable for " + this.getEntity().getTableName() + "."
-        + this.getColumnName());
+    log.debug(
+        "Setting translatable for " + this.getEntity().getTableName() + "." + this.getColumnName());
 
     if (translationProperty == null) {
       log.warn(this.getEntity().getTableName() + "." + this.getColumnName()
@@ -1291,7 +1287,6 @@ public class Property {
       if (pk.equals(trlParent.getReferencedProperty())) {
         this.trlParentProperty = trlParent;
         this.translationProperty = translationProperty;
-        this.trlOneToManyProperty = trlPropertyListInBase;
         translatable = true;
         return;
       }
@@ -1306,10 +1301,6 @@ public class Property {
 
   public Property getTrlParentProperty() {
     return trlParentProperty;
-  }
-
-  public Property getTrlOneToManyProperty() {
-    return trlOneToManyProperty;
   }
 
   public boolean isStoredInSession() {
@@ -1335,7 +1326,6 @@ public class Property {
   public void setUsedSequence(boolean usedSequence) {
     this.usedSequence = "documentno".equalsIgnoreCase(columnName)
         || (usedSequence && "Value".equals(columnName));
-    ;
   }
 
   public String getSqlLogic() {

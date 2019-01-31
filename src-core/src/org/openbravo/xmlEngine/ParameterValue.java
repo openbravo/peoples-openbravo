@@ -13,11 +13,12 @@ package org.openbravo.xmlEngine;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.utils.Replace;
 
 class ParameterValue implements XmlComponentValue {
-  private static final Logger log4j = Logger.getLogger(ParameterValue.class);
+  private static final Logger log4j = LogManager.getLogger();
   String strValue = null;
   ParameterTemplate parameterTemplate;
   XmlComponentValue xmlComponentValue = null;
@@ -49,6 +50,7 @@ class ParameterValue implements XmlComponentValue {
     this.strValue = replace(strValue);
   }
 
+  @Override
   public String print() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.print();
@@ -72,6 +74,7 @@ class ParameterValue implements XmlComponentValue {
     return parameterTemplate.formatOutput.format(total);
   }
 
+  @Override
   public String printPrevious() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.printPrevious();
@@ -80,6 +83,7 @@ class ParameterValue implements XmlComponentValue {
     }
   }
 
+  @Override
   public String printSimple() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.printSimple();
@@ -88,6 +92,7 @@ class ParameterValue implements XmlComponentValue {
     }
   }
 
+  @Override
   public String printPreviousSimple() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.printPreviousSimple();

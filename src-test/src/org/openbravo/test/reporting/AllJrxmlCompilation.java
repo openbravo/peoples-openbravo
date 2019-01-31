@@ -82,8 +82,9 @@ public class AllJrxmlCompilation extends WeldBaseTest {
     final Collection<Path> allJasperFiles = new ArrayList<>();
 
     final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("regex:.*\\.jrxml");
-    Path basePath = Paths.get(OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("source.path"), dir);
+    Path basePath = Paths.get(
+        OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("source.path"),
+        dir);
     Files.walkFileTree(basePath, new SimpleFileVisitor<Path>() {
       @Override
       public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {

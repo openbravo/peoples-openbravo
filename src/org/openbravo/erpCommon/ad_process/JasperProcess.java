@@ -26,7 +26,8 @@ import java.util.Locale;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
@@ -42,7 +43,7 @@ import org.openbravo.utils.Replace;
 
 public class JasperProcess implements Process {
 
-  static Logger log4j = Logger.getLogger(JasperProcess.class);
+  static Logger log4j = LogManager.getLogger();
 
   private ConnectionProvider connection;
 
@@ -50,6 +51,7 @@ public class JasperProcess implements Process {
     connection = bundle.getConnection();
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public void execute(ProcessBundle bundle) throws Exception {
 
@@ -85,8 +87,9 @@ public class JasperProcess implements Process {
     // FIXME: os is never assigned, but used leading to an NPE
     ServletOutputStream os = null;
     try {
-      if (designParameters == null)
+      if (designParameters == null) {
         designParameters = new HashMap<String, Object>();
+      }
 
       // designParameters.put("BASE_WEB", strReplaceWithFull);
       designParameters.put("BASE_DESIGN", strBaseDesign);
@@ -99,14 +102,16 @@ public class JasperProcess implements Process {
       DecimalFormatSymbols dfs = new DecimalFormatSymbols();
       dfs.setDecimalSeparator(vars.getSessionValue("#AD_ReportDecimalSeparator").charAt(0));
       dfs.setGroupingSeparator(vars.getSessionValue("#AD_ReportGroupingSeparator").charAt(0));
-      DecimalFormat numberFormat = new DecimalFormat(
-          vars.getSessionValue("#AD_ReportNumberFormat"), dfs);
+      DecimalFormat numberFormat = new DecimalFormat(vars.getSessionValue("#AD_ReportNumberFormat"),
+          dfs);
       designParameters.put("NUMBERFORMAT", numberFormat);
 
-      if (exportParameters == null)
+      if (exportParameters == null) {
         exportParameters = new HashMap<Object, Object>();
-      if (strOutputType == null || strOutputType.equals(""))
+      }
+      if (strOutputType == null || strOutputType.equals("")) {
         strOutputType = "html";
+      }
       final ExportType expType = ExportType.getExportType(strOutputType);
       ReportingUtils.exportJR(strReportName, expType, designParameters, os, false, connection,
           new JRFieldProviderDataSource(data, vars.getJavaDateFormat()), exportParameters);

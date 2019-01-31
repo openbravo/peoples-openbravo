@@ -56,8 +56,7 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
   private static final String rtv_priceIncludeTax = "(select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine.id = iol.id)";
   private static final String rfc_priceIncludeTax = "(select e.priceList.priceIncludesTax from Order as e where e.id = :salesOrderId)";
 
-  private final static String rm_aum = ""
-      + "(select u.name from UOM as u where u.id in "
+  private final static String rm_aum = "" + "(select u.name from UOM as u where u.id in "
       + "(case when ((select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null) "
       + "then " // obSelected = false
       + "(case when (coalesce (iol.operativeUOM.id, '0') <> '0') then iol.operativeUOM.id else M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id) end) "
@@ -79,20 +78,16 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
   private final static String rm_aum_conversion_rate = ""
       + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
       + "then " // obSelected = false
-      + "(case when coalesce (iol.operativeUOM.id, '0') = '0' "
-      + "then "
+      + "(case when coalesce (iol.operativeUOM.id, '0') = '0' " + "then "
       + "TO_NUMBER(M_GET_CONVERTED_QTY(iol.product.id, 1.0, M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id))) "
-      + "else "
-      + "TO_NUMBER(M_GET_CONVERTED_QTY(iol.product.id, 1.0, iol.operativeUOM.id)) "
-      + "end) "
-      + "else " // obSelected = true
+      + "else " + "TO_NUMBER(M_GET_CONVERTED_QTY(iol.product.id, 1.0, iol.operativeUOM.id)) "
+      + "end) " + "else " // obSelected = true
       + "TO_NUMBER(M_GET_CONVERTED_QTY(iol.product.id, 1.0, coalesce ((select ol.operativeUOM.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),''))) "
       + "end)";
 
   private static final String returnedLeftClauseAUM = " coalesce((select ol.operativeQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0)";
 
-  private static final String rm_returnedUOM = ""
-      + "(select u from UOM as u where u.id in "
+  private static final String rm_returnedUOM = "" + "(select u from UOM as u where u.id in "
       + "(case when (coalesce (iol.operativeUOM.id, '0') <> '0') then iol.operativeUOM.id else M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id) end)) ";
 
   @Override
@@ -118,8 +113,8 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
       transformedHqlQuery = transformedHqlQuery.replaceAll("@unitPriceProperty@",
           grossUnitPriceProperty);
     } else {
-      transformedHqlQuery = transformedHqlQuery
-          .replaceAll("@unitPriceProperty@", unitPriceProperty);
+      transformedHqlQuery = transformedHqlQuery.replaceAll("@unitPriceProperty@",
+          unitPriceProperty);
     }
 
     String buttonOwnerViewTabId = requestParameters.get("buttonOwnerViewTabId");

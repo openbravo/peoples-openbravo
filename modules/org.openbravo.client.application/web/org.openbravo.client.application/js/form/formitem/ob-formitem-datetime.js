@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,7 +44,9 @@ isc.OBDateTimeItem.addClassProperties({
         // If we are inserting in a position different from  the last one, we don't autocomplete
         return value;
       }
-    } catch (ignored) {}
+    } catch (ignored) {
+      // Ignoring exceptions
+    }
     var strDate = value;
     var b = fmt.match(/%./g);
     var i = 0,

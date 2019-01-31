@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,12 +20,13 @@
 package org.openbravo.test.dal;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -40,7 +41,7 @@ import org.openbravo.test.base.OBBaseTest;
 
 public class DalComplexQueryTestOrderLine extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(DalComplexQueryTestOrderLine.class);
+  private static final Logger log = LogManager.getLogger();
 
   // SELECT C_ORDERLINE.C_ORDERLINE_ID AS ID, C_ORDER.C_ORDER_ID AS C_ORDER_ID, C_ORDER.DOCUMENTNO
   // AS DOCUMENTNO, C_ORDER.DATEORDERED AS DATEORDERED,
@@ -98,7 +99,7 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
 
     // AND C_BPARTNER.C_BPARTNER_ID = ?
     // note the value of the parameter is set below
-    whereClause.append(" and ol.salesOrder.businessPartner.id=? ");
+    whereClause.append(" and ol.salesOrder.businessPartner.id=:bpId ");
 
     // AND C_ORDER.DOCSTATUS = 'CO'
     whereClause.append(" and ol.salesOrder.documentStatus='CO' ");
@@ -108,13 +109,13 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
 
     // final Session session = OBDal.getInstance().getSession();
     // session.createQuery(hql.toString());
-    final OBQuery<OrderLine> qry = OBDal.getInstance().createQuery(OrderLine.class,
-        whereClause.toString());
+    final OBQuery<OrderLine> qry = OBDal.getInstance()
+        .createQuery(OrderLine.class, whereClause.toString());
 
     // set the business partner parameter
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add("1000017");
-    qry.setParameters(parameters);
+    final Map<String, Object> parameters = new HashMap<>(1);
+    parameters.put("bpId", "1000017");
+    qry.setNamedParameters(parameters);
 
     for (OrderLine ol : qry.list()) {
 
@@ -147,11 +148,11 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
       // C_ORDERLINE.QTYORDERED-SUM(COALESCE(M_MATCHPO.QTY,0)) AS QTYORDERED, '-1' AS ISACTIVE
       // todo this we have to repeat the sum query, we use direct hql for this
       final String hql = "select sum(quantity) from ProcurementPOInvoiceMatch "
-          + "where goodsShipmentLine is not null and salesOrderLine=?";
+          + "where goodsShipmentLine is not null and salesOrderLine=:orderLine";
       final Session session = OBDal.getInstance().getSession();
-      final Query query = session.createQuery(hql);
-      query.setParameter(0, ol);
-      final BigDecimal sum = (BigDecimal) query.uniqueResult();
+      final Query<BigDecimal> query = session.createQuery(hql, BigDecimal.class);
+      query.setParameter("orderLine", ol);
+      final BigDecimal sum = query.uniqueResult();
       log.debug(sum);
     }
   }
@@ -165,10 +166,10 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
     // SELECT ID, C_ORDER_ID, DOCUMENTNO, DATEORDERED, C_BPARTNER_ID, PARTNER_NAME, PRODUCT_NAME,
     // DESCRIPTION, TOTAL_QTY,
     // QTYORDERED, ISACTIVE, ? AS DATE_FORMAT
-    selectClause
-        .append("select ol.id, ol.salesOrder.id, ol.salesOrder.documentNo, ol.salesOrder.orderDate, ");
-    selectClause
-        .append(" ol.salesOrder.businessPartner.id, ol.salesOrder.businessPartner.name, ol.product.name, ");
+    selectClause.append(
+        "select ol.id, ol.salesOrder.id, ol.salesOrder.documentNo, ol.salesOrder.orderDate, ");
+    selectClause.append(
+        " ol.salesOrder.businessPartner.id, ol.salesOrder.businessPartner.name, ol.product.name, ");
     selectClause.append(" ol.orderedQuantity, sum(matchPO.quantity) as totalQty ");
 
     final StringBuilder fromClause = new StringBuilder();
@@ -190,14 +191,14 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
 
     // AND C_BPARTNER.C_BPARTNER_ID = ?
     // note the value of the parameter is set below
-    whereClause.append(" and ol.salesOrder.businessPartner.id=? ");
+    whereClause.append(" and ol.salesOrder.businessPartner.id=:bpId ");
 
     // AND C_ORDER.DOCSTATUS = 'CO'
     whereClause.append(" and ol.salesOrder.documentStatus='CO' ");
 
     // Add the readable organization and client clauses
-    whereClause.append(" and ol.organization "
-        + OBDal.getInstance().getReadableOrganizationsInClause());
+    whereClause
+        .append(" and ol.organization " + OBDal.getInstance().getReadableOrganizationsInClause());
     whereClause.append(" and ol.client " + OBDal.getInstance().getReadableClientsInClause());
 
     // append active
@@ -208,10 +209,10 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
     orderByClause.append(" order by ol.salesOrder.businessPartner.id, ol.id");
 
     final StringBuilder groupClause = new StringBuilder();
-    groupClause
-        .append(" group by ol.id, ol.salesOrder.id, ol.salesOrder.documentNo, ol.salesOrder.orderDate, ");
-    groupClause
-        .append(" ol.salesOrder.businessPartner.id, ol.salesOrder.businessPartner.name, ol.product.name, ");
+    groupClause.append(
+        " group by ol.id, ol.salesOrder.id, ol.salesOrder.documentNo, ol.salesOrder.orderDate, ");
+    groupClause.append(
+        " ol.salesOrder.businessPartner.id, ol.salesOrder.businessPartner.name, ol.product.name, ");
     groupClause.append(" ol.orderedQuantity");
 
     final String hql = selectClause.toString() + fromClause.toString() + whereClause.toString()
@@ -221,11 +222,10 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
 
     // final Session session = OBDal.getInstance().getSession();
     // session.createQuery(hql.toString());
-    final Query query = OBDal.getInstance().getSession().createQuery(hql);
-    query.setParameter(0, "1000017");
+    final Query<Object[]> query = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
+    query.setParameter("bpId", "1000017");
 
-    for (Object o : query.list()) {
-      final Object[] os = (Object[]) o;
+    for (Object[] os : query.list()) {
       for (Object result : os) {
         log.debug(result);
       }

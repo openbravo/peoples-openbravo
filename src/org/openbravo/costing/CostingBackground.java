@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,8 +24,9 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -54,7 +55,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  * 
  */
 public class CostingBackground extends DalBaseProcess implements KillableProcess {
-  private static final Logger log4j = Logger.getLogger(CostingBackground.class);
+  private static final Logger log4j = LogManager.getLogger();
   public static final String AD_PROCESS_ID = "3F2B4AAC707B4CE7B98D2005CF7310B5";
   private ProcessLogger logger;
   public static final String TRANSACTION_COST_DATEACCT_INITIALIZED = "TransactionCostDateacctInitialized";
@@ -71,8 +72,8 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     try {
       OBContext.setAdminMode(false);
 
-      CostingUtils.checkValidOrganization(AD_PROCESS_ID, OBContext.getOBContext()
-          .getCurrentOrganization());
+      CostingUtils.checkValidOrganization(AD_PROCESS_ID,
+          OBContext.getOBContext().getCurrentOrganization());
 
       result.setType("Success");
       result.setTitle(OBMessageUtils.messageBD("Success"));
@@ -91,8 +92,8 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
       where.append(" )");
       where.append("    and ad_isorgincluded(o.id, '" + bundle.getContext().getOrganization()
           + "', '" + bundle.getContext().getClient() + "') <> -1 ");
-      OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
-          where.toString());
+      OBQuery<Organization> orgQry = OBDal.getInstance()
+          .createQuery(Organization.class, where.toString());
       List<Organization> orgs = orgQry.list();
       if (orgs.size() == 0) {
         log4j.debug("No organizations with Costing Rule defined");
@@ -130,8 +131,8 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
           log4j.debug("Starting transaction process: " + trxId);
           counter++;
           counterBatch++;
-          MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
-              trxId);
+          MaterialTransaction transaction = OBDal.getInstance()
+              .get(MaterialTransaction.class, trxId);
           CostingServer transactionCost = new CostingServer(transaction);
           transactionCost.process();
           OBDal.getInstance().getSession().clear();
@@ -152,9 +153,9 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
           elapsedTime += t2 - t1;
           long avgTimePerBatch = elapsedTime / batch / 1000;
           log4j.debug("Pending transactions: " + pendingTrxs);
-          log4j.debug("Average time per batch: " + avgTimePerBatch
-              + " seconds. Estimated time to finish: " + (avgTimePerBatch * pendingBatches)
-              + " seconds.");
+          log4j.debug(
+              "Average time per batch: " + avgTimePerBatch + " seconds. Estimated time to finish: "
+                  + (avgTimePerBatch * pendingBatches) + " seconds.");
         }
       }
 
@@ -162,8 +163,9 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
       bundle.setResult(result);
     } catch (OBException e) {
       OBDal.getInstance().rollbackAndClose();
-      String message = OBMessageUtils.parseTranslation(bundle.getConnection(), bundle.getContext()
-          .toVars(), OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
+      String message = OBMessageUtils.parseTranslation(bundle.getConnection(),
+          bundle.getContext().toVars(), OBContext.getOBContext().getLanguage().getLanguage(),
+          e.getMessage());
       result.setMessage(message);
       result.setType("Error");
       log4j.error(message, e);
@@ -194,12 +196,14 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     hqlTransactions.append(" update " + MaterialTransaction.ENTITY_NAME + " as trx set trx."
         + MaterialTransaction.PROPERTY_ISPROCESSED + " = false ");
     hqlTransactions.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = true");
-    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED
-        + " = false");
+    hqlTransactions
+        .append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
     hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
-    hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
-        + ".id in (:orgs)");
-    Query updateTransactions = OBDal.getInstance().getSession()
+    hqlTransactions
+        .append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    @SuppressWarnings("rawtypes")
+    Query updateTransactions = OBDal.getInstance()
+        .getSession()
         .createQuery(hqlTransactions.toString());
     updateTransactions.setParameterList("orgs", orgsWithRule);
     updateTransactions.executeUpdate();
@@ -207,7 +211,6 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     OBDal.getInstance().flush();
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getTransactionsBatch(List<String> orgsWithRule) {
     StringBuffer where = new StringBuffer();
     where.append(" select trx." + MaterialTransaction.PROPERTY_ID + " as id ");
@@ -227,7 +230,9 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     where.append(" , trxtype." + CostAdjustmentUtils.propADListPriority);
     where.append(" , trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " desc");
     where.append(" , trx." + MaterialTransaction.PROPERTY_ID);
-    Query trxQry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<String> trxQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(where.toString(), String.class);
 
     trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
     trxQry.setParameter("now", new Date());
@@ -251,13 +256,13 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
         + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
     where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    Query trxQry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<Long> trxQry = OBDal.getInstance().getSession().createQuery(where.toString(), Long.class);
 
     trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
     trxQry.setParameter("now", new Date());
     trxQry.setParameterList("orgs", orgsWithRule);
     trxQry.setMaxResults(1);
-    return ((Long) trxQry.uniqueResult()).intValue();
+    return (trxQry.uniqueResult()).intValue();
   }
 
   private void initializeMtransCostDateAcct() throws Exception {
@@ -265,9 +270,10 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     Client client = OBDal.getInstance().get(Client.class, "0");
     Organization organization = OBDal.getInstance().get(Organization.class, "0");
     try {
-      transactionCostDateacctInitialized = Preferences.getPreferenceValue(
-          CostingBackground.TRANSACTION_COST_DATEACCT_INITIALIZED, false, client, organization,
-          null, null, null).equals(Preferences.YES);
+      transactionCostDateacctInitialized = Preferences
+          .getPreferenceValue(CostingBackground.TRANSACTION_COST_DATEACCT_INITIALIZED, false,
+              client, organization, null, null, null)
+          .equals(Preferences.YES);
     } catch (PropertyException e1) {
       transactionCostDateacctInitialized = false;
     }
@@ -276,14 +282,14 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
 
       try {
         ConnectionProvider cp = new DalConnectionProvider();
-        InitializeCostingMTransCostDateacctData.initializeCostingMTransCostDateacct(
-            cp.getConnection(), cp);
-        InitializeCostingMTransCostDateacctData.initializeCostingMTransCostDateacct2(
-            cp.getConnection(), cp);
+        InitializeCostingMTransCostDateacctData
+            .initializeCostingMTransCostDateacct(cp.getConnection(), cp);
+        InitializeCostingMTransCostDateacctData
+            .initializeCostingMTransCostDateacct2(cp.getConnection(), cp);
 
       } catch (ServletException e) {
-        log4j
-            .error("SQL error in Costing Backgroung Initializing Transaction Cost Date Acct: Exception:"
+        log4j.error(
+            "SQL error in Costing Backgroung Initializing Transaction Cost Date Acct: Exception:"
                 + e);
         throw new OBException("@CODE=" + e.getCause() + "@" + e.getMessage());
       } catch (NoConnectionAvailableException e) {
@@ -296,8 +302,8 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
       }
 
       // Create the preference
-      Preference transactionCostDateacctInitializedPreference = OBProvider.getInstance().get(
-          Preference.class);
+      Preference transactionCostDateacctInitializedPreference = OBProvider.getInstance()
+          .get(Preference.class);
       transactionCostDateacctInitializedPreference.setClient(client);
       transactionCostDateacctInitializedPreference.setOrganization(organization);
       transactionCostDateacctInitializedPreference

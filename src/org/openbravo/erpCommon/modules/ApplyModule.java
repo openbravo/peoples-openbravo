@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,9 +26,12 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.CPStandAlone;
@@ -53,22 +56,18 @@ import org.openbravo.service.db.ImportResult;
  */
 public class ApplyModule {
   private static ConnectionProvider pool;
-  static Logger log4j = Logger.getLogger(ApplyModule.class);
+  static Logger log4j = LogManager.getLogger();
   private String obDir;
   private boolean forceRefData = false;
 
   public ApplyModule(ConnectionProvider cp, String dir) {
     pool = cp;
     obDir = dir;
-    PropertyConfigurator.configure(obDir + "/src/log4j.lcf");
-    log4j = Logger.getLogger(ApplyModule.class);
   }
 
   public ApplyModule(ConnectionProvider cp, String dir, boolean forceRefData) {
     pool = cp;
     obDir = dir;
-    PropertyConfigurator.configure(obDir + "/src/log4j.lcf");
-    log4j = Logger.getLogger(ApplyModule.class);
     this.forceRefData = forceRefData;
   }
 
@@ -85,9 +84,8 @@ public class ApplyModule {
    * Uninstalled modules Deletes them
    */
   public void execute() {
-    PropertyConfigurator.configure(obDir + "/src/log4j.lcf");
-    if (log4j.getLevel() == null || log4j.getLevel().isGreaterOrEqual(Level.INFO)) {
-      log4j.setLevel(Level.INFO);
+    if (log4j.getLevel() == null || log4j.getLevel().isMoreSpecificThan(Level.DEBUG)) {
+      setLoggerLevel(Level.INFO);
     }
     try {
       // ************ Reference data for system client modules ************
@@ -138,12 +136,14 @@ public class ApplyModule {
           }
 
           String msg = result.getWarningMessages();
-          if (msg != null && msg.length() > 0)
+          if (msg != null && msg.length() > 0) {
             log4j.warn(msg);
+          }
 
           msg = result.getLogMessages();
-          if (msg != null && msg.length() > 0)
+          if (msg != null && msg.length() > 0) {
             log4j.debug(msg);
+          }
         }
         OBDal.getInstance().commitAndClose();
       }
@@ -176,10 +176,11 @@ public class ApplyModule {
           ApplyModuleData.process179(pool, pinstance);
 
           final OBError myMessage = getProcessInstanceMessageSimple(pool, pinstance);
-          if (myMessage.getType().equals("Error"))
+          if (myMessage.getType().equals("Error")) {
             log4j.error(myMessage.getMessage());
-          else
+          } else {
             log4j.info(myMessage.getMessage());
+          }
         } catch (final ServletException ex) {
           log4j.error("Error running verify language process", ex);
         }
@@ -199,6 +200,16 @@ public class ApplyModule {
       e.printStackTrace();
       throw new OBException(e);
     }
+  }
+
+  private void setLoggerLevel(Level level) {
+    final LoggerContext context = LoggerContext.getContext(false);
+    final Configuration config = context.getConfiguration();
+
+    LoggerConfig loggerConfig = config.getLoggerConfig(log4j.getName());
+    loggerConfig.setLevel(level);
+
+    context.updateLoggers();
   }
 
   /**
@@ -242,18 +253,20 @@ public class ApplyModule {
    */
   private String dataSet2ImportFilename(ApplyModuleData ds) throws FileNotFoundException {
     String strPath;
-    if (ds.adModuleId.equals("0"))
+    if (ds.adModuleId.equals("0")) {
       strPath = obDir + "/referencedata/standard";
-    else
+    } else {
       strPath = obDir + "/modules/" + ds.javapackage + "/referencedata/standard";
+    }
 
     strPath = strPath + "/" + BasicUtility.wikifiedName(ds.dsName) + ".xml";
     return strPath;
   }
 
   public static void main(String[] args) {
-    final ApplyModule am = new ApplyModule(new CPStandAlone(
-        "/ws/modularity/openbravo/config/Openbravo.properties"), "/ws/modularity/openbravo");
+    final ApplyModule am = new ApplyModule(
+        new CPStandAlone("/ws/modularity/openbravo/config/Openbravo.properties"),
+        "/ws/modularity/openbravo");
     am.execute();
   }
 }

@@ -13,22 +13,25 @@ package org.openbravo.xmlEngine;
 
 import java.text.DecimalFormat;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionOrderTemplate extends FunctionTemplate {
 
-  static Logger log4jFunctionOrderTemplate = Logger.getLogger(FunctionOrderTemplate.class);
+  static Logger log4jFunctionOrderTemplate = LogManager.getLogger();
 
   public FunctionOrderTemplate(String fieldName, FieldTemplate field, DecimalFormat format,
       DataTemplate dataTemplate) {
     super(fieldName, field, format, format, dataTemplate);
   }
 
+  @Override
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      if (log4jFunctionOrderTemplate.isDebugEnabled())
+      if (log4jFunctionOrderTemplate.isDebugEnabled()) {
         log4jFunctionOrderTemplate.debug("New FunctionOrderValue: " + fieldName);
+      }
       functionValue = new FunctionOrderValue(this, xmlDocument);
     }
     return functionValue;

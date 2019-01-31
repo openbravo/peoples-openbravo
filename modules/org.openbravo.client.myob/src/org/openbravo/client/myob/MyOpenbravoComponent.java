@@ -27,11 +27,12 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
 import org.openbravo.dal.core.DalUtil;
@@ -55,7 +56,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   static final String COMPONENT_ID = "MyOpenbravo";
   private static final String TEMPLATEID = "CA8047B522B44F61831A8CAA3AE2A7CD";
 
-  private Logger log = Logger.getLogger(MyOpenbravoComponent.class);
+  private Logger log = LogManager.getLogger();
 
   @Inject
   private MyOBUtils myOBUtils;
@@ -75,6 +76,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
    * 
    * @see org.openbravo.client.kernel.BaseComponent#getId()
    */
+  @Override
   public String getId() {
     return COMPONENT_ID;
   }
@@ -135,7 +137,6 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     }
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getAccessibleWidgetClassIds(String roleId, String additionalWhereClause) {
     final StringBuilder hql = new StringBuilder();
     hql.append("SELECT widgetClassAccess.widgetClass.id ");
@@ -145,11 +146,13 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     if (!StringUtils.isEmpty(additionalWhereClause)) {
       hql.append(additionalWhereClause);
     }
-    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<String> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql.toString(), String.class);
     if (StringUtils.isEmpty(roleId)) {
-      query.setString("roleId", OBContext.getOBContext().getRole().getId());
+      query.setParameter("roleId", OBContext.getOBContext().getRole().getId());
     } else {
-      query.setString("roleId", roleId);
+      query.setParameter("roleId", roleId);
     }
     List<String> widgetClassIds = query.list();
     List<String> anonymousWidgetClasses;
@@ -205,8 +208,8 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
       final JSONObject valueMap = new JSONObject();
       final JSONObject jsonLevels = new JSONObject();
 
-      final Role currentRole = OBDal.getInstance().get(Role.class,
-          OBContext.getOBContext().getRole().getId());
+      final Role currentRole = OBDal.getInstance()
+          .get(Role.class, OBContext.getOBContext().getRole().getId());
 
       if (currentRole.getId().equals("0")) {
         Map<String, String> systemLevel = new HashMap<String, String>();
@@ -234,13 +237,13 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
       valueMap.put("level", jsonLevels);
 
       final Map<String, String> client = new HashMap<String, String>();
-      client.put(OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-          .getCurrentClient().getName());
+      client.put(OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentClient().getName());
 
       final Map<String, String> org = new HashMap<String, String>();
       for (RoleOrganization currentRoleOrg : adminOrgs) {
-        org.put(currentRoleOrg.getOrganization().getId(), currentRoleOrg.getOrganization()
-            .getName());
+        org.put(currentRoleOrg.getOrganization().getId(),
+            currentRoleOrg.getOrganization().getName());
       }
 
       final Map<String, String> role = new HashMap<String, String>();
@@ -269,8 +272,9 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     final List<String> accessibleWidgetClasses = getAccessibleWidgetClassIds(role.getId(), null);
     final List<WidgetInstance> userWidgets = getWidgetInstances(client, role, user,
         accessibleWidgetClasses);
-    final List<WidgetInstance> defaultWidgets = getRoleDefaultWidgets(OBContext.getOBContext()
-        .getRole(), client.getId(), OBContext.getOBContext().getWritableOrganizations());
+    final List<WidgetInstance> defaultWidgets = getRoleDefaultWidgets(
+        OBContext.getOBContext().getRole(), client.getId(),
+        OBContext.getOBContext().getWritableOrganizations());
 
     final List<WidgetInstance> contextWidgets = new ArrayList<WidgetInstance>();
     final List<WidgetInstance> copiedWidgets = new ArrayList<WidgetInstance>();

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.test.base.OBBaseTest;
 
 /**
@@ -65,19 +66,19 @@ public class DalPerformanceProxyTest extends OBBaseTest {
         bp.setName(name.toString());
         bp.setSearchKey(key.toString());
 
-        final Category category = (Category) OBDal.getInstance().getProxy(Category.ENTITY_NAME,
-            TEST_BP_CATEGORY_ID);
+        final Category category = (Category) OBDal.getInstance()
+            .getProxy(Category.ENTITY_NAME, TEST_BP_CATEGORY_ID);
         bp.setBusinessPartnerCategory(category);
 
         // should not be initialized
         // only check the first time as after the first loop
         // the category is loaded because of the refresh below.
         if (i == 0) {
-          Assert.assertTrue(((HibernateProxy) category).getHibernateLazyInitializer()
-              .isUninitialized());
+          Assert.assertTrue(
+              ((HibernateProxy) category).getHibernateLazyInitializer().isUninitialized());
         } else {
-          Assert.assertFalse(((HibernateProxy) category).getHibernateLazyInitializer()
-              .isUninitialized());
+          Assert.assertFalse(
+              ((HibernateProxy) category).getHibernateLazyInitializer().isUninitialized());
         }
 
         OBDal.getInstance().save(bp);
@@ -90,8 +91,8 @@ public class DalPerformanceProxyTest extends OBBaseTest {
           Assert.assertTrue(bp.getId() != null);
 
           // check that if really loading that still the proxy object is returned
-          Assert.assertTrue(category == OBDal.getInstance().get(Category.ENTITY_NAME,
-              TEST_BP_CATEGORY_ID));
+          Assert.assertTrue(
+              category == OBDal.getInstance().get(Category.ENTITY_NAME, TEST_BP_CATEGORY_ID));
         }
       }
       OBDal.getInstance().commitAndClose();
@@ -105,8 +106,10 @@ public class DalPerformanceProxyTest extends OBBaseTest {
     try {
       setTestAdminContext();
 
-      final StatelessSession session = SessionFactoryController.getInstance().getSessionFactory()
-          .openStatelessSession();
+      DalConnectionProvider dcp = new DalConnectionProvider(false);
+      final StatelessSession session = SessionFactoryController.getInstance()
+          .getSessionFactory()
+          .openStatelessSession(dcp.getConnection());
       session.beginTransaction();
       for (int i = 0; i < CNT; i++) {
         BusinessPartner bp = OBProvider.getInstance().get(BusinessPartner.class);

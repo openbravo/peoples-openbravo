@@ -47,13 +47,14 @@ public class SL_Currency_StdPrecision extends SimpleCallout {
       final int stdPrecision = Integer.parseInt(paramStandardPrecision);
       if (stdPrecision < 0) {
         info.addResult("inpstdprecision", DEFAULT_CURRENCY_STANDARD_PRECISION);
-        info.showError(Utility.messageBD(this, "CurrencyStdPrecisionNegative",
-            info.vars.getLanguage()));
+        info.showError(
+            Utility.messageBD(this, "CurrencyStdPrecisionNegative", info.vars.getLanguage()));
       } else {
-        int isoCurrencyPrecision = ISOCurrencyPrecision.getCurrencyPrecisionInISO4217Spec(paramISOCode);
+        int isoCurrencyPrecision = ISOCurrencyPrecision
+            .getCurrencyPrecisionInISO4217Spec(paramISOCode);
         if (stdPrecision > isoCurrencyPrecision) {
-          info.showWarning(String.format(
-              Utility.messageBD(this, "CurrencyStdPrecisionHigherThanISOSpec",
+          info.showWarning(
+              String.format(Utility.messageBD(this, "CurrencyStdPrecisionHigherThanISOSpec",
                   info.vars.getLanguage()), stdPrecision, isoCurrencyPrecision, paramISOCode));
         }
       }

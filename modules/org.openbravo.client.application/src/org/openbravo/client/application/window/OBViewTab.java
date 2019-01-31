@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,10 +26,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -39,6 +42,8 @@ import org.openbravo.base.model.Property;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.DynamicExpressionParser;
+import org.openbravo.client.application.GCSystem;
+import org.openbravo.client.application.GCTab;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
@@ -60,7 +65,6 @@ import org.openbravo.model.ad.domain.ModelImplementationMapping;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.ui.TabTrl;
 import org.openbravo.service.datasource.DataSourceComponent;
 import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -75,19 +79,20 @@ import org.openbravo.utils.FormatUtilities;
  */
 public class OBViewTab extends BaseTemplateComponent {
 
-  private static final Logger log = Logger.getLogger(OBViewTab.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String DEFAULT_TEMPLATE_ID = "B5124C0A450D4D3A867AEAC7DF64D6F0";
-  protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
+  private static final String PICK_AND_EXECUTE = "OBUIAPP_PickAndExecute";
+  protected static final Map<String, String> TEMPLATE_MAP = new HashMap<>();
 
   static {
     // Map: WindowType - Template
-    TEMPLATE_MAP.put("OBUIAPP_PickAndExecute", "FF808181330BD14F01330BD34EA00008");
+    TEMPLATE_MAP.put(PICK_AND_EXECUTE, "FF808181330BD14F01330BD34EA00008");
   }
 
   private Entity entity;
   private Tab tab;
   private String tabTitle;
-  private List<OBViewTab> childTabs = new ArrayList<OBViewTab>();
+  private List<OBViewTab> childTabs = new ArrayList<>();
   private OBViewTab parentTabComponent;
   private String parentProperty = null;
   private List<ButtonField> buttonFields = null;
@@ -98,7 +103,7 @@ public class OBViewTab extends BaseTemplateComponent {
   private boolean isRootTab;
   private String uniqueString = "" + System.currentTimeMillis();
 
-  private Map<String, String> preferenceAttributesMap = new HashMap<String, String>();
+  private Map<String, String> preferenceAttributesMap = new HashMap<>();
 
   @Inject
   private OBViewFieldHandler fieldHandler;
@@ -106,12 +111,14 @@ public class OBViewTab extends BaseTemplateComponent {
   @Inject
   @ComponentProvider.Qualifier(DataSourceConstants.DS_COMPONENT_TYPE)
   private ComponentProvider dsComponentProvider;
+  private Map<String, Optional<GCTab>> tabsGridConfig;
+  private Optional<GCSystem> systemGridConfig;
 
   public String getDataSourceJavaScript() {
     final String dsId = getDataSourceId();
-    final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
+    final Map<String, Object> dsParameters = new HashMap<>(getParameters());
     dsParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
-    if ("OBUIAPP_PickAndExecute".equals(tab.getWindow().getWindowType())) {
+    if (PICK_AND_EXECUTE.equals(tab.getWindow().getWindowType())) {
       dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBPickAndExecuteDataSource");
     } else {
       dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBViewDataSource");
@@ -138,20 +145,21 @@ public class OBViewTab extends BaseTemplateComponent {
     }
     DataSourceComponent component = (DataSourceComponent) dsComponentProvider.getComponent(dsId,
         dsParameters);
-    if ("OBUIAPP_PickAndExecute".equals(tab.getWindow().getWindowType())) {
+    if (PICK_AND_EXECUTE.equals(tab.getWindow().getWindowType())) {
       component.setIncludeCreationCode(false);
     }
     return component.generate();
   }
 
   public String getNotesDataSourceJavaScript() {
-    final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
+    final Map<String, Object> dsParameters = new HashMap<>(getParameters());
     dsParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
-    final Component component = dsComponentProvider.getComponent(
-        "090A37D22E61FE94012E621729090048", dsParameters);
+    final Component component = dsComponentProvider.getComponent("090A37D22E61FE94012E621729090048",
+        dsParameters);
     return component.generate();
   }
 
+  @Override
   protected Template getComponentTemplate() {
     final String windowType = tab.getWindow().getWindowType();
     if (TEMPLATE_MAP.containsKey(windowType)) {
@@ -165,7 +173,7 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public List<OtherField> getOtherFields() {
-    final List<OtherField> otherFields = new ArrayList<OBViewTab.OtherField>();
+    final List<OtherField> otherFields = new ArrayList<>();
     for (Field fld : fieldHandler.getIgnoredFields()) {
       if (fld.getColumn() == null) {
         continue;
@@ -190,19 +198,19 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public boolean getDefaultEditMode() {
-    return tab.isDefaultEditMode() == null ? false : tab.isDefaultEditMode();
+    return tab.isDefaultEditMode() != null && tab.isDefaultEditMode();
   }
 
   public String getMapping250() {
-    return Utility.getTabURL(tab.getId(), "none", false);
+    return Utility.getTabURL(tab, "none", false);
   }
 
   public List<ButtonField> getButtonFields() {
     if (buttonFields != null) {
       return buttonFields;
     }
-    buttonFields = new ArrayList<ButtonField>();
-    final List<Field> adFields = new ArrayList<Field>(tab.getADFieldList());
+    buttonFields = new ArrayList<>();
+    final List<Field> adFields = new ArrayList<>(tab.getADFieldList());
     Collections.sort(adFields, new FormFieldComparator());
     for (Field fld : adFields) {
       if (fld.isActive() && fld.isDisplayed()) {
@@ -219,12 +227,19 @@ public class OBViewTab extends BaseTemplateComponent {
     return buttonFields;
   }
 
+  public void setGCSettings(Optional<GCSystem> systemGridConfig,
+      Map<String, Optional<GCTab>> tabsGridConfig) {
+    fieldHandler.setGCSettings(systemGridConfig, tabsGridConfig);
+    this.systemGridConfig = systemGridConfig;
+    this.tabsGridConfig = tabsGridConfig;
+  }
+
   public List<ButtonField> getAllButtonFields() {
     if (allButtonFields != null) {
       return allButtonFields;
     }
-    allButtonFields = new ArrayList<ButtonField>();
-    final List<Field> adFields = new ArrayList<Field>(tab.getADFieldList());
+    allButtonFields = new ArrayList<>();
+    final List<Field> adFields = new ArrayList<>(tab.getADFieldList());
     Collections.sort(adFields, new FormFieldComparator());
     for (Field fld : adFields) {
       if (fld.isActive()) {
@@ -243,7 +258,7 @@ public class OBViewTab extends BaseTemplateComponent {
       return iconButtons;
     }
 
-    iconButtons = new ArrayList<IconButton>();
+    iconButtons = new ArrayList<>();
 
     // Print/email button
     if (tab.getProcess() != null) {
@@ -254,8 +269,8 @@ public class OBViewTab extends BaseTemplateComponent {
     if (!ActivationKey.getInstance().isActive() || tab.getTable().isFullyAudited()) {
       IconButton auditBtn = new IconButton();
       auditBtn.type = "audit";
-      auditBtn.label = Utility.messageBD(new DalConnectionProvider(false), "AuditTrail", OBContext
-          .getOBContext().getLanguage().getLanguage());
+      auditBtn.label = Utility.messageBD(new DalConnectionProvider(false), "AuditTrail",
+          OBContext.getOBContext().getLanguage().getLanguage());
       auditBtn.action = "OB.ToolbarUtils.showAuditTrail(this.view);";
       iconButtons.add(auditBtn);
     }
@@ -263,9 +278,9 @@ public class OBViewTab extends BaseTemplateComponent {
     String useClassicPopupTreeStr = null;
     try {
       useClassicPopupTreeStr = Preferences.getPreferenceValue("OBUIAPP_UseClassicTreeView", true,
-          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), tab.getWindow());
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), tab.getWindow());
     } catch (PropertyException e) {
       // The property is not defined, so the classic popup tree should not be used
     }
@@ -276,8 +291,8 @@ public class OBViewTab extends BaseTemplateComponent {
         // Classic Tree button
         IconButton treeBtn = new IconButton();
         treeBtn.type = "tree";
-        treeBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Tree", OBContext
-            .getOBContext().getLanguage().getLanguage());
+        treeBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Tree",
+            OBContext.getOBContext().getLanguage().getLanguage());
         treeBtn.action = "OB.ToolbarUtils.showTree(this.view);";
         iconButtons.add(treeBtn);
       } else {
@@ -294,7 +309,7 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   private Collection<? extends IconButton> getPrintEmailButtons() {
-    List<IconButton> btns = new ArrayList<IconButton>();
+    List<IconButton> btns = new ArrayList<>();
 
     PrintButton printBtn = new PrintButton();
     btns.add(printBtn);
@@ -302,8 +317,8 @@ public class OBViewTab extends BaseTemplateComponent {
     if (printBtn.hasEmail) {
       IconButton emailBtn = new IconButton();
       emailBtn.type = "email";
-      emailBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Email", OBContext
-          .getOBContext().getLanguage().getLanguage());
+      emailBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Email",
+          OBContext.getOBContext().getLanguage().getLanguage());
       emailBtn.action = printBtn.action.replace("print.html", "send.html");
       emailBtn.action = emailBtn.action.replace("printButton", "emailButton");
       btns.add(emailBtn);
@@ -334,9 +349,6 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getViewForm() {
-    // force a load all the columns of the table
-    getTab().getTable().getADColumnList().size();
-
     final OBViewFormComponent viewFormComponent = createComponent(OBViewFormComponent.class);
     viewFormComponent.setParameters(getParameters());
     viewFormComponent.setParentProperty(getParentProperty());
@@ -345,9 +357,6 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getViewGrid() {
-    // force a load all the columns of the table
-    getTab().getTable().getADColumnList().size();
-
     // check at least one field is visible in grid view, does not stop the execution
     OBCriteria<Field> fieldCriteria = OBDal.getInstance().createCriteria(Field.class);
     fieldCriteria.add(Restrictions.eq(Field.PROPERTY_TAB, getTab()));
@@ -361,9 +370,21 @@ public class OBViewTab extends BaseTemplateComponent {
     viewGridComponent.setParameters(getParameters());
     viewGridComponent.setTab(tab);
     viewGridComponent.setViewTab(this);
-    viewGridComponent.setApplyTransactionalFilter(isRootTab()
-        && this.tab.getWindow().getWindowType().equals("T"));
+    viewGridComponent.setApplyTransactionalFilter(shouldApplyTransactionalFilter());
+    viewGridComponent.setGCSettings(systemGridConfig, tabsGridConfig);
     return viewGridComponent.generate();
+  }
+
+  private boolean shouldApplyTransactionalFilter() {
+    return isRootTab() && tab.getWindow().getWindowType().equals("T")
+        && areTransactionalFiltersEnabled();
+  }
+
+  private boolean areTransactionalFiltersEnabled() {
+    if (!systemGridConfig.isPresent()) {
+      return true;
+    }
+    return systemGridConfig.get().isAllowTransactionalFilters();
   }
 
   public OBViewTab getParentTabComponent() {
@@ -463,18 +484,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public String getTabTitle() {
     if (tabTitle == null) {
-      if (OBContext.hasTranslationInstalled()) {
-        final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
-        for (TabTrl tabTrl : tab.getADTabTrlList()) {
-          final String trlLanguageId = tabTrl.getLanguage().getId();
-          if (trlLanguageId.equals(userLanguageId)) {
-            tabTitle = tabTrl.getName();
-          }
-        }
-      }
-      if (tabTitle == null) {
-        tabTitle = tab.getName();
-      }
+      tabTitle = OBViewUtil.getLabel(tab, tab.getADTabTrlList(), Tab.PROPERTY_NAME);
     }
     return tabTitle;
   }
@@ -525,15 +535,13 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public boolean isDataSourceTable() {
-    if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(this.tab.getTable().getDataOriginType())) {
-      return true;
-    } else {
-      return false;
-    }
+    return ApplicationConstants.DATASOURCEBASEDTABLE
+        .equals(this.tab.getTable().getDataOriginType());
   }
 
   public String getKeyPropertyType() {
-    return UIDefinitionController.getInstance().getUIDefinition(getKeyProperty().getColumnId())
+    return UIDefinitionController.getInstance()
+        .getUIDefinition(getKeyProperty().getColumnId())
         .getName();
   }
 
@@ -565,16 +573,16 @@ public class OBViewTab extends BaseTemplateComponent {
   public String getProcessViews() {
     StringBuilder views = new StringBuilder();
     // Use HashSet to avoid processId duplicities
-    HashSet<String> processIds = new HashSet<String>();
+    HashSet<String> processIds = new HashSet<>();
     for (ButtonField f : getButtonFields()) {
       // Get processes coming from action buttons
       if (f.column.getOBUIAPPProcess() == null
-          || !"OBUIAPP_PickAndExecute".equals(f.column.getOBUIAPPProcess().getUIPattern())) {
+          || !PICK_AND_EXECUTE.equals(f.column.getOBUIAPPProcess().getUIPattern())) {
         continue;
       }
       processIds.add(f.column.getOBUIAPPProcess().getId());
     }
-    final List<Field> adFields = new ArrayList<Field>(tab.getADFieldList());
+    final List<Field> adFields = new ArrayList<>(tab.getADFieldList());
     Collections.sort(adFields, new FormFieldComparator());
     for (Field fld : adFields) {
       // Get processes coming from selectors
@@ -583,7 +591,7 @@ public class OBViewTab extends BaseTemplateComponent {
           continue;
         }
         List<Selector> selectors = fld.getColumn().getReferenceSearchKey().getOBUISELSelectorList();
-        if (selectors.size() == 0) {
+        if (selectors.isEmpty()) {
           continue;
         }
         Selector selector = selectors.get(0);
@@ -595,15 +603,15 @@ public class OBViewTab extends BaseTemplateComponent {
       }
     }
     for (String processId : processIds) {
-      org.openbravo.client.application.Process process = OBDal.getInstance().get(
-          org.openbravo.client.application.Process.class, processId);
-      final ParameterWindowComponent processWindow = createComponent(ParameterWindowComponent.class);
+      org.openbravo.client.application.Process process = OBDal.getInstance()
+          .get(org.openbravo.client.application.Process.class, processId);
+      final ParameterWindowComponent processWindow = createComponent(
+          ParameterWindowComponent.class);
       processWindow.setParameters(getParameters());
       processWindow.setUniqueString(uniqueString);
       processWindow.setProcess(process);
       processWindow.setParentWindow(getTab().getWindow());
       processWindow.setPoup(true);
-      // processWindow.setWindow(OBDal.getInstance().get(Window.class, f.getWindowId()));
       views.append(processWindow.generate()).append("\n");
     }
     return views.toString();
@@ -657,8 +665,8 @@ public class OBViewTab extends BaseTemplateComponent {
     String jsExpression = null;
     if (tab.getDisplayLogic() != null && !tab.getDisplayLogic().isEmpty()) {
       boolean inpColumnNames = true;
-      final DynamicExpressionParser parser = new DynamicExpressionParser(tab.getDisplayLogic(),
-          tab, inpColumnNames);
+      final DynamicExpressionParser parser = new DynamicExpressionParser(tab.getDisplayLogic(), tab,
+          inpColumnNames);
       jsExpression = parser.getJSExpression();
       // Retrieves the preference attributes used in the display logic of the tab
       setPreferenceAttributesFromParserResult(parser, this.getWindowId());
@@ -708,8 +716,8 @@ public class OBViewTab extends BaseTemplateComponent {
     if (!preferenceAttributesMap.isEmpty()) {
       try {
         JSONObject preferenceAttributesJSON = new JSONObject();
-        for (String attr : preferenceAttributesMap.keySet()) {
-          preferenceAttributesJSON.put(attr, preferenceAttributesMap.get(attr));
+        for (Entry<String, String> entry : preferenceAttributesMap.entrySet()) {
+          preferenceAttributesJSON.put(entry.getKey(), entry.getValue());
         }
         preferenceAttributes = preferenceAttributesJSON.toString();
       } catch (JSONException e) {
@@ -739,12 +747,12 @@ public class OBViewTab extends BaseTemplateComponent {
   public List<String> getDisplayLogicFields() {
     boolean getOnlyFirstLevelSubTabs = false;
     List<Tab> subTabs = KernelUtils.getInstance().getTabSubtabs(tab, getOnlyFirstLevelSubTabs);
-    List<String> displayLogicFields = new ArrayList<String>();
+    List<String> displayLogicFields = new ArrayList<>();
     for (Tab subTab : subTabs) {
       if (subTab.getDisplayLogic() != null && !subTab.getDisplayLogic().isEmpty()) {
         boolean inpColumnNames = true;
-        final DynamicExpressionParser parser = new DynamicExpressionParser(
-            subTab.getDisplayLogic(), tab, inpColumnNames);
+        final DynamicExpressionParser parser = new DynamicExpressionParser(subTab.getDisplayLogic(),
+            tab, inpColumnNames);
         List<String> tokens = parser.getOtherTokensInExpression();
         for (String token : tokens) {
           if (!displayLogicFields.contains(token) && fieldHandler.isField(token)) {
@@ -799,7 +807,7 @@ public class OBViewTab extends BaseTemplateComponent {
         multiRecord = newProcess.isMultiRecord();
 
         setWindowId(tab.getWindow().getId());
-        if ("OBUIAPP_PickAndExecute".equals(uiPattern)) {
+        if (PICK_AND_EXECUTE.equals(uiPattern)) {
           // TODO: modal should be a parameter in the process definition?
           modal = false;
         }
@@ -820,7 +828,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
         if (manualProcessMapping == null) {
           // Standard UI process
-          url = Utility.getTabURL(fld.getTab().getId(), "E", false);
+          url = Utility.getTabURL(fld.getTab(), "E", false);
           command = "BUTTON" + FormatUtilities.replace(column.getDBColumnName())
               + column.getProcess().getId();
         } else {
@@ -835,12 +843,12 @@ public class OBViewTab extends BaseTemplateComponent {
         String colName = column.getDBColumnName();
         if ("Posted".equalsIgnoreCase(colName) || "CreateFrom".equalsIgnoreCase(colName)) {
           command = "BUTTON" + colName;
-          url = Utility.getTabURL(fld.getTab().getId(), "E", false);
+          url = Utility.getTabURL(fld.getTab(), "E", false);
         }
       }
 
       if (labelValues == null) {
-        labelValues = new ArrayList<Value>();
+        labelValues = new ArrayList<>();
 
         if (column.getReferenceSearchKey() != null) {
           for (org.openbravo.model.ad.domain.List valueList : column.getReferenceSearchKey()
@@ -855,17 +863,17 @@ public class OBViewTab extends BaseTemplateComponent {
         final DynamicExpressionParser parser = new DynamicExpressionParser(fld.getDisplayLogic(),
             tab, fld);
         showIf = parser.getJSExpression();
-        if (parser.getSessionAttributes().size() > 0) {
+        if (!parser.getSessionAttributes().isEmpty()) {
           sessionLogic = true;
         }
       }
 
       // Read only logic
       if (fld.getColumn().getReadOnlyLogic() != null) {
-        final DynamicExpressionParser parser = new DynamicExpressionParser(fld.getColumn()
-            .getReadOnlyLogic(), tab);
+        final DynamicExpressionParser parser = new DynamicExpressionParser(
+            fld.getColumn().getReadOnlyLogic(), tab);
         readOnlyIf = parser.getJSExpression();
-        if (parser.getSessionAttributes().size() > 0) {
+        if (!parser.getSessionAttributes().isEmpty()) {
           sessionLogic = true;
         }
       }
@@ -890,9 +898,9 @@ public class OBViewTab extends BaseTemplateComponent {
     public String getUrl() {
       if (url == null) {
         url = "/";
-        log.error("The button " + column.getName() + " of the table "
-            + column.getTable().getDBTableName()
-            + " has not process or a process definition assigned to it");
+        log.error(
+            "The button " + column.getName() + " of the table " + column.getTable().getDBTableName()
+                + " has not process or a process definition assigned to it");
       }
       return url;
     }
@@ -904,9 +912,9 @@ public class OBViewTab extends BaseTemplateComponent {
     public String getCommand() {
       if (command == null) {
         command = "/";
-        log.error("The button " + column.getName() + " of the table "
-            + column.getTable().getDBTableName()
-            + " has not process or a process definition assigned to it");
+        log.error(
+            "The button " + column.getName() + " of the table " + column.getTable().getDBTableName()
+                + " has not process or a process definition assigned to it");
       }
       return command;
     }
@@ -1036,7 +1044,7 @@ public class OBViewTab extends BaseTemplateComponent {
       if (processUrl.isEmpty()) {
         processUrl = process.getSearchKey() + ".pdf";
       }
-      if (processUrl.indexOf("/") == -1) {
+      if (processUrl.indexOf('/') == -1) {
         processUrl = "/" + FormatUtilities.replace(processUrl);
       }
     }
@@ -1056,8 +1064,8 @@ public class OBViewTab extends BaseTemplateComponent {
       type = "print";
       action = "OB.ToolbarUtils.print(this.view, '" + processUrl + "', " + process.isDirectPrint()
           + ", 'printButton');";
-      label = Utility.messageBD(new DalConnectionProvider(false), "Print", OBContext.getOBContext()
-          .getLanguage().getLanguage());
+      label = Utility.messageBD(new DalConnectionProvider(false), "Print",
+          OBContext.getOBContext().getLanguage().getLanguage());
     }
   }
 
@@ -1149,4 +1157,5 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
   }
+
 }

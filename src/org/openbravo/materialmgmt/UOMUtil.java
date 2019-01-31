@@ -26,7 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -54,7 +55,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 public class UOMUtil {
 
-  private static final Logger log4j = Logger.getLogger(UOMUtil.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String UOM_PROPERTY = "UomManagement";
   private static final String UOM_NOT_APPLICABLE = "NA";
 
@@ -120,8 +121,8 @@ public class UOMUtil {
     try {
       OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
       pAUMCriteria.add(Restrictions.eq("product.id", mProductId));
-      pAUMCriteria.add(Restrictions.eq(isSoTrx ? ProductAUM.PROPERTY_SALES
-          : ProductAUM.PROPERTY_PURCHASE, UOM_PRIMARY));
+      pAUMCriteria.add(Restrictions
+          .eq(isSoTrx ? ProductAUM.PROPERTY_SALES : ProductAUM.PROPERTY_PURCHASE, UOM_PRIMARY));
       Product product = OBDal.getInstance().get(Product.class, mProductId);
       finalAUM = product.getUOM().getId();
       ProductAUM primaryAum = (ProductAUM) pAUMCriteria.uniqueResult();
@@ -134,7 +135,7 @@ public class UOMUtil {
     return finalAUM;
   }
 
-   /**
+  /**
    * Get default AUM for a product in Logistic Flow
    * 
    * @param mProductId
@@ -164,7 +165,6 @@ public class UOMUtil {
     return finalAUM;
   }
 
-
   /**
    * Get all the available UOM for a product for a given document
    * 
@@ -185,8 +185,9 @@ public class UOMUtil {
       DocumentType docType = OBDal.getInstance().get(DocumentType.class, docTypeId);
       OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
       pAUMCriteria.add(Restrictions.eq("product.id", mProductId));
-      pAUMCriteria.add(Restrictions.ne(docType.isSalesTransaction() ? ProductAUM.PROPERTY_SALES
-          : ProductAUM.PROPERTY_PURCHASE, UOM_NOT_APPLICABLE));
+      pAUMCriteria.add(Restrictions.ne(
+          docType.isSalesTransaction() ? ProductAUM.PROPERTY_SALES : ProductAUM.PROPERTY_PURCHASE,
+          UOM_NOT_APPLICABLE));
       pAUMCriteria.addOrderBy("uOM.name", true);
       Product product = OBDal.getInstance().get(Product.class, mProductId);
       List<ProductAUM> pAUMList = pAUMCriteria.list();
@@ -229,10 +230,10 @@ public class UOMUtil {
 
       if (qty != null) {
 
-        OBCriteria<ProductAUM> productAUMConversionCriteria = OBDal.getInstance().createCriteria(
-            ProductAUM.class);
-        productAUMConversionCriteria.add(Restrictions.and(
-            Restrictions.eq("product.id", mProductId), Restrictions.eq("uOM.id", toUOMId)));
+        OBCriteria<ProductAUM> productAUMConversionCriteria = OBDal.getInstance()
+            .createCriteria(ProductAUM.class);
+        productAUMConversionCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId),
+            Restrictions.eq("uOM.id", toUOMId)));
 
         try {
           ProductAUM conversion = (ProductAUM) productAUMConversionCriteria.uniqueResult();
@@ -245,8 +246,8 @@ public class UOMUtil {
           if (reverse) {
             strQty = qty.divide(rate, uom.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
           } else {
-            strQty = rate.multiply(qty).setScale(uom.getStandardPrecision().intValue(),
-                RoundingMode.HALF_UP);
+            strQty = rate.multiply(qty)
+                .setScale(uom.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
           }
         } catch (NonUniqueResultException e) {
           throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(false),

@@ -20,11 +20,12 @@ package org.openbravo.xmlEngine;
  // comments of the error
  break;
  */
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class ErrorManagement {
 
-  static Logger log4jErrorManagement = Logger.getLogger(ErrorManagement.class);
+  static Logger log4jErrorManagement = LogManager.getLogger();
 
   public static void error(int i, String locationText) {
     error(i, locationText, null);
@@ -33,39 +34,39 @@ class ErrorManagement {
   public static void error(int i, String locationText, Exception e) {
     String errorText = "";
     switch (i) {
-    case 101:
-      errorText = "Data not defined for structure";
-      // The setData has not been made in the structure of a XmlDocument
-      // or a sql sentece was not specified in the configuration file
-      break;
-    case 102:
-      errorText = "Not found fileXmlEngineConfiguration";
-      // the .xml file does not exist
-      break;
-    case 103:
-      errorText = "IOException in fileXmlEngineConfiguration";
-      break;
-    case 104:
-      errorText = "Exception in parsing of fileXmlEngineConfiguration";
-      // error when parsing the .xml file, for example badly nested tags
-      // or badly closed
-      break;
-    case 105:
-      errorText = "File of template not defined";
-      // no template found in the xml file
-      break;
-    case 106:
-      errorText = "Not found fileXmlEngineTemplate";
-      // the template file does not exist (.html, .xml, ...)
-      break;
-    case 107:
-      errorText = "IOException in fileXmlEngineTemplate";
-      break;
-    case 108:
-      errorText = "Exception in parsing of fileXmlEngineTemplate";
-      // error when parsing the .xml file, for example badly nested tags
-      // or badly closed
-      break;
+      case 101:
+        errorText = "Data not defined for structure";
+        // The setData has not been made in the structure of a XmlDocument
+        // or a sql sentece was not specified in the configuration file
+        break;
+      case 102:
+        errorText = "Not found fileXmlEngineConfiguration";
+        // the .xml file does not exist
+        break;
+      case 103:
+        errorText = "IOException in fileXmlEngineConfiguration";
+        break;
+      case 104:
+        errorText = "Exception in parsing of fileXmlEngineConfiguration";
+        // error when parsing the .xml file, for example badly nested tags
+        // or badly closed
+        break;
+      case 105:
+        errorText = "File of template not defined";
+        // no template found in the xml file
+        break;
+      case 106:
+        errorText = "Not found fileXmlEngineTemplate";
+        // the template file does not exist (.html, .xml, ...)
+        break;
+      case 107:
+        errorText = "IOException in fileXmlEngineTemplate";
+        break;
+      case 108:
+        errorText = "Exception in parsing of fileXmlEngineTemplate";
+        // error when parsing the .xml file, for example badly nested tags
+        // or badly closed
+        break;
     }
     log4jErrorManagement.error(errorText);
     log4jErrorManagement.error("in " + locationText);

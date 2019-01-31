@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -54,8 +54,9 @@ public class Login extends HttpBaseServlet {
   @Any
   private Instance<SignInProvider> signInProvider;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
@@ -93,24 +94,23 @@ public class Login extends HttpBaseServlet {
       try {
         ConnectionProvider cp = new DalConnectionProvider(false);
         Client systemClient = OBDal.getInstance().get(Client.class, "0");
-        final String cacheMsg = Utility.messageBD(cp, "OUTDATED_FILES_CACHED", systemClient
-            .getLanguage().getLanguage());
-        final String validBrowserMsg = Utility.messageBD(cp, "BROWSER_NOT_SUPPORTED", systemClient
-            .getLanguage().getLanguage());
-        final String orHigherMsg = Utility.messageBD(cp, "OR_HIGHER_TEXT", systemClient
-            .getLanguage().getLanguage());
+        String systemLanguage = systemClient.getLanguage().getLanguage();
+        final String cacheMsg = Utility.messageBD(cp, "OUTDATED_FILES_CACHED", systemLanguage);
+        final String validBrowserMsg = Utility.messageBD(cp, "BROWSER_NOT_SUPPORTED",
+            systemLanguage);
+        final String orHigherMsg = Utility.messageBD(cp, "OR_HIGHER_TEXT", systemLanguage);
         final String recBrowserMsgTitle = Utility.messageBD(cp, "RECOMMENDED_BROWSER_TITLE",
-            systemClient.getLanguage().getLanguage());
+            systemLanguage);
         final String recBrowserMsgText = Utility.messageBD(cp, "RECOMMENDED_BROWSER_TEXT",
-            systemClient.getLanguage().getLanguage());
+            systemLanguage);
         final String identificationFailureTitle = Utility.messageBD(cp,
-            "IDENTIFICATION_FAILURE_TITLE", systemClient.getLanguage().getLanguage());
+            "IDENTIFICATION_FAILURE_TITLE", systemLanguage);
         final String emptyUsernameOrPasswordText = Utility.messageBD(cp,
-            "EMPTY_USERNAME_OR_PASSWORD_TEXT", systemClient.getLanguage().getLanguage());
-        final String errorSamePassword = Utility.messageBD(cp, "CPSamePassword", systemClient
-            .getLanguage().getLanguage());
+            "EMPTY_USERNAME_OR_PASSWORD_TEXT", systemLanguage);
+        final String errorSamePassword = Utility.messageBD(cp, "CPSamePassword", systemLanguage);
         final String errorDifferentPasswordInFields = Utility.messageBD(cp,
-            "CPDifferentPasswordInFields", systemClient.getLanguage().getLanguage());
+            "CPDifferentPasswordInFields", systemLanguage);
+
         printPageLogin(vars, response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg,
             recBrowserMsgTitle, recBrowserMsgText, identificationFailureTitle,
             emptyUsernameOrPasswordText, errorSamePassword, errorDifferentPasswordInFields);
@@ -125,7 +125,7 @@ public class Login extends HttpBaseServlet {
       String strTheme, String cacheMsg, String validBrowserMsg, String orHigherMsg,
       String recBrowserMsgTitle, String recBrowserMsgText, String identificationFailureTitle,
       String emptyUsernameOrPasswordText, String errorSamePassword,
-      String errorDifferentPasswordInFields) throws IOException, ServletException {
+      String errorDifferentPasswordInFields) throws IOException {
 
     boolean showForgeLogo = true;
     boolean showITLogo = false;
@@ -139,7 +139,7 @@ public class Login extends HttpBaseServlet {
     ActivationKey ak = ActivationKey.getInstance(true);
     if (ak.isActive()) {
       String hql = "from ADPreference pref where searchKey like :value and property = :prop and (visibleAtClient is null or visibleAtClient.id = '0')";
-      Query q = OBDal.getInstance().getSession().createQuery(hql);
+      Query<Object> q = OBDal.getInstance().getSession().createQuery(hql, Object.class);
       q.setParameter("value", "N");
       q.setParameter("prop", GOOGLE_PREFERENCE_PROPERTY);
 
@@ -155,17 +155,15 @@ public class Login extends HttpBaseServlet {
       showForgeLogo = !ActivationKey.getInstance().isActive()
           || (ActivationKey.getInstance().isActive() && sysInfo.isShowForgeLogoInLogin());
       itLink = sysInfo.getSupportContact() == null ? "" : sysInfo.getSupportContact();
-      if (!itLink.isEmpty()
-          && !(StringUtils.startsWithIgnoreCase(itLink, "http://")
-              || StringUtils.startsWithIgnoreCase(itLink, "https://") || StringUtils
-                .startsWithIgnoreCase(itLink, "ftp://"))) {
+      if (!itLink.isEmpty() && !(StringUtils.startsWithIgnoreCase(itLink, "http://")
+          || StringUtils.startsWithIgnoreCase(itLink, "https://")
+          || StringUtils.startsWithIgnoreCase(itLink, "ftp://"))) {
         itLink = "http://" + itLink;
       }
       companyLink = sysInfo.getYourCompanyURL() == null ? "" : sysInfo.getYourCompanyURL();
-      if (!companyLink.isEmpty()
-          && !(StringUtils.startsWithIgnoreCase(companyLink, "http://")
-              || StringUtils.startsWithIgnoreCase(companyLink, "https://") || StringUtils
-                .startsWithIgnoreCase(companyLink, "ftp://"))) {
+      if (!companyLink.isEmpty() && !(StringUtils.startsWithIgnoreCase(companyLink, "http://")
+          || StringUtils.startsWithIgnoreCase(companyLink, "https://")
+          || StringUtils.startsWithIgnoreCase(companyLink, "ftp://"))) {
         companyLink = "http://" + companyLink;
       }
     }
@@ -188,36 +186,19 @@ public class Login extends HttpBaseServlet {
         + ak.getExpirationMessage(vars.getLanguage()).toString() + ";";
     xmlDocument.setParameter("expirationMessage", expirationMessage);
 
-    String cacheMsgFinal = "var cacheMsg = \"" + cacheMsg + "\"";
-    xmlDocument.setParameter("cacheMsg", cacheMsgFinal.replaceAll("\\n", "\n"));
+    insertMessageInPage(xmlDocument, "cacheMsg", cacheMsg);
+    insertMessageInPage(xmlDocument, "identificationFailureTitle", identificationFailureTitle);
 
-    String identificationFailureFinal = "var identificationFailureTitle = \""
-        + identificationFailureTitle + "\"";
-    xmlDocument.setParameter("identificationFailureTitle",
-        identificationFailureFinal.replaceAll("\\n", "\n"));
+    insertMessageInPage(xmlDocument, "errorEmptyContent", emptyUsernameOrPasswordText);
+    insertMessageInPage(xmlDocument, "errorSamePassword", errorSamePassword);
+    insertMessageInPage(xmlDocument, "errorDifferentPasswordInFields",
+        errorDifferentPasswordInFields);
 
-    String emptyUserNameOrPasswordFinal = "var errorEmptyContent = \""
-        + emptyUsernameOrPasswordText + "\"";
-    xmlDocument.setParameter("errorEmptyContent",
-        emptyUserNameOrPasswordFinal.replaceAll("\\n", "\n"));
+    insertMessageInPage(xmlDocument, "validBrowserMsg", validBrowserMsg);
+    insertMessageInPage(xmlDocument, "validBrowserMsgOrHigher", orHigherMsg);
 
-    String errorSamePasswordFinal = "var errorSamePassword = \"" + errorSamePassword + "\"";
-    xmlDocument.setParameter("errorSamePassword", errorSamePasswordFinal.replaceAll("\\n", "\n"));
-
-    String errorDifferentPasswordInFieldsFinal = "var errorDifferentPasswordInFields = \""
-        + errorDifferentPasswordInFields + "\"";
-    xmlDocument.setParameter("errorDifferentPasswordInFields",
-        errorDifferentPasswordInFieldsFinal.replaceAll("\\n", "\n"));
-
-    String validBrowserMsgFinal = "var validBrowserMsg = \"" + validBrowserMsg + "\"";
-    String orHigherMsgFinal = "var validBrowserMsgOrHigher = \"" + orHigherMsg + "\"";
-    xmlDocument.setParameter("validBrowserMsg", validBrowserMsgFinal.replaceAll("\\n", "\n"));
-    xmlDocument.setParameter("validBrowserMsgOrHigher", orHigherMsgFinal.replaceAll("\\n", "\n"));
-
-    String recBrowserMsgTitleFinal = "var recBrowserMsgTitle = \"" + recBrowserMsgTitle + "\"";
-    String recBrowserMsgTextFinal = "var recBrowserMsgText = \"" + recBrowserMsgText + "\"";
-    xmlDocument.setParameter("recBrowserMsgTitle", recBrowserMsgTitleFinal.replaceAll("\\n", "\n"));
-    xmlDocument.setParameter("recBrowserMsgText", recBrowserMsgTextFinal.replaceAll("\\n", "\n"));
+    insertMessageInPage(xmlDocument, "recBrowserMsgTitle", recBrowserMsgTitle);
+    insertMessageInPage(xmlDocument, "recBrowserMsgText", recBrowserMsgText);
 
     if (showGSignInButtonDemo || !signInProvider.isUnsatisfied()) {
       String link = "<span class=\"LabelText Login_LabelText\">"
@@ -233,7 +214,8 @@ public class Login extends HttpBaseServlet {
           message = message.replace("%0",
               Utility.messageBD(cp, "OBUIAPP_gSignInButtonDemoCommunity", lang));
         }
-        message = message.replaceAll("&quot;", "\"").replaceAll("\"", "\\\\\"")
+        message = message.replaceAll("&quot;", "\"")
+            .replaceAll("\"", "\\\\\"")
             .replaceAll("'", "´");
 
         link += "<style type=\"text/css\">" //
@@ -268,8 +250,7 @@ public class Login extends HttpBaseServlet {
             + "  }" //
             + "</style>" //
             + "&nbsp;&nbsp;<div id=\"gSignInButtonDemo\" class=\"gSignInButtonDemo\" onclick='setLoginMessage(\"Error\", null, \""
-            + message
-            + "\")'>" //
+            + message + "\")'>" //
             + "  <span title=\""
             + Utility.messageBD(cp, "OBUIAPP_gSignInButtonDemoAltMsg", vars.getLanguage()) //
             + "\"></span>" //
@@ -296,5 +277,10 @@ public class Login extends HttpBaseServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private void insertMessageInPage(XmlDocument document, String parameterName, String message) {
+    String messageFinal = String.format("var %s = \"%s\"", parameterName, message);
+    document.setParameter(parameterName, messageFinal.replaceAll("\\n", "\n"));
   }
 }

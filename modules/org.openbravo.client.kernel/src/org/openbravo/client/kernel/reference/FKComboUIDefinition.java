@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.client.kernel.reference;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
@@ -45,6 +46,7 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
     return "OBFKComboItem";
   }
 
+  @Override
   public String getGridEditorFieldProperties(Field field) {
     return "displayField: '_identifier', valueField: 'id'";
   }
@@ -62,8 +64,8 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
         ReferencedTable referencedTable = referenceSearchKey.getADReferencedTableList().get(0);
         if (referencedTable != null) {
           Property prop = KernelUtils.getInstance().getPropertyFromColumn(column);
-          Property referencedProp = KernelUtils.getInstance().getPropertyFromColumn(
-              referencedTable.getDisplayedColumn());
+          Property referencedProp = KernelUtils.getInstance()
+              .getPropertyFromColumn(referencedTable.getDisplayedColumn());
           if (prop != null && referencedProp != null) {
             if (isTableWithMultipleIdentifierColumns(referencedTable.getTable())
                 && !isPropertyField(field)) {
@@ -77,8 +79,8 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
             // always pass the display property in case of table references. This is used to fetch
             // the record properly in grid filter.
             // refer issue https://issues.openbravo.com/view.php?id=26696
-            criteriaField = criteriaField.concat(", displayProperty: '" + referencedProp.getName()
-                + "'");
+            criteriaField = criteriaField
+                .concat(", displayProperty: '" + referencedProp.getName() + "'");
           }
         }
       }
@@ -88,18 +90,12 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
 
   /* Returns true if the identifier of the table is composed of more than one column */
   private Boolean isTableWithMultipleIdentifierColumns(Table relatedTable) {
-    int nIdentifiers = 0;
-    for (Column curColumn : relatedTable.getADColumnList()) {
-      if (curColumn.isIdentifier()) {
-        nIdentifiers += 1;
-        if (nIdentifiers > 1) {
-          // if there is more than one identifier return true
-          return true;
-        }
-      }
-    }
-    // there is only one identifier column
-    return false;
+    return ModelProvider.getInstance() //
+        .getTable(relatedTable.getDBTableName()) //
+        .getColumns() //
+        .stream() //
+        .filter(org.openbravo.base.model.Column::isIdentifier) //
+        .count() > 1;
   }
 
   private boolean isPropertyField(Field field) {
@@ -120,6 +116,7 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
     }
   }
 
+  @Override
   public String getFieldPropertiesFirstRecord(Field field, boolean getValueFromSession) {
     JSONObject value;
     try {

@@ -27,7 +27,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBSecurityException;
@@ -64,7 +65,7 @@ import org.openbravo.service.json.JsonConstants;
  * @author mtaal
  */
 public class DefaultDataSourceService extends BaseDataSourceService {
-  private static final Logger log4j = Logger.getLogger(DefaultDataSourceService.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Inject
   private CachedPreference cachedPreference;
@@ -74,16 +75,18 @@ public class DefaultDataSourceService extends BaseDataSourceService {
    * 
    * @see org.openbravo.service.datasource.DataSource#fetch(java.util.Map)
    */
+  @Override
   public String fetch(Map<String, String> parameters) {
     return fetch(parameters, true);
   }
 
-  protected String fetch(Map<String, String> parameters, boolean shouldFilterOnRedeableOrganizations) {
+  protected String fetch(Map<String, String> parameters,
+      boolean shouldFilterOnRedeableOrganizations) {
     OBContext.setAdminMode(shouldFilterOnRedeableOrganizations);
     try {
       addFetchParameters(parameters);
-      return DefaultJsonDataService.getInstance().fetch(parameters,
-          shouldFilterOnRedeableOrganizations);
+      return DefaultJsonDataService.getInstance()
+          .fetch(parameters, shouldFilterOnRedeableOrganizations);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -125,8 +128,8 @@ public class DefaultDataSourceService extends BaseDataSourceService {
         String whereAndFilterClause = getWhereAndFilterClause(parameters);
         if (StringUtils.isNotBlank(whereAndFilterClause)) {
           if (getWhereClause() != null) {
-            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, "(" + whereAndFilterClause
-                + ") and (" + getWhereClause() + ")");
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
+                "(" + whereAndFilterClause + ") and (" + getWhereClause() + ")");
           } else {
             parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereAndFilterClause);
           }
@@ -139,12 +142,12 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     }
 
     // add a filter on the parent of the entity
-    if ((parameters.get(JsonConstants.FILTERBYPARENTPROPERTY_PARAMETER) != null && !"null"
-        .equals(parameters.get(JsonConstants.FILTERBYPARENTPROPERTY_PARAMETER)))
+    if ((parameters.get(JsonConstants.FILTERBYPARENTPROPERTY_PARAMETER) != null
+        && !"null".equals(parameters.get(JsonConstants.FILTERBYPARENTPROPERTY_PARAMETER)))
         && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
       final String parentProperty = parameters.get(JsonConstants.FILTERBYPARENTPROPERTY_PARAMETER);
-      final BaseOBObject bob = OBDal.getInstance().get(getEntity().getName(),
-          parameters.get(JsonConstants.TARGETRECORDID_PARAMETER));
+      final BaseOBObject bob = OBDal.getInstance()
+          .get(getEntity().getName(), parameters.get(JsonConstants.TARGETRECORDID_PARAMETER));
 
       // a special case, a child tab actually displays the parent record
       // but a different set of information of that record
@@ -169,8 +172,8 @@ public class DefaultDataSourceService extends BaseDataSourceService {
   }
 
   private boolean manualWhereClausePreferenceIsEnabled() {
-    return Preferences.YES.equals(cachedPreference
-        .getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER));
+    return Preferences.YES
+        .equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER));
   }
 
   private boolean whereParameterIsNotBlank(Map<String, String> parameters) {
@@ -277,22 +280,19 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       if (entityName == null) {
         throw new IllegalArgumentException("Entity name not defined in jsonobject " + data);
       }
-      final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
-          DataToJsonConverter.class);
-      final BaseOBObject oldDataObject = id == null ? null : OBDal.getInstance()
-          .get(entityName, id);
-      final JSONObject oldData = oldDataObject == null ? null : toJsonConverter.toJsonObject(
-          oldDataObject, DataResolvingMode.FULL);
-      final OBQuery<Field> fieldQuery = OBDal
-          .getInstance()
-          .createQuery(
-              Field.class,
-              "as f where f.tab.id = :tabId"
-                  + " and (exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId and fa.editableField = false and fa.active = true and fa.ischeckonsave = true)"
-                  + "      or (not exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId and fa.active = true)"
-                  + "          and exists (from f.tab.aDTabAccessList ta where ta.windowAccess.role.id = :roleId and ta.editableField = false and ta.active = true)"
-                  + "          or not exists (from f.tab.aDTabAccessList  ta where  ta.windowAccess.role.id = :roleId and ta.active = true)"
-                  + "          and exists (from ADWindowAccess wa where f.tab.window = wa.window and wa.role.id = :roleId and wa.editableField = false and wa.active = true)))");
+      final DataToJsonConverter toJsonConverter = OBProvider.getInstance()
+          .get(DataToJsonConverter.class);
+      final BaseOBObject oldDataObject = id == null ? null
+          : OBDal.getInstance().get(entityName, id);
+      final JSONObject oldData = oldDataObject == null ? null
+          : toJsonConverter.toJsonObject(oldDataObject, DataResolvingMode.FULL);
+      final OBQuery<Field> fieldQuery = OBDal.getInstance()
+          .createQuery(Field.class, "as f where f.tab.id = :tabId"
+              + " and (exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId and fa.editableField = false and fa.active = true and fa.ischeckonsave = true)"
+              + "      or (not exists (from f.aDFieldAccessList fa where fa.tabAccess.windowAccess.role.id = :roleId and fa.active = true)"
+              + "          and exists (from f.tab.aDTabAccessList ta where ta.windowAccess.role.id = :roleId and ta.editableField = false and ta.active = true)"
+              + "          or not exists (from f.tab.aDTabAccessList  ta where  ta.windowAccess.role.id = :roleId and ta.active = true)"
+              + "          and exists (from ADWindowAccess wa where f.tab.window = wa.window and wa.role.id = :roleId and wa.editableField = false and wa.active = true)))");
       fieldQuery.setNamedParameter("tabId", tab.getId());
       fieldQuery.setNamedParameter("roleId", roleId);
       for (Field f : fieldQuery.list()) {
@@ -308,11 +308,11 @@ public class DefaultDataSourceService extends BaseDataSourceService {
               && isSameNumericValue(newValue, oldValue)) {
             continue;
           }
-          if (oldValue == null && newValue != null || oldValue != null
-              && !oldValue.equals(newValue)) {
-            throw new RuntimeException(KernelUtils.getInstance().getI18N(
-                "OBSERDS_RoleHasNoFieldAccess",
-                new String[] { OBContext.getOBContext().getRole().getName(), f.getName() }));
+          if (oldValue == null && newValue != null
+              || oldValue != null && !oldValue.equals(newValue)) {
+            throw new RuntimeException(KernelUtils.getInstance()
+                .getI18N("OBSERDS_RoleHasNoFieldAccess",
+                    new String[] { OBContext.getOBContext().getRole().getName(), f.getName() }));
           }
         }
       }
@@ -324,16 +324,19 @@ public class DefaultDataSourceService extends BaseDataSourceService {
   }
 
   private static final String getValue(JSONObject jsonObject, String prop) throws JSONException {
-    if (jsonObject == null)
+    if (jsonObject == null) {
       return null;
-    if (!jsonObject.has(prop))
+    }
+    if (!jsonObject.has(prop)) {
       return null;
+    }
     Object val = jsonObject.get(prop);
-    if (JSONObject.NULL.equals(val) || val == null || val instanceof String
-        && ((String) val).trim().equals(""))
+    if (JSONObject.NULL.equals(val) || val == null
+        || val instanceof String && ((String) val).trim().equals("")) {
       return null;
-    else
+    } else {
       return val.toString();
+    }
   }
 
   private static boolean isSameNumericValue(String str1, String str2) {
@@ -353,6 +356,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     return false;
   }
 
+  @Override
   public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {
     final Entity entity = getEntity();
     final List<DataSourceProperty> dsProperties;
@@ -407,7 +411,8 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     return dsProperties;
   }
 
-  protected List<DataSourceProperty> getInitialProperties(Entity entity, boolean minimalProperties) {
+  protected List<DataSourceProperty> getInitialProperties(Entity entity,
+      boolean minimalProperties) {
     if (entity == null) {
       return Collections.emptyList();
     }
@@ -420,10 +425,10 @@ public class DefaultDataSourceService extends BaseDataSourceService {
 
       // if minimal then only generate date properties
       // and the id itself
-      if (!prop.isId()
-          && minimalProperties
+      if (!prop.isId() && minimalProperties
           && !(prop.getDomainType() instanceof EnumerateDomainType)
-          && !(prop.getDomainType() instanceof DateDomainType || prop.getDomainType() instanceof DatetimeDomainType)) {
+          && !(prop.getDomainType() instanceof DateDomainType
+              || prop.getDomainType() instanceof DatetimeDomainType)) {
         continue;
       }
 

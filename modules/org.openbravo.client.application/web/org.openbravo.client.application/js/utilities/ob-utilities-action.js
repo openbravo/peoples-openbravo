@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -104,8 +104,7 @@ OB.Utilities.Action = {
   // * {{{threadId}}}: the id of the thread to cancel
   // * {{{delay}}}: delay in ms to cancel the thread
   cancelThread: function (threadId, delay) {
-    var position = this._cancelledThreads.length,
-        i;
+    var position = this._cancelledThreads.length;
 
     if (delay && Object.prototype.toString.apply(delay) === '[object Number]') {
       setTimeout(function () {
@@ -219,7 +218,7 @@ OB.Utilities.Action = {
   // * {{{processView}}}: view of the process that invoked the execution
   executeJSON: function (jsonArray, threadId, delay, processView) {
     var length = jsonArray.length,
-        i, object, member, paramObj;
+        object, member, paramObj;
 
     if (delay && Object.prototype.toString.apply(delay) === '[object Number]') {
       setTimeout(function () {

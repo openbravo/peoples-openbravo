@@ -20,11 +20,12 @@ package org.openbravo.erpCommon.ad_forms;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocLine_GLJournal extends DocLine {
-  static Logger log4jDocLine_GLJournal = Logger.getLogger(DocLine_GLJournal.class);
+  static Logger log4jDocLine_GLJournal = LogManager.getLogger();
 
   public DocLine_GLJournal(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);
@@ -47,18 +48,19 @@ public class DocLine_GLJournal extends DocLine {
         DocLineGLJournalData[] data = null;
         data = DocLineGLJournalData.selectGlitem(conn, m_C_Glitem_ID, as.getC_AcctSchema_ID());
         String Account_ID = "";
-        if (data == null || data.length == 0)
+        if (data == null || data.length == 0) {
           return null;
+        }
         if (data.length > 0) {
           switch (Integer.parseInt(AcctType)) {
-          case 1:
-            // It is similar to ProductInfo.ACCTTYPE_P_Revenue
-            Account_ID = data[0].glitemDebitAcct;
-            break;
-          case 2:
-            // It is similar to ProductInfo.ACCTTYPE_P_Expense
-            Account_ID = data[0].glitemCreditAcct;
-            break;
+            case 1:
+              // It is similar to ProductInfo.ACCTTYPE_P_Revenue
+              Account_ID = data[0].glitemDebitAcct;
+              break;
+            case 2:
+              // It is similar to ProductInfo.ACCTTYPE_P_Expense
+              Account_ID = data[0].glitemCreditAcct;
+              break;
           }
         }
         // No account

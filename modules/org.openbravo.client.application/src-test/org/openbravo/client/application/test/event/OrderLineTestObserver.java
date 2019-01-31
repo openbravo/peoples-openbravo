@@ -44,7 +44,8 @@ import org.openbravo.model.common.order.OrderLine;
  */
 public class OrderLineTestObserver extends EntityPersistenceEventObserver {
   static final String FORCED_DESCRIPTION = "test description";
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME) };
   private static int executionCount = 0;
   private static int beginTrx = 0;
   private static int endTrx = 0;
@@ -55,37 +56,38 @@ public class OrderLineTestObserver extends EntityPersistenceEventObserver {
     }
 
     switch (ObserverBaseTest.observerExecutionType) {
-    case UPDATE_DESCRIPTION:
-      event.setCurrentState(entities[0].getProperty(OrderLine.PROPERTY_DESCRIPTION),
-          FORCED_DESCRIPTION);
-      break;
-    case CREATE_NOTE:
-      final OrderLine orderLine = (OrderLine) event.getTargetInstance();
-      Note newNote = OBProvider.getInstance().get(Note.class);
-      newNote.setTable(OBDal.getInstance()
-          .getProxy(Table.class, orderLine.getEntity().getTableId()));
-      newNote.setRecord(orderLine.getId());
-      newNote.setNote("test");
-      OBDal.getInstance().save(newNote);
-      break;
-    case COUNT_LINES:
-      int numOfLines = ((OrderLine) event.getTargetInstance()).getSalesOrder().getOrderLineList()
-          .size();
-      event.setCurrentState(entities[0].getProperty(OrderLine.PROPERTY_DESCRIPTION),
-          FORCED_DESCRIPTION + numOfLines);
-      break;
-    case UPDATE_PARENT:
-      Order orderWithForcedDescription = ((OrderLine) event.getTargetInstance()).getSalesOrder();
-      orderWithForcedDescription.setDescription(FORCED_DESCRIPTION);
-      break;
-    case UPDATE_PARENT_RANDOM:
-      Order orderWithRandomDescription = ((OrderLine) event.getTargetInstance()).getSalesOrder();
-      orderWithRandomDescription.setDescription(Long.toString(System.currentTimeMillis()));
-      break;
-    case ON_NOOP:
-      break;
-    default:
-      return;
+      case UPDATE_DESCRIPTION:
+        event.setCurrentState(entities[0].getProperty(OrderLine.PROPERTY_DESCRIPTION),
+            FORCED_DESCRIPTION);
+        break;
+      case CREATE_NOTE:
+        final OrderLine orderLine = (OrderLine) event.getTargetInstance();
+        Note newNote = OBProvider.getInstance().get(Note.class);
+        newNote.setTable(
+            OBDal.getInstance().getProxy(Table.class, orderLine.getEntity().getTableId()));
+        newNote.setRecord(orderLine.getId());
+        newNote.setNote("test");
+        OBDal.getInstance().save(newNote);
+        break;
+      case COUNT_LINES:
+        int numOfLines = ((OrderLine) event.getTargetInstance()).getSalesOrder()
+            .getOrderLineList()
+            .size();
+        event.setCurrentState(entities[0].getProperty(OrderLine.PROPERTY_DESCRIPTION),
+            FORCED_DESCRIPTION + numOfLines);
+        break;
+      case UPDATE_PARENT:
+        Order orderWithForcedDescription = ((OrderLine) event.getTargetInstance()).getSalesOrder();
+        orderWithForcedDescription.setDescription(FORCED_DESCRIPTION);
+        break;
+      case UPDATE_PARENT_RANDOM:
+        Order orderWithRandomDescription = ((OrderLine) event.getTargetInstance()).getSalesOrder();
+        orderWithRandomDescription.setDescription(Long.toString(System.currentTimeMillis()));
+        break;
+      case ON_NOOP:
+        break;
+      default:
+        return;
     }
 
     executionCount++;
@@ -97,10 +99,10 @@ public class OrderLineTestObserver extends EntityPersistenceEventObserver {
     }
 
     switch (ObserverBaseTest.observerExecutionType) {
-    case ON_NOOP:
-      break;
-    default:
-      return;
+      case ON_NOOP:
+        break;
+      default:
+        return;
     }
 
     executionCount++;
@@ -112,10 +114,10 @@ public class OrderLineTestObserver extends EntityPersistenceEventObserver {
     }
 
     switch (ObserverBaseTest.observerExecutionType) {
-    case ON_NOOP:
-      break;
-    default:
-      return;
+      case ON_NOOP:
+        break;
+      default:
+        return;
     }
 
     executionCount++;
@@ -150,5 +152,12 @@ public class OrderLineTestObserver extends EntityPersistenceEventObserver {
 
   public static int getNumberOfClosedTrxs() {
     return endTrx;
+  }
+
+  public static void refreshObservedEntities() {
+    Entity currentEntity = ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME);
+    if (entities[0] != currentEntity) {
+      entities[0] = currentEntity;
+    }
   }
 }

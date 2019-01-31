@@ -26,6 +26,14 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
+import static org.openbravo.test.base.TestConstants.Orgs.ESP;
+import static org.openbravo.test.base.TestConstants.Orgs.ESP_NORTE;
+import static org.openbravo.test.base.TestConstants.Orgs.ESP_SUR;
+import static org.openbravo.test.base.TestConstants.Orgs.FB_GROUP;
+import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
+import static org.openbravo.test.base.TestConstants.Orgs.US;
+import static org.openbravo.test.base.TestConstants.Orgs.US_EST;
+import static org.openbravo.test.base.TestConstants.Orgs.US_WEST;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,15 +70,6 @@ import com.google.common.collect.ImmutableMap;
 
 @RunWith(Parameterized.class)
 public class AllowedOrganizationsTest extends OBBaseTest {
-  private static final String MAIN = "0";
-  private static final String FB_GROUP = "19404EAD144C49A0AF37D54377CF452D";
-  private static final String US = "2E60544D37534C0B89E765FE29BC0B43";
-  private static final String US_EST = "7BABA5FF80494CAFA54DEBD22EC46F01";
-  private static final String US_WEST = "BAE22373FEBE4CCCA24517E23F0C8A48";
-  private static final String ESP = "B843C30461EA4501935CB1D125C9C25A";
-  private static final String ESP_SUR = "DC206C91AA6A4897B44DA897936E0EC3";
-  private static final String ESP_NORTE = "E443A31992CB4635AFCAEABE7183CE85";
-
   private static final Map<String, String> ORG_NAMES = ImmutableMap.<String, String> builder()
       .put(MAIN, "Main") //
       .put(FB_GROUP, "F&B International Group") //
@@ -80,7 +79,8 @@ public class AllowedOrganizationsTest extends OBBaseTest {
       .put(ESP, "F&B España, S.A") //
       .put(ESP_SUR, "F&B España - Región Sur") //
       .put(ESP_NORTE, "F&B España - Región Norte") //
-      .put("Dummy", "Dummy").build();
+      .put("Dummy", "Dummy")
+      .build();
 
   // note first parent must be first element in list
   private static final Map<String, List<TestOrg>> ORG_TREES = ImmutableMap
@@ -113,9 +113,9 @@ public class AllowedOrganizationsTest extends OBBaseTest {
     for (Entry<String, List<TestOrg>> tree : ORG_TREES.entrySet()) {
       allTrees.add(new Object[] { //
           ORG_NAMES.get(tree.getKey()), //
-              tree.getKey(), //
-              tree.getValue() //
-          });
+          tree.getKey(), //
+          tree.getValue() //
+      });
     }
 
     return allTrees;
@@ -141,8 +141,9 @@ public class AllowedOrganizationsTest extends OBBaseTest {
 
     for (TestOrg org : expectedNaturalTree) {
       assertThat(ORG_NAMES.get(org.id) + " is in natural tree of " + testingOrgId,
-          osp.isInNaturalTree(OBDal.getInstance().getProxy(Organization.class, org.id), OBDal
-              .getInstance().getProxy(Organization.class, testingOrgId)), is(true));
+          osp.isInNaturalTree(OBDal.getInstance().getProxy(Organization.class, org.id),
+              OBDal.getInstance().getProxy(Organization.class, testingOrgId)),
+          is(true));
     }
   }
 
@@ -191,8 +192,8 @@ public class AllowedOrganizationsTest extends OBBaseTest {
     Organization org = OBDal.getInstance().getProxy(Organization.class, testingOrgId);
 
     if (!FB_GROUP.equals(testingOrgId)) {
-      assertThat(ORG_NAMES.get(testingOrgId) + "'s legal entity", osp
-          .getPeriodControlAllowedOrganization(org).getId(),
+      assertThat(ORG_NAMES.get(testingOrgId) + "'s legal entity",
+          osp.getPeriodControlAllowedOrganization(org).getId(),
           is(TestOrg.getFirstPeriodControl(expectedNaturalTree)));
     } else {
       assertThat(ORG_NAMES.get(testingOrgId) + " has no legal entity ",
@@ -225,7 +226,9 @@ public class AllowedOrganizationsTest extends OBBaseTest {
 
     public static String getFirstLegal(List<TestOrg> orgs) {
       for (TestOrg org : orgs) {
-        if (OBDal.getInstance().get(Organization.class, org.id).getOrganizationType()
+        if (OBDal.getInstance()
+            .get(Organization.class, org.id)
+            .getOrganizationType()
             .isLegalEntity()) {
           return org.id;
         }
@@ -235,7 +238,8 @@ public class AllowedOrganizationsTest extends OBBaseTest {
 
     public static Object getFirstLegalOrBU(List<TestOrg> orgs) {
       for (TestOrg org : orgs) {
-        OrganizationType ot = OBDal.getInstance().get(Organization.class, org.id)
+        OrganizationType ot = OBDal.getInstance()
+            .get(Organization.class, org.id)
             .getOrganizationType();
         if (ot.isLegalEntity() || ot.isBusinessUnit()) {
           return org.id;

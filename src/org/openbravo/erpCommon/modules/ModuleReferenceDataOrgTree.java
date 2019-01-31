@@ -27,7 +27,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -45,7 +46,7 @@ import org.openbravo.xmlEngine.XmlDocument;
  * It implements GenericTree, detailed description is in that API doc.
  */
 public class ModuleReferenceDataOrgTree extends ModuleTree {
-  private final static Logger log4j = Logger.getLogger(ModuleReferenceDataOrgTree.class);
+  private final static Logger log4j = LogManager.getLogger();
 
   /**
    * Constructor to generate a root tree
@@ -114,8 +115,9 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
     try {
       data = ModuleReferenceDataOrgTreeData.select(conn, (lang.equals("") ? "en_US" : lang),
           strClient);
-      if (bAddLinks)
+      if (bAddLinks) {
         addLinks();
+      }
       setLevel(0);
       setIcons();
     } catch (ServletException ex) {
@@ -124,6 +126,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
     }
   }
 
+  @Override
   protected void setLevel(int level) {
     super.setLevel(level);
 
@@ -142,8 +145,9 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
           strClient, strOrg);
       cleanData();
       filterAlreadyApplied(strClient, strOrg);
-      if (bAddLinks)
+      if (bAddLinks) {
         addLinks();
+      }
       setLevel(0);
       setIcons();
     } catch (ServletException ex) {
@@ -166,8 +170,8 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
       // OBCriteria cannot be used here because it is not able to filer CLOB in Oracle: using
       // OBQuery instead. See issue #15556
       String whereClause = "as m where m.module.id = :module and m.client.id=:client and m.organization.id=:org and to_char(m.checksum)=:checksum";
-      OBQuery<ADOrgModule> cOrgModule = OBDal.getInstance().createQuery(ADOrgModule.class,
-          whereClause);
+      OBQuery<ADOrgModule> cOrgModule = OBDal.getInstance()
+          .createQuery(ADOrgModule.class, whereClause);
       cOrgModule.setNamedParameter("module", moduleId);
       cOrgModule.setNamedParameter("client", strClient);
       cOrgModule.setNamedParameter("org", strOrg);
@@ -251,8 +255,9 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
   }
 
   private void addLinks(ModuleReferenceDataOrgTreeData[] modules, boolean showApplied) {
-    if (modules == null || modules.length == 0)
+    if (modules == null || modules.length == 0) {
       return;
+    }
     for (int i = 0; i < modules.length; i++) {
       if (modules[i].updateAvailable.equals("Y")) {
         modules[i].updatelabel = Utility.messageBD(conn, "UpdateAvailable", lang);
@@ -283,24 +288,29 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
    * @param node
    * @return a HTML String with the description for the given node
    */
+  @Override
   public String getHTMLDescription(String node) {
     try {
 
-      ModuleReferenceDataOrgTreeData[] moduleReferenceDataOrgTreeData = ModuleReferenceDataOrgTreeData.selectDescription(
-          conn, lang, node);
+      ModuleReferenceDataOrgTreeData[] moduleReferenceDataOrgTreeData = ModuleReferenceDataOrgTreeData
+          .selectDescription(conn, lang, node);
       // addLinks(data, true);
       String discard[] = { "" };
-      if (moduleReferenceDataOrgTreeData != null && moduleReferenceDataOrgTreeData.length > 0 && moduleReferenceDataOrgTreeData[0].linkname != null
-          && !moduleReferenceDataOrgTreeData[0].linkname.equals(""))
+      if (moduleReferenceDataOrgTreeData != null && moduleReferenceDataOrgTreeData.length > 0
+          && moduleReferenceDataOrgTreeData[0].linkname != null
+          && !moduleReferenceDataOrgTreeData[0].linkname.equals("")) {
         moduleReferenceDataOrgTreeData[0].statusName = "";
-      if (moduleReferenceDataOrgTreeData != null
-          && moduleReferenceDataOrgTreeData.length > 0
-          && (moduleReferenceDataOrgTreeData[0].updateAvailable == null || moduleReferenceDataOrgTreeData[0].updateAvailable.equals("") || moduleReferenceDataOrgTreeData[0].updateAvailable
-              .equals("N")))
+      }
+      if (moduleReferenceDataOrgTreeData != null && moduleReferenceDataOrgTreeData.length > 0
+          && (moduleReferenceDataOrgTreeData[0].updateAvailable == null
+              || moduleReferenceDataOrgTreeData[0].updateAvailable.equals("")
+              || moduleReferenceDataOrgTreeData[0].updateAvailable.equals("N"))) {
         discard[0] = "update";
+      }
 
-      XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/modules/ModuleTreeDescription", discard).createXmlDocument();
+      XmlDocument xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/modules/ModuleTreeDescription", discard)
+          .createXmlDocument();
       xmlDocument.setData("structureDesc", moduleReferenceDataOrgTreeData);
       return xmlDocument.print();
 
@@ -315,6 +325,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
    * 
    * @param nodeId
    */
+  @Override
   public void setSubTree(String nodeId, String level) {
     setIsSubTree(true);
     try {

@@ -76,27 +76,28 @@ public class GCSequenceNumberTests extends GridConfigurationTest {
     try {
       gctabFirstRecord = OBProvider.getInstance().get(GCTab.class);
       gctabSecondRecord = OBProvider.getInstance().get(GCTab.class);
-      gctabFirstRecord.setClient(OBDal.getInstance().get(Client.class,
-          CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
-      gctabFirstRecord.setOrganization(OBDal.getInstance().get(Organization.class,
-          ZERO_ORGANIZATION));
+      gctabFirstRecord
+          .setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
+      gctabFirstRecord
+          .setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gctabFirstRecord.setFilterable(YES);
       gctabFirstRecord.setSeqno(HIGH_SEQUENCE_NUMBER);
       Tab firstTab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       firstTab.getOBUIAPPGCTabList().add(gctabFirstRecord);
       OBDal.getInstance().save(gctabFirstRecord);
 
-      gctabSecondRecord.setClient(OBDal.getInstance().get(Client.class,
-          CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
-      gctabSecondRecord.setOrganization(OBDal.getInstance().get(Organization.class,
-          ZERO_ORGANIZATION));
+      gctabSecondRecord
+          .setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
+      gctabSecondRecord
+          .setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gctabSecondRecord.setFilterable(NO);
       gctabSecondRecord.setSeqno(LOW_SEQUENCE_NUMBER);
       firstTab.getOBUIAPPGCTabList().add(gctabSecondRecord);
       OBDal.getInstance().save(gctabSecondRecord);
 
-      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(OBDal.getInstance().get(
-          Tab.class, BUSINESS_PARTNER_TAB_ID));
+      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
+      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(),
+          getTabGridConfig(tab));
 
       assertThat("Grid configuration in business partner tab with filtering enabled:",
           tabConfig.toString(), containsString(CAN_FILTER_TRUE));
@@ -117,32 +118,39 @@ public class GCSequenceNumberTests extends GridConfigurationTest {
     GCTab gctabSecondRecord = null;
     OBContext.setAdminMode(false);
     try {
+      Tab firstTab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       gctabFirstRecord = OBProvider.getInstance().get(GCTab.class);
       gctabSecondRecord = OBProvider.getInstance().get(GCTab.class);
-      gctabFirstRecord.setClient(OBDal.getInstance().get(Client.class,
-          CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
-      gctabFirstRecord.setOrganization(OBDal.getInstance().get(Organization.class,
-          ZERO_ORGANIZATION));
+      gctabFirstRecord
+          .setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
+      gctabFirstRecord
+          .setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gctabFirstRecord.setFilterable(YES);
       gctabFirstRecord.setSeqno(LOW_SEQUENCE_NUMBER);
-      Tab firstTab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
+      gctabFirstRecord.setTab(firstTab);
       firstTab.getOBUIAPPGCTabList().add(gctabFirstRecord);
       OBDal.getInstance().save(gctabFirstRecord);
 
-      gctabSecondRecord.setClient(OBDal.getInstance().get(Client.class,
-          CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
-      gctabSecondRecord.setOrganization(OBDal.getInstance().get(Organization.class,
-          ZERO_ORGANIZATION));
+      Tab secondTab = OBDal.getInstance().get(Tab.class, PRODUCT_TAB_ID);
+      gctabSecondRecord
+          .setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
+      gctabSecondRecord
+          .setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gctabSecondRecord.setFilterable(NO);
       gctabSecondRecord.setSeqno(LOW_SEQUENCE_NUMBER);
-      Tab secondTab = OBDal.getInstance().get(Tab.class, PRODUCT_TAB_ID);
+      gctabSecondRecord.setTab(secondTab);
       secondTab.getOBUIAPPGCTabList().add(gctabSecondRecord);
       OBDal.getInstance().save(gctabSecondRecord);
 
-      JSONObject bpTabConfig = OBViewUtil.getGridConfigurationSettings(OBDal.getInstance().get(
-          Tab.class, BUSINESS_PARTNER_TAB_ID));
-      JSONObject productTabConfig = OBViewUtil.getGridConfigurationSettings(OBDal.getInstance()
-          .get(Tab.class, PRODUCT_TAB_ID));
+      OBDal.getInstance().flush();
+
+      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
+      JSONObject bpTabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(),
+          getTabGridConfig(tab));
+
+      tab = OBDal.getInstance().get(Tab.class, PRODUCT_TAB_ID);
+      JSONObject productTabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(),
+          getTabGridConfig(tab));
 
       assertThat("Grid configuration in business partner tab with filtering enabled:",
           bpTabConfig.toString(), containsString(CAN_FILTER_TRUE));
@@ -165,32 +173,39 @@ public class GCSequenceNumberTests extends GridConfigurationTest {
     GCTab gctabSecondRecord = null;
     OBContext.setAdminMode(false);
     try {
+      Tab firstTab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       gctabFirstRecord = OBProvider.getInstance().get(GCTab.class);
       gctabSecondRecord = OBProvider.getInstance().get(GCTab.class);
-      gctabFirstRecord.setClient(OBDal.getInstance().get(Client.class,
-          CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
-      gctabFirstRecord.setOrganization(OBDal.getInstance().get(Organization.class,
-          ZERO_ORGANIZATION));
+      gctabFirstRecord
+          .setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
+      gctabFirstRecord
+          .setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gctabFirstRecord.setFilterable(YES);
       gctabFirstRecord.setSeqno(HIGH_SEQUENCE_NUMBER);
-      Tab firstTab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
+      gctabFirstRecord.setTab(firstTab);
       firstTab.getOBUIAPPGCTabList().add(gctabFirstRecord);
       OBDal.getInstance().save(gctabFirstRecord);
 
-      gctabSecondRecord.setClient(OBDal.getInstance().get(Client.class,
-          CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
-      gctabSecondRecord.setOrganization(OBDal.getInstance().get(Organization.class,
-          ZERO_ORGANIZATION));
+      Tab secondTab = OBDal.getInstance().get(Tab.class, PRODUCT_TAB_ID);
+      gctabSecondRecord
+          .setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
+      gctabSecondRecord
+          .setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gctabSecondRecord.setFilterable(NO);
       gctabSecondRecord.setSeqno(LOW_SEQUENCE_NUMBER);
-      Tab secondTab = OBDal.getInstance().get(Tab.class, PRODUCT_TAB_ID);
+      gctabSecondRecord.setTab(secondTab);
       secondTab.getOBUIAPPGCTabList().add(gctabSecondRecord);
       OBDal.getInstance().save(gctabSecondRecord);
 
-      JSONObject bpTabConfig = OBViewUtil.getGridConfigurationSettings(OBDal.getInstance().get(
-          Tab.class, BUSINESS_PARTNER_TAB_ID));
-      JSONObject productTabConfig = OBViewUtil.getGridConfigurationSettings(OBDal.getInstance()
-          .get(Tab.class, PRODUCT_TAB_ID));
+      OBDal.getInstance().flush();
+
+      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
+      JSONObject bpTabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(),
+          getTabGridConfig(tab));
+
+      tab = OBDal.getInstance().get(Tab.class, PRODUCT_TAB_ID);
+      JSONObject productTabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(),
+          getTabGridConfig(tab));
 
       assertThat("Grid configuration in business partner tab with filtering enabled:",
           bpTabConfig.toString(), containsString(CAN_FILTER_TRUE));

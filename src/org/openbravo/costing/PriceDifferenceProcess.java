@@ -40,7 +40,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
-import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
@@ -110,11 +109,11 @@ public class PriceDifferenceProcess {
         basePrice = receiptLine.getSalesOrderLine().getUnitPrice();
         baseCurrency = receiptLine.getSalesOrderLine().getSalesOrder().getCurrency();
       } else {
-        basePrice = materialTransaction.getTransactionCost().divide(receiptQty, costCurPrecission,
-            RoundingMode.HALF_UP);
+        basePrice = materialTransaction.getTransactionCost()
+            .divide(receiptQty, costCurPrecission, RoundingMode.HALF_UP);
       }
-      BigDecimal baseAmt = notInvoicedQty.multiply(basePrice).setScale(costCurPrecission,
-          RoundingMode.HALF_UP);
+      BigDecimal baseAmt = notInvoicedQty.multiply(basePrice)
+          .setScale(costCurPrecission, RoundingMode.HALF_UP);
       if (!baseCurrency.getId().equals(trxCurrency.getId())) {
         baseAmt = FinancialUtils.getConvertedAmount(baseAmt, baseCurrency, trxCurrency, trxDate,
             trxOrg, FinancialUtils.PRECISION_STANDARD);
@@ -142,10 +141,10 @@ public class PriceDifferenceProcess {
       BigDecimal trxCostDifference = (expectedUnitCost.multiply(receiptQty))
           .subtract(currentTrxCost);
 
-      CostAdjustmentLine costAdjLine = CostAdjustmentUtils.insertCostAdjustmentLine(
-          materialTransaction, costAdjHeader, trxCostDifference, Boolean.TRUE, costAdjDateAcct);
-      costAdjLine.setNeedsPosting(Boolean.TRUE);
-      OBDal.getInstance().save(costAdjLine);
+      final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+          materialTransaction, trxCostDifference, costAdjHeader);
+      lineParameters.setSource(true);
+      CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, costAdjDateAcct);
       costAdjCreated = true;
     }
 
@@ -166,8 +165,8 @@ public class PriceDifferenceProcess {
 
   }
 
-  public static JSONObject processPriceDifferenceTransaction(MaterialTransaction materialTransaction)
-      throws OBException {
+  public static JSONObject processPriceDifferenceTransaction(
+      MaterialTransaction materialTransaction) throws OBException {
     costAdjHeader = null;
 
     Organization organizationForCostAdjustmentHeader = new OrganizationStructureProvider()
@@ -239,8 +238,8 @@ public class PriceDifferenceProcess {
     costAdjHeader = null;
     boolean costAdjCreated = false;
     int count = 0;
-    OBCriteria<MaterialTransaction> mTrxs = OBDal.getInstance().createCriteria(
-        MaterialTransaction.class);
+    OBCriteria<MaterialTransaction> mTrxs = OBDal.getInstance()
+        .createCriteria(MaterialTransaction.class);
     if (date != null) {
       mTrxs.add(Restrictions.le(MaterialTransaction.PROPERTY_MOVEMENTDATE, date));
     }
@@ -249,9 +248,9 @@ public class PriceDifferenceProcess {
     }
     mTrxs.add(Restrictions.eq(MaterialTransaction.PROPERTY_CHECKPRICEDIFFERENCE, true));
     mTrxs.add(Restrictions.eq(MaterialTransaction.PROPERTY_ISCOSTCALCULATED, true));
-    mTrxs.add(Restrictions.in(MaterialTransaction.PROPERTY_ORGANIZATION + "."
-        + Organization.PROPERTY_ID,
-        new OrganizationStructureProvider().getChildTree(legalOrganization.getId(), true)));
+    mTrxs.add(
+        Restrictions.in(MaterialTransaction.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID,
+            new OrganizationStructureProvider().getChildTree(legalOrganization.getId(), true)));
     mTrxs.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTDATE, true);
     mTrxs.addOrderBy(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
     ScrollableResults lines = mTrxs.scroll(ScrollMode.FORWARD_ONLY);
@@ -313,10 +312,10 @@ public class PriceDifferenceProcess {
   private static boolean isValidPriceAdjTrx(MaterialTransaction trx) {
     TrxType transacctionType = TrxType.getTrxType(trx);
     switch (transacctionType) {
-    case Receipt:
-      return true;
-    default:
-      return false;
+      case Receipt:
+        return true;
+      default:
+        return false;
     }
   }
 

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Copyright (C) 2001-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -16,7 +16,8 @@ import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.VariablesBase;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -34,7 +35,7 @@ import org.quartz.SchedulerException;
  * 
  */
 public class VariablesSecureApp extends VariablesBase {
-  private static final Logger log4j = Logger.getLogger(VariablesSecureApp.class);
+  private static final Logger log4j = LogManager.getLogger();
   private String user;
   private String role;
   private String language;
@@ -97,7 +98,8 @@ public class VariablesSecureApp extends VariablesBase {
    *          ID of the role as specified by the AD_ROLE_ID column within the AD_ROLE database
    *          table.
    */
-  public VariablesSecureApp(String strUser, String strClient, String strOrganization, String strRole) {
+  public VariablesSecureApp(String strUser, String strClient, String strOrganization,
+      String strRole) {
     this(strUser, strClient, strOrganization, strRole, null);
   }
 
@@ -121,8 +123,7 @@ public class VariablesSecureApp extends VariablesBase {
     this.user = strUser;
     this.role = strRole;
     if (StringUtils.isEmpty(strLanguage)) {
-      this.language = System.getProperty("user.language") + "_"
-          + System.getProperty("user.country");
+      this.language = "en_US";
     } else {
       this.language = strLanguage;
     }
@@ -234,8 +235,8 @@ public class VariablesSecureApp extends VariablesBase {
           // Get theme (skin)
           OBContext.setAdminMode();
           try {
-            org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-                org.openbravo.model.ad.system.System.class, "0");
+            org.openbravo.model.ad.system.System sys = OBDal.getInstance()
+                .get(org.openbravo.model.ad.system.System.class, "0");
             if (sys != null && !sys.getTADTheme().isEmpty()) {
               strTheme = (systemClient.getLanguage().isRTLLanguage() ? "rtl/" : "ltr/")
                   + sys.getTADTheme();

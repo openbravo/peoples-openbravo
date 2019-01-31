@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2017 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -53,6 +53,8 @@
     v_validfromdate M_PriceList_Version.ValidFrom%TYPE;
     v_isCostMigrated NUMBER;
     v_clientCurrencyId AD_Client.C_Currency_ID%TYPE;
+    v_count NUMBER;
+    v_priceListPrefValue CHAR(1):='Y';
     --
     -- Get PL Parameter
     Cur_DiscountLine RECORD;
@@ -68,7 +70,6 @@
     v_Sql_insert VARCHAR2(2000);
     v_rdbms VARCHAR2(2000):=AD_GET_RDBMS();
 
-    v_priceRemoved CHAR(1) := 'N';
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing') ;
@@ -134,8 +135,16 @@
     IF (v_Costbased = 'N' AND (v_PriceList_Version_Base_ID IS NULL OR v_PriceList_Version_Base_ID='')) THEN
       RAISE_APPLICATION_ERROR(-20000, '@BasePriceListRequired@');
     END IF;
+    -- Calculate Hierarchical Product Price Preference
+    SELECT COUNT(1) INTO v_count
+    FROM ad_preference
+    WHERE property = 'HierarchicalPriceList';
+    IF (v_count > 0) THEN
+      v_priceListPrefValue := AD_GET_PREFERENCE_VALUE('HierarchicalPriceList', 'Y', v_client_id, v_org_id, v_User, NULL, NULL);    
+    END IF;
     --Create temporary tables 
     v_temp:=C_CREATE_TEMPORARY_TABLES();
+    DELETE FROM C_TEMP_Selection2;
     DBMS_OUTPUT.PUT_LINE('  PriceList_Version_ID=' || v_PriceList_Version_ID) ;
     -- Checking Prerequisites
     -- -- PO Prices must exists
@@ -158,7 +167,6 @@
         rowcount:=SQL%ROWCOUNT;
         v_Message:='@Deleted@=' || rowcount || ' - ';
         DBMS_OUTPUT.PUT_LINE(v_Message) ;
-        v_priceRemoved := 'Y';
       END IF;
       /**
       * For All Discount Lines in Sequence
@@ -264,7 +272,7 @@
         END IF;
 
         -- Product Price will be created with initial values only the first time and will be used as basis for next iterations
-        IF (v_priceRemoved = 'N' AND (v_PriceList_Version_Base_ID IS NULL OR v_PriceList_Version_Base_ID <> v_PriceList_Version_ID)) THEN
+        IF (v_PriceList_Version_Base_ID IS NULL OR v_PriceList_Version_Base_ID <> v_PriceList_Version_ID) THEN
           v_ResultStr:=v_ResultStr || ', Delete';
           DELETE
           FROM M_ProductPrice
@@ -274,8 +282,24 @@
             FROM C_TEMP_Selection s
             WHERE M_ProductPrice.M_Product_ID=s.C_TEMP_Selection_ID
             )
-            ;
-          v_priceRemoved := 'Y';
+            AND NOT EXISTS
+            (SELECT 1
+            FROM C_TEMP_Selection2 sel2
+            WHERE M_ProductPrice.M_Product_ID=sel2.C_TEMP_Selection_ID
+            );
+          IF(v_priceListPrefValue = 'Y') THEN
+            INSERT INTO C_TEMP_Selection2 
+            (
+             C_TEMP_Selection_ID, QUERY_ID
+            )
+            SELECT sel.C_TEMP_Selection_ID, ' '
+            FROM C_TEMP_Selection sel
+            WHERE NOT EXISTS
+              (SELECT 1
+               FROM C_TEMP_Selection2 sel2
+               WHERE sel.C_TEMP_Selection_ID=sel2.C_TEMP_Selection_ID
+              );  
+          END IF;
         END IF;
         -- --------------------
         -- Copy (Insert) Prices

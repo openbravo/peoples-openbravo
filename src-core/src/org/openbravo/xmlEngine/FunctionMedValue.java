@@ -14,36 +14,40 @@ package org.openbravo.xmlEngine;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionMedValue extends FunctionValue {
   int count;
   BigDecimal sum;
 
-  static Logger log4jFunctionMedValue = Logger.getLogger(FunctionMedValue.class);
+  static Logger log4jFunctionMedValue = LogManager.getLogger();
 
   public FunctionMedValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     try {
-      return functionTemplate.printFormatOutput(sum.divide(new BigDecimal(count), 12,
-          RoundingMode.HALF_UP));
+      return functionTemplate
+          .printFormatOutput(sum.divide(new BigDecimal(count), 12, RoundingMode.HALF_UP));
     } catch (ArithmeticException a) {
       return XmlEngine.strTextDividedByZero;
     }
   }
 
+  @Override
   public String printSimple() {
     try {
-      return functionTemplate.printFormatSimple(sum.divide(new BigDecimal(count), 12,
-          RoundingMode.HALF_UP));
+      return functionTemplate
+          .printFormatSimple(sum.divide(new BigDecimal(count), 12, RoundingMode.HALF_UP));
     } catch (ArithmeticException a) {
       return XmlEngine.strTextDividedByZero;
     }
   }
 
+  @Override
   public void acumulate() {
     count++;
     if (fieldValue.print() != "") {
@@ -51,6 +55,7 @@ class FunctionMedValue extends FunctionValue {
     }
   }
 
+  @Override
   public void init() {
     sum = BigDecimal.ZERO;
     count = 0;

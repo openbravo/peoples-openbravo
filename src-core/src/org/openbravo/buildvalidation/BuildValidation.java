@@ -54,6 +54,7 @@ public abstract class BuildValidation extends ExecutionLimitBaseProcess {
   /**
    * This method returns the name of the class.
    */
+  @Override
   protected String getTypeName() {
     return BUILD_VALIDATION;
   }
@@ -88,8 +89,8 @@ public abstract class BuildValidation extends ExecutionLimitBaseProcess {
 
   protected List<String> handleError(Throwable t) {
     ArrayList<String> exceptionErrors = new ArrayList<String>();
-    exceptionErrors.add("Error executing build-validation " + this.getClass().getName() + ": "
-        + t.getMessage());
+    exceptionErrors.add(
+        "Error executing build-validation " + this.getClass().getName() + ": " + t.getMessage());
     exceptionErrors.add("The build validation couldn't be properly executed");
     return exceptionErrors;
   }

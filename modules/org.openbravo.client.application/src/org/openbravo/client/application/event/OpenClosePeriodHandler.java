@@ -20,7 +20,8 @@ package org.openbravo.client.application.event;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -44,7 +45,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 
 public class OpenClosePeriodHandler extends BaseActionHandler {
-  private static final Logger log4j = Logger.getLogger(OpenClosePeriodHandler.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -64,8 +65,8 @@ public class OpenClosePeriodHandler extends BaseActionHandler {
         String strAction = "";
         if (size == 1) {
           if (OBDal.getInstance().get(Period.class, periodIdList.get(0)) == null) {
-            PeriodControl periodControl = OBDal.getInstance().get(PeriodControl.class,
-                periodIdList.get(0));
+            PeriodControl periodControl = OBDal.getInstance()
+                .get(PeriodControl.class, periodIdList.get(0));
             strAction = periodControl.getPeriodStatus();
           } else {
             Period period = OBDal.getInstance().get(Period.class, periodIdList.get(0));
@@ -181,9 +182,9 @@ public class OpenClosePeriodHandler extends BaseActionHandler {
     JSONObject response = new JSONObject();
     DalConnectionProvider conn = new DalConnectionProvider(false);
     ComboTableData comboTableData = new ComboTableData(vars, conn, "LIST", "", ACTIONS_REF,
-        VALID_PERIOD_CONTROL_ACTION_VALIDATION, Utility.getContext(conn, vars,
-            "#AccessibleOrgTree", PERIOD_CONTROL_WINDOW_ID), Utility.getContext(conn, vars,
-            "#User_Client", PERIOD_CONTROL_WINDOW_ID), 0);
+        VALID_PERIOD_CONTROL_ACTION_VALIDATION,
+        Utility.getContext(conn, vars, "#AccessibleOrgTree", PERIOD_CONTROL_WINDOW_ID),
+        Utility.getContext(conn, vars, "#User_Client", PERIOD_CONTROL_WINDOW_ID), 0);
     Utility.fillSQLParameters(conn, vars, null, comboTableData, PERIOD_CONTROL_WINDOW_ID, "");
     FieldProvider[] fpArray = comboTableData.select(false);
     JSONObject valueMap = new JSONObject();

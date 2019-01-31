@@ -34,10 +34,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.dialect.function.SQLFunction;
 import org.jboss.arquillian.container.weld.ee.embedded_1_1.mock.MockServletContext;
 import org.junit.After;
 import org.junit.Before;
@@ -50,6 +55,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.DalLayerInitializer;
@@ -61,6 +67,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.test.base.TestConstants.Orgs;
 
 /**
  * OBBaseTest class which can/should be extended by most other test classes which want to make use
@@ -71,7 +78,16 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 
 public class OBBaseTest {
-  private static final Logger log = Logger.getLogger(OBBaseTest.class);
+
+  static {
+    // Adds the package location of the plugins used by Log4j
+    // in order to make them available before initialization
+    PluginManager.addPackage("org.openbravo.test.base");
+  }
+
+  private static Logger log = LogManager.getLogger();
+  private static final String TEST_LOG_APPENDER_NAME = "TestLogAppender";
+  private static TestLogAppender testLogAppender;
   private static List<String> disabledTestCases;
   private boolean disabledTestCase = false;
 
@@ -90,7 +106,7 @@ public class OBBaseTest {
       if (!disabledTestCase) {
         log.info("*** Starting test case: " + getTestName(description));
       }
-    };
+    }
 
     private boolean isDisabled(Description description) {
       boolean fullClassDisabled = disabledTestCases.contains(description.getClassName());
@@ -170,12 +186,12 @@ public class OBBaseTest {
   /**
    * Record ID of Organization "F&amp;B España - Región Norte"
    */
-  protected static final String TEST_ORG_ID = "E443A31992CB4635AFCAEABE7183CE85";
+  protected static final String TEST_ORG_ID = Orgs.ESP_NORTE;
 
   /**
    * Record ID of Organization "F&amp;B US West Coast"
    */
-  protected static final String TEST_US_ORG_ID = "BAE22373FEBE4CCCA24517E23F0C8A48";
+  protected static final String TEST_US_ORG_ID = Orgs.US_WEST;
 
   /**
    * Record ID of Warehouse "España Región Norte"
@@ -216,9 +232,7 @@ public class OBBaseTest {
   /**
    * Map representation of current Organization tree for Client {@link #TEST_CLIENT_ID}
    */
-  protected static Map<String, String[]> TEST_ORG_TREE = new HashMap<String, String[]>();
-
-  private static TestLogAppender testLogAppender;
+  protected static Map<String, String[]> TEST_ORG_TREE = new HashMap<>();
 
   static {
 
@@ -229,7 +243,7 @@ public class OBBaseTest {
     TEST_ORG_TREE.put("B843C30461EA4501935CB1D125C9C25A", new String[] { "" });
 
     // "F&B US, Inc."
-    TEST_ORG_TREE.put("B843C30461EA4501935CB1D125C9C25A", new String[] { "" });
+    TEST_ORG_TREE.put("2E60544D37534C0B89E765FE29BC0B43", new String[] { "" });
 
   }
 
@@ -286,16 +300,17 @@ public class OBBaseTest {
    * @see TestLogAppender
    */
   @BeforeClass
-  public static void setDalUp() throws Exception {
-    if (OBBaseTest.class.getResource("/log4j.lcf") != null) {
-      PropertyConfigurator.configure(OBBaseTest.class.getResource("/log4j.lcf"));
-      testLogAppender = new TestLogAppender();
-
-      testLogAppender.setThreshold(Level.OFF);
-      Logger.getRootLogger().addAppender(testLogAppender);
-    }
+  public static void classSetUp() throws Exception {
+    initializeTestLogAppender();
     staticInitializeDalLayer();
     initializeDisabledTestCases();
+  }
+
+  private static void initializeTestLogAppender() {
+    final LoggerContext context = LoggerContext.getContext(false);
+    final Configuration config = context.getConfiguration();
+
+    testLogAppender = config.getAppender(TEST_LOG_APPENDER_NAME);
   }
 
   /**
@@ -337,9 +352,11 @@ public class OBBaseTest {
   }
 
   private void setMockServletContext() {
-    String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String sourcePath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("source.path");
-    String attachPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String attachPath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("attach.path");
     MockServletContext mockServletContext = new MockServletContext(sourcePath + "/WebContent");
     mockServletContext.addInitParameter("BaseConfigPath", "WEB-INF");
@@ -357,10 +374,17 @@ public class OBBaseTest {
    * {@link TestLogAppender}. Note after test completion appender is reset and its level is set back
    * to Level.OFF disabling in this manner subsequent logging track.
    */
-  protected void setTestLogAppenderLevel(Level level) {
-    if (testLogAppender != null) {
-      testLogAppender.setThreshold(level);
-    }
+  protected void setTestLogAppenderLevel(org.apache.logging.log4j.Level level) {
+    final LoggerContext context = LoggerContext.getContext(false);
+    final Configuration config = context.getConfiguration();
+
+    testLogAppender = config.getAppender(TEST_LOG_APPENDER_NAME);
+
+    LoggerConfig rootLoggerConfig = config.getRootLogger();
+    rootLoggerConfig.removeAppender(TEST_LOG_APPENDER_NAME);
+
+    rootLoggerConfig.addAppender(testLogAppender, level, null);
+    context.updateLoggers();
   }
 
   /** Include in messages possible stack traces for logged Throwables */
@@ -374,17 +398,51 @@ public class OBBaseTest {
   }
 
   /**
-   * Initializes the DALLayer, can be overridden to add specific initialization behavior.
+   * Initializes the DAL layer, can be overridden to add specific initialization behavior.
    * 
+   * @param sqlFunctions
+   *          a Map with SQL functions to be registered in Hibernate during the DAL layer
+   *          initialization. It can be null if not needed.
    * @throws Exception
    */
-  protected void initializeDalLayer() throws Exception {
-    staticInitializeDalLayer();
+  protected void initializeDalLayer(Map<String, SQLFunction> sqlFunctions) throws Exception {
+    if (areAllSqlFunctionsRegistered(sqlFunctions)) {
+      // do not re-initialize the DAL layer, as the provided SQL functions are already registered
+      return;
+    }
+    DalLayerInitializer.getInstance().setInitialized(false);
+    log.info("Creating custom DAL layer initialization...");
+    staticInitializeDalLayer(sqlFunctions);
+  }
+
+  private boolean areAllSqlFunctionsRegistered(Map<String, SQLFunction> sqlFunctions) {
+    if (sqlFunctions == null || sqlFunctions.isEmpty()) {
+      return true;
+    }
+    Map<String, SQLFunction> registeredFunctions = SessionFactoryController.getInstance()
+        .getConfiguration()
+        .getSqlFunctions();
+    if (registeredFunctions == null) {
+      return false;
+    }
+    for (String sqlFunction : sqlFunctions.keySet()) {
+      if (!registeredFunctions.containsKey(sqlFunction)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private static void staticInitializeDalLayer() throws Exception {
-    if (!DalLayerInitializer.getInstance().isInitialized()) {
-      DalLayerInitializer.getInstance().initialize(true);
+    staticInitializeDalLayer(null);
+  }
+
+  private static void staticInitializeDalLayer(Map<String, SQLFunction> sqlFunctions)
+      throws Exception {
+    DalLayerInitializer initializer = DalLayerInitializer.getInstance();
+    if (!initializer.isInitialized()) {
+      initializer.setSQLFunctions(sqlFunctions);
+      initializer.initialize(true);
     }
   }
 
@@ -472,7 +530,7 @@ public class OBBaseTest {
 
       String[] excludedUserIds = { "100", TEST_USER_ID };
       OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
-      obc.add(Restrictions.not(Restrictions.in(User.PROPERTY_ID, excludedUserIds)));
+      obc.add(Restrictions.not(Restrictions.in(User.PROPERTY_ID, (Object[]) excludedUserIds)));
       obc.add(Restrictions.isNotEmpty(User.PROPERTY_ADUSERROLESLIST));
 
       if (obc.count() == 0) {
@@ -497,8 +555,9 @@ public class OBBaseTest {
    *          the exception to report.
    */
   protected void reportException(Exception e) {
-    if (e == null)
+    if (e == null) {
       return;
+    }
     e.printStackTrace(System.err);
     if (e instanceof SQLException) {
       reportException(((SQLException) e).getNextException());

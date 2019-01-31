@@ -23,7 +23,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.scheduling.ProcessBundle;
@@ -37,12 +38,13 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class ImportClientProcess implements org.openbravo.scheduling.Process {
 
-  private static final Logger log = Logger.getLogger(ExportClientProcess.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Executes the import process. The expected parameters in the bundle are clientId (denoting the
    * client) and fileLocation giving the full path location of the file with the data to import.
    */
+  @Override
   public void execute(ProcessBundle bundle) throws Exception {
 
     try {
@@ -54,10 +56,10 @@ public class ImportClientProcess implements org.openbravo.scheduling.Process {
 
       final ClientImportProcessor importProcessor = new ClientImportProcessor();
       importProcessor.setNewName((newName != null ? newName.trim() : newName));
-      final InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(
-          getImportFile()), "UTF-8");
-      final ImportResult ir = DataImportService.getInstance().importClientData(importProcessor,
-          importAuditInfo, inputStreamReader);
+      final InputStreamReader inputStreamReader = new InputStreamReader(
+          new FileInputStream(getImportFile()), "UTF-8");
+      final ImportResult ir = DataImportService.getInstance()
+          .importClientData(importProcessor, importAuditInfo, inputStreamReader);
       inputStreamReader.close();
       if (ir.hasErrorOccured()) {
         final StringBuilder sb = new StringBuilder();

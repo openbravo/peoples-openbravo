@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,7 +23,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -34,7 +35,7 @@ import org.openbravo.database.ConnectionProvider;
  *         Abstract Class Handler for the Error management in the application.
  */
 abstract class ErrorTextParser {
-  private static final Logger log4j = Logger.getLogger(ErrorTextParser.class);
+  private static final Logger log4j = LogManager.getLogger();
   private ConnectionProvider conn;
   private String language = "";
   private String message = "";
@@ -73,8 +74,9 @@ abstract class ErrorTextParser {
    */
   public void setLanguage(String _data) {
     String localData = _data;
-    if (localData == null)
+    if (localData == null) {
       localData = "";
+    }
     this.language = localData;
   }
 
@@ -95,8 +97,9 @@ abstract class ErrorTextParser {
    */
   public void setMessage(String _data) {
     String localData = _data;
-    if (localData == null)
+    if (localData == null) {
       localData = "";
+    }
     this.message = localData;
   }
 
@@ -156,10 +159,10 @@ abstract class ErrorTextParser {
   protected String getTableName(String tableName) {
     try {
       String pkColumnName = tableName + "_ID";
-      return ErrorTextParserData.selectColumnName(conn, language, pkColumnName);
+      return ErrorTextParserData.selectColumnName(conn, language, tableName, pkColumnName);
     } catch (ServletException e) {
-      log4j.error(
-          "Error while trying to name for table via ad_element for tablename: " + tableName, e);
+      log4j.error("Error while trying to name for table via ad_element for tablename: " + tableName,
+          e);
     }
     return tableName;
   }
@@ -168,14 +171,17 @@ abstract class ErrorTextParser {
    * Helper method to get a (slightly better) human-readable name for a database column based on its
    * name. Method uses AD_ELEMENT.name and AD_ELEMENT_TRL.NAME for this purpose
    * 
+   * @param tableName
+   *          table where the column is in
+   * 
    * @param columnName
-   *          name of a database column
+   *          name of the column to get its human readable name
    * @return translated, human-readable name
    */
-  protected String getColumnName(String columnName) {
+  protected String getColumnName(String tableName, String columnName) {
     String res;
     try {
-      res = ErrorTextParserData.selectColumnName(conn, language, columnName);
+      res = ErrorTextParserData.selectColumnName(conn, language, tableName, columnName);
       return res;
     } catch (ServletException e) {
       log4j.error("Error while trying to get name for ad_element.columnname: " + columnName, e);
@@ -213,8 +219,8 @@ abstract class ErrorTextParser {
         String tableName = getTableName(constraintData[0].tableName);
         Map<String, String> replaceMap = new HashMap<String, String>();
         replaceMap.put("TABLE_NAME", tableName);
-        String res = Utility.parseTranslation(getConnection(), getVars(), replaceMap,
-            getLanguage(), msgTemplate);
+        String res = Utility.parseTranslation(getConnection(), getVars(), replaceMap, getLanguage(),
+            msgTemplate);
 
         myError = new OBError();
         myError.setType("Error");
@@ -236,7 +242,7 @@ abstract class ErrorTextParser {
           if (columns.length() > 0) {
             columns.append(", ");
           }
-          columns.append(getColumnName(column));
+          columns.append(getColumnName(constraintData[0].tableName, column));
         }
         String columnName;
         if (columnList.length > 1) {
@@ -247,8 +253,8 @@ abstract class ErrorTextParser {
         Map<String, String> replaceMap = new HashMap<String, String>();
         replaceMap.put("TABLE_NAME", tableName);
         replaceMap.put("COLUMN_NAMES", columnName);
-        String res = Utility.parseTranslation(getConnection(), getVars(), replaceMap,
-            getLanguage(), msgTemplate);
+        String res = Utility.parseTranslation(getConnection(), getVars(), replaceMap, getLanguage(),
+            msgTemplate);
 
         myError = new OBError();
         myError.setType("Error");
@@ -266,8 +272,8 @@ abstract class ErrorTextParser {
       if (msgText != null) {
         String msgTemplate = msgText.getField("msgText");
         Map<String, String> replaceMap = new HashMap<String, String>();
-        String res = Utility.parseTranslation(getConnection(), getVars(), replaceMap,
-            getLanguage(), msgTemplate);
+        String res = Utility.parseTranslation(getConnection(), getVars(), replaceMap, getLanguage(),
+            msgTemplate);
 
         myError = new OBError();
         myError.setType("Error");
@@ -300,7 +306,7 @@ abstract class ErrorTextParser {
           if (msgText != null) {
             String msgTemplate = msgText.getField("msgText");
             String tableName = getTableName(constraintData[0].tableName);
-            columnName = getColumnName(columnName);
+            columnName = getColumnName(constraintData[0].tableName, columnName);
             Map<String, String> replaceMap = new HashMap<String, String>();
             replaceMap.put("TABLE_NAME", tableName);
             replaceMap.put("COLUMN_NAME", columnName);
@@ -312,7 +318,7 @@ abstract class ErrorTextParser {
         } else if (searchCond.endsWith(" IN ('Y','N')") || searchCond.endsWith(" IN ('Y', 'N')")
             || searchCond.endsWith(" IN ('N','Y')") || searchCond.endsWith(" IN ('N', 'Y')")) {
           String columnName = searchCond.substring(0, searchCond.lastIndexOf(" IN (")).trim();
-          columnName = getColumnName(columnName);
+          columnName = getColumnName(constraintData[0].tableName, columnName);
 
           FieldProvider msgText = Utility.locateMessage(getConnection(), "NotYNError",
               getLanguage());

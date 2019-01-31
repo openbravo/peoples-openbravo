@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
@@ -52,11 +54,9 @@ import org.openbravo.model.sales.SalesRegion;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AddTransactionActionHandler extends BaseProcessActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(AddTransactionActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -72,8 +72,9 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
       final String strTransactionType = params.getString("trxtype");
       final String strTransactionDate = params.getString("trxdate");
       final Date transactionDate = JsonUtils.createDateFormat().parse(strTransactionDate);
-      final String selectedPaymentId = params.has("fin_payment_id") ? params
-          .getString("fin_payment_id") : "";
+      final String selectedPaymentId = params.has("fin_payment_id")
+          ? params.getString("fin_payment_id")
+          : "";
       final String strGLItemId = params.has("c_glitem_id") ? params.getString("c_glitem_id") : "";
       final String strDepositAmount = params.getString("depositamt");
       final String strWithdrawalamt = params.getString("withdrawalamt");
@@ -100,9 +101,9 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
   }
 
   private void createAndMatchTransaction(String strTabId, String strFinancialAccountId,
-      String selectedPaymentId, String strTransactionType, String strGLItemId,
-      Date transactionDate, String strFinBankStatementLineId, String strDepositAmount,
-      String strWithdrawalamt, String strDescription, JSONObject params) throws Exception {
+      String selectedPaymentId, String strTransactionType, String strGLItemId, Date transactionDate,
+      String strFinBankStatementLineId, String strDepositAmount, String strWithdrawalamt,
+      String strDescription, JSONObject params) throws Exception {
     final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     final ConnectionProvider conn = new DalConnectionProvider(false);
 
@@ -110,8 +111,8 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
       OBContext.setAdminMode(true);
 
       Organization organization = null;
-      final FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          strFinancialAccountId);
+      final FIN_FinancialAccount account = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, strFinancialAccountId);
       String description = "";
       GLItem glItem = null;
       FIN_Payment payment = null;
@@ -133,8 +134,8 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
       UserDimension2 user2 = null;
       Costcenter costcenter = null;
 
-      final FIN_BankStatementLine bankStatementLine = OBDal.getInstance().get(
-          FIN_BankStatementLine.class, strFinBankStatementLineId);
+      final FIN_BankStatementLine bankStatementLine = OBDal.getInstance()
+          .get(FIN_BankStatementLine.class, strFinBankStatementLineId);
       // Accounting Dimensions
       final String strElement_OT = params.getString("ad_org_id");
       organization = OBDal.getInstance().get(Organization.class, strElement_OT);
@@ -171,8 +172,9 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
         paymentAmt = FIN_Utility.getPaymentAmount(payment.isReceipt(),
             payment.getFinancialTransactionAmount());
         isReceipt = payment.isReceipt();
-        String paymentDescription = StringUtils.isNotBlank(payment.getDescription()) ? payment
-            .getDescription().replace("\n", ". ") : "";
+        String paymentDescription = StringUtils.isNotBlank(payment.getDescription())
+            ? payment.getDescription().replace("\n", ". ")
+            : "";
         description = StringUtils.isNotBlank(strDescription) ? strDescription : paymentDescription;
         paymentCurrency = payment.getCurrency();
         convertRate = payment.getFinancialTransactionConvertRate();
@@ -183,15 +185,15 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
         depositAmt = new BigDecimal(strDepositAmount);
         paymentAmt = new BigDecimal(strWithdrawalamt);
         isReceipt = (depositAmt.compareTo(paymentAmt) >= 0);
-        description = (StringUtils.isBlank(strDescription) || strDescription.equals("null")) ? OBMessageUtils
-            .messageBD("APRM_GLItem") + ": " + glItem.getName()
+        description = (StringUtils.isBlank(strDescription) || strDescription.equals("null"))
+            ? OBMessageUtils.messageBD("APRM_GLItem") + ": " + glItem.getName()
             : strDescription;
       } else { // Bank Fee or transaction without payment and gl item
         depositAmt = new BigDecimal(strDepositAmount);
         paymentAmt = new BigDecimal(strWithdrawalamt);
         isReceipt = (depositAmt.compareTo(paymentAmt) >= 0);
-        description = StringUtils.isBlank(strDescription) ? OBMessageUtils
-            .messageBD("APRM_BankFee") : strDescription;
+        description = StringUtils.isBlank(strDescription) ? OBMessageUtils.messageBD("APRM_BankFee")
+            : strDescription;
       }
 
       APRM_MatchingUtility.createAndMatchFinancialTransaction(strFinancialAccountId,

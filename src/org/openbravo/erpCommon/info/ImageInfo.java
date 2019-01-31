@@ -34,20 +34,23 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ImageInfo extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       String strKey = vars.getStringParameter("inpNameValue");
       String strNameValue = ImageInfoData.selectName(this, strKey);
-      if (!strNameValue.equals(""))
+      if (!strNameValue.equals("")) {
         vars.setSessionValue("ImageInfo.name", strNameValue + "%");
+      }
       printPageFrame(response, vars, strNameValue, "");
     } else if (vars.commandIn("FIND")) {
       String strName = vars.getRequestGlobalVariable("inpName", "ImageInfo.name");
@@ -60,9 +63,9 @@ public class ImageInfo extends HttpSecureAppServlet {
       String strInitRecord = vars.getSessionValue("ImageInfo.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "ImageInfo");
       int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
-      if (strInitRecord.equals("") || strInitRecord.equals("0"))
+      if (strInitRecord.equals("") || strInitRecord.equals("0")) {
         vars.setSessionValue("ImageInfo.initRecordNumber", "0");
-      else {
+      } else {
         int initRecord = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
         initRecord -= intRecordRange;
         strInitRecord = ((initRecord < 0) ? "0" : Integer.toString(initRecord));
@@ -75,21 +78,24 @@ public class ImageInfo extends HttpSecureAppServlet {
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "ImageInfo");
       int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
       int initRecord = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
-      if (initRecord == 0)
+      if (initRecord == 0) {
         initRecord = 1;
+      }
       initRecord += intRecordRange;
       strInitRecord = ((initRecord < 0) ? "0" : Integer.toString(initRecord));
       vars.setSessionValue("ImageInfo.initRecordNumber", strInitRecord);
 
       response.sendRedirect(strDireccion + request.getServletPath());
-    } else
+    } else {
       pageError(response);
+    }
   }
 
-  private void printPageFrame(HttpServletResponse response, VariablesSecureApp vars,
-      String strName, String strURL) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+  private void printPageFrame(HttpServletResponse response, VariablesSecureApp vars, String strName,
+      String strURL) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Frame 2 of the image seeker");
+    }
     XmlDocument xmlDocument;
 
     String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "ImageInfo");
@@ -108,10 +114,12 @@ public class ImageInfo extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#User_Client", "ImageInfo"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ImageInfo"), strName, strURL,
           initRecordNumber, intRecordRange);
-      if (data == null || data.length == 0 || initRecordNumber <= 1)
+      if (data == null || data.length == 0 || initRecordNumber <= 1) {
         discard[0] = new String("hasPrevious");
-      if (data == null || data.length == 0 || data.length < intRecordRange)
+      }
+      if (data == null || data.length == 0 || data.length < intRecordRange) {
         discard[1] = new String("hasNext");
+      }
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/ImageInfo", discard)
           .createXmlDocument();
       xmlDocument.setData("structure1", data);
@@ -130,6 +138,7 @@ public class ImageInfo extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents que image seeker";
   } // end of getServletInfo() method

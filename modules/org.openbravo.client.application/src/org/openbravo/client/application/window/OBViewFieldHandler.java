@@ -26,12 +26,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.script.ScriptException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.expression.OBScriptEngine;
@@ -41,6 +43,8 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.DynamicExpressionParser;
+import org.openbravo.client.application.GCSystem;
+import org.openbravo.client.application.GCTab;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.reference.FKSearchUIDefinition;
 import org.openbravo.client.kernel.reference.StringUIDefinition;
@@ -63,7 +67,7 @@ import org.openbravo.model.ad.ui.Tab;
 
 public class OBViewFieldHandler {
 
-  private static Logger log = Logger.getLogger(OBViewFieldHandler.class);
+  private static Logger log = LogManager.getLogger();
 
   private String parentProperty;
 
@@ -85,6 +89,9 @@ public class OBViewFieldHandler {
   private List<String> storedInSessionProperties = new ArrayList<String>();
 
   private List<Field> ignoredFields = new ArrayList<Field>();
+
+  private Optional<GCSystem> systemGridConfig;
+  private Map<String, Optional<GCTab>> tabsGridConfig;
 
   public Tab getTab() {
     return tab;
@@ -113,8 +120,8 @@ public class OBViewFieldHandler {
   }
 
   public List<OBViewFieldDefinition> getFields() {
-    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
-        getTab().getTable().getId());
+    final Entity entity = ModelProvider.getInstance()
+        .getEntityByTableId(getTab().getTable().getId());
     if (fields != null) {
       return fields;
     }
@@ -151,15 +158,15 @@ public class OBViewFieldHandler {
         // All the properties that are used in the display logic of the buttons must be included in
         // the list of grid mandatory columns
         if ("Button".equals(f.getColumn().getReference().getName())) {
-          Property property = entity.getPropertyByColumnName(fieldExpression.getColumn()
-              .getDBColumnName());
+          Property property = entity
+              .getPropertyByColumnName(fieldExpression.getColumn().getDBColumnName());
           if (!propertiesInButtonFieldDisplayLogic.contains(property.getName())) {
             propertiesInButtonFieldDisplayLogic.add(property.getName());
           }
         } else {
           if (!fieldExpression.isDisplayed() || !fieldExpression.isShowInGridView()) {
-            Property property = entity.getPropertyByColumnName(fieldExpression.getColumn()
-                .getDBColumnName());
+            Property property = entity
+                .getPropertyByColumnName(fieldExpression.getColumn().getDBColumnName());
             if (!hiddenPropertiesInDisplayLogic.contains(property.getName())) {
               hiddenPropertiesInDisplayLogic.add(property.getName());
             }
@@ -194,8 +201,8 @@ public class OBViewFieldHandler {
         continue;
       }
 
-      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getColumn()
-          .getReadOnlyLogic(), tab);
+      final DynamicExpressionParser parser = new DynamicExpressionParser(
+          f.getColumn().getReadOnlyLogic(), tab);
       readOnlyLogicMap.put(f, parser.getJSExpression());
 
       log.debug(f.getTab().getId() + " - " + f.getName() + " >>> " + parser.getJSExpression());
@@ -206,7 +213,8 @@ public class OBViewFieldHandler {
     }
 
     // Processing audit fields: if there's field for audit, don't put it in the "more info" section
-    boolean hasCreatedField = false, hasCreatedByField = false, hasUpdatedField = false, hasUpdatedByField = false;
+    boolean hasCreatedField = false, hasCreatedByField = false, hasUpdatedField = false,
+        hasUpdatedByField = false;
     for (Field f : adFields) {
       if (f.getColumn() == null) {
         continue;
@@ -229,19 +237,19 @@ public class OBViewFieldHandler {
     }
     List<OBViewFieldDefinition> auditFields = new ArrayList<OBViewFieldDefinition>();
     if (!hasCreatedField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", OBViewUtil.createdElement, tab);
+      OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", OBViewUtil.createdElement);
       auditFields.add(audit);
     }
     if (!hasCreatedByField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("createdBy", OBViewUtil.createdByElement, tab);
+      OBViewFieldAudit audit = new OBViewFieldAudit("createdBy", OBViewUtil.createdByElement);
       auditFields.add(audit);
     }
     if (!hasUpdatedField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("updated", OBViewUtil.updatedElement, tab);
+      OBViewFieldAudit audit = new OBViewFieldAudit("updated", OBViewUtil.updatedElement);
       auditFields.add(audit);
     }
     if (!hasUpdatedByField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("updatedBy", OBViewUtil.updatedByElement, tab);
+      OBViewFieldAudit audit = new OBViewFieldAudit("updatedBy", OBViewUtil.updatedByElement);
       auditFields.add(audit);
     }
 
@@ -285,10 +293,10 @@ public class OBViewFieldHandler {
         viewField.setField(field);
         viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field.getId()));
         viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
-        viewField.setDisplayLogicGrid(displayLogicGridMap.get(field) != null ? displayLogicGridMap
-            .get(field) : "");
-        viewField.setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field)
-            : "");
+        viewField.setDisplayLogicGrid(
+            displayLogicGridMap.get(field) != null ? displayLogicGridMap.get(field) : "");
+        viewField
+            .setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field) : "");
         // Positioning some fields in odd-columns
         if (colNum % 2 == 0 && (field.isStartinoddcolumn() || viewField.getColSpan() == 2)) {
           final OBViewFieldSpacer spacer = new OBViewFieldSpacer();
@@ -327,18 +335,18 @@ public class OBViewFieldHandler {
       } else {
         final OBViewField viewField = new OBViewField();
 
-        final Property property = KernelUtils.getInstance().getPropertyFromColumn(
-            field.getColumn(), false);
+        final Property property = KernelUtils.getInstance()
+            .getPropertyFromColumn(field.getColumn(), false);
         viewField.setProperty(property);
 
         viewField.setField(field);
         viewField.setId(field);
         viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field.getId()));
         viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
-        viewField.setDisplayLogicGrid(displayLogicGridMap.get(field) != null ? displayLogicGridMap
-            .get(field) : "");
-        viewField.setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field)
-            : "");
+        viewField.setDisplayLogicGrid(
+            displayLogicGridMap.get(field) != null ? displayLogicGridMap.get(field) : "");
+        viewField
+            .setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field) : "");
         // Positioning some fields in odd-columns
         if (colNum % 2 == 0 && (field.isStartinoddcolumn() || viewField.getColSpan() == 2)) {
           final OBViewFieldSpacer spacer = new OBViewFieldSpacer();
@@ -383,8 +391,8 @@ public class OBViewFieldHandler {
         continue;
       }
       if (field.getColumn().isStoredInSession()) {
-        Property prop = entity.getPropertyByColumnName(field.getColumn().getDBColumnName()
-            .toLowerCase(), false);
+        Property prop = entity
+            .getPropertyByColumnName(field.getColumn().getDBColumnName().toLowerCase(), false);
         if (prop != null) {
           storedInSessionProperties.add(prop.getName());
         }
@@ -463,9 +471,10 @@ public class OBViewFieldHandler {
     return statusBarFields;
   }
 
-  private void processStatusBarFields(List<OBViewFieldDefinition> viewFields, List<Field> adFields) {
-    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
-        getTab().getTable().getId());
+  private void processStatusBarFields(List<OBViewFieldDefinition> viewFields,
+      List<Field> adFields) {
+    final Entity entity = ModelProvider.getInstance()
+        .getEntityByTableId(getTab().getTable().getId());
 
     if (statusBarFields != null) {
       return;
@@ -641,51 +650,52 @@ public class OBViewFieldHandler {
     private String refType;
     private String refEntity;
     private Element element;
-    private Tab auditTab;
-    JSONObject gridConfiguration;
 
+    @Override
     public String getOnChangeFunction() {
       return null;
     }
 
+    @Override
     public boolean getShowColSpan() {
       return getColSpan() != 1;
     }
 
+    @Override
     public boolean getShowStartRow() {
       return getStartRow();
     }
 
+    @Override
     public boolean getShowEndRow() {
       return getEndRow();
     }
 
+    @Override
     public boolean getHasChildren() {
       return false;
     }
 
+    @Override
     public int getGridSort() {
       // put them at the back somewhere
       return 990;
     }
 
+    @Override
     public Long getGridPosition() {
       return null;
     }
 
+    @Override
     public Long getSequenceNumber() {
       return null;
     }
 
     public OBViewFieldAudit(String type, Element element) {
-      this(type, element, null);
-    }
-
-    public OBViewFieldAudit(String type, Element element, Tab tab) {
       // force reload of element as if it was previously loaded but its children were not touched,
       // lazy initialization fails
       this.element = OBDal.getInstance().get(Element.class, element.getId());
-      this.auditTab = tab;
       name = type;
       if (type.endsWith("By")) {
         // User search
@@ -699,34 +709,32 @@ public class OBViewFieldHandler {
     }
 
     public String getGridFieldProperties() {
-      StringBuffer result = new StringBuffer();
+      StringBuilder result = new StringBuilder();
       if (SEARCH_REFERENCE.equals(refType)) {
         result.append(", fkField: true");
       }
-      if (this.gridConfiguration != null) {
-        Boolean canSort = null;
-        Boolean canFilter = null;
+
+      if (tab != null) {
+        JSONObject gridConfiguration = OBViewUtil.getGridConfigurationSettings(systemGridConfig,
+            getTabGridConfig());
         try {
-          if (this.gridConfiguration.has("canFilter")) {
-            canFilter = (Boolean) this.gridConfiguration.get("canFilter");
+          if (gridConfiguration.has("canFilter")) {
+            boolean canFilter = gridConfiguration.getBoolean("canFilter");
+            result.append(", canFilter: ").append(canFilter);
           }
-          if (this.gridConfiguration.has("canSort")) {
-            canSort = (Boolean) this.gridConfiguration.get("canSort");
+          if (gridConfiguration.has("canSort")) {
+            boolean canSort = gridConfiguration.getBoolean("canSort");
+            result.append(", canSort: ").append(canSort);
           }
         } catch (JSONException e) {
           log.error("Error while getting the grid field properties of an audit field", e);
-        }
-        if (canSort != null) {
-          result.append(", canSort: " + canSort.toString());
-        }
-        if (canFilter != null) {
-          result.append(", canFilter: " + canFilter.toString());
         }
       }
       result.append(", showHover: true");
       return result.toString();
     }
 
+    @Override
     public Integer getLength() {
       return null;
     }
@@ -739,18 +747,22 @@ public class OBViewFieldHandler {
       return "";
     }
 
+    @Override
     public String getCellAlign() {
       return "left";
     }
 
+    @Override
     public boolean getAutoExpand() {
       return false;
     }
 
+    @Override
     public boolean getIsAuditField() {
       return true;
     }
 
+    @Override
     public boolean getIsGridProperty() {
       return true;
     }
@@ -760,6 +772,7 @@ public class OBViewFieldHandler {
       return OBViewUtil.getLabel(element, element.getADElementTrlList());
     }
 
+    @Override
     public boolean getSessionProperty() {
       return false;
     }
@@ -779,6 +792,7 @@ public class OBViewFieldHandler {
       return true;
     }
 
+    @Override
     public String getClientClass() {
       return "";
     }
@@ -789,12 +803,7 @@ public class OBViewFieldHandler {
 
     @Override
     public String getFieldProperties() {
-      if (tab != null) {
-        gridConfiguration = OBViewUtil.getGridConfigurationSettings(auditTab);
-        return "";
-      } else {
-        return "";
-      }
+      return "";
     }
 
     @Override
@@ -807,6 +816,7 @@ public class OBViewFieldHandler {
       return "";
     }
 
+    @Override
     public boolean getHasDefaultValue() {
       return false;
     }
@@ -846,6 +856,7 @@ public class OBViewFieldHandler {
       return false;
     }
 
+    @Override
     public boolean getPersonalizable() {
       return false;
     }
@@ -870,6 +881,7 @@ public class OBViewFieldHandler {
       return "";
     }
 
+    @Override
     public boolean getRequired() {
       return false;
     }
@@ -886,6 +898,7 @@ public class OBViewFieldHandler {
       return !refEntity.isEmpty();
     }
 
+    @Override
     public boolean isDisplayed() {
       return true;
     }
@@ -898,14 +911,17 @@ public class OBViewFieldHandler {
       return false;
     }
 
+    @Override
     public String getDisplayLogicGrid() {
       return "";
     }
 
+    @Override
     public String getId() {
       return null;
     }
 
+    @Override
     public boolean getIsComputedColumn() {
       return false;
     }
@@ -921,46 +937,57 @@ public class OBViewFieldHandler {
 
     private int gridSort = 0;
 
+    @Override
     public String getOnChangeFunction() {
       return field.getOnChangeFunction();
     }
 
+    @Override
     public boolean getShowColSpan() {
       return getColSpan() != 1;
     }
 
+    @Override
     public boolean getShowStartRow() {
       return getStartRow();
     }
 
+    @Override
     public boolean getShowEndRow() {
       return getEndRow();
     }
 
+    @Override
     public boolean getHasChildren() {
       return false;
     }
 
+    @Override
     public Long getGridPosition() {
       return field.getGridPosition();
     }
 
+    @Override
     public String getClientClass() {
       return field.getClientclass() == null ? "" : field.getClientclass();
     }
 
+    @Override
     public Long getSequenceNumber() {
       return field.getSequenceNumber();
     }
 
+    @Override
     public String getCellAlign() {
       return "left";
     }
 
+    @Override
     public boolean getAutoExpand() {
       return false;
     }
 
+    @Override
     public boolean getIsAuditField() {
       return false;
     }
@@ -985,26 +1012,32 @@ public class OBViewFieldHandler {
       this.setRedrawOnChange(value);
     }
 
+    @Override
     public boolean getIsGridProperty() {
       return true;
     }
 
+    @Override
     public boolean getSessionProperty() {
       return false;
     }
 
+    @Override
     public boolean getReadOnly() {
       return getParentProperty() || field.isReadOnly();
     }
 
+    @Override
     public boolean getUpdatable() {
       return true;
     }
 
+    @Override
     public boolean getPersonalizable() {
       return true;
     }
 
+    @Override
     public boolean getParentProperty() {
       return false;
     }
@@ -1017,18 +1050,22 @@ public class OBViewFieldHandler {
       return false;
     }
 
+    @Override
     public String getType() {
       return "text";
     }
 
+    @Override
     public boolean getHasDefaultValue() {
       return field.getColumn() != null && field.getColumn().getDefaultValue() != null;
     }
 
+    @Override
     public String getFieldProperties() {
       return "editorType: 'OBClientClassCanvasItem', filterEditorType: 'TextItem', ";
     }
 
+    @Override
     public String getName() {
       return field.getName();
     }
@@ -1037,18 +1074,22 @@ public class OBViewFieldHandler {
       return "";
     }
 
+    @Override
     public String getInpColumnName() {
       return "";
     }
 
+    @Override
     public String getReferencedKeyColumnName() {
       return "";
     }
 
+    @Override
     public String getTargetEntity() {
       return "";
     }
 
+    @Override
     public String getLabel() {
       // compute the label
       if (label == null) {
@@ -1069,14 +1110,17 @@ public class OBViewFieldHandler {
       this.field = field;
     }
 
+    @Override
     public boolean getStandardField() {
       return true;
     }
 
+    @Override
     public boolean getRequired() {
       return false;
     }
 
+    @Override
     public Integer getLength() {
       return field.getDisplayedLength() != null ? field.getDisplayedLength().intValue() : 0;
     }
@@ -1089,6 +1133,7 @@ public class OBViewFieldHandler {
       return "";
     }
 
+    @Override
     public long getColSpan() {
       if (field.getObuiappColspan() != null) {
         return field.getObuiappColspan();
@@ -1096,10 +1141,12 @@ public class OBViewFieldHandler {
       return field.getDisplayedLength() > ONE_COLUMN_MAX_LENGTH || getRowSpan() == 2 ? 2 : 1;
     }
 
+    @Override
     public boolean getEndRow() {
       return false;
     }
 
+    @Override
     public long getRowSpan() {
       if (field.getObuiappRowspan() != null) {
         return field.getObuiappRowspan();
@@ -1107,6 +1154,7 @@ public class OBViewFieldHandler {
       return 1;
     }
 
+    @Override
     public boolean getStartRow() {
       return field.isStartnewline();
     }
@@ -1115,6 +1163,7 @@ public class OBViewFieldHandler {
       this.redrawOnChange = redrawOnChange;
     }
 
+    @Override
     public boolean getRedrawOnChange() {
       return redrawOnChange;
     }
@@ -1123,6 +1172,7 @@ public class OBViewFieldHandler {
       this.showIf = showIf;
     }
 
+    @Override
     public String getShowIf() {
       return showIf;
     }
@@ -1133,10 +1183,12 @@ public class OBViewFieldHandler {
       }
     }
 
+    @Override
     public String getReadOnlyIf() {
       return readOnlyIf;
     }
 
+    @Override
     public String getDisplayLogicGrid() {
       return displaylogicgrid;
     }
@@ -1147,6 +1199,7 @@ public class OBViewFieldHandler {
       }
     }
 
+    @Override
     public boolean isDisplayed() {
       return field.isDisplayed() != null && field.isDisplayed();
     }
@@ -1155,6 +1208,7 @@ public class OBViewFieldHandler {
       return field.isShowInGridView();
     }
 
+    @Override
     public int getGridSort() {
       return gridSort;
     }
@@ -1171,13 +1225,19 @@ public class OBViewFieldHandler {
       return false;
     }
 
+    @Override
     public String getId() {
       return null;
     }
 
+    @Override
     public boolean getIsComputedColumn() {
       return false;
     }
+  }
+
+  private Optional<GCTab> getTabGridConfig() {
+    return tabsGridConfig.get(tab.getId());
   }
 
   public class OBViewField implements OBViewFieldDefinition {
@@ -1193,51 +1253,63 @@ public class OBViewFieldHandler {
     private int gridSort = 0;
     private String id;
 
+    @Override
     public boolean getIsComputedColumn() {
       return property.isComputedColumn();
     }
 
+    @Override
     public String getClientClass() {
       return field.getClientclass() == null ? "" : field.getClientclass();
     }
 
+    @Override
     public String getOnChangeFunction() {
       return field.getOnChangeFunction();
     }
 
+    @Override
     public boolean getShowColSpan() {
       return getColSpan() != 1;
     }
 
+    @Override
     public boolean getShowStartRow() {
       return getStartRow();
     }
 
+    @Override
     public boolean getShowEndRow() {
       return getEndRow();
     }
 
+    @Override
     public boolean getHasChildren() {
       return false;
     }
 
+    @Override
     public Long getGridPosition() {
       return field.getGridPosition();
     }
 
+    @Override
     public Long getSequenceNumber() {
       return field.getSequenceNumber();
     }
 
+    @Override
     public String getCellAlign() {
       return uiDefinition.getCellAlign();
     }
 
+    @Override
     public boolean getAutoExpand() {
-      return (!property.getName().equalsIgnoreCase("documentno") && (uiDefinition instanceof StringUIDefinition || !property
-          .isPrimitive()));
+      return (!property.getName().equalsIgnoreCase("documentno")
+          && (uiDefinition instanceof StringUIDefinition || !property.isPrimitive()));
     }
 
+    @Override
     public boolean getIsAuditField() {
       return false;
     }
@@ -1273,6 +1345,7 @@ public class OBViewFieldHandler {
       this.setRedrawOnChange(value);
     }
 
+    @Override
     public boolean getIsGridProperty() {
 
       if (!field.isActive()) {
@@ -1291,10 +1364,12 @@ public class OBViewFieldHandler {
       return true;
     }
 
+    @Override
     public boolean getSessionProperty() {
       return property.isStoredInSession();
     }
 
+    @Override
     public boolean getReadOnly() {
       if (field.getProperty() != null && field.getProperty().contains(".")) {
         return true;
@@ -1305,14 +1380,17 @@ public class OBViewFieldHandler {
       return getParentProperty() || field.isReadOnly();
     }
 
+    @Override
     public boolean getUpdatable() {
       return property.isUpdatable();
     }
 
+    @Override
     public boolean getPersonalizable() {
       return true;
     }
 
+    @Override
     public boolean getParentProperty() {
       if (isParentProperty == null) {
         if (OBViewFieldHandler.this.getParentProperty() == null) {
@@ -1334,17 +1412,21 @@ public class OBViewFieldHandler {
       return focused != null && focused && displayed != null && displayed;
     }
 
+    @Override
     public String getType() {
       return getUIDefinition().getName();
     }
 
+    @Override
     public boolean getHasDefaultValue() {
       return field.getColumn() != null && field.getColumn().getDefaultValue() != null;
     }
 
+    @Override
     public String getFieldProperties() {
       // First obtain the gridConfigurationSettings which will be used in other places
-      getUIDefinition().establishGridConfigurationSettings(field);
+      getUIDefinition().establishGridConfigurationSettings(field, systemGridConfig,
+          getTabGridConfig());
 
       if (getClientClass().length() > 0) {
         return "editorType: 'OBClientClassCanvasItem', ";
@@ -1376,6 +1458,7 @@ public class OBViewFieldHandler {
       return uiDefinition;
     }
 
+    @Override
     public String getName() {
       if (field.getProperty() != null) {
         return field.getProperty().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
@@ -1387,6 +1470,7 @@ public class OBViewFieldHandler {
       return OBViewFieldHandler.getFieldColumnName(field, property);
     }
 
+    @Override
     public String getInpColumnName() {
       String inpColumnName = null;
       if (field != null && field.getProperty() != null) {
@@ -1397,6 +1481,7 @@ public class OBViewFieldHandler {
       return inpColumnName;
     }
 
+    @Override
     public String getReferencedKeyColumnName() {
       if (property.isOneToMany() || property.isPrimitive()) {
         return "";
@@ -1410,6 +1495,7 @@ public class OBViewFieldHandler {
       return prop.getColumnName();
     }
 
+    @Override
     public String getTargetEntity() {
       if (property.isOneToMany() || property.isPrimitive()) {
         return "";
@@ -1417,6 +1503,7 @@ public class OBViewFieldHandler {
       return property.getTargetEntity().getName();
     }
 
+    @Override
     public String getLabel() {
       // compute the label
       if (label == null) {
@@ -1441,10 +1528,12 @@ public class OBViewFieldHandler {
       this.id = field.getId();
     }
 
+    @Override
     public String getId() {
       return id;
     }
 
+    @Override
     public boolean getStandardField() {
       return true;
     }
@@ -1457,6 +1546,7 @@ public class OBViewFieldHandler {
       this.property = property;
     }
 
+    @Override
     public boolean getRequired() {
       if (field.getProperty() != null && field.getProperty().contains(DalUtil.DOT)) {
         return false;
@@ -1476,6 +1566,7 @@ public class OBViewFieldHandler {
       }
     }
 
+    @Override
     public Integer getLength() {
       return property.getFieldLength();
     }
@@ -1488,19 +1579,22 @@ public class OBViewFieldHandler {
       return property.getTargetEntity().getName();
     }
 
+    @Override
     public long getColSpan() {
       if (field.getObuiappColspan() != null) {
         return field.getObuiappColspan();
       }
-      return field.getDisplayedLength() > ONE_COLUMN_MAX_LENGTH
-          || (getRowSpan() == 2 && !property.getDomainType().getReference().getId()
-              .equals(IMAGEBLOB_AD_REFERENCE_ID)) ? 2 : 1;
+      return field.getDisplayedLength() > ONE_COLUMN_MAX_LENGTH || (getRowSpan() == 2
+          && !property.getDomainType().getReference().getId().equals(IMAGEBLOB_AD_REFERENCE_ID)) ? 2
+              : 1;
     }
 
+    @Override
     public boolean getEndRow() {
       return false;
     }
 
+    @Override
     public long getRowSpan() {
       if (field.getObuiappRowspan() != null) {
         return field.getObuiappRowspan();
@@ -1514,6 +1608,7 @@ public class OBViewFieldHandler {
       return 1;
     }
 
+    @Override
     public boolean getStartRow() {
       return field.isStartnewline();
     }
@@ -1522,6 +1617,7 @@ public class OBViewFieldHandler {
       this.redrawOnChange = redrawOnChange;
     }
 
+    @Override
     public boolean getRedrawOnChange() {
       return redrawOnChange;
     }
@@ -1530,6 +1626,7 @@ public class OBViewFieldHandler {
       this.showIf = showIf;
     }
 
+    @Override
     public String getShowIf() {
       return showIf;
     }
@@ -1540,16 +1637,17 @@ public class OBViewFieldHandler {
       }
     }
 
+    @Override
     public String getReadOnlyIf() {
       return readOnlyIf;
     }
 
+    @Override
     public boolean isDisplayed() {
       if (field.isShownInStatusBar()) {
         return false;
       } else {
-        return field.isDisplayed() != null
-            && field.isDisplayed()
+        return field.isDisplayed() != null && field.isDisplayed()
             && evaluateDisplayLogicAtServerLevel(field.getDisplayLogicEvaluatedInTheServer(),
                 field.getId());
       }
@@ -1583,7 +1681,8 @@ public class OBViewFieldHandler {
       } catch (ScriptException e) {
         log.error(
             "Error while evaluating the Display Logic at Server Level. Error in field with id: "
-                + fieldId + " in Tab with id: " + tab.getId(), e);
+                + fieldId + " in Tab with id: " + tab.getId(),
+            e);
         result = true;
       }
       return result;
@@ -1594,11 +1693,11 @@ public class OBViewFieldHandler {
     }
 
     public boolean isShowInitiallyInGrid() {
-      return field.isShowInGridView()
-          && evaluateDisplayLogicAtServerLevel(field.getDisplayLogicEvaluatedInTheServer(),
-              field.getId());
+      return field.isShowInGridView() && evaluateDisplayLogicAtServerLevel(
+          field.getDisplayLogicEvaluatedInTheServer(), field.getId());
     }
 
+    @Override
     public int getGridSort() {
       return gridSort;
     }
@@ -1614,6 +1713,7 @@ public class OBViewFieldHandler {
       return "";
     }
 
+    @Override
     public String getDisplayLogicGrid() {
       if (field.getDisplaylogicgrid() != null) {
         return this.displayLogicGrid;
@@ -1653,162 +1753,202 @@ public class OBViewFieldHandler {
 
   public class DefaultVirtualField implements OBViewFieldDefinition {
 
+    @Override
     public String getOnChangeFunction() {
       return null;
     }
 
+    @Override
     public String getClientClass() {
       return "";
     }
 
+    @Override
     public boolean getShowColSpan() {
       return getColSpan() != 4;
     }
 
+    @Override
     public boolean getShowStartRow() {
       return !getStartRow();
     }
 
+    @Override
     public boolean getShowEndRow() {
       return !getEndRow();
     }
 
+    @Override
     public boolean getHasChildren() {
       return false;
     }
 
+    @Override
     public int getGridSort() {
       return -1;
     }
 
+    @Override
     public Long getGridPosition() {
       return null;
     }
 
+    @Override
     public Long getSequenceNumber() {
       return null;
     }
 
+    @Override
     public Integer getLength() {
       return 0;
     }
 
+    @Override
     public String getCellAlign() {
       return null;
     }
 
+    @Override
     public boolean getAutoExpand() {
       return false;
     }
 
+    @Override
     public boolean getIsAuditField() {
       return false;
     }
 
+    @Override
     public boolean getIsGridProperty() {
       return false;
     }
 
+    @Override
     public boolean getRequired() {
       return false;
     }
 
+    @Override
     public boolean getSessionProperty() {
       return false;
     }
 
+    @Override
     public String getFieldProperties() {
       return "";
     }
 
+    @Override
     public boolean getHasDefaultValue() {
       return false;
     }
 
+    @Override
     public boolean getReadOnly() {
       return false;
     }
 
+    @Override
     public boolean getUpdatable() {
       return true;
     }
 
+    @Override
     public boolean getParentProperty() {
       return false;
     }
 
+    @Override
     public boolean getPersonalizable() {
       return false;
     }
 
+    @Override
     public String getInpColumnName() {
       return "";
     }
 
+    @Override
     public String getReferencedKeyColumnName() {
       return "";
     }
 
+    @Override
     public String getTargetEntity() {
       return "";
     }
 
+    @Override
     public long getColSpan() {
       return 4;
     }
 
+    @Override
     public boolean getEndRow() {
       return true;
     }
 
+    @Override
     public long getRowSpan() {
       return 1;
     }
 
+    @Override
     public boolean getStartRow() {
       return true;
     }
 
+    @Override
     public boolean getStandardField() {
       return false;
     }
 
+    @Override
     public String getLabel() {
       return "";
     }
 
+    @Override
     public String getName() {
       return "";
     }
 
+    @Override
     public String getType() {
       return "";
     }
 
+    @Override
     public boolean getRedrawOnChange() {
       return false;
     }
 
+    @Override
     public String getShowIf() {
       return "";
     }
 
+    @Override
     public String getReadOnlyIf() {
       return "";
     }
 
+    @Override
     public boolean isDisplayed() {
       return true;
     }
 
+    @Override
     public String getDisplayLogicGrid() {
       return "";
     }
 
+    @Override
     public String getId() {
       return null;
     }
 
+    @Override
     public boolean getIsComputedColumn() {
       return false;
     }
@@ -1827,10 +1967,12 @@ public class OBViewFieldHandler {
       type = "OBSectionItem";
     }
 
+    @Override
     public boolean getPersonalizable() {
       return personalizable;
     }
 
+    @Override
     public String getLabel() {
       // compute the label
       if (label == null) {
@@ -1860,6 +2002,7 @@ public class OBViewFieldHandler {
       children.addAll(viewFieldDefinitions);
     }
 
+    @Override
     public boolean getHasChildren() {
       return !getChildren().isEmpty();
     }
@@ -1868,6 +2011,7 @@ public class OBViewFieldHandler {
       return children;
     }
 
+    @Override
     public String getType() {
       return type;
     }
@@ -1876,6 +2020,7 @@ public class OBViewFieldHandler {
       this.type = type;
     }
 
+    @Override
     public String getName() {
       return fieldGroup.getId();
     }
@@ -1888,6 +2033,7 @@ public class OBViewFieldHandler {
       this.expanded = expanded;
     }
 
+    @Override
     public boolean isDisplayed() {
       for (OBViewFieldDefinition child : children) {
         if (child.isDisplayed()) {
@@ -1904,10 +2050,12 @@ public class OBViewFieldHandler {
 
   public class AttachmentsCanvasField extends DefaultVirtualField {
 
+    @Override
     public String getName() {
       return "_attachments_Canvas";
     }
 
+    @Override
     public String getType() {
       return "OBAttachmentCanvasItem";
     }
@@ -1917,11 +2065,13 @@ public class OBViewFieldHandler {
 
     private OBViewFieldDefinition childField;
 
+    @Override
     public String getLabel() {
       // is set at runtime
       return "";
     }
 
+    @Override
     public boolean getEndRow() {
       return true;
     }
@@ -1930,18 +2080,22 @@ public class OBViewFieldHandler {
       return Collections.singletonList(childField);
     }
 
+    @Override
     public String getType() {
       return "OBAttachmentsSectionItem";
     }
 
+    @Override
     public boolean getStartRow() {
       return true;
     }
 
+    @Override
     public boolean getRedrawOnChange() {
       return false;
     }
 
+    @Override
     public String getName() {
       return "_attachments_";
     }
@@ -1963,11 +2117,13 @@ public class OBViewFieldHandler {
 
     private OBViewFieldDefinition childField;
 
+    @Override
     public String getLabel() {
       // is set at runtime
       return "";
     }
 
+    @Override
     public boolean getEndRow() {
       return true;
     }
@@ -1976,18 +2132,22 @@ public class OBViewFieldHandler {
       return Collections.singletonList(childField);
     }
 
+    @Override
     public String getType() {
       return "OBLinkedItemSectionItem";
     }
 
+    @Override
     public boolean getStartRow() {
       return true;
     }
 
+    @Override
     public boolean getRedrawOnChange() {
       return false;
     }
 
+    @Override
     public String getName() {
       return "_linkedItems_";
     }
@@ -2007,6 +2167,7 @@ public class OBViewFieldHandler {
 
   private class LinkedItemsCanvasField extends DefaultVirtualField {
 
+    @Override
     public String getLabel() {
       // is set at runtime
       return "";
@@ -2017,10 +2178,12 @@ public class OBViewFieldHandler {
       return Collections.emptyList();
     }
 
+    @Override
     public String getType() {
       return "OBLinkedItemCanvasItem";
     }
 
+    @Override
     public String getName() {
       return "_linkedItems_Canvas";
     }
@@ -2030,11 +2193,13 @@ public class OBViewFieldHandler {
 
     private OBViewFieldDefinition childField;
 
+    @Override
     public String getLabel() {
       // is set at runtime
       return "";
     }
 
+    @Override
     public boolean getEndRow() {
       return true;
     }
@@ -2043,18 +2208,22 @@ public class OBViewFieldHandler {
       return Collections.singletonList(childField);
     }
 
+    @Override
     public String getType() {
       return "OBNoteSectionItem";
     }
 
+    @Override
     public boolean getStartRow() {
       return true;
     }
 
+    @Override
     public boolean getRedrawOnChange() {
       return false;
     }
 
+    @Override
     public String getName() {
       return "_notes_";
     }
@@ -2074,6 +2243,7 @@ public class OBViewFieldHandler {
 
   private class NotesCanvasField extends DefaultVirtualField {
 
+    @Override
     public String getLabel() {
       // is set at runtime
       return "";
@@ -2084,10 +2254,12 @@ public class OBViewFieldHandler {
       return Collections.emptyList();
     }
 
+    @Override
     public String getType() {
       return "OBNoteCanvasItem";
     }
 
+    @Override
     public String getName() {
       return "_notes_Canvas";
     }
@@ -2095,162 +2267,202 @@ public class OBViewFieldHandler {
   }
 
   public class OBViewFieldSpacer implements OBViewFieldDefinition {
+    @Override
     public String getOnChangeFunction() {
       return null;
     }
 
+    @Override
     public boolean getHasChildren() {
       return false;
     }
 
+    @Override
     public boolean getShowColSpan() {
       return getColSpan() != 1;
     }
 
+    @Override
     public String getClientClass() {
       return "";
     }
 
+    @Override
     public boolean getShowStartRow() {
       return getStartRow();
     }
 
+    @Override
     public boolean getShowEndRow() {
       return getEndRow();
     }
 
+    @Override
     public int getGridSort() {
       return 990;
     }
 
+    @Override
     public Long getGridPosition() {
       return null;
     }
 
+    @Override
     public Long getSequenceNumber() {
       return null;
     }
 
+    @Override
     public Integer getLength() {
       return 0;
     }
 
+    @Override
     public String getCellAlign() {
       return null;
     }
 
+    @Override
     public boolean getAutoExpand() {
       return false;
     }
 
+    @Override
     public boolean getIsAuditField() {
       return false;
     }
 
+    @Override
     public boolean getIsGridProperty() {
       return false;
     }
 
+    @Override
     public boolean getRequired() {
       return false;
     }
 
+    @Override
     public boolean getSessionProperty() {
       return false;
     }
 
+    @Override
     public boolean getPersonalizable() {
       return false;
     }
 
+    @Override
     public boolean getHasDefaultValue() {
       return false;
     }
 
+    @Override
     public long getColSpan() {
       return 1;
     }
 
+    @Override
     public boolean getEndRow() {
       return false;
     }
 
+    @Override
     public boolean getReadOnly() {
       return false;
     }
 
+    @Override
     public boolean getUpdatable() {
       return true;
     }
 
+    @Override
     public boolean getParentProperty() {
       return false;
     }
 
+    @Override
     public String getFieldProperties() {
       return "";
     }
 
+    @Override
     public String getInpColumnName() {
       return "";
     }
 
+    @Override
     public String getLabel() {
       return "";
     }
 
+    @Override
     public String getName() {
       return "";
     }
 
+    @Override
     public String getReferencedKeyColumnName() {
       return "";
     }
 
+    @Override
     public String getTargetEntity() {
       return "";
     }
 
+    @Override
     public long getRowSpan() {
       return 1;
     }
 
+    @Override
     public boolean getStandardField() {
       return false;
     }
 
+    @Override
     public boolean getStartRow() {
       return false;
     }
 
+    @Override
     public String getType() {
       return "spacer";
     }
 
+    @Override
     public boolean getRedrawOnChange() {
       return false;
     }
 
+    @Override
     public String getShowIf() {
       return "";
     }
 
+    @Override
     public String getReadOnlyIf() {
       return "";
     }
 
+    @Override
     public boolean isDisplayed() {
       return true;
     }
 
+    @Override
     public String getDisplayLogicGrid() {
       return "";
     }
 
+    @Override
     public String getId() {
       return null;
     }
 
+    @Override
     public boolean getIsComputedColumn() {
       return false;
     }
@@ -2292,10 +2504,10 @@ public class OBViewFieldHandler {
 
     @Override
     public int compare(OBViewFieldDefinition arg0, OBViewFieldDefinition arg1) {
-      Long arg0Position = (arg0.getGridPosition() != null ? arg0.getGridPosition() : arg0
-          .getSequenceNumber());
-      Long arg1Position = (arg1.getGridPosition() != null ? arg1.getGridPosition() : arg1
-          .getSequenceNumber());
+      Long arg0Position = (arg0.getGridPosition() != null ? arg0.getGridPosition()
+          : arg0.getSequenceNumber());
+      Long arg1Position = (arg1.getGridPosition() != null ? arg1.getGridPosition()
+          : arg1.getSequenceNumber());
 
       if (arg0Position == null && arg1Position == null) {
         return 0;
@@ -2323,15 +2535,21 @@ public class OBViewFieldHandler {
   }
 
   public boolean hasProcessNowProperty() {
-    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
-        getTab().getTable().getId());
+    final Entity entity = ModelProvider.getInstance()
+        .getEntityByTableId(getTab().getTable().getId());
     return (entity == null) ? false : entity.hasProperty("processNow");
   }
 
   public boolean hasProcessedProperty() {
-    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
-        getTab().getTable().getId());
+    final Entity entity = ModelProvider.getInstance()
+        .getEntityByTableId(getTab().getTable().getId());
     return (entity == null) ? false : entity.hasProperty("processed");
+  }
+
+  void setGCSettings(Optional<GCSystem> systemGridConfig,
+      Map<String, Optional<GCTab>> tabsGridConfig) {
+    this.systemGridConfig = systemGridConfig;
+    this.tabsGridConfig = tabsGridConfig;
   }
 
 }

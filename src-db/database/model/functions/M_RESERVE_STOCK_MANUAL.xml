@@ -49,7 +49,7 @@
   v_client_id               VARCHAR2(32);
   v_org_id                  VARCHAR2(32);
   v_locator_id              VARCHAR2(32);
-  v_asi_id                  VARCHAR2(32);
+  v_asi_id                  VARCHAR2(32) := '0';
   v_poline_id               VARCHAR2(32);
   v_reserve_attr_id         VARCHAR2(32);
   v_reserve_product_id      VARCHAR2(32);

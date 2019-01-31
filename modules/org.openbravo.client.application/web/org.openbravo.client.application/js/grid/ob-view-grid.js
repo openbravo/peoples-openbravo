@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -249,7 +249,7 @@ isc.OBViewGrid.addProperties({
     },
 
     transformData: function (newData, dsResponse) {
-      var i, length, timeFields, responseToFilter, newTotalRows;
+      var i, length, responseToFilter, newTotalRows;
 
       // when the data is received from the datasource, time fields are formatted in UTC time. They have to be converted to local time
       if (dsResponse && dsResponse.context && (dsResponse.context.operationType === 'fetch' || dsResponse.context.operationType === 'update' || dsResponse.context.operationType === 'add')) {
@@ -384,7 +384,7 @@ isc.OBViewGrid.addProperties({
 
       getCellValue: function (record, recordNum, fieldNum, gridBody) {
         var field = this.getField(fieldNum),
-            gridField, func = this.parentElement.getGridSummaryFunction(field),
+            func = this.parentElement.getGridSummaryFunction(field),
             value = record && field ? (field.displayField ? record[field.displayField] : record[field.name]) : null;
 
         // get the summary function from the main grid
@@ -404,8 +404,7 @@ isc.OBViewGrid.addProperties({
       }
     };
 
-    var thisGrid = this,
-        localEditLinkField;
+    var localEditLinkField;
     if (this.editGrid) {
       // add the edit pencil in the beginning
       localEditLinkField = isc.addProperties({}, this.editLinkFieldProperties);
@@ -690,7 +689,7 @@ isc.OBViewGrid.addProperties({
         i, summarySubMenu = [],
         grid = this,
         groupByFields = this.getGroupByFields(),
-        type, isDate, isNumber, menuItems = this.Super('getHeaderContextMenuItems', arguments);
+        type, isNumber, menuItems = this.Super('getHeaderContextMenuItems', arguments);
 
 
     // remove the group by menu option if the field is grouped 
@@ -706,7 +705,6 @@ isc.OBViewGrid.addProperties({
 
     if (field && this.allowSummaryFunctions && !field.isComputedColumn) {
       type = isc.SimpleType.getType(field.type);
-      isDate = isc.SimpleType.inheritsFrom(type, 'date');
       isNumber = isc.SimpleType.inheritsFrom(type, 'integer') || isc.SimpleType.inheritsFrom(type, 'float');
 
       if (isNumber && !field.clientClass) {
@@ -1249,7 +1247,7 @@ isc.OBViewGrid.addProperties({
   },
 
   setGroupState: function (state) {
-    var i, fld, key;
+    var fld, key;
     if (state && (state.groupByFields || state.groupByFields === '')) {
       if (state.groupingModes) {
         for (key in state.groupingModes) {
@@ -1292,7 +1290,7 @@ isc.OBViewGrid.addProperties({
   },
 
   getSummaryRowFetchRequestConfig: function () {
-    var fld, i, summary = this.getSummarySettings(),
+    var summary = this.getSummarySettings(),
         config = this.Super('getSummaryRowFetchRequestConfig', arguments);
     if (summary) {
       config.params = config.params || {};
@@ -1316,7 +1314,7 @@ isc.OBViewGrid.addProperties({
   },
 
   setView: function (view) {
-    var dataPageSizeaux, length, i, crit, groupByMaxRecords, fkCache;
+    var dataPageSizeaux, length, i, crit, groupByMaxRecords;
 
     this.view = view;
 
@@ -1445,7 +1443,7 @@ isc.OBViewGrid.addProperties({
 
   enableShortcuts: function () {
     var me = this,
-        ksAction_CancelEditing, ksAction_MoveUpWhileEditing, ksAction_MoveDownWhileEditing, ksAction_DeleteSelectedRecords, ksAction_EditInGrid, ksAction_EditInForm, ksAction_CancelChanges;
+        ksAction_CancelEditing, ksAction_MoveUpWhileEditing, ksAction_MoveDownWhileEditing, ksAction_DeleteSelectedRecords, ksAction_EditInGrid, ksAction_EditInForm;
 
     // This is JUST for the case of an editing row with the whole row in "read only mode"
     ksAction_MoveUpWhileEditing = function () {
@@ -1561,8 +1559,7 @@ isc.OBViewGrid.addProperties({
   },
 
   storeValueMaps: function () {
-    var i, items, editForm = this.getEditForm(),
-        item;
+    var i, items, editForm = this.getEditForm();
     if (!editForm) {
       return;
     }
@@ -1963,7 +1960,7 @@ isc.OBViewGrid.addProperties({
 
   // with a delay to handle the target record when the body has been drawn
   delayedHandleTargetRecord: function (startRow, endRow) {
-    var rowTop, recordIndex, i, data = this.data,
+    var recordIndex, data = this.data,
         tmpTargetRecordId = this.targetRecordId || this.selectedRecordId;
     if (!tmpTargetRecordId) {
       delete this.isOpenDirectModeLeaf;
@@ -2107,9 +2104,8 @@ isc.OBViewGrid.addProperties({
   },
 
   convertCriteria: function (criteria) {
-    var selectedValues, prop, fld, value, i, j, k, criterion, fldName, length, today = new Date(),
-        currentTimeZoneOffsetInMinutes = -today.getTimezoneOffset(),
-        applyParentTabCriteria = true;
+    var selectedValues, i, j, k, criterion, fldName, length, today = new Date(),
+        currentTimeZoneOffsetInMinutes = -today.getTimezoneOffset();
 
     if (!criteria) {
       criteria = {};
@@ -2965,7 +2961,7 @@ isc.OBViewGrid.addProperties({
   },
 
   startEditing: function (rowNum, colNum, suppressFocus, eCe, suppressWarning) {
-    var i, ret, fld, length = this.getFields().length;
+    var i, ret, length = this.getFields().length;
     // if a row is set and not a col then check if we should focus in the
     // first error field
     if ((rowNum || rowNum === 0) && (!colNum && colNum !== 0) && this.rowHasErrors(rowNum)) {
@@ -3193,7 +3189,7 @@ isc.OBViewGrid.addProperties({
   // Those kind of changes happen when a row is opened in edit mode, they should not be detected as an actual change
   recordHasActualChanges: function (rowNum, colNum, checkEditor) {
     var newValues, oldValues, changes = false,
-        fieldName, oldFieldValue, newFieldValue, i, len, isNew;
+        fieldName, oldFieldValue, newFieldValue, isNew;
     if (!checkEditor) {
       checkEditor = true;
     }
@@ -3223,7 +3219,7 @@ isc.OBViewGrid.addProperties({
   editComplete: function (rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse) {
 
     var record = this.getRecord(rowNum),
-        editRow, editSession, autoSaveAction, keepSelection, form, isNewRecord;
+        keepSelection, form, isNewRecord;
 
     // this happens when the record change causes a group name
     // change and therefore a group collapse
@@ -3353,7 +3349,6 @@ isc.OBViewGrid.addProperties({
 
   discardEdits: function (rowNum, colNum, dontHideEditor, editCompletionEvent) {
     var localArguments = arguments,
-        editForm = this.getEditForm(),
         totalRows, record = this.getRecord(rowNum),
         selectedRecord = this.getSelectedRecord();
 
@@ -3447,7 +3442,7 @@ isc.OBViewGrid.addProperties({
         editField = this.getEditField(colNum),
         focusItem = (editForm ? editForm.getFocusItem() : null),
         isDynamicCol = false,
-        i, len;
+        i;
     // sometimes rowNum and colnum are not set, then don't compute the next cell
     var nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? this.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
     var newRow = nextEditCell && nextEditCell[0] !== rowNum;
@@ -4042,10 +4037,7 @@ isc.OBViewGrid.addProperties({
 
   // +++++++++++++++++ functions for the edit-link column +++++++++++++++++
   createRecordComponent: function (record, colNum) {
-    var fld = this.getFields()[colNum],
-        isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]),
-        canvas, rowNum = this.getRecordIndex(record),
-        isEditRecord = rowNum === this.getEditRow();
+    var isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
 
     // don't support record components in summary fields
     if (isSummary) {
@@ -4077,9 +4069,7 @@ isc.OBViewGrid.addProperties({
   },
 
   updateRecordComponent: function (record, colNum, component, recordChanged) {
-    var rowNum = this.getRecordIndex(record),
-        isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]),
-        isEditRecord = rowNum === this.getEditRow();
+    var isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
 
     // don't support record components in summary fields
     if (isSummary) {
@@ -4110,9 +4100,7 @@ isc.OBViewGrid.addProperties({
   },
 
   getFieldFromColumnName: function (columnName) {
-    var i, field, length, fields = this.view.propertyToColumns;
-
-    length = fields.length;
+    var i, field, fields = this.view.propertyToColumns;
 
     for (i = 0; i < fields.length; i++) {
       if (fields[i].dbColumn === columnName) {
@@ -4139,7 +4127,7 @@ isc.OBViewGrid.addProperties({
     var context = response && response.clientContext,
         rowNum = context && context.rowNum,
         grid = context && context.grid,
-        columnValues, prop, value, undef, field;
+        columnValues, prop, undef, field;
 
     if (rowNum === undef || !data || !data.columnValues) {
       return;

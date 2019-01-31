@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,10 +20,10 @@ package org.openbravo.erpCommon.ad_reports;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -52,8 +52,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
@@ -119,9 +120,9 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       if (vars.commandIn("PDF")) {
         strOutput = "pdf";
       }
-      printPageDataHtml(request, response, vars, strOrg, strProject, strProjectType,
-          strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2,
-          strDateFrom3, strDateTo3, strOutput, strCurrencyId);
+      printPageDataHtml(request, response, vars, strOrg, strProject, strProjectType, strResponsible,
+          strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2, strDateFrom3,
+          strDateTo3, strOutput, strCurrencyId);
     } else {
       pageError(response);
     }
@@ -131,8 +132,8 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strOrg, String strProject, String strProjectType,
       String strResponsible, String strDateFrom, String strDateTo, String strExpand,
       String strPartner, String strDateFrom2, String strDateTo2, String strDateFrom3,
-      String strDateTo3, String strOutput, String strCurrencyId) throws IOException,
-      ServletException {
+      String strDateTo3, String strOutput, String strCurrencyId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
@@ -209,7 +210,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       String strOrg, String strProjectType, String strResponsible, Date dateFromContract,
       Date dateToContract, String strPartner, Date dateFromStarting, Date dateToStarting) {
     final StringBuilder hsqlScript = new StringBuilder();
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>();
 
     hsqlScript.append(" as unitofmeasure");
     hsqlScript.append(" where exists (");
@@ -222,47 +223,47 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     hsqlScript.append("         and tel.uOM.id <> '101' ");
     hsqlScript.append("         and es.processed = 'Y' ");
     if (StringUtils.isNotEmpty(strProject)) {
-      hsqlScript.append("    and p.id = ?");
-      parameters.add(strProject);
+      hsqlScript.append("    and p.id = :projectId");
+      parameters.put("projectId", strProject);
     }
     if (StringUtils.isNotEmpty(strOrg)) {
       hsqlScript.append("    and p." + Project.PROPERTY_ORGANIZATION + ".id in (" + strOrg + ")");
     }
     if (StringUtils.isNotEmpty(strProjectType)) {
-      hsqlScript.append("    and p." + Project.PROPERTY_PROJECTTYPE + ".id = ?");
-      parameters.add(strProjectType);
+      hsqlScript.append("    and p." + Project.PROPERTY_PROJECTTYPE + ".id = :projectTypeId");
+      parameters.put("projectTypeId", strProjectType);
     }
     if (StringUtils.isNotEmpty(strResponsible)) {
-      hsqlScript.append("    and p." + Project.PROPERTY_PERSONINCHARGE + ".id = ?");
-      parameters.add(strResponsible);
+      hsqlScript.append("    and p." + Project.PROPERTY_PERSONINCHARGE + ".id = :responsible");
+      parameters.put("responsible", strResponsible);
     }
     if (StringUtils.isNotEmpty(strPartner)) {
-      hsqlScript.append("    and p." + Project.PROPERTY_BUSINESSPARTNER + ".id = ?");
-      parameters.add(strPartner);
+      hsqlScript.append("    and p." + Project.PROPERTY_BUSINESSPARTNER + ".id = :bpId");
+      parameters.put("bpId", strPartner);
     }
     if (dateFrom != null) {
-      hsqlScript.append("    and es.reportDate >= ?");
-      parameters.add(dateFrom);
+      hsqlScript.append("    and es.reportDate >= :dateFrom");
+      parameters.put("dateFrom", dateFrom);
     }
     if (dateTo != null) {
-      hsqlScript.append("    and es.reportDate <= ?");
-      parameters.add(dateTo);
+      hsqlScript.append("    and es.reportDate <= :dateTo");
+      parameters.put("dateTo", dateTo);
     }
     if (dateFromStarting != null) {
-      hsqlScript.append("    and p." + Project.PROPERTY_STARTINGDATE + " >= ?");
-      parameters.add(dateFromStarting);
+      hsqlScript.append("    and p." + Project.PROPERTY_STARTINGDATE + " >= :dateFromStarting");
+      parameters.put("dateFromStarting", dateFromStarting);
     }
     if (dateToStarting != null) {
-      hsqlScript.append("    and p." + Project.PROPERTY_STARTINGDATE + " < ?");
-      parameters.add(dateToStarting);
+      hsqlScript.append("    and p." + Project.PROPERTY_STARTINGDATE + " < :dateToStarting");
+      parameters.put("dateToStarting", dateToStarting);
     }
     if (dateFromContract != null) {
-      hsqlScript.append("    and p." + Project.PROPERTY_CONTRACTDATE + " >= ?");
-      parameters.add(dateFromContract);
+      hsqlScript.append("    and p." + Project.PROPERTY_CONTRACTDATE + " >= :dateFromContract");
+      parameters.put("dateFromContract", dateFromContract);
     }
     if (dateToContract != null) {
-      hsqlScript.append("    and p." + Project.PROPERTY_CONTRACTDATE + " < ?");
-      parameters.add(dateToContract);
+      hsqlScript.append("    and p." + Project.PROPERTY_CONTRACTDATE + " < :dateToContract");
+      parameters.put("dateToContract", dateToContract);
     }
     hsqlScript.append(" )");
     hsqlScript.append(" and not exists (");
@@ -272,9 +273,9 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     hsqlScript.append("         and uomconv.toUOM.id =  '101' ");
     hsqlScript.append(" )");
 
-    final OBQuery<UOM> query = OBDal.getReadOnlyInstance().createQuery(UOM.class,
-        hsqlScript.toString());
-    query.setParameters(parameters);
+    final OBQuery<UOM> query = OBDal.getReadOnlyInstance()
+        .createQuery(UOM.class, hsqlScript.toString());
+    query.setNamedParameters(parameters);
     return query.list();
   }
 
@@ -289,8 +290,9 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportProjectProfitabilityJR").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProjectProfitabilityJR")
+        .createXmlDocument();
 
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportProjectProfitabilityJR",
@@ -356,9 +358,10 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLE",
-          "Responsible_ID", "Responsible employee", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportProjectProfitabilityJR"), Utility.getContext(readOnlyCP,
-              vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
+          "Responsible_ID", "Responsible employee", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportProjectProfitabilityJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportProjectProfitabilityJR", strResponsible);
       xmlDocument.setData("reportResponsible", "liststructure", comboTableData.select(false));
@@ -373,8 +376,8 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       comboTableData = null;
 
       comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "C_Project_ID", "", "",
-          Utility
-              .getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportProjectProfitabilityJR"),
           Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportProjectProfitabilityJR", strProject);
@@ -382,8 +385,8 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       comboTableData = null;
 
       comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "C_ProjectType_ID", "", "",
-          Utility
-              .getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportProjectProfitabilityJR"),
           Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportProjectProfitabilityJR", strProjectType);
@@ -397,9 +400,10 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportProjectProfitabilityJR"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportProjectProfitabilityJR"), 0);
+          "C_Currency_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportProjectProfitabilityJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportProjectProfitabilityJR", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -412,6 +416,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportProjectProfitabilityJR. This Servlet was made by Pablo Sarobe";
   }

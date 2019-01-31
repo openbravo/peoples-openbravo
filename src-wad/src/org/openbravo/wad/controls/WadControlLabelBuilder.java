@@ -47,8 +47,8 @@ public class WadControlLabelBuilder {
       result.append(labelControl.getColumnNameInp());
       result.append(".value, '");
       result.append(labelControl.getTableId());
-      result
-          .append("', '_self', true);return false;\" onmouseover=\"return true;\" onmouseout=\"return true;\" id=\"fieldLink\">");
+      result.append(
+          "', '_self', true);return false;\" onmouseover=\"return true;\" onmouseout=\"return true;\" id=\"fieldLink\">");
       result.append(getBasicLabelText());
       result.append("</a>");
     } else {

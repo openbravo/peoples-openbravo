@@ -195,7 +195,8 @@ abstract class ReferencedInventoryProcessor {
    * 
    * The process is exactly the same for boxing and unboxing.
    */
-  private void createMovementLines(final InternalMovement goodsMovementHeader) throws JSONException {
+  private void createMovementLines(final InternalMovement goodsMovementHeader)
+      throws JSONException {
     long lineNo = 10l;
     for (int i = 0; i < selectedStorageDetails.length(); i++) {
       final JSONObject storageDetailJS = selectedStorageDetails.getJSONObject(i);
@@ -240,7 +241,8 @@ abstract class ReferencedInventoryProcessor {
       try {
         while (reservationStockScroll.next()
             && ReferencedInventoryUtil.isGreaterThanZero(remainingQtyToReleaseInReservations)) {
-          final ReservationStock reservationStock = (ReservationStock) reservationStockScroll.get()[0];
+          final ReservationStock reservationStock = (ReservationStock) reservationStockScroll
+              .get()[0];
           final BigDecimal currentReservedQty = (BigDecimal) reservationStockScroll.get()[1];
           final BigDecimal qtyToMoveInThisReservation = remainingQtyToReleaseInReservations
               .min(currentReservedQty);
@@ -254,9 +256,9 @@ abstract class ReferencedInventoryProcessor {
         }
 
         if (ReferencedInventoryUtil.isGreaterThanZero(remainingQtyToReleaseInReservations)) {
-          throw new OBException(String.format(
-              OBMessageUtils.messageBD("RefInventoryCannotReallocateAllQuantity"),
-              remainingQtyToReleaseInReservations));
+          throw new OBException(
+              String.format(OBMessageUtils.messageBD("RefInventoryCannotReallocateAllQuantity"),
+                  remainingQtyToReleaseInReservations));
         }
       } finally {
         reservationStockScroll.close();
@@ -282,8 +284,8 @@ abstract class ReferencedInventoryProcessor {
         .call(process, goodsMovementId, null);
     final OBError result = OBMessageUtils.getProcessInstanceMessage(pinstance);
     if (StringUtils.equals("Error", result.getType())) {
-      throw new OBException(OBMessageUtils.messageBD("ErrorProcessingGoodMovement") + ": "
-          + result.getMessage());
+      throw new OBException(
+          OBMessageUtils.messageBD("ErrorProcessingGoodMovement") + ": " + result.getMessage());
     } else {
       OBDal.getInstance().flush(); // Flush in admin mode
     }

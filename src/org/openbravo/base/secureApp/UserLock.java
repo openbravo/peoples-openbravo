@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2010-2017 Openbravo SL 
+ * All portions are Copyright (C) 2010-2018 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,15 @@
 
 package org.openbravo.base.secureApp;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -36,14 +39,14 @@ import org.openbravo.model.ad.access.User;
  * 
  */
 public class UserLock {
-  private static Logger log4j = Logger.getLogger(UserLock.class);
+  private static Logger log4j = LogManager.getLogger();
 
-  private static int delayInc;
+  private static float delayInc;
   private static int delayMax;
   private static int lockAfterTrials;
   private static boolean lockingConfigured;
 
-  private int delay;
+  private float delay;
 
   private String userName;
   private int numberOfFails;
@@ -65,7 +68,7 @@ public class UserLock {
     }
 
     try {
-      delayInc = Integer.parseInt(propInc);
+      delayInc = Float.parseFloat(propInc);
     } catch (NumberFormatException e) {
       log4j.error("Could not set login.trial.delay.increment property " + propInc, e);
       delayInc = 0;
@@ -96,15 +99,22 @@ public class UserLock {
     // Count how many times this user has attempted to login without success
     long t = System.currentTimeMillis();
 
-    // to improve performance this query is not done as subquery of the main one, see issue #25466
+    // to improve performance this query is not done as subquery of the main one,
+    // see issue #25466
     StringBuilder hql = new StringBuilder();
     hql.append("select max(s1.creationDate)");
     hql.append("  from ADSession s1");
     hql.append(" where s1.username = :name");
-    hql.append("   and s1.loginStatus!='F')");
-    Query q1 = OBDal.getInstance().getSession().createQuery(hql.toString());
+    hql.append("   and s1.loginStatus != 'F'");
+    Query<Date> q1 = OBDal.getInstance().getSession().createQuery(hql.toString(), Date.class);
     q1.setParameter("name", userName);
-    Date lastFailedAttempt = (Date) q1.list().get(0);
+    Date lastFailedAttempt = q1.list().get(0);
+
+    if (lastFailedAttempt == null) {
+      Calendar yesterday = Calendar.getInstance();
+      yesterday.add(Calendar.DATE, -1);
+      lastFailedAttempt = yesterday.getTime();
+    }
     log4j.debug("Time taken to check user lock 1st query " + (System.currentTimeMillis() - t));
 
     long t1 = System.currentTimeMillis();
@@ -113,20 +123,15 @@ public class UserLock {
     hql.append("  from ADSession s ");
     hql.append(" where s.loginStatus='F'");
     hql.append("   and s.username = :name");
-    if (lastFailedAttempt != null) {
-      hql.append(" and s.creationDate > :lastFail");
-    } else {
-      hql.append(" and s.creationDate > s.creationDate-1");
-    }
-    Query q = OBDal.getInstance().getSession().createQuery(hql.toString());
-    q.setParameter("name", userName);
-    if (lastFailedAttempt != null) {
-      q.setParameter("lastFail", lastFailedAttempt);
-    }
+    hql.append("   and s.creationDate > :lastFail");
 
-    numberOfFails = ((Long) q.list().get(0)).intValue();
+    Query<Long> q = OBDal.getInstance().getSession().createQuery(hql.toString(), Long.class);
+    q.setParameter("name", userName);
+    q.setParameter("lastFail", lastFailedAttempt);
+
+    numberOfFails = q.list().get(0).intValue();
     log4j.debug("Time taken to check user lock " + (System.currentTimeMillis() - t)
-        + "ms. Time of 2nd query " + ((System.currentTimeMillis() - t1))
+        + "ms. Time of 2nd query " + (System.currentTimeMillis() - t1)
         + "ms. Number of failed login attempts: " + numberOfFails);
 
     if (numberOfFails == 0) {
@@ -164,22 +169,19 @@ public class UserLock {
     }
     numberOfFails++;
     boolean lockUser = (lockAfterTrials != 0) && (numberOfFails >= lockAfterTrials);
-    log4j.debug("lock: " + lockUser + " -lock after:" + lockAfterTrials + "- fails:"
-        + numberOfFails + " - user:" + user);
-    if (lockUser) {
-      // Try to lock the user in database
-      delay = 0;
-      if (user != null) {
-        try {
-          OBContext.setAdminMode();
+    log4j.debug("lock: " + lockUser + " -lock after:" + lockAfterTrials + "- fails:" + numberOfFails
+        + " - user:" + user);
+    if (lockUser && user != null && !user.isLocked()) {
+      try {
+        OBContext.setAdminMode();
 
-          user.setLocked(true);
-          OBDal.getInstance().flush();
-          log4j.warn(userName + " is locked after " + numberOfFails + " failed logins.");
-          return;
-        } finally {
-          OBContext.restorePreviousMode();
-        }
+        // re-attach user to session as it was detached in commit and close
+        user = OBDal.getInstance().get(User.class, user.getId());
+        user.setLocked(true);
+        OBDal.getInstance().flush();
+        log4j.warn(userName + " is locked after " + numberOfFails + " failed logins.");
+      } finally {
+        OBContext.restorePreviousMode();
       }
     }
   }
@@ -204,13 +206,16 @@ public class UserLock {
    * attempts failed.
    */
   public void delayResponse() {
-    if (delay > 0) {
-      log4j.debug("Delaying response " + delay + " seconds because of the previous login failed.");
-      try {
-        Thread.sleep(delay * 1000);
-      } catch (InterruptedException e) {
-        log4j.error("Error delaying login response", e);
-      }
+    if (delay == 0) {
+      return;
+    }
+    // release DB connection while delaying response
+    OBDal.getInstance().commitAndClose();
+    log4j.debug("Delaying response " + delay + " seconds because of the previous login failed.");
+    try {
+      TimeUnit.MILLISECONDS.sleep((long) (delay * 1_000L));
+    } catch (InterruptedException e) {
+      log4j.error("Error delaying login response", e);
     }
   }
 

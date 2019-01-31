@@ -21,6 +21,8 @@ import org.openbravo.modulescript.OpenbravoVersion;
 
 public abstract class ExecutionLimitBaseProcess {
 
+  // Do not update to log4j2. It may cause problems when upgrading from a version already compiled
+  // log4j 1.x Logger
   protected static final Logger log4j = Logger.getLogger(ExecutionLimitBaseProcess.class);
 
   private ConnectionProvider cp;
@@ -136,12 +138,13 @@ public abstract class ExecutionLimitBaseProcess {
 
   protected File getPropertiesFile() {
     File fProp = null;
-    if (new File(PATH_CONFIG).exists())
+    if (new File(PATH_CONFIG).exists()) {
       fProp = new File(PATH_CONFIG);
-    else if (new File("../" + PATH_CONFIG).exists())
+    } else if (new File("../" + PATH_CONFIG).exists()) {
       fProp = new File("../" + PATH_CONFIG);
-    else if (new File("../../" + PATH_CONFIG).exists())
+    } else if (new File("../../" + PATH_CONFIG).exists()) {
       fProp = new File("../../" + PATH_CONFIG);
+    }
     if (fProp == null) {
       log4j.error("Could not find Openbravo.properties");
     }

@@ -1289,7 +1289,7 @@ $BODY$
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009 Openbravo SLU
+* All portions are Copyright (C) 2009-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -1311,6 +1311,7 @@ begin
          where  pronamespace = n.oid   and n.nspname=current_schema() 
          and p.oid not in (select tgfoid   from pg_trigger) 
          and p.proname not in ('temp_findinarray', 'ad_db_modified', 'dateformat')
+         and p.probin is null
          order by 1,2,3,4) loop 
       --note that for overloaded functions more than one line will be obtained
 
@@ -1338,7 +1339,6 @@ begin
 	   WHERE pg_proc.prorettype <> 'pg_catalog.cstring'::pg_catalog.regtype
 	     AND (pg_proc.proargtypes[0] IS NULL
 	      OR pg_proc.proargtypes[0] <> 'pg_catalog.cstring'::pg_catalog.regtype)
-	     AND NOT pg_proc.proisagg
 	     AND pg_catalog.pg_function_is_visible(pg_proc.oid)
 	     AND pg_proc.proname = i.realname
              and pg_proc.pronargs = i.pronargs
@@ -1602,3 +1602,85 @@ BEGIN
 END; $BODY$
   LANGUAGE plpgsql IMMUTABLE
 /-- END
+ 
+CREATE OR REPLACE FUNCTION AD_IsTriggerEnabled()
+  RETURNS character AS
+$BODY$ DECLARE 
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2008-2018 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+BEGIN
+  if current_setting('my.triggers_disabled') = 'Y' then
+    return 'N';
+  end if;
+  return 'Y';
+EXCEPTION
+WHEN OTHERS THEN
+  RETURN 'Y';
+END ; $BODY$
+  LANGUAGE plpgsql VOLATILE
+/-- END
+ 
+CREATE OR REPLACE FUNCTION AD_Disable_Triggers()
+  RETURNS void AS
+$BODY$ DECLARE 
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2018 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+BEGIN
+  perform set_config('my.triggers_disabled', 'Y', true);
+END ; $BODY$
+  LANGUAGE plpgsql VOLATILE
+/-- END
+
+CREATE OR REPLACE FUNCTION AD_Enable_Triggers()
+  RETURNS void AS
+$BODY$ DECLARE 
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2018 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+BEGIN
+  perform set_config('my.triggers_disabled', 'N', true);
+END ; $BODY$
+  LANGUAGE plpgsql VOLATILE
+/-- END
+ 

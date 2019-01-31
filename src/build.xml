@@ -165,7 +165,9 @@ build.war: build a war file in the lib directory.
       <src path="${base.src}"/>
       <src path="../build/javasqlc/src"/>
       <src path="../src-gen"/>
+      <src path="../modules/org.openbravo.base.weld/src/"/>
       <classpath refid="apply.module.compile.classpath" />
+      <compilerarg value="-implicit:class" />
     </javac>
   </target>
   
@@ -186,7 +188,6 @@ build.war: build a war file in the lib directory.
       </syspropertyset>
     </java>
     <copy file="${base.src}/buildAD.xml" tofile="${build.AD}/build.xml" />
-    <copy file="${base.src}/log4j.lcf" tofile="${build.AD}/log4j.lcf" />
     <ant dir="${build.AD}" target="buildAD" inheritAll="true" inheritRefs="true" />
   </target>
 
@@ -211,6 +212,7 @@ build.war: build a war file in the lib directory.
   <target name="generate.entities.quick" depends="compile.src.gen">
     <java classname="org.openbravo.base.gen.GenerateEntitiesTask" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}' '${friendlyWarnings}'" />
+      <jvmarg line="${jvm.arg.line}" />
       <classpath refid="project.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
@@ -224,8 +226,9 @@ build.war: build a war file in the lib directory.
         <classpath refid="project.class.path" />      
       </javac>
       -->
-      <javac srcdir="${base.src}:${base.src.gen}" includes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
-        <classpath refid="project.class.path" />      
+      <javac srcdir="${base.src}:${base.src.gen}:${base.modules}" includes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**,*/src/**/base/weld/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
+        <classpath refid="project.class.path" />
+        <compilerarg value="-implicit:class" />
       </javac>
       <javac srcdir="${base.src.gen}" excludes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
         <classpath refid="project.class.path" />
@@ -260,58 +263,12 @@ build.war: build a war file in the lib directory.
     <javac srcdir="${build.AD}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}" includeantruntime="false">
       <classpath refid="project.class.path" />
     </javac>
-  	<antcall target="calculate.version"/>
   </target>
-
-	<target name="calculate.version" depends="init">
-	  <condition property="revision.from.file">
-		<and>
-		  <not>
-		 	<isset property="hg.id"/>
-		  </not>
-		  <available file="${basedir}/config/instance.revision"/>
-	    </and>
-	  </condition>
-	  <condition property="revision.not.found">
-		<and>
-		  <not>
-		 	<isset property="hg.id"/>
-		  </not>
-		  <not>
-		  	<available file="${basedir}/config/instance.revision"/>
-		  </not>
-	    </and>
-	  </condition>
-	  <antcall inheritall="true" target="calculate.instance.version"/>
-	</target>
-	<target name="calculate.instance.version" depends="calculate.version.from.hg, calculate.version.from.file, cannot.find.version">
-	    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" delimiter="/">
-	      <classpath>
-	        <fileset dir="${base.lib}">
-	          <include name="**/*.jar">
-	          </include>
-	        </fileset>
-	      </classpath>
-	      <transaction>
-		        UPDATE AD_MODULE 
-	      	       SET VERSION_ID='${instance.version}'
-                 WHERE AD_MODULE_ID='0'
-		      </transaction>
-	    </sql>
-	</target>
-	<target name="calculate.version.from.hg" if="is.hg">
-	  <property name="instance.version" value="${hg.id}"/>
-	</target>
-	<target name="calculate.version.from.file" if="revision.from.file">
-	  <loadfile property="instance.version" srcfile="${basedir}/config/instance.revision"/>
-	</target>
-	<target name="cannot.find.version" if="revision.not.found">
-	  <property name="instance.version" value=" - "/>
-	</target>
 
   <target name="compile.src.gen" depends="init">
     <javac srcdir="${basedir}" includes="org/openbravo/base/exception/**,org/openbravo/base/gen/**,org/openbravo/base/expression/**,org/openbravo/base/provider/**,org/openbravo/base/model/**,org/openbravo/base/session/**,org/openbravo/base/validation/**,org/openbravo/base/util/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
       <classpath refid="project.class.path" />
+      <compilerarg value="-implicit:class" />
     </javac>
     <copy todir="${build}">
       <fileset dir="${basedir}">
@@ -430,6 +387,7 @@ build.war: build a war file in the lib directory.
         <exclude name="**/setup-properties**" />
         <exclude name="*.template" />
         <exclude name="checksums"/>
+        <exclude name="log4j2.xml"/>
       </fileset>
     </copy>
     <copy todir="${base.context}/WEB-INF" encoding="UTF-8">
@@ -459,6 +417,21 @@ build.war: build a war file in the lib directory.
       </fileset>
       <mapper type="regexp" from="(.*\${file.separator}lib\${file.separator}runtime)(.*)" to="\2" />
     </copy>
+
+    <copy todir="${base.context}/WEB-INF/referencedata/standard/org.openbravo">
+      <fileset dir="${basedir}/../referencedata/standard">
+        <include name="*.xml" />
+      </fileset>
+    </copy>
+
+    <copy todir="${base.context}/WEB-INF/referencedata">
+      <fileset dir="${base.modules}">
+        <include name="*/referencedata/standard/*.xml" />
+        <include name="*/referencedata/accounts/COA.csv" />
+      </fileset>
+      <mapper type="regexp" from="(.*\${file.separator})referencedata\${file.separator}(standard|accounts)\${file.separator}(.*)" to="\2/\1\3" />
+    </copy>
+
     <antcall target="build.web.folder" inheritAll="true" inheritrefs="true" />
   </target>
 

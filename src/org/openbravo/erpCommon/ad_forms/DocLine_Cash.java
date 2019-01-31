@@ -20,11 +20,12 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocLine_Cash extends DocLine {
-  static Logger log4jDocLine_Cash = Logger.getLogger(DocLine_Cash.class);
+  static Logger log4jDocLine_Cash = LogManager.getLogger();
 
   public DocLine_Cash(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);
@@ -65,8 +66,9 @@ public class DocLine_Cash extends DocLine {
    *          see CASHTYPE_*
    */
   public void setCashType(String CashType) {
-    if (CashType != null && !CashType.equals(""))
+    if (CashType != null && !CashType.equals("")) {
       m_CashType = CashType;
+    }
   } // setCashType
 
   /**
@@ -94,8 +96,9 @@ public class DocLine_Cash extends DocLine {
         data = DocLineCashData.selectPayment(conn, m_C_Debt_Payment_Id);
       } else if (!m_C_Order_Id.equals("")) {
         data = DocLineCashData.selectOrder(conn, m_C_Order_Id);
-      } else
+      } else {
         return;
+      }
     } catch (ServletException e) {
       log4jDocLine_Cash.warn(e);
     }
@@ -119,12 +122,15 @@ public class DocLine_Cash extends DocLine {
    *          wrire-off
    */
   public void setAmount(String Amount, String DiscountAmt, String WriteOffAmt) {
-    if (!Amount.equals(""))
+    if (!Amount.equals("")) {
       m_Amount = Amount;
-    if (!DiscountAmt.equals(""))
+    }
+    if (!DiscountAmt.equals("")) {
       m_DiscountAmt = DiscountAmt;
-    if (!WriteOffAmt.equals(""))
+    }
+    if (!WriteOffAmt.equals("")) {
       m_WriteOffAmt = WriteOffAmt;
+    }
     //
     setAmount(Amount);
   } // setAmount
@@ -134,6 +140,7 @@ public class DocLine_Cash extends DocLine {
    * 
    * @return Payment Amount
    */
+  @Override
   public String getAmount() {
     return m_Amount;
   }
@@ -148,8 +155,9 @@ public class DocLine_Cash extends DocLine {
    * @return Charge Account or null
    */
   public Account getGlitemAccount(AcctSchema as, BigDecimal amount, ConnectionProvider conn) {
-    if (m_C_Glitem_ID.equals(""))
+    if (m_C_Glitem_ID.equals("")) {
       return null;
+    }
     String Account_ID = "";
     DocLineCashData[] data = null;
     Account acct = null;
@@ -157,8 +165,9 @@ public class DocLine_Cash extends DocLine {
       data = DocLineCashData.selectGlitem(conn, m_C_Glitem_ID, as.getC_AcctSchema_ID());
       if (data.length > 0) {
         Account_ID = data[0].glitemDebitAcct;
-        if (amount != null && amount.signum() < 0)
+        if (amount != null && amount.signum() < 0) {
           Account_ID = data[0].glitemCreditAcct;
+        }
       }
       // No account
       if (Account_ID.equals("")) {
@@ -180,14 +189,17 @@ public class DocLine_Cash extends DocLine {
    */
   public String getC_Currency_ID(ConnectionProvider conn) {
     if ((m_C_BankAccount_ID == null || m_C_BankAccount_ID.equals(""))
-        && (m_C_Invoice_ID == null || m_C_Invoice_ID.equals("")))
+        && (m_C_Invoice_ID == null || m_C_Invoice_ID.equals(""))) {
       return m_C_Currency_ID;// call to the upper class...
+    }
 
-    if (m_C_Currency_ID == null || m_C_Currency_ID.equals(""))
+    if (m_C_Currency_ID == null || m_C_Currency_ID.equals("")) {
       setReferenceInfo(conn);
+    }
     return m_C_Currency_ID;
   } // getC_Currency_ID
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

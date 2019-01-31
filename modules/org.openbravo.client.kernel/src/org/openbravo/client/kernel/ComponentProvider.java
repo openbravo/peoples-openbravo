@@ -109,8 +109,8 @@ public interface ComponentProvider {
    * @author mtaal
    */
   @SuppressWarnings("all")
-  public static class Selector extends AnnotationLiteral<ComponentProvider.Qualifier> implements
-      ComponentProvider.Qualifier {
+  public static class Selector extends AnnotationLiteral<ComponentProvider.Qualifier>
+      implements ComponentProvider.Qualifier {
     private static final long serialVersionUID = 1L;
 
     final String value;
@@ -119,6 +119,7 @@ public interface ComponentProvider {
       this.value = value;
     }
 
+    @Override
     public String value() {
       return value;
     }

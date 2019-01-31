@@ -22,14 +22,15 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 import org.openbravo.modulescript.ModuleScriptExecutionLimits;
 import org.openbravo.modulescript.OpenbravoVersion;
 
 public class LinkCreditPayments extends ModuleScript {
-  private static final Logger log4j = Logger.getLogger(LinkCreditPayments.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   public void execute() {

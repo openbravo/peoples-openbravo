@@ -24,7 +24,8 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
@@ -41,8 +42,7 @@ import org.openbravo.model.materialmgmt.transaction.InternalConsumptionLine;
 
 public class DocInternalConsumption extends AcctServer {
   private static final long serialVersionUID = 1L;
-  private static Logger log4jDocInternalConsumption = Logger
-      .getLogger(DocInternalConsumption.class);
+  private static final Logger log4jDocInternalConsumption = LogManager.getLogger();
 
   private String SeqNo = "0";
 
@@ -101,8 +101,8 @@ public class DocInternalConsumption extends AcctServer {
         docLine.m_M_Locator_ID = data[i].getField("mLocatorId");
 
         // Get related M_Transaction_ID
-        InternalConsumptionLine intConsLine = OBDal.getInstance().get(
-            InternalConsumptionLine.class, Line_ID);
+        InternalConsumptionLine intConsLine = OBDal.getInstance()
+            .get(InternalConsumptionLine.class, Line_ID);
         if (intConsLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
           docLine.setTransaction(intConsLine.getMaterialMgmtMaterialTransactionList().get(0));
         }
@@ -112,8 +112,9 @@ public class DocInternalConsumption extends AcctServer {
         } catch (ServletException e) {
           log4jDocInternalConsumption.warn(e);
         }
-        if (data1 != null && data1.length > 0)
+        if (data1 != null && data1.length > 0) {
           this.M_Warehouse_ID = data1[0].mWarehouseId;
+        }
         list.add(docLine);
       }
     } catch (ServletException e) {
@@ -155,14 +156,16 @@ public class DocInternalConsumption extends AcctServer {
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
     if (StringUtils.isEmpty(strClassname)) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
     } else {
       try {
         DocInternalConsumptionTemplate newTemplate = (DocInternalConsumptionTemplate) Class
-            .forName(strClassname).getDeclaredConstructor().newInstance();
+            .forName(strClassname)
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocInternalConsumptionTemplate - " + e);
@@ -180,8 +183,8 @@ public class DocInternalConsumption extends AcctServer {
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
 
-      Currency costCurrency = FinancialUtils.getLegalEntityCurrency(OBDal.getInstance().get(
-          Organization.class, line.m_AD_Org_ID));
+      Currency costCurrency = FinancialUtils
+          .getLegalEntityCurrency(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
       if (!CostingStatus.getInstance().isMigrated()) {
         costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
       } else if (line.transaction != null && line.transaction.getCurrency() != null) {
@@ -211,8 +214,8 @@ public class DocInternalConsumption extends AcctServer {
         org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance()
             .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                 as.m_C_AcctSchema_ID);
-        log4j.error("No Account Asset for product: " + product.getName()
-            + " in accounting schema: " + schema.getName());
+        log4j.error("No Account Asset for product: " + product.getName() + " in accounting schema: "
+            + schema.getName());
       }
       if (b_Costs.compareTo(BigDecimal.ZERO) == 0 && !CostingStatus.getInstance().isMigrated()
           && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
@@ -253,21 +256,6 @@ public class DocInternalConsumption extends AcctServer {
   }
 
   /**
-   * @return the log4jDocInternalConsumption
-   */
-  public static Logger getLog4jDocInternalConsumption() {
-    return log4jDocInternalConsumption;
-  }
-
-  /**
-   * @param log4jDocInternalConsumption
-   *          the log4jDocInternalConsumption to set
-   */
-  public static void setLog4jDocInternalConsumption(Logger log4jDocInternalConsumption) {
-    DocInternalConsumption.log4jDocInternalConsumption = log4jDocInternalConsumption;
-  }
-
-  /**
    * @return the seqNo
    */
   public String getSeqNo() {
@@ -305,6 +293,7 @@ public class DocInternalConsumption extends AcctServer {
   /**
    * @return the servlet information
    */
+  @Override
   public String getServletInfo() {
     return "Servlet for the internal consumption accounting";
   }

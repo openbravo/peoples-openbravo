@@ -13,16 +13,18 @@ package org.openbravo.xmlEngine;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionEqualValue extends FunctionEvaluationValue {
 
-  static Logger log4jFunctionEqualValue = Logger.getLogger(FunctionEqualValue.class);
+  static Logger log4jFunctionEqualValue = LogManager.getLogger();
 
   public FunctionEqualValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
@@ -31,6 +33,7 @@ class FunctionEqualValue extends FunctionEvaluationValue {
     }
   }
 
+  @Override
   public String printSimple() {
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;

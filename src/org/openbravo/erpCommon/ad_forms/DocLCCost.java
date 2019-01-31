@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
@@ -41,7 +42,7 @@ import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 public class DocLCCost extends AcctServer {
 
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocLCCost = Logger.getLogger(DocLCCost.class);
+  private static final Logger log4jDocLCCost = LogManager.getLogger();
 
   /** AD_Table_ID */
   private String SeqNo = "0";
@@ -60,6 +61,7 @@ public class DocLCCost extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn,
       @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocLCCostData.selectRegistro(conn, AD_Client_ID, Id));
@@ -70,6 +72,7 @@ public class DocLCCost extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     C_Currency_ID = NO_CURRENCY;
 
@@ -133,6 +136,7 @@ public class DocLCCost extends AcctServer {
    * 
    * @return Zero (always balanced)
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
     return retValue;
@@ -157,17 +161,20 @@ public class DocLCCost extends AcctServer {
    *          accounting schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocLCCostTemplate newTemplate = (DocLCCostTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocLCCostTemplate - " + e);
@@ -177,8 +184,10 @@ public class DocLCCost extends AcctServer {
     int stdPrecision = 0;
     OBContext.setAdminMode(true);
     try {
-      stdPrecision = OBDal.getInstance().get(Currency.class, this.C_Currency_ID)
-          .getStandardPrecision().intValue();
+      stdPrecision = OBDal.getInstance()
+          .get(Currency.class, this.C_Currency_ID)
+          .getStandardPrecision()
+          .intValue();
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -229,8 +238,9 @@ public class DocLCCost extends AcctServer {
 
       fact.createLine(line2, acctLC, line2.m_C_Currency_ID,
           "Y".equals(line.getIsMatchingAdjusted()) ? totalAmount.add(differenceAmt).toString()
-              : totalAmount.toString(), amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, line2.m_DateAcct, null, conn);
+              : totalAmount.toString(),
+          amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line2.m_DateAcct, null,
+          conn);
     }
 
     // if there is difference between matched amt and cost amt, then accounting is generated
@@ -264,16 +274,16 @@ public class DocLCCost extends AcctServer {
           ProductInfo p = new ProductInfo(line4.m_M_Product_ID, conn);
 
           // If transaction uses Standard Algorithm IPD account will be used, else Asset account
-          LandedCostCost landedCostCost = OBDal.getInstance().get(LandedCostCost.class,
-              line.m_TrxHeader_ID);
+          LandedCostCost landedCostCost = OBDal.getInstance()
+              .get(LandedCostCost.class, line.m_TrxHeader_ID);
           Organization org = OBContext.getOBContext()
               .getOrganizationStructureProvider(landedCostCost.getClient().getId())
               .getLegalEntity(landedCostCost.getOrganization());
           Account account = null;
-          if (StringUtils.equals(
-              CostingUtils.getCostDimensionRule(org, landedCostCost.getCreationDate())
-                  .getCostingAlgorithm().getJavaClassName(),
-              "org.openbravo.costing.StandardAlgorithm")) {
+          if (StringUtils
+              .equals(CostingUtils.getCostDimensionRule(org, landedCostCost.getCreationDate())
+                  .getCostingAlgorithm()
+                  .getJavaClassName(), "org.openbravo.costing.StandardAlgorithm")) {
             account = p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn);
           } else {
             account = p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn);
@@ -290,21 +300,6 @@ public class DocLCCost extends AcctServer {
     SeqNo = "0";
     return fact;
   } // createFact
-
-  /**
-   * @return the log4jDocLCCost
-   */
-  public static Logger getlog4jDocLCCost() {
-    return log4jDocLCCost;
-  }
-
-  /**
-   * @param log4jDocLCCost
-   *          the log4jDocLCCost to set
-   */
-  public static void setlog4jDocLCCost(Logger log4jDocLCCost) {
-    DocLCCost.log4jDocLCCost = log4jDocLCCost;
-  }
 
   /**
    * @return the seqNo
@@ -366,15 +361,15 @@ public class DocLCCost extends AcctServer {
           Account_ID = data[0].accountId;
         }
       } else {
-        log4jDocLCCost.warn("getLCCostAccount - NO account for landed cost type "
-            + dataAcctType[0].name);
+        log4jDocLCCost
+            .warn("getLCCostAccount - NO account for landed cost type " + dataAcctType[0].name);
         return null;
       }
 
       // No account
       if (Account_ID.equals("")) {
-        log4jDocLCCost.warn("getLCCostAccount - NO account for landed cost type ="
-            + dataAcctType[0].name);
+        log4jDocLCCost
+            .warn("getLCCostAccount - NO account for landed cost type =" + dataAcctType[0].name);
         return null;
       }
       // Return Account
@@ -390,10 +385,12 @@ public class DocLCCost extends AcctServer {
    * 
    * not used
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

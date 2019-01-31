@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
@@ -32,12 +34,10 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.ResetAccounting;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ResetAccountingHandler extends BaseProcessActionHandler {
 
-  private static final Logger log = LoggerFactory.getLogger(ResetAccountingHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -51,10 +51,11 @@ public class ResetAccountingHandler extends BaseProcessActionHandler {
       String adClientId = params.getString("AD_Client_ID");
       String adOrgId = params.getString("AD_Org_ID");
       String deletePosting = params.getString("DeletePosting");
-      String datefrom = StringUtils.equals(params.getString("datefrom"), "null") ? "" : OBDateUtils
-          .formatDate(JsonUtils.createDateFormat().parse(params.getString("datefrom")));
-      String dateto = StringUtils.equals(params.getString("dateto"), "null") ? "" : OBDateUtils
-          .formatDate(JsonUtils.createDateFormat().parse(params.getString("dateto")));
+      String datefrom = StringUtils.equals(params.getString("datefrom"), "null") ? ""
+          : OBDateUtils
+              .formatDate(JsonUtils.createDateFormat().parse(params.getString("datefrom")));
+      String dateto = StringUtils.equals(params.getString("dateto"), "null") ? ""
+          : OBDateUtils.formatDate(JsonUtils.createDateFormat().parse(params.getString("dateto")));
       JSONArray tableIds = params.getJSONArray("AD_Table_ID");
       List<String> tableIdsList = new ArrayList<String>();
       for (int i = 0; i < tableIds.length(); i++) {
@@ -74,8 +75,8 @@ public class ResetAccountingHandler extends BaseProcessActionHandler {
       JSONObject successMessage = new JSONObject();
       successMessage.put("severity", "success");
       StringBuilder message = new StringBuilder();
-      message.append(OBMessageUtils.parseTranslation("@UnpostedDocuments@ = " + counter
-          + ", @DeletedEntries@ = " + counterDeleted));
+      message.append(OBMessageUtils.parseTranslation(
+          "@UnpostedDocuments@ = " + counter + ", @DeletedEntries@ = " + counterDeleted));
       successMessage.put("text", message);
       result.put("message", successMessage);
 

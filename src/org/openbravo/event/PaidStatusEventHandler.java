@@ -20,7 +20,8 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -32,9 +33,9 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 
 public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      FIN_FinaccTransaction.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(FIN_FinaccTransaction.ENTITY_NAME) };
+  protected Logger logger = LogManager.getLogger();
   public static final String STATUS_CLEARED = "RPPC";
   public static final String STATUS_DEPOSIT = "RDNC";
   public static final String STATUS_WITHDRAWN = "PWNC";
@@ -44,14 +45,13 @@ public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
 
-    final Entity transactionEntity = ModelProvider.getInstance().getEntity(
-        FIN_FinaccTransaction.ENTITY_NAME);
+    final Entity transactionEntity = ModelProvider.getInstance()
+        .getEntity(FIN_FinaccTransaction.ENTITY_NAME);
     final Property statusProperty = transactionEntity
         .getProperty(FIN_FinaccTransaction.PROPERTY_STATUS);
     final Property processedProperty = transactionEntity
@@ -72,7 +72,8 @@ public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
             for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
               invoicePaidold = psd.isInvoicePaid();
               if (!invoicePaidold) {
-                if (newStatus.equals(transaction.getFinPayment().getStatus())) {
+                if (newStatus.equals(transaction.getFinPayment().getStatus())
+                    && (!psd.getPaymentDetails().isPrepayment())) {
                   psd.setInvoicePaid(true);
                 }
                 if (psd.isInvoicePaid()) {
@@ -92,7 +93,8 @@ public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
             for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
               invoicePaidold = psd.isInvoicePaid();
               if (invoicePaidold) {
-                if (oldStatus.equals(FIN_Utility.invoicePaymentStatus(transaction.getFinPayment()))) {
+                if (oldStatus.equals(FIN_Utility.invoicePaymentStatus(transaction.getFinPayment()))
+                    && (!psd.getPaymentDetails().isPrepayment())) {
                   FIN_Utility.restorePaidAmounts(psd);
                 }
               }

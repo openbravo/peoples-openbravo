@@ -31,27 +31,28 @@ public class UtilSql {
         strValor = strDefault;
       }
       if (strValor != null) {
-        if (strValor.compareTo("") == 0)
+        if (strValor.compareTo("") == 0) {
           ps.setNull(posicion, tipo);
-        else {
+        } else {
           switch (tipo) {
-          case 2:
-            ps.setLong(posicion, Long.valueOf(strValor).longValue());
-            break;
-          case 12:
-            ps.setString(posicion, strValor);
-            break;
-          case java.sql.Types.LONGVARCHAR:
-            ps.setString(posicion, strValor);
-            break;
-          case 0:
-            ps.setDouble(posicion, Double.valueOf(strValor).doubleValue());
-            break;
+            case 2:
+              ps.setLong(posicion, Long.valueOf(strValor).longValue());
+              break;
+            case 12:
+              ps.setString(posicion, strValor);
+              break;
+            case java.sql.Types.LONGVARCHAR:
+              ps.setString(posicion, strValor);
+              break;
+            case 0:
+              ps.setDouble(posicion, Double.valueOf(strValor).doubleValue());
+              break;
           }
 
         }
-      } else
+      } else {
         ps.setNull(posicion, tipo);
+      }
     } catch (Exception e) {
       e.printStackTrace();
       return (false);
@@ -61,15 +62,17 @@ public class UtilSql {
 
   public static String getValue(ResultSet result, String strField) throws java.sql.SQLException {
     String strValueReturn = result.getString(strField);
-    if (result.wasNull())
+    if (result.wasNull()) {
       strValueReturn = "";
+    }
     return strValueReturn;
   }
 
   public static String getValue(ResultSet result, int pos) throws java.sql.SQLException {
     String strValueReturn = result.getString(pos);
-    if (result.wasNull())
+    if (result.wasNull()) {
       strValueReturn = "";
+    }
     return strValueReturn;
   }
 
@@ -102,19 +105,22 @@ public class UtilSql {
     return strValueReturn;
   }
 
-  public static String getDateValue(ResultSet result, String strField) throws java.sql.SQLException {
+  public static String getDateValue(ResultSet result, String strField)
+      throws java.sql.SQLException {
     return getDateValue(result, strField, "dd-MM-yyyy");
   }
 
-  public static String getBlobValue(ResultSet result, String strField) throws java.sql.SQLException {
+  public static String getBlobValue(ResultSet result, String strField)
+      throws java.sql.SQLException {
     String strValueReturn = "";
     Blob blob = result.getBlob(strField);
     if (result.wasNull()) {
       strValueReturn = "";
     } else {
       int length = (int) blob.length();
-      if (length > 0)
+      if (length > 0) {
         strValueReturn = new String(blob.getBytes(1, length));
+      }
     }
     return strValueReturn;
   }
@@ -122,8 +128,9 @@ public class UtilSql {
   public static String getStringCallableStatement(CallableStatement cs, int intField)
       throws java.sql.SQLException {
     String strValueReturn = cs.getString(intField);
-    if (strValueReturn == null)
+    if (strValueReturn == null) {
       strValueReturn = "";
+    }
     return strValueReturn;
   }
 }

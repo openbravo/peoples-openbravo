@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -42,11 +44,9 @@ import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.materialmgmt.cost.LCMatched;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(LCCostMatchFromInvoiceHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -109,8 +109,8 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
       boolean isMatched = line.getBoolean("matched");
       boolean processMatching = line.getBoolean("processMatching");
       LCMatched match = null;
-      LandedCostCost lcc = (LandedCostCost) OBDal.getInstance().getProxy(
-          LandedCostCost.ENTITY_NAME, strLCCostId);
+      LandedCostCost lcc = (LandedCostCost) OBDal.getInstance()
+          .getProxy(LandedCostCost.ENTITY_NAME, strLCCostId);
 
       if (strLCMatchedId.isEmpty()) {
         // Create new match record
@@ -148,22 +148,23 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
         OBDal.getInstance().save(lcCost);
       }
 
-      final OBCriteria<ConversionRateDoc> conversionRateDoc = OBDal.getInstance().createCriteria(
-          ConversionRateDoc.class);
-      conversionRateDoc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE,
-          localIl.getInvoice()));
+      final OBCriteria<ConversionRateDoc> conversionRateDoc = OBDal.getInstance()
+          .createCriteria(ConversionRateDoc.class);
+      conversionRateDoc
+          .add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, localIl.getInvoice()));
       ConversionRateDoc invoiceconversionrate = (ConversionRateDoc) conversionRateDoc
           .uniqueResult();
 
-      Currency currency = lcc.getOrganization().getCurrency() != null ? lcc.getOrganization()
-          .getCurrency() : lcc.getOrganization().getClient().getCurrency();
-      ConversionRate landedCostrate = FinancialUtils.getConversionRate(lcc.getLandedCost()
-          .getReferenceDate(), lcc.getCurrency(), currency, lcc.getOrganization(), lcc.getClient());
+      Currency currency = lcc.getOrganization().getCurrency() != null
+          ? lcc.getOrganization().getCurrency()
+          : lcc.getOrganization().getClient().getCurrency();
+      ConversionRate landedCostrate = FinancialUtils.getConversionRate(
+          lcc.getLandedCost().getReferenceDate(), lcc.getCurrency(), currency,
+          lcc.getOrganization(), lcc.getClient());
 
       if (invoiceconversionrate != null
           && invoiceconversionrate.getRate() != landedCostrate.getMultipleRateBy()) {
-        amount = amount
-            .multiply(invoiceconversionrate.getRate())
+        amount = amount.multiply(invoiceconversionrate.getRate())
             .subtract(amount.multiply(landedCostrate.getMultipleRateBy()))
             .divide(landedCostrate.getMultipleRateBy(), currency.getStandardPrecision().intValue(),
                 RoundingMode.HALF_UP);
@@ -194,8 +195,8 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
         LCMatched matchToRemove = OBDal.getInstance().get(LCMatched.class, strLCMatchId);
 
         // load landedcostcost
-        lcCost = OBDal.getInstance().get(LandedCostCost.class,
-            matchToRemove.getLandedCostCost().getId());
+        lcCost = OBDal.getInstance()
+            .get(LandedCostCost.class, matchToRemove.getLandedCostCost().getId());
         lcCost.getLandedCostMatchedList().remove(matchToRemove);
         localIl.getLandedCostMatchedList().remove(matchToRemove);
         OBDal.getInstance().save(lcCost);

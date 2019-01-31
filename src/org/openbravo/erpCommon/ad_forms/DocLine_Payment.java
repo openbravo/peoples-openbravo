@@ -11,17 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.apache.log4j.Logger;
-
 public class DocLine_Payment extends DocLine {
-  static Logger log4jDocLine_Payment = Logger.getLogger(DocLine_Payment.class);
 
   String Line_ID = "";
   String Amount = "";
@@ -50,23 +47,9 @@ public class DocLine_Payment extends DocLine {
   /**
    * @return the amount
    */
+  @Override
   public String getAmount() {
     return Amount;
-  }
-
-  /**
-   * @return the log4jDocLine_Payment
-   */
-  public static Logger getLog4jDocLine_Payment() {
-    return log4jDocLine_Payment;
-  }
-
-  /**
-   * @param log4jDocLine_Payment
-   *          the log4jDocLine_Payment to set
-   */
-  public static void setLog4jDocLine_Payment(Logger log4jDocLine_Payment) {
-    DocLine_Payment.log4jDocLine_Payment = log4jDocLine_Payment;
   }
 
   /**
@@ -343,6 +326,7 @@ public class DocLine_Payment extends DocLine {
    * @param amount
    *          the amount to set
    */
+  @Override
   public void setAmount(String amount) {
     Amount = amount;
   }
@@ -453,6 +437,7 @@ public class DocLine_Payment extends DocLine {
     return lineAux;
   } // clone
 
+  @Override
   public String getServletInfo() {
     return "Servlet for accounting";
   } // end of getServletInfo() method

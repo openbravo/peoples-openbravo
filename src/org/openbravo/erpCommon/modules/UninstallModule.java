@@ -25,7 +25,8 @@ import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
@@ -42,7 +43,7 @@ import org.openbravo.erpCommon.utility.Utility;
  */
 public class UninstallModule {
   private static ConnectionProvider pool;
-  static Logger log4j = Logger.getLogger(UninstallModule.class);
+  static Logger log4j = LogManager.getLogger();
   private String modulesBaseDir;
 
   private StringBuffer log = new StringBuffer();
@@ -117,7 +118,8 @@ public class UninstallModule {
           try {
             ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "",
                 "cannot uninstall module because it is part of a dependency "
-                    + dependencies[i].name, "E");
+                    + dependencies[i].name,
+                "E");
           } catch (final ServletException ex) {
             ex.printStackTrace();
           }
@@ -138,10 +140,10 @@ public class UninstallModule {
         // obtain all the modules to uninstall: selected modules + inclussions of them
         String modsToUninstall = getContentList(module.replace("'", ""));
 
-        ArrayList<String> uninstallList = new ArrayList<String>(Arrays.asList(modsToUninstall
-            .replace(" ", "").replace("'", "").split(",")));
-        for (UninstallModuleData dep : UninstallModuleData
-            .selectDependencies(pool, modsToUninstall)) {
+        ArrayList<String> uninstallList = new ArrayList<String>(
+            Arrays.asList(modsToUninstall.replace(" ", "").replace("'", "").split(",")));
+        for (UninstallModuleData dep : UninstallModuleData.selectDependencies(pool,
+            modsToUninstall)) {
           // Do not uninstall inclussions that are dependencies for other modules
           uninstallList.remove(dep.adDependentModuleId);
           addLog(dep.origname + " @IsDependencyOf@ " + dep.name + ". @ModuleWillNotBeUninstalled@",
@@ -163,8 +165,8 @@ public class UninstallModule {
         if (data != null && data.length > 0) {
           for (int i = 0; i < data.length; i++) {
             UninstallModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()),
-                data[i].adModuleId, data[i].version, data[i].name, "Uninstalled module "
-                    + data[i].name + " - " + data[i].version, "D");
+                data[i].adModuleId, data[i].version, data[i].name,
+                "Uninstalled module " + data[i].name + " - " + data[i].version, "D");
             final File f = new File(modulesBaseDir, data[i].javapackage);
             if (f.exists()) {
               if (!Utility.deleteDir(f)) {
@@ -236,8 +238,9 @@ public class UninstallModule {
     if (level > logLevel) {
       logLevel = level;
       log = new StringBuffer(m);
-    } else if (level == logLevel)
+    } else if (level == logLevel) {
       log.append(m + "\n");
+    }
   }
 
   /**
@@ -250,21 +253,22 @@ public class UninstallModule {
       final String lang = vars.getLanguage();
       final OBError rt = new OBError();
       switch (logLevel) {
-      case MSG_ERROR:
-        rt.setType("Error");
-        break;
-      case MSG_WARN:
-        rt.setType("Warning");
-        break;
-      default:
-        rt.setType("Success");
-        break;
+        case MSG_ERROR:
+          rt.setType("Error");
+          break;
+        case MSG_WARN:
+          rt.setType("Warning");
+          break;
+        default:
+          rt.setType("Success");
+          break;
       }
       rt.setMessage(Utility.parseTranslation(pool, vars, lang, log.toString()));
 
       rt.setTitle(Utility.messageBD(pool, rt.getType(), lang));
       return rt;
-    } else
+    } else {
       return null;
+    }
   }
 }

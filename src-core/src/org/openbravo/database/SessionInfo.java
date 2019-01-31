@@ -24,7 +24,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class is used to maintain session information which will be used for audit purposes.
@@ -33,7 +34,7 @@ import org.apache.log4j.Logger;
 public class SessionInfo {
   private static final String JDBC_CONNECTION_POOL_CLASS_NAME = "org.openbravo.apachejdbcconnectionpool.JdbcExternalConnectionPool";
 
-  private static final Logger log4j = Logger.getLogger(SessionInfo.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public static final String IMPORT_ENTRY_PROCESS = "IE";
 
@@ -119,21 +120,17 @@ public class SessionInfo {
   }
 
   private static void createAdContextInfoTable(Connection conn) {
-    // Create temporary table
-    PreparedStatement psCreate = null;
-    try {
-      StringBuffer sql = new StringBuffer();
-      sql.append("CREATE TEMPORARY TABLE AD_CONTEXT_INFO");
-      sql.append("(AD_USER_ID VARCHAR(32), ");
-      sql.append("  AD_SESSION_ID VARCHAR(32),");
-      sql.append("  PROCESSTYPE VARCHAR(60), ");
-      sql.append("  PROCESSID VARCHAR(32)) on commit preserve rows");
-      psCreate = getPreparedStatement(conn, sql.toString());
+    String sql = "CREATE TEMPORARY TABLE AD_CONTEXT_INFO" + //
+        "(AD_USER_ID VARCHAR(32), " + //
+        "  AD_SESSION_ID VARCHAR(32)," + //
+        "  PROCESSTYPE VARCHAR(60), " + //
+        "  PROCESSID VARCHAR(32)) on commit preserve rows";
+
+    try (PreparedStatement psCreate = getPreparedStatement(conn, sql)) {
       psCreate.execute();
-    } catch (Exception e) {
+    } catch (SQLException e) {
       log4j.error("Error initializating audit infrastructure", e);
-    } finally {
-      releasePreparedStatement(psCreate);
+      throw new IllegalStateException(e);
     }
   }
 
@@ -168,23 +165,18 @@ public class SessionInfo {
     if (ExternalConnectionPool.getInstance() == null) {
       return false;
     }
-    return JDBC_CONNECTION_POOL_CLASS_NAME.equals(ExternalConnectionPool.getInstance().getClass()
-        .getName());
+    return JDBC_CONNECTION_POOL_CLASS_NAME
+        .equals(ExternalConnectionPool.getInstance().getClass().getName());
   }
 
   private static boolean adContextInfoExists(Connection conn) {
-    PreparedStatement psQuery = null;
     boolean alreadyExists = false;
-    try {
-      psQuery = getPreparedStatement(
-          conn,
-          "select count(*) from information_schema.tables where table_name='ad_context_info' and table_type = 'LOCAL TEMPORARY'");
-      ResultSet rs = psQuery.executeQuery();
+    try (PreparedStatement psQuery = getPreparedStatement(conn,
+        "select count(*) from information_schema.tables where table_name='ad_context_info' and table_type = 'LOCAL TEMPORARY'");
+        ResultSet rs = psQuery.executeQuery()) {
       alreadyExists = rs.next() && !rs.getString(1).equals("0");
     } catch (SQLException e) {
       log4j.error("Error checking if the ad_context_info table exists", e);
-    } finally {
-      releasePreparedStatement(psQuery);
     }
     return alreadyExists;
   }
@@ -249,16 +241,15 @@ public class SessionInfo {
       }
 
       if (log4j.isDebugEnabled()) {
-        log4j.debug("saving DB context info " + SessionInfo.getUserId() + " - "
-            + SessionInfo.getSessionId() + " - " + SessionInfo.getProcessType() + " - "
-            + SessionInfo.getProcessId());
+        log4j.debug(
+            "saving DB context info " + SessionInfo.getUserId() + " - " + SessionInfo.getSessionId()
+                + " - " + SessionInfo.getProcessType() + " - " + SessionInfo.getProcessId());
       }
 
       psCleanUp = getPreparedStatement(conn, "delete from ad_context_info");
       psCleanUp.executeUpdate();
 
-      psInsert = getPreparedStatement(
-          conn,
+      psInsert = getPreparedStatement(conn,
           "insert into ad_context_info (ad_user_id, ad_session_id, processType, processId) values (?, ?, ?, ?)");
       psInsert.setString(1, SessionInfo.getUserId());
       psInsert.setString(2, SessionInfo.getSessionId());
@@ -314,31 +305,27 @@ public class SessionInfo {
     return conn;
   }
 
-  private static PreparedStatement getPreparedStatement(Connection conn, String SQLPreparedStatement)
+  private static PreparedStatement getPreparedStatement(Connection conn, String sql)
       throws SQLException {
-    if (conn == null || SQLPreparedStatement == null || SQLPreparedStatement.equals(""))
+    if (conn == null || sql == null || sql.equals("")) {
       return null;
+    }
     PreparedStatement ps = null;
 
     try {
-      if (log4j.isDebugEnabled())
-        log4j.debug("preparedStatement requested");
-      ps = conn.prepareStatement(SQLPreparedStatement, ResultSet.TYPE_SCROLL_INSENSITIVE,
+      log4j.trace("preparedStatement requested");
+      ps = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
           ResultSet.CONCUR_READ_ONLY);
-      if (log4j.isDebugEnabled())
-        log4j.debug("preparedStatement received");
     } catch (SQLException e) {
-      log4j.error("getPreparedStatement: " + SQLPreparedStatement + "\n" + e);
-      if (conn != null) {
-        try {
-          conn.setAutoCommit(true);
-          conn.close();
-        } catch (Exception ex) {
-          ex.printStackTrace();
-        }
+      log4j.error("getPreparedStatement: " + sql, e);
+      try {
+        conn.setAutoCommit(true);
+        conn.close();
+      } catch (Exception ex) {
+        log4j.error("Could not close PreparedStatement for " + sql, ex);
       }
     }
-    return (ps);
+    return ps;
   }
 
   private static void releasePreparedStatement(PreparedStatement ps) {

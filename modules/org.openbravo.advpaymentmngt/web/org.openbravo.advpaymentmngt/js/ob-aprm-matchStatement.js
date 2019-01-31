@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,8 +60,7 @@ OB.APRM.MatchStatement.onLoad = function (view) {
   grid.dataSourceOrig = grid.dataSource;
   grid.dataSource = null;
   execute = function (ok) {
-    var onLoadCallback, newCriteria = {},
-        params = {};
+    var onLoadCallback, params = {};
     if (grid.view.sourceView) {
       params.context = grid.view.sourceView.getContextInfo();
     }
@@ -144,7 +143,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
             grid = me.grid,
             record = me.record,
             standardWindow = grid.view.parentWindow.view.standardWindow,
-            process, callback, bankStatementLineId = me.record.id,
+            callback, bankStatementLineId = me.record.id,
             updated = new Date(),
             view = me.grid.view;
         updated.setTime(me.record.bslUpdated.getTime());
@@ -153,7 +152,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
           if (data && data.message && data.message.severity === 'error') {
             view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
           } else {
-            var process = standardWindow.openProcess({
+            standardWindow.openProcess({
               callerField: me,
               paramWindow: true,
               processId: processId,
@@ -185,9 +184,8 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
       action: function () {
         var processId = 'E68790A7B65F4D45AB35E2BAE34C1F39',
             grid = me.grid,
-            record = me.record,
             standardWindow = grid.view.parentWindow.view.standardWindow,
-            process, callback, bankStatementLineId = me.record.id,
+            callback, bankStatementLineId = me.record.id,
             updated = new Date(),
             view = me.grid.view;
         updated.setTime(me.record.bslUpdated.getTime());
@@ -196,7 +194,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
           if (data && data.message && data.message.severity === 'error') {
             view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
           } else {
-            process = standardWindow.openProcess({
+            standardWindow.openProcess({
               callerField: me,
               paramWindow: true,
               processId: processId,

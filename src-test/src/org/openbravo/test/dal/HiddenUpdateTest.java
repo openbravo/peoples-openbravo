@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,12 +22,18 @@ package org.openbravo.test.dal;
 import static org.junit.Assert.fail;
 
 import java.io.Serializable;
-import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.integrator.spi.Integrator;
 import org.hibernate.mapping.PersistentClass;
+import org.hibernate.service.spi.SessionFactoryServiceRegistry;
 import org.hibernate.type.Type;
 import org.junit.Test;
 import org.openbravo.base.model.Entity;
@@ -52,6 +58,8 @@ import org.openbravo.test.base.OBBaseTest;
 
 public class HiddenUpdateTest extends OBBaseTest {
 
+  private static final Logger log = LogManager.getLogger();
+
   /**
    * Tests for hidden updates. Hidden updates can occur when a load/read of an entity also changes
    * the state, or that hibernate detects dirty in another way. Use the Hibernate Interceptor
@@ -59,40 +67,39 @@ public class HiddenUpdateTest extends OBBaseTest {
    */
   @Test
   public void testHiddenUpdates() {
+
     setSystemAdministratorContext();
 
     final SessionFactoryController currentSFC = SessionFactoryController.getInstance();
     try {
+      // close session created with previous SessionFactoryController
+      SessionHandler.getInstance().commitAndClose();
+
       final SessionFactoryController newSFC = new LocalSessionFactoryController();
       SessionFactoryController.setInstance(newSFC);
       SessionFactoryController.getInstance().reInitialize();
-      SessionHandler.getInstance().commitAndClose();
 
-      // System.err.println(SessionFactoryController.getInstance().
-      // getMapping());
+      Metadata metadata = LocalMetadataExtractorIntegrator.getInstance().getMetadata();
 
-      final Configuration cfg = DalSessionFactoryController.getInstance().getConfiguration();
-
-      for (final Iterator<?> it = cfg.getClassMappings(); it.hasNext();) {
-        final PersistentClass pc = (PersistentClass) it.next();
+      log.info("Checking hidden updates...");
+      for (PersistentClass pc : metadata.getEntityBindings()) {
         final String entityName = pc.getEntityName();
 
         Entity entity = ModelProvider.getInstance().getEntity(entityName);
-        // can also ignore views as they will result in errors anyway and they are
-        // mapped as not updateable
+        // can also ignore views as they will result in errors anyway and they are mapped as not
+        // updateable
         if (entity.isHQLBased() || entity.isDataSourceBased() || entity.isView()) {
           continue;
         }
 
-        // read max 5 records from each type, should be enough to limit runtime of the test
-        // and still give good results.
+        log.info("Checking entity {}", entityName);
+        // read max 5 records from each type, should be enough to limit runtime of the test and
+        // still give good results.
         final OBCriteria<BaseOBObject> criteria = OBDal.getInstance().createCriteria(entityName);
         criteria.setMaxResults(5);
         for (final Object o : criteria.list()) {
           if (o == null) {
-            // can occur when reading views which have nullable
-            // columns in a
-            // multi-column pk
+            // can occur when reading views which have nullable columns in a multi-column pk
             continue;
           }
           EntityXMLConverter.newInstance().toXML((BaseOBObject) o);
@@ -101,10 +108,19 @@ public class HiddenUpdateTest extends OBBaseTest {
       }
     } finally {
       SessionFactoryController.setInstance(currentSFC);
+      SessionFactoryController.getInstance().reInitialize();
     }
+
   }
 
   private class LocalSessionFactoryController extends DalSessionFactoryController {
+    @Override
+    public Configuration buildConfiguration() {
+      return new Configuration(new BootstrapServiceRegistryBuilder()
+          .applyIntegrator(LocalMetadataExtractorIntegrator.getInstance())
+          .build());
+    }
+
     @Override
     protected void setInterceptor(Configuration configuration) {
       configuration.setInterceptor(new LocalInterceptor());
@@ -155,5 +171,36 @@ public class HiddenUpdateTest extends OBBaseTest {
     public void onCollectionUpdate(Object collection, Serializable key) throws CallbackException {
       fail();
     }
+  }
+
+  private static class LocalMetadataExtractorIntegrator implements Integrator {
+
+    private static LocalMetadataExtractorIntegrator instance = new LocalMetadataExtractorIntegrator();
+
+    private Metadata metadata;
+
+    public static LocalMetadataExtractorIntegrator getInstance() {
+      return instance;
+    }
+
+    public Metadata getMetadata() {
+      return metadata;
+    }
+
+    @Override
+    public void integrate(Metadata md, SessionFactoryImplementor sessionFactory,
+        SessionFactoryServiceRegistry serviceRegistry) {
+      if (this.metadata != null) {
+        return;
+      }
+      this.metadata = md;
+    }
+
+    @Override
+    public void disintegrate(SessionFactoryImplementor sessionFactory,
+        SessionFactoryServiceRegistry serviceRegistry) {
+      // Do not require to implement
+    }
+
   }
 }

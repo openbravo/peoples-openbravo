@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,7 @@ public abstract class PriceListTestData {
   private boolean isSalesPrice;
   private boolean isBasedOnCost;
   private boolean isPriceIncludesTax;
+  private boolean isDefault;
 
   // Price List Version
   private String basePriceListVersionId;
@@ -115,6 +116,14 @@ public abstract class PriceListTestData {
     this.basePriceListVersionId = basePriceListVersionId;
   }
 
+  public boolean isDefault() {
+    return isDefault;
+  }
+
+  public void setDefault(boolean isDefault) {
+    this.isDefault = isDefault;
+  }
+
   /**
    * Returns Map should be used to verify Product Prices values after test is executed. Map has the
    * following structure: &lt;Product name, [Unit Price Expected, List Price Expected]&gt;
@@ -126,5 +135,4 @@ public abstract class PriceListTestData {
   public void setExpectedProductPrices(HashMap<String, String[]> expectedProductPrices) {
     this.expectedProductPrices = expectedProductPrices;
   }
-
 }

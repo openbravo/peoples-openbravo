@@ -26,11 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import junit.framework.TestCase;
-import junit.framework.TestResult;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -48,6 +45,9 @@ import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.exception.PoolNotFoundException;
 import org.openbravo.model.ad.access.User;
 
+import junit.framework.TestCase;
+import junit.framework.TestResult;
+
 /**
  * BaseTest class is deprecated. All test case that works with old notation, will be working
  * normally.
@@ -64,7 +64,7 @@ import org.openbravo.model.ad.access.User;
 @Deprecated
 public class BaseTest extends TestCase {
 
-  private static final Logger log = Logger.getLogger(BaseTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   private boolean errorOccured = false;
 
@@ -168,11 +168,6 @@ public class BaseTest extends TestCase {
    */
   @Override
   protected void setUp() throws Exception {
-
-    if (this.getClass().getResource("/log4j.lcf") != null) {
-      PropertyConfigurator.configure(this.getClass().getResource("/log4j.lcf"));
-    }
-
     initializeDalLayer();
     // clear the session otherwise it keeps the old model
     setTestUserContext();
@@ -195,7 +190,8 @@ public class BaseTest extends TestCase {
   protected ConnectionProvider getConnectionProvider() {
     try {
       final String propFile = OBConfigFileProvider.getInstance().getFileLocation();
-      final ConnectionProvider conn = new ConnectionProviderImpl(propFile + "/Openbravo.properties");
+      final ConnectionProvider conn = new ConnectionProviderImpl(
+          propFile + "/Openbravo.properties");
       return conn;
     } catch (PoolNotFoundException e) {
       throw new IllegalStateException(e);
@@ -280,7 +276,7 @@ public class BaseTest extends TestCase {
     if (userIds == null) {
       setTestUserContext();
 
-      String[] excludedUserIds = { "100", TEST_USER_ID };
+      Object[] excludedUserIds = { "100", TEST_USER_ID };
       OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
       obc.add(Restrictions.not(Restrictions.in(User.PROPERTY_ID, excludedUserIds)));
       obc.add(Restrictions.isNotEmpty(User.PROPERTY_ADUSERROLESLIST));
@@ -359,8 +355,9 @@ public class BaseTest extends TestCase {
    *          the exception to report.
    */
   protected void reportException(Exception e) {
-    if (e == null)
+    if (e == null) {
       return;
+    }
     e.printStackTrace(System.err);
     if (e instanceof SQLException) {
       reportException(((SQLException) e).getNextException());

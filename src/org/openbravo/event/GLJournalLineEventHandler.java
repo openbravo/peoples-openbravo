@@ -22,7 +22,8 @@ import java.math.BigDecimal;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -32,9 +33,9 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.financialmgmt.gl.GLJournalLine;
 
 public class GLJournalLineEventHandler extends EntityPersistenceEventObserver {
-  protected Logger logger = Logger.getLogger(this.getClass());
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      GLJournalLine.ENTITY_NAME) };
+  protected Logger logger = LogManager.getLogger();
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(GLJournalLine.ENTITY_NAME) };
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -53,16 +54,17 @@ public class GLJournalLineEventHandler extends EntityPersistenceEventObserver {
   // After reactivating the GL Journal, if you want to modify the Credit/Debit/Financial
   // Account/Payment Method/GL Item/Payment Date of any of these lines, you must first reactivate
   // and delete its related payments (if any)
-  private void checkAllowModification(final EntityUpdateEvent event, final GLJournalLine journalLine) {
+  private void checkAllowModification(final EntityUpdateEvent event,
+      final GLJournalLine journalLine) {
     final Entity gljournalLine = ModelProvider.getInstance().getEntity(GLJournalLine.ENTITY_NAME);
     if (!journalLine.getJournalEntry().isProcessed() && journalLine.getRelatedPayment() != null) {
       final Property credit = gljournalLine.getProperty(GLJournalLine.PROPERTY_CREDIT);
       final Property debit = gljournalLine.getProperty(GLJournalLine.PROPERTY_DEBIT);
       final Property openItems = gljournalLine.getProperty(GLJournalLine.PROPERTY_OPENITEMS);
-      if (((BigDecimal) event.getCurrentState(credit)).compareTo((BigDecimal) event
-          .getPreviousState(credit)) != 0
-          || ((BigDecimal) event.getCurrentState(debit)).compareTo((BigDecimal) event
-              .getPreviousState(debit)) != 0
+      if (((BigDecimal) event.getCurrentState(credit))
+          .compareTo((BigDecimal) event.getPreviousState(credit)) != 0
+          || ((BigDecimal) event.getCurrentState(debit))
+              .compareTo((BigDecimal) event.getPreviousState(debit)) != 0
           || !((Boolean) event.getCurrentState(openItems))
               .equals(event.getPreviousState(openItems))) {
         logger.info("Current credit: " + event.getCurrentState(credit) + ". Previous Credit: "

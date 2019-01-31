@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
@@ -34,6 +34,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.gl.GLJournalLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -67,7 +68,8 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
       BusinessPartner bPartner = journalLine.getBusinessPartner();
       GLItem glItem = journalLine.getGLItem();
       Date date = journalLine.getPaymentDate();
-      boolean isReceipt = journalLine.getDebit().subtract(journalLine.getCredit())
+      boolean isReceipt = journalLine.getDebit()
+          .subtract(journalLine.getCredit())
           .compareTo(BigDecimal.ZERO) > 0;
 
       // Check restrictions
@@ -81,7 +83,8 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
               + "', o.id, o.client) <> -1 ");
           hsqlScript.append("and o.generalLedger is not null ");
           final Session session = OBDal.getInstance().getSession();
-          final Query query = session.createQuery(hsqlScript.toString());
+          final Query<AcctSchema> query = session.createQuery(hsqlScript.toString(),
+              AcctSchema.class);
           if (query.list().size() != 1) {
             throw new OBException("@FIN_NoMultiAccountingAllowed@");
           }
@@ -107,8 +110,8 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
       parameters.add(journalLine.getClient().getId());
       parameters.add(journalLine.getOrganization().getId());
       parameters.add(isReceipt ? "ARR" : "APP");
-      String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
-          parameters, null);
+      String strDocTypeId = (String) CallStoredProcedure.getInstance()
+          .call("AD_GET_DOCTYPE", parameters, null);
       String strPaymentDocumentNo = FIN_Utility.getDocumentNo(journalLine.getOrganization(),
           (isReceipt) ? "ARR" : "APP", (isReceipt) ? "AR Receipt" : "AP Payment");
 
@@ -116,13 +119,18 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
       FIN_Payment payment = dao.getNewPayment(isReceipt, journalLine.getOrganization(),
           dao.getObject(DocumentType.class, strDocTypeId), strPaymentDocumentNo, bPartner,
           paymentMethod, financialAccount,
-          journalLine.getForeignCurrencyDebit().subtract(journalLine.getForeignCurrencyCredit())
-              .abs().toString(), date, null, journalLine.getCurrency(), null, null);
+          journalLine.getForeignCurrencyDebit()
+              .subtract(journalLine.getForeignCurrencyCredit())
+              .abs()
+              .toString(),
+          date, null, journalLine.getCurrency(), null, null);
 
       // Add Payment Details
       FIN_AddPayment.saveGLItem(payment,
-          journalLine.getForeignCurrencyDebit().subtract(journalLine.getForeignCurrencyCredit())
-              .abs(), glItem, bPartner, journalLine.getProduct(), journalLine.getProject(),
+          journalLine.getForeignCurrencyDebit()
+              .subtract(journalLine.getForeignCurrencyCredit())
+              .abs(),
+          glItem, bPartner, journalLine.getProduct(), journalLine.getProject(),
           journalLine.getSalesCampaign(), journalLine.getActivity(), journalLine.getSalesRegion(),
           journalLine.getCostCenter(), journalLine.getStDimension(), journalLine.getNdDimension());
 
@@ -134,8 +142,9 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
 
       // Print result
       if (message.getType().equals("Error")) {
-        String exceptionMessage = payment.getBusinessPartner() != null ? payment
-            .getBusinessPartner().getName() : "";
+        String exceptionMessage = payment.getBusinessPartner() != null
+            ? payment.getBusinessPartner().getName()
+            : "";
         exceptionMessage += ": " + message.getMessage();
         throw new OBException(exceptionMessage);
       } else if (message.getType().equals("Warning")) {
@@ -146,13 +155,13 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
         strMessageType = "Success";
       }
       strMessageResult.append("@Payment@ ").append(payment.getDocumentNo());
-      strMessageResult
-          .append(" (")
+      strMessageResult.append(" (")
           .append(
               payment.getBusinessPartner() != null ? payment.getBusinessPartner().getName() : "")
           .append(")");
-      if (!"".equals(message.getMessage()))
+      if (!"".equals(message.getMessage())) {
         strMessageResult.append(": ").append(message.getMessage());
+      }
       strMessageResult.append("<br>");
 
       // OBError is also used for successful results

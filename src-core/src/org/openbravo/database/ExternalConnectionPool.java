@@ -18,9 +18,12 @@
 package org.openbravo.database;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Abstract class that represents an external connection pool
@@ -28,11 +31,14 @@ import org.apache.log4j.Logger;
  */
 public abstract class ExternalConnectionPool {
 
-  static Logger log = Logger.getLogger(ExternalConnectionPool.class);
+  static Logger log = LogManager.getLogger();
   public static final String DEFAULT_POOL = "DEFAULT";
   public static final String READONLY_POOL = "RO";
 
   private static ExternalConnectionPool instance;
+
+  private static final String PG_TOO_MANY_CONNECTIONS = "53300";
+  private static final String ORA_CONNECTION_REFUSED = "66000";
 
   /**
    * 
@@ -45,7 +51,8 @@ public abstract class ExternalConnectionPool {
       String externalConnectionPoolClassName) throws ReflectiveOperationException {
     if (instance == null) {
       instance = (ExternalConnectionPool) Class.forName(externalConnectionPoolClassName)
-          .getDeclaredConstructor().newInstance();
+          .getDeclaredConstructor()
+          .newInstance();
     }
     return instance;
   }
@@ -93,4 +100,28 @@ public abstract class ExternalConnectionPool {
     return getConnection();
   }
 
+  /** {@code Exception}s thrown when trying to create a new connection and pool is exhausted. */
+  protected List<Class<? extends Exception>> getExhaustedExceptions() {
+    return Collections.emptyList();
+  }
+
+  /** Checks if {@code Throwable} was caused by pool not having more connections. */
+  public boolean hasNoConnections(Throwable t) {
+    if (t == null) {
+      return false;
+    }
+
+    boolean isOutOfPhysicalConns;
+    if (t instanceof SQLException) {
+      String state = ((SQLException) t).getSQLState();
+      isOutOfPhysicalConns = PG_TOO_MANY_CONNECTIONS.equals(state)
+          || ORA_CONNECTION_REFUSED.equals(state);
+    } else {
+      isOutOfPhysicalConns = false;
+    }
+
+    return isOutOfPhysicalConns
+        || getExhaustedExceptions().stream().anyMatch(e -> e.isAssignableFrom(t.getClass()))
+        || hasNoConnections(t.getCause());
+  }
 }

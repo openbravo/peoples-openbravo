@@ -71,7 +71,8 @@ public class AbsoluteTimeUIDefinition extends UIDefinition {
 
   private SimpleDateFormat getClassicFormat() {
     if (classicFormat == null) {
-      String dateTimeFormat = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      String dateTimeFormat = (String) OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .get(KernelConstants.DATETIME_FORMAT_PROPERTY);
       if (dateTimeFormat.indexOf(" a") != -1) {
         // The value of this reference always go to/from the client in the 24h notation, so in case
@@ -120,8 +121,8 @@ public class AbsoluteTimeUIDefinition extends UIDefinition {
       JSONObject jsnobject = new JSONObject(result);
       if (getValueFromSession) {
         RequestContext rq = RequestContext.get();
-        String columnValue = rq.getRequestParameter("inp"
-            + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
+        String columnValue = rq.getRequestParameter(
+            "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
         if (StringUtils.isEmpty(columnValue)) {
           // If the date is empty, it does not have to be converted
           return result;

@@ -22,6 +22,8 @@ package org.openbravo.utility.cleanup.log;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -32,8 +34,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.scheduling.ProcessLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation to clean up an entity.
@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class CleanEntity {
   protected static final String SYSTEM = "0";
 
-  private static final Logger log = LoggerFactory.getLogger(CleanEntity.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Clean logs for an entity
@@ -67,9 +67,9 @@ public class CleanEntity {
    *          Log to be displayed in Process Request window
    * @return number of deleted rows
    */
-  public int clean(LogCleanUpConfig config, Client client, Organization org, ProcessLogger bgLogger) {
-    Entity entity = ModelProvider.getInstance().getEntityByTableId(
-        config.getTable().getId());
+  public int clean(LogCleanUpConfig config, Client client, Organization org,
+      ProcessLogger bgLogger) {
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(config.getTable().getId());
 
     String hql = "delete from " + entity.getName();
 

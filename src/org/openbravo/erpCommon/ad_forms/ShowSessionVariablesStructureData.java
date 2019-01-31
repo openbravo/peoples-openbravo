@@ -11,18 +11,20 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * All portions are Copyright (C) 2001-2018 Openbravo S.L.U.
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
+@SuppressWarnings("serial")
 class ShowSessionVariablesStructureData implements FieldProvider {
-  static Logger log4j = Logger.getLogger(ShowSessionVariablesStructureData.class);
+  static Logger log4j = LogManager.getLogger();
   boolean isPreference = false;
   boolean isAccounting = false;
   boolean isGlobal = false;
@@ -33,28 +35,30 @@ class ShowSessionVariablesStructureData implements FieldProvider {
   String value;
   String rownum;
 
+  @Override
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("isPreference"))
+    if (fieldName.equalsIgnoreCase("isPreference")) {
       return (isPreference ? "Yes" : "NO");
-    else if (fieldName.equalsIgnoreCase("isAccounting"))
+    } else if (fieldName.equalsIgnoreCase("isAccounting")) {
       return (isAccounting ? "Yes" : "NO");
-    else if (fieldName.equalsIgnoreCase("isGlobal"))
+    } else if (fieldName.equalsIgnoreCase("isGlobal")) {
       return (isGlobal ? "Yes" : "NO");
-    else if (fieldName.equalsIgnoreCase("window"))
+    } else if (fieldName.equalsIgnoreCase("window")) {
       return ((window == null) ? "" : window);
-    else if (fieldName.equalsIgnoreCase("windowName"))
+    } else if (fieldName.equalsIgnoreCase("windowName")) {
       return ((windowName == null) ? "" : windowName);
-    else if (fieldName.equalsIgnoreCase("completeName"))
+    } else if (fieldName.equalsIgnoreCase("completeName")) {
       return ((completeName == null) ? "" : completeName);
-    else if (fieldName.equalsIgnoreCase("name"))
+    } else if (fieldName.equalsIgnoreCase("name")) {
       return ((name == null) ? "" : name);
-    else if (fieldName.equalsIgnoreCase("value"))
+    } else if (fieldName.equalsIgnoreCase("value")) {
       return ((value == null) ? "" : value);
-    else if (fieldName.equalsIgnoreCase("rownum"))
+    } else if (fieldName.equalsIgnoreCase("rownum")) {
       return ((rownum == null) ? "0" : rownum);
-    else {
-      if (log4j.isDebugEnabled())
+    } else {
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Field does not exist: " + fieldName);
+      }
       return null;
     }
   }

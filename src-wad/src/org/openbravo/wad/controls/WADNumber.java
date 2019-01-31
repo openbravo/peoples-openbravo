@@ -33,6 +33,7 @@ public class WADNumber extends WADControl {
     initialize();
   }
 
+  @Override
   public void initialize() {
     generateJSCode();
     this.button = new WADFieldButton("Calc", getData("ColumnName"), getData("ColumnNameInp"),
@@ -49,22 +50,27 @@ public class WADNumber extends WADControl {
   public void generateValidation() {
     String[] discard = { "", "", "", "" };
     String join = "";
-    if (!getData("IsMandatory").equals("Y"))
+    if (!getData("IsMandatory").equals("Y")) {
       discard[0] = "isMandatory";
-    if (getData("ValueMin").equals("") && getData("ValueMax").equals(""))
+    }
+    if (getData("ValueMin").equals("") && getData("ValueMax").equals("")) {
       discard[1] = "isValueCheck";
+    }
     boolean valmin = false;
-    if (getData("ValueMin").equals(""))
+    if (getData("ValueMin").equals("")) {
       discard[2] = "isValueMin";
-    else
+    } else {
       valmin = true;
-    if (getData("ValueMax").equals(""))
+    }
+    if (getData("ValueMax").equals("")) {
       discard[3] = "isValueMax";
-    else if (valmin)
+    } else if (valmin) {
       join = " || ";
+    }
 
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADNumberJSValidation", discard).createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADNumberJSValidation", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("valueMin", getData("ValueMin"));
     xmlDocument.setParameter("valueMax", getData("ValueMax"));
@@ -72,10 +78,12 @@ public class WADNumber extends WADControl {
     setValidation(replaceHTML(xmlDocument.print()));
   }
 
+  @Override
   public String getType() {
     return "TextBox_btn";
   }
 
+  @Override
   public String editMode() {
     String textButton = "";
     String buttonClass = "";
@@ -90,8 +98,9 @@ public class WADNumber extends WADControl {
       // if field is not mandatory, discard it
       discard[0] = "xxmissingSpan";
     }
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADNumber", discard).createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADNumber", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -101,8 +110,8 @@ public class WADNumber extends WADControl {
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
     xmlDocument.setParameter("button", textButton);
 
-    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData(
-        "IsUpdateable").equals("N"));
+    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")
+        || getData("IsUpdateable").equals("N"));
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
     if (!isDisabled && getData("IsMandatory").equals("Y")) {
       xmlDocument.setParameter("required", "true");
@@ -121,6 +130,7 @@ public class WADNumber extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String newMode() {
     String textButton = "";
     String buttonClass = "";
@@ -134,8 +144,9 @@ public class WADNumber extends WADControl {
       // if field is not mandatory, discard it
       discard[0] = "xxmissingSpan";
     }
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADNumber", discard).createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADNumber", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -145,7 +156,8 @@ public class WADNumber extends WADControl {
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
     xmlDocument.setParameter("button", textButton);
 
-    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));
+    boolean isDisabled = (getData("IsReadOnly").equals("Y")
+        || getData("IsReadOnlyTab").equals("Y"));
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
     if (!isDisabled && getData("IsMandatory").equals("Y")) {
       xmlDocument.setParameter("required", "true");
@@ -164,12 +176,15 @@ public class WADNumber extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String toXml() {
     String[] discard = { "xx_PARAM" };
-    if (getData("IsParameter").equals("Y"))
+    if (getData("IsParameter").equals("Y")) {
       discard[0] = "xx";
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADNumberXML", discard).createXmlDocument();
+    }
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADNumberXML", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnFormat", getFormat());
@@ -194,43 +209,51 @@ public class WADNumber extends WADControl {
   }
 
   private static boolean isDecimalNumber(String reference) {
-    if (reference == null || reference.equals(""))
+    if (reference == null || reference.equals("")) {
       return false;
+    }
     return (reference.equals("12") || reference.equals("22"));
   }
 
   private static boolean isGeneralNumber(String reference) {
-    if (reference == null || reference.equals(""))
+    if (reference == null || reference.equals("")) {
       return false;
+    }
     return reference.equals("800019");
   }
 
   private static boolean isQtyNumber(String reference) {
-    if (reference == null || reference.equals(""))
+    if (reference == null || reference.equals("")) {
       return false;
+    }
     return reference.equals("29");
   }
 
   private static boolean isPriceNumber(String reference) {
-    if (reference == null || reference.equals(""))
+    if (reference == null || reference.equals("")) {
       return false;
+    }
     return reference.equals("800008");
 
   }
 
   private static boolean isIntegerNumber(String reference) {
-    if (reference == null || reference.equals(""))
+    if (reference == null || reference.equals("")) {
       return false;
+    }
     return reference.equals("11");
   }
 
+  @Override
   public boolean isNumericType() {
     return true;
   }
 
+  @Override
   public String getHiddenHTML() {
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADHiddenNumber").createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADHiddenNumber")
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));

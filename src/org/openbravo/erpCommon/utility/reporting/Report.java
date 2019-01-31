@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2017 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2018 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
@@ -17,6 +17,7 @@ package org.openbravo.erpCommon.utility.reporting;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -24,13 +25,15 @@ import java.util.regex.Matcher;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.service.db.DalConnectionProvider;
 
-public class Report {
+@SuppressWarnings("serial")
+public class Report implements Serializable {
   public String getOrgId() {
     return orgId;
   }
@@ -45,7 +48,7 @@ public class Report {
 
   public OutputTypeEnum outputType = OutputTypeEnum.DEFAULT;
 
-  private static Logger log4j = Logger.getLogger(Report.class);
+  private static Logger log4j = LogManager.getLogger();
 
   private DocumentType _DocumentType;
   private String _DocumentId; // Order Id, invoice id, etc.
@@ -80,44 +83,45 @@ public class Report {
 
   private TemplateInfo templateInfo;
 
-  public Report(DocumentType documentType, String documentId, String strLanguage,
-      String templateId, boolean multiReport, OutputTypeEnum outputTypeString)
+  public Report(DocumentType documentType, String documentId, String strLanguage, String templateId,
+      boolean multiReport, OutputTypeEnum outputTypeString)
       throws ReportingException, ServletException {
     this(DalConnectionProvider.getReadOnlyConnectionProvider(), documentType, documentId,
         strLanguage, templateId, multiReport, outputTypeString);
   }
 
-  public Report(ConnectionProvider connectionProvider, DocumentType documentType,
-      String documentId, String strLanguage, String templateId, boolean multiReport,
-      OutputTypeEnum outputTypeString) throws ReportingException, ServletException {
+  public Report(ConnectionProvider connectionProvider, DocumentType documentType, String documentId,
+      String strLanguage, String templateId, boolean multiReport, OutputTypeEnum outputTypeString)
+      throws ReportingException, ServletException {
     _DocumentType = documentType;
     _DocumentId = documentId;
     outputType = outputTypeString;
     ReportData[] reportData = null;
 
     switch (_DocumentType) {
-    case QUOTATION: // Retrieve quotation information
-      reportData = ReportData.getOrderInfo(connectionProvider, documentId);
-      break;
-    case SALESORDER: // Retrieve order information
-      reportData = ReportData.getOrderInfo(connectionProvider, documentId);
-      break;
+      case QUOTATION: // Retrieve quotation information
+        reportData = ReportData.getOrderInfo(connectionProvider, documentId);
+        break;
+      case SALESORDER: // Retrieve order information
+        reportData = ReportData.getOrderInfo(connectionProvider, documentId);
+        break;
 
-    case SALESINVOICE: // Retrieve invoice information
-      reportData = ReportData.getInvoiceInfo(connectionProvider, documentId);
-      break;
+      case SALESINVOICE: // Retrieve invoice information
+        reportData = ReportData.getInvoiceInfo(connectionProvider, documentId);
+        break;
 
-    case SHIPMENT: // Retrieve shipment information
-      reportData = ReportData.getShipmentInfo(connectionProvider, documentId);
-      break;
+      case SHIPMENT: // Retrieve shipment information
+        reportData = ReportData.getShipmentInfo(connectionProvider, documentId);
+        break;
 
-    case PAYMENT: // Retrieve payment information
-      reportData = ReportData.getPaymentInfo(connectionProvider, documentId);
-      break;
+      case PAYMENT: // Retrieve payment information
+        reportData = ReportData.getPaymentInfo(connectionProvider, documentId);
+        break;
 
-    default:
-      throw new ReportingException(Utility.messageBD(connectionProvider, "UnknownDocumentType",
-          strLanguage) + _DocumentType);
+      default:
+        throw new ReportingException(
+            Utility.messageBD(connectionProvider, "UnknownDocumentType", strLanguage)
+                + _DocumentType);
     }
 
     multiReports = multiReport;
@@ -138,13 +142,15 @@ public class Report {
       _MaxDueDate = reportData[0].getField("maxduedate");
       _DocDescription = reportData[0].getField("docdesc");
       _ContactName = reportData[0].getField("contact_name");
-      templateInfo = new TemplateInfo(connectionProvider, docTypeId, orgId, strLanguage, templateId);
+      templateInfo = new TemplateInfo(connectionProvider, docTypeId, orgId, strLanguage,
+          templateId);
 
       _Filename = generateReportFileName();
       _targetDirectory = null;
-    } else
-      throw new ReportingException(Utility.messageBD(connectionProvider, "NoDataReport",
-          strLanguage) + documentId);
+    } else {
+      throw new ReportingException(
+          Utility.messageBD(connectionProvider, "NoDataReport", strLanguage) + documentId);
+    }
 
   }
 
@@ -156,10 +162,10 @@ public class Report {
     // Generate the target report filename
     final String dateStamp = Utility.formatDate(new Date(), "yyyyMMdd-HHmmss");
     String reportFilename = templateInfo.getReportFilename();
-    reportFilename = reportFilename
-        .replaceAll("@our_ref@", Matcher.quoteReplacement(_OurReference));
-    reportFilename = reportFilename
-        .replaceAll("@cus_ref@", Matcher.quoteReplacement(_CusReference));
+    reportFilename = reportFilename.replaceAll("@our_ref@",
+        Matcher.quoteReplacement(_OurReference));
+    reportFilename = reportFilename.replaceAll("@cus_ref@",
+        Matcher.quoteReplacement(_CusReference));
     reportFilename = reportFilename.replaceAll("@cus_nam@", Matcher.quoteReplacement(_ContactName));
     reportFilename = reportFilename.replaceAll("@bp_nam@", Matcher.quoteReplacement(_BPartnerName));
     reportFilename = reportFilename.replaceAll("@doc_date@", Matcher.quoteReplacement(_DocDate));
@@ -178,8 +184,9 @@ public class Report {
     // only characters, numbers and "." are accepted. Others will be changed for "_"
     reportFilename = reportFilename.replaceAll("[^A-Za-z0-9\\.]", "_");
     reportFilename = reportFilename + "." + dateStamp + ".pdf";
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("target report filename: " + reportFilename);
+    }
 
     if (multiReports && outputType.equals(OutputTypeEnum.PRINT)) {
       reportFilename = UUID.randomUUID().toString() + "_" + reportFilename;

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2017 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,8 +29,10 @@ import java.util.Map.Entry;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.SQLQuery;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.SQLGrammarException;
+import org.hibernate.query.NativeQuery;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -40,8 +42,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.UsedByLink;
 import org.openbravo.service.datasource.DefaultDataSourceService;
 import org.openbravo.service.json.JsonConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Datasource used by the Alert Management window
@@ -52,7 +52,7 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
   private static final String ALERT_RULE_TAB = "alertRule.tab.id";
   private static final int ALERT_RULE_ID = 0;
   private static final int ALERT_RULE_FILTERCLAUSE = 1;
-  private static final Logger log = LoggerFactory.getLogger(ADAlertDatasourceService.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public Entity getEntity() {
@@ -95,8 +95,7 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
 
   private List<String> getAlertIds(String alertStatus) {
     // Get alert rules visible for context's the role/user.
-    final String sql = "SELECT ad_alertrule_id, filterclause"
-        + "  FROM ad_alertrule arule" //
+    final String sql = "SELECT ad_alertrule_id, filterclause" + "  FROM ad_alertrule arule" //
         + " WHERE EXISTS (SELECT 1" //
         + "                 FROM ad_alertrecipient arecipient"
         + "                WHERE arule.ad_alertrule_id = arecipient.ad_alertrule_id"
@@ -106,7 +105,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
         + "  AND ad_org_id " + OBDal.getInstance().getReadableOrganizationsInClause()
         + "  AND isactive='Y'";
 
-    final SQLQuery alertRules = OBDal.getInstance().getSession().createSQLQuery(sql);
+    @SuppressWarnings("rawtypes")
+    final NativeQuery alertRules = OBDal.getInstance().getSession().createNativeQuery(sql);
     alertRules.setParameter("userId", OBContext.getOBContext().getUser().getId());
     alertRules.setParameter("roleId", OBContext.getOBContext().getRole().getId());
     return getAlertIdsFromAlertRules(getAlertRulesGroupedByFilterClause(alertRules), alertStatus);
@@ -116,7 +116,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
    * The method groups the AlertRule IDS by taking into account when they have the same filter
    * clause.
    */
-  private Map<String, List<String>> getAlertRulesGroupedByFilterClause(SQLQuery alertRules) {
+  @SuppressWarnings("rawtypes")
+  private Map<String, List<String>> getAlertRulesGroupedByFilterClause(NativeQuery alertRules) {
     Map<String, List<String>> alertRulesIdGroupByFilterClauses = new HashMap<>();
     try {
       for (Object resultObject : alertRules.list()) {
@@ -133,7 +134,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
         ids.add(alertRuleId);
       }
     } catch (SQLGrammarException e) {
-      log.error("An error has ocurred when trying to process the alert rules: " + e.getMessage(), e);
+      log.error("An error has ocurred when trying to process the alert rules: " + e.getMessage(),
+          e);
     }
     return alertRulesIdGroupByFilterClauses;
   }
@@ -144,8 +146,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
     for (Entry<String, List<String>> alertRuleList : alertRulesGroupByFilterClause.entrySet()) {
       String filterClause;
       try {
-        filterClause = new UsedByLink().getWhereClause(
-            RequestContext.get().getVariablesSecureApp(), "", alertRuleList.getKey());
+        filterClause = new UsedByLink().getWhereClause(RequestContext.get().getVariablesSecureApp(),
+            "", alertRuleList.getKey());
       } catch (ServletException e) {
         throw new IllegalStateException(e);
       }
@@ -154,14 +156,15 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
           + " AND ad_org_id " + OBDal.getInstance().getReadableOrganizationsInClause()
           + " AND ad_alertrule_id IN (" + commaSeparated(alertRuleList.getValue()) + ")"
           + filterClause + " AND coalesce(to_char(status), 'NEW') = :status";
-      final SQLQuery sqlQuery = OBDal.getInstance().getSession().createSQLQuery(sql);
+      @SuppressWarnings("rawtypes")
+      final NativeQuery sqlQuery = OBDal.getInstance().getSession().createNativeQuery(sql);
       sqlQuery.setParameter("status", alertStatus);
       try {
         @SuppressWarnings("unchecked")
         List<String> alertsFound = sqlQuery.list();
         if (log.isDebugEnabled()) {
-          log.debug("Alert rule IDs: " + alertRuleList.getValue() + ") - SQL:'" + sql
-              + "' - Rows: " + alertsFound.size());
+          log.debug("Alert rule IDs: " + alertRuleList.getValue() + ") - SQL:'" + sql + "' - Rows: "
+              + alertsFound.size());
         }
         alertIds.addAll(alertsFound);
       } catch (SQLGrammarException e) {

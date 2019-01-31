@@ -56,8 +56,8 @@ public class SL_Order_Conversion extends SimpleCallout {
       strMultiplyRate = "1";
       if (StringUtils.isNotEmpty(strMProductUOMID)) {
         // Set message when no UOM Conversion exists
-        info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this, "NoUOMConversion",
-            info.vars.getLanguage())));
+        info.showMessage(FormatUtilities
+            .replaceJS(Utility.messageBD(this, "NoUOMConversion", info.vars.getLanguage())));
       }
     }
 
@@ -67,8 +67,8 @@ public class SL_Order_Conversion extends SimpleCallout {
       BigDecimal quantityOrder = new BigDecimal(strQuantityOrder);
       BigDecimal qtyOrdered = quantityOrder.multiply(multiplyRate);
       String strStdPrecision = SLInvoiceConversionData.stdPrecision(this, strUOM);
-      int stdPrecision = StringUtils.isEmpty(strStdPrecision) ? 0 : Integer
-          .valueOf(strStdPrecision).intValue();
+      int stdPrecision = StringUtils.isEmpty(strStdPrecision) ? 0
+          : Integer.valueOf(strStdPrecision).intValue();
       if (qtyOrdered.scale() > stdPrecision) {
         qtyOrdered = qtyOrdered.setScale(stdPrecision, RoundingMode.HALF_UP);
       }
@@ -76,8 +76,7 @@ public class SL_Order_Conversion extends SimpleCallout {
     }
 
     // Set Quantity Order blank when Product UOM is blank
-    if (StringUtils.isEmpty(strMProductUOMID)
-        && !StringUtils.equals(strChanged, "inpquantityorder")
+    if (StringUtils.isEmpty(strMProductUOMID) && !StringUtils.equals(strChanged, "inpquantityorder")
         && StringUtils.isNotEmpty(strQuantityOrder)) {
       info.addResult("inpquantityorder", "");
     }

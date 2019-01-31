@@ -22,7 +22,8 @@ import java.math.BigDecimal;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
@@ -42,8 +43,9 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
 
 public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(ServiceOrderLineEventHandler.class);
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME) };
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -114,8 +116,8 @@ public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver
               OBDal.getInstance().remove(or);
 
               // Create new relation line and relate to the new orderline
-              OrderlineServiceRelation olsr = OBProvider.getInstance().get(
-                  OrderlineServiceRelation.class);
+              OrderlineServiceRelation olsr = OBProvider.getInstance()
+                  .get(OrderlineServiceRelation.class);
               olsr.setClient(thisLine.getClient());
               olsr.setOrganization(thisLine.getOrganization());
               olsr.setOrderlineRelated(thisLine);
@@ -187,10 +189,10 @@ public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver
   private OBQuery<OrderlineServiceRelation> relatedServices(OrderLine thisLine) {
     StringBuffer where = new StringBuffer();
     where.append(" as rol");
-    where.append(" where " + OrderlineServiceRelation.PROPERTY_ORDERLINERELATED
-        + ".id = :orderLineId");
-    OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance().createQuery(
-        OrderlineServiceRelation.class, where.toString());
+    where.append(
+        " where " + OrderlineServiceRelation.PROPERTY_ORDERLINERELATED + ".id = :orderLineId");
+    OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance()
+        .createQuery(OrderlineServiceRelation.class, where.toString());
 
     rol.setNamedParameter("orderLineId", thisLine.getId());
     return rol;
@@ -208,10 +210,10 @@ public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver
   private OBQuery<OrderlineServiceRelation> relatedProducts(OrderLine thisLine) {
     StringBuffer where = new StringBuffer();
     where.append(" as rol");
-    where.append(" where " + OrderlineServiceRelation.PROPERTY_SALESORDERLINE
-        + ".id = :orderLineId");
-    OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance().createQuery(
-        OrderlineServiceRelation.class, where.toString());
+    where.append(
+        " where " + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + ".id = :orderLineId");
+    OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance()
+        .createQuery(OrderlineServiceRelation.class, where.toString());
 
     rol.setNamedParameter("orderLineId", thisLine.getId());
     return rol;

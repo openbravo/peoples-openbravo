@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2017 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -366,8 +366,7 @@ isc.OBBaseParameterWindowView.addProperties({
     var i, field, def, defaults = result.defaults,
         filterExpressions = result.filterExpressions,
         defaultFilter = {},
-        gridsToBeFiltered = [],
-        allRequiredSet;
+        gridsToBeFiltered = [];
     if (!this.theForm) {
       if (this.onLoadFunction) {
         this.onLoadFunction(this);
@@ -498,7 +497,7 @@ isc.OBBaseParameterWindowView.addProperties({
   // returns true if any non-grid required parameter does not have a value
   allRequiredParametersSet: function () {
     var i, item, length = this.theForm && this.theForm.getItems().length,
-        value, undef, nullValue = null;
+        value;
     for (i = 0; i < length; i++) {
       item = this.theForm.getItems()[i];
       value = item.getValue();

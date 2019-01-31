@@ -40,7 +40,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2016 Openbravo SLU
+* All portions are Copyright (C) 2001-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -51,7 +51,6 @@
 
   v_Stock NUMBER:=0;
   v_neededQty_New NUMBER;
-  v_neededQty_Old NUMBER;
   v_Qty_New NUMBER;
   v_Qty_Old NUMBER;
   v_Qty_Added VARCHAR(1);
@@ -100,7 +99,6 @@ BEGIN
             porg.stockmin, porg.maximumqty
     ) LOOP
       v_stock := 0;
-      v_neededqty_old := NULL;
       v_planneddate_old := NULL;
       v_Qty_Added := 'N';
       FOR Cur_Lines IN (
@@ -188,7 +186,6 @@ BEGIN
             WHERE MRP_RUN_PURCHASELINE_ID = v_Aux_new;
             v_stock := v_stock + v_qty_new - v_qty_old;
           END IF;
-          v_neededqty_old := v_neededqty_new;
           v_qty_old := v_qty_new;
         END IF;
 

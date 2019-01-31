@@ -56,9 +56,9 @@ public class SE_Proposal_BPartner extends SimpleCallout {
     FieldProvider[] tdv = null;
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR",
-          "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To", Utility.getContext(this,
-              info.vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, info.vars,
-              "#User_Client", strWindowId), 0);
+          "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To",
+          Utility.getContext(this, info.vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, info.vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, strWindowId, "");
       tdv = comboTableData.select(false);
       comboTableData = null;
@@ -80,9 +80,9 @@ public class SE_Proposal_BPartner extends SimpleCallout {
     // provided, it is selected.
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR", "AD_User_ID",
-          "", "AD_User C_BPartner User/Contacts", Utility.getContext(this, info.vars,
-              "#AccessibleOrgTree", strWindowId), Utility.getContext(this, info.vars,
-              "#User_Client", strWindowId), 0);
+          "", "AD_User C_BPartner User/Contacts",
+          Utility.getContext(this, info.vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, info.vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, strWindowId, "");
       tdv = comboTableData.select(false);
       comboTableData = null;

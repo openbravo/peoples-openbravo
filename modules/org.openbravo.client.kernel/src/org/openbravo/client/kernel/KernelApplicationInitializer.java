@@ -24,29 +24,30 @@ import java.util.Date;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
-import org.hibernate.dialect.function.StandardSQLFunction;
-import org.hibernate.type.StandardBasicTypes;
-import org.hibernate.type.StringType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.client.application.report.JmxReportCache;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
+import org.openbravo.client.application.window.JmxApplicationDictionaryCachedStructures;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.jmx.MBeanRegistry;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
- * An {@link ApplicationInitializer} in charge of doing some initialization tasks like registering
- * core SQL functions, checking if both Tomcat and DB are configured to use the same time and
- * registering standard jmx beans.
+ * An {@link ApplicationInitializer} in charge of doing some initialization tasks like checking if
+ * both Tomcat and DB are configured to use the same time and registering some standard jmx beans.
  * 
  * @author mtaal
  */
 @ApplicationScoped
 public class KernelApplicationInitializer implements ApplicationInitializer {
-  private static Logger log4j = Logger.getLogger(KernelApplicationInitializer.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String sqlDateTimeFormat = "DD-MM-YYYY HH24:MI:SS";
   private static final String javaDateTimeFormat = "dd-MM-yyyy HH:mm:ss";
   private static final long THRESHOLD = 5000; // 5 seconds
+  private static final String PRODUCTION_INSTANCE = "P";
 
   @Inject
   private StaticResourceProvider resourceProvider;
@@ -54,21 +55,17 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   @Inject
   private JmxReportCache reportCache;
 
+  @Inject
+  private ApplicationDictionaryCachedStructures adCachedStructures;
+
+  @Inject
+  private JmxApplicationDictionaryCachedStructures adcsJmx;
+
+  @Override
   public void initialize() {
-    registerSQLFunctions();
     checkDatabaseAndTomcatDateTime();
     registerMBeans();
-  }
-
-  private void registerSQLFunctions() {
-    OBDal.getInstance().registerSQLFunction("ad_org_getcalendarowner",
-        new StandardSQLFunction("ad_org_getcalendarowner", new StringType()));
-    OBDal.getInstance().registerSQLFunction("ad_org_getperiodcontrolallow",
-        new StandardSQLFunction("ad_org_getperiodcontrolallow", new StringType()));
-    OBDal.getInstance().registerSQLFunction("m_isparent_ch_value",
-        new StandardSQLFunction("m_isparent_ch_value", new StringType()));
-    OBDal.getInstance().registerSQLFunction("m_getjsondescription",
-        new StandardSQLFunction("m_getjsondescription", StandardBasicTypes.STRING));
+    setModulesAsNotInDevelopment();
   }
 
   private void checkDatabaseAndTomcatDateTime() {
@@ -85,8 +82,8 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
               + ", Database Time: " + dbDate);
         }
       } else {
-        log4j
-            .error("Received null as Database time. Not possible to check time differences with Tomcat.");
+        log4j.error(
+            "Received null as Database time. Not possible to check time differences with Tomcat.");
       }
     } catch (Exception ex) {
       log4j.error("Could not check if Tomcat and Database have the same time.", ex);
@@ -109,5 +106,21 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   private void registerMBeans() {
     MBeanRegistry.registerMBean(KernelConstants.RESOURCE_COMPONENT_ID, resourceProvider);
     MBeanRegistry.registerMBean(JmxReportCache.MBEAN_NAME, reportCache);
+    MBeanRegistry.registerMBean(JmxApplicationDictionaryCachedStructures.MBEAN_NAME, adcsJmx);
+  }
+
+  private void setModulesAsNotInDevelopment() {
+    log4j.debug("Checking instance purpose and In Development modules");
+    if (PRODUCTION_INSTANCE.equals(getInstancePurpose()) && adCachedStructures.isInDevelopment()) {
+      adCachedStructures.setNotInDevelopment();
+    }
+  }
+
+  private String getInstancePurpose() {
+    return (String) OBDal.getInstance()
+        .getSession()
+        .createQuery("select " + SystemInformation.PROPERTY_INSTANCEPURPOSE + " from "
+            + SystemInformation.ENTITY_NAME)
+        .uniqueResult();
   }
 }

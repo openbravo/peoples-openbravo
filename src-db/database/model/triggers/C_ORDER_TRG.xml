@@ -29,9 +29,11 @@
     *  Update potentially existing Invoices with Payment Info
     *  Sync Header Changes to Lines
     ************************************************************************/
-        
+    v_returnline CHAR(1);
+
+
 BEGIN
-    
+
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
@@ -64,6 +66,26 @@ BEGIN
 		END IF;
   END IF;
  END IF;
+ 
+ IF (UPDATING) THEN
+    IF (COALESCE(:OLD.c_doctypetarget_id, '0') <> COALESCE(:NEW.c_doctypetarget_id, '0')) THEN
+     SELECT CASE WHEN (dt.isreturn = 'Y') THEN 'Y' ELSE NULL END
+     INTO v_returnline
+     FROM c_doctype dt 
+     WHERE dt.c_doctype_id=:NEW.c_doctypetarget_id; 
+    
+     IF (v_returnline = 'Y') THEN
+      UPDATE c_orderline
+      SET returnline = 'Y'
+      WHERE c_order_id = :OLD.c_order_id;
+     ELSIF (v_returnline <> 'Y') THEN
+      UPDATE c_orderline
+      SET returnline = NULL
+      WHERE c_order_id = :OLD.c_order_id;
+     END IF;      
+    END IF;
+  END IF;
+
 END C_ORDER_TRG
 ]]></body>
     </trigger>

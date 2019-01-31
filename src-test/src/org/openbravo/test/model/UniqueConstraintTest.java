@@ -24,7 +24,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -45,7 +46,7 @@ import org.openbravo.test.base.OBBaseTest;
 
 public class UniqueConstraintTest extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(UniqueConstraintTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Check that the unique constraints are loaded ([@link {@link Entity#getUniqueConstraints()}).

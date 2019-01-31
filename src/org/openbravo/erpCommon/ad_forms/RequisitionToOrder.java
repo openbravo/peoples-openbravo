@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,8 +59,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class RequisitionToOrder extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -155,26 +156,29 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           strPriceListId, strOrg, strWarehouse);
       vars.setMessage("RequisitionToOrderCreate", myMessage);
       printPageCreate(response, vars, "", "", "", "", "");
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strProductId, String strDateFrom, String strDateTo, String strRequesterId,
-      String strVendorId, String strIncludeVendor, String strOrgId) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      String strVendorId, String strIncludeVendor, String strOrgId)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
 
     String strTreeOrg = RequisitionToOrderData.treeOrg(this, vars.getClient());
-    RequisitionToOrderData[] datalines = RequisitionToOrderData.selectLines(this, vars
-        .getLanguage(), Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"), Tree
-        .getMembers(this, strTreeOrg, strOrgId), strDateFrom, DateTimeData.nDaysAfter(this,
-        strDateTo, "1"), strProductId, strRequesterId, (strIncludeVendor.equals("Y") ? strVendorId
-        : null), (strIncludeVendor.equals("Y") ? null : strVendorId));
+    RequisitionToOrderData[] datalines = RequisitionToOrderData.selectLines(this,
+        Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"),
+        Tree.getMembers(this, strTreeOrg, strOrgId), strDateFrom,
+        DateTimeData.nDaysAfter(this, strDateTo, "1"), strProductId, strRequesterId,
+        (strIncludeVendor.equals("Y") ? strVendorId : null),
+        (strIncludeVendor.equals("Y") ? null : strVendorId));
 
     RequisitionToOrderData[] dataselected = RequisitionToOrderData.selectSelected(this,
         vars.getLanguage(), vars.getUser(),
@@ -185,11 +189,12 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       dataselected = RequisitionToOrderData.set();
       discard[0] = "funcSelectedEvenOddRow";
     }
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/RequisitionToOrder",
-        discard).createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/RequisitionToOrder", discard)
+        .createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "RequisitionToOrder", false, "", "",
-        "", false, "ad_forms", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "RequisitionToOrder", false, "", "", "",
+        false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -236,9 +241,9 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramAdOrgId", strOrgId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID", "",
-          "UsersWithRequisition", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "RequisitionToOrder"), Utility.getContext(this, vars, "#User_Client",
-              "RequisitionToOrder"), 0);
+          "UsersWithRequisition",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "RequisitionToOrder"),
+          Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "RequisitionToOrder",
           strRequesterId);
       xmlDocument.setData("reportRequester_ID", "liststructure", comboTableData.select(false));
@@ -248,9 +253,9 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "AD_Org Security validation", Utility.getContext(this, vars, "#User_Org",
-              "RequisitionToOrder"), Utility.getContext(this, vars, "#User_Client",
-              "RequisitionToOrder"), 0);
+          "AD_Org Security validation",
+          Utility.getContext(this, vars, "#User_Org", "RequisitionToOrder"),
+          Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "RequisitionToOrder", strOrgId);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -298,8 +303,10 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           datalines[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
               : datalines[i].uomname;
           if (!defaultAum.equals(datalines[i].cUomId)) {
-            datalines[i].qtytoorder = UOMUtil.getConvertedQty(datalines[i].mProductId,
-                new BigDecimal(datalines[i].aumqty), datalines[i].cAum).toString();
+            datalines[i].qtytoorder = UOMUtil
+                .getConvertedQty(datalines[i].mProductId, new BigDecimal(datalines[i].aumqty),
+                    datalines[i].cAum)
+                .toString();
           }
         }
       } else if (uomManagementPreference && datalines[i].quantityorder.isEmpty()
@@ -318,8 +325,10 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           datalines[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
               : datalines[i].uomname;
           if (!defaultAum.equals(datalines[i].cUomId)) {
-            datalines[i].qtytoorder = UOMUtil.getConvertedQty(datalines[i].mProductId,
-                new BigDecimal(datalines[i].aumqty), datalines[i].cAum).toString();
+            datalines[i].qtytoorder = UOMUtil
+                .getConvertedQty(datalines[i].mProductId, new BigDecimal(datalines[i].aumqty),
+                    datalines[i].cAum)
+                .toString();
           }
         }
       } else {
@@ -368,8 +377,10 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           dataselected[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
               : dataselected[i].uomname;
           if (!defaultAum.equals(dataselected[i].cUomId)) {
-            dataselected[i].lockqty = UOMUtil.getConvertedQty(dataselected[i].mProductId,
-                new BigDecimal(dataselected[i].aumqty), dataselected[i].cAum).toString();
+            dataselected[i].lockqty = UOMUtil
+                .getConvertedQty(dataselected[i].mProductId, new BigDecimal(dataselected[i].aumqty),
+                    dataselected[i].cAum)
+                .toString();
           }
         }
       } else if (uomManagementPreference && dataselected[i].quantityorder.isEmpty()
@@ -388,8 +399,10 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           dataselected[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
               : dataselected[i].uomname;
           if (!defaultAum.equals(dataselected[i].cUomId)) {
-            dataselected[i].lockqty = UOMUtil.getConvertedQty(dataselected[i].mProductId,
-                new BigDecimal(dataselected[i].aumqty), dataselected[i].cAum).toString();
+            dataselected[i].lockqty = UOMUtil
+                .getConvertedQty(dataselected[i].mProductId, new BigDecimal(dataselected[i].aumqty),
+                    dataselected[i].cAum)
+                .toString();
           }
         }
       } else {
@@ -407,22 +420,25 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
 
   private void lockRequisitionLines(VariablesSecureApp vars, String strRequisitionLines)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Locking requisition lines: " + strRequisitionLines);
+    }
     RequisitionToOrderData.lock(this, vars.getUser(), strRequisitionLines);
   }
 
   private void unlockRequisitionLines(VariablesSecureApp vars, String strRequisitionLines)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Unlocking requisition lines: " + strRequisitionLines);
+    }
     RequisitionToOrderData.unlock(this, strRequisitionLines);
   }
 
-  private void updateLockedLines(VariablesSecureApp vars, String strOrgId) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+  private void updateLockedLines(VariablesSecureApp vars, String strOrgId)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Update locked lines");
+    }
     String strTreeOrg = RequisitionToOrderData.treeOrg(this, vars.getClient());
     RequisitionToOrderData[] dataselected = RequisitionToOrderData.selectSelected(this,
         vars.getLanguage(), vars.getUser(),
@@ -442,8 +458,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         strLockQty = vars.getNumericParameter("inpQty" + dataselected[i].mRequisitionlineId);
       }
 
-      String strLockPrice = vars.getNumericParameter("inpPrice"
-          + dataselected[i].mRequisitionlineId);
+      String strLockPrice = vars
+          .getNumericParameter("inpPrice" + dataselected[i].mRequisitionlineId);
       RequisitionToOrderData.updateLock(this, strLockQty, strLockPrice, strLockAqumQty,
           dataselected[i].mRequisitionlineId);
     }
@@ -451,8 +467,9 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
 
   private void checkSelectedRequisitionLines(HttpServletResponse response, VariablesSecureApp vars,
       String strSelected) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Check selected requisition lines");
+    }
 
     // Check unique partner
     String strVendorId = "";
@@ -464,8 +481,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       RequisitionToOrderData[] vendor = RequisitionToOrderData.selectVendor(this, strSelected);
       if (vendor != null && vendor.length == 1) {
         strVendorId = vendor[0].vendorId;
-        strMessage = Utility.messageBD(this, "AllLinesSameVendor", vars.getLanguage())
-            + ": "
+        strMessage = Utility.messageBD(this, "AllLinesSameVendor", vars.getLanguage()) + ": "
             + RequisitionToOrderData.bPartnerDescription(this, vendor[0].vendorId,
                 vars.getLanguage());
       } else if (vendor != null && vendor.length > 1) {
@@ -497,8 +513,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           strSelected);
       if (org != null && org.length == 1) {
         strOrgId = org[0].adOrgId;
-        strMessage += "<br>" + Utility.messageBD(this, "AllLinesSameOrg", vars.getLanguage())
-            + ": " + org[0].org;
+        strMessage += "<br>" + Utility.messageBD(this, "AllLinesSameOrg", vars.getLanguage()) + ": "
+            + org[0].org;
       } else {
         // Error, the selected lines are of different orgs, it is
         // necessary to set one.
@@ -524,11 +540,13 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
   private void printPageCreate(HttpServletResponse response, VariablesSecureApp vars,
       String strOrderDate, String strVendorId, String strPriceListId, String strOrgId,
       String strSelected) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Print Create Purchase order");
+    }
     String strDescription = Utility.messageBD(this, "RequisitionToOrderCreate", vars.getLanguage());
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/RequisitionToOrderCreate").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/RequisitionToOrderCreate")
+        .createXmlDocument();
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
@@ -551,19 +569,17 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("orderDate", strOrderDate);
     xmlDocument.setParameter("displayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paramOrderOrgId", strOrgId);
-    xmlDocument.setParameter(
-        "arrayWarehouse",
-        Utility.arrayDobleEntrada(
-            "arrWarehouse",
+    xmlDocument.setParameter("arrayWarehouse",
+        Utility.arrayDobleEntrada("arrWarehouse",
             RequisitionToOrderData.selectWarehouseDouble(this, vars.getClient(),
                 Utility.getContext(this, vars, "#AccessibleOrgTree", "RequisitionToOrder"),
                 Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"))));
     xmlDocument.setParameter("paramPriceListId", strPriceListId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "AD_Org is transactions allowed", Utility.getContext(this, vars, "#User_Org",
-              "RequisitionToOrder"), Utility.getContext(this, vars, "#User_Client",
-              "RequisitionToOrder"), 0);
+          "AD_Org is transactions allowed",
+          Utility.getContext(this, vars, "#User_Org", "RequisitionToOrder"),
+          Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "RequisitionToOrder", strOrgId);
       xmlDocument.setData("reportOrderOrg_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -572,9 +588,9 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Pricelist_ID",
-          "", "Purchase Pricelist", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "RequisitionToOrder"), Utility.getContext(this, vars, "#User_Client",
-              "RequisitionToOrder"), 0);
+          "", "Purchase Pricelist",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "RequisitionToOrder"),
+          Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "RequisitionToOrder",
           strPriceListId);
       xmlDocument.setData("reportPriceList_ID", "liststructure", comboTableData.select(false));
@@ -603,8 +619,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     RequisitionToOrderData[] noprice = RequisitionToOrderData.selectNoPrice(this,
         vars.getLanguage(), strPriceListVersionId, strSelected);
     if (noprice != null && noprice.length > 0) {
-      textMessage.append(Utility.messageBD(this, "LinesWithNoPrice", vars.getLanguage())).append(
-          "<br><ul>");
+      textMessage.append(Utility.messageBD(this, "LinesWithNoPrice", vars.getLanguage()))
+          .append("<br><ul>");
       for (int i = 0; i < noprice.length; i++) {
         textMessage.append("<li>").append(noprice[i].product);
       }
@@ -636,29 +652,16 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       String cCurrencyId = RequisitionToOrderData.selectCurrency(this, strPriceListId);
 
       try {
-        RequisitionToOrderData.insertCOrder(
-            conn,
-            this,
-            strCOrderId,
-            vars.getClient(),
-            strOrg,
-            vars.getUser(),
-            strDocumentNo,
-            "DR",
-            "CO",
-            "0",
-            docTargetType,
-            strOrderDate,
-            strOrderDate,
-            strOrderDate,
-            strVendor,
+        RequisitionToOrderData.insertCOrder(conn, this, strCOrderId, vars.getClient(), strOrg,
+            vars.getUser(), strDocumentNo, "DR", "CO", "0", docTargetType, strOrderDate,
+            strOrderDate, strOrderDate, strVendor,
             RequisitionToOrderData.cBPartnerLocationId(this, strVendor),
-            RequisitionToOrderData.billto(this, strVendor).equals("") ? RequisitionToOrderData
-                .cBPartnerLocationId(this, strVendor) : RequisitionToOrderData.billto(this,
-                strVendor), cCurrencyId, isAlternativeFinancialFlow() ? "P"
-                : data1[0].paymentrulepo, data1[0].poPaymenttermId,
-            data1[0].invoicerule.equals("") ? "I" : data1[0].invoicerule, data1[0].deliveryrule
-                .equals("") ? "A" : data1[0].deliveryrule, "I",
+            RequisitionToOrderData.billto(this, strVendor).equals("")
+                ? RequisitionToOrderData.cBPartnerLocationId(this, strVendor)
+                : RequisitionToOrderData.billto(this, strVendor),
+            cCurrencyId, isAlternativeFinancialFlow() ? "P" : data1[0].paymentrulepo,
+            data1[0].poPaymenttermId, data1[0].invoicerule.equals("") ? "I" : data1[0].invoicerule,
+            data1[0].deliveryrule.equals("") ? "A" : data1[0].deliveryrule, "I",
             data1[0].deliveryviarule.equals("") ? "D" : data1[0].deliveryviarule, strWarehouse,
             strPriceListId, "", "", "", data1[0].poPaymentmethodId);
       } catch (ServletException ex) {
@@ -668,18 +671,20 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       }
 
       RequisitionToOrderData[] lines = RequisitionToOrderData.linesToOrder(this, cCurrencyId,
-          strOrderDate, strOrg, strWarehouse, RequisitionToOrderData.billto(this, strVendor)
-              .equals("") ? RequisitionToOrderData.cBPartnerLocationId(this, strVendor)
-              : RequisitionToOrderData.billto(this, strVendor), RequisitionToOrderData
-              .cBPartnerLocationId(this, strVendor), strPriceListVersionId, strSelected);
+          strOrderDate, strOrg, strWarehouse,
+          RequisitionToOrderData.billto(this, strVendor).equals("")
+              ? RequisitionToOrderData.cBPartnerLocationId(this, strVendor)
+              : RequisitionToOrderData.billto(this, strVendor),
+          RequisitionToOrderData.cBPartnerLocationId(this, strVendor), strPriceListVersionId,
+          strSelected);
 
       boolean uomManagementPreference = UOMUtil.isUomManagementEnabled();
       HashMap<String, String[]> hashLines = new HashMap<String, String[]>();
       int line = 0;
       for (int i = 0; lines != null && i < lines.length; i++) {
         if ("".equals(lines[i].tax)) {
-          RequisitionLine rl = OBDal.getInstance().get(RequisitionLine.class,
-              lines[i].mRequisitionlineId);
+          RequisitionLine rl = OBDal.getInstance()
+              .get(RequisitionLine.class, lines[i].mRequisitionlineId);
           myMessage.setType("Error");
           myMessage.setMessage(String.format(OBMessageUtils.messageBD("NoTaxRequisition"),
               rl.getLineNo(), rl.getRequisition().getDocumentNo()));
@@ -698,14 +703,17 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
             && StringUtils.equals(lines[i].secuomname, "**")) {
           try {
             if (lines[i].cAum.isEmpty()) {
-              RequisitionToOrderData[] defaultAumData = RequisitionToOrderData.selectAUMDefault(
-                  this, lines[i].mProductId);
+              RequisitionToOrderData[] defaultAumData = RequisitionToOrderData
+                  .selectAUMDefault(this, lines[i].mProductId);
               lines[i].cAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
                   : lines[i].cUomId;
             }
             if (!lines[i].cUomId.equals(lines[i].cAum)) {
-              lines[i].aumqty = new BigDecimal(UOMUtil.getConvertedQty(lines[i].mProductId,
-                  new BigDecimal(lines[i].lockaumqty), lines[i].cAum).toString()).toPlainString();
+              lines[i].aumqty = new BigDecimal(
+                  UOMUtil
+                      .getConvertedQty(lines[i].mProductId, new BigDecimal(lines[i].lockaumqty),
+                          lines[i].cAum)
+                      .toString()).toPlainString();
             }
           } catch (NumberFormatException e) {
           }
@@ -739,15 +747,15 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           BigDecimal qtyOrder = new BigDecimal(hashLine[1]).add(new BigDecimal(lines[i].lockqty));
           BigDecimal quantityOrder = (StringUtils.isEmpty(hashLine[2]) ? BigDecimal.ZERO
               : new BigDecimal(hashLine[2]))
-              .add(StringUtils.isEmpty(lines[i].quantityorder) ? BigDecimal.ZERO : new BigDecimal(
-                  lines[i].quantityorder));
+                  .add(StringUtils.isEmpty(lines[i].quantityorder) ? BigDecimal.ZERO
+                      : new BigDecimal(lines[i].quantityorder));
           BigDecimal qtyAumOrder = (StringUtils.isEmpty(hashLine[3]) ? BigDecimal.ZERO
               : new BigDecimal(hashLine[3]))
-              .add(StringUtils.isEmpty(lines[i].aumqty) ? BigDecimal.ZERO : new BigDecimal(
-                  lines[i].aumqty));
+                  .add(StringUtils.isEmpty(lines[i].aumqty) ? BigDecimal.ZERO
+                      : new BigDecimal(lines[i].aumqty));
           hashLine[1] = qtyOrder.toPlainString();
-          hashLine[2] = BigDecimal.ZERO.compareTo(quantityOrder) == 0 ? "" : quantityOrder
-              .toPlainString();
+          hashLine[2] = BigDecimal.ZERO.compareTo(quantityOrder) == 0 ? ""
+              : quantityOrder.toPlainString();
           hashLine[3] = qtyAumOrder.toPlainString();
           try {
             RequisitionToOrderData.updateCOrderline(conn, this, hashLine[1], hashLine[2],
@@ -760,8 +768,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         }
 
         if (log4j.isDebugEnabled()) {
-          log4j.debug("Lockqty: " + lines[i].lockqty + " - Quantityorder: "
-              + lines[i].quantityorder);
+          log4j.debug(
+              "Lockqty: " + lines[i].lockqty + " - Quantityorder: " + lines[i].quantityorder);
         }
       }
 
@@ -777,27 +785,30 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           releaseRollbackConnection(conn);
           return myMessage;
         }
-        if (lines[i].toClose.equals("Y"))
+        if (lines[i].toClose.equals("Y")) {
           RequisitionToOrderData.requisitionStatus(conn, this, lines[i].mRequisitionlineId,
               vars.getUser());
+        }
       }
 
       OBError myMessageAux = cOrderPost(conn, vars, strCOrderId);
       releaseCommitConnection(conn);
       String strWindowName = WindowTabsData.selectWindowInfo(this, vars.getLanguage(), "181");
       textMessage.append(strWindowName).append(" ").append(strDocumentNo).append(": ");
-      if (myMessageAux.getMessage().equals(""))
+      if (myMessageAux.getMessage().equals("")) {
         textMessage.append(Utility.messageBD(this, "Success", vars.getLanguage()));
-      else
+      } else {
         textMessage.append(myMessageAux.getMessage());
+      }
 
       myMessage.setType(myMessageAux.getType());
       myMessage.setMessage(textMessage.toString());
       return myMessage;
     } catch (Exception e) {
       try {
-        if (conn != null)
+        if (conn != null) {
           releaseRollbackConnection(conn);
+        }
       } catch (Exception ignored) {
       }
       e.printStackTrace();
@@ -831,8 +842,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
   private boolean isAlternativeFinancialFlow() {
     try {
       try {
-        Preferences.getPreferenceValue("FinancialManagement", true, null, null, OBContext
-            .getOBContext().getUser(), null, null);
+        Preferences.getPreferenceValue("FinancialManagement", true, null, null,
+            OBContext.getOBContext().getUser(), null, null);
       } catch (PropertyNotFoundException e) {
         return false;
       }
@@ -842,6 +853,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     return true;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet RequisitionToOrder.";
   } // end of getServletInfo() method

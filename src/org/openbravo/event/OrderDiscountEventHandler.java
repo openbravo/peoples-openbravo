@@ -20,7 +20,8 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -33,17 +34,16 @@ import org.openbravo.model.common.order.OrderDiscount;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class OrderDiscountEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      OrderDiscount.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(OrderDiscount.ENTITY_NAME) };
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }

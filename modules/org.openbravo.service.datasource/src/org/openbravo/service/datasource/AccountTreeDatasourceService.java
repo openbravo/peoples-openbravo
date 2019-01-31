@@ -22,6 +22,8 @@ package org.openbravo.service.datasource;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -29,15 +31,13 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.financialmgmt.accounting.coa.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Tree Datasource for Account Tree
  * 
  */
 public class AccountTreeDatasourceService extends ADTreeDatasourceService {
-  private static final Logger logger = LoggerFactory.getLogger(AccountTreeDatasourceService.class);
+  private static final Logger logger = LogManager.getLogger();
   private static final String DATASOURCE_ID = "D2F94DC86DEC48D69E4BFCE59DC670CF";
   private static final String C_ELEMENTVALUE_TABLE_ID = "188";
   private static final String FINANCIALMGMTELEMENT_ID = "@FinancialMgmtElement.id@";

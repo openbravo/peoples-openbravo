@@ -11,26 +11,26 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.service.datasource;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class contains utility methods for dataSource related classes
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DataSourceUtils {
 
-  private static final Logger log = LoggerFactory.getLogger(DataSourceUtils.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Returns a comma separated list of organization ids to filter the HQL. If an organization id is
@@ -48,7 +48,8 @@ public class DataSourceUtils {
   public static String getOrgs(String orgId) {
     StringBuffer orgPart = new StringBuffer();
     if (StringUtils.isNotEmpty(orgId)) {
-      final Set<String> orgSet = OBContext.getOBContext().getOrganizationStructureProvider()
+      final Set<String> orgSet = OBContext.getOBContext()
+          .getOrganizationStructureProvider()
           .getNaturalTree(orgId);
       if (orgSet.size() > 0) {
         boolean addComma = false;
@@ -80,35 +81,36 @@ public class DataSourceUtils {
    * according to that criteria.
    */
   public static int getNumberOfSelectedRecords(Map<String, String> parameters) {
-    List<String> selectedRecords = new ArrayList<String>();
     boolean hasCriteria = parameters.containsKey("criteria");
-    if (hasCriteria) {
-      try {
-        selectedRecords = getSelectedRecordsFromCriteria(JsonUtils.buildCriteria(parameters));
-      } catch (JSONException jsonex) {
-        log.error("Error retrieving number of selected records", jsonex);
-      }
+    if (!hasCriteria) {
+      return 0;
     }
-    return selectedRecords.size();
+    return getSelectedRecordsFromCriteria(JsonUtils.buildCriteria(parameters)).size();
   }
 
   /**
-   * Returns a list of selected record IDs from a criteria included in the JSONObject received as
+   * Returns a set of selected record IDs from a criteria included in the JSONObject received as
    * parameter.
    */
-  public static List<String> getSelectedRecordsFromCriteria(JSONObject buildCriteria)
-      throws JSONException {
-    List<String> selectedRecords = new ArrayList<String>();
-    JSONArray criteriaArray = buildCriteria.getJSONArray("criteria");
-    for (int i = 0; i < criteriaArray.length(); i++) {
-      JSONObject criteria = criteriaArray.getJSONObject(i);
-      if (criteria.has("fieldName") && criteria.getString("fieldName").equals("id")
-          && criteria.has("value")) {
-        String value = criteria.getString("value");
-        for (String recordId : value.split(",")) {
-          selectedRecords.add(recordId.trim());
+  public static Set<String> getSelectedRecordsFromCriteria(JSONObject buildCriteria) {
+    if (buildCriteria == null) {
+      return Collections.emptySet();
+    }
+    Set<String> selectedRecords = new HashSet<>();
+    try {
+      JSONArray criteriaArray = buildCriteria.getJSONArray("criteria");
+      for (int i = 0; i < criteriaArray.length(); i++) {
+        JSONObject criteria = criteriaArray.getJSONObject(i);
+        if (criteria.has("fieldName") && criteria.getString("fieldName").equals("id")
+            && criteria.has("value")) {
+          String value = criteria.getString("value");
+          for (String recordId : value.split(",")) {
+            selectedRecords.add(recordId.trim());
+          }
         }
       }
+    } catch (JSONException e) {
+      log.error("Error getting selected records from criteria {}", buildCriteria, e);
     }
     return selectedRecords;
   }

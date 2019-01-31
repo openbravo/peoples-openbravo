@@ -26,7 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -40,7 +41,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
 public class SessionLogin {
-  static Logger log4j = Logger.getLogger(SessionLogin.class);
+  static Logger log4j = LogManager.getLogger();
   protected String sessionID;
   protected String client;
   protected String org;
@@ -57,12 +58,13 @@ public class SessionLogin {
 
   public SessionLogin(String ad_client_id, String ad_org_id, String ad_user_id)
       throws ServletException {
-    if (ad_client_id == null || ad_client_id.equals(""))
+    if (ad_client_id == null || ad_client_id.equals("")) {
       throw new ServletException("SessionLogin load - client is null");
-    else if (ad_org_id == null || ad_org_id.equals(""))
+    } else if (ad_org_id == null || ad_org_id.equals("")) {
       throw new ServletException("SessionLogin load - organization is null");
-    else if (ad_user_id == null || ad_user_id.equals(""))
+    } else if (ad_user_id == null || ad_user_id.equals("")) {
       throw new ServletException("SessionLogin load - user is null");
+    }
     setClient(ad_client_id);
     setOrg(ad_org_id);
     setUser(ad_user_id);
@@ -71,12 +73,13 @@ public class SessionLogin {
 
   public SessionLogin(HttpServletRequest request, String ad_client_id, String ad_org_id,
       String ad_user_id) throws ServletException {
-    if (ad_client_id == null || ad_client_id.equals(""))
+    if (ad_client_id == null || ad_client_id.equals("")) {
       throw new ServletException("SessionLogin load - client is null");
-    else if (ad_org_id == null || ad_org_id.equals(""))
+    } else if (ad_org_id == null || ad_org_id.equals("")) {
       throw new ServletException("SessionLogin load - organization is null");
-    else if (ad_user_id == null || ad_user_id.equals(""))
+    } else if (ad_user_id == null || ad_user_id.equals("")) {
       throw new ServletException("SessionLogin load - user is null");
+    }
     setClient(ad_client_id);
     setOrg(ad_org_id);
     setUser(ad_user_id);
@@ -98,9 +101,10 @@ public class SessionLogin {
     } catch (UnknownHostException e) {
       log4j.error("SessionLogin.defaultParameters() - No local host. " + e);
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("SessionLogin.defaultParameters() - Remote Address: " + getRemoteAddr()
           + " - Remote Host: " + getRemoteHost());
+    }
   }
 
   private void defaultParameters(HttpServletRequest request) {
@@ -110,9 +114,10 @@ public class SessionLogin {
     if (requestSession != null) {
       setWebSession(requestSession.getId());
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("SessionLogin.defaultParameters(request) - Remote Address: " + getRemoteAddr()
           + " - Remote Host: " + getRemoteHost());
+    }
   }
 
   public int save() throws ServletException {
@@ -121,8 +126,9 @@ public class SessionLogin {
       if (!stateless) {
         SessionListener.addSession(key);
       }
-      if (key == null || key.equals(""))
+      if (key == null || key.equals("")) {
         throw new ServletException("SessionLogin.save() - key creation failed");
+      }
       setSessionID(key);
     }
     try {

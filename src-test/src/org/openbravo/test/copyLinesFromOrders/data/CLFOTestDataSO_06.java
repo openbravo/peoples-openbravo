@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,7 +45,7 @@ import org.openbravo.model.pricing.pricelist.ProductPrice;
  * Product with attributes (not an instance attribute). In this case the attribute isn't copied.
  * 
  * @author Mark
- *
+ * 
  */
 public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
 
@@ -103,6 +103,7 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
     order1Line1.setPrice(new BigDecimal("10.00"));
     order1Line1.setTaxId(CLFOTestConstants.EXEMPT3_TAX_ID);
     order1Line1.setWarehouseId(CLFOTestConstants.SPAIN_EAST_WAREHOUSE);
+    order1Line1.setDescription(CLFOTestConstants.LINE1_DESCRIPTION);
 
     OrderLineData order1Line2 = new OrderLineData();
     order1Line2.setLineNo(20L);
@@ -116,6 +117,7 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
     order1Line2.setPrice(new BigDecimal("10.00"));
     order1Line2.setTaxId(CLFOTestConstants.EXEMPT3_TAX_ID);
     order1Line2.setWarehouseId(CLFOTestConstants.SPAIN_EAST_WAREHOUSE);
+    order1Line2.setDescription(CLFOTestConstants.LINE2_DESCRIPTION);
     OrderLineData[][] expectedOrderLins = new OrderLineData[1][2];
     expectedOrderLins[0] = new OrderLineData[] { order1Line1, order1Line2 };
     setOrderLinesCopiedFrom(expectedOrderLins);
@@ -150,16 +152,16 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
      * created, BP Address, Organization, Attribute Value, Operative Qty, Operative UOM]>
      */
     HashMap<String, String[]> expectedOrderLines = new HashMap<String, String[]>();
-    expectedOrderLines.put("10", new String[] { SHORT_PRODUCT_NAME, "20",
-        CLFOTestConstants.BAG_UOM_NAME, "10.00", "10.00", "0",
-        CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
-        BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME,
-        ATTRIBUTE_VALUE_XL, null, null });
-    expectedOrderLines.put("20", new String[] { PENCIL_PRODUCT_NAME, "10",
-        CLFOTestConstants.BAG_UOM_NAME, "10.00", "10.00", "0",
-        CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
-        BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME, "",
-        null, null });
+    expectedOrderLines.put("10",
+        new String[] { SHORT_PRODUCT_NAME, "20", CLFOTestConstants.BAG_UOM_NAME, "10.00", "10.00",
+            "0", CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
+            BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME,
+            ATTRIBUTE_VALUE_XL, null, null, CLFOTestConstants.LINE1_DESCRIPTION });
+    expectedOrderLines.put("20",
+        new String[] { PENCIL_PRODUCT_NAME, "10", CLFOTestConstants.BAG_UOM_NAME, "10.00", "10.00",
+            "0", CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
+            BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME,
+            "", null, null, CLFOTestConstants.LINE2_DESCRIPTION });
     setExpectedOrderLines(expectedOrderLines);
   }
 
@@ -172,21 +174,25 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
    * <li>Name = Size</li>
    * <li>Instance Attribute = Yes</li>
    * <li>List = Yes</li>
-   * </ul></li>
+   * </ul>
+   * </li>
    * <li>Add an Attribute Value to it
    * <ul>
    * <li>Search key = Name = XL</li>
-   * </ul></li>
+   * </ul>
+   * </li>
    * <li>Create a new Attribute Set
    * <ul>
    * <li>Organization = Spain</li>
    * <li>Name = Size</li>
-   * </ul></li>
+   * </ul>
+   * </li>
    * <li>Add as assigned attribute the previously created Size attribute.</li>
    * <li>Create a new Product and assign the created Size Attribute Set to it</li>
    * <li>Create a new Product and assign the existing Colour Attribute Set to it</li>
    * </ul>
    */
+  @Override
   public void applyTestSettings() {
     // Create a new product with a new instance attribute
     Attribute attribute = createNewAttribute(true);
@@ -197,10 +203,10 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
         attributeSetValue, SHORT_ATTRIBUTE_INSTANCE_ID);
 
     // Create a new product using an existing NOT instance attribute. In this case COLOUR
-    AttributeSet colourAttributeSet = OBDal.getInstance().get(AttributeSet.class,
-        COLOUR_ATTRIBUTE_SET_ID);
-    AttributeValue blueAttributeSetValue = OBDal.getInstance().get(AttributeValue.class,
-        BLUE_ATTRIBUTE_SET_VALUE_ID);
+    AttributeSet colourAttributeSet = OBDal.getInstance()
+        .get(AttributeSet.class, COLOUR_ATTRIBUTE_SET_ID);
+    AttributeValue blueAttributeSetValue = OBDal.getInstance()
+        .get(AttributeValue.class, BLUE_ATTRIBUTE_SET_VALUE_ID);
     createNewProduct(PENCIL_PRODUCT_WITH_NON_INSTANCE_ATTRIBUTE_ID, PENCIL_PRODUCT_NAME,
         colourAttributeSet, blueAttributeSetValue, PENCIL_ATTRIBUTE_INSTANCE_ID);
 
@@ -231,8 +237,8 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
     productPrice.setListPrice(new BigDecimal("10.00"));
     productPrice.setPriceLimit(new BigDecimal("10.00"));
     productPrice.setStandardPrice(new BigDecimal("10.00"));
-    productPrice.setPriceListVersion(OBDal.getInstance().get(PriceListVersion.class,
-        CLFOTestConstants.CUSTOMER_A_PRICE_LIST_VERSION_ID));
+    productPrice.setPriceListVersion(OBDal.getInstance()
+        .get(PriceListVersion.class, CLFOTestConstants.CUSTOMER_A_PRICE_LIST_VERSION_ID));
     product.getPricingProductPriceList().add(productPrice);
     OBDal.getInstance().save(productPrice);
     OBDal.getInstance().flush();
@@ -256,8 +262,8 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
 
   private Product cloneFinalGoodBProduct() {
     Product product;
-    Product productFGA = OBDal.getInstance().get(Product.class,
-        CLFOTestConstants.FINAL_GOOD_B_PRODUCT_ID);
+    Product productFGA = OBDal.getInstance()
+        .get(Product.class, CLFOTestConstants.FINAL_GOOD_B_PRODUCT_ID);
     product = (Product) DalUtil.copy(productFGA, false);
     // Avoid duplication in UPC breaking retail CI
     product.setUPCEAN(StringUtils.left(UUID.randomUUID().toString(), 30));
@@ -272,11 +278,14 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
       attrInstance.setNewOBObject(true);
     }
     attrInstance.setAttributeSet(attributeSet);
-    attrInstance.setOrganization(OBDal.getInstance().get(Organization.class,
-        CLFOTestConstants.SPAIN_ORGANIZATION_ID));
+    attrInstance.setOrganization(
+        OBDal.getInstance().get(Organization.class, CLFOTestConstants.SPAIN_ORGANIZATION_ID));
     if (!attributeSet.getAttributeUseList().isEmpty()) {
-      AttributeValue attributeValue = attributeSet.getAttributeUseList().get(0).getAttribute()
-          .getAttributeValueList().get(0);
+      AttributeValue attributeValue = attributeSet.getAttributeUseList()
+          .get(0)
+          .getAttribute()
+          .getAttributeValueList()
+          .get(0);
       attrInstance.setDescription(attributeValue.getName());
     }
     OBDal.getInstance().save(attrInstance);
@@ -301,8 +310,8 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
     attributeSet.setExpirationDate(false);
     attributeSet.setLot(false);
     attributeSet.setSerialNo(false);
-    attributeSet.setOrganization(OBDal.getInstance().get(Organization.class,
-        CLFOTestConstants.SPAIN_ORGANIZATION_ID));
+    attributeSet.setOrganization(
+        OBDal.getInstance().get(Organization.class, CLFOTestConstants.SPAIN_ORGANIZATION_ID));
     OBDal.getInstance().save(attributeSet);
     OBDal.getInstance().flush();
     return attributeSet;
@@ -313,8 +322,8 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
     attributeValue.setSearchKey(ATTRIBUTE_VALUE_XL);
     attributeValue.setName(ATTRIBUTE_VALUE_XL);
     attributeValue.setActive(true);
-    attributeValue.setOrganization(OBDal.getInstance().get(Organization.class,
-        CLFOTestConstants.SPAIN_ORGANIZATION_ID));
+    attributeValue.setOrganization(
+        OBDal.getInstance().get(Organization.class, CLFOTestConstants.SPAIN_ORGANIZATION_ID));
     attributeValue.setAttribute(attribute);
     attribute.getAttributeValueList().add(attributeValue);
     OBDal.getInstance().save(attributeValue);
@@ -329,8 +338,8 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
     attribute.setName(ATTRIBUTE_SIZE);
     attribute.setList(true);
     attribute.setActive(true);
-    attribute.setOrganization(OBDal.getInstance().get(Organization.class,
-        CLFOTestConstants.SPAIN_ORGANIZATION_ID));
+    attribute.setOrganization(
+        OBDal.getInstance().get(Organization.class, CLFOTestConstants.SPAIN_ORGANIZATION_ID));
     OBDal.getInstance().save(attribute);
     OBDal.getInstance().flush();
     return attribute;

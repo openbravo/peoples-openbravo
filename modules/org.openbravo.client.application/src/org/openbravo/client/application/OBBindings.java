@@ -26,6 +26,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.OBClassLoader;
@@ -35,8 +37,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * JS - Java binding to use in JavaScript expressions.
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class OBBindings {
 
-  private static final Logger log = LoggerFactory.getLogger(OBBindings.class);
+  private static final Logger log = LogManager.getLogger();
 
   private OBContext context;
   private Map<String, String> requestMap;
@@ -197,18 +197,20 @@ public class OBBindings {
 
   private Date getTimeFromNashornNativeDate(Object d) {
     // Since Java 8, Nashorn is the Javascript engine used by default. When returning Javascript
-    // Date objects to Java the java.util.Date class is no longer used but
-    // jdk.nashorn.internal.objects.NativeDate is used instead.
-    // We need to use reflection to access to the time information contained in such class. Thus, we
-    // avoid the usage of unsupported classes in Java 7.
-    // TODO: Once Java 7 is desupported, change this implementation to not use reflection
+    // date objects they are represented by jdk.nashorn.internal.objects.NativeDate.
+    //
+    // Although being a public class, it is in an internal module which is not opened by default in
+    // JDK9+ therefore we still need to use reflection to access to it.
+    //
+    // Note Nashorn is marked as deprecated for deletion in JDK11
+    // -> TODO: look for a valid alternative in future releases.
     try {
       Method m = d.getClass().getMethod("callMember", String.class, Object[].class);
       long localTime = ((Double) m.invoke(d, "getTime", null)).longValue();
       return new Date(localTime);
     } catch (Exception ex) {
-      log.error("Error getting javascript date from object {} of class {}", d, d.getClass()
-          .getName());
+      log.error("Error getting javascript date from object {} of class {}", d,
+          d.getClass().getName());
       throw new OBException(ex.getMessage(), ex);
     }
   }
@@ -249,8 +251,8 @@ public class OBBindings {
     Calendar localTime = Calendar.getInstance();
     localTime.setTime(UTCTime);
 
-    int gmtMillisecondOffset = (localTime.get(Calendar.ZONE_OFFSET) + localTime
-        .get(Calendar.DST_OFFSET));
+    int gmtMillisecondOffset = (localTime.get(Calendar.ZONE_OFFSET)
+        + localTime.get(Calendar.DST_OFFSET));
     localTime.add(Calendar.MILLISECOND, gmtMillisecondOffset);
 
     return localTime.getTime();
@@ -282,12 +284,14 @@ public class OBBindings {
     FilterExpression expr;
     try {
       try {
-        expr = (FilterExpression) WeldUtils.getInstanceFromStaticBeanManager(Class
-            .forName(className));
+        expr = (FilterExpression) WeldUtils
+            .getInstanceFromStaticBeanManager(Class.forName(className));
       } catch (IllegalArgumentException e) {
         // try with OBClassLoader in case package is excluded by Weld
-        expr = (FilterExpression) OBClassLoader.getInstance().loadClass(className)
-            .getDeclaredConstructor().newInstance();
+        expr = (FilterExpression) OBClassLoader.getInstance()
+            .loadClass(className)
+            .getDeclaredConstructor()
+            .newInstance();
       }
       return expr.getExpression(requestMap);
     } catch (Exception e) {

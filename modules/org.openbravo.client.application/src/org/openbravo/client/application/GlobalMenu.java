@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2017 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,8 +28,10 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.client.application.MenuManager.MenuEntryType;
 import org.openbravo.client.application.MenuManager.MenuOption;
 import org.openbravo.dal.service.OBCriteria;
@@ -43,8 +45,6 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class GlobalMenu {
-  private static final Logger log = LoggerFactory.getLogger(GlobalMenu.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Map<String, List<MenuOption>> menuOptionsByLangAndTree = null;
 
@@ -119,8 +119,7 @@ public class GlobalMenu {
     // Cache in DAL session all menu entries in a single query, so no need to query one by one
     // afterwards
     final String menuHql = "select m from ADMenu m left join fetch m.aDMenuTrlList where m.module.enabled=true";
-    final Query menuQry = OBDal.getInstance().getSession().createQuery(menuHql);
-    @SuppressWarnings("unchecked")
+    final Query<Menu> menuQry = OBDal.getInstance().getSession().createQuery(menuHql, Menu.class);
     List<Menu> menus = menuQry.list();
 
     List<TreeNode> nodes = treeNodes.list();
@@ -239,8 +238,8 @@ public class GlobalMenu {
               && menu.getOBUIAPPProcessDefinition().isActive()) {
             foundOption.setType(MenuEntryType.ProcessDefinition);
             foundOption.setObjectId(menu.getOBUIAPPProcessDefinition().getId());
-            if (ApplicationConstants.REPORT_UI_PATTERN.equals(menu.getOBUIAPPProcessDefinition()
-                .getUIPattern())) {
+            if (ApplicationConstants.REPORT_UI_PATTERN
+                .equals(menu.getOBUIAPPProcessDefinition().getUIPattern())) {
               foundOption.setReport(true);
             }
           } else if (menu.getWindow() != null && menu.getWindow().isActive()) {

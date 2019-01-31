@@ -22,13 +22,14 @@ import java.sql.Connection;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
 public abstract class DocInternalConsumptionTemplate {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocInternalConsumption = Logger.getLogger(DocInternalConsumption.class);
+  static Logger log4jDocInternalConsumption = LogManager.getLogger();
 
   /**
    * Constructor

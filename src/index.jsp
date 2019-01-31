@@ -1,15 +1,10 @@
 
-<%@ page import="java.util.Properties" %>
-<%@ page import="org.openbravo.base.HttpBaseServlet" %>
 <%@ page import="org.openbravo.dal.core.OBContext"%>
-<%@ page import="org.openbravo.base.util.OBClassLoader" %>
 <%@ page import="org.openbravo.base.weld.WeldUtils"%>
 <%@ page import="org.openbravo.authentication.AuthenticationManager" %>
 <%@ page import="org.openbravo.client.kernel.KernelUtils" %>
 <%@ page import="org.openbravo.client.kernel.KernelConstants" %>
 <%@ page import="org.openbravo.client.kernel.StaticResourceProvider" %>
-<%@ page import="org.openbravo.dal.core.OBContext" %>
-<%@ page import="org.openbravo.model.ad.module.Module" %>
 <%@ page import="org.apache.log4j.Logger" %>
 <%@ page import="org.openbravo.model.ad.access.Role" %>
 <%@ page import="org.openbravo.model.ad.access.User" %>
@@ -17,10 +12,8 @@
 <%@ page import="org.openbravo.base.secureApp.VariablesSecureApp" %>
 <%@ page import="org.openbravo.erpCommon.obps.ActivationKey" %>
 <%@ page import="org.openbravo.base.secureApp.LoginHandler" %>
-<%@ page import="org.openbravo.base.HttpBaseUtils" %>
 <%@ page import="org.openbravo.erpCommon.utility.OBMessageUtils" %>
 <%@ page import="org.openbravo.erpCommon.utility.OBError" %>
-<%@ page import="java.util.Date" %>
 <%@ page import="org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction" %>
 <%@ page import="org.openbravo.client.application.window.ApplicationDictionaryCachedStructures"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
@@ -39,7 +32,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2018 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,8 +44,12 @@ HttpSession currentSession = request.getSession(false);
 boolean adSessionPresent = currentSession != null && currentSession.getAttribute("#AD_SESSION_ID") != null;
 
 AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
-if (!adSessionPresent) {
-  response.sendRedirect(authManager.getLoginURL(request));
+if (!adSessionPresent && !authManager.useExternalLoginPage()) {
+  if (request.getQueryString() != null) {
+    response.sendRedirect(authManager.getLoginURL(request) + "?" + request.getQueryString());
+  } else {
+    response.sendRedirect(authManager.getLoginURL(request));
+  }
   return;
 }
 
@@ -65,7 +62,7 @@ if (userId == null) {
 OBContext.setAdminMode(false);
 String sessionId = null;
 try {
-  sessionId = (String) currentSession.getAttribute("#AD_SESSION_ID");
+  sessionId = currentSession != null ? (String) currentSession.getAttribute("#AD_SESSION_ID") : null;
   if (sessionId != null && !"".equals(sessionId) && !"Y".equals(currentSession.getAttribute("forceLogin"))) {
     org.openbravo.model.ad.access.Session dbSession = OBDal.getInstance().get(org.openbravo.model.ad.access.Session.class, sessionId);
     String currentSessionType = dbSession.getLoginStatus();
@@ -274,7 +271,7 @@ if (onlySystemAdminAccess && role != null && !"0".equals(role.getId())) {
   document.body.removeChild(document.getElementById('OBLoadingDiv'));
   OB.GlobalHiddenForm = document.forms.OBGlobalHiddenForm;
 <%
-  if (currentSession.getAttribute("STARTUP-MESSAGE") != null) {
+  if (currentSession != null && currentSession.getAttribute("STARTUP-MESSAGE") != null) {
     String text = (String) currentSession.getAttribute("STARTUP-MESSAGE");
     String title = (String) currentSession.getAttribute("STARTUP-MESSAGE-TITLE");
     currentSession.removeAttribute("STARTUP-MESSAGE");

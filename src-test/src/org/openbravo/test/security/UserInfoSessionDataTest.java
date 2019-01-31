@@ -30,11 +30,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -48,15 +50,13 @@ import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.test.datasource.BaseDataSourceTestDal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * These tests ensure that the information that is displayed in the user profile widget is updated
  * properly when roles, organization accesses or warehouses are activated/deactivated.
  */
 public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
-  private static Logger log = LoggerFactory.getLogger(UserInfoSessionDataTest.class);
+  private static Logger log = LogManager.getLogger();
 
   private static final String USER_INFO_START = "OB.User.userInfo = ";
   private static final String USER_INFO_FINISH = "};";
@@ -146,7 +146,8 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
       JSONArray warehouses = getRoleWarehouses(response, US_EMPLOYEE_ROLE_ID);
       JSONArray organizationWarehouses = getOrganizationWarehouses(warehouses, US_EASTCOAST_ORG_ID);
       assertThat("Active warehouse is available for the user.",
-          isIdInUserProfileWidget(organizationWarehouses, US_EASTCOAST_WAREHOUSE_ID), equalTo(true));
+          isIdInUserProfileWidget(organizationWarehouses, US_EASTCOAST_WAREHOUSE_ID),
+          equalTo(true));
 
       setActiveWarehouse(false);
 
@@ -167,9 +168,7 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
     JSONArray warehouses = getRoleWarehouses(response, QA_TESTING_ADMIN_ROLE_ID);
     List<String> organizationWarehousesIds = getOrganizationWarehousesIds(warehouses, ZERO_ORG);
     List<String> accessibleWarehousesIds = getAccessibleWarehousesIds(QA_TEST_CLIENT_ID, ZERO_ORG);
-    assertThat(
-        "Retrieved the expected warehouses",
-        organizationWarehousesIds,
+    assertThat("Retrieved the expected warehouses", organizationWarehousesIds,
         allOf(hasSize(accessibleWarehousesIds.size()),
             containsInAnyOrder(accessibleWarehousesIds.toArray())));
   }
@@ -247,18 +246,20 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
     return ids;
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getAccessibleWarehousesIds(String clientId, String orgId)
       throws JSONException {
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        clientId);
+    OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(clientId);
     final StringBuilder hql = new StringBuilder();
     hql.append("select w.id from Warehouse w ");
-    hql.append("where w.active=true and w.organization.id in (:orgList) and w.client.id=:clientId and w.organization.active=true");
-    Query orgWarehouses = OBDal.getInstance().getSession().createQuery(hql.toString());
+    hql.append(
+        "where w.active=true and w.organization.id in (:orgList) and w.client.id=:clientId and w.organization.active=true");
+    Query<String> orgWarehouses = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql.toString(), String.class);
     orgWarehouses.setParameterList("orgList", osp.getNaturalTree(orgId));
-    orgWarehouses.setString("clientId", clientId);
-    return (List<String>) orgWarehouses.list();
+    orgWarehouses.setParameter("clientId", clientId);
+    return orgWarehouses.list();
   }
 
   private JSONObject getUserInfo(String resp) {
@@ -313,12 +314,13 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
   }
 
   private void setActiveOrganizationRoleAccess(boolean isActive) {
-    final OBCriteria<RoleOrganization> orgAccessCriteria = OBDal.getInstance().createCriteria(
-        RoleOrganization.class);
+    final OBCriteria<RoleOrganization> orgAccessCriteria = OBDal.getInstance()
+        .createCriteria(RoleOrganization.class);
     orgAccessCriteria.add(Restrictions.eq(RoleOrganization.PROPERTY_ROLE + "." + Role.PROPERTY_ID,
         US_EMPLOYEE_ROLE_ID));
-    orgAccessCriteria.add(Restrictions.eq(RoleOrganization.PROPERTY_ORGANIZATION + "."
-        + Organization.PROPERTY_ID, US_EASTCOAST_ORG_ID));
+    orgAccessCriteria.add(
+        Restrictions.eq(RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID,
+            US_EASTCOAST_ORG_ID));
     orgAccessCriteria.setMaxResults(1);
     orgAccessCriteria.setFilterOnActive(false);
     RoleOrganization ro = (RoleOrganization) orgAccessCriteria.uniqueResult();

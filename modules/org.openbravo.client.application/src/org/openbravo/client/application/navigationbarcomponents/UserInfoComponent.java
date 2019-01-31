@@ -23,7 +23,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.KernelServlet;
 import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
@@ -78,10 +78,9 @@ public class UserInfoComponent extends SessionDynamicTemplateComponent {
   }
 
   public List<Language> getLanguages() {
-    final OBQuery<Language> languages = OBDal.getInstance().createQuery(
-        Language.class,
-        "(" + Language.PROPERTY_SYSTEMLANGUAGE + "=true or " + Language.PROPERTY_BASELANGUAGE
-            + "=true)");
+    final OBQuery<Language> languages = OBDal.getInstance()
+        .createQuery(Language.class, "(" + Language.PROPERTY_SYSTEMLANGUAGE + "=true or "
+            + Language.PROPERTY_BASELANGUAGE + "=true)");
     languages.setFilterOnReadableClients(false);
     languages.setFilterOnReadableOrganization(false);
     return languages.list();
@@ -94,24 +93,29 @@ public class UserInfoComponent extends SessionDynamicTemplateComponent {
     userRoles = new ArrayList<>();
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     boolean correctSystemStatus = sysInfo.getSystemStatus() == null
-        || KernelServlet.getGlobalParameters().getOBProperty("safe.mode", "false")
-            .equalsIgnoreCase("false") || sysInfo.getSystemStatus().equals("RB70");
+        || KernelServlet.getGlobalParameters()
+            .getOBProperty("safe.mode", "false")
+            .equalsIgnoreCase("false")
+        || sysInfo.getSystemStatus().equals("RB70");
 
-    if (!correctSystemStatus
-        || ActivationKey.getInstance().forceSysAdminLogin(
-            (HttpSession) getParameters().get(KernelConstants.HTTP_SESSION))) {
+    if (!correctSystemStatus || ActivationKey.getInstance()
+        .forceSysAdminLogin((HttpSession) getParameters().get(KernelConstants.HTTP_SESSION))) {
       userRoles.add(new RoleInfo(OBDal.getInstance().get(Role.class, "0")));
       return userRoles;
     }
 
     // return the complete role list for the current user
     final StringBuilder hql = new StringBuilder();
-    hql.append("select ur.role.id, ur.role.name, ur.client.id, ur.client.name from ADUserRoles ur ");
-    hql.append("where ur.active=true and ur.userContact.id=:userId and ur.role.active=true and ur.role.isrestrictbackend=false ");
-    Query rolesQry = OBDal.getInstance().getSession().createQuery(hql.toString());
-    rolesQry.setString("userId", OBContext.getOBContext().getUser().getId());
-    for (Object entry : rolesQry.list()) {
-      userRoles.add(new RoleInfo((Object[]) entry));
+    hql.append(
+        "select ur.role.id, ur.role.name, ur.client.id, ur.client.name from ADUserRoles ur ");
+    hql.append(
+        "where ur.active=true and ur.userContact.id=:userId and ur.role.active=true and ur.role.isrestrictbackend=false ");
+    Query<Object[]> rolesQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql.toString(), Object[].class);
+    rolesQry.setParameter("userId", OBContext.getOBContext().getUser().getId());
+    for (Object[] entry : rolesQry.list()) {
+      userRoles.add(new RoleInfo(entry));
     }
     return userRoles;
   }

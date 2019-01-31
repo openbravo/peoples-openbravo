@@ -50,8 +50,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
      * 
      */
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("UPDATESTATUS")) {
@@ -93,7 +93,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     try {
       if (fillWarnsAndErrors) {
         int newlinenumber = lastlinenumber;
-        ps = getPreparedStatement("SELECT MESSAGE, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN' AND SYSTEM_STATUS LIKE ?");
+        ps = getPreparedStatement(
+            "SELECT MESSAGE, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN' AND SYSTEM_STATUS LIKE ?");
         ps.setString(1, "%" + state);
         ps.executeQuery();
         ResultSet rs = ps.getResultSet();
@@ -110,7 +111,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         }
         resp.setWarnings(warnings.toArray(new String[0]));
 
-        ps2 = getPreparedStatement("SELECT MESSAGE, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND SYSTEM_STATUS LIKE ?");
+        ps2 = getPreparedStatement(
+            "SELECT MESSAGE, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND SYSTEM_STATUS LIKE ?");
         ps2.setString(1, "%" + state);
         ps2.executeQuery();
         ResultSet rs2 = ps2.getResultSet();
@@ -138,12 +140,13 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         resp.setLastmessage("");
       }
 
-      if (error)
+      if (error) {
         resp.setStatusofstate("Error");
-      else if (warning)
+      } else if (warning) {
         resp.setStatusofstate("Warning");
-      else
+      } else {
         resp.setStatusofstate(defaultState);
+      }
     } catch (Exception e) {
     } finally {
       try {
@@ -172,7 +175,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     boolean warning = false;
     boolean error = false;
     try {
-      ps2 = getPreparedStatement("SELECT MESSAGE, SYSTEM_STATUS, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND MESSAGE NOT LIKE 'Task%' AND MESSAGE NOT LIKE 'Target%' ORDER BY CREATED DESC");
+      ps2 = getPreparedStatement(
+          "SELECT MESSAGE, SYSTEM_STATUS, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND MESSAGE NOT LIKE 'Task%' AND MESSAGE NOT LIKE 'Target%' ORDER BY CREATED DESC");
       ps2.executeQuery();
       ResultSet rs2 = ps2.getResultSet();
       ArrayList<String> errors = new ArrayList<String>();
@@ -192,12 +196,13 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         resp.setLastmessage("");
       }
 
-      if (error)
+      if (error) {
         resp.setStatusofstate("Error");
-      else if (warning)
+      } else if (warning) {
         resp.setStatusofstate("Warning");
-      else
+      } else {
         resp.setStatusofstate(defaultState);
+      }
     } catch (Exception e) {
       // We need to use printStackTrace here because if not, the log will not be shown
       e.printStackTrace();
@@ -286,8 +291,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
    * Method to be called via AJAX. It returns a XML structure with the error messages (if any) or a
    * Success one
    */
-  private void getError(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void getError(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     String ln = vars.getSessionValue("ApplyModules|Last_Line_Number_Log");
     if (ln == null || ln.equals("")) {
       return;
@@ -302,7 +307,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     PreparedStatement ps6 = null;
     PreparedStatement ps7 = null;
     try {
-      ps = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' ORDER BY CREATED DESC");
+      ps = getPreparedStatement(
+          "SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' ORDER BY CREATED DESC");
       ps.executeQuery();
       ResultSet rs = ps.getResultSet();
       if (rs.next()) {
@@ -322,12 +328,14 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       error.setTitle(Utility.messageBD(myPool, finalMessageType, vars.getLanguage()));
       error.setMessage("");
 
-      String source = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .get("source.path").toString();
-      Build build = Build.getBuildFromXMLFile(source
-          + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml", new File(
-          source, "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml")
-          .getAbsolutePath());
+      String source = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
+          .get("source.path")
+          .toString();
+      Build build = Build.getBuildFromXMLFile(
+          source + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml",
+          new File(source, "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml")
+              .getAbsolutePath());
 
       BuildMainStep finalStep;
       if (finalMessageType.equals("Error")) {
@@ -350,8 +358,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
           error.setMessage(finalStep.getSuccessMessage());
         }
       } else {
-        BuildTranslation buildTranslation = ApplyModules.getBuildTranslationFromFile(vars
-            .getLanguage());
+        BuildTranslation buildTranslation = ApplyModules
+            .getBuildTranslationFromFile(vars.getLanguage());
         buildTranslation.setBuild(build);
         BuildMainStepTranslation stepTranslation = buildTranslation
             .getBuildMainStepTranslationForCode(finalStep.getCode());
@@ -383,11 +391,13 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       out.print(strResult);
       out.close();
 
-      PreparedStatement psErr = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR'");
+      PreparedStatement psErr = getPreparedStatement(
+          "SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR'");
       psErr.executeQuery();
       ResultSet rsErr = psErr.getResultSet();
       if (!rsErr.next()) {
-        String successCode = build.getMainSteps().get(build.getMainSteps().size() - 1)
+        String successCode = build.getMainSteps()
+            .get(build.getMainSteps().size() - 1)
             .getSuccessCode();
         ps4 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='" + successCode + "'");
         ps4.executeUpdate();
@@ -422,6 +432,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     }
   }
 
+  @Override
   public void releasePreparedStatement(PreparedStatement ps) throws SQLException {
     if (ps != null) {
       super.releasePreparedStatement(ps);

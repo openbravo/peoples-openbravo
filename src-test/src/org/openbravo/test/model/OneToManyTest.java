@@ -22,7 +22,8 @@ package org.openbravo.test.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -44,7 +45,7 @@ import org.openbravo.test.base.OBBaseTest;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class OneToManyTest extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(OneToManyTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static String lineId;
 

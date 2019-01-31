@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2017 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2018 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -57,6 +57,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.poc.EmailInfo;
 import org.openbravo.erpCommon.utility.poc.EmailManager;
 import org.openbravo.erpCommon.utility.poc.EmailType;
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
@@ -74,7 +75,6 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.model.common.enterprise.EmailTemplate;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 import net.sf.jasperreports.engine.JRException;
@@ -97,8 +97,8 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     DocumentType documentType = DocumentType.UNKNOWN;
@@ -106,8 +106,9 @@ public class PrintController extends HttpSecureAppServlet {
     String strDocumentId = null;
 
     // Determine which process called the print controller
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Servletpath: " + request.getServletPath());
+    }
     if (request.getServletPath().toLowerCase().indexOf("quotations") != -1) {
       documentType = DocumentType.QUOTATION;
       // The prefix PRINTORDERS is a fixed name based on the KEY of the
@@ -115,8 +116,9 @@ public class PrintController extends HttpSecureAppServlet {
       sessionValuePrefix = "PRINTQUOTATIONS";
 
       strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpcOrderId_R");
-      if (strDocumentId.equals(""))
+      if (strDocumentId.equals("")) {
         strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpcOrderId");
+      }
     }
     if (request.getServletPath().toLowerCase().indexOf("orders") != -1) {
       documentType = DocumentType.SALESORDER;
@@ -125,8 +127,9 @@ public class PrintController extends HttpSecureAppServlet {
       sessionValuePrefix = "PRINTORDERS";
 
       strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpcOrderId_R");
-      if (strDocumentId.equals(""))
+      if (strDocumentId.equals("")) {
         strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpcOrderId");
+      }
     }
     if (request.getServletPath().toLowerCase().indexOf("invoices") != -1) {
       documentType = DocumentType.SALESINVOICE;
@@ -135,8 +138,9 @@ public class PrintController extends HttpSecureAppServlet {
       sessionValuePrefix = "PRINTINVOICES";
 
       strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpcInvoiceId_R");
-      if (strDocumentId.equals(""))
+      if (strDocumentId.equals("")) {
         strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpcInvoiceId");
+      }
     }
     if (request.getServletPath().toLowerCase().indexOf("shipments") != -1) {
       documentType = DocumentType.SHIPMENT;
@@ -145,8 +149,9 @@ public class PrintController extends HttpSecureAppServlet {
       sessionValuePrefix = "PRINTSHIPMENTS";
 
       strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpmInoutId_R");
-      if (strDocumentId.equals(""))
+      if (strDocumentId.equals("")) {
         strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpmInoutId");
+      }
     }
     if (request.getServletPath().toLowerCase().indexOf("payments") != -1) {
       documentType = DocumentType.PAYMENT;
@@ -155,8 +160,9 @@ public class PrintController extends HttpSecureAppServlet {
       sessionValuePrefix = "PRINTPAYMENT";
 
       strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpfinPaymentId_R");
-      if (strDocumentId.equals(""))
+      if (strDocumentId.equals("")) {
         strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpfinPaymentId");
+      }
     }
 
     post(request, response, vars, documentType, sessionValuePrefix, strDocumentId);
@@ -172,7 +178,8 @@ public class PrintController extends HttpSecureAppServlet {
 
       String fullDocumentIdentifier = localStrDocumentId + documentType.getTableName();
 
-      Map<String, Report> reports;
+      // reports is set in session: defining it as a Serializable HashMap
+      HashMap<String, Report> reports;
 
       // Checks are maintained in this way for mulithread safety
       HashMap<String, Boolean> checks = new HashMap<String, Boolean>();
@@ -180,21 +187,24 @@ public class PrintController extends HttpSecureAppServlet {
       checks.put("moreThanOnesalesRep", Boolean.FALSE);
 
       String documentIds[] = null;
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("strDocumentId: " + localStrDocumentId);
+      }
       // normalize the string of ids to a comma separated list
       localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
-      if (localStrDocumentId.length() == 0)
+      if (localStrDocumentId.length() == 0) {
         throw new ServletException(Utility.messageBD(this, "NoDocument", vars.getLanguage()));
+      }
 
       documentIds = localStrDocumentId.split(",");
 
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Number of documents selected: " + documentIds.length);
+      }
 
       multiReports = (documentIds.length > 1);
 
-      reports = (Map<String, Report>) vars.getSessionObject(sessionValuePrefix + ".Documents");
+      reports = (HashMap<String, Report>) vars.getSessionObject(sessionValuePrefix + ".Documents");
       final ReportManager reportManager = new ReportManager(globalParameters.strFTPDirectory,
           strReplaceWithFull, globalParameters.strBaseDesignPath,
           globalParameters.strDefaultDesignPath, globalParameters.prefix, multiReports);
@@ -202,8 +212,9 @@ public class PrintController extends HttpSecureAppServlet {
       if (vars.commandIn("PRINT")) {
         archivedReports = false;
         // Order documents by Document No.
-        if (multiReports)
+        if (multiReports) {
           documentIds = orderByDocumentNo(documentType, documentIds);
+        }
 
         /*
          * PRINT option will print directly to the UI for a single report. For multiple reports the
@@ -235,8 +246,9 @@ public class PrintController extends HttpSecureAppServlet {
         printReports(response, jrPrintReports, savedReports, isDirectPrint(vars));
       } else if (vars.commandIn("ARCHIVE")) {
         // Order documents by Document No.
-        if (multiReports)
+        if (multiReports) {
           documentIds = orderByDocumentNo(documentType, documentIds);
+        }
 
         /*
          * ARCHIVE will save each report individually and then print the reports in a single
@@ -269,8 +281,9 @@ public class PrintController extends HttpSecureAppServlet {
           reports = new HashMap<String, Report>();
           for (int index = 0; index < documentIds.length; index++) {
             final String documentId = documentIds[index];
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("Processing document with id: " + documentId);
+            }
 
             try {
               final Report report = new Report(documentType, documentId, vars.getLanguage(),
@@ -311,18 +324,19 @@ public class PrintController extends HttpSecureAppServlet {
 
           vars.setSessionObject(sessionValuePrefix + ".Documents", reports);
 
-          if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) != -1)
+          if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) != -1) {
             createPrintOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports);
-          else if (request.getServletPath().toLowerCase().indexOf(SEND_PATH) != -1)
+          } else if (request.getServletPath().toLowerCase().indexOf(SEND_PATH) != -1) {
             createEmailOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
+          }
 
         } else if (vars.commandIn("ADD")) {
-          if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) != -1)
+          if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) != -1) {
             createPrintOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports);
-          else {
+          } else {
             createEmailOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
           }
@@ -342,8 +356,9 @@ public class PrintController extends HttpSecureAppServlet {
           for (final PocData documentData : pocData) {
             getEnvironentInformation(pocData, checks);
             final String documentId = documentData.documentId;
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("Processing document with id: " + documentId);
+            }
 
             String templateInUse = "default";
             if (differentDocTypes.size() == 1) {
@@ -366,17 +381,18 @@ public class PrintController extends HttpSecureAppServlet {
               }
             }
 
-            if (report == null)
+            if (report == null) {
               throw new ServletException(
                   Utility.messageBD(this, "NoDataReport", vars.getLanguage()) + documentId);
+            }
             // Check if the document is not in status 'draft'
             if (!report.isDraft()) {
               // Check if the report is already attached
               if (!report.isAttached()) {
                 // get the Id of the entities table, this is used to
                 // store the file as an OB attachment
-                final String tableId = ToolsData.getTableId(this, report.getDocumentType()
-                    .getTableName());
+                final String tableId = ToolsData.getTableId(this,
+                    report.getDocumentType().getTableName());
 
                 // If the user wants to archive the document
                 if (vars.getStringParameter("inpArchive").equals("Y")) {
@@ -392,8 +408,9 @@ public class PrintController extends HttpSecureAppServlet {
                   reportManager.saveTempReport(report, vars);
                 }
               } else {
-                if (log4j.isDebugEnabled())
+                if (log4j.isDebugEnabled()) {
                   log4j.debug("Document is not attached.");
+                }
               }
               final String senderAddress = vars.getStringParameter("fromEmail");
               sendDocumentEmail(report, vars,
@@ -408,8 +425,8 @@ public class PrintController extends HttpSecureAppServlet {
         } else if (vars.commandIn("UPDATE_TEMPLATE")) {
           JSONObject o = new JSONObject();
           try {
-            PocData[] pocData = (PocData[]) vars.getSessionObject("pocData"
-                + fullDocumentIdentifier);
+            PocData[] pocData = (PocData[]) vars
+                .getSessionObject("pocData" + fullDocumentIdentifier);
             final String templateId = vars.getRequestGlobalVariable("templates", "templates");
             final String documentId = pocData[0].documentId;
             final Report report = new Report(documentType, documentId, vars.getLanguage(),
@@ -442,8 +459,8 @@ public class PrintController extends HttpSecureAppServlet {
           JSONObject o = new JSONObject();
           try {
             String currentEmailConfigId = vars.getStringParameter("emailConfigList");
-            EmailTemplate emailTemplate = OBDal.getInstance().get(EmailTemplate.class,
-                currentEmailConfigId);
+            EmailTemplate emailTemplate = OBDal.getInstance()
+                .get(EmailTemplate.class, currentEmailConfigId);
             o.put("subject", emailTemplate.getSubject());
             o.put("body", emailTemplate.getBody());
 
@@ -500,10 +517,10 @@ public class PrintController extends HttpSecureAppServlet {
       }
       for (Report report : reports) {
         switch (report.getDocumentType()) {
-        case SALESORDER:
-          PrintControllerData.updateOrderDatePrinted(this, report.getDocumentId());
-        default:
-          break;
+          case SALESORDER:
+            PrintControllerData.updateOrderDatePrinted(this, report.getDocumentId());
+          default:
+            break;
         }
       }
     } catch (IOException e) {
@@ -602,12 +619,14 @@ public class PrintController extends HttpSecureAppServlet {
       throws ServletException, IOException {
     String localStrDocumentId = strDocumentId;
     final String documentId = vars.getStringParameter("inpDocumentId");
-    if (localStrDocumentId != null)
+    if (localStrDocumentId != null) {
       localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
+    }
     final Report report = reports.get(localStrDocumentId);
-    if (report == null)
-      throw new ServletException(Utility.messageBD(this, "NoDataReport", vars.getLanguage())
-          + documentId);
+    if (report == null) {
+      throw new ServletException(
+          Utility.messageBD(this, "NoDataReport", vars.getLanguage()) + documentId);
+    }
     // Check if the document is not in status 'draft'
     if (!report.isDraft() && !report.isAttached() && vars.commandIn("ARCHIVE")) {
       // TODO: Move the table Id retrieval into the DocumentType
@@ -616,9 +635,10 @@ public class PrintController extends HttpSecureAppServlet {
       // file as an OB attachment
       final String tableId = ToolsData.getTableId(this, report.getDocumentType().getTableName());
 
-      if (log4j.isDebugEnabled())
-        log4j.debug("Table " + report.getDocumentType().getTableName() + " has table id: "
-            + tableId);
+      if (log4j.isDebugEnabled()) {
+        log4j.debug(
+            "Table " + report.getDocumentType().getTableName() + " has table id: " + tableId);
+      }
       // Save the report as a attachment because it is being
       // transferred to the user
       File attachedFile = null;
@@ -634,8 +654,9 @@ public class PrintController extends HttpSecureAppServlet {
         }
       }
     } else {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Document is not attached.");
+      }
     }
   }
 
@@ -658,20 +679,20 @@ public class PrintController extends HttpSecureAppServlet {
   PocData[] getContactDetails(DocumentType documentType, String strDocumentId)
       throws ServletException {
     switch (documentType) {
-    case QUOTATION:
-      return PocData.getContactDetailsForOrders(this, strDocumentId);
-    case SALESORDER:
-      return PocData.getContactDetailsForOrders(this, strDocumentId);
-    case SALESINVOICE:
-      return PocData.getContactDetailsForInvoices(this, strDocumentId);
-    case SHIPMENT:
-      return PocData.getContactDetailsForShipments(this, strDocumentId);
-    case PURCHASEORDER:
-      return PocData.getContactDetailsForOrders(this, strDocumentId);
-    case PAYMENT:
-      return PocData.getContactDetailsForPayments(this, strDocumentId);
-    case UNKNOWN:
-      return null;
+      case QUOTATION:
+        return PocData.getContactDetailsForOrders(this, strDocumentId);
+      case SALESORDER:
+        return PocData.getContactDetailsForOrders(this, strDocumentId);
+      case SALESINVOICE:
+        return PocData.getContactDetailsForInvoices(this, strDocumentId);
+      case SHIPMENT:
+        return PocData.getContactDetailsForShipments(this, strDocumentId);
+      case PURCHASEORDER:
+        return PocData.getContactDetailsForOrders(this, strDocumentId);
+      case PAYMENT:
+        return PocData.getContactDetailsForPayments(this, strDocumentId);
+      case UNKNOWN:
+        return null;
     }
     return null;
   }
@@ -683,10 +704,12 @@ public class PrintController extends HttpSecureAppServlet {
     String emailSubject = null, emailBody = null;
     final String ourReference = report.getOurReference();
     final String cusReference = report.getCusReference();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("our document ref: " + ourReference);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("cus document ref: " + cusReference);
+    }
 
     final String toName = documentData.contactName;
     String toEmail = null;
@@ -736,8 +759,8 @@ public class PrintController extends HttpSecureAppServlet {
     emailSubject = emailSubject.replaceAll("@our_ref@", Matcher.quoteReplacement(ourReference));
     emailSubject = emailSubject.replaceAll("@cus_nam@", Matcher.quoteReplacement(toName));
     emailSubject = emailSubject.replaceAll("@sal_nam@", Matcher.quoteReplacement(replyToName));
-    emailSubject = emailSubject
-        .replaceAll("@bp_nam@", Matcher.quoteReplacement(report.getBPName()));
+    emailSubject = emailSubject.replaceAll("@bp_nam@",
+        Matcher.quoteReplacement(report.getBPName()));
     emailSubject = emailSubject.replaceAll("@doc_date@",
         Matcher.quoteReplacement(report.getDocDate()));
     emailSubject = emailSubject.replaceAll("@doc_nextduedate@",
@@ -760,46 +783,16 @@ public class PrintController extends HttpSecureAppServlet {
     emailBody = emailBody.replaceAll("@doc_desc@",
         Matcher.quoteReplacement(report.getDocDescription()));
 
-    String host = null;
-    boolean auth = true;
-    String username = null;
-    String password = null;
-    String connSecurity = null;
-    int port = 25;
-
     OBContext.setAdminMode(true);
+    EmailServerConfiguration mailConfig = null;
     try {
-      final EmailServerConfiguration mailConfig = OBDal.getInstance().get(
-          EmailServerConfiguration.class, vars.getStringParameter("fromEmailId"));
-
-      host = mailConfig.getSmtpServer();
-
-      if (!mailConfig.isSMTPAuthentification()) {
-        auth = false;
-      }
-      username = mailConfig.getSmtpServerAccount();
-      password = FormatUtilities.encryptDecrypt(mailConfig.getSmtpServerPassword(), false);
-      connSecurity = mailConfig.getSmtpConnectionSecurity();
-      port = mailConfig.getSmtpPort().intValue();
+      mailConfig = OBDal.getInstance()
+          .get(EmailServerConfiguration.class, vars.getStringParameter("fromEmailId"));
     } finally {
       OBContext.restorePreviousMode();
     }
 
-    final String recipientTO = toEmail;
-    final String recipientCC = vars.getStringParameter("ccEmail");
-    final String recipientBCC = vars.getStringParameter("bccEmail");
-    final String replyTo = replyToEmail;
-    final String contentType = "text/plain; charset=utf-8";
-
-    if (log4j.isDebugEnabled()) {
-      log4j.debug("From: " + senderAddress);
-      log4j.debug("Recipient TO (contact email): " + recipientTO);
-      log4j.debug("Recipient CC: " + recipientCC);
-      log4j.debug("Recipient BCC (user email): " + recipientBCC);
-      log4j.debug("Reply-to (sales rep email): " + replyTo);
-    }
-
-    List<File> attachments = new ArrayList<File>();
+    List<File> attachments = new ArrayList<>();
     attachments.add(new File(attachmentFileLocation));
 
     if (object != null) {
@@ -811,10 +804,27 @@ public class PrintController extends HttpSecureAppServlet {
       }
     }
 
+    final EmailInfo email = new EmailInfo.Builder().setRecipientTO(toEmail)
+        .setRecipientCC(vars.getStringParameter("ccEmail"))
+        .setRecipientBCC(vars.getStringParameter("bccEmail"))
+        .setReplyTo(replyToEmail)
+        .setSubject(emailSubject)
+        .setContent(emailBody)
+        .setContentType("text/plain; charset=utf-8")
+        .setAttachments(attachments)
+        .setSentDate(new Date())
+        .build();
+
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("From: " + senderAddress);
+      log4j.debug("Recipient TO (contact email): " + email.getRecipientTO());
+      log4j.debug("Recipient CC: " + email.getRecipientCC());
+      log4j.debug("Recipient BCC (user email): " + email.getRecipientBCC());
+      log4j.debug("Reply-to (sales rep email): " + email.getReplyTo());
+    }
+
     try {
-      EmailManager.sendEmail(host, auth, username, password, connSecurity, port, senderAddress,
-          recipientTO, recipientCC, recipientBCC, replyTo, emailSubject, emailBody, contentType,
-          attachments, new Date(), null);
+      EmailManager.sendEmail(mailConfig, email);
     } catch (Exception exception) {
       log4j.error(exception);
       final String exceptionClass = exception.getClass().toString().replace("class ", "");
@@ -837,12 +847,14 @@ public class PrintController extends HttpSecureAppServlet {
 
       // First store the email message
       final String newEmailId = SequenceIdData.getUUID();
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("New email id: " + newEmailId);
+      }
 
       EmailData.insertEmail(conn, this, newEmailId, vars.getClient(), report.getOrgId(),
-          vars.getUser(), EmailType.OUTGOING.getStringValue(), replyTo, recipientTO, recipientCC,
-          recipientBCC, Utility.formatDate(new Date(), "yyyyMMddHHmmss"), emailSubject, emailBody,
+          vars.getUser(), EmailType.OUTGOING.getStringValue(), email.getReplyTo(),
+          email.getRecipientTO(), email.getRecipientCC(), email.getRecipientBCC(),
+          Utility.formatDate(new Date(), "yyyyMMddHHmmss"), emailSubject, emailBody,
           report.getBPartnerId(),
           ToolsData.getTableId(this, report.getDocumentType().getTableName()),
           documentData.documentId);
@@ -867,8 +879,9 @@ public class PrintController extends HttpSecureAppServlet {
       VariablesSecureApp vars, DocumentType documentType, String strDocumentId,
       Map<String, Report> reports) throws IOException, ServletException {
     XmlDocument xmlDocument = null;
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/reporting/printing/PrintOptions").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/reporting/printing/PrintOptions")
+        .createXmlDocument();
     xmlDocument.setParameter("strDocumentId", strDocumentId);
 
     // Get additional document information
@@ -907,17 +920,19 @@ public class PrintController extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
     PocData[] pocData = getContactDetails(documentType, strDocumentId);
     @SuppressWarnings("unchecked")
-    Vector<java.lang.Object> vector = (Vector<java.lang.Object>) request.getSession().getAttribute(
-        "files");
+    Vector<java.lang.Object> vector = (Vector<java.lang.Object>) request.getSession()
+        .getAttribute("files");
 
     final String[] hiddenTags = getHiddenTags(pocData, vector, vars, checks);
     if (hiddenTags != null) {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/utility/reporting/printing/EmailOptions", hiddenTags)
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/utility/reporting/printing/EmailOptions",
+              hiddenTags)
           .createXmlDocument();
     } else {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/utility/reporting/printing/EmailOptions").createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/utility/reporting/printing/EmailOptions")
+          .createXmlDocument();
     }
 
     xmlDocument.setParameter("strDocumentId", strDocumentId);
@@ -928,7 +943,8 @@ public class PrintController extends HttpSecureAppServlet {
       isTheFirstEntry = true;
     }
 
-    if (vars.getMultiFile("inpFile") != null && !vars.getMultiFile("inpFile").getName().equals("")) {
+    if (vars.getMultiFile("inpFile") != null
+        && !vars.getMultiFile("inpFile").getName().equals("")) {
       final AttachContent content = new AttachContent();
       final FileItem file1 = vars.getMultiFile("inpFile");
       content.setFileName(pocData[0].ourreference.replace('/', '_') + '-'
@@ -958,14 +974,19 @@ public class PrintController extends HttpSecureAppServlet {
       if (moreThanOneLanguageDefined(reports) && hasDifferentBpLanguages(reports)) {
         // set multiple email configurations
         List<EmailDefinition> emailDef = new ArrayList<EmailDefinition>();
-        Map<String, EmailDefinition> emailDefinitions = reports.values().iterator().next()
+        Map<String, EmailDefinition> emailDefinitions = reports.values()
+            .iterator()
+            .next()
             .getEmailDefinitions();
         Iterator<Entry<String, EmailDefinition>> entries = emailDefinitions.entrySet().iterator();
         while (entries.hasNext()) {
           Map.Entry<String, EmailDefinition> entry = entries.next();
           emailDef.add(entry.getValue());
         }
-        emailDefinition = reports.values().iterator().next().getTemplateInfo()
+        emailDefinition = reports.values()
+            .iterator()
+            .next()
+            .getTemplateInfo()
             .get_DefaultEmailDefinition();
         String emailDefinitionsComboHtml = getOptionsList(emailDef, emailDefinition.getId(), false);
         xmlDocument.setParameter("reportEmailConfig", emailDefinitionsComboHtml);
@@ -993,8 +1014,8 @@ public class PrintController extends HttpSecureAppServlet {
 
     OBContext.setAdminMode(true);
     try {
-      OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance().createCriteria(
-          EmailServerConfiguration.class);
+      OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance()
+          .createCriteria(EmailServerConfiguration.class);
       mailConfigCriteria.addOrderBy("client.id", false);
       final List<EmailServerConfiguration> mailConfigList = mailConfigCriteria.list();
 
@@ -1002,8 +1023,8 @@ public class PrintController extends HttpSecureAppServlet {
         throw new ServletException("No Poc configuration found for this client.");
       }
 
-      EmailServerConfiguration mailConfig = EmailUtils.getEmailConfiguration(OBDal.getInstance()
-          .get(Organization.class, vars.getOrg()));
+      EmailServerConfiguration mailConfig = EmailUtils
+          .getEmailConfiguration(OBDal.getInstance().get(Organization.class, vars.getOrg()));
 
       if (mailConfig == null) {
         throw new ServletException(
@@ -1032,8 +1053,8 @@ public class PrintController extends HttpSecureAppServlet {
       if (checks.get("moreThanOneDoc")) {
         if (customer == null || customer.length() == 0) {
           final OBError on = new OBError();
-          on.setMessage(Utility.messageBD(this, "NoContact", vars.getLanguage()).replace(
-              "@docNum@", documentData.ourreference));
+          on.setMessage(Utility.messageBD(this, "NoContact", vars.getLanguage())
+              .replace("@docNum@", documentData.ourreference));
 
           on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
           on.setType("info");
@@ -1044,8 +1065,8 @@ public class PrintController extends HttpSecureAppServlet {
           printPageClosePopUpAndRefreshParent(response, vars);
         } else if (documentData.contactEmail == null || documentData.contactEmail.equals("")) {
           final OBError on = new OBError();
-          on.setMessage(Utility.messageBD(this, "NoEmail", vars.getLanguage()).replace(
-              "@customer@", documentData.contactName));
+          on.setMessage(Utility.messageBD(this, "NoEmail", vars.getLanguage())
+              .replace("@customer@", documentData.contactName));
           on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
           on.setType("info");
           final String tabId = vars.getSessionValue("inpTabId");
@@ -1076,8 +1097,8 @@ public class PrintController extends HttpSecureAppServlet {
           printPageClosePopUpAndRefreshParent(response, vars);
         } else if (documentData.salesrepEmail == null || documentData.salesrepEmail.equals("")) {
           final OBError on = new OBError();
-          on.setMessage(Utility.messageBD(this, "NoEmailSender", vars.getLanguage()).replace(
-              "@salesRep@", documentData.salesrepName));
+          on.setMessage(Utility.messageBD(this, "NoEmailSender", vars.getLanguage())
+              .replace("@salesRep@", documentData.salesrepName));
           on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
           on.setType("info");
           final String tabId = vars.getSessionValue("inpTabId");
@@ -1095,18 +1116,20 @@ public class PrintController extends HttpSecureAppServlet {
       final Report report = reports.get(documentData.documentId);
       // All ids of documents in draft are passed to the web client
       if (report.isDraft()) {
-        if (draftDocumentIds.length() > 0)
+        if (draftDocumentIds.length() > 0) {
           draftDocumentIds += ",";
+        }
         draftDocumentIds += report.getDocumentId();
         allTheDocsCompleted = false;
       }
 
       // Fill the report location
       final String reportFilename = report.getContextSubFolder() + report.getFilename();
-      documentData.reportLocation = request.getContextPath() + "/" + reportFilename
-          + "?documentId=" + documentData.documentId;
-      if (log4j.isDebugEnabled())
+      documentData.reportLocation = request.getContextPath() + "/" + reportFilename + "?documentId="
+          + documentData.documentId;
+      if (log4j.isDebugEnabled()) {
         log4j.debug(" Filling report location with: " + documentData.reportLocation);
+      }
 
       if (onlyOneAttachedDoc) {
         attachedContent.setDocName(report.getFilename());
@@ -1132,8 +1155,8 @@ public class PrintController extends HttpSecureAppServlet {
 
     if (!onlyOneAttachedDoc && isTheFirstEntry) {
       if (numberOfCustomers > 1) {
-        attachedContent.setDocName(String.valueOf(reports.size() + " Documents to "
-            + String.valueOf(numberOfCustomers) + " Customers"));
+        attachedContent.setDocName(String.valueOf(
+            reports.size() + " Documents to " + String.valueOf(numberOfCustomers) + " Customers"));
         attachedContent.setVisible("checkbox");
 
       } else {
@@ -1153,12 +1176,13 @@ public class PrintController extends HttpSecureAppServlet {
       xmlDocument.setData("structure1", data);
     }
     if (pocData.length >= 1) {
-      xmlDocument.setData("reportEmail", "liststructure", reports.get((pocData[0].documentId))
-          .getTemplate());
+      xmlDocument.setData("reportEmail", "liststructure",
+          reports.get((pocData[0].documentId)).getTemplate());
     }
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Documents still in draft: " + draftDocumentIds);
+    }
     xmlDocument.setParameter("draftDocumentIds", draftDocumentIds);
 
     final PocData[] currentUserInfo = PocData.getContactDetailsForUser(this, vars.getUser());
@@ -1224,21 +1248,24 @@ public class PrintController extends HttpSecureAppServlet {
   private String getOptionsList(List<EmailDefinition> emailDef, String selectedValue,
       boolean isMandatory) {
     StringBuilder strOptions = new StringBuilder();
-    if (!isMandatory)
+    if (!isMandatory) {
       strOptions.append("<option value=\"\"></option>");
+    }
     for (EmailDefinition obObject : emailDef) {
       strOptions.append("<option value=\"").append(obObject.getId()).append("\"");
-      if (obObject.getId().equals(selectedValue))
+      if (obObject.getId().equals(selectedValue)) {
         strOptions.append(" selected=\"selected\"");
+      }
       strOptions.append(">");
-      strOptions.append(BasicUtility.formatMessageBDToHtml(obObject.getSubject() + " - "
-          + obObject.getLanguage()));
+      strOptions.append(BasicUtility
+          .formatMessageBDToHtml(obObject.getSubject() + " - " + obObject.getLanguage()));
       strOptions.append("</option>");
     }
     return strOptions.toString();
   }
 
-  private boolean moreThanOneLanguageDefined(Map<String, Report> reports) throws ReportingException {
+  private boolean moreThanOneLanguageDefined(Map<String, Report> reports)
+      throws ReportingException {
     boolean hasMoreThanOneLanguage = false;
     @SuppressWarnings("rawtypes")
     Iterator itRep = reports.values().iterator();
@@ -1371,8 +1398,9 @@ public class PrintController extends HttpSecureAppServlet {
   void createPrintStatusPage(HttpServletResponse response, VariablesSecureApp vars,
       int nrOfEmailsSend) throws IOException, ServletException {
     XmlDocument xmlDocument = null;
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/reporting/printing/PrintStatus").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/reporting/printing/PrintStatus")
+        .createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("language", vars.getLanguage());
@@ -1410,16 +1438,17 @@ public class PrintController extends HttpSecureAppServlet {
    */
   private File prepareFile(AttachContent content, String documentId) throws ServletException {
     try {
-      final String attachPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("attach.path")
-          + "/tmp";
+      final String attachPath = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
+          .getProperty("attach.path") + "/tmp";
       final File f = new File(attachPath, content.getFileName());
       final InputStream inputStream = content.getFileItem().getInputStream();
       final OutputStream out = new FileOutputStream(f);
       final byte buf[] = new byte[1024];
       int len;
-      while ((len = inputStream.read(buf)) > 0)
+      while ((len = inputStream.read(buf)) > 0) {
         out.write(buf, 0, len);
+      }
       out.close();
       inputStream.close();
       return f;
@@ -1470,8 +1499,9 @@ public class PrintController extends HttpSecureAppServlet {
       for (PrintControllerData docID : printControllerData) {
         documentIdsOrdered[i++] = docID.getField("Id");
       }
-    } else
+    } else {
       return documentIds;
+    }
 
     return documentIdsOrdered;
   }

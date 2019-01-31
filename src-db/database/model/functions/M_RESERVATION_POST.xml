@@ -25,7 +25,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2017 Openbravo SLU
+* All portions are Copyright (C) 2012-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -204,7 +204,7 @@ BEGIN
           AND rs.m_reservation_id = v_reservation_id
           AND rs.m_locator_id IS NOT NULL
       ) LOOP
-        RAISE_APPLICATION_ERROR(-20000, '@NotEnoughAvailableStock@ : ' || cur_not_available.locatorName || ' - ' || cur_not_available.attributeName);
+        RAISE_APPLICATION_ERROR(-20000, '@NotEnoughAvailableStock@ : ' || cur_not_available.locatorName || ' - ' || COALESCE(TO_CHAR(cur_not_available.attributeName), ''));
       END LOOP;
       
       -- Check that prereserved quantity is equal all lower than ordered quantity

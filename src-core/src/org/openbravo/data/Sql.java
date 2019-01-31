@@ -14,7 +14,8 @@ package org.openbravo.data;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class Sql {
   String sqlName;
@@ -35,7 +36,7 @@ class Sql {
   String strSequenceName = null;
   boolean boolOptional = false;
   boolean saveContextInfo = true;
-  static Logger log4j = Logger.getLogger(Sql.class); // log4j
+  static Logger log4j = LogManager.getLogger(); // log4j
 
   public Sql() {
     vecParameter = new Vector<Parameter>();
@@ -44,29 +45,36 @@ class Sql {
 
   public Parameter addParameter(boolean sequence, String strName, String strDefault,
       String strInOut, String strOptional, String strAfter, String strText, String strIgnoreValue) {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("addParameter sequence: " + sequence + " name: " + strName);
-    if (strOptional != null)
+    }
+    if (strOptional != null) {
       boolOptional = true;
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("previous new Parameter");
+    }
     Parameter parameterNew = new Parameter(sequence, strName, strDefault, strInOut, strOptional,
         strAfter, strText, strIgnoreValue);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("called new Parameter");
+    }
     for (Enumeration<Parameter> e = vecParameter.elements(); e.hasMoreElements();) {
       Parameter parameter = e.nextElement();
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("parameter: " + parameter.strName);
+      }
       if (parameter.strName.equals(strName)) {
         parameterNew.boolRepeated = true;
       }
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("previous new vecParameter.addElement");
+    }
     vecParameter.addElement(parameterNew);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("called new vecParameter.addElement");
+    }
     return parameterNew;
   }
 }

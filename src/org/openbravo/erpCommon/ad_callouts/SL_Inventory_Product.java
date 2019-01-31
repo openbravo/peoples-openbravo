@@ -117,9 +117,9 @@ public class SL_Inventory_Product extends SimpleCallout {
     FieldProvider[] tld = null;
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
-          "M_Product_UOM", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
-              "SLInventoryProduct"), Utility.getContext(this, info.vars, "#User_Client",
-              "SLInventoryProduct"), 0);
+          "M_Product_UOM", "",
+          Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SLInventoryProduct"),
+          Utility.getContext(this, info.vars, "#User_Client", "SLInventoryProduct"), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SLInventoryProduct", "");
       tld = comboTableData.select(false);
       comboTableData = null;
@@ -133,8 +133,8 @@ public class SL_Inventory_Product extends SimpleCallout {
     if (tld != null && tld.length > 0 && !"".equals(strHasSecondaryUOMInInventory)) {
       info.addSelect("inpmProductUomId");
       for (int i = 0; i < tld.length; i++) {
-        info.addSelectResult(tld[i].getField("id"), tld[i].getField("name"), tld[i].getField("id")
-            .equalsIgnoreCase(strPUOM));
+        info.addSelectResult(tld[i].getField("id"), tld[i].getField("name"),
+            tld[i].getField("id").equalsIgnoreCase(strPUOM));
       }
       info.endSelect();
     } else {

@@ -71,8 +71,8 @@ public class TaxesTestData146 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes2 = new HashMap<String, String[]>();
-    lineTaxes2.put(TaxDataConstants.TAX_VAT_21, new String[] { "-29.70", "-6.24", "-29.70",
-        "-6.24", "-59.40", "-12.47", "-59.40", "-12.47" });
+    lineTaxes2.put(TaxDataConstants.TAX_VAT_21, new String[] { "-29.70", "-6.24", "-29.70", "-6.24",
+        "-59.40", "-12.47", "-59.40", "-12.47" });
     line2.setLinetaxes(lineTaxes2);
 
     // Amounts for line level are provided
@@ -97,8 +97,8 @@ public class TaxesTestData146 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes3 = new HashMap<String, String[]>();
-    lineTaxes3.put(TaxDataConstants.TAX_VAT_10, new String[] { "-9.60", "-0.96", "-9.60", "-0.96",
-        "-19.20", "-1.92", "-19.20", "-1.92" });
+    lineTaxes3.put(TaxDataConstants.TAX_VAT_10,
+        new String[] { "-9.60", "-0.96", "-9.60", "-0.96", "-19.20", "-1.92", "-19.20", "-1.92" });
     line3.setLinetaxes(lineTaxes3);
 
     // Amounts for line level are provided
@@ -177,8 +177,8 @@ public class TaxesTestData146 extends TaxesTestData {
     HashMap<String, String[]> lineTaxes6 = new HashMap<String, String[]>();
     lineTaxes6.put(TaxDataConstants.TAX_SUPER_25, new String[] { "-14.93", "-3.73", "-14.93",
         "-3.73", "-29.85", "-7.46", "-29.85", "-7.46" });
-    lineTaxes6.put(TaxDataConstants.TAX_SUPER_50, new String[] { "-9.95", "-4.98", "-9.95",
-        "-4.98", "-19.90", "-9.95", "-19.90", "-9.95" });
+    lineTaxes6.put(TaxDataConstants.TAX_SUPER_50,
+        new String[] { "-9.95", "-4.98", "-9.95", "-4.98", "-19.90", "-9.95", "-19.90", "-9.95" });
     line6.setLinetaxes(lineTaxes6);
 
     // Amounts for line level are provided
@@ -205,8 +205,8 @@ public class TaxesTestData146 extends TaxesTestData {
     HashMap<String, String[]> lineTaxes7 = new HashMap<String, String[]>();
     lineTaxes7.put(TaxDataConstants.TAX_SUPER_25, new String[] { "-11.18", "-2.80", "-11.18",
         "-2.80", "-22.35", "-5.59", "-22.35", "-5.59" });
-    lineTaxes7.put(TaxDataConstants.TAX_SUPER_50, new String[] { "-7.45", "-3.73", "-7.45",
-        "-3.73", "-14.90", "-7.45", "-14.90", "-7.45" });
+    lineTaxes7.put(TaxDataConstants.TAX_SUPER_50,
+        new String[] { "-7.45", "-3.73", "-7.45", "-3.73", "-14.90", "-7.45", "-14.90", "-7.45" });
     line7.setLinetaxes(lineTaxes7);
 
     // Amounts for line level are provided

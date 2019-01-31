@@ -24,7 +24,8 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -48,7 +49,7 @@ public class AttributeSetInstanceValue {
   private String lockDescription = "";
   private String attSetInstanceId = "";
 
-  protected Logger log4j = Logger.getLogger(this.getClass());
+  protected Logger log4j = LogManager.getLogger();
 
   public AttributeSetInstanceValue() {
   }
@@ -153,8 +154,9 @@ public class AttributeSetInstanceValue {
       return myMessage;
     }
 
-    boolean isinstance = !AttributeSetInstanceValueData.isInstanceAttribute(conProv,
-        strAttributeSet).equals("0");
+    boolean isinstance = !AttributeSetInstanceValueData
+        .isInstanceAttribute(conProv, strAttributeSet)
+        .equals("0");
 
     if (isinstance) {
       org = organization;
@@ -177,7 +179,8 @@ public class AttributeSetInstanceValue {
         }
       }
       if (data[0].isserno.equals("Y")) {
-        if (!data[0].mSernoctlId.equals("") && (strIsSOTrx.equals("N") || strWindow.equals("191"))) {
+        if (!data[0].mSernoctlId.equals("")
+            && (strIsSOTrx.equals("N") || strWindow.equals("191"))) {
           serno = getNextSerialNumber(conProv, vars, data[0].mSernoctlId, conn);
           description_first += (description_first.equals("") ? "" : "_") + serno;
         } else {
@@ -218,14 +221,16 @@ public class AttributeSetInstanceValue {
           for (int i = 0; i < data.length; i++) {
             String strValue = attributeValues.get(replace(data[i].elementname));
             if ((strValue == null || strValue.equals("")) && data[i].ismandatory.equals("Y")) {
-              throw new ServletException("Request parameter required: "
-                  + replace(data[i].elementname));
+              throw new ServletException(
+                  "Request parameter required: " + replace(data[i].elementname));
             }
-            if (strValue == null)
+            if (strValue == null) {
               strValue = "";
+            }
             String strDescValue = strValue;
-            if (data[i].islist.equals("Y"))
+            if (data[i].islist.equals("Y")) {
               strDescValue = AttributeSetInstanceValueData.selectAttributeValue(conProv, strValue);
+            }
             if (!strNewInstance.equals("")) {
               if (AttributeSetInstanceValueData.update(conn, conProv, vars.getUser(),
                   (data[i].islist.equals("Y") ? strValue : ""), strDescValue, strNewInstance,
@@ -240,16 +245,17 @@ public class AttributeSetInstanceValue {
                   (data[i].islist.equals("Y") ? strValue : ""), strDescValue, strInstance,
                   data[i].mAttributeId) == 0) {
                 String strNewAttrInstance = SequenceIdData.getUUID();
-                AttributeSetInstanceValueData.insert(conn, conProv, strNewAttrInstance,
-                    strInstance, data[i].mAttributeId, client.getId(), org.getId(), vars.getUser(),
+                AttributeSetInstanceValueData.insert(conn, conProv, strNewAttrInstance, strInstance,
+                    data[i].mAttributeId, client.getId(), org.getId(), vars.getUser(),
                     (data[i].islist.equals("Y") ? strValue : ""), strDescValue);
               }
             }
             description += (description.equals("") ? "" : "_") + strDescValue;
           }
         }
-        if (!description_first.equals(""))
+        if (!description_first.equals("")) {
           description += (description.equals("") ? "" : "_") + description_first;
+        }
 
         if (StringUtils.isNotBlank(strInstance)) {
           ReferencedInventoryUtil.avoidUpdatingIfLinkedToReferencedInventory(strInstance);
@@ -326,32 +332,38 @@ public class AttributeSetInstanceValue {
 
   private String replace(String strIni) {
     // delete characters: " ","&",","
-    return Replace.replace(Replace.replace(Replace.replace(
-        Replace.replace(Replace.replace(Replace.replace(strIni, "#", ""), " ", ""), "&", ""), ",",
-        ""), "(", ""), ")", "");
+    return Replace
+        .replace(Replace.replace(
+            Replace.replace(Replace.replace(
+                Replace.replace(Replace.replace(strIni, "#", ""), " ", ""), "&", ""), ",", ""),
+            "(", ""), ")", "");
   }
 
   private String getDescription(ConnectionProvider conProv, VariablesSecureApp vars,
       AttributeSetInstanceValueData[] data, String strIsSOTrx, String strWindowId,
       Map<String, String> attributeValues) {
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       return "";
+    }
     String description = "";
     try {
       // AttributeSet header
       String description_first = "";
       if (data[0].islot.equals("Y")) {
-        if (!data[0].mLotctlId.equals("") && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) {
+        if (!data[0].mLotctlId.equals("")
+            && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) {
           description_first += (description_first.equals("") ? "" : "_") + lot;
-        } else
+        } else {
           description_first += (description_first.equals("") ? "" : "_") + "L" + lot;
+        }
       }
       if (data[0].isserno.equals("Y")) {
         if (!data[0].mSernoctlId.equals("")
             && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) {
           description_first += (description_first.equals("") ? "" : "_") + serno;
-        } else
+        } else {
           description_first += (description_first.equals("") ? "" : "_") + "#" + serno;
+        }
       }
       if (data[0].isguaranteedate.equals("Y")) {
         description_first += (description_first.equals("") ? "" : "_") + guaranteedate;
@@ -364,19 +376,22 @@ public class AttributeSetInstanceValue {
         for (int i = 0; i < data.length; i++) {
           String strValue = attributeValues.get(replace(data[i].elementname));
           if ((strValue == null || strValue.equals("")) && data[i].ismandatory.equals("Y")) {
-            throw new ServletException("Request parameter required: "
-                + replace(data[i].elementname));
+            throw new ServletException(
+                "Request parameter required: " + replace(data[i].elementname));
           }
-          if (strValue == null)
+          if (strValue == null) {
             strValue = "";
+          }
           String strDescValue = strValue;
-          if (data[i].islist.equals("Y"))
+          if (data[i].islist.equals("Y")) {
             strDescValue = AttributeSetInstanceValueData.selectAttributeValue(conProv, strValue);
+          }
           description += (description.equals("") ? "" : "_") + strDescValue;
         }
       }
-      if (!description_first.equals(""))
+      if (!description_first.equals("")) {
         description += (description.equals("") ? "" : "_") + description_first;
+      }
     } catch (ServletException e) {
       return "";
     }

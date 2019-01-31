@@ -27,7 +27,8 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.DalInitializingTask;
@@ -50,7 +51,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 public class ActivationTask extends DalInitializingTask {
 
-  final static Logger log = Logger.getLogger(ActivationTask.class);
+  final static Logger log = LogManager.getLogger();
 
   private static final String PURPOSE_REFERENCE_ID = "60E231391A7348DDA7171E780F62EF99";
 
@@ -106,8 +107,8 @@ public class ActivationTask extends DalInitializingTask {
         msg += "\n  *" + value.getSearchKey() + " [" + value.getName() + "]";
       }
       if (!foundValue) {
-        throw new BuildException(purpose + " is not one of the valid values for purpose parameter:"
-            + msg);
+        throw new BuildException(
+            purpose + " is not one of the valid values for purpose parameter:" + msg);
       }
     }
 

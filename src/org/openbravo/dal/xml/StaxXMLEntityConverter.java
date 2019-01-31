@@ -32,7 +32,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -72,7 +73,7 @@ import org.openbravo.model.common.enterprise.Organization;
 public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OBNotSingleton {
   // This class should translate the
 
-  private static final Logger log = Logger.getLogger(EntityXMLConverter.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static StaxXMLEntityConverter newInstance() {
     return OBProvider.getInstance().get(StaxXMLEntityConverter.class);
@@ -183,16 +184,16 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
     }
     try {
       log.debug("Converting entity " + entityName);
-      final boolean hasReferenceAttribute = obElement.getAttributes().get(
-          XMLConstants.REFERENCE_ATTRIBUTE) != null;
+      final boolean hasReferenceAttribute = obElement.getAttributes()
+          .get(XMLConstants.REFERENCE_ATTRIBUTE) != null;
 
       // resolve the entity, using the id, note that
       // resolve will create a new object if none is found
       BaseOBObject bob = resolve(entityName, id, false);
 
       // should never be null at this point
-      Check.isNotNull(bob, "The business object " + entityName + " (" + id
-          + ") can not be resolved");
+      Check.isNotNull(bob,
+          "The business object " + entityName + " (" + id + ") can not be resolved");
 
       // warn/error is logged below if the entity is updated
       // update is prevented below
@@ -226,7 +227,8 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
             || (p.isAuditInfo() && !isOptionImportAuditInfo()) || p.isInactive()
             || p.isComputedColumn();
         if (isNotImportableProperty) {
-          log.debug("Property " + p + " is inactive, transient, computed or auditinfo, ignoring it");
+          log.debug(
+              "Property " + p + " is inactive, transient, computed or auditinfo, ignoring it");
           skipElement(xmlReader);
           continue;
         }
@@ -324,7 +326,8 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
       bob = replaceByUniqueObject(bob);
 
       // add to the correct list on the basis of different characteristics
-      addToInsertOrUpdateLists(id, bob, writable, updated, hasReferenceAttribute, preventRealUpdate);
+      addToInsertOrUpdateLists(id, bob, writable, updated, hasReferenceAttribute,
+          preventRealUpdate);
 
       // do a check that in case of a client/organization import that the
       // client and organization are indeed set

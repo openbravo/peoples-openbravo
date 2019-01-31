@@ -19,7 +19,8 @@
 
 package org.openbravo.erpCommon.modules;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.DalInitializingTask;
@@ -28,7 +29,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.services.webservice.Module;
 
 public class CheckLocalConsistency extends DalInitializingTask {
-  private static final Logger log4j = Logger.getLogger(CheckLocalConsistency.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   protected void doExecute() {

@@ -44,8 +44,9 @@ import net.sf.jasperreports.engine.JasperReport;
 public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -74,15 +75,17 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
       String strmaProcessPlan = vars.getRequestGlobalVariable("inpmaProcessPlanId",
           "ReportWorkRequirementDaily|MA_ProcessPlan_ID");
       printPageDataHtml(response, vars, strStartDateFrom, strStartDateTo, strmaProcessPlan, "pdf");
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strStartDateFrom, String strStartDateTo, String strmaProcessPlan, String strOutput)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
 
     ReportWorkRequirementDailyData[] data = null;
 
@@ -95,8 +98,8 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
     String strBaseDesign = getBaseDesignPath(strLanguage);
     JasperReport jasperReportProducts;
     try {
-      jasperReportProducts = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/SubreportWorkRequirementDaily.jrxml",
+      jasperReportProducts = ReportingUtils.getTranslatedJasperReport(this,
+          strBaseDesign + "/org/openbravo/erpCommon/ad_reports/SubreportWorkRequirementDaily.jrxml",
           vars.getLanguage());
     } catch (JRException e) {
       log4j.error("Could not load/compile jrxml-file", e);
@@ -105,8 +108,9 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
 
     JasperReport jasperReportProducts2;
     try {
-      jasperReportProducts2 = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/SubreportWorkRequirementDaily2.jrxml",
+      jasperReportProducts2 = ReportingUtils.getTranslatedJasperReport(this,
+          strBaseDesign
+              + "/org/openbravo/erpCommon/ad_reports/SubreportWorkRequirementDaily2.jrxml",
           vars.getLanguage());
     } catch (JRException e) {
       log4j.error("Could not load/compile jrxml-file", e);
@@ -123,19 +127,21 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strStartDateFrom, String strStartDateTo, String strmaProcessPlan) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      String strStartDateFrom, String strStartDateTo, String strmaProcessPlan)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
 
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDaily").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDaily")
+        .createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportWorkRequirementDaily", false,
-        "", "", "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportWorkRequirementDaily", false, "",
+        "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -175,9 +181,7 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTo", strStartDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setData(
-        "reportMA_PROCESSPLAN",
-        "liststructure",
+    xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure",
         ProcessPlanComboData.select(this,
             Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDaily"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDaily")));
@@ -234,6 +238,7 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
    * Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDaily")));
    * xmlDocument.setData("structure1", data); out.println(xmlDocument.print()); out.close(); }
    */
+  @Override
   public String getServletInfo() {
     return "Servlet ReportWorkRequirementDaily.";
   } // end of getServletInfo() method

@@ -50,16 +50,14 @@ public class HQLDataSourceTest extends BaseDataSourceTestNoDal {
     params.put("_endRow", "1");
 
     // filtering by outstandingAmount which alias and column name is different
-    params
-        .put(
-            "criteria",
-            "{\"fieldName\":\"outstandingAmount\",\"operator\":\"equals\",\"value\":100,\"_constructor\":\"AdvancedCriteria\"}\"");
+    params.put("criteria",
+        "{\"fieldName\":\"outstandingAmount\",\"operator\":\"equals\",\"value\":100,\"_constructor\":\"AdvancedCriteria\"}\"");
 
     String response = doRequest(
         "/org.openbravo.service.datasource/3C1148C0AB604DE1B51B7EA4112C325F", params, 200, "POST");
 
-    assertThat("status should be success (0)", new JSONObject(response).getJSONObject("response")
-        .getLong("status"), is(0L));
+    assertThat("status should be success (0)",
+        new JSONObject(response).getJSONObject("response").getLong("status"), is(0L));
   }
 
 }

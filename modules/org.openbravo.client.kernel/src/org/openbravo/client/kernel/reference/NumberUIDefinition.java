@@ -94,9 +94,8 @@ public abstract class NumberUIDefinition extends UIDefinition {
     final StringBuilder sb = new StringBuilder();
     sb.append("parseInput: function(value, field, component, record) {"
         + " if (OB.Utilities.Number.IsValidValueString(this, value)) {\n"
-        + "return OB.Utilities.Number.OBMaskedToJS(value,'" + inputFormat.getDecimalSymbol()
-        + "','" + inputFormat.getGroupingSymbol() + "');" + "\n} else {" + "\nreturn value;"
-        + "\n}},");
+        + "return OB.Utilities.Number.OBMaskedToJS(value,'" + inputFormat.getDecimalSymbol() + "','"
+        + inputFormat.getGroupingSymbol() + "');" + "\n} else {" + "\nreturn value;" + "\n}},");
     sb.append("'maskNumeric': '" + inputFormat.getFormat() + "', " + "'decSeparator': '"
         + inputFormat.getDecimalSymbol() + "'," + "'groupSeparator': '"
         + inputFormat.getGroupingSymbol() + "',");
@@ -196,9 +195,10 @@ public abstract class NumberUIDefinition extends UIDefinition {
     }
     String valueStr = value.toString();
     VariablesSecureApp variables = RequestContext.get().getVariablesSecureApp();
-    valueStr = valueStr.replace(
-        variables.getSessionValue("#GroupSeparator|" + getFormat()).substring(0, 1), "").replace(
-        variables.getSessionValue("#DecimalSeparator|" + getFormat()).substring(0, 1), ".");
+    valueStr = valueStr
+        .replace(variables.getSessionValue("#GroupSeparator|" + getFormat()).substring(0, 1), "")
+        .replace(variables.getSessionValue("#DecimalSeparator|" + getFormat()).substring(0, 1),
+            ".");
     try {
       return new BigDecimal(valueStr);
     } catch (Exception e) {
@@ -220,35 +220,41 @@ public abstract class NumberUIDefinition extends UIDefinition {
     final String valueStr = value.toString();
     VariablesSecureApp variables = RequestContext.get().getVariablesSecureApp();
     // only replace the decimal symbol
-    return valueStr.replace(".", variables.getSessionValue("#DecimalSeparator|" + getFormat())
-        .substring(0, 1));
+    return valueStr.replace(".",
+        variables.getSessionValue("#DecimalSeparator|" + getFormat()).substring(0, 1));
   }
 
   public static class DecimalUIDefinition extends NumberUIDefinition {
+    @Override
     public String getParentType() {
       return "float";
     }
 
+    @Override
     public String getFormat() {
       return "generalQtyEdition";
     }
   }
 
   public static class BigDecimalUIDefinition extends NumberUIDefinition {
+    @Override
     public String getParentType() {
       return "float";
     }
 
+    @Override
     public String getFormat() {
       return "generalQtyEdition";
     }
   }
 
   public static class IntegerUIDefinition extends NumberUIDefinition {
+    @Override
     public String getParentType() {
       return "integer";
     }
 
+    @Override
     public String getFormat() {
       return "integerEdition";
     }
@@ -265,30 +271,36 @@ public abstract class NumberUIDefinition extends UIDefinition {
   }
 
   public static class AmountUIDefinition extends NumberUIDefinition {
+    @Override
     public String getParentType() {
       return "float";
     }
 
+    @Override
     public String getFormat() {
       return "euroEdition";
     }
   }
 
   public static class QuantityUIDefinition extends NumberUIDefinition {
+    @Override
     public String getParentType() {
       return "float";
     }
 
+    @Override
     public String getFormat() {
       return "qtyEdition";
     }
   }
 
   public static class PriceUIDefinition extends NumberUIDefinition {
+    @Override
     public String getParentType() {
       return "float";
     }
 
+    @Override
     public String getFormat() {
       return "priceEdition";
     }

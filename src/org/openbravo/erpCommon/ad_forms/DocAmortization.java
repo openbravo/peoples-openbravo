@@ -24,7 +24,8 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -32,7 +33,7 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class DocAmortization extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocAmortization = Logger.getLogger(DocAmortization.class);
+  private static final Logger log4jDocAmortization = LogManager.getLogger();
 
   private String SeqNo = "0";
   /** Account Type - Asset */
@@ -66,21 +67,6 @@ public class DocAmortization extends AcctServer {
   }
 
   /**
-   * @return the log4jDocAmortization
-   */
-  public static Logger getLog4jDocAmortization() {
-    return log4jDocAmortization;
-  }
-
-  /**
-   * @param log4jDocAmortization
-   *          the log4jDocAmortization to set
-   */
-  public static void setLog4jDocAmortization(Logger log4jDocAmortization) {
-    DocAmortization.log4jDocAmortization = log4jDocAmortization;
-  }
-
-  /**
    * @return the seqNo
    */
   public String getSeqNo() {
@@ -102,6 +88,7 @@ public class DocAmortization extends AcctServer {
     return serialVersionUID;
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID, String Id)
       throws ServletException {
     setObjectFieldProvider(DocAmortizationData.selectRegistro(conn, aD_Client_ID, Id));
@@ -112,6 +99,7 @@ public class DocAmortization extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DocumentType = AcctServer.DOCTYPE_Amortization;
     DateDoc = data[0].getField("Dateacct");
@@ -160,6 +148,7 @@ public class DocAmortization extends AcctServer {
    * 
    * @return Zero (always balanced)
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
 
@@ -173,18 +162,21 @@ public class DocAmortization extends AcctServer {
    *          accounting schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     log4jDocAmortization.debug("createFact - Inicio");
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocAmortizationTemplate newTemplate = (DocAmortizationTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocAmortizationTemplate - " + e);
@@ -200,11 +192,11 @@ public class DocAmortization extends AcctServer {
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_Amortization line = (DocLine_Amortization) p_lines[i];
       fact.createLine(line, getAccount(ACCTTYPE_Depreciation, line.m_A_Asset_ID, as, conn),
-          line.m_C_Currency_ID, line.Amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, conn);
+          line.m_C_Currency_ID, line.Amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+          conn);
       fact.createLine(line, getAccount(ACCTTYPE_AccumDepreciation, line.m_A_Asset_ID, as, conn),
-          line.m_C_Currency_ID, "", line.Amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, conn);
+          line.m_C_Currency_ID, "", line.Amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+          conn);
     }
     SeqNo = "0";
     return fact;
@@ -223,6 +215,7 @@ public class DocAmortization extends AcctServer {
    * 
    * not used
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;
   }
@@ -238,8 +231,9 @@ public class DocAmortization extends AcctServer {
    */
   public Account getAccount(String AcctType, String A_Asset_ID, AcctSchema as,
       ConnectionProvider conn) {
-    if (Integer.parseInt(AcctType) < 1 || Integer.parseInt(AcctType) > 2)
+    if (Integer.parseInt(AcctType) < 1 || Integer.parseInt(AcctType) > 2) {
       return null;
+    }
     // No Product - get Default from Product Category
     /*
      * if (A_Asset_ID.equals("")) return getAccountDefault(AcctType, as, conn);
@@ -248,19 +242,21 @@ public class DocAmortization extends AcctServer {
     Account acc = null;
     try {
       data = DocAmortizationData.selectAssetAcct(conn, A_Asset_ID, as.getC_AcctSchema_ID());
-      if (data == null || data.length == 0)
+      if (data == null || data.length == 0) {
         return null;
+      }
       String validCombination_ID = "";
       switch (Integer.parseInt(AcctType)) {
-      case 1:
-        validCombination_ID = data[0].depreciation;
-        break;
-      case 2:
-        validCombination_ID = data[0].accumdepreciation;
-        break;
+        case 1:
+          validCombination_ID = data[0].depreciation;
+          break;
+        case 2:
+          validCombination_ID = data[0].accumdepreciation;
+          break;
       }
-      if (validCombination_ID.equals(""))
+      if (validCombination_ID.equals("")) {
         return null;
+      }
       acc = Account.getAccount(conn, validCombination_ID);
       log4jDocAmortization.debug("DocAmortization - getAccount - " + acc.Account_ID);
     } catch (ServletException e) {
@@ -269,6 +265,7 @@ public class DocAmortization extends AcctServer {
     return acc;
   } // getAccount
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

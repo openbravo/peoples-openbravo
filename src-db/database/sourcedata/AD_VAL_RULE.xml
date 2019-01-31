@@ -2228,7 +2228,7 @@ where ad_org_warehouse.ad_org_id=@AD_Org_ID@)]]></CODE>
 <!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <NAME><![CDATA[C_Calendar and C_Year of an organization]]></NAME>
 <!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <DESCRIPTION><![CDATA[It ensures the calendar combobox shows always the calendar of the selected organization]]></DESCRIPTION>
 <!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <TYPE><![CDATA[S]]></TYPE>
-<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <CODE><![CDATA[C_YEAR.C_CALENDAR_ID IN (SELECT DISTINCT(C_CALENDAR_ID) FROM AD_ORG WHERE AD_ORG_ID=AD_ORG_GETCALENDAROWNER(@AD_ORG_ID@))]]></CODE>
+<!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <CODE><![CDATA[C_YEAR.C_CALENDAR_ID IN (SELECT AD_InheritedCalendar_ID FROM AD_ORG WHERE AD_Client_ID= @AD_Client_ID@ AND AD_ORG_ID= @AD_Org_ID@)]]></CODE>
 <!--C9A72C5855CB4E29AFEB5DC17A5A9177-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C9A72C5855CB4E29AFEB5DC17A5A9177--></AD_VAL_RULE>
 
@@ -2403,7 +2403,7 @@ OR
 <!--E0541EB2493547BC934F5EFA044AB668-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E0541EB2493547BC934F5EFA044AB668-->  <NAME><![CDATA[C_Period - Org Calendar Period]]></NAME>
 <!--E0541EB2493547BC934F5EFA044AB668-->  <TYPE><![CDATA[S]]></TYPE>
-<!--E0541EB2493547BC934F5EFA044AB668-->  <CODE><![CDATA[ exists (select 1 from c_year where c_period.c_year_id = c_year.c_year_id and (select c_calendar_id from ad_org where ad_org_id = ad_org_getcalendarowner (@AD_Org_ID@)) = c_year.c_calendar_id) and periodtype = 'S']]></CODE>
+<!--E0541EB2493547BC934F5EFA044AB668-->  <CODE><![CDATA[exists (select 1 from c_year where c_period.c_year_id = c_year.c_year_id and (SELECT AD_InheritedCalendar_ID FROM AD_ORG WHERE AD_Client_ID= @AD_Client_ID@ AND AD_ORG_ID= @AD_Org_ID@) = c_year.c_calendar_id) and periodtype = 'S']]></CODE>
 <!--E0541EB2493547BC934F5EFA044AB668-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E0541EB2493547BC934F5EFA044AB668--></AD_VAL_RULE>
 

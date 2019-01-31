@@ -11,13 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.businessUtility;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -28,14 +29,17 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.VariablesBase;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
@@ -77,7 +81,7 @@ public class COAUtility {
   private Calendar calendar;
   private Element element;
   private AcctSchema acctSchema = null;
-  private static final Logger log4j = Logger.getLogger(COAUtility.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public COAUtility(Client clientProvided, Tree treeAccountProvided) {
     client = clientProvided;
@@ -105,18 +109,19 @@ public class COAUtility {
    * @param currency
    * @param strCalendarColumnName
    */
-  public OBError createAccounting(VariablesSecureApp vars, InputStream fileCoA,
-      boolean hasBPartner, boolean hasProduct, boolean hasProject, boolean hasMCampaign,
-      boolean hasSRegion, String strAccountString, String strGAAPProvided,
-      String strCostingMethodProvided, String strCalendarColumnName, Currency currency) {
+  public OBError createAccounting(VariablesSecureApp vars, InputStream fileCoA, boolean hasBPartner,
+      boolean hasProduct, boolean hasProject, boolean hasMCampaign, boolean hasSRegion,
+      String strAccountString, String strGAAPProvided, String strCostingMethodProvided,
+      String strCalendarColumnName, Currency currency) {
 
-    if (client == null || treeAccount == null)
-      return logError(
-          "@CreateAccountingFailed@",
+    if (client == null || treeAccount == null) {
+      return logError("@CreateAccountingFailed@",
           "createAccounting() - ERROR - No client or account tree in class attributes! Cannot create accounting.");
-    if (fileCoA == null)
+    }
+    if (fileCoA == null) {
       return logError("@CreateAccountingFailed@",
           "createAccounting() - ERROR - A file for the Chart of Accounts must be provided. fileCoA is null!");
+    }
     log4j.debug("createAccounting() - Starting the creation of accounting for client "
         + client.getName() + ", with account tree " + treeAccount.getName() + "("
         + treeAccount.getDescription() + ")");
@@ -136,57 +141,88 @@ public class COAUtility {
       String strCalendarName = strElementName + " " + strCalendarColumnName;
       log4j.debug("createAccounting() - Creating calendar named " + strCalendarName);
       obeResult = insertCalendar(strCalendarName);
-      if (!obeResult.getType().equals(strMessageOk))
+      if (!obeResult.getType().equals(strMessageOk)) {
         return obeResult;
+      }
       log4j.debug("createAccounting() - Calendar inserted correctly.");
 
       log4j.debug("createAccounting() - Inserting year");
       obeResult = insertYear();
-      if (!obeResult.getType().equals(strMessageOk))
+      if (!obeResult.getType().equals(strMessageOk)) {
         return obeResult;
+      }
       log4j.debug("createAccounting() - Year correctly inserted");
     }
     log4j.debug("createAccounting() - Inserting element");
     obeResult = insertElement(strElementName, strAccountString);
-    if (!obeResult.getType().equals(strMessageOk))
+    if (!obeResult.getType().equals(strMessageOk)) {
       return obeResult;
+    }
     log4j.debug("createAccounting() - Element correctly inserted");
 
     log4j.debug("createAccounting() - Inserting accounting schema (general ledger)");
     obeResult = insertAccountingSchema(strGAAPProvided, strCostingMethodProvided, currency,
         hasBPartner, hasProduct, hasProject, hasMCampaign, hasSRegion);
-    if (!obeResult.getType().equals(strMessageOk))
+    if (!obeResult.getType().equals(strMessageOk)) {
       return obeResult;
+    }
     log4j.debug("createAccounting() - Accounting schema (general ledger) correctly inserted");
 
     log4j.debug("createAccounting() - Inserting accounts from file");
     obeResult = insertElementValues(vars, fileCoA);
-    if (!obeResult.getType().equals(strMessageOk))
+    if (!obeResult.getType().equals(strMessageOk)) {
       return obeResult;
+    }
     log4j.debug("createAccounting() - Accounts correctly added to database.");
     // Not meaningful message, but set to keep backwards compatibility
     logEvent("@C_ElementValue_ID@ #");
 
     log4j.debug("createAccounting() - Inserting accounting schema (general ledger and defaults)");
     obeResult = insertAccountingSchemaGLDefaults(acctSchema);
-    if (!obeResult.getType().equals(strMessageOk))
+    if (!obeResult.getType().equals(strMessageOk)) {
       return obeResult;
+    }
     log4j.debug("createAccounting() - Accounting schema (general ledger) correctly inserted");
 
     return obeResult;
   }
 
+  /**
+   * Returns the COA.csv resource as an {@link InputStream}, obtained from deployed reources
+   * 
+   * @param coaModule
+   *          Module containing chart of accounts
+   * @return {@link InputStream} to chart of accounts file
+   * @throws FileNotFoundException
+   *           In case expected COA.csv file cannot be found
+   */
+  public static InputStream getCOAResource(Module coaModule) throws FileNotFoundException {
+    OBContext.setAdminMode();
+    try {
+      String coaPath = "/WEB-INF/referencedata/accounts/" + coaModule.getJavaPackage() + "/COA.csv";
+      InputStream inputStream = RequestContext.getServletContext().getResourceAsStream(coaPath);
+      if (inputStream == null) {
+        throw new FileNotFoundException(RequestContext.getServletContext().getRealPath(coaPath));
+      }
+      return inputStream;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   private String setAccountType(COAData data) {
-    if (data == null)
+    if (data == null) {
       return null;
+    }
     String accountType = "";
     if (!data.accountType.equals("")) {
       String s = data.accountType.toUpperCase().substring(0, 1);
       if (s.equals("A") || s.equals("L") || s.equals("O") || s.equals("E") || s.equals("R")
-          || s.equals("M"))
+          || s.equals("M")) {
         accountType = s;
-      else
+      } else {
         accountType = "E";
+      }
     } else {
       accountType = "E";
     }
@@ -221,8 +257,7 @@ public class COAUtility {
           OBDal.getInstance().flush();
         }
       } catch (Exception e) {
-        return logError(
-            "@CreateAccountingFailed@",
+        return logError("@CreateAccountingFailed@",
             "insertElementValues() - Exception when saving element values readen from file into database",
             e);
       }
@@ -239,35 +274,41 @@ public class COAUtility {
     obeResult.setType(strMessageOk);
 
     String strGAAP = strGAAPProvided;
-    if (strGAAP == null || strGAAP.equals(""))
+    if (strGAAP == null || strGAAP.equals("")) {
       strGAAP = "US"; // AD_Reference_ID=123
+    }
     String strCostingMethod = strCostingMethodProvided;
-    if (strCostingMethod == null || strCostingMethod.equals(""))
+    if (strCostingMethod == null || strCostingMethod.equals("")) {
       strCostingMethod = "A"; // AD_Reference_ID=122
-    String strAcctSchemaName = (organization == null) ? client.getName() : organization.getName()
-        + " " + strGAAP + "/" + strCostingMethod + "/" + currency.getDescription();
+    }
+    String strAcctSchemaName = (organization == null) ? client.getName()
+        : organization.getName() + " " + strGAAP + "/" + strCostingMethod + "/"
+            + currency.getDescription();
     log4j.debug("insertAccountingSchema() - Creating accounting schema (general ledger) "
         + strAcctSchemaName);
     try {
       acctSchema = InitialSetupUtility.insertAcctSchema(client, organization, currency,
           strAcctSchemaName, strGAAP, strCostingMethod, true);
-      if (acctSchema == null)
+      if (acctSchema == null) {
         return logError("@CreateAccountingFailed@",
             "insertAccountingSchema() - Could not create accounting schema (general ledger)"
                 + strAcctSchemaName);
+      }
     } catch (Exception e) {
       return logError("@CreateAccountingFailed@",
           "insertAccountingSchema() - Exception occured while creating accounting schema (general ledger)"
-              + strAcctSchemaName, e);
+              + strAcctSchemaName,
+          e);
     }
     log4j.debug("insertAccountingSchema() - Retrieving Reference List elements belonging to"
         + " reference list (id=181, name='C_AcctSchema ElementType'");
     List<org.openbravo.model.ad.domain.List> acctSchemaElements;
     try {
       acctSchemaElements = InitialSetupUtility.getAcctSchemaElements();
-      if (acctSchemaElements == null || acctSchemaElements.size() == 0)
+      if (acctSchemaElements == null || acctSchemaElements.size() == 0) {
         return logError("@CreateAccountingFailed@", "insertAccountingSchema() - "
             + "ERROR retrieving the acct.schema elements from reference list with id 181");
+      }
     } catch (Exception e) {
       return logError("@CreateAccountingFailed@", "insertAccountingSchema() - "
           + "ERROR retrieving the acct.schema elements from reference list with id 181", e);
@@ -281,45 +322,43 @@ public class COAUtility {
     AcctSchemaElement projectAcctSchemaElement = null;
     AcctSchemaElement campaignAcctSchemaElement = null;
     AcctSchemaElement salesregionAcctSchemaElement = null;
-    for (Iterator<org.openbravo.model.ad.domain.List> listElements = acctSchemaElements.iterator(); listElements
-        .hasNext();) {
+    for (Iterator<org.openbravo.model.ad.domain.List> listElements = acctSchemaElements
+        .iterator(); listElements.hasNext();) {
       org.openbravo.model.ad.domain.List listElement = listElements.next();
 
       String strElement = listElement.getSearchKey();
 
-      log4j.debug("insertAccountingSchema() - Creating acct.schema element "
-          + listElement.getName() + "(" + listElement.getDescription() + ")");
+      log4j.debug("insertAccountingSchema() - Creating acct.schema element " + listElement.getName()
+          + "(" + listElement.getDescription() + ")");
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_ORGANIZATION)) {
         try {
           organizationAcctSchemaElement = InitialSetupUtility.insertAcctSchemaElement(acctSchema,
               organization, listElement, 10L, true, true, null, element);
         } catch (Exception e) {
-          return logError(
-              "@CreateAccountingFailed@",
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for organization",
               e);
         }
-        if (organizationAcctSchemaElement == null)
-          return logError(
-              "@CreateAccountingFailed@",
+        if (organizationAcctSchemaElement == null) {
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for organization");
+        }
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_ACCOUNT)) {
         try {
           accountAcctSchemaElement = InitialSetupUtility.insertAcctSchemaElement(acctSchema,
-              organization, listElement, 20L, true, false,
-              defaultElementValues.get("DEFAULT_ACCT"), element);
+              organization, listElement, 20L, true, false, defaultElementValues.get("DEFAULT_ACCT"),
+              element);
         } catch (Exception e) {
-          return logError(
-              "@CreateAccountingFailed@",
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for account",
               e);
         }
-        if (accountAcctSchemaElement == null)
-          return logError(
-              "@CreateAccountingFailed@",
+        if (accountAcctSchemaElement == null) {
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for account");
+        }
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_PRODUCT) && hasProduct) {
@@ -327,15 +366,14 @@ public class COAUtility {
           productAcctSchemaElement = InitialSetupUtility.insertAcctSchemaElement(acctSchema,
               organization, listElement, 30L, false, false, null, element);
         } catch (Exception e) {
-          return logError(
-              "@CreateAccountingFailed@",
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for product",
               e);
         }
-        if (productAcctSchemaElement == null)
-          return logError(
-              "@CreateAccountingFailed@",
+        if (productAcctSchemaElement == null) {
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for product");
+        }
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_BP) && hasBPartner) {
@@ -343,15 +381,14 @@ public class COAUtility {
           bpartnerAcctSchemaElement = InitialSetupUtility.insertAcctSchemaElement(acctSchema,
               organization, listElement, 40L, false, false, null, element);
         } catch (Exception e) {
-          return logError(
-              "@CreateAccountingFailed@",
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for business partner",
               e);
         }
-        if (bpartnerAcctSchemaElement == null)
-          return logError(
-              "@CreateAccountingFailed@",
+        if (bpartnerAcctSchemaElement == null) {
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for business partner");
+        }
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_PROJECT) && hasProject) {
@@ -359,14 +396,13 @@ public class COAUtility {
           projectAcctSchemaElement = InitialSetupUtility.insertAcctSchemaElement(acctSchema,
               organization, listElement, 50L, false, false, null, element);
         } catch (Exception e) {
-          return logError(
-              "@CreateAccountingFailed@",
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for project");
         }
-        if (projectAcctSchemaElement == null)
-          return logError(
-              "@CreateAccountingFailed@",
+        if (projectAcctSchemaElement == null) {
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for project");
+        }
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_CAMPAIGN) && hasMCampaign) {
@@ -374,15 +410,14 @@ public class COAUtility {
           campaignAcctSchemaElement = InitialSetupUtility.insertAcctSchemaElement(acctSchema,
               organization, listElement, 60L, false, false, null, element);
         } catch (Exception e) {
-          return logError(
-              "@CreateAccountingFailed@",
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for campaign",
               e);
         }
-        if (campaignAcctSchemaElement == null)
-          return logError(
-              "@CreateAccountingFailed@",
+        if (campaignAcctSchemaElement == null) {
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for campaign");
+        }
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_SALESREGION) && hasSRegion) {
@@ -390,15 +425,14 @@ public class COAUtility {
           salesregionAcctSchemaElement = InitialSetupUtility.insertAcctSchemaElement(acctSchema,
               organization, listElement, 70L, false, false, null, element);
         } catch (Exception e) {
-          return logError(
-              "@CreateAccountingFailed@",
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for sales region",
               e);
         }
-        if (salesregionAcctSchemaElement == null)
-          return logError(
-              "@CreateAccountingFailed@",
+        if (salesregionAcctSchemaElement == null) {
+          return logError("@CreateAccountingFailed@",
               "insertAccountingSchema() - Error while creating accounting schema element (general ledger element) for sales region");
+        }
         logEvent("@C_AcctSchema_Element_ID@=" + listElement.getName());
       }
     }
@@ -420,9 +454,10 @@ public class COAUtility {
           "insertAccountingSchema() - Exception while creating acct. schema G/L entry in database",
           e);
     }
-    if (acctSchGL == null)
+    if (acctSchGL == null) {
       return logError("@CreateAccountingFailed@",
           "insertAccountingSchema() - ERROR while creating acct. schema G/L entry in database");
+    }
 
     log4j.debug("insertAccountingSchema() - Acct.schema gl account combinations correctly "
         + "inserted. Inserting acct.schema defaults");
@@ -430,14 +465,14 @@ public class COAUtility {
     try {
       acctSchDef = InitialSetupUtility.insertAcctSchemaDefault(defaultElementValues, acctSchm);
     } catch (Exception e) {
-      return logError(
-          "@CreateAccountingFailed@",
+      return logError("@CreateAccountingFailed@",
           "insertAccountingSchema() - Exception while creating acct. schema defaults entry in database",
           e);
     }
-    if (acctSchDef == null)
+    if (acctSchDef == null) {
       return logError("@CreateAccountingFailed@",
           "insertAccountingSchema() - Exception while creating acct. schema defaults entry in database");
+    }
     log4j.debug("insertAccountingSchema() - Acct.schema defaults correctly iserted.");
 
     log4j.debug("insertAccountingSchema() - Inserting Organization  (general ledger) record.");
@@ -446,8 +481,7 @@ public class COAUtility {
       try {
         orgAcctSchema = InitialSetupUtility.insertOrgAcctSchema(client, acctSchm, organization);
       } catch (Exception e) {
-        return logError(
-            "@CreateAccountingFailed@",
+        return logError("@CreateAccountingFailed@",
             "insertAccountingSchema() - Exception while creating organization - acct. schema entry",
             e);
       }
@@ -464,21 +498,23 @@ public class COAUtility {
   }
 
   private COAData[] parseCOA(VariablesBase vars, InputStream instFile) throws IOException {
-    log4j.debug("parseCOA() - Parsing chart of acconts file provided."
-        + " A COAData object is created.");
+    log4j.debug(
+        "parseCOA() - Parsing chart of acconts file provided." + " A COAData object is created.");
     COAData coa;
-    if (vars == null)
+    if (vars == null) {
       coa = new COAData(instFile, true, "C");
-    else
+    } else {
       coa = new COAData(vars, instFile, true, "C");
+    }
     log4j.debug("parseCOA() - A COAData object correctly created."
         + " Parsing the data readen from the file.");
     return parseData(coa.getFieldProvider());
   }
 
   private COAData[] parseData(FieldProvider[] data) {
-    if (data == null)
+    if (data == null) {
       return null;
+    }
     log4j.debug("parseData() - Parsing " + data.length + " elements read from file.");
     COAData[] result = null;
     Vector<COAData> vec = new Vector<>();
@@ -514,15 +550,15 @@ public class COAUtility {
       dataAux.setUS1120BalanceSheet(data[i].getField("uS1120BalanceSheet"));
       log4j.debug("parseData() - dataAux.uS1120BalanceSheet: " + dataAux.getUS1120BalanceSheet());
       dataAux.setUS1120BalanceSheetName(data[i].getField("uS1120BalanceSheetName"));
-      log4j.debug("parseData() - dataAux.uS1120BalanceSheetName: "
-          + dataAux.getUS1120BalanceSheetName());
+      log4j.debug(
+          "parseData() - dataAux.uS1120BalanceSheetName: " + dataAux.getUS1120BalanceSheetName());
       dataAux.setProfitAndLoss(data[i].getField("profitAndLoss"));
       log4j.debug("parseData() - dataAux.profitAndLoss: " + dataAux.getProfitAndLoss());
       dataAux.setProfitAndLossName(data[i].getField("profitAndLossName"));
       log4j.debug("parseData() - dataAux.profitAndLossName: " + dataAux.getProfitAndLossName());
       dataAux.setUS1120IncomeStatement(data[i].getField("uS1120IncomeStatement"));
-      log4j.debug("parseData() - dataAux.uS1120IncomeStatement: "
-          + dataAux.getUS1120IncomeStatement());
+      log4j.debug(
+          "parseData() - dataAux.uS1120IncomeStatement: " + dataAux.getUS1120IncomeStatement());
       dataAux.setUS1120IncomeStatementName(data[i].getField("uS1120IncomeStatementName"));
       log4j.debug("parseData() - dataAux.uS1120IncomeStatementName: "
           + dataAux.getUS1120IncomeStatementName());
@@ -573,8 +609,9 @@ public class COAUtility {
     obeResult.setType(strMessageError);
     obeResult.setTitle(strMessage);
     strLog = new StringBuffer(strMessage);
-    if (strLogError != null)
+    if (strLogError != null) {
       log4j.error(strLogError);
+    }
 
     if (e != null) {
       log4j.error("Exception ", e);
@@ -594,9 +631,10 @@ public class COAUtility {
   }
 
   private OBError insertCalendar(String strCalendarName) {
-    if (client == null)
+    if (client == null) {
       return logError("@CreateClientFailed@",
           "insertTrees() - ERROR - No client in class attribute client! Cannot insert calendar.");
+    }
     OBError obeResult = new OBError();
     obeResult.setType(strMessageOk);
 
@@ -618,16 +656,17 @@ public class COAUtility {
   }
 
   private OBError insertYear() {
-    if (client == null || calendar == null)
+    if (client == null || calendar == null) {
       return logError("@CreateClientFailed@",
           "insertYear() - ERROR - No client or calendar in class attribute! Cannot insert year.");
+    }
     OBError obeResult = new OBError();
     obeResult.setType(strMessageOk);
 
     try {
       String strYearName = Utility.formatDate(new Date(), "yyyy").toString();
-      log4j.debug("insertYear() - Inserting year " + strYearName + " in calendar "
-          + calendar.getName());
+      log4j.debug(
+          "insertYear() - Inserting year " + strYearName + " in calendar " + calendar.getName());
       Year year = InitialSetupUtility.insertYear(client, organization, calendar, strYearName);
       if (year == null) {
         return logError("@YearNotInserted@", "insertYear() - ERROR - Year NOT inserted");
@@ -648,9 +687,10 @@ public class COAUtility {
    */
   private OBError insertElement(String strClientName, String strAccountString) {
 
-    if (client == null || treeAccount == null)
+    if (client == null || treeAccount == null) {
       return logError("@CreateClientFailed@",
           "insertElement() - ERROR - No client or treeAccount in class attributes! Cannot create element.");
+    }
 
     OBError obeResult = new OBError();
     obeResult.setType(strMessageOk);
@@ -658,15 +698,15 @@ public class COAUtility {
     String strElementName = strClientName + " " + strAccountString;
     log4j.debug("insertElement() - Inserting element " + strElementName);
     try {
-      element = InitialSetupUtility.insertElement(client, organization, strElementName,
-          treeAccount, true);
+      element = InitialSetupUtility.insertElement(client, organization, strElementName, treeAccount,
+          true);
       if (element == null) {
         return logError("@ElementNotInserted@",
             "insertElement() - ERROR - Acct Element NOT inserted");
       }
     } catch (Exception e) {
-      return logError("@ElementNotInserted@",
-          "insertElement() - ERROR - Acct Element NOT inserted", e);
+      return logError("@ElementNotInserted@", "insertElement() - ERROR - Acct Element NOT inserted",
+          e);
     }
     log4j.debug("insertElement() - Element inserted correctly " + element.getName());
     logEvent("@C_Element_ID@=" + strElementName);
@@ -677,9 +717,10 @@ public class COAUtility {
   private OBError insertElementValuesInDB(COAData[] data) {
     OBError obeResult = new OBError();
     obeResult.setType(strMessageOk);
-    if (data == null)
+    if (data == null) {
       return logError("@CreateAccountingFailed@",
           "insertElementValuesInDB() - No element provided to be inserted in database");
+    }
     log4j.debug("insertElementValuesInDB() - Inserting " + data.length + " elements into database");
     // mapElementValueId while store the link c_elementvalue_id <-> value
     HashMap<String, String> mapElementValueValue = new HashMap<String, String>();
@@ -713,10 +754,9 @@ public class COAUtility {
         if (!"".equals(showValueCond) && !showValueCond.startsWith("P")
             && !showValueCond.startsWith("N") && !showValueCond.startsWith("A")) {
           showValueCond = null;
-          logEvent(String
-              .format(Utility.messageBD(new DalConnectionProvider(),
-                  "ValueIgnoredImportingAccount", language), data[i].getAccountValue(),
-                  "ShowValueCond"));
+          logEvent(String.format(Utility.messageBD(new DalConnectionProvider(),
+              "ValueIgnoredImportingAccount", language), data[i].getAccountValue(),
+              "ShowValueCond"));
         }
 
         if (!"".equals(titleNode) && !titleNode.startsWith("Y") && !titleNode.startsWith("N")) {
@@ -759,30 +799,31 @@ public class COAUtility {
               accountType, accountSign, IsDocControlled, IsSummary, data[i].getElementLevel(),
               false, showValueCond, titleNode);
         } catch (Exception e) {
-          return logError(
-              "@CreateAccountingFailed@",
+          return logError("@CreateAccountingFailed@",
               "insertElementValuesInDB() - Not inserted account with value: "
-                  + data[i].getAccountValue(), e);
+                  + data[i].getAccountValue(),
+              e);
         }
         if (elementValue == null) {
-          return logError(
-              "@CreateAccountingFailed@",
+          return logError("@CreateAccountingFailed@",
               "insertElementValuesInDB() - Not inserted account with value: "
                   + data[i].getAccountValue());
         }
-        if (!data[i].getDefaultAccount().equals(""))
+        if (!data[i].getDefaultAccount().equals("")) {
           defaultElementValues.put(data[i].getDefaultAccount(), elementValue);
+        }
 
         mapElementValueValue.put(elementValue.getId(), elementValue.getSearchKey());
         mapElementValueId.put(elementValue.getSearchKey(), elementValue.getId());
 
-        log4j
-            .debug("insertElementValuesInDB() - Element value correctly inserted. Figuring out the correct sequence number.");
+        log4j.debug(
+            "insertElementValuesInDB() - Element value correctly inserted. Figuring out the correct sequence number.");
 
         Long lSequence = 10L;
         String strParent = data[i].getAccountParent();
-        if (strParent.equals(""))
+        if (strParent.equals("")) {
           strParent = "0";
+        }
         if (mapChildSequence.containsKey(strParent)) {
           lSequence = mapChildSequence.get(strParent) + 10;
           mapChildSequence.put(strParent, lSequence);
@@ -790,8 +831,8 @@ public class COAUtility {
           mapSequence.put(data[i].getAccountValue(), lSequence);
           mapParent.put(data[i].getAccountValue(), strParent);
         } else {
-          logEvent("@ParentNotFound@ " + data[i].getAccountValue() + " = "
-              + data[i].getAccountParent());
+          logEvent(
+              "@ParentNotFound@ " + data[i].getAccountValue() + " = " + data[i].getAccountParent());
         }
         log4j.debug("insertElementValues() - Sequence for the element value: " + lSequence);
       }
@@ -803,9 +844,9 @@ public class COAUtility {
     List<TreeNode> lTreeNodes = null;
     try {
       lTreeNodes = InitialSetupUtility.getTreeNode(treeAccount, client, organization);
-      if (lTreeNodes == null)
+      if (lTreeNodes == null) {
         logEvent("@AccountTreeNotSorted@");
-      else {
+      } else {
         log4j.debug("insertElementValuesInDB() - Read from database " + lTreeNodes.size()
             + " ADTreeNode elements. Updating tree.");
         InitialSetupUtility.updateAccountTree(lTreeNodes, mapSequence, mapElementValueValue,
@@ -821,8 +862,8 @@ public class COAUtility {
     } catch (Exception e) {
       logEvent("@AccountTreeNotSorted@");
     }
-    log4j
-        .debug("insertElementValuesInDB() - All accounts inserted correctly in database. Updating operands.");
+    log4j.debug(
+        "insertElementValuesInDB() - All accounts inserted correctly in database. Updating operands.");
     return updateOperands(data);
   }
 
@@ -830,25 +871,27 @@ public class COAUtility {
     String accountSign = "";
     if (!data.accountSign.equals("")) {
       String s = data.accountSign.toUpperCase().substring(0, 1);
-      if (s.equals("D") || s.equals("C"))
+      if (s.equals("D") || s.equals("C")) {
         accountSign = s;
-      else
+      } else {
         accountSign = "N";
-    } else
+      }
+    } else {
       accountSign = "N";
+    }
     log4j.debug("AccountSign: " + accountSign);
     return accountSign;
   }
 
   private OBError updateOperands(COAData[] data) {
-    log4j.debug("updateOperands() - Updating operands for " + data.length
-        + " element values inserted.");
+    log4j.debug(
+        "updateOperands() - Updating operands for " + data.length + " element values inserted.");
     OBError obeResult = new OBError();
     obeResult.setType(strMessageOk);
 
     for (int i = 0; i < data.length; i++) {
-      log4j.debug("updateOperands() - Procesing account in position " + i + ": "
-          + data[i].accountValue);
+      log4j.debug(
+          "updateOperands() - Procesing account in position " + i + ": " + data[i].accountValue);
       String[][] strOperand = operandProcess(data[i].operands);
       String strSeqNo = "10";
       try {
@@ -860,12 +903,13 @@ public class COAUtility {
             log4j.debug("updateOperands() - Procesing operand " + strOperand[j][0]
                 + ", of the account " + data[i].accountValue);
             ElementValueOperand operandElement = InitialSetupUtility.insertOperand(operand,
-                elementValue, Long.valueOf((strOperand[j][1].equals("+") ? "1" : "-1")), Long.valueOf(
-                    strSeqNo));
+                elementValue, Long.valueOf((strOperand[j][1].equals("+") ? "1" : "-1")),
+                Long.valueOf(strSeqNo));
             strSeqNo = nextSeqNo(strSeqNo);
-            if (operandElement == null)
+            if (operandElement == null) {
               logEvent("@OperandNotInserted@. @Account_ID@ = " + data[i].accountValue
                   + " - @Account_ID@ = " + strOperand[j][0]);
+            }
           } else {
             logEvent("Operand not inserted: Account = " + data[i].accountValue + " - Operand = "
                 + strOperand[j][0]);
@@ -886,8 +930,9 @@ public class COAUtility {
   }
 
   private String[][] operandProcess(String strOperand) {
-    if (strOperand == null || strOperand.equals(""))
+    if (strOperand == null || strOperand.equals("")) {
       return null;
+    }
     StringTokenizer st = new StringTokenizer(strOperand, "+-", true);
     StringTokenizer stNo = new StringTokenizer(strOperand, "+-", false);
     int no = stNo.countTokens();
@@ -899,8 +944,9 @@ public class COAUtility {
       if (i % 2 != 1) {
         strResult[no][0] = st.nextToken().trim();
         no++;
-      } else
+      } else {
         strResult[no][1] = st.nextToken().trim();
+      }
       i++;
     }
     // strResult = filterArray(strResult);

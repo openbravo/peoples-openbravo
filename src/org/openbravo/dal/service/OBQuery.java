@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,19 +19,23 @@
 
 package org.openbravo.dal.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
@@ -52,19 +56,20 @@ import org.openbravo.service.db.QueryTimeOutUtil;
  */
 
 public class OBQuery<E extends BaseOBObject> {
-  private static final Logger log = Logger.getLogger(OBQuery.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String FROM_SPACED = " from ";
   private static final String FROM_BRACKET = "(from ";
   private static final String AS = "as ";
   private static final String WHERE = "where";
   private static final String ORDERBY = "order by";
+  private static final String DAL_CLIENT_FILTER = "_dal_readableClients_dal_";
+  private static final String DAL_ORG_FILTER = "_dal_readableOrganizations_dal_";
 
   // computed in createQueryString
   private String usedAlias = "";
   private String whereAndOrderBy;
   private Entity entity;
-  private List<Object> parameters;
   private Map<String, Object> namedParameters;
   private boolean filterOnReadableOrganizations = true;
   private boolean filterOnReadableClients = true;
@@ -91,7 +96,6 @@ public class OBQuery<E extends BaseOBObject> {
    *           if the query returns more than one result
    * @see OBQuery#uniqueResultObject() uniqueResultObject for a version returning an Object
    */
-  @SuppressWarnings("unchecked")
   public E uniqueResult() {
     return (E) createQuery().uniqueResult();
   }
@@ -106,7 +110,7 @@ public class OBQuery<E extends BaseOBObject> {
    * @see OBQuery#uniqueResult() uniqueResult for a type-safe version
    */
   public Object uniqueResultObject() {
-    return createQuery().uniqueResult();
+    return createQuery(Object.class).uniqueResult();
   }
 
   /**
@@ -115,9 +119,19 @@ public class OBQuery<E extends BaseOBObject> {
    * 
    * @return list of objects retrieved from the database
    */
-  @SuppressWarnings("unchecked")
   public List<E> list() {
     return createQuery().list();
+  }
+
+  /**
+   * Makes it possible to get a {@link Stream} over the underlying Query object. Note that the
+   * {@link java.util.stream.Stream#close()} method should be invoked after processing the stream so
+   * that the underlying resources are deallocated right away.
+   * 
+   * @return a {@link Stream} over the underlying Query object.
+   */
+  public Stream<E> stream() {
+    return createQuery().stream();
   }
 
   /**
@@ -126,8 +140,9 @@ public class OBQuery<E extends BaseOBObject> {
    * data.
    * 
    * @return iterator which walks over the list of objects in the db
+   * @deprecated
    */
-  @SuppressWarnings("unchecked")
+  @Deprecated
   public Iterator<E> iterate() {
     return createQuery().iterate();
   }
@@ -156,9 +171,10 @@ public class OBQuery<E extends BaseOBObject> {
       final int index = qryStr.indexOf(FROM_SPACED) + FROM_SPACED.length();
       qryStr = qryStr.substring(index);
     }
-    final Query qry = getSession().createQuery("select count(*) " + FROM_SPACED + qryStr);
+    final Query<Number> qry = getSession().createQuery("select count(*) " + FROM_SPACED + qryStr,
+        Number.class);
     setParameters(qry);
-    return ((Number) qry.uniqueResult()).intValue();
+    return qry.uniqueResult().intValue();
   }
 
   /**
@@ -176,20 +192,17 @@ public class OBQuery<E extends BaseOBObject> {
       final int index = qryStr.indexOf(FROM_SPACED) + FROM_SPACED.length();
       qryStr = qryStr.substring(index);
     }
-    final Query qry = getSession()
-        .createQuery("select " + usedAlias + "id " + FROM_SPACED + qryStr);
+    final Query<String> qry = getSession()
+        .createQuery("select " + usedAlias + "id " + FROM_SPACED + qryStr, String.class);
     setParameters(qry);
 
-    final ScrollableResults results = qry.scroll(ScrollMode.FORWARD_ONLY);
-    try {
+    try (ScrollableResults results = qry.scroll(ScrollMode.FORWARD_ONLY)) {
       while (results.next()) {
         final String id = results.getString(0);
         if (id.equals(targetId)) {
           return results.getRowNumber();
         }
       }
-    } finally {
-      results.close();
     }
     return -1;
   }
@@ -206,8 +219,10 @@ public class OBQuery<E extends BaseOBObject> {
    * OBQuery instance. To generate the criteria of the deletion, it makes use of the whereclause and
    * extra filters (for readable organizations etc.).
    * 
-   * @return a new Hibernate Query object
+   * @return a new Hibernate Query object. Note that it does not have an specific type because
+   *         delete queries can not be typed.
    */
+  @SuppressWarnings("rawtypes")
   public Query deleteQuery() {
     final String qryStr = createQueryString();
     String whereClause;
@@ -219,14 +234,16 @@ public class OBQuery<E extends BaseOBObject> {
       throw new OBException("Exception when creating delete query " + qryStr);
     }
 
+    StringBuilder deleteClause = new StringBuilder();
     try {
-      final Query qry = getSession().createQuery(
-          "DELETE FROM " + getEntity().getName() + " " + whereClause);
+      deleteClause.append("DELETE FROM ");
+      deleteClause.append(getEntity().getName() + " ");
+      deleteClause.append(whereClause);
+      final Query qry = getSession().createQuery(deleteClause.toString());
       setParameters(qry);
       return qry;
     } catch (final Exception e) {
-      throw new OBException("Exception when creating delete query " + "DELETE FROM "
-          + getEntity().getName() + " " + whereClause, e);
+      throw new OBException("Exception when creating delete query " + deleteClause.toString(), e);
     }
   }
 
@@ -236,10 +253,25 @@ public class OBQuery<E extends BaseOBObject> {
    * 
    * @return a new Hibernate Query object
    */
-  public Query createQuery() {
+  @SuppressWarnings("unchecked")
+  public Query<E> createQuery() {
+    return (Query<E>) createQuery(BaseOBObject.class);
+  }
+
+  /**
+   * Creates a Hibernate Query object using the whereclause and extra filters (for readable
+   * organizations etc.). The Query will return objects with the type specified as parameter (unless
+   * a specific select clause is provided using the {@link #setSelectClause(String)} method).
+   *
+   * @param clz
+   *          the class of the query's resulting objects
+   * 
+   * @return a new Hibernate Query object
+   */
+  public <T extends Object> Query<T> createQuery(Class<T> clz) {
     final String qryStr = createQueryString();
     try {
-      final Query qry = getSession().createQuery(qryStr);
+      final Query<T> qry = getSession().createQuery(qryStr, clz);
       setParameters(qry);
       if (fetchSize > -1) {
         qry.setFetchSize(fetchSize);
@@ -391,21 +423,24 @@ public class OBQuery<E extends BaseOBObject> {
     boolean addWhereClause = !whereClause.toLowerCase().contains(" where ");
     if (isFilterOnReadableOrganization() && entity.isOrganizationPartOfKey()) {
       whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
-          + "id.organization.id " + createInClause(obContext.getReadableOrganizations());
+          + "id.organization.id in (:" + DAL_ORG_FILTER + ")";
+      setNamedParameter(DAL_ORG_FILTER, obContext.getReadableOrganizations());
       if (addWhereClause) {
         addWhereClause = false;
       }
     } else if (isFilterOnReadableOrganization() && entity.isOrganizationEnabled()) {
       whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
-          + "organization.id " + createInClause(obContext.getReadableOrganizations());
+          + "organization.id in (:" + DAL_ORG_FILTER + ")";
+      setNamedParameter(DAL_ORG_FILTER, obContext.getReadableOrganizations());
       if (addWhereClause) {
         addWhereClause = false;
       }
     }
 
     if (isFilterOnReadableClients() && getEntity().isClientEnabled()) {
-      whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix + "client.id "
-          + createInClause(obContext.getReadableClients());
+      whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
+          + "client.id in (:" + DAL_CLIENT_FILTER + ")";
+      setNamedParameter(DAL_CLIENT_FILTER, obContext.getReadableClients());
       if (addWhereClause) {
         addWhereClause = false;
       }
@@ -425,20 +460,6 @@ public class OBQuery<E extends BaseOBObject> {
     return whereClause;
   }
 
-  private String createInClause(String[] values) {
-    if (values.length == 0) {
-      return " in ('') ";
-    }
-    final StringBuilder sb = new StringBuilder();
-    for (final String v : values) {
-      if (sb.length() > 0) {
-        sb.append(", ");
-      }
-      sb.append("'" + v + "'");
-    }
-    return " in (" + sb.toString() + ")";
-  }
-
   /**
    * @return the Entity queried by the Query object
    */
@@ -450,26 +471,20 @@ public class OBQuery<E extends BaseOBObject> {
     this.entity = entity;
   }
 
-  private void setParameters(Query qry) {
-    int pos = 0;
-    for (final Object param : getParameters()) {
-      if (param instanceof BaseOBObject) {
-        qry.setEntity(pos++, param);
-      } else {
-        qry.setParameter(pos++, param);
-      }
-    }
+  private void setParameters(Query<?> qry) {
     final Map<String, Object> localNamedParameters = getNamedParameters();
-    if (localNamedParameters != null) {
-      for (final String name : localNamedParameters.keySet()) {
-        final Object value = localNamedParameters.get(name);
-        if (value instanceof BaseOBObject) {
-          qry.setEntity(name, value);
-        } else if (value instanceof Collection<?>) {
-          qry.setParameterList(name, (Collection<?>) value);
-        } else {
-          qry.setParameter(name, value);
-        }
+    if (localNamedParameters == null) {
+      return;
+    }
+    for (Entry<String, Object> entry : localNamedParameters.entrySet()) {
+      final String name = entry.getKey();
+      final Object value = entry.getValue();
+      if (value instanceof Collection<?>) {
+        qry.setParameterList(name, (Collection<?>) value);
+      } else if (value instanceof String[]) {
+        qry.setParameterList(name, (String[]) value);
+      } else {
+        qry.setParameter(name, value);
       }
     }
   }
@@ -543,24 +558,40 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   /**
-   * @return the parameters used in the query, this is the list of non-named parameters in the query
-   */
-  public List<Object> getParameters() {
-    return parameters;
-  }
-
-  /**
-   * Set the parameters in this query. These are the non-named parameters.
+   * Set the non-named parameters ('?') in the query by converting them to named parameters. This
+   * conversion is done because legacy-style query parameters are no longer supported in Hibernate.
+   * 
+   * Note that this method also parses the where and order by clauses of the query to make use of
+   * the newly generated named parameters.
    * 
    * @param parameters
    *          the parameters which are set in the query without a name (e.g. as :?)
+   * 
+   * @deprecated use {@link #setNamedParameters(Map)} instead.
    */
+  @Deprecated
   public void setParameters(List<Object> parameters) {
-    if (parameters == null) {
-      this.parameters = new ArrayList<Object>();
-    } else {
-      this.parameters = parameters;
+    converToNamedParameterQuery(parameters);
+  }
+
+  private void converToNamedParameterQuery(List<Object> parameters) {
+    if (parameters == null || parameters.isEmpty()) {
+      return;
     }
+    Pattern pattern = Pattern.compile("\\?");
+    Matcher matcher = pattern.matcher(whereAndOrderBy);
+    StringBuffer parsedHql = new StringBuffer();
+    int parameterCount = 0;
+    while (matcher.find()) {
+      String parameterName = "__p" + parameterCount;
+      matcher.appendReplacement(parsedHql, ":" + parameterName + " ");
+      setNamedParameter(parameterName, parameters.get(parameterCount));
+      parameterCount++;
+    }
+    matcher.appendTail(parsedHql);
+    Check.isTrue(parameterCount == parameters.size(),
+        "Could not convert legacy-style query parameters in: " + whereAndOrderBy);
+    whereAndOrderBy = parsedHql.toString();
   }
 
   /**
@@ -615,7 +646,7 @@ public class OBQuery<E extends BaseOBObject> {
    */
   public void setNamedParameter(String paramName, Object value) {
     if (this.namedParameters == null) {
-      this.namedParameters = new HashMap<String, Object>();
+      this.namedParameters = new HashMap<>();
     }
     this.namedParameters.put(paramName, value);
   }
@@ -687,7 +718,9 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   /**
-   * Defines a select clause for the underlying query.
+   * Defines a select clause for the underlying query. <b>Important Note</b>: this method can change
+   * the type of the object returned by the query, which is previously defined when instantiating
+   * the OBQuery object.
    * 
    * @param selectClause
    *          the select clause to be used by the underlying query.

@@ -29,12 +29,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBNotSingleton;
@@ -58,12 +59,13 @@ import org.openbravo.service.db.DbUtility;
 // TODO: revisit when looking at factory pattern and dependency injection
 // framework
 public class SessionHandler implements OBNotSingleton {
-  private static final Logger log = Logger.getLogger(SessionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static ExternalConnectionPool externalConnectionPool;
 
   {
-    String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String poolClassName = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("db.externalPoolClassName");
     if (poolClassName != null && !"".equals(poolClassName)) {
       try {
@@ -241,7 +243,7 @@ public class SessionHandler implements OBNotSingleton {
       // If the connection has been obtained using an external connection pool it is passed to
       // openSession, to prevent a new connection to be created using the Hibernate default
       // connection pool
-      return sf.openSession(connection);
+      return sf.withOptions().connection(connection).openSession();
     } else {
       return sf.openSession();
     }
@@ -306,7 +308,7 @@ public class SessionHandler implements OBNotSingleton {
       // getting connection from Hibernate pool
       DalSessionFactory sf = (DalSessionFactory) SessionFactoryController.getInstance()
           .getSessionFactory();
-      newConnection = sf.getConnectionProvider().getConnection();
+      newConnection = sf.getJdbcConnectionAccess().obtainConnection();
       sf.initConnection(newConnection);
     }
     return newConnection;
@@ -537,14 +539,28 @@ public class SessionHandler implements OBNotSingleton {
    * 
    * @param qryStr
    *          the HQL query
+   * @param clazz
+   *          the class of the query's resulting objects
    * @return a new Query object
    */
-  public Query createQuery(String qryStr) {
-    return createQuery(DEFAULT_POOL, qryStr);
+  public <T> Query<T> createQuery(String qryStr, Class<T> clazz) {
+    return createQuery(DEFAULT_POOL, qryStr, clazz);
   }
 
-  private Query createQuery(String pool, String qryStr) {
-    return getSession(pool).createQuery(qryStr);
+  /**
+   * Create a query object from the current getSession().
+   * 
+   * @param qryStr
+   *          the HQL query
+   * @return a new Query object
+   */
+  @SuppressWarnings("unchecked")
+  public <T extends Object> Query<T> createQuery(String qryStr) {
+    return (Query<T>) createQuery(DEFAULT_POOL, qryStr, Object.class);
+  }
+
+  private <T> Query<T> createQuery(String pool, String qryStr, Class<T> clazz) {
+    return getSession(pool).createQuery(qryStr, clazz);
   }
 
   /**
@@ -557,7 +573,7 @@ public class SessionHandler implements OBNotSingleton {
   private void begin(String pool) {
     Check.isTrue(sessions.get(pool) == null, "Session must be null before begin");
     setSession(pool, createSession(pool));
-    getSession(pool).setFlushMode(FlushMode.COMMIT);
+    getSession(pool).setHibernateFlushMode(FlushMode.COMMIT);
     Check.isTrue(getTransaction(pool) == null, "tx must be null before begin");
     setTransaction(pool, getSession(pool).beginTransaction());
     setAvailablePool(pool);

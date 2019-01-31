@@ -19,7 +19,8 @@ package org.openbravo.erpCommon.ad_forms;
 import java.math.BigDecimal;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
@@ -31,7 +32,7 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public class DocLine_Material extends DocLine {
-  static Logger log4jDocLine_Material = Logger.getLogger(DocLine_Material.class);
+  static Logger log4jDocLine_Material = LogManager.getLogger();
 
   /**
    * Constructor
@@ -91,7 +92,8 @@ public class DocLine_Material extends DocLine {
    * @param as
    */
 
-  public String getProductCosts(String date, AcctSchema as, ConnectionProvider conn, Connection con) {
+  public String getProductCosts(String date, AcctSchema as, ConnectionProvider conn,
+      Connection con) {
     if (transaction != null && transaction.getTransactionCost() != null
         && CostingStatus.getInstance().isMigrated()) {
       BigDecimal sign = new BigDecimal(new BigDecimal(getQty()).signum());
@@ -105,8 +107,8 @@ public class DocLine_Material extends DocLine {
             .getOrganizationStructureProvider(p_productInfo.m_AD_Client_ID)
             .getLegalEntity(OBDal.getInstance().get(Organization.class, m_AD_Org_ID));
         return p_productInfo.getProductDefaultCosts(date, null, legalEntity, getWarehouse(),
-            legalEntity.getCurrency() != null ? legalEntity.getCurrency() : legalEntity.getClient()
-                .getCurrency());
+            legalEntity.getCurrency() != null ? legalEntity.getCurrency()
+                : legalEntity.getClient().getCurrency());
       } catch (OBException e) {
         log4jDocLine_Material.error("No standard cost found for product: "
             + OBDal.getInstance().get(Product.class, m_M_Product_ID).getIdentifier()
@@ -138,6 +140,7 @@ public class DocLine_Material extends DocLine {
     this.m_breakdownqty = breakdownqty;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

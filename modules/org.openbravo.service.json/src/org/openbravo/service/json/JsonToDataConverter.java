@@ -34,7 +34,8 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -117,7 +118,7 @@ import org.openbravo.utils.FormatUtilities;
  * @author mtaal
  */
 public class JsonToDataConverter {
-  private static final Logger log = Logger.getLogger(JsonToDataConverter.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String DOT = ".";
 
@@ -241,8 +242,8 @@ public class JsonToDataConverter {
     Calendar localTime = Calendar.getInstance();
     localTime.setTime(UTCTime);
 
-    int gmtMillisecondOffset = (localTime.get(Calendar.ZONE_OFFSET) + localTime
-        .get(Calendar.DST_OFFSET));
+    int gmtMillisecondOffset = (localTime.get(Calendar.ZONE_OFFSET)
+        + localTime.get(Calendar.DST_OFFSET));
     localTime.add(Calendar.MILLISECOND, gmtMillisecondOffset);
 
     return localTime.getTime();
@@ -514,8 +515,8 @@ public class JsonToDataConverter {
                 + previousPath + " " + remainingPath);
           }
         } else if (currentOBObject == null) {
-          currentOBObject = (BaseOBObject) OBProvider.getInstance().get(
-              property.getTargetEntity().getName());
+          currentOBObject = (BaseOBObject) OBProvider.getInstance()
+              .get(property.getTargetEntity().getName());
         }
         handleMultiPathProperty(previousPath + (previousPath.length() > 0 ? DOT : "") + firstPart,
             secondPart, currentOBObject, jsonObject, value);
@@ -547,8 +548,8 @@ public class JsonToDataConverter {
     }
 
     // note: when inheritance is supported then this Check should be changed/removed
-    Check.isTrue(value.getEntity() == entity, "The object " + value
-        + " has a different entity then the request entity " + entity);
+    Check.isTrue(value.getEntity() == entity,
+        "The object " + value + " has a different entity then the request entity " + entity);
     return value;
   }
 
@@ -566,7 +567,8 @@ public class JsonToDataConverter {
    *          the id of the entity
    * @return an existing of new BaseOBObject
    */
-  protected BaseOBObject getBaseOBObjectFromId(Entity entity, Property property, String referencedId) {
+  protected BaseOBObject getBaseOBObjectFromId(Entity entity, Property property,
+      String referencedId) {
     BaseOBObject value = null;
     if (referencedId != null) {
       final String key = getObjectKey(referencedId, entity.getName());
@@ -576,8 +578,9 @@ public class JsonToDataConverter {
         // if an id we should use the get method as it loads from the first level
         // cache
         if (property.getReferencedProperty() != null && !property.getReferencedProperty().isId()) {
-          final OBQuery<BaseOBObject> qry = OBDal.getInstance().createQuery(entity.getName(),
-              property.getReferencedProperty().getName() + "=:reference");
+          final OBQuery<BaseOBObject> qry = OBDal.getInstance()
+              .createQuery(entity.getName(),
+                  property.getReferencedProperty().getName() + "=:reference");
           qry.setNamedParameter("reference", referencedId);
           qry.setFilterOnActive(false);
           qry.setFilterOnReadableClients(false);
@@ -608,8 +611,8 @@ public class JsonToDataConverter {
     }
 
     // note: when inheritance is supported then this Check should be changed/removed
-    Check.isTrue(value.getEntity() == entity, "The object " + value
-        + " has a different entity then the request entity " + entity);
+    Check.isTrue(value.getEntity() == entity,
+        "The object " + value + " has a different entity then the request entity " + entity);
     return value;
   }
 
@@ -626,8 +629,8 @@ public class JsonToDataConverter {
    *          the value as it is present in the original JSONObject
    */
   protected void setValue(BaseOBObject obObject, Property property, Object jsonValue) {
-    Check.isTrue(obObject.getEntity().hasProperty(property.getName()), "The object " + obObject
-        + " does not have the property " + property);
+    Check.isTrue(obObject.getEntity().hasProperty(property.getName()),
+        "The object " + obObject + " does not have the property " + property);
 
     if (isNotConvertable(obObject, property)) {
       // valid case, do not log
@@ -853,6 +856,7 @@ public class JsonToDataConverter {
       throwable = new IllegalStateException(msg);
     }
 
+    @Override
     public String toString() {
       return "Error " + baseOBObject + " " + property + " " + throwable.getMessage();
     }

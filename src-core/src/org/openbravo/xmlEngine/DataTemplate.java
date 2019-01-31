@@ -14,7 +14,8 @@ package org.openbravo.xmlEngine;
 import java.text.DecimalFormat;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A piece of a XmlTemplate with a defined data. This class manages the connection an the query if
@@ -41,7 +42,7 @@ class DataTemplate implements XmlComponentTemplate {
   String strURL;
   String strSQL;
 
-  static Logger log4jDataTemplate = Logger.getLogger(DataTemplate.class);
+  static Logger log4jDataTemplate = LogManager.getLogger();
 
   public DataTemplate() {
     intTotalLevels = -1;
@@ -59,8 +60,8 @@ class DataTemplate implements XmlComponentTemplate {
     return addField(name, null, null, null);
   }
 
-  public FieldTemplate addField(String name, DecimalFormat formatOutput,
-      DecimalFormat formatSimple, Vector<ReplaceElement> vecReplace) {
+  public FieldTemplate addField(String name, DecimalFormat formatOutput, DecimalFormat formatSimple,
+      Vector<ReplaceElement> vecReplace) {
     log4jDataTemplate.debug("(addField) Crear FieldTemplate:" + name);
     // FieldComponent fieldComponent = new
     // FieldComponent(name.trim().toUpperCase(), this);
@@ -139,6 +140,7 @@ class DataTemplate implements XmlComponentTemplate {
     return dataValue;
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
     DataValue dataValue = xmlDocument.hasDataValue.get(strName);
     if (dataValue == null) {

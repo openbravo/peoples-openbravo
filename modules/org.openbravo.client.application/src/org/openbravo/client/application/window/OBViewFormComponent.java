@@ -39,6 +39,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
   private OBViewFieldHandler fieldHandler;
 
+  @Override
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, templateId);
   }

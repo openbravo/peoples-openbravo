@@ -42,10 +42,10 @@ public abstract class BaseTemplateProcessor<T extends Object> implements Templat
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.openbravo.client.kernel.TemplateProcessor#process(org.openbravo.client.kernel.ComponentTemplate
-   * , java.util.Map)
+   * @see org.openbravo.client.kernel.TemplateProcessor#process(org.openbravo.client.kernel.
+   * ComponentTemplate , java.util.Map)
    */
+  @Override
   public String process(Template template, Map<String, Object> data) {
 
     // add some defaults
@@ -105,8 +105,9 @@ public abstract class BaseTemplateProcessor<T extends Object> implements Templat
     final StringBuilder source = new StringBuilder();
     for (Template resolvedTemplate : resolvedTemplates) {
       if (resolvedTemplate.getTemplateClasspathLocation() != null) {
-        source.append(readTemplateSourceFromClasspath(resolvedTemplate
-            .getTemplateClasspathLocation()) + "\n");
+        source
+            .append(readTemplateSourceFromClasspath(resolvedTemplate.getTemplateClasspathLocation())
+                + "\n");
       } else {
         source.append(resolvedTemplate.getTemplate() + "\n");
       }
@@ -174,6 +175,7 @@ public abstract class BaseTemplateProcessor<T extends Object> implements Templat
    * 
    * @see org.openbravo.client.kernel.TemplateProcessor#clearCache()
    */
+  @Override
   public void clearCache() {
     templateCache = new ConcurrentHashMap<String, T>();
   }

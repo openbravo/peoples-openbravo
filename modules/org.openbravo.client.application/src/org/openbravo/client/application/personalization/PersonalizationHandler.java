@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,8 @@ import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -47,8 +49,6 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Handles personalization settings, stores them and retrieves them, taking into account priority
@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 @RequestScoped
 public class PersonalizationHandler {
-  private static final Logger log = LoggerFactory.getLogger(PersonalizationHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Returns all the personalization settings in an object keyed by tabid. The current client, org,
@@ -179,8 +179,8 @@ public class PersonalizationHandler {
 
     try {
 
-      final Role currentRole = OBDal.getInstance().get(Role.class,
-          OBContext.getOBContext().getRole().getId());
+      final Role currentRole = OBDal.getInstance()
+          .get(Role.class, OBContext.getOBContext().getRole().getId());
 
       if (currentRole.getId().equals("0")) {
         result.put("system", true);
@@ -189,15 +189,15 @@ public class PersonalizationHandler {
 
       if (ApplicationUtils.isClientAdmin()) {
         final JSONObject clientObject = new JSONObject();
-        clientObject.put(OBContext.getOBContext().getCurrentClient().getId(), OBContext
-            .getOBContext().getCurrentClient().getIdentifier());
+        clientObject.put(OBContext.getOBContext().getCurrentClient().getId(),
+            OBContext.getOBContext().getCurrentClient().getIdentifier());
         result.put("clients", clientObject);
       }
 
       final Map<String, String> orgs = new HashMap<>();
       for (RoleOrganization currentRoleOrg : adminOrgs) {
-        orgs.put(currentRoleOrg.getOrganization().getId(), currentRoleOrg.getOrganization()
-            .getName());
+        orgs.put(currentRoleOrg.getOrganization().getId(),
+            currentRoleOrg.getOrganization().getName());
       }
 
       final Map<String, String> roles = new HashMap<>();
@@ -231,9 +231,10 @@ public class PersonalizationHandler {
   public UIPersonalization getPersonalizationForTab(Tab tab) {
     OBContext.setAdminMode(false);
     try {
-      return getPersonalization(OBContext.getOBContext().getCurrentClient().getId(), OBContext
-          .getOBContext().getCurrentOrganization().getId(), OBContext.getOBContext().getRole()
-          .getId(), OBContext.getOBContext().getUser().getId(), tab.getId(), null, false);
+      return getPersonalization(OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentOrganization().getId(),
+          OBContext.getOBContext().getRole().getId(), OBContext.getOBContext().getUser().getId(),
+          tab.getId(), null, false);
     } catch (Exception e) {
       throw new OBException("Exception when getting personalization settings for tab " + tab, e);
     } finally {
@@ -245,8 +246,9 @@ public class PersonalizationHandler {
   private List<UIPersonalization> getPersonalizationsForWindow(Window window) {
     OBContext.setAdminMode(false);
     try {
-      final List<UIPersonalization> personalizations = getPersonalizations(OBContext.getOBContext()
-          .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
+      final List<UIPersonalization> personalizations = getPersonalizations(
+          OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentOrganization().getId(),
           OBContext.getOBContext().getUser().getId(), OBContext.getOBContext().getRole().getId(),
           null, window.getId(), false);
       sortPersonalizations(personalizations);
@@ -313,7 +315,8 @@ public class PersonalizationHandler {
       UIPersonalization selectedUIPersonalization = null;
       List<String> parentTree = null;
       if (orgId != null) {
-        parentTree = OBContext.getOBContext().getOrganizationStructureProvider(clientId)
+        parentTree = OBContext.getOBContext()
+            .getOrganizationStructureProvider(clientId)
             .getParentList(orgId, true);
       }
       for (UIPersonalization uiPersonalization : pers) {
@@ -325,15 +328,15 @@ public class PersonalizationHandler {
         int higherPriority = isHigherPriority(selectedUIPersonalization, uiPersonalization,
             parentTree);
         switch (higherPriority) {
-        case 1:
-          // do nothing, selected one has higher priority
-          break;
-        case 2:
-          selectedUIPersonalization = uiPersonalization;
-          break;
-        default:
-          // conflict ignore
-          break;
+          case 1:
+            // do nothing, selected one has higher priority
+            break;
+          case 2:
+            selectedUIPersonalization = uiPersonalization;
+            break;
+          default:
+            // conflict ignore
+            break;
         }
       }
       return selectedUIPersonalization;
@@ -411,8 +414,8 @@ public class PersonalizationHandler {
         if (persId != null) {
           uiPersonalization = OBDal.getInstance().get(UIPersonalization.class, persId);
           if (uiPersonalization == null) {
-            throw new IllegalArgumentException("UI Personalization with id " + persId
-                + " not found");
+            throw new IllegalArgumentException(
+                "UI Personalization with id " + persId + " not found");
           }
         } else {
           uiPersonalization = getPersonalization(clientId, orgId, roleId, userId, tabId, windowId,
@@ -445,8 +448,8 @@ public class PersonalizationHandler {
       }
 
       if (orgId != null) {
-        uiPersonalization.setVisibleAtOrganization(OBDal.getInstance().get(Organization.class,
-            orgId));
+        uiPersonalization
+            .setVisibleAtOrganization(OBDal.getInstance().get(Organization.class, orgId));
       } else {
         uiPersonalization.setVisibleAtOrganization(null);
       }
@@ -485,50 +488,50 @@ public class PersonalizationHandler {
   private static List<UIPersonalization> getPersonalizations(String clientId, String orgId,
       String userId, String roleId, String tabId, String windowId, boolean exactMatch) {
 
-    List<Object> parameters = new ArrayList<>();
+    Map<String, Object> parameters = new HashMap<>();
     StringBuilder hql = new StringBuilder();
     hql.append(" as p ");
     hql.append(" where ");
     if (exactMatch) {
       if (clientId != null) {
-        hql.append(" p.visibleAtClient.id = ? ");
-        parameters.add(clientId);
+        hql.append(" p.visibleAtClient.id = :clientId ");
+        parameters.put("clientId", clientId);
       } else {
         hql.append(" p.visibleAtClient is null");
       }
 
       if (orgId != null) {
-        hql.append(" and p.visibleAtOrganization.id = ? ");
-        parameters.add(orgId);
+        hql.append(" and p.visibleAtOrganization.id = :orgId ");
+        parameters.put("orgId", orgId);
       } else {
         hql.append(" and p.visibleAtOrganization is null ");
       }
 
       if (userId != null) {
-        hql.append(" and p.user.id = ? ");
-        parameters.add(userId);
+        hql.append(" and p.user.id = :userId ");
+        parameters.put("userId", userId);
       } else {
         hql.append(" and p.user is null ");
       }
 
       if (roleId != null) {
-        hql.append(" and p.visibleAtRole.id = ? ");
-        parameters.add(roleId);
+        hql.append(" and p.visibleAtRole.id = :roleId ");
+        parameters.put("roleId", roleId);
       } else {
         hql.append(" and p.visibleAtRole is null");
       }
     } else {
       if (clientId != null) {
-        hql.append(" (p.visibleAtClient.id = ? or ");
-        parameters.add(clientId);
+        hql.append(" (p.visibleAtClient.id = :clientId or ");
+        parameters.put("clientId", clientId);
       } else {
         hql.append(" (");
       }
       hql.append(" coalesce(p.visibleAtClient, '0')='0') ");
 
       if (roleId != null) {
-        hql.append(" and   (p.visibleAtRole.id = ? or ");
-        parameters.add(roleId);
+        hql.append(" and   (p.visibleAtRole.id = :roleId or ");
+        parameters.put("roleId", roleId);
       } else {
         hql.append(" and (");
       }
@@ -540,8 +543,8 @@ public class PersonalizationHandler {
       }
 
       if (userId != null) {
-        hql.append("  and (p.user.id = ? or ");
-        parameters.add(userId);
+        hql.append("  and (p.user.id = :userId or ");
+        parameters.put("userId", userId);
       } else {
         hql.append(" and (");
       }
@@ -549,23 +552,24 @@ public class PersonalizationHandler {
     }
 
     if (tabId != null) {
-      hql.append(" and  p.tab.id = ? ");
-      parameters.add(tabId);
+      hql.append(" and  p.tab.id = :tabId ");
+      parameters.put("tabId", tabId);
     } else {
-      hql.append(" and  p.window.id = ? ");
-      parameters.add(windowId);
+      hql.append(" and  p.window.id = :windowId ");
+      parameters.put("windowId", windowId);
     }
 
-    OBQuery<UIPersonalization> qPers = OBDal.getInstance().createQuery(UIPersonalization.class,
-        hql.toString());
-    qPers.setParameters(parameters);
+    OBQuery<UIPersonalization> qPers = OBDal.getInstance()
+        .createQuery(UIPersonalization.class, hql.toString());
+    qPers.setNamedParameters(parameters);
     List<UIPersonalization> personalizations = qPers.list();
 
     if (orgId != null && !exactMatch) {
       // Remove from list organization that are not visible
       final Organization org = OBDal.getInstance().get(Organization.class, orgId);
       List<String> parentTree = OBContext.getOBContext()
-          .getOrganizationStructureProvider(org.getClient().getId()).getParentList(orgId, true);
+          .getOrganizationStructureProvider(org.getClient().getId())
+          .getParentList(orgId, true);
       List<UIPersonalization> auxPersonalizations = new ArrayList<>();
       for (UIPersonalization pers : personalizations) {
         if (pers.getVisibleAtOrganization() == null
@@ -589,7 +593,8 @@ public class PersonalizationHandler {
    * @param parentTree
    *          Parent tree of organizations including the current one, used to assign more priority
    *          to organizations nearer in the tree.
-   * @return <ul>
+   * @return
+   *         <ul>
    *         <li>1 in case pers1 is more visible than pers2
    *         <li>2 in case pers2 is more visible than pers1
    *         <li>0 in case of conflict (both have identical visibility and value)

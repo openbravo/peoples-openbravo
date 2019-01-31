@@ -31,9 +31,8 @@ public class CalendarWidgetProvider extends WidgetProvider {
 
   @Override
   public String generate() {
-    final String result = "isc.defineClass('" + KernelConstants.ID_PREFIX
-        + getWidgetClass().getId() + "', isc.OBCalendarWidget).addProperties({widgetId: '"
-        + getWidgetClass().getId() + "'});";
+    final String result = "isc.defineClass('" + KernelConstants.ID_PREFIX + getWidgetClass().getId()
+        + "', isc.OBCalendarWidget).addProperties({widgetId: '" + getWidgetClass().getId() + "'});";
     return result;
   }
 

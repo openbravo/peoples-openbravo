@@ -27,6 +27,7 @@ class ClientAuthenticator extends Authenticator {
     _password = password;
   }
 
+  @Override
   public PasswordAuthentication getPasswordAuthentication() {
     return new PasswordAuthentication(_username, _password);
   }

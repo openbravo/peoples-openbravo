@@ -83,13 +83,13 @@ public class SL_Order_DocType extends SimpleCallout {
 
         // Description for Quotation
         String strOldDocSubTypeSO = SLOrderDocTypeData.selectOldDocSubType(this, strOrder);
-        if (!StringUtils.equals(docSubTypeSO, "OB") && StringUtils.equals(strOldDocSubTypeSO, "OB")) {
+        if (!StringUtils.equals(docSubTypeSO, "OB")
+            && StringUtils.equals(strOldDocSubTypeSO, "OB")) {
           String strOldDocNo = SLOrderDocTypeData.selectOldDocNo(this, strOrder);
-          info.addResult(
-              "inpdescription",
-              FormatUtilities.replaceJS(Utility.messageBD(this, "Quotation",
-                  info.vars.getLanguage())
-                  + " " + strOldDocNo + ". " + strDescription));
+          info.addResult("inpdescription",
+              FormatUtilities
+                  .replaceJS(Utility.messageBD(this, "Quotation", info.vars.getLanguage()) + " "
+                      + strOldDocNo + ". " + strDescription));
         }
 
         if (StringUtils.equals(dataNew[0].isdocnocontrolled, "Y")) {
@@ -100,7 +100,8 @@ public class SL_Order_DocType extends SimpleCallout {
           }
           if (newDocNo) {
             if (StringUtils.equalsIgnoreCase(info.vars.getRole(), "System")
-                && new BigDecimal(info.vars.getClient()).compareTo(new BigDecimal("1000000.0")) < 0) {
+                && new BigDecimal(info.vars.getClient())
+                    .compareTo(new BigDecimal("1000000.0")) < 0) {
               info.addResult("inpdocumentno", "<" + dataNew[0].currentnextsys + ">");
             } else {
               info.addResult("inpdocumentno", "<" + dataNew[0].currentnext + ">");
@@ -129,8 +130,8 @@ public class SL_Order_DocType extends SimpleCallout {
           String bpPaymentRule = isSOTrx ? dataBP[0].paymentrule : dataBP[0].paymentrulepo;
           if (StringUtils.isNotEmpty(bpPaymentRule)) {
             if (StringUtils.equals(bpPaymentRule, "B")
-                || (isSOTrx && (StringUtils.equals(bpPaymentRule, "S") || StringUtils.equals(
-                    bpPaymentRule, "U")))) {
+                || (isSOTrx && (StringUtils.equals(bpPaymentRule, "S")
+                    || StringUtils.equals(bpPaymentRule, "U")))) {
               bpPaymentRule = "P";
             }
             paymentRule = bpPaymentRule;
@@ -153,9 +154,9 @@ public class SL_Order_DocType extends SimpleCallout {
         FieldProvider[] l = null;
         try {
           ComboTableData comboTableData = new ComboTableData(info.vars, this, "LIST", "",
-              "C_Order InvoiceRule", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
-                  "SLOrderDocType"), Utility.getContext(this, info.vars, "#User_Client",
-                  "SLOrderDocType"), 0);
+              "C_Order InvoiceRule", "",
+              Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SLOrderDocType"),
+              Utility.getContext(this, info.vars, "#User_Client", "SLOrderDocType"), 0);
           Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SLOrderDocType", "");
           l = comboTableData.select(false);
           comboTableData = null;

@@ -37,7 +37,9 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.common.hooks.ConvertQuotationIntoOrderHookManager;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -64,14 +66,14 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
 
     HttpServletRequest request = RequestContext.get().getRequest();
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    boolean recalculatePrices = "N".equals(vars.getStringParameter("inprecalculateprices", false,
-        "N"));
+    boolean recalculatePrices = "N"
+        .equals(vars.getStringParameter("inprecalculateprices", false, "N"));
     String quotationId = (String) bundle.getParams().get("C_Order_ID");
 
     try {
       Order salesOrder = convertQuotationIntoSalesOrder(recalculatePrices, quotationId);
-      OBError msg = OBErrorBuilder.buildMessage(null, "success", "@SalesOrderDocumentno@ "
-          + salesOrder.getDocumentNo() + " @beenCreated@");
+      OBError msg = OBErrorBuilder.buildMessage(null, "success",
+          "@SalesOrderDocumentno@ " + salesOrder.getDocumentNo() + " @beenCreated@");
       bundle.setResult(msg);
       bundle.getParams().put("SalesOrderId", salesOrder.getId());
       return;
@@ -92,7 +94,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
    * <li>1. Creates a Sales Order in Draft Status based on a clone of the Quotation</li>
    * <li>2. Sets the proper Document Type to the new Sales Order</li>
    * <li>3. Sets the proper values to the Sales Order header</li>
-   * <li>4. For each line that is not a discount it creates a clone into the Sales Order Document</li>
+   * <li>4. For each line that is not a discount it creates a clone into the Sales Order
+   * Document</li>
    * <li>5. If the parameter recalculatePrices is true, it recalculates the prices</li>
    * <li>6. Recalculates the discounts for each line</li>
    * <li>7. Calls C_Order_Post and updates the status of the Quotation to Already Converted to Order
@@ -256,16 +259,16 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
 
             if (newSalesOrderDiscount.isCascade()) {
               discountAmount = newSalesOrderDiscount.getDiscount().getDiscount();
-              discountAmount = cumulativeDiscount.multiply(discountAmount).divide(
-                  new BigDecimal(100));
+              discountAmount = cumulativeDiscount.multiply(discountAmount)
+                  .divide(new BigDecimal(100));
 
             } else {
               discountAmount = newSalesOrderDiscount.getDiscount().getDiscount();
             }
             cumulativeDiscount = cumulativeDiscount.subtract(discountAmount);
 
-            OrderLine olDiscount = generateOrderLineDiscount(taxesWithPrices,
-                newSalesOrderDiscount, quotation, newSalesOrder, lineNo, discountAmount);
+            OrderLine olDiscount = generateOrderLineDiscount(taxesWithPrices, newSalesOrderDiscount,
+                quotation, newSalesOrder, lineNo, discountAmount);
             lineNo = lineNo + 10;
             newSalesOrder.getOrderLineList().add(olDiscount);
           }
@@ -277,6 +280,9 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
 
     OBDal.getInstance().flush();
     OBDal.getInstance().refresh(newSalesOrder);
+
+    // Hook entry point
+    executeHooks(newSalesOrder);
 
     // If prices are going to be recalculated, call C_Order_Post
     callCOrderPost(newSalesOrder, recalculatePrices);
@@ -302,8 +308,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
   private void recalculatePrices(Order quotation, OrderLine quotationLine, Order newSalesOrder,
       OrderLine newSalesOrderLine) {
 
-    String strPriceVersionId = getPriceListVersion(quotation.getPriceList().getId(), quotation
-        .getClient().getId(), newSalesOrder.getOrderDate());
+    String strPriceVersionId = getPriceListVersion(quotation.getPriceList().getId(),
+        quotation.getClient().getId(), newSalesOrder.getOrderDate());
     BigDecimal bdPriceList = getPriceList(quotationLine.getProduct().getId(), strPriceVersionId);
     BigDecimal bdPriceStd = getPriceStd(quotationLine.getProduct().getId(), strPriceVersionId);
 
@@ -340,8 +346,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     }
     BigDecimal discount = BigDecimal.ZERO;
     if (bdPriceList.compareTo(BigDecimal.ZERO) != 0) {
-      discount = bdPriceList
-          .subtract(bdPriceStd)
+      discount = bdPriceList.subtract(bdPriceStd)
           .multiply(new BigDecimal("100"))
           .divide(bdPriceList, newSalesOrder.getCurrency().getStandardPrecision().intValue(),
               RoundingMode.HALF_EVEN);
@@ -350,11 +355,11 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     // Line Price
     if (quotation.getPriceList().isPriceIncludesTax()) {
       // If is Price Including Taxes, change gross
-      newSalesOrderLine.setLineGrossAmount(newSalesOrderLine.getGrossUnitPrice().multiply(
-          newSalesOrderLine.getOrderedQuantity()));
+      newSalesOrderLine.setLineGrossAmount(
+          newSalesOrderLine.getGrossUnitPrice().multiply(newSalesOrderLine.getOrderedQuantity()));
     }
-    newSalesOrderLine.setLineNetAmount(newSalesOrderLine.getUnitPrice().multiply(
-        newSalesOrderLine.getOrderedQuantity()));
+    newSalesOrderLine.setLineNetAmount(
+        newSalesOrderLine.getUnitPrice().multiply(newSalesOrderLine.getOrderedQuantity()));
   }
 
   /**
@@ -381,8 +386,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       String whereClause = " as plv left outer join plv.priceList pl where pl.active='Y' and plv.active='Y' and "
           + " pl.id = :priceList and plv.client.id = :clientId and plv.validFromDate<= :orderDate  order by plv.validFromDate desc";
 
-      OBQuery<PriceListVersion> ppriceListVersion = OBDal.getInstance().createQuery(
-          PriceListVersion.class, whereClause);
+      OBQuery<PriceListVersion> ppriceListVersion = OBDal.getInstance()
+          .createQuery(PriceListVersion.class, whereClause);
       ppriceListVersion.setNamedParameter("priceList", priceList);
       ppriceListVersion.setNamedParameter("clientId", clientId);
       ppriceListVersion.setNamedParameter("orderDate", orderDate);
@@ -408,8 +413,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       parameters.add(strProductID);
       parameters.add(strPriceVersionId);
       final String procedureName = "M_BOM_PriceList";
-      bdPriceList = (BigDecimal) CallStoredProcedure.getInstance().call(procedureName, parameters,
-          null);
+      bdPriceList = (BigDecimal) CallStoredProcedure.getInstance()
+          .call(procedureName, parameters, null);
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -427,8 +432,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       parameters.add(strProductID);
       parameters.add(strPriceVersionId);
       final String procedureName = "M_BOM_PriceStd";
-      bdPriceList = (BigDecimal) CallStoredProcedure.getInstance().call(procedureName, parameters,
-          null);
+      bdPriceList = (BigDecimal) CallStoredProcedure.getInstance()
+          .call(procedureName, parameters, null);
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -475,6 +480,13 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     olDiscount.setProduct(newSalesOrderDiscount.getDiscount().getProduct());
     olDiscount.setDescription(newSalesOrderDiscount.getDiscount().getProduct().getName());
     return olDiscount;
+  }
+
+  private void executeHooks(Order salesOrder) {
+    ConvertQuotationIntoOrderHookManager manager = WeldUtils
+        .getInstanceFromStaticBeanManager(ConvertQuotationIntoOrderHookManager.class);
+
+    manager.executeHooks(salesOrder);
   }
 
 }

@@ -24,7 +24,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -46,7 +47,7 @@ public class ScheduleProcess extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
   private static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
-  private static final Logger log = Logger.getLogger(ScheduleProcess.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -70,15 +71,15 @@ public class ScheduleProcess extends HttpSecureAppServlet {
       // Duplicated code in: RescheduleProcess
       if (group.equals("Y")) {
         ProcessRequest requestObject = OBDal.getInstance().get(ProcessRequest.class, requestId);
-        OBCriteria<ProcessGroupList> processListCri = OBDal.getInstance().createCriteria(
-            ProcessGroupList.class);
+        OBCriteria<ProcessGroupList> processListCri = OBDal.getInstance()
+            .createCriteria(ProcessGroupList.class);
         processListCri.add(Restrictions.eq(ProcessGroupList.PROPERTY_PROCESSGROUP,
             requestObject.getProcessGroup()));
         processListCri.setMaxResults(1);
         if (processListCri.list().size() == 0) {
           advisePopUp(request, response, "ERROR", OBMessageUtils.getI18NMessage("Error", null),
-              OBMessageUtils.getI18NMessage("PROGROUP_NoProcess", new String[] { requestObject
-                  .getProcessGroup().getName() }));
+              OBMessageUtils.getI18NMessage("PROGROUP_NoProcess",
+                  new String[] { requestObject.getProcessGroup().getName() }));
           return;
         }
       }

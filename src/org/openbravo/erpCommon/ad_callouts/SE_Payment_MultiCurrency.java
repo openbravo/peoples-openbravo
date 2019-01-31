@@ -26,7 +26,8 @@ import java.util.Date;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -40,8 +41,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 
 public class SE_Payment_MultiCurrency extends SimpleCallout {
 
-  private static final Logger sePaymentMultiCurrencyLog4j = Logger
-      .getLogger(SE_Payment_MultiCurrency.class);
+  private static final Logger sePaymentMultiCurrencyLog4j = LogManager.getLogger();
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
@@ -52,17 +52,17 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
     String strFinaccTxnAmount = vars.getNumericParameter("inpfinaccTxnAmount");
     String strConvertRate = vars.getNumericParameter("inpfinaccTxnConvertRate");
     String paymentDate = vars.getStringParameter("inppaymentdate");
-    String strAmount = vars.getNumericParameter("inpgeneratedCredit").isEmpty()
-        || (BigDecimal.ZERO).compareTo(new BigDecimal(vars
-            .getNumericParameter("inpgeneratedCredit"))) == 0 ? vars
-        .getNumericParameter("inpamount") : vars.getNumericParameter("inpgeneratedCredit");
+    String strAmount = vars.getNumericParameter("inpgeneratedCredit").isEmpty() || (BigDecimal.ZERO)
+        .compareTo(new BigDecimal(vars.getNumericParameter("inpgeneratedCredit"))) == 0
+            ? vars.getNumericParameter("inpamount")
+            : vars.getNumericParameter("inpgeneratedCredit");
     String currencyId = vars.getStringParameter("inpcCurrencyId");
     String strOrgId = vars.getStringParameter("inpadOrgId");
     String financialAccountId = vars.getStringParameter("inpfinFinancialAccountId");
 
     if ("inpcCurrencyId".equals(lastFieldChanged) || "inppaymentdate".equals(lastFieldChanged)) {
-      FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          financialAccountId);
+      FIN_FinancialAccount financialAccount = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, financialAccountId);
       Currency currency = OBDal.getInstance().get(Currency.class, currencyId);
       BigDecimal finAccConvertRate = BigDecimal.ONE;
       BigDecimal finAccTxnAmount = BigDecimal.ZERO;
@@ -91,8 +91,7 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
         }
       }
 
-    } else if ("inpamount".equals(lastFieldChanged)
-        || "inpgeneratedCredit".equals(lastFieldChanged)
+    } else if ("inpamount".equals(lastFieldChanged) || "inpgeneratedCredit".equals(lastFieldChanged)
         || "inpfinaccTxnConvertRate".equals(lastFieldChanged)) {
       if (!strConvertRate.isEmpty() && !strAmount.isEmpty()) {
         BigDecimal convertRate = new BigDecimal(strConvertRate);
@@ -110,9 +109,8 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
         }
       }
     } else {
-      sePaymentMultiCurrencyLog4j
-          .error("SE_Payment_MultiCurrency. The following field executed the callout"
-              + lastFieldChanged);
+      sePaymentMultiCurrencyLog4j.error(
+          "SE_Payment_MultiCurrency. The following field executed the callout" + lastFieldChanged);
     }
 
   }
@@ -135,8 +133,8 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
     ConversionRate conversionRate;
     OBContext.setAdminMode(true);
     try {
-      final OBCriteria<ConversionRate> obcConvRate = OBDal.getInstance().createCriteria(
-          ConversionRate.class);
+      final OBCriteria<ConversionRate> obcConvRate = OBDal.getInstance()
+          .createCriteria(ConversionRate.class);
       obcConvRate.setFilterOnReadableOrganization(false);
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_ORGANIZATION, org));
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY, fromCurrency));
@@ -150,14 +148,12 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
         if ("0".equals(org.getId())) {
           conversionRate = null;
         } else {
-          return getConversionRate(
-              fromCurrency,
-              toCurrency,
-              conversionDate,
-              OBDal.getInstance().get(
-                  Organization.class,
-                  OBContext.getOBContext().getOrganizationStructureProvider()
-                      .getParentOrg(org.getId())));
+          return getConversionRate(fromCurrency, toCurrency, conversionDate,
+              OBDal.getInstance()
+                  .get(Organization.class,
+                      OBContext.getOBContext()
+                          .getOrganizationStructureProvider()
+                          .getParentOrg(org.getId())));
         }
       }
     } catch (Exception e) {
@@ -177,10 +173,12 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
    * @return valid Date object, or null if string cannot be parsed into a date
    */
   public static Date toDate(String strDate) {
-    if (strDate == null || strDate.isEmpty())
+    if (strDate == null || strDate.isEmpty()) {
       return null;
+    }
     try {
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      String dateFormat = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       return (outputFormat.parse(strDate));

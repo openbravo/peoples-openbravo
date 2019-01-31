@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,10 +22,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -38,7 +39,7 @@ import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalBaseProcess;
 
 public class MRPManufacturingPlanProcess extends DalBaseProcess {
-  private static final Logger log4j = Logger.getLogger(MRPManufacturingPlanProcess.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String NULL = null;
 
   @Override
@@ -47,21 +48,24 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
     final String strManufacturingMRPID = (String) bundle.getParams().get("MRP_Run_Production_ID");
-    final ProductionRun productionRun = OBDal.getInstance().get(ProductionRun.class,
-        strManufacturingMRPID);
+    final ProductionRun productionRun = OBDal.getInstance()
+        .get(ProductionRun.class, strManufacturingMRPID);
     final String userId = OBContext.getOBContext().getUser().getId();
     final String orgId = productionRun.getOrganization().getId();
     final String clientId = productionRun.getClient().getId();
-    final String plannerId = productionRun.getPlanner() != null ? productionRun.getPlanner()
-        .getId() : NULL;
-    final String productId = productionRun.getProduct() != null ? productionRun.getProduct()
-        .getId() : NULL;
-    final String productCategoryId = productionRun.getProductCategory() != null ? productionRun
-        .getProductCategory().getId() : NULL;
-    final String bpId = productionRun.getBusinessPartner() != null ? productionRun
-        .getBusinessPartner().getId() : NULL;
-    final String bpCatId = productionRun.getBusinessPartnerCategory() != null ? productionRun
-        .getBusinessPartnerCategory().getId() : NULL;
+    final String plannerId = productionRun.getPlanner() != null ? productionRun.getPlanner().getId()
+        : NULL;
+    final String productId = productionRun.getProduct() != null ? productionRun.getProduct().getId()
+        : NULL;
+    final String productCategoryId = productionRun.getProductCategory() != null
+        ? productionRun.getProductCategory().getId()
+        : NULL;
+    final String bpId = productionRun.getBusinessPartner() != null
+        ? productionRun.getBusinessPartner().getId()
+        : NULL;
+    final String bpCatId = productionRun.getBusinessPartnerCategory() != null
+        ? productionRun.getBusinessPartnerCategory().getId()
+        : NULL;
     final long timeHorizon = productionRun.getTimeHorizon();
     final long safetyLeadTime = productionRun.getSafetyLeadTime();
     final Date docDate = productionRun.getDocumentDate();
@@ -165,8 +169,9 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
     deleteLines.append(" delete from " + ProductionRunLine.ENTITY_NAME);
     deleteLines.append(" where " + ProductionRunLine.PROPERTY_MANUFACTURINGPLAN + ".id = :prodRun");
     deleteLines.append("   and " + ProductionRunLine.PROPERTY_FIXED + " = false");
+    @SuppressWarnings("rawtypes")
     Query delete = OBDal.getInstance().getSession().createQuery(deleteLines.toString());
-    delete.setString("prodRun", strManufacturingMRPID);
+    delete.setParameter("prodRun", strManufacturingMRPID);
     delete.executeUpdate();
     OBDal.getInstance().flush();
   }
@@ -176,8 +181,8 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
     where.append(" where " + ProductionRunLine.PROPERTY_MANUFACTURINGPLAN + ".id = :prodRun");
     where.append("   and " + ProductionRunLine.PROPERTY_QUANTITY + " < 0");
     where.append("   and " + ProductionRunLine.PROPERTY_TRANSACTIONTYPE + " <> 'WR'");
-    OBQuery<ProductionRunLine> prlQry = OBDal.getInstance().createQuery(ProductionRunLine.class,
-        where.toString());
+    OBQuery<ProductionRunLine> prlQry = OBDal.getInstance()
+        .createQuery(ProductionRunLine.class, where.toString());
     prlQry.setNamedParameter("prodRun", productionRunId);
 
     prlQry.setFetchSize(1000);

@@ -33,7 +33,7 @@ public class SL_Organization_Info extends SimpleCallout {
       log4j.debug("CHANGED: " + strChanged);
     }
 
-    info.showInformation(OBMessageUtils.messageBD(this, "CreateOrganizationInfo",
-        info.vars.getLanguage()));
+    info.showInformation(
+        OBMessageUtils.messageBD(this, "CreateOrganizationInfo", info.vars.getLanguage()));
   }
 }

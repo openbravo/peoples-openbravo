@@ -20,7 +20,8 @@ package org.openbravo.email;
  */
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -37,7 +38,7 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 
 public class EmailUtils {
-  static Logger log4j = Logger.getLogger(EmailUtils.class);
+  static Logger log4j = LogManager.getLogger();
 
   /*
    * Retrieves the email configuration of the Organization
@@ -52,15 +53,16 @@ public class EmailUtils {
       if (organization != null) {
         OBCriteria<EmailServerConfiguration> mailConfigCriteria = OBDal.getInstance()
             .createCriteria(EmailServerConfiguration.class);
-        mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_ORGANIZATION,
-            organization));
-        mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_CLIENT, OBContext.getOBContext().getCurrentClient()));
+        mailConfigCriteria
+            .add(Restrictions.eq(EmailServerConfiguration.PROPERTY_ORGANIZATION, organization));
+        mailConfigCriteria.add(Restrictions.eq(EmailServerConfiguration.PROPERTY_CLIENT,
+            OBContext.getOBContext().getCurrentClient()));
 
         List<EmailServerConfiguration> mailConfigList = null;
         mailConfigList = mailConfigCriteria.list();
         // A client can define several organization, so uniqueRequlst can not be used
         if (mailConfigList.size() != 0) {
-        	emailConfiguration = mailConfigList.get(0);
+          emailConfiguration = mailConfigList.get(0);
         }
 
         if (organization.getId().equals("0")) {

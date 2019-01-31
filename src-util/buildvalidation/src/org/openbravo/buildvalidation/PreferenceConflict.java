@@ -21,7 +21,8 @@ package org.openbravo.buildvalidation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ExecutionLimits;
 import org.openbravo.buildvalidation.BuildValidation;
 import org.openbravo.database.ConnectionProvider;
@@ -32,7 +33,7 @@ import org.openbravo.modulescript.OpenbravoVersion;
  * organizations with different values. This can cause a different behavior than in <mp16 releases.
  */
 public class PreferenceConflict extends BuildValidation {
-  private static Logger log4j = Logger.getLogger(PreferenceConflict.class);
+  private static Logger log4j = LogManager.getLogger();
 
   @Override
   public List<String> execute() {

@@ -82,19 +82,21 @@ public class BuildTranslation {
 
   public BuildMainStepTranslation getBuildMainStepTranslationForCode(String code) {
     for (BuildMainStepTranslation tr : mainStepTranslations) {
-      if (tr.getCode().equals(code))
+      if (tr.getCode().equals(code)) {
         return tr;
+      }
     }
     return null;
   }
 
   public FieldProvider[] getFieldProvidersForBuild() {
-    if (build == null)
+    if (build == null) {
       return null;
+    }
     ArrayList<FieldProvider> fieldProviderList = new ArrayList<FieldProvider>();
     for (BuildMainStep mainStep : build.getMainSteps()) {
-      BuildMainStepTranslation mainStepTranslation = getBuildMainStepTranslationForCode(mainStep
-          .getCode());
+      BuildMainStepTranslation mainStepTranslation = getBuildMainStepTranslationForCode(
+          mainStep.getCode());
       if (mainStepTranslation == null) {
         fieldProviderList.add(new BuildStepWrapper(mainStep).getFieldProvider());
         for (BuildStep step : mainStep.getStepList()) {
@@ -116,8 +118,9 @@ public class BuildTranslation {
 
     FieldProvider[] fps = new FieldProvider[fieldProviderList.size()];
     int i = 0;
-    for (FieldProvider fp : fieldProviderList)
+    for (FieldProvider fp : fieldProviderList) {
       fps[i++] = fp;
+    }
     return fps;
   }
 

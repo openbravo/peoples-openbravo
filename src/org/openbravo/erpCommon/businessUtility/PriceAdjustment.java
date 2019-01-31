@@ -28,12 +28,14 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
@@ -48,7 +50,7 @@ import org.openbravo.model.common.plm.Product;
  * 
  */
 public class PriceAdjustment {
-  private static final Logger log = Logger.getLogger(PriceAdjustment.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   @Any
@@ -62,8 +64,8 @@ public class PriceAdjustment {
       BigDecimal qty, BigDecimal priceStd) {
     BigDecimal priceActual = priceStd;
     try {
-      int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY))
-          .getPricePrecision().intValue();
+      int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY)).getPricePrecision()
+          .intValue();
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
           orderOrInvoice, qty, product, false)) {
         log.debug("promo: " + promo + "- " + promo.getDiscount());
@@ -76,8 +78,7 @@ public class PriceAdjustment {
           priceActual = promo.getFixedPrice();
         } else {
           if (applyDiscount) {
-            priceActual = priceActual
-                .subtract(promo.getDiscountAmount())
+            priceActual = priceActual.subtract(promo.getDiscountAmount())
                 .multiply(
                     BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))))
                 .setScale(precision, RoundingMode.HALF_UP);
@@ -105,8 +106,8 @@ public class PriceAdjustment {
       BigDecimal qty, BigDecimal priceActual) {
     BigDecimal priceStd = priceActual;
     try {
-      int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY))
-          .getPricePrecision().intValue();
+      int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY)).getPricePrecision()
+          .intValue();
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
           orderOrInvoice, qty, product, true)) {
         boolean applyDiscount = true;
@@ -119,9 +120,10 @@ public class PriceAdjustment {
           // Avoids divide by zero error
           if (BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100)))
               .compareTo(BigDecimal.ZERO) != 0) {
-            priceStd = priceStd.add(promo.getDiscountAmount()).divide(
-                BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))),
-                precision, RoundingMode.HALF_UP);
+            priceStd = priceStd.add(promo.getDiscountAmount())
+                .divide(
+                    BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))),
+                    precision, RoundingMode.HALF_UP);
           } else {
             // 100 % Discount in price adjustment results in priceStd = Zero
             priceStd = BigDecimal.ZERO;
@@ -134,9 +136,9 @@ public class PriceAdjustment {
       log.debug("Std:" + priceActual + "->" + priceStd);
       return priceStd;
     } catch (Throwable t) {
-      log.error("Error calculating price std with adjustments, returning price actual ("
-          + priceActual + ") order/invoice:" + orderOrInvoice + " - product: " + product
-          + " - qty:" + qty);
+      log.error(
+          "Error calculating price std with adjustments, returning price actual (" + priceActual
+              + ") order/invoice:" + orderOrInvoice + " - product: " + product + " - qty:" + qty);
       return priceActual;
     }
   }
@@ -146,7 +148,7 @@ public class PriceAdjustment {
     String hql = "as p ";
     hql += "where active = true ";
     hql += "and client = :client ";
-    hql += "and ad_isorgincluded(:org, p.organization.id, p.client.id) <> -1 ";
+    hql += "and ad_isorgincluded(:orgId, p.organization.id, p.client.id) <> -1 ";
     hql += "and (endingDate is null or trunc(endingDate) + 1 > :date) ";
     hql += "and trunc(startingDate)<=:date ";
     hql += "and p.discountType.id = '5D4BAF6BB86D4D2C9ED3D5A6FC051579' ";
@@ -240,13 +242,13 @@ public class PriceAdjustment {
     hql += "         from PricingAdjustmentOrganization o";
     hql += "        where active = true";
     hql += "          and o.priceAdjustment = p";
-    hql += "          and o.organization.id = :org)) ";
+    hql += "          and o.organization.id = :orgId)) ";
     hql += "   or (includedOrganizations='N' ";
     hql += "  and  exists (select 1 ";
     hql += "         from PricingAdjustmentOrganization o";
     hql += "        where active = true";
     hql += "          and o.priceAdjustment = p";
-    hql += "          and o.organization.id = :org )) ";
+    hql += "          and o.organization.id = :orgId )) ";
     hql += "    ) ";
 
     // product characteristic
@@ -286,7 +288,8 @@ public class PriceAdjustment {
     OBQuery<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> q = OBDal.getInstance()
         .createQuery(org.openbravo.model.pricing.priceadjustment.PriceAdjustment.class, hql);
     q.setNamedParameter("client", orderOrInvoice.get(Invoice.PROPERTY_CLIENT));
-    q.setNamedParameter("org", orderOrInvoice.get(Invoice.PROPERTY_ORGANIZATION));
+    q.setNamedParameter("orgId",
+        ((Organization) orderOrInvoice.get(Invoice.PROPERTY_ORGANIZATION)).getId());
     q.setNamedParameter("priceList", orderOrInvoice.get(Invoice.PROPERTY_PRICELIST));
     q.setNamedParameter("bp", orderOrInvoice.get(Invoice.PROPERTY_BUSINESSPARTNER));
 

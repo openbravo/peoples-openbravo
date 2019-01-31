@@ -21,7 +21,8 @@ package org.openbravo.client.kernel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -48,7 +49,7 @@ import org.openbravo.dal.service.OBDal;
  * @see Template#getOverridesTemplate()
  */
 public class TemplateResolver {
-  private static final Logger log = Logger.getLogger(TemplateResolver.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static TemplateResolver instance = new TemplateResolver();
 
@@ -94,8 +95,8 @@ public class TemplateResolver {
     Template currentTemplate = template;
     int cnt = 0;
     while (true) {
-      final OBCriteria<Template> templateCriteria = OBDal.getInstance().createCriteria(
-          Template.class);
+      final OBCriteria<Template> templateCriteria = OBDal.getInstance()
+          .createCriteria(Template.class);
       templateCriteria.add(Restrictions.eq(Template.PROPERTY_OVERRIDESTEMPLATE, currentTemplate));
       final List<Template> overridingTemplates = templateCriteria.list();
       if (overridingTemplates.size() == 0) {
@@ -108,8 +109,8 @@ public class TemplateResolver {
       derivePath.add(currentTemplate);
       final Template newTemplate = overridingTemplates.get(0);
       if (derivePath.contains(newTemplate)) {
-        log.error("There is a cycle in the overriding of templates, one template is "
-            + currentTemplate);
+        log.error(
+            "There is a cycle in the overriding of templates, one template is " + currentTemplate);
         return currentTemplate;
       }
       currentTemplate = newTemplate;

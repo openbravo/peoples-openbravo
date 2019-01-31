@@ -21,7 +21,8 @@ package org.openbravo.client.application;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -45,7 +46,7 @@ import org.openbravo.model.ad.ui.Tab;
  */
 public class ApplicationUtils {
 
-  private static Logger log = Logger.getLogger(ApplicationUtils.class);
+  private static Logger log = LogManager.getLogger();
   private static final String BUTTON_REFERENCE = "28";
 
   /**
@@ -60,8 +61,8 @@ public class ApplicationUtils {
    */
   public static String getParentProperty(Tab tab, Tab parentTab) {
     final Entity thisEntity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
-    final Entity parentEntity = ModelProvider.getInstance().getEntity(
-        parentTab.getTable().getName());
+    final Entity parentEntity = ModelProvider.getInstance()
+        .getEntity(parentTab.getTable().getName());
     Property returnProperty = null;
     // first try the real parent properties
     for (Property property : thisEntity.getProperties()) {
@@ -141,8 +142,8 @@ public class ApplicationUtils {
     try {
       OBContext.setAdminMode();
 
-      final OBCriteria<RoleOrganization> roleOrgs = OBDal.getInstance().createCriteria(
-          RoleOrganization.class);
+      final OBCriteria<RoleOrganization> roleOrgs = OBDal.getInstance()
+          .createCriteria(RoleOrganization.class);
       roleOrgs.add(Restrictions.eq(RoleOrganization.PROPERTY_ROLE, role));
       roleOrgs.add(Restrictions.eq(RoleOrganization.PROPERTY_ORGADMIN, true));
 

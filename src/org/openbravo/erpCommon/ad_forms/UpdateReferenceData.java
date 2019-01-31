@@ -11,14 +11,13 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2017 Openbravo SLU
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -31,8 +30,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.InitialSetupUtility;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
@@ -43,6 +44,7 @@ import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DataImportService;
@@ -53,6 +55,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final String SALTO_LINEA = "<br>\n";
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -70,8 +73,9 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
       log4j.debug("UpdateReferenceData - after processFile");
       printPageResult(response, vars, strResultado, m_info);
     } else if (vars.commandIn("CANCEL")) {
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
@@ -80,12 +84,15 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
         strOrganization, true);
     XmlDocument xmlDocument = null;
     String[] discard = { "selEliminar" };
-    if (tree.getData() == null || tree.getData().length == 0)
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_forms/UpdateReferenceData").createXmlDocument();
-    else
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_forms/UpdateReferenceData", discard).createXmlDocument();
+    if (tree.getData() == null || tree.getData().length == 0) {
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_forms/UpdateReferenceData")
+          .createXmlDocument();
+    } else {
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_forms/UpdateReferenceData", discard)
+          .createXmlDocument();
+    }
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -132,8 +139,9 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
 
   private void printPageResult(HttpServletResponse response, VariablesSecureApp vars,
       String strResultado, StringBuffer m_info) throws IOException, ServletException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/Resultado").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/Resultado")
+        .createXmlDocument();
 
     xmlDocument.setParameter("resultado", m_info.toString());
 
@@ -159,21 +167,26 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
     }
     OBError myMessage = new OBError();
     myMessage.setTitle("");
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("UpdateReferenceData - before setMessage");
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("UpdateReferenceData - isOK: " + strResultado.equals(""));
+    }
     if (strResultado.equals("")) {
       myMessage.setType("Success");
-    } else
+    } else {
       myMessage.setType("Error");
-    myMessage.setMessage(Utility.messageBD(this,
-        strResultado.equals("") ? "Success" : strResultado, vars.getLanguage()));
-    if (log4j.isDebugEnabled())
+    }
+    myMessage.setMessage(Utility.messageBD(this, strResultado.equals("") ? "Success" : strResultado,
+        vars.getLanguage()));
+    if (log4j.isDebugEnabled()) {
       log4j.debug("UpdateReferenceData - Message Type: " + myMessage.getType());
+    }
     vars.setMessage("UpdateReferenceData", myMessage);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("UpdateReferenceData - after setMessage");
+    }
     if (myMessage != null) {
       xmlDocument.setParameter("messageType", myMessage.getType());
       xmlDocument.setParameter("messageTitle", myMessage.getTitle());
@@ -192,8 +205,9 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
     String strOrganization = vars.getStringParameter("inpOrganization");
     String strModules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
     String strModule = vars.getStringParameter("inpNodeId");
-    if (strModules == null || strModules.equals(""))
+    if (strModules == null || strModules.equals("")) {
       strModules = "('" + strModule + "')";
+    }
     ArrayList<String> modules = new ArrayList<String>();
     if (strModules != null && !strModules.equals("")) {
       UpdateReferenceDataData[] data = UpdateReferenceDataData.selectModules(cp, strModules,
@@ -211,46 +225,58 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
 
         StringBuffer strError = new StringBuffer("");
         for (int j = 0; j < data.length; j++) {
-          String strPath = vars.getSessionValue("#SOURCEPATH");
-          if (!data[j].javapackage.equals("org.openbravo"))
-            strPath = strPath + "/modules/" + data[j].javapackage;
-          strPath = strPath + "/referencedata/standard";
-          File datasetFile = new File(strPath + "/" + Utility.wikifiedName(data[j].datasetname)
-              + ".xml");
-          if (!datasetFile.exists()) {
-            continue;
-          }
-          if (UpdateReferenceDataData.existsOrgModule(cp, vars.getClient(), strOrganization,
-              data[j].adModuleId, data[j].version).equals("0")) {
+          String fileName = Utility.wikifiedName(data[j].datasetname);
+          if (UpdateReferenceDataData
+              .existsOrgModule(cp, vars.getClient(), strOrganization, data[j].adModuleId,
+                  data[j].version)
+              .equals("0")) {
             // Not installed previously
-            String strXml = Utility.fileToString(datasetFile.getPath());
+            OBContext.setAdminMode(true);
+            String strXml;
+            try {
+              strXml = InitialSetupUtility
+                  .getDatasetContent(OBDal.getInstance().get(DataSet.class, data[j].adDatasetId));
+            } catch (IOException ignore) {
+              log4j.error("Error updating reference data for " + fileName, ignore);
+              continue;
+            } finally {
+              OBContext.restorePreviousMode();
+            }
+
             ImportResult myResult = myData.importDataFromXML(
                 OBDal.getInstance().get(Client.class, vars.getClient()),
-                OBDal.getInstance().get(Organization.class, strOrganization), strXml, OBDal
-                    .getInstance().get(Module.class, data[j].adModuleId), true);
-            m_info.append(SALTO_LINEA).append("File: ").append(datasetFile.getName()).append(":")
+                OBDal.getInstance().get(Organization.class, strOrganization), strXml,
+                OBDal.getInstance().get(Module.class, data[j].adModuleId), true);
+            m_info.append(SALTO_LINEA)
+                .append("File: ")
+                .append(fileName)
+                .append(":")
                 .append(SALTO_LINEA);
             if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
                 && !myResult.getLogMessages().equals("null")) {
               m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getLogMessages()))
+              m_info.append(SALTO_LINEA)
+                  .append(replaceNL(myResult.getLogMessages()))
                   .append(SALTO_LINEA);
             }
             if (myResult.getWarningMessages() != null && !myResult.getWarningMessages().equals("")
                 && !myResult.getWarningMessages().equals("null")) {
               m_info.append(SALTO_LINEA).append("WARNINGS:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getWarningMessages()))
+              m_info.append(SALTO_LINEA)
+                  .append(replaceNL(myResult.getWarningMessages()))
                   .append(SALTO_LINEA);
             }
             if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
                 && !myResult.getErrorMessages().equals("null")) {
               m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getErrorMessages()))
+              m_info.append(SALTO_LINEA)
+                  .append(replaceNL(myResult.getErrorMessages()))
                   .append(SALTO_LINEA);
             }
             if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
-                && !myResult.getErrorMessages().equals("null"))
+                && !myResult.getErrorMessages().equals("null")) {
               strError = strError.append(myResult.getErrorMessages());
+            }
             if (!strError.toString().equals("")) {
               return strError.toString();
             } else {
@@ -262,10 +288,12 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
                   .append(SALTO_LINEA);
             }
           } else {
-            m_info.append(SALTO_LINEA).append("File: ").append(datasetFile.getName()).append(":")
+            m_info.append(SALTO_LINEA)
+                .append("File: ")
+                .append(fileName)
+                .append(":")
                 .append(SALTO_LINEA);
-            m_info
-                .append(SALTO_LINEA)
+            m_info.append(SALTO_LINEA)
                 .append(
                     Utility.messageBD(cp, "CreateReferenceDataAlreadyCreated", vars.getLanguage()))
                 .append(SALTO_LINEA);
@@ -287,8 +315,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
             // dataset has been already applied
             if (updatedOrgModule == 0) {
               OBDal.getInstance().rollbackAndClose();
-              m_info
-                  .append(SALTO_LINEA)
+              m_info.append(SALTO_LINEA)
                   .append(Utility.messageBD(cp, "DatasetHasBeenAlreadyApplied", vars.getLanguage()))
                   .append(SALTO_LINEA);
             }
@@ -307,10 +334,12 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
           UpdateReferenceDataData.updateOrgModuleChecksum(cp, checksums.get(moduleId),
               vars.getUser(), vars.getClient(), strOrganization, moduleId);
         }
-      } else
+      } else {
         return "WrongModules";
-    } else
+      }
+    } else {
       return "NoModules";
+    }
     return "";
   }
 

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -87,17 +89,15 @@ import org.openbravo.test.copyLinesFromOrders.data.JSONUtils;
 import org.openbravo.test.copyLinesFromOrders.data.OrderData;
 import org.openbravo.test.copyLinesFromOrders.data.OrderLineData;
 import org.openbravo.test.copyLinesFromOrders.data.UOMManagementUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Tests cases to check Copy Lines From Orders process
  * 
  * @author Mark
- *
+ * 
  */
 public class CopyLinesFromOrdersTest extends WeldBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(CopyLinesFromOrdersTest.class);
+  final static private Logger log = LogManager.getLogger();
 
   // User Openbravo
   private final String USER_ID = "100";
@@ -312,43 +312,45 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
     testOrder.setDocumentNo(orderData.getDocumentNo());
     testOrder.setOrderDate(new Date());
     testOrder.setAccountingDate(new Date());
-    testOrder.setScheduledDeliveryDate(DateUtils.addDays(new Date(),
-        orderData.getDeliveryDaysCountFromNow()));
-    testOrder.setDocumentType(OBDal.getInstance().getProxy(DocumentType.class,
-        orderData.getDocumentTypeId()));
-    testOrder.setTransactionDocument(OBDal.getInstance().getProxy(DocumentType.class,
-        orderData.getDocumentTypeId()));
-    testOrder.setOrganization(OBDal.getInstance().getProxy(Organization.class,
-        orderData.getOrganizationId()));
-    testOrder.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class,
-        orderData.getBusinessPartnerId()));
-    testOrder.setPartnerAddress(OBDal.getInstance().getProxy(Location.class,
-        orderData.getBusinessPartnerLocationId()));
-    testOrder.setInvoiceAddress(OBDal.getInstance().getProxy(Location.class,
-        orderData.getBusinessPartnerLocationId()));
+    testOrder.setScheduledDeliveryDate(
+        DateUtils.addDays(new Date(), orderData.getDeliveryDaysCountFromNow()));
+    testOrder.setDocumentType(
+        OBDal.getInstance().getProxy(DocumentType.class, orderData.getDocumentTypeId()));
+    testOrder.setTransactionDocument(
+        OBDal.getInstance().getProxy(DocumentType.class, orderData.getDocumentTypeId()));
+    testOrder.setOrganization(
+        OBDal.getInstance().getProxy(Organization.class, orderData.getOrganizationId()));
+    testOrder.setBusinessPartner(
+        OBDal.getInstance().getProxy(BusinessPartner.class, orderData.getBusinessPartnerId()));
+    testOrder.setPartnerAddress(
+        OBDal.getInstance().getProxy(Location.class, orderData.getBusinessPartnerLocationId()));
+    testOrder.setInvoiceAddress(
+        OBDal.getInstance().getProxy(Location.class, orderData.getBusinessPartnerLocationId()));
     testOrder.setSummedLineAmount(BigDecimal.ZERO);
     testOrder.setGrandTotalAmount(BigDecimal.ZERO);
-    testOrder.setCurrency(OBDal.getInstance().getProxy(Currency.class,
-        CLFOTestConstants.EUR_CURRENCY_ID));
+    testOrder.setCurrency(
+        OBDal.getInstance().getProxy(Currency.class, CLFOTestConstants.EUR_CURRENCY_ID));
     testOrder.setSalesTransaction(orderData.isSales());
     testOrder.setPriceIncludesTax(orderData.isPriceIncludingTaxes());
-    testOrder.setPriceList(OBDal.getInstance()
-        .getProxy(PriceList.class, orderData.getPriceListId()));
-    testOrder.setPaymentMethod(OBDal.getInstance().getProxy(FIN_PaymentMethod.class,
-        orderData.getPaymentMethodId()));
-    testOrder.setPaymentTerms(OBDal.getInstance().getProxy(PaymentTerm.class,
-        orderData.getPaymentTermsId()));
-    testOrder.setWarehouse(OBDal.getInstance()
-        .getProxy(Warehouse.class, orderData.getWarehouseId()));
+    testOrder
+        .setPriceList(OBDal.getInstance().getProxy(PriceList.class, orderData.getPriceListId()));
+    testOrder.setPaymentMethod(
+        OBDal.getInstance().getProxy(FIN_PaymentMethod.class, orderData.getPaymentMethodId()));
+    testOrder.setPaymentTerms(
+        OBDal.getInstance().getProxy(PaymentTerm.class, orderData.getPaymentTermsId()));
+    testOrder
+        .setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, orderData.getWarehouseId()));
     OBDal.getInstance().save(testOrder);
     OBDal.getInstance().flush();
     return testOrder;
   }
 
   private void addOrderLineFromData(Order order, OrderLineData line) {
-    AttributeSetInstance attributeSetInstance = StringUtils.isNotEmpty(line
-        .getAttributeSetInstanceId()) ? OBDal.getInstance().getProxy(AttributeSetInstance.class,
-        line.getAttributeSetInstanceId()) : null;
+    AttributeSetInstance attributeSetInstance = StringUtils
+        .isNotEmpty(line.getAttributeSetInstanceId())
+            ? OBDal.getInstance()
+                .getProxy(AttributeSetInstance.class, line.getAttributeSetInstanceId())
+            : null;
     UOM operativeUOM = null;
     BigDecimal operativeQuantity = BigDecimal.ZERO;
     if (UOMUtil.isUomManagementEnabled()) {
@@ -361,13 +363,13 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
       }
     }
     addOrderLine(order, line.getLineNo(),
-        OBDal.getInstance().getProxy(BusinessPartner.class, line.getBusinessPartnerId()), OBDal
-            .getInstance().getProxy(Organization.class, line.getOrganizationId()), OBDal
-            .getInstance().getProxy(Product.class, line.getProductId()), OBDal.getInstance()
-            .getProxy(UOM.class, line.getUomId()), line.getOrderedQuantity(), line.getPrice(),
-        OBDal.getInstance().getProxy(TaxRate.class, line.getTaxId()),
-        OBDal.getInstance().getProxy(Warehouse.class, line.getWarehouseId()),
-        line.getDescription(), attributeSetInstance, operativeQuantity, operativeUOM);
+        OBDal.getInstance().getProxy(BusinessPartner.class, line.getBusinessPartnerId()),
+        OBDal.getInstance().getProxy(Organization.class, line.getOrganizationId()),
+        OBDal.getInstance().getProxy(Product.class, line.getProductId()),
+        OBDal.getInstance().getProxy(UOM.class, line.getUomId()), line.getOrderedQuantity(),
+        line.getPrice(), OBDal.getInstance().getProxy(TaxRate.class, line.getTaxId()),
+        OBDal.getInstance().getProxy(Warehouse.class, line.getWarehouseId()), line.getDescription(),
+        attributeSetInstance, operativeQuantity, operativeUOM);
   }
 
   public void addOrderLine(Order order, Long lineNo, BusinessPartner businessPartner,
@@ -381,8 +383,8 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
     testOrderLine.setBusinessPartner(businessPartner);
     testOrderLine.setWarehouse(warehouse);
     testOrderLine.setDescription(description);
-    testOrderLine.setCurrency(OBDal.getInstance().getProxy(Currency.class,
-        CLFOTestConstants.EUR_CURRENCY_ID));
+    testOrderLine.setCurrency(
+        OBDal.getInstance().getProxy(Currency.class, CLFOTestConstants.EUR_CURRENCY_ID));
     testOrderLine.setProduct(product);
     testOrderLine.setUOM(uom);
     testOrderLine.setOrderedQuantity(orderedQuantity);
@@ -429,22 +431,26 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
   private void validateExpectedOrderAmounts(Order processingOrder) {
     String expectedTotalNetAmount = expectedOrderAmounts[0];
     String expectedTotalGrossAmount = expectedOrderAmounts[1];
-    assertThat(testNumber + ". Wrong Total Net Amount = "
-        + processingOrder.getSummedLineAmount().toString() + "). Was expected "
-        + expectedTotalNetAmount, processingOrder.getSummedLineAmount(),
+    assertThat(
+        testNumber + ". Wrong Total Net Amount = "
+            + processingOrder.getSummedLineAmount().toString() + "). Was expected "
+            + expectedTotalNetAmount,
+        processingOrder.getSummedLineAmount(),
         comparesEqualTo(new BigDecimal(expectedTotalNetAmount)));
 
-    assertThat(testNumber + ". Wrong Total Gross Amount = "
-        + processingOrder.getGrandTotalAmount().toString() + "). Was expected "
-        + expectedTotalNetAmount, processingOrder.getGrandTotalAmount(),
+    assertThat(
+        testNumber + ". Wrong Total Gross Amount = "
+            + processingOrder.getGrandTotalAmount().toString() + "). Was expected "
+            + expectedTotalNetAmount,
+        processingOrder.getGrandTotalAmount(),
         comparesEqualTo(new BigDecimal(expectedTotalGrossAmount)));
   }
 
   private void validateExpectedOrderLines(Order processingOrder) {
-    assertThat(testNumber + ". Number of lines copied = "
-        + processingOrder.getOrderLineList().size() + " different than expected ("
-        + expectedOrderLinesData.size() + ")", processingOrder.getOrderLineList().size(),
-        comparesEqualTo(expectedOrderLinesData.size()));
+    assertThat(
+        testNumber + ". Number of lines copied = " + processingOrder.getOrderLineList().size()
+            + " different than expected (" + expectedOrderLinesData.size() + ")",
+        processingOrder.getOrderLineList().size(), comparesEqualTo(expectedOrderLinesData.size()));
 
     for (OrderLine orderLineCopied : processingOrder.getOrderLineList()) {
       String lineNo = orderLineCopied.getLineNo().toString();
@@ -465,38 +471,45 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
         String expectedAttributeValue = expectedLineData[10];
         String expectedOperativeQty = expectedLineData[11];
         String expectedOperativeUOM = expectedLineData[12];
+        String expectedDescription = expectedLineData[13];
 
-        String referenceOrderDocumentNo = orderLineCopied.getSOPOReference().getSalesOrder()
+        String referenceOrderDocumentNo = orderLineCopied.getSOPOReference()
+            .getSalesOrder()
             .getDocumentNo();
-        assertThat(testNumber + ". Wrong Reference Order = " + referenceOrderDocumentNo
-            + "). Was expected " + expectedReferenceOrderDocumentNo, referenceOrderDocumentNo,
-            comparesEqualTo(expectedReferenceOrderDocumentNo));
+        assertThat(
+            testNumber + ". Wrong Reference Order = " + referenceOrderDocumentNo
+                + "). Was expected " + expectedReferenceOrderDocumentNo,
+            referenceOrderDocumentNo, comparesEqualTo(expectedReferenceOrderDocumentNo));
 
         String productName = orderLineCopied.getProduct().getName();
         assertThat(testNumber + ". Wrong Product = " + productName + "). Was expected "
             + expectedProductName, productName, comparesEqualTo(expectedProductName));
 
         BigDecimal orderQty = orderLineCopied.getOrderedQuantity();
-        assertThat(testNumber + ". Wrong Ordered Qty = " + orderQty + "). Was expected "
-            + expectedOrderedQty, orderQty, comparesEqualTo(new BigDecimal(expectedOrderedQty)));
+        assertThat(
+            testNumber + ". Wrong Ordered Qty = " + orderQty + "). Was expected "
+                + expectedOrderedQty,
+            orderQty, comparesEqualTo(new BigDecimal(expectedOrderedQty)));
 
         String uom = orderLineCopied.getUOM().getName();
         assertThat(testNumber + ". Wrong UOM = " + uom + "). Was expected " + expectedUOM, uom,
             comparesEqualTo(expectedUOM));
 
         BigDecimal netUnitPrice = orderLineCopied.getUnitPrice();
-        assertThat(testNumber + ". Wrong Net Unit Price = " + netUnitPrice + "). Was expected "
-            + expectedNetUnitPrice, netUnitPrice, comparesEqualTo(new BigDecimal(
-            expectedNetUnitPrice)));
+        assertThat(
+            testNumber + ". Wrong Net Unit Price = " + netUnitPrice + "). Was expected "
+                + expectedNetUnitPrice,
+            netUnitPrice, comparesEqualTo(new BigDecimal(expectedNetUnitPrice)));
 
         BigDecimal listPrice = orderLineCopied.getListPrice();
         assertThat(testNumber + ". Wrong List Price = " + listPrice + "). Was expected "
             + expectedListPrice, listPrice, comparesEqualTo(new BigDecimal(expectedListPrice)));
 
         BigDecimal grossPrice = orderLineCopied.getGrossUnitPrice();
-        assertThat(testNumber + ". Wrong Gross Unit Price = " + grossPrice + "). Was expected "
-            + expectedGrossUnitPrice, grossPrice, comparesEqualTo(new BigDecimal(
-            expectedGrossUnitPrice)));
+        assertThat(
+            testNumber + ". Wrong Gross Unit Price = " + grossPrice + "). Was expected "
+                + expectedGrossUnitPrice,
+            grossPrice, comparesEqualTo(new BigDecimal(expectedGrossUnitPrice)));
 
         String taxName = orderLineCopied.getTax().getName();
         assertThat(testNumber + ". Wrong Tax = " + taxName + "). Was expected " + expectedTax,
@@ -510,16 +523,18 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
 
         String headerDeliveryDate = processingOrder.getOrderDate().toString();
         String lineDeliveryDate = orderLineCopied.getOrderDate().toString();
-        assertThat(testNumber + ". Wrong Order Line Schedule Delivery Date = " + lineDeliveryDate
-            + "). Was expected " + headerDeliveryDate, lineDeliveryDate,
-            comparesEqualTo(headerDeliveryDate));
+        assertThat(
+            testNumber + ". Wrong Order Line Schedule Delivery Date = " + lineDeliveryDate
+                + "). Was expected " + headerDeliveryDate,
+            lineDeliveryDate, comparesEqualTo(headerDeliveryDate));
 
-        String headerDescription = processingOrder.getDescription();
         String lineDescription = orderLineCopied.getDescription();
-        if (StringUtils.isNotEmpty(headerDescription) || StringUtils.isNotEmpty(lineDescription)) {
-          assertThat(testNumber + ". Wrong Order Line Description = " + lineDescription
-              + "). Was expected " + headerDescription, lineDescription,
-              comparesEqualTo(headerDescription));
+        if (StringUtils.isNotEmpty(expectedDescription)
+            || StringUtils.isNotEmpty(lineDescription)) {
+          assertThat(
+              testNumber + ". Wrong Order Line Description = " + lineDescription
+                  + "). Was expected " + expectedDescription,
+              lineDescription, comparesEqualTo(expectedDescription));
         }
 
         // Check BP Address
@@ -534,22 +549,31 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
             + expectedOrganization, organization, comparesEqualTo(expectedOrganization));
 
         // Check Attribute
-        String attributeValue = orderLineCopied.getAttributeSetValue() != null ? orderLineCopied
-            .getAttributeSetValue().getAttributeSet().getAttributeUseList().get(0).getAttribute()
-            .getAttributeValueList().get(0).getName() : "";
+        String attributeValue = orderLineCopied.getAttributeSetValue() != null
+            ? orderLineCopied.getAttributeSetValue()
+                .getAttributeSet()
+                .getAttributeUseList()
+                .get(0)
+                .getAttribute()
+                .getAttributeValueList()
+                .get(0)
+                .getName()
+            : "";
         if (StringUtils.isNotEmpty(attributeValue)
             || StringUtils.isNotEmpty(expectedAttributeValue)) {
-          assertThat(testNumber + ". Wrong Attribute Value = " + attributeValue
-              + "). Was expected " + expectedAttributeValue, attributeValue,
-              comparesEqualTo(expectedAttributeValue));
+          assertThat(
+              testNumber + ". Wrong Attribute Value = " + attributeValue + "). Was expected "
+                  + expectedAttributeValue,
+              attributeValue, comparesEqualTo(expectedAttributeValue));
         }
 
         // Check AUM
         if (UOMUtil.isUomManagementEnabled()) {
           BigDecimal operativeQty = orderLineCopied.getOperativeQuantity();
-          assertThat(testNumber + ". Wrong Operative Qty = " + operativeQty + "). Was expected "
-              + expectedOperativeQty, operativeQty, comparesEqualTo(new BigDecimal(
-              expectedOperativeQty)));
+          assertThat(
+              testNumber + ". Wrong Operative Qty = " + operativeQty + "). Was expected "
+                  + expectedOperativeQty,
+              operativeQty, comparesEqualTo(new BigDecimal(expectedOperativeQty)));
 
           String operativeAUM = orderLineCopied.getOperativeUOM().getName();
           assertThat(testNumber + ". Wrong Operative UOM = " + operativeAUM + "). Was expected "

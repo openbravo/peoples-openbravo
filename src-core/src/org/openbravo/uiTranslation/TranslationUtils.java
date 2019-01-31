@@ -18,12 +18,13 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 class TranslationUtils {
 
-  private static final Logger log4j = Logger.getLogger(TranslationUtils.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public static final int TAB = 0, FORM = 1, PROCESS = 2;
 
@@ -69,8 +70,8 @@ class TranslationUtils {
     info.setHelp(module.help);
   }
 
-  public static WindowLabel[] processWindowLabels(ConnectionProvider con, String tabId,
-      String lang, String moduleLang) {
+  public static WindowLabel[] processWindowLabels(ConnectionProvider con, String tabId, String lang,
+      String moduleLang) {
     FieldLabelsData[] fieldLabels;
     FieldGroupLabelsData[] fieldGroupLabels;
     try {
@@ -173,15 +174,16 @@ class TranslationUtils {
     return res;
   }
 
-  private static HashMap<String, String> retrieveLabelData(ConnectionProvider conn,
-      String fileName, String language) {
+  private static HashMap<String, String> retrieveLabelData(ConnectionProvider conn, String fileName,
+      String language) {
     HashMap<String, String> textmap = new HashMap<String, String>();
     try {
       TextInterfacesData[] textData = TextInterfacesData.selectText(conn, fileName, language);
       for (int i = 0; i < textData.length; i++) {
         // trim values, in some occasions there is a character 160 representing blank spaces
-        if (!textmap.containsKey(textData[i].text.replace((char) 160, ' ').trim()))
+        if (!textmap.containsKey(textData[i].text.replace((char) 160, ' ').trim())) {
           textmap.put(textData[i].text.replace((char) 160, ' ').trim(), textData[i].trltext);
+        }
       }
       return textmap;
     } catch (ServletException e) {

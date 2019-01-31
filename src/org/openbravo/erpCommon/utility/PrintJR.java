@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2007-2015 Openbravo SLU
+ * All portions are Copyright (C) 2007-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,31 +26,38 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.data.Sqlc;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.reference.Reference;
 import org.openbravo.reference.ui.UIReference;
 import org.openbravo.utils.Replace;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.JasperReport;
+
 public class PrintJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     String strProcessId = vars.getRequiredStringParameter("inpadProcessId");
+    String processType = "R";
     String strOutputType = vars.getStringParameter("inpoutputtype", "html");
-    if (!hasGeneralAccess(vars, "P", strProcessId)) {
+    if (!hasGeneralAccess(vars, processType, strProcessId)) {
       bdError(request, response, "AccessTableNoView", vars.getLanguage());
       return;
     }
+
+    SessionInfo.setProcessId(strProcessId);
+    SessionInfo.setProcessType(processType);
+
     String strReportName = PrintJRData.getReportName(this, strProcessId);
     HashMap<String, Object> parameters = createParameters(vars, strProcessId);
 
@@ -61,8 +68,9 @@ public class PrintJR extends HttpSecureAppServlet {
 
   private HashMap<String, Object> createParameters(VariablesSecureApp vars, String strProcessId)
       throws ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("JR: Get Parameters");
+    }
     String strParamname;
     JasperReport jasperReport = null;
 
@@ -74,14 +82,15 @@ public class PrintJR extends HttpSecureAppServlet {
       String strLanguage = vars.getLanguage();
       String strBaseDesign = getBaseDesignPath(strLanguage);
 
-      strReportName = Replace.replace(
-          Replace.replace(strReportName, "@basedesign@", strBaseDesign), "@attach@", strAttach);
+      strReportName = Replace.replace(Replace.replace(strReportName, "@basedesign@", strBaseDesign),
+          "@attach@", strAttach);
 
       try {
         jasperReport = ReportingUtils.compileReport(strReportName);
       } catch (JRException e) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("JR: Error: " + e);
+        }
         e.printStackTrace();
         throw new ServletException(e.getMessage(), e);
       } catch (Exception e) {
@@ -105,26 +114,26 @@ public class PrintJR extends HttpSecureAppServlet {
       }
 
       if (!paramValue.equals("")) {
-        parameters.put(
-            processparams[i].paramname,
-            formatParameter(vars, processparams[i].paramname, paramValue,
-                processparams[i].reference, jasperReport));
+        parameters.put(processparams[i].paramname, formatParameter(vars, processparams[i].paramname,
+            paramValue, processparams[i].reference, jasperReport));
       }
     }
     return parameters;
   }
 
-  private Object formatParameter(VariablesSecureApp vars, String strParamName,
-      String strParamValue, String reference, JasperReport jasperReport) throws ServletException {
+  private Object formatParameter(VariablesSecureApp vars, String strParamName, String strParamValue,
+      String reference, JasperReport jasperReport) throws ServletException {
     String strObjectClass = "";
     Object object;
     JRParameter[] jrparams = jasperReport.getParameters();
     for (int i = 0; i < jrparams.length; i++) {
-      if (jrparams[i].getName().equals(strParamName))
+      if (jrparams[i].getName().equals(strParamName)) {
         strObjectClass = jrparams[i].getValueClassName();
+      }
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("ClassType: " + strObjectClass);
+    }
     if (strObjectClass.equals("java.lang.String")) {
       object = new String(strParamValue);
     } else if (strObjectClass.equals("java.util.Date")) {
@@ -142,6 +151,7 @@ public class PrintJR extends HttpSecureAppServlet {
     return object;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that generates the output of a JasperReports report.";
   } // end of getServletInfo() method

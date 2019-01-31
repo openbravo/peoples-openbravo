@@ -69,6 +69,7 @@ public class ModuleValidator implements SystemValidator {
     }
   };
 
+  @Override
   public String getCategory() {
     return "Module";
   }
@@ -76,6 +77,7 @@ public class ModuleValidator implements SystemValidator {
   /**
    * Validates all modules and returns the {@link SystemValidationResult}.
    */
+  @Override
   public SystemValidationResult validate() {
     final SystemValidationResult result = new SystemValidationResult();
     if (getValidateModule() != null) {
@@ -95,7 +97,8 @@ public class ModuleValidator implements SystemValidator {
     if (module.getId().equals("0")) {
       return;
     }
-    final String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    final String sourcePath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("source.path");
     final File modulesDir = new File(sourcePath, "modules");
 
@@ -145,10 +148,10 @@ public class ModuleValidator implements SystemValidator {
     for (String part : paths) {
       final File partDir = new File(curDir, part);
       if (curDir.listFiles() == null || !partDir.exists()) {
-        result.addError(SystemValidationType.MODULE_ERROR, "The source directory of the Module "
-            + module.getName()
-            + " is invalid, the source directory structure does not correspond to the "
-            + "javaPackage of the module (" + javaPackage + ").");
+        result.addError(SystemValidationType.MODULE_ERROR,
+            "The source directory of the Module " + module.getName()
+                + " is invalid, the source directory structure does not correspond to the "
+                + "javaPackage of the module (" + javaPackage + ").");
         return;
       }
       // check all children
@@ -170,9 +173,10 @@ public class ModuleValidator implements SystemValidator {
             continue;
           }
 
-          result.addError(SystemValidationType.MODULE_ERROR, "The source directory of the Module "
-              + module.getName() + " is invalid, it contains directories/files (" + fileName
-              + ") which are not part of " + "the javaPackage of the module: " + javaPackage);
+          result.addError(SystemValidationType.MODULE_ERROR,
+              "The source directory of the Module " + module.getName()
+                  + " is invalid, it contains directories/files (" + fileName
+                  + ") which are not part of " + "the javaPackage of the module: " + javaPackage);
         }
       }
       curDir = partDir;
@@ -214,10 +218,11 @@ public class ModuleValidator implements SystemValidator {
       if (dependentModule.isIncluded()) {
         // for inclusions check the dependency matches exactly with the defined one
         if (!depActualVersion.equals(firstVer)) {
-          result.addWarning(SystemValidationType.MODULE_ERROR, module.getName()
-              + " defines inclussion of module " + dependentModule.getDependentModule().getName()
-              + " in version " + firstVer + ", but actual version in DB is " + depActualVersion
-              + ". They must exactly match.");
+          result.addWarning(SystemValidationType.MODULE_ERROR,
+              module.getName() + " defines inclussion of module "
+                  + dependentModule.getDependentModule().getName() + " in version " + firstVer
+                  + ", but actual version in DB is " + depActualVersion
+                  + ". They must exactly match.");
         }
         // check dependencies for included modules recursively
         checkDependencyVersion(dependentModule.getDependentModule(), result);
@@ -226,48 +231,51 @@ public class ModuleValidator implements SystemValidator {
         String enforcement = dependentModule.getDependencyEnforcement();
 
         if (lastVer != null && vc.compare(firstVer, lastVer) > 0) {
-          result.addError(SystemValidationType.MODULE_ERROR, module.getName()
-              + " defines dependency on " + dependentModule.getDependentModule().getName()
-              + ". It is incorrect beacuase first version (" + firstVer
-              + ") is higher than last version (" + lastVer + ")");
+          result.addError(SystemValidationType.MODULE_ERROR,
+              module.getName() + " defines dependency on "
+                  + dependentModule.getDependentModule().getName()
+                  + ". It is incorrect beacuase first version (" + firstVer
+                  + ") is higher than last version (" + lastVer + ")");
         }
 
         if ("MAJOR".equals(enforcement)) {
           if (vc.compare(firstVer, depActualVersion) > 0) {
-            result.addError(SystemValidationType.MODULE_ERROR, module.getName()
-                + " defines dependency on " + dependentModule.getDependentModule().getName()
-                + " start version " + firstVer + ", but actual version in DB is "
-                + depActualVersion + ".");
+            result.addError(SystemValidationType.MODULE_ERROR,
+                module.getName() + " defines dependency on "
+                    + dependentModule.getDependentModule().getName() + " start version " + firstVer
+                    + ", but actual version in DB is " + depActualVersion + ".");
           } else if (lastVer == null && vc.compareMajorVersions(firstVer, depActualVersion) != 0) {
-            result.addError(SystemValidationType.MODULE_ERROR, module.getName()
-                + " defines dependency on " + dependentModule.getDependentModule().getName()
-                + " start version " + firstVer + ", but actual version in DB is "
-                + depActualVersion + ". Which has a different major version.");
+            result.addError(SystemValidationType.MODULE_ERROR,
+                module.getName() + " defines dependency on "
+                    + dependentModule.getDependentModule().getName() + " start version " + firstVer
+                    + ", but actual version in DB is " + depActualVersion
+                    + ". Which has a different major version.");
           } else if (lastVer != null
               && VersionUtility.versionCompareStrictMajorVersion(depActualVersion, lastVer) > 0) {
-            result.addError(SystemValidationType.MODULE_ERROR, module.getName()
-                + " defines dependency on " + dependentModule.getDependentModule().getName()
-                + " end version " + lastVer + ", but actual version in DB is " + depActualVersion);
+            result.addError(SystemValidationType.MODULE_ERROR,
+                module.getName() + " defines dependency on "
+                    + dependentModule.getDependentModule().getName() + " end version " + lastVer
+                    + ", but actual version in DB is " + depActualVersion);
           }
         } else if ("MINOR".equals(enforcement)) {
           if (lastVer == null && vc.compare(firstVer, depActualVersion) != 0) {
-            result.addError(SystemValidationType.MODULE_ERROR, module.getName()
-                + " defines a MINOR enforcement dependency on "
-                + dependentModule.getDependentModule().getName() + " version " + firstVer
-                + ", but actual version in DB is " + depActualVersion
-                + ". Both versions must be exactly the same.");
+            result.addError(SystemValidationType.MODULE_ERROR,
+                module.getName() + " defines a MINOR enforcement dependency on "
+                    + dependentModule.getDependentModule().getName() + " version " + firstVer
+                    + ", but actual version in DB is " + depActualVersion
+                    + ". Both versions must be exactly the same.");
           } else if (lastVer != null && vc.compare(depActualVersion, lastVer) > 0) {
-            result.addError(SystemValidationType.MODULE_ERROR, module.getName()
-                + " defines a MINOR enforcement dependency on "
-                + dependentModule.getDependentModule().getName() + " end version " + lastVer
-                + ", but actual version in DB is " + depActualVersion);
+            result.addError(SystemValidationType.MODULE_ERROR,
+                module.getName() + " defines a MINOR enforcement dependency on "
+                    + dependentModule.getDependentModule().getName() + " end version " + lastVer
+                    + ", but actual version in DB is " + depActualVersion);
           }
         } else { // NONE
           if (vc.compare(firstVer, depActualVersion) > 0) {
-            result.addError(SystemValidationType.MODULE_ERROR, module.getName()
-                + " defines NONE enforcement dependency on "
-                + dependentModule.getDependentModule().getName() + " start version " + firstVer
-                + ", but actual version in DB is " + depActualVersion + ".");
+            result.addError(SystemValidationType.MODULE_ERROR,
+                module.getName() + " defines NONE enforcement dependency on "
+                    + dependentModule.getDependentModule().getName() + " start version " + firstVer
+                    + ", but actual version in DB is " + depActualVersion + ".");
           }
         }
       }
@@ -305,9 +313,9 @@ public class ModuleValidator implements SystemValidator {
     for (ModuleDependency md : module.getModuleDependencyList()) {
       if (md.isIncluded()) {
         if (verifiedInclusions.contains(md.getDependentModule().getId())) {
-          result.addError(SystemValidationType.DUPLICATED_INCLUSION, "Module "
-              + md.getDependentModule().getName()
-              + " is included several times in the dependency tree.");
+          result.addError(SystemValidationType.DUPLICATED_INCLUSION,
+              "Module " + md.getDependentModule().getName()
+                  + " is included several times in the dependency tree.");
         }
         verifiedInclusions.add(md.getDependentModule().getId());
         checkDuplicatedInclusions(md.getDependentModule(), result, verifiedInclusions);
@@ -326,9 +334,9 @@ public class ModuleValidator implements SystemValidator {
           result.addError(SystemValidationType.WRONG_NAME, "Table " + table.getName()
               + " has a name containing illegal characters such as dot, comma, /, etc.");
         } else if (NamingUtil.doesNameContainNonNormalCharacters(name)) {
-          result.addWarning(SystemValidationType.WRONG_NAME, "Table " + table.getName()
-              + " has a name containing less normal characters, "
-              + "it is best to only use characters from a to z, A to Z, 0 to 9 or _");
+          result.addWarning(SystemValidationType.WRONG_NAME,
+              "Table " + table.getName() + " has a name containing less normal characters, "
+                  + "it is best to only use characters from a to z, A to Z, 0 to 9 or _");
         }
       }
     }
@@ -343,12 +351,8 @@ public class ModuleValidator implements SystemValidator {
       result.addWarning(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
           + " has been marked as 'has reference data' but it does not have any Dataset associated");
     } else if (!module.isHasReferenceData() && numDatasets > 0) {
-      result
-          .addWarning(
-              SystemValidationType.MODULE_ERROR,
-              "Module "
-                  + module.getName()
-                  + " has at least one Dataset associated but it has not been marked as 'has reference data'");
+      result.addWarning(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
+          + " has at least one Dataset associated but it has not been marked as 'has reference data'");
     }
   }
 

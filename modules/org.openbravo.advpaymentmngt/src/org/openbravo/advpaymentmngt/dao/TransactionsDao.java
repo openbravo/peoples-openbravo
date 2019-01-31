@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,13 +21,14 @@ package org.openbravo.advpaymentmngt.dao;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -55,33 +56,33 @@ public class TransactionsDao {
 
   public static List<Tab> getWindowData(String className) {
 
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>(1);
     final StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as td");
     whereClause.append(" left outer join td.window as win");
     whereClause.append(" left outer join td.masterDetailForm as mdf");
-    whereClause.append(" where UPPER(mdf.javaClassName) = UPPER(?)");
-    parameters.add(className);
+    whereClause.append(" where UPPER(mdf.javaClassName) = UPPER(:className)");
+    parameters.put("className", className);
 
     final OBQuery<Tab> obQuery = OBDal.getInstance().createQuery(Tab.class, whereClause.toString());
-    obQuery.setParameters(parameters);
+    obQuery.setNamedParameters(parameters);
     return obQuery.list();
   }
 
   public static OBObjectFieldProvider[] getAccTrxData(String finFinancialAccountId) {
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>(1);
     final StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as ft");
     whereClause.append(" left outer join ft.account as acc");
     whereClause.append(" left outer join ft.reconciliation as rec");
     whereClause.append(" where acc.id = rec.account.id");
-    whereClause.append(" and acc.id = ?");
-    parameters.add(finFinancialAccountId);
+    whereClause.append(" and acc.id = :financialAccountId");
+    parameters.put("financialAccountId", finFinancialAccountId);
     OBContext.setAdminMode();
     try {
-      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance().createQuery(
-          FIN_FinaccTransaction.class, whereClause.toString());
-      obQuery.setParameters(parameters);
+      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance()
+          .createQuery(FIN_FinaccTransaction.class, whereClause.toString());
+      obQuery.setNamedParameters(parameters);
       OBObjectFieldProvider[] objectFieldProvider = OBObjectFieldProvider
           .createOBObjectFieldProvider(obQuery.list());
       return objectFieldProvider;
@@ -91,8 +92,8 @@ public class TransactionsDao {
   }
 
   public static FIN_FinaccTransaction createFinAccTransaction(FIN_Payment payment) {
-    final FIN_FinaccTransaction newTransaction = OBProvider.getInstance().get(
-        FIN_FinaccTransaction.class);
+    final FIN_FinaccTransaction newTransaction = OBProvider.getInstance()
+        .get(FIN_FinaccTransaction.class);
     OBContext.setAdminMode();
     try {
       newTransaction.setId(payment.getId());
@@ -110,8 +111,7 @@ public class TransactionsDao {
       newTransaction.setCurrency(payment.getAccount().getCurrency());
       String desc = "";
       if (payment.getDescription() != null && !payment.getDescription().isEmpty()) {
-        desc = payment
-            .getDescription()
+        desc = payment.getDescription()
             .replace("\n", ". ")
             .substring(0,
                 payment.getDescription().length() > 254 ? 254 : payment.getDescription().length());
@@ -120,15 +120,18 @@ public class TransactionsDao {
       newTransaction.setClient(payment.getClient());
       newTransaction.setLineNo(getTransactionMaxLineNo(payment.getAccount()) + 10);
 
-      BigDecimal depositAmt = FIN_Utility.getDepositAmount(payment.getDocumentType()
-          .getDocumentCategory().equals("ARR"), payment.getFinancialTransactionAmount());
-      BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(payment.getDocumentType()
-          .getDocumentCategory().equals("ARR"), payment.getFinancialTransactionAmount());
+      BigDecimal depositAmt = FIN_Utility.getDepositAmount(
+          payment.getDocumentType().getDocumentCategory().equals("ARR"),
+          payment.getFinancialTransactionAmount());
+      BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(
+          payment.getDocumentType().getDocumentCategory().equals("ARR"),
+          payment.getFinancialTransactionAmount());
 
       newTransaction.setDepositAmount(depositAmt);
       newTransaction.setPaymentAmount(paymentAmt);
-      newTransaction.setStatus(newTransaction.getDepositAmount().compareTo(
-          newTransaction.getPaymentAmount()) > 0 ? "RPR" : "PPM");
+      newTransaction.setStatus(
+          newTransaction.getDepositAmount().compareTo(newTransaction.getPaymentAmount()) > 0 ? "RPR"
+              : "PPM");
       if (!newTransaction.getCurrency().equals(payment.getCurrency())) {
         newTransaction.setForeignCurrency(payment.getCurrency());
         newTransaction.setForeignConversionRate(payment.getFinancialTransactionConvertRate());
@@ -144,27 +147,26 @@ public class TransactionsDao {
   }
 
   public static Long getTransactionMaxLineNo(FIN_FinancialAccount financialAccount) {
-    Query query = OBDal
-        .getInstance()
+    Query<Long> query = OBDal.getInstance()
         .getSession()
         .createQuery(
-            "select max(f.lineNo) as maxLineno from FIN_Finacc_Transaction as f where account.id=?");
-    query.setString(0, financialAccount.getId());
-    for (Object obj : query.list()) {
-      if (obj != null) {
-        return (Long) obj;
-      }
+            "select max(f.lineNo) as maxLineno from FIN_Finacc_Transaction as f where account.id=:accountId",
+            Long.class);
+    query.setParameter("accountId", financialAccount.getId());
+    Long maxLineNo = query.uniqueResult();
+    if (maxLineNo != null) {
+      return maxLineNo;
     }
     return 0l;
   }
 
   @Deprecated
   public static void process(FIN_FinaccTransaction finFinancialAccountTransaction) {
-    final FIN_FinancialAccount financialAccount = OBDal.getInstance().get(
-        FIN_FinancialAccount.class, finFinancialAccountTransaction.getAccount().getId());
-    financialAccount.setCurrentBalance(financialAccount.getCurrentBalance().add(
-        finFinancialAccountTransaction.getDepositAmount().subtract(
-            finFinancialAccountTransaction.getPaymentAmount())));
+    final FIN_FinancialAccount financialAccount = OBDal.getInstance()
+        .get(FIN_FinancialAccount.class, finFinancialAccountTransaction.getAccount().getId());
+    financialAccount.setCurrentBalance(financialAccount.getCurrentBalance()
+        .add(finFinancialAccountTransaction.getDepositAmount()
+            .subtract(finFinancialAccountTransaction.getPaymentAmount())));
     finFinancialAccountTransaction.setProcessed(true);
     FIN_Payment payment = finFinancialAccountTransaction.getFinPayment();
     if (payment != null) {
@@ -189,8 +191,8 @@ public class TransactionsDao {
           finFinancialAccountTransaction.getOrganization().getId(), connectionProvider);
       if (acct == null) {
         throw new OBException("Accounting process failed for the financial account transaction");
-      } else if (!acct.post(finFinancialAccountTransaction.getId(), false, vars,
-          connectionProvider, connectionProvider.getConnection()) || acct.errors != 0) {
+      } else if (!acct.post(finFinancialAccountTransaction.getId(), false, vars, connectionProvider,
+          connectionProvider.getConnection()) || acct.errors != 0) {
         connectionProvider.releaseRollbackConnection(connectionProvider.getConnection());
         throw new OBException(acct.getMessageResult().getMessage());
       }
@@ -203,8 +205,8 @@ public class TransactionsDao {
       String isProcessed) {
     OBContext.setAdminMode();
     try {
-      final OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance().createCriteria(
-          FIN_Reconciliation.class);
+      final OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance()
+          .createCriteria(FIN_Reconciliation.class);
       obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, account));
       if ("Y".equals(isProcessed)) {
         obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_PROCESSED, true));
@@ -231,10 +233,11 @@ public class TransactionsDao {
       whereClause.append(".id='");
       whereClause.append(financialAccount.getId());
       whereClause.append("'");
-      whereClause.append(" and fatrx.").append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION)
+      whereClause.append(" and fatrx.")
+          .append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION)
           .append(" is null ");
-      final OBQuery<FIN_FinaccTransaction> obqFATrx = OBDal.getInstance().createQuery(
-          FIN_FinaccTransaction.class, whereClause.toString());
+      final OBQuery<FIN_FinaccTransaction> obqFATrx = OBDal.getInstance()
+          .createQuery(FIN_FinaccTransaction.class, whereClause.toString());
       return obqFATrx.count();
 
     } finally {
@@ -263,22 +266,22 @@ public class TransactionsDao {
     OBContext.setAdminMode();
     try {
 
-      final List<Object> parameters = new ArrayList<Object>();
+      final Map<String, Object> parameters = new HashMap<>();
       final StringBuilder whereClause = new StringBuilder();
       whereClause.append(" as ft");
       whereClause.append(" left outer join ft.reconciliation as rec");
-      whereClause.append(" where ft.account.id = ?");
+      whereClause.append(" where ft.account.id = :accountId");
       whereClause.append(" and (rec is null or rec.processed = 'N')");
       whereClause.append(" and ft.processed = 'Y'");
-      parameters.add(account.getId());
+      parameters.put("accountId", account.getId());
       if (hideAfterDate) {
-        whereClause.append(" and ft.transactionDate < ?");
-        parameters.add(statementDate);
+        whereClause.append(" and ft.transactionDate < :statementDate");
+        parameters.put("statementDate", statementDate);
       }
       whereClause.append(" order by ft.transactionDate, ft.lineNo");
 
-      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance().createQuery(
-          FIN_FinaccTransaction.class, whereClause.toString(), parameters);
+      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance()
+          .createQuery(FIN_FinaccTransaction.class, whereClause.toString(), parameters);
 
       return obQuery.list();
 
@@ -293,28 +296,29 @@ public class TransactionsDao {
   public static FieldProvider[] getTransactionsFiltered(FIN_FinancialAccount account,
       Date statementDate, boolean hideAfterDate) {
 
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
     OBContext.setAdminMode();
     try {
 
-      final List<Object> parameters = new ArrayList<Object>();
+      final Map<String, Object> parameters = new HashMap<>();
       final StringBuilder whereClause = new StringBuilder();
       whereClause.append(" as ft");
       whereClause.append(" left outer join ft.reconciliation as rec");
-      whereClause.append(" where ft.account.id = ?");
+      whereClause.append(" where ft.account.id = :accountId");
       whereClause.append(" and (rec is null or rec.processed = 'N')");
       whereClause.append(" and ft.processed = 'Y'");
-      parameters.add(account.getId());
+      parameters.put("accountId", account.getId());
       if (hideAfterDate) {
-        whereClause.append(" and ft.transactionDate < ?");
-        parameters.add(statementDate);
+        whereClause.append(" and ft.transactionDate < :statementDate");
+        parameters.put("statementDate", statementDate);
       }
       whereClause.append(" order by ft.transactionDate, ft.lineNo");
 
-      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance().createQuery(
-          FIN_FinaccTransaction.class, whereClause.toString(), parameters);
+      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance()
+          .createQuery(FIN_FinaccTransaction.class, whereClause.toString(), parameters);
 
       List<FIN_FinaccTransaction> transactionOBList = obQuery.list();
 
@@ -336,8 +340,9 @@ public class TransactionsDao {
         }
 
         // Truncate business partner name
-        String truncateBPname = (strBusinessPartner.length() > 30) ? strBusinessPartner
-            .substring(0, 27).concat("...").toString() : strBusinessPartner;
+        String truncateBPname = (strBusinessPartner.length() > 30)
+            ? strBusinessPartner.substring(0, 27).concat("...").toString()
+            : strBusinessPartner;
         FieldProviderFactory.setField(data[i], "businessPartner",
             (strBusinessPartner.length() > 30) ? strBusinessPartner : "");
         FieldProviderFactory.setField(data[i], "businessPartnerTrunc", truncateBPname);
@@ -348,17 +353,18 @@ public class TransactionsDao {
         String description = FIN_Transactions[i].getDescription();
         String truncateDescription = "";
         if (description != null) {
-          truncateDescription = (description.length() > 42) ? description.substring(0, 39)
-              .concat("...").toString() : description;
+          truncateDescription = (description.length() > 42)
+              ? description.substring(0, 39).concat("...").toString()
+              : description;
         }
         FieldProviderFactory.setField(data[i], "description",
             (description != null && description.length() > 42) ? description : "");
         FieldProviderFactory.setField(data[i], "descriptionTrunc", truncateDescription);
 
-        FieldProviderFactory.setField(data[i], "paymentAmount", FIN_Transactions[i]
-            .getPaymentAmount().toString());
-        FieldProviderFactory.setField(data[i], "depositAmount", FIN_Transactions[i]
-            .getDepositAmount().toString());
+        FieldProviderFactory.setField(data[i], "paymentAmount",
+            FIN_Transactions[i].getPaymentAmount().toString());
+        FieldProviderFactory.setField(data[i], "depositAmount",
+            FIN_Transactions[i].getDepositAmount().toString());
         FieldProviderFactory.setField(data[i], "rownum", "" + (i + 1));
         FieldProviderFactory.setField(data[i], "markSelectedId",
             (FIN_Transactions[i].getStatus().equals("RPPC")) ? FIN_Transactions[i].getId() : "");
@@ -385,14 +391,11 @@ public class TransactionsDao {
     hqlString.append(" and ft.processed = 'Y'");
 
     final Session session = OBDal.getInstance().getSession();
-    final Query query = session.createQuery(hqlString.toString());
-
-    for (Object resultObject : query.list()) {
-      if (resultObject != null && resultObject.getClass().isInstance(BigDecimal.ONE)) {
-        return (BigDecimal) resultObject;
-      }
+    final Query<BigDecimal> query = session.createQuery(hqlString.toString(), BigDecimal.class);
+    BigDecimal resultObject = query.uniqueResult();
+    if (resultObject != null) {
+      return resultObject;
     }
-
     return BigDecimal.ZERO;
   }
 }

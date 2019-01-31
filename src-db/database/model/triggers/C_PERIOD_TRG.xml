@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -41,11 +41,10 @@ BEGIN
                            WHERE o.ISREADY='Y'
                            AND o.ISPERIODCONTROLALLOWED='Y'
                            and exists (SELECT 1
-                                                  FROM C_Year, c_calendar, ad_org
+                                                  FROM C_Year, c_calendar
                                                   WHERE C_Year.c_calendar_id = c_calendar.c_calendar_id
-                                                  and c_calendar.c_calendar_id = ad_org.c_calendar_id
-                                                  and C_Year.C_Year_ID=:new.C_Year_ID
-                                                  and ad_org.ad_org_id = ad_org_getcalendarowner(o.AD_ORG_ID))
+                                                  and c_calendar.c_calendar_id = o.ad_inheritedcalendar_id
+                                                  and C_Year.C_Year_ID=:new.C_Year_ID)
                           ) a
        WHERE AD_Reference_ID='183'
        AND VALUE = (CASE WHEN :new.PeriodType = 'S' THEN VALUE ELSE 'GLJ' END)

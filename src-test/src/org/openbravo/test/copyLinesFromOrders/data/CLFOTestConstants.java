@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -125,5 +125,8 @@ public class CLFOTestConstants {
   public static final String ENABLE_AUM = "Y";
   public static final String DISABLE_AUM = "N";
   public static final String PRIMARY_AUM = "P";
+
+  public static final String LINE1_DESCRIPTION = "Line 1 Description";
+  public static final String LINE2_DESCRIPTION = "Line 2 Description";
 
 }

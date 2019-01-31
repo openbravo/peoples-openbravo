@@ -50,18 +50,22 @@ public class SE_Expense_Amount extends SimpleCallout {
 
     // Get the currency to from organization's currency, or from the client's currency if it doesn't
     // exists
-    final Organization org = OBDal.getInstance().get(Sheet.class, strTimeExpenseId)
+    final Organization org = OBDal.getInstance()
+        .get(Sheet.class, strTimeExpenseId)
         .getOrganization();
     String c_Currency_To_ID = getCurrency(org.getId());
     if (c_Currency_To_ID == null) {
-      c_Currency_To_ID = OBDal.getInstance().get(Sheet.class, strTimeExpenseId).getClient()
-          .getCurrency().getId();
+      c_Currency_To_ID = OBDal.getInstance()
+          .get(Sheet.class, strTimeExpenseId)
+          .getClient()
+          .getCurrency()
+          .getId();
     }
 
     if (StringUtils.isEmpty(strDateexpense)) {
-      strDateexpense = StringUtils.isEmpty(SEExpenseAmountData.selectReportDate(this,
-          strTimeExpenseId)) ? DateTimeData.today(this) : SEExpenseAmountData.selectReportDate(
-          this, strTimeExpenseId);
+      strDateexpense = StringUtils.isEmpty(
+          SEExpenseAmountData.selectReportDate(this, strTimeExpenseId)) ? DateTimeData.today(this)
+              : SEExpenseAmountData.selectReportDate(this, strTimeExpenseId);
     }
 
     // Amount expense
@@ -84,16 +88,17 @@ public class SE_Expense_Amount extends SimpleCallout {
       } catch (Exception e) {
         convertedAmount = "";
         OBDal.getInstance().rollbackAndClose();
-        info.showMessage(Utility.translateError(this, info.vars, info.vars.getLanguage(),
-            e.getMessage()).getMessage());
+        info.showMessage(
+            Utility.translateError(this, info.vars, info.vars.getLanguage(), e.getMessage())
+                .getMessage());
         log4j.warn("Currency does not exist. Exception:" + e);
       }
       convAmount = StringUtils.isNotEmpty(convertedAmount) ? new BigDecimal(convertedAmount)
           : BigDecimal.ZERO;
       int stdPrecisionConv = 0;
       if (StringUtils.isNotEmpty(c_Currency_To_ID)) {
-        stdPrecisionConv = Integer.valueOf(SEExpenseAmountData.selectPrecision(this,
-            c_Currency_To_ID));
+        stdPrecisionConv = Integer
+            .valueOf(SEExpenseAmountData.selectPrecision(this, c_Currency_To_ID));
       }
       if (convAmount.scale() > stdPrecisionConv) {
         convAmount = convAmount.setScale(stdPrecisionConv, RoundingMode.HALF_UP);
@@ -102,8 +107,8 @@ public class SE_Expense_Amount extends SimpleCallout {
 
     // Update Expense Amount and Converted Amount
     info.addResult("inpexpenseamt", amount);
-    info.addResult("inpconvertedamt", convAmount.compareTo(BigDecimal.ZERO) != 0 ? convAmount
-        : null);
+    info.addResult("inpconvertedamt",
+        convAmount.compareTo(BigDecimal.ZERO) != 0 ? convAmount : null);
   }
 
   private static String getCurrency(String org) {

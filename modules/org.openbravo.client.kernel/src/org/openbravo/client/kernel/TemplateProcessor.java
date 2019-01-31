@@ -89,8 +89,8 @@ public interface TemplateProcessor {
    * @author mtaal
    */
   @SuppressWarnings("all")
-  public static class Selector extends AnnotationLiteral<TemplateProcessor.Qualifier> implements
-      TemplateProcessor.Qualifier {
+  public static class Selector extends AnnotationLiteral<TemplateProcessor.Qualifier>
+      implements TemplateProcessor.Qualifier {
     private static final long serialVersionUID = 1L;
 
     final String value;
@@ -99,6 +99,7 @@ public interface TemplateProcessor {
       this.value = value;
     }
 
+    @Override
     public String value() {
       return value;
     }
@@ -124,8 +125,8 @@ public interface TemplateProcessor {
           return processor;
         }
       }
-      throw new IllegalArgumentException("Template processor for language " + language
-          + " not found");
+      throw new IllegalArgumentException(
+          "Template processor for language " + language + " not found");
     }
   }
 

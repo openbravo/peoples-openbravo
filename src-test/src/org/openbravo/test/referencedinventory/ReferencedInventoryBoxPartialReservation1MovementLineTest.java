@@ -31,8 +31,8 @@ import org.openbravo.dal.service.OBDal;
  * Box a storage detail which had some units (not 100%) previously reserved. The box movement will
  * only have 1 line.
  */
-public class ReferencedInventoryBoxPartialReservation1MovementLineTest extends
-    ReferencedInventoryBoxTest {
+public class ReferencedInventoryBoxPartialReservation1MovementLineTest
+    extends ReferencedInventoryBoxTest {
 
   @Rule
   public ParameterCdiTestRule<ParamsBoxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsBoxReservationTest>(

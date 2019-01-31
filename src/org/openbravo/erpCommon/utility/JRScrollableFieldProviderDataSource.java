@@ -20,10 +20,11 @@ package org.openbravo.erpCommon.utility;
 
 import javax.servlet.ServletException;
 
-import net.sf.jasperreports.engine.JRException;
-
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.ScrollableFieldProvider;
+
+import net.sf.jasperreports.engine.JRException;
 
 /**
  * This class allows to use a class implementing the {@link ScrollableFieldProvider} interface to be
@@ -33,7 +34,7 @@ import org.openbravo.data.ScrollableFieldProvider;
  * 
  */
 public class JRScrollableFieldProviderDataSource extends JRFieldProviderDataSource {
-  private static final Logger log = Logger.getLogger(JRScrollableFieldProviderDataSource.class);
+  private static final Logger log = LogManager.getLogger();
 
   private final ScrollableFieldProvider input;
 

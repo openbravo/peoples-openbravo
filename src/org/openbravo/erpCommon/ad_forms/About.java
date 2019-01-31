@@ -43,20 +43,23 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class About extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       printPageDataSheet(response, vars);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
 
     OBContext.setAdminMode();
     try {
@@ -75,9 +78,8 @@ public class About extends HttpSecureAppServlet {
         edition += Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(),
             vars.getLanguage());
 
-        licenseInfo = Utility.messageBD(this, "OPSLicensedTo", vars.getLanguage()).replace(
-            "@OBPSEdition@", edition)
-            + " " + ak.getProperty("customer");
+        licenseInfo = Utility.messageBD(this, "OPSLicensedTo", vars.getLanguage())
+            .replace("@OBPSEdition@", edition) + " " + ak.getProperty("customer");
       } else {
         licenseInfo = Utility.messageBD(this, "OPSCommunityEdition", vars.getLanguage());
         discard[0] = "paramOPSInfo";
@@ -156,9 +158,8 @@ public class About extends HttpSecureAppServlet {
     HashMap<String, String> rt = new HashMap<String, String>();
     rt.put("moduleName", module.modulename);
     rt.put("moduleVersion",
-        module.version
-            + (module.versionLabel == null || module.versionLabel.isEmpty() ? "" : " - "
-                + module.versionLabel));
+        module.version + (module.versionLabel == null || module.versionLabel.isEmpty() ? ""
+            : " - " + module.versionLabel));
     rt.put("moduleAuthor", module.author == null || module.author.isEmpty() ? "-" : module.author);
     String tab = "";
     for (int i = 0; i < level; i++) {
@@ -168,6 +169,7 @@ public class About extends HttpSecureAppServlet {
     return rt;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet DebtPaymentUnapply. This Servlet was made by Eduardo Argal";
   } // end of getServletInfo() method

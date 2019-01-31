@@ -23,6 +23,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -37,15 +39,13 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.role.inheritance.RoleInheritanceManager.CalculationResult;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Handler for the Recalculate Permissions process which is intended to launch that process to one
  * or multiple roles
  */
 public class RecalculatePermissionsHandler extends BaseActionHandler {
-  final static private Logger log = LoggerFactory.getLogger(RecalculatePermissionsHandler.class);
+  final static private Logger log = LogManager.getLogger();
   @Inject
   private RoleInheritanceManager manager;
 
@@ -117,8 +117,8 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
     }
     String msgParam[] = { roleNames.substring(1) };
     String title = Utility.messageBD(new DalConnectionProvider(false),
-        "RecalculatePermissionsMultipleSuccess", OBContext.getOBContext().getLanguage()
-            .getLanguage());
+        "RecalculatePermissionsMultipleSuccess",
+        OBContext.getOBContext().getLanguage().getLanguage());
     String text = OBMessageUtils.getI18NMessage("RecalculatePermissionsMultipleRoles", msgParam);
     JSONObject message = new JSONObject();
     message.put("severity", "success");

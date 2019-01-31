@@ -20,7 +20,8 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -33,9 +34,9 @@ import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 
 public class InvoiceLineEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      InvoiceLine.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(InvoiceLine.ENTITY_NAME) };
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -54,8 +55,8 @@ public class InvoiceLineEventHandler extends EntityPersistenceEventObserver {
     criteria.add(Restrictions.eq(InvoiceLine.PROPERTY_INVOICE, ObjInvoiceLine.getInvoice()));
 
     if (criteria.count() == 1) {
-      Invoice ObjInvoice = OBDal.getInstance().get(Invoice.class,
-          ObjInvoiceLine.getInvoice().getId());
+      Invoice ObjInvoice = OBDal.getInstance()
+          .get(Invoice.class, ObjInvoiceLine.getInvoice().getId());
 
       if (ObjInvoice != null) {
         ObjInvoice.setSalesOrder(null);

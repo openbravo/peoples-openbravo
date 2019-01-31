@@ -87,16 +87,16 @@ public class AlertRecipientAccessInjector extends AccessTypeInjector {
    *         recipient, false otherwise
    */
   private boolean existsAlertRecipient(AlertRecipient alertRecipient) {
-    final OBCriteria<AlertRecipient> obCriteria = OBDal.getInstance().createCriteria(
-        AlertRecipient.class);
+    final OBCriteria<AlertRecipient> obCriteria = OBDal.getInstance()
+        .createCriteria(AlertRecipient.class);
     obCriteria
         .add(Restrictions.eq(AlertRecipient.PROPERTY_ALERTRULE, alertRecipient.getAlertRule()));
     obCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_ROLE, alertRecipient.getRole()));
     if (alertRecipient.getUserContact() == null) {
       obCriteria.add(Restrictions.isNull(AlertRecipient.PROPERTY_USERCONTACT));
     } else {
-      obCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_USERCONTACT,
-          alertRecipient.getUserContact()));
+      obCriteria.add(
+          Restrictions.eq(AlertRecipient.PROPERTY_USERCONTACT, alertRecipient.getUserContact()));
     }
     obCriteria.setMaxResults(1);
     return (obCriteria.list().size() > 0);

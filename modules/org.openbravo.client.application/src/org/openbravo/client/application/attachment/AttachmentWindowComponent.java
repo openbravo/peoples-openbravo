@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,11 +25,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.Parameter;
-import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.application.window.OBViewParameterHandler;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
@@ -39,15 +40,13 @@ import org.openbravo.model.ad.domain.Validation;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.AttachmentMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The component which takes care of creating a class for a tab's Attachment popup.
  */
 public class AttachmentWindowComponent extends BaseTemplateComponent {
   private static final String DEFAULT_TEMPLATE_ID = "01E447F740584E02BA4612F6BDFB900D";
-  private static final Logger log = LoggerFactory.getLogger(AttachmentWindowComponent.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Boolean inDevelopment = null;
   private String uniqueString = "" + System.currentTimeMillis();
@@ -57,9 +56,7 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
   @Inject
   private OBViewParameterHandler paramHandler;
 
-  @Inject
-  private ApplicationDictionaryCachedStructures adcs;
-
+  @Override
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
   }
@@ -102,6 +99,7 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
    * 
    * @return generated code
    */
+  @Override
   public String generate() {
     final String jsCode = super.generate();
     return jsCode;
@@ -170,8 +168,8 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
         if (validation.getType().equals("HQL_JS")) {
           paramsWithValidation.add(param);
         } else {
-          log.error("Unsupported validation type {} for param {} in tab {}", new Object[] {
-              "HQL_JS", param, tab });
+          log.error("Unsupported validation type {} for param {} in tab {}",
+              new Object[] { "HQL_JS", param, tab });
         }
       }
       allParams.add(param.getDBColumnName());

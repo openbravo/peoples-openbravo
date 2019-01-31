@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,9 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -33,22 +35,19 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.common.uom.UOMConversion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      UOMConversion.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(UOMConversion.ENTITY_NAME) };
 
-  protected Logger logger = LoggerFactory.getLogger(UOMConversionEventHandler.class);
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
   }
 
-  public void onNew(@Observes
-  EntityNewEvent event) {
+  public void onNew(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -61,8 +60,7 @@ public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
     }
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -78,7 +76,8 @@ public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
       final UOMConversion uomConversion = (UOMConversion) event.getTargetInstance();
 
       // Check if exists another record using this uomFrom - uomTo
-      if (existsRecord(uomConversion.getClient(), uomConversion.getUOM(), uomConversion.getToUOM())) {
+      if (existsRecord(uomConversion.getClient(), uomConversion.getUOM(),
+          uomConversion.getToUOM())) {
         throw new OBException(String.format(OBMessageUtils.messageBD("CannotInsertUOMConversion"),
             uomConversion.getUOM().getName(), uomConversion.getToUOM().getName()));
       }
@@ -93,9 +92,8 @@ public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
       if (uomConversion.isActive()) {
         if (existsRecord(uomConversion.getClient(), uomConversion.getUOM(),
             uomConversion.getToUOM())) {
-          throw new OBException(String.format(
-              OBMessageUtils.messageBD("CannotInsertUOMConversion"), uomConversion.getUOM()
-                  .getName(), uomConversion.getToUOM().getName()));
+          throw new OBException(String.format(OBMessageUtils.messageBD("CannotInsertUOMConversion"),
+              uomConversion.getUOM().getName(), uomConversion.getToUOM().getName()));
         }
       }
 
@@ -120,7 +118,9 @@ public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
       hql.append("AND t1." + UOMConversion.PROPERTY_CLIENT + " = :client");
     }
 
-    final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    final Query<String> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql.toString(), String.class);
     query.setParameter("uomFrom", uomFrom);
     query.setParameter("uomTo", uomTo);
     if (!client.getId().equals("0")) {

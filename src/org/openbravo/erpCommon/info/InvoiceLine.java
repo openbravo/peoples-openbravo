@@ -50,13 +50,15 @@ public class InvoiceLine extends HttpSecureAppServlet {
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -78,23 +80,23 @@ public class InvoiceLine extends HttpSecureAppServlet {
           }
 
           switch (count) {
-          case 1:
-            vars.setSessionValue("InvoiceLine.documentno", token);
-            break;
-          case 2:
-            vars.setSessionValue("InvoiceLine.datefrom", token);
-            vars.setSessionValue("InvoiceLine.dateto", token);
-            break;
-          case 3:
-            vars.setSessionValue("InvoiceLine.grandtotalfrom", token);
-            vars.setSessionValue("InvoiceLine.grandtotalto", token);
-            break;
-          case 4:
-            vars.setSessionValue("InvoiceLine.lineno", token);
-            break;
-          case 5:
-            vars.setSessionValue("InvoiceLine.linenet", token);
-            break;
+            case 1:
+              vars.setSessionValue("InvoiceLine.documentno", token);
+              break;
+            case 2:
+              vars.setSessionValue("InvoiceLine.datefrom", token);
+              vars.setSessionValue("InvoiceLine.dateto", token);
+              break;
+            case 3:
+              vars.setSessionValue("InvoiceLine.grandtotalfrom", token);
+              vars.setSessionValue("InvoiceLine.grandtotalto", token);
+              break;
+            case 4:
+              vars.setSessionValue("InvoiceLine.lineno", token);
+              break;
+            case 5:
+              vars.setSessionValue("InvoiceLine.linenet", token);
+              break;
           }
           count++;
         } while (i != -1);
@@ -121,13 +123,13 @@ public class InvoiceLine extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#User_Client", "InvoiceLine"),
           Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue + "%", issotrx);
 
-      if (data != null && data.length == 1)
+      if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
-      else {
+      } else {
         String strBPartner = vars.getGlobalVariable("inpcBpartnerId", "InvoiceLine.bpartner", "");
         String strProduct = vars.getGlobalVariable("inpmProductId", "InvoiceLine.product", "");
-        String strDocumentNo = vars
-            .getGlobalVariable("inpdocumentno", "InvoiceLine.documentno", "");
+        String strDocumentNo = vars.getGlobalVariable("inpdocumentno", "InvoiceLine.documentno",
+            "");
         String strDateFrom = vars.getGlobalVariable("inpDateFrom", "InvoiceLine.datefrom", "");
         String strDateTo = vars.getGlobalVariable("inpDateTo", "InvoiceLine.dateto", "");
         String strCal1 = vars.getNumericGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
@@ -139,8 +141,9 @@ public class InvoiceLine extends HttpSecureAppServlet {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
 
-      if (vars.getStringParameter("newFilter").equals("1"))
+      if (vars.getStringParameter("newFilter").equals("1")) {
         clearSessionVariables(vars);
+      }
 
       String strBpartnerId = vars.getGlobalVariable("inpBpartnerId", "InvoiceLine.bpartner", "");
       String strProduct = vars.getGlobalVariable("inpmProductId", "InvoiceLine.product", "");
@@ -165,16 +168,19 @@ public class InvoiceLine extends HttpSecureAppServlet {
           strDescription, strCal1, strCal2, strOrder, strProduct, strSortCols, strSortDirs,
           strOffset, strPageSize, strNewFilter, strOrg, issotrx);
 
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       InvoiceLineData[] data) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: sale-order-lines seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/SearchUniqueKeyResponse").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/SearchUniqueKeyResponse")
+        .createXmlDocument();
 
     xmlDocument.setParameter("script", generateResult(data));
     response.setContentType("text/html; charset=UTF-8");
@@ -185,8 +191,9 @@ public class InvoiceLine extends HttpSecureAppServlet {
 
   private String generateResult(InvoiceLineData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Save- clave:" + data[0].cInvoicelineId + " txt:" + data[0].lineText);
+    }
     html.append("\nfunction validateSelector() {\n");
     html.append("var key = \"" + data[0].cInvoicelineId + "\";\n");
     html.append("var text = \"" + Replace.replace(data[0].lineText, "\"", "\\\"") + "\";\n");
@@ -197,11 +204,12 @@ public class InvoiceLine extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
-      String strProduct, String strDocumentNo, String strDateFrom, String strDateTo,
-      String strCal1, String strCal2, String issotrx) throws IOException, ServletException {
+      String strProduct, String strDocumentNo, String strDateFrom, String strDateTo, String strCal1,
+      String strCal2, String issotrx) throws IOException, ServletException {
     String localStrDocumentNo = strDocumentNo;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Frame 1 of sale-order-lines seeker");
+    }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/InvoiceLine")
         .createXmlDocument();
     if (strBPartner.equals("") && strProduct.equals("") && localStrDocumentNo.equals("")
@@ -234,10 +242,12 @@ public class InvoiceLine extends HttpSecureAppServlet {
 
   private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page structure");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure")
+        .createXmlDocument();
 
     SQLReturnObject[] data = getHeaders(vars);
     String type = "Hidden";
@@ -252,8 +262,9 @@ public class InvoiceLine extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(xmlDocument.print());
+    }
     out.println(xmlDocument.print());
     out.close();
   }
@@ -289,8 +300,9 @@ public class InvoiceLine extends HttpSecureAppServlet {
       String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
       String strNewFilter, String strOrg, String issotrx) throws IOException, ServletException {
     String localStrNewFilter = strNewFilter;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page rows");
+    }
     int page = 0;
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
@@ -364,32 +376,38 @@ public class InvoiceLine extends HttpSecureAppServlet {
         } else {
           type = myError.getType();
           title = myError.getTitle();
-          if (!myError.getMessage().startsWith("<![CDATA["))
+          if (!myError.getMessage().startsWith("<![CDATA[")) {
             description = "<![CDATA[" + myError.getMessage() + "]]>";
-          else
+          } else {
             description = myError.getMessage();
+          }
         }
       } catch (Exception e) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Error obtaining rows data");
+        }
         type = "Error";
         title = "Error";
-        if (e.getMessage().startsWith("<![CDATA["))
+        if (e.getMessage().startsWith("<![CDATA[")) {
           description = "<![CDATA[" + e.getMessage() + "]]>";
-        else
+        } else {
           description = e.getMessage();
+        }
         e.printStackTrace();
       }
     }
 
     DecimalFormat df = Utility.getFormat(vars, "priceEdition");
 
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -397,7 +415,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+    strRowsData.append("  <rows numRows=\"")
+        .append(strNumRows)
         .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
@@ -410,18 +429,28 @@ public class InvoiceLine extends HttpSecureAppServlet {
               || columnname.equalsIgnoreCase("linenetamt")) {
             strRowsData.append(df.format(new BigDecimal(data[j].getField(columnname))));
           } else if ((data[j].getField(columnname)) != null) {
-            if (headers[k].getField("adReferenceId").equals("32"))
+            if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
-                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
-                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
-                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            }
+            strRowsData.append(data[j].getField(columnname)
+                .replaceAll("<b>", "")
+                .replaceAll("<B>", "")
+                .replaceAll("</b>", "")
+                .replaceAll("</B>", "")
+                .replaceAll("<i>", "")
+                .replaceAll("<I>", "")
+                .replaceAll("</i>", "")
+                .replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;")
+                .replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;")
+                .replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
-            } else
+            } else {
               strRowsData.append("&nbsp;");
+            }
           }
           strRowsData.append("]]></td>\n");
         }
@@ -434,8 +463,9 @@ public class InvoiceLine extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strRowsData.toString());
+    }
     out.print(strRowsData.toString());
     out.close();
   }
@@ -453,6 +483,7 @@ public class InvoiceLine extends HttpSecureAppServlet {
     vars.removeSessionValue("InvoiceLine.currentPage");
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents que sale-orders lines seeker";
   } // end of getServletInfo() method

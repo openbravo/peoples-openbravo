@@ -20,8 +20,10 @@
 package org.openbravo.dal.core;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -35,9 +37,10 @@ import java.util.Stack;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
@@ -73,32 +76,61 @@ import org.openbravo.model.common.enterprise.Warehouse;
 
 // Note the getInstance/setInstance and ThreadLocal pattern should be reviewed
 // when using a factory/dependency injection approach.
-public class OBContext implements OBNotSingleton {
-  private static final Logger log = Logger.getLogger(OBContext.class);
+public class OBContext implements OBNotSingleton, Serializable {
+  private static final long serialVersionUID = 1L;
+  private static final Logger log = LogManager.getLogger();
 
-  // private static final String AD_USERID = "#AD_USER_ID";
-  // TODO: maybe use authenticated user
-  private static final String AUTHENTICATED_USER = "#AD_User_ID";
-  private static final String ROLE = "#AD_Role_ID";
-  private static final String CLIENT = "#AD_Client_ID";
-  private static final String ORG = "#AD_Org_ID";
+  public static final String CONTEXT_PARAM = "#OBContext";
+
+  private String userID;
+  private String roleID;
+  private String clientID;
+  private String orgID;
+  private String warehouseID;
+  private String langID;
+
+  private transient Client currentClient;
+  private transient Organization currentOrganization;
+  private transient Role role;
+  private transient User user;
+  private transient Language language;
+  private transient boolean translationInstalled;
+  private transient Warehouse warehouse;
+  private transient List<String> organizationList;
+  private transient List<String> deactivatedOrganizationList;
+  private transient String[] readableOrganizations;
+  private transient String[] readableClients;
+  private transient Set<String> writableOrganizations;
+  private transient Set<String> deactivatedOrganizations;
+  private transient String userLevel;
+  private transient Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
+  private transient Map<String, AcctSchemaStructureProvider> acctSchemaStructureProviderByClient;
+  private transient EntityAccessChecker entityAccessChecker;
+  private transient boolean isAdministrator;
+  private transient boolean isInitialized = false;
+  private transient boolean isRTL = false;
+  private transient boolean isPortalRole = false;
+  private transient boolean isWebServiceEnabled = false;
+  private transient Set<String> additionalWritableOrganizations;
+  private transient boolean newUI = false;
+  private transient boolean checkAccessLevel = true;
 
   // set this to a higher value to enable admin mode tracing
   private static int ADMIN_TRACE_SIZE = 0;
 
-  private static ThreadLocal<OBContext> instance = new ThreadLocal<OBContext>();
-
-  private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<OBContext>();
-
-  private static ThreadLocal<Stack<OBAdminMode>> adminModeStack = new ThreadLocal<Stack<OBAdminMode>>();
-  private static ThreadLocal<List<String>> adminModeTrace = new ThreadLocal<List<String>>();
-
-  private static ThreadLocal<Stack<OBAdminMode>> crossOrgAdminModeStack = new ThreadLocal<Stack<OBAdminMode>>();
-  private static ThreadLocal<List<String>> crossOrgAdminModeTrace = new ThreadLocal<List<String>>();
-
-  public static final String CONTEXT_PARAM = "#OBContext";
+  private static ThreadLocal<OBContext> instance = new ThreadLocal<>();
+  private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<>();
+  private static ThreadLocal<Stack<OBAdminMode>> adminModeStack = new ThreadLocal<>();
+  private static ThreadLocal<List<String>> adminModeTrace = new ThreadLocal<>();
+  private static ThreadLocal<Stack<OBAdminMode>> crossOrgAdminModeStack = new ThreadLocal<>();
+  private static ThreadLocal<List<String>> crossOrgAdminModeTrace = new ThreadLocal<>();
 
   private static OBContext adminContext = null;
+
+  private static final String AUTHENTICATED_USER = "#AD_User_ID";
+  private static final String ROLE = "#AD_Role_ID";
+  private static final String CLIENT = "#AD_Client_ID";
+  private static final String ORG = "#AD_Org_ID";
 
   private enum AdminType {
     ADMIN_MODE("setAdminMode", "restorePreviousMode", adminModeStack, adminModeTrace), //
@@ -110,8 +142,8 @@ public class OBContext implements OBNotSingleton {
     private ThreadLocal<Stack<OBAdminMode>> stack;
     private ThreadLocal<List<String>> trace;
 
-    private AdminType(String setMethod, String restoreMethod,
-        ThreadLocal<Stack<OBAdminMode>> stack, ThreadLocal<List<String>> trace) {
+    private AdminType(String setMethod, String restoreMethod, ThreadLocal<Stack<OBAdminMode>> stack,
+        ThreadLocal<List<String>> trace) {
       this.setMethod = setMethod;
       this.restoreMethod = restoreMethod;
       this.stack = stack;
@@ -293,11 +325,7 @@ public class OBContext implements OBNotSingleton {
 
   private static void printUnbalancedWarning(boolean printLocationOfCaller, AdminType type) {
     if (ADMIN_TRACE_SIZE == 0) {
-      String errMsg = "Unbalanced calls to "
-          + type.setMethod
-          + " and "
-          + type.restoreMethod
-          + ". "
+      String errMsg = "Unbalanced calls to " + type.setMethod + " and " + type.restoreMethod + ". "
           + "Consider setting the constant OBContext.ADMIN_TRACE_SIZE to a value higher than 0 to debug this situation";
       if (printLocationOfCaller) {
         log.warn(errMsg, new IllegalStateException());
@@ -322,8 +350,8 @@ public class OBContext implements OBNotSingleton {
           "Unbalanced calls to " + type.setMethod + " and " + type.restoreMethod + sb.toString(),
           new IllegalStateException());
     } else {
-      log.warn("Unbalanced calls to " + type.setMethod + " and " + type.restoreMethod
-          + sb.toString());
+      log.warn(
+          "Unbalanced calls to " + type.setMethod + " and " + type.restoreMethod + sb.toString());
     }
   }
 
@@ -425,7 +453,9 @@ public class OBContext implements OBNotSingleton {
       context.setNewUI("true".equals(newUIValue));
     }
 
-    session.setAttribute(CONTEXT_PARAM, context);
+    if (session.getAttribute(CONTEXT_PARAM) != context) {
+      session.setAttribute(CONTEXT_PARAM, context);
+    }
   }
 
   /**
@@ -537,50 +567,8 @@ public class OBContext implements OBNotSingleton {
    */
   public static OBContext getOBContext() {
     final OBContext localContext = instance.get();
-    if (localContext != null && localContext.isSerialized()) {
-      localContext.initializeFromSerializedState();
-    }
     return localContext;
   }
-
-  private Client currentClient;
-  private Organization currentOrganization;
-  private Role role;
-  private User user;
-  private Language language;
-  private boolean translationInstalled;
-  private Warehouse warehouse;
-  private List<String> organizationList;
-  private List<String> deactivatedOrganizationList;
-  private String[] readableOrganizations;
-  private String[] readableClients;
-  private Set<String> writableOrganizations;
-  private Set<String> deactivatedOrganizations;
-  private String userLevel;
-  private Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
-  private Map<String, AcctSchemaStructureProvider> acctSchemaStructureProviderByClient;
-  private EntityAccessChecker entityAccessChecker;
-
-  // the "0" user is the administrator
-  private boolean isAdministrator;
-  private boolean isInitialized = false;
-
-  private boolean isRTL = false;
-
-  private boolean isPortalRole = false;
-
-  private boolean isWebServiceEnabled = false;
-
-  private Set<String> additionalWritableOrganizations = new HashSet<String>();
-
-  // support storing the context in a persistent tomcat session
-  private String serializedUserId;
-  private boolean serialized = false;
-
-  // check whether using new or old UI
-  private boolean newUI = false;
-
-  private boolean checkAccessLevel = true;
 
   public String getUserLevel() {
     return userLevel;
@@ -651,20 +639,19 @@ public class OBContext implements OBNotSingleton {
       Set<String> additionalOrgs, boolean isActiveOrganization) {
 
     if (orgList != null) {
-      return new ArrayList<String>(orgList);
+      return new ArrayList<>(orgList);
     }
 
-    String propertyActive = isActiveOrganization ? "Y" : "N";
-    final Query qry = SessionHandler.getInstance().createQuery(
-        "select o.id from " + Organization.class.getName() + " o, "
+    final Query<String> qry = SessionHandler.getInstance()
+        .createQuery("select o.id from " + Organization.class.getName() + " o, "
             + RoleOrganization.class.getName() + " roa where o." + Organization.PROPERTY_ID
             + "=roa." + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID
             + " and roa." + RoleOrganization.PROPERTY_ROLE + "." + Organization.PROPERTY_ID
             + "= :targetRoleId" + " and roa." + RoleOrganization.PROPERTY_ACTIVE + "='Y' and o."
-            + Organization.PROPERTY_ACTIVE + "= :active");
-    qry.setString("targetRoleId", targetRole.getId());
-    qry.setString("active", propertyActive);
-    @SuppressWarnings("unchecked")
+            + Organization.PROPERTY_ACTIVE + "= :active", String.class);
+    qry.setParameter("targetRoleId", targetRole.getId());
+    qry.setParameter("active", isActiveOrganization);
+
     List<String> currentOrgList = qry.list();
 
     if (additionalOrgs != null) {
@@ -674,15 +661,13 @@ public class OBContext implements OBNotSingleton {
         }
       }
     }
-    return new ArrayList<String>(currentOrgList);
+    return new ArrayList<>(currentOrgList);
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getOrganizations(Client client) {
-    final Query qry = SessionHandler.getInstance().createQuery(
-        "select o.id from " + Organization.class.getName() + " o where " + "o."
-            + Organization.PROPERTY_CLIENT + "=:client and o." + Organization.PROPERTY_ACTIVE
-            + "='Y'");
+    final Query<String> qry = SessionHandler.getInstance()
+        .createQuery("select o.id from " + Organization.class.getName() + " o where " + "o."
+            + Organization.PROPERTY_CLIENT + "=:client", String.class);
     qry.setParameter("client", client);
     organizationList = qry.list();
     return organizationList;
@@ -697,9 +682,7 @@ public class OBContext implements OBNotSingleton {
       readableOrgs.addAll(getOrganizations(getCurrentClient()));
     } else {
       for (final String o : os) {
-        if (!readableOrgs.contains(o)) {
-          readableOrgs.addAll(getOrganizationStructureProvider().getNaturalTree(o));
-        }
+        readableOrgs.addAll(getOrganizationStructureProvider().getNaturalTree(o));
       }
     }
     readableOrgs.add("0");
@@ -796,42 +779,19 @@ public class OBContext implements OBNotSingleton {
     }
   }
 
-  // the obcontext is located in the session, in tomcat sessions are
-  // persisted and its content is serialized. The OBContext contains non-
-  // serializable objects (like non-initialized cglib proxies). Therefore
-  // before really serializing the obcontext is cleaned out.
-  // only the serializedUserId is maintained so that the context can be
-  // refreshed after being de-serialized and at the first request
   private void writeObject(ObjectOutputStream out) throws IOException {
-
-    currentClient = null;
-    currentOrganization = null;
-    role = null;
-    user = null;
-    language = null;
-    warehouse = null;
-    organizationList = null;
-    deactivatedOrganizationList = null;
-    readableOrganizations = null;
-    readableClients = null;
-    writableOrganizations = null;
-    deactivatedOrganizations = null;
-    userLevel = null;
-    organizationStructureProviderByClient = null;
-    acctSchemaStructureProviderByClient = null;
-    entityAccessChecker = null;
-
-    isAdministrator = false;
-    isInitialized = false;
-
-    serializedUserId = getUser().getId();
-    serialized = true;
+    if (log.isTraceEnabled()) {
+      log.trace("Write context: " + this);
+    }
     out.defaultWriteObject();
   }
 
-  protected void initializeFromSerializedState() {
-    initialize(serializedUserId);
-    serialized = false;
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    if (log.isTraceEnabled()) {
+      log.trace("Read context: " + this);
+    }
+    initialize(userID, roleID, clientID, orgID, langID, warehouseID);
   }
 
   // sets the context by reading all user information
@@ -853,6 +813,14 @@ public class OBContext implements OBNotSingleton {
   // sets the context by reading all user information
   private boolean initialize(String userId, String roleId, String clientId, String orgId,
       String languageCode, String warehouseId) {
+    userID = userId;
+    roleID = roleId;
+    clientID = clientId;
+    orgID = orgId;
+    langID = languageCode;
+    warehouseID = warehouseId;
+
+    additionalWritableOrganizations = new HashSet<>();
 
     String localClientId = clientId;
     final User u = SessionHandler.getInstance().find(User.class, userId);
@@ -899,11 +867,13 @@ public class OBContext implements OBNotSingleton {
       } else {
         Map<String, String> params = new HashMap<>(1);
         params.put("userId", u.getId());
-        final UserRoles ur = getOne(UserRoles.class, "select ur from " + UserRoles.class.getName()
-            + " ur where " + " ur." + UserRoles.PROPERTY_USERCONTACT + "." + User.PROPERTY_ID
-            + "=:userId and ur." + UserRoles.PROPERTY_ACTIVE + "='Y' and ur."
-            + UserRoles.PROPERTY_ROLE + "." + Role.PROPERTY_ACTIVE + "='Y' order by ur."
-            + UserRoles.PROPERTY_ROLE + "." + Role.PROPERTY_ID + " asc", params, false);
+        final UserRoles ur = getOne(UserRoles.class,
+            "select ur from " + UserRoles.class.getName() + " ur where " + " ur."
+                + UserRoles.PROPERTY_USERCONTACT + "." + User.PROPERTY_ID + "=:userId and ur."
+                + UserRoles.PROPERTY_ACTIVE + "='Y' and ur." + UserRoles.PROPERTY_ROLE + "."
+                + Role.PROPERTY_ACTIVE + "='Y' order by ur." + UserRoles.PROPERTY_ROLE + "."
+                + Role.PROPERTY_ID + " asc",
+            params, false);
         if (ur == null) {
           throw new OBSecurityException(
               "Your user is not assigned to a Role and it is required to login into Openbravo. Ask the Security Administrator");
@@ -919,7 +889,8 @@ public class OBContext implements OBNotSingleton {
         params.put("orgId", orgId);
         final Organization o = getOne(Organization.class,
             "select r from " + Organization.class.getName() + " r where " + " r."
-                + Organization.PROPERTY_ID + "=:orgId", params, true);
+                + Organization.PROPERTY_ID + "=:orgId",
+            params, true);
         setCurrentOrganization(o);
       } else if (getUser().getDefaultOrganization() != null
           && getUser().getDefaultOrganization().isActive()) {
@@ -927,13 +898,14 @@ public class OBContext implements OBNotSingleton {
       } else {
         Map<String, String> params = new HashMap<>(1);
         params.put("roleId", getRole().getId());
-        final RoleOrganization roa = getOne(RoleOrganization.class, "select roa from "
-            + RoleOrganization.class.getName() + " roa where roa." + RoleOrganization.PROPERTY_ROLE
-            + "." + Organization.PROPERTY_ID + "=:roleId and roa."
-            + RoleOrganization.PROPERTY_ACTIVE + "='Y' and roa."
-            + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ACTIVE
-            + "='Y' order by roa." + RoleOrganization.PROPERTY_ORGANIZATION + "."
-            + Organization.PROPERTY_ID + " desc", params, false);
+        final RoleOrganization roa = getOne(RoleOrganization.class,
+            "select roa from " + RoleOrganization.class.getName() + " roa where roa."
+                + RoleOrganization.PROPERTY_ROLE + "." + Organization.PROPERTY_ID
+                + "=:roleId and roa." + RoleOrganization.PROPERTY_ACTIVE + "='Y' and roa."
+                + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ACTIVE
+                + "='Y' order by roa." + RoleOrganization.PROPERTY_ORGANIZATION + "."
+                + Organization.PROPERTY_ID + " desc",
+            params, false);
         Hibernate.initialize(roa.getOrganization());
         setCurrentOrganization(roa.getOrganization());
 
@@ -954,8 +926,8 @@ public class OBContext implements OBNotSingleton {
         if (writableOrgs.isEmpty()) {
           log.warn("The user " + userId + " does not have any write access to any organization");
         } else {
-          setCurrentOrganization(SessionHandler.getInstance().find(Organization.class,
-              writableOrgs.iterator().next()));
+          setCurrentOrganization(SessionHandler.getInstance()
+              .find(Organization.class, writableOrgs.iterator().next()));
         }
       }
 
@@ -981,17 +953,18 @@ public class OBContext implements OBNotSingleton {
       Hibernate.initialize(getCurrentClient().getClientInformationList());
 
       Check.isNotNull(getCurrentClient(), "Client may not be null");
-      Check.isTrue(getCurrentClient().isActive(), "Current Client " + getCurrentClient().getName()
-          + " is not active!");
+      Check.isTrue(getCurrentClient().isActive(),
+          "Current Client " + getCurrentClient().getName() + " is not active!");
       if (languageCode != null) {
-        final Query qry = SessionHandler.getInstance().createQuery(
-            "select l from " + Language.class.getName() + " l where l."
-                + Language.PROPERTY_LANGUAGE + "=:languageCode ");
+        final Query<Language> qry = SessionHandler.getInstance()
+            .createQuery("select l from " + Language.class.getName() + " l where l."
+                + Language.PROPERTY_LANGUAGE + "=:languageCode ", Language.class);
         qry.setParameter("languageCode", languageCode);
-        if (qry.list().isEmpty()) {
+        List<Language> languages = qry.list();
+        if (languages.isEmpty()) {
           throw new IllegalArgumentException("No language found for code " + languageCode);
         }
-        setLanguage((Language) qry.list().get(0));
+        setLanguage(languages.get(0));
       } else if (getUser().getDefaultLanguage() != null
           && getUser().getDefaultLanguage().isActive()) {
         setLanguage(getUser().getDefaultLanguage());
@@ -1005,23 +978,24 @@ public class OBContext implements OBNotSingleton {
 
       Check.isNotNull(getLanguage(), "Language may not be null");
 
-      final Query trl = SessionHandler.getInstance().createQuery(
-          "select count(*) from " + Language.class.getName() + " l where l."
-              + Language.PROPERTY_SYSTEMLANGUAGE + "= true ");
+      final Query<Long> trl = SessionHandler.getInstance()
+          .createQuery("select count(*) from " + Language.class.getName() + " l where l."
+              + Language.PROPERTY_SYSTEMLANGUAGE + "= true ", Long.class);
 
       // There are translations installed in the system when there are more than one system
       // language. There's always at last one which is the base language.
-      setTranslationInstalled(((Long) trl.list().get(0)) > 1);
+      setTranslationInstalled(trl.list().get(0) > 1);
 
       setReadableClients(role);
 
       // note sometimes the warehouseId is an empty string
       // this happens when it is set from the session variables
       if (warehouseId != null && warehouseId.trim().length() > 0) {
-        final Query qry = SessionHandler.getInstance().createQuery(
-            "select w from " + Warehouse.class.getName() + " w where w.id=:id");
+        final Query<Warehouse> qry = SessionHandler.getInstance()
+            .createQuery("select w from " + Warehouse.class.getName() + " w where w.id=:id",
+                Warehouse.class);
         qry.setParameter("id", warehouseId);
-        setWarehouse((Warehouse) qry.list().get(0));
+        setWarehouse(qry.uniqueResult());
       } else if (getUser().getDefaultWarehouse() != null) {
         setWarehouse(getUser().getDefaultWarehouse());
       }
@@ -1050,21 +1024,20 @@ public class OBContext implements OBNotSingleton {
     return true;
   }
 
-  @SuppressWarnings({ "unchecked" })
   private <T extends Object> T getOne(Class<T> clz, String qryStr, Map<String, String> parameters,
       boolean doCheck) {
-    final Query qry = SessionHandler.getInstance().createQuery(qryStr);
+    final Query<T> qry = SessionHandler.getInstance().createQuery(qryStr, clz);
     qry.setProperties(parameters);
     qry.setMaxResults(1);
-    final List<?> result = qry.list();
+    final List<T> result = qry.list();
     if (doCheck && result.size() != 1) {
       log.error("The query '" + qryStr + "' returned " + result.size()
           + " results while only 1 result was expected");
     }
-    if (result.size() == 0) {
+    if (result.isEmpty()) {
       return null;
     }
-    return (T) result.get(0);
+    return result.get(0);
   }
 
   public User getUser() {
@@ -1260,10 +1233,6 @@ public class OBContext implements OBNotSingleton {
     return (String) session.getAttribute(param.toUpperCase());
   }
 
-  public boolean isSerialized() {
-    return serialized;
-  }
-
   public Warehouse getWarehouse() {
     return warehouse;
   }
@@ -1333,6 +1302,12 @@ public class OBContext implements OBNotSingleton {
 
   private void setTranslationInstalled(boolean translationInstalled) {
     this.translationInstalled = translationInstalled;
+  }
+
+  @Override
+  public String toString() {
+    return "[user: " + userID + ", role:" + roleID + ", client:" + clientID + ", org:" + orgID
+        + ", warehouse: " + warehouseID + ", lang:" + langID + "]";
   }
 
 }

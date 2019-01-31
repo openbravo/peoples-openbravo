@@ -24,12 +24,15 @@ import static org.hibernate.criterion.Restrictions.not;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.openbravo.client.application.GCSystem;
 import org.openbravo.client.application.GCTab;
+import org.openbravo.client.application.window.StandardWindowComponent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.test.base.OBBaseTest;
 
 public class GridConfigurationTest extends OBBaseTest {
@@ -38,7 +41,8 @@ public class GridConfigurationTest extends OBBaseTest {
    * Standard Grid Configuration IDs
    */
   private static final List<String> CORE_DEFAULT_GRID_CONFIGS = Arrays.asList(
-      "4701BC23719C41FAA422305FCDBBAF85", "FDA9AFD8D7504E18A220EFC01F5D28D3");
+      "4701BC23719C41FAA422305FCDBBAF85", "FDA9AFD8D7504E18A220EFC01F5D28D3",
+      "1AD989605ACA4F5FB6C11B2E7AC88867");
 
   /**
    * @return the current number of grid configurations defined in the system.
@@ -53,5 +57,13 @@ public class GridConfigurationTest extends OBBaseTest {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  protected static Optional<GCSystem> getSystemGridConfig() {
+    return StandardWindowComponent.getSystemGridConfig();
+  }
+
+  protected static Optional<GCTab> getTabGridConfig(Tab tab) {
+    return StandardWindowComponent.getTabsGridConfig(tab.getWindow()).get(tab.getId());
   }
 }

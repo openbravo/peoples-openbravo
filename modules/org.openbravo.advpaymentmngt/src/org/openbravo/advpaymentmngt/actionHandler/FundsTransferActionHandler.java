@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
@@ -43,8 +45,6 @@ import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class implements the ability to transfer funds among financial accounts in a simple and
@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FundsTransferActionHandler extends BaseProcessActionHandler {
   private static final String ERROR_IN_PROCESS = "Error in process";
-  private static final Logger log = LoggerFactory.getLogger(FundsTransferActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String BP_DEPOSIT = "BPD";
   private static final String BP_WITHDRAWAL = "BPW";
   private static final String BANK_FEE = "BF";
@@ -73,13 +73,13 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
 
       // Account from
       String strAccountFrom = request.getString("inpfinFinancialAccountId");
-      FIN_FinancialAccount accountFrom = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          strAccountFrom);
+      FIN_FinancialAccount accountFrom = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, strAccountFrom);
 
       // Account to
       String strAccountTo = jsonParams.getString("fin_financial_account_id");
-      FIN_FinancialAccount accountTo = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          strAccountTo);
+      FIN_FinancialAccount accountTo = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, strAccountTo);
 
       // GL item
       String strGLItem = jsonParams.getString("glitem");
@@ -118,15 +118,21 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
 
       return getResponseBuilder()
           .showMsgInProcessView(MessageType.ERROR, OBMessageUtils.messageBD("error"),
-              e.getMessage(), true).retryExecution().build();
+              e.getMessage(), true)
+          .retryExecution()
+          .build();
     } catch (Exception e) {
       log.error(ERROR_IN_PROCESS, e);
-      return getResponseBuilder().showMsgInProcessView(MessageType.ERROR,
-          OBMessageUtils.messageBD("error"), OBMessageUtils.messageBD("APRM_UnknownError")).build();
+      return getResponseBuilder()
+          .showMsgInProcessView(MessageType.ERROR, OBMessageUtils.messageBD("error"),
+              OBMessageUtils.messageBD("APRM_UnknownError"))
+          .build();
     }
     return getResponseBuilder()
         .showMsgInProcessView(MessageType.SUCCESS, OBMessageUtils.messageBD("success"),
-            OBMessageUtils.messageBD("APRM_TransferFundsSuccess")).refreshGrid().build();
+            OBMessageUtils.messageBD("APRM_TransferFundsSuccess"))
+        .refreshGrid()
+        .build();
   }
 
   /**
@@ -219,8 +225,8 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
       OBDal.getInstance().flush();
       processTransactions(transactions);
 
-      WeldUtils.getInstanceFromStaticBeanManager(FundsTransferHookCaller.class).executeHook(
-          transactions);
+      WeldUtils.getInstanceFromStaticBeanManager(FundsTransferHookCaller.class)
+          .executeHook(transactions);
 
     } catch (Exception e) {
       String message = OBMessageUtils.parseTranslation(e.getMessage());
@@ -264,7 +270,8 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
     }
     // If the user has access to the Organization of the Financial Account, the Transaction is
     // created for it. If not, the Organization of the context is used instead
-    if (OBContext.getOBContext().getWritableOrganizations()
+    if (OBContext.getOBContext()
+        .getWritableOrganizations()
         .contains(account.getOrganization().getId())) {
       trx.setOrganization(account.getOrganization());
     } else {

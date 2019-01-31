@@ -19,16 +19,16 @@
 
 package org.openbravo.base.model.domaintype;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The type used in the Product Characteristic reference.
  */
 public class ProductCharacteristicsDomainType extends StringDomainType {
-  final private static Logger log = LoggerFactory.getLogger(ProductCharacteristicsDomainType.class);
+  final private static Logger log = LogManager.getLogger();
 
   /**
    * Columns that use the ProductCharacteristics reference store in the database a String

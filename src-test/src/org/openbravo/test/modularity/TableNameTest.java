@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,10 +23,11 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.hibernate.QueryTimeoutException;
+import javax.persistence.PersistenceException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.exception.GenericJDBCException;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -49,7 +50,7 @@ import org.openbravo.test.base.OBBaseTest;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TableNameTest extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(TableNameTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Creates a test module to work with it in later tests
@@ -115,9 +116,7 @@ public class TableNameTest extends OBBaseTest {
       // force dal commit to throw exception
       commitTransaction();
       fail("Saved table but it shouldn't be");
-    } catch (GenericJDBCException e) { // thrown on pgsql
-      rollback();
-    } catch (QueryTimeoutException e) { // thrown on oracle
+    } catch (PersistenceException e) {
       rollback();
     }
   }
@@ -141,9 +140,7 @@ public class TableNameTest extends OBBaseTest {
       // force dal commit to throw exception
       commitTransaction();
       fail("Saved table but it shouldn't be");
-    } catch (GenericJDBCException e) { // thrown on pgsql
-      rollback();
-    } catch (QueryTimeoutException e) { // thrown on oracle
+    } catch (PersistenceException e) {
       rollback();
     }
   }
@@ -165,9 +162,7 @@ public class TableNameTest extends OBBaseTest {
       // force dal commit to throw exception
       commitTransaction();
       fail("Saved table but it shouldn't be");
-    } catch (GenericJDBCException e) { // thrown on pgsql
-      rollback();
-    } catch (QueryTimeoutException e) { // thrown on oracle
+    } catch (PersistenceException e) {
       rollback();
     }
   }
@@ -186,8 +181,8 @@ public class TableNameTest extends OBBaseTest {
     for (Module module : modules) {
       log.debug("*deleting module:" + module.toString());
 
-      OBCriteria<ModuleDBPrefix> obCritPrefix = OBDal.getInstance().createCriteria(
-          ModuleDBPrefix.class);
+      OBCriteria<ModuleDBPrefix> obCritPrefix = OBDal.getInstance()
+          .createCriteria(ModuleDBPrefix.class);
       obCritPrefix.add(Restrictions.eq(ModuleDBPrefix.PROPERTY_MODULE, module));
       List<ModuleDBPrefix> dbp = obCritPrefix.list();
       log.debug("  -deleting " + dbp.size() + " prefixes");

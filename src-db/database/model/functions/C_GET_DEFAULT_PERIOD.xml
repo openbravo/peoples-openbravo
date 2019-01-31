@@ -19,14 +19,15 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
 /*
-* It returns the organization that owns the calendar for the p_organization Organization.
-* If no calendar is found, it returns NULL.
+* It returns the period from the inherited calendar of the invoice organization
+* based on p_defaultperiod input parameter.
+* If no period is found, it returns NULL.
 */
 
   v_calendar_id AD_Org.C_Calendar_ID%TYPE; 
@@ -36,10 +37,10 @@
   
 begin
 
-		SELECT C_CALENDAR_ID 
+		SELECT ad_inheritedcalendar_id
 		INTO v_calendar_id
 		FROM AD_ORG
-		WHERE AD_ORG_ID = AD_ORG_GETCALENDAROWNER((SELECT AD_ORG_ID FROM C_INVOICE WHERE C_INVOICE_ID = p_invoice));
+		WHERE AD_ORG_ID = (SELECT AD_ORG_ID FROM C_INVOICE WHERE C_INVOICE_ID = p_invoice);
 
 		SELECT DATEACCT 
 		INTO v_dateAcct

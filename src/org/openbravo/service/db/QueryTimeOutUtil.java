@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,13 +26,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utility class with that allows to set a query timeout for hibernate queries, hibernate criterias
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 public class QueryTimeOutUtil implements OBSingleton {
 
-  private static Logger log = LoggerFactory.getLogger(QueryTimeOutUtil.class);
+  private static Logger log = LogManager.getLogger();
 
   private static QueryTimeOutUtil instance;
 
@@ -78,7 +78,7 @@ public class QueryTimeOutUtil implements OBSingleton {
    * canApplyTimeOut is set to false
    */
   private void loadQueryTimeOutMap() {
-    queryTimeOutMap = new HashMap<String, Integer>();
+    queryTimeOutMap = new HashMap<>();
     final Properties obProperties = OBPropertiesProvider.getInstance().getOpenbravoProperties();
     Iterator<Object> keys = obProperties.keySet().iterator();
     while (keys.hasNext()) {
@@ -134,7 +134,7 @@ public class QueryTimeOutUtil implements OBSingleton {
    *          query type, it will be used to fetch the proper timeout
    * 
    */
-  public void setQueryTimeOut(Query query, String type) {
+  public void setQueryTimeOut(Query<?> query, String type) {
     if (canApplyTimeOut && checkQueryType(type)) {
       query.setTimeout(queryTimeOutMap.get(type));
     }
@@ -186,7 +186,7 @@ public class QueryTimeOutUtil implements OBSingleton {
   /**
    * Sets the 0 the timeout of a hibernate query
    */
-  public static void resetQueryTimeOut(Query query) {
+  public static void resetQueryTimeOut(Query<?> query) {
     query.setTimeout(0);
   }
 

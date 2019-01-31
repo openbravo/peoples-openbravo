@@ -14,7 +14,8 @@ package org.openbravo.xmlEngine;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionTemplate implements XmlComponentTemplate, IDComponent {
   protected String fieldName;
@@ -25,7 +26,7 @@ class FunctionTemplate implements XmlComponentTemplate, IDComponent {
   protected XmlComponentTemplate arg1Template;
   protected XmlComponentTemplate arg2Template;
 
-  static Logger log4jFunctionTemplate = Logger.getLogger(FunctionTemplate.class);
+  static Logger log4jFunctionTemplate = LogManager.getLogger();
 
   public FunctionTemplate() {
   }
@@ -49,6 +50,7 @@ class FunctionTemplate implements XmlComponentTemplate, IDComponent {
     this.arg2Template = arg2;
   }
 
+  @Override
   public int type() {
     return FUNCTION;
   }
@@ -98,6 +100,7 @@ class FunctionTemplate implements XmlComponentTemplate, IDComponent {
     return functionValue;
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
     return createFunctionValue(xmlDocument);
   }

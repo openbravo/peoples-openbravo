@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,11 +19,16 @@
 
 package org.openbravo.test.security;
 
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -33,9 +38,13 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
 
 /**
  * Tests check of writable organization and allowed client.
@@ -155,6 +164,48 @@ public class WritableReadableOrganizationClientTest extends OBBaseTest {
       rollback();
       assertTrue("Invalid exception " + e.getMessage(),
           e.getMessage().indexOf("is not present in ClientList") != -1);
+    }
+  }
+
+  /* see issue #38761 */
+  @Test
+  public void readSibilingOrganizationsShouldBeAllowed() {
+    RoleOrganization disabledAccess = null;
+    try {
+      // given a role with access to España and España Norte Organizations
+      OBContext.setAdminMode(false);
+      Role espAdminRole = OBDal.getInstance().get(Role.class, Roles.ESP_ADMIN);
+      for (RoleOrganization orgAccess : espAdminRole.getADRoleOrganizationList()) {
+        if (orgAccess.getOrganization().getId().equals(Orgs.ESP_SUR)) {
+          orgAccess.setActive(false);
+          disabledAccess = orgAccess;
+        }
+      }
+
+      OBDal.getInstance().flush();
+
+      // when it is used
+      OBContext.setOBContext(TEST_USER_ID, Roles.ESP_ADMIN, TEST_CLIENT_ID, Orgs.ESP_NORTE);
+
+      // then it shouldn't be able to write in sibling organizations
+      Set<String> writableOrganizations = OBContext.getOBContext().getWritableOrganizations();
+      assertThat("Role shouldn't be able to write on España Sur", writableOrganizations,
+          not(hasItem(Orgs.ESP_SUR)));
+
+      // and it should be able to read them if it has access to their ancestor
+      List<String> readableOrgs = Arrays
+          .asList(OBContext.getOBContext().getReadableOrganizations());
+      assertThat("Role should be able to read España Sur", readableOrgs, hasItem(Orgs.ESP_SUR));
+
+      // and it should not be able to read them if it has no access to their ancestor
+      assertThat("Role should not be able to read any US organization", readableOrgs,
+          allOf(not(hasItem(Orgs.US_EST)), not(hasItem(Orgs.US_WEST)), not(hasItem(Orgs.US))));
+    } finally {
+      if (disabledAccess != null) {
+        disabledAccess.setActive(true);
+      }
+      OBDal.getInstance().flush();
+      OBContext.restorePreviousMode();
     }
   }
 }

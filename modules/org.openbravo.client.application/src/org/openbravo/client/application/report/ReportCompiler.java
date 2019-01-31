@@ -25,13 +25,14 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.Replace;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -45,7 +46,7 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
  * passed as parameters within the report design.
  */
 class ReportCompiler {
-  private static final Logger log = LoggerFactory.getLogger(ReportCompiler.class);
+  private static final Logger log = LogManager.getLogger();
 
   // connection provider used to retrieve the translated texts
   private ConnectionProvider connectionProvider;
@@ -87,8 +88,8 @@ class ReportCompiler {
    * present this process assumes the subreport is a .jrxml file. It does not support the
    * possibility that this subreport file could be a .jasper file.
    * 
-   * @param connectionProvider
-   *          A connection provider in case the report needs it.
+   * @param provider
+   *          A connection provider in case sub-reports need it.
    * @return a Map containing the compiled sub-reports. The keys of the map are the name of the
    *         parameter that references to each sub-report.
    * @throws OBException
@@ -96,6 +97,8 @@ class ReportCompiler {
    *           error message.
    */
   Map<String, JasperReport> compileSubReports(ConnectionProvider provider) throws OBException {
+    ConnectionProvider cp = provider != null ? provider
+        : DalConnectionProvider.getReadOnlyConnectionProvider();
     try {
       Map<String, JasperReport> compiledSubReports = new HashMap<>();
       for (Object parameterObj : getMainDesign().getParametersList()) {
@@ -103,7 +106,7 @@ class ReportCompiler {
         if (parameter.getName().startsWith("SUBREP_")) {
           String parameterName = parameter.getName();
           String subReportName = Replace.replace(parameterName, "SUBREP_", "") + ".jrxml";
-          JasperDesign jasperDesign = getJasperDesign(provider, templateLocation + subReportName);
+          JasperDesign jasperDesign = getJasperDesign(cp, templateLocation + subReportName);
           JasperReport jasperReportLines = compileJasperReport(jasperDesign);
           compiledSubReports.put(parameterName, jasperReportLines);
         }

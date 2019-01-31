@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,8 +20,9 @@ package org.openbravo.erpCommon.ad_actionButton;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -42,7 +43,7 @@ public class SequenceProductCreate implements Process {
   private static final String lotSearchKey = "LOT";
   private static final String serialNoSearchKey = "SNO";
   private static final String expirationDateSearchKey = "EXD";
-  private static final Logger log4j = Logger.getLogger(SequenceProductCreate.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -60,8 +61,8 @@ public class SequenceProductCreate implements Process {
       OBContext.setAdminMode(true);
 
       // Create new product copy of selected
-      OperationProduct opProduct = OBDal.getInstance().get(OperationProduct.class,
-          sequenceProductId);
+      OperationProduct opProduct = OBDal.getInstance()
+          .get(OperationProduct.class, sequenceProductId);
 
       Product originalProduct = opProduct.getProduct();
       Product newProduct = (Product) DalUtil.copy(originalProduct);
@@ -83,8 +84,9 @@ public class SequenceProductCreate implements Process {
 
       // Product Category
       ProductCategory pcategory = OBDal.getInstance().get(ProductCategory.class, productCategoryId);
-      if (pcategory != null)
+      if (pcategory != null) {
         newProduct.setProductCategory(pcategory);
+      }
 
       // Save product
       OBDal.getInstance().save(newProduct);
@@ -114,12 +116,15 @@ public class SequenceProductCreate implements Process {
       if (copyAttribute.equals("Y") && newProduct.getAttributeSet() != null
           && productionType.equals("+") && opProduct.getProductionType().equals("-")) {
         // Special Attribute
-        if (newProduct.getAttributeSet().isLot())
+        if (newProduct.getAttributeSet().isLot()) {
           copyAtt(newOpProduct, opProduct, true, lotSearchKey, null);
-        if (newProduct.getAttributeSet().isSerialNo())
+        }
+        if (newProduct.getAttributeSet().isSerialNo()) {
           copyAtt(newOpProduct, opProduct, true, serialNoSearchKey, null);
-        if (newProduct.getAttributeSet().isExpirationDate())
+        }
+        if (newProduct.getAttributeSet().isExpirationDate()) {
           copyAtt(newOpProduct, opProduct, true, expirationDateSearchKey, null);
+        }
         // Normal Attribute
         for (AttributeUse attributeuse : newProduct.getAttributeSet().getAttributeUseList()) {
           copyAtt(newOpProduct, opProduct, false, "", attributeuse);
@@ -131,15 +136,13 @@ public class SequenceProductCreate implements Process {
       final OBError msg = new OBError();
       msg.setType("Success");
       msg.setTitle(Utility.messageBD(conn, "Success", bundle.getContext().getLanguage()));
-      String message = Utility.messageBD(conn, "SequenceProductCreated", bundle.getContext()
-          .getLanguage())
-          + newProduct.getName() + " " + qty + " P" + productionType;
+      String message = Utility.messageBD(conn, "SequenceProductCreated",
+          bundle.getContext().getLanguage()) + newProduct.getName() + " " + qty + " P"
+          + productionType;
       if (copyAttribute.equals("Y")
           && (productionType.equals("-") || opProduct.getProductionType().equals("+"))) {
-        message = message
-            + ". "
-            + Utility.messageBD(conn, "SequenceProductAttNotCopied", bundle.getContext()
-                .getLanguage());
+        message = message + ". " + Utility.messageBD(conn, "SequenceProductAttNotCopied",
+            bundle.getContext().getLanguage());
       }
       msg.setMessage(message);
       bundle.setResult(msg);
@@ -152,10 +155,12 @@ public class SequenceProductCreate implements Process {
       msg.setType("Error");
       if (e instanceof org.hibernate.exception.GenericJDBCException) {
         msg.setMessage(((org.hibernate.exception.GenericJDBCException) e).getSQLException()
-            .getNextException().getMessage());
+            .getNextException()
+            .getMessage());
       } else if (e instanceof org.hibernate.exception.ConstraintViolationException) {
         msg.setMessage(((org.hibernate.exception.ConstraintViolationException) e).getSQLException()
-            .getNextException().getMessage());
+            .getNextException()
+            .getMessage());
       } else {
         msg.setMessage(e.getMessage());
       }
@@ -170,8 +175,8 @@ public class SequenceProductCreate implements Process {
   private void copyAtt(OperationProduct newOpProduct, OperationProduct fromOpProduct,
       boolean isSpecial, String specialValue, AttributeUse attributeuse) throws Exception {
 
-    OperationProductAttribute opProductAtt = OBProvider.getInstance().get(
-        OperationProductAttribute.class);
+    OperationProductAttribute opProductAtt = OBProvider.getInstance()
+        .get(OperationProductAttribute.class);
     opProductAtt.setSequenceproduct(newOpProduct);
     opProductAtt.setClient(newOpProduct.getClient());
     opProductAtt.setOrganization(newOpProduct.getOrganization());
@@ -191,9 +196,9 @@ public class SequenceProductCreate implements Process {
   private static Long getLineNum(String SequenceId) throws Exception {
     String hql = "  SELECT COALESCE(MAX(l.lineNo),0)+10 AS DefaultValue FROM ManufacturingOperationProduct l WHERE l.mASequence.id= '"
         + SequenceId + "'";
-    Query q = OBDal.getInstance().getSession().createQuery(hql);
+    Query<Long> q = OBDal.getInstance().getSession().createQuery(hql, Long.class);
     try {
-      Long result = (Long) q.uniqueResult();
+      Long result = q.uniqueResult();
       return result == null ? 0L : result;
     } catch (Exception e) {
       // Unique result throws exception if more than one line is returned.

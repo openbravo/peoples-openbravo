@@ -23,7 +23,8 @@ import java.util.HashMap;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
@@ -37,7 +38,7 @@ import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
 
 public class ProductInfo {
-  static Logger log4jProductInfo = Logger.getLogger(ProductInfo.class);
+  static Logger log4jProductInfo = LogManager.getLogger();
 
   /**
    * Constructor
@@ -67,8 +68,9 @@ public class ProductInfo {
    */
   private void init(String M_Product_ID, ConnectionProvider conn) {
     m_M_Product_ID = M_Product_ID;
-    if (m_M_Product_ID != null && m_M_Product_ID.equals(""))
+    if (m_M_Product_ID != null && m_M_Product_ID.equals("")) {
       return;
+    }
 
     ProductInfoData[] data = null;
     try {
@@ -96,59 +98,63 @@ public class ProductInfo {
    * @return Requested Product Account
    */
   public Account getAccount(String AcctType, AcctSchema as, ConnectionProvider conn) {
-    if (Integer.parseInt(AcctType) < 1 || Integer.parseInt(AcctType) > 12)
+    if (Integer.parseInt(AcctType) < 1 || Integer.parseInt(AcctType) > 12) {
       return null;
+    }
     // No Product - get Default from Accounting Schema defaults then from default Product Category
     // and finally from oldest Product Category
-    if (m_M_Product_ID.equals(""))
+    if (m_M_Product_ID.equals("")) {
       return getAccountDefault(AcctType, as, conn);
+    }
     ProductInfoData[] data = null;
     Account acc = null;
     try {
       data = ProductInfoData.selectProductAcct(conn, m_M_Product_ID, as.getC_AcctSchema_ID());
-      if (data == null || data.length == 0)
+      if (data == null || data.length == 0) {
         return null;
+      }
       String validCombination_ID = "";
       switch (Integer.parseInt(AcctType)) {
-      case 1:
-        validCombination_ID = data[0].revenue;
-        break;
-      case 2:
-        validCombination_ID = data[0].expense;
-        break;
-      case 3:
-        validCombination_ID = data[0].asset;
-        break;
-      case 4:
-        validCombination_ID = data[0].cogs;
-        break;
-      case 5:
-        validCombination_ID = data[0].purchasepricevariance;
-        break;
-      case 6:
-        validCombination_ID = data[0].invoicepricevariance;
-        break;
-      case 7:
-        validCombination_ID = data[0].discountrec;
-        break;
-      case 8:
-        validCombination_ID = data[0].discountgrant;
-        break;
-      case 9:
-        validCombination_ID = data[0].revenuereturn;
-        break;
-      case 10:
-        validCombination_ID = data[0].cogsreturn;
-        break;
-      case 11:
-        validCombination_ID = data[0].defrevenue;
-        break;
-      case 12:
-        validCombination_ID = data[0].defexpense;
-        break;
+        case 1:
+          validCombination_ID = data[0].revenue;
+          break;
+        case 2:
+          validCombination_ID = data[0].expense;
+          break;
+        case 3:
+          validCombination_ID = data[0].asset;
+          break;
+        case 4:
+          validCombination_ID = data[0].cogs;
+          break;
+        case 5:
+          validCombination_ID = data[0].purchasepricevariance;
+          break;
+        case 6:
+          validCombination_ID = data[0].invoicepricevariance;
+          break;
+        case 7:
+          validCombination_ID = data[0].discountrec;
+          break;
+        case 8:
+          validCombination_ID = data[0].discountgrant;
+          break;
+        case 9:
+          validCombination_ID = data[0].revenuereturn;
+          break;
+        case 10:
+          validCombination_ID = data[0].cogsreturn;
+          break;
+        case 11:
+          validCombination_ID = data[0].defrevenue;
+          break;
+        case 12:
+          validCombination_ID = data[0].defexpense;
+          break;
       }
-      if (validCombination_ID.equals(""))
+      if (validCombination_ID.equals("")) {
         return null;
+      }
       acc = Account.getAccount(conn, validCombination_ID);
     } catch (ServletException e) {
       log4jProductInfo.warn(e);
@@ -167,47 +173,49 @@ public class ProductInfo {
    * @return Requested Product Account
    */
   public Account getAccountDefault(String AcctType, AcctSchema as, ConnectionProvider conn) {
-    if (Integer.parseInt(AcctType) < 1 || Integer.parseInt(AcctType) > 8)
+    if (Integer.parseInt(AcctType) < 1 || Integer.parseInt(AcctType) > 8) {
       return null;
+    }
     ProductInfoData[] data = null;
     Account acct = null;
     try {
       data = ProductInfoData.selectDefaultAcct(conn, as.getC_AcctSchema_ID());
       String validCombination_ID = "";
       switch (Integer.parseInt(AcctType)) {
-      case 1:
-        validCombination_ID = data[0].revenue;
-        break;
-      case 2:
-        validCombination_ID = data[0].expense;
-        break;
-      case 3:
-        validCombination_ID = data[0].asset;
-        break;
-      case 4:
-        validCombination_ID = data[0].cogs;
-        break;
-      case 5:
-        validCombination_ID = data[0].purchasepricevariance;
-        break;
-      case 6:
-        validCombination_ID = data[0].invoicepricevariance;
-        break;
-      case 7:
-        validCombination_ID = data[0].discountrec;
-        break;
-      case 8:
-        validCombination_ID = data[0].discountgrant;
-        break;
-      case 9:
-        validCombination_ID = data[0].revenuereturn;
-        break;
-      case 10:
-        validCombination_ID = data[0].cogsreturn;
-        break;
+        case 1:
+          validCombination_ID = data[0].revenue;
+          break;
+        case 2:
+          validCombination_ID = data[0].expense;
+          break;
+        case 3:
+          validCombination_ID = data[0].asset;
+          break;
+        case 4:
+          validCombination_ID = data[0].cogs;
+          break;
+        case 5:
+          validCombination_ID = data[0].purchasepricevariance;
+          break;
+        case 6:
+          validCombination_ID = data[0].invoicepricevariance;
+          break;
+        case 7:
+          validCombination_ID = data[0].discountrec;
+          break;
+        case 8:
+          validCombination_ID = data[0].discountgrant;
+          break;
+        case 9:
+          validCombination_ID = data[0].revenuereturn;
+          break;
+        case 10:
+          validCombination_ID = data[0].cogsreturn;
+          break;
       }
-      if (validCombination_ID.equals(""))
+      if (validCombination_ID.equals("")) {
         return null;
+      }
       acct = Account.getAccount(conn, validCombination_ID);
     } catch (ServletException e) {
       log4jProductInfo.warn(e);
@@ -250,8 +258,9 @@ public class ProductInfo {
       String StdPrecision, ConnectionProvider conn) {
     // Nothing to do
     if (qty.equals("") || (new BigDecimal(qty).compareTo(BigDecimal.ZERO) == 0)
-        || C_UOM_From_ID.equals(C_UOM_To_ID))
+        || C_UOM_From_ID.equals(C_UOM_To_ID)) {
       return qty;
+    }
     //
     String retValue = "";
     ProductInfoData[] data = null;
@@ -282,19 +291,20 @@ public class ProductInfo {
     log4jProductInfo.debug("getProductCosts - qty = " + m_qty);
     if (strQty == null || strQty.equals("")) {
       BigDecimal qty = new BigDecimal(m_qty);
-      log4jProductInfo.debug("getProductCosts - Qty(" + m_qty + ") * Cost(" + cost + ") = "
-          + qty.multiply(cost));
+      log4jProductInfo.debug(
+          "getProductCosts - Qty(" + m_qty + ") * Cost(" + cost + ") = " + qty.multiply(cost));
       return qty.multiply(cost).toString();
-    } else
+    } else {
       return cost.multiply(new BigDecimal(strQty)).toString();
+    }
 
   } // getProductCosts
 
   public String getProductItemCost(String date, AcctSchema as, String costType,
       ConnectionProvider conn, Connection con) {
     String cost = "";
-    log4jProductInfo.debug("getProductItemCost - m_M_Product_ID(" + m_M_Product_ID + ") - date("
-        + date + ")");
+    log4jProductInfo
+        .debug("getProductItemCost - m_M_Product_ID(" + m_M_Product_ID + ") - date(" + date + ")");
     try {
       cost = ProductInfoData.selectProductAverageCost(conn, m_M_Product_ID, date);
     } catch (ServletException e) {
@@ -321,8 +331,8 @@ public class ProductInfo {
    *           When the Product does not have a standard cost defined for the given date on the
    *           organization's Legal Entity
    */
-  public String getProductDefaultCosts(String date, BigDecimal _qty, Organization org,
-      Warehouse wh, Currency currency) throws OBException {
+  public String getProductDefaultCosts(String date, BigDecimal _qty, Organization org, Warehouse wh,
+      Currency currency) throws OBException {
     BigDecimal qty = null;
     Product product = OBDal.getInstance().get(Product.class, m_M_Product_ID);
     if (_qty == null) {

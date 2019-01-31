@@ -20,7 +20,8 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -29,17 +30,16 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 
 public class FaccAcctModifyEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      AccountingFact.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(AccountingFact.ENTITY_NAME) };
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }

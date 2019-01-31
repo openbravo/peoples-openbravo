@@ -34,20 +34,20 @@ public enum AccessLevel {
    */
   public int getDbValue() {
     switch (this) {
-    case SYSTEM:
-      return 4;
-    case ORGANIZATION:
-      return 1;
-    case CLIENT_ORGANIZATION:
-      return 3;
-    case SYSTEM_CLIENT:
-      return 6;
-    case ALL:
-      return 7;
+      case SYSTEM:
+        return 4;
+      case ORGANIZATION:
+        return 1;
+      case CLIENT_ORGANIZATION:
+        return 3;
+      case SYSTEM_CLIENT:
+        return 6;
+      case ALL:
+        return 7;
       // client is not implemented..
-    case CLIENT:
-    default:
-      throw new OBException("getDbValue called with illegal value: " + name());
+      case CLIENT:
+      default:
+        throw new OBException("getDbValue called with illegal value: " + name());
     }
   }
 }

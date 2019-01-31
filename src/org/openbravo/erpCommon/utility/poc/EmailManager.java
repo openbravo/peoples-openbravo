@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2012 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2018 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -38,17 +39,66 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.email.EmailUtils;
+import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.utils.FormatUtilities;
 
 public class EmailManager {
-  private static Logger log4j = Logger.getLogger(EmailManager.class);
+  private static Logger log4j = LogManager.getLogger();
+  private static final Long DEFAULT_SMTP_TIMEOUT = TimeUnit.MINUTES.toMillis(10);
 
+  /**
+   * Sends an email using the given SMTP Server configuration and the email definition contained in
+   * the email parameter.
+   * 
+   * @param conf
+   *          The SMTP Server configuration
+   * @param email
+   *          The data of the email being sent
+   * @throws Exception
+   */
+  public static void sendEmail(EmailServerConfiguration conf, EmailInfo email) throws Exception {
+
+    String decryptedPassword = FormatUtilities.encryptDecrypt(conf.getSmtpServerPassword(), false);
+    Long timeoutMillis = TimeUnit.SECONDS.toMillis(conf.getSmtpConnectionTimeout());
+
+    sendEmail(conf.getSmtpServer(), conf.isSMTPAuthentification(), conf.getSmtpServerAccount(),
+        decryptedPassword, conf.getSmtpConnectionSecurity(), conf.getSmtpPort().intValue(),
+        conf.getSmtpServerSenderAddress(), email.getRecipientTO(), email.getRecipientCC(),
+        email.getRecipientBCC(), email.getReplyTo(), email.getSubject(), email.getContent(),
+        email.getContentType(), email.getAttachments(), email.getSentDate(),
+        email.getHeaderExtras(), timeoutMillis.intValue());
+  }
+
+  /**
+   * @deprecated Use {@link #sendEmail(EmailServerConfiguration, EmailInfo)} instead.
+   */
+  @Deprecated
   public static void sendEmail(String host, boolean auth, String username, String password,
       String connSecurity, int port, String senderAddress, String recipientTO, String recipientCC,
       String recipientBCC, String replyTo, String subject, String content, String contentType,
       List<File> attachments, Date sentDate, List<String> headerExtras) throws Exception {
+
+    EmailServerConfiguration configuration = EmailUtils
+        .getEmailConfiguration(OBContext.getOBContext().getCurrentOrganization());
+    Long timeoutMillis = (configuration != null)
+        ? TimeUnit.SECONDS.toMillis(configuration.getSmtpConnectionTimeout())
+        : DEFAULT_SMTP_TIMEOUT;
+
+    sendEmail(host, auth, username, password, connSecurity, port, senderAddress, recipientTO,
+        recipientCC, recipientBCC, replyTo, subject, content, contentType, attachments, sentDate,
+        headerExtras, timeoutMillis.intValue());
+  }
+
+  private static void sendEmail(String host, boolean auth, String username, String password,
+      String connSecurity, int port, String senderAddress, String recipientTO, String recipientCC,
+      String recipientBCC, String replyTo, String subject, String content, String contentType,
+      List<File> attachments, Date sentDate, List<String> headerExtras, int smtpServerTimeout)
+      throws Exception {
     String localReplyTo = replyTo;
     String localRecipientTO = recipientTO;
     String localRecipientCC = recipientCC;
@@ -63,7 +113,12 @@ public class EmailManager {
       }
       props.put("mail.transport.protocol", "smtp");
       props.put("mail.smtp.host", host);
-      props.put("mail.smtp.port", port);
+      props.put("mail.smtp.port", String.valueOf(port));
+
+      String timeout = String.valueOf(smtpServerTimeout);
+      props.put("mail.smtp.timeout", timeout);
+      props.put("mail.smtp.connectiontimeout", timeout);
+      props.put("mail.smtp.writetimeout", timeout);
 
       if (localConnSecurity != null) {
         localConnSecurity = localConnSecurity.replaceAll(", *", ",");
@@ -188,6 +243,7 @@ public class EmailManager {
       _password = password;
     }
 
+    @Override
     public PasswordAuthentication getPasswordAuthentication() {
       return new PasswordAuthentication(_username, _password);
     }
@@ -265,8 +321,9 @@ public class EmailManager {
 
       message.setRecipients(Message.RecipientType.TO, getAddressesFrom(to.split(",")));
 
-      if (bcc != null)
+      if (bcc != null) {
         message.setRecipients(Message.RecipientType.BCC, getAddressesFrom(bcc.split(",")));
+      }
 
       message.setSubject(subject);
 
@@ -315,9 +372,10 @@ public class EmailManager {
       try {
         internetAddresses[index] = new InternetAddress(textualAddresses[index]);
       } catch (AddressException e) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Could not create a valid email for: " + textualAddresses[index]
               + ". Address ignored");
+        }
       }
     }
     return internetAddresses;

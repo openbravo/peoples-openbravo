@@ -19,7 +19,8 @@
 package org.openbravo.erpCommon.utility;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
@@ -29,7 +30,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  * Utilities to get Currency
  */
 public class OBCurrencyUtils {
-  private static Logger log4j = Logger.getLogger(OBCurrencyUtils.class);
+  private static Logger log4j = LogManager.getLogger();
 
   /**
    * Returns the currency id for the given organization id.
@@ -58,15 +59,16 @@ public class OBCurrencyUtils {
         return org.getCurrency().getId();
       } else {
         final Organization legalEntity = OBContext.getOBContext()
-            .getOrganizationStructureProvider().getLegalEntity(org);
+            .getOrganizationStructureProvider()
+            .getLegalEntity(org);
         if (legalEntity != null && legalEntity.getCurrency() != null) {
           // Get currency from legal entity of organization
           return legalEntity.getCurrency().getId();
         } else {
           // Get client base currency
-          return Utility.stringBaseCurrencyId(new DalConnectionProvider(false), StringUtils.equals(
-              orgId, "0") ? OBContext.getOBContext().getCurrentClient().getId() : org.getClient()
-              .getId());
+          return Utility.stringBaseCurrencyId(new DalConnectionProvider(false),
+              StringUtils.equals(orgId, "0") ? OBContext.getOBContext().getCurrentClient().getId()
+                  : org.getClient().getId());
         }
       }
     } catch (Exception e) {

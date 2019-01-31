@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,19 +30,24 @@ import org.openbravo.test.datasource.FKDropDownDatasource;
 import org.openbravo.test.datasource.FetchDSNoActiveEntityObjects;
 import org.openbravo.test.datasource.HQLDataSourceTest;
 import org.openbravo.test.datasource.LinkToParentTreeDataSourceTest;
+import org.openbravo.test.datasource.LogDatasourceTest;
 import org.openbravo.test.datasource.NonIdForeignKeyFilters;
+import org.openbravo.test.datasource.OpenRecordAfterLogin;
 import org.openbravo.test.datasource.OrganizationSelectorDataSourceTest;
 import org.openbravo.test.datasource.OtherDatasourceRequests;
 import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
 import org.openbravo.test.datasource.ResetCookieOnLogin;
 import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
 import org.openbravo.test.datasource.SelectorPickListFieldsDataSourceTest;
+import org.openbravo.test.datasource.SummaryFieldRequestTest;
 import org.openbravo.test.datasource.TestAllowUnpagedDatasourcePreference;
 import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.datasource.TestComboDatasource;
 import org.openbravo.test.datasource.TestNoteDatasource;
+import org.openbravo.test.security.CSRFAttackTest;
 import org.openbravo.test.security.ExplicitCrossOrganizationReference;
 import org.openbravo.test.security.UserInfoSessionDataTest;
+import org.openbravo.test.selector.TestSelectorDefaultFilterActionHandler;
 import org.openbravo.test.views.ETagGeneration;
 import org.openbravo.test.webservice.JSONWebServices;
 import org.openbravo.test.webservice.JSONWebServicesWhereParameter;
@@ -63,7 +68,7 @@ import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-DataSourceWhereParameter.class, //
+    DataSourceWhereParameter.class, //
     WSReadTest.class, //
     WSUpdateTest.class, //
     PerformanceTest.class, //
@@ -78,6 +83,7 @@ DataSourceWhereParameter.class, //
     JSONWebServices.class, //
     FICTest.class, //
     HQLDataSourceTest.class, //
+    LogDatasourceTest.class, //
     TestAllowUnpagedDatasourcePreference.class, //
     TestNoteDatasource.class, //
     WebServicesWithNoActiveFilterTest.class, //
@@ -94,7 +100,11 @@ DataSourceWhereParameter.class, //
     OtherDatasourceRequests.class, //
     NonIdForeignKeyFilters.class, //
     ResetCookieOnLogin.class, //
-    ETagGeneration.class //
+    OpenRecordAfterLogin.class, //
+    ETagGeneration.class, //
+    TestSelectorDefaultFilterActionHandler.class, //
+    SummaryFieldRequestTest.class, //
+    CSRFAttackTest.class //
 })
 public class AllWebserviceTests {
 }

@@ -16,13 +16,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.uiTranslation.TranslationHandler;
 
 class XmlVectorValue extends Vector<Object> {
 
   private static final long serialVersionUID = 1L;
-  static Logger log4jXmlVectorValue = Logger.getLogger(XmlVectorValue.class);
+  static Logger log4jXmlVectorValue = LogManager.getLogger();
   private HashMap<String, String> textMap;
   public TranslationHandler handler;
 
@@ -50,8 +51,8 @@ class XmlVectorValue extends Vector<Object> {
             && !xmlComponentValue.print().equals("")) {
 
           result = xmlComponentValue.print().replace(String.valueOf((char) 160), " ").trim();
-          log4jXmlVectorValue.debug("printStringBuffer(HashMap<String, String> textMap) - result: "
-              + result);
+          log4jXmlVectorValue
+              .debug("printStringBuffer(HashMap<String, String> textMap) - result: " + result);
           log4jXmlVectorValue.debug("checking for existence of text in textdata: " + result);
           String translation = textMap.get(result.trim());
           if (translation != null && !translation.equals("")) {
@@ -66,8 +67,8 @@ class XmlVectorValue extends Vector<Object> {
       }
       if (result != null && !result.equals("")) {
         if (result.contains("alt=") || result.contains("title=")) {
-          log4jXmlVectorValue.debug("printStringBuffer(HashMap<String, String> textMap) - result: "
-              + result);
+          log4jXmlVectorValue
+              .debug("printStringBuffer(HashMap<String, String> textMap) - result: " + result);
           String prefix = "alt=\"";
           String suffix = "\"";
           if (result.contains("alt=\"")) {

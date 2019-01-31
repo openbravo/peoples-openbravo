@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  *   Martin Taal <martin.taal@openbravo.com>,
@@ -24,6 +24,7 @@ package org.openbravo.test.dal;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -35,10 +36,13 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeThat;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
@@ -58,6 +62,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ExternalConnectionPool;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
@@ -79,13 +84,13 @@ import org.openbravo.test.base.OBBaseTest;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DalTest extends OBBaseTest {
-  private static final Logger log = Logger.getLogger(DalTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
   /**
-   * Test to assert save false in a null char(1) column - Part I
+   * Test to assert save false in a null char(1) column - Part I.
    */
   @Test
   public void testASaveBooleanValue1() {
@@ -99,7 +104,7 @@ public class DalTest extends OBBaseTest {
   }
 
   /**
-   * Test to assert save false in a null char(1) column - Part II
+   * Test to assert save false in a null char(1) column - Part II.
    */
   @Test
   public void testBSaveBooleanValue2() {
@@ -145,8 +150,8 @@ public class DalTest extends OBBaseTest {
     assertEquals(obContext.getUser().getId(), bpg.getUpdatedBy().getId());
 
     // first delete the related accounts
-    final OBCriteria<CategoryAccounts> obc2 = OBDal.getInstance().createCriteria(
-        CategoryAccounts.class);
+    final OBCriteria<CategoryAccounts> obc2 = OBDal.getInstance()
+        .createCriteria(CategoryAccounts.class);
     obc2.add(Restrictions.eq(CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY, bpgs.get(0)));
     final List<CategoryAccounts> bpgas = obc2.list();
     for (final CategoryAccounts bga : bpgas) {
@@ -182,7 +187,8 @@ public class DalTest extends OBBaseTest {
     final Currency c = cs.get(0);
     // Call getValue and setValue directly to work around security checks on the description
     // that are not the objective of this test.
-    c.setValue(Currency.PROPERTY_DESCRIPTION, c.getValue(Currency.PROPERTY_DESCRIPTION) + " a test");
+    c.setValue(Currency.PROPERTY_DESCRIPTION,
+        c.getValue(Currency.PROPERTY_DESCRIPTION) + " a test");
     try {
       OBDal.getInstance().save(c);
       OBDal.getInstance().commitAndClose();
@@ -254,8 +260,8 @@ public class DalTest extends OBBaseTest {
   public void testITransaction25PageRead() {
     setTestUserContext();
     addReadWriteAccess(MaterialTransaction.class);
-    final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance().createCriteria(
-        MaterialTransaction.class);
+    final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance()
+        .createCriteria(MaterialTransaction.class);
     final int count = countObc.count();
     final int pageSize = 25;
     int pageCount = 1 + (count / pageSize);
@@ -264,8 +270,8 @@ public class DalTest extends OBBaseTest {
     }
     final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < pageCount; i++) {
-      final OBCriteria<MaterialTransaction> obc = OBDal.getInstance().createCriteria(
-          MaterialTransaction.class);
+      final OBCriteria<MaterialTransaction> obc = OBDal.getInstance()
+          .createCriteria(MaterialTransaction.class);
       obc.addOrderBy(MaterialTransaction.PROPERTY_PRODUCT + "." + Product.PROPERTY_NAME, false);
       obc.setMaxResults(pageSize);
       obc.setFirstResult(i * pageSize);
@@ -285,8 +291,8 @@ public class DalTest extends OBBaseTest {
   @Test
   public void testJTransactionAllPagesTime() {
     setSystemAdministratorContext();
-    final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance().createCriteria(
-        MaterialTransaction.class);
+    final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance()
+        .createCriteria(MaterialTransaction.class);
     final int count = countObc.count();
     long time = System.currentTimeMillis();
     final int pageSize = 25;
@@ -294,8 +300,8 @@ public class DalTest extends OBBaseTest {
     pageCount = 500;
     long avg = 0;
     for (int i = 0; i < pageCount; i++) {
-      final OBCriteria<MaterialTransaction> obc = OBDal.getInstance().createCriteria(
-          MaterialTransaction.class);
+      final OBCriteria<MaterialTransaction> obc = OBDal.getInstance()
+          .createCriteria(MaterialTransaction.class);
       obc.addOrderBy(MaterialTransaction.PROPERTY_PRODUCT + "." + Product.PROPERTY_NAME, false);
       obc.setMaxResults(pageSize);
       obc.setFirstResult(i * pageSize);
@@ -390,8 +396,8 @@ public class DalTest extends OBBaseTest {
 
       // now check if the save indeed worked out by seeing if there is a
       // cashbook account
-      final OBCriteria<CashBookAccounts> cbc = OBDal.getInstance().createCriteria(
-          CashBookAccounts.ENTITY_NAME);
+      final OBCriteria<CashBookAccounts> cbc = OBDal.getInstance()
+          .createCriteria(CashBookAccounts.ENTITY_NAME);
       cbc.add(Restrictions.eq(CashBookAccounts.PROPERTY_CASHBOOK + "." + CashBook.PROPERTY_ID,
           cashBookId));
       final List<?> cbas = cbc.list();
@@ -423,8 +429,8 @@ public class DalTest extends OBBaseTest {
 
   @Test
   public void getInexistentObjByEntityNameShouldBeNull() {
-    BusinessPartner bp = (BusinessPartner) OBDal.getInstance().get(BusinessPartner.ENTITY_NAME,
-        "DummyId");
+    BusinessPartner bp = (BusinessPartner) OBDal.getInstance()
+        .get(BusinessPartner.ENTITY_NAME, "DummyId");
 
     assertThat(bp, is(nullValue()));
   }
@@ -441,10 +447,10 @@ public class DalTest extends OBBaseTest {
   @Test
   public void getInexistentObjByEntityNameShouldBeNullEvenIfItWasProxied() {
     @SuppressWarnings("unused")
-    BusinessPartner bpProxy = (BusinessPartner) OBDal.getInstance().getProxy(
-        BusinessPartner.ENTITY_NAME, "DummyId");
-    BusinessPartner bp = (BusinessPartner) OBDal.getInstance().get(BusinessPartner.ENTITY_NAME,
-        "DummyId");
+    BusinessPartner bpProxy = (BusinessPartner) OBDal.getInstance()
+        .getProxy(BusinessPartner.ENTITY_NAME, "DummyId");
+    BusinessPartner bp = (BusinessPartner) OBDal.getInstance()
+        .get(BusinessPartner.ENTITY_NAME, "DummyId");
 
     assertThat(bp, is(nullValue()));
   }
@@ -596,8 +602,8 @@ public class DalTest extends OBBaseTest {
       OBDal.getReadOnlyInstance().commitAndClose();
     } catch (Exception ignored) {
     }
-    final OBCriteria<Category> obCriteria = OBDal.getReadOnlyInstance().createCriteria(
-        Category.class);
+    final OBCriteria<Category> obCriteria = OBDal.getReadOnlyInstance()
+        .createCriteria(Category.class);
     obCriteria.add(Restrictions.eq(Category.PROPERTY_NAME, "ro_testname"));
     final List<Category> categories = obCriteria.list();
     assertEquals(0, categories.size());
@@ -633,7 +639,8 @@ public class DalTest extends OBBaseTest {
   }
 
   private boolean isReadOnlyPoolDefined() {
-    return OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    return OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .containsKey("bbdd.readonly.url");
   }
 
@@ -659,6 +666,28 @@ public class DalTest extends OBBaseTest {
     assertEquals(isoCode, EURO);
   }
 
+  /**
+   * Test to check deletion queries using OBQuery
+   */
+  @Test
+  public void canDeleteWithOBQuery() {
+    int deletions = 0;
+    try {
+      User user = getNewUser();
+      // save the new user...
+      OBDal.getInstance().save(user);
+      OBDal.getInstance().flush();
+      // ...and now delete it using an OBQuery instance
+      String hql = "id = :id";
+      OBQuery<User> query = OBDal.getInstance().createQuery(User.class, hql);
+      query.setNamedParameter("id", user.getId());
+      deletions = query.deleteQuery().executeUpdate();
+    } finally {
+      OBDal.getInstance().rollbackAndClose();
+    }
+    assertThat("Can delete business objects using OBQuery", deletions, equalTo(1));
+  }
+
   private String getISOCodeFromCurrencyId(String currencyId, boolean includeAlias) {
     String isoCode = null;
     try {
@@ -677,5 +706,127 @@ public class DalTest extends OBBaseTest {
     } catch (Exception ignored) {
     }
     return isoCode;
+  }
+
+  /**
+   * Test to check that an OBQuery using legacy-style query parameters ('?') can be executed
+   * properly.
+   */
+  @Test
+  @SuppressWarnings("deprecation")
+  public void testOBQueryWithLegacyStyleParameters() {
+    setTestUserContext();
+    String hql = "as c where c.iSOCode = ? and c.symbol = ?";
+    OBQuery<Currency> query = OBDal.getInstance().createQuery(Currency.class, hql);
+    List<Object> parameters = new ArrayList<>(2);
+    parameters.add(EURO);
+    parameters.add("€");
+    query.setParameters(parameters);
+    assertNotNull(query.uniqueResult());
+  }
+
+  /**
+   * Test to check that proxies are not initialized when retrieving their identifier.
+   */
+  @Test
+  public void proxyShouldNotBeInitialized() {
+    Currency euro = OBDal.getInstance().getProxy(Currency.class, EURO_ID);
+    euro.getId();
+    assertThat("Proxy is not initialized", Hibernate.isInitialized(euro), equalTo(false));
+  }
+
+  /**
+   * Test to check that proxies are initialized when retrieving a property different from the
+   * identifier.
+   */
+  @Test
+  public void proxyShouldBeInitialized() {
+    Currency euro = OBDal.getInstance().getProxy(Currency.class, EURO_ID);
+    euro.getISOCode();
+    assertThat("Proxy is not initialized", Hibernate.isInitialized(euro), equalTo(true));
+  }
+
+  /**
+   * Test to check that it is possible to retrieve the identifier of a proxy that references a
+   * non-existent record.
+   */
+  @Test
+  public void canRetrieveIdOfNonExistentProxy() {
+    final String nonExistingId = "_0";
+    Currency unknown = OBDal.getInstance().getProxy(Currency.class, nonExistingId);
+    assertThat("Can retrieve ID of non-existent Proxy", unknown.getId(), equalTo(nonExistingId));
+  }
+
+  /**
+   * Test to check that it is possible to use OBContext cached objects as the value for OBQuery
+   * parameters even if they have not been previously loaded into the session.
+   */
+  @Test
+  public void canUseOBContextParamNotPresentInSession() {
+    OBDal.getInstance().getSession().clear();
+    OBQuery<BusinessPartner> q = OBDal.getInstance()
+        .createQuery(BusinessPartner.class, "as bp where bp.client = :client");
+    q.setNamedParameter("client", OBContext.getOBContext().getCurrentClient());
+    assertThat("Can use OBContext object as OBQuery parameter value", q.list(), notNullValue());
+  }
+
+  /**
+   * Test to verify that Hibernate's property nullability check is disabled when creating entities
+   * through DAL.
+   */
+  @Test
+  public void nullabilityCheckIsDisabled() {
+    User newUser = getNewUser();
+    OBContext.setAdminMode(true);
+    String userId = null;
+    try {
+      // We should be able to create the User without explicitly setting its not nullable
+      // properties like the "lastPasswordUpdate" property.
+      OBDal.getInstance().save(newUser);
+      OBDal.getInstance().flush();
+      userId = newUser.getId();
+    } catch (Exception ex) {
+      log.error("Could not create new user", ex);
+    } finally {
+      OBDal.getInstance().rollbackAndClose(); // do not need to persist the new User in DB
+      OBContext.restorePreviousMode();
+    }
+    assertThat("Created User without setting its not-nullable properties", userId, notNullValue());
+  }
+
+  private User getNewUser() {
+    final User newUser = OBProvider.getInstance().get(User.class);
+    newUser.setClient(OBContext.getOBContext().getCurrentClient());
+    newUser.setOrganization(OBContext.getOBContext().getCurrentOrganization());
+    newUser.setName("Name");
+    newUser.setDescription("Description");
+    newUser.setUsername("UserName");
+    newUser.setPassword("Password");
+    newUser.setDefaultLanguage(OBContext.getOBContext().getLanguage());
+    return newUser;
+  }
+
+  /**
+   * Test to verify that evict() does not fail when invoking it with an already evicted
+   * BaseOBObject.
+   */
+  @Test
+  public void evictAnEvictedObjectShouldNotFail() {
+    User user = getNewUser();
+    OBContext.setAdminMode(true);
+    boolean fail = false;
+    try {
+      OBDal.getInstance().save(user);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().evict(user);
+      // This second evict has no effect but it should not fail
+      OBDal.getInstance().getSession().evict(user);
+    } catch (IllegalArgumentException iaex) {
+      fail = true;
+    } finally {
+      OBDal.getInstance().rollbackAndClose();
+      OBContext.restorePreviousMode();
+    }
+    assertThat("Can evict same BaseOBObject twice", fail, equalTo(false));
   }
 }

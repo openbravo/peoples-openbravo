@@ -20,16 +20,15 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FundsTransferOnChangeDepositToActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(FundsTransferOnChangeDepositToActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
@@ -40,8 +39,8 @@ public class FundsTransferOnChangeDepositToActionHandler extends BaseActionHandl
       String accountID = jsonData.getString("accountID");
 
       if (accountID != null) {
-        FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-            accountID);
+        FIN_FinancialAccount account = OBDal.getInstance()
+            .get(FIN_FinancialAccount.class, accountID);
 
         if (account != null) {
           result.put("currencyID", account.getCurrency().getId());

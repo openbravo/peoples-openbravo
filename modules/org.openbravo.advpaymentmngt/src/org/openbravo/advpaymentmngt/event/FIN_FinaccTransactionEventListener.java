@@ -22,7 +22,8 @@ package org.openbravo.advpaymentmngt.event;
 import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -37,9 +38,9 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 
 public class FIN_FinaccTransactionEventListener extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      FIN_FinaccTransaction.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(FIN_FinaccTransaction.ENTITY_NAME) };
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -65,20 +66,19 @@ public class FIN_FinaccTransactionEventListener extends EntityPersistenceEventOb
    * defined neither a payment nor a gl item
    */
   private void validateTransactionType(final EntityPersistenceEvent event) {
-    final Entity transactionEntity = ModelProvider.getInstance().getEntity(
-        FIN_FinaccTransaction.ENTITY_NAME);
+    final Entity transactionEntity = ModelProvider.getInstance()
+        .getEntity(FIN_FinaccTransaction.ENTITY_NAME);
 
-    final String transactionType = (String) event.getCurrentState(transactionEntity
-        .getProperty(FIN_FinaccTransaction.PROPERTY_TRANSACTIONTYPE));
-    final GLItem glItem = (GLItem) event.getCurrentState(transactionEntity
-        .getProperty(FIN_FinaccTransaction.PROPERTY_GLITEM));
-    final FIN_Payment payment = (FIN_Payment) event.getCurrentState(transactionEntity
-        .getProperty(FIN_FinaccTransaction.PROPERTY_FINPAYMENT));
+    final String transactionType = (String) event.getCurrentState(
+        transactionEntity.getProperty(FIN_FinaccTransaction.PROPERTY_TRANSACTIONTYPE));
+    final GLItem glItem = (GLItem) event
+        .getCurrentState(transactionEntity.getProperty(FIN_FinaccTransaction.PROPERTY_GLITEM));
+    final FIN_Payment payment = (FIN_Payment) event
+        .getCurrentState(transactionEntity.getProperty(FIN_FinaccTransaction.PROPERTY_FINPAYMENT));
 
-    if ((StringUtils.equals(transactionType, APRMConstants.TRXTYPE_BPDeposit) || StringUtils
-        .equals(transactionType, APRMConstants.TRXTYPE_BPWithdrawal))
-        && glItem == null
-        && payment == null) {
+    if ((StringUtils.equals(transactionType, APRMConstants.TRXTYPE_BPDeposit)
+        || StringUtils.equals(transactionType, APRMConstants.TRXTYPE_BPWithdrawal))
+        && glItem == null && payment == null) {
       logger.debug("@APRM_INVALID_TRANSACTION@");
       throw new OBException("@APRM_INVALID_TRANSACTION@");
     }

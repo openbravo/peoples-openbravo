@@ -23,5 +23,6 @@ interface HTMLElement {
 
   public String elementType();
 
+  @Override
   public String toString();
 }

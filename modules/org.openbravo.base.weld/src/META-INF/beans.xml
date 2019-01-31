@@ -24,7 +24,9 @@
         <weld:exclude name="org.openbravo.base.structure.**"/>
         <weld:exclude name="org.openbravo.base.util.**"/>
         <weld:exclude name="org.openbravo.base.validation.**"/>
-        <weld:exclude name="org.openbravo.dal.**"/>
+        <weld:exclude name="org.openbravo.dal.security.**"/>
+        <weld:exclude name="org.openbravo.dal.service.**"/>
+        <weld:exclude name="org.openbravo.dal.xml.**"/>
         <weld:exclude name="org.openbravo.erpReports.**"/>
         <weld:exclude name="org.openbravo.reference.**"/>
         <weld:exclude name="org.openbravo.scheduling.**"/>

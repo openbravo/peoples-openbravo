@@ -20,7 +20,8 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -34,9 +35,9 @@ import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicConf;
 
 public class SubsetValueEventHandler extends EntityPersistenceEventObserver {
-  protected Logger logger = Logger.getLogger(this.getClass());
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      CharacteristicSubsetValue.class) };
+  protected Logger logger = LogManager.getLogger();
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(CharacteristicSubsetValue.class) };
   private static ThreadLocal<String> chsubsetvalueUpdated = new ThreadLocal<String>();
 
   @Override
@@ -53,25 +54,24 @@ public class SubsetValueEventHandler extends EntityPersistenceEventObserver {
         .getTargetInstance();
     chsubsetvalueUpdated.set(chsubsetv.getId());
     // Update all product characteristics configurations with updated code of the Subset Value.
-    final Entity chsubsetValue = ModelProvider.getInstance().getEntity(
-        CharacteristicSubsetValue.ENTITY_NAME);
+    final Entity chsubsetValue = ModelProvider.getInstance()
+        .getEntity(CharacteristicSubsetValue.ENTITY_NAME);
     final Property codeProperty = chsubsetValue
         .getProperty(CharacteristicSubsetValue.PROPERTY_CODE);
     if (event.getCurrentState(codeProperty) != event.getPreviousState(codeProperty)) {
-      OBCriteria<ProductCharacteristic> productCharacteristic = OBDal.getInstance().createCriteria(
-          ProductCharacteristic.class);
-      productCharacteristic
-          .add(Restrictions.eq(ProductCharacteristic.PROPERTY_CHARACTERISTICSUBSET,
-              chsubsetv.getCharacteristicSubset()));
+      OBCriteria<ProductCharacteristic> productCharacteristic = OBDal.getInstance()
+          .createCriteria(ProductCharacteristic.class);
+      productCharacteristic.add(Restrictions.eq(ProductCharacteristic.PROPERTY_CHARACTERISTICSUBSET,
+          chsubsetv.getCharacteristicSubset()));
       if (productCharacteristic.count() > 0) {
         for (ProductCharacteristic productCh : productCharacteristic.list()) {
           OBCriteria<ProductCharacteristicConf> productCharateristicsConf = OBDal.getInstance()
               .createCriteria(ProductCharacteristicConf.class);
-          productCharateristicsConf.add(Restrictions.eq(
-              ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
-              chsubsetv.getCharacteristicValue()));
-          productCharateristicsConf.add(Restrictions.eq(
-              ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, productCh));
+          productCharateristicsConf
+              .add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
+                  chsubsetv.getCharacteristicValue()));
+          productCharateristicsConf.add(Restrictions
+              .eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, productCh));
           if (productCharateristicsConf.count() > 0) {
             for (ProductCharacteristicConf conf : productCharateristicsConf.list()) {
               if (chsubsetv.getCode() != conf.getCode()) {

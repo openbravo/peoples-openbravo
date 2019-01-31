@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -41,8 +43,6 @@ import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Action handler to manage attachments.<br>
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AttachmentAH extends BaseActionHandler {
 
-  private static final Logger log = LoggerFactory.getLogger(AttachmentAH.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   private AttachImplementationManager aim;
@@ -159,7 +159,8 @@ public class AttachmentAH extends BaseActionHandler {
     String tableId = tab.getTable().getId();
 
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
-        Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
+        Restrictions.eq("table.id", tableId),
+        Restrictions.in("record", (Object[]) recordIds.split(",")));
     // do not filter by the attachment's organization
     // if the user has access to the record where the file its attached, it has access to all
     // its attachments

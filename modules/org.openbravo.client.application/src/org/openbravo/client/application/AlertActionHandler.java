@@ -11,25 +11,35 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static org.openbravo.erpCommon.utility.StringCollectionUtils.commaSeparated;
+
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
@@ -38,7 +48,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.UsedByLink;
-import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.alert.AlertRule;
 import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -54,7 +63,7 @@ import org.openbravo.service.json.JsonConstants;
  */
 @ApplicationScoped
 public class AlertActionHandler extends BaseActionHandler implements PortalAccessible {
-  private static final Logger log4j = Logger.getLogger(AlertActionHandler.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /*
    * (non-Javadoc)
@@ -68,94 +77,112 @@ public class AlertActionHandler extends BaseActionHandler implements PortalAcces
     final long t = System.currentTimeMillis();
     OBContext.setAdminMode();
     try {
-      final HttpServletRequest request = RequestContext.get().getRequest();
-      final HttpServletResponse response = RequestContext.get().getResponse();
-      final HttpSession session = request.getSession(false);
-      // update the session
-      if (session != null) {
-        final String dbSessionId = (String) session.getAttribute("#AD_Session_ID".toUpperCase());
-        if (dbSessionId != null) {
-          ConnectionProvider conn = new DalConnectionProvider(false);
-          AlertActionHandlerData.setLastPing(conn, dbSessionId);
-        }
-      }
-      final VariablesSecureApp vars = new VariablesSecureApp(request);
-      // Do not execute the alerts if the system if being rebuilt
-      Long total = 0L;
-      if (!"Y".equals(vars.getSessionValue("ApplyModules|BuildRunning"))) {
-        // select the alert rules
-        final String hql = "select distinct(e.alertRule) from  "
-            + AlertRecipient.ENTITY_NAME
-            + " e where e.alertRule.active = true and (e.userContact.id=? "
-            + " or (e.userContact.id = null and e.role.id = ?))"
-
-            // select only those rules that are client/org visible from current role
-            + " and e.alertRule.client.id " + OBDal.getInstance().getReadableClientsInClause()
-            + " and e.alertRule.organization.id "
-            + OBDal.getInstance().getReadableOrganizationsInClause();
-
-        final Query qry = OBDal.getInstance().getSession().createQuery(hql);
-        qry.setParameter(0, OBContext.getOBContext().getUser().getId());
-        qry.setParameter(1, OBContext.getOBContext().getRole().getId());
-
-        for (Object o : qry.list()) {
-          final AlertRule alertRule = (AlertRule) o;
-          final String whereClause = new UsedByLink().getWhereClause(vars, "",
-              alertRule.getFilterClause() == null ? "" : alertRule.getFilterClause());
-          final String sql = "select count(*) from AD_ALERT where COALESCE(to_char(STATUS), 'NEW')='NEW'"
-              + " AND AD_CLIENT_ID "
-              + OBDal.getInstance().getReadableClientsInClause()
-              + " AND AD_ORG_ID "
-              + OBDal.getInstance().getReadableOrganizationsInClause()
-              + " AND AD_ALERTRULE_ID = ? " + (whereClause == null ? "" : whereClause);
-
-          PreparedStatement sqlQuery = null;
-          ResultSet rs = null;
-          try {
-            sqlQuery = new DalConnectionProvider(false).getPreparedStatement(sql);
-            sqlQuery.setString(1, alertRule.getId());
-            sqlQuery.execute();
-            rs = sqlQuery.getResultSet();
-            if (rs.next()) {
-              long rows = rs.getLong(1);
-              total += rs.getLong(1);
-              log4j.debug("Alert " + alertRule.getName() + " (" + alertRule.getId() + ") - SQL:'"
-                  + sql + "' - Rows: " + rows);
-            }
-          } catch (Exception e) {
-            log4j.error(
-                "An error has ocurred when trying to process the alerts: " + e.getMessage(), e);
-          } finally {
-            try {
-              if (sqlQuery != null) {
-                sqlQuery.close();
-              }
-              if (rs != null) {
-                rs.close();
-              }
-            } catch (Exception e) {
-              log4j.error(
-                  "An error has ocurred when trying to close the statement: " + e.getMessage(), e);
-            }
-          }
-        }
-      }
-
-      final JSONObject result = new JSONObject();
-      result.put("cnt", total);
-      result.put("result", "success");
-
-      response.setContentType(JsonConstants.JSON_CONTENT_TYPE);
-      response.setHeader("Content-Type", JsonConstants.JSON_CONTENT_TYPE);
-      response.getWriter().write(result.toString());
-      log4j.debug("Time spent: " + (System.currentTimeMillis() - t));
+      boolean updated = updateSessionPing();
+      long activeAlerts = updated ? countActiveAlerts() : 0L;
+      writeResponse(activeAlerts);
     } catch (Exception e) {
       throw new IllegalStateException(e);
     } finally {
       OBContext.restorePreviousMode();
+      log4j.debug("Time spent: " + (System.currentTimeMillis() - t) + " ms");
     }
   }
 
+  private boolean updateSessionPing() throws ServletException {
+    final HttpServletRequest request = RequestContext.get().getRequest();
+
+    final HttpSession session = request.getSession(false);
+    if (session == null) {
+      return false;
+    }
+    final String dbSessionId = (String) session.getAttribute("#AD_Session_ID".toUpperCase());
+    if (dbSessionId != null) {
+      ConnectionProvider conn = new DalConnectionProvider(false);
+      AlertActionHandlerData.setLastPing(conn, dbSessionId);
+
+      // release locks on ad_session table
+      OBDal.getInstance().commitAndClose();
+    }
+    return true;
+  }
+
+  private long countActiveAlerts() throws ServletException {
+    final VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get().getRequest());
+
+    if ("Y".equals(vars.getSessionValue("ApplyModules|BuildRunning"))) {
+      return 0L;
+    }
+
+    final String hql = "select distinct(e.alertRule)" + " from ADAlertRecipient"
+        + " e where e.alertRule.active = true and (e.userContact.id= :userId "
+        + " or (e.userContact.id = null and e.role.id = :roleId))"
+
+        // select only those rules that are client/org visible from current role
+        + " and e.alertRule.client.id " + OBDal.getInstance().getReadableClientsInClause()
+        + " and e.alertRule.organization.id "
+        + OBDal.getInstance().getReadableOrganizationsInClause();
+
+    final Query<AlertRule> qry = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, AlertRule.class)
+        .setParameter("userId", OBContext.getOBContext().getUser().getId())
+        .setParameter("roleId", OBContext.getOBContext().getRole().getId());
+
+    long total = qry.stream()
+        .collect(groupingBy(rule -> Objects.toString(rule.getFilterClause(), ""))) // null can't be
+                                                                                   // key
+        .values()
+        .stream()
+        .mapToLong(rulesByFilterClause -> countActiveAlertsForRules(rulesByFilterClause, vars))
+        .sum();
+
+    return total;
+  }
+
+  private long countActiveAlertsForRules(List<AlertRule> rules, VariablesSecureApp vars) {
+    String commonFilterClause = rules.get(0).getFilterClause();
+    List<String> ruleIds = rules.stream().map(AlertRule::getId).collect(toList());
+    final String sql = "select count(*) from AD_ALERT where COALESCE(STATUS, 'NEW')='NEW'"
+        + " AND AD_CLIENT_ID " + OBDal.getInstance().getReadableClientsInClause()
+        + " AND AD_ORG_ID " + OBDal.getInstance().getReadableOrganizationsInClause()
+        + " AND AD_ALERTRULE_ID IN   (" + commaSeparated(ruleIds) + ")" //
+        + getFilterSQL(commonFilterClause, vars);
+
+    try (PreparedStatement sqlQuery = new DalConnectionProvider(false).getPreparedStatement(sql)) {
+      sqlQuery.execute();
+      try (ResultSet rs = sqlQuery.getResultSet()) {
+        rs.next();
+        return rs.getLong(1);
+      }
+    } catch (Exception e) {
+      log4j.error("An error has ocurred when trying to process the alerts: " + e.getMessage(), e);
+      return 0L;
+    }
+  }
+
+  private String getFilterSQL(String filterClause, VariablesSecureApp vars) {
+    String whereClause;
+    try {
+      whereClause = new UsedByLink().getWhereClause(vars, "", Objects.toString(filterClause, ""));
+    } catch (ServletException ignore) {
+      log4j.error("Could not convert filter clause into SQL: " + filterClause, ignore);
+      whereClause = " AND 1=2"; // do not count if where clause is broken
+    }
+    return whereClause;
+  }
+
+  private void writeResponse(long activeAlerts) throws JSONException, IOException {
+    final JSONObject result = new JSONObject();
+    result.put("cnt", activeAlerts);
+    result.put("result", "success");
+
+    final HttpServletResponse response = RequestContext.get().getResponse();
+    response.setContentType(JsonConstants.JSON_CONTENT_TYPE);
+    response.setHeader("Content-Type", JsonConstants.JSON_CONTENT_TYPE);
+    response.getWriter().write(result.toString());
+  }
+
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     throw new UnsupportedOperationException();
   }

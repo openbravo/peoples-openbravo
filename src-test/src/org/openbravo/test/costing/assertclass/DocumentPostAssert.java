@@ -29,7 +29,8 @@ public class DocumentPostAssert {
   final private BigDecimal credit;
   final private BigDecimal quantity;
 
-  public DocumentPostAssert(String account, BigDecimal debit, BigDecimal credit, BigDecimal quantity) {
+  public DocumentPostAssert(String account, BigDecimal debit, BigDecimal credit,
+      BigDecimal quantity) {
     this(null, account, debit, credit, quantity);
   }
 

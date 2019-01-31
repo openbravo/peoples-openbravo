@@ -32,6 +32,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.client.application.OBBindings;
@@ -39,15 +41,13 @@ import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.test.base.OBBaseTest;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Test the result of evaluating JavaScript expressions configuring {@link OBBindings} as the Java
  * binding to be used by the engine in the execution of the scripts.
  */
 public class OBBindingsTest extends OBBaseTest {
-  private static final Logger log = LoggerFactory.getLogger(OBBindingsTest.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String DEFAULT = "DEFAULT";
   private static final String YES = "Y";
   private ScriptEngine engine;
@@ -110,8 +110,8 @@ public class OBBindingsTest extends OBBaseTest {
   private Date convertToLocalTime(Date UTCTime) {
     Calendar localTime = Calendar.getInstance();
     localTime.setTime(UTCTime);
-    int gmtMillisecondOffset = (localTime.get(Calendar.ZONE_OFFSET) + localTime
-        .get(Calendar.DST_OFFSET));
+    int gmtMillisecondOffset = (localTime.get(Calendar.ZONE_OFFSET)
+        + localTime.get(Calendar.DST_OFFSET));
     localTime.add(Calendar.MILLISECOND, gmtMillisecondOffset);
     return localTime.getTime();
   }

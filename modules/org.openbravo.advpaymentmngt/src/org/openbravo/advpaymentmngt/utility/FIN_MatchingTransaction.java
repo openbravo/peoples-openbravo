@@ -32,12 +32,14 @@ public class FIN_MatchingTransaction {
 
   public FIN_MatchingTransaction(String _algorithm) throws NoAlgorithmFoundException {
     try {
-      if (_algorithm != null && !_algorithm.equals(""))
-        this.algorithm = (FIN_MatchingAlgorithm) Class.forName(_algorithm).getDeclaredConstructor()
+      if (_algorithm != null && !_algorithm.equals("")) {
+        this.algorithm = (FIN_MatchingAlgorithm) Class.forName(_algorithm)
+            .getDeclaredConstructor()
             .newInstance();
-      else
+      } else {
         throw new NoAlgorithmFoundException(
             "No algorithm has been defined to match bank statement lines");
+      }
     } catch (InstantiationException e) {
       throw new NoAlgorithmFoundException(e);
     } catch (IllegalAccessException e) {
@@ -51,19 +53,21 @@ public class FIN_MatchingTransaction {
 
   public FIN_MatchedTransaction match(FIN_BankStatementLine _bankstatementLine,
       List<FIN_FinaccTransaction> excluded) throws ServletException, NoAlgorithmFoundException {
-    if (algorithm != null)
+    if (algorithm != null) {
       return algorithm.match(_bankstatementLine, excluded);
-    else
+    } else {
       throw new NoAlgorithmFoundException(
           "No algorithm has been defined to match bank statement lines");
+    }
   }
 
-  public void unmatch(FIN_FinaccTransaction _transaction) throws ServletException,
-      NoAlgorithmFoundException {
-    if (algorithm != null)
+  public void unmatch(FIN_FinaccTransaction _transaction)
+      throws ServletException, NoAlgorithmFoundException {
+    if (algorithm != null) {
       algorithm.unmatch(_transaction);
-    else
+    } else {
       throw new NoAlgorithmFoundException("No algorithm has been defined to unmatch");
+    }
     return;
   }
 }

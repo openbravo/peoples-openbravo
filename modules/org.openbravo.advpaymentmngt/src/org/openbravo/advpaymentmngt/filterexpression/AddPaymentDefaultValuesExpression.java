@@ -25,6 +25,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -33,12 +35,9 @@ import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AddPaymentDefaultValuesExpression implements FilterExpression {
-  private static final Logger log = LoggerFactory
-      .getLogger(AddPaymentDefaultValuesExpression.class);
+  private static final Logger log = LogManager.getLogger();
   @Inject
   @Any
   private Instance<AddPaymentDefaultValuesHandler> addPaymentFilterExpressionHandlers;
@@ -58,54 +57,54 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
       Parameters param = Parameters.getParameter(strCurrentParam);
       try {
         switch (param) {
-        case ExpectedPayment:
-          return handler.getDefaultExpectedAmount(requestMap);
-        case ActualPayment:
-          return handler.getDefaultActualAmount(requestMap);
-        case CurrencyTo:
-          return handler.getDefaultCurrencyTo(requestMap);
-        case CustomerCredit:
-          return handler.getDefaultCustomerCredit(requestMap);
-        case DocumentNo:
-          return handler.getDefaultDocumentNo(requestMap);
-        case FinancialAccount:
-          return handler.getDefaultFinancialAccount(requestMap);
-        case IsSOTrx:
-          return handler.getDefaultIsSOTrx(requestMap);
-        case PaymentDate:
-          return handler.getDefaultPaymentDate(requestMap);
-        case PaymentMethod:
-          return handler.getDefaultPaymentMethod(requestMap);
-        case ReceivedFrom:
-          return handler.getDefaultReceivedFrom(requestMap);
-        case TransactionType:
-          return handler.getDefaultTransactionType(requestMap);
-        case Invoice:
-          return handler.getDefaultInvoiceType(requestMap);
-        case Order:
-          return handler.getDefaultOrderType(requestMap);
-        case Payment:
-          return handler.getDefaultPaymentType(requestMap);
-        case ConversionRate:
-          return handler.getDefaultConversionRate(requestMap);
-        case ConvertedAmount:
-          return handler.getDefaultConvertedAmount(requestMap);
-        case StandardPrecision:
-          return handler.getDefaultStandardPrecision(requestMap);
-        case GenerateCredit:
-          return handler.getDefaultGeneratedCredit(requestMap);
-        case DocumentCategory:
-          return handler.getDefaultDocumentCategory(requestMap);
-        case ReferenceNo:
-          return handler.getDefaultReferenceNo(requestMap);
-        case Currency:
-          return handler.getDefaultCurrency(requestMap);
-        case Organization:
-          return handler.getOrganization(requestMap);
-        case Document:
-          return handler.getDefaultDocument(requestMap);
-        case BankStatementLineAmount:
-          return handler.getBankStatementLineAmount(requestMap);
+          case ExpectedPayment:
+            return handler.getDefaultExpectedAmount(requestMap);
+          case ActualPayment:
+            return handler.getDefaultActualAmount(requestMap);
+          case CurrencyTo:
+            return handler.getDefaultCurrencyTo(requestMap);
+          case CustomerCredit:
+            return handler.getDefaultCustomerCredit(requestMap);
+          case DocumentNo:
+            return handler.getDefaultDocumentNo(requestMap);
+          case FinancialAccount:
+            return handler.getDefaultFinancialAccount(requestMap);
+          case IsSOTrx:
+            return handler.getDefaultIsSOTrx(requestMap);
+          case PaymentDate:
+            return handler.getDefaultPaymentDate(requestMap);
+          case PaymentMethod:
+            return handler.getDefaultPaymentMethod(requestMap);
+          case ReceivedFrom:
+            return handler.getDefaultReceivedFrom(requestMap);
+          case TransactionType:
+            return handler.getDefaultTransactionType(requestMap);
+          case Invoice:
+            return handler.getDefaultInvoiceType(requestMap);
+          case Order:
+            return handler.getDefaultOrderType(requestMap);
+          case Payment:
+            return handler.getDefaultPaymentType(requestMap);
+          case ConversionRate:
+            return handler.getDefaultConversionRate(requestMap);
+          case ConvertedAmount:
+            return handler.getDefaultConvertedAmount(requestMap);
+          case StandardPrecision:
+            return handler.getDefaultStandardPrecision(requestMap);
+          case GenerateCredit:
+            return handler.getDefaultGeneratedCredit(requestMap);
+          case DocumentCategory:
+            return handler.getDefaultDocumentCategory(requestMap);
+          case ReferenceNo:
+            return handler.getDefaultReferenceNo(requestMap);
+          case Currency:
+            return handler.getDefaultCurrency(requestMap);
+          case Organization:
+            return handler.getOrganization(requestMap);
+          case Document:
+            return handler.getDefaultDocument(requestMap);
+          case BankStatementLineAmount:
+            return handler.getBankStatementLineAmount(requestMap);
         }
       } catch (Exception e) {
         log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(),
@@ -149,15 +148,30 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
   }
 
   private enum Parameters {
-    ActualPayment("actual_payment"), ExpectedPayment("expected_payment"), DocumentNo(
-        "payment_documentno"), CurrencyTo("c_currency_to_id"), ReceivedFrom("received_from"), FinancialAccount(
-        "fin_financial_account_id"), PaymentDate("payment_date"), PaymentMethod(
-        "fin_paymentmethod_id"), TransactionType("transaction_type"), CustomerCredit(
-        "customer_credit"), IsSOTrx("issotrx"), Payment("fin_payment_id"), Invoice("c_invoice_id"), Order(
-        "c_order_id"), ConversionRate("conversion_rate"), ConvertedAmount("converted_amount"), StandardPrecision(
-        "StdPrecision"), GenerateCredit("generateCredit"), DocumentCategory("DOCBASETYPE"), ReferenceNo(
-        "reference_no"), Currency("c_currency_id"), Organization("ad_org_id"), Document("trxtype"), BankStatementLineAmount(
-        "bslamount");
+    ActualPayment("actual_payment"),
+    ExpectedPayment("expected_payment"),
+    DocumentNo("payment_documentno"),
+    CurrencyTo("c_currency_to_id"),
+    ReceivedFrom("received_from"),
+    FinancialAccount("fin_financial_account_id"),
+    PaymentDate("payment_date"),
+    PaymentMethod("fin_paymentmethod_id"),
+    TransactionType("transaction_type"),
+    CustomerCredit("customer_credit"),
+    IsSOTrx("issotrx"),
+    Payment("fin_payment_id"),
+    Invoice("c_invoice_id"),
+    Order("c_order_id"),
+    ConversionRate("conversion_rate"),
+    ConvertedAmount("converted_amount"),
+    StandardPrecision("StdPrecision"),
+    GenerateCredit("generateCredit"),
+    DocumentCategory("DOCBASETYPE"),
+    ReferenceNo("reference_no"),
+    Currency("c_currency_id"),
+    Organization("ad_org_id"),
+    Document("trxtype"),
+    BankStatementLineAmount("bslamount");
 
     private String columnname;
 

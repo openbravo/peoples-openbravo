@@ -73,8 +73,8 @@ public class FKTreeUIDefinition extends ForeignKeyUIDefinition {
         if (prop.isPrimitive()) {
           json.put("identifier", json.getString("value"));
         } else {
-          final BaseOBObject target = OBDal.getInstance().get(prop.getTargetEntity().getName(),
-              json.getString("value"));
+          final BaseOBObject target = OBDal.getInstance()
+              .get(prop.getTargetEntity().getName(), json.getString("value"));
           if (target != null) {
             final ReferencedTree referencedTree = getReferencedTree(field);
             final ReferencedTreeField displayField = referencedTree.getDisplayfield();
@@ -94,13 +94,14 @@ public class FKTreeUIDefinition extends ForeignKeyUIDefinition {
     }
   }
 
+  @Override
   public Map<String, Object> getDataSourceParameters() {
     final Map<String, Object> params = new HashMap<String, Object>();
     final Reference reference = OBDal.getInstance().get(Reference.class, getReference().getId());
     for (ReferencedTree referencedTree : reference.getADReferencedTreeList()) {
       if (referencedTree.isActive() && referencedTree.getTable() != null) {
-        final String extraProperties = OBTreeReferenceComponent.getAdditionalProperties(
-            referencedTree, true);
+        final String extraProperties = OBTreeReferenceComponent
+            .getAdditionalProperties(referencedTree, true);
         if (extraProperties.length() > 0) {
           params.put(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER, extraProperties);
         }
@@ -129,8 +130,8 @@ public class FKTreeUIDefinition extends ForeignKeyUIDefinition {
       // result in an error
       return displayFieldName.replace(".", DalUtil.FIELDSEPARATOR);
     } else {
-      final String result = (prop.getName() + DalUtil.FIELDSEPARATOR + displayFieldName).replace(
-          ".", DalUtil.FIELDSEPARATOR);
+      final String result = (prop.getName() + DalUtil.FIELDSEPARATOR + displayFieldName)
+          .replace(".", DalUtil.FIELDSEPARATOR);
       return result;
     }
 
@@ -145,6 +146,7 @@ public class FKTreeUIDefinition extends ForeignKeyUIDefinition {
     }
   }
 
+  @Override
   public String getFieldProperties(Field field) {
     if (field == null) {
       return super.getFieldProperties(field);
@@ -156,8 +158,8 @@ public class FKTreeUIDefinition extends ForeignKeyUIDefinition {
     final String tableId = field.getColumn().getTable().getId();
 
     Property property = null;
-    if (!ApplicationConstants.TABLEBASEDTABLE.equals(field.getColumn().getTable()
-        .getDataOriginType())) {
+    if (!ApplicationConstants.TABLEBASEDTABLE
+        .equals(field.getColumn().getTable().getDataOriginType())) {
       property = DalUtil.getPropertyByTableId(tableId, columnName);
     } else {
       property = DalUtil.getProperty(tableName, columnName);

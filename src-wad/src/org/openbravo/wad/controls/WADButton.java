@@ -37,6 +37,7 @@ public class WADButton extends WADControl {
     setData("nameButton", "");
   }
 
+  @Override
   public void initialize() {
     generateJSCode();
   }
@@ -46,6 +47,7 @@ public class WADButton extends WADControl {
     setCalloutJS();
   }
 
+  @Override
   public String getType() {
     return "Button_CenterAlign";
   }
@@ -57,8 +59,8 @@ public class WADButton extends WADControl {
 
     StringBuffer text = new StringBuffer();
     boolean isDisabled = (getData("IsReadOnly").equals("Y")
-        || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N")) || getData(
-        "IsUpdateable").equals("N"));
+        || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N"))
+        || getData("IsUpdateable").equals("N"));
 
     if (isDisabled) {
       text.append("return true;");
@@ -70,8 +72,10 @@ public class WADButton extends WADControl {
         text.append("openServletNewWindow('BUTTON")
             .append(FormatUtilities.replace(getData("ColumnName")))
             .append(getData("AD_Process_ID"));
-        text.append("', true, '").append(getData("TabName"))
-            .append("_Edition.html', 'BUTTON', null, ").append(triggersAutosave);
+        text.append("', true, '")
+            .append(getData("TabName"))
+            .append("_Edition.html', 'BUTTON', null, ")
+            .append(triggersAutosave);
 
         text.append(", 600, 900, null, null, null, null, zz);");
       } else {
@@ -79,19 +83,25 @@ public class WADButton extends WADControl {
           text.append(logClickCode);
         }
         text.append("openServletNewWindow('DEFAULT', true, '..");
-        if (!getData("MappingName").startsWith("/"))
+        if (!getData("MappingName").startsWith("/")) {
           text.append('/');
-        text.append(getData("MappingName")).append("', 'BUTTON', '")
-            .append(getData("AD_Process_ID")).append("', ").append(triggersAutosave);
+        }
+        text.append(getData("MappingName"))
+            .append("', 'BUTTON', '")
+            .append(getData("AD_Process_ID"))
+            .append("', ")
+            .append(triggersAutosave);
         text.append(",600, 900, null, null, null, null, zz);");
       }
     }
     return text;
   }
 
+  @Override
   public String editMode() {
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADButton").createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADButton")
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -102,17 +112,19 @@ public class WADButton extends WADControl {
     xmlDocument.setParameter("action", getAction().toString());
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y")
-        || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N")) || getData(
-        "IsUpdateable").equals("N"));
+        || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N"))
+        || getData("IsUpdateable").equals("N"));
     if (isDisabled) {
       xmlDocument.setParameter("disabled", "_disabled");
     }
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String newMode() {
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADButton").createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADButton")
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -125,8 +137,8 @@ public class WADButton extends WADControl {
     xmlDocument.setParameter("action", getAction().toString());
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y")
-        || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N")) || getData(
-        "IsUpdateable").equals("N"));
+        || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N"))
+        || getData("IsUpdateable").equals("N"));
 
     if (isDisabled) {
       xmlDocument.setParameter("disabled", "_disabled");
@@ -134,6 +146,7 @@ public class WADButton extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String toXml() {
     StringBuffer text = new StringBuffer();
 
@@ -151,14 +164,18 @@ public class WADButton extends WADControl {
       }
     } else {
       if (getData("IsDisplayed").equals("Y")) {
-        text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("_BTNname\" name=\"")
-            .append(getData("ColumnName")).append("_BTNname\" default=\"\"/>\n");
+        text.append("<PARAMETER id=\"")
+            .append(getData("ColumnName"))
+            .append("_BTNname\" name=\"")
+            .append(getData("ColumnName"))
+            .append("_BTNname\" default=\"\"/>\n");
       }
       text.append("<FIELD id=\"").append(getData("ColumnName"));
       text.append("\" attribute=\"value\">").append(getData("ColumnName")).append("</FIELD>");
       if (getData("IsDisplayed").equals("Y")
           && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
-        text.append("\n<FIELD id=\"").append(getData("ColumnName"))
+        text.append("\n<FIELD id=\"")
+            .append(getData("ColumnName"))
             .append("_BTN\" replaceCharacters=\"htmlPreformated\">");
         text.append(getData("ColumnName")).append("_BTN</FIELD>");
       }

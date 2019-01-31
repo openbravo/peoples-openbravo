@@ -45,8 +45,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     String referenceId = UtilityData.getReferenceId(this, "ProjectStatus");
@@ -121,28 +122,32 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportProjectBuildingSiteJR|currency", strUserCurrencyId);
       String strOutput = "html";
-      if (vars.commandIn("PDF"))
+      if (vars.commandIn("PDF")) {
         strOutput = "pdf";
+      }
       printPageDataPDF(request, response, vars, strdateFrom, strdateTo, strcBpartnerId,
           strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus,
           strProjectpublic, strcRegionId, strSalesRep, strProduct, strCurrencyId, strOutput);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo, String strcBpartnerId, String strcProjectId,
-      String strmCategoryId, String strProjectkind, String strProjectphase,
-      String strProjectstatus, String strProjectpublic, String strcRegionId, String strSalesRep,
-      String strProduct, String strCurrencyId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+      String strmCategoryId, String strProjectkind, String strProjectphase, String strProjectstatus,
+      String strProjectpublic, String strcRegionId, String strSalesRep, String strProduct,
+      String strCurrencyId) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     String discard[] = { "sectionPartner" };
     String strTitle = "";
     XmlDocument xmlDocument = null;
     if (vars.commandIn("DEFAULT")) {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR").createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR")
+          .createXmlDocument();
 
       ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportProjectBuildingSiteJR", false,
           "", "", "", false, "ad_reports", strReplaceWith, false, true);
@@ -196,9 +201,9 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("salesRep", strSalesRep);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Project_kind",
-            "Projectkind", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client",
-                "ReportProjectBuildingSiteJR"), 0);
+            "Projectkind", "",
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
+            Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectBuildingSiteJR",
             strProjectkind);
         xmlDocument.setData("reportC_PROJECTKIND", "liststructure", comboTableData.select(false));
@@ -209,9 +214,9 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Project_phase",
-            "Projectphase", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client",
-                "ReportProjectBuildingSiteJR"), 0);
+            "Projectphase", "",
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
+            Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectBuildingSiteJR",
             strProjectphase);
         xmlDocument.setData("reportC_PROJECTPHASE", "liststructure", comboTableData.select(false));
@@ -222,9 +227,9 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Project_status",
-            "ProjectStatus", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client",
-                "ReportProjectBuildingSiteJR"), 0);
+            "ProjectStatus", "",
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
+            Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectBuildingSiteJR",
             strProjectstatus);
         xmlDocument.setData("reportC_PROJECTSTATUS", "liststructure", comboTableData.select(false));
@@ -235,9 +240,9 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST",
-            "C_Project_publicprivate", "PublicPrivate", "", Utility.getContext(this, vars,
-                "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"), Utility.getContext(this,
-                vars, "#User_Client", "ReportProjectBuildingSiteJR"), 0);
+            "C_Project_publicprivate", "PublicPrivate", "",
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
+            Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectBuildingSiteJR",
             strProjectpublic);
         xmlDocument.setData("reportC_PROJECTPUBLIC", "liststructure", comboTableData.select(false));
@@ -248,9 +253,9 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_PRODUCT_CATEGORY_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client",
-                "ReportProjectBuildingSiteJR"), 0);
+            "M_PRODUCT_CATEGORY_ID", "", "",
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
+            Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), 0);
         comboTableData.fillParameters(null, "ReportProjectBuildingSiteJR", "");
         xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure",
             comboTableData.select(false));
@@ -260,9 +265,9 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Region_ID",
-            "", "C_Region of Country", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "Account"), Utility.getContext(this, vars, "#User_Client",
-                "ReportSalesOrderProvided"), 0);
+            "", "C_Region of Country",
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
+            Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderProvided"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderProvided",
             strcRegionId);
         xmlDocument.setData("reportC_REGIONID", "liststructure", comboTableData.select(false));
@@ -273,9 +278,9 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "AD_User SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client",
-                "ReportProjectBuildingSiteJR"), 0);
+            "AD_User SalesRep", "",
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
+            Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderProvided",
             strSalesRep);
         xmlDocument.setData("reportSALESREP", "liststructure", comboTableData.select(false));
@@ -287,9 +292,9 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client",
-                "ReportProjectBuildingSiteJR"), 0);
+            "", "",
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
+            Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectBuildingSiteJR",
             strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -298,15 +303,11 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
         throw new ServletException(ex);
       }
 
-      xmlDocument.setData(
-          "reportCBPartnerId_IN",
-          "liststructure",
+      xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
           SelectorUtilityData.selectBpartner(this,
               Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
               Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
-      xmlDocument.setData(
-          "reportMProductId_IN",
-          "liststructure",
+      xmlDocument.setData("reportMProductId_IN", "liststructure",
           SelectorUtilityData.selectMproduct(this,
               Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
               Utility.getContext(this, vars, "#User_Client", ""), strProduct));
@@ -315,38 +316,40 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
           strCurrencyId,
           Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
-          strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId,
-          strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus,
-          strProjectpublic, strcRegionId, strSalesRep, strProduct);
+          strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId, strcProjectId,
+          strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic,
+          strcRegionId, strSalesRep, strProduct);
 
       if (data == null || data.length == 0) {
-        xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR", discard)
+        xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR",
+                discard)
             .createXmlDocument();
         xmlDocument.setData("structure1", ReportProjectBuildingSiteData.set());
       } else {
-        xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR").createXmlDocument();
+        xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR")
+            .createXmlDocument();
         xmlDocument.setData("structure1", data);
       }
-      if (!strProjectpublic.equals(""))
-        strTitle += ", "
-            + Utility.messageBD(this, "WithInitiativeType", vars.getLanguage())
-            + " "
+      if (!strProjectpublic.equals("")) {
+        strTitle += ", " + Utility.messageBD(this, "WithInitiativeType", vars.getLanguage()) + " "
             + ReportProjectBuildingSiteData.selectProjectpublic(this, vars.getLanguage(),
                 strProjectpublic);
-      if (!strdateFrom.equals(""))
+      }
+      if (!strdateFrom.equals("")) {
         strTitle += ", " + Utility.messageBD(this, "From", vars.getLanguage()) + " " + strdateFrom;
-      if (!strdateTo.equals(""))
+      }
+      if (!strdateTo.equals("")) {
         strTitle += " " + Utility.messageBD(this, "To", vars.getLanguage()) + " " + strdateTo;
-      if (!strSalesRep.equals(""))
-        strTitle += ", "
-            + Utility.messageBD(this, "ForTheSalesRep", vars.getLanguage())
-            + " "
-            + ReportProjectBuildingSiteData
-                .selectSalesRep(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-                    "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client",
-                    "ReportProjectBuildingSiteJR"), strSalesRep);
+      }
+      if (!strSalesRep.equals("")) {
+        strTitle += ", " + Utility.messageBD(this, "ForTheSalesRep", vars.getLanguage()) + " "
+            + ReportProjectBuildingSiteData.selectSalesRep(this,
+                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
+                Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"),
+                strSalesRep);
+      }
       xmlDocument.setParameter("title", strTitle);
     }
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -361,10 +364,11 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnerId,
       String strcProjectId, String strmCategoryId, String strProjectkind, String strProjectphase,
       String strProjectstatus, String strProjectpublic, String strcRegionId, String strSalesRep,
-      String strProduct, String strCurrencyId, String strOutput) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      String strProduct, String strCurrencyId, String strOutput)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: PDF");
+    }
     String discard[] = { "sectionPartner" };
 
     ReportProjectBuildingSiteData[] data = null;
@@ -378,9 +382,9 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       data = ReportProjectBuildingSiteData.select(this, strCurrencyId,
           Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
-          strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId,
-          strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus,
-          strProjectpublic, strcRegionId, strSalesRep, strProduct);
+          strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId, strcProjectId,
+          strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic,
+          strcRegionId, strSalesRep, strProduct);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }
@@ -398,9 +402,10 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       }
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR.jrxml";
 
-      if (strOutput.equals("pdf"))
+      if (strOutput.equals("pdf")) {
         response.setHeader("Content-disposition",
             "inline; filename=ReportProjectBuildingSiteJR.pdf");
+      }
 
       HashMap<String, Object> parameters = new HashMap<String, Object>();
       String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strdateFrom
@@ -411,6 +416,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportProjectBuildingSite. This Servlet was made by Eduardo Argal";
   } // end of getServletInfo() method

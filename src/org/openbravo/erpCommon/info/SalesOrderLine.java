@@ -50,13 +50,15 @@ public class SalesOrderLine extends HttpSecureAppServlet {
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -64,8 +66,9 @@ public class SalesOrderLine extends HttpSecureAppServlet {
       String strNameValue = vars.getRequestGlobalVariable("inpNameValue", "SalesOrderLine.name");
       String windowId = vars.getRequestGlobalVariable("WindowID", "SalesOrderLine.windowId");
       String strSOTrx = vars.getStringParameter("inpisSOTrxTab");
-      if (strSOTrx.equals(""))
+      if (strSOTrx.equals("")) {
         strSOTrx = Utility.getContext(this, vars, "isSOTrx", windowId);
+      }
       vars.setSessionValue("SalesOrderLine.isSOTrx", strSOTrx);
       String strProduct = vars.getRequestGlobalVariable("inpmProductId", "SalesOrderLine.product");
       String strBpartnerId = vars.getRequestGlobalVariable("inpcBpartnerId",
@@ -89,28 +92,28 @@ public class SalesOrderLine extends HttpSecureAppServlet {
           }
 
           switch (count) {
-          case 1:
-            strDocumentNo = token + "%";
-            vars.setSessionValue("SalesOrderLine.documentno", strDocumentNo);
-            break;
-          case 2:
-            strDateFrom = token;
-            strDateTo = token;
-            vars.setSessionValue("SalesOrderLine.datefrom", token);
-            vars.setSessionValue("SalesOrderLine.dateto", token);
-            break;
-          case 3:
-            strCal1 = token;
-            strCal2 = token;
-            vars.setSessionValue("SalesOrderLine.grandtotalfrom", token);
-            vars.setSessionValue("SalesOrderLine.grandtotalto", token);
-            break;
-          case 4:
-            vars.setSessionValue("SalesOrderLine.lineno", token);
-            break;
-          case 5:
-            vars.setSessionValue("SalesOrderLine.linenet", token);
-            break;
+            case 1:
+              strDocumentNo = token + "%";
+              vars.setSessionValue("SalesOrderLine.documentno", strDocumentNo);
+              break;
+            case 2:
+              strDateFrom = token;
+              strDateTo = token;
+              vars.setSessionValue("SalesOrderLine.datefrom", token);
+              vars.setSessionValue("SalesOrderLine.dateto", token);
+              break;
+            case 3:
+              strCal1 = token;
+              strCal2 = token;
+              vars.setSessionValue("SalesOrderLine.grandtotalfrom", token);
+              vars.setSessionValue("SalesOrderLine.grandtotalto", token);
+              break;
+            case 4:
+              vars.setSessionValue("SalesOrderLine.lineno", token);
+              break;
+            case 5:
+              vars.setSessionValue("SalesOrderLine.linenet", token);
+              break;
           }
           count++;
         } while (i != -1);
@@ -123,25 +126,28 @@ public class SalesOrderLine extends HttpSecureAppServlet {
           "SalesOrderLine.documentno");
       String windowId = vars.getRequestGlobalVariable("WindowID", "SalesOrderLine.windowId");
       String strSOTrx = vars.getStringParameter("inpisSOTrxTab");
-      if (strSOTrx.equals(""))
+      if (strSOTrx.equals("")) {
         strSOTrx = Utility.getContext(this, vars, "isSOTrx", windowId);
+      }
       vars.setSessionValue("SalesOrderLine.isSOTrx", strSOTrx);
       strKeyValue = strKeyValue + "%";
       vars.setSessionValue("SalesOrderLine.documentno", strKeyValue);
       SalesOrderLineData[] data = null;
       String strOrg = vars.getStringParameter("inpAD_Org_ID");
-      if (strSOTrx.equals("Y"))
+      if (strSOTrx.equals("Y")) {
         data = SalesOrderLineData.selectKey(this,
             Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
             Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue);
-      else
+      } else {
         data = SalesOrderLineData.selectKeySOTrx(this,
             Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
             Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strKeyValue);
-      if (data != null && data.length == 1)
+      }
+      if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
-      else
+      } else {
         printPage(response, vars, "", "", strKeyValue, "", "", "", "");
+      }
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
@@ -155,10 +161,10 @@ public class SalesOrderLine extends HttpSecureAppServlet {
           "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "SalesOrderLine.datefrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "SalesOrderLine.dateto", "");
-      String strDescription = vars.getGlobalVariable("inpDescription",
-          "SalesOrderLine.description", "");
-      String strCal1 = vars
-          .getNumericGlobalVariable("inpCal1", "SalesOrderLine.grandtotalfrom", "");
+      String strDescription = vars.getGlobalVariable("inpDescription", "SalesOrderLine.description",
+          "");
+      String strCal1 = vars.getNumericGlobalVariable("inpCal1", "SalesOrderLine.grandtotalfrom",
+          "");
       String strCal2 = vars.getNumericGlobalVariable("inpCal2", "SalesOrderLine.grandtotalto", "");
       String strOrder = vars.getGlobalVariable("inpOrder", "SalesOrderLine.order", "");
       String strDelivered = vars.getGlobalVariable("inpdelivered", "SalesOrderLine.deliverd", "N");
@@ -170,10 +176,11 @@ public class SalesOrderLine extends HttpSecureAppServlet {
       String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
       String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       printGridData(response, vars, strDocumentNo, strDescription, strOrder, strBpartnerId,
-          strDateFrom, strDateTo, strCal1, strCal2, strProduct, strDelivered, strInvoiced,
-          strSOTrx, strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
-    } else
+          strDateFrom, strDateTo, strCal1, strCal2, strProduct, strDelivered, strInvoiced, strSOTrx,
+          strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
+    } else {
       pageError(response);
+    }
   }
 
   private void removePageSessionVariables(VariablesSecureApp vars) {
@@ -193,13 +200,15 @@ public class SalesOrderLine extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
-      String strProduct, String strDocumentNo, String strDateFrom, String strDateTo,
-      String strCal1, String strCal2) throws IOException, ServletException {
+      String strProduct, String strDocumentNo, String strDateFrom, String strDateTo, String strCal1,
+      String strCal2) throws IOException, ServletException {
     String localStrDocumentNo = strDocumentNo;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Frame 1 of sale-order-lines seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/SalesOrderLine").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/SalesOrderLine")
+        .createXmlDocument();
 
     String strSOTrx = vars.getSessionValue("SalesOrderLine.isSOTrx");
 
@@ -246,10 +255,12 @@ public class SalesOrderLine extends HttpSecureAppServlet {
 
   private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       SalesOrderLineData[] data) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: sale-order-lines seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/SearchUniqueKeyResponse").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/SearchUniqueKeyResponse")
+        .createXmlDocument();
 
     xmlDocument.setParameter("script", generateResult(data));
     response.setContentType("text/html; charset=UTF-8");
@@ -272,10 +283,12 @@ public class SalesOrderLine extends HttpSecureAppServlet {
 
   private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page structure");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure")
+        .createXmlDocument();
     xmlDocument.setParameter("backendPageSize", String.valueOf(TableSQLData.maxRowsPerGridPage));
     SQLReturnObject[] data = getHeaders(vars);
     String type = "Hidden";
@@ -289,8 +302,9 @@ public class SalesOrderLine extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(xmlDocument.print());
+    }
     out.println(xmlDocument.print());
     out.close();
   }
@@ -309,8 +323,8 @@ public class SalesOrderLine extends HttpSecureAppServlet {
       dataAux.setData("iskey", (colNames[i].equals("rowkey") ? "true" : "false"));
       dataAux.setData("isvisible",
           (colNames[i].endsWith("_id") || colNames[i].equals("rowkey") ? "false" : "true"));
-      String name = Utility
-          .messageBD(this, "SOLS_" + colNames[i].toUpperCase(), vars.getLanguage());
+      String name = Utility.messageBD(this, "SOLS_" + colNames[i].toUpperCase(),
+          vars.getLanguage());
       dataAux.setData("name", (name.startsWith("SOLS_") ? colNames[i] : name));
       dataAux.setData("type", "string");
       dataAux.setData("width", colWidths[i]);
@@ -328,8 +342,9 @@ public class SalesOrderLine extends HttpSecureAppServlet {
       String strOrderDirs, String strOffset, String strPageSize, String strNewFilter, String strOrg)
       throws IOException, ServletException {
     String localStrNewFilter = strNewFilter;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page rows");
+    }
 
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
@@ -376,12 +391,12 @@ public class SalesOrderLine extends HttpSecureAppServlet {
               pgLimit, oraLimit1, oraLimit2);
 
           if (!"Y".equals(strSOTrx)) {
-            data = SalesOrderLineData.selectSOTrx(this, "1", Utility.getContext(this, vars,
-                "#User_Client", "SalesOrderLine"), Utility.getSelectorOrgs(this, vars, strOrg),
-                strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
-                    .nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2, strProduct, (strDelivered
-                    .equals("Y") ? "isdelivered" : ""), (strInvoiced.equals("Y") ? "isinvoiced"
-                    : ""), strOrderBy, "", "");
+            data = SalesOrderLineData.selectSOTrx(this, "1",
+                Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
+                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
+                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+                strCal1, strCalc2, strProduct, (strDelivered.equals("Y") ? "isdelivered" : ""),
+                (strInvoiced.equals("Y") ? "isinvoiced" : ""), strOrderBy, "", "");
           }
 
           vars.setSessionValue("SalesOrderLine.numrows", strNumRows);
@@ -393,36 +408,37 @@ public class SalesOrderLine extends HttpSecureAppServlet {
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           if (strSOTrx.equals("Y")) {
-            data = SalesOrderLineData.select(this, "ROWNUM", Utility.getContext(this, vars,
-                "#User_Client", "SalesOrderLine"), Utility.getSelectorOrgs(this, vars, strOrg),
-                strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
-                    .nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2, strProduct, (strDelivered
-                    .equals("Y") ? "isdelivered" : ""), (strInvoiced.equals("Y") ? "isinvoiced"
-                    : ""), strOrderBy, oraLimit, "");
+            data = SalesOrderLineData.select(this, "ROWNUM",
+                Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
+                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
+                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+                strCal1, strCalc2, strProduct, (strDelivered.equals("Y") ? "isdelivered" : ""),
+                (strInvoiced.equals("Y") ? "isinvoiced" : ""), strOrderBy, oraLimit, "");
           } else {
-            data = SalesOrderLineData.selectSOTrx(this, "ROWNUM", Utility.getContext(this, vars,
-                "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org",
-                "SalesOrderLine"), strDocumentNo, strDescription, strOrder, strBpartnerId,
-                strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2,
-                strProduct, (strDelivered.equals("Y") ? "isdelivered" : ""), (strInvoiced
-                    .equals("Y") ? "isinvoiced" : ""), strOrderBy, oraLimit, "");
+            data = SalesOrderLineData.selectSOTrx(this, "ROWNUM",
+                Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
+                Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo,
+                strDescription, strOrder, strBpartnerId, strDateFrom,
+                DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2, strProduct,
+                (strDelivered.equals("Y") ? "isdelivered" : ""),
+                (strInvoiced.equals("Y") ? "isinvoiced" : ""), strOrderBy, oraLimit, "");
           }
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
           if (strSOTrx.equals("Y")) {
-            data = SalesOrderLineData.select(this, "1", Utility.getContext(this, vars,
-                "#User_Client", "SalesOrderLine"), Utility.getSelectorOrgs(this, vars, strOrg),
-                strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
-                    .nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2, strProduct, (strDelivered
-                    .equals("Y") ? "isdelivered" : ""), (strInvoiced.equals("Y") ? "isinvoiced"
-                    : ""), strOrderBy, "", pgLimit);
+            data = SalesOrderLineData.select(this, "1",
+                Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
+                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
+                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+                strCal1, strCalc2, strProduct, (strDelivered.equals("Y") ? "isdelivered" : ""),
+                (strInvoiced.equals("Y") ? "isinvoiced" : ""), strOrderBy, "", pgLimit);
           } else {
-            data = SalesOrderLineData.selectSOTrx(this, "1", Utility.getContext(this, vars,
-                "#User_Client", "SalesOrderLine"), Utility.getSelectorOrgs(this, vars, strOrg),
-                strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
-                    .nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2, strProduct, (strDelivered
-                    .equals("Y") ? "isdelivered" : ""), (strInvoiced.equals("Y") ? "isinvoiced"
-                    : ""), strOrderBy, "", pgLimit);
+            data = SalesOrderLineData.selectSOTrx(this, "1",
+                Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
+                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
+                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+                strCal1, strCalc2, strProduct, (strDelivered.equals("Y") ? "isdelivered" : ""),
+                (strInvoiced.equals("Y") ? "isinvoiced" : ""), strOrderBy, "", pgLimit);
           }
         }
       } catch (ServletException e) {
@@ -435,32 +451,38 @@ public class SalesOrderLine extends HttpSecureAppServlet {
         } else {
           type = myError.getType();
           title = myError.getTitle();
-          if (!myError.getMessage().startsWith("<![CDATA["))
+          if (!myError.getMessage().startsWith("<![CDATA[")) {
             description = "<![CDATA[" + myError.getMessage() + "]]>";
-          else
+          } else {
             description = myError.getMessage();
+          }
         }
       } catch (Exception e) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Error obtaining rows data");
+        }
         type = "Error";
         title = "Error";
-        if (e.getMessage().startsWith("<![CDATA["))
+        if (e.getMessage().startsWith("<![CDATA[")) {
           description = "<![CDATA[" + e.getMessage() + "]]>";
-        else
+        } else {
           description = e.getMessage();
+        }
         e.printStackTrace();
       }
     }
 
     DecimalFormat df = Utility.getFormat(vars, "priceEdition");
 
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -468,7 +490,8 @@ public class SalesOrderLine extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+    strRowsData.append("  <rows numRows=\"")
+        .append(strNumRows)
         .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
@@ -481,18 +504,28 @@ public class SalesOrderLine extends HttpSecureAppServlet {
               || columnname.equalsIgnoreCase("linenetamt")) {
             strRowsData.append(df.format(new BigDecimal(data[j].getField(columnname))));
           } else if ((data[j].getField(columnname)) != null) {
-            if (headers[k].getField("adReferenceId").equals("32"))
+            if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
-                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
-                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
-                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            }
+            strRowsData.append(data[j].getField(columnname)
+                .replaceAll("<b>", "")
+                .replaceAll("<B>", "")
+                .replaceAll("</b>", "")
+                .replaceAll("</B>", "")
+                .replaceAll("<i>", "")
+                .replaceAll("<I>", "")
+                .replaceAll("</i>", "")
+                .replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;")
+                .replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;")
+                .replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
-            } else
+            } else {
               strRowsData.append("&nbsp;");
+            }
           }
           strRowsData.append("]]></td>\n");
         }
@@ -505,12 +538,14 @@ public class SalesOrderLine extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strRowsData.toString());
+    }
     out.print(strRowsData.toString());
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents que sale-orders lines seeker";
   } // end of getServletInfo() method

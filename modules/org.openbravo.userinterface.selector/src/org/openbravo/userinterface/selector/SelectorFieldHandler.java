@@ -37,8 +37,8 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
  */
 public class SelectorFieldHandler extends EntityPersistenceEventObserver {
   private static final String SELECTOR_FIELD_TABLE_ID = "A2F880F9981349E2A6A57BD58267EBCE";
-  private static Entity[] entities = { ModelProvider.getInstance().getEntityByTableId(
-      SELECTOR_FIELD_TABLE_ID) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntityByTableId(SELECTOR_FIELD_TABLE_ID) };
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
@@ -55,8 +55,8 @@ public class SelectorFieldHandler extends EntityPersistenceEventObserver {
   }
 
   private void checkCentralMaintenance(EntityPersistenceEvent event) {
-    Selector sel = (Selector) event.getCurrentState(entities[0]
-        .getPropertyByColumnName("Obuisel_Selector_ID"));
+    Selector sel = (Selector) event
+        .getCurrentState(entities[0].getPropertyByColumnName("Obuisel_Selector_ID"));
 
     if (sel.isCustomQuery()) {
       event.setCurrentState(entities[0].getPropertyByColumnName("Iscentrallymaintained"), false);

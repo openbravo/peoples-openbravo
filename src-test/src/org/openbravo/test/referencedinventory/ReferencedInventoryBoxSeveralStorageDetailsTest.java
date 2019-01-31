@@ -74,23 +74,23 @@ public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedI
       final String attributeSetInstanceId, final String toBinId) throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType();
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils.createReferencedInventory(
-        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
+    final ReferencedInventory refInv = ReferencedInventoryTestUtils
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
     final Product product1 = ReferencedInventoryTestUtils.cloneProduct(productId);
     final BigDecimal receivedQty = new BigDecimal("10");
     ReferencedInventoryTestUtils.receiveProduct(product1, receivedQty, attributeSetInstanceId);
     final StorageDetail storageDetail1 = ReferencedInventoryTestUtils
         .getUniqueStorageDetail(product1);
-    final JSONArray storageDetails1JS = ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(
-        storageDetail1, receivedQty);
+    final JSONArray storageDetails1JS = ReferencedInventoryTestUtils
+        .getStorageDetailsToBoxJSArray(storageDetail1, receivedQty);
 
     final Product product2 = ReferencedInventoryTestUtils.cloneProduct(productId);
     ReferencedInventoryTestUtils.receiveProduct(product2, receivedQty, attributeSetInstanceId);
     final StorageDetail storageDetail2 = ReferencedInventoryTestUtils
         .getUniqueStorageDetail(product2);
-    final JSONArray storageDetails2JS = ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(
-        storageDetail2, receivedQty);
+    final JSONArray storageDetails2JS = ReferencedInventoryTestUtils
+        .getStorageDetailsToBoxJSArray(storageDetail2, receivedQty);
 
     final JSONArray selectedStorageDetailsJS = storageDetails1JS;
     selectedStorageDetailsJS.put(storageDetails2JS.get(0));
@@ -103,8 +103,8 @@ public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedI
 
     assertsGoodsMovementIsProcessed(boxMovement);
     assertsGoodsMovementNumberOfLines(boxMovement, 2);
-    assertThat("Referenced Inventory has two different storage details", refInv
-        .getMaterialMgmtStorageDetailList().size(), equalTo(2));
+    assertThat("Referenced Inventory has two different storage details",
+        refInv.getMaterialMgmtStorageDetailList().size(), equalTo(2));
   }
 
   private void testBoxSeveralStorageDetailsInTwoMovements(final String productId1,
@@ -116,8 +116,8 @@ public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedI
     ReferencedInventoryTestUtils.receiveProduct(product2, receivedQty, attributeSetInstanceId2);
     final StorageDetail storageDetail2 = ReferencedInventoryTestUtils
         .getUniqueStorageDetail(product2);
-    final JSONArray storageDetails2JS = ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(
-        storageDetail2, receivedQty);
+    final JSONArray storageDetails2JS = ReferencedInventoryTestUtils
+        .getStorageDetailsToBoxJSArray(storageDetail2, receivedQty);
 
     final InternalMovement boxMovement = new BoxProcessor(refInv, storageDetails2JS, toBinId)
         .createAndProcessGoodsMovement();
@@ -127,8 +127,8 @@ public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedI
 
     assertsGoodsMovementIsProcessed(boxMovement);
     assertsGoodsMovementNumberOfLines(boxMovement, 1);
-    assertThat("Referenced Inventory has two different storage details", refInv
-        .getMaterialMgmtStorageDetailList().size(), equalTo(2));
+    assertThat("Referenced Inventory has two different storage details",
+        refInv.getMaterialMgmtStorageDetailList().size(), equalTo(2));
   }
 
 }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,15 +25,16 @@ import static org.openbravo.model.common.enterprise.Organization.PROPERTY_CLIENT
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.impl.CriteriaImpl;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.internal.CriteriaImpl;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
@@ -60,7 +61,7 @@ import org.openbravo.service.db.QueryTimeOutUtil;
 public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   private static final long serialVersionUID = 1L;
 
-  private static final Logger log = Logger.getLogger(OBCriteria.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Entity entity;
 
@@ -94,6 +95,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
    * 
    * @return the list of Objects retrieved through this Criteria object
    */
+  @Override
   @SuppressWarnings("unchecked")
   public List<E> list() throws HibernateException {
     initialize();
@@ -124,6 +126,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   /**
    * See the scroll method on the Hibernate Criteria class.
    */
+  @Override
   public ScrollableResults scroll() throws HibernateException {
     scrolling = true;
     try {
@@ -137,6 +140,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   /**
    * See the scroll method on the Hibernate Criteria class.
    */
+  @Override
   public ScrollableResults scroll(ScrollMode scrollMode) throws HibernateException {
     scrolling = true;
     try {
@@ -161,6 +165,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   /**
    * See the uniqueResult() method on the Hibernate Criteria class.
    */
+  @Override
   public Object uniqueResult() throws HibernateException {
     initialize();
     return super.uniqueResult();
@@ -171,8 +176,9 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
       if (!modified) {
         return;
       }
-      log.warn("Detected multiple calls to initialize() in the same OBCriteria instance. "
-          + "This should be fixed in order to prevent adding duplicated filters in the query.",
+      log.warn(
+          "Detected multiple calls to initialize() in the same OBCriteria instance. "
+              + "This should be fixed in order to prevent adding duplicated filters in the query.",
           new Exception());
     }
     final OBContext obContext = OBContext.getOBContext();
@@ -184,14 +190,15 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
 
     if (isFilterOnReadableOrganization() && e.isOrganizationPartOfKey()) {
       add(Restrictions.in("id." + PROPERTY_ORGANIZATION + ".id",
-          obContext.getReadableOrganizations()));
+          (Object[]) obContext.getReadableOrganizations()));
 
     } else if (isFilterOnReadableOrganization() && e.isOrganizationEnabled()) {
-      add(Restrictions.in(PROPERTY_ORGANIZATION + ".id", obContext.getReadableOrganizations()));
+      add(Restrictions.in(PROPERTY_ORGANIZATION + ".id",
+          (Object[]) obContext.getReadableOrganizations()));
     }
 
     if (isFilterOnReadableClients() && getEntity().isClientEnabled()) {
-      add(Restrictions.in(PROPERTY_CLIENT + ".id", obContext.getReadableClients()));
+      add(Restrictions.in(PROPERTY_CLIENT + ".id", (Object[]) obContext.getReadableClients()));
     }
 
     if (isFilterOnActive() && e.isActiveEnabled()) {

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,8 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
 /**
@@ -42,11 +43,12 @@ import org.openbravo.data.FieldProvider;
  * This example will call to obj.getName() method.
  * 
  */
+@SuppressWarnings("serial")
 public class FieldProviderFactory implements FieldProvider {
 
   private Object object;
   private HashMap<String, String> properties;
-  private static Logger log4j = Logger.getLogger(FieldProviderFactory.class);
+  private static Logger log4j = LogManager.getLogger();
 
   /**
    * Initializes a new FieldProviderFactory for the object
@@ -71,6 +73,7 @@ public class FieldProviderFactory implements FieldProvider {
    * Note that for a fieldName it must exist in the object a getter called "getFieldName" "F" is
    * upper case though in the passed parameter can be lower case.
    */
+  @Override
   public String getField(String fieldName) {
     try {
       String rt = properties.get(fieldName);

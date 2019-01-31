@@ -28,10 +28,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -52,12 +55,10 @@ import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ManageVariantsDS extends ReadOnlyDataSourceService {
 
-  private static final Logger log = LoggerFactory.getLogger(ManageVariantsDS.class);
+  private static final Logger log = LogManager.getLogger();
   private static final int searchKeyLength = getSearchKeyColumnLength();
   private static final String MANAGE_VARIANTS_TABLE_ID = "147D4D709FAC4AF0B611ABFED328FA12";
   private static final String ID_REFERENCE_ID = "13";
@@ -65,8 +66,8 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
   @Override
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     final OBContext obContext = OBContext.getOBContext();
-    Entity entityManageVariants = ModelProvider.getInstance().getEntityByTableId(
-        MANAGE_VARIANTS_TABLE_ID);
+    Entity entityManageVariants = ModelProvider.getInstance()
+        .getEntityByTableId(MANAGE_VARIANTS_TABLE_ID);
     try {
       obContext.getEntityAccessChecker().checkReadableAccess(entityManageVariants);
     } catch (OBSecurityException e) {
@@ -93,8 +94,8 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       long variantNumber = 1;
       Map<ProductCharacteristic, ProductCharacteristicAux> prChUseCode = new HashMap<ProductCharacteristic, ProductCharacteristicAux>();
 
-      OBCriteria<ProductCharacteristic> prChCrit = OBDal.getInstance().createCriteria(
-          ProductCharacteristic.class);
+      OBCriteria<ProductCharacteristic> prChCrit = OBDal.getInstance()
+          .createCriteria(ProductCharacteristic.class);
       prChCrit.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, product));
       prChCrit.add(Restrictions.eq(ProductCharacteristic.PROPERTY_VARIANT, true));
       prChCrit.addOrderBy(ProductCharacteristic.PROPERTY_SEQUENCENUMBER, true);
@@ -108,10 +109,10 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
 
       int i = 0;
       for (ProductCharacteristic prCh : prChs) {
-        OBCriteria<ProductCharacteristicConf> prChConfCrit = OBDal.getInstance().createCriteria(
-            ProductCharacteristicConf.class);
-        prChConfCrit.add(Restrictions.eq(
-            ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
+        OBCriteria<ProductCharacteristicConf> prChConfCrit = OBDal.getInstance()
+            .createCriteria(ProductCharacteristicConf.class);
+        prChConfCrit
+            .add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
         List<ProductCharacteristicConf> prChConfs = prChConfCrit.list();
         long valuesCount = prChConfs.size();
 
@@ -131,8 +132,8 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         if (useCode) {
           totalMaxLength += maxLength;
         }
-        List<CharacteristicValue> filteredValues = selectedFilters.getSelectedChValues().get(
-            prCh.getCharacteristic().getId());
+        List<CharacteristicValue> filteredValues = selectedFilters.getSelectedChValues()
+            .get(prCh.getCharacteristic().getId());
         ProductCharacteristicAux prChAux = new ProductCharacteristicAux(useCode, prChConfs,
             filteredValues);
         currentValues[i] = prChAux.getNextValue();
@@ -146,7 +147,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       }
 
       if (variantNumber > 1000) {
-        return result;
+        throw new OBException("HighRecords");
       }
       totalMaxLength += Long.toString(variantNumber).length();
       boolean useCodes = totalMaxLength <= searchKeyLength;
@@ -184,8 +185,8 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
             searchKey += "_" + prChConf.getCode() + "_";
           }
         }
-        for (int j = 0; j < (Long.toString(variantNumber).length() - Integer.toString(productNo)
-            .length()); j++) {
+        for (int j = 0; j < (Long.toString(variantNumber).length()
+            - Integer.toString(productNo).length()); j++) {
           searchKey += "0";
         }
         searchKey += productNo;
@@ -218,8 +219,8 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         variantMap.put("characteristicDescription", strChDesc);
         variantMap.put("id", strKeyId);
 
-        OBQuery<Product> variantQry = OBDal.getInstance().createQuery(Product.class,
-            where.toString());
+        OBQuery<Product> variantQry = OBDal.getInstance()
+            .createQuery(Product.class, where.toString());
         variantQry.setNamedParameter("product", product);
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicConf prChConf = currentValues[i];
@@ -237,20 +238,20 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         }
         if (StringUtils.isNotEmpty(selectedFilters.getSearchKey())) {
           StringBuilder matchedRegex = new StringBuilder(".*");
-          matchedRegex.append(selectedFilters.getSearchKey().trim().toLowerCase()
-              .replace(" ", ".*"));
+          matchedRegex
+              .append(selectedFilters.getSearchKey().trim().toLowerCase().replace(" ", ".*"));
           matchedRegex.append(".*");
-          includeInResult = includeInResult
-              && ((String) variantMap.get("searchKey")).trim().toLowerCase()
-                  .matches(matchedRegex.toString());
+          includeInResult = includeInResult && ((String) variantMap.get("searchKey")).trim()
+              .toLowerCase()
+              .matches(matchedRegex.toString());
         }
         if (StringUtils.isNotEmpty(selectedFilters.getName())) {
           StringBuilder matchedRegex = new StringBuilder(".*");
           matchedRegex.append(selectedFilters.getName().trim().toLowerCase().replace(" ", ".*"));
           matchedRegex.append(".*");
-          includeInResult = includeInResult
-              && ((String) variantMap.get("name")).trim().toLowerCase()
-                  .matches(matchedRegex.toString());
+          includeInResult = includeInResult && ((String) variantMap.get("name")).trim()
+              .toLowerCase()
+              .matches(matchedRegex.toString());
         }
         if (selectedFilters.isVariantCreated() != null) {
           includeInResult = includeInResult
@@ -336,8 +337,8 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         String strCharacteristicId = null;
         List<CharacteristicValue> chValueIds = new ArrayList<CharacteristicValue>();
         for (int j = 0; j < values.length(); j++) {
-          CharacteristicValue chValue = OBDal.getInstance().get(CharacteristicValue.class,
-              values.getString(j));
+          CharacteristicValue chValue = OBDal.getInstance()
+              .get(CharacteristicValue.class, values.getString(j));
           chValueIds.add(chValue);
           if (strCharacteristicId == null) {
             strCharacteristicId = chValue.getCharacteristic().getId();
@@ -352,11 +353,11 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
 
   private String buildExistsClause(int i) {
     StringBuffer clause = new StringBuffer();
-    clause.append(" and exists (select 1 from " + ProductCharacteristicValue.ENTITY_NAME
-        + " as pcv");
+    clause
+        .append(" and exists (select 1 from " + ProductCharacteristicValue.ENTITY_NAME + " as pcv");
     clause.append("    where pcv." + ProductCharacteristicValue.PROPERTY_PRODUCT + " = p");
-    clause.append("      and pcv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTIC
-        + ".id = :ch" + i);
+    clause.append(
+        "      and pcv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTIC + ".id = :ch" + i);
     clause.append("      and pcv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTICVALUE
         + ".id = :chvalue" + i);
     clause.append("     )");

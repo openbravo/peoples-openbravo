@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Copyright (C) 2001-2019 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -11,6 +11,7 @@
  */
 package org.openbravo.base;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -30,7 +31,8 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.filter.NumberFilter;
 import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.utils.FormatUtilities;
@@ -51,7 +53,7 @@ public class VariablesBase {
   List<FileItem> items;
   private final String DEFAULT_FORMAT_NAME = "qtyEdition";
 
-  static Logger log4j = Logger.getLogger(VariablesBase.class);
+  static Logger log4j = LogManager.getLogger();
 
   private Map<String, Object> sessionAttributes = new HashMap<String, Object>();
 
@@ -247,8 +249,9 @@ public class VariablesBase {
       RequestFilter requestFilter) throws ServletException {
     String auxStr = getStringParameter(requestParameter, requestFilter);
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Request parameter: " + requestParameter + ":..." + auxStr);
+    }
     if (!(auxStr.equals(""))) {
       setSessionValue(sessionAttribute, auxStr);
     } else {
@@ -256,24 +259,27 @@ public class VariablesBase {
         throw new ServletException("Request parameter required: " + requestParameter);
       } else {
         auxStr = getSessionValue(sessionAttribute);
-        if (!sessionAttribute.equalsIgnoreCase("menuVertical") && log4j.isDebugEnabled())
+        if (!sessionAttribute.equalsIgnoreCase("menuVertical") && log4j.isDebugEnabled()) {
           log4j.debug("Session attribute: " + sessionAttribute + ":..." + auxStr);
+        }
         if (auxStr.equals("")) {
           if (sessionRequired) {
             throw new ServletException("Session attribute required: " + sessionAttribute);
           } else {
             auxStr = defaultValue;
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("Default value:..." + auxStr);
+            }
             setSessionValue(sessionAttribute, auxStr);
           }
         } else {
           if (clearSession) {
             auxStr = defaultValue;
-            if (auxStr.equals(""))
+            if (auxStr.equals("")) {
               removeSessionValue(sessionAttribute);
-            else
+            } else {
               setSessionValue(sessionAttribute, auxStr);
+            }
           }
         }
       }
@@ -328,8 +334,9 @@ public class VariablesBase {
       boolean clearSession, boolean requestRequired, boolean sessionRequired, String defaultValue,
       RequestFilter requestFilter) throws ServletException {
     String auxStr = getInStringParameter(requestParameter, requestFilter);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Request IN parameter: " + requestParameter + ":..." + auxStr);
+    }
     if (!(auxStr.equals(""))) {
       setSessionValue(sessionAttribute, auxStr);
     } else {
@@ -337,15 +344,17 @@ public class VariablesBase {
         throw new ServletException("Request IN parameter required: " + requestParameter);
       } else {
         auxStr = getSessionValue(sessionAttribute);
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Session IN attribute: " + sessionAttribute + ":..." + auxStr);
+        }
         if (auxStr.equals("")) {
           if (sessionRequired) {
             throw new ServletException("Session IN attribute required: " + sessionAttribute);
           } else {
             auxStr = defaultValue;
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("Default value:..." + auxStr);
+            }
             setSessionValue(sessionAttribute, auxStr);
           }
         } else {
@@ -698,8 +707,8 @@ public class VariablesBase {
 
     if (!NumberFilter.instance.accept(newValue)) {
       log4j.error("Input: " + parameter + " not accepted by filter: " + NumberFilter.instance);
-      throw new ServletException("Input: " + parameter + " with value " + newValue
-          + " is not an accepted input");
+      throw new ServletException(
+          "Input: " + parameter + " with value " + newValue + " is not an accepted input");
     }
 
     return newValue;
@@ -889,10 +898,11 @@ public class VariablesBase {
       RequestFilter requestFilter) throws ServletException {
     String auxStr = null;
     try {
-      if (isMultipart)
+      if (isMultipart) {
         auxStr = getMultiParameter(parameter);
-      else
+      } else {
         auxStr = httpRequest.getParameter(parameter);
+      }
     } catch (Exception e) {
       if (!(required)) {
         auxStr = defaultValue;
@@ -909,8 +919,9 @@ public class VariablesBase {
     auxStr = FormatUtilities.sanitizeInput(auxStr);
     filterRequest(requestFilter, auxStr);
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Request parameter: " + parameter + ":..." + auxStr);
+    }
     return auxStr;
   }
 
@@ -1033,10 +1044,11 @@ public class VariablesBase {
     String[] auxStr = null;
     StringBuffer strResultado = new StringBuffer();
     try {
-      if (isMultipart)
+      if (isMultipart) {
         auxStr = getMultiParameters(parameter);
-      else
+      } else {
         auxStr = httpRequest.getParameterValues(parameter);
+      }
     } catch (Exception e) {
       if (!(required)) {
         strResultado.append(defaultValue);
@@ -1058,8 +1070,9 @@ public class VariablesBase {
     if (auxStr != null && auxStr.length > 0) {
       for (int i = 0; i < auxStr.length; i++) {
         if (auxStr[i].length() > 0) {
-          if (strResultado.length() > 0)
+          if (strResultado.length() > 0) {
             strResultado.append(",");
+          }
           strResultado.append(auxStr[i]);
         }
       }
@@ -1074,8 +1087,9 @@ public class VariablesBase {
       return strResultado.toString();
     }
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Request IN parameter: " + parameter + ":...(" + strResultado.toString() + ")");
+    }
 
     return "(" + strResultado.toString() + ")";
   }
@@ -1084,7 +1098,8 @@ public class VariablesBase {
    * @see #getInStringParameter(String,String,RequestFilter)
    */
   @Deprecated
-  public String getInStringParameter(String parameter, String defaultValue) throws ServletException {
+  public String getInStringParameter(String parameter, String defaultValue)
+      throws ServletException {
     return getInStringParameter(parameter, defaultValue, null);
   }
 
@@ -1227,10 +1242,11 @@ public class VariablesBase {
     String[] auxStr = null;
     StringBuffer strResult = new StringBuffer();
     try {
-      if (isMultipart)
+      if (isMultipart) {
         auxStr = getMultiParameters(parameter);
-      else
+      } else {
         auxStr = httpRequest.getParameterValues(parameter);
+      }
     } catch (Exception e) {
       if (!(required)) {
         strResult.append(defaultValue);
@@ -1258,8 +1274,9 @@ public class VariablesBase {
     }
     strResult.append("')");
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Request IN parameter: " + parameter + ":..." + strResult.toString());
+    }
 
     return strResult.toString();
   }
@@ -1284,10 +1301,11 @@ public class VariablesBase {
       RequestFilter requestFilter) throws ServletException {
     String[] auxStr = null;
     try {
-      if (isMultipart)
+      if (isMultipart) {
         auxStr = getMultiParameters(parameter);
-      else
+      } else {
         auxStr = httpRequest.getParameterValues(parameter);
+      }
     } catch (Exception e) {
       if (!(required)) {
         return new String[0];
@@ -1305,8 +1323,9 @@ public class VariablesBase {
     auxStr = FormatUtilities.sanitizeInput(auxStr);
     filterRequest(requestFilter, auxStr);
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Request IN parameter: " + parameter + ":..." + auxStr.toString());
+    }
 
     return auxStr;
   }
@@ -1341,14 +1360,17 @@ public class VariablesBase {
       } else {
         auxStr = (String) sessionAttributes.get(sessionAttribute.toUpperCase());
       }
-      if (auxStr == null || auxStr.trim().equals(""))
+      if (auxStr == null || auxStr.trim().equals("")) {
         auxStr = defaultValue;
+      }
     } catch (Exception e) {
       auxStr = defaultValue;
     }
-    if (!sessionAttribute.equalsIgnoreCase("menuVertical"))
-      if (log4j.isDebugEnabled())
+    if (!sessionAttribute.equalsIgnoreCase("menuVertical")) {
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Get session attribute: " + sessionAttribute + ":..." + auxStr);
+      }
+    }
     return auxStr;
   }
 
@@ -1367,9 +1389,11 @@ public class VariablesBase {
       } else {
         sessionAttributes.put(attribute.toUpperCase(), value);
       }
-      if (!attribute.equalsIgnoreCase("menuVertical"))
-        if (log4j.isDebugEnabled())
+      if (!attribute.equalsIgnoreCase("menuVertical")) {
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Set session attribute: " + attribute + ":..." + value.toString());
+        }
+      }
     } catch (final IllegalStateException ise) {
       throw (IllegalStateException) new IllegalStateException().initCause(ise);
     } catch (final Exception e) {
@@ -1385,8 +1409,9 @@ public class VariablesBase {
    */
   public void removeSessionValue(String attribute) {
     try {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Remove session attribute: " + attribute + ":..." + getSessionValue(attribute));
+      }
       if (session != null) {
         session.removeAttribute(attribute.toUpperCase());
       } else {
@@ -1426,6 +1451,15 @@ public class VariablesBase {
    * @param value
    *          The value of the object to store.
    */
+  public void setSessionObject(String attribute, Serializable value) {
+    setSessionObject(attribute, (Object) value);
+  }
+
+  /**
+   * @deprecated Only {@code Serializable} objects should be set in session: use
+   *             {@link #setSessionObject(String, Serializable)} instead
+   */
+  @Deprecated
   public void setSessionObject(String attribute, Object value) {
     try {
       if (session != null) {
@@ -1446,23 +1480,21 @@ public class VariablesBase {
    *          are erased.
    */
   public void clearSession(boolean all) {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("...: removing session");
+    }
     String target = "";
-    String targetQueryString = null;
     try {
       if (session != null) {
         String sessionName;
         Enumeration<?> e = session.getAttributeNames();
         while (e.hasMoreElements()) {
           sessionName = (String) e.nextElement();
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("  session name: " + sessionName);
+          }
           if (!all && sessionName.equalsIgnoreCase("target")) {
             target = (String) session.getAttribute(sessionName);
-          }
-          if (!all && sessionName.equalsIgnoreCase("targetQueryString")) {
-            targetQueryString = (String) session.getAttribute(sessionName);
           }
           session.removeAttribute(sessionName);
           e = session.getAttributeNames();
@@ -1470,26 +1502,18 @@ public class VariablesBase {
         if (!target.equals("")) {
           session.setAttribute("TARGET", target);
         }
-        if (targetQueryString != null) {
-          session.setAttribute("TARGETQUERYSTRING", targetQueryString);
-        }
       } else {
         for (String key : sessionAttributes.keySet()) {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("  session name: " + key);
+          }
           if (!all && key.equalsIgnoreCase("target")) {
             target = (String) sessionAttributes.get(key);
-          }
-          if (!all && key.equalsIgnoreCase("targetQueryString")) {
-            targetQueryString = (String) sessionAttributes.get(key);
           }
         }
         sessionAttributes.clear();
         if (!target.equals("")) {
           sessionAttributes.put("TARGET", target);
-        }
-        if (targetQueryString != null) {
-          sessionAttributes.put("TARGETQUERYSTRING", targetQueryString);
         }
       }
     } catch (IllegalStateException ignored) {
@@ -1511,24 +1535,30 @@ public class VariablesBase {
   public Vector<String> getListFromInString(String _strList) {
     String strList = _strList;
     Vector<String> fields = new Vector<String>();
-    if (strList == null || strList.length() == 0)
+    if (strList == null || strList.length() == 0) {
       return fields;
+    }
     strList = strList.trim();
-    if (strList.equals(""))
+    if (strList.equals("")) {
       return fields;
-    if (strList.startsWith("("))
+    }
+    if (strList.startsWith("(")) {
       strList = strList.substring(1, strList.length() - 1);
+    }
     strList = strList.trim();
-    if (strList.equals(""))
+    if (strList.equals("")) {
       return fields;
+    }
     StringTokenizer datos = new StringTokenizer(strList, ",", false);
     while (datos.hasMoreTokens()) {
       String token = datos.nextToken();
-      if (token.startsWith("'"))
+      if (token.startsWith("'")) {
         token = token.substring(1, token.length() - 1);
+      }
       token = token.trim();
-      if (!token.equals(""))
+      if (!token.equals("")) {
         fields.addElement(token);
+      }
     }
     return fields;
   }
@@ -1551,8 +1581,9 @@ public class VariablesBase {
    *         multipart or the parameter is not found.
    */
   public String getMultiParameter(String parameter, RequestFilter requestFilter) {
-    if (!isMultipart || items == null)
+    if (!isMultipart || items == null) {
       return "";
+    }
     Iterator<FileItem> iter = items.iterator();
     while (iter.hasNext()) {
       FileItem item = iter.next();
@@ -1589,8 +1620,9 @@ public class VariablesBase {
    *         multipart.
    */
   public String[] getMultiParameters(String parameter, RequestFilter requestFilter) {
-    if (!isMultipart || items == null)
+    if (!isMultipart || items == null) {
       return null;
+    }
     Iterator<FileItem> iter = items.iterator();
     Vector<String> result = new Vector<String>();
     while (iter.hasNext()) {
@@ -1618,13 +1650,15 @@ public class VariablesBase {
    * @return FileItem object containing the file content
    */
   public FileItem getMultiFile(String parameter) {
-    if (!isMultipart || items == null)
+    if (!isMultipart || items == null) {
       return null;
+    }
     Iterator<FileItem> iter = items.iterator();
     while (iter.hasNext()) {
       FileItem item = iter.next();
-      if (!item.isFormField() && item.getFieldName().equals(parameter))
+      if (!item.isFormField() && item.getFieldName().equals(parameter)) {
         return item;
+      }
     }
     return null;
   }

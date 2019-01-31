@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.type.YesNoType;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -50,17 +51,16 @@ import org.openbravo.base.util.Check;
  */
 
 public class DalMappingGenerator implements OBSingleton {
-  private static final Logger log = Logger.getLogger(DalMappingGenerator.class);
+  private static final Logger log = LogManager.getLogger();
 
-  private final static String HIBERNATE_FILE_PROPERTY = "hibernate.hbm.file";
-  private final static String HIBERNATE_READ_FILE_PROPERTY = "hibernate.hbm.readFile";
+  private static final String HIBERNATE_FILE_PROPERTY = "hibernate.hbm.file";
+  private static final String HIBERNATE_READ_FILE_PROPERTY = "hibernate.hbm.readFile";
 
-  private final static String TEMPLATE_FILE = "template.hbm.xml";
-  private final static String MAIN_TEMPLATE_FILE = "template_main.hbm.xml";
-  // private final static char TAB = '\t';
-  private final static String TAB2 = "\t\t";
-  private final static String TAB3 = "\t\t\t";
-  private final static char NL = '\n';
+  private static final String TEMPLATE_FILE = "template.hbm.xml";
+  private static final String MAIN_TEMPLATE_FILE = "template_main.hbm.xml";
+  private static final String TAB2 = "\t\t";
+  private static final String TAB3 = "\t\t\t";
+  private static final char NL = '\n';
 
   private static DalMappingGenerator instance = new DalMappingGenerator();
 
@@ -84,13 +84,13 @@ public class DalMappingGenerator implements OBSingleton {
    * @return the generated Hibernate mapping (corresponds to what is found in a hbm.xml file)
    */
   public String generateMapping() {
-    final String hibernateFileLocation = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties().getProperty(HIBERNATE_FILE_PROPERTY);
+    final String hibernateFileLocation = getHibernateFileLocation();
 
     // If readMappingFromFile is true and the mapping is already generated to a file, this file will
     // be read instead of generating a new one. Useful while developing changes in mapping to edit
     // the file before generating it.
-    final String readMappingFromFile = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    final String readMappingFromFile = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty(HIBERNATE_READ_FILE_PROPERTY);
 
     if (hibernateFileLocation != null && readMappingFromFile != null
@@ -111,7 +111,7 @@ public class DalMappingGenerator implements OBSingleton {
     final StringBuilder sb = new StringBuilder();
     for (final Entity e : mp.getModel()) {
       // Do not map datasource based tables
-      if (!e.isDataSourceBased() && !e.isVirtualEntity()) {
+      if (!e.isDataSourceBased() && !e.isVirtualEntity() && e.getMappingClass() != null) {
         final String entityMapping = generateMapping(e);
         sb.append(entityMapping);
       }
@@ -141,11 +141,17 @@ public class DalMappingGenerator implements OBSingleton {
     return result;
   }
 
+  String getHibernateFileLocation() {
+    return OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty(HIBERNATE_FILE_PROPERTY);
+  }
+
   private String generateMapping(Entity entity) {
     String hbm = getClassTemplateContents();
     hbm = hbm.replaceAll("mappingName", entity.getName());
     hbm = hbm.replaceAll("tableName", entity.getTableName());
-    hbm = hbm.replaceAll("ismutable", entity.isMutable() + "");
+    hbm = hbm.replaceAll("ismutable", Boolean.toString(entity.isMutable()));
 
     if (entity.getMappingClass() != null) {
       hbm = hbm.replaceAll("<class", "<class name=\"" + entity.getClassName() + "\" ");
@@ -155,13 +161,6 @@ public class DalMappingGenerator implements OBSingleton {
     final StringBuilder content = new StringBuilder();
 
     content.append(TAB2);
-    if (entity.getMappingClass() == null) {
-      content.append("<tuplizer entity-mode=\"dynamic-map\" "
-          + "class=\"org.openbravo.dal.core.OBDynamicTuplizer\"/>\n\n");
-    } else {
-      content.append("<tuplizer entity-mode=\"pojo\" "
-          + "class=\"org.openbravo.dal.core.OBTuplizer\"/>\n\n");
-    }
 
     if (entity.hasCompositeId()) {
       content.append(generateCompositeID(entity));
@@ -170,7 +169,7 @@ public class DalMappingGenerator implements OBSingleton {
     }
     content.append(NL);
 
-    List<Property> computedColumns = new ArrayList<Property>();
+    List<Property> computedColumns = new ArrayList<>();
     // now handle the standard columns
     for (final Property p : entity.getProperties()) {
       if (p.isId()) { // && p.isPrimitive()) { // handled separately
@@ -211,31 +210,28 @@ public class DalMappingGenerator implements OBSingleton {
     return hbm;
   }
 
-  private String generateComputedColumnsClassMapping(Entity entity, List<Property> computedColumns) {
+  private String generateComputedColumnsClassMapping(Entity entity,
+      List<Property> computedColumns) {
     String hbm = getClassTemplateContents();
     String entityName = getComputedColumnsEntityName(entity);
-    hbm = hbm.replaceAll("<class", "<class name=\"" + entity.getPackageName() + "." + entityName
-        + "\" ");
+    hbm = hbm.replaceAll("<class",
+        "<class name=\"" + entity.getPackageName() + "." + entityName + "\" ");
     hbm = hbm.replaceAll("mappingName", entityName);
     hbm = hbm.replaceAll("tableName", entity.getTableName());
     hbm = hbm.replaceAll("ismutable", "false");
 
     final StringBuilder content = new StringBuilder();
-    content.append(TAB2
-        + "<tuplizer entity-mode=\"pojo\" class=\"org.openbravo.dal.core.OBTuplizer\"/>" + NL + NL);
     content.append(generateStandardID(entity) + NL);
 
     if (entity.isClientEnabled()) {
-      content
-          .append(TAB2
-              + "<many-to-one name=\"client\" column=\"AD_Client_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"ADClient\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\"/>"
-              + NL);
+      content.append(TAB2
+          + "<many-to-one name=\"client\" column=\"AD_Client_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"ADClient\" access=\"org.openbravo.dal.core.DalPropertyAccessStrategy\"/>"
+          + NL);
     }
     if (entity.isOrganizationEnabled()) {
-      content
-          .append(TAB2
-              + "<many-to-one name=\"organization\" column=\"AD_Org_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"Organization\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\"/>"
-              + NL);
+      content.append(TAB2
+          + "<many-to-one name=\"organization\" column=\"AD_Org_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"Organization\" access=\"org.openbravo.dal.core.DalPropertyAccessStrategy\"/>"
+          + NL);
     }
     content.append(NL);
     for (Property p : computedColumns) {
@@ -252,10 +248,10 @@ public class DalMappingGenerator implements OBSingleton {
   private String generateComputedColumnsMapping(Entity entity) {
     Check.isTrue(entity.getIdProperties().size() == 1,
         "Computed columns are not supported in entities with composited ID");
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     final Property p = entity.getIdProperties().get(0);
     sb.append(TAB2
-        + "<many-to-one name=\"_computedColumns\" update=\"false\" insert=\"false\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\" ");
+        + "<many-to-one name=\"_computedColumns\" update=\"false\" insert=\"false\" access=\"org.openbravo.dal.core.DalPropertyAccessStrategy\" ");
     sb.append("column=\"" + p.getColumnName() + "\" ");
     sb.append("entity-name=\"" + getComputedColumnsEntityName(entity) + "\"/>" + NL);
     return sb.toString();
@@ -273,7 +269,7 @@ public class DalMappingGenerator implements OBSingleton {
     if (p.getHibernateType() == Object.class) {
       return "";
     }
-    final StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
     sb.append(TAB2 + "<property name=\"" + p.getName() + "\"");
     sb.append(getAccessorAttribute());
     String type;
@@ -283,13 +279,13 @@ public class DalMappingGenerator implements OBSingleton {
       type = p.getHibernateType().getName();
     }
     if (p.isBoolean()) {
-      type = YesNoType.class.getName(); // "yes_no";
+      type = YesNoType.class.getName();
     }
     sb.append(" type=\"" + type + "\"");
 
     if (p.getSqlLogic() != null) {
-      sb.append(" formula=\"" + StringEscapeUtils.escapeHtml(processSqlLogic(p.getSqlLogic()))
-          + "\"");
+      sb.append(
+          " formula=\"" + StringEscapeUtils.escapeHtml(processSqlLogic(p.getSqlLogic())) + "\"");
     } else {
       sb.append(" column=\"" + p.getColumnName() + "\"");
     }
@@ -298,9 +294,8 @@ public class DalMappingGenerator implements OBSingleton {
       sb.append(" not-null=\"true\"");
     }
 
-    // ignoring isUpdatable for now as this is primarily used
+    // ignoring p.isUpdatable() for now as this is primarily used
     // for ui and not for background processes
-    // if (!p.isUpdatable() || p.isInactive()) {
 
     if (p.isInactive() || p.getEntity().isView() || p.getSqlLogic() != null) {
       sb.append(" update=\"false\"");
@@ -320,7 +315,7 @@ public class DalMappingGenerator implements OBSingleton {
             + p.getEntity().getName() + "-->" + NL;
       }
     }
-    final StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
     if (p.isOneToOne()) {
       final String name = p.getSimpleTypeName().substring(0, 1).toLowerCase()
           + p.getSimpleTypeName().substring(1);
@@ -329,8 +324,8 @@ public class DalMappingGenerator implements OBSingleton {
     } else {
       sb.append(TAB2 + "<many-to-one name=\"" + p.getName() + "\" ");
       if (p.getSqlLogic() != null) {
-        sb.append("formula=\"" + StringEscapeUtils.escapeHtml(processSqlLogic(p.getSqlLogic()))
-            + "\"");
+        sb.append(
+            "formula=\"" + StringEscapeUtils.escapeHtml(processSqlLogic(p.getSqlLogic())) + "\"");
       } else {
         sb.append("column=\"" + p.getColumnName() + "\"");
       }
@@ -358,7 +353,6 @@ public class DalMappingGenerator implements OBSingleton {
         sb.append(" insert=\"false\"");
       }
     }
-    // sb.append(" cascade=\"save-update\"");
 
     // to prevent cascade errors that the parent is saved after the child
     // this is handled by the DataImportService.insertObjectGraph
@@ -380,10 +374,10 @@ public class DalMappingGenerator implements OBSingleton {
   }
 
   private String generateOneToMany(Property p) {
-    final StringBuffer sb = new StringBuffer();
-    StringBuffer order = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
+    StringBuilder order = new StringBuilder();
     if (p.isOneToMany()) {
-      if (p.getTargetEntity().getOrderByProperties().size() > 0) {
+      if (!p.getTargetEntity().getOrderByProperties().isEmpty()) {
         order.append("order-by=\"");
         for (final Property po : p.getTargetEntity().getOrderByProperties()) {
           order.append(po.getColumnName() + " ASC,");
@@ -423,7 +417,7 @@ public class DalMappingGenerator implements OBSingleton {
         "Method can only handle primary keys with one column in entity " + entity.getName()
             + ". It has " + entity.getIdProperties().size());
     final Property p = entity.getIdProperties().get(0);
-    final StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
     sb.append(TAB2 + "<id name=\"" + p.getName() + "\" type=\"string\" " + getAccessorAttribute()
         + " column=\"" + p.getColumnName() + "\" unsaved-value=\"null\">" + NL);
     if (p.getIdBasedOnProperty() != null) {
@@ -439,18 +433,18 @@ public class DalMappingGenerator implements OBSingleton {
   }
 
   private String getAccessorAttribute() {
-    return " access=\"" + OBDynamicPropertyHandler.class.getName() + "\"";
+    return " access=\"" + DalPropertyAccessStrategy.class.getName() + "\"";
   }
 
   private String generateCompositeID(Entity e) {
     Check.isTrue(e.hasCompositeId(),
         "Method can only handle primary keys with more than one column");
-    final StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
     sb.append(TAB2 + "<composite-id name=\"id\" class=\"" + e.getClassName() + "$Id\""
         + getAccessorAttribute() + ">" + NL);
     final Property compId = e.getIdProperties().get(0);
-    Check
-        .isTrue(compId.isCompositeId(), "Property " + compId + " is expected to be a composite Id");
+    Check.isTrue(compId.isCompositeId(),
+        "Property " + compId + " is expected to be a composite Id");
     for (final Property p : compId.getIdParts()) {
       if (p.isPrimitive()) {
         String type = p.getHibernateType().getName();
@@ -488,7 +482,7 @@ public class DalMappingGenerator implements OBSingleton {
       final BufferedReader br = new BufferedReader(fr);
       try {
         String line;
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         while ((line = br.readLine()) != null) {
           sb.append(line + "\n");
         }

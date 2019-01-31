@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -29,11 +29,13 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
@@ -56,8 +58,6 @@ import org.openbravo.userinterface.selector.CustomQuerySelectorDatasource;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorConstants;
 import org.openbravo.userinterface.selector.SelectorField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Manual datasource that creates a tree of characteristics with their values. Intended to be used
@@ -71,7 +71,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class ProductCharacteristicsDS extends DefaultDataSourceService {
-  final static Logger log = LoggerFactory.getLogger(ProductCharacteristicsDS.class);
+  final static Logger log = LogManager.getLogger();
 
   final static int CHAR_ID = 0;
   final static int CHAR_NAME = 1;
@@ -120,8 +120,8 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     final OBContext obContext = OBContext.getOBContext();
     try {
-      Entity entityToCheck = ModelProvider.getInstance().getEntityByTableId(
-          PRODUCT_CHARACTERISTICS_TABLE_ID);
+      Entity entityToCheck = ModelProvider.getInstance()
+          .getEntityByTableId(PRODUCT_CHARACTERISTICS_TABLE_ID);
       obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
     } catch (OBSecurityException e) {
       handleExceptionUnsecuredDSAccess(e);
@@ -141,8 +141,8 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     if (!addMissingNodes && dsIdentifier != null) {
       parentGridEntity = ModelProvider.getInstance().getEntity(dsIdentifier, false);
       if (parentGridEntity != null) {
-        final DataEntityQueryService queryService = OBProvider.getInstance().get(
-            DataEntityQueryService.class);
+        final DataEntityQueryService queryService = OBProvider.getInstance()
+            .get(DataEntityQueryService.class);
 
         queryService.setEntityName(parentGridEntity.getName());
         queryService.setFilterOnReadableOrganizations(true);
@@ -202,15 +202,19 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     hqlBuilder.append(" and v.characteristic = c");
     hqlBuilder.append(this.getClientOrgFilter());
 
-    if (StringUtils.isNotBlank(gridWhereClause)) {
-      hqlBuilder.append("  and exists (from ProductCharacteristicValue pcv, " + parentGridEntity
-          + gridWhereClause + "  and pcv.characteristicValue = v and pcv.product = " + productPath
-          + ")");
+    if (StringUtils.isNotBlank(gridWhereClause) && parentGridEntity != null) {
+      hqlBuilder.append(
+          " and exists (from ProductCharacteristicValue pcv, " + parentGridEntity + gridWhereClause
+              + "  and pcv.characteristicValue = v and pcv.product = " + productPath + ")");
 
     } else if (StringUtils.isNotBlank(customSelectorWhereClause)) {
-      hqlBuilder.append("  and exists (from ProductCharacteristicValue pcv, "
-          + customSelectorWhereClause + "  and pcv.characteristicValue = v and pcv.product = "
-          + productPath + ")");
+      hqlBuilder
+          .append(" and exists (from ProductCharacteristicValue pcv, " + customSelectorWhereClause
+              + "  and pcv.characteristicValue = v and pcv.product = " + productPath + ")");
+
+    } else if (parentGridEntity != null) {
+      hqlBuilder.append(" and exists (from ProductCharacteristicValue pcv, " + parentGridEntity
+          + " as e where pcv.characteristicValue = v and pcv.product = " + productPath + ")");
     }
 
     hqlBuilder.append(" order by c.name, ");
@@ -220,9 +224,9 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     String hql = hqlBuilder.toString();
     log.debug("HQL:\n " + hql);
 
-    Query qTree;
+    Query<Object[]> qTree;
     try {
-      qTree = OBDal.getInstance().getSession().createQuery(hql);
+      qTree = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
     } catch (Exception e) {
       if (StringUtils.isNotBlank(customSelectorWhereClause)
           || StringUtils.isNotBlank(gridWhereClause)) {
@@ -245,8 +249,9 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
       for (int i = 0; i < selectorParameters.size(); i++) {
         qTree.setParameter(CustomQuerySelectorDatasource.ALIAS_PREFIX + Integer.toString(i),
             selectorParameters.get(i));
-        log.debug("Param {}:{}", CustomQuerySelectorDatasource.ALIAS_PREFIX + Integer.toString(i)
-            + " ", selectorParameters.get(i));
+        log.debug("Param {}:{}",
+            CustomQuerySelectorDatasource.ALIAS_PREFIX + Integer.toString(i) + " ",
+            selectorParameters.get(i));
       }
     } else if (addMissingNodes) {
       qTree.setParameterList("missingNodes", missingNodes);
@@ -254,8 +259,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
 
     String currentCharId = null;
     JSONArray responseData = new JSONArray();
-    for (Object rawNode : qTree.list()) {
-      Object[] node = (Object[]) rawNode;
+    for (Object[] node : qTree.list()) {
       String charId = (String) node[CHAR_ID];
       String nodeId = (String) node[VAL_ID];
 
@@ -267,10 +271,8 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
         characteristic.put("_identifier", node[CHAR_NAME]);
         characteristic.put("showOpenIcon", true);
         characteristic.put("isCharacteristic", true);
-        characteristic
-            .put(
-                "icon",
-                "../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/form/sectionItem-ico.png");
+        characteristic.put("icon",
+            "../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/form/sectionItem-ico.png");
         // TODO: skinnable icon
         responseData.put(characteristic);
         allNodes.add(charId);
@@ -324,8 +326,8 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
 
     // Role in OBContext has not organization list initialized, force reload to attach to current
     // DAL's session
-    Role currentRole = OBDal.getInstance().get(Role.class,
-        OBContext.getOBContext().getRole().getId());
+    Role currentRole = OBDal.getInstance()
+        .get(Role.class, OBContext.getOBContext().getRole().getId());
 
     // Adding organizations in the trees of all granted ones
     for (RoleOrganization org : currentRole.getADRoleOrganizationList()) {

@@ -11,7 +11,8 @@
  */
 package org.openbravo.xmlEngine;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * class for represent the structure of the value of an attribute. It is used because part of the
@@ -27,7 +28,7 @@ class XmlThreeTemplate implements XmlComponentTemplate {
   protected XmlThreeTemplate xmlEnd = null;
   protected boolean isEndXmlThreeTemplate = false;
   protected String stringEnd;
-  static Logger log4jXmlThreeTemplate = Logger.getLogger(XmlThreeTemplate.class);
+  static Logger log4jXmlThreeTemplate = LogManager.getLogger();
 
   public XmlThreeTemplate() {
   }
@@ -46,8 +47,8 @@ class XmlThreeTemplate implements XmlComponentTemplate {
     stringBegin = characterBegin;
     stringEnd = characterEnd;
     xmlMiddle = xmlComponentTemplate;
-    log4jXmlThreeTemplate.debug("constructor with stringBegin: " + stringBegin + " stringEnd: "
-        + stringEnd);
+    log4jXmlThreeTemplate
+        .debug("constructor with stringBegin: " + stringBegin + " stringEnd: " + stringEnd);
   }
 
   public String printStringBegin() {
@@ -66,8 +67,8 @@ class XmlThreeTemplate implements XmlComponentTemplate {
         int index = stringBegin.indexOf(attributeComponentTemplate.replace());
         if (index != -1) {
           xmlBegin = new XmlThreeTemplate(stringBegin.substring(0, index),
-              attributeComponentTemplate.xmlComponentTemplate(), stringBegin.substring(index
-                  + attributeComponentTemplate.replace().length()));
+              attributeComponentTemplate.xmlComponentTemplate(),
+              stringBegin.substring(index + attributeComponentTemplate.replace().length()));
           isBeginXmlThreeTemplate = true;
         }
       }
@@ -79,8 +80,8 @@ class XmlThreeTemplate implements XmlComponentTemplate {
         int index = stringEnd.indexOf(attributeComponentTemplate.replace());
         if (index != -1) {
           xmlEnd = new XmlThreeTemplate(stringEnd.substring(0, index),
-              attributeComponentTemplate.xmlComponentTemplate(), stringEnd.substring(index
-                  + attributeComponentTemplate.replace().length()));
+              attributeComponentTemplate.xmlComponentTemplate(),
+              stringEnd.substring(index + attributeComponentTemplate.replace().length()));
           isEndXmlThreeTemplate = true;
         }
       }
@@ -91,6 +92,7 @@ class XmlThreeTemplate implements XmlComponentTemplate {
     return new XmlThreeValue(this, xmlDocument);
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
     return new XmlThreeValue(this, xmlDocument);
   }

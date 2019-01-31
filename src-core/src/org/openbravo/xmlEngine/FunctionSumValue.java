@@ -13,17 +13,19 @@ package org.openbravo.xmlEngine;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionSumValue extends FunctionValue {
   BigDecimal sum = BigDecimal.ZERO;
 
-  static Logger log4jFunctionSumValue = Logger.getLogger(FunctionSumValue.class);
+  static Logger log4jFunctionSumValue = LogManager.getLogger();
 
   public FunctionSumValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     if (functionTemplate.formatOutput != null) {
       return functionTemplate.formatOutput.format(sum);
@@ -32,6 +34,7 @@ class FunctionSumValue extends FunctionValue {
     }
   }
 
+  @Override
   public String printSimple() {
     if (functionTemplate.formatSimple != null) {
       return functionTemplate.formatSimple.format(sum);
@@ -40,6 +43,7 @@ class FunctionSumValue extends FunctionValue {
     }
   }
 
+  @Override
   public void acumulate() {
     log4jFunctionSumValue.debug("Accumulate: " + fieldValue.print());
     if (fieldValue.print() != "") {
@@ -47,6 +51,7 @@ class FunctionSumValue extends FunctionValue {
     }
   }
 
+  @Override
   public void init() {
     sum = BigDecimal.ZERO;
   }

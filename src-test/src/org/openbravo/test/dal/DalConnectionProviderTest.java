@@ -32,7 +32,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 
 public class DalConnectionProviderTest extends OBBaseTest {
-  // private static final Logger log = Logger.getLogger(DalConnectionProviderTest.class);
+  // private static final Logger log = LogManager.getLogger();
 
   /**
    * Tests calling database procedures using the dal connection provider

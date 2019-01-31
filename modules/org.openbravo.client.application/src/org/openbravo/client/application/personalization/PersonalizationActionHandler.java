@@ -11,14 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.personalization;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,6 +70,7 @@ public class PersonalizationActionHandler extends BaseActionHandler {
   @Inject
   private OBViewFieldHandler fieldHandler;
 
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
 
     try {
@@ -79,8 +80,8 @@ public class PersonalizationActionHandler extends BaseActionHandler {
       }
       if (!parameters.containsKey(PERSONALIZATIONID) && !parameters.containsKey(TABID)
           && !parameters.containsKey(WINDOWID)) {
-        throw new IllegalStateException("Mandatory parameter " + TABID + "/" + WINDOWID
-            + " not present");
+        throw new IllegalStateException(
+            "Mandatory parameter " + TABID + "/" + WINDOWID + " not present");
       }
       final String action = (String) parameters.get(ACTION);
       final String tabId = (String) parameters.get(TABID);
@@ -89,25 +90,25 @@ public class PersonalizationActionHandler extends BaseActionHandler {
       Boolean saveAsNewPreference = false;
       String personalizationID = (String) parameters.get(PERSONALIZATIONID);
       if (action.equals(ACTION_DELETE)) {
-        final UIPersonalization uiPersonalization = OBDal.getInstance().get(
-            UIPersonalization.class, personalizationID);
+        final UIPersonalization uiPersonalization = OBDal.getInstance()
+            .get(UIPersonalization.class, personalizationID);
         if (uiPersonalization != null) {
           // is null if already removed
           OBDal.getInstance().remove(uiPersonalization);
         }
 
         // Delete also all the preferences that has this uiPersonalization as the 'Default View'
-        List<Object> params = new ArrayList<Object>();
+        Map<String, Object> params = new HashMap<>(2);
         StringBuilder hql = new StringBuilder();
         hql.append(" as p where ");
-        hql.append(" p.searchKey = ? ");
-        params.add(uiPersonalization);
-        hql.append(" and p.property = ?");
-        params.add("OBUIAPP_DefaultSavedView");
+        hql.append(" p.searchKey = :uiPersonalization ");
+        params.put("uiPersonalization", uiPersonalization);
+        hql.append(" and p.property = :property");
+        params.put("property", "OBUIAPP_DefaultSavedView");
 
-        OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class,
-            hql.toString());
-        qPref.setParameters(params);
+        OBQuery<Preference> qPref = OBDal.getInstance()
+            .createQuery(Preference.class, hql.toString());
+        qPref.setNamedParameters(params);
         List<Preference> preferences = qPref.list();
 
         for (Preference preference : preferences) {
@@ -125,14 +126,17 @@ public class PersonalizationActionHandler extends BaseActionHandler {
         if ("false".equals(applyLevelInformation) && personalizationID != null) {
           // If we don't have to apply the level information and the personalization is being
           // updated, use the original level information
-          final UIPersonalization uiPersonalization = OBDal.getInstance().get(
-              UIPersonalization.class, personalizationID);
-          clientID = uiPersonalization.getVisibleAtClient() != null ? uiPersonalization
-              .getVisibleAtClient().getId() : null;
-          orgID = uiPersonalization.getVisibleAtOrganization() != null ? uiPersonalization
-              .getVisibleAtOrganization().getId() : null;
-          roleID = uiPersonalization.getVisibleAtRole() != null ? uiPersonalization
-              .getVisibleAtRole().getId() : null;
+          final UIPersonalization uiPersonalization = OBDal.getInstance()
+              .get(UIPersonalization.class, personalizationID);
+          clientID = uiPersonalization.getVisibleAtClient() != null
+              ? uiPersonalization.getVisibleAtClient().getId()
+              : null;
+          orgID = uiPersonalization.getVisibleAtOrganization() != null
+              ? uiPersonalization.getVisibleAtOrganization().getId()
+              : null;
+          roleID = uiPersonalization.getVisibleAtRole() != null
+              ? uiPersonalization.getVisibleAtRole().getId()
+              : null;
           userID = uiPersonalization.getUser() != null ? uiPersonalization.getUser().getId() : null;
         }
 

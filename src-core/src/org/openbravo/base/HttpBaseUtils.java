@@ -13,10 +13,11 @@ package org.openbravo.base;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class HttpBaseUtils {
-  public static Logger log4j = Logger.getLogger(HttpBaseUtils.class);
+  public static Logger log4j = LogManager.getLogger();
 
   /** Creates a new instance of LoginUtils */
   private HttpBaseUtils() {
@@ -46,18 +47,21 @@ public class HttpBaseUtils {
 
   public static String getRelativeUrl(HttpServletRequest request, String _url) {
     String url = _url;
-    if (!url.startsWith(getLocalHostAddress(request, true) + "/"))
+    if (!url.startsWith(getLocalHostAddress(request, true) + "/")) {
       return url;
+    }
     url = url.replace((getLocalHostAddress(request, true) + "/"), "");
     String actualServlet = request.getContextPath() + request.getServletPath();
-    if (actualServlet.startsWith("/"))
+    if (actualServlet.startsWith("/")) {
       actualServlet = actualServlet.substring(1);
+    }
     int i = actualServlet.indexOf("/");
     while (i != -1) {
-      if (url.startsWith(actualServlet.substring(0, i)))
+      if (url.startsWith(actualServlet.substring(0, i))) {
         url = url.replace(actualServlet.substring(0, i + 1), "");
-      else
+      } else {
         url = "../" + url;
+      }
       actualServlet = actualServlet.substring(i + 1);
       i = actualServlet.indexOf("/");
     }

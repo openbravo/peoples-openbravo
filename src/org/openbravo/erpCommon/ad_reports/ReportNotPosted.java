@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,11 +28,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -43,8 +45,9 @@ public class ReportNotPosted extends HttpSecureAppServlet {
 
   // static Category log4j = Category.getInstance(ReportNotPosted.class);
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -78,8 +81,11 @@ public class ReportNotPosted extends HttpSecureAppServlet {
 
     // Use ReadOnly Connection Provider
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    String orgIds = StringCollectionUtils
+        .commaSeparated(OBContext.getOBContext().getReadableOrganizations());
+
     ReportNotPostedData[] data = ReportNotPostedData.select(readOnlyCP, vars.getLanguage(),
-        vars.getClient(), strDateFrom, strDateTo);
+        vars.getClient(), orgIds, strDateFrom, strDateTo);
     // }// DateTimeData.nDaysAfter
 
     ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportNotPosted", false, "", "",
@@ -137,6 +143,7 @@ public class ReportNotPosted extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportNotPosted. This Servlet was made by Juan Pablo Calvente";
   } // end of the getServletInfo() method

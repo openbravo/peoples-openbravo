@@ -44,8 +44,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportPricelist extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -101,8 +102,9 @@ public class ReportPricelist extends HttpSecureAppServlet {
           Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportPricelist"),
           strPricelistversionId, strProductCategory, strmProductId);
     }
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportPricelist",
-        discard).createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportPricelist", discard)
+        .createXmlDocument();
 
     ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportPricelist", false, "", "",
         "", false, "ad_reports", strReplaceWith, false, true);
@@ -140,18 +142,16 @@ public class ReportPricelist extends HttpSecureAppServlet {
     xmlDocument.setParameter("mProductCategoryId", strProductCategory);
     xmlDocument.setParameter("mPricelistVersionId", strPricelistversionId);
 
-    xmlDocument.setData(
-        "reportMProductId_IN",
-        "liststructure",
+    xmlDocument.setData("reportMProductId_IN", "liststructure",
         SelectorUtilityData.selectMproduct(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
             Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strmProductId));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportPricelist"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportPricelist"), 0);
+          "M_Product_Category_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportPricelist"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportPricelist"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportPricelist",
           strProductCategory);
       xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
@@ -163,9 +163,9 @@ public class ReportPricelist extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "M_PriceList_Version_ID", "", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportPricelist"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportPricelist"), 0);
+          "M_PriceList_Version_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportPricelist"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportPricelist"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportPricelist",
           strPricelistversionId);
       xmlDocument.setData("reportM_PRICELIST_VERSIONID", "liststructure",
@@ -188,14 +188,16 @@ public class ReportPricelist extends HttpSecureAppServlet {
       log4j.debug("Output: print pdf");
     }
     XmlDocument xmlDocument = null;
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportPricelist_Pdf").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportPricelist_Pdf")
+        .createXmlDocument();
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-    xmlDocument.setData("structure1", ReportPricelistData.selectPDFTrl(readOnlyCP,
-        Utility.messageBD(readOnlyCP, "validFrom", vars.getLanguage()),
-        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportPricelist"),
-        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportPricelist"),
-        strPricelistversionId, strProductCategory, strmProductId));
+    xmlDocument.setData("structure1",
+        ReportPricelistData.selectPDFTrl(readOnlyCP,
+            Utility.messageBD(readOnlyCP, "validFrom", vars.getLanguage()),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportPricelist"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportPricelist"),
+            strPricelistversionId, strProductCategory, strmProductId));
     String strResult = xmlDocument.print();
     if (log4j.isDebugEnabled()) {
       log4j.debug(strResult);
@@ -203,6 +205,7 @@ public class ReportPricelist extends HttpSecureAppServlet {
     renderFO(strResult, request, response);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportPricelist. This Servlet was made by Pablo Sarobe";
   }

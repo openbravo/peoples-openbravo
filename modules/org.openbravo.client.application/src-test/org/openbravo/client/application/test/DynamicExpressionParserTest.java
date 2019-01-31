@@ -69,15 +69,13 @@ public class DynamicExpressionParserTest extends WeldBaseTest {
 
   @Test
   public void orExpression() {
-    assertExpression(
-        "@Financial_Invoice_Line@='N' | @lineNetAmt@ > 100",
+    assertExpression("@Financial_Invoice_Line@='N' | @lineNetAmt@ > 100",
         "OB.Utilities.getValue(currentValues,'financialInvoiceLine') === false || OB.Utilities.getValue(currentValues,'lineNetAmount')  >  100");
   }
 
   @Test
   public void andExpression() {
-    assertExpression(
-        "@Financial_Invoice_Line@='N' & @lineNetAmt@ > 100",
+    assertExpression("@Financial_Invoice_Line@='N' & @lineNetAmt@ > 100",
         "OB.Utilities.getValue(currentValues,'financialInvoiceLine') === false && OB.Utilities.getValue(currentValues,'lineNetAmount')  >  100");
   }
 

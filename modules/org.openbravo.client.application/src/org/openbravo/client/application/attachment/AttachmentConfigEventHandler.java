@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,8 @@ package org.openbravo.client.application.attachment;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -33,8 +35,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.AttachmentConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Event Handler on AttachmentConfig entity that manages the changes on the Attachment Method used
@@ -43,10 +43,10 @@ import org.slf4j.LoggerFactory;
  * AttachmentUtils.
  */
 public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
-  private static final Logger logger = LoggerFactory.getLogger(AttachmentConfigEventHandler.class);
+  private static final Logger logger = LogManager.getLogger();
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      AttachmentConfig.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(AttachmentConfig.ENTITY_NAME) };
   private static Property propActive = entities[0].getProperty(AttachmentConfig.PROPERTY_ACTIVE);
 
   @Override
@@ -114,9 +114,10 @@ public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver
     if (!newAttachmentConfig.isActive()) {
       return;
     }
-    final OBQuery<AttachmentConfig> attachmentConfigQuery = OBDal.getInstance().createQuery(
-        AttachmentConfig.class, "id!=:id");
+    final OBQuery<AttachmentConfig> attachmentConfigQuery = OBDal.getInstance()
+        .createQuery(AttachmentConfig.class, "id!=:id and client.id=:clientId");
     attachmentConfigQuery.setNamedParameter("id", newAttachmentConfig.getId());
+    attachmentConfigQuery.setNamedParameter("clientId", newAttachmentConfig.getClient().getId());
     // Ensure that filtering by client and active is done.
     attachmentConfigQuery.setFilterOnReadableClients(true);
     attachmentConfigQuery.setFilterOnActive(true);

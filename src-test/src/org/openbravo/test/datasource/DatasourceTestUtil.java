@@ -4,15 +4,15 @@
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2018 Openbravo SLU 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
@@ -28,22 +28,22 @@ import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import junit.framework.TestCase;
 
 /**
  * Utility methods to deal with datasource calls.
- * 
+ *
  * @author alostale
- * 
+ *
  */
 public class DatasourceTestUtil {
-  private static final Logger log = LoggerFactory.getLogger(DatasourceTestUtil.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String CONTEXT_PROPERTY = "context.url";
 
   /** Creates a connection to a given URL without processing it. */
@@ -76,6 +76,7 @@ public class DatasourceTestUtil {
     os.flush();
     os.close();
     hc.connect();
+
     return hc.getHeaderField("Set-Cookie");
   }
 
@@ -84,7 +85,7 @@ public class DatasourceTestUtil {
     return request(openbravoURL, wsPart, method, content, cookie, expectedResponse, null);
   }
 
-  static String request(String openbravoURL, String wsPart, String method, String content,
+  public static String request(String openbravoURL, String wsPart, String method, String content,
       String cookie, int expectedResponse, String contentType) throws Exception {
     final HttpURLConnection hc = createConnection(openbravoURL, wsPart, method, cookie);
     if (contentType != null) {
@@ -138,8 +139,7 @@ public class DatasourceTestUtil {
     newProfile.put("organization", orgId);
     newProfile.put("role", roleId);
     newProfile.put("warehouse", warehouseId);
-    request(
-        openbravoURL,
+    request(openbravoURL,
         "/org.openbravo.client.kernel?command=save&_action=org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler",
         "POST", newProfile.toString(), cookie, 200, "application/json");
   }

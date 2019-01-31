@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,11 +21,13 @@ package org.openbravo.erpCommon.modules;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.openbravo.base.AntExecutor;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.dal.core.DalInitializingTask;
 import org.openbravo.database.CPStandAlone;
 
@@ -36,7 +38,7 @@ import org.openbravo.database.CPStandAlone;
 public class ApplyModuleTask extends DalInitializingTask {
   // private String propertiesFile;
   private String obDir;
-  private static final Logger log4j = Logger.getLogger(ApplyModuleTask.class);
+  private static final Logger log4j = LogManager.getLogger();
   private Boolean forceRefData = false;
 
   public static void main(String[] args) {
@@ -59,6 +61,7 @@ public class ApplyModuleTask extends DalInitializingTask {
     }
   }
 
+  @Override
   public void execute() {
     // always do friendly warnings for the dal layer during apply module
     // the unfriendly warnings are shown in generate.entities anyway
@@ -78,8 +81,14 @@ public class ApplyModuleTask extends DalInitializingTask {
       log4j.error("Error checking modules with reference data", e);
     }
     if (ds != null && ds.length > 0) {
-      // Initialize DAL and execute
-      super.execute();
+      try {
+        // Initialize DAL and execute
+        super.execute();
+      } finally {
+        // Close the Hibernate pool to force the termination of a non-daemon thread used by the
+        // pool to validate its status. Otherwise this thread may cause this task to never finish.
+        SessionFactoryController.getInstance().closeHibernatePool();
+      }
     } else {
       try {
         if (!forceRefData) {
@@ -109,10 +118,12 @@ public class ApplyModuleTask extends DalInitializingTask {
   @Override
   public void doExecute() {
     try {
-      if (obDir == null || obDir.equals(""))
+      if (obDir == null || obDir.equals("")) {
         obDir = getProject().getBaseDir().toString();
-      if (propertiesFile == null || propertiesFile.equals(""))
+      }
+      if (propertiesFile == null || propertiesFile.equals("")) {
         propertiesFile = obDir + "/config/Openbravo.properties";
+      }
       final ApplyModule am = new ApplyModule(new CPStandAlone(propertiesFile), obDir, forceRefData);
       am.execute();
     } catch (final Exception e) {

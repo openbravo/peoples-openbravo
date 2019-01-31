@@ -26,7 +26,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.openbravo.base.ConfigParameters;
@@ -43,7 +44,7 @@ import org.openbravo.base.provider.OBConfigFileProvider;
  * @author mtaal
  */
 public class OBPropertiesProvider {
-  private final Logger log = Logger.getLogger(OBPropertiesProvider.class);
+  private final Logger log = LogManager.getLogger();
 
   private static OBPropertiesProvider instance = new OBPropertiesProvider();
 
@@ -115,8 +116,8 @@ public class OBPropertiesProvider {
         return;
       }
 
-      ConfigParameters.overrideProperties(obProperties, OBConfigFileProvider.getInstance()
-          .getServletContext().getRealPath("/WEB-INF"));
+      ConfigParameters.overrideProperties(obProperties,
+          OBConfigFileProvider.getInstance().getServletContext().getRealPath("/WEB-INF"));
     } catch (final Exception e) {
       throw new OBException(e);
     }
@@ -169,8 +170,8 @@ public class OBPropertiesProvider {
       return;
     }
     setProperties(propertiesFile.getAbsolutePath());
-    OBConfigFileProvider.getInstance().setFileLocation(
-        propertiesFile.getParentFile().getAbsolutePath());
+    OBConfigFileProvider.getInstance()
+        .setFileLocation(propertiesFile.getParentFile().getAbsolutePath());
   }
 
   private File getFileFromDevelopmentPath(String fileName) {

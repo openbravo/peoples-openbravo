@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2018 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -180,7 +180,9 @@ isc.OBSelectorPopupWindow.addProperties({
             rowNum = this.getRecordIndex(record);
             this.selectSingleRecord(record);
             // give grid time to draw
-            this.fireOnPause('scrollRecordIntoView', this.scrollRecordIntoView, [rowNum, true], this);
+            this.fireOnPause('scrollRecordIntoView_' + rowNum, function () {
+              this.scrollRecordIntoView(rowNum, true);
+            });
             delete this.targetRecordId;
           } else if (this.data.lengthIsKnown() && this.data.getLength() === 1) {
             // only one record, select that one straight away
@@ -291,7 +293,7 @@ isc.OBSelectorPopupWindow.addProperties({
 
   setFilterEditorProperties: function (gridFields) {
     var type, selectorWindow = this,
-        keyPressFunction, clickFunction, i, gridField;
+        keyPressFunction, i, gridField;
 
     keyPressFunction = function (item, form, keyName, characterValue) {
       if (keyName === 'Escape') {
@@ -299,12 +301,6 @@ isc.OBSelectorPopupWindow.addProperties({
         return false;
       }
       return true;
-    };
-
-    clickFunction = function (form, item, icon) {
-      item.setValue(null);
-      selectorWindow.selectorGrid.focusInFilterEditor(item);
-      selectorWindow.selectorGrid.filterByEditor();
     };
 
     for (i = 0; i < gridFields.length; i++) {
@@ -694,24 +690,45 @@ isc.OBSelectorItem.addProperties({
   setPickListWidth: function () {
     var extraWidth = 0,
         leftFieldsWidth = 0,
-        i = 0,
         nameField = this.name,
         fieldWidth = this.getVisibleWidth();
     // minimum width for smaller fields.
     fieldWidth = (fieldWidth < 150 ? 150 : fieldWidth);
     // Dropdown selector that shows more than one column.
     if (this.pickListFields.length > 1) {
-      // calculate width of checkBox and first fields before selector field in viewGrid
       if (this.form.view && !this.form.view.isShowingForm && this.grid) {
-        while (i < this.grid.fields.size() && nameField.localeCompare(this.grid.fields.get(i).valueField) !== 0) {
-          leftFieldsWidth = leftFieldsWidth + this.grid.fields.get(i).width;
-          i++;
-        }
-        // prevents a pickListWidth longer than width of the grid.
-        extraWidth = Math.min(150 * (this.pickListFields.length - 1), this.grid.width - fieldWidth - this.grid.scrollbarSize - leftFieldsWidth);
+        // Calculate the extra space available right of the field to add it as extra space to the pick list width
+        leftFieldsWidth = this.getVisibleLeftFieldWidth(nameField);
+        extraWidth = Math.min(150 * (this.pickListFields.length - 1), Math.max(this.getAvailableRightFieldWidth(fieldWidth, leftFieldsWidth), 0));
       }
     }
     this.pickListWidth = fieldWidth + extraWidth;
+  },
+
+  getAvailableRightFieldWidth: function (fieldWidth, leftFieldsWidth) {
+    return this.grid.width - fieldWidth - this.grid.scrollbarSize - leftFieldsWidth;
+  },
+
+  getVisibleLeftFieldWidth: function (fieldName) {
+    var i = 0,
+        leftFieldsWidth = 0;
+
+    // Calculate the width of all fields located left of the field which will display the pick list
+    while (i < this.grid.fields.size() && fieldName.localeCompare(this.grid.fields.get(i).valueField) !== 0) {
+      leftFieldsWidth = leftFieldsWidth + this.grid.fields.get(i).width;
+      i++;
+    }
+
+    return this.removeSpaceHiddenByScroll(leftFieldsWidth);
+  },
+
+  removeSpaceHiddenByScroll: function (space) {
+    var visibleSpace = 0;
+    if (this.grid.body && isc.isA.Number(this.grid.body.scrollLeft)) {
+      visibleSpace = space - this.grid.body.scrollLeft;
+      return (visibleSpace >= 0) ? visibleSpace : space;
+    }
+    return space;
   },
 
   enableShortcuts: function () {
@@ -802,7 +819,7 @@ isc.OBSelectorItem.addProperties({
     var currentValue = this.getValue(),
         identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
         valueMapObj = {},
-        valueToDisplay, i;
+        valueToDisplay;
     this._notUpdatingManually = true;
     if (!record) {
       this.storeValue(null);
@@ -890,7 +907,7 @@ isc.OBSelectorItem.addProperties({
     var i, j, outFields = this.outFields,
         form = this.form,
         grid = this.grid,
-        item, value, fields, numberFormat;
+        item, value, fields;
 
     if ((!form || (form && !form.fields)) && (!grid || (grid && !grid.fields))) {
       // not handling out fields
@@ -1369,7 +1386,7 @@ isc.OBSelectorLinkItem.addProperties({
     var i, j, outFields = this.outFields,
         form = this.form,
         grid = this.grid,
-        item, value, fields = form.fields || grid.fields;
+        value, fields = form.fields || grid.fields;
     form.hiddenInputs = form.hiddenInputs || {};
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {

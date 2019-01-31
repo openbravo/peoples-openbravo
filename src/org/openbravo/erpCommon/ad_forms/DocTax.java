@@ -18,11 +18,12 @@ package org.openbravo.erpCommon.ad_forms;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocTax {
-  static Logger log4jDocTax = Logger.getLogger(DocTax.class);
+  static Logger log4jDocTax = LogManager.getLogger();
 
   public DocTax(String C_Tax_ID, String name, String rate, String taxBaseAmt, String amount) {
     this(C_Tax_ID, name, rate, taxBaseAmt, amount, false, false);
@@ -85,8 +86,9 @@ public class DocTax {
    * @return Account
    */
   public Account getAccount(int AcctType, AcctSchema as, ConnectionProvider conn) {
-    if (AcctType < 0 || AcctType > 6)
+    if (AcctType < 0 || AcctType > 6) {
       return null;
+    }
     String validCombination_ID = "";
     DocTaxData[] data = null;
     Account acc = null;
@@ -94,31 +96,32 @@ public class DocTax {
       data = DocTaxData.select(conn, m_C_Tax_ID, as.m_C_AcctSchema_ID);
       if (data.length > 0) {
         switch (AcctType) {
-        case 0:
-          validCombination_ID = data[0].tDueAcct;
-          break;
-        case 1:
-          validCombination_ID = data[0].tLiabilityAcct;
-          break;
-        case 2:
-          validCombination_ID = data[0].tCreditAcct;
-          break;
-        case 3:
-          validCombination_ID = data[0].tReceivablesAcct;
-          break;
-        case 4:
-          validCombination_ID = data[0].tExpenseAcct;
-          break;
-        case 5:
-          validCombination_ID = data[0].tDueTransAcct;
-          break;
-        case 6:
-          validCombination_ID = data[0].tCreditTransAcct;
-          break;
+          case 0:
+            validCombination_ID = data[0].tDueAcct;
+            break;
+          case 1:
+            validCombination_ID = data[0].tLiabilityAcct;
+            break;
+          case 2:
+            validCombination_ID = data[0].tCreditAcct;
+            break;
+          case 3:
+            validCombination_ID = data[0].tReceivablesAcct;
+            break;
+          case 4:
+            validCombination_ID = data[0].tExpenseAcct;
+            break;
+          case 5:
+            validCombination_ID = data[0].tDueTransAcct;
+            break;
+          case 6:
+            validCombination_ID = data[0].tCreditTransAcct;
+            break;
         }
       }
-      if (validCombination_ID.equals(""))
+      if (validCombination_ID.equals("")) {
         return null;
+      }
       acc = Account.getAccount(conn, validCombination_ID);
     } catch (ServletException e) {
       log4jDocTax.warn(e);

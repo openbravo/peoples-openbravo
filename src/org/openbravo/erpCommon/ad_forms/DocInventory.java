@@ -23,7 +23,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
@@ -40,7 +41,7 @@ import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 
 public class DocInventory extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocInventory = Logger.getLogger(DocInventory.class);
+  private static final Logger log4jDocInventory = LogManager.getLogger();
 
   private String SeqNo = "0";
 
@@ -50,10 +51,12 @@ public class DocInventory extends AcctServer {
    * @param AD_Client_ID
    *          client
    */
-  public DocInventory(String AD_Client_ID, String AD_Org_ID, ConnectionProvider connectionProvider) {
+  public DocInventory(String AD_Client_ID, String AD_Org_ID,
+      ConnectionProvider connectionProvider) {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String stradClientId, String Id)
       throws ServletException {
     setObjectFieldProvider(DocInventoryData.select(conn, stradClientId, Id));
@@ -64,6 +67,7 @@ public class DocInventory extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DocumentType = AcctServer.DOCTYPE_MatInventory;
     C_Currency_ID = NO_CURRENCY;
@@ -107,11 +111,13 @@ public class DocInventory extends AcctServer {
         } catch (ServletException e) {
           log4jDocInventory.warn(e);
         }
-        if (data1 != null && data1.length > 0)
+        if (data1 != null && data1.length > 0) {
           this.M_Warehouse_ID = data1[0].mWarehouseId;
+        }
         // Set Charge ID only when Inventory Type = Charge
-        if (!"C".equals(data[i].getField("inventorytype")))
+        if (!"C".equals(data[i].getField("inventorytype"))) {
           docLine.m_C_Charge_ID = "";
+        }
         //
         list.add(docLine);
       }
@@ -131,6 +137,7 @@ public class DocInventory extends AcctServer {
    * 
    * @return Zero (always balanced)
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
     return retValue;
@@ -149,17 +156,20 @@ public class DocInventory extends AcctServer {
    *          account schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocInventoryTemplate newTemplate = (DocInventoryTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocInventoryTemplate - " + e);
@@ -185,9 +195,8 @@ public class DocInventory extends AcctServer {
         setStatus(STATUS_NotCalculatedCost);
       }
 
-      if (line.transaction == null
-          || (line.transaction.getTransactionCost() != null && line.transaction
-              .getTransactionCost().compareTo(ZERO) == 0)) {
+      if (line.transaction == null || (line.transaction.getTransactionCost() != null
+          && line.transaction.getTransactionCost().compareTo(ZERO) == 0)) {
         countInvLinesWithTrnCostZero++;
       }
     }
@@ -197,8 +206,8 @@ public class DocInventory extends AcctServer {
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
 
-      Currency costCurrency = FinancialUtils.getLegalEntityCurrency(OBDal.getInstance().get(
-          Organization.class, line.m_AD_Org_ID));
+      Currency costCurrency = FinancialUtils
+          .getLegalEntityCurrency(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
       if (!CostingStatus.getInstance().isMigrated()) {
         costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
       } else if (line.transaction != null && line.transaction.getCurrency() != null) {
@@ -223,8 +232,8 @@ public class DocInventory extends AcctServer {
         org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance()
             .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
                 as.m_C_AcctSchema_ID);
-        log4j.error("No Account Asset for product: " + product.getName()
-            + " in accounting schema: " + schema.getName());
+        log4j.error("No Account Asset for product: " + product.getName() + " in accounting schema: "
+            + schema.getName());
       }
       if (b_Costs.compareTo(BigDecimal.ZERO) == 0 && !CostingStatus.getInstance().isMigrated()
           && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
@@ -263,21 +272,6 @@ public class DocInventory extends AcctServer {
   } // createFact
 
   /**
-   * @return the log4jDocInventory
-   */
-  public static Logger getLog4jDocInventory() {
-    return log4jDocInventory;
-  }
-
-  /**
-   * @param log4jDocInventory
-   *          the log4jDocInventory to set
-   */
-  public static void setLog4jDocInventory(Logger log4jDocInventory) {
-    DocInventory.log4jDocInventory = log4jDocInventory;
-  }
-
-  /**
    * @return the seqNo
    */
   public String getSeqNo() {
@@ -312,10 +306,12 @@ public class DocInventory extends AcctServer {
    * 
    * not used
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

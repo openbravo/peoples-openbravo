@@ -23,7 +23,8 @@ import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The OBProvider provides the runtime instances of model entities as well as service instances.
@@ -37,7 +38,7 @@ import org.apache.log4j.Logger;
  */
 
 public class OBProvider {
-  private static final Logger log = Logger.getLogger(OBProvider.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static final String CONFIG_FILE_NAME = "provider-config.xml";
 

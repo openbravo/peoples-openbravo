@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,9 +25,13 @@ import java.net.URLEncoder;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.SessionFactoryController;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.MaturityLevel;
@@ -47,9 +51,10 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class ActiveInstanceProcess implements Process {
 
-  private static final Logger log = Logger.getLogger(ActiveInstanceProcess.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String BUTLER_URL = "https://butler.openbravo.com:443/heartbeat-server/activate";
   private static final String EVALUATION_PURPOSE = "E";
+  private static final String PRODUCTION_PURPOSE = "P";
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -85,9 +90,8 @@ public class ActiveInstanceProcess implements Process {
       }
     }
 
-    if (localActivation
-        || (result.length == 2 && result[0] != null && result[1] != null && result[0]
-            .equals("@Success@"))) {
+    if (localActivation || (result.length == 2 && result[0] != null && result[1] != null
+        && result[0].equals("@Success@"))) {
       // now we have the activation key, lets save it
       String activationKey;
       if (localActivation) {
@@ -141,6 +145,10 @@ public class ActiveInstanceProcess implements Process {
           if (HeartbeatProcess.isClonedInstance()) {
             insertDummyHBLog();
           }
+
+          if (PRODUCTION_PURPOSE.equals(purpose)) {
+            setModulesAsNotInDevelopment();
+          }
         } else {
           msg.setType("Error");
           msg.setMessage(ak.getErrorMessage());
@@ -159,6 +167,21 @@ public class ActiveInstanceProcess implements Process {
 
   }
 
+  private void setModulesAsNotInDevelopment() {
+    if (SessionFactoryController.isRunningInWebContainer()) {
+      WeldUtils.getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class)
+          .setNotInDevelopment();
+    } else {
+      // executing from ant activate.instance task
+      OBDal.getInstance()
+          .getSession()
+          .createQuery(
+              "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
+          .executeUpdate();
+    }
+  }
+
+  @SuppressWarnings("rawtypes")
   public static void updateShowProductionFields(String value) {
     String hql = "update ADPreference set searchKey = :value where property = 'showMRPandProductionFields' and module.id is null";
     Query q = OBDal.getInstance().getSession().createQuery(hql);
@@ -197,8 +220,9 @@ public class ActiveInstanceProcess implements Process {
     if (!activate) {
       content += "&cancel=Y";
     }
-    if (instanceNo != null && !instanceNo.equals(""))
+    if (instanceNo != null && !instanceNo.equals("")) {
       content += "&instanceNo=" + instanceNo;
+    }
 
     try {
       OBContext.setAdminMode();
@@ -211,10 +235,6 @@ public class ActiveInstanceProcess implements Process {
     content += "&sysId=" + URLEncoder.encode(SystemInfo.getSystemIdentifier(), "utf-8");
     content += "&dbId=" + URLEncoder.encode(SystemInfo.getDBIdentifier(), "utf-8");
     content += "&macId=" + URLEncoder.encode(SystemInfo.getMacAddress(), "utf-8");
-
-    if (ActivationKey.getInstance().isOffPlatform()) {
-      content += "&offPlatform=true";
-    }
 
     if (!StringUtils.isBlank(updated)) {
       content += "&updated=" + updated;

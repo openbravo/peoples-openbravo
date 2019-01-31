@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,6 +70,7 @@ function setLoginMessage(type, title, text) {
 }
 
 function doLogin(command) {
+  var extraParams;
   if (document.getElementById('resetPassword').value === 'true' && document.getElementById('user').value !== document.getElementById('password').value) {
     setLoginMessage('Error', errorSamePassword, errorDifferentPasswordInFields);
     return true;
@@ -91,10 +92,15 @@ function doLogin(command) {
     }
     disableButton('buttonOK');
     command = command || (document.getElementById('resetPassword').value === 'true' ? 'FORCE_RESET_PASSWORD' : 'DEFAULT');
-    submitXmlHttpRequest(loginResult, document.frmIdentificacion, command, '../secureApp/LoginHandler.html', false, null, null);
+    extraParams = '&targetQueryString=' + getURLQueryString();
+    submitXmlHttpRequest(loginResult, document.frmIdentificacion, command, '../secureApp/LoginHandler.html', false, extraParams, null);
   }
 
   return false;
+}
+
+function getURLQueryString() {
+  return encodeURIComponent(window.location.search.substr(1));
 }
 
 function loginResult(paramXMLParticular, XMLHttpRequestObj) {
@@ -110,8 +116,7 @@ function loginResult(paramXMLParticular, XMLHttpRequestObj) {
 }
 
 function processResult(result) {
-  var target = '_self',
-      command, shouldContinue = true;
+  var shouldContinue = true;
   if (result.showMessage) {
     shouldContinue = setLoginMessage(result.messageType, result.messageTitle, result.messageText);
     if (!shouldContinue) {
@@ -233,7 +238,6 @@ function browserVersionTrim(versionNum) {
 function checkBrowserCompatibility() {
   var browserName = getBrowserInfo('name');
   var browserVersion = getBrowserInfo('version');
-  var browserMajorVersion = getBrowserInfo('majorVersion');
   var isValid = false;
   if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
     if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserFirefox)) {
@@ -262,7 +266,6 @@ function checkBrowserCompatibility() {
 function checkRecommendedBrowser() {
   var browserName = getBrowserInfo('name');
   var browserVersion = getBrowserInfo('version');
-  var browserMajorVersion = getBrowserInfo('majorVersion');
   var isRecommended = false;
   if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
     if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserFirefox)) {
@@ -360,7 +363,6 @@ function beforeLoadDo() {
 }
 
 function onLoadDo() {
-  var msgContainer = document.getElementById('errorMsg');
   var msgContainerTitle = document.getElementById('errorMsgTitle');
   var msgContainerTitleContainer = document.getElementById('errorMsgTitle_Container');
   var msgContainerContent = document.getElementById('errorMsgContent');
@@ -409,40 +411,23 @@ function onLoadDo() {
 
 function enableEditionShortcuts() {
   try {
-    this.keyArray = new Array();
-    getEditionShortcuts('applicationCommonKeys');
-    getEditionShortcuts('windowCommonKeys');
-    getEditionShortcuts('editionSpecificKeys');
-    getEditionShortcuts('genericTreeKeys');
+    getEditionShortcuts();
     enableDefaultAction();
   } catch (e) {}
   keyDownManagement();
   keyUpManagement();
 }
 
-function getEditionShortcuts(type) {
-  if (type == null || type == "" || type == "null") {
-    return;
-  } else if (type == 'applicationCommonKeys') {
-    // don't override browser shortcuts in case of MDI environment
-    if (!isWindowInMDIContext) {
-      this.keyArray.splice(keyArray.length - 1, 0, new keyArrayItem("M", "executeMenuButton('buttonExpand');executeMenuButton('buttonCollapse');", null, "ctrlKey+shiftKey", false, 'onkeydown'), new keyArrayItem("U", "executeMenuButton('buttonUserOptions');", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("Q", "executeMenuButton('buttonQuit');", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("F8", "executeMenuButton('buttonAlerts');", null, null, false, 'onkeydown'), new keyArrayItem("F9", "menuShowHide();", null, null, false, 'onkeydown'), new keyArrayItem("I", "executeWindowButton('buttonAbout');", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("H", "executeWindowButton('buttonHelp');", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("R", "executeWindowButton('buttonRefresh');", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("BACKSPACE", "executeWindowButton('buttonBack');", null, "ctrlKey+shiftKey", false, 'onkeydown'));
-    } else {
-      var LayoutMDI = getFrame('LayoutMDI');
-      if (typeof LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard === "object" && typeof LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard.getMDIKS === "function") {
-        var MDIKeyJSON = LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard.getMDIKS();
-        for (var i = 0; i < MDIKeyJSON.length; i++) {
-          this.keyArray.splice(keyArray.length - 1, 0, new keyArrayItem(MDIKeyJSON[i].key, [MDIKeyJSON[i].action, MDIKeyJSON[i].funcParam], null, MDIKeyJSON[i].auxKey, false, 'onkeydown'));
-        }
-      }
-    }
-  } else if (type == 'windowCommonKeys') {
-    this.keyArray.splice(keyArray.length - 1, 0, new keyArrayItem("M", "putFocusOnMenu();", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("F10", "swichSelectedArea();", null, null, false, 'onkeydown'), new keyArrayItem("N", "executeWindowButton('linkButtonNew',true);", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("N", "executeWindowButton('linkButtonSave_Next',true);", null, "ctrlKey+shiftKey", false, 'onkeydown'), new keyArrayItem("G", "executeWindowButton('linkButtonSave_Relation',true);", null, "ctrlKey+shiftKey", false, 'onkeydown'), new keyArrayItem("S", "executeWindowButton('linkButtonSave',true);", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("S", "executeWindowButton('linkButtonSave_New',true);", null, "ctrlKey+shiftKey", false, 'onkeydown'), new keyArrayItem("D", "executeWindowButton('linkButtonDelete');", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("Z", "executeWindowButton('linkButtonUndo');", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("A", "executeWindowButton('linkButtonAttachment');", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("F", "executeWindowButton('linkButtonSearch');executeWindowButton('linkButtonSearchFiltered');", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("HOME", "executeWindowButton('linkButtonFirst',true);", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("END", "executeWindowButton('linkButtonLast',true);", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("LEFTARROW", "executeWindowButton('linkButtonPrevious',true);", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("RIGHTARROW", "executeWindowButton('linkButtonNext',true);", null, "ctrlKey", false, 'onkeydown'), new keyArrayItem("L", "executeWindowButton('linkButtonRelatedInfo');", null, "ctrlKey", false, 'onkeydown'));
-  } else if (type == 'editionSpecificKeys') {
-    this.keyArray.splice(keyArray.length - 1, 0, new keyArrayItem("TAB", "windowTabKey(true);", null, null, false, 'onkeydown'), new keyArrayItem("TAB", "windowTabKey(false);", null, null, false, 'onkeyup'), new keyArrayItem("TAB", "windowShiftTabKey(true);", null, "shiftKey", false, 'onkeydown'), new keyArrayItem("TAB", "windowShiftTabKey(false);", null, "shiftKey", false, 'onkeyup'), new keyArrayItem("ENTER", "windowCtrlShiftEnterKey();", null, "ctrlKey+shiftKey", false, 'onkeydown'), new keyArrayItem("ENTER", "windowCtrlEnterKey();", null, "ctrlKey", true, 'onkeydown'), new keyArrayItem("ENTER", "windowEnterKey();", null, null, true, 'onkeydown'), new keyArrayItem("G", "executeWindowButton('buttonRelation');", null, "ctrlKey", false, 'onkeydown'));
-  } else if (type == 'genericTreeKeys') {
-    this.keyArray.splice(keyArray.length - 1, 0, new keyArrayItem("UPARROW", "windowUpKey();", null, null, true, 'onkeydown'), new keyArrayItem("RIGHTARROW", "windowRightKey();", null, null, true, 'onkeydown'), new keyArrayItem("DOWNARROW", "windowDownKey();", null, null, true, 'onkeydown'), new keyArrayItem("LEFTARROW", "windowLeftKey();", null, null, true, 'onkeydown'), new keyArrayItem("SPACE", "windowSpaceKey();", null, null, true, 'onkeydown'));
-  }
+function getEditionShortcuts() {
+  this.keyArray = [
+	  new keyArrayItem('TAB', 'windowTabKey(true);', null, null, false, 'onkeydown'),
+	  new keyArrayItem('TAB', 'windowTabKey(false);', null, null, false, 'onkeyup'),
+	  new keyArrayItem('TAB', 'windowShiftTabKey(true);', null, 'shiftKey', false, 'onkeydown'),
+	  new keyArrayItem('TAB', 'windowShiftTabKey(false);', null, 'shiftKey', false, 'onkeyup'),
+	  new keyArrayItem('ENTER', 'windowCtrlShiftEnterKey();', null, 'ctrlKey+shiftKey', false, 'onkeydown'),
+	  new keyArrayItem('ENTER', 'windowCtrlEnterKey();', null, 'ctrlKey', true, 'onkeydown'),
+	  new keyArrayItem('ENTER', 'windowEnterKey();', null, null, true, 'onkeydown')
+    ];
 }
 
 /**
@@ -485,11 +470,12 @@ function enableButton(id) {
 }
 
 function disableAttributeWithFunction(element, type, attribute) {
+  var obj;
   if (type == 'obj') {
-    var obj = element;
+    obj = element;
   }
   if (type == 'id') {
-    var obj = document.getElementById(element);
+    obj = document.getElementById(element);
   }
   var attribute_text = getObjAttribute(obj, attribute);
   attribute_text = 'return true; tmp_water_mark; ' + attribute_text;
@@ -497,11 +483,12 @@ function disableAttributeWithFunction(element, type, attribute) {
 }
 
 function enableAttributeWithFunction(element, type, attribute) {
+  var obj;
   if (type == 'obj') {
-    var obj = element;
+    obj = element;
   }
   if (type == 'id') {
-    var obj = document.getElementById(element);
+    obj = document.getElementById(element);
   }
   var attribute_text = getObjAttribute(obj, attribute);
   attribute_text = attribute_text.replace('return true; tmp_water_mark; ', '')
@@ -513,10 +500,6 @@ function enableAttributeWithFunction(element, type, attribute) {
  */
 
 function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, debug, extraParams, paramXMLReq) {
-  submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, null, paramXMLReq);
-}
-
-function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, extraParams, paramXMLReq) {
   var XMLHttpRequestObj = null;
   XMLHttpRequestObj = getXMLHttpRequest();
   if (formObject === null) {
@@ -616,7 +599,6 @@ function getReadyStateHandler(req, responseXmlHandler, notifyError) {
       }
       return false;
     }
-    return false;
   }
   return false;
 }

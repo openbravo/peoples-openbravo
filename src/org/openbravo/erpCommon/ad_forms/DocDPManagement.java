@@ -24,7 +24,8 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -32,24 +33,9 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class DocDPManagement extends AcctServer {
   private static final long serialVersionUID = 1L;
-  private static Logger docDPManagementLog4j = Logger.getLogger(DocDPManagement.class);
+  private static final Logger docDPManagementLog4j = LogManager.getLogger();
 
   private String SeqNo = "0";
-
-  /**
-   * @return the docDPManagementLog4j
-   */
-  public static Logger getLog4j() {
-    return docDPManagementLog4j;
-  }
-
-  /**
-   * @param docDPManagementLog4j
-   *          the docDPManagementLog4j to set
-   */
-  public static void setLog4j(Logger docDPManagementLog4j) {
-    DocDPManagement.docDPManagementLog4j = docDPManagementLog4j;
-  }
 
   /**
    * @return the seqNo
@@ -84,6 +70,7 @@ public class DocDPManagement extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID, String Id)
       throws ServletException {
     setObjectFieldProvider(DocDPManagementData.selectRegistro(conn, aD_Client_ID, Id));
@@ -94,6 +81,7 @@ public class DocDPManagement extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DocumentType = AcctServer.DOCTYPE_DPManagement;
     DateDoc = data[0].getField("Dateacct");
@@ -115,8 +103,8 @@ public class DocDPManagement extends AcctServer {
 
     try {
       data = DocLineDPManagementData.select(conn, Record_ID);
-      docDPManagementLog4j.debug("LoadLines: data.length " + data.length + " record_ID "
-          + Record_ID);
+      docDPManagementLog4j
+          .debug("LoadLines: data.length " + data.length + " record_ID " + Record_ID);
     } catch (ServletException e) {
       docDPManagementLog4j.warn(e);
     }
@@ -148,6 +136,7 @@ public class DocDPManagement extends AcctServer {
    * 
    * @return Zero (always balanced)
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
 
@@ -161,17 +150,20 @@ public class DocDPManagement extends AcctServer {
    *          accounting schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocDPManagementTemplate newTemplate = (DocDPManagementTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         docDPManagementLog4j
@@ -236,14 +228,15 @@ public class DocDPManagement extends AcctServer {
   public String calculateAmount(AcctSchema as, DocLine_DPManagement line, ConnectionProvider conn) {
     String Amt = getConvertedAmt(line.Amount, line.m_C_Currency_ID, as.m_C_Currency_ID,
         line.conversionDate, "", AD_Client_ID, AD_Org_ID, conn);
-    Amt = getConvertedAmt(Amt, as.m_C_Currency_ID, line.m_C_Currency_ID, DateAcct, "",
-        AD_Client_ID, AD_Org_ID, conn);
+    Amt = getConvertedAmt(Amt, as.m_C_Currency_ID, line.m_C_Currency_ID, DateAcct, "", AD_Client_ID,
+        AD_Org_ID, conn);
     return Amt;
   }
 
   /**
- *
- */
+  *
+  */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     DocDPManagementData[] data;
     try {
@@ -256,8 +249,9 @@ public class DocDPManagement extends AcctServer {
 
     if (data.length > 0) {
       for (DocDPManagementData row : data) {
-        if (row.ismanual.equals("N") || row.isdirectposting.equals("Y"))
+        if (row.ismanual.equals("N") || row.isdirectposting.equals("Y")) {
           return true;
+        }
       }
       setStatus(STATUS_DocumentDisabled);
       return false;
@@ -299,11 +293,13 @@ public class DocDPManagement extends AcctServer {
         validCombination_ID = data[0].acct;
       }
 
-      if (data == null || data.length == 0)
+      if (data == null || data.length == 0) {
         return null;
+      }
 
-      if (validCombination_ID.equals(""))
+      if (validCombination_ID.equals("")) {
         return null;
+      }
       acc = Account.getAccount(conn, validCombination_ID);
       docDPManagementLog4j.debug("DocDPManagement - getAccount - " + acc.Account_ID);
     } catch (ServletException e) {
@@ -312,6 +308,7 @@ public class DocDPManagement extends AcctServer {
     return acc;
   } // getAccount
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

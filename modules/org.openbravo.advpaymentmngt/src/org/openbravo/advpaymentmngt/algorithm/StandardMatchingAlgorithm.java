@@ -40,6 +40,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class StandardMatchingAlgorithm implements FIN_MatchingAlgorithm {
 
+  @Override
   public FIN_MatchedTransaction match(FIN_BankStatementLine line,
       List<FIN_FinaccTransaction> excluded) throws ServletException {
 
@@ -50,12 +51,12 @@ public class StandardMatchingAlgorithm implements FIN_MatchingAlgorithm {
 
     List<FIN_FinaccTransaction> transactions = new ArrayList<FIN_FinaccTransaction>();
     if (line.getGLItem() != null) {
-      transactions = MatchTransactionDao.getMatchingGLItemTransaction(line.getBankStatement()
-          .getAccount().getId(), line.getGLItem(), line.getTransactionDate(),
+      transactions = MatchTransactionDao.getMatchingGLItemTransaction(
+          line.getBankStatement().getAccount().getId(), line.getGLItem(), line.getTransactionDate(),
           (line.getCramount().subtract(line.getDramount())), excluded);
       if (transactions.isEmpty()) {
-        transactions = MatchTransactionDao.getMatchingGLItemTransaction(line.getBankStatement()
-            .getAccount().getId(), line.getGLItem(), null,
+        transactions = MatchTransactionDao.getMatchingGLItemTransaction(
+            line.getBankStatement().getAccount().getId(), line.getGLItem(), null,
             (line.getCramount().subtract(line.getDramount())), excluded);
         if (!transactions.isEmpty()) {
           return new FIN_MatchedTransaction(transactions.get(0), FIN_MatchedTransaction.WEAK);
@@ -65,44 +66,51 @@ public class StandardMatchingAlgorithm implements FIN_MatchingAlgorithm {
       }
     }
     if (algorithm.isMatchbpname()) {
-      transactions = MatchTransactionDao.getMatchingFinancialTransaction(line.getBankStatement()
-          .getAccount().getId(), transactionDate, reference,
+      transactions = MatchTransactionDao.getMatchingFinancialTransaction(
+          line.getBankStatement().getAccount().getId(), transactionDate, reference,
           (line.getCramount().subtract(line.getDramount())), line.getBpartnername(), excluded);
     } else {
-      transactions = MatchTransactionDao.getMatchingFinancialTransaction(line.getBankStatement()
-          .getAccount().getId(), transactionDate, reference,
+      transactions = MatchTransactionDao.getMatchingFinancialTransaction(
+          line.getBankStatement().getAccount().getId(), transactionDate, reference,
           (line.getCramount().subtract(line.getDramount())), excluded);
     }
 
-    if (!transactions.isEmpty())
+    if (!transactions.isEmpty()) {
       return new FIN_MatchedTransaction(transactions.get(0), FIN_MatchedTransaction.STRONG);
+    }
     if (algorithm.isMatchtransactiondate()) {
-      transactions = MatchTransactionDao.getMatchingFinancialTransaction(line.getBankStatement()
-          .getAccount().getId(), line.getTransactionDate(),
+      transactions = MatchTransactionDao.getMatchingFinancialTransaction(
+          line.getBankStatement().getAccount().getId(), line.getTransactionDate(),
           line.getCramount().subtract(line.getDramount()), excluded);
     } else {
-      transactions = MatchTransactionDao.getMatchingFinancialTransaction(line.getBankStatement()
-          .getAccount().getId(), line.getCramount().subtract(line.getDramount()), excluded);
+      transactions = MatchTransactionDao.getMatchingFinancialTransaction(
+          line.getBankStatement().getAccount().getId(),
+          line.getCramount().subtract(line.getDramount()), excluded);
     }
-    if (!transactions.isEmpty())
+    if (!transactions.isEmpty()) {
       return new FIN_MatchedTransaction(transactions.get(0), FIN_MatchedTransaction.WEAK);
+    }
 
     return new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
   }
 
+  @Override
   public void unmatch(FIN_FinaccTransaction _transaction) throws ServletException {
-    if (_transaction == null)
+    if (_transaction == null) {
       return;
+    }
     FIN_Payment payment = _transaction.getFinPayment();
     VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-        OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId());
+        OBContext.getOBContext().getCurrentClient().getId(),
+        OBContext.getOBContext().getCurrentOrganization().getId(),
+        OBContext.getOBContext().getRole().getId());
     // flush is set to true because pl is called in removeTransaction and removePayment
     ConnectionProvider conn = new DalConnectionProvider(true);
     if (_transaction.isCreatedByAlgorithm()) {
       APRM_MatchingUtility.removeTransaction(vars, conn, _transaction);
-    } else
+    } else {
       return;
+    }
     if (payment.isCreatedByAlgorithm()) {
       APRM_MatchingUtility.removePayment(vars, conn, payment);
     }

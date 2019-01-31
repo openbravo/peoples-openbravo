@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,11 +26,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -56,11 +58,9 @@ import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class InventoryAmountUpdateProcess extends BaseActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(InventoryAmountUpdateProcess.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
@@ -73,10 +73,10 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
 
       String orgId = jsonData.getString("inpadOrgId");
       String invAmtUpdId = jsonData.getString("M_Ca_Inventoryamt_ID");
-      InventoryAmountUpdate invAmtUpd = OBDal.getInstance().get(InventoryAmountUpdate.class,
-          invAmtUpdId);
-      final OBCriteria<InventoryAmountUpdateLine> qLines = OBDal.getInstance().createCriteria(
-          InventoryAmountUpdateLine.class);
+      InventoryAmountUpdate invAmtUpd = OBDal.getInstance()
+          .get(InventoryAmountUpdate.class, invAmtUpdId);
+      final OBCriteria<InventoryAmountUpdateLine> qLines = OBDal.getInstance()
+          .createCriteria(InventoryAmountUpdateLine.class);
       qLines.add(Restrictions.eq(InventoryAmountUpdateLine.PROPERTY_CAINVENTORYAMT, invAmtUpd));
 
       ScrollableResults scrollLines = qLines.scroll(ScrollMode.FORWARD_ONLY);
@@ -123,10 +123,10 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         where.append("      select 1 from " + InvAmtUpdLnInventories.ENTITY_NAME + " invAmtUpd");
         where.append("      where invAmtUpd." + InvAmtUpdLnInventories.PROPERTY_CAINVENTORYAMTLINE
             + "." + InventoryAmountUpdateLine.PROPERTY_CAINVENTORYAMT + ".id =:invAmtUpdId");
-        where.append("        and invAmtUpd." + InvAmtUpdLnInventories.PROPERTY_INITINVENTORY
-            + "= inv)");
-        OBQuery<InventoryCount> qry = OBDal.getInstance().createQuery(InventoryCount.class,
-            where.toString());
+        where.append(
+            "        and invAmtUpd." + InvAmtUpdLnInventories.PROPERTY_INITINVENTORY + "= inv)");
+        OBQuery<InventoryCount> qry = OBDal.getInstance()
+            .createQuery(InventoryCount.class, where.toString());
         qry.setNamedParameter("invAmtUpdId", invAmtUpdId);
 
         ScrollableResults invLines = qry.scroll(ScrollMode.FORWARD_ONLY);
@@ -169,8 +169,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
       Set<String> childOrgs, Date date) {
 
     CostingRule costRule = OBDal.getInstance().get(CostingRule.class, ruleId);
-    InventoryAmountUpdateLine line = OBDal.getInstance().get(InventoryAmountUpdateLine.class,
-        lineId);
+    InventoryAmountUpdateLine line = OBDal.getInstance()
+        .get(InventoryAmountUpdateLine.class, lineId);
     ScrollableResults stockLines = getStockLines(childOrgs, date, line.getProduct(), warehouse,
         costRule.isBackdatedTransactionsFixed());
     // The key of the Map is the concatenation of orgId and warehouseId
@@ -199,8 +199,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         } else {
           inv = OBDal.getInstance().get(InvAmtUpdLnInventories.class, invId);
         }
-        Long lineNo = (maxLineNumbers.get(inv.getId()) == null ? 0L : maxLineNumbers.get(inv
-            .getId())) + 10L;
+        Long lineNo = (maxLineNumbers.get(inv.getId()) == null ? 0L
+            : maxLineNumbers.get(inv.getId())) + 10L;
         maxLineNumbers.put(inv.getId(), lineNo);
 
         if (BigDecimal.ZERO.compareTo(qty) < 0) {
@@ -210,18 +210,18 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
           // By doing so the difference between both quantities remains the same and no negative
           // values have been inserted.
 
-          openInventoryLine = insertInventoryLine(inv.getInitInventory(),
-              line.getProduct().getId(), attrSetInsId, uomId, orderUOMId, locatorId, qty,
-              BigDecimal.ZERO, orderQty, BigDecimal.ZERO, lineNo, null, line.getUnitCost());
+          openInventoryLine = insertInventoryLine(inv.getInitInventory(), line.getProduct().getId(),
+              attrSetInsId, uomId, orderUOMId, locatorId, qty, BigDecimal.ZERO, orderQty,
+              BigDecimal.ZERO, lineNo, null, line.getUnitCost());
           insertInventoryLine(inv.getCloseInventory(), line.getProduct().getId(), attrSetInsId,
-              uomId, orderUOMId, locatorId, BigDecimal.ZERO, qty, BigDecimal.ZERO, orderQty,
-              lineNo, openInventoryLine, null);
+              uomId, orderUOMId, locatorId, BigDecimal.ZERO, qty, BigDecimal.ZERO, orderQty, lineNo,
+              openInventoryLine, null);
 
         } else {
-          openInventoryLine = insertInventoryLine(inv.getInitInventory(),
-              line.getProduct().getId(), attrSetInsId, uomId, orderUOMId, locatorId,
-              BigDecimal.ZERO, qty.negate(), BigDecimal.ZERO, orderQty == null ? null : orderQty,
-              lineNo, closingInventoryLine, line.getUnitCost());
+          openInventoryLine = insertInventoryLine(inv.getInitInventory(), line.getProduct().getId(),
+              attrSetInsId, uomId, orderUOMId, locatorId, BigDecimal.ZERO, qty.negate(),
+              BigDecimal.ZERO, orderQty == null ? null : orderQty, lineNo, closingInventoryLine,
+              line.getUnitCost());
           insertInventoryLine(inv.getCloseInventory(), line.getProduct().getId(), attrSetInsId,
               uomId, orderUOMId, locatorId, qty == null ? null : qty.negate(), BigDecimal.ZERO,
               orderQty == null ? null : orderQty, BigDecimal.ZERO, lineNo, openInventoryLine, null);
@@ -265,8 +265,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
       if (backdatedTransactionsFixed) {
         select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
       } else {
-        subSelect.append("select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-            + ")");
+        subSelect
+            .append("select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + ")");
         subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
         if (warehouse != null) {
           subSelect
@@ -279,21 +279,23 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         if (warehouse != null) {
           subSelect.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
         }
-        subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
-            + ".id in (:orgs)");
+        subSelect
+            .append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
 
-        Query trxsubQry = OBDal.getInstance().getSession().createQuery(subSelect.toString());
+        Query<Date> trxsubQry = OBDal.getInstance()
+            .getSession()
+            .createQuery(subSelect.toString(), Date.class);
         trxsubQry.setParameter("date", localDate);
         trxsubQry.setParameter("product", product.getId());
         if (warehouse != null) {
           trxsubQry.setParameter("warehouse", warehouse.getId());
         }
         trxsubQry.setParameterList("orgs", childOrgs);
-        Object trxprocessDate = trxsubQry.uniqueResult();
+        Date trxprocessDate = trxsubQry.uniqueResult();
         if (trxprocessDate != null) {
-          localDate = (Date) trxprocessDate;
-          select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-              + " < :date");
+          localDate = trxprocessDate;
+          select.append(
+              "   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :date");
         } else {
           select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
         }
@@ -316,10 +318,12 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     select.append(", trx." + MaterialTransaction.PROPERTY_UOM + ".id");
     select.append(", trx." + MaterialTransaction.PROPERTY_ORDERUOM + ".id");
 
-    Query stockLinesQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<Object[]> stockLinesQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(select.toString(), Object[].class);
     stockLinesQry.setParameterList("orgs", childOrgs);
     if (localDate != null) {
-      stockLinesQry.setTimestamp("date", localDate);
+      stockLinesQry.setParameter("date", localDate);
     }
     if (warehouse != null) {
       stockLinesQry.setParameter("warehouse", warehouse);
@@ -340,8 +344,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     String orgId = invLine.getOrganization().getId();
     InvAmtUpdLnInventories inv = OBProvider.getInstance().get(InvAmtUpdLnInventories.class);
     inv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
-    inv.setOrganization((Organization) OBDal.getInstance()
-        .getProxy(Organization.ENTITY_NAME, orgId));
+    inv.setOrganization(
+        (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
     inv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
     inv.setCaInventoryamtline(invLine);
     List<InvAmtUpdLnInventories> invList = invLine.getInventoryAmountUpdateLineInventoriesList();
@@ -350,22 +354,22 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
 
     InventoryCount closeInv = OBProvider.getInstance().get(InventoryCount.class);
     closeInv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
-    closeInv.setOrganization((Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME,
-        orgId));
+    closeInv.setOrganization(
+        (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
     closeInv.setName(OBMessageUtils.messageBD("InvAmtUpdCloseInventory"));
-    closeInv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME,
-        warehouseId));
+    closeInv
+        .setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
     closeInv.setMovementDate(localDate);
     closeInv.setInventoryType("C");
     inv.setCloseInventory(closeInv);
 
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
     initInv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
-    initInv.setOrganization((Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME,
-        orgId));
+    initInv.setOrganization(
+        (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
     initInv.setName(OBMessageUtils.messageBD("InvAmtUpdInitInventory"));
-    initInv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME,
-        warehouseId));
+    initInv
+        .setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
     initInv.setMovementDate(localDate);
     initInv.setInventoryType("O");
     inv.setInitInventory(initInv);
@@ -389,15 +393,16 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     icl.setLineNo(lineNo);
     icl.setStorageBin((Locator) OBDal.getInstance().getProxy(Locator.ENTITY_NAME, locatorId));
     icl.setProduct((Product) OBDal.getInstance().getProxy(Product.ENTITY_NAME, productId));
-    icl.setAttributeSetValue((AttributeSetInstance) OBDal.getInstance().getProxy(
-        AttributeSetInstance.ENTITY_NAME, attrSetInsId));
+    icl.setAttributeSetValue((AttributeSetInstance) OBDal.getInstance()
+        .getProxy(AttributeSetInstance.ENTITY_NAME, attrSetInsId));
     icl.setQuantityCount(qtyCount);
     icl.setBookQuantity(qtyBook);
     icl.setUOM((UOM) OBDal.getInstance().getProxy(UOM.ENTITY_NAME, uomId));
     if (orderUOMId != null) {
       icl.setOrderQuantity(orderQtyCount);
       icl.setQuantityOrderBook(orderQtyBook);
-      icl.setOrderUOM((ProductUOM) OBDal.getInstance().getProxy(ProductUOM.ENTITY_NAME, orderUOMId));
+      icl.setOrderUOM(
+          (ProductUOM) OBDal.getInstance().getProxy(ProductUOM.ENTITY_NAME, orderUOMId));
     }
     icl.setRelatedInventory(relatedInventoryLine);
     if (cost != null) {

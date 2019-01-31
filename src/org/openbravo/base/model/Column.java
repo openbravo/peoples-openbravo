@@ -22,7 +22,8 @@ package org.openbravo.base.model;
 import java.util.Collections;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.domaintype.ButtonDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
@@ -41,7 +42,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
  */
 
 public class Column extends ModelObject {
-  private static final Logger log = Logger.getLogger(Column.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Property property;
   private String columnName;
@@ -83,7 +84,8 @@ public class Column extends ModelObject {
       // two exceptions on this also (other main reference)
       // but the common case is that the subreference is a list
       if (reference.getDomainType() instanceof ButtonDomainType
-          && !(refValueDomainType instanceof EnumerateDomainType || refValueDomainType instanceof StringDomainType)) {
+          && !(refValueDomainType instanceof EnumerateDomainType
+              || refValueDomainType instanceof StringDomainType)) {
         final StringDomainType stringDomainType = new StringDomainType();
         stringDomainType.setModelProvider(refValueDomainType.getModelProvider());
         stringDomainType.setReference(referenceValue);
@@ -97,8 +99,8 @@ public class Column extends ModelObject {
   }
 
   public boolean isBoolean() {
-    return isPrimitiveType()
-        && (getPrimitiveType().getName().compareTo("boolean") == 0 || Boolean.class == getPrimitiveType());
+    return isPrimitiveType() && (getPrimitiveType().getName().compareTo("boolean") == 0
+        || Boolean.class == getPrimitiveType());
   }
 
   public String getColumnName() {
@@ -240,8 +242,9 @@ public class Column extends ModelObject {
   }
 
   public Column getReferenceType() {
-    if (!isPrimitiveType())
+    if (!isPrimitiveType()) {
       return referenceType;
+    }
     return null;
   }
 
@@ -257,9 +260,10 @@ public class Column extends ModelObject {
       // note calls isSuperActive(), if it would call isActive there is a danger
       // for infinite looping, see issue:
       // https://issues.openbravo.com/view.php?id=8632
-      if (thatColumn != null && (!thatColumn.isSuperActive() || !thatColumn.getTable().isActive())) {
-        log.error("Column " + this + " refers to a non active table or column or to a view"
-            + thatColumn);
+      if (thatColumn != null
+          && (!thatColumn.isSuperActive() || !thatColumn.getTable().isActive())) {
+        log.error(
+            "Column " + this + " refers to a non active table or column or to a view" + thatColumn);
       }
     }
     return super.isActive();
@@ -286,8 +290,8 @@ public class Column extends ModelObject {
     }
 
     try {
-      setReferenceType(((ForeignKeyDomainType) getDomainType())
-          .getForeignKeyColumn(getColumnName()));
+      setReferenceType(
+          ((ForeignKeyDomainType) getDomainType()).getForeignKeyColumn(getColumnName()));
     } catch (final Exception e) {
       if (!OBPropertiesProvider.isFriendlyWarnings()) {
         log.error("No referenced column found: error >> tableName: " + table.getTableName()

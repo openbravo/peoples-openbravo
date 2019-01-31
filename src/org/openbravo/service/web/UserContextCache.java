@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.dal.core.OBContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The main purpose of the user context cache is to support session-less http requests without a
@@ -50,7 +50,7 @@ public class UserContextCache implements OBSingleton {
 
   private static UserContextCache instance;
 
-  private static final Logger log = LoggerFactory.getLogger(UserContextCache.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static synchronized UserContextCache getInstance() {
     if (instance == null) {
@@ -114,8 +114,8 @@ public class UserContextCache implements OBSingleton {
         cache.remove(cacheKey);
       } else {
         if (log.isDebugEnabled()) {
-          log.debug("Found element in cache. User: {}, Role: {}", ce.getObContext().getUser(), ce
-              .getObContext().getRole());
+          log.debug("Found element in cache. User: {}, Role: {}", ce.getObContext().getUser(),
+              ce.getObContext().getRole());
         }
         return ce.getObContext();
       }
@@ -129,8 +129,8 @@ public class UserContextCache implements OBSingleton {
     ce.setUserId(userId);
     cache.put(cacheKey, ce);
     if (log.isDebugEnabled()) {
-      log.debug("Created new cache entry.  User: {}, Role: {}", ce.getObContext().getUser(), ce
-          .getObContext().getRole());
+      log.debug("Created new cache entry.  User: {}, Role: {}", ce.getObContext().getUser(),
+          ce.getObContext().getRole());
     }
     return obContext;
   }

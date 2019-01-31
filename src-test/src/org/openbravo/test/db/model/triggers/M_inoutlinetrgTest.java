@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,9 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -46,12 +48,10 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class M_inoutlinetrgTest extends OBBaseTest {
 
-  private static Logger log = LoggerFactory.getLogger(M_inoutlinetrgTest.class);
+  private static Logger log = LogManager.getLogger();
   // User Openbravo
   private static String USER_ID = "100";
 
@@ -87,8 +87,8 @@ public class M_inoutlinetrgTest extends OBBaseTest {
 
     product = OBDal.getInstance().get(Product.class, ProductId);
     locator = OBDal.getInstance().get(Locator.class, LocatorId);
-    attributeSetInstance = OBDal.getInstance().get(AttributeSetInstance.class,
-        attributeSetInstanceId);
+    attributeSetInstance = OBDal.getInstance()
+        .get(AttributeSetInstance.class, attributeSetInstanceId);
   }
 
   private void purchaseSetup() {
@@ -101,8 +101,8 @@ public class M_inoutlinetrgTest extends OBBaseTest {
 
     product = OBDal.getInstance().get(Product.class, ProductId);
     locator = OBDal.getInstance().get(Locator.class, LocatorId);
-    attributeSetInstance = OBDal.getInstance().get(AttributeSetInstance.class,
-        attributeSetInstanceId);
+    attributeSetInstance = OBDal.getInstance()
+        .get(AttributeSetInstance.class, attributeSetInstanceId);
   }
 
   @Test
@@ -157,8 +157,8 @@ public class M_inoutlinetrgTest extends OBBaseTest {
     test_UpdateLocator(locator);
     if (isSales) {
       // blue
-      test_UpdateAttribute(OBDal.getInstance().get(AttributeSetInstance.class,
-          "1B78D7E95FBC47788B4962B11E80002B"));
+      test_UpdateAttribute(
+          OBDal.getInstance().get(AttributeSetInstance.class, "1B78D7E95FBC47788B4962B11E80002B"));
       test_UpdateAttribute(attributeSetInstance);
     }
     test_DeleteLine();
@@ -174,7 +174,8 @@ public class M_inoutlinetrgTest extends OBBaseTest {
     inOut = insertMInOut(isSales);
     assertTrue("M_Inout header not inserted successfully ", inOut != null);
 
-    storageDetail = getStorageDetail(product, product.getUOM(), locator, null, attributeSetInstance);
+    storageDetail = getStorageDetail(product, product.getUOM(), locator, null,
+        attributeSetInstance);
     if (storageDetail != null) {
       OBDal.getInstance().refresh(storageDetail);
       beforeValue = storageDetail.getQuantityInDraftTransactions();
@@ -182,7 +183,8 @@ public class M_inoutlinetrgTest extends OBBaseTest {
       beforeValue = BigDecimal.ZERO;
     }
 
-    log.info("*************** Create a new shipment line with a Product (10 units) *****************");
+    log.info(
+        "*************** Create a new shipment line with a Product (10 units) *****************");
     log.info("Qty in Draft transaction before insertion: " + beforeValue);
 
     for (int i = 0; i < numberOfLines; i++) {
@@ -207,8 +209,8 @@ public class M_inoutlinetrgTest extends OBBaseTest {
     beforeValue = storageDetail.getQuantityInDraftTransactions();
 
     log.info("*************** Set Product null *****************");
-    log.info("Qty in Draft transaction before setting product as null in m_inoutline "
-        + beforeValue);
+    log.info(
+        "Qty in Draft transaction before setting product as null in m_inoutline " + beforeValue);
 
     updateMInOutLine(ShipmentInOutLine.PROPERTY_PRODUCT, null);
     assertTrue(inOutLine.getProduct() == null);
@@ -287,9 +289,8 @@ public class M_inoutlinetrgTest extends OBBaseTest {
     // the updated column with UPDATED=to_date(now()), which seems to set always the same date
     // because to_date() is declared as IMMUTABLE. To properly test it, it should be UPDATED=now().
     // However the assert is kept as it doesn't create false positives
-    assertTrue(
-        "Storage detail is not updated because only description has been updated. Previous: "
-            + previousDate + ". newDate: " + newDate, previousDate.compareTo(newDate) == 0);
+    assertTrue("Storage detail is not updated because only description has been updated. Previous: "
+        + previousDate + ". newDate: " + newDate, previousDate.compareTo(newDate) == 0);
   }
 
   // Update product quantity (positive qty)
@@ -318,7 +319,8 @@ public class M_inoutlinetrgTest extends OBBaseTest {
     OBDal.getInstance().refresh(storageDetail);
     OBDal.getInstance().refresh(inOutLine);
     beforeValue = storageDetail.getQuantityInDraftTransactions();
-    log.info("*************** Update Product quantity to the same quantity (no change) *****************");
+    log.info(
+        "*************** Update Product quantity to the same quantity (no change) *****************");
 
     updateMInOutLine(ShipmentInOutLine.PROPERTY_MOVEMENTQUANTITY, inOutLine.getMovementQuantity());
 
@@ -392,10 +394,12 @@ public class M_inoutlinetrgTest extends OBBaseTest {
       afterValue = BigDecimal.ZERO;
     }
 
-    log.info("Qty in Draft transaction for old attributesetinstance before updating attributesetinstance "
-        + beforeValue);
-    log.info("Qty in Draft transaction for old attributesetinstance after updating attributesetinstance "
-        + afterValue);
+    log.info(
+        "Qty in Draft transaction for old attributesetinstance before updating attributesetinstance "
+            + beforeValue);
+    log.info(
+        "Qty in Draft transaction for old attributesetinstance after updating attributesetinstance "
+            + afterValue);
 
     assertTrue(
         "Quantities should not be equal for old attributesetinstance because we have updated the attributesetinstance",
@@ -409,10 +413,12 @@ public class M_inoutlinetrgTest extends OBBaseTest {
       afterValueNewAttribute = storageDetail.getQuantityInDraftTransactions();
     }
 
-    log.info("Qty in Draft transaction for new attributesetinstance before updating attributesetinstance "
-        + beforeValueNewAttribute);
-    log.info("Qty in Draft transaction for new attributesetinstance after updating attributesetinstance "
-        + afterValueNewAttribute);
+    log.info(
+        "Qty in Draft transaction for new attributesetinstance before updating attributesetinstance "
+            + beforeValueNewAttribute);
+    log.info(
+        "Qty in Draft transaction for new attributesetinstance after updating attributesetinstance "
+            + afterValueNewAttribute);
 
     assertTrue(
         "Quantities should not be equal for new attributesetinstance because we have updated the attributesetinstance",
@@ -457,8 +463,7 @@ public class M_inoutlinetrgTest extends OBBaseTest {
     log.info("Qty in Draft transaction for old locator before updating locator " + beforeValue);
     log.info("Qty in Draft transaction for old locator after updating locator " + afterValue);
 
-    assertTrue(
-        "Quantities should not be equal for old locator because we have updated the locator",
+    assertTrue("Quantities should not be equal for old locator because we have updated the locator",
         afterValue.compareTo(beforeValue) != 0);
 
     storageDetail = getStorageDetail(product, inOutLine.getUOM(), newLocator,
@@ -471,11 +476,10 @@ public class M_inoutlinetrgTest extends OBBaseTest {
 
     log.info("Qty in Draft transaction for new locator before updating locator "
         + beforeValueNewLocator);
-    log.info("Qty in Draft transaction for new locator after updating locator "
-        + afterValueNewLocator);
+    log.info(
+        "Qty in Draft transaction for new locator after updating locator " + afterValueNewLocator);
 
-    assertTrue(
-        "Quantities should not be equal for new locator because we have updated the locator",
+    assertTrue("Quantities should not be equal for new locator because we have updated the locator",
         afterValueNewLocator.compareTo(beforeValueNewLocator) != 0);
 
   }
@@ -491,7 +495,8 @@ public class M_inoutlinetrgTest extends OBBaseTest {
     deleteMInOutLines();
     assertTrue(inOut.getMaterialMgmtShipmentInOutLineList().isEmpty());
 
-    storageDetail = getStorageDetail(product, product.getUOM(), locator, null, attributeSetInstance);
+    storageDetail = getStorageDetail(product, product.getUOM(), locator, null,
+        attributeSetInstance);
     if (storageDetail != null) {
       OBDal.getInstance().refresh(storageDetail);
       afterValue = storageDetail.getQuantityInDraftTransactions();
@@ -593,8 +598,9 @@ public class M_inoutlinetrgTest extends OBBaseTest {
     final StringBuffer hqlString = new StringBuffer();
     hqlString
         .append(" delete from MaterialMgmtShipmentInOutLine where shipmentReceipt.id = :mInOutId ");
+    @SuppressWarnings("rawtypes")
     Query deleteQry = OBDal.getInstance().getSession().createQuery(hqlString.toString());
-    deleteQry.setString("mInOutId", inOut.getId());
+    deleteQry.setParameter("mInOutId", inOut.getId());
     deleteQry.executeUpdate();
     OBDal.getInstance().getConnection().commit();
     OBDal.getInstance().refresh(inOut);
@@ -628,7 +634,9 @@ public class M_inoutlinetrgTest extends OBBaseTest {
       hqlString.append(" and sd.orderUOM.id is null ");
     }
 
-    Query query = OBDal.getInstance().getSession().createQuery(hqlString.toString());
+    Query<StorageDetail> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hqlString.toString(), StorageDetail.class);
     query.setParameter("productId", _product.getId());
     query.setParameter("locatorId", _locator.getId());
     query.setParameter("uomId", uom.getId());
@@ -638,9 +646,9 @@ public class M_inoutlinetrgTest extends OBBaseTest {
     }
     query.setMaxResults(1);
 
-    List<?> queryList = query.list();
+    List<StorageDetail> queryList = query.list();
     if (!queryList.isEmpty()) {
-      return (StorageDetail) queryList.get(0);
+      return queryList.get(0);
     }
     return null;
   }

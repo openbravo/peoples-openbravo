@@ -38,12 +38,12 @@ public class PriceListTestData10 extends PriceListTestData {
     PriceListSchemaLineTestData ruleLine = new PriceListSchemaLineTestData();
     ruleLine.setProductCategoryId(PriceListTestConstants.DISTRIBUTION_GOODS_PRODUCT_CATEGORY);
     ruleLine.setProductId(PriceListTestConstants.TENNIS_BALL_PRODUCT_ID);
-    ruleLine
-        .setBaseListPriceValue(PriceListTestConstants.REFLIST_VALUE_FIXED_PRICE_OR_COST_PLUS_MARGIN);
+    ruleLine.setBaseListPriceValue(
+        PriceListTestConstants.REFLIST_VALUE_FIXED_PRICE_OR_COST_PLUS_MARGIN);
     ruleLine.setFixedListPrice(new BigDecimal("11.73"));
     ruleLine.setListPriceMargin(new BigDecimal("10"));
-    ruleLine
-        .setBaseStandardPriceValue(PriceListTestConstants.REFLIST_VALUE_FIXED_PRICE_OR_COST_PLUS_MARGIN);
+    ruleLine.setBaseStandardPriceValue(
+        PriceListTestConstants.REFLIST_VALUE_FIXED_PRICE_OR_COST_PLUS_MARGIN);
     ruleLine.setFixedStandardPrice(new BigDecimal("10.65"));
     ruleLine.setUnitPriceMargin(new BigDecimal("10"));
 
@@ -55,8 +55,8 @@ public class PriceListTestData10 extends PriceListTestData {
      * following structure: <Product name, [Unit Price Expected, List Price Expected]>
      */
     HashMap<String, String[]> productPriceLines = new HashMap<String, String[]>();
-    productPriceLines.put(PriceListTestConstants.TENNIS_BALL_PRODUCT_NAME, new String[] { "11.00",
-        "11.73" });
+    productPriceLines.put(PriceListTestConstants.TENNIS_BALL_PRODUCT_NAME,
+        new String[] { "11.00", "11.73" });
     setExpectedProductPrices(productPriceLines);
 
     // Price List Header

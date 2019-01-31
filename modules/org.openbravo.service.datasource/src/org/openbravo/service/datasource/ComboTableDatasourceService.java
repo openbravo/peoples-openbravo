@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -41,8 +43,6 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The implementation of the combo table reference datasource.
@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 
 public class ComboTableDatasourceService extends BaseDataSourceService {
-  private static final Logger log = LoggerFactory.getLogger(ComboTableDatasourceService.class);
+  private static final Logger log = LogManager.getLogger();
 
   /*
    * (non-Javadoc)
@@ -130,8 +130,9 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       // non-mandatory fields add a blank record at the beginning of 1st page, this needs to be
       // taken into account in subsequent pages
 
-      fps = comboTableData.select(new DalConnectionProvider(false), newParameters, true, startRow
-          - (optionalFieldNonFirstPage ? 1 : 0), endRow - (optionalFieldNonFirstPage ? 1 : 0));
+      fps = comboTableData.select(new DalConnectionProvider(false), newParameters, true,
+          startRow - (optionalFieldNonFirstPage ? 1 : 0),
+          endRow - (optionalFieldNonFirstPage ? 1 : 0));
 
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
       // If column is mandatory we add an initial blank value in the first page if not filtered

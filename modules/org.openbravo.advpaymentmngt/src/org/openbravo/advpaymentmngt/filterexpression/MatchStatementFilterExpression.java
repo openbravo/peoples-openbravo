@@ -25,16 +25,16 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.ComponentProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MatchStatementFilterExpression implements FilterExpression {
-  private static final Logger log = LoggerFactory.getLogger(MatchStatementFilterExpression.class);
+  private static final Logger log = LogManager.getLogger();
   @Inject
   @Any
   private Instance<MatchStatementFilterExpressionHandler> matchStatementFilterExpressionHandlers;
@@ -47,13 +47,13 @@ public class MatchStatementFilterExpression implements FilterExpression {
       String strColumnName = requestMap.get("filterExpressionColumnName");
       Columns column = Columns.getColumn(strColumnName);
       switch (column) {
-      case Cleared:
-        String cleared = handler.getFilterExpression(requestMap);
-        if (!"".equals(cleared) && cleared != null) {
-          return cleared;
-        } else {
-          return "No";
-        }
+        case Cleared:
+          String cleared = handler.getFilterExpression(requestMap);
+          if (!"".equals(cleared) && cleared != null) {
+            return cleared;
+          } else {
+            return "No";
+          }
       }
     } catch (Exception e) {
       return "";

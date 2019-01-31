@@ -21,7 +21,8 @@ package org.openbravo.dal.core;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.tuple.Instantiator;
 import org.openbravo.base.model.Entity;
@@ -43,7 +44,7 @@ import org.openbravo.base.util.Check;
 // hibernate DynamicMapInstantiator for ideas on how to accomplish this.
 public class OBInstantiator implements Instantiator {
   private static final long serialVersionUID = 1L;
-  private static final Logger log = Logger.getLogger(OBInstantiator.class);
+  private static final Logger log = LogManager.getLogger();
 
   private String entityName;
   private Class<?> mappedClass;
@@ -59,6 +60,7 @@ public class OBInstantiator implements Instantiator {
   }
 
   /** Instantiate a new instance of the entity. */
+  @Override
   public Object instantiate() {
     return OBProvider.getInstance().get(entityName);
   }
@@ -70,6 +72,7 @@ public class OBInstantiator implements Instantiator {
    * @param id
    *          the id to set in the instance
    */
+  @Override
   public Object instantiate(Serializable id) {
     if (mappedClass != null) {
       final Identifiable obObject = (Identifiable) OBProvider.getInstance().get(mappedClass);
@@ -93,6 +96,7 @@ public class OBInstantiator implements Instantiator {
    *          the object to compare with the Entity managed here
    * @return true if the object is an Entity managed by this class
    */
+  @Override
   public boolean isInstance(Object object) {
     if (object instanceof Identifiable) {
       return entityName.equals(((Identifiable) object).getEntityName());

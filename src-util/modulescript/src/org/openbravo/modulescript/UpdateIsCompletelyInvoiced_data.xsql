@@ -31,9 +31,9 @@
     <Sql>
      <![CDATA[
         UPDATE M_InOut
-        SET iscompletelyinvoiced = 'Y'
+        SET iscompletelyinvoiced = 'N'
         WHERE issotrx = 'Y'
-        AND NOT EXISTS (SELECT 1 FROM M_INOUTLINE l
+        AND EXISTS (SELECT 1 FROM M_INOUTLINE l
                         LEFT JOIN c_invoiceline il ON l.m_inoutline_id = il.m_inoutline_id
                         LEFT JOIN c_invoice i ON il.c_invoice_id = i.c_invoice_id
                         WHERE l.M_INOUT_ID = M_InOut.M_INOUT_ID

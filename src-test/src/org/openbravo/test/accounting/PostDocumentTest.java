@@ -31,6 +31,8 @@ import java.util.Collection;
 
 import javax.servlet.ServletException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
@@ -47,8 +49,6 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.financial.ResetAccounting;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Tests cases to check taxes computation
@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 @RunWith(Parameterized.class)
 public class PostDocumentTest extends OBBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(PostDocumentTest.class);
+  final static private Logger log = LogManager.getLogger();
   // User Openbravo
   private final String USER_ID = "100";
   // Client QA Testing
@@ -137,8 +137,10 @@ public class PostDocumentTest extends OBBaseTest {
         { MAIN_EURO_LEGDER, VENTA_MERCADERIAS, "18-07-2014", "102", "0.00", "200.00", "0.00",
             "200.00" } };
     String[][] resultTest2 = {
-        { MAIN_EURO_LEGDER, IVA_SOPORTADO, "04-05-2015", "102", "-10.00", "0.00", "-10.00", "0.00" },
-        { MAIN_EURO_LEGDER, IVA_SOPORTADO, "04-05-2015", "102", "10.00", "0.00", "10.00", "0.00" } };
+        { MAIN_EURO_LEGDER, IVA_SOPORTADO, "04-05-2015", "102", "-10.00", "0.00", "-10.00",
+            "0.00" },
+        { MAIN_EURO_LEGDER, IVA_SOPORTADO, "04-05-2015", "102", "10.00", "0.00", "10.00",
+            "0.00" } };
     String[][] resultTest3 = {
         // Dollar Ledger
         { USA_DOLLAR_LEGDER, VENDOR_PREPAYMENT, "05-05-2015", "130", "0.00", "5.50", "0.00",
@@ -158,23 +160,30 @@ public class PostDocumentTest extends OBBaseTest {
         { MAIN_EURO_LEGDER, VENTA_MERCADERIAS, "05-05-2015", "102", "0.00", "300.00", "0.00",
             "300.00" } };
     String[][] resultTest5 = {
-        { USA_DOLLAR_LEGDER, BANK_ACCOUNT, "02-06-2015", "100", "0.00", "100.00", "0.00", "100.00" },
+        { USA_DOLLAR_LEGDER, BANK_ACCOUNT, "02-06-2015", "100", "0.00", "100.00", "0.00",
+            "100.00" },
         { USA_DOLLAR_LEGDER, PRETTY_CASH, "02-06-2015", "100", "100.00", "0.00", "100.00", "0.00" },
         { MAIN_EURO_LEGDER, FONDO_SOCIAL, "02-06-2015", "100", "0.00", "100.00", "0.00", "200.00" },
-        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "02-06-2015", "100", "100.00", "0.00", "200.00", "0.00" } };
+        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "02-06-2015", "100", "100.00", "0.00", "200.00",
+            "0.00" } };
     String[][] resultTest6 = {
-        { USA_DOLLAR_LEGDER, BANK_ACCOUNT, "03-06-2015", "100", "0.00", "100.00", "0.00", "100.00" },
+        { USA_DOLLAR_LEGDER, BANK_ACCOUNT, "03-06-2015", "100", "0.00", "100.00", "0.00",
+            "100.00" },
         { USA_DOLLAR_LEGDER, PRETTY_CASH, "03-06-2015", "100", "100.00", "0.00", "100.00", "0.00" },
         { MAIN_EURO_LEGDER, FONDO_SOCIAL, "03-06-2015", "100", "0.00", "100.00", "0.00", "40.00" },
-        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "40.00", "0.00" } };
+        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "40.00",
+            "0.00" } };
     String[][] resultTest7 = {
         { MAIN_EURO_LEGDER, FONDO_SOCIAL, "03-06-2015", "100", "0.00", "100.00", "0.00", "40.00" },
-        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "40.00", "0.00" } };
+        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "40.00",
+            "0.00" } };
     String[][] resultTest8 = {
-        { USA_DOLLAR_LEGDER, BANK_ACCOUNT, "03-06-2015", "100", "0.00", "100.00", "0.00", "100.00" },
+        { USA_DOLLAR_LEGDER, BANK_ACCOUNT, "03-06-2015", "100", "0.00", "100.00", "0.00",
+            "100.00" },
         { USA_DOLLAR_LEGDER, PRETTY_CASH, "03-06-2015", "100", "100.00", "0.00", "100.00", "0.00" },
         { MAIN_EURO_LEGDER, FONDO_SOCIAL, "03-06-2015", "100", "0.00", "100.00", "0.00", "200.00" },
-        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "200.00", "0.00" } };
+        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "200.00",
+            "0.00" } };
 
     return Arrays.asList(new Object[][] {
         { "1", "Sales invoice I/29", INVOICE_TEST1, TABLE_INVOICE, ORGANIZATION_SPAIN_ID,
@@ -196,10 +205,10 @@ public class PostDocumentTest extends OBBaseTest {
             ORGANIZATION_USA_ID, resultTest7 },
         { "8", "Simple GL Journal with the same exchange rate than test 5", GLJOURNAL_TEST8,
             TABLE_GLJOURNAL, ORGANIZATION_USA_ID, resultTest8 }
-    /*
-     * , { "9", "Simple GL Journal with a currency without global conversion" , GLJOURNAL_TEST9,
-     * TABLE_GLJOURNAL, ORGANIZATION_USA_ID, resultTest9 }
-     */
+        /*
+         * , { "9", "Simple GL Journal with a currency without global conversion" , GLJOURNAL_TEST9,
+         * TABLE_GLJOURNAL, ORGANIZATION_USA_ID, resultTest9 }
+         */
     });
   }
 

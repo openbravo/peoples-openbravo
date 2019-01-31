@@ -35,6 +35,7 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
 
   private static final long SEQUENCE = 100l;
 
+  @Override
   protected long getSeq() {
     return SEQUENCE;
   }
@@ -51,12 +52,14 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
   }
 
   @Override
-  public boolean getPaymentMethodReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getPaymentMethodReadOnlyLogic(Map<String, String> requestMap)
+      throws JSONException {
     return false;
   }
 
   @Override
-  public boolean getActualPaymentReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getActualPaymentReadOnlyLogic(Map<String, String> requestMap)
+      throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     String document = null;
     if (context.has("inptrxtype") && !context.isNull("inptrxtype")) {
@@ -71,8 +74,8 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
       } else {
         return true;
       }
-    } else if ((context.has("inpwindowId") && context.get("inpwindowId").equals(
-        APRMConstants.TRANSACTION_WINDOW_ID))) {
+    } else if ((context.has("inpwindowId")
+        && context.get("inpwindowId").equals(APRMConstants.TRANSACTION_WINDOW_ID))) {
       return false;
     } else {
       return true;
@@ -97,8 +100,8 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
     String trxtype = null;
     boolean readOnly = true;
     if (context.has("fin_paymentmethod_id") && !context.isNull("fin_paymentmethod_id")) {
-      paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-          context.getString("fin_paymentmethod_id"));
+      paymentMethod = OBDal.getInstance()
+          .get(FIN_PaymentMethod.class, context.getString("fin_paymentmethod_id"));
     } else {
       paymentMethod = OBDal.getInstance()
           .get(FIN_PaymentMethod.class, getPaymentMethod(requestMap));
@@ -153,18 +156,18 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
     JSONObject context = new JSONObject(requestMap.get("context"));
     if (context.has("inpfinFinancialAccountId") && !context.isNull("inpfinFinancialAccountId")
         && !"".equals(context.getString("inpfinFinancialAccountId"))) {
-      return OBDal.getInstance().get(FIN_FinancialAccount.class,
-          context.get("inpfinFinancialAccountId"));
+      return OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, context.get("inpfinFinancialAccountId"));
     }
     if (context.has("fin_financial_account_id") && !context.isNull("fin_financial_account_id")
         && !"".equals(context.getString("fin_financial_account_id"))) {
-      return OBDal.getInstance().get(FIN_FinancialAccount.class,
-          context.get("fin_financial_account_id"));
+      return OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, context.get("fin_financial_account_id"));
     }
     if (context.has("Fin_Financial_Account_ID") && !context.isNull("Fin_Financial_Account_ID")
         && !"".equals(context.getString("Fin_Financial_Account_ID"))) {
-      return OBDal.getInstance().get(FIN_FinancialAccount.class,
-          context.get("Fin_Financial_Account_ID"));
+      return OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, context.get("Fin_Financial_Account_ID"));
     }
     return null;
   }

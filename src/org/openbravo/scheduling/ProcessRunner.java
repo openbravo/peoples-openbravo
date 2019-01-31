@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,8 @@ import static org.openbravo.scheduling.Process.SUCCESS;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -37,7 +38,7 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
  */
 public class ProcessRunner {
 
-  static Logger log = Logger.getLogger(ProcessRunner.class);
+  static Logger log = LogManager.getLogger();
 
   private ProcessBundle bundle;
 
@@ -91,7 +92,7 @@ public class ProcessRunner {
       throw new ServletException(e);
     } finally {
       final String duration = ProcessMonitor.getDuration(endTime - startTime);
-      ProcessRequestData.update(conn, COMPLETE, requestId);
+      ProcessRequestData.update(conn, COMPLETE, ctx.getUser(), requestId);
       ProcessRunData.update(conn, ctx.getUser(), status, duration, bundle.getLog(), executionId);
     }
 

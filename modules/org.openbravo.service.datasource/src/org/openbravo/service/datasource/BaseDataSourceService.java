@@ -25,7 +25,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -48,7 +49,7 @@ import org.openbravo.userinterface.selector.SelectorConstants;
  * @author mtaal
  */
 public abstract class BaseDataSourceService implements DataSourceService {
-  private static final Logger log = Logger.getLogger(BaseDataSourceService.class);
+  private static final Logger log = LogManager.getLogger();
 
   private String name;
   private Template template;
@@ -72,6 +73,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
    * 
    * @see org.openbravo.service.datasource.DataSourceService#getTemplate()
    */
+  @Override
   public Template getTemplate() {
     if (template == null) {
       template = OBDal.getInstance().get(Template.class, DataSourceConstants.DS_TEMPLATE_ID);
@@ -83,34 +85,42 @@ public abstract class BaseDataSourceService implements DataSourceService {
     return template;
   }
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public String getDataUrl() {
     return dataUrl;
   }
 
+  @Override
   public void setDataUrl(String dataUrl) {
     this.dataUrl = dataUrl;
   }
 
+  @Override
   public String getWhereClause() {
     return whereClause;
   }
 
+  @Override
   public void setWhereClause(String whereClause) {
     this.whereClause = whereClause;
   }
 
+  @Override
   public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {
     return dataSourceProperties;
   }
 
+  @Override
   public DataSource getDataSource() {
     return dataSource;
   }
 
+  @Override
   public void setDataSource(DataSource dataSource) {
     this.dataSource = dataSource;
     setName(dataSource.getId());
@@ -205,22 +215,25 @@ public abstract class BaseDataSourceService implements DataSourceService {
   }
 
   protected void handleExceptionUnsecuredDSAccess(OBSecurityException securityException) {
-    if (!Preferences.YES.equals(cachedPreference
-        .getPreferenceValue(CachedPreference.ALLOW_UNSECURED_DS_REQUEST))) {
+    if (!Preferences.YES
+        .equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_UNSECURED_DS_REQUEST))) {
       throw new OBSecurityException(securityException);
     } else {
       log.warn(securityException.getMessage() + " but in fact it is being allowed access.");
     }
   }
 
+  @Override
   public Entity getEntity() {
     return entity;
   }
 
+  @Override
   public void setEntity(Entity entity) {
     this.entity = entity;
   }
 
+  @Override
   public void setName(String name) {
     this.name = name;
   }

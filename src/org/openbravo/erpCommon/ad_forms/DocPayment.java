@@ -24,7 +24,8 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -32,7 +33,7 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class DocPayment extends AcctServer {
   private static final long serialVersionUID = 1L;
-  private static Logger docPaymentLog4j = Logger.getLogger(DocPayment.class);
+  private static final Logger docPaymentLog4j = LogManager.getLogger();
 
   private String SeqNo = "0";
   private String SettlementType = "";
@@ -47,6 +48,7 @@ public class DocPayment extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID, String Id)
       throws ServletException {
     setObjectFieldProvider(DocPaymentData.selectRegistro(conn, aD_Client_ID, Id));
@@ -57,14 +59,16 @@ public class DocPayment extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DateDoc = data[0].getField("DateTrx");
     ChargeAmt = data[0].getField("ChargedAmt");
     SettlementType = data[0].getField("settlementtype");
     // Contained Objects
     p_lines = loadLines(conn);
-    if (docPaymentLog4j.isDebugEnabled())
+    if (docPaymentLog4j.isDebugEnabled()) {
       docPaymentLog4j.debug("DocPayment - loadDocumentDetails - Lines=" + p_lines.length);
+    }
     return false;
   } // loadDocumentDetails
 
@@ -107,9 +111,10 @@ public class DocPayment extends AcctServer {
           docPaymentLog4j.error(e);
           docLine.dpStatus = "";
         }
-        if (docPaymentLog4j.isDebugEnabled())
-          docPaymentLog4j.debug("DocPayment - loadLines - docLine.IsDirectPosting - "
-              + docLine.IsDirectPosting);
+        if (docPaymentLog4j.isDebugEnabled()) {
+          docPaymentLog4j.debug(
+              "DocPayment - loadLines - docLine.IsDirectPosting - " + docLine.IsDirectPosting);
+        }
         list.add(docLine);
       }
     } catch (ServletException e) {
@@ -126,6 +131,7 @@ public class DocPayment extends AcctServer {
    * 
    * @return Zero (always balanced)
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
     return retValue;
@@ -153,24 +159,28 @@ public class DocPayment extends AcctServer {
    *          accounting schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocPaymentTemplate newTemplate = (DocPaymentTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         docPaymentLog4j.error("Error while creating new instance for DocPaymentTemplate - " + e);
       }
     }
-    if (docPaymentLog4j.isDebugEnabled())
+    if (docPaymentLog4j.isDebugEnabled()) {
       docPaymentLog4j.debug("DocPayment - createFact - p_lines.length - " + p_lines.length);
+    }
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
 
@@ -179,23 +189,25 @@ public class DocPayment extends AcctServer {
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_Payment line = (DocLine_Payment) p_lines[i];
 
-      if (docPaymentLog4j.isDebugEnabled())
-        docPaymentLog4j.debug("DocPayment - createFact - line.conversionDate - "
-            + line.conversionDate);
+      if (docPaymentLog4j.isDebugEnabled()) {
+        docPaymentLog4j
+            .debug("DocPayment - createFact - line.conversionDate - " + line.conversionDate);
+      }
       // For manual payment with direct posting = 'N' (no posting occurred at payment creation so no
       // conversion, for currency gain-loss, is needed)
       String convertedAmt = "";
       if (line.isManual.equals("Y") && line.IsDirectPosting.equals("N")
-          && line.C_Settlement_Cancel_ID.equals(Record_ID))
+          && line.C_Settlement_Cancel_ID.equals(Record_ID)) {
         convertedAmt = line.Amount;
-      else
+      } else {
         // 1* Amount is calculated and if there is currency conversion
         // variations between dates this change is accounted
         convertedAmt = convertAmount(line.Amount, line.isReceipt.equals("Y"), DateAcct,
             line.conversionDate, line.C_Currency_ID_From, C_Currency_ID, line, as, fact,
             Fact_Acct_Group_ID, conn);
-      String convertWithHold = convertAmount(line.WithHoldAmt, line.isReceipt.equals("Y"),
-          DateAcct, line.conversionDate, line.C_Currency_ID_From, C_Currency_ID, line, as, fact,
+      }
+      String convertWithHold = convertAmount(line.WithHoldAmt, line.isReceipt.equals("Y"), DateAcct,
+          line.conversionDate, line.C_Currency_ID_From, C_Currency_ID, line, as, fact,
           Fact_Acct_Group_ID, conn);
       BigDecimal convertTotal = new BigDecimal(convertedAmt).add(new BigDecimal(convertWithHold));
 
@@ -208,61 +220,69 @@ public class DocPayment extends AcctServer {
           finalConvertedAmt = convertAmount(convertTotal.toString(), line.isReceipt.equals("Y"),
               DateAcct, line.conversionDate, C_Currency_ID, as.m_C_Currency_ID, null, as, fact,
               Fact_Acct_Group_ID, conn);
-        } else
+        } else {
           finalConvertedAmt = convertTotal.toString();
+        }
         if (!line.C_Settlement_Generate_ID.equals(Record_ID)) { // 2.1*
           // Cancelled
           // DP
           finalConvertedAmt = getConvertedAmt(finalConvertedAmt, as.m_C_Currency_ID, C_Currency_ID,
               DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
-          fact.createLine(
-              line,
+          fact.createLine(line,
               getAccountBPartner(line.m_C_BPartner_ID, as, line.isReceipt.equals("Y"),
-                  line.dpStatus, conn), C_Currency_ID, (line.isReceipt.equals("Y") ? ""
-                  : finalConvertedAmt), (line.isReceipt.equals("Y") ? finalConvertedAmt : ""),
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+                  line.dpStatus, conn),
+              C_Currency_ID, (line.isReceipt.equals("Y") ? "" : finalConvertedAmt),
+              (line.isReceipt.equals("Y") ? finalConvertedAmt : ""), Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
         } else { // 2.2* Generated DP
-          if (docPaymentLog4j.isDebugEnabled())
+          if (docPaymentLog4j.isDebugEnabled()) {
             docPaymentLog4j.debug("Genenarted DP");
+          }
           if (!line.isPaid.equals("Y")
               || !(line.C_Settlement_Cancel_ID == null || line.C_Settlement_Cancel_ID.equals(""))) {
-            if (docPaymentLog4j.isDebugEnabled())
+            if (docPaymentLog4j.isDebugEnabled()) {
               docPaymentLog4j.debug("Not paid");
-            fact.createLine(
-                line,
+            }
+            fact.createLine(line,
                 getAccountBPartner(line.m_C_BPartner_ID, as, line.isReceipt.equals("Y"),
-                    line.dpStatus, conn), C_Currency_ID,
-                (line.isReceipt.equals("Y") ? convertTotal.toString() : ""), (line.isReceipt
-                    .equals("Y") ? "" : convertTotal.toString()), Fact_Acct_Group_ID,
+                    line.dpStatus, conn),
+                C_Currency_ID, (line.isReceipt.equals("Y") ? convertTotal.toString() : ""),
+                (line.isReceipt.equals("Y") ? "" : convertTotal.toString()), Fact_Acct_Group_ID,
                 nextSeqNo(SeqNo), DocumentType, conn);
           }
         }
 
-        if (docPaymentLog4j.isDebugEnabled())
-          docPaymentLog4j.debug("DocPayment - createFact - No manual  - isReceipt: "
-              + line.isReceipt);
+        if (docPaymentLog4j.isDebugEnabled()) {
+          docPaymentLog4j
+              .debug("DocPayment - createFact - No manual  - isReceipt: " + line.isReceipt);
+        }
       } else {// 3* MANUAL debt-payments (generated in a Manual stt)
-        if (docPaymentLog4j.isDebugEnabled())
+        if (docPaymentLog4j.isDebugEnabled()) {
           docPaymentLog4j.debug("Manual DP - DirectPosting: " + line.IsDirectPosting
               + " - SettType:" + SettlementType);
+        }
         if (line.IsDirectPosting.equals("Y")) { // Direct posting:
           // transitory Account
           BigDecimal amount = ZERO;
           DocPaymentData[] data = DocPaymentData.selectDirectManual(conn, as.m_C_AcctSchema_ID,
               line.Line_ID);
-          if (docPaymentLog4j.isDebugEnabled())
-            docPaymentLog4j.debug("data[0].amount:" + data[0].amount + " - convertedAmt:"
-                + convertedAmt);
+          if (docPaymentLog4j.isDebugEnabled()) {
+            docPaymentLog4j
+                .debug("data[0].amount:" + data[0].amount + " - convertedAmt:" + convertedAmt);
+          }
 
-          if (convertedAmt != null && !convertedAmt.equals(""))
+          if (convertedAmt != null && !convertedAmt.equals("")) {
             amount = new BigDecimal(convertedAmt);
+          }
           boolean changeGenerate = (!SettlementType.equals("I"));
-          if (changeGenerate)
+          if (changeGenerate) {
             amount = amount.negate();
+          }
           BigDecimal transitoryAmount = new BigDecimal(convertedAmt);
-          if (docPaymentLog4j.isDebugEnabled())
+          if (docPaymentLog4j.isDebugEnabled()) {
             docPaymentLog4j.debug("Manual DP - amount:" + amount + " - transitoryAmount:"
                 + transitoryAmount + " - Receipt:" + line.isReceipt);
+          }
           // Line is cloned to add withholding and/or tax info
           DocLine_Payment lineAux = DocLine_Payment.clone(line);
           lineAux.setM_C_WithHolding_ID(data[0].cWithholdingId);
@@ -270,23 +290,29 @@ public class DocPayment extends AcctServer {
           // Depending on the stt type and the signum of DP it will be
           // posted on credit or debit
           if (amount.signum() == 1) {
-            fact.createLine(lineAux, new Account(conn,
-                (lineAux.isReceipt.equals("Y") ? data[0].creditAcct : data[0].debitAcct)),
-                C_Currency_ID, (lineAux.isReceipt.equals("Y") ? transitoryAmount.abs().toString()
-                    : "0"), (lineAux.isReceipt.equals("Y") ? "0" : transitoryAmount.abs()
-                    .toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            fact.createLine(lineAux,
+                new Account(conn,
+                    (lineAux.isReceipt.equals("Y") ? data[0].creditAcct : data[0].debitAcct)),
+                C_Currency_ID,
+                (lineAux.isReceipt.equals("Y") ? transitoryAmount.abs().toString() : "0"),
+                (lineAux.isReceipt.equals("Y") ? "0" : transitoryAmount.abs().toString()),
+                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
             if ((!changeGenerate && line.isReceipt.equals("N"))
-                || (changeGenerate && line.isReceipt.equals("Y")))
+                || (changeGenerate && line.isReceipt.equals("Y"))) {
               amount = amount.negate();
+            }
           } else {
-            fact.createLine(lineAux, new Account(conn,
-                (lineAux.isReceipt.equals("Y") ? data[0].creditAcct : data[0].debitAcct)),
-                C_Currency_ID, (lineAux.isReceipt.equals("Y") ? "0" : transitoryAmount.abs()
-                    .toString()), (lineAux.isReceipt.equals("Y") ? transitoryAmount.abs()
-                    .toString() : "0"), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            fact.createLine(lineAux,
+                new Account(conn,
+                    (lineAux.isReceipt.equals("Y") ? data[0].creditAcct : data[0].debitAcct)),
+                C_Currency_ID,
+                (lineAux.isReceipt.equals("Y") ? "0" : transitoryAmount.abs().toString()),
+                (lineAux.isReceipt.equals("Y") ? transitoryAmount.abs().toString() : "0"),
+                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
             if ((!changeGenerate && line.isReceipt.equals("Y"))
-                || (changeGenerate && line.isReceipt.equals("N")))
+                || (changeGenerate && line.isReceipt.equals("N"))) {
               amount = amount.negate();
+            }
           }
         }
         // 4 Manual Sett + Cancelation Sett (no direct posting)
@@ -305,18 +331,20 @@ public class DocPayment extends AcctServer {
                 "", AD_Client_ID, AD_Org_ID, conn);
             amountcredit = getConvertedAmt(amountcredit, as.m_C_Currency_ID, C_Currency_ID,
                 DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
-            if (docPaymentLog4j.isDebugEnabled())
+            if (docPaymentLog4j.isDebugEnabled()) {
               docPaymentLog4j.debug("DocPayment - createFact - Conceptos - AmountDebit: "
                   + amountdebit + " - AmountCredit: " + amountcredit);
+            }
             // Line is cloned to add withholding and/or tax info
             DocLine_Payment lineAux = DocLine_Payment.clone(line);
             lineAux.setM_C_WithHolding_ID(data[j].cWithholdingId);
             lineAux.setM_C_Tax_ID(data[j].cTaxId);
-            fact.createLine(lineAux, new Account(conn,
-                (lineAux.isReceipt.equals("Y") ? data[j].creditAcct : data[j].debitAcct)),
-                C_Currency_ID, (amountdebit.equals("0") ? "" : amountdebit), (amountcredit
-                    .equals("0") ? "" : amountcredit), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
+            fact.createLine(lineAux,
+                new Account(conn,
+                    (lineAux.isReceipt.equals("Y") ? data[j].creditAcct : data[j].debitAcct)),
+                C_Currency_ID, (amountdebit.equals("0") ? "" : amountdebit),
+                (amountcredit.equals("0") ? "" : amountcredit), Fact_Acct_Group_ID,
+                nextSeqNo(SeqNo), DocumentType, conn);
           }
         }
       } // END debt-payment conditions
@@ -362,18 +390,19 @@ public class DocPayment extends AcctServer {
             docPaymentLog4j.warn("AcctServer - getAccount - NO account Type="
                 + AcctServer.ACCTTYPE_WriteOff + ", Record=" + Record_ID);
           }
-          fact.createLine(line, acct, C_Currency_ID, (line.isReceipt.equals("Y") ? line.WriteOffAmt
-              : ""), (line.isReceipt.equals("Y") ? "" : line.WriteOffAmt), Fact_Acct_Group_ID,
+          fact.createLine(line, acct, C_Currency_ID,
+              (line.isReceipt.equals("Y") ? line.WriteOffAmt : ""),
+              (line.isReceipt.equals("Y") ? "" : line.WriteOffAmt), Fact_Acct_Group_ID,
               nextSeqNo(SeqNo), DocumentType, conn);
         }
       }
 
       // 6* PPA - Bank in transit default, paid DPs, (non manual and
       // manual non direct posting)
-      if ((line.isPaid.equals("Y") || new BigDecimal(line.Amount).compareTo(new BigDecimal(
-          line.WriteOffAmt)) == 0)
-          && ((line.C_Settlement_Cancel_ID == null || line.C_Settlement_Cancel_ID.equals("")) || (line.C_Settlement_Cancel_ID
-              .equals(Record_ID)))) {
+      if ((line.isPaid.equals("Y")
+          || new BigDecimal(line.Amount).compareTo(new BigDecimal(line.WriteOffAmt)) == 0)
+          && ((line.C_Settlement_Cancel_ID == null || line.C_Settlement_Cancel_ID.equals(""))
+              || (line.C_Settlement_Cancel_ID.equals(Record_ID)))) {
         BigDecimal finalLineAmt = new BigDecimal(line.Amount);
         String idSchema = as.getC_AcctSchema_ID();
         if (line.C_WITHHOLDING_ID != null && !line.C_WITHHOLDING_ID.equals("")) {
@@ -383,16 +412,18 @@ public class DocPayment extends AcctServer {
           String sWithHoldAmt = getConvertedAmt(line.WithHoldAmt, line.C_Currency_ID_From,
               C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
 
-          fact.createLine(line, Account.getAccount(conn, IdAccount), C_Currency_ID, (line.isReceipt
-              .equals("Y") ? sWithHoldAmt : ""), (line.isReceipt.equals("Y") ? "" : sWithHoldAmt),
-              Fact_Acct_Group_ID, "999999", DocumentType, conn);
+          fact.createLine(line, Account.getAccount(conn, IdAccount), C_Currency_ID,
+              (line.isReceipt.equals("Y") ? sWithHoldAmt : ""),
+              (line.isReceipt.equals("Y") ? "" : sWithHoldAmt), Fact_Acct_Group_ID, "999999",
+              DocumentType, conn);
         }
         if (line.isPaid.equals("Y")
-            && ((line.C_Settlement_Cancel_ID == null || line.C_Settlement_Cancel_ID.equals("")) || (line.C_Settlement_Cancel_ID
-                .equals(Record_ID)))) {
+            && ((line.C_Settlement_Cancel_ID == null || line.C_Settlement_Cancel_ID.equals(""))
+                || (line.C_Settlement_Cancel_ID.equals(Record_ID)))) {
           if (line.WriteOffAmt != null && !line.WriteOffAmt.equals("")
-              && !line.WriteOffAmt.equals("0"))
+              && !line.WriteOffAmt.equals("0")) {
             finalLineAmt = finalLineAmt.subtract(new BigDecimal(line.WriteOffAmt));
+          }
           String finalAmtTo = "";
           String strcCurrencyId = "";
           if (line.isManual.equals("N")) {
@@ -412,40 +443,27 @@ public class DocPayment extends AcctServer {
                   strcCurrencyId, (line.isReceipt.equals("Y") ? finalAmtTo : ""),
                   (line.isReceipt.equals("Y") ? "" : finalAmtTo), Fact_Acct_Group_ID, "999999",
                   DocumentType, conn);
-            }// else if(line.C_CASHLINE_ID!=null &&
-             // !line.C_CASHLINE_ID.equals("")) fact.createLine(line,
-             // getAccountCashLine(line.C_CASHLINE_ID,
-             // as,conn),strcCurrencyId,
-             // (line.isReceipt.equals("Y")?finalAmtTo:""),(line.isReceipt.equals("Y")?"":finalAmtTo),
-             // Fact_Acct_Group_ID, "999999", DocumentType,conn);
-            else
+            } // else if(line.C_CASHLINE_ID!=null &&
+              // !line.C_CASHLINE_ID.equals("")) fact.createLine(line,
+              // getAccountCashLine(line.C_CASHLINE_ID,
+              // as,conn),strcCurrencyId,
+              // (line.isReceipt.equals("Y")?finalAmtTo:""),(line.isReceipt.equals("Y")?"":finalAmtTo),
+              // Fact_Acct_Group_ID, "999999", DocumentType,conn);
+            else {
               fact.createLine(line, getAccount(AcctServer.ACCTTYPE_BankInTransitDefault, as, conn),
                   strcCurrencyId, (line.isReceipt.equals("Y") ? finalAmtTo : ""),
                   (line.isReceipt.equals("Y") ? "" : finalAmtTo), Fact_Acct_Group_ID, "999999",
                   DocumentType, conn);
+            }
           }
         }
       }
     } // END of the C_Debt_Payment loop
     SeqNo = "0";
-    if (docPaymentLog4j.isDebugEnabled())
+    if (docPaymentLog4j.isDebugEnabled()) {
       docPaymentLog4j.debug("DocPayment - createFact - finish");
+    }
     return fact;
-  }
-
-  /**
-   * @return the docPaymentLog4j
-   */
-  public static Logger getLog4j() {
-    return docPaymentLog4j;
-  }
-
-  /**
-   * @param docPaymentLog4j
-   *          the docPaymentLog4j to set
-   */
-  public static void setLog4j(Logger docPaymentLog4j) {
-    DocPayment.docPaymentLog4j = docPaymentLog4j;
   }
 
   /**
@@ -497,28 +515,34 @@ public class DocPayment extends AcctServer {
       AcctSchema as, Fact fact, String Fact_Acct_Group_ID, ConnectionProvider conn)
       throws ServletException {
     String amount = Amount;
-    if (docPaymentLog4j.isDebugEnabled())
+    if (docPaymentLog4j.isDebugEnabled()) {
       docPaymentLog4j.debug("Amount:" + amount + " curr from:" + C_Currency_ID_From + " Curr to:"
           + c_Currency_ID + " convDate:" + conversionDate + " DateAcct:" + acctDate);
-    if (amount == null || amount.equals(""))
+    }
+    if (amount == null || amount.equals("")) {
       amount = "0";
-    if (C_Currency_ID_From.equals(c_Currency_ID))
+    }
+    if (C_Currency_ID_From.equals(c_Currency_ID)) {
       return amount;
-    else
+    } else {
       MultiCurrency = true;
+    }
     String Amt = getConvertedAmt(amount, C_Currency_ID_From, c_Currency_ID, conversionDate, "",
         AD_Client_ID, AD_Org_ID, conn);
-    if (docPaymentLog4j.isDebugEnabled())
+    if (docPaymentLog4j.isDebugEnabled()) {
       docPaymentLog4j.debug("Amt:" + Amt);
+    }
 
     String AmtTo = getConvertedAmt(amount, C_Currency_ID_From, c_Currency_ID, acctDate, "",
         AD_Client_ID, AD_Org_ID, conn);
-    if (docPaymentLog4j.isDebugEnabled())
+    if (docPaymentLog4j.isDebugEnabled()) {
       docPaymentLog4j.debug("AmtTo:" + AmtTo);
+    }
 
     BigDecimal AmtDiff = (new BigDecimal(AmtTo)).subtract(new BigDecimal(Amt));
-    if (docPaymentLog4j.isDebugEnabled())
+    if (docPaymentLog4j.isDebugEnabled()) {
       docPaymentLog4j.debug("AmtDiff:" + AmtDiff);
+    }
 
     if (docPaymentLog4j.isDebugEnabled()) {
       docPaymentLog4j.debug("curr from:" + C_Currency_ID_From + " Curr to:" + c_Currency_ID
@@ -553,11 +577,12 @@ public class DocPayment extends AcctServer {
       String dpStatus, ConnectionProvider conn) {
     DocPaymentData[] data = null;
     try {
-      if (docPaymentLog4j.isDebugEnabled())
+      if (docPaymentLog4j.isDebugEnabled()) {
         docPaymentLog4j.debug("DocPayment - getAccountBPartner - DocumentType = " + DocumentType);
+      }
       if (isReceipt) {
-        data = DocPaymentData.selectBPartnerCustomerAcct(conn, cBPartnerId,
-            as.getC_AcctSchema_ID(), dpStatus);
+        data = DocPaymentData.selectBPartnerCustomerAcct(conn, cBPartnerId, as.getC_AcctSchema_ID(),
+            dpStatus);
       } else {
         data = DocPaymentData.selectBPartnerVendorAcct(conn, cBPartnerId, as.getC_AcctSchema_ID(),
             dpStatus);
@@ -569,8 +594,9 @@ public class DocPayment extends AcctServer {
     String Account_ID = "";
     if (data != null && data.length != 0) {
       Account_ID = data[0].accountId;
-    } else
+    } else {
       return null;
+    }
     // No account
     if (Account_ID.equals("")) {
       docPaymentLog4j.warn("DocPayment - getAccountBPartner - NO account BPartner=" + cBPartnerId
@@ -609,8 +635,9 @@ public class DocPayment extends AcctServer {
     String Account_ID = "";
     if (data != null && data.length != 0) {
       Account_ID = data[0].accountId;
-    } else
+    } else {
       return null;
+    }
     // No account
     if (Account_ID.equals("")) {
       docPaymentLog4j
@@ -649,12 +676,13 @@ public class DocPayment extends AcctServer {
     String Account_ID = "";
     if (data != null && data.length != 0) {
       Account_ID = data[0].accountId;
-    } else
+    } else {
       return null;
+    }
     // No account
     if (Account_ID.equals("")) {
-      docPaymentLog4j.warn("DocPayment - getAccountCashLine - NO account CashLine="
-          + strcCashlineId + ", Record=" + Record_ID);
+      docPaymentLog4j.warn("DocPayment - getAccountCashLine - NO account CashLine=" + strcCashlineId
+          + ", Record=" + Record_ID);
       return null;
     }
     // Return Account
@@ -668,12 +696,14 @@ public class DocPayment extends AcctServer {
   } // getAccount
 
   public String nextSeqNo(String oldSeqNo) {
-    if (docPaymentLog4j.isDebugEnabled())
+    if (docPaymentLog4j.isDebugEnabled()) {
       docPaymentLog4j.debug("DocPayment - oldSeqNo = " + oldSeqNo);
+    }
     BigDecimal seqNo = new BigDecimal(oldSeqNo);
     SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
-    if (docPaymentLog4j.isDebugEnabled())
+    if (docPaymentLog4j.isDebugEnabled()) {
       docPaymentLog4j.debug("DocPayment - nextSeqNo = " + SeqNo);
+    }
     return SeqNo;
   }
 
@@ -682,6 +712,7 @@ public class DocPayment extends AcctServer {
    * 
    * not used
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     DocPaymentData[] data;
     try {
@@ -693,8 +724,9 @@ public class DocPayment extends AcctServer {
     }
     if (data.length > 0) {
       for (DocPaymentData row : data) {
-        if (row.ismanual.equals("N") || row.isdirectposting.equals("Y"))
+        if (row.ismanual.equals("N") || row.isdirectposting.equals("Y")) {
           return true;
+        }
       }
       setStatus(STATUS_DocumentDisabled);
       return false;
@@ -702,6 +734,7 @@ public class DocPayment extends AcctServer {
     return true;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

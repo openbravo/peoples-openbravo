@@ -37,7 +37,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.betwixt.io.BeanReader;
 import org.apache.commons.betwixt.io.BeanWriter;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -56,7 +57,8 @@ import org.xml.sax.InputSource;
  * 
  * {attachmentsDir} {laguageFolder} {moduleFolder}
  * 
- * Example: /opt/attachments/ en_US/ &lt;trl tables from core&gt; module1/ &lt;trl tables from module1&gt;
+ * Example: /opt/attachments/ en_US/ &lt;trl tables from core&gt; module1/ &lt;trl tables from
+ * module1&gt;
  * 
  */
 public class TranslationManager {
@@ -91,7 +93,7 @@ public class TranslationManager {
   static final String CONTRIBUTORS_FILENAME = "CONTRIBUTORS";
   static final String XML_CONTRIB = "Contributors";
 
-  private static final Logger log4j = Logger.getLogger(TranslationManager.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /**
    * Export all the trl tables that refers to tables with ad_module_id column or trl tables that
@@ -122,13 +124,14 @@ public class TranslationManager {
     final String strFTPDirectory = exportDirectory;
 
     if (new File(strFTPDirectory).canWrite()) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("can write...");
+      }
     } else {
       log4j.error("Can't write on directory: " + strFTPDirectory);
       myMessage.setType("Error");
-      myMessage.setMessage(BasicUtility.messageBD(conn, "CannotWriteDirectory", uiLanguage) + " "
-          + strFTPDirectory);
+      myMessage.setMessage(
+          BasicUtility.messageBD(conn, "CannotWriteDirectory", uiLanguage) + " " + strFTPDirectory);
       return myMessage;
     }
 
@@ -137,8 +140,9 @@ public class TranslationManager {
     final String directory = strFTPDirectory + "/lang/" + AD_Language + "/";
     (new File(directory)).mkdir();
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("directory " + directory);
+    }
 
     try {
       final TranslationData[] modulesTables = TranslationData.trlModulesTables(conn);
@@ -166,19 +170,21 @@ public class TranslationManager {
 
   private static void exportBuildFile(String directory, String language) {
 
-    String source = OBPropertiesProvider.getInstance().getOpenbravoProperties().get("source.path")
+    String source = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .get("source.path")
         .toString();
 
     try {
-      FileReader xmlReader = new FileReader(source
-          + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml");
+      FileReader xmlReader = new FileReader(
+          source + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml");
 
       BeanReader beanReader = new BeanReader();
 
       beanReader.getBindingConfiguration().setMapIDs(false);
 
-      beanReader.getXMLIntrospector().register(
-          new InputSource(new FileReader(new File(source,
+      beanReader.getXMLIntrospector()
+          .register(new InputSource(new FileReader(new File(source,
               "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
 
       beanReader.registerBeanClass("Build", Build.class);
@@ -190,8 +196,8 @@ public class TranslationManager {
 
       BeanWriter beanWriterT = new BeanWriter(outputWriterT);
       beanWriterT.getXMLIntrospector().getConfiguration().setAttributesForPrimitives(false);
-      beanWriterT.getXMLIntrospector().register(
-          new InputSource(new FileReader(new File(source,
+      beanWriterT.getXMLIntrospector()
+          .register(new InputSource(new FileReader(new File(source,
               "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
       beanWriterT.getBindingConfiguration().setMapIDs(false);
       beanWriterT.enablePrettyPrint();
@@ -237,16 +243,17 @@ public class TranslationManager {
     } else {
       log4j.error("Can't read on directory: " + directory);
       myMessage.setType("Error");
-      myMessage.setMessage(BasicUtility.messageBD(cp, "CannotReadDirectory", UILanguage) + " "
-          + directory);
+      myMessage.setMessage(
+          BasicUtility.messageBD(cp, "CannotReadDirectory", UILanguage) + " " + directory);
       return myMessage;
     }
 
     final int AD_Client_ID = Integer.valueOf(strClient);
     try {
       final TranslationData[] tables = TranslationData.trlTables(cp);
-      for (int i = 0; i < tables.length; i++)
+      for (int i = 0; i < tables.length; i++) {
         importTrlFile(cp, directory, AD_Client_ID, AD_Language, tables[i].c);
+      }
       importContributors(cp, directory, AD_Language);
     } catch (OBException e) {
       myMessage.setType("Error");
@@ -267,8 +274,9 @@ public class TranslationManager {
       if (list[f].isDirectory()) {
         final OBError subDirError = importTrlDirectory(cp, list[f].toString() + "/", strLang,
             strClient, UILanguage);
-        if (!"Success".equals(subDirError.getType()))
+        if (!"Success".equals(subDirError.getType())) {
           return subDirError;
+        }
       }
     }
 
@@ -287,8 +295,8 @@ public class TranslationManager {
       final Element root = document.createElement(XML_CONTRIB);
       root.setAttribute(XML_ATTRIBUTE_LANGUAGE, AD_Language);
       document.appendChild(root);
-      root.appendChild(document.createTextNode(TranslationData
-          .selectContributors(conn, AD_Language)));
+      root.appendChild(
+          document.createTextNode(TranslationData.selectContributors(conn, AD_Language)));
       final DOMSource source = new DOMSource(document);
       final TransformerFactory tFactory = TransformerFactory.newInstance();
       final Transformer transformer = tFactory.newTransformer();
@@ -338,8 +346,9 @@ public class TranslationManager {
           final String Base_Table = Trl_Table.substring(0, pos);
           boolean trl = true;
 
-          if (moduleLanguage.equals(AD_Language))
+          if (moduleLanguage.equals(AD_Language)) {
             trl = false;
+          }
           exportTable(conn, AD_Language, false, false, Base_Table, "0", rootDirectory,
               modules[mod].adModuleId, moduleLanguage, modules[mod].value, trl);
 
@@ -375,39 +384,48 @@ public class TranslationManager {
    */
   private static void exportTable(ConnectionProvider cp, String AD_Language,
       boolean exportReferenceData, boolean exportAll, String table, String tableID,
-      String rootDirectory, String moduleId, String moduleLanguage, String javaPackage, boolean trl) {
+      String rootDirectory, String moduleId, String moduleLanguage, String javaPackage,
+      boolean trl) {
 
     Statement st = null;
     StringBuffer sql = null;
     try {
       String trlTable = table;
-      if (trl && !table.endsWith("_TRL"))
+      if (trl && !table.endsWith("_TRL")) {
         trlTable = table + "_TRL";
+      }
       final TranslationData[] trlColumns = getTrlColumns(cp, table);
       final String keyColumn = table + "_ID";
 
       boolean m_IsCentrallyMaintained = false;
       try {
         m_IsCentrallyMaintained = !(TranslationData.centrallyMaintained(cp, table).equals("0"));
-        if (m_IsCentrallyMaintained)
+        if (m_IsCentrallyMaintained) {
           log4j.debug("table:" + table + " IS centrally maintained");
-        else
+        } else {
           log4j.debug("table:" + table + " is NOT centrally maintained");
+        }
       } catch (final Exception e) {
         log4j.error("getTrlColumns (IsCentrallyMaintained)", e);
       }
 
       // Prepare query to retrieve translated rows
       sql = new StringBuffer("SELECT ");
-      if (trl)
+      if (trl) {
         sql.append("t.IsTranslated,");
-      else
+      } else {
         sql.append("'N', ");
+      }
       sql.append("t.").append(keyColumn);
 
       for (int i = 0; i < trlColumns.length; i++) {
-        sql.append(", t.").append(trlColumns[i].c).append(",o.").append(trlColumns[i].c)
-            .append(" AS ").append(trlColumns[i].c).append("O");
+        sql.append(", t.")
+            .append(trlColumns[i].c)
+            .append(",o.")
+            .append(trlColumns[i].c)
+            .append(" AS ")
+            .append(trlColumns[i].c)
+            .append("O");
       }
 
       sql.append(" FROM ").append(trlTable).append(" t").append(", ").append(table).append(" o");
@@ -417,8 +435,9 @@ public class TranslationManager {
       }
 
       sql.append(" WHERE ");
-      if (trl)
+      if (trl) {
         sql.append("t.AD_Language='" + AD_Language + "'").append(" AND ");
+      }
       sql.append("o.").append(keyColumn).append("= t.").append(keyColumn);
 
       if (m_IsCentrallyMaintained) {
@@ -442,7 +461,9 @@ public class TranslationManager {
             String strParentTable = parentTable[0].tablename;
             sql.append(" AND ");
             sql.append(" exists ( select 1 from ").append(strParentTable).append(" p ");
-            sql.append("   where p.").append(strParentTable + "_ID").append("=")
+            sql.append("   where p.")
+                .append(strParentTable + "_ID")
+                .append("=")
                 .append("o." + strParentTable + "_ID");
             sql.append("   and p.ad_module_id='").append(moduleId).append("')");
           } else {
@@ -450,9 +471,14 @@ public class TranslationManager {
             String strGandParentTable = parentTable[0].grandparent;
 
             sql.append(" AND ");
-            sql.append(" exists ( select 1 from ").append(strGandParentTable).append(" gp, ")
-                .append(strParentTable).append(" p");
-            sql.append("   where p.").append(strParentTable + "_ID").append("=")
+            sql.append(" exists ( select 1 from ")
+                .append(strGandParentTable)
+                .append(" gp, ")
+                .append(strParentTable)
+                .append(" p");
+            sql.append("   where p.")
+                .append(strParentTable + "_ID")
+                .append("=")
                 .append("o." + strParentTable + "_ID");
             sql.append("   and p." + strGandParentTable + "_ID = gp." + strGandParentTable + "_ID");
             sql.append("   and gp.ad_module_id='").append(moduleId).append("')");
@@ -460,23 +486,31 @@ public class TranslationManager {
         }
       }
       if (exportReferenceData && !exportAll) {
-        sql.append(" AND DL.GENERIC_ID = o.").append(keyColumn).append(" AND DL.AD_TABLE_ID = '")
-            .append(tableID).append("'").append(" AND DL.AD_MODULE_ID = '").append(moduleId)
+        sql.append(" AND DL.GENERIC_ID = o.")
+            .append(keyColumn)
+            .append(" AND DL.AD_TABLE_ID = '")
+            .append(tableID)
+            .append("'")
+            .append(" AND DL.AD_MODULE_ID = '")
+            .append(moduleId)
             .append("'");
       }
 
       sql.append(" ORDER BY t.").append(keyColumn);
       //
 
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("SQL:" + sql.toString());
+      }
       st = cp.getStatement();
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("st");
+      }
 
       final ResultSet rs = st.executeQuery(sql.toString());
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("rs");
+      }
       int rows = 0;
       boolean hasRows = false;
 
@@ -500,12 +534,14 @@ public class TranslationManager {
       root.setAttribute(XML_ATTRIBUTE_VERSION, TranslationData.version(cp));
       document.appendChild(root);
 
-      if (moduleId.equals("0"))
+      if (moduleId.equals("0")) {
         directory = rootDirectory + AD_Language + "/";
-      else
+      } else {
         directory = rootDirectory + AD_Language + "/" + javaPackage + "/";
-      if (!new File(directory).exists())
+      }
+      if (!new File(directory).exists()) {
         (new File(directory)).mkdir();
+      }
 
       String fileName = directory + trlTable + "_" + AD_Language + ".xml";
       log4j.info("exportTrl - " + fileName);
@@ -528,12 +564,14 @@ public class TranslationManager {
           root.setAttribute(XML_ATTRIBUTE_VERSION, TranslationData.version(cp));
           document.appendChild(root);
 
-          if (moduleId.equals("0"))
+          if (moduleId.equals("0")) {
             directory = rootDirectory + AD_Language + "/";
-          else
+          } else {
             directory = rootDirectory + AD_Language + "/" + javaPackage + "/";
-          if (!new File(directory).exists())
+          }
+          if (!new File(directory).exists()) {
             (new File(directory)).mkdir();
+          }
 
           fileName = directory + trlTable + "_" + AD_Language + ".xml";
           log4j.info("exportTrl - " + fileName);
@@ -558,8 +596,9 @@ public class TranslationManager {
             valueString = "";
             isTrlString = "N";
           }
-          if (origString.equals(valueString))
+          if (origString.equals(valueString)) {
             isTrlString = "N";
+          }
           value.setAttribute(XML_VALUE_ATTRIBUTE_ISTRL, isTrlString);
           value.setAttribute(XML_VALUE_ATTRIBUTE_ORIGINAL, origString);
           value.appendChild(document.createTextNode(valueString));
@@ -588,8 +627,9 @@ public class TranslationManager {
       log4j.error("Error exporting translation for table " + table + "\n" + sql, e);
     } finally {
       try {
-        if (st != null)
+        if (st != null) {
           cp.releaseStatement(st);
+        }
       } catch (final Exception ignored) {
       }
     }

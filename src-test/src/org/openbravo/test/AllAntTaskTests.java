@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,11 +44,13 @@ import org.openbravo.test.cancelandreplace.CancelAndReplaceTest;
 import org.openbravo.test.centralbroker.CentralBrokerTest;
 import org.openbravo.test.copyLinesFromOrders.CopyLinesFromOrdersTest;
 import org.openbravo.test.costing.TestCosting;
+import org.openbravo.test.createlinesfrom.CreateLinesFromTest;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
 import org.openbravo.test.dal.DalComplexQueryTestOrderLine;
 import org.openbravo.test.dal.DalConnectionProviderTest;
+import org.openbravo.test.dal.DalLockingTest;
 import org.openbravo.test.dal.DalPerformanceInventoryLineTest;
 import org.openbravo.test.dal.DalPerformanceProductTest;
 import org.openbravo.test.dal.DalPerformanceProxyTest;
@@ -67,11 +69,15 @@ import org.openbravo.test.dal.ViewTest;
 import org.openbravo.test.db.model.functions.ADOrgTreeTest;
 import org.openbravo.test.db.model.functions.Ad_isorgincludedTest;
 import org.openbravo.test.db.model.functions.SqlCallableStatement;
+import org.openbravo.test.db.pool.PoolHasNoConnectionsDetection;
 import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.expression.OBBindingsTest;
+import org.openbravo.test.generalsetup.enterprise.organization.ADOrgPersistInfoTestSuite;
 import org.openbravo.test.inventoryStatus.InventoryStatusTest;
+import org.openbravo.test.materialMgmt.invoiceFromShipment.InvoiceFromShipmentTest;
 import org.openbravo.test.materialMgmt.iscompletelyinvoicedshipment.IsCompletelyInvoicedShipment;
 import org.openbravo.test.model.ClassLoaderTest;
+import org.openbravo.test.model.DBModifiedTest;
 import org.openbravo.test.model.IndexesTest;
 import org.openbravo.test.model.OneToManyTest;
 import org.openbravo.test.model.RuntimeModelTest;
@@ -84,6 +90,7 @@ import org.openbravo.test.modularity.MergePropertiesTest;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.pricelist.PriceListTest;
+import org.openbravo.test.productStatus.ProductStatusTest;
 import org.openbravo.test.referencedinventory.ReferencedInventoryTestSuite;
 import org.openbravo.test.reporting.AllJrxmlCompilation;
 import org.openbravo.test.reporting.CompiledReportsCacheTest;
@@ -97,22 +104,28 @@ import org.openbravo.test.security.CrossOrganizationUI;
 import org.openbravo.test.security.CrossOrganizationUICDI;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.OBContextCollectionsTest;
+import org.openbravo.test.security.PasswordStrengthCheckerTest;
 import org.openbravo.test.security.StandardCrossOrganizationReference;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.services.ServicesTest;
 import org.openbravo.test.services.ServicesTest2;
 import org.openbravo.test.services.ServicesTest3;
 import org.openbravo.test.system.CryptoUtilities;
+import org.openbravo.test.system.ErrorTextParserIntegrationTest;
 import org.openbravo.test.system.ErrorTextParserTest;
+import org.openbravo.test.system.ImportEntryBuilderTest;
 import org.openbravo.test.system.ImportEntrySizeTest;
 import org.openbravo.test.system.Issue29934Test;
 import org.openbravo.test.system.Sessions;
 import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.system.TestInfrastructure;
+import org.openbravo.test.taxes.ModifyTaxesTest;
 import org.openbravo.test.taxes.TaxesTest;
+import org.openbravo.test.views.ConfigurableTransactionalFilters;
 import org.openbravo.test.views.GCSequenceNumberTests;
 import org.openbravo.test.views.SortingFilteringGridConfiguration;
+import org.openbravo.test.views.ViewGeneration;
 import org.openbravo.test.views.ViewGenerationWithDifferentConfigLevelTest;
 import org.openbravo.test.xml.ClientExportImportTest;
 import org.openbravo.test.xml.DatasetExportTest;
@@ -134,7 +147,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-// dal
+    // dal
     DalComplexQueryRequisitionTest.class, //
     DalComplexQueryTestOrderLine.class, //
     DalPerformanceInventoryLineTest.class, //
@@ -142,6 +155,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     DalPerformanceProxyTest.class, //
     DalQueryTest.class, //
     DalTest.class, //
+    DalLockingTest.class, //
     CentralBrokerTest.class, //
     DalUtilTest.class, //
     IssuesTest.class, //
@@ -170,7 +184,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ClassLoaderTest.class, //
     IndexesTest.class, //
     TrlColumnsOraTypeTest.class, //
-    ADCSInitialization.class,
+    ADCSInitialization.class, //
+    DBModifiedTest.class,
 
     // modularity
     DatasetServiceTest.class, //
@@ -187,17 +202,21 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     BypassAccessLevelCheck.class, //
     CrossOrganizationUI.class, //
     CrossOrganizationUICDI.class, //
-    OBContextCollectionsTest.class,
+    OBContextCollectionsTest.class, //
+    PasswordStrengthCheckerTest.class, //
 
     // system
     SystemServiceTest.class, //
     SystemValidatorTest.class, //
     ErrorTextParserTest.class, //
+    ErrorTextParserIntegrationTest.class, //
     TestInfrastructure.class, //
     Issue29934Test.class, //
     ImportEntrySizeTest.class, //
+    ImportEntryBuilderTest.class, //
     CryptoUtilities.class, //
     Sessions.class, //
+    OBContextTest.class, //
 
     // xml
     ClientExportImportTest.class, //
@@ -220,6 +239,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // Taxes
     TaxesTest.class, //
+    ModifyTaxesTest.class, //
 
     // Price List
     PriceListTest.class, //
@@ -229,6 +249,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // Inventory Status
     InventoryStatusTest.class, //
+
+    // PLM Status
+    ProductStatusTest.class, //
 
     // Material Management
     IsCompletelyInvoicedShipment.class, //
@@ -262,11 +285,13 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // db
     SqlCallableStatement.class, //
+    PoolHasNoConnectionsDetection.class, //
 
     // grid configuration
     ViewGenerationWithDifferentConfigLevelTest.class, //
     GCSequenceNumberTests.class, //
-    SortingFilteringGridConfiguration.class,
+    SortingFilteringGridConfiguration.class, //
+    ConfigurableTransactionalFilters.class,
 
     // jasper
     JasperReportsCompilation.class, //
@@ -279,7 +304,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ServicesTest3.class,
 
     // others
-    DocumentNumberGeneration.class,
+    DocumentNumberGeneration.class, //
+    ViewGeneration.class,
 
     // Cancel and Replace Tests
     CancelAndReplaceTest.class,
@@ -291,8 +317,17 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     // CopyFromOrders refactor
     CopyLinesFromOrdersTest.class,
 
+    // Create Lines From refactor
+    CreateLinesFromTest.class,
+
     // Referenced Inventory
-    ReferencedInventoryTestSuite.class
+    ReferencedInventoryTestSuite.class,
+
+    // AD_Org Persist Information
+    ADOrgPersistInfoTestSuite.class,
+
+    // Automatic Invoice from Goods Shipment
+    InvoiceFromShipmentTest.class
 
 })
 public class AllAntTaskTests {

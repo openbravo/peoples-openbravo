@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.inject.Inject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
@@ -47,6 +49,10 @@ public class InstancePurpose extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final ValueListFilter availablePurposeFilter = new ValueListFilter("P", "D", "T",
       "E");
+  private static final String PRODUCTION_INSTANCE = "P";
+
+  @Inject
+  private ApplicationDictionaryCachedStructures adCachedStructures;
 
   @Override
   public void init(ServletConfig config) {
@@ -55,8 +61,8 @@ public class InstancePurpose extends HttpSecureAppServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -65,10 +71,6 @@ public class InstancePurpose extends HttpSecureAppServlet {
       savePurpose(vars.getRequiredStringParameter("instancePurpose", availablePurposeFilter));
       if (HeartbeatProcess.isShowHeartbeatRequired(vars, myPool)) {
         response.sendRedirect("Heartbeat.html");
-        return;
-      }
-      if (HeartbeatProcess.isShowRegistrationRequired(vars, myPool)) {
-        response.sendRedirect("Registration.html");
         return;
       }
       printPageClosePopUp(response, vars);
@@ -123,19 +125,16 @@ public class InstancePurpose extends HttpSecureAppServlet {
         xmlDocument.setParameter("selectedPurpose", purpose);
       }
     }
-    xmlDocument
-        .setParameter("welcome", Replace.replace(
-            Utility.messageBD(this, strWelcomeMsg, vars.getLanguage()), "\\n", "<br/>"));
+    xmlDocument.setParameter("welcome", Replace
+        .replace(Utility.messageBD(this, strWelcomeMsg, vars.getLanguage()), "\\n", "<br/>"));
     xmlDocument.setParameter("title", Utility.messageBD(myPool, strTitle, vars.getLanguage()));
 
     xmlDocument.setParameter("recordId",
         vars.getStringParameter("inpcRecordId", IsIDFilter.instance));
 
     try {
-      String validation = ActivationKey.getInstance().isOffPlatform() ? "50AFB21662F74D7DAEA5EA721AA7F2BA"
-          : "";
-      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose",
-          validation, Utility.getContext(this, vars, "#AccessibleOrgTree", "InstancePurpose"),
+      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "InstancePurpose"),
           Utility.getContext(this, vars, "#User_Client", "InstancePurpose"), 0);
       xmlDocument.setData("reportPurpose", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {
@@ -159,6 +158,10 @@ public class InstancePurpose extends HttpSecureAppServlet {
     OBDal.getInstance().save(systemInfo);
     if (HeartbeatProcess.isClonedInstance()) {
       InstanceManagement.insertDummyHBLog();
+    }
+
+    if (PRODUCTION_INSTANCE.equals(strPurpose)) {
+      adCachedStructures.setNotInDevelopment();
     }
   }
 

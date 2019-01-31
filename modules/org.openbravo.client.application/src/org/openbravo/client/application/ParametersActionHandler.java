@@ -22,7 +22,8 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.provider.OBProvider;
@@ -41,7 +42,7 @@ import org.openbravo.portal.PortalAccessible;
  */
 @ApplicationScoped
 public class ParametersActionHandler extends BaseActionHandler implements PortalAccessible {
-  private static Logger log = Logger.getLogger(ParametersActionHandler.class);
+  private static Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -100,13 +101,11 @@ public class ParametersActionHandler extends BaseActionHandler implements Portal
 
       try {
         @SuppressWarnings("unused")
-        final java.lang.reflect.Field f = ParameterValue.class.getDeclaredField("PROPERTY_"
-            + dbFilterProperty.toUpperCase());
+        final java.lang.reflect.Field f = ParameterValue.class
+            .getDeclaredField("PROPERTY_" + dbFilterProperty.toUpperCase());
       } catch (NoSuchFieldException fieldException) {
-        result.put(
-            "message",
-            getMessge("Error", "Property " + dbFilterProperty
-                + " is not defined in Parameters class"));
+        result.put("message", getMessge("Error",
+            "Property " + dbFilterProperty + " is not defined in Parameters class"));
         return result;
       }
 
@@ -116,8 +115,9 @@ public class ParametersActionHandler extends BaseActionHandler implements Portal
         final Parameter param = OBDal.getInstance()
             .get(Parameter.class, p.getString("parameterId"));
         ParameterValue value;
-        OBQuery<ParameterValue> obq = OBDal.getInstance().createQuery(ParameterValue.class,
-            dbFilterProperty + " = :filter and parameter = :param");
+        OBQuery<ParameterValue> obq = OBDal.getInstance()
+            .createQuery(ParameterValue.class,
+                dbFilterProperty + " = :filter and parameter = :param");
         obq.setNamedParameter("filter", filterObject);
         obq.setNamedParameter("param", param);
 

@@ -42,10 +42,10 @@ public class SE_GLItem_Transaction extends SimpleCallout {
 
       // Delete only previous GL Item description
       if (StringUtils.isBlank(strGLItemId)) {
-        description = FIN_Utility.getFinAccTransactionDescription(description, "\n"
-            + glItemDescPrefix, "");
-        description = FIN_Utility
-            .getFinAccTransactionDescription(description, glItemDescPrefix, "");
+        description = FIN_Utility.getFinAccTransactionDescription(description,
+            "\n" + glItemDescPrefix, "");
+        description = FIN_Utility.getFinAccTransactionDescription(description, glItemDescPrefix,
+            "");
       }
 
       // Write description for selected GL Item

@@ -14,7 +14,7 @@ $BODY$ DECLARE
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
+* All portions are Copyright (C) 2001-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -304,40 +304,6 @@ WHEN OTHERS THEN
 END;   $BODY$
   LANGUAGE 'plpgsql' VOLATILE;
 SELECT pg_temp.insert_recipient();
-/-- END
-
---Inserts role access for new Smartclient register window
---It needs to be done this way until this issue is fixed:  https://issues.openbravo.com/view.php?id=18689
-CREATE OR REPLACE FUNCTION pg_temp.insert_register_form_access()
-  RETURNS void AS
-$BODY$ DECLARE
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009 Openbravo SLU
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
-BEGIN
-  INSERT INTO OBUIAPP_View_Role_Access(OBUIAPP_View_Role_Access_ID, OBUIAPP_View_Impl_ID, AD_Role_ID, AD_Client_ID,
-      AD_Org_ID, IsActive, Created,
-      CreatedBy, Updated, UpdatedBy)
-         VALUES(get_uuid(), 'FF808081329B023101329B0CE2080013', '0', '0', '0', 'Y', now(), '0', now(), '0');
-EXCEPTION
-WHEN OTHERS THEN
---do nothing
-END;   $BODY$
-  LANGUAGE 'plpgsql' VOLATILE;
-SELECT pg_temp.insert_register_form_access();
 /-- END
 
 --update parent reference for old modules

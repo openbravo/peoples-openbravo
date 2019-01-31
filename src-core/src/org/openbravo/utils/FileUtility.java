@@ -22,7 +22,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Fernando Iriazabal
@@ -31,7 +32,7 @@ import org.apache.log4j.Logger;
 public class FileUtility {
   private String dir;
   private String filename;
-  static Logger log4j = Logger.getLogger(FileUtility.class);
+  static Logger log4j = LogManager.getLogger();
 
   public FileUtility() {
   }
@@ -46,21 +47,26 @@ public class FileUtility {
 
   public FileUtility(String path, String name, boolean newFile, boolean readonly)
       throws IOException {
-    if (path == null || path.equals(""))
+    if (path == null || path.equals("")) {
       throw new IllegalArgumentException("directory cannot be null");
-    if (name == null || name.equals(""))
+    }
+    if (name == null || name.equals("")) {
       throw new IllegalArgumentException("file name cannot be null");
+    }
 
     File fpath = new File(path);
-    if (!fpath.isDirectory())
+    if (!fpath.isDirectory()) {
       throw new IllegalArgumentException("Not a directory: " + path);
-    if ((newFile || !readonly) && !fpath.canWrite())
+    }
+    if ((newFile || !readonly) && !fpath.canWrite()) {
       throw new IllegalArgumentException("Not writable: " + path);
+    }
 
     if (newFile) {
       File file = new File(path, name);
-      if (file.canRead())
+      if (file.canRead()) {
         throw new IllegalArgumentException("file: " + path + "\\" + name + " already exists");
+      }
     }
 
     dir = path;
@@ -68,8 +74,9 @@ public class FileUtility {
   }
 
   public boolean ByteArrayToFile(ByteArrayOutputStream in) throws IOException {
-    if (in == null)
+    if (in == null) {
       return false;
+    }
     File f = new File(dir, filename);
     FileOutputStream fos = new FileOutputStream(f);
     in.writeTo(fos);
@@ -78,8 +85,9 @@ public class FileUtility {
   }
 
   public boolean StringToFile(String in) throws IOException {
-    if (in == null)
+    if (in == null) {
       return false;
+    }
     File f = new File(dir, filename);
     FileWriter fileWriterData = new FileWriter(f);
     PrintWriter printWriterData = new PrintWriter(fileWriterData);
@@ -92,11 +100,12 @@ public class FileUtility {
   public void dumpFile(OutputStream outputstream) {
     byte abyte0[] = new byte[4096];
     try {
-      BufferedInputStream bufferedinputstream = new BufferedInputStream(new FileInputStream(
-          new File(dir, filename)));
+      BufferedInputStream bufferedinputstream = new BufferedInputStream(
+          new FileInputStream(new File(dir, filename)));
       int i;
-      while ((i = bufferedinputstream.read(abyte0, 0, 4096)) != -1)
+      while ((i = bufferedinputstream.read(abyte0, 0, 4096)) != -1) {
         outputstream.write(abyte0, 0, i);
+      }
       bufferedinputstream.close();
     } catch (Exception exception) {
     }
@@ -111,10 +120,11 @@ public class FileUtility {
       boolean overwrite) throws Exception {
     File[] list;
     int total = 0;
-    if (dirFilter != null)
+    if (dirFilter != null) {
       list = source.listFiles(dirFilter);
-    else
+    } else {
       list = source.listFiles();
+    }
     for (int i = 0; i < list.length; i++) {
       File fileItem = list[i];
       if (fileItem.isDirectory()) {

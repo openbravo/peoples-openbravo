@@ -72,6 +72,7 @@ public class Reconciliation extends HttpSecureAppServlet {
   private AdvPaymentMngtDao dao;
   Set<FIN_FinaccTransaction> transactionsToBePosted = new HashSet<FIN_FinaccTransaction>();
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -87,8 +88,10 @@ public class Reconciliation extends HttpSecureAppServlet {
           strTabId))
           || !(Utility.isElementInList(
               Utility.getContext(this, vars, "#User_Client", strWindowId, accesslevel),
-              vars.getClient()) && Utility.isElementInList(
-              Utility.getContext(this, vars, "#User_Org", strWindowId, accesslevel), strOrgId))) {
+              vars.getClient())
+              && Utility.isElementInList(
+                  Utility.getContext(this, vars, "#User_Org", strWindowId, accesslevel),
+                  strOrgId))) {
         OBError myError = Utility.translateError(this, vars, vars.getLanguage(),
             Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
         vars.setMessage(strTabId, myError);
@@ -134,11 +137,11 @@ public class Reconciliation extends HttpSecureAppServlet {
   private void updateTransactionStatus(HttpServletResponse response, String strFinancialAccountId,
       String strSelectedTransId, boolean isChecked) {
 
-    OBContext.setAdminMode();
     try {
+      OBContext.setAdminMode();
       if (strSelectedTransId != "") {
-        FIN_FinaccTransaction trans = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-            strSelectedTransId);
+        FIN_FinaccTransaction trans = OBDal.getInstance()
+            .get(FIN_FinaccTransaction.class, strSelectedTransId);
         String newStatus = "RPPC";
         if (!isChecked) {
           newStatus = (trans.getPaymentAmount().compareTo(trans.getDepositAmount()) >= 0) ? "PWNC"
@@ -148,8 +151,8 @@ public class Reconciliation extends HttpSecureAppServlet {
             trans.getFinPayment().setStatus((trans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");
           }
         } else {
-          FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-              strFinancialAccountId);
+          FIN_FinancialAccount account = OBDal.getInstance()
+              .get(FIN_FinancialAccount.class, strFinancialAccountId);
           FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(account, "N");
           trans.setReconciliation(reconciliation);
           if (trans.getFinPayment() != null) {
@@ -159,6 +162,9 @@ public class Reconciliation extends HttpSecureAppServlet {
 
         trans.setStatus(newStatus);
         OBDal.getInstance().save(trans);
+        OBDal.getInstance().flush();
+        // Force flush because eventhandler is executed in the first flush and data updated in
+        // enventhandler needs to be flush in a admin mode block
         OBDal.getInstance().flush();
       }
       response.setContentType("text/html; charset=UTF-8");
@@ -175,24 +181,24 @@ public class Reconciliation extends HttpSecureAppServlet {
 
   private void processReconciliation(HttpServletResponse response, VariablesSecureApp vars,
       String strTabId, String strFinancialAccountId, String strDifference, String strStatementDate,
-      String strBeginBalance, String strEndBalance, boolean process) throws IOException,
-      ServletException {
+      String strBeginBalance, String strEndBalance, boolean process)
+      throws IOException, ServletException {
 
-    log4j
-        .debug("Output: Process or Save button pressed on Financial Account || Transaction || Reconciliation manual window");
+    log4j.debug(
+        "Output: Process or Save button pressed on Financial Account || Transaction || Reconciliation manual window");
 
     dao = new AdvPaymentMngtDao();
     OBError msg = new OBError();
     OBContext.setAdminMode();
     try {
 
-      FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          strFinancialAccountId);
+      FIN_FinancialAccount account = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, strFinancialAccountId);
 
       FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(account, "N");
 
-      FIN_Reconciliation lastProcessedReconciliation = TransactionsDao.getLastReconciliation(
-          account, "Y");
+      FIN_Reconciliation lastProcessedReconciliation = TransactionsDao
+          .getLastReconciliation(account, "Y");
 
       reconciliation.setEndingBalance(new BigDecimal(strEndBalance));
       reconciliation.setTransactionDate(FIN_Utility.getDate(strStatementDate));
@@ -243,17 +249,16 @@ public class Reconciliation extends HttpSecureAppServlet {
         }
 
         boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(
-            FIN_Reconciliation.TABLE_NAME, reconciliation.getId(), FIN_Reconciliation.TABLE_NAME
-                + "_ID", "LE");
+            FIN_Reconciliation.TABLE_NAME, reconciliation.getId(),
+            FIN_Reconciliation.TABLE_NAME + "_ID", "LE");
         boolean documentEnabled = getDocumentConfirmation(this, reconciliation.getId());
-        if (documentEnabled
-            && !FIN_Utility.isPeriodOpen(reconciliation.getClient().getId(),
-                AcctServer.DOCTYPE_Reconciliation, reconciliation.getOrganization().getId(),
-                strStatementDate) && orgLegalWithAccounting) {
+        if (documentEnabled && !FIN_Utility.isPeriodOpen(reconciliation.getClient().getId(),
+            AcctServer.DOCTYPE_Reconciliation, reconciliation.getOrganization().getId(),
+            strStatementDate) && orgLegalWithAccounting) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-          msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
-              "@PeriodNotAvailable@"));
+          msg.setMessage(
+              Utility.parseTranslation(this, vars, vars.getLanguage(), "@PeriodNotAvailable@"));
           vars.setMessage(strTabId, msg);
           msg = null;
           printPageClosePopUpAndRefreshParent(response, vars);
@@ -276,8 +281,8 @@ public class Reconciliation extends HttpSecureAppServlet {
         }
 
         for (APRM_FinaccTransactionV finacctrxv : reconciliation.getAPRMFinaccTransactionVList()) {
-          if (reconciliation.getEndingDate().compareTo(
-              finacctrxv.getFinancialAccountTransaction().getTransactionDate()) < 0) {
+          if (reconciliation.getEndingDate()
+              .compareTo(finacctrxv.getFinancialAccountTransaction().getTransactionDate()) < 0) {
             FIN_FinaccTransaction trans = finacctrxv.getFinancialAccountTransaction();
             // We set processed to false before changing dates to avoid trigger exception
             boolean posted = "Y".equals(trans.getPosted());
@@ -311,8 +316,9 @@ public class Reconciliation extends HttpSecureAppServlet {
               for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
                 invoicePaidold = psd.isInvoicePaid();
                 if (!invoicePaidold) {
-                  if ((FIN_Utility.invoicePaymentStatus(finacctrxv.getPayment().getPaymentMethod(),
-                      reconciliation.getAccount(), finacctrxv.getPayment().isReceipt())
+                  if ((FIN_Utility
+                      .invoicePaymentStatus(finacctrxv.getPayment().getPaymentMethod(),
+                          reconciliation.getAccount(), finacctrxv.getPayment().isReceipt())
                       .equals(finacctrxv.getPayment().getStatus()))) {
                     psd.setInvoicePaid(true);
                   }
@@ -357,18 +363,19 @@ public class Reconciliation extends HttpSecureAppServlet {
     log4j.debug("Output: Reconcile button pressed on Financial Account || Transaction tab");
 
     dao = new AdvPaymentMngtDao();
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
 
     FIN_Reconciliation currentReconciliation = null;
     OBContext.setAdminMode();
     try {
-      FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          strFinancialAccountId);
+      FIN_FinancialAccount account = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, strFinancialAccountId);
 
-      FIN_Reconciliation lastProcessedReconciliation = TransactionsDao.getLastReconciliation(
-          account, "Y");
+      FIN_Reconciliation lastProcessedReconciliation = TransactionsDao
+          .getLastReconciliation(account, "Y");
       currentReconciliation = TransactionsDao.getLastReconciliation(account, "N");
       if (isAutomaticReconciliation(currentReconciliation)) {
         OBDal.getInstance().rollbackAndClose();
@@ -379,8 +386,9 @@ public class Reconciliation extends HttpSecureAppServlet {
         return;
       }
 
-      XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/advpaymentmngt/ad_actionbutton/Reconciliation").createXmlDocument();
+      XmlDocument xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/Reconciliation")
+          .createXmlDocument();
 
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -420,21 +428,19 @@ public class Reconciliation extends HttpSecureAppServlet {
       xmlDocument.setParameter("calcBeginningBalance", beginBalance.toString());
       xmlDocument.setParameter("calcTotalPayment", BigDecimal.ZERO.toString());
       xmlDocument.setParameter("calcTotalDeposit", BigDecimal.ZERO.toString());
-      xmlDocument.setParameter("calcDifferenceToClear", currentEndBalance.subtract(beginBalance)
-          .toString());
+      xmlDocument.setParameter("calcDifferenceToClear",
+          currentEndBalance.subtract(beginBalance).toString());
       xmlDocument.setParameter("calcCurrentlyCleared",
           TransactionsDao.getCurrentlyClearedAmt(account.getId()).toString());
-      xmlDocument
-          .setParameter(
-              "calcDifference",
-              currentEndBalance.subtract(
-                  beginBalance.add(TransactionsDao.getCurrentlyClearedAmt(account.getId())))
-                  .toString());
+      xmlDocument.setParameter("calcDifference",
+          currentEndBalance
+              .subtract(beginBalance.add(TransactionsDao.getCurrentlyClearedAmt(account.getId())))
+              .toString());
 
       OBContext.setAdminMode();
       try {
-        xmlDocument.setParameter("precision", account.getCurrency().getStandardPrecision()
-            .toString());
+        xmlDocument.setParameter("precision",
+            account.getCurrency().getStandardPrecision().toString());
 
         if (currentReconciliation == null) {
           DocumentType docType = FIN_Utility.getDocumentType(account.getOrganization(), "REC");
@@ -485,11 +491,12 @@ public class Reconciliation extends HttpSecureAppServlet {
 
     log4j.debug("Output: Grid on Financial Account || Transaction tab || Reconciliation window");
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/ReconciliationGrid").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/ReconciliationGrid")
+        .createXmlDocument();
 
-    FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-        strFinancialAccountId);
+    FIN_FinancialAccount account = OBDal.getInstance()
+        .get(FIN_FinancialAccount.class, strFinancialAccountId);
 
     Map<String, String> map = FIN_Utility.getMapFromStringList(selectedTransactionsIds);
 
@@ -526,8 +533,8 @@ public class Reconciliation extends HttpSecureAppServlet {
   private boolean isAutomaticReconciliation(FIN_Reconciliation reconciliation) {
     OBContext.setAdminMode();
     try {
-      final OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance().createCriteria(
-          FIN_ReconciliationLine_v.class);
+      final OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance()
+          .createCriteria(FIN_ReconciliationLine_v.class);
       obc.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION, reconciliation));
       obc.add(Restrictions.isNotNull(FIN_ReconciliationLine_v.PROPERTY_BANKSTATEMENTLINE));
       obc.setMaxResults(1);
@@ -538,6 +545,7 @@ public class Reconciliation extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "This servlet manages manual transactions reconciliations.";
   }
@@ -550,8 +558,8 @@ public class Reconciliation extends HttpSecureAppServlet {
     hql.append("   and c_chk_open_period(rl.organization, rl.transactionDate, 'REC', null) = 0 ");
     hql.append(" order by rl.transactionDate");
 
-    final OBQuery<FIN_ReconciliationLine_v> obqRL = OBDal.getInstance().createQuery(
-        FIN_ReconciliationLine_v.class, hql.toString());
+    final OBQuery<FIN_ReconciliationLine_v> obqRL = OBDal.getInstance()
+        .createQuery(FIN_ReconciliationLine_v.class, hql.toString());
     obqRL.setMaxResult(1);
 
     List<FIN_ReconciliationLine_v> obqRLlist = obqRL.list();
@@ -568,8 +576,8 @@ public class Reconciliation extends HttpSecureAppServlet {
     OBContext.setAdminMode();
     List<FIN_FinaccTransaction> transactions = null;
     try {
-      OBCriteria<FIN_FinaccTransaction> trans = OBDal.getInstance().createCriteria(
-          FIN_FinaccTransaction.class);
+      OBCriteria<FIN_FinaccTransaction> trans = OBDal.getInstance()
+          .createCriteria(FIN_FinaccTransaction.class);
       trans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_RECONCILIATION, reconciliation));
       trans.setFilterOnReadableClients(false);
       trans.setFilterOnReadableOrganization(false);
@@ -587,8 +595,8 @@ public class Reconciliation extends HttpSecureAppServlet {
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     OBContext.setAdminMode();
     try {
-      FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
-          strRecordId);
+      FIN_Reconciliation reconciliation = OBDal.getInstance()
+          .get(FIN_Reconciliation.class, strRecordId);
       List<FIN_FinaccTransaction> transactions = getTransactionList(reconciliation);
       List<FIN_FinancialAccountAccounting> accounts = reconciliation.getAccount()
           .getFINFinancialAccountAcctList();
@@ -596,10 +604,10 @@ public class Reconciliation extends HttpSecureAppServlet {
         FIN_Payment payment = transaction.getFinPayment();
         // If payment exists, check Payment Method + financial Account Configuration
         if (payment != null) {
-          OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
-              FinAccPaymentMethod.class);
-          obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
-              reconciliation.getAccount()));
+          OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance()
+              .createCriteria(FinAccPaymentMethod.class);
+          obCriteria.add(
+              Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, reconciliation.getAccount()));
           obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
               payment.getPaymentMethod()));
           obCriteria.setFilterOnReadableClients(false);

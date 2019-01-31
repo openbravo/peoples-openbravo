@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,19 @@
 package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -39,9 +48,12 @@ import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
 
 public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
-  private static final Logger log = Logger.getLogger(AddMultiplePaymentsHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final SimpleDateFormat jsDateFormat = JsonUtils.createDateFormat();
   private static final String ACTION_PROCESS_TRANSACTION = "P";
+  @Inject
+  @Any
+  private Instance<AddMultiplePaymentsProcessAfterProcessHook> afterHooks;
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String data) {
@@ -49,22 +61,40 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
       final JSONObject jsonData = new JSONObject(data);
       final JSONObject jsonparams = jsonData.getJSONObject("_params");
 
-      final JSONArray selectedPayments = jsonparams.getJSONObject("payments").getJSONArray(
-          "_selection");
+      final JSONArray selectedPayments = jsonparams.getJSONObject("payments")
+          .getJSONArray("_selection");
       final Date statementDate = jsDateFormat.parse(jsonparams.getString("statementDate"));
       final Date dateAcct = jsDateFormat.parse(jsonparams.getString("dateAcct"));
       final String strAccountId = jsonData.getString("Fin_Financial_Account_ID");
 
       int selectedPaymentsLength = selectedPayments.length();
+
+      for (int i = 0; i < selectedPaymentsLength; i++) {
+        final JSONObject paymentJS = selectedPayments.getJSONObject(i);
+        createAndProcessTransactionFromPayment(paymentJS, statementDate, dateAcct, strAccountId);
+        OBDal.getInstance().getSession().clear();
+      }
+
+      List<AddMultiplePaymentsProcessAfterProcessHook> hooksPriority = new ArrayList<AddMultiplePaymentsProcessAfterProcessHook>();
+      for (AddMultiplePaymentsProcessAfterProcessHook hook : afterHooks) {
+        hooksPriority.add(hook);
+      }
+      Collections.sort(hooksPriority, new Comparator<AddMultiplePaymentsProcessAfterProcessHook>() {
+        @Override
+        public int compare(AddMultiplePaymentsProcessAfterProcessHook o1,
+            AddMultiplePaymentsProcessAfterProcessHook o2) {
+          return (int) Math.signum(o2.getPriority() - o1.getPriority());
+        }
+      });
+      for (AddMultiplePaymentsProcessAfterProcessHook hook : hooksPriority) {
+        selectedPaymentsLength = selectedPaymentsLength + hook.executeHook(jsonData);
+      }
+
       if (selectedPaymentsLength == 0) {
         // Validation error: No lines selected
         return getErrorMessage(OBMessageUtils.messageBD("APRM_NO_PAYMENTS_SELECTED"));
       }
 
-      for (int i = 0; i < selectedPaymentsLength; i++) {
-        final JSONObject paymentJS = selectedPayments.getJSONObject(i);
-        createAndProcessTransactionFromPayment(paymentJS, statementDate, dateAcct, strAccountId);
-      }
       // Success Message
       return getSuccessMessage(String.format(
           OBMessageUtils.messageBD("APRM_MULTIPLE_TRANSACTIONS_ADDED"), selectedPaymentsLength));
@@ -95,15 +125,14 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
       final String paymentId = paymentJS.getString("id");
       log.debug("Creating transaction for FIN_Payment_ID: " + paymentId);
       final FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, paymentId);
-      FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          strAccountId);
+      FIN_FinancialAccount account = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, strAccountId);
 
       if (payment != null) {
         final FIN_FinaccTransaction transaction = TransactionsDao.createFinAccTransaction(payment);
         transaction.setTransactionDate(transactionDate);
         transaction.setDateAcct(acctDate);
         transaction.setAccount(account);
-        transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
         FIN_TransactionProcess.doTransactionProcess(ACTION_PROCESS_TRANSACTION, transaction);
       }
     } finally {

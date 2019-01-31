@@ -21,7 +21,8 @@ package org.openbravo.client.application.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -38,11 +39,11 @@ import org.openbravo.model.ad.system.SystemInformation;
  */
 public class UsageAuditHandler extends EntityPersistenceEventObserver {
   private static final String SYSTEM_INFO_TABLE_ID = "1005400005";
-  private static final Entity[] entities = { ModelProvider.getInstance().getEntityByTableId(
-      SYSTEM_INFO_TABLE_ID) };
+  private static final Entity[] entities = {
+      ModelProvider.getInstance().getEntityByTableId(SYSTEM_INFO_TABLE_ID) };
   private static final Property usageAuditProperty = entities[0]
       .getProperty(SystemInformation.PROPERTY_ISUSAGEAUDITENABLED);
-  private static final Logger log = Logger.getLogger(UsageAuditHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {

@@ -30,6 +30,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -53,8 +55,6 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Computes different settings which may be user/role specific for a certain window.
@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class WindowSettingsActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(WindowSettingsActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   public static final String EXTRA_CALLBACKS = "extraCallbacks";
 
   @Inject
@@ -140,9 +140,10 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
 
   private boolean getBooleanPreference(Window window, String preference, boolean defaultValue) {
     try {
-      String prefValue = Preferences.getPreferenceValue(preference, false, OBContext.getOBContext()
-          .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-          .getOBContext().getUser(), OBContext.getOBContext().getRole(), window);
+      String prefValue = Preferences.getPreferenceValue(preference, false,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), window);
       return Preferences.YES.equals(prefValue);
     } catch (PropertyException ignore) {
       return defaultValue;
@@ -153,12 +154,12 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
     final String roleId = OBContext.getOBContext().getRole().getId();
     final JSONArray tabs = new JSONArray();
 
-    OBQuery<TabAccess> qTabAccess = OBDal.getInstance().createQuery(
-        TabAccess.class,
-        "as ta where ta.windowAccess.role.id= :roleId\n"
-            + "and ta.windowAccess.window.id = :windowId\n" //
-            + "and ta.windowAccess.active = true\n" //
-            + "and ta.active=true");
+    OBQuery<TabAccess> qTabAccess = OBDal.getInstance()
+        .createQuery(TabAccess.class,
+            "as ta where ta.windowAccess.role.id= :roleId\n"
+                + "and ta.windowAccess.window.id = :windowId\n" //
+                + "and ta.windowAccess.active = true\n" //
+                + "and ta.active=true");
     qTabAccess.setNamedParameter("roleId", roleId);
     qTabAccess.setNamedParameter("windowId", window.getId());
 
@@ -255,10 +256,10 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
     // - None of the above: permission is inherited from window
     boolean securedProcess = false;
     try {
-      securedProcess = Preferences.YES.equals(Preferences.getPreferenceValue("SecuredProcess",
-          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), window));
+      securedProcess = Preferences.YES.equals(Preferences.getPreferenceValue("SecuredProcess", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), window));
     } catch (PropertyException e) {
       // do nothing, property is not set so securedProcess is false
     }
@@ -273,8 +274,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       restrictedProcessesQry += " and exists (select 1 from OBUIAPP_Process p where p = f.column.oBUIAPPProcess and requiresExplicitAccessPermission = true) ";
     }
     restrictedProcessesQry += " and not exists (select 1 from " //
-        + " OBUIAPP_Process_Access a"
-        + " where a.obuiappProcess = f.column.oBUIAPPProcess"
+        + " OBUIAPP_Process_Access a" + " where a.obuiappProcess = f.column.oBUIAPPProcess"
         + " and a.role.id = :role and a.active=true))"//
 
         + " or (column.process is not null ";

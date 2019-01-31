@@ -27,7 +27,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
@@ -58,7 +59,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 public class PaymentTest_05 extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(PaymentTest_05.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String MANUAL_EXECUTION = "M";
   private static final String CLEARED_ACCOUNT = "CLE";
@@ -103,10 +104,11 @@ public class PaymentTest_05 extends OBBaseTest {
       inv1 = OBDal.getInstance().get(Invoice.class, inv1.getId());
       inv2 = OBDal.getInstance().get(Invoice.class, inv2.getId());
 
-      FIN_PaymentProposal paymentProposal = TestUtility.createNewPaymentProposal(OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId), OBDal
-              .getInstance().get(Currency.class, currencyId),
+      FIN_PaymentProposal paymentProposal = TestUtility.createNewPaymentProposal(
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(),
+          OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId),
+          OBDal.getInstance().get(Currency.class, currencyId),
           OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethodId));
 
       List<FIN_PaymentScheduleDetail> scheduleDetails1 = dao
@@ -159,15 +161,15 @@ public class PaymentTest_05 extends OBBaseTest {
     BigDecimal priceLimit = new BigDecimal("1");
 
     PriceList testPriceList = OBDal.getInstance().get(PriceList.class, priceListId);
-    BusinessPartner testBusinessPartner = OBDal.getInstance().get(BusinessPartner.class,
-        businessPartnerId);
-    Location location = TestUtility.getOneInstance(Location.class, new Value(
-        Location.PROPERTY_BUSINESSPARTNER, testBusinessPartner));
+    BusinessPartner testBusinessPartner = OBDal.getInstance()
+        .get(BusinessPartner.class, businessPartnerId);
+    Location location = TestUtility.getOneInstance(Location.class,
+        new Value(Location.PROPERTY_BUSINESSPARTNER, testBusinessPartner));
     PaymentTerm testPaymentTerm = OBDal.getInstance().get(PaymentTerm.class, paymentTermId);
     Currency testCurrency = OBDal.getInstance().get(Currency.class, currencyId);
     Product testProduct = OBDal.getInstance().get(Product.class, productId);
-    UOM uom = TestUtility.getOneInstance(UOM.class, new Value(UOM.PROPERTY_NAME, testProduct
-        .getUOM().getName()));
+    UOM uom = TestUtility.getOneInstance(UOM.class,
+        new Value(UOM.PROPERTY_NAME, testProduct.getUOM().getName()));
     TaxRate testTaxRate = OBDal.getInstance().get(TaxRate.class, taxId);
     DocumentType testDocumentType = OBDal.getInstance().get(DocumentType.class, docTypeId);
 
@@ -178,16 +180,17 @@ public class PaymentTest_05 extends OBBaseTest {
         null, true, true);
 
     FIN_PaymentMethod testPaymentMethod = TestUtility.insertPaymentMethod("APRM_PM_PAYMENT_01",
-        STANDARD_DESCRIPTION, true, false, false, MANUAL_EXECUTION, null, false,
-        IN_TRANSIT_ACCOUNT, DEPOSIT_ACCOUNT, CLEARED_ACCOUNT, true, false, false, MANUAL_EXECUTION,
-        null, false, IN_TRANSIT_ACCOUNT, WITHDRAWN_ACCOUNT, CLEARED_ACCOUNT, true, true);
+        STANDARD_DESCRIPTION, true, false, false, MANUAL_EXECUTION, null, false, IN_TRANSIT_ACCOUNT,
+        DEPOSIT_ACCOUNT, CLEARED_ACCOUNT, true, false, false, MANUAL_EXECUTION, null, false,
+        IN_TRANSIT_ACCOUNT, WITHDRAWN_ACCOUNT, CLEARED_ACCOUNT, true, true);
 
     FinAccPaymentMethod existAssociation = TestUtility.getOneInstance(FinAccPaymentMethod.class,
-        new Value(FinAccPaymentMethod.PROPERTY_ACCOUNT, testAccount), new Value(
-            FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, testPaymentMethod));
+        new Value(FinAccPaymentMethod.PROPERTY_ACCOUNT, testAccount),
+        new Value(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, testPaymentMethod));
 
-    if (existAssociation == null)
+    if (existAssociation == null) {
       TestUtility.associatePaymentMethod(testAccount, testPaymentMethod);
+    }
 
     this.financialAccountId = testAccount.getId();
     this.paymentMethodId = testPaymentMethod.getId();

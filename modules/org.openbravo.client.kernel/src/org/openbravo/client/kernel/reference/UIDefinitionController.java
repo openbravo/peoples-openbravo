@@ -23,7 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.hibernate.Hibernate;
@@ -47,7 +48,7 @@ import org.openbravo.model.ad.domain.ReferencedTable;
  * @author mtaal
  */
 public class UIDefinitionController extends BaseTemplateComponent {
-  private static final Logger log = Logger.getLogger(UIDefinitionController.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String TEMPORARY_DECIMAL_REPLACE = ";;;";
 
@@ -182,8 +183,8 @@ public class UIDefinitionController extends BaseTemplateComponent {
     if (!reference.getOBCLKERUIDefinitionList().isEmpty()) {
       for (UserInterfaceDefinition uiDefinition : reference.getOBCLKERUIDefinitionList()) {
         if (uiDefinition.isActive()) {
-          final Class<?> clz = OBClassLoader.getInstance().loadClass(
-              uiDefinition.getImplementationClassname());
+          final Class<?> clz = OBClassLoader.getInstance()
+              .loadClass(uiDefinition.getImplementationClassname());
           return (UIDefinition) clz.getDeclaredConstructor().newInstance();
         }
       }

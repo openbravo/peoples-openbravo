@@ -19,6 +19,7 @@
 package org.openbravo.client.kernel;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.inject.Any;
@@ -29,7 +30,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
@@ -44,7 +46,7 @@ import org.openbravo.service.web.WebServiceUtil;
  * @author iperdomo
  */
 public class StaticResourceComponent extends BaseComponent {
-  private static final Logger log = Logger.getLogger(StaticResourceComponent.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static final String GEN_TARGET_LOCATION = "/web/js/gen";
 
@@ -79,6 +81,7 @@ public class StaticResourceComponent extends BaseComponent {
    * @return returns this instance
    * @see org.openbravo.client.kernel.BaseComponent#getData()
    */
+  @Override
   public Object getData() {
     return this;
   }
@@ -107,8 +110,8 @@ public class StaticResourceComponent extends BaseComponent {
     } catch (Exception e) {
       log.error("Error generating component; " + e.getMessage(), e);
     } finally {
-      log.debug("StaticResourceComponent generation took: " + (System.currentTimeMillis() - t1)
-          + "ms");
+      log.debug(
+          "StaticResourceComponent generation took: " + (System.currentTimeMillis() - t1) + "ms");
     }
     return "";
   }
@@ -132,19 +135,19 @@ public class StaticResourceComponent extends BaseComponent {
     final String scriptPath = getContextUrl() + GEN_TARGET_LOCATION.substring(1) + "/"
         + staticResourceFileName + ".js";
     if (isClassicMode()) {
-      result.append("document.write(\"<LINK rel='stylesheet' type='text/css' href='"
-          + getContextUrl()
-          + "org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_skinVersion="
-          + KernelConstants.SKIN_DEFAULT + "&_mode=" + KernelConstants.MODE_PARAMETER_CLASSIC
-          + "'></link>\");\n");
       result
-          .append("var isomorphicDir='../web/org.openbravo.userinterface.smartclient/isomorphic/';\n");
+          .append("document.write(\"<LINK rel='stylesheet' type='text/css' href='" + getContextUrl()
+              + "org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_skinVersion="
+              + KernelConstants.SKIN_DEFAULT + "&_mode=" + KernelConstants.MODE_PARAMETER_CLASSIC
+              + "'></link>\");\n");
+      result.append(
+          "var isomorphicDir='../web/org.openbravo.userinterface.smartclient/isomorphic/';\n");
 
       final String scDevModulePackage = "org.openbravo.userinterface.smartclient.dev";
       if (KernelUtils.getInstance().isModulePresent(scDevModulePackage)
           && KernelUtils.getInstance().getModule(scDevModulePackage).isInDevelopment()) {
-        result
-            .append("document.write('<'+'SCRIPT SRC=' + window.isomorphicDir + 'ISC_Combined.uncompressed.js><'+'/SCRIPT>');");
+        result.append(
+            "document.write('<'+'SCRIPT SRC=' + window.isomorphicDir + 'ISC_Combined.uncompressed.js><'+'/SCRIPT>');");
       }
     }
     result.append("document.write(\"<s\" + \"cript type='text/javascript' src='" + scriptPath
@@ -152,6 +155,7 @@ public class StaticResourceComponent extends BaseComponent {
     return result.toString();
   }
 
+  @Override
   public String getId() {
     return KernelConstants.RESOURCE_COMPONENT_ID;
   }
@@ -174,9 +178,18 @@ public class StaticResourceComponent extends BaseComponent {
         return staticResourceFileName;
       }
 
+      if (log.isDebugEnabled()) {
+        log.debug("Processing static resources for app " + appName);
+        List<String> providers = new ArrayList<>();
+        for (ComponentProvider provider : componentProviders) {
+          providers.add(provider.getClass().toString());
+        }
+        log.debug("  Injected providers: " + providers);
+      }
+
       final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
-      final ServletContext context = (ServletContext) getParameters().get(
-          KernelConstants.SERVLET_CONTEXT);
+      final ServletContext context = (ServletContext) getParameters()
+          .get(KernelConstants.SERVLET_CONTEXT);
       final StringBuffer sb = new StringBuffer();
 
       final String skinParam;
@@ -187,8 +200,8 @@ public class StaticResourceComponent extends BaseComponent {
       }
 
       int cntDynamicScripts = 0;
-
       for (Module module : modules) {
+        log.debug("  * " + module);
         for (ComponentProvider provider : componentProviders) {
           final List<ComponentResource> resources = provider.getGlobalComponentResources();
           if (resources == null || resources.size() == 0) {
@@ -202,16 +215,19 @@ public class StaticResourceComponent extends BaseComponent {
                 continue;
               }
 
-              log.debug("Processing resource: " + resource);
               String resourcePath = resource.getPath();
+              int size = -1;
               if (resource.getType() == ComponentResourceType.Stylesheet) {
                 // do these differently...
               } else if (resource.getType() == ComponentResourceType.Static) {
                 if (resourcePath.startsWith(KernelConstants.KERNEL_JAVA_PACKAGE)) {
-                  final String[] pathParts = WebServiceUtil.getInstance().getSegments(
-                      resourcePath.substring(KernelConstants.KERNEL_JAVA_PACKAGE.length()));
+                  final String[] pathParts = WebServiceUtil.getInstance()
+                      .getSegments(
+                          resourcePath.substring(KernelConstants.KERNEL_JAVA_PACKAGE.length()));
                   final Component component = provider.getComponent(pathParts[1], getParameters());
-                  sb.append(ComponentGenerator.getInstance().generate(component)).append("\n");
+                  String c = ComponentGenerator.getInstance().generate(component);
+                  size = c.length();
+                  sb.append(c).append("\n");
                 } else {
 
                   // Skin version handling
@@ -232,6 +248,7 @@ public class StaticResourceComponent extends BaseComponent {
                       continue;
                     }
                     String resourceContents = FileUtils.readFileToString(file, "UTF-8");
+                    size = resourceContents.length();
                     sb.append(resourceContents).append("\n");
                   } catch (Exception e) {
                     log.error("Error reading file: " + resource, e);
@@ -244,12 +261,14 @@ public class StaticResourceComponent extends BaseComponent {
                   resourcePath = getContextUrl() + resourcePath;
                 }
 
-                sb.append("$LAB.script('" + resourcePath
-                    + "').wait(function(){var _exception; try{\n");
+                sb.append(
+                    "$LAB.script('" + resourcePath + "').wait(function(){var _exception; try{\n");
                 cntDynamicScripts++;
               } else {
                 log.error("Resource " + resource + " not supported");
               }
+
+              log.debug("      resource: " + resource + " - size: " + size);
             }
           }
         }
@@ -278,24 +297,23 @@ public class StaticResourceComponent extends BaseComponent {
             || OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")) {
           // append a global isDebug var and the causes that provoked the application to enter Debug
           // mode
-          sb.insert(
-              0,
-              String
-                  .format(
-                      "var isDebug = true;\nvar debugCauses = {\n  isInDevelopment: %s,\n  isTestEnvironment: %s\n};\n\n",
-                      isInDevelopment(),
-                      OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")));
+          sb.insert(0, String.format(
+              "var isDebug = true;\nvar debugCauses = {\n  isInDevelopment: %s,\n  isTestEnvironment: %s\n};\n\n",
+              isInDevelopment(),
+              OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")));
         }
         sb.append("if (window.onerror && window.onerror.name === '"
             + KernelConstants.BOOTSTRAP_ERROR_HANDLER_NAME + "') { window.onerror = null; }");
-        sb.append("if (typeof OBStartApplication !== 'undefined' && Object.prototype.toString.call(OBStartApplication) === '[object Function]') { OBStartApplication(); }");
+        sb.append(
+            "if (typeof OBStartApplication !== 'undefined' && Object.prototype.toString.call(OBStartApplication) === '[object Function]') { OBStartApplication(); }");
       }
 
       for (int i = 0; i < cntDynamicScripts; i++) {
         // add extra exception handling code otherwise exceptions occuring in
         // the Labs wait function are not visible.
         sb.append("\n} catch (_exception) {");
-        sb.append("if (isc) { isc.Log.logError(_exception + ' ' + _exception.message + ' ' + _exception.stack); }");
+        sb.append(
+            "if (isc) { isc.Log.logError(_exception + ' ' + _exception.message + ' ' + _exception.stack); }");
         sb.append("if (console && console.trace) { console.trace();}");
         sb.append("}\n});");
       }
@@ -310,6 +328,7 @@ public class StaticResourceComponent extends BaseComponent {
       } else {
         output = sb.toString();
       }
+
       final String md5 = DigestUtils.md5Hex(output);
       final String getTargetLocation = context.getRealPath(GEN_TARGET_LOCATION);
       final File dir = new File(getTargetLocation);
@@ -320,11 +339,14 @@ public class StaticResourceComponent extends BaseComponent {
 
       if (!outFile.exists()) {
         try {
-          log.debug("Writing file: " + outFile.getAbsolutePath());
+          log.debug("Writing file: " + " - size " + output.length() + " - size " + output.length());
           FileUtils.writeStringToFile(outFile, output, "UTF-8");
         } catch (Exception e) {
           log.error("Error writing file: " + e.getMessage(), e);
         }
+      } else {
+        log.debug(
+            "Resource " + outFile + " already existed, keeping it. Size - " + output.length());
       }
 
       if (!isInDevelopment()) {

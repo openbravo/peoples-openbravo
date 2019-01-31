@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
+      SELECT B.* FROM (
       SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 
       SUM(AMOUNT) AS AMOUNT, SUM(QTY) AS QTY, SUM(WEIGHT) AS WEIGHT, SUM(COST) AS COST,
       SUM(AMOUNTREF) AS AMOUNTREF, SUM(QTYREF) AS QTYREF, SUM(WEIGHTREF) AS WEIGHTREF, SUM(COSTREF) AS COSTREF,
@@ -136,6 +137,7 @@
       ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10) AA
       GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
       GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1
+      ) B
      ]]></Sql>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
@@ -160,7 +162,7 @@
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
     <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
@@ -185,7 +187,7 @@
     <Parameter name="dateToRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
     <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
@@ -194,12 +196,15 @@
     <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
     <Parameter name="strvoid" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
+    <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
   
   <SqlMethod name="select2" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
+      SELECT B.* FROM (
       SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 
       SUM(AMOUNT) AS AMOUNT, SUM(QTY) AS QTY, SUM(WEIGHT) AS WEIGHT, SUM(COST) AS COST,
       SUM(AMOUNTREF) AS AMOUNTREF, SUM(QTYREF) AS QTYREF, SUM(WEIGHTREF) AS WEIGHTREF, SUM(COSTREF) AS COSTREF,
@@ -368,6 +373,7 @@
       ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10) AA
       GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
       GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1
+      ) B
      ]]></Sql>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
@@ -394,7 +400,7 @@
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
     <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
@@ -419,7 +425,7 @@
     <Parameter name="dateToRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
     <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
@@ -444,7 +450,7 @@
     <Parameter name="dateToRef2" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
     <Parameter name="cBpartnerGroupId" optional="true" after="AND 4=4"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 4=4"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="salesrepId" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 4=4"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
@@ -453,12 +459,15 @@
     <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
     <Parameter name="strvoid" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
+    <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
   
   <SqlMethod name="select3" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
+      SELECT B.* FROM (
       SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 
       SUM(AMOUNT) AS AMOUNT, SUM(QTY) AS QTY, SUM(WEIGHT) AS WEIGHT, SUM(COST) AS COST,
       SUM(AMOUNTREF) AS AMOUNTREF, SUM(QTYREF) AS QTYREF, SUM(WEIGHTREF) AS WEIGHTREF, SUM(COSTREF) AS COSTREF,
@@ -691,6 +700,7 @@
       ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10) AA
       GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
       GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1
+      ) B
      ]]></Sql>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
@@ -719,7 +729,7 @@
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
     <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
@@ -744,7 +754,7 @@
     <Parameter name="dateToRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
     <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
@@ -769,7 +779,7 @@
     <Parameter name="dateToRef2" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
     <Parameter name="cBpartnerGroupId" optional="true" after="AND 4=4"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 4=4"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 4=4"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="salesrepId" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 4=4"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
@@ -794,7 +804,7 @@
     <Parameter name="dateToRef3" optional="true" after="AND 6=6"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
     <Parameter name="cBpartnerGroupId" optional="true" after="AND 6=6"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 6=6"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 6=6"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" type="argument" after="AND 6=6"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 6=6"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="salesrepId" optional="true" after="AND 6=6"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 6=6"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
@@ -803,60 +813,15 @@
     <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 6=6"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
     <Parameter name="strvoid" optional="true" after="AND 6=6"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
-  </SqlMethod>
-
-  <SqlMethod name="selectCount" type="preparedStatement" return="string" default="0">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-      SELECT COUNT( DISTINCT 1 ) AS COUNT
-      FROM C_INVOICE left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
-                     left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
-                     left join C_DOCTYPE on C_INVOICE.C_DOCTYPE_ID=C_DOCTYPE.C_DOCTYPE_ID,
-           C_INVOICELINE left join C_UOM on C_INVOICELINE.C_UOM_ID = C_UOM.C_UOM_ID
-                         left join M_PRODUCT on C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-                         left join M_PRODUCT_CATEGORY on M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
-                         left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
-                         left join  M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID,
-           C_BPARTNER left join C_BPARTNER CB on C_BPARTNER.SALESREP_ID = CB.C_BPARTNER_ID,
-           C_BP_GROUP, AD_ORG
-      WHERE C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-      AND C_BPARTNER.C_BP_GROUP_ID = C_BP_GROUP.C_BP_GROUP_ID
-      AND C_INVOICE.C_INVOICE_ID = C_INVOICELINE.C_INVOICE_ID
-      AND C_INVOICE.AD_ORG_ID = AD_ORG.AD_ORG_ID
-      AND C_INVOICE.ISSOTRX = 'Y'
-      AND C_INVOICE.PROCESSED = 'Y'
-      AND 0=0 AND C_INVOICE.AD_ORG_ID IN ('1')
-      AND C_INVOICE.AD_CLIENT_ID IN ('8')
-      AND 1=1 AND ((2=2)OR (3=3)OR (4=4)OR (5=5))
-    ]]></Sql>
-    <Parameter name="levels" type="replace" optional="true" after="SELECT COUNT( DISTINCT " text="1"/>
-    <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'8'"/>
-    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-    <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-    <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-    <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-    <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-    <Parameter name="dateFromRef" optional="true" after="3=3"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-    <Parameter name="dateToRef" optional="true" after="3=3"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-    <Parameter name="dateFromRef2" optional="true" after="4=4"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-    <Parameter name="dateToRef2" optional="true" after="4=4"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-    <Parameter name="dateFromRef3" optional="true" after="5=5"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-    <Parameter name="dateToRef3" optional="true" after="5=5"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectNoComparative" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
+    SELECT B.* FROM (
     SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10,
         SUM(AMOUNT) AS AMOUNT, SUM(QTY) AS QTY, SUM(WEIGHT) AS WEIGHT, SUM(COST) AS COST, 
         SUM(AMOUNTREF) AS AMOUNTREF, SUM(QTYREF) AS QTYREF, SUM(WEIGHTREF) AS WEIGHTREF,
@@ -918,6 +883,7 @@
       ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10) AA
       GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
       GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1
+      ) B
      ]]></Sql>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
@@ -940,7 +906,7 @@
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
     <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
@@ -949,48 +915,8 @@
     <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
     <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
-  </SqlMethod>
-
-    <SqlMethod name="selectNoComparativeCount" type="preparedStatement" return="string" default="0">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-      SELECT COUNT( DISTINCT 1 ) AS COUNT
-      FROM C_INVOICE left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
-                     left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
-                     left join C_DOCTYPE on C_INVOICE.C_DOCTYPE_ID=C_DOCTYPE.C_DOCTYPE_ID,
-           C_INVOICELINE left join C_UOM on C_INVOICELINE.C_UOM_ID = C_UOM.C_UOM_ID
-                         left join M_PRODUCT on C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-                         left join M_PRODUCT_CATEGORY on M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
-                         left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
-                         left join  M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID,
-           C_BPARTNER left join C_BPARTNER CB on C_BPARTNER.SALESREP_ID = CB.C_BPARTNER_ID,
-           C_BP_GROUP, AD_ORG
-      WHERE C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-      AND C_BPARTNER.C_BP_GROUP_ID = C_BP_GROUP.C_BP_GROUP_ID
-      AND C_INVOICE.C_INVOICE_ID = C_INVOICELINE.C_INVOICE_ID
-      AND C_INVOICE.AD_ORG_ID = AD_ORG.AD_ORG_ID
-      AND C_INVOICE.ISSOTRX = 'Y'
-      AND C_INVOICE.PROCESSED = 'Y'
-      AND 0=0 AND C_INVOICE.AD_ORG_ID IN ('1')
-      AND C_INVOICE.AD_CLIENT_ID IN ('8')
-      AND 1=1 AND 2=2
-     ]]></Sql>
-    <Parameter name="levels" type="replace" optional="true" after="SELECT COUNT( DISTINCT " text="1"/>
-    <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'8'"/>
-    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-    <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
-    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
-    <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
-    <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-    <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectProject" type="preparedStatement" return="String" default="">
@@ -1118,12 +1044,13 @@
      <Parameter name="shown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID IN]]></Parameter>
   </SqlMethod>
   
-  <SqlMethod name="selectXLS" type="preparedStatement" return="scrollable">
+  <SqlMethod name="selectXLS" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
+      SELECT B.* FROM (
       SELECT ORG, DOCTYPENAME, PARTNERGROUP, PARTNER, DOCUMENTNO, INVOICEDATE, PRODCATEGORY, PRODUCT, SEARCHKEY, UNITPRICE, 
-        AMOUNT, COST, (AMOUNT - COST) AS PROFIT, CASE WHEN AMOUNT <> 0 THEN ROUND((100 * (AMOUNT - COST) / AMOUNT), 2) * SIGN(AMOUNT - COST) ELSE 0 END AS MARGIN, 
+        AMOUNT, COST, (AMOUNT - COST) AS PROFIT, CASE WHEN AMOUNT <> 0 THEN ROUND((100 * ABS((AMOUNT - COST) / AMOUNT)), 2) * SIGN(AMOUNT - COST) ELSE 0 END AS MARGIN, 
         WEIGHT, QTY, CONTACT, SALESREP, PROJECT, ADDRESS
         FROM (
           SELECT AD_ORG.NAME AS ORG, 
@@ -1169,6 +1096,7 @@
           AND 1=1
           GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_DOCTYPE_TRL.NAME, C_DOCTYPE.NAME, C_BPARTNER.NAME, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, M_PRODUCT.NAME, M_PRODUCT.VALUE, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, C_INVOICE.AD_USER_ID, C_INVOICE.SALESREP_ID, C_INVOICE.C_PROJECT_ID, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICE.AD_CLIENT_ID, C_INVOICE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE) AA
           ORDER BY ORG, DOCUMENTNO, INVOICEDATE
+          ) B
      ]]></Sql>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
@@ -1181,7 +1109,7 @@
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
     <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
@@ -1189,5 +1117,7 @@
     <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
     <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
     <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
+    <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
 </SqlClass>

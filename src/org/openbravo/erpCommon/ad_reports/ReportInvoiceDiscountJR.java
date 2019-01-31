@@ -45,30 +45,31 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     String strUserCurrencyId = Utility.stringBaseCurrencyId(readOnlyCP, vars.getClient());
     if (vars.commandIn("DEFAULT")) {
-      String strDateFrom = vars.getGlobalVariable("inpDateFrom",
-          "ReportInvoiceDiscountJR|dateFrom", "");
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportInvoiceDiscountJR|dateFrom",
+          "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceDiscountJR|dateTo", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportInvoiceDiscountJR|partner", "", IsIDFilter.instance);
 
-      String strDiscount = vars.getGlobalVariable("inpDiscount",
-          "ReportInvoiceDiscountJR|discount", "N");
+      String strDiscount = vars.getGlobalVariable("inpDiscount", "ReportInvoiceDiscountJR|discount",
+          "N");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportInvoiceDiscountJR|currency", strUserCurrencyId);
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strCurrencyId,
           strDiscount);
 
     } else if (vars.commandIn("FIND")) {
-      String strDateFrom = vars.getGlobalVariable("inpDateFrom",
-          "ReportInvoiceDiscountJR|dateFrom", "");
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportInvoiceDiscountJR|dateFrom",
+          "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceDiscountJR|dateTo", "");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportInvoiceDiscountJR|partner", IsIDFilter.instance);
@@ -110,11 +111,11 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
       OBError myMessage = null;
       myMessage = new OBError();
       try {
-        data = ReportInvoiceDiscountData.select(readOnlyCP, strCurrencyId, Utility.getContext(
-            readOnlyCP, vars, "#User_Client", "ReportInvoiceDiscountJR"), Utility.getContext(
-            readOnlyCP, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"), strDateFrom,
-            strDateTo, strcBpartnerId, (StringUtils.equals(localStrDiscount, "N")) ? ""
-                : "discount");
+        data = ReportInvoiceDiscountData.select(readOnlyCP, strCurrencyId,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportInvoiceDiscountJR"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"),
+            strDateFrom, strDateTo, strcBpartnerId,
+            (StringUtils.equals(localStrDiscount, "N")) ? "" : "discount");
       } catch (ServletException ex) {
         myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
       }
@@ -154,8 +155,9 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     if (StringUtils.isEmpty(localStrDiscount)) {
       localStrDiscount = "N";
     }
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportInvoiceDiscountJR").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportInvoiceDiscountJR")
+        .createXmlDocument();
 
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(),
@@ -200,8 +202,8 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("discount", localStrDiscount);
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
-        .selectBpartner(readOnlyCP,
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
+        SelectorUtilityData.selectBpartner(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"),
             Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportInvoiceDiscountJR"),
             strcBpartnerId));
@@ -209,9 +211,9 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportInvoiceDiscountJR"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportInvoiceDiscountJR"), 0);
+          "C_Currency_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportInvoiceDiscountJR"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportInvoiceDiscountJR",
           strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -226,6 +228,7 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportInvoiceDiscount. This Servlet was made by Pablo Sarobe";
   } // end of getServletInfo() method

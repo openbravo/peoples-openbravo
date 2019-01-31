@@ -31,6 +31,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -45,8 +47,6 @@ import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.model.ad.utility.FileType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -101,7 +101,7 @@ public class ReportingUtils {
 
   private static final float TEXT_CHAR_HEIGHT = 10;
   private static final float TEXT_CHAR_WIDTH = 10;
-  private static final Logger log = LoggerFactory.getLogger(ReportingUtils.class);
+  private static final Logger log = LogManager.getLogger();
   private static CompiledReportManager compiledReportManager = CompiledReportManager.getInstance();
 
   /**
@@ -140,31 +140,9 @@ public class ReportingUtils {
   }
 
   /**
-   * @see ReportingUtils#exportJR(String, ExportType, Map, File, boolean, ConnectionProvider,
-   *      JRDataSource, Map, boolean)
-   */
-  public static void exportJR(String jasperFilePath, ExportType expType,
-      Map<String, Object> parameters, File target, boolean addProcessDefinitionParameters,
-      ConnectionProvider connectionProvider, JRDataSource data,
-      Map<Object, Object> additionalExportParameters) throws OBException {
-    exportJR(jasperFilePath, expType, parameters, target, addProcessDefinitionParameters,
-        connectionProvider, data, additionalExportParameters, false);
-  }
-
-  /**
-   * @see ReportingUtils#exportJR(String, ExportType, Map, OutputStream, boolean,
-   *      ConnectionProvider, JRDataSource, Map, boolean)
-   */
-  public static void exportJR(String jasperFilePath, ExportType expType,
-      Map<String, Object> parameters, OutputStream outputStream,
-      boolean addProcessDefinitionParameters, ConnectionProvider connectionProvider,
-      JRDataSource data, Map<Object, Object> additionalExportParameters) throws OBException {
-    exportJR(jasperFilePath, expType, parameters, outputStream, addProcessDefinitionParameters,
-        connectionProvider, data, additionalExportParameters, false);
-  }
-
-  /**
-   * Exports the report to a file.
+   * Exports the report to a file. This method will try to compile the sub-reports (if any). Note
+   * that the sub-reports to be compiled will be the .jrxml files placed in the same folder as the
+   * main report and whose related parameter name starts with <b>SUBREP_</b>.
    * 
    * @param jasperFilePath
    *          The path to the JR template of the report.
@@ -183,10 +161,6 @@ public class ReportingUtils {
    *          The data to be used in the report, if required.
    * @param additionalExportParameters
    *          Additional export parameters than can be added to configure the resulting report.
-   * @param compileSubreports
-   *          A flag to indicate if the sub-reports should be compiled too. If true, the sub-report
-   *          jrxml files should be placed in the same folder as the main report and their related
-   *          parameter name should start with SUBREP_
    * @throws OBException
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
@@ -194,7 +168,7 @@ public class ReportingUtils {
   public static void exportJR(String jasperFilePath, ExportType expType,
       Map<String, Object> parameters, File target, boolean addProcessDefinitionParameters,
       ConnectionProvider connectionProvider, JRDataSource data,
-      Map<Object, Object> additionalExportParameters, boolean compileSubreports) throws OBException {
+      Map<Object, Object> additionalExportParameters) throws OBException {
 
     JRSwapFileVirtualizer virtualizer = null;
     Map<Object, Object> exportParameters = new HashMap<>();
@@ -214,8 +188,8 @@ public class ReportingUtils {
     if (addProcessDefinitionParameters) {
       addProcessDefinitionParameters(parameters);
     }
-    JasperPrint jasperPrint = generateJasperPrint(jasperFilePath, parameters, compileSubreports,
-        connectionProvider, data);
+    JasperPrint jasperPrint = generateJasperPrint(jasperFilePath, parameters, connectionProvider,
+        data);
     if (expType == ExportType.HTML) {
       HttpSession session = (HttpSession) parameters.get("HTTP_SESSION");
       if (session != null) {
@@ -236,7 +210,9 @@ public class ReportingUtils {
   }
 
   /**
-   * Exports the report to an output stream.
+   * Exports the report to an output stream. This method will try to compile the sub-reports (if
+   * any). Note that the sub-reports to be compiled will be the .jrxml files placed in the same
+   * folder as the main report and whose related parameter name starts with <b>SUBREP_</b>.
    * 
    * @param jasperFilePath
    *          The path to the JR template of the report.
@@ -255,10 +231,6 @@ public class ReportingUtils {
    *          The data to be used in the report, if required.
    * @param additionalExportParameters
    *          Additional export parameters than can be added to configure the resulting report.
-   * @param compileSubreports
-   *          A flag to indicate if the sub-reports should be compiled too. If true, the sub-report
-   *          jrxml files should be placed in the same folder as the main report and their related
-   *          parameter name should start with SUBREP_
    * @throws OBException
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
@@ -266,8 +238,7 @@ public class ReportingUtils {
   public static void exportJR(String jasperFilePath, ExportType expType,
       Map<String, Object> parameters, OutputStream outputStream,
       boolean addProcessDefinitionParameters, ConnectionProvider connectionProvider,
-      JRDataSource data, Map<Object, Object> additionalExportParameters, boolean compileSubreports)
-      throws OBException {
+      JRDataSource data, Map<Object, Object> additionalExportParameters) throws OBException {
 
     JRSwapFileVirtualizer virtualizer = null;
     Map<Object, Object> exportParameters = new HashMap<>();
@@ -287,8 +258,8 @@ public class ReportingUtils {
     if (addProcessDefinitionParameters) {
       addProcessDefinitionParameters(parameters);
     }
-    JasperPrint jasperPrint = generateJasperPrint(jasperFilePath, parameters, compileSubreports,
-        connectionProvider, data);
+    JasperPrint jasperPrint = generateJasperPrint(jasperFilePath, parameters, connectionProvider,
+        data);
     if (expType == ExportType.HTML) {
       HttpSession session = (HttpSession) parameters.get("HTTP_SESSION");
       if (session != null) {
@@ -309,6 +280,40 @@ public class ReportingUtils {
   }
 
   /**
+   * Exports the report to a file.
+   * 
+   * @deprecated The compileSubreports parameter has no effect. Therefore, use
+   *             {@link ReportingUtils#exportJR(String, ExportType, Map, File, boolean, ConnectionProvider, JRDataSource, Map)}
+   *             instead.
+   */
+  @Deprecated
+  public static void exportJR(String jasperFilePath, ExportType expType,
+      Map<String, Object> parameters, File target, boolean addProcessDefinitionParameters,
+      ConnectionProvider connectionProvider, JRDataSource data,
+      Map<Object, Object> additionalExportParameters, boolean compileSubreports)
+      throws OBException {
+    exportJR(jasperFilePath, expType, parameters, target, addProcessDefinitionParameters,
+        connectionProvider, data, additionalExportParameters);
+  }
+
+  /**
+   * Exports the report to an output stream.
+   * 
+   * @deprecated The compileSubreports parameter has no effect. Therefore, use
+   *             {@link ReportingUtils#exportJR(String, ExportType, Map, OutputStream, boolean, ConnectionProvider, JRDataSource, Map)}
+   *             instead.
+   */
+  @Deprecated
+  public static void exportJR(String jasperFilePath, ExportType expType,
+      Map<String, Object> parameters, OutputStream outputStream,
+      boolean addProcessDefinitionParameters, ConnectionProvider connectionProvider,
+      JRDataSource data, Map<Object, Object> additionalExportParameters, boolean compileSubreports)
+      throws OBException {
+    exportJR(jasperFilePath, expType, parameters, outputStream, addProcessDefinitionParameters,
+        connectionProvider, data, additionalExportParameters);
+  }
+
+  /**
    * Saves a pre-compiled report into a file.
    * 
    * @param jasperPrint
@@ -326,29 +331,30 @@ public class ReportingUtils {
   public static void saveReport(JasperPrint jasperPrint, ExportType expType,
       Map<Object, Object> exportParameters, File target) throws JRException {
     switch (expType) {
-    case CSV:
-      saveCsvReportToFile(jasperPrint, target);
-      break;
-    case HTML:
-      if (log.isDebugEnabled())
-        log.debug("JR: Print HTML");
-      saveHTMLReportToFile(jasperPrint, exportParameters, target);
-      break;
-    case PDF:
-      JasperExportManager.exportReportToPdfFile(jasperPrint, target.getAbsolutePath());
-      break;
-    case TXT:
-      saveTxtReportToFile(jasperPrint, target);
-      break;
-    case XLS:
-      saveExcelReportToFile(new JRXlsExporter(), jasperPrint, exportParameters, target);
-      break;
-    case XLSX:
-      saveExcelReportToFile(new JRXlsxExporter(), jasperPrint, exportParameters, target);
-      break;
-    case XML:
-      JasperExportManager.exportReportToXmlFile(jasperPrint, target.getAbsolutePath(), true);
-      break;
+      case CSV:
+        saveCsvReportToFile(jasperPrint, target);
+        break;
+      case HTML:
+        if (log.isDebugEnabled()) {
+          log.debug("JR: Print HTML");
+        }
+        saveHTMLReportToFile(jasperPrint, exportParameters, target);
+        break;
+      case PDF:
+        JasperExportManager.exportReportToPdfFile(jasperPrint, target.getAbsolutePath());
+        break;
+      case TXT:
+        saveTxtReportToFile(jasperPrint, target);
+        break;
+      case XLS:
+        saveExcelReportToFile(new JRXlsExporter(), jasperPrint, exportParameters, target);
+        break;
+      case XLSX:
+        saveExcelReportToFile(new JRXlsxExporter(), jasperPrint, exportParameters, target);
+        break;
+      case XML:
+        JasperExportManager.exportReportToXmlFile(jasperPrint, target.getAbsolutePath(), true);
+        break;
     }
   }
 
@@ -370,31 +376,32 @@ public class ReportingUtils {
   public static void saveReport(JasperPrint jasperPrint, ExportType expType,
       Map<Object, Object> exportParameters, OutputStream outputStream) throws JRException {
     switch (expType) {
-    case CSV:
-      saveCsvReportToOutputStream(jasperPrint, outputStream);
-      break;
-    case HTML:
-      if (log.isDebugEnabled())
-        log.debug("JR: Print HTML");
-      saveHTMLReportToOutputStream(jasperPrint, exportParameters, outputStream);
-      break;
-    case PDF:
-      savePDFReportToOutputStream(jasperPrint, exportParameters, outputStream);
-      break;
-    case TXT:
-      saveTxtReportToOutputStream(jasperPrint, outputStream);
-      break;
-    case XLS:
-      saveExcelReportToOutputStream(new JRXlsExporter(), jasperPrint, exportParameters,
-          outputStream);
-      break;
-    case XLSX:
-      saveExcelReportToOutputStream(new JRXlsxExporter(), jasperPrint, exportParameters,
-          outputStream);
-      break;
-    case XML:
-      JasperExportManager.exportReportToXmlStream(jasperPrint, outputStream);
-      break;
+      case CSV:
+        saveCsvReportToOutputStream(jasperPrint, outputStream);
+        break;
+      case HTML:
+        if (log.isDebugEnabled()) {
+          log.debug("JR: Print HTML");
+        }
+        saveHTMLReportToOutputStream(jasperPrint, exportParameters, outputStream);
+        break;
+      case PDF:
+        savePDFReportToOutputStream(jasperPrint, exportParameters, outputStream);
+        break;
+      case TXT:
+        saveTxtReportToOutputStream(jasperPrint, outputStream);
+        break;
+      case XLS:
+        saveExcelReportToOutputStream(new JRXlsExporter(), jasperPrint, exportParameters,
+            outputStream);
+        break;
+      case XLSX:
+        saveExcelReportToOutputStream(new JRXlsxExporter(), jasperPrint, exportParameters,
+            outputStream);
+        break;
+      case XML:
+        JasperExportManager.exportReportToXmlStream(jasperPrint, outputStream);
+        break;
     }
   }
 
@@ -553,7 +560,8 @@ public class ReportingUtils {
     SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(file);
 
     if (exportParameters != null && exportParameters.size() > 0) {
-      SimpleXlsReportConfiguration exportConfiguration = getXlsConfigurationFromExportParameters(exportParameters);
+      SimpleXlsReportConfiguration exportConfiguration = getXlsConfigurationFromExportParameters(
+          exportParameters);
       excelExporter.setConfiguration(exportConfiguration);
     } else {
       SimpleXlsReportConfiguration reportExportConfiguration = new SimpleXlsReportConfiguration();
@@ -588,7 +596,8 @@ public class ReportingUtils {
         outputStream);
 
     if (exportParameters != null && exportParameters.size() > 0) {
-      SimpleXlsReportConfiguration exportConfiguration = getXlsConfigurationFromExportParameters(exportParameters);
+      SimpleXlsReportConfiguration exportConfiguration = getXlsConfigurationFromExportParameters(
+          exportParameters);
       excelExporter.setConfiguration(exportConfiguration);
     } else {
       SimpleXlsReportConfiguration reportExportConfiguration = new SimpleXlsReportConfiguration();
@@ -682,8 +691,8 @@ public class ReportingUtils {
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
    */
-  private static void saveCsvReportToOutputStream(JasperPrint jasperPrint, OutputStream outputStream)
-      throws JRException {
+  private static void saveCsvReportToOutputStream(JasperPrint jasperPrint,
+      OutputStream outputStream) throws JRException {
     final JRCsvExporter csvExporter = new JRCsvExporter();
     SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
     SimpleWriterExporterOutput exporterOutput = new SimpleWriterExporterOutput(outputStream);
@@ -761,8 +770,8 @@ public class ReportingUtils {
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
    */
-  private static void saveTxtReportToOutputStream(JasperPrint jasperPrint, OutputStream outputStream)
-      throws JRException {
+  private static void saveTxtReportToOutputStream(JasperPrint jasperPrint,
+      OutputStream outputStream) throws JRException {
     final JRTextExporter textExporter = new JRTextExporter();
     SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
     SimpleWriterExporterOutput exporterOutput = new SimpleWriterExporterOutput(outputStream);
@@ -930,14 +939,24 @@ public class ReportingUtils {
   /**
    * Generates a compiled, translated and filled report into a JasperPrint object.
    * 
+   * @deprecated The compileSubreports parameter has no effect. Therefore, use
+   *             {@link ReportingUtils#generateJasperPrint(String, Map, ConnectionProvider, JRDataSource)}
+   *             instead.
+   */
+  @Deprecated
+  public static JasperPrint generateJasperPrint(String jasperFilePath,
+      Map<String, Object> parameters, boolean compileSubreports,
+      ConnectionProvider connectionProvider, JRDataSource data) throws OBException {
+    return generateJasperPrint(jasperFilePath, parameters, connectionProvider, data);
+  }
+
+  /**
+   * Generates a compiled, translated and filled report into a JasperPrint object.
+   * 
    * @param jasperFilePath
    *          The path to the JR template of the report.
    * @param parameters
    *          The parameters to be sent to Jasper Report.
-   * @param compileSubreports
-   *          A flag to indicate if the sub-reports of the report should be compiled too. If true,
-   *          the sub-report jrxml files should be placed in the same folder as the main report and
-   *          their name should start with SUBREP_
    * @param connectionProvider
    *          A connection provider in case the report needs it.
    * @param data
@@ -948,8 +967,8 @@ public class ReportingUtils {
    *           error message.
    */
   public static JasperPrint generateJasperPrint(String jasperFilePath,
-      Map<String, Object> parameters, boolean compileSubreports,
-      ConnectionProvider connectionProvider, JRDataSource data) throws OBException {
+      Map<String, Object> parameters, ConnectionProvider connectionProvider, JRDataSource data)
+      throws OBException {
     long t1 = System.currentTimeMillis();
     try {
       setReportFormatFactory(parameters);
@@ -963,12 +982,9 @@ public class ReportingUtils {
 
       String language = OBContext.getOBContext().getLanguage().getLanguage();
       JasperReport jReport;
-      if (compileSubreports && connectionProvider != null) {
-        jReport = compiledReportManager.compileReportWithSubreports(jasperFilePath, language,
-            parameters, connectionProvider);
-      } else {
-        jReport = compiledReportManager.compileReport(jasperFilePath, language);
-      }
+
+      jReport = compiledReportManager.compileReportWithSubreports(jasperFilePath, language,
+          parameters, connectionProvider);
 
       ReportFiller reportFiller = new ReportFiller(jReport, parameters);
       if (connectionProvider != null) {
@@ -1124,18 +1140,18 @@ public class ReportingUtils {
     parameters.put(JASPER_PARAM_HBSESSION, OBDal.getReadOnlyInstance().getSession());
     parameters.put(JASPER_PARAM_OBCONTEXT, OBContext.getOBContext());
 
-    FormatDefinition amountFormat = UIDefinitionController.getInstance().getFormatDefinition(
-        "amount", UIDefinitionController.NORMALFORMAT_QUALIFIER);
+    FormatDefinition amountFormat = UIDefinitionController.getInstance()
+        .getFormatDefinition("amount", UIDefinitionController.NORMALFORMAT_QUALIFIER);
     addFormatParameter(parameters, amountFormat, "AMOUNTFORMAT");
 
-    FormatDefinition generalQtyFormat = UIDefinitionController.getInstance().getFormatDefinition(
-        "generalQty", UIDefinitionController.SHORTFORMAT_QUALIFIER);
+    FormatDefinition generalQtyFormat = UIDefinitionController.getInstance()
+        .getFormatDefinition("generalQty", UIDefinitionController.SHORTFORMAT_QUALIFIER);
     addFormatParameter(parameters, generalQtyFormat, "QUANTITYFORMAT");
 
     String strClientId = OBContext.getOBContext().getCurrentClient().getId();
     parameters.put("Current_Client_ID", strClientId);
-    String strOrgs = StringCollectionUtils.commaSeparated(OBContext.getOBContext()
-        .getReadableOrganizations());
+    String strOrgs = StringCollectionUtils
+        .commaSeparated(OBContext.getOBContext().getReadableOrganizations());
     parameters.put("Readable_Organizations", strOrgs);
   }
 
@@ -1147,7 +1163,8 @@ public class ReportingUtils {
 
     final DecimalFormat numberFormat = new DecimalFormat(
         correctMaskForGrouping(reportFormat.getFormat(), reportFormat.getDecimalSymbol(),
-            reportFormat.getGroupingSymbol()), dfs);
+            reportFormat.getGroupingSymbol()),
+        dfs);
     parameters.put(parameterName, numberFormat);
   }
 
@@ -1158,10 +1175,12 @@ public class ReportingUtils {
    *          Map of parameters where the date format configuration is put.
    */
   private static void setReportFormatFactory(Map<String, Object> parameters) {
-    String javaDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String javaDateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
-    if (log.isDebugEnabled())
+    if (log.isDebugEnabled()) {
       log.debug("creating the format factory: " + javaDateFormat);
+    }
     final JRFormatFactory jrFormatFactory = new JRFormatFactory();
     jrFormatFactory.setDatePattern(javaDateFormat);
     parameters.put(JRParameter.REPORT_FORMAT_FACTORY, jrFormatFactory);
@@ -1365,8 +1384,8 @@ public class ReportingUtils {
       } else if (ExportType.XML.hasExtension(action)) {
         return ExportType.XML;
       } else {
-        throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_UnsupportedAction",
-            new String[] { action }));
+        throw new OBException(
+            OBMessageUtils.getI18NMessage("OBUIAPP_UnsupportedAction", new String[] { action }));
       }
     }
 
@@ -1399,8 +1418,8 @@ public class ReportingUtils {
         // file name should end with the extension
         return false;
       }
-      final String tmpFileNameWithoutExtension = tmpFileName.substring(0, tmpFileName.length()
-          - getExtension().length() - 1);
+      final String tmpFileNameWithoutExtension = tmpFileName.substring(0,
+          tmpFileName.length() - getExtension().length() - 1);
 
       // temp file must be a valid uuid
       return tmpFileNameWithoutExtension.matches("[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}");

@@ -22,12 +22,13 @@ import java.sql.Connection;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
 public abstract class DocLCCostTemplate {
-  static Logger log4jDocLCCost = Logger.getLogger(DocLCCost.class);
+  static Logger log4jDocLCCost = LogManager.getLogger();
 
   /**
    * Constructor

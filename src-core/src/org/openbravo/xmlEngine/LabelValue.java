@@ -11,12 +11,13 @@
  */
 package org.openbravo.xmlEngine;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.utils.Replace;
 
 class LabelValue implements XmlComponentValue {
 
-  static Logger log4j = Logger.getLogger(LabelValue.class);
+  static Logger log4j = LogManager.getLogger();
 
   String strValue = null;
   LabelTemplate labelTemplate;
@@ -50,6 +51,7 @@ class LabelValue implements XmlComponentValue {
     this.strValue = replace(strValue);
   }
 
+  @Override
   public String print() {
     log4j.debug("running print() in LabelValue class");
     if (xmlComponentValue != null) {
@@ -59,6 +61,7 @@ class LabelValue implements XmlComponentValue {
     }
   }
 
+  @Override
   public String printPrevious() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.printPrevious();
@@ -67,6 +70,7 @@ class LabelValue implements XmlComponentValue {
     }
   }
 
+  @Override
   public String printSimple() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.printSimple();
@@ -75,6 +79,7 @@ class LabelValue implements XmlComponentValue {
     }
   }
 
+  @Override
   public String printPreviousSimple() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.printPreviousSimple();

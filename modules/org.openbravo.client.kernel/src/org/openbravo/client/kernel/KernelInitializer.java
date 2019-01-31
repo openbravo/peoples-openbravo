@@ -27,14 +27,14 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.client.kernel.event.PersistenceEventOBInterceptor;
 import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.PoolInterceptorProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class responsible for initializing the kernel layer. Can be used in a servlet as well as a
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public class KernelInitializer {
 
-  final static private Logger log = LoggerFactory.getLogger(KernelInitializer.class);
+  final static private Logger log = LogManager.getLogger();
 
   @Inject
   private PersistenceEventOBInterceptor persistenceEventOBInterceptor;
@@ -66,7 +66,8 @@ public class KernelInitializer {
     }
 
     // If an external connection pool is used, its injected interceptors are added to the pool
-    String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String poolClassName = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("db.externalPoolClassName");
     if (poolClassName != null && !"".equals(poolClassName)) {
       try {
@@ -84,7 +85,8 @@ public class KernelInitializer {
 
   public synchronized void setInterceptor() {
     final OBInterceptor interceptor = (OBInterceptor) SessionFactoryController.getInstance()
-        .getConfiguration().getInterceptor();
+        .getConfiguration()
+        .getInterceptor();
     if (interceptor.getInterceptorListener() == null) {
       interceptor.setInterceptorListener(persistenceEventOBInterceptor);
     }

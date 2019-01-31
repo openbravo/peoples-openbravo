@@ -42,17 +42,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.HttpSessionWrapper;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.test.base.HiddenObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** HttpServletRequest mock to be used to test components requiring requests */
 public class HttpServletRequestMock implements HttpServletRequest {
-  private static final Logger log = LoggerFactory.getLogger(HttpServletRequestMock.class);
+  private static final Logger log = LogManager.getLogger();
 
   private HttpSession session;
 
@@ -78,7 +78,9 @@ public class HttpServletRequestMock implements HttpServletRequest {
     setRequestMockInRequestContext(new VariablesSecureAppMock());
   }
 
-  /** Create a mock for HttpServletRequest setting some basic configuration parameters in session. */
+  /**
+   * Create a mock for HttpServletRequest setting some basic configuration parameters in session.
+   */
   public HttpServletRequestMock() {
     session = new HttpSessionWrapper();
     Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();

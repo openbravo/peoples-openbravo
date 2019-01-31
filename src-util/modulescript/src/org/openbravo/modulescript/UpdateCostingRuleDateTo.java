@@ -19,7 +19,8 @@
 
 package org.openbravo.modulescript;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 /**
@@ -28,7 +29,7 @@ import org.openbravo.database.ConnectionProvider;
  */
 public class UpdateCostingRuleDateTo extends ModuleScript {
 
-  private static final Logger log4j = Logger.getLogger(UpdateCostingRuleDateTo.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   public void execute() {

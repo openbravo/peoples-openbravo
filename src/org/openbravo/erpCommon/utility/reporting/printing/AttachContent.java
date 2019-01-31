@@ -10,19 +10,21 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************/
 package org.openbravo.erpCommon.utility.reporting.printing;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
+@SuppressWarnings("serial")
 class AttachContent implements FieldProvider {
 
-  static Logger log4j = Logger.getLogger(AttachContent.class);
+  static Logger log4j = LogManager.getLogger();
   public String docName;
   public String fileName;
   public FileItem fileItem;
@@ -78,10 +80,11 @@ class AttachContent implements FieldProvider {
     this.docName = docName;
   }
 
+  @Override
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("FILENAME"))
+    if (fieldName.equalsIgnoreCase("FILENAME")) {
       return fileName;
-    else if (fieldName.equalsIgnoreCase("ID")) {
+    } else if (fieldName.equalsIgnoreCase("ID")) {
       return id;
     } else if (fieldName.equalsIgnoreCase("VISIBLE")) {
       return visible;

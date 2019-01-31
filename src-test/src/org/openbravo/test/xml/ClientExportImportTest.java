@@ -67,8 +67,9 @@ public class ClientExportImportTest extends XMLBaseTest {
   @Test
   public void testZDeleteClient() {
     Platform platform = SystemService.getInstance().getPlatform();
-    ExcludeFilter excludeFilter = DBSMOBUtil.getInstance().getExcludeFilter(
-        new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    ExcludeFilter excludeFilter = DBSMOBUtil.getInstance()
+        .getExcludeFilter(new File(OBPropertiesProvider.getInstance()
+            .getOpenbravoProperties()
             .getProperty("source.path")));
     Database dbBefore = platform.loadTablesFromDatabase(excludeFilter);
     String newClientId = exportImport(QA_TEST_CLIENT_ID);
@@ -95,7 +96,8 @@ public class ClientExportImportTest extends XMLBaseTest {
     String xml = sw.toString();
     try {
       final String sourcePath = (String) OBPropertiesProvider.getInstance()
-          .getOpenbravoProperties().get("source.path");
+          .getOpenbravoProperties()
+          .get("source.path");
       final File dir = new File(sourcePath + File.separator + "temp");
       if (!dir.exists()) {
         dir.mkdir();
@@ -115,8 +117,8 @@ public class ClientExportImportTest extends XMLBaseTest {
     final ClientImportProcessor importProcessor = new ClientImportProcessor();
     importProcessor.setNewName("" + System.currentTimeMillis());
     try {
-      final ImportResult ir = DataImportService.getInstance().importClientData(importProcessor,
-          false, new StringReader(xml));
+      final ImportResult ir = DataImportService.getInstance()
+          .importClientData(importProcessor, false, new StringReader(xml));
       xml = null;
       if (ir.getException() != null) {
         throw new OBException(ir.getException());

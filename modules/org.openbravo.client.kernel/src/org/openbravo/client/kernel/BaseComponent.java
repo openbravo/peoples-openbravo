@@ -29,7 +29,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource;
@@ -66,14 +67,14 @@ public abstract class BaseComponent implements Component {
 
   private static String moduleVersionHash = null;
 
-  private static final Logger log4j = Logger.getLogger(BaseComponent.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Inject
   @Any
   private Instance<Component> components;
 
   @Inject
-  private ApplicationDictionaryCachedStructures adcs;
+  protected ApplicationDictionaryCachedStructures adcs;
 
   // TODO: add the concept of child components which are generated/rendered before the root
   // component.
@@ -83,6 +84,7 @@ public abstract class BaseComponent implements Component {
   /**
    * @return the generated javascript which is send back to the client
    */
+  @Override
   public abstract String generate();
 
   public String getContextUrl() {
@@ -119,6 +121,7 @@ public abstract class BaseComponent implements Component {
     return url;
   }
 
+  @Override
   public String getId() {
     return id;
   }
@@ -183,6 +186,7 @@ public abstract class BaseComponent implements Component {
    * 
    * @see org.openbravo.client.kernel.Component#getETag()
    */
+  @Override
   public String getETag() {
     if (adcs.isInDevelopment()) {
       return OBContext.getOBContext().getLanguage().getId() + "_" + getLastModified().getTime();
@@ -206,8 +210,8 @@ public abstract class BaseComponent implements Component {
           moduleVersions += "\n";
         }
         moduleVersionHash = DigestUtils.md5Hex(moduleVersions);
-        log4j.debug("New moduleVersionHash. Original: " + moduleVersions + " hash:"
-            + moduleVersionHash);
+        log4j.debug(
+            "New moduleVersionHash. Original: " + moduleVersions + " hash:" + moduleVersionHash);
 
       } finally {
         OBContext.restorePreviousMode();
@@ -226,10 +230,12 @@ public abstract class BaseComponent implements Component {
    * 
    * @see org.openbravo.client.kernel.Component#getLastModified()
    */
+  @Override
   public Date getLastModified() {
     return new Date();
   }
 
+  @Override
   public Module getModule() {
     if (module != null) {
       return module;
@@ -258,14 +264,17 @@ public abstract class BaseComponent implements Component {
   /**
    * @return returns the javascript content type with UTF-8: application/javascript;charset=UTF-8
    */
+  @Override
   public String getContentType() {
     return KernelConstants.JAVASCRIPT_CONTENTTYPE;
   }
 
+  @Override
   public boolean isJavaScriptComponent() {
     return true;
   }
 
+  @Override
   public boolean isInDevelopment() {
     return adcs.isInDevelopment(getModule().getId());
   }
@@ -298,5 +307,9 @@ public abstract class BaseComponent implements Component {
 
   public boolean bypassAuthentication() {
     return false;
+  }
+
+  public ApplicationDictionaryCachedStructures getADCS() {
+    return adcs;
   }
 }

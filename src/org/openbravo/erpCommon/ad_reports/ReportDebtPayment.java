@@ -43,8 +43,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportDebtPayment extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT", "DIRECT")) {
@@ -86,8 +87,8 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       String strSettle = vars.getGlobalVariable("inpSettle", "ReportDebtPayment|Settle", "");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportDebtPayment|currency",
           strUserCurrencyId);
-      String strConciliate = vars.getGlobalVariable("inpConciliate",
-          "ReportDebtPayment|Conciliate", "");
+      String strConciliate = vars.getGlobalVariable("inpConciliate", "ReportDebtPayment|Conciliate",
+          "");
       String strStatus = vars.getGlobalVariable("inpStatus", "ReportDebtPayment|Status", "");
       String strGroup = vars.getGlobalVariable("inpGroup", "ReportDebtPayment|Group", "isGroup");
       String strPending = "";
@@ -133,8 +134,8 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
           "ReportDebtPayment|currency");
       // String strReceipt = vars.getRequestGlobalVariable("inpReceipt",
       // "ReportDebtPayment|Receipt");
-      String strReceipt = vars.getStringParameter("inpReceipt").equals("") ? "N" : vars
-          .getStringParameter("inpReceipt");
+      String strReceipt = vars.getStringParameter("inpReceipt").equals("") ? "N"
+          : vars.getStringParameter("inpReceipt");
       vars.setSessionValue("ReportDebtPayment|Receipt", strReceipt);
       // String strEntry = vars.getGlobalVariable("inpEntry",
       // "ReportDebtPayment|Entry","1");
@@ -170,27 +171,29 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
           "ReportDebtPayment|currency");
       // String strReceipt = vars.getRequestGlobalVariable("inpReceipt",
       // "ReportDebtPayment|Receipt");
-      String strReceipt = vars.getStringParameter("inpReceipt").equals("") ? "N" : vars
-          .getStringParameter("inpReceipt");
+      String strReceipt = vars.getStringParameter("inpReceipt").equals("") ? "N"
+          : vars.getStringParameter("inpReceipt");
       vars.setSessionValue("ReportDebtPayment|Receipt", strReceipt);
       // String strEntry = vars.getGlobalVariable("inpEntry", "ReportDebtPayment|Entry","1");
       setHistoryCommand(request, "DIRECT");
       printPageDataPdf(response, vars, strcBpartnerId, strDateFrom, strDateTo, strCal1, strCal2,
           strPaymentRule, strSettle, strConciliate, strReceipt, strPending, strcbankaccount,
           strStatus, strGroup, strGroupBA, strCurrencyId);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strDateFrom, String strDateTo, String strCal1,
       String strCalc2, String strPaymentRule, String strSettle, String strConciliate,
       String strReceipt, String strPending, String strcbankaccount, String strStatus,
-      String strGroup, String strGroupBA, String cCurrencyConv) throws IOException,
-      ServletException {
+      String strGroup, String strGroupBA, String cCurrencyConv)
+      throws IOException, ServletException {
     String strAux = "";
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("strGroup = " + strGroup);
+    }
     if (strPending.equals("") && strConciliate.equals("") && strSettle.equals("")) {
       strAux = "";
     } else {
@@ -249,17 +252,19 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       String strC_BPartner_ID, String strDateFrom, String strDateTo, String strCal1,
       String strCalc2, String strPaymentRule, String strSettle, String strConciliate,
       String strReceipt, String strPending, String strcbankaccount, String strStatus,
-      String strGroup, String strGroupBA, String cCurrencyConv) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      String strGroup, String strGroupBA, String cCurrencyConv)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     String discard[] = { "discard", "discard2", "discard3", "discard4", "discard5", "discard6",
         "discard7", "discard8" };
     String strAux = "";
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("strGroup = " + strGroup);
+    }
     if (strPending.equals("") && strConciliate.equals("") && strSettle.equals("")) {
       strAux = "";
     } else {
@@ -282,20 +287,21 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     }
     XmlDocument xmlDocument;
     ReportDebtPaymentData[] data = null;
-    if (!strGroup.equals(""))
+    if (!strGroup.equals("")) {
       data = ReportDebtPaymentData.select(this, cCurrencyConv, vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
           strC_BPartner_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
           strCalc2, strPaymentRule, strReceipt, strStatus, strAux, strcbankaccount,
           "BPARTNER, BANKACC");
-    else
+    } else {
       data = ReportDebtPaymentData.selectNoBpartner(this, cCurrencyConv, vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
           strC_BPartner_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
           strCalc2, strPaymentRule, strReceipt, strStatus, strAux, strcbankaccount,
           "BANKACC, BPARTNER");
+    }
     if (data == null || data.length == 0) {
       data = ReportDebtPaymentData.set();
       discard[0] = "sectionBpartner";
@@ -346,12 +352,14 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       discard[0] = "sectionBpartner";
       discard[1] = "sectionStatus2";
       discard[2] = "sectionTotal2";
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportDebtPayment", discard).createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportDebtPayment", discard)
+          .createXmlDocument();
       data = ReportDebtPaymentData.set();
     } else {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportDebtPayment", discard).createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportDebtPayment", discard)
+          .createXmlDocument();
     }
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportDebtPayment", false, "", "", "",
         false, "ad_reports", strReplaceWith, false, true);
@@ -388,15 +396,11 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("cBankAccount", strcbankaccount);
-    xmlDocument.setData(
-        "reportC_ACCOUNTNUMBER",
-        "liststructure",
+    xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure",
         AccountNumberComboData.select(this, vars.getLanguage(),
             Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment")));
-    xmlDocument.setData(
-        "reportCBPartnerId_IN",
-        "liststructure",
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         SelectorUtilityData.selectBpartner(this,
             Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
             Utility.getContext(this, vars, "#User_Client", ""), strC_BPartner_ID));
@@ -418,17 +422,18 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     xmlDocument.setParameter("status", strStatus);
     xmlDocument.setParameter("group", strGroup);
     xmlDocument.setParameter("groupBA", strGroupBA);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("diacard = " + discard[0] + " - " + discard[1] + " - " + discard[2]);
+    }
     // xmlDocument.setParameter("paramBPartnerDescription",
     // ReportDebtPaymentData.bPartnerDescription(this, strC_BPartner_ID));
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("ListData.select PaymentRule:" + strPaymentRule);
+    }
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportDebtPayment"), Utility.getContext(this, vars, "#User_Client",
-              "ReportDebtPayment"), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "All_Payment Rule",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
+          Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportDebtPayment",
           strPaymentRule);
       xmlDocument.setData("reportPaymentRule", "liststructure", comboTableData.select(false));
@@ -436,13 +441,14 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("ListData.select Status:" + strPaymentRule);
+    }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_DP_Management_Status", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportDebtPayment"), Utility.getContext(this, vars, "#User_Client",
-              "ReportDebtPayment"), 0);
+          "C_DP_Management_Status", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
+          Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportDebtPayment", strStatus);
       xmlDocument.setData("reportStatus", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -476,6 +482,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportDebtPayment. This Servlet was made by Pablo Sarobe";
   } // end of getServletInfo() method

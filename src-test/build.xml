@@ -56,6 +56,7 @@
     <fileset dir="${base.modules}">
       <include name="*/lib/**" />
     </fileset>
+    <pathelement path="${base.src.test}/src"/>
   </path>
 
   <target name="compile.test" depends="sqlc,generate.entities.quick">
@@ -66,20 +67,14 @@
     </javac>
   </target>
 
-  <target name="copy.xml">
-    <copy todir="${build}">
-      <fileset dir="${base.src.test}/src" includes="**/*.xml" />
-    </copy>
-  </target>
-
-  <target name="run.tests" depends="compile.test, copy.xml">
+  <target name="run.tests" depends="compile.test">
     <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
       <classpath refid="test.class.path" />
       <test name="org.openbravo.test.AntTaskTests" haltonfailure="no"/>
     </junit>
   </target>
 
-  <target name="run.all.tests" depends="compile.test, copy.xml">
+  <target name="run.all.tests" depends="compile.test">
     <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
       <classpath refid="test.class.path" />
       <test name="org.openbravo.test.AllAntTaskTests" haltonfailure="no" outfile="../src/result">
@@ -88,14 +83,14 @@
     </junit>
   </target>
 
-  <target name="run.quick.tests" depends="compile.test, copy.xml">
+  <target name="run.quick.tests" depends="compile.test">
     <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
       <classpath refid="test.class.path" />
       <test name="org.openbravo.test.AllQuickAntTaskTests" haltonfailure="no"/>
     </junit>
   </target>
 
-  <target name="run.test" depends="compile.test, copy.xml">
+  <target name="run.test" depends="compile.test">
     <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
       <classpath refid="test.class.path" />
       <test name="${test}" haltonfailure="no" outfile="../src/result-${test}">
@@ -104,7 +99,7 @@
     </junit>
   </target>
 
-  <target name="run.webservice.tests" depends="compile.test, copy.xml">
+  <target name="run.webservice.tests" depends="compile.test">
     <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
       <classpath refid="test.class.path" />
       <test name="org.openbravo.test.AllWebserviceTests" haltonfailure="no" outfile="../src/resultws">

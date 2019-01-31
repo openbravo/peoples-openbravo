@@ -27,7 +27,8 @@ import java.util.HashMap;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.client.application.OBBindings;
@@ -44,13 +45,13 @@ public class ExpressionsTest extends OBBaseTest {
   private ScriptEngineManager manager;
   private ScriptEngine engine;
   private Object result = null;
-  private Logger log = Logger.getLogger(ExpressionsTest.class);
+  private Logger log = LogManager.getLogger();
 
   private HashMap<String, String> expr = new HashMap<String, String>();
 
-  /** 
-   * This before method is named setUpEt() to avoid overwriting the super 
-   * setUp method that is invoke automatically before this one.
+  /**
+   * This before method is named setUpEt() to avoid overwriting the super setUp method that is
+   * invoke automatically before this one.
    */
   @Before
   public void setUpEt() throws Exception {
@@ -75,9 +76,10 @@ public class ExpressionsTest extends OBBaseTest {
     expr.put("Format a parsed date",
         "OB.formatDate(OB.parseDate('1979-04-24', 'yyyy-MM-dd'), 'MM-dd-yyyy')");
 
-    expr.put("Filter by vendor/customer", "if(OB.isSalesTransaction()===null){'';}"
-        + "else if(OB.isSalesTransaction()==true){'e.customer = true';}"
-        + "else{'e.vendor = true';}");
+    expr.put("Filter by vendor/customer",
+        "if(OB.isSalesTransaction()===null){'';}"
+            + "else if(OB.isSalesTransaction()==true){'e.customer = true';}"
+            + "else{'e.vendor = true';}");
 
     expr.put("Complex expression from Java",
         "OB.getFilterExpression('org.openbravo.userinterface.selectors.test.SampleFilterExpression');");

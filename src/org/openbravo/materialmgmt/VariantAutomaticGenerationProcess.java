@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.QueryTimeoutException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.GenericJDBCException;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -55,7 +55,7 @@ import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 
 public class VariantAutomaticGenerationProcess implements Process {
-  private static final Logger log4j = Logger.getLogger(VariantAutomaticGenerationProcess.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final int searchKeyLength = getSearchKeyColumnLength();
   private static final String SALES_PRICELIST = "SALES";
   private static final String PURCHASE_PRICELIST = "PURCHASE";
@@ -77,27 +77,23 @@ public class VariantAutomaticGenerationProcess implements Process {
       long variantNumber = 1;
       Map<String, ProductCharacteristicAux> prChUseCode = new HashMap<String, ProductCharacteristicAux>();
 
-      OBCriteria<ProductCharacteristic> prChCrit = OBDal.getInstance().createCriteria(
-          ProductCharacteristic.class);
+      OBCriteria<ProductCharacteristic> prChCrit = OBDal.getInstance()
+          .createCriteria(ProductCharacteristic.class);
       prChCrit.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, product));
       prChCrit.add(Restrictions.eq(ProductCharacteristic.PROPERTY_VARIANT, true));
       prChCrit.addOrderBy(ProductCharacteristic.PROPERTY_SEQUENCENUMBER, true);
+      List<ProductCharacteristic> prChCritList = prChCrit.list();
       List<String> prChs = new ArrayList<String>();
-      for (ProductCharacteristic pc : prChCrit.list()) {
+      for (ProductCharacteristic pc : prChCritList) {
         prChs.add(pc.getId());
       }
       int chNumber = prChs.size();
       String[] currentValues = new String[chNumber];
 
       int i = 0;
-      for (ProductCharacteristic prCh : prChCrit.list()) {
-        OBCriteria<ProductCharacteristicConf> prChConfCrit = OBDal.getInstance().createCriteria(
-            ProductCharacteristicConf.class);
-        prChConfCrit.add(Restrictions.eq(
-            ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
-
+      for (ProductCharacteristic prCh : prChCritList) {
         List<String> prChConfs = new ArrayList<String>();
-        for (ProductCharacteristicConf pcc : prChConfCrit.list()) {
+        for (ProductCharacteristicConf pcc : prCh.getProductCharacteristicConfList()) {
           prChConfs.add(pcc.getId());
         }
         long valuesCount = prChConfs.size();
@@ -105,8 +101,8 @@ public class VariantAutomaticGenerationProcess implements Process {
         boolean useCode = true;
         int maxLength = 0;
         for (String id : prChConfs) {
-          ProductCharacteristicConf prChConf = OBDal.getInstance().get(
-              ProductCharacteristicConf.class, id);
+          ProductCharacteristicConf prChConf = OBDal.getInstance()
+              .get(ProductCharacteristicConf.class, id);
           if (StringUtils.isBlank(prChConf.getCode())) {
             useCode = false;
             break;
@@ -120,21 +116,25 @@ public class VariantAutomaticGenerationProcess implements Process {
         if (useCode) {
           totalMaxLength += maxLength;
         }
-        ProductCharacteristicAux prChAux = new ProductCharacteristicAux(useCode, prChConfs);
-        currentValues[i] = prChAux.getNextValue();
-        prChUseCode.put(prCh.getId(), prChAux);
-        i++;
+
+        if (!prChConfs.isEmpty()) {
+          ProductCharacteristicAux prChAux = new ProductCharacteristicAux(useCode, prChConfs);
+          currentValues[i] = prChAux.getNextValue();
+          prChUseCode.put(prCh.getId(), prChAux);
+          i++;
+        }
       }
       totalMaxLength += Long.toString(variantNumber).length();
       boolean useCodes = totalMaxLength <= searchKeyLength;
 
-      boolean hasNext = true;
+      boolean hasNext = variantNumber > 0;
       int productNo = 0;
       int k = 0;
       Long start = System.currentTimeMillis();
       boolean multilingualDocs = OBDal.getInstance()
-          .get(Client.class, bundle.getContext().getClient()).isMultilingualDocuments();
-      do {
+          .get(Client.class, bundle.getContext().getClient())
+          .isMultilingualDocuments();
+      while (hasNext) {
         k = k + 1;
         // Create variant product
         product = OBDal.getInstance().get(Product.class, recordID);
@@ -154,21 +154,22 @@ public class VariantAutomaticGenerationProcess implements Process {
         variant.setProductAccountsList(Collections.<ProductAccounts> emptyList());
         variant.setGeneric(false);
         for (ProductCharacteristic prCh : variant.getProductCharacteristicList()) {
-          prCh.setProductCharacteristicConfList(Collections.<ProductCharacteristicConf> emptyList());
+          prCh.setProductCharacteristicConfList(
+              Collections.<ProductCharacteristicConf> emptyList());
         }
 
         String searchKey = product.getSearchKey();
         for (i = 0; i < chNumber; i++) {
-          ProductCharacteristicConf prChConf = OBDal.getInstance().get(
-              ProductCharacteristicConf.class, currentValues[i]);
+          ProductCharacteristicConf prChConf = OBDal.getInstance()
+              .get(ProductCharacteristicConf.class, currentValues[i]);
           ProductCharacteristicAux prChConfAux = prChUseCode.get(prChs.get(i));
 
           if (useCodes && prChConfAux.isUseCode()) {
             searchKey += prChConf.getCode();
           }
         }
-        for (int j = 0; j < (Long.toString(variantNumber).length() - Integer.toString(productNo)
-            .length()); j++) {
+        for (int j = 0; j < (Long.toString(variantNumber).length()
+            - Integer.toString(productNo).length()); j++) {
           searchKey += "0";
         }
         searchKey += productNo;
@@ -176,10 +177,10 @@ public class VariantAutomaticGenerationProcess implements Process {
         OBDal.getInstance().save(variant);
         String strChDesc = "";
         for (i = 0; i < chNumber; i++) {
-          ProductCharacteristicConf prChConf = OBDal.getInstance().get(
-              ProductCharacteristicConf.class, currentValues[i]);
-          ProductCharacteristicValue newPrChValue = OBProvider.getInstance().get(
-              ProductCharacteristicValue.class);
+          ProductCharacteristicConf prChConf = OBDal.getInstance()
+              .get(ProductCharacteristicConf.class, currentValues[i]);
+          ProductCharacteristicValue newPrChValue = OBProvider.getInstance()
+              .get(ProductCharacteristicValue.class);
           newPrChValue.setCharacteristic(prChConf.getCharacteristicOfProduct().getCharacteristic());
           newPrChValue.setCharacteristicValue(prChConf.getCharacteristicValue());
           newPrChValue.setProduct(variant);
@@ -192,10 +193,11 @@ public class VariantAutomaticGenerationProcess implements Process {
           OBDal.getInstance().save(newPrChValue);
           if (prChConf.getCharacteristicOfProduct().isDefinesPrice()
               && prChConf.getNetUnitPrice() != null) {
-            setPrice(variant, prChConf.getNetUnitPrice(), prChConf.getCharacteristicOfProduct()
-                .getPriceListType());
+            setPrice(variant, prChConf.getNetUnitPrice(),
+                prChConf.getCharacteristicOfProduct().getPriceListType());
           }
-          if (prChConf.getCharacteristicOfProduct().isDefinesImage() && prChConf.getImage() != null) {
+          if (prChConf.getCharacteristicOfProduct().isDefinesImage()
+              && prChConf.getImage() != null) {
             Image newImage = (Image) DalUtil.copy(prChConf.getImage(), false);
             OBDal.getInstance().save(newImage);
             variant.setImage(newImage);
@@ -219,13 +221,12 @@ public class VariantAutomaticGenerationProcess implements Process {
         if (k == 1000) {
           OBDal.getInstance().flush();
           OBDal.getInstance().getSession().clear();
-          log4j.debug("Variants loop: " + productNo + " : "
-              + ((System.currentTimeMillis()) - (start)));
+          log4j.debug(
+              "Variants loop: " + productNo + " : " + ((System.currentTimeMillis()) - (start)));
           k = 0;
           start = System.currentTimeMillis();
         }
-
-      } while (hasNext);
+      }
 
       OBDal.getInstance().flush();
       OBDal.getInstance().getSession().clear();
@@ -240,25 +241,16 @@ public class VariantAutomaticGenerationProcess implements Process {
     } catch (GenericJDBCException ge) {
       log4j.error("Exception processing variant generation", ge);
       msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
-      msg.setMessage(ge.getSQLException().getMessage());
-      bundle.setResult(msg);
-      OBDal.getInstance().rollbackAndClose();
-      // Oracle wraps the exception into a QueryTimeoutException
-    } catch (QueryTimeoutException qte) {
-      log4j.error("Exception processing variant generation", qte);
-      msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
-      msg.setMessage(qte.getSQLException().getMessage().split("\n")[0]);
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error",
+          bundle.getContext().getLanguage()));
+      msg.setMessage(ge.getSQLException().getMessage().split("\n")[0]);
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
     } catch (final Exception e) {
       log4j.error("Exception processing variant generation", e);
       msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error",
+          bundle.getContext().getLanguage()));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();

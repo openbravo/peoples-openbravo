@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -20,19 +20,19 @@ package org.openbravo.costing;
 
 import java.util.Map;
 
-import org.codehaus.jettison.json.JSONException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.cost.LandedCost;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class LandedCostProcessHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(LandedCostProcessHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -40,37 +40,31 @@ public class LandedCostProcessHandler extends BaseActionHandler {
     try {
       JSONObject jsonContent = new JSONObject(content);
       final String strLandedCostId = jsonContent.getString("M_Landedcost_ID");
-      final LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, strLandedCostId);
+      LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, strLandedCostId);
+      // lock Landed Cost
+      if (landedCost.isProcessNow()) {
+        throw new OBException(OBMessageUtils.parseTranslation("@OtherProcessActive@"));
+      }
 
+      landedCost.setProcessNow(true);
+      if (SessionHandler.isSessionHandlerPresent()) {
+        SessionHandler.getInstance().commitAndStart();
+      }
       JSONObject message = LandedCostProcess.doProcessLandedCost(landedCost);
+      landedCost = OBDal.getInstance().get(LandedCost.class, strLandedCostId);
+      landedCost.setProcessNow(false);
+
       jsonResponse.put("message", message);
 
-    } catch (OBException e) {
-      OBDal.getInstance().rollbackAndClose();
-      log.error("Error in LandedCostProcessHandler: " + e.getMessage(), e);
-      try {
-        JSONObject message = new JSONObject();
-        message.put("severity", "error");
-        message.put("title", OBMessageUtils.messageBD("Error"));
-        message.put("text", e.getMessage());
-        jsonResponse.put("message", message);
-      } catch (JSONException ignore) {
-      }
-    } catch (JSONException e) {
-      OBDal.getInstance().rollbackAndClose();
-      log.error("Error parsing JSONObject: " + e.getMessage(), e);
-      try {
-        JSONObject errorMessage = new JSONObject();
-        errorMessage.put("severity", "error");
-        errorMessage.put("title", OBMessageUtils.messageBD("Error"));
-        errorMessage.put("text", e.getMessage());
-        jsonResponse.put("message", errorMessage);
-      } catch (JSONException ignore) {
-      }
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       log.error("Error in LandedCostProcessHandler: " + e.getMessage(), e);
       try {
+        JSONObject jsonContent = new JSONObject(content);
+        final String strLandedCostId = jsonContent.getString("M_Landedcost_ID");
+        final LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, strLandedCostId);
+        landedCost.setProcessNow(false);
+
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
         String strMessage = OBMessageUtils.translateError(ex.getMessage()).getMessage();
         JSONObject errorMessage = new JSONObject();

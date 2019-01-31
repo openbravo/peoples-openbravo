@@ -36,13 +36,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class CreateFile extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -60,31 +62,33 @@ public class CreateFile extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String windowId, String strProcessId, String strMessage, boolean isDefault)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Button create file msg:" + strMessage);
+    }
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
 
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
     String[] discard = { "" };
-    if (strHelp.equals(""))
+    if (strHelp.equals("")) {
       discard[0] = new String("helpDiscard");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CreateFile", discard).createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFile", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("key", strKey);
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setData(
-        "reportTyperemittance",
-        "liststructure",
+    xmlDocument.setData("reportTyperemittance", "liststructure",
         TyperemittanceComboData.select(this,
             Utility.getContext(this, vars, "#User_Client", "CreateFile"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "CreateFile")));
@@ -100,21 +104,26 @@ public class CreateFile extends HttpSecureAppServlet {
     } else {
       OBError myMessage = new OBError();
       myMessage.setTitle("");
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("CreateFile - before setMessage");
-      if (strMessage == null || strMessage.equals(""))
+      }
+      if (strMessage == null || strMessage.equals("")) {
         myMessage.setType("Success");
-      else
+      } else {
         myMessage.setType("Error");
+      }
       if (strMessage != null && !strMessage.equals("")) {
         myMessage.setMessage(strMessage);
-      } else
+      } else {
         Utility.translateError(this, vars, vars.getLanguage(), "Success");
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("CreateFile - Message Type: " + myMessage.getType());
+      }
       vars.setMessage("CreateFile", myMessage);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("CreateFile - after setMessage");
+      }
       if (myMessage != null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
         xmlDocument.setParameter("messageTitle", myMessage.getTitle());
@@ -130,30 +139,35 @@ public class CreateFile extends HttpSecureAppServlet {
 
   private void getPrintPage(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strKey) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("generate " + strKey);
+    }
     String strCuaderno = CreateFileData.selectParam(this, strKey, "CUADERNO");
     String strContract = CreateFileData.selectParam(this, strKey, "CONTRACT");
-    if (strCuaderno == null)
+    if (strCuaderno == null) {
       strCuaderno = "";
-    if (strContract == null || strContract.equals(""))
+    }
+    if (strContract == null || strContract.equals("")) {
       advisePopUp(request, response, "Error", Utility.messageBD(this, "Error", vars.getLanguage()),
           Utility.messageBD(this, "RemittanceTypeContractError", vars.getLanguage()));
-    if (strCuaderno.equals("58"))
+    }
+    if (strCuaderno.equals("58")) {
       printPageFind58(response, vars, strKey, strContract);
-    else if (strCuaderno.equals("19"))
+    } else if (strCuaderno.equals("19")) {
       printPageFind19(response, vars, strKey, strContract);
-    else if (strCuaderno.equals("34"))
+    } else if (strCuaderno.equals("34")) {
       printPageFind34(response, vars, strKey);
-    else
+    } else {
       advisePopUp(request, response, "Error", Utility.messageBD(this, "Error", vars.getLanguage()),
           Utility.messageBD(this, "RemittanceTypeError", vars.getLanguage()));
+    }
   }
 
-  private void printPageFind58(HttpServletResponse response, VariablesSecureApp vars,
-      String strKey, String strContract) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+  private void printPageFind58(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+      String strContract) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pageFind");
+    }
     StringBuffer strBuf = new StringBuffer();
     String strMessage = "";
     CreateFileData[] Principio = CreateFileData.select(this, strKey);
@@ -164,9 +178,10 @@ public class CreateFile extends HttpSecureAppServlet {
     int comprobacion3 = Integer.parseInt(CreateFileData.selectComprobacion3(this, strKey));
     int comprobacion4 = Integer.parseInt(CreateFileData.selectComprobacion4(this, strKey));
     CreateFileData[] comprobacion5 = CreateFileData.selectComprobacion5(this, strKey);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(" c1:" + comprobacion1 + " c2:" + comprobacion2 + " c3:" + comprobacion3 + " c4:"
           + comprobacion4 + " c5:" + comprobacion5.length);
+    }
 
     for (int i = 0; i < comprobacion5.length; i++) {
       strMessage = strMessage + comprobacion5[i].bpname + " "
@@ -187,8 +202,9 @@ public class CreateFile extends HttpSecureAppServlet {
       printPage(response, vars, strKey, "", "", strMessage, false);
       return;
     }
-    if (Lineas == null || Total == null)
+    if (Lineas == null || Total == null) {
       return;
+    }
     if (Principio[0].nif == null || Principio[0].nif.equals("")) {
       strMessage = Utility.messageBD(this, "NIFError", vars.getLanguage());
     }
@@ -208,12 +224,16 @@ public class CreateFile extends HttpSecureAppServlet {
       strMessage = Utility.messageBD(this, "INEError", vars.getLanguage());
     }
     // presentation header
-    strBuf = strBuf.append("5170").append(Principio[0].nif).append(strContract)
+    strBuf = strBuf.append("5170")
+        .append(Principio[0].nif)
+        .append(strContract)
         .append(Principio[0].dateplanned);
     strBuf = strBuf.append(Principio[0].entidad);
     strBuf = strBuf.append(Principio[0].entofi).append("\r\n");
     // ordering header
-    strBuf = strBuf.append("5370").append(Principio[0].nif).append(strContract)
+    strBuf = strBuf.append("5370")
+        .append(Principio[0].nif)
+        .append(strContract)
         .append(Principio[0].dateplanned);
     strBuf = strBuf.append(Principio[0].entidad).append(Principio[0].nCuenta).append("        06");
     strBuf = strBuf.append(Principio[0].ine).append("   \r\n");
@@ -247,30 +267,45 @@ public class CreateFile extends HttpSecureAppServlet {
             + Lineas[i].tercero;
         ;
       }
-      strBuf = strBuf.append("5670").append(Principio[0].nif).append(strContract)
-          .append(Lineas[i].nFactura).append(Lineas[i].tercero);
-      strBuf = strBuf.append(Lineas[i].creditcardnumber).append(Lineas[i].payamt)
+      strBuf = strBuf.append("5670")
+          .append(Principio[0].nif)
+          .append(strContract)
+          .append(Lineas[i].nFactura)
+          .append(Lineas[i].tercero);
+      strBuf = strBuf.append(Lineas[i].creditcardnumber)
+          .append(Lineas[i].payamt)
           .append("                ");
       strBuf = strBuf.append(Replace.replace(Lineas[i].concepto, "\n", ""))
-          .append(Lineas[i].fechaVencimiento).append("  \r\n");
+          .append(Lineas[i].fechaVencimiento)
+          .append("  \r\n");
       contador++;
-      strBuf = strBuf.append("5676").append(Principio[0].nif).append(strContract)
-          .append(Lineas[i].nFactura).append(Lineas[i].direccion);
+      strBuf = strBuf.append("5676")
+          .append(Principio[0].nif)
+          .append(strContract)
+          .append(Lineas[i].nFactura)
+          .append(Lineas[i].direccion);
       strBuf = strBuf.append(Lineas[i].plaza).append(Lineas[i].postal).append(Lineas[i].localidad);
-      strBuf = strBuf.append(Lineas[i].codigoProvincia).append(Lineas[i].fechaFactura)
+      strBuf = strBuf.append(Lineas[i].codigoProvincia)
+          .append(Lineas[i].fechaFactura)
           .append("\r\n");
       contador++;
     }
     CreateFileData[] NLineas = CreateFileData.selectNLineas(this, String.valueOf(contador));
     // total orderer
-    strBuf = strBuf.append("5870").append(Principio[0].nif).append(strContract)
+    strBuf = strBuf.append("5870")
+        .append(Principio[0].nif)
+        .append(strContract)
         .append(NLineas[0].hueco);
-    strBuf = strBuf.append(Total[0].payamt).append(Total[0].nFactura).append(NLineas[0].lineas)
+    strBuf = strBuf.append(Total[0].payamt)
+        .append(Total[0].nFactura)
+        .append(NLineas[0].lineas)
         .append("\r\n");
     NLineas = CreateFileData.selectNLineas(this, String.valueOf(contador + 2));
     // total
     strBuf = strBuf.append("5970").append(Principio[0].nif).append(strContract);
-    strBuf = strBuf.append(NLineas[0].ordenantes).append(Total[0].payamt).append(Total[0].nFactura)
+    strBuf = strBuf.append(NLineas[0].ordenantes)
+        .append(Total[0].payamt)
+        .append(Total[0].nFactura)
         .append(NLineas[0].lineas);
     if (!strMessage.equals("")) {
       printPage(response, vars, strKey, "", "", strMessage, false);
@@ -283,10 +318,11 @@ public class CreateFile extends HttpSecureAppServlet {
     }
   }
 
-  private void printPageFind19(HttpServletResponse response, VariablesSecureApp vars,
-      String strKey, String strContract) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+  private void printPageFind19(HttpServletResponse response, VariablesSecureApp vars, String strKey,
+      String strContract) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pageFind");
+    }
     StringBuffer strBuf = new StringBuffer();
     String strMessage = "";
     CreateFileData[] Principio = CreateFileData.select(this, strKey);
@@ -298,9 +334,10 @@ public class CreateFile extends HttpSecureAppServlet {
     int comprobacion3 = Integer.parseInt(CreateFileData.selectComprobacion3(this, strKey));
     int comprobacion4 = Integer.parseInt(CreateFileData.selectComprobacion4(this, strKey));
     CreateFileData[] comprobacion5 = CreateFileData.selectComprobacion5(this, strKey);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(" c1:" + comprobacion1 + " c2:" + comprobacion2 + " c3:" + comprobacion3 + " c4:"
           + comprobacion4 + " c5:" + comprobacion5.length);
+    }
 
     for (int i = 0; i < comprobacion5.length; i++) {
       strMessage = strMessage + comprobacion5[i].bpname + " "
@@ -311,14 +348,16 @@ public class CreateFile extends HttpSecureAppServlet {
     }
 
     if (comprobacion1 != 0 || comprobacion2 == 0 || comprobacion3 != 1 || comprobacion4 == 0) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Error: c1:" + comprobacion1 + " c2:" + comprobacion2 + " c3:" + comprobacion3
             + " c4:" + comprobacion4);
+      }
       strMessage = Utility.messageBD(this, "CreateFileError", vars.getLanguage());
       printPage(response, vars, strKey, "", "", strMessage, false);
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("check1 ok");
+    }
     int contador = 2;
     // debugging headers
     if (Principio == null || Principio.length == 0) {
@@ -326,96 +365,122 @@ public class CreateFile extends HttpSecureAppServlet {
       printPage(response, vars, strKey, "", "", strMessage, false);
       return;
     }
-    if (Lineas == null || Total == null)
+    if (Lineas == null || Total == null) {
       return;
+    }
     if (Principio[0].nif == null || Principio[0].nif.equals("")) {
       strMessage = Utility.messageBD(this, "NIFError", vars.getLanguage());
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("NIF");
+      }
     }
     if (Principio[0].codebank == null || Principio[0].codebank.equals("")) {
       strMessage = Utility.messageBD(this, "CodeBankError", vars.getLanguage());
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("codebank");
+      }
     }
     if (Principio[0].codebranch == null || Principio[0].codebranch.equals("")) {
       strMessage = Utility.messageBD(this, "CodeBranchError", vars.getLanguage());
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("CodeBranchError");
+      }
     }
     if (Principio[0].digitcontrol1 == null || Principio[0].digitcontrol1.equals("")) {
       strMessage = Utility.messageBD(this, "DC1Error", vars.getLanguage());
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("DC1Error");
+      }
     }
     if (Principio[0].digitcontrol2 == null || Principio[0].digitcontrol2.equals("")) {
       strMessage = Utility.messageBD(this, "DC2Error", vars.getLanguage());
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("DC2Error");
+      }
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("check2 ok");
+    }
     // presentation header
-    strBuf = strBuf.append("5180").append(Principio[0].nif).append(strContract)
-        .append(Principio[0].hoy).append(Principio[0].dateplanned);
+    strBuf = strBuf.append("5180")
+        .append(Principio[0].nif)
+        .append(strContract)
+        .append(Principio[0].hoy)
+        .append(Principio[0].dateplanned);
     strBuf = strBuf.append(Principio[0].entidad19);
     strBuf = strBuf.append(Principio[0].entofi).append("\r\n");
     // ordering header
-    strBuf = strBuf.append("5380").append(Principio[0].nif).append(strContract)
-        .append(Principio[0].hoy).append(Principio[0].dateplanned);
-    strBuf = strBuf.append(Principio[0].entidad19).append(Principio[0].nCuenta)
+    strBuf = strBuf.append("5380")
+        .append(Principio[0].nif)
+        .append(strContract)
+        .append(Principio[0].hoy)
+        .append(Principio[0].dateplanned);
+    strBuf = strBuf.append(Principio[0].entidad19)
+        .append(Principio[0].nCuenta)
         .append("        01                                                             ");
     strBuf = strBuf.append("   \r\n");
     // Lines
     for (int i = 0; i < Lineas.length; i++) {
       // lines debugging
       if (Lineas[i].creditcardnumber == null || Lineas[i].creditcardnumber.equals("")) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("CodeBankBPError");
+        }
         strMessage = Utility.messageBD(this, "CodeBankBPError", vars.getLanguage())
             + Lineas[i].tercero;
       }
       if (Lineas[i].fechaVencimiento == null || Lineas[i].fechaVencimiento.equals("")) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("DatePlannedError");
+        }
         strMessage = Utility.messageBD(this, "DatePlannedError", vars.getLanguage())
             + Lineas[i].tercero;
       }
       if (Lineas[i].direccion == null || Lineas[i].direccion.equals("")) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("AddressError");
+        }
         strMessage = Utility.messageBD(this, "AddressError", vars.getLanguage())
             + Lineas[i].tercero;
       }
       if (Lineas[i].plaza == null || Lineas[i].plaza.equals("")) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("SquareError");
+        }
         strMessage = Utility.messageBD(this, "SquareError", vars.getLanguage()) + Lineas[i].tercero;
       }
       if (Lineas[i].postal == null || Lineas[i].postal.equals("")) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("PostCodeError");
+        }
         strMessage = Utility.messageBD(this, "PostCodeError", vars.getLanguage())
             + Lineas[i].tercero;
       }
       if (Lineas[i].localidad == null || Lineas[i].localidad.equals("")) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("TownError");
+        }
         strMessage = Utility.messageBD(this, "TownError", vars.getLanguage()) + Lineas[i].tercero;
       }
       if (Lineas[i].fechaFactura == null || Lineas[i].fechaFactura.equals("")) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("InvoiceDateError");
+        }
         strMessage = Utility.messageBD(this, "InvoiceDateError", vars.getLanguage())
             + Lineas[i].tercero;
         ;
       }
-      strBuf = strBuf.append("5680").append(Principio[0].nif).append(strContract)
-          .append(Lineas[i].nFactura19).append(Lineas[i].tercero);
-      strBuf = strBuf.append(Lineas[i].creditcardnumber).append(Lineas[i].payamt)
+      strBuf = strBuf.append("5680")
+          .append(Principio[0].nif)
+          .append(strContract)
+          .append(Lineas[i].nFactura19)
+          .append(Lineas[i].tercero);
+      strBuf = strBuf.append(Lineas[i].creditcardnumber)
+          .append(Lineas[i].payamt)
           .append("0000000000000000");
       strBuf = strBuf.append(Replace.replace(Lineas[i].concepto, "\n", ""))
-          .append(Lineas[i].fechaVencimiento).append("  \r\n");
+          .append(Lineas[i].fechaVencimiento)
+          .append("  \r\n");
       contador++;
       /*
        * strBuf = strBuf.append("5676").append(Principio[0].nif).append("000"
@@ -425,18 +490,25 @@ public class CreateFile extends HttpSecureAppServlet {
        * append(Lineas[i].fechaFactura).append("\r\n"); contador++;
        */
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("check3 ok");
+    }
     CreateFileData[] NLineas = CreateFileData.selectNLineas(this, String.valueOf(contador));
     // total orderer
-    strBuf = strBuf.append("5880").append(Principio[0].nif).append(strContract)
+    strBuf = strBuf.append("5880")
+        .append(Principio[0].nif)
+        .append(strContract)
         .append(NLineas[0].hueco);
-    strBuf = strBuf.append(Total[0].payamt).append(Total[0].nFactura).append(NLineas[0].lineas)
+    strBuf = strBuf.append(Total[0].payamt)
+        .append(Total[0].nFactura)
+        .append(NLineas[0].lineas)
         .append("\r\n");
     NLineas = CreateFileData.selectNLineas(this, String.valueOf(contador + 2));
     // total
     strBuf = strBuf.append("5980").append(Principio[0].nif).append(strContract);
-    strBuf = strBuf.append(NLineas[0].ordenantes).append(Total[0].payamt).append(Total[0].nFactura)
+    strBuf = strBuf.append(NLineas[0].ordenantes)
+        .append(Total[0].payamt)
+        .append(Total[0].nFactura)
         .append(NLineas[0].lineas);
     if (!strMessage.equals("")) {
       printPage(response, vars, strKey, "", "", strMessage, false);
@@ -451,54 +523,63 @@ public class CreateFile extends HttpSecureAppServlet {
 
   private void printPageFind34(HttpServletResponse response, VariablesSecureApp vars, String strKey)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pageFind34");
+    }
     StringBuffer strBuf = new StringBuffer();
     String strMessage = "";
 
     String strConcepto = CreateFileData.selectParam(this, strKey, "CONCEPTO");
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Item" + strConcepto);
-    if (strConcepto == null || strConcepto.equals(""))
+    }
+    if (strConcepto == null || strConcepto.equals("")) {
       strConcepto = "N";
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Item" + strConcepto);
+    }
     char cConcepto = strConcepto.charAt(0);
 
     String strCodigo;
 
     switch (cConcepto) {
-    case 'C': // check
-      strCodigo = "57";
-      break;
-    case 'R': // promissory note
-      strCodigo = "58";
-      break;
-    case 'P': // certified payments
-      strCodigo = "59";
-      break;
-    default: // Salaries y bank transfers
-      strCodigo = "56";
+      case 'C': // check
+        strCodigo = "57";
+        break;
+      case 'R': // promissory note
+        strCodigo = "58";
+        break;
+      case 'P': // certified payments
+        strCodigo = "59";
+        break;
+      default: // Salaries y bank transfers
+        strCodigo = "56";
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("code" + strCodigo);
+    }
     /*
      * 1->Orderer (by default) 2->Beneficiary
      */
     String strGastos = CreateFileData.selectParam(this, strKey, "GASTOS");
-    if (strGastos == null || !strGastos.equals("2"))
+    if (strGastos == null || !strGastos.equals("2")) {
       strGastos = "1";
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("strGastos" + strGastos);
+    }
 
     /*
      * 0->Only one journal entry 1->One entry per beneficiary
      */
     String strDetalle = CreateFileData.selectParam(this, strKey, "DETALLE");
-    if (strDetalle == null || !strDetalle.equals("1"))
+    if (strDetalle == null || !strDetalle.equals("1")) {
       strDetalle = "0";
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("code" + strDetalle);
+    }
 
     CreateFile34Data[] Principio = CreateFile34Data.select(this, strKey);
     CreateFile34Data[] Lineas = CreateFile34Data.selectLineas(this, strKey);
@@ -508,9 +589,10 @@ public class CreateFile extends HttpSecureAppServlet {
     int comprobacion3 = Integer.parseInt(CreateFileData.selectComprobacion3(this, strKey));
     int comprobacion4 = Integer.parseInt(CreateFileData.selectComprobacion4(this, strKey));
     CreateFileData[] comprobacion5 = CreateFileData.selectComprobacion5(this, strKey);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(" c1:" + comprobacion1 + " c2:" + comprobacion2 + " c3:" + comprobacion3 + " c4:"
           + comprobacion4 + " c5:" + comprobacion5.length);
+    }
 
     for (int i = 0; i < comprobacion5.length; i++) {
       strMessage = strMessage + comprobacion5[i].bpname + " "
@@ -521,19 +603,23 @@ public class CreateFile extends HttpSecureAppServlet {
     }
 
     if (comprobacion1 != 0 || comprobacion2 == 0 || comprobacion3 != 1 || comprobacion4 == 0) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Error: c1:" + comprobacion1 + " c2:" + comprobacion2 + " c3:" + comprobacion3
             + " c4:" + comprobacion4);
+      }
       strMessage = Utility.messageBD(this, "CreateFileError", vars.getLanguage());
       printPage(response, vars, strKey, "", "", strMessage, false);
     }
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Principio[0].taxid = " + Principio[0].taxid);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Principio[0].acct = " + Principio[0].acct);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("check1 ok");
+    }
 
     // debugging headers
     if (Principio == null || Principio.length == 0) {
@@ -541,19 +627,22 @@ public class CreateFile extends HttpSecureAppServlet {
       printPage(response, vars, strKey, "", "", strMessage, false);
       return;
     }
-    if (Lineas == null || Total == null)
+    if (Lineas == null || Total == null) {
       return;
+    }
     if (Principio[0].taxid == null || Principio[0].taxid.length() != 9) {
       strMessage = Utility.messageBD(this, "NIFError", vars.getLanguage());
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("VAT number");
+      }
       printPage(response, vars, strKey, "", "", strMessage, false);
       return;
     }
     if (Principio[0].acct == null || Principio[0].acct.length() != 18) {
       strMessage = Utility.messageBD(this, "BankAccountError", vars.getLanguage());
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("bankaccount");
+      }
       printPage(response, vars, strKey, "", "", strMessage, false);
       return;
     }
@@ -564,8 +653,9 @@ public class CreateFile extends HttpSecureAppServlet {
      * printPage(response, vars, strKey, "", "", strMessage, false); return; }
      */
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("check2 ok");
+    }
     // header: orderer
     // 001
     strBuf = strBuf.append("03").append(strCodigo).append(Principio[0].nif).append("            "); // A
@@ -573,15 +663,21 @@ public class CreateFile extends HttpSecureAppServlet {
     // D
     // (common)
     strBuf = strBuf.append("001").append(Principio[0].hoy).append(Principio[0].duedate); // E-F2
-    strBuf = strBuf.append(Principio[0].nCuenta).append(strDetalle).append("   ")
-        .append(Principio[0].dc).append(Principio[0].hueco).append("\r\n"); // F3-G
+    strBuf = strBuf.append(Principio[0].nCuenta)
+        .append(strDetalle)
+        .append("   ")
+        .append(Principio[0].dc)
+        .append(Principio[0].hueco)
+        .append("\r\n"); // F3-G
 
     // 002
     strBuf = strBuf.append("03").append(strCodigo).append(Principio[0].nif).append("            "); // A
     // -
     // D
     // (common)
-    strBuf = strBuf.append("002").append(Principio[0].nombre).append(Principio[0].hueco)
+    strBuf = strBuf.append("002")
+        .append(Principio[0].nombre)
+        .append(Principio[0].hueco)
         .append("\r\n"); // E-G
 
     // 003
@@ -589,7 +685,9 @@ public class CreateFile extends HttpSecureAppServlet {
     // -
     // D
     // (common)
-    strBuf = strBuf.append("003").append(Principio[0].domicilio).append(Principio[0].hueco)
+    strBuf = strBuf.append("003")
+        .append(Principio[0].domicilio)
+        .append(Principio[0].hueco)
         .append("\r\n"); // E-G
 
     // 004
@@ -597,66 +695,80 @@ public class CreateFile extends HttpSecureAppServlet {
     // -
     // D
     // (common)
-    strBuf = strBuf.append("004").append(Principio[0].plaza).append(Principio[0].hueco)
+    strBuf = strBuf.append("004")
+        .append(Principio[0].plaza)
+        .append(Principio[0].hueco)
         .append("\r\n"); // E-G
 
     int contador = 4;
     // Lines
     for (int i = 0; i < Lineas.length; i++) {
       // debugging lines
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Lineas[i].taxid=" + Lineas[i].taxid);
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Lineas[i].acct=" + Lineas[i].acct);
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Lineas[i].nom=" + Lineas[i].nom);
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Lineas[i].dom=" + Lineas[i].dom);
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Lineas[i].pla=" + Lineas[i].pla);
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Lineas[i].prov=" + Lineas[i].prov);
+      }
 
       if (Lineas[i].nom == null || Lineas[i].nom.length() < 1) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("NameError");
+        }
         strMessage = Utility.messageBD(this, "NameError", vars.getLanguage()) + Lineas[i].nif;
         printPage(response, vars, strKey, "", "", strMessage, false);
         return;
       }
       if (Lineas[i].taxid == null || Lineas[i].taxid.length() != 9) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("NIFError");
+        }
         strMessage = Utility.messageBD(this, "NIFBPartnerError", vars.getLanguage())
             + Lineas[i].nombre;
         printPage(response, vars, strKey, "", "", strMessage, false);
         return;
       }
       if (Lineas[i].acct == null || Lineas[i].acct.length() != 20) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("CodeBankBPError");
+        }
         strMessage = Utility.messageBD(this, "CodeBankBPError", vars.getLanguage())
             + Lineas[i].nombre;
         printPage(response, vars, strKey, "", "", strMessage, false);
         return;
       }
       if (Lineas[i].dom == null || Lineas[i].dom.length() < 1) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("AddressError");
+        }
         strMessage = Utility.messageBD(this, "AddressError", vars.getLanguage()) + Lineas[i].nombre;
         printPage(response, vars, strKey, "", "", strMessage, false);
         return;
       }
       if (Lineas[i].pla == null || Lineas[i].pla.length() < 1) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("SquareError");
+        }
         strMessage = Utility.messageBD(this, "SquareError", vars.getLanguage()) + Lineas[i].nombre;
         printPage(response, vars, strKey, "", "", strMessage, false);
         return;
       }
       if (Lineas[i].prov == null || Lineas[i].prov.length() < 1) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("AddressError");
+        }
         strMessage = Utility.messageBD(this, "AddressError", vars.getLanguage()) + Lineas[i].nombre;
         printPage(response, vars, strKey, "", "", strMessage, false);
         return;
@@ -676,14 +788,18 @@ public class CreateFile extends HttpSecureAppServlet {
       // -
       // D
       // (common)
-      strBuf = strBuf.append("011").append(Lineas[i].nombre).append(Principio[0].hueco)
+      strBuf = strBuf.append("011")
+          .append(Lineas[i].nombre)
+          .append(Principio[0].hueco)
           .append("\r\n");
       // 012
       strBuf = strBuf.append("06").append(strCodigo).append(Principio[0].nif).append(Lineas[i].nif); // A
       // -
       // D
       // (common)
-      strBuf = strBuf.append("012").append(Lineas[i].domicilio).append(Principio[0].hueco)
+      strBuf = strBuf.append("012")
+          .append(Lineas[i].domicilio)
+          .append(Principio[0].hueco)
           .append("\r\n");
 
       // 014
@@ -691,7 +807,9 @@ public class CreateFile extends HttpSecureAppServlet {
       // -
       // D
       // (common)
-      strBuf = strBuf.append("014").append(Lineas[i].plaza).append(Principio[0].hueco)
+      strBuf = strBuf.append("014")
+          .append(Lineas[i].plaza)
+          .append(Principio[0].hueco)
           .append("\r\n");
 
       // 015
@@ -699,7 +817,9 @@ public class CreateFile extends HttpSecureAppServlet {
       // -
       // D
       // (common)
-      strBuf = strBuf.append("015").append(Lineas[i].provincia).append(Principio[0].hueco)
+      strBuf = strBuf.append("015")
+          .append(Lineas[i].provincia)
+          .append(Principio[0].hueco)
           .append("\r\n");
 
       // 016
@@ -709,7 +829,8 @@ public class CreateFile extends HttpSecureAppServlet {
       // (common)
       strBuf = strBuf.append("016")
           .append(Lineas[i].concepto.replaceAll("\r", " ").replaceAll("\n", " "))
-          .append(Principio[0].hueco).append("\r\n");
+          .append(Principio[0].hueco)
+          .append("\r\n");
 
       contador += 6;
     }
@@ -719,7 +840,8 @@ public class CreateFile extends HttpSecureAppServlet {
     strBuf = strBuf.append("08").append(strCodigo).append(Principio[0].nif).append(Total[0].payamt); // A
     // -
     // E
-    strBuf = strBuf.append(NLineas[0].ordenantes).append(NLineas[0].lineas)
+    strBuf = strBuf.append(NLineas[0].ordenantes)
+        .append(NLineas[0].lineas)
         .append(NLineas[0].hueco);
 
     if (!strMessage.equals("")) {
@@ -733,6 +855,7 @@ public class CreateFile extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the generation of files for banks";
   } // end of getServletInfo() method

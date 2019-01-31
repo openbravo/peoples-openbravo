@@ -37,6 +37,7 @@ public class GetLabelActionHandler extends BaseActionHandler {
   private static final String KEY_PARAMETER = "key";
   private static final String LABEL_PROPERTY = "label";
 
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     if (!parameters.containsKey(KEY_PARAMETER)) {
       throw new OBException("Request parameter " + KEY_PARAMETER + " is mandatory");

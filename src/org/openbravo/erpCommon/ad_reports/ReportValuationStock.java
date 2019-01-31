@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -78,8 +78,9 @@ public class ReportValuationStock extends HttpSecureAppServlet {
   private static final String COST_TEMPLATE = "org/openbravo/erpCommon/ad_reports/ReportValuationStock";
   private static final String NO_COST_TEMPLATE = "org/openbravo/erpCommon/ad_reports/ReportValuationStock2";
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // This report cannot be run if the instance is not migrated.
@@ -94,8 +95,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT", "RELATION")) {
       String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock|Date",
           DateTimeData.today(readOnlyCP));
-      String strOrganization = vars.getGlobalVariable("inpOrg",
-          "ReportValuationStock|Organization", "", IsIDFilter.instance);
+      String strOrganization = vars.getGlobalVariable("inpOrg", "ReportValuationStock|Organization",
+          "", IsIDFilter.instance);
       String strWarehouse = vars.getGlobalVariable("inpmWarehouseId",
           "ReportValuationStock|Warehouse", "", IsIDFilter.instance);
       String strCategoryProduct = vars.getGlobalVariable("inpCategoryProduct",
@@ -108,8 +109,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
           "ReportValuationStock|warehouseConsolidation", "");
       boolean isWarehouseConsolidation = StringUtils.equals(strWarehouseConsolidation, "on");
 
-      printPageDataSheet(response, vars, strDate, strOrganization, strWarehouse,
-          strCategoryProduct, strCurrencyId, isWarehouseConsolidation, null, null, null, null);
+      printPageDataSheet(response, vars, strDate, strOrganization, strWarehouse, strCategoryProduct,
+          strCurrencyId, isWarehouseConsolidation, null, null, null, null);
     } else if (vars.commandIn("FIND", "PDF", "XLS")) {
       String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock|Date",
           DateTimeData.today(readOnlyCP));
@@ -193,8 +194,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         strCostOrg = strLegalEntity;
       }
       String strDateNext = DateTimeData.nDaysAfter(readOnlyCP, strDate, "1");
-      String strMaxAggDate = ReportValuationStockData.selectMaxAggregatedDate(readOnlyCP, OBDal
-          .getReadOnlyInstance().get(Organization.class, strLegalEntity).getClient().getId(),
+      String strMaxAggDate = ReportValuationStockData.selectMaxAggregatedDate(readOnlyCP,
+          OBDal.getReadOnlyInstance().get(Organization.class, strLegalEntity).getClient().getId(),
           orgIds);
       if (StringUtils.isEmpty(strMaxAggDate)) {
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -243,8 +244,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     }
 
     if (vars.commandIn("FIND")) {
-      printPageDataSheet(response, vars, strDate, strOrganization, strWarehouse,
-          strCategoryProduct, strCurrencyId, isWarehouseConsolidation, data, strCostType, ca, orgs);
+      printPageDataSheet(response, vars, strDate, strOrganization, strWarehouse, strCategoryProduct,
+          strCurrencyId, isWarehouseConsolidation, data, strCostType, ca, orgs);
     } else if (vars.commandIn("PDF")) {
       printPageDataPDF(response, vars, strDate, data, strCostType, ca);
     } else {
@@ -255,8 +256,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDate, String strOrganization, String strWarehouse, String strCategoryProduct,
       String strCurrencyId, boolean isWarehouseConsolidation, ReportValuationStockData[] data,
-      String strCostType, CostingAlgorithm ca, Set<String> orgs) throws IOException,
-      ServletException {
+      String strCostType, CostingAlgorithm ca, Set<String> orgs)
+      throws IOException, ServletException {
     log4j.debug("Output: dataSheet");
 
     response.setContentType("text/html; charset=UTF-8");
@@ -276,7 +277,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         discard[0] = "sectionCategoryProduct";
         discard[1] = "sectionWarehouse";
       } else {
-        boolean hasTrxWithNoCost = hasTrxWithNoCost(strDate, orgs, strWarehouse, strCategoryProduct);
+        boolean hasTrxWithNoCost = hasTrxWithNoCost(strDate, orgs, strWarehouse,
+            strCategoryProduct);
         if (hasTrxWithNoCost) {
           OBError warning = new OBError();
           warning.setType("Warning");
@@ -340,9 +342,9 @@ public class ReportValuationStock extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_Org_ID",
-          "", "D4DF252DEC3B44858454EE5292A8B836", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportValuationStock"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportValuationStock"), 0);
+          "", "D4DF252DEC3B44858454EE5292A8B836",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportValuationStock"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportValuationStock"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportValuationStock",
           strOrganization);
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
@@ -354,27 +356,25 @@ public class ReportValuationStock extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLE",
-          "M_Warehouse_ID", "M_Warehouse of Client", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", ""), Utility.getContext(readOnlyCP, vars, "#User_Client", ""),
-          0);
+          "M_Warehouse_ID", "M_Warehouse of Client", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", ""), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "", "");
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    xmlDocument.setParameter(
-        "warehouses",
-        Utility.arrayDobleEntrada("arrWh",
-            ReportValuationStockData.selectWhsDouble(readOnlyCP, vars.getClient())));
+    xmlDocument.setParameter("warehouses", Utility.arrayDobleEntrada("arrWh",
+        ReportValuationStockData.selectWhsDouble(readOnlyCP, vars.getClient())));
     xmlDocument.setParameter("warehouseID", strWarehouse);
     xmlDocument.setParameter("whwh", strWarehouse);
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", ""), Utility.getContext(readOnlyCP, vars, "#User_Client", ""),
-          0);
+          "M_Product_Category_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", ""), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "", strCategoryProduct);
       xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
           comboTableData.select(false));
@@ -386,9 +386,9 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportValuationStock"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportValuationStock"), 0);
+          "C_Currency_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportValuationStock"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportValuationStock"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportValuationStock",
           strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -401,8 +401,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       if (strCostType != null && ca != null) {
         Map<String, String> params = new HashMap<String, String>();
         params.put("algorithm", ca.getName());
-        String strCostHeader = OBMessageUtils.parseTranslation(
-            OBMessageUtils.messageBD("ValuedStockReport_CostHeader"), params);
+        String strCostHeader = OBMessageUtils
+            .parseTranslation(OBMessageUtils.messageBD("ValuedStockReport_CostHeader"), params);
         String strValuationHeader = OBMessageUtils.parseTranslation(
             OBMessageUtils.messageBD("ValuedStockReport_ValuationHeader"), params);
         xmlDocument.setParameter("costTypeCol", strCostHeader);
@@ -415,8 +415,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
   }
 
   private void printPageDataXLS(HttpServletResponse response, VariablesSecureApp vars,
-      ReportValuationStockData[] data, String strCostType, CostingAlgorithm ca) throws IOException,
-      ServletException {
+      ReportValuationStockData[] data, String strCostType, CostingAlgorithm ca)
+      throws IOException, ServletException {
     log4j.debug("Output: XLS");
     response.setContentType("text/html; charset=UTF-8");
 
@@ -439,10 +439,10 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     if (ca != null && strCostType != null) {
       Map<String, String> params = new HashMap<String, String>();
       params.put("algorithm", ca.getName());
-      strCostHeader = OBMessageUtils.parseTranslation(
-          OBMessageUtils.messageBD("ValuedStockReport_CostHeader"), params);
-      strValuationHeader = OBMessageUtils.parseTranslation(
-          OBMessageUtils.messageBD("ValuedStockReport_ValuationHeader"), params);
+      strCostHeader = OBMessageUtils
+          .parseTranslation(OBMessageUtils.messageBD("ValuedStockReport_CostHeader"), params);
+      strValuationHeader = OBMessageUtils
+          .parseTranslation(OBMessageUtils.messageBD("ValuedStockReport_ValuationHeader"), params);
     }
     parameters.put("ALG_COST", strCostHeader);
     parameters.put("SUM_ALG_COST", strValuationHeader);
@@ -499,10 +499,10 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     if (ca != null && strCostType != null) {
       Map<String, String> params = new HashMap<String, String>();
       params.put("algorithm", ca.getName());
-      strCostHeader = OBMessageUtils.parseTranslation(
-          OBMessageUtils.messageBD("ValuedStockReport_CostHeader"), params);
-      strValuationHeader = OBMessageUtils.parseTranslation(
-          OBMessageUtils.messageBD("ValuedStockReport_ValuationHeader"), params);
+      strCostHeader = OBMessageUtils
+          .parseTranslation(OBMessageUtils.messageBD("ValuedStockReport_CostHeader"), params);
+      strValuationHeader = OBMessageUtils
+          .parseTranslation(OBMessageUtils.messageBD("ValuedStockReport_ValuationHeader"), params);
     }
     parameters.put("TITLE", classInfo.name);
     parameters.put("DATE", strDate);
@@ -523,8 +523,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       where.append(" and cosrule." + CostingRule.PROPERTY_VALIDATED + " = true");
       where.append(" order by " + CostingRule.PROPERTY_STARTINGDATE + " desc");
 
-      OBQuery<CostingRule> whereQry = OBDal.getReadOnlyInstance().createQuery(CostingRule.class,
-          where.toString());
+      OBQuery<CostingRule> whereQry = OBDal.getReadOnlyInstance()
+          .createQuery(CostingRule.class, where.toString());
       whereQry.setNamedParameter("org", legalEntity.getId());
       whereQry.setMaxResult(1);
       CostingRule cr = whereQry.uniqueResult();
@@ -577,8 +577,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         where.append("   and p." + Product.PROPERTY_PRODUCTCATEGORY + ".id = :prodCategory");
       }
 
-      OBQuery<MaterialTransaction> whereQry = OBDal.getReadOnlyInstance().createQuery(
-          MaterialTransaction.class, where.toString());
+      OBQuery<MaterialTransaction> whereQry = OBDal.getReadOnlyInstance()
+          .createQuery(MaterialTransaction.class, where.toString());
       whereQry.setFilterOnReadableClients(false);
       whereQry.setFilterOnReadableOrganization(false);
       try {
@@ -604,7 +604,6 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     }
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getWarehouses(String clientId, String orgId) {
     final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(clientId);
@@ -613,12 +612,15 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     hqlString.append(" from Warehouse as e");
     hqlString.append(" where e.organization.id in (:orgList)");
     hqlString.append(" and e.client.id = :clientId");
-    Query qry = OBDal.getReadOnlyInstance().getSession().createQuery(hqlString.toString());
+    Query<String> qry = OBDal.getReadOnlyInstance()
+        .getSession()
+        .createQuery(hqlString.toString(), String.class);
     qry.setParameterList("orgList", osp.getNaturalTree(orgId));
     qry.setParameter("clientId", clientId);
-    return (List<String>) qry.list();
+    return qry.list();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportValuationStock. This Servlet was made by Pablo Sarobe";
   } // end of getServletInfo() method

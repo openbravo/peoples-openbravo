@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -50,8 +50,8 @@ public class ImportProcessUtils {
   }
 
   public static List<String> getOrderedTypesOfData() {
-    final Reference reference = OBDal.getInstance().get(Reference.class,
-        "11F86B630ECB4A57B28927193F8AB99D");
+    final Reference reference = OBDal.getInstance()
+        .get(Reference.class, "11F86B630ECB4A57B28927193F8AB99D");
 
     List<org.openbravo.model.ad.domain.List> refList = new ArrayList<org.openbravo.model.ad.domain.List>(
         reference.getADListList());
@@ -81,7 +81,8 @@ public class ImportProcessUtils {
   }
 
   // get a property but prevent someone from putting a crazy value in properties
-  public static int getCheckIntProperty(Logger log, String property, int defaultValue, int minValue) {
+  public static int getCheckIntProperty(Logger log, String property, int defaultValue,
+      int minValue) {
     final int value = ImportProcessUtils.getIntOpenbravoProperty(property, defaultValue);
     if (value < minValue) {
       log.warn("Value of property " + property + " is set too low (" + value
@@ -92,7 +93,8 @@ public class ImportProcessUtils {
   }
 
   public static int getIntOpenbravoProperty(String propName, int defaultValue) {
-    final String val = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    final String val = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty(propName);
     if (val == null) {
       return defaultValue;

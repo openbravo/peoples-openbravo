@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,9 +31,7 @@
   }
 
   // cache object references locally
-  var O = OB,
-      ISC = isc,
-      keyboardMgr; // Local reference to UrlManager instance
+  var O = OB;
 
   function KeyboardManager() {}
 
@@ -345,7 +343,7 @@
   };
 
   // Initialize KeyboardManager object
-  keyboardMgr = O.KeyboardManager = new KeyboardManager();
+  O.KeyboardManager = new KeyboardManager();
 
   // To fix issue https://issues.openbravo.com/view.php?id=21786
   isc.ComboBoxItem.getPrototype()._originalKeyDown = isc.ComboBoxItem.getPrototype().keyDown;

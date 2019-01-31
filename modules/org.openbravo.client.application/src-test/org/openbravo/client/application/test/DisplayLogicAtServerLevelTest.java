@@ -145,8 +145,8 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
     Class<?> clazz = field.getClass();
     Method evaluateDisplayLogicAtServerLevel;
     try {
-      evaluateDisplayLogicAtServerLevel = clazz.getDeclaredMethod(
-          "evaluateDisplayLogicAtServerLevel", String.class, String.class);
+      evaluateDisplayLogicAtServerLevel = clazz
+          .getDeclaredMethod("evaluateDisplayLogicAtServerLevel", String.class, String.class);
       // replace isAccesible() with canAccess() when JDK9 becomes the minimum supported version
       @SuppressWarnings("all")
       boolean originallyAccessible = evaluateDisplayLogicAtServerLevel.isAccessible();

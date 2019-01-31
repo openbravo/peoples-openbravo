@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,8 @@ import java.util.List;
 
 import javax.servlet.Servlet;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.openbravo.dal.service.OBCriteria;
@@ -43,7 +44,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 public class ClassLoaderTest extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(ClassLoaderTest.class);
+  private static final Logger log = LogManager.getLogger();
   private static List<String> notFoundClasses = new ArrayList<String>();
   private static List<String> notServletClasses = new ArrayList<String>();
   private static boolean initialized = false;
@@ -91,11 +92,11 @@ public class ClassLoaderTest extends OBBaseTest {
     // "F" - "Filter"
     // "R" - "Resource"
 
-    final String[] in = { "L", "F" };
+    final Object[] in = { "L", "F" };
 
     // Checking listener and filters classes
-    OBCriteria<ModelImplementation> obc = OBDal.getInstance().createCriteria(
-        ModelImplementation.class);
+    OBCriteria<ModelImplementation> obc = OBDal.getInstance()
+        .createCriteria(ModelImplementation.class);
     obc.add(Restrictions.in(ModelImplementation.PROPERTY_OBJECTTYPE, in));
 
     // these don't need to implement Servlet
@@ -112,23 +113,23 @@ public class ClassLoaderTest extends OBBaseTest {
     checkClasses("Manual Servlet", obc.list(), notFoundClasses, notServletClasses);
 
     // Checking servlets associated to forms
-    OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(ModelImplementation.class,
-        "objectType = 'S' and specialForm is not null and specialForm.active = true");
+    OBQuery<ModelImplementation> obq = OBDal.getInstance()
+        .createQuery(ModelImplementation.class,
+            "objectType = 'S' and specialForm is not null and specialForm.active = true");
 
     checkClasses("Form", obq.list(), notFoundClasses, notServletClasses);
 
     // Check servlets associated to processes/reports
-    obq = OBDal
-        .getInstance()
-        .createQuery(
-            ModelImplementation.class,
+    obq = OBDal.getInstance()
+        .createQuery(ModelImplementation.class,
             "objectType = 'S' and process is not null and process.active = true and process.uIPattern = 'M' and process.report = false");
 
     checkClasses("Process", obq.list(), notFoundClasses, notServletClasses);
 
     // Checking servlets associated to tabs
-    obq = OBDal.getInstance().createQuery(ModelImplementation.class,
-        "objectType = 'S' and tab is not null and tab.active = true and tab.window.active = true");
+    obq = OBDal.getInstance()
+        .createQuery(ModelImplementation.class,
+            "objectType = 'S' and tab is not null and tab.active = true and tab.window.active = true");
 
     checkClasses("Tab", obq.list(), notFoundClasses, notServletClasses);
   }

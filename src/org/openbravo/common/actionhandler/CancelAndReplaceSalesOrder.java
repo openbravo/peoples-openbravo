@@ -20,7 +20,8 @@ package org.openbravo.common.actionhandler;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -32,7 +33,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.service.db.DbUtility;
 
 public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
-  private static final Logger log = Logger.getLogger(CancelAndReplaceSalesOrder.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {

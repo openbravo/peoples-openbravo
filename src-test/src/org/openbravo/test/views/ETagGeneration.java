@@ -28,27 +28,29 @@ import java.net.HttpURLConnection;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.test.base.TestConstants.Tables;
+import org.openbravo.test.base.TestConstants.Windows;
 import org.openbravo.test.datasource.BaseDataSourceTestDal;
 import org.openbravo.test.datasource.DatasourceTestUtil;
 
 /** Test cases covering ETag management for generated views */
 public class ETagGeneration extends BaseDataSourceTestDal {
-  private static final String SALES_ORDER_WINDOW = "143";
 
   @Test
   public void eTagShouldBeStable() throws Exception {
     assumeThat("Has modules in development", hasModulesInDevelopment(), is(false));
 
-    String eTag = getEtag(SALES_ORDER_WINDOW);
+    String eTag = getEtag(Windows.SALES_ORDER);
 
-    assertResponseCode("Response without changes", SALES_ORDER_WINDOW, eTag,
+    assertResponseCode("Response without changes", Windows.SALES_ORDER, eTag,
         HttpServletResponse.SC_NOT_MODIFIED);
   }
 
@@ -59,22 +61,22 @@ public class ETagGeneration extends BaseDataSourceTestDal {
     Preference newPref = null;
     setSystemAdministratorContext();
     try {
-      String oldEtag = getEtag(SALES_ORDER_WINDOW);
+      String oldEtag = getEtag(Windows.SALES_ORDER);
 
       if (!Preferences.existsPreference("UomManagement", true, "0", "0", null, null, null)) {
-        newPref = Preferences.setPreferenceValue("UomManagement", "Y", true, OBDal.getInstance()
-            .getProxy(Client.class, "0"), OBDal.getInstance().getProxy(Organization.class, "0"),
-            null, null, null, null);
+        newPref = Preferences.setPreferenceValue("UomManagement", "Y", true,
+            OBDal.getInstance().getProxy(Client.class, "0"),
+            OBDal.getInstance().getProxy(Organization.class, "0"), null, null, null, null);
       }
       OBDal.getInstance().commitAndClose();
 
-      String newEtag = getEtag(SALES_ORDER_WINDOW);
+      String newEtag = getEtag(Windows.SALES_ORDER);
       assertThat("ETag should change", newEtag, is(not(oldEtag)));
 
-      assertResponseCode("Response after adding server dl config", SALES_ORDER_WINDOW, oldEtag,
+      assertResponseCode("Response after adding server dl config", Windows.SALES_ORDER, oldEtag,
           HttpServletResponse.SC_OK);
       assertResponseCode("Response on 2nd request after change in dl server config",
-          SALES_ORDER_WINDOW, newEtag, HttpServletResponse.SC_NOT_MODIFIED);
+          Windows.SALES_ORDER, newEtag, HttpServletResponse.SC_NOT_MODIFIED);
     } finally {
       if (newPref != null) {
         OBDal.getInstance().remove(newPref);
@@ -82,9 +84,37 @@ public class ETagGeneration extends BaseDataSourceTestDal {
     }
   }
 
+  @Test
+  public void auditTableShouldChangeETag() throws Exception {
+    assumeThat("Has modules in development", hasModulesInDevelopment(), is(false));
+    setSystemAdministratorContext();
+    boolean wasAudited = false;
+
+    try {
+      String oldEtag = getEtag(Windows.SALES_ORDER);
+
+      Table orderTable = OBDal.getInstance().get(Table.class, Tables.C_ORDER);
+      wasAudited = orderTable.isFullyAudited();
+      orderTable.setFullyAudited(!wasAudited);
+      OBDal.getInstance().commitAndClose();
+
+      String newEtag = getEtag(Windows.SALES_ORDER);
+      assertThat("ETag should change", newEtag, is(not(oldEtag)));
+
+      assertResponseCode("Response after adding server dl config", Windows.SALES_ORDER, oldEtag,
+          HttpServletResponse.SC_OK);
+      assertResponseCode("Response on 2nd request after change audit config", Windows.SALES_ORDER,
+          newEtag, HttpServletResponse.SC_NOT_MODIFIED);
+    } finally {
+      Table orderTable = OBDal.getInstance().get(Table.class, Tables.C_ORDER);
+      orderTable.setFullyAudited(wasAudited);
+    }
+  }
+
   private Boolean hasModulesInDevelopment() {
-    final Query indevelMods = OBDal.getInstance().getSession()
-        .createQuery("select 1 from ADModule m where m.inDevelopment=true");
+    final Query<Object> indevelMods = OBDal.getInstance()
+        .getSession()
+        .createQuery("select 1 from ADModule m where m.inDevelopment=true", Object.class);
     indevelMods.setMaxResults(1);
     return indevelMods.list().size() > 0;
   }

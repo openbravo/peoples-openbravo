@@ -35,10 +35,12 @@ public class LongDomainType extends BasePrimitiveDomainType {
   /**
    * @return class of the {@link Long}
    */
+  @Override
   public Class<?> getPrimitiveType() {
     return Long.class;
   }
 
+  @Override
   public void checkIsValidValue(Property property, Object value) throws ValidationException {
     if (value == null) {
       return;
@@ -50,6 +52,7 @@ public class LongDomainType extends BasePrimitiveDomainType {
     super.checkIsValidValue(property, value);
   }
 
+  @Override
   public String getFormatId() {
     return "integer";
   }

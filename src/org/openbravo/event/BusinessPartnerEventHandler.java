@@ -20,7 +20,8 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -31,9 +32,9 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 
 public class BusinessPartnerEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      BusinessPartner.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(BusinessPartner.ENTITY_NAME) };
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -63,8 +64,9 @@ public class BusinessPartnerEventHandler extends EntityPersistenceEventObserver 
       final Entity bpEntity = ModelProvider.getInstance().getEntity(BusinessPartner.ENTITY_NAME);
       final Property bpCurrencyProperty = bpEntity.getProperty(BusinessPartner.PROPERTY_CURRENCY);
 
-      event.setCurrentState(bpCurrencyProperty, bp.getPriceList() != null ? bp.getPriceList()
-          .getCurrency() : bp.getPurchasePricelist().getCurrency());
+      event.setCurrentState(bpCurrencyProperty,
+          bp.getPriceList() != null ? bp.getPriceList().getCurrency()
+              : bp.getPurchasePricelist().getCurrency());
     }
   }
 }

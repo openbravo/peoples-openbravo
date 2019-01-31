@@ -44,9 +44,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class BusinessPartner extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  private static final String[] colNames = { "value", "name", "so_creditavailable",
-      "so_creditused", "contact", "phone", "pc", "city", "income", "c_bpartner_id",
-      "c_bpartner_contact_id", "c_bpartner_location_id", "rowkey" };
+  private static final String[] colNames = { "value", "name", "so_creditavailable", "so_creditused",
+      "contact", "phone", "pc", "city", "income", "c_bpartner_id", "c_bpartner_contact_id",
+      "c_bpartner_location_id", "rowkey" };
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
@@ -57,8 +57,8 @@ public class BusinessPartner extends HttpSecureAppServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -72,26 +72,30 @@ public class BusinessPartner extends HttpSecureAppServlet {
       vars.setSessionValue("BusinessPartner.adorgid", vars.getStringParameter("inpAD_Org_ID", ""));
       if (!strIDValue.equals("")) {
         final String strNameAux = BusinessPartnerData.existsActual(this, strNameValue, strIDValue);
-        if (!strNameAux.equals(""))
+        if (!strNameAux.equals("")) {
           strNameValue = strNameAux;
+        }
       }
 
       vars.removeSessionValue("BusinessPartner.key");
 
       final String strIsSOTrxTab = vars.getStringParameter("inpisSOTrxTab");
       String strBpartner = strIsSOTrxTab;
-      if (strIsSOTrxTab.equals(""))
+      if (strIsSOTrxTab.equals("")) {
         strBpartner = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+      }
       String strSelected = "all";
-      if (strBpartner.equals("Y"))
+      if (strBpartner.equals("Y")) {
         strSelected = "customer";
-      else if (strBpartner.equals("N"))
+      } else if (strBpartner.equals("N")) {
         strSelected = "vendor";
-      else
+      } else {
         strSelected = "all";
+      }
       vars.setSessionValue("BusinessPartner.bpartner", strSelected);
-      if (!strNameValue.equals(""))
+      if (!strNameValue.equals("")) {
         vars.setSessionValue("BusinessPartner.name", strNameValue + "%");
+      }
       printPage(response, vars, strKeyValue, strNameValue.concat("%"), strSelected, "paramName");
     } else if (vars.commandIn("KEY")) {
       final String strWindowId = vars.getStringParameter("WindowID");
@@ -103,22 +107,26 @@ public class BusinessPartner extends HttpSecureAppServlet {
       if (!strIDValue.equals("")) {
         final String strNameAux = BusinessPartnerData.existsActualValue(this, strKeyValue,
             strIDValue);
-        if (!strNameAux.equals(""))
+        if (!strNameAux.equals("")) {
           strKeyValue = strNameAux;
+        }
       }
       vars.removeSessionValue("BusinessPartner.name");
-      if (!strKeyValue.equals(""))
+      if (!strKeyValue.equals("")) {
         vars.setSessionValue("BusinessPartner.key", strKeyValue + "%");
+      }
       String strBpartner = strIsSOTrxTab;
-      if (strIsSOTrxTab.equals(""))
+      if (strIsSOTrxTab.equals("")) {
         strBpartner = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+      }
       String strSelected = "all";
-      if (strBpartner.equals("Y"))
+      if (strBpartner.equals("Y")) {
         strSelected = "customer";
-      else if (strBpartner.equals("N"))
+      } else if (strBpartner.equals("N")) {
         strSelected = "vendor";
-      else
+      } else {
         strSelected = "all";
+      }
       vars.setSessionValue("BusinessPartner.bpartner", strSelected);
 
       // two cases are interesting in the result:
@@ -132,14 +140,16 @@ public class BusinessPartner extends HttpSecureAppServlet {
         pgLimit = "2";
       }
 
-      final BusinessPartnerData[] data = BusinessPartnerData.selectKey(this, Utility.getContext(
-          this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars,
-          strOrg), (strSelected.equals("customer") ? "clients" : ""),
+      final BusinessPartnerData[] data = BusinessPartnerData.selectKey(this,
+          Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
+          Utility.getSelectorOrgs(this, vars, strOrg),
+          (strSelected.equals("customer") ? "clients" : ""),
           (strSelected.equals("vendor") ? "vendors" : ""), strKeyValue + "%", pgLimit, oraLimit1);
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
-      } else
+      } else {
         printPage(response, vars, strKeyValue + "%", "", strSelected, "paramKey");
+      }
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
@@ -163,18 +173,21 @@ public class BusinessPartner extends HttpSecureAppServlet {
       final String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       printGridData(response, vars, strKey, strName, strOrg, strContact, strZIP, strProvincia,
           strBpartners, strCity, strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
-      String strNameValue, String strBpartners, String focusedId) throws IOException,
-      ServletException {
+      String strNameValue, String strBpartners, String focusedId)
+      throws IOException, ServletException {
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Frame 1 of business partners seeker");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/BusinessPartner").createXmlDocument();
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/BusinessPartner")
+        .createXmlDocument();
     if (strKeyValue.equals("") && strNameValue.equals("")) {
       xmlDocument.setParameter("key", "%");
     } else {
@@ -205,10 +218,12 @@ public class BusinessPartner extends HttpSecureAppServlet {
 
   private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       BusinessPartnerData[] data) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: business partners seeker Frame Set");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/SearchUniqueKeyResponse").createXmlDocument();
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/SearchUniqueKeyResponse")
+        .createXmlDocument();
 
     xmlDocument.setParameter("script", generateResult(data));
     response.setContentType("text/html; charset=UTF-8");
@@ -235,10 +250,12 @@ public class BusinessPartner extends HttpSecureAppServlet {
 
   private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page structure");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure")
+        .createXmlDocument();
 
     final SQLReturnObject[] data = getHeaders(vars);
     final String type = "Hidden";
@@ -253,8 +270,9 @@ public class BusinessPartner extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     final PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(xmlDocument.print());
+    }
     out.println(xmlDocument.print());
     out.close();
   }
@@ -289,11 +307,12 @@ public class BusinessPartner extends HttpSecureAppServlet {
   private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String strName, String strOrg, String strContact, String strZIP, String strProvincia,
       String strBpartners, String strCity, String strOrderCols, String strOrderDirs,
-      String strOffset, String strPageSize, String strNewFilter) throws IOException,
-      ServletException {
+      String strOffset, String strPageSize, String strNewFilter)
+      throws IOException, ServletException {
     String localStrNewFilter = strNewFilter;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page rows");
+    }
     int page = 0;
     final SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
@@ -367,32 +386,38 @@ public class BusinessPartner extends HttpSecureAppServlet {
         } else {
           type = myError.getType();
           title = myError.getTitle();
-          if (!myError.getMessage().startsWith("<![CDATA["))
+          if (!myError.getMessage().startsWith("<![CDATA[")) {
             description = "<![CDATA[" + myError.getMessage() + "]]>";
-          else
+          } else {
             description = myError.getMessage();
+          }
         }
       } catch (final Exception e) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Error obtaining rows data");
+        }
         type = "Error";
         title = "Error";
-        if (e.getMessage().startsWith("<![CDATA["))
+        if (e.getMessage().startsWith("<![CDATA[")) {
           description = "<![CDATA[" + e.getMessage() + "]]>";
-        else
+        } else {
           description = e.getMessage();
+        }
         e.printStackTrace();
       }
     }
 
     DecimalFormat df = Utility.getFormat(vars, "priceEdition");
 
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     final StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -400,7 +425,8 @@ public class BusinessPartner extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+    strRowsData.append("  <rows numRows=\"")
+        .append(strNumRows)
         .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
@@ -412,22 +438,32 @@ public class BusinessPartner extends HttpSecureAppServlet {
           if (columnname.equalsIgnoreCase("so_creditavailable")
               || columnname.equalsIgnoreCase("so_creditused")
               || columnname.equalsIgnoreCase("income")) {
-            final String value = data[j].getField(columnname).equals("") ? "0" : data[j]
-                .getField(columnname);
+            final String value = data[j].getField(columnname).equals("") ? "0"
+                : data[j].getField(columnname);
             strRowsData.append(df.format(new BigDecimal(value)));
           } else if ((data[j].getField(columnname)) != null) {
-            if (headers[k].getField("adReferenceId").equals("32"))
+            if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
-                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
-                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
-                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            }
+            strRowsData.append(data[j].getField(columnname)
+                .replaceAll("<b>", "")
+                .replaceAll("<B>", "")
+                .replaceAll("</b>", "")
+                .replaceAll("</B>", "")
+                .replaceAll("<i>", "")
+                .replaceAll("<I>", "")
+                .replaceAll("</i>", "")
+                .replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;")
+                .replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;")
+                .replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
-            } else
+            } else {
               strRowsData.append("&nbsp;");
+            }
           }
           strRowsData.append("]]></td>\n");
         }
@@ -439,8 +475,9 @@ public class BusinessPartner extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     final PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strRowsData.toString());
+    }
     out.print(strRowsData.toString());
     out.close();
   }

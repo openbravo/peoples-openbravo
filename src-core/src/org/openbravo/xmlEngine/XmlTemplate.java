@@ -15,7 +15,8 @@ import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -53,9 +54,10 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
   String prefix;
   String strCharacters = "";
 
-  static Logger log4jXmlTemplate = Logger.getLogger(XmlTemplate.class);
+  static Logger log4jXmlTemplate = LogManager.getLogger();
 
-  public XmlTemplate(String strName, String fileConfiguration, String[] discard, XmlEngine xmlEngine) {
+  public XmlTemplate(String strName, String fileConfiguration, String[] discard,
+      XmlEngine xmlEngine) {
     this.strName = strName;
     this.fileConfiguration = fileConfiguration;
     this.discard = discard;
@@ -85,6 +87,7 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     return fileConfiguration;
   }
 
+  @Override
   public int type() {
     return REPORT;
   }
@@ -111,8 +114,9 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
   }
 
   private StackElement popElement() {
-    if (stcElement.isEmpty())
+    if (stcElement.isEmpty()) {
       return null;
+    }
     StackElement _stackElement = (StackElement) stcElement.pop();
     if (stcElement.isEmpty()) {
       strElement = null;
@@ -132,18 +136,22 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     return _stackElement;
   }
 
+  @Override
   public void startPrefixMapping(java.lang.String _prefix, java.lang.String uri) {
-    if (log4jXmlTemplate.isDebugEnabled())
-      log4jXmlTemplate.debug("XmlTemplate: startPrefixMapping is called, prefix:" + _prefix
-          + " uri: " + uri);
+    if (log4jXmlTemplate.isDebugEnabled()) {
+      log4jXmlTemplate
+          .debug("XmlTemplate: startPrefixMapping is called, prefix:" + _prefix + " uri: " + uri);
+    }
     this.prefix = _prefix;
   }
 
+  @Override
   public void startElement(java.lang.String uri, java.lang.String name, java.lang.String qName,
       Attributes amap) { // throws SAXException {
-    if (log4jXmlTemplate.isDebugEnabled())
-      log4jXmlTemplate.debug("XmlTemplate: startElement is called3:" + name + " strElement: "
-          + strElement);
+    if (log4jXmlTemplate.isDebugEnabled()) {
+      log4jXmlTemplate
+          .debug("XmlTemplate: startElement is called3:" + name + " strElement: " + strElement);
+    }
 
     // characters can be read in multiple chunks, add them to the activeXmlVector at the end of the
     // element
@@ -158,8 +166,9 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     if (previousStackElement != null) {
       stackElement.setPrintEnabled(previousStackElement.printEnabled());
     }
-    if (log4jXmlTemplate.isDebugEnabled())
+    if (log4jXmlTemplate.isDebugEnabled()) {
       log4jXmlTemplate.debug("Call to CharacterComponent");
+    }
     TagTemplate tag = new TagTemplate(qName, amap, xmlEngine.strReplaceWhat,
         xmlEngine.strReplaceWith, prefix, uri);
     prefix = null;
@@ -168,9 +177,10 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     String strClass = null;
 
     for (int i = 0; i < amap.getLength(); i++) {
-      if (log4jXmlTemplate.isDebugEnabled())
+      if (log4jXmlTemplate.isDebugEnabled()) {
         log4jXmlTemplate.debug("  XmlTemplate (attribute list): attribute name=" + amap.getQName(i)
             + " value=" + amap.getValue(i));
+      }
       if (amap.getQName(i).equals("id")) {
         id = amap.getValue(i);
       } else if (amap.getQName(i).equals("class")) {
@@ -189,10 +199,10 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
             log4jXmlTemplate.debug("id: " + id + " tipo: " + iDComponent.type());
             // first test if print the tag
             switch (iDComponent.type()) {
-            case IDComponent.DISCARD:
-              log4jXmlTemplate.debug("Case DISCARD");
-              stackElement.setPrintEnabled(false);
-              break;
+              case IDComponent.DISCARD:
+                log4jXmlTemplate.debug("Case DISCARD");
+                stackElement.setPrintEnabled(false);
+                break;
             }
             if (stackElement.printEnabled()) {
               if (!tagAdded) {
@@ -202,93 +212,94 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
               // Discard2 }
 
               switch (iDComponent.type()) {
-              case IDComponent.SECTION:
-                log4jXmlTemplate.debug("Case SECTION");
-                stackElement.setSection(activeSection);
-                activeSection = (SectionTemplate) iDComponent;
-                activeSection.dataTemplate.vecSectionTemplate.addElement(activeSection);
-                if (activeSection.dataTemplate.firstSectionTemplate == null) {
-                  activeSection.dataTemplate.firstSectionTemplate = activeSection;
-                  vecXmlVector.addElement(activeSection.dataTemplate);
-                }
-                if (activeSection.breakFieldTemplate == null) {
-                  log4jXmlTemplate.debug("Add to detail");
-                  activeXmlVector = activeSection.dataTemplate().vecDetailTemplate;
-                } else {
-                  log4jXmlTemplate.debug("Add to Head");
-                  activeXmlVector = activeSection.vecHeadTemplate;
-                }
-                break;
-              case IDComponent.FIELD:
-                log4jXmlTemplate.debug("Case FIELD");
-                stackElement.setSkipCharacters(); // to remove
-                // the
-                // characters
-                FieldTemplate field = (FieldTemplate) iDComponent;
-                activeXmlVector.addElement(field);
-                break;
-              case IDComponent.PARAMETER:
-                log4jXmlTemplate.debug("Case PARAMETER");
-                stackElement.setSkipCharacters(); // to remove
-                // the
-                // characters
-                ParameterTemplate parameter = (ParameterTemplate) iDComponent;
-                // vecParameter.addElement(parameter);
-                activeXmlVector.addElement(parameter);
-                break;
-              case IDComponent.ATTRIBUTE:
-                log4jXmlTemplate.debug("Case ATTRIBUTE");
-                // not remove the characters
-                AttributeComponentTemplate attributeComponent = (AttributeComponentTemplate) iDComponent;
-                FunctionTemplate functionAttributeComponent = attributeComponent.functionTemplate();
-                if (functionAttributeComponent != null) {
-                  if (activeSection == null) {
-                    functionAttributeComponent.dataTemplate.vecFunctionTemplateOutSection
-                        .addElement(functionAttributeComponent); // XmlEngineNP
-                    // (it
-                    // had
-                    // problems
-                    // compiling,verify
-                    // it
-                    // is
-                    // vecFunctionTemplateOutSection)
-                  } else {
-                    activeSection.addFunction(functionAttributeComponent);
+                case IDComponent.SECTION:
+                  log4jXmlTemplate.debug("Case SECTION");
+                  stackElement.setSection(activeSection);
+                  activeSection = (SectionTemplate) iDComponent;
+                  activeSection.dataTemplate.vecSectionTemplate.addElement(activeSection);
+                  if (activeSection.dataTemplate.firstSectionTemplate == null) {
+                    activeSection.dataTemplate.firstSectionTemplate = activeSection;
+                    vecXmlVector.addElement(activeSection.dataTemplate);
                   }
-                }
-                tag.setAttribute(attributeComponent);
-                break;
-              case IDComponent.FUNCTION:
-                log4jXmlTemplate.debug("Case FUNCTION");
-                stackElement.setSkipCharacters(); // to remove
-                // the
-                // characters
-                FunctionTemplate function = (FunctionTemplate) iDComponent;
-                if (activeSection == null) {
-                  function.dataTemplate.vecFunctionTemplateOutSection.addElement(function); // XmlEngineNP
-                  // like the
-                  // last one
-                } else {
-                  activeSection.addFunction(function);
-                }
-                activeXmlVector.addElement(function);
-                break;
-              case IDComponent.REPORT:
-                log4jXmlTemplate.debug("Case REPORT");
-                stackElement.setSkipCharacters(); // to remove
-                // the
-                // characters
-                XmlTemplate subDocument = (XmlTemplate) iDComponent;
-                activeXmlVector.addElement(subDocument);
-                break;
-              case IDComponent.LABEL:
-                log4jXmlTemplate.debug("Case LABEL");
-                stackElement.setSkipCharacters(); // to remove
-                // the
-                // characters
-                LabelTemplate label = (LabelTemplate) iDComponent;
-                activeXmlVector.addElement(label);
-                break;
+                  if (activeSection.breakFieldTemplate == null) {
+                    log4jXmlTemplate.debug("Add to detail");
+                    activeXmlVector = activeSection.dataTemplate().vecDetailTemplate;
+                  } else {
+                    log4jXmlTemplate.debug("Add to Head");
+                    activeXmlVector = activeSection.vecHeadTemplate;
+                  }
+                  break;
+                case IDComponent.FIELD:
+                  log4jXmlTemplate.debug("Case FIELD");
+                  stackElement.setSkipCharacters(); // to remove
+                  // the
+                  // characters
+                  FieldTemplate field = (FieldTemplate) iDComponent;
+                  activeXmlVector.addElement(field);
+                  break;
+                case IDComponent.PARAMETER:
+                  log4jXmlTemplate.debug("Case PARAMETER");
+                  stackElement.setSkipCharacters(); // to remove
+                  // the
+                  // characters
+                  ParameterTemplate parameter = (ParameterTemplate) iDComponent;
+                  // vecParameter.addElement(parameter);
+                  activeXmlVector.addElement(parameter);
+                  break;
+                case IDComponent.ATTRIBUTE:
+                  log4jXmlTemplate.debug("Case ATTRIBUTE");
+                  // not remove the characters
+                  AttributeComponentTemplate attributeComponent = (AttributeComponentTemplate) iDComponent;
+                  FunctionTemplate functionAttributeComponent = attributeComponent
+                      .functionTemplate();
+                  if (functionAttributeComponent != null) {
+                    if (activeSection == null) {
+                      functionAttributeComponent.dataTemplate.vecFunctionTemplateOutSection
+                          .addElement(functionAttributeComponent); // XmlEngineNP
+                      // (it
+                      // had
+                      // problems
+                      // compiling,verify
+                      // it
+                      // is
+                      // vecFunctionTemplateOutSection)
+                    } else {
+                      activeSection.addFunction(functionAttributeComponent);
+                    }
+                  }
+                  tag.setAttribute(attributeComponent);
+                  break;
+                case IDComponent.FUNCTION:
+                  log4jXmlTemplate.debug("Case FUNCTION");
+                  stackElement.setSkipCharacters(); // to remove
+                  // the
+                  // characters
+                  FunctionTemplate function = (FunctionTemplate) iDComponent;
+                  if (activeSection == null) {
+                    function.dataTemplate.vecFunctionTemplateOutSection.addElement(function); // XmlEngineNP
+                    // like the
+                    // last one
+                  } else {
+                    activeSection.addFunction(function);
+                  }
+                  activeXmlVector.addElement(function);
+                  break;
+                case IDComponent.REPORT:
+                  log4jXmlTemplate.debug("Case REPORT");
+                  stackElement.setSkipCharacters(); // to remove
+                  // the
+                  // characters
+                  XmlTemplate subDocument = (XmlTemplate) iDComponent;
+                  activeXmlVector.addElement(subDocument);
+                  break;
+                case IDComponent.LABEL:
+                  log4jXmlTemplate.debug("Case LABEL");
+                  stackElement.setSkipCharacters(); // to remove
+                  // the
+                  // characters
+                  LabelTemplate label = (LabelTemplate) iDComponent;
+                  activeXmlVector.addElement(label);
+                  break;
               }
             } // Discard2
           }
@@ -313,13 +324,15 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
 
   }
 
+  @Override
   public void endElement(java.lang.String uri, java.lang.String name, java.lang.String qName) { // throws
     // SAXException
     // {
     do {
-      if (log4jXmlTemplate.isDebugEnabled())
-        log4jXmlTemplate.debug("XmlTemplate: endElement is called: " + name + " strElement: "
-            + strElement);
+      if (log4jXmlTemplate.isDebugEnabled()) {
+        log4jXmlTemplate
+            .debug("XmlTemplate: endElement is called: " + name + " strElement: " + strElement);
+      }
       stackElement = popElement();
       if (stackElement == null) {
         log4jXmlTemplate.warn("XmlTemplate: not begin tag for " + name);
@@ -355,10 +368,12 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     }
     // the stackElement is changed once it is verified if the element could
     // be printed
-    if (!stcElement.isEmpty())
+    if (!stcElement.isEmpty()) {
       stackElement = (StackElement) stcElement.peek();
+    }
   }
 
+  @Override
   public void characters(char[] ch, int start, int length) { // throws
     // SAXException {
     if (log4jXmlTemplate.isDebugEnabled()) {
@@ -366,10 +381,12 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
           + " element:" + strElement + " function of:" + strFunctionOfElement + " previousElement:"
           + strPreviousElement);
     }
-    if (strElement == null)
+    if (strElement == null) {
       return;
-    if (!stackElement.printEnabled())
+    }
+    if (!stackElement.printEnabled()) {
       return;
+    }
     if (!peekElement().skipCharacters()) {
       String chars = new String(ch, start, length);
       // characters can be read in multiple chunks, concatenate them here
@@ -377,14 +394,17 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     }
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
-    if (log4jXmlTemplate.isDebugEnabled())
+    if (log4jXmlTemplate.isDebugEnabled()) {
       log4jXmlTemplate.debug("Creation of XmlDocument: " + strName);
+    }
     XmlDocument subXmlDocument = xmlDocument.hasSubXmlDocuments.get(strName);
     if (subXmlDocument == null) {
-      if (log4jXmlTemplate.isDebugEnabled())
-        log4jXmlTemplate.debug("new subXmlDocument : " + strName
-            + " in createXmlComponentValue of " + xmlDocument.xmlTemplate.strName);
+      if (log4jXmlTemplate.isDebugEnabled()) {
+        log4jXmlTemplate.debug("new subXmlDocument : " + strName + " in createXmlComponentValue of "
+            + xmlDocument.xmlTemplate.strName);
+      }
       subXmlDocument = new XmlDocument(this, xmlDocument);
     }
     return subXmlDocument;

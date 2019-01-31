@@ -153,8 +153,8 @@ public class FreemarkerTemplateProcessorTest extends WeldBaseTest {
     template.setModule(getModule());
 
     for (Template dependency : dependencies) {
-      final TemplateDependency templateDependency = OBProvider.getInstance().get(
-          TemplateDependency.class);
+      final TemplateDependency templateDependency = OBProvider.getInstance()
+          .get(TemplateDependency.class);
       templateDependency.setObclkerTemplate(template);
       templateDependency.setDependsOnTemplate(dependency);
       template.getOBCLKERTemplateDependencyList().add(templateDependency);

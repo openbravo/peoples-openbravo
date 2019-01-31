@@ -483,7 +483,7 @@ The Invoices generated are going to be created all of them against the selected 
 <!--122-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--122-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--122-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--122-->  <VALUE><![CDATA[M_Movement_Post]]></VALUE>
+<!--122-->  <VALUE><![CDATA[M_Movement_Post0]]></VALUE>
 <!--122-->  <NAME><![CDATA[Process Movements]]></NAME>
 <!--122-->  <DESCRIPTION><![CDATA[Process Inventory Movements]]></DESCRIPTION>
 <!--122-->  <HELP><![CDATA[Process Inventory Movements will update inventory quantities based on the defined movements between warehouses or locations.]]></HELP>

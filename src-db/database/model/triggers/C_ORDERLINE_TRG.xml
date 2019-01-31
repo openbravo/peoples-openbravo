@@ -32,6 +32,7 @@
   v_CountRelations NUMBER;
   v_reservation_id    VARCHAR2(32);
   v_istaxincluded CHAR(1);
+  v_isReturn CHAR(1);
   v_PriceActual NUMBER;
   
   v_Warehouse_ID VARCHAR2(32);
@@ -254,6 +255,18 @@ IF (UPDATING) THEN
   
   :new.FreightAmt := ROUND(:new.FreightAmt, v_Prec);
   :new.ChargeAmt := ROUND(:new.ChargeAmt, v_Prec);  
+ END IF;
+
+ IF (INSERTING) THEN
+  SELECT dt.isReturn
+  INTO v_isReturn
+  FROM c_doctype dt 
+    INNER JOIN c_order o ON o.c_doctypetarget_id = dt.c_doctype_id
+  WHERE o.c_order_id = :NEW.c_order_id;
+ 
+  IF(v_isReturn = 'Y') THEN
+    :NEW.returnline := 'Y';
+  END IF;
  END IF;
 
 END C_ORDERLINE_TRG

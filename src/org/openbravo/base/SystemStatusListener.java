@@ -22,12 +22,13 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
 
 public class SystemStatusListener implements ServletContextListener {
-  private static final Logger logger = Logger.getLogger(SystemStatusListener.class);
+  private static final Logger logger = LogManager.getLogger();
 
   @Override
   public void contextDestroyed(ServletContextEvent arg0) {
@@ -43,8 +44,9 @@ public class SystemStatusListener implements ServletContextListener {
     ConnectionProvider cp = ConnectionProviderContextListener.getPool(sce.getServletContext());
     try {
       String st = SystemStatusListenerData.getSystemStatus(cp);
-      if (st.equals("RB60") || st.equals("RB50") || st.equals("RB51"))
+      if (st.equals("RB60") || st.equals("RB50") || st.equals("RB51")) {
         SystemStatusListenerData.setSystemStatus(cp, "RB70");
+      }
     } catch (ServletException e) {
       logger.error("Error while updating system status", e);
     } finally {

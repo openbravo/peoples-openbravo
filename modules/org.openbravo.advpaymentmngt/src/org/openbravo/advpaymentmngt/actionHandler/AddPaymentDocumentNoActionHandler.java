@@ -40,8 +40,9 @@ public class AddPaymentDocumentNoActionHandler extends BaseActionHandler {
       final String strOrganization = jsonData.getString("organization");
       if (StringUtils.isNotEmpty(strOrganization)) {
         Organization organization = OBDal.getInstance().get(Organization.class, strOrganization);
-        strDocNo = FIN_Utility.getDocumentNo(organization, jsonData.getString("issotrx").toString()
-            .equals("true") ? "ARR" : "APP", "FIN_Payment", false);
+        strDocNo = FIN_Utility.getDocumentNo(organization,
+            jsonData.getString("issotrx").toString().equals("true") ? "ARR" : "APP", "FIN_Payment",
+            false);
       }
       result.put("payment_documentno", "<" + strDocNo + ">");
       return result;

@@ -263,6 +263,10 @@
       </column>
       <column name="ISCOMPLETELYINVOICED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
+      <column name="INVOICEFROMSHIPMENT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="M_FREIGHTCATEGORY" name="M_FREIGHTCATEGORY_M_INOUT">
@@ -337,6 +341,14 @@
       <foreign-key foreignTable="USER2" name="M_INOUT_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="M_INOUT_AD_USER" unique="false">
+        <index-column name="AD_USER_ID"/>
+        <whereClause><![CDATA[AD_USER_ID IS NOT NULL]]></whereClause>
+      </index>
+      <index name="M_INOUT_BP_MOVEMENTDATE" unique="false">
+        <index-column name="C_BPARTNER_ID"/>
+        <index-column name="MOVEMENTDATE"/>
+      </index>
       <index name="M_INOUT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
@@ -361,6 +373,10 @@
       </index>
       <index name="M_INOUT_POSTED" unique="false">
         <index-column name="POSTED"/>
+      </index>
+      <index name="M_INOUT_SALESREP" unique="false">
+        <index-column name="SALESREP_ID"/>
+        <whereClause><![CDATA[SALESREP_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_INOUT_UPDATED" unique="false">
         <index-column name="UPDATED"/>

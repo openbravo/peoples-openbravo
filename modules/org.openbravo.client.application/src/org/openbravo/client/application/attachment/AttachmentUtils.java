@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2017 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,8 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -86,8 +86,8 @@ public class AttachmentUtils {
     String strAttachmentConfigId = clientConfigs.get(clientId);
     if (strAttachmentConfigId == null) {
       // Only one active AttachmentConfig is allowed per client.
-      OBCriteria<AttachmentConfig> critAttConf = OBDal.getInstance().createCriteria(
-          AttachmentConfig.class);
+      OBCriteria<AttachmentConfig> critAttConf = OBDal.getInstance()
+          .createCriteria(AttachmentConfig.class);
       critAttConf.add(Restrictions.eq(AttachmentConfig.PROPERTY_CLIENT + ".id", clientId));
       if (!OBDal.getInstance().isActiveFilterEnabled()) {
         critAttConf.setFilterOnActive(true);
@@ -167,7 +167,7 @@ public class AttachmentUtils {
   public static List<JSONObject> getTabAttachmentsForRows(Tab tab, String[] recordIds) {
     String tableId = tab.getTable().getId();
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
-        Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds));
+        Restrictions.eq("table.id", tableId), Restrictions.in("record", (Object[]) recordIds));
     attachmentFiles.addOrderBy("creationDate", false);
     List<JSONObject> attachments = new ArrayList<>();
     // do not filter by the attachment's organization
@@ -179,8 +179,8 @@ public class AttachmentUtils {
       try {
         attachmentobj.put("id", attachment.getId());
         attachmentobj.put("name", attachment.getName());
-        attachmentobj.put("age", (new Date().getTime() - getLastUpdateOfAttachment(attachment)
-            .getTime()));
+        attachmentobj.put("age",
+            (new Date().getTime() - getLastUpdateOfAttachment(attachment).getTime()));
         attachmentobj.put("updatedby", attachment.getUpdatedBy().getName());
         String attachmentMethod = DEFAULT_METHOD_ID;
         if (attachment.getAttachmentConf() != null) {
@@ -200,10 +200,12 @@ public class AttachmentUtils {
     final StringBuilder hql = new StringBuilder();
     hql.append("SELECT MAX(pv.updated) FROM OBUIAPP_ParameterValue pv");
     hql.append(" WHERE pv.file.id =:fileId");
-    final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    final Query<Date> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql.toString(), Date.class);
     query.setParameter("fileId", attachment.getId());
     query.setMaxResults(1);
-    Date metadataLastUpdate = (Date) query.uniqueResult();
+    Date metadataLastUpdate = query.uniqueResult();
     if (metadataLastUpdate == null || attachment.getUpdated().after(metadataLastUpdate)) {
       return attachment.getUpdated();
     }
@@ -229,8 +231,8 @@ public class AttachmentUtils {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
     final String hql = "SELECT a." + parameter.getPropertyPath() + " FROM " + entity.getName()
         + " AS a WHERE a.id=:recordId";
-    final Query query = OBDal.getInstance().getSession().createQuery(hql);
-    query.setString("recordId", recordId);
+    final Query<Object> query = OBDal.getInstance().getSession().createQuery(hql, Object.class);
+    query.setParameter("recordId", recordId);
     try {
       return query.uniqueResult();
     } catch (Exception e) {
@@ -238,7 +240,8 @@ public class AttachmentUtils {
     }
   }
 
-  private static String buildDescription(Attachment attachment, String strAttMethodId, String tabId) {
+  private static String buildDescription(Attachment attachment, String strAttMethodId,
+      String tabId) {
     StringBuilder description = new StringBuilder();
     try {
       OBContext.setAdminMode(true);
@@ -249,8 +252,8 @@ public class AttachmentUtils {
           continue;
         }
 
-        final OBCriteria<ParameterValue> critStoredMetadata = OBDal.getInstance().createCriteria(
-            ParameterValue.class);
+        final OBCriteria<ParameterValue> critStoredMetadata = OBDal.getInstance()
+            .createCriteria(ParameterValue.class);
         critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
         critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER, param));
         critStoredMetadata.setMaxResults(1);
@@ -276,8 +279,8 @@ public class AttachmentUtils {
         } else {
           description.append(DESCRIPTION_DELIMITER);
         }
-        description.append((String) param.get(Parameter.PROPERTY_NAME, OBContext.getOBContext()
-            .getLanguage()));
+        description.append(
+            (String) param.get(Parameter.PROPERTY_NAME, OBContext.getOBContext().getLanguage()));
         description.append(": ");
         description.append(value);
       }

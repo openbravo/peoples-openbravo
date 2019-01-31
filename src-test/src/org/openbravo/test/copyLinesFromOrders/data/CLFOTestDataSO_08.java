@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,7 +35,7 @@ import org.openbravo.model.pricing.pricelist.ProductPrice;
  * price list doesn't including taxes from another including taxes.
  * 
  * @author Mark
- *
+ * 
  */
 public class CLFOTestDataSO_08 extends CopyLinesFromOrdersTestData {
 
@@ -74,6 +74,7 @@ public class CLFOTestDataSO_08 extends CopyLinesFromOrdersTestData {
     order1Line1.setPrice(new BigDecimal("2"));
     order1Line1.setTaxId(CLFOTestConstants.VAT3_CHARGE05_TAX_ID);
     order1Line1.setWarehouseId(CLFOTestConstants.SPAIN_EAST_WAREHOUSE);
+    order1Line1.setDescription(CLFOTestConstants.LINE1_DESCRIPTION);
     setOrderLinesCopiedFrom(new OrderLineData[][] { new OrderLineData[] { order1Line1 } });
 
     // Information of the order that will be processed
@@ -106,11 +107,12 @@ public class CLFOTestDataSO_08 extends CopyLinesFromOrdersTestData {
      * created, BP Address, Organization, Attribute Value, Operative Qty, Operative UOM]>
      */
     HashMap<String, String[]> expectedOrderLines = new HashMap<String, String[]>();
-    expectedOrderLines.put("10", new String[] { CLFOTestConstants.FINAL_GOOD_C_PRODUCT_NAME, "10",
-        CLFOTestConstants.BAG_UOM_NAME, "2.00", "2.00", "0",
-        CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
-        BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME, "",
-        null, null });
+    expectedOrderLines.put("10",
+        new String[] { CLFOTestConstants.FINAL_GOOD_C_PRODUCT_NAME, "10",
+            CLFOTestConstants.BAG_UOM_NAME, "2.00", "2.00", "0",
+            CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
+            BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME,
+            "", null, null, CLFOTestConstants.LINE1_DESCRIPTION });
     setExpectedOrderLines(expectedOrderLines);
   }
 
@@ -119,9 +121,10 @@ public class CLFOTestDataSO_08 extends CopyLinesFromOrdersTestData {
    * 
    * Add the Final Good C product to the Customer A Including Taxes Price List
    */
+  @Override
   public void applyTestSettings() {
-    PriceList customerAIncludinTaxesPL = OBDal.getInstance().get(PriceList.class,
-        CLFOTestConstants.CUSTOMER_A_INCLUDING_TAXES_PRICE_LIST_ID);
+    PriceList customerAIncludinTaxesPL = OBDal.getInstance()
+        .get(PriceList.class, CLFOTestConstants.CUSTOMER_A_INCLUDING_TAXES_PRICE_LIST_ID);
     PriceListVersion priceListVersion = customerAIncludinTaxesPL.getPricingPriceListVersionList()
         .get(0);
     // If already exists a product price for the product on this version is not needed to create
@@ -132,8 +135,8 @@ public class CLFOTestDataSO_08 extends CopyLinesFromOrdersTestData {
         return;
       }
     }
-    Product finalGoodC = OBDal.getInstance().get(Product.class,
-        CLFOTestConstants.FINAL_GOOD_C_PRODUCT_ID);
+    Product finalGoodC = OBDal.getInstance()
+        .get(Product.class, CLFOTestConstants.FINAL_GOOD_C_PRODUCT_ID);
     ProductPrice productPrice = OBProvider.getInstance().get(ProductPrice.class);
     productPrice.setProduct(finalGoodC);
     productPrice.setListPrice(new BigDecimal("2.50"));

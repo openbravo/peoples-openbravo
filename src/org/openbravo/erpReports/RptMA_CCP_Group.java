@@ -32,34 +32,40 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class RptMA_CCP_Group extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       String strmaCcpGroup = vars.getSessionValue("RptMA_CCP_Group.inpmaCcpGroup_R");
-      if (strmaCcpGroup.equals(""))
+      if (strmaCcpGroup.equals("")) {
         strmaCcpGroup = vars.getSessionValue("RptMA_CCP_Group.inpmaCcpGroupId");
+      }
       printPagePartePDF(request, response, vars, strmaCcpGroup);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPagePartePDF(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strmaCcpGroup) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pdf");
+    }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptMA_CCP_Group")
         .createXmlDocument();
     // here we pass the familiy-ID with report.setData
     RptMACCPGroupData[] data1 = RptMACCPGroupData.select(this, strmaCcpGroup);
-    if (data1 == null || data1.length == 0)
+    if (data1 == null || data1.length == 0) {
       data1 = RptMACCPGroupData.set();
+    }
 
     int length = 0;
     for (int i = 0; i < data1.length; i++) {
@@ -77,11 +83,13 @@ public class RptMA_CCP_Group extends HttpSecureAppServlet {
 
     xmlDocument.setData("structure1", data2);
     String strResult = xmlDocument.print();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strResult);
+    }
     renderFO(strResult, request, response);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the RptMACcp seeker";
   } // End of getServletInfo() method

@@ -22,6 +22,8 @@ package org.openbravo.common.actionhandler;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -33,8 +35,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Action Handler to manage the Copy From Orders process
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CopyFromOrdersActionHandler extends BaseProcessActionHandler {
 
-  private static final Logger log = LoggerFactory.getLogger(CopyFromOrdersActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String MESSAGE = "message";
   private static final String MESSAGE_SEVERITY = "severity";

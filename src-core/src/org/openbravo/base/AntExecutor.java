@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,12 +25,12 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
-import org.apache.tools.ant.listener.Log4jListener;
 
 /**
  * The AntExecutor class allows to execute ant tasks in a given build.xml file.
@@ -38,7 +38,7 @@ import org.apache.tools.ant.listener.Log4jListener;
  * 
  */
 public class AntExecutor {
-  private static final Logger logger = Logger.getLogger(AntExecutor.class);
+  private static final Logger logger = LogManager.getLogger();
 
   private Project project;
   private String baseDir;
@@ -95,9 +95,6 @@ public class AntExecutor {
       logger1.setErrorPrintStream(ps);
       logger1.setMessageOutputLevel(Project.MSG_INFO);
       project.addBuildListener(logger1);
-
-      Log4jListener listener = new Log4jListener();
-      project.addBuildListener(listener);
     } catch (FileNotFoundException e) {
       logger.error("Error assigning rebuild log file.", e);
     }
@@ -125,10 +122,12 @@ public class AntExecutor {
    */
   public void runTask(String _task) throws Exception {
     String task = _task;
-    if (project == null)
+    if (project == null) {
       throw new Exception("NoProjectLoaded");
-    if (task == null)
+    }
+    if (task == null) {
       task = project.getDefaultTarget();
+    }
     try {
       project.executeTarget(task);
     } catch (final BuildException e) {
@@ -145,8 +144,9 @@ public class AntExecutor {
    *           - In case the project is not loaded
    */
   public void runTask(Vector<String> tasks) throws Exception {
-    if (project == null)
+    if (project == null) {
       throw new Exception("NoProjectLoaded");
+    }
     try {
       project.executeTargets(tasks);
     } catch (final BuildException e) {

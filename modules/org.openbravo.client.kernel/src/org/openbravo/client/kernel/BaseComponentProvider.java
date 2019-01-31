@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,9 +21,9 @@ package org.openbravo.client.kernel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
@@ -38,7 +38,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
 
   private Module module;
 
-  private static Map<String, List<String>> appDependencies = new HashMap<String, List<String>>();
+  private static Map<String, List<String>> appDependencies = new ConcurrentHashMap<>();
 
   /**
    * Return a component of the correct implementation using Weld.
@@ -51,6 +51,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     return WeldUtils.getInstanceFromStaticBeanManager(clz);
   }
 
+  @Override
   public Module getModule() {
     if (module != null) {
       return module;
@@ -82,6 +83,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
    * @see KernelConstants#RESOURCE_LANGUAGE_PARAMETER
    * @see KernelUtils#getVersionParameters(Module)
    */
+  @Override
   public String getVersionParameters(String resource) {
     return KernelUtils.getInstance().getVersionParameters(getModule());
   }
@@ -93,6 +95,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     return this.getClass().getPackage().getName();
   }
 
+  @Override
   public List<String> getTestResources() {
     return null;
   }
@@ -169,7 +172,8 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     return componentResource;
   }
 
-  protected ComponentResource createStyleSheetResource(String path, boolean includeAlsoInClassicMode) {
+  protected ComponentResource createStyleSheetResource(String path,
+      boolean includeAlsoInClassicMode) {
     final ComponentResource componentResource = new ComponentResource();
     componentResource.setType(ComponentResourceType.Stylesheet);
     componentResource.setPath(path);
@@ -185,16 +189,15 @@ public abstract class BaseComponentProvider implements ComponentProvider {
   }
 
   protected ComponentResource createDynamicResource(String path) {
-    final ComponentResource componentResource = createComponentResource(
-        ComponentResourceType.Dynamic, path, ComponentResource.APP_OB3);
-    return componentResource;
+    return createComponentResource(ComponentResourceType.Dynamic, path, ComponentResource.APP_OB3);
   }
 
   /**
    * Implemented here for backward compatibility, calls the {@link #getGlobalResources()}
    */
+  @Override
   public List<ComponentResource> getGlobalComponentResources() {
-    final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
+    final List<ComponentResource> globalResources = new ArrayList<>();
     for (String globalResource : getGlobalResources()) {
       globalResources.add(createStaticResource(globalResource, true));
     }
@@ -216,8 +219,8 @@ public abstract class BaseComponentProvider implements ComponentProvider {
 
     public static final String APP_OB3 = "OB3";
     public static final String APP_CLASSIC = "CLASSIC";
-    public static final List<String> ALL_CORE_APPS = Arrays.asList(new String[] { APP_OB3,
-        APP_CLASSIC });
+    public static final List<String> ALL_CORE_APPS = Arrays
+        .asList(new String[] { APP_OB3, APP_CLASSIC });
 
     private ComponentResourceType type;
     private String path;
@@ -228,7 +231,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     @Deprecated
     private boolean includeInNewUIMode = true;
 
-    private List<String> validForAppList = new ArrayList<String>();
+    private List<String> validForAppList = new ArrayList<>();
 
     public ComponentResourceType getType() {
       return type;
@@ -246,6 +249,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
       this.path = path;
     }
 
+    @Override
     public String toString() {
       return type + " " + path;
     }
@@ -275,6 +279,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     }
 
     public void setValidForAppList(List<String> validForAppList) {
+
       this.validForAppList = validForAppList;
     }
 

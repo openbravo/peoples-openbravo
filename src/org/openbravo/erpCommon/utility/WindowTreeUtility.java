@@ -21,7 +21,8 @@ package org.openbravo.erpCommon.utility;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -33,7 +34,7 @@ import org.openbravo.utils.Replace;
  *         Utility class for the window tree type.
  */
 class WindowTreeUtility {
-  static Logger log4j = Logger.getLogger(WindowTreeUtility.class);
+  static Logger log4j = LogManager.getLogger();
 
   /**
    * Gets the tree type.
@@ -43,52 +44,56 @@ class WindowTreeUtility {
    * @return String with the tree type.
    */
   public static String getTreeType(String keyColumnName) {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("WindowTreeUtility.getTreeID() - key Column: " + keyColumnName);
-    if (keyColumnName == null || keyColumnName.length() == 0)
+    }
+    if (keyColumnName == null || keyColumnName.length() == 0) {
       return "";
+    }
     String TreeType = "";
-    if (keyColumnName.equals("AD_Menu_ID"))
+    if (keyColumnName.equals("AD_Menu_ID")) {
       TreeType = "MM";
-    else if (keyColumnName.equals("C_ElementValue_ID"))
+    } else if (keyColumnName.equals("C_ElementValue_ID")) {
       TreeType = "EV";
-    else if (keyColumnName.equals("C_BPartner_ID"))
+    } else if (keyColumnName.equals("C_BPartner_ID")) {
       TreeType = "BP";
-    else if (keyColumnName.equals("AD_Org_ID"))
+    } else if (keyColumnName.equals("AD_Org_ID")) {
       TreeType = "OO";
-    else if (keyColumnName.equals("C_Project_ID"))
+    } else if (keyColumnName.equals("C_Project_ID")) {
       TreeType = "PJ";
-    else if (keyColumnName.equals("M_Product_Category_ID"))
+    } else if (keyColumnName.equals("M_Product_Category_ID")) {
       TreeType = "PC";
-    else if (keyColumnName.equals("C_Costcenter_ID"))
+    } else if (keyColumnName.equals("C_Costcenter_ID")) {
       TreeType = "CC";
-    else if (keyColumnName.equals("User1_ID"))
+    } else if (keyColumnName.equals("User1_ID")) {
       TreeType = "U1";
-    else if (keyColumnName.equals("User2_ID"))
+    } else if (keyColumnName.equals("User2_ID")) {
       TreeType = "U2";
-    else if (keyColumnName.equals("M_BOM_ID"))
+    } else if (keyColumnName.equals("M_BOM_ID")) {
       TreeType = "BB";
-    else if (keyColumnName.equals("C_SalesRegion_ID"))
+    } else if (keyColumnName.equals("C_SalesRegion_ID")) {
       TreeType = "SR";
-    else if (keyColumnName.equals("C_Campaign_ID"))
+    } else if (keyColumnName.equals("C_Campaign_ID")) {
       TreeType = "MC";
-    else if (keyColumnName.equals("C_Activity_ID"))
+    } else if (keyColumnName.equals("C_Activity_ID")) {
       TreeType = "AY";
-    else if (keyColumnName.equals("AD_Accountingrpt_Element_ID"))
+    } else if (keyColumnName.equals("AD_Accountingrpt_Element_ID")) {
       TreeType = "AR";
-    else if (keyColumnName.equals("C_Tax_Report_ID"))
+    } else if (keyColumnName.equals("C_Tax_Report_ID")) {
       TreeType = "TR";
-    else if (keyColumnName.equals("A_Asset_ID"))
+    } else if (keyColumnName.equals("A_Asset_ID")) {
       TreeType = "AS";
-    else if (keyColumnName.equals("Obre_Resource_Category_ID"))
+    } else if (keyColumnName.equals("Obre_Resource_Category_ID")) {
       TreeType = "OBRE_RC";
-    else if (keyColumnName.equals("M_Ch_Value_ID")) {
+    } else if (keyColumnName.equals("M_Ch_Value_ID")) {
       TreeType = "CH";
-    } else
+    } else {
       TreeType = "";
-    if (TreeType.equals(""))
+    }
+    if (TreeType.equals("")) {
       log4j.warn("WindowTreeUtility.getTreeID() - Could not map " + keyColumnName
           + ". It could be a tree that uses the new tree structure");
+    }
     return TreeType;
   }
 
@@ -117,52 +122,53 @@ class WindowTreeUtility {
   public static WindowTreeData[] getTree(ConnectionProvider conn, VariablesSecureApp vars,
       String TreeType, String TreeID, boolean editable, String strParentID, String strNodeId,
       String strTabID) throws ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("WindowTreeUtility.getTree() - TreeID: " + TreeID);
+    }
     WindowTreeData[] data = null;
     String strEditable = (editable ? "editable" : "");
     if (TreeType.equals("MM")) {
-      data = WindowTreeData.selectTrl(conn, vars.getLanguage(), strEditable, strParentID,
-          strNodeId, TreeID);
-    } else if (TreeType.equals("OO"))
+      data = WindowTreeData.selectTrl(conn, vars.getLanguage(), strEditable, strParentID, strNodeId,
+          TreeID);
+    } else if (TreeType.equals("OO")) {
       data = WindowTreeData.selectOrg(conn, strEditable, strParentID, strNodeId, TreeID);
-    else if (TreeType.equals("PC"))
-      data = WindowTreeData
-          .selectProductCategory(conn, strEditable, strParentID, strNodeId, TreeID);
-    else if (TreeType.equals("CC"))
+    } else if (TreeType.equals("PC")) {
+      data = WindowTreeData.selectProductCategory(conn, strEditable, strParentID, strNodeId,
+          TreeID);
+    } else if (TreeType.equals("CC")) {
       data = WindowTreeData.selectCostcenter(conn, strEditable, strParentID, strNodeId, TreeID);
-    else if (TreeType.equals("U1"))
+    } else if (TreeType.equals("U1")) {
       data = WindowTreeData.selectUser1(conn, strEditable, strParentID, strNodeId, TreeID);
-    else if (TreeType.equals("U2"))
+    } else if (TreeType.equals("U2")) {
       data = WindowTreeData.selectUser2(conn, strEditable, strParentID, strNodeId, TreeID);
-    else if (TreeType.equals("BB"))
+    } else if (TreeType.equals("BB")) {
       data = WindowTreeData.selectBOM(conn, strEditable, strParentID, strNodeId, TreeID);
-    else if (TreeType.equals("EV")) {
-      String strElementId = vars.getSessionValue(Utility.getWindowID(conn, strTabID)
-          + "|C_Element_ID");
+    } else if (TreeType.equals("EV")) {
+      String strElementId = vars
+          .getSessionValue(Utility.getWindowID(conn, strTabID) + "|C_Element_ID");
       data = WindowTreeData.selectElementValue(conn, vars.getLanguage(), strEditable, strParentID,
           strNodeId, TreeID, strElementId);
-    } else if (TreeType.equals("MC"))
+    } else if (TreeType.equals("MC")) {
       data = WindowTreeData.selectCampaign(conn, strEditable, strParentID, strNodeId, TreeID);
-    else if (TreeType.equals("PJ"))
+    } else if (TreeType.equals("PJ")) {
       data = WindowTreeData.selectProject(conn, strEditable, strParentID, strNodeId, TreeID);
-    else if (TreeType.equals("AY"))
+    } else if (TreeType.equals("AY")) {
       data = WindowTreeData.selectActivity(conn, strEditable, strParentID, strNodeId, TreeID);
-    else if (TreeType.equals("SR"))
+    } else if (TreeType.equals("SR")) {
       data = WindowTreeData.selectSalesRegion(conn, strEditable, strParentID, strNodeId, TreeID);
-    else if (TreeType.equals("AR"))
+    } else if (TreeType.equals("AR")) {
       data = WindowTreeData.selectAccountingReport(conn, strEditable, strParentID, strNodeId,
           TreeID);
-    else if (TreeType.equals("TR"))
+    } else if (TreeType.equals("TR")) {
       data = WindowTreeData.selectTaxReport(conn, strEditable, strParentID, strNodeId, TreeID);
-    else if (TreeType.equals("AS"))
+    } else if (TreeType.equals("AS")) {
       data = WindowTreeData.selectAsset(conn, strEditable, strParentID, strNodeId, TreeID);
-    else if (TreeType.equals("OBRE_RC"))
+    } else if (TreeType.equals("OBRE_RC")) {
       data = WindowTreeData.selectOBRE_ResouceCategory(conn, "OBRE_Resource_Category_ID",
           "OBRE_Resource_Category", TreeID, strEditable, strParentID, strNodeId);
-    else if (TreeType.equals("CH")) {
-      String strCharacteristicId = vars.getSessionValue(Utility.getWindowID(conn, strTabID)
-          + "|M_Characteristic_ID");
+    } else if (TreeType.equals("CH")) {
+      String strCharacteristicId = vars
+          .getSessionValue(Utility.getWindowID(conn, strTabID) + "|M_Characteristic_ID");
       data = WindowTreeData.selectChValue(conn, strEditable, strParentID, strNodeId, TreeID,
           strCharacteristicId);
     }
@@ -226,8 +232,9 @@ class WindowTreeUtility {
       String strOnDblClick, boolean hasChilds, String nodeId, String action) {
     String localStrOnDblClick = strOnDblClick;
     String localStrOnClick = strOnClick;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("WindowTreeUtility.addNodeElement() - name: " + name);
+    }
     StringBuffer element = new StringBuffer();
     localStrOnClick = Replace.replace(localStrOnClick, "\"", "&quot;");
     localStrOnDblClick = Replace.replace(localStrOnDblClick, "\"", "&quot;");
@@ -236,21 +243,27 @@ class WindowTreeUtility {
     // in the
     // tree but click action is disabled
     if (isSummary) {
-      element
-          .append("<li id=\"folder")
+      element.append("<li id=\"folder")
           .append((hasChilds ? "" : "NoChilds"))
           .append("__")
           .append(nodeId)
           .append("\"")
-          .append(
-              (nodeId.equals("0") ? " noDrag=\"true\" noSiblings=\"true\" noDelete=\"true\" noRename=\"true\" "
-                  : "")).append(">\n");
+          .append((nodeId.equals("0")
+              ? " noDrag=\"true\" noSiblings=\"true\" noDelete=\"true\" noRename=\"true\" "
+              : ""))
+          .append(">\n");
       if (localStrOnClick == null && localStrOnDblClick == null) {
-        element.append("<a id=\"folderHref").append((hasChilds ? "" : "NoChilds")).append("__")
-            .append(nodeId).append("\"");
+        element.append("<a id=\"folderHref")
+            .append((hasChilds ? "" : "NoChilds"))
+            .append("__")
+            .append(nodeId)
+            .append("\"");
       } else {
-        element.append("<a href=\"#\" id=\"folderHref").append((hasChilds ? "" : "NoChilds"))
-            .append("__").append(nodeId).append("\"");
+        element.append("<a href=\"#\" id=\"folderHref")
+            .append((hasChilds ? "" : "NoChilds"))
+            .append("__")
+            .append(nodeId)
+            .append("\"");
         if (localStrOnDblClick != null && !localStrOnDblClick.equals("")) {
           element.append(" onclick=\"").append(localStrOnDblClick).append("return true;\"");
         }
@@ -258,14 +271,25 @@ class WindowTreeUtility {
       element.append(">").append(StringEscapeUtils.escapeHtml(name)).append("</a>\n");
       // element.append("</li>\n");
     } else {
-      element.append("<li id=\"").append(windowTypeNico(action)).append("__").append(nodeId)
-          .append("\" isElement=\"true\"").append(" noChildren=\"true\"").append(">\n");
+      element.append("<li id=\"")
+          .append(windowTypeNico(action))
+          .append("__")
+          .append(nodeId)
+          .append("\" isElement=\"true\"")
+          .append(" noChildren=\"true\"")
+          .append(">\n");
       if (localStrOnClick == null && localStrOnDblClick == null) {
-        element.append("<a id=\"child").append(windowTypeNico(action)).append("__").append(nodeId)
+        element.append("<a id=\"child")
+            .append(windowTypeNico(action))
+            .append("__")
+            .append(nodeId)
             .append("\"");
       } else {
-        element.append("<a href=\"#\" id=\"child").append(windowTypeNico(action)).append("__")
-            .append(nodeId).append("\"");
+        element.append("<a href=\"#\" id=\"child")
+            .append(windowTypeNico(action))
+            .append("__")
+            .append(nodeId)
+            .append("\"");
         if (localStrOnDblClick != null && !localStrOnDblClick.equals("")) {
           element.append(" onclick=\"").append(localStrOnDblClick).append("return true;\"");
         }
@@ -285,26 +309,28 @@ class WindowTreeUtility {
    * @return String with the css type.
    */
   public static String windowType(String type) {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("WindowTreeUtility.windowType() - type: " + type);
-    if (type == null || type.equals(""))
+    }
+    if (type == null || type.equals("")) {
       return "";
-    else if (type.equals("W"))
+    } else if (type.equals("W")) {
       return "Ventanas";
-    else if (type.equals("X"))
+    } else if (type.equals("X")) {
       return "Formularios";
-    else if (type.equals("P"))
+    } else if (type.equals("P")) {
       return "Procesos";
-    else if (type.equals("T"))
+    } else if (type.equals("T")) {
       return "Tareas";
-    else if (type.equals("R"))
+    } else if (type.equals("R")) {
       return "Informes";
-    else if (type.equals("F"))
+    } else if (type.equals("F")) {
       return "FlujoTrabajo";
-    else if (type.equals("B"))
+    } else if (type.equals("B")) {
       return "BancoTrabajo";
-    else
+    } else {
       return "";
+    }
   }
 
   /**
@@ -315,24 +341,26 @@ class WindowTreeUtility {
    * @return String with the id type.
    */
   public static String windowTypeNico(String tipo) {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("WindowTreeUtility.windowTypeNico() - type: " + tipo);
-    if (tipo == null)
+    }
+    if (tipo == null) {
       return "";
-    else if (tipo.equals("W"))
+    } else if (tipo.equals("W")) {
       return "window";
-    else if (tipo.equals("X"))
+    } else if (tipo.equals("X")) {
       return "form";
-    else if (tipo.equals("P"))
+    } else if (tipo.equals("P")) {
       return "process";
-    else if (tipo.equals("R"))
+    } else if (tipo.equals("R")) {
       return "report";
-    else if (tipo.equals("F"))
+    } else if (tipo.equals("F")) {
       return "wf";
-    else if (tipo.equals("B"))
+    } else if (tipo.equals("B")) {
       return "wb";
-    else
+    } else {
       return "";
+    }
   }
 
   /**
@@ -356,8 +384,9 @@ class WindowTreeUtility {
    */
   public static void setNode(ConnectionProvider conn, VariablesSecureApp vars, String TreeType,
       String TreeID, String strParentID, String strLink, String strSeqNo) throws ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("WindowTreeUtility.setNode() - TreeID: " + TreeID);
+    }
 
     WindowTreeData.update(conn, vars.getUser(), strParentID, strSeqNo, TreeID, strLink);
   }

@@ -37,7 +37,8 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -73,7 +74,7 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 
 public class EntityXMLConverter implements OBNotSingleton {
-  private static final Logger log = Logger.getLogger(EntityXMLConverter.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static EntityXMLConverter newInstance() {
     return OBProvider.getInstance().get(EntityXMLConverter.class);
@@ -246,8 +247,8 @@ public class EntityXMLConverter implements OBNotSingleton {
             Boolean.toString(defaultValuesData));
       }
 
-      xmlHandler.startElement(XMLConstants.OPENBRAVO_NAMESPACE, XMLConstants.OB_ROOT_ELEMENT, "ob:"
-          + XMLConstants.OB_ROOT_ELEMENT, rootAttrs);
+      xmlHandler.startElement(XMLConstants.OPENBRAVO_NAMESPACE, XMLConstants.OB_ROOT_ELEMENT,
+          "ob:" + XMLConstants.OB_ROOT_ELEMENT, rootAttrs);
 
       boolean exportBecauseReferenced = false;
       // do the data scrollers
@@ -280,8 +281,8 @@ public class EntityXMLConverter implements OBNotSingleton {
       // reset mem
       replaceToProcess();
       getAllToProcessObjects().clear();
-      xmlHandler.endElement("http://www.openbravo.com", XMLConstants.OB_ROOT_ELEMENT, "ob:"
-          + XMLConstants.OB_ROOT_ELEMENT);
+      xmlHandler.endElement("http://www.openbravo.com", XMLConstants.OB_ROOT_ELEMENT,
+          "ob:" + XMLConstants.OB_ROOT_ELEMENT);
       xmlHandler.endDocument();
     } catch (Exception e) {
       throw new EntityXMLException(e);
@@ -345,7 +346,8 @@ public class EntityXMLConverter implements OBNotSingleton {
     if (OBContext.getOBContext().isInAdministratorMode()) {
       onlyIdentifierProps = false;
     } else {
-      onlyIdentifierProps = OBContext.getOBContext().getEntityAccessChecker()
+      onlyIdentifierProps = OBContext.getOBContext()
+          .getEntityAccessChecker()
           .isDerivedReadable(obObject.getEntity());
     }
 
@@ -353,11 +355,12 @@ public class EntityXMLConverter implements OBNotSingleton {
     // second 'and' is necessary because referenced entities are not part of the dataset
     if (getDataSet() != null && dataSetTablesByEntity.get(obObject.getEntity()) != null) {
       final DataSetTable dst = dataSetTablesByEntity.get(obObject.getEntity());
-      exportableProperties = DataSetService.getInstance().getExportableProperties(obObject, dst,
-          dst.getDataSetColumnList(), optionExportTransientInfo);
+      exportableProperties = DataSetService.getInstance()
+          .getExportableProperties(obObject, dst, dst.getDataSetColumnList(),
+              optionExportTransientInfo);
     } else {
-      exportableProperties = new ArrayList<Property>(obObject.getEntity().getRealProperties(
-          includedComputedColumns));
+      exportableProperties = new ArrayList<Property>(
+          obObject.getEntity().getRealProperties(includedComputedColumns));
       if (excludeAuditInfo != null && excludeAuditInfo) {
         DataSetService.getInstance().removeAuditInfo(exportableProperties);
       }
@@ -472,8 +475,9 @@ public class EntityXMLConverter implements OBNotSingleton {
           // embed in the parent
           if (isOptionEmbedChildren()) {
             if (objectBelongsToReadableClient((BaseOBObject) o)) {
-              final DataSetTable dst = (getDataSet() != null && obObject.getEntity() != null) ? dataSetTablesByEntity
-                  .get(obObject.getEntity()) : null;
+              final DataSetTable dst = (getDataSet() != null && obObject.getEntity() != null)
+                  ? dataSetTablesByEntity.get(obObject.getEntity())
+                  : null;
               if ((excludeAuditInfo != null && excludeAuditInfo)
                   || (dst != null && dst.isExcludeAuditInfo())) {
                 export((BaseOBObject) o, false, true, exportedPropertyName);
@@ -491,8 +495,8 @@ public class EntityXMLConverter implements OBNotSingleton {
             // add attributes
             final AttributesImpl childAttrs = new AttributesImpl();
             childAttrs.addAttribute("", "", XMLConstants.TRANSIENT_ATTRIBUTE, "CDATA", "true");
-            childAttrs.addAttribute("", "", XMLConstants.ID_ATTRIBUTE, "CDATA", child.getId()
-                .toString());
+            childAttrs.addAttribute("", "", XMLConstants.ID_ATTRIBUTE, "CDATA",
+                child.getId().toString());
             if (!isOptionMinimizeXMLSize()) {
               childAttrs.addAttribute("", "", XMLConstants.IDENTIFIER_ATTRIBUTE, "CDATA",
                   IdentifierProvider.getInstance().getIdentifier(child));
@@ -573,13 +577,13 @@ public class EntityXMLConverter implements OBNotSingleton {
     }
     // final Element refElement =
     // currentElement.addElement(REFERENCE_ELEMENT_NAME);
-    attrs
-        .addAttribute("", "", XMLConstants.ID_ATTRIBUTE, "CDATA", referedObject.getId().toString());
+    attrs.addAttribute("", "", XMLConstants.ID_ATTRIBUTE, "CDATA",
+        referedObject.getId().toString());
     if (!isOptionMinimizeXMLSize()) {
       attrs.addAttribute("", "", XMLConstants.ENTITYNAME_ATTRIBUTE, "CDATA",
           DalUtil.getEntityName(referedObject));
-      attrs.addAttribute("", "", XMLConstants.IDENTIFIER_ATTRIBUTE, "CDATA", IdentifierProvider
-          .getInstance().getIdentifier(referedObject));
+      attrs.addAttribute("", "", XMLConstants.IDENTIFIER_ATTRIBUTE, "CDATA",
+          IdentifierProvider.getInstance().getIdentifier(referedObject));
     }
   }
 
@@ -872,8 +876,8 @@ public class EntityXMLConverter implements OBNotSingleton {
 
     dataSetTablesByEntity = new HashMap<Entity, DataSetTable>();
     for (DataSetTable dst : dataSet.getDataSetTableList()) {
-      final Entity entity = ModelProvider.getInstance().getEntityByTableName(
-          dst.getTable().getDBTableName());
+      final Entity entity = ModelProvider.getInstance()
+          .getEntityByTableName(dst.getTable().getDBTableName());
       dataSetTablesByEntity.put(entity, dst);
     }
   }

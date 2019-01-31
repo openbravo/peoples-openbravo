@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,8 +21,9 @@ package org.openbravo.erpCommon.utility;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
@@ -33,7 +34,7 @@ import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
  * Utilities to get AcctSchema
  */
 public class OBLedgerUtils {
-  private static Logger log4j = Logger.getLogger(OBLedgerUtils.class);
+  private static Logger log4j = LogManager.getLogger();
 
   /**
    * Returns the ledger id for the given organization id.
@@ -67,8 +68,9 @@ public class OBLedgerUtils {
         return acctSchemaId;
       }
 
-      String clientId = StringUtils.equals(orgId, "0") ? OBContext.getOBContext()
-          .getCurrentClient().getId() : org.getClient().getId();
+      String clientId = StringUtils.equals(orgId, "0")
+          ? OBContext.getOBContext().getCurrentClient().getId()
+          : org.getClient().getId();
       // Get client base general ledger
       return getClientLedger(clientId);
 
@@ -103,8 +105,8 @@ public class OBLedgerUtils {
     }
 
     // Loop through parent organization list
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        org.getClient().getId());
+    OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(org.getClient().getId());
     List<String> parentOrgIds = osp.getParentList(org.getId(), false);
     for (String orgId : parentOrgIds) {
       Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
@@ -122,7 +124,9 @@ public class OBLedgerUtils {
     where.append(" from " + AcctSchema.ENTITY_NAME);
     where.append(" where " + AcctSchema.PROPERTY_CLIENT + ".id = :clientId");
     where.append(" order by " + AcctSchema.PROPERTY_NAME);
-    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<String> qry = OBDal.getInstance()
+        .getSession()
+        .createQuery(where.toString(), String.class);
     qry.setParameter("clientId", clientId);
     qry.setMaxResults(1);
     return (String) qry.uniqueResult();

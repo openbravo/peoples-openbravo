@@ -28,7 +28,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.ad_callouts.SL_Currency_StdPrecision;
 import org.w3c.dom.Document;
@@ -38,8 +39,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * Returns the standard currency precission for a specific currency defined in
- * ISO 4217. If not found in ISO, returns a standard precision of 2.
+ * Returns the standard currency precission for a specific currency defined in ISO 4217. If not
+ * found in ISO, returns a standard precision of 2.
  *
  * @see SL_Currency_StdPrecision
  *
@@ -47,7 +48,7 @@ import org.xml.sax.SAXException;
  * @author jorge-garcia
  */
 public class ISOCurrencyPrecision {
-  private static Logger log4j = Logger.getLogger(ISOCurrencyPrecision.class);
+  private static Logger log4j = LogManager.getLogger();
   private static final int DEFAULT_CURRENCY_STANDARD_PRECISION = 2;
   private static final String CURRENCY_TAG_NAME = "CcyNtry";
   private static final String CURRENCY_ISO_CODE_TAG_NAME = "Ccy";
@@ -84,8 +85,8 @@ public class ISOCurrencyPrecision {
     }
   }
 
-  private static Document getISOCurrencyDocument() throws IOException,
-      ParserConfigurationException, SAXException {
+  private static Document getISOCurrencyDocument()
+      throws IOException, ParserConfigurationException, SAXException {
     long t1 = System.currentTimeMillis();
     try (InputStream isoXMLDoc = ISOCurrencyPrecision.class
         .getResourceAsStream("../ad_callouts/ISO_4217.xml")) {
@@ -115,7 +116,8 @@ public class ISOCurrencyPrecision {
         String ccyIsoCode = getFirstValueWithTagName(ccyNode, CURRENCY_ISO_CODE_TAG_NAME);
         String ccyPrecision = getFirstValueWithTagName(ccyNode, CURRENCY_PRECISION_TAG_NAME);
 
-        if (isSameCurrencyAsParameterAndIsPrecisionDefined(paramISOCode, ccyIsoCode, ccyPrecision)) {
+        if (isSameCurrencyAsParameterAndIsPrecisionDefined(paramISOCode, ccyIsoCode,
+            ccyPrecision)) {
           return Integer.parseInt(ccyPrecision);
         }
       }

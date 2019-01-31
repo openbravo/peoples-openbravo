@@ -37,7 +37,7 @@ BEGIN
   IF(UPDATING OR INSERTING) THEN
 		-- Check if locator and locator_to are diferents
 		IF  (:NEW.M_LOCATOR_ID = :NEW.M_LOCATORTO_ID 
-             AND COALESCE(:NEW.M_ATTRIBUTESETINSTANCE_ID, 'X') = COALESCE(:NEW.M_ATTRIBUTESETINSTANCETO_ID, 'X')) THEN
+                     AND :NEW.M_ATTRIBUTESETINSTANCETO_ID IS NULL) THEN
 		  RAISE_APPLICATION_ERROR(-20000, '@MovementLineLocators@');
 		END IF;
     v_ID:=:new.M_Movement_ID;

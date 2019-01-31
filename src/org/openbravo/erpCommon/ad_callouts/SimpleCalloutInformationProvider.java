@@ -23,14 +23,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.service.json.JsonConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * SimpleCalloutInformationProvider provides the information that is used to populate the messages,
@@ -45,7 +45,7 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
   private Iterator<String> keys;
   private String currentElementName;
 
-  private final Logger log = LoggerFactory.getLogger(SimpleCalloutInformationProvider.class);
+  private final Logger log = LogManager.getLogger();
 
   @SuppressWarnings("unchecked")
   public SimpleCalloutInformationProvider(JSONObject calloutResult) {

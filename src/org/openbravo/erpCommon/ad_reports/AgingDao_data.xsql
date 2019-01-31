@@ -126,6 +126,28 @@
                                             AND fpsd.fin_payment_schedule_invoice IS NULL
                                      ) 
                            )
+                UNION
+                SELECT fp2.fin_payment_id                AS fin_payment_id,
+                       fpsd.amount             AS GENERATED_CREDIT,
+                       fp2.PAYMENTDATE                   AS PAYMENTDATE,
+                       fp2.c_currency_id                 AS c_currency_id,
+                       fp2.c_bpartner_id                 AS c_bpartner_id,
+                       CASE
+                        WHEN fp2.isreceipt = 'N' AND fp2.referenceno IS NOT NULL THEN FIN_AGING_GETDOCNO(fp2.referenceno, fp2.documentNo, fp2.ad_org_id)
+                        ELSE fp2.documentNo
+                        END                             AS docNo
+                FROM   fin_payment_scheduledetail fpsd
+                       INNER JOIN fin_payment_detail fpd ON fpsd.fin_payment_detail_id = fpd.fin_payment_detail_id
+                       INNER JOIN fin_payment fp2 ON fpd.fin_payment_id = fp2.fin_payment_id
+                WHERE  (fp2.AD_Org_ID in ('1'))
+                       AND (fp2.status IN ('1'))
+                       AND Trunc(fp2.paymentdate) <= TO_DATE(?)
+                       AND fp2.isreceipt = ?
+                       AND 2=2
+                       AND fpsd.isactive = 'Y'
+                       AND fpsd.iscanceled = 'N'
+                       AND fpsd.fin_payment_schedule_invoice IS NULL
+                       AND fpsd.fin_payment_schedule_order IS NOT NULL
                 ) P 
                 LEFT JOIN 
                 (SELECT SUM(fpc.amount) AS USED_CREDIT,
@@ -158,6 +180,11 @@
     <Parameter name="asOfDate"/>
     <Parameter name="recOrPay"/>
     <Parameter name="cbPartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND fp.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="org" type="replace" optional="true" after=" WHERE  (fp2.AD_Org_ID in (" text="'1'"/>
+    <Parameter name="paidStatus" type="replace" optional="true" after="AND (fp2.status IN (" text="'1'"/>
+    <Parameter name="asOfDate"/>
+    <Parameter name="recOrPay"/>
+    <Parameter name="cbPartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND fp2.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="asOfDate"/>
     <Parameter name="paidStatus" type="replace" optional="true" after="OR ( fp1.status IN (" text="'1'"/>
     <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>

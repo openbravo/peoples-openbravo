@@ -24,12 +24,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
@@ -39,7 +39,7 @@ import net.sf.jasperreports.engine.JasperReport;
  * cache, avoiding unnecessary compilations when the same report is generated multiple times.
  */
 class CompiledReportManager {
-  private static final Logger log = LoggerFactory.getLogger(CompiledReportManager.class);
+  private static final Logger log = LogManager.getLogger();
   private static CompiledReportManager instance = new CompiledReportManager();
 
   private ConcurrentHashMap<String, CompiledReport> compiledReports;
@@ -47,18 +47,14 @@ class CompiledReportManager {
 
   private CompiledReportManager() {
     compiledReports = new ConcurrentHashMap<>();
-    isDisabled = WeldUtils.getInstanceFromStaticBeanManager(
-        ApplicationDictionaryCachedStructures.class).isInDevelopment();
+    isDisabled = WeldUtils
+        .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class)
+        .isInDevelopment();
     log.info("CompiledReportManager initialized, use cache: {}", !isDisabled);
   }
 
   static CompiledReportManager getInstance() {
     return instance;
-  }
-
-  JasperReport compileReport(String reportPath, String language) throws JRException {
-    return compileReport(reportPath, language,
-        DalConnectionProvider.getReadOnlyConnectionProvider());
   }
 
   JasperReport compileReport(String reportPath, String language,
@@ -102,7 +98,8 @@ class CompiledReportManager {
     return compiledReports.get(getKey(reportPath, language));
   }
 
-  private void putCompiledReport(String reportPath, String language, CompiledReport compiledReport) {
+  private void putCompiledReport(String reportPath, String language,
+      CompiledReport compiledReport) {
     if (isDisabled) {
       return;
     }
@@ -156,7 +153,7 @@ class CompiledReportManager {
 
     public CompiledReport(JasperReport mainReport, Map<String, JasperReport> subReports) {
       this.mainReport = mainReport;
-      this.subReports = subReports;
+      this.subReports = !subReports.isEmpty() ? subReports : null;
     }
   }
 }

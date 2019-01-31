@@ -41,8 +41,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportPendingProductionJr extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("FIND")) {
@@ -84,8 +85,9 @@ public class ReportPendingProductionJr extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportPendingProductionJr").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportPendingProductionJr")
+        .createXmlDocument();
 
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportPendingProductionJr",
@@ -126,6 +128,7 @@ public class ReportPendingProductionJr extends HttpSecureAppServlet {
 
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportPendingProductionJr.";
   } // end of getServletInfo() method

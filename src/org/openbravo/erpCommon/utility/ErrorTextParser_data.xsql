@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,12 +38,21 @@
   <SqlMethod name="selectColumnName" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      select coalesce(ad_element_trl.name, ad_element.name) as column_name
-      from ad_element left join ad_element_trl on ad_element.ad_element_id = ad_element_trl.ad_element_id and ad_element_trl.ad_language = ?
-      where upper(ad_element.columnname) = upper(?)
+        select coalesce(et.name, e.name, c.name) as column_name
+          from ad_table t,
+               ad_column c
+                left join ad_element e
+                       on c.ad_element_id = e.ad_element_id
+                left join ad_element_trl et
+                       on e.ad_element_id = et.ad_element_id
+                      and et.ad_language = ?
+         where t.ad_table_id = c.ad_table_id
+           and upper(t.tableName) = upper(?)
+           and upper(c.columnName) = upper(?)
     </Sql>
     <Parameter name="language"/>
-    <Parameter name="columnname"/>
+    <Parameter name="tableName"/>
+    <Parameter name="columnName"/>
   </SqlMethod>
 
   <SqlMethod name="selectColumnNamesForConstraint" type="preparedStatement" return="multiple">

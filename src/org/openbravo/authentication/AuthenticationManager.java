@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Copyright (C) 2001-2019 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -29,7 +29,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.VariablesBase;
@@ -55,13 +56,13 @@ import org.openbravo.service.web.BaseWebServiceServlet;
  */
 public abstract class AuthenticationManager {
 
-  private static final Logger log4j = Logger.getLogger(AuthenticationManager.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String DEFAULT_AUTH_CLASS = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
   private static final String AD_SESSION_ID_ATTR = "#AD_SESSION_ID";
   private static final String SUCCESS_SESSION_WEB_SERVICE = "WS";
   private static final String REJECTED_SESSION_WEB_SERVICE = "WSR";
   private static final String SUCCESS_SESSION_CONNECTOR = "WSC";
-  private static final String FAILED_SESSION = "F";
+  protected static final String FAILED_SESSION = "F";
 
   protected static final String LOGIN_PARAM = "user";
   protected static final String PASSWORD_PARAM = "password";
@@ -104,19 +105,22 @@ public abstract class AuthenticationManager {
    */
   public static final AuthenticationManager getAuthenticationManager(HttpServlet s) {
     AuthenticationManager authManager;
-    String authClass = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String authClass = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("authentication.class", DEFAULT_AUTH_CLASS);
     if (authClass == null || authClass.equals("")) {
       // If not defined, load default
       authClass = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
     }
     try {
-      authManager = (AuthenticationManager) OBClassLoader.getInstance().loadClass(authClass)
-          .getDeclaredConstructor().newInstance();
+      authManager = (AuthenticationManager) OBClassLoader.getInstance()
+          .loadClass(authClass)
+          .getDeclaredConstructor()
+          .newInstance();
       authManager.init(s);
     } catch (Exception e) {
-      log4j
-          .error("Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
+      log4j.error(
+          "Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
       authManager = new DefaultAuthenticationManager(s);
       authManager.init(s);
     }
@@ -206,7 +210,8 @@ public abstract class AuthenticationManager {
     final String customLoginURL = (String) request.getAttribute("loginURL");
 
     return HttpBaseUtils.getLocalAddress(request)
-        + (customLoginURL == null || "".equals(customLoginURL) ? defaultServletUrl : customLoginURL);
+        + (customLoginURL == null || "".equals(customLoginURL) ? defaultServletUrl
+            : customLoginURL);
   }
 
   /**
@@ -267,29 +272,31 @@ public abstract class AuthenticationManager {
 
     String dbSessionId = setDBSession(request, userId, SUCCESS_SESSION_WEB_SERVICE, false);
     switch (activationKey.checkNewWSCall(true)) {
-    case NO_RESTRICTION:
-      return userId;
-    case EXCEEDED_WARN_WS_CALLS:
-      log4j.warn("Number of webservice calls exceeded today.");
-      return userId;
-    case EXCEEDED_MAX_WS_CALLS:
-      if (dbSessionId != null) {
-        updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
-      }
-      log4j.warn("Cannot use WS, exceeded number of calls");
-      throw new AuthenticationException("Exceeded maximum number of allowed calls to web services.");
-    case EXPIRED:
-      if (dbSessionId != null) {
-        updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
-      }
-      log4j.warn("Cannot use WS, license expired");
-      throw new AuthenticationException("Exceeded maximum number of allowed calls to web services.");
-    case EXPIRED_MODULES:
-      if (dbSessionId != null) {
-        updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
-      }
-      log4j.warn("Cannot use WS, expired modules");
-      throw new AuthenticationException("There are expired modules");
+      case NO_RESTRICTION:
+        return userId;
+      case EXCEEDED_WARN_WS_CALLS:
+        log4j.warn("Number of webservice calls exceeded today.");
+        return userId;
+      case EXCEEDED_MAX_WS_CALLS:
+        if (dbSessionId != null) {
+          updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
+        }
+        log4j.warn("Cannot use WS, exceeded number of calls");
+        throw new AuthenticationException(
+            "Exceeded maximum number of allowed calls to web services.");
+      case EXPIRED:
+        if (dbSessionId != null) {
+          updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
+        }
+        log4j.warn("Cannot use WS, license expired");
+        throw new AuthenticationException(
+            "Exceeded maximum number of allowed calls to web services.");
+      case EXPIRED_MODULES:
+        if (dbSessionId != null) {
+          updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
+        }
+        log4j.warn("Cannot use WS, expired modules");
+        throw new AuthenticationException("There are expired modules");
     }
 
     return null;
@@ -384,7 +391,8 @@ public abstract class AuthenticationManager {
    * @param request
    *          HTTP request object, used for handling parameters and session attributes
    * @param response
-   * @return <ul>
+   * @return
+   *         <ul>
    *         <li>The user id (AD_User_ID) if the request is already authenticated or the
    *         authentication process succeeded</li>
    *         <li><b>null</b> if the request is not authenticated or authentication process failed
@@ -402,7 +410,8 @@ public abstract class AuthenticationManager {
    * 
    * @param request
    *          HTTP request object, used for handling parameters and session attributes
-   * @return <ul>
+   * @return
+   *         <ul>
    *         <li>The user id (AD_User_ID) if the request is already authenticated or the
    *         authentication process succeeded</li>
    *         <li><b>null</b> if the request is not authenticated or authentication process failed
@@ -410,6 +419,8 @@ public abstract class AuthenticationManager {
    *         </ul>
    */
   protected String doWebServiceAuthenticate(HttpServletRequest request) {
+    markRequestAsSelfAuthenticated(request);
+
     UserLoginInfo authenticationData = getAuthenticationData(request);
     if (authenticationData == null) {
       return null;
@@ -417,6 +428,17 @@ public abstract class AuthenticationManager {
     String user = authenticationData.getUserName();
     String password = authenticationData.getPassword();
     return doWebServiceAuthenticate(user, password);
+  }
+
+  /**
+   * Utility method to mark that the current request has authentication data used to authenticate
+   * this particular request
+   * 
+   * @param request
+   *          the request to be marked as self-authenticated
+   */
+  protected void markRequestAsSelfAuthenticated(HttpServletRequest request) {
+    request.setAttribute("IS_SELF_AUTHENTICATED", "Y");
   }
 
   private UserLoginInfo getAuthenticationData(HttpServletRequest request) {
@@ -480,7 +502,8 @@ public abstract class AuthenticationManager {
    *          A String with the user name
    * @param password
    *          A String with the password of the user
-   * @return <ul>
+   * @return
+   *         <ul>
    *         <li>The user id (AD_User_ID) if the request is already authenticated or the
    *         authentication process succeeded</li>
    *         <li><b>null</b> if the request is not authenticated or authentication process failed
@@ -524,12 +547,13 @@ public abstract class AuthenticationManager {
   protected abstract void doLogout(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException;
 
-  protected final String createDBSession(HttpServletRequest req, String strUser, String strUserAuth) {
+  protected final String createDBSession(HttpServletRequest req, String strUser,
+      String strUserAuth) {
     return createDBSession(req, strUser, strUserAuth, "S");
   }
 
-  protected final String createDBSession(HttpServletRequest req, String strUser,
-      String strUserAuth, String successSessionType) {
+  protected final String createDBSession(HttpServletRequest req, String strUser, String strUserAuth,
+      String successSessionType) {
     try {
       if (strUserAuth == null && StringUtils.isEmpty(strUser)) {
         // do not create ad_session row for empty user name, this can happen if trying to
@@ -572,6 +596,17 @@ public abstract class AuthenticationManager {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  /**
+   * This method can be overridden by those subclasses that expect to retrieve the authentication
+   * result from an external login page.
+   * 
+   * @return {@code true} if the authentication result is retrieved from an external login page.
+   *         Otherwise, return {@code false} which is the value returned by default.
+   */
+  public boolean useExternalLoginPage() {
+    return false;
   }
 
   /**

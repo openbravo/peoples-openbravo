@@ -40,8 +40,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -68,8 +69,8 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportDebtPaymentTrack|DateFrom");
-      String strDateTo = vars
-          .getRequestGlobalVariable("inpDateTo", "ReportDebtPaymentTrack|DateTo");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
+          "ReportDebtPaymentTrack|DateTo");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportDebtPaymentTrack|cBpartnerId", IsIDFilter.instance);
       String strAmtFrom = vars.getNumericRequestGlobalVariable("inpAmtFrom",
@@ -93,9 +94,9 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
           "ReportDebtPaymentTrack");
       int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
-      if (strInitRecord.equals("") || strInitRecord.equals("0"))
+      if (strInitRecord.equals("") || strInitRecord.equals("0")) {
         vars.setSessionValue("ReportDebtPaymentTrack.initRecordNumber", "0");
-      else {
+      } else {
         int initRecord = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
         initRecord -= intRecordRange;
         strInitRecord = ((initRecord < 0) ? "0" : Integer.toString(initRecord));
@@ -115,8 +116,8 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     } else if (vars.commandIn("PRINT_PDF")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportDebtPaymentTrack|DateFrom");
-      String strDateTo = vars
-          .getRequestGlobalVariable("inpDateTo", "ReportDebtPaymentTrack|DateTo");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
+          "ReportDebtPaymentTrack|DateTo");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportDebtPaymentTrack|cBpartnerId", IsIDFilter.instance);
       String strAmtFrom = vars.getNumericRequestGlobalVariable("inpAmtFrom",
@@ -135,8 +136,9 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       printPageDataPdf(request, response, vars, strDateFrom, strDateTo, strcBpartnerId, strAmtFrom,
           strAmtTo, strInvoice, strDPCNA, strDPCA, strDPGNA, strDPGA, strDPM, strDPC, strDPB);
       // setHistoryCommand(request, "FIND");
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataPdf(HttpServletRequest request, HttpServletResponse response,
@@ -159,8 +161,9 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     } catch (NumberFormatException e) {
     }
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     ReportDebtPaymentTrackData[] data = null;
     if (limit > 0 && mycount > limit) {
@@ -174,9 +177,8 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
           + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
       data = ReportDebtPaymentTrackData.select(this, "0", vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
-          strcBpartnerId, strDateFrom, strDateTo, strAmtFrom, strAmtTo, strDocTypes, null, null,
-          null);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId,
+          strDateFrom, strDateTo, strAmtFrom, strAmtTo, strDocTypes, null, null, null);
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportDebtPaymentTracker.jrxml";
       renderJR(vars, response, strReportName, "pdf", null, data, null);
     }
@@ -185,13 +187,14 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strcBpartnerId, String strAmtFrom,
       String strAmtTo, String strInvoice, String strDPCNA, String strDPCA, String strDPGNA,
-      String strDPGA, String strDPM, String strDPC, String strDPB) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      String strDPGA, String strDPM, String strDPC, String strDPB)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
-    String strRecordRange = Utility
-        .getContext(this, vars, "#RecordRange", "ReportDebtPaymentTrack");
+    String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
+        "ReportDebtPaymentTrack");
     int intRecordRange = (strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange));
     String strInitRecord = vars.getSessionValue("ReportDebtPaymentTrack.initRecordNumber");
     int initRecordNumber = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
@@ -225,15 +228,15 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
           + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
       data = ReportDebtPaymentTrackData.select(this, rowNum, vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
-          strcBpartnerId, strDateFrom, strDateTo, strAmtFrom, strAmtTo, strDocTypes, oraLimit1,
-          oraLimit2, pgLimit);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId,
+          strDateFrom, strDateTo, strAmtFrom, strAmtTo, strDocTypes, oraLimit1, oraLimit2, pgLimit);
     }
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportDebtPaymentTrack", discard).createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportDebtPaymentTrack", discard)
+        .createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportDebtPaymentTrack", false, "",
-        "", "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportDebtPaymentTrack", false, "", "",
+        "", false, "ad_reports", strReplaceWith, false, true);
     boolean hasPrevious = !(data == null || data.length == 0 || initRecordNumber <= 1);
     boolean hasNext = !(data == null || data.length == 0 || data.length < intRecordRange);
     toolbar.prepareRelationBarTemplate(hasPrevious, hasNext);
@@ -245,9 +248,8 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportDebtPaymentTrack.html", classInfo.id, classInfo.type, strReplaceWith,
-          tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportDebtPaymentTrack.html",
+          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportDebtPaymentTrack.html",
           strReplaceWith);
@@ -284,9 +286,7 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     xmlDocument.setParameter("DPC", strDPC);
     xmlDocument.setParameter("DPB", strDPB);
     xmlDocument.setParameter("Invoice", strInvoice);
-    xmlDocument.setData(
-        "reportCBPartnerId_IN",
-        "liststructure",
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         SelectorUtilityData.selectBpartner(this,
             Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
             Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
@@ -295,6 +295,7 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportDebtPaymentTrack. This Servlet was made by Eduardo Argal";
   } // end of getServletInfo() method

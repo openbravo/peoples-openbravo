@@ -26,12 +26,13 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.exception.PoolNotFoundException;
 
 public class JNDIConnectionProvider implements ConnectionProvider {
-  protected static Logger log4j = Logger.getLogger(JNDIConnectionProvider.class);
+  protected static Logger log4j = LogManager.getLogger();
   protected static Map<String, PoolInfo> pools = new HashMap<String, PoolInfo>();
   protected String defaultPoolName = "";
 
@@ -59,30 +60,37 @@ public class JNDIConnectionProvider implements ConnectionProvider {
       Properties properties = new Properties();
       properties.load(new FileInputStream(file));
       String poolName = properties.getProperty("bbdd.poolName", "myPool");
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("poolName: " + poolName);
+      }
 
       String jndiResourceName = properties.getProperty("JNDI.resourceName");
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("jndiResourceName: " + jndiResourceName);
+      }
       String dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("dbSessionConfig: " + dbSessionConfig);
+      }
       String rdbms = properties.getProperty("bbdd.rdbms");
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("rdbms: " + rdbms);
+      }
 
       // Add the new pool to the list of available pools
       Context initctx = new InitialContext();
       Context ctx = (Context) initctx.lookup("java:/comp/env");
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Connected to java:/comp/env");
+      }
       DataSource ds = (DataSource) ctx.lookup(jndiResourceName);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Datasource retrieved from JNDI server. Resource " + jndiResourceName);
+      }
       pools.put(poolName, new PoolInfo(poolName, ds, rdbms, dbSessionConfig));
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Added to pools");
+      }
 
       // First defined pool is the default pool
       if ("".equals(defaultPoolName)) {
@@ -100,19 +108,21 @@ public class JNDIConnectionProvider implements ConnectionProvider {
         pstmt.executeQuery();
         log4j.debug("Connection initialized");
       } finally {
-        if (con != null)
+        if (con != null) {
           con.close();
+        }
       }
       log4j.debug("Created JNDI ConnectionProvider");
 
     } catch (Exception e) {
       log4j.error("Error creating JNDI connection", e);
-      throw new PoolNotFoundException("Failed when creating database connections pool: "
-          + e.getMessage());
+      throw new PoolNotFoundException(
+          "Failed when creating database connections pool: " + e.getMessage());
     }
 
   }
 
+  @Override
   public Connection getConnection() throws NoConnectionAvailableException {
     return getConnection(defaultPoolName);
   }
@@ -128,6 +138,7 @@ public class JNDIConnectionProvider implements ConnectionProvider {
     return conn;
   }
 
+  @Override
   public String getRDBMS() {
     return getRDBMS(defaultPoolName);
   }
@@ -150,6 +161,7 @@ public class JNDIConnectionProvider implements ConnectionProvider {
     return true;
   }
 
+  @Override
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
     Connection conn = getConnection();
     if (conn == null) {
@@ -159,6 +171,7 @@ public class JNDIConnectionProvider implements ConnectionProvider {
     return conn;
   }
 
+  @Override
   public void releaseCommitConnection(Connection conn) throws SQLException {
     if (conn != null) {
       conn.commit();
@@ -166,6 +179,7 @@ public class JNDIConnectionProvider implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releaseRollbackConnection(Connection conn) throws SQLException {
     if (conn != null) {
       conn.rollback();
@@ -173,34 +187,43 @@ public class JNDIConnectionProvider implements ConnectionProvider {
     }
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(String SQLPreparedStatement) throws Exception {
     return getPreparedStatement(defaultPoolName, SQLPreparedStatement);
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(String poolName, String SQLPreparedStatement)
       throws Exception {
-    if (poolName == null || poolName.equals(""))
+    if (poolName == null || poolName.equals("")) {
       throw new PoolNotFoundException("Can't get the pool. No pool name specified");
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("connection requested");
+    }
     Connection conn = getConnection(poolName);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("connection established");
+    }
     return getPreparedStatement(conn, SQLPreparedStatement);
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(Connection conn, String SQLPreparedStatement)
       throws SQLException {
-    if (conn == null || SQLPreparedStatement == null || SQLPreparedStatement.equals(""))
+    if (conn == null || SQLPreparedStatement == null || SQLPreparedStatement.equals("")) {
       return null;
+    }
     PreparedStatement ps = null;
     try {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("preparedStatement requested");
+      }
       ps = conn.prepareStatement(SQLPreparedStatement, ResultSet.TYPE_SCROLL_INSENSITIVE,
           ResultSet.CONCUR_READ_ONLY);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("preparedStatement received");
+      }
     } catch (SQLException e) {
       log4j.error("getPreparedStatement: " + SQLPreparedStatement + "\n" + e);
       releaseConnection(conn);
@@ -209,22 +232,27 @@ public class JNDIConnectionProvider implements ConnectionProvider {
     return (ps);
   }
 
+  @Override
   public CallableStatement getCallableStatement(String SQLCallableStatement) throws Exception {
     return getCallableStatement(defaultPoolName, SQLCallableStatement);
   }
 
+  @Override
   public CallableStatement getCallableStatement(String poolName, String SQLCallableStatement)
       throws Exception {
-    if (poolName == null || poolName.equals(""))
+    if (poolName == null || poolName.equals("")) {
       throw new PoolNotFoundException("Can't get the pool. No pool name specified");
+    }
     Connection conn = getConnection(poolName);
     return getCallableStatement(conn, SQLCallableStatement);
   }
 
+  @Override
   public CallableStatement getCallableStatement(Connection conn, String SQLCallableStatement)
       throws SQLException {
-    if (conn == null || SQLCallableStatement == null || SQLCallableStatement.equals(""))
+    if (conn == null || SQLCallableStatement == null || SQLCallableStatement.equals("")) {
       return null;
+    }
     CallableStatement cs = null;
     try {
       cs = conn.prepareCall(SQLCallableStatement);
@@ -236,20 +264,25 @@ public class JNDIConnectionProvider implements ConnectionProvider {
     return (cs);
   }
 
+  @Override
   public Statement getStatement() throws Exception {
     return getStatement(defaultPoolName);
   }
 
+  @Override
   public Statement getStatement(String poolName) throws Exception {
-    if (poolName == null || poolName.equals(""))
+    if (poolName == null || poolName.equals("")) {
       throw new PoolNotFoundException("Can't get the pool. No pool name specified");
+    }
     Connection conn = getConnection(poolName);
     return getStatement(conn);
   }
 
+  @Override
   public Statement getStatement(Connection conn) throws SQLException {
-    if (conn == null)
+    if (conn == null) {
       return null;
+    }
     try {
       return (conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY));
     } catch (SQLException e) {
@@ -259,9 +292,11 @@ public class JNDIConnectionProvider implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releasePreparedStatement(PreparedStatement preparedStatement) throws SQLException {
-    if (preparedStatement == null)
+    if (preparedStatement == null) {
       return;
+    }
     Connection conn = null;
     try {
       conn = preparedStatement.getConnection();
@@ -274,9 +309,11 @@ public class JNDIConnectionProvider implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releaseCallableStatement(CallableStatement callableStatement) throws SQLException {
-    if (callableStatement == null)
+    if (callableStatement == null) {
       return;
+    }
     Connection conn = null;
     try {
       conn = callableStatement.getConnection();
@@ -289,9 +326,11 @@ public class JNDIConnectionProvider implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releaseStatement(Statement statement) throws SQLException {
-    if (statement == null)
+    if (statement == null) {
       return;
+    }
     Connection conn = null;
     try {
       conn = statement.getConnection();
@@ -304,25 +343,31 @@ public class JNDIConnectionProvider implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releaseTransactionalStatement(Statement statement) throws SQLException {
-    if (statement == null)
+    if (statement == null) {
       return;
+    }
     statement.close();
   }
 
+  @Override
   public void releaseTransactionalPreparedStatement(PreparedStatement preparedStatement)
       throws SQLException {
-    if (preparedStatement == null)
+    if (preparedStatement == null) {
       return;
+    }
     preparedStatement.close();
   }
 
+  @Override
   public void destroy() {
   }
 
   /**
    * Returns the actual status of the dynamic pool.
    */
+  @Override
   public String getStatus() {
     StringBuffer strResultado = new StringBuffer();
     strResultado.append("Not implemented yet");

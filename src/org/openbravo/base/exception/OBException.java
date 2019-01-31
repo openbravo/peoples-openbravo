@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,8 @@
 package org.openbravo.base.exception;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.service.db.DbUtility;
 
 /**
@@ -84,8 +85,8 @@ public class OBException extends RuntimeException {
 
     String msg;
     if (StringUtils.isBlank(message)) {
-      msg = foundCause == cause ? cause.getMessage() : (cause.getMessage() + "-" + foundCause
-          .getMessage());
+      msg = foundCause == cause ? cause.getMessage()
+          : (cause.getMessage() + "-" + foundCause.getMessage());
     } else {
       msg = message;
     }
@@ -99,7 +100,7 @@ public class OBException extends RuntimeException {
    * @return the class-specific Logger
    */
   protected Logger getLogger() {
-    return Logger.getLogger(this.getClass());
+    return LogManager.getLogger(this.getClass());
   }
 
   /**

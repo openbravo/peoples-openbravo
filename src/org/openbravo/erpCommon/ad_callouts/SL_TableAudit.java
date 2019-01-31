@@ -47,8 +47,8 @@ public class SL_TableAudit extends SimpleCallout {
         } else {
           info.addResult("inpisauditinserts", "Y");
         }
-        info.showMessage(Utility.messageBD(this, "RegenerateAudit_ExcludeColumn",
-            info.vars.getLanguage()));
+        info.showMessage(
+            Utility.messageBD(this, "RegenerateAudit_ExcludeColumn", info.vars.getLanguage()));
       } else {
         info.showMessage(Utility.messageBD(this, "RegenerateAudit", info.vars.getLanguage()));
       }

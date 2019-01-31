@@ -25,7 +25,8 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -59,7 +60,7 @@ import org.openbravo.model.common.order.Order;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EntityAccessTest extends CrossOrganizationReference {
 
-  private static final Logger log = Logger.getLogger(EntityAccessTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Creates test data, a {@link Currency}.
@@ -197,7 +198,7 @@ public class EntityAccessTest extends CrossOrganizationReference {
     // assertTrue(cs.size() > 0);
     // fail("Non readable check not enforced");
     // } catch (final OBSecurityException e) {
-    // assertTrue("Wrong exception thrown:  " + e.getMessage(), e.getMessage().indexOf(
+    // assertTrue("Wrong exception thrown: " + e.getMessage(), e.getMessage().indexOf(
     // "is not readable") != -1);
     // }
   }
@@ -216,7 +217,9 @@ public class EntityAccessTest extends CrossOrganizationReference {
     OBDal.getInstance().remove(cs.get(0));
   }
 
-  /** Covers issue #36628: it was not possible to update organization if entity had computed columns */
+  /**
+   * Covers issue #36628: it was not possible to update organization if entity had computed columns
+   */
   @Test
   public void changeOrgIsAllowedHavingComputedColumns() {
     setTestAdminContext();

@@ -11,19 +11,26 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.base.weld.test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.dialect.function.SQLFunction;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -38,9 +45,8 @@ import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.KernelInitializer;
 import org.openbravo.dal.core.OBInterceptor;
+import org.openbravo.dal.core.SQLFunctionRegister;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base test for weld, provides access to the weld container.
@@ -49,7 +55,7 @@ import org.slf4j.LoggerFactory;
  */
 @RunWith(Arquillian.class)
 public class WeldBaseTest extends OBBaseTest {
-  private static final Logger log = LoggerFactory.getLogger(WeldBaseTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static boolean initialized = false;
   private static JavaArchive archive = null;
@@ -64,7 +70,8 @@ public class WeldBaseTest extends OBBaseTest {
       System.setProperty("com.sun.jersey.server.impl.cdi.lookupExtensionInBeanManager", "true");
 
       log.info("Creating cdi archive...");
-      final String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      final String sourcePath = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("source.path");
       archive = ShrinkWrap.create(JavaArchive.class);
 
@@ -99,6 +106,10 @@ public class WeldBaseTest extends OBBaseTest {
   @Inject
   private KernelInitializer kernelInitializer;
 
+  @Inject
+  @Any
+  private Instance<SQLFunctionRegister> sqlFunctionRegisters;
+
   /**
    * Sets static instance bean manager in WeldUtils so it is globally accessible and initializes
    * kernel.
@@ -111,12 +122,28 @@ public class WeldBaseTest extends OBBaseTest {
   @Before
   public void setUp() throws Exception {
     if (!initialized) {
+      initializeDalLayer(getSqlFunctions());
       WeldUtils.setStaticInstanceBeanManager(beanManager);
       kernelInitializer.setInterceptor();
       weldUtils.setBeanManager(beanManager);
       initialized = true;
     }
     super.setUp();
+  }
+
+  private Map<String, SQLFunction> getSqlFunctions() {
+    Map<String, SQLFunction> sqlFunctions = new HashMap<>();
+    if (sqlFunctionRegisters == null) {
+      return sqlFunctions;
+    }
+    for (SQLFunctionRegister register : sqlFunctionRegisters) {
+      Map<String, SQLFunction> registeredSqlFunctions = register.getSQLFunctions();
+      if (registeredSqlFunctions == null) {
+        continue;
+      }
+      sqlFunctions.putAll(registeredSqlFunctions);
+    }
+    return sqlFunctions;
   }
 
   /**
@@ -127,7 +154,8 @@ public class WeldBaseTest extends OBBaseTest {
   @AfterClass
   public static void resetOBInterceptors() {
     final OBInterceptor interceptor = (OBInterceptor) SessionFactoryController.getInstance()
-        .getConfiguration().getInterceptor();
+        .getConfiguration()
+        .getInterceptor();
     interceptor.setInterceptorListener(null);
     initialized = false;
   }

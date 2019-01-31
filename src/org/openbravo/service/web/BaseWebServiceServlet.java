@@ -28,7 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.exception.OBSecurityException;
@@ -49,7 +50,7 @@ import org.openbravo.dal.core.SessionHandler;
  */
 
 public class BaseWebServiceServlet extends HttpServlet {
-  private static final Logger log = Logger.getLogger(BaseWebServiceServlet.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static final String LOGIN_PARAM = "l";
   public static final String PASSWORD_PARAM = "p";
@@ -119,8 +120,8 @@ public class BaseWebServiceServlet extends HttpServlet {
       } finally {
         final boolean sessionCreated = !sessionExists && null != request.getSession(false);
         if (sessionCreated && AuthenticationManager.isStatelessRequest(request)) {
-          log.warn("Stateless request, still a session was created " + request.getRequestURL()
-              + " " + request.getQueryString());
+          log.warn("Stateless request, still a session was created " + request.getRequestURL() + " "
+              + request.getQueryString());
         }
 
         HttpSession session = request.getSession(false);
@@ -189,8 +190,8 @@ public class BaseWebServiceServlet extends HttpServlet {
           log.error("User " + OBContext.getOBContext().getUser() + " with role "
               + OBContext.getOBContext().getRole()
               + " is trying to access to non granted web service " + request.getRequestURL());
-          throw new OBSecurityException("Web Services are not granted to "
-              + OBContext.getOBContext().getRole() + " role");
+          throw new OBSecurityException(
+              "Web Services are not granted to " + OBContext.getOBContext().getRole() + " role");
         }
       }
       super.service(request, response);

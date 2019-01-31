@@ -44,8 +44,8 @@ public class MainLayoutComponent extends BaseTemplateComponent {
   }
 
   public Collection<NBComponent> getNavigationBarComponents() {
-    return NavigationBarComponentGenerator.getInstance().getDynamicNavigationBarComponents(
-        getParameters());
+    return NavigationBarComponentGenerator.getInstance()
+        .getDynamicNavigationBarComponents(getParameters());
   }
 
   public String getVersion() {

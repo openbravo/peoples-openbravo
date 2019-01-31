@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -49,7 +50,7 @@ import org.openbravo.service.db.DbUtility;
  * 
  */
 public class ManageReservationActionHandler extends BaseProcessActionHandler {
-  private static final Logger log = Logger.getLogger(ManageReservationActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String strOrderLineTableId = "260";
   private static final String strReservationsTableId = "77264B07BB0E4FA483A07FB40C2E0FE0";
   private static final String strResStockTableId = "7BDAC914CA60418795E453BC0E8C89DC";
@@ -141,7 +142,8 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
 
   private void manageReservedStockLines(JSONObject jsonRequest, Reservation reservation,
       List<String> idList) throws JSONException {
-    JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+    JSONArray selectedLines = jsonRequest.getJSONObject("_params")
+        .getJSONObject("grid")
         .getJSONArray("_selection");
     // if no lines selected don't do anything.
     if (selectedLines.length() == 0) {
@@ -156,8 +158,8 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
           : selectedLine.getString("reservationStock");
       boolean existsReservationStock = StringUtils.isNotBlank(strReservationStockId);
       if (!existsReservationStock) {
-        String released = selectedLine.get("released").equals(null) ? "" : selectedLine
-            .getString("released");
+        String released = selectedLine.get("released").equals(null) ? ""
+            : selectedLine.getString("released");
         if (StringUtils.isNotBlank(released)) {
           BigDecimal qtyReleased = new BigDecimal(released);
           if (qtyReleased.compareTo(BigDecimal.ZERO) != 0) {
@@ -174,23 +176,23 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
         resStock.setReservation(reservation);
         resStock.setOrganization(reservation.getOrganization());
 
-        final String strLocator = selectedLine.get("storageBin").equals(null) ? "" : selectedLine
-            .getString("storageBin");
+        final String strLocator = selectedLine.get("storageBin").equals(null) ? ""
+            : selectedLine.getString("storageBin");
         if (StringUtils.isNotBlank(strLocator)) {
-          resStock.setStorageBin((Locator) OBDal.getInstance().getProxy(Locator.ENTITY_NAME,
-              strLocator));
+          resStock.setStorageBin(
+              (Locator) OBDal.getInstance().getProxy(Locator.ENTITY_NAME, strLocator));
         }
         final String strASIId = selectedLine.get("attributeSetValue").equals(null) ? ""
             : selectedLine.getString("attributeSetValue");
         if (StringUtils.isNotBlank(strASIId)) {
-          resStock.setAttributeSetValue((AttributeSetInstance) OBDal.getInstance().getProxy(
-              AttributeSetInstance.ENTITY_NAME, strASIId));
+          resStock.setAttributeSetValue((AttributeSetInstance) OBDal.getInstance()
+              .getProxy(AttributeSetInstance.ENTITY_NAME, strASIId));
         }
         final String strOrderLineId = selectedLine.get("purchaseOrderLine").equals(null) ? ""
             : selectedLine.getString("purchaseOrderLine");
         if (StringUtils.isNotBlank(strOrderLineId)) {
-          resStock.setSalesOrderLine((OrderLine) OBDal.getInstance().getProxy(
-              OrderLine.ENTITY_NAME, strOrderLineId));
+          resStock.setSalesOrderLine(
+              (OrderLine) OBDal.getInstance().getProxy(OrderLine.ENTITY_NAME, strOrderLineId));
         }
         resStock.setReleased(BigDecimal.ZERO);
 

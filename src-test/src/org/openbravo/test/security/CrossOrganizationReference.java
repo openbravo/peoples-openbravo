@@ -105,8 +105,8 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
     Order order = OBProvider.getInstance().get(Order.class);
     order.setOrganization(OBDal.getInstance().getProxy(Organization.class, orgId));
     order.setDocumentType(OBDal.getInstance().getProxy(DocumentType.class, CREDIT_ORDER_DOC_TYPE));
-    order.setTransactionDocument(OBDal.getInstance().getProxy(DocumentType.class,
-        CREDIT_ORDER_DOC_TYPE));
+    order.setTransactionDocument(
+        OBDal.getInstance().getProxy(DocumentType.class, CREDIT_ORDER_DOC_TYPE));
     order.setDocumentNo("TestCrossOrg");
 
     order.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class, CUST_A));
@@ -204,7 +204,8 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
     OBContext.setOBContext("0");
     for (String colId : colIds) {
       Column col = OBDal.getInstance().get(Column.class, colId);
-      Property p = ModelProvider.getInstance().getEntityByTableId(col.getTable().getId())
+      Property p = ModelProvider.getInstance()
+          .getEntityByTableId(col.getTable().getId())
           .getPropertyByColumnName(col.getDBColumnName());
       p.setAllowedCrossOrgReference(allowCrossOrgColumns);
     }

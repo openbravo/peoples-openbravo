@@ -25,7 +25,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
@@ -43,7 +44,7 @@ import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 
 public class DocProduction extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocProduction = Logger.getLogger(DocProduction.class);
+  private static final Logger log4jDocProduction = LogManager.getLogger();
 
   private String SeqNo = "0";
 
@@ -57,6 +58,7 @@ public class DocProduction extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, conn);
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String stradClientId, String Id)
       throws ServletException {
     setObjectFieldProvider(DocProductionData.selectRegistro(conn, stradClientId, Id));
@@ -67,6 +69,7 @@ public class DocProduction extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DocumentType = AcctServer.DOCTYPE_MatProduction;
     C_Currency_ID = NO_CURRENCY;
@@ -132,6 +135,7 @@ public class DocProduction extends AcctServer {
    * 
    * @return Zero (always balanced)
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
 
@@ -145,21 +149,24 @@ public class DocProduction extends AcctServer {
    *          accounting schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocProductionTemplate newTemplate = (DocProductionTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        log4jDocProduction.error("Error while creating new instance for DocProductionTemplate - "
-            + e);
+        log4jDocProduction
+            .error("Error while creating new instance for DocProductionTemplate - " + e);
       }
     }
     log4jDocProduction.debug("createFact - Inicio");
@@ -183,8 +190,8 @@ public class DocProduction extends AcctServer {
     fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
-      Currency costCurrency = FinancialUtils.getLegalEntityCurrency(OBDal.getInstance().get(
-          Organization.class, line.m_AD_Org_ID));
+      Currency costCurrency = FinancialUtils
+          .getLegalEntityCurrency(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
       if (!CostingStatus.getInstance().isMigrated()) {
         costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
       } else if (line.transaction != null && line.transaction.getCurrency() != null) {
@@ -205,8 +212,8 @@ public class DocProduction extends AcctServer {
         setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
         throw new IllegalStateException();
       }
-      log4jDocProduction.debug("DocProduction - createFact - line.m_Productiontype - "
-          + line.m_Productiontype);
+      log4jDocProduction
+          .debug("DocProduction - createFact - line.m_Productiontype - " + line.m_Productiontype);
       if (line.m_Productiontype.equals("+")) {
         factLine = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
             costCurrency.getId(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
@@ -238,21 +245,6 @@ public class DocProduction extends AcctServer {
     SeqNo = "0";
     return fact;
   } // createFact
-
-  /**
-   * @return the log4j
-   */
-  public static Logger getLog4j() {
-    return log4jDocProduction;
-  }
-
-  /**
-   * @param log4j
-   *          the log4j to set
-   */
-  public static void setLog4j(Logger log4j) {
-    DocProduction.log4jDocProduction = log4j;
-  }
 
   /**
    * @return the seqNo
@@ -301,8 +293,9 @@ public class DocProduction extends AcctServer {
     String Account_ID = "";
     if (data != null && data.length != 0) {
       Account_ID = data[0].accountId;
-    } else
+    } else {
       return null;
+    }
     // No account
     if (Account_ID.equals("")) {
       return null;
@@ -324,10 +317,12 @@ public class DocProduction extends AcctServer {
    * 
    * not used
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

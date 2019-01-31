@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
+      SELECT B.* FROM (
       SELECT M_INOUT.DOCUMENTNO AS DOCUMENTNO, M_INOUT.MOVEMENTDATE AS MOVEMENTDATE, C_BPARTNER.NAME AS CLIENT_NAME, M_PRODUCT.NAME AS PRODUCT_NAME, SUM(M_INOUTLINE.MOVEMENTQTY) AS QUANTITYORDER, C_UOM.NAME AS UOMNAME,
       (CASE M_INOUT.ISSOTRX 
   		WHEN 'Y' THEN TO_CHAR(AD_MESSAGE_GET2('GOODSSHIPMENT',?))
@@ -51,6 +52,7 @@
       GROUP BY C_BPARTNER.NAME, M_PRODUCT.NAME, C_UOM.NAME, M_INOUT.DOCUMENTNO, M_INOUT.MOVEMENTDATE, M_INOUT.ISSOTRX, M_LOCATOR.VALUE, M_WAREHOUSE.NAME,
       M_INOUTLINE.C_AUM, M_INOUTLINE.AUMQTY
       ORDER BY C_BPARTNER.NAME, M_INOUT.MOVEMENTDATE
+      ) B
      ]]></Sql>
     <Parameter name="adLanguage"/>
     <Parameter name="adLanguage"/>
@@ -61,6 +63,8 @@
     <Parameter name="cBPartnerId" optional="true" after="1=1"><![CDATA[AND M_INOUT.C_BPARTNER_ID = ?]]></Parameter>
     <Parameter name="mWarehouseId" optional="true" after="1=1"><![CDATA[AND M_INOUT.M_WAREHOUSE_ID = ?]]></Parameter>
     <Parameter name="cProjectId" optional="true" after="1=1"><![CDATA[AND M_INOUT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
+    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="selectShipment" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>

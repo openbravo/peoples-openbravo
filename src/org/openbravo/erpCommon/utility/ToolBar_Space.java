@@ -25,14 +25,17 @@ class ToolBar_Space implements HTMLElement {
     this.base_direction = _base_direction;
   }
 
+  @Override
   public String getWidth() {
     return "1";
   }
 
+  @Override
   public String elementType() {
     return "SPACE";
   }
 
+  @Override
   public String toString() {
     return "<img src=\"" + base_direction + "/images/blank.gif\" class=\"Main_ToolBar_Separator\">";
   }

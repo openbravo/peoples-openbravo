@@ -11,14 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -47,6 +47,7 @@ import org.openbravo.model.ad.ui.WindowTrl;
 @ApplicationScoped
 public class ComputeWindowActionHandler extends BaseActionHandler {
 
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     final String tabId = removeFragment((String) parameters.get("tabId"));
     final String recordId = removeFragment((String) parameters.get("recordId"));
@@ -64,9 +65,11 @@ public class ComputeWindowActionHandler extends BaseActionHandler {
 
       // special case, find the real recordId for the language case
       if (entity.getName().equals(Language.ENTITY_NAME)) {
-        final OBQuery<Language> languages = OBDal.getInstance().createQuery(Language.class,
-            Language.PROPERTY_LANGUAGE + "=?");
-        languages.setParameters(Collections.singletonList((Object) recordId));
+        final OBQuery<Language> languages = OBDal.getInstance()
+            .createQuery(Language.class, Language.PROPERTY_LANGUAGE + "=:recordId");
+        Map<String, Object> qryParameters = new HashMap<>(1);
+        qryParameters.put("recordId", recordId);
+        languages.setNamedParameters(qryParameters);
         json.put("recordId", languages.list().get(0).getId());
       } else {
         json.put("recordId", recordId);

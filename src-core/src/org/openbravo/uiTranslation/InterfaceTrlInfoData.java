@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2008-2010 Openbravo S.L.U.
+ * Copyright (C) 2008-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -19,25 +19,28 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 
+@SuppressWarnings("serial")
 class InterfaceTrlInfoData implements FieldProvider {
-  static Logger log4j = Logger.getLogger(InterfaceTrlInfoData.class);
+  static Logger log4j = LogManager.getLogger();
   public String name;
   public String description;
   public String help;
 
+  @Override
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("NAME"))
+    if (fieldName.equalsIgnoreCase("NAME")) {
       return name;
-    else if (fieldName.equalsIgnoreCase("DESCRIPTION"))
+    } else if (fieldName.equalsIgnoreCase("DESCRIPTION")) {
       return description;
-    else if (fieldName.equalsIgnoreCase("HELP"))
+    } else if (fieldName.equalsIgnoreCase("HELP")) {
       return help;
-    else {
+    } else {
       log4j.debug("Field does not exist: " + fieldName);
       return null;
     }
@@ -74,8 +77,8 @@ class InterfaceTrlInfoData implements FieldProvider {
       result.close();
     } catch (SQLException e) {
       log4j.error("SQL error in query: " + strSql + "Exception:", e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
+      throw new ServletException(
+          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
     } catch (Exception ex) {
       log4j.error("Exception in query: " + strSql + "Exception:", ex);
       throw new ServletException("@CODE=@" + ex.getMessage());

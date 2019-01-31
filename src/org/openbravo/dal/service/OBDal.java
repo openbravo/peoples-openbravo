@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,18 +22,19 @@ package org.openbravo.dal.service;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Logger;
+import javax.persistence.LockModeType;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.function.SQLFunction;
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.impl.SessionFactoryImpl;
-import org.hibernate.jdbc.BorrowedConnectionProxy;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.stat.SessionStatistics;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -41,11 +42,10 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.UniqueConstraint;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
-import org.openbravo.dal.core.DalSessionFactory;
+import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -54,6 +54,7 @@ import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * The OBDal class offers the main external access to the Data Access Layer. The variety of data
@@ -69,12 +70,13 @@ import org.openbravo.model.common.enterprise.Organization;
 // TODO: re-check singleton pattern when a new factory/dependency injection
 // approach is implemented.
 public class OBDal implements OBNotSingleton {
-  private static final Logger log = Logger.getLogger(OBDal.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static OBDal instance;
 
   private static ConcurrentHashMap<String, OBDal> otherPoolInstances = new ConcurrentHashMap<>();
   private String poolName;
+  private static DataPoolChecker dataPoolChecker;
 
   /**
    * @return the singleton instance of the OBDal service
@@ -88,7 +90,13 @@ public class OBDal implements OBNotSingleton {
   }
 
   /**
-   * @return the singleton instance of the OBDal read-only service
+   * This method tries to return a read-only instance if the read-only pool is enabled in the
+   * configuration, the Preference "OBUIAPP_DefaultDBPoolForReports" is set to "RO" or there is a
+   * DataPoolSelection entry for the current process set to "RO". Otherwise, the default pool is
+   * returned.
+   *
+   * @return the singleton instance of the OBDal read-only service if possible. In any other case,
+   *         the default instance will be returned.
    */
   public static OBDal getReadOnlyInstance() {
     return getInstance(ExternalConnectionPool.READONLY_POOL);
@@ -101,9 +109,23 @@ public class OBDal implements OBNotSingleton {
    * @return the singleton instance related to the name passed as parameter
    */
   public static OBDal getInstance(String pool) {
-    if (ExternalConnectionPool.DEFAULT_POOL.equals(pool)) {
+    if (ExternalConnectionPool.DEFAULT_POOL.equals(pool)
+        || getDataPoolChecker().shouldUseDefaultPool(SessionInfo.getProcessId())) {
       return getInstance();
     }
+
+    return getOtherPoolInstance(pool);
+  }
+
+  private static DataPoolChecker getDataPoolChecker() {
+    if (dataPoolChecker == null) {
+      dataPoolChecker = DataPoolChecker.getInstance();
+    }
+
+    return dataPoolChecker;
+  }
+
+  private static OBDal getOtherPoolInstance(String pool) {
     if (!otherPoolInstances.containsKey(pool)) {
       OBDal dal = OBProvider.getInstance().get(OBDal.class);
       dal.poolName = pool;
@@ -121,20 +143,10 @@ public class OBDal implements OBNotSingleton {
    * @see #disableActiveFilter()
    */
   public void enableActiveFilter() {
-    SessionHandler.getInstance().getSession(poolName).enableFilter("activeFilter")
+    SessionHandler.getInstance()
+        .getSession(poolName)
+        .enableFilter("activeFilter")
         .setParameter("activeParam", "Y");
-  }
-
-  /**
-   * Register a sql function in the session factory, after this call it can be used by queries.
-   */
-  public void registerSQLFunction(String name, SQLFunction function) {
-    final DalSessionFactory dalSessionFactory = (DalSessionFactory) SessionFactoryController
-        .getInstance().getSessionFactory();
-
-    final Dialect dialect = ((SessionFactoryImpl) dalSessionFactory.getDelegateSessionFactory())
-        .getDialect();
-    dialect.getFunctions().put(name, function);
   }
 
   /**
@@ -154,7 +166,9 @@ public class OBDal implements OBNotSingleton {
    * @return true if the active filter is enabled, false if it is disabled
    */
   public boolean isActiveFilterEnabled() {
-    return SessionHandler.getInstance().getSession(poolName).getEnabledFilter("activeFilter") != null;
+    return SessionHandler.getInstance()
+        .getSession(poolName)
+        .getEnabledFilter("activeFilter") != null;
   }
 
   /**
@@ -185,17 +199,9 @@ public class OBDal implements OBNotSingleton {
       flush();
     }
 
-    // NOTE: workaround for this issue:
-    // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
-    final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
-    try {
-      Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      final Connection connection = ((SessionImplementor) SessionHandler.getInstance().getSession(
-          poolName)).connection();
-      return connection;
-    } finally {
-      Thread.currentThread().setContextClassLoader(currentLoader);
-    }
+    final Connection connection = ((SessionImplementor) SessionHandler.getInstance()
+        .getSession(poolName)).connection();
+    return connection;
   }
 
   /**
@@ -295,7 +301,8 @@ public class OBDal implements OBNotSingleton {
     setClientOrganization(obj);
     if (!OBContext.getOBContext().isInAdministratorMode()) {
       if (obj instanceof BaseOBObject) {
-        OBContext.getOBContext().getEntityAccessChecker()
+        OBContext.getOBContext()
+            .getEntityAccessChecker()
             .checkWritable(((BaseOBObject) obj).getEntity());
       }
       SecurityChecker.getInstance().checkWriteAccess(obj);
@@ -423,7 +430,7 @@ public class OBDal implements OBNotSingleton {
   }
 
   /**
-   * Create a OBQuery object using a class and a specific where and order by clause.
+   * Creates an OBQuery object using a class and a specific where and order by clause.
    * 
    * @param fromClz
    *          the class to create the query for
@@ -431,12 +438,13 @@ public class OBDal implements OBNotSingleton {
    *          the HQL where and orderby clause
    * @return the query object
    */
-  public <T extends BaseOBObject> OBQuery<T> createQuery(Class<T> fromClz, String whereOrderByClause) {
-    return createQuery(fromClz, whereOrderByClause, new ArrayList<Object>());
+  public <T extends BaseOBObject> OBQuery<T> createQuery(Class<T> fromClz,
+      String whereOrderByClause) {
+    return createQuery(fromClz, whereOrderByClause, new HashMap<String, Object>());
   }
 
   /**
-   * Create a OBQuery object using a class and a specific where and order by clause and a set of
+   * Creates an OBQuery object using a class and a specific where and order by clause and a set of
    * parameters which are used in the query.
    * 
    * @param fromClz
@@ -446,11 +454,14 @@ public class OBDal implements OBNotSingleton {
    * @param parameters
    *          the parameters to use in the query
    * @return the query object
+   * 
+   * @deprecated use {@link #createQuery(Class, String, Map)} instead.
    */
+  @Deprecated
   public <T extends BaseOBObject> OBQuery<T> createQuery(Class<T> fromClz,
       String whereOrderByClause, List<Object> parameters) {
     checkReadAccess(fromClz);
-    final OBQuery<T> obQuery = new OBQuery<T>();
+    final OBQuery<T> obQuery = new OBQuery<>();
     obQuery.setWhereAndOrderBy(whereOrderByClause);
     obQuery.setEntity(ModelProvider.getInstance().getEntity(fromClz));
     obQuery.setParameters(parameters);
@@ -459,7 +470,30 @@ public class OBDal implements OBNotSingleton {
   }
 
   /**
-   * Create a OBQuery object using an entity name and a specific where and order by clause.
+   * Creates an OBQuery object using a class and a specific where and order by clause and a map of
+   * named parameters which are used in the query.
+   * 
+   * @param fromClz
+   *          the class to create the query for
+   * @param whereOrderByClause
+   *          the HQL where and orderby clause
+   * @param parameters
+   *          the named parameters to use in the query
+   * @return the query object
+   */
+  public <T extends BaseOBObject> OBQuery<T> createQuery(Class<T> fromClz,
+      String whereOrderByClause, Map<String, Object> parameters) {
+    checkReadAccess(fromClz);
+    final OBQuery<T> obQuery = new OBQuery<>();
+    obQuery.setWhereAndOrderBy(whereOrderByClause);
+    obQuery.setEntity(ModelProvider.getInstance().getEntity(fromClz));
+    obQuery.setNamedParameters(parameters);
+    obQuery.setPoolName(poolName);
+    return obQuery;
+  }
+
+  /**
+   * Creates an OBQuery object using an entity name and a specific where and order by clause.
    * 
    * @param entityName
    *          the type to create the query for
@@ -468,12 +502,12 @@ public class OBDal implements OBNotSingleton {
    * @return the new query object
    */
   public OBQuery<BaseOBObject> createQuery(String entityName, String whereOrderByClause) {
-    return createQuery(entityName, whereOrderByClause, new ArrayList<Object>());
+    return createQuery(entityName, whereOrderByClause, new HashMap<String, Object>());
   }
 
   /**
-   * Create a OBQuery object using an entity name and a specific where and order by clause and a set
-   * of parameters which are used in the query.
+   * Creates an OBQuery object using an entity name and a specific where and order by clause and a
+   * set of parameters which are used in the query.
    * 
    * @param entityName
    *          the type to create the query for
@@ -482,14 +516,40 @@ public class OBDal implements OBNotSingleton {
    * @param parameters
    *          the parameters to use in the query
    * @return a new instance of {@link OBQuery}.
+   * 
+   * @deprecated use {@link #createQuery(String, String, Map)} instead.
    */
+  @Deprecated
   public OBQuery<BaseOBObject> createQuery(String entityName, String whereOrderByClause,
       List<Object> parameters) {
     checkReadAccess(entityName);
-    final OBQuery<BaseOBObject> obQuery = new OBQuery<BaseOBObject>();
+    final OBQuery<BaseOBObject> obQuery = new OBQuery<>();
     obQuery.setWhereAndOrderBy(whereOrderByClause);
     obQuery.setEntity(ModelProvider.getInstance().getEntity(entityName));
     obQuery.setParameters(parameters);
+    obQuery.setPoolName(poolName);
+    return obQuery;
+  }
+
+  /**
+   * Creates an OBQuery object using an entity name and a specific where and order by clause and a
+   * map of named parameters which are used in the query.
+   * 
+   * @param entityName
+   *          the type to create the query for
+   * @param whereOrderByClause
+   *          the HQL where and orderby clause
+   * @param parameters
+   *          the named parameters to use in the query
+   * @return a new instance of {@link OBQuery}.
+   */
+  public OBQuery<BaseOBObject> createQuery(String entityName, String whereOrderByClause,
+      Map<String, Object> parameters) {
+    checkReadAccess(entityName);
+    final OBQuery<BaseOBObject> obQuery = new OBQuery<>();
+    obQuery.setWhereAndOrderBy(whereOrderByClause);
+    obQuery.setEntity(ModelProvider.getInstance().getEntity(entityName));
+    obQuery.setNamedParameters(parameters);
     obQuery.setPoolName(poolName);
     return obQuery;
   }
@@ -617,7 +677,8 @@ public class OBDal implements OBNotSingleton {
     if (o instanceof OrganizationEnabled) {
       final OrganizationEnabled oe = (OrganizationEnabled) o;
       if (oe.getOrganization() == null) {
-        oe.setOrganization(getProxy(Organization.class, obContext.getCurrentOrganization().getId()));
+        oe.setOrganization(
+            getProxy(Organization.class, obContext.getCurrentOrganization().getId()));
       }
     }
   }
@@ -675,5 +736,47 @@ public class OBDal implements OBNotSingleton {
     }
     final Entity e = ModelProvider.getInstance().getEntity(entityName);
     OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
+  }
+
+  /**
+   * Creates a WRITE lock in database for the DAL persistence instance {@code object} parameter and
+   * returns a new instance representing the same database object.
+   * <p>
+   * Note the original instance that is passed as parameter is evicted from Hibernate's 1st level.
+   * Therefore, any state not persisted before invoking this method will be ignored, after invoking
+   * this method the parameter instance shouldn't be used anymore using instead the returned one.
+   * <p>
+   * Whereas this is similar to JPA's {@link LockModeType#PESSIMISTIC_WRITE}, it decreases lock
+   * level in PostgreSQL implemented by Hibernate from {@code FOR UPDATE} to
+   * {@code FOR NO KEY UPDATE} allowing insertions of children records while a lock on its parent is
+   * acquired by a different transaction. This is a workaround until Hibernate issue HHH-13135 is
+   * fixed. Unlike locks acquired by Hibernate, the ones created by this method are only present in
+   * Database and cannot be detected by Hibernate (eg. {@link Session#getCurrentLockMode(Object)}.
+   * 
+   * @param object
+   *          DAL instance to acquire a database lock for.
+   * @return A new DAL instance that represents the same database object than the parameter.
+   */
+  public <T extends BaseOBObject> T getObjectLockForNoKeyUpdate(T object) {
+    Entity entity = object.getEntity();
+
+    Check.isTrue(entity.getIdProperties().size() == 1,
+        "Expected entity with a single ID. " + entity + " has " + entity.getIdProperties().size());
+
+    String rdbms = new DalConnectionProvider(false).getRDBMS();
+    String lockType = "ORACLE".equals(rdbms) ? "UPDATE" : "NO KEY UPDATE";
+
+    String sql = "SELECT " + entity.getIdProperties().get(0).getColumnName() + " FROM "
+        + entity.getTableName() + " WHERE " + entity.getIdProperties().get(0).getColumnName()
+        + " = :id FOR " + lockType;
+
+    Session session = getSession();
+    session.evict(object);
+    session.createNativeQuery(sql).setParameter(BaseOBObject.ID, object.getId()).uniqueResult();
+
+    @SuppressWarnings("unchecked")
+    T newInstance = OBDal.getInstance().get((Class<T>) entity.getMappingClass(), object.getId());
+
+    return newInstance;
   }
 }

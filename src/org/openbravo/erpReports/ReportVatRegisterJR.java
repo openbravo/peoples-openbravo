@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -44,8 +45,9 @@ import net.sf.jasperreports.engine.JasperPrint;
 public class ReportVatRegisterJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -81,14 +83,16 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
         return;
       }
 
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     // String strMessage = "";
@@ -148,8 +152,9 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
   private void printReportJRRegisterLine(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String TaxPayId, String TaxRegId, String strTypeReport)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print html");
+    }
 
     ReportRegisterLineJRData[] data = null;
     data = ReportRegisterLineJRData.select(this, "", "", TaxPayId, TaxRegId);
@@ -190,24 +195,27 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
     // int pag = x.getPages().size();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportVatRegisterJR.";
   } // end of getServletInfo() method
 
 }
 
+@SuppressWarnings("serial")
 class TypeReportRegister implements FieldProvider {
-  static Logger log4j = Logger.getLogger(TypeReportRegister.class);
+  static Logger log4j = LogManager.getLogger();
   // private String InitRecordNumber = "0";
   public String id;
   public String name;
 
+  @Override
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("ID"))
+    if (fieldName.equalsIgnoreCase("ID")) {
       return id;
-    else if (fieldName.equalsIgnoreCase("NAME"))
+    } else if (fieldName.equalsIgnoreCase("NAME")) {
       return name;
-    else {
+    } else {
       log4j.debug("Field does not exist: " + fieldName);
       return null;
     }

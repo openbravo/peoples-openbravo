@@ -60,8 +60,9 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
@@ -102,7 +103,7 @@ import net.sf.jasperreports.engine.JasperReport;
  *         Utility class
  */
 public class Utility {
-  static Logger log4j = Logger.getLogger(Utility.class);
+  static Logger log4j = LogManager.getLogger();
 
   public static final String COMMUNITY_BRANDING_URL = "//butler.openbravo.com/heartbeat-server/org.openbravo.butler.communitybranding/CommunityBranding.html";
   public static final String STATIC_COMMUNITY_BRANDING_URL = "StaticCommunityBranding.html";
@@ -179,8 +180,8 @@ public class Utility {
    */
   @Deprecated
   public static boolean isNumericParameter(String reference) {
-    return (!Utility.isID(reference) && (Utility.isDecimalNumber(reference) || Utility
-        .isIntegerNumber(reference)));
+    return (!Utility.isID(reference)
+        && (Utility.isDecimalNumber(reference) || Utility.isIntegerNumber(reference)));
   }
 
   /**
@@ -207,14 +208,15 @@ public class Utility {
    */
   @Deprecated
   public static boolean isDecimalNumber(String reference) {
-    if (reference == null || reference.equals(""))
+    if (reference == null || reference.equals("")) {
       return false;
+    }
     switch (Integer.valueOf(reference).intValue()) {
-    case 12:
-    case 22:
-    case 29:
-    case 80008:
-      return true;
+      case 12:
+      case 22:
+      case 29:
+      case 80008:
+        return true;
     }
     return false;
   }
@@ -228,13 +230,14 @@ public class Utility {
    */
   @Deprecated
   public static boolean isIntegerNumber(String reference) {
-    if (reference == null || reference.equals(""))
+    if (reference == null || reference.equals("")) {
       return false;
+    }
     switch (Integer.valueOf(reference).intValue()) {
-    case 11:
-    case 13:
-    case 25:
-      return true;
+      case 11:
+      case 13:
+      case 25:
+        return true;
     }
     return false;
   }
@@ -248,13 +251,14 @@ public class Utility {
    */
   @Deprecated
   public static boolean isDateTime(String reference) {
-    if (reference == null || reference.equals(""))
+    if (reference == null || reference.equals("")) {
       return false;
+    }
     switch (Integer.valueOf(reference).intValue()) {
-    case 15:
-    case 16:
-    case 24:
-      return true;
+      case 15:
+      case 16:
+      case 24:
+        return true;
     }
     return false;
   }
@@ -312,13 +316,15 @@ public class Utility {
    * @return String with the value.
    */
   public static String getPreference(VariablesSecureApp vars, String context, String window) {
-    if (context == null || context.equals(""))
+    if (context == null || context.equals("")) {
       throw new IllegalArgumentException("getPreference - require context");
+    }
     String retValue = "";
 
     retValue = vars.getSessionValue("P|" + window + "|" + context);
-    if (retValue.equals(""))
+    if (retValue.equals("")) {
       retValue = vars.getSessionValue("P|" + context);
+    }
 
     return (retValue);
   }
@@ -343,8 +349,9 @@ public class Utility {
     } catch (final IllegalArgumentException ignored) {
     }
 
-    if (retValue.equals(""))
+    if (retValue.equals("")) {
       return "1";
+    }
     return retValue;
   }
 
@@ -398,8 +405,9 @@ public class Utility {
       }
     } else {
       try {
-        if (context.equalsIgnoreCase("#Date"))
+        if (context.equalsIgnoreCase("#Date")) {
           return DateTimeData.today(conn);
+        }
       } catch (final ServletException e) {
       }
       retValue = vars.getSessionValue(context);
@@ -414,16 +422,18 @@ public class Utility {
       }
 
       if (context.equalsIgnoreCase("#User_Org")) {
-        if (userLevel.contains("S") || userLevel.equals(" C"))
+        if (userLevel.contains("S") || userLevel.equals(" C")) {
           return "'0'"; // force org *
+        }
 
         if (userLevel.equals("  O")) { // remove *
-          if (retValue.equals("'0'"))
+          if (retValue.equals("'0'")) {
             retValue = "";
-          else if (retValue.startsWith("'0',"))
+          } else if (retValue.startsWith("'0',")) {
             retValue = retValue.substring(4);
-          else
+          } else {
             retValue = retValue.replace(",'0'", "");
+          }
         } else { // add *
           if (!retValue.equals("0") && !retValue.startsWith("'0',")
               && retValue.indexOf(",'0'") == -1) {// Any: current
@@ -465,44 +475,50 @@ public class Utility {
     }
     String retValue;
 
-    if ((!context.startsWith("#") && !context.startsWith("$")) || context.equalsIgnoreCase("#Date")) {
+    if ((!context.startsWith("#") && !context.startsWith("$"))
+        || context.equalsIgnoreCase("#Date")) {
       retValue = getContext(conn, vars, context, strWindow);
     } else {
       retValue = vars.getSessionValue(context);
 
       final String userLevel = vars.getSessionValue("#User_Level");
       if (context.equalsIgnoreCase("#AccessibleOrgTree")) {
-        if (!retValue.equals("0") && !retValue.startsWith("'0',") && retValue.indexOf(",'0'") == -1) {// add
+        if (!retValue.equals("0") && !retValue.startsWith("'0',")
+            && retValue.indexOf(",'0'") == -1) {// add
           // *
           retValue = "'0'" + (retValue.equals("") ? "" : ",") + retValue;
         }
       }
       if (context.equalsIgnoreCase("#User_Org")) {
-        if (accessLevel == 4 || accessLevel == 6)
+        if (accessLevel == 4 || accessLevel == 6) {
           return "'0'"; // force to be org *
+        }
 
         Window window;
         OBContext.setAdminMode();
         try {
           window = org.openbravo.dal.service.OBDal.getInstance().get(Window.class, strWindow);
           if (window.getWindowType().equals("T")) {
-            String transactionalOrgs = OBContext.getOBContext().getOrganizationStructureProvider()
+            String transactionalOrgs = OBContext.getOBContext()
+                .getOrganizationStructureProvider()
                 .getTransactionAllowedOrgs(retValue);
-            if (transactionalOrgs.equals(""))
+            if (transactionalOrgs.equals("")) {
               // Will show no organizations into the organization's field of the transactional
               // windows
               return "'-1'";
-            else
+            } else {
               return transactionalOrgs;
+            }
           } else {
             if ((accessLevel == 1) || (userLevel.equals("  O"))) {
               // No *: remove 0 from current list
-              if (retValue.equals("'0'"))
+              if (retValue.equals("'0'")) {
                 retValue = "";
-              else if (retValue.startsWith("'0',"))
+              } else if (retValue.startsWith("'0',")) {
                 retValue = retValue.substring(4);
-              else
+              } else {
                 retValue = retValue.replace(",'0'", "");
+              }
             } else {// Any: add 0 to current list
               if (!retValue.equals("'0'") && !retValue.startsWith("'0',")
                   && retValue.indexOf(",'0'") == -1) {
@@ -518,21 +534,24 @@ public class Utility {
 
       if (context.equalsIgnoreCase("#User_Client")) {
         if (accessLevel == 4) {
-          if (userLevel.contains("S"))
+          if (userLevel.contains("S")) {
             return "'0'"; // force client 0
-          else
+          } else {
             return "";
+          }
         }
 
         if ((accessLevel == 1) || (accessLevel == 3)) { // No 0
-          if (userLevel.contains("S"))
+          if (userLevel.contains("S")) {
             return "";
-          if (retValue.equals("'0'"))
+          }
+          if (retValue.equals("'0'")) {
             retValue = "";
-          else if (retValue.startsWith("'0',"))
+          } else if (retValue.startsWith("'0',")) {
             retValue = retValue.substring(2);
-          else
+          } else {
             retValue = retValue.replace(",'0'", "");
+          }
         } else if (userLevel.contains("S")) { // Any: add 0
           if (retValue != "'0'" && !retValue.startsWith("'0',") && retValue.indexOf(",'0'") == -1) {
             retValue = "'0'" + (retValue.equals("") ? "" : ",") + retValue;
@@ -553,8 +572,8 @@ public class Utility {
    * @return comma delimited Stirng of referenceable organizations.
    */
   public static String getReferenceableOrg(VariablesSecureApp vars, String currentOrg) {
-    return StringCollectionUtils.commaSeparated(OBContext.getOBContext()
-        .getOrganizationStructureProvider().getNaturalTree(currentOrg));
+    return StringCollectionUtils.commaSeparated(
+        OBContext.getOBContext().getOrganizationStructureProvider().getNaturalTree(currentOrg));
   }
 
   /**
@@ -571,11 +590,12 @@ public class Utility {
    */
   public static String getReferenceableOrg(ConnectionProvider conn, VariablesSecureApp vars,
       String currentOrg, String window, int accessLevel) {
-    if (accessLevel == 4 || accessLevel == 6)
+    if (accessLevel == 4 || accessLevel == 6) {
       return "'0'"; // force to be org *
+    }
     final Vector<String> vComplete = getStringVector(getReferenceableOrg(vars, currentOrg));
-    final Vector<String> vAccessible = getStringVector(getContext(conn, vars, "#User_Org", window,
-        accessLevel));
+    final Vector<String> vAccessible = getStringVector(
+        getContext(conn, vars, "#User_Org", window, accessLevel));
     return getVectorToString(getIntersectionVector(vComplete, vAccessible));
   }
 
@@ -596,10 +616,11 @@ public class Utility {
    */
   public static String getSelectorOrgs(ConnectionProvider conn, VariablesSecureApp vars,
       String currentOrg) {
-    if ((currentOrg == null) || (currentOrg.equals("")))
+    if ((currentOrg == null) || (currentOrg.equals(""))) {
       return getContext(conn, vars, "#AccessibleOrgTree", "Selectors");
-    else
+    } else {
       return getReferenceableOrg(vars, currentOrg);
+    }
   }
 
   /**
@@ -624,8 +645,9 @@ public class Utility {
   public static String getDefault(ConnectionProvider conn, VariablesSecureApp vars,
       String columnname, String context, String window, String defaultValue,
       FieldProvider sessionData) {
-    if (columnname == null || columnname.equals(""))
+    if (columnname == null || columnname.equals("")) {
       return "";
+    }
 
     if (sessionData != null) {
       final String sessionValue = sessionData.getField(columnname);
@@ -635,29 +657,35 @@ public class Utility {
     }
 
     String defStr = getPreference(vars, columnname, window);
-    if (!defStr.equals(""))
+    if (!defStr.equals("")) {
       return defStr;
+    }
 
-    if (context.indexOf("@") == -1) // Tokenize just when contains @
+    if (context.indexOf("@") == -1) {
       defStr = context;
-    else {
+    } else {
       final StringTokenizer st = new StringTokenizer(context, ",;", false);
       while (st.hasMoreTokens()) {
         final String token = st.nextToken().trim();
-        if (token.indexOf("@") == -1)
+        if (token.indexOf("@") == -1) {
           defStr = token;
-        else
+        } else {
           defStr = parseContext(conn, vars, token, window);
-        if (!defStr.equals(""))
+        }
+        if (!defStr.equals("")) {
           return defStr;
+        }
       }
     }
-    if (defStr.equals(""))
+    if (defStr.equals("")) {
       defStr = vars.getSessionValue("#" + columnname);
-    if (defStr.equals(""))
+    }
+    if (defStr.equals("")) {
       defStr = vars.getSessionValue("$" + columnname);
-    if (defStr.equals("") && defaultValue != null)
+    }
+    if (defStr.equals("") && defaultValue != null) {
       defStr = defaultValue;
+    }
     log4j.debug("getDefault(" + columnname + "): " + defStr);
     return defStr;
   }
@@ -681,8 +709,9 @@ public class Utility {
     final StringTokenizer st = new StringTokenizer(s, ",", false);
     while (st.hasMoreTokens()) {
       final String token = st.nextToken().trim();
-      if (!v.contains(token))
+      if (!v.contains(token)) {
         v.add(token);
+      }
     }
     return v;
   }
@@ -697,8 +726,9 @@ public class Utility {
   public static Vector<String> getIntersectionVector(Vector<String> v1, Vector<String> v2) {
     final Vector<String> v = new Vector<String>();
     for (int i = 0; i < v1.size(); i++) {
-      if (v2.contains(v1.elementAt(i)) && !v.contains(v1.elementAt(i)))
+      if (v2.contains(v1.elementAt(i)) && !v.contains(v1.elementAt(i))) {
         v.add(v1.elementAt(i));
+      }
     }
     return v;
   }
@@ -712,8 +742,9 @@ public class Utility {
   public static String getVectorToString(Vector<String> v) {
     final StringBuffer s = new StringBuffer();
     for (int i = 0; i < v.size(); i++) {
-      if (s.length() != 0)
+      if (s.length() != 0) {
         s.append(", ");
+      }
       s.append(v.elementAt(i));
     }
     return s.toString();
@@ -745,8 +776,9 @@ public class Utility {
    */
   public static String parseContext(ConnectionProvider conn, VariablesSecureApp vars,
       String context, String window, Vector<String> params) {
-    if (context == null || context.equals(""))
+    if (context == null || context.equals("")) {
       return "";
+    }
     final StringBuffer strOut = new StringBuffer();
     String value = new String(context);
     String token, defStr;
@@ -761,8 +793,9 @@ public class Utility {
       }
       token = value.substring(0, j);
       defStr = getContext(conn, vars, token, window);
-      if (defStr.equals(""))
+      if (defStr.equals("")) {
         return "";
+      }
       if (params != null) {
         params.add(defStr);
         strOut.append("?");
@@ -799,16 +832,19 @@ public class Utility {
   public static String getDocumentNo(ConnectionProvider conn, VariablesSecureApp vars,
       String WindowNo, String TableName, String C_DocTypeTarget_ID, String C_DocType_ID,
       boolean onlyDocType, boolean updateNext) {
-    if (TableName == null || TableName.length() == 0)
+    if (TableName == null || TableName.length() == 0) {
       throw new IllegalArgumentException("Utility.getDocumentNo - required parameter missing");
+    }
     final String AD_Client_ID = getContext(conn, vars, "AD_Client_ID", WindowNo);
 
     final String cDocTypeID = (C_DocTypeTarget_ID.equals("") ? C_DocType_ID : C_DocTypeTarget_ID);
-    if (cDocTypeID.equals(""))
+    if (cDocTypeID.equals("")) {
       return getDocumentNo(conn, AD_Client_ID, TableName, updateNext);
+    }
 
-    if (AD_Client_ID.equals("0"))
+    if (AD_Client_ID.equals("0")) {
       throw new UnsupportedOperationException("Utility.getDocumentNo - Cannot add System records");
+    }
 
     CSResponse cs = null;
     try {
@@ -817,30 +853,35 @@ public class Utility {
     }
 
     if (cs == null || cs.razon == null || cs.razon.equals("")) {
-      if (!onlyDocType)
+      if (!onlyDocType) {
         return getDocumentNo(conn, AD_Client_ID, TableName, updateNext);
-      else
+      } else {
         return "0";
-    } else
+      }
+    } else {
       return cs.razon;
+    }
   }
 
   public static String getDocumentNo(Connection conn, ConnectionProvider con,
       VariablesSecureApp vars, String WindowNo, String TableName, String C_DocTypeTarget_ID,
       String C_DocType_ID, boolean onlyDocType, boolean updateNext) {
-    if (TableName == null || TableName.length() == 0)
+    if (TableName == null || TableName.length() == 0) {
       throw new IllegalArgumentException("Utility.getDocumentNo - required parameter missing");
+    }
     String AD_Client_ID = getContext(con, vars, "AD_Client_ID", WindowNo);
     if ("".equals(AD_Client_ID)) {
       AD_Client_ID = vars.getClient();
     }
 
     final String cDocTypeID = (C_DocTypeTarget_ID.equals("") ? C_DocType_ID : C_DocTypeTarget_ID);
-    if (cDocTypeID.equals(""))
+    if (cDocTypeID.equals("")) {
       return getDocumentNo(con, AD_Client_ID, TableName, updateNext);
+    }
 
-    if (AD_Client_ID.equals("0"))
+    if (AD_Client_ID.equals("0")) {
       throw new UnsupportedOperationException("Utility.getDocumentNo - Cannot add System records");
+    }
 
     CSResponse cs = null;
     try {
@@ -851,12 +892,14 @@ public class Utility {
     }
 
     if (cs == null || cs.razon == null || cs.razon.equals("")) {
-      if (!onlyDocType)
+      if (!onlyDocType) {
         return getDocumentNoConnection(conn, con, AD_Client_ID, TableName, updateNext);
-      else
+      } else {
         return "0";
-    } else
+      }
+    } else {
       return cs.razon;
+    }
   }
 
   /**
@@ -872,22 +915,24 @@ public class Utility {
    *          Save the new sequence in database.
    * @return String with the new document number.
    */
-  public static String getDocumentNo(ConnectionProvider conn, String AD_Client_ID,
-      String TableName, boolean updateNext) {
-    if (TableName == null || TableName.length() == 0)
+  public static String getDocumentNo(ConnectionProvider conn, String AD_Client_ID, String TableName,
+      boolean updateNext) {
+    if (TableName == null || TableName.length() == 0) {
       throw new IllegalArgumentException("Utility.getDocumentNo - required parameter missing");
+    }
 
     CSResponse cs = null;
     try {
-      cs = DocumentNoData.nextDoc(conn, "DocumentNo_" + TableName, AD_Client_ID, (updateNext ? "Y"
-          : "N"));
+      cs = DocumentNoData.nextDoc(conn, "DocumentNo_" + TableName, AD_Client_ID,
+          (updateNext ? "Y" : "N"));
     } catch (final ServletException e) {
     }
 
-    if (cs == null || cs.razon == null)
+    if (cs == null || cs.razon == null) {
       return "";
-    else
+    } else {
       return cs.razon;
+    }
   }
 
   /**
@@ -905,8 +950,9 @@ public class Utility {
    */
   public static String getDocumentNoConnection(Connection conn, ConnectionProvider con,
       String AD_Client_ID, String TableName, boolean updateNext) {
-    if (TableName == null || TableName.length() == 0)
+    if (TableName == null || TableName.length() == 0) {
       throw new IllegalArgumentException("Utility.getDocumentNo - required parameter missing");
+    }
 
     CSResponse cs = null;
     try {
@@ -915,10 +961,11 @@ public class Utility {
     } catch (final ServletException e) {
     }
 
-    if (cs == null || cs.razon == null)
+    if (cs == null || cs.razon == null) {
       return "";
-    else
+    } else {
       return cs.razon;
+    }
   }
 
   /**
@@ -935,12 +982,14 @@ public class Utility {
     ht.put("0", "0");
 
     final StringTokenizer st = new StringTokenizer(list, ",", false);
-    while (st.hasMoreTokens())
+    while (st.hasMoreTokens()) {
       ht.put(st.nextToken(), "x");
+    }
 
     final Enumeration<String> e = ht.keys();
-    while (e.hasMoreElements())
+    while (e.hasMoreElements()) {
       retValue += e.nextElement() + ",";
+    }
 
     retValue = retValue.substring(0, retValue.length() - 1);
     return retValue;
@@ -966,21 +1015,25 @@ public class Utility {
       String AD_Client_ID, String AD_Org_ID, String window) throws ServletException {
     final String User_Level = getContext(conn, vars, "#User_Level", window);
 
-    if (User_Level.indexOf("S") != -1)
+    if (User_Level.indexOf("S") != -1) {
       return true;
+    }
 
     boolean retValue = true;
 
     if (AD_Client_ID.equals("0") && AD_Org_ID.equals("0") && User_Level.indexOf("S") == -1) {
       retValue = false;
-    } else if (!AD_Client_ID.equals("0") && AD_Org_ID.equals("0") && User_Level.indexOf("C") == -1) {
+    } else if (!AD_Client_ID.equals("0") && AD_Org_ID.equals("0")
+        && User_Level.indexOf("C") == -1) {
       retValue = false;
-    } else if (!AD_Client_ID.equals("0") && !AD_Org_ID.equals("0") && User_Level.indexOf("O") == -1) {
+    } else if (!AD_Client_ID.equals("0") && !AD_Org_ID.equals("0")
+        && User_Level.indexOf("O") == -1) {
       retValue = false;
     }
 
-    if (!WindowAccessData.hasWriteAccess(conn, window, vars.getRole()))
+    if (!WindowAccessData.hasWriteAccess(conn, window, vars.getRole())) {
       retValue = false;
+    }
 
     return retValue;
   }
@@ -1022,12 +1075,13 @@ public class Utility {
    * @return True if exists or false if not.
    */
   public static boolean isInFieldProvider(FieldProvider[] data, String fieldName, String key) {
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       return false;
-    else if (fieldName == null || fieldName.trim().equals(""))
+    } else if (fieldName == null || fieldName.trim().equals("")) {
       return false;
-    else if (key == null || key.trim().equals(""))
+    } else if (key == null || key.trim().equals("")) {
       return false;
+    }
     String f = "";
     for (int i = 0; i < data.length; i++) {
       try {
@@ -1036,8 +1090,9 @@ public class Utility {
         log4j.error("Utility.isInFieldProvider - " + e);
         return false;
       }
-      if (f != null && f.equalsIgnoreCase(key))
+      if (f != null && f.equalsIgnoreCase(key)) {
         return true;
+      }
     }
     return false;
   }
@@ -1086,8 +1141,8 @@ public class Utility {
   public static boolean generateFileEncoding(String strPath, String strFile, String data,
       String encoding) {
     try {
-      BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(
-          strPath, strFile)), encoding));
+      BufferedWriter out = new BufferedWriter(
+          new OutputStreamWriter(new FileOutputStream(new File(strPath, strFile)), encoding));
       final PrintWriter printWriterData = new PrintWriter(out);
       printWriterData.print(data);
       out.close();
@@ -1184,8 +1239,8 @@ public class Utility {
           "@CODE=@" + message.substring(errorPos + 7));
       log4j.debug("Error Message returned: " + myMessage.getMessage());
       if (message.substring(errorPos + 7).equals(myMessage.getMessage())) {
-        myMessage.setMessage(parseTranslation(conn, vars, vars.getLanguage(),
-            myMessage.getMessage()));
+        myMessage
+            .setMessage(parseTranslation(conn, vars, vars.getLanguage(), myMessage.getMessage()));
       }
       if (errorPos > 0) {
         message = message.substring(0, errorPos);
@@ -1243,8 +1298,9 @@ public class Utility {
 
     while (st.hasMoreTokens()) {
       final String token = st.nextToken().trim().replaceAll("'", "");
-      if (token.equals(localStrElement))
+      if (token.equals(localStrElement)) {
         return true;
+      }
     }
     return false;
   }
@@ -1275,11 +1331,12 @@ public class Utility {
   public static void dumpFile(String fileLocation, OutputStream outputstream) {
     final byte dataPart[] = new byte[4096];
     try {
-      final BufferedInputStream bufferedinputstream = new BufferedInputStream(new FileInputStream(
-          new File(fileLocation)));
+      final BufferedInputStream bufferedinputstream = new BufferedInputStream(
+          new FileInputStream(new File(fileLocation)));
       int i;
-      while ((i = bufferedinputstream.read(dataPart, 0, 4096)) != -1)
+      while ((i = bufferedinputstream.read(dataPart, 0, 4096)) != -1) {
         outputstream.write(dataPart, 0, i);
+      }
       bufferedinputstream.close();
     } catch (final Exception exception) {
     }
@@ -1294,19 +1351,23 @@ public class Utility {
     String localList = list;
     String ret = "";
     final boolean hasBrackets = localList.startsWith("(") && localList.endsWith(")");
-    if (hasBrackets)
+    if (hasBrackets) {
       localList = localList.substring(1, localList.length() - 1);
+    }
     final StringTokenizer st = new StringTokenizer(localList, ",", false);
     while (st.hasMoreTokens()) {
       String token = st.nextToken().trim();
-      if (!ret.equals(""))
+      if (!ret.equals("")) {
         ret += ", ";
-      if (!(token.startsWith("'") && token.endsWith("'")))
+      }
+      if (!(token.startsWith("'") && token.endsWith("'"))) {
         token = "'" + token + "'";
+      }
       ret += token;
     }
-    if (hasBrackets)
+    if (hasBrackets) {
       ret = "(" + ret + ")";
+    }
     return ret;
   }
 
@@ -1336,10 +1397,11 @@ public class Utility {
       boolean addParentheses) {
     StringBuilder strInList = new StringBuilder();
     for (T obObject : obObjectList) {
-      if (strInList.length() == 0)
+      if (strInList.length() == 0) {
         strInList.append("'" + obObject.getId() + "'");
-      else
+      } else {
         strInList.append(", '" + obObject.getId() + "'");
+      }
     }
     if (addParentheses) {
       return "(" + strInList.toString() + ")";
@@ -1359,8 +1421,9 @@ public class Utility {
   public static boolean isUUIDString(String CharacterString) {
     if (CharacterString.length() == 32) {
       for (int i = 0; i < CharacterString.length(); i++) {
-        if (!isHexStringChar(CharacterString.charAt(i)))
+        if (!isHexStringChar(CharacterString.charAt(i))) {
           return false;
+        }
       }
       return true;
     }
@@ -1386,8 +1449,9 @@ public class Utility {
    */
   public static boolean deleteDir(File[] f) {
     for (int i = 0; i < f.length; i++) {
-      if (!deleteDir(f[i]))
+      if (!deleteDir(f[i])) {
         return false;
+      }
     }
     return true;
   }
@@ -1402,8 +1466,9 @@ public class Utility {
     if (f.isDirectory()) {
       final File elements[] = f.listFiles();
       for (int i = 0; i < elements.length; i++) {
-        if (!deleteDir(elements[i]))
+        if (!deleteDir(elements[i])) {
           return false;
+        }
       }
     }
     return f.delete();
@@ -1431,44 +1496,49 @@ public class Utility {
 
   public static String getButtonName(ConnectionProvider conn, VariablesSecureApp vars,
       String reference, String currentValue, String buttonId,
-      HashMap<String, String> usedButtonShortCuts, HashMap<String, String> reservedButtonShortCuts) {
+      HashMap<String, String> usedButtonShortCuts,
+      HashMap<String, String> reservedButtonShortCuts) {
     String localCurrentValue = currentValue;
     try {
       final UtilityData[] data = UtilityData.selectReference(conn, vars.getLanguage(), reference);
       String retVal = "";
-      if (localCurrentValue.equals("--"))
+      if (localCurrentValue.equals("--")) {
         localCurrentValue = "CL";
-      if (data == null)
+      }
+      if (data == null) {
         return retVal;
+      }
       for (int j = 0; j < data.length; j++) {
         int i = 0;
         final String name = data[j].name;
-        while ((i < name.length())
-            && (name.substring(i, i + 1).equals(" ") || reservedButtonShortCuts.containsKey(name
-                .substring(i, i + 1).toUpperCase()))) {
-          if (data[j].value.equals(localCurrentValue))
+        while ((i < name.length()) && (name.substring(i, i + 1).equals(" ")
+            || reservedButtonShortCuts.containsKey(name.substring(i, i + 1).toUpperCase()))) {
+          if (data[j].value.equals(localCurrentValue)) {
             retVal += name.substring(i, i + 1);
+          }
           i++;
         }
         if ((i == name.length()) && (data[j].value.equals(localCurrentValue))) {
           i = 1;
-          while (i <= 10 && reservedButtonShortCuts.containsKey(Integer.valueOf(i).toString()))
+          while (i <= 10 && reservedButtonShortCuts.containsKey(Integer.valueOf(i).toString())) {
             i++;
+          }
           if (i < 10) {
             if (data[j].value.equals(localCurrentValue)) {
               retVal += "<span>(<u>" + i + "</u>)</span>";
               reservedButtonShortCuts.put(Integer.valueOf(i).toString(), "");
-              usedButtonShortCuts.put(Integer.valueOf(i).toString(), "executeWindowButton('"
-                  + buttonId + "');");
+              usedButtonShortCuts.put(Integer.valueOf(i).toString(),
+                  "executeWindowButton('" + buttonId + "');");
             }
           }
         } else {
 
           if (data[j].value.equals(localCurrentValue)) {
-            if (i < name.length())
+            if (i < name.length()) {
               reservedButtonShortCuts.put(name.substring(i, i + 1).toUpperCase(), "");
-            usedButtonShortCuts.put(name.substring(i, i + 1).toUpperCase(), "executeWindowButton('"
-                + buttonId + "');");
+            }
+            usedButtonShortCuts.put(name.substring(i, i + 1).toUpperCase(),
+                "executeWindowButton('" + buttonId + "');");
             retVal += "<u>" + name.substring(i, i + 1) + "</u>" + name.substring(i + 1);
           }
         }
@@ -1487,32 +1557,34 @@ public class Utility {
     try {
       final UtilityData data = UtilityData.selectFieldName(conn, vars.getLanguage(), fieldId);
       String retVal = "";
-      if (data == null)
+      if (data == null) {
         return retVal;
+      }
       final String name = data.name;
       int i = 0;
-      while ((i < name.length())
-          && (name.substring(i, i + 1).equals(" ") || reservedButtonShortCuts.containsKey(name
-              .substring(i, i + 1).toUpperCase()))) {
+      while ((i < name.length()) && (name.substring(i, i + 1).equals(" ")
+          || reservedButtonShortCuts.containsKey(name.substring(i, i + 1).toUpperCase()))) {
         retVal += name.substring(i, i + 1);
         i++;
       }
 
       if (i == name.length()) {
         i = 1;
-        while (i <= 10 && reservedButtonShortCuts.containsKey(Integer.valueOf(i).toString()))
+        while (i <= 10 && reservedButtonShortCuts.containsKey(Integer.valueOf(i).toString())) {
           i++;
+        }
         if (i < 10) {
           retVal += "<span>(<u>" + i + "</u>)</span>";
           reservedButtonShortCuts.put(Integer.valueOf(i).toString(), "");
-          usedButtonShortCuts.put(Integer.valueOf(i).toString(), "executeWindowButton('" + buttonId
-              + "');");
+          usedButtonShortCuts.put(Integer.valueOf(i).toString(),
+              "executeWindowButton('" + buttonId + "');");
         }
       } else {
-        if (i < name.length())
+        if (i < name.length()) {
           reservedButtonShortCuts.put(name.substring(i, i + 1).toUpperCase(), "");
-        usedButtonShortCuts.put(name.substring(i, i + 1).toUpperCase(), "executeWindowButton('"
-            + buttonId + "');");
+        }
+        usedButtonShortCuts.put(name.substring(i, i + 1).toUpperCase(),
+            "executeWindowButton('" + buttonId + "');");
         retVal += "<u>" + name.substring(i, i + 1) + "</u>" + name.substring(i + 1);
       }
 
@@ -1551,8 +1623,9 @@ public class Utility {
     String jsString = "var confirmOnChanges = ";
     String showConfirmation = getPreference(vars, "ShowConfirmation", windowId);
 
-    if (showConfirmation == null || showConfirmation.equals(""))
+    if (showConfirmation == null || showConfirmation.equals("")) {
       showConfirmation = vars.getSessionValue("#ShowConfirmation");
+    }
     jsString = jsString + (showConfirmation.equalsIgnoreCase("Y") ? "true" : "false") + ";";
     return jsString;
   }
@@ -1595,10 +1668,12 @@ public class Utility {
    */
   public static ArrayList<String> stringToArrayList(String[] list) {
     final ArrayList<String> rt = new ArrayList<String>();
-    if (list == null)
+    if (list == null) {
       return rt;
-    for (int i = 0; i < list.length; i++)
+    }
+    for (int i = 0; i < list.length; i++) {
       rt.add(list[i]);
+    }
     return rt;
   }
 
@@ -1620,17 +1695,18 @@ public class Utility {
   // in 2.50
   public static boolean hasAttachments(ConnectionProvider conn, String userClient, String userOrg,
       String tableId, String recordId) throws ServletException {
-    if (tableId.equals("") || recordId.equals(""))
+    if (tableId.equals("") || recordId.equals("")) {
       return false;
-    else
+    } else {
       return UtilityData.select(conn, userClient, userOrg, tableId, recordId);
+    }
   }
 
   /**
    * @see OBDateUtils#calculateLaborDays(String, String, DateFormat)
    */
-  public static String calculateLaborDays(String strDate1, String strDate2, DateFormat DateFormatter)
-      throws ParseException {
+  public static String calculateLaborDays(String strDate1, String strDate2,
+      DateFormat DateFormatter) throws ParseException {
     return OBDateUtils.calculateLaborDays(strDate1, strDate2, DateFormatter);
   }
 
@@ -1655,7 +1731,8 @@ public class Utility {
   /**
    * @see OBDateUtils#isWeekendDay(String, DateFormat)
    */
-  public static boolean isWeekendDay(String strDay, DateFormat DateFormatter) throws ParseException {
+  public static boolean isWeekendDay(String strDay, DateFormat DateFormatter)
+      throws ParseException {
     return OBDateUtils.isWeekendDay(strDay, DateFormatter);
   }
 
@@ -1681,8 +1758,8 @@ public class Utility {
   /**
    * Returns the URL for a tab
    * 
-   * @param tabId
-   *          Id for the tab to obtain the url for
+   * @param tab
+   *          The tab to obtain the url for
    * @param type
    *          "R" -&gt; Relation, "E" -&gt; Edition, "X" -&gt; Excel
    * @param completeURL
@@ -1690,15 +1767,9 @@ public class Utility {
    *          URL relative to base context
    * @return the URL for a tab.
    */
-  public static String getTabURL(String tabId, String type, boolean completeURL) {
+  public static String getTabURL(Tab tab, String type, boolean completeURL) {
     OBContext.setAdminMode();
     try {
-      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      if (tab == null) {
-        log4j.error("Error trying to obtain URL for unknown tab:" + tabId);
-        return "";
-      }
-
       String url = (completeURL ? HttpBaseServlet.strDireccion : "") + "/";
       if (!"0".equals(tab.getWindow().getModule().getId())) {
         url += tab.getWindow().getModule().getJavaPackage();
@@ -1721,8 +1792,35 @@ public class Utility {
 
       return url;
     } catch (Exception e) {
-      log4j.error(e.getMessage());
+      log4j.error("Could not get URL for tab " + tab.getId(), e);
       return "";
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns the URL for a tab
+   *
+   * @param tabId
+   *          Id for the tab to obtain the url for
+   * @param type
+   *          "R" -&gt; Relation, "E" -&gt; Edition, "X" -&gt; Excel
+   * @param completeURL
+   *          if true returns the complete ULR including server name and context, if not, it return
+   *          URL relative to base context
+   * @return the URL for a tab.
+   */
+  public static String getTabURL(String tabId, String type, boolean completeURL) {
+    OBContext.setAdminMode();
+    try {
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      if (tab == null) {
+        log4j.error("Error trying to obtain URL for unknown tab:" + tabId);
+        return "";
+      }
+
+      return getTabURL(tab, type, completeURL);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -1742,10 +1840,24 @@ public class Utility {
    * 
    */
   private static String mappingFormat(String map) {
-    return map.replace(" ", "").replace("-", "").replace("/", "").replace("#", "").replace("&", "")
-        .replace(",", "").replace("(", "").replace(")", "").replace("á", "a").replace("é", "e")
-        .replace("í", "i").replace("ó", "o").replace("ú", "u").replace("Á", "A").replace("É", "")
-        .replace("Í", "I").replace("Ó", "O").replace("Ú", "U");
+    return map.replace(" ", "")
+        .replace("-", "")
+        .replace("/", "")
+        .replace("#", "")
+        .replace("&", "")
+        .replace(",", "")
+        .replace("(", "")
+        .replace(")", "")
+        .replace("á", "a")
+        .replace("é", "e")
+        .replace("í", "i")
+        .replace("ó", "o")
+        .replace("ú", "u")
+        .replace("Á", "A")
+        .replace("É", "")
+        .replace("Í", "I")
+        .replace("Ó", "O")
+        .replace("Ú", "U");
   }
 
   /**
@@ -1851,7 +1963,7 @@ public class Utility {
         + "      ADListTrl rlt" + " where rl.reference = r" + "  and rlt.listReference = rl"
         + "  and rlt.language.language = '" + lang + "'" + "  and r.name =  '" + ListName + "'"
         + "  and rl.searchKey = '" + value + "'";
-    Query q = OBDal.getInstance().getSession().createQuery(hql);
+    Query<String> q = OBDal.getInstance().getSession().createQuery(hql, String.class);
     q.setMaxResults(1);
     String name = (String) q.uniqueResult();
     if (name != null) {
@@ -1862,7 +1974,7 @@ public class Utility {
     hql = "  select rl.name " + " from ADReference r, " + "      ADList rl"
         + " where rl.reference = r" + "  and r.name =  '" + ListName + "'"
         + "  and rl.searchKey = '" + value + "'";
-    q = OBDal.getInstance().getSession().createQuery(hql);
+    q = OBDal.getInstance().getSession().createQuery(hql, String.class);
     q.setMaxResults(1);
     name = (String) q.uniqueResult();
     if (name != null) {
@@ -1897,8 +2009,9 @@ public class Utility {
           + StringEscapeUtils.escapeHtml(data[i].getField("padre")) + "\", \""
           + data[i].getField("id") + "\", \"" + FormatUtilities.replaceJS(data[i].getField("name"))
           + "\")";
-      if (i < data.length - 1)
+      if (i < data.length - 1) {
         strArray = strArray + ", ";
+      }
     }
     strArray = strArray + ");";
     return strArray;
@@ -1926,8 +2039,9 @@ public class Utility {
     for (int i = 0; i < data.length; i++) {
       strArray = strArray + "\nnew Array(\"" + data[i].getField("id") + "\", \""
           + FormatUtilities.replaceJS(data[i].getField("name")) + "\")";
-      if (i < data.length - 1)
+      if (i < data.length - 1) {
         strArray = strArray + ", ";
+      }
     }
     strArray = strArray + ");";
     return strArray;
@@ -1991,7 +2105,7 @@ public class Utility {
     try {
       ByteArrayOutputStream bout = new ByteArrayOutputStream();
       new FileUtility(OBConfigFileProvider.getInstance().getServletContext().getRealPath("/"),
-          getDefaultImageLogo("Empty"), false, true).dumpFile(bout);
+          getDefaultImageLogoPath("Empty"), false, true).dumpFile(bout);
       bout.close();
       return bout.toByteArray();
     } catch (IOException ex) {
@@ -2018,14 +2132,14 @@ public class Utility {
    * 
    * @param id
    *          The id of the image to display
-   * @param doCommit
-   *          A flag to force the commit of the DAL connection after retrieve the image
+   * @param doCommitAndClose
+   *          A flag to force the commit and close of the DAL connection after retrieving the image
    * @return The image requested
    */
-  private static byte[] getImage(String id, boolean doCommit) {
+  private static byte[] getImage(String id, boolean doCommitAndClose) {
     byte[] imageByte;
     try {
-      Image img = getImageObject(id, doCommit);
+      Image img = getImageObject(id, doCommitAndClose);
       if (img == null) {
         imageByte = getBlankImage();
       } else {
@@ -2063,11 +2177,11 @@ public class Utility {
    * 
    * @param id
    *          The id of the image to display
-   * @param doCommit
-   *          A flag to force the commit of the DAL connection after retrieve the image
+   * @param doCommitAndClose
+   *          A flag to force the commit and close of the DAL connection after retrieving the image
    * @return The image requested
    */
-  private static Image getImageObject(String id, boolean doCommit) {
+  private static Image getImageObject(String id, boolean doCommitAndClose) {
     Image img = null;
     OBContext.setAdminMode();
     try {
@@ -2076,7 +2190,7 @@ public class Utility {
       log4j.error("Could not load image from database: " + id, e);
     } finally {
       OBContext.restorePreviousMode();
-      if (doCommit) {
+      if (doCommitAndClose) {
         OBDal.getInstance().commitAndClose();
       }
     }
@@ -2084,7 +2198,7 @@ public class Utility {
   }
 
   /**
-   * Provides the image as a BufferedImage object.
+   * Provides the image as a BufferedImage object. Commonly used for reports.
    * 
    * @param id
    *          The id of the image to display
@@ -2104,10 +2218,12 @@ public class Utility {
    * 
    * @param logo
    *          The name of the logo to display This can be one of the following: yourcompanylogin,
-   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
+   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          or banner-production
    * @param org
    *          The organization id used to get the logo In the case of requesting the yourcompanydoc
    *          logo you can indicate the organization used to request the logo.
+   *
    * @return The image requested
    */
   public static Image getImageLogoObject(String logo, String org) {
@@ -2116,17 +2232,20 @@ public class Utility {
     try {
 
       if ("yourcompanylogin".equals(logo)) {
-        img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
+        img = OBDal.getReadOnlyInstance()
+            .get(SystemInformation.class, "0")
             .getYourCompanyLoginImage();
       } else if ("youritservicelogin".equals(logo)) {
-        img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
+        img = OBDal.getReadOnlyInstance()
+            .get(SystemInformation.class, "0")
             .getYourItServiceLoginImage();
       } else if ("yourcompanymenu".equals(logo)) {
         img = OBDal.getReadOnlyInstance()
             .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
             .getYourCompanyMenuImage();
         if (img == null) {
-          img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
+          img = OBDal.getReadOnlyInstance()
+              .get(SystemInformation.class, "0")
               .getYourCompanyMenuImage();
         }
       } else if ("yourcompanybig".equals(logo)) {
@@ -2134,7 +2253,8 @@ public class Utility {
             .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
             .getYourCompanyBigImage();
         if (img == null) {
-          img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
+          img = OBDal.getReadOnlyInstance()
+              .get(SystemInformation.class, "0")
               .getYourCompanyBigImage();
         }
       } else if ("yourcompanydoc".equals(logo)) {
@@ -2148,11 +2268,13 @@ public class Utility {
               .getYourCompanyDocumentImage();
         }
         if (img == null) {
-          img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
+          img = OBDal.getReadOnlyInstance()
+              .get(SystemInformation.class, "0")
               .getYourCompanyDocumentImage();
         }
       } else if ("banner-production".equals(logo)) {
-        img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
+        img = OBDal.getReadOnlyInstance()
+            .get(SystemInformation.class, "0")
             .getProductionBannerImage();
       } else if ("yourcompanylegal".equals(logo)) {
         if (org != null && !org.equals("")) {
@@ -2166,7 +2288,8 @@ public class Utility {
               .getYourCompanyDocumentImage();
 
           if (img == null) {
-            img = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0")
+            img = OBDal.getReadOnlyInstance()
+                .get(SystemInformation.class, "0")
                 .getYourCompanyDocumentImage();
           }
         }
@@ -2186,20 +2309,38 @@ public class Utility {
    * 
    * @param logo
    *          The name of the logo to display This can be one of the following: yourcompanylogin,
-   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
+   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          or banner-production
    * @param org
    *          The organization id used to get the logo In the case of requesting the yourcompanydoc
    *          logo you can indicate the organization used to request the logo.
    * @return The image requested
    */
   public static byte[] getImageLogo(String logo, String org) {
+    return getImageLogo(logo, org, false);
+  }
 
+  /**
+   * Provides the image logo as a byte array for the indicated parameters.
+   *
+   * @param logo
+   *          The name of the logo to display This can be one of the following: yourcompanylogin,
+   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          or banner-production
+   * @param org
+   *          The organization id used to get the logo In the case of requesting the yourcompanydoc
+   *          logo you can indicate the organization used to request the logo.
+   * @param doConnectionClose
+   *          When true, forces the close of the DAL connection after retrieving the image
+   * @return The image requested
+   */
+  private static byte[] getImageLogo(String logo, String org, boolean doConnectionClose) {
     byte[] imageByte;
 
     try {
       Image img = getImageLogoObject(logo, org);
       if (img == null) {
-        String path = getDefaultImageLogo(logo);
+        String path = getDefaultImageLogoPath(logo);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         new FileUtility(OBConfigFileProvider.getInstance().getServletContext().getRealPath("/"),
             path, false, true).dumpFile(bout);
@@ -2217,19 +2358,26 @@ public class Utility {
     } catch (Exception e) {
       log4j.error("Could not load logo from database: " + logo + ", " + org, e);
       imageByte = getBlankImage();
+    } finally {
+      if (doConnectionClose) {
+        // Closing read-only instance connection because this is the connection used by
+        // getImageLogoObject
+        OBDal.getReadOnlyInstance().commitAndClose();
+      }
     }
     return imageByte;
   }
 
   /**
-   * Provides the image logo as a byte array for the indicated parameters.
+   * Provides the image path for the indicated parameters.
    * 
    * @param logo
    *          The name of the logo to display This can be one of the following: yourcompanylogin,
-   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
-   * @return The image requested
+   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          or banner-production
+   * @return The path of the image requested
    */
-  private static String getDefaultImageLogo(String logo) {
+  private static String getDefaultImageLogoPath(String logo) {
 
     String defaultImagePath = null;
 
@@ -2354,7 +2502,7 @@ public class Utility {
   }
 
   /**
-   * Provides the image logo as a BufferedImage object.
+   * Provides the image logo as a BufferedImage object. Commonly used for reports.
    * 
    * @param logo
    *          The name of the logo to display
@@ -2367,7 +2515,7 @@ public class Utility {
   }
 
   /**
-   * Provides the image logo as a BufferedImage object.
+   * Provides the image logo as a BufferedImage object. Commonly used for reports.
    * 
    * @param logo
    *          The name of the logo to display
@@ -2378,7 +2526,11 @@ public class Utility {
    * @see #getImageLogo(String,String)
    */
   public static BufferedImage showImageLogo(String logo, String org) throws IOException {
-    return ImageIO.read(new ByteArrayInputStream(getImageLogo(logo, org)));
+    // Same as showImage(id), using getImageLogo(id, org, true) to close the DAL connection once the
+    // image has been retrieved.
+    // This is required to avoid connection leaks when invoking this method from a sub-report.
+    // This is needed until issue https://issues.openbravo.com/view.php?id=30182 is fixed.
+    return ImageIO.read(new ByteArrayInputStream(getImageLogo(logo, org, true)));
   }
 
   /**
@@ -2395,9 +2547,9 @@ public class Utility {
     String processModal = null;
     try {
       processModal = Preferences.getPreferenceValue("ModalProcess" + process.getId(), false,
-          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), null);
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null);
     } catch (PropertyException e) {
       // Not found, keep processModal = null
     }
@@ -2406,16 +2558,18 @@ public class Utility {
       modal = Preferences.YES.equals(processModal);
     } else {
       try {
-        modal = Preferences.YES.equals(Preferences.getPreferenceValue("ModalModule"
-            + process.getModule().getJavaPackage(), false, OBContext.getOBContext()
-            .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-            .getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+        modal = Preferences.YES.equals(
+            Preferences.getPreferenceValue("ModalModule" + process.getModule().getJavaPackage(),
+                false, OBContext.getOBContext().getCurrentClient(),
+                OBContext.getOBContext().getCurrentOrganization(),
+                OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
       } catch (PropertyException e1) {
         try {
-          modal = Preferences.YES.equals(Preferences.getPreferenceValue("ModalModule"
-              + process.getModule().getId(), false, OBContext.getOBContext().getCurrentClient(),
-              OBContext.getOBContext().getCurrentOrganization(),
-              OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+          modal = Preferences.YES
+              .equals(Preferences.getPreferenceValue("ModalModule" + process.getModule().getId(),
+                  false, OBContext.getOBContext().getCurrentClient(),
+                  OBContext.getOBContext().getCurrentOrganization(),
+                  OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
         } catch (PropertyException e) {
           modal = false;
         }
@@ -2464,7 +2618,9 @@ public class Utility {
     hql.append("       f.name\n");
     hql.append("  from ADField f\n");
     hql.append(" where f.id =:fieldId\n");
-    Query qName = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<Object[]> qName = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql.toString(), Object[].class);
     qName.setParameter("lang", language);
     qName.setParameter("fieldId", fieldId);
 
@@ -2473,7 +2629,7 @@ public class Utility {
       return "";
     }
 
-    Object[] names = (Object[]) qName.list().get(0);
+    Object[] names = qName.list().get(0);
     return names[0] != null ? (String) names[0] : (String) names[1];
   }
 
@@ -2487,10 +2643,11 @@ public class Utility {
   public static String getInStrSet(Set<String> set) {
     StringBuilder strInList = new StringBuilder();
     for (String string : set) {
-      if (strInList.length() == 0)
+      if (strInList.length() == 0) {
         strInList.append("'" + string + "'");
-      else
+      } else {
         strInList.append(", '" + string + "'");
+      }
     }
     return strInList.toString();
   }
@@ -2505,8 +2662,8 @@ public class Utility {
    * 
    */
   public static Country getCountryFromOrgId(String orgid) {
-    Organization organization = (Organization) OBDal.getReadOnlyInstance().get(
-        Organization.ENTITY_NAME, orgid);
+    Organization organization = (Organization) OBDal.getReadOnlyInstance()
+        .get(Organization.ENTITY_NAME, orgid);
     List<OrganizationInformation> orgInfoList = organization.getOrganizationInformationList();
     if (orgInfoList.isEmpty()) {
       return null;
@@ -2578,10 +2735,12 @@ public class Utility {
         return defaultDecimalFormat;
       }
       DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-      if (country.getDecimalseparator() != null)
+      if (country.getDecimalseparator() != null) {
         symbols.setDecimalSeparator(country.getDecimalseparator().equals("C") ? ',' : '.');
-      if (country.getGroupingseparator() != null)
+      }
+      if (country.getGroupingseparator() != null) {
         symbols.setGroupingSeparator(country.getGroupingseparator().equals("C") ? ',' : '.');
+      }
       if (country.getNumericmask() != null) {
         DecimalFormat numberFormat = new DecimalFormat(country.getNumericmask());
         numberFormat.setDecimalFormatSymbols(symbols);

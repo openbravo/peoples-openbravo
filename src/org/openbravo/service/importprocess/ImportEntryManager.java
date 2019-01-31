@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2018 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,18 +40,16 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.access.Role;
 import org.openbravo.service.json.JsonUtils;
 
 /**
@@ -117,7 +115,7 @@ public class ImportEntryManager {
    * #setImportEntryErrorIndependent(String, Throwable)}.
    */
 
-  private static final Logger log = Logger.getLogger(ImportEntryManager.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static ImportEntryManager instance;
 
@@ -235,8 +233,8 @@ public class ImportEntryManager {
     } catch (Exception e) {
       // except for logging we can ignore the exception
       // as the import entry will be offered again for reprocessing later anyway
-      log.warn("Exception while trying to add runnable " + runnable
-          + " to the list of tasks to run", e);
+      log.warn(
+          "Exception while trying to add runnable " + runnable + " to the list of tasks to run", e);
     }
   }
 
@@ -301,54 +299,14 @@ public class ImportEntryManager {
    * Note will commit the session/connection using {@link OBDal#commitAndClose()}
    */
   public void createImportEntry(String id, String typeOfData, String json, boolean commitAndClose) {
-    OBContext.setAdminMode(true);
     try {
-      // check if it is not there already or already archived
-      {
-        final Query qry = SessionHandler.getInstance().getSession()
-            .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where id=:id");
-        qry.setParameter("id", id);
-        if (((Number) qry.uniqueResult()).intValue() > 0) {
-          log.debug("Entry already exists, ignoring it, id/typeofdata " + id + "/" + typeOfData
-              + " json " + json);
-          return;
-        }
-      }
-      {
-        final Query qry = SessionHandler
-            .getInstance()
-            .getSession()
-            .createQuery("select count(*) from " + ImportEntryArchive.ENTITY_NAME + " where id=:id");
-        qry.setParameter("id", id);
-        if (((Number) qry.uniqueResult()).intValue() > 0) {
-          log.debug("Entry already archived, ignoring it, id/typeofdata " + id + "/" + typeOfData
-              + " json " + json);
-          return;
-        }
-      }
-
-      ImportEntry importEntry = OBProvider.getInstance().get(ImportEntry.class);
-      importEntry.setId(id);
-      importEntry.setRole(OBDal.getInstance().getProxy(Role.class,
-          OBContext.getOBContext().getRole().getId()));
-      importEntry.setNewOBObject(true);
-      importEntry.setImportStatus("Initial");
-      importEntry.setCreatedtimestamp((new Date()).getTime());
-      importEntry.setImported(null);
-      importEntry.setTypeofdata(typeOfData);
-      importEntry.setJsonInfo(json);
-
-      for (ImportEntryPreProcessor processor : entryPreProcessors) {
-        processor.beforeCreate(importEntry);
-      }
-      OBDal.getInstance().save(importEntry);
-      if (commitAndClose) {
-        OBDal.getInstance().commitAndClose();
-
-        notifyNewImportEntryCreated();
-      }
-    } finally {
-      OBContext.restorePreviousMode();
+      ImportEntryBuilder.newInstance(typeOfData, json) //
+          .setId(id) //
+          .setNotifyManager(commitAndClose) //
+          .create();
+    } catch (ImportEntryAlreadyExistsException e) {
+      // Ignore exception when ImportEntry already exists either in ImportEntry or
+      // ImportEntryArchive table
     }
   }
 
@@ -611,8 +569,9 @@ public class ImportEntryManager {
                     + ImportEntry.PROPERTY_CREATIONDATE + ", "
                     + ImportEntry.PROPERTY_CREATEDTIMESTAMP;
 
-                final Query entriesQry = OBDal.getInstance().getSession()
-                    .createQuery(importEntryQryStr);
+                final Query<ImportEntry> entriesQry = OBDal.getInstance()
+                    .getSession()
+                    .createQuery(importEntryQryStr, ImportEntry.class);
                 entriesQry.setFirstResult(0);
                 entriesQry.setFetchSize(100);
                 entriesQry.setMaxResults(manager.importBatchSize);
@@ -664,7 +623,8 @@ public class ImportEntryManager {
                   // in case of test don't wait minimal 2 seconds
                   Thread.sleep(300 + ((1000 * entryCount) / 30));
                 } else {
-                  log.debug("Entries have been processed, wait a shorter time, and try again to capture new entries which have been added");
+                  log.debug(
+                      "Entries have been processed, wait a shorter time, and try again to capture new entries which have been added");
                   // wait minimal 2 seconds or based on entry count
                   Thread.sleep(Math.max(2000, 300 + ((1000 * entryCount) / 30)));
                 }
@@ -731,6 +691,7 @@ public class ImportEntryManager {
       this.entity = entity;
     }
 
+    @Override
     public String entity() {
       return entity;
     }
@@ -774,8 +735,8 @@ public class ImportEntryManager {
     @Override
     public Thread newThread(Runnable runnable) {
 
-      final Thread thread = new Thread(group, runnable, "Import Entry - "
-          + threadNumber.getAndIncrement(), 0);
+      final Thread thread = new Thread(group, runnable,
+          "Import Entry - " + threadNumber.getAndIncrement(), 0);
 
       if (thread.getPriority() != Thread.NORM_PRIORITY) {
         thread.setPriority(Thread.NORM_PRIORITY);

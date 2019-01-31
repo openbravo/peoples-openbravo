@@ -23,10 +23,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
+
 /** Provides common utilities to handle {@code Collection}s as {@code String}s. */
 public class StringCollectionUtils {
   private static final char COMMA = ',';
   private static final char QUOUTE = '\'';
+  private static final String EMPTY_COLLECTION = "''";
 
   /**
    * Returns a {@code String} including all elements in the {@code Collection} received as parameter
@@ -77,5 +80,17 @@ public class StringCollectionUtils {
       }
       sb.append(COMMA);
     }
+  }
+
+  /**
+   * Checks if a comma separated representation of a collection represents an empty collection.
+   *
+   * @param collection
+   *          A comma separated representation of a collection
+   * @return {@code true} if the provided {@code String} represents an empty collection. Otherwise,
+   *         return {@code false}.
+   */
+  public static boolean isEmptyCollection(String collection) {
+    return StringUtils.isBlank(collection) || EMPTY_COLLECTION.equals(collection);
   }
 }

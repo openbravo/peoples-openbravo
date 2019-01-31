@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.application;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -30,9 +31,11 @@ import javax.inject.Inject;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
@@ -53,8 +56,6 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.AttachmentMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Reads the view and generates it.
@@ -63,7 +64,7 @@ import org.slf4j.LoggerFactory;
  */
 @RequestScoped
 public class ViewComponent extends BaseComponent {
-  private static Logger log = LoggerFactory.getLogger(ViewComponent.class);
+  private static Logger log = LogManager.getLogger();
 
   @Inject
   private StandardWindowComponent standardWindowComponent;
@@ -88,11 +89,11 @@ public class ViewComponent extends BaseComponent {
     try {
       OBContext.setAdminMode();
 
-      final Window window = OBDal.getInstance().get(Window.class, correctViewId(viewId));
+      final Window window = adcs.getWindow(correctViewId(viewId));
 
       if (window != null) {
-        FeatureRestriction featureRestriction = ActivationKey.getInstance().hasLicenseAccess("MW",
-            window.getId());
+        FeatureRestriction featureRestriction = ActivationKey.getInstance()
+            .hasLicenseAccess("MW", window.getId());
         if (featureRestriction != FeatureRestriction.NO_RESTRICTION) {
           throw new OBUserException(featureRestriction.toString());
         }
@@ -109,7 +110,13 @@ public class ViewComponent extends BaseComponent {
       } else {
         return generateView(viewId);
       }
+    } catch (Exception e) {
+      log.error("Error generating view {}", viewId, e);
+      throw e;
     } finally {
+      // view generation is read only, remove from session whatever DAL loaded to make faster flush
+      OBDal.getInstance().getSession().clear();
+
       OBContext.restorePreviousMode();
       log.debug("View {} generated in {} ms", viewId, System.currentTimeMillis() - t);
     }
@@ -130,7 +137,8 @@ public class ViewComponent extends BaseComponent {
       try {
         @SuppressWarnings("unchecked")
         final Class<BaseTemplateComponent> clz = (Class<BaseTemplateComponent>) OBClassLoader
-            .getInstance().loadClass(viewImpDef.getJavaClassName());
+            .getInstance()
+            .loadClass(viewImpDef.getJavaClassName());
         component = weldUtils.getInstance(clz);
       } catch (Exception e) {
         throw new OBException(e);
@@ -159,7 +167,7 @@ public class ViewComponent extends BaseComponent {
   protected String generateAttachment(String viewId) {
     String[] keys = viewId.split(KernelConstants.ID_PREFIX);
     String tabId = keys[1];
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    Tab tab = adcs.getTab(tabId);
     if (tab == null) {
       throw new IllegalArgumentException("Not found process definition with ID " + tabId);
     }
@@ -183,8 +191,8 @@ public class ViewComponent extends BaseComponent {
   }
 
   private OBUIAPPViewImplementation getView(String viewName) {
-    OBCriteria<OBUIAPPViewImplementation> obc = OBDal.getInstance().createCriteria(
-        OBUIAPPViewImplementation.class);
+    OBCriteria<OBUIAPPViewImplementation> obc = OBDal.getInstance()
+        .createCriteria(OBUIAPPViewImplementation.class);
     obc.add(Restrictions.or(Restrictions.eq(OBUIAPPViewImplementation.PROPERTY_NAME, viewName),
         Restrictions.eq(OBUIAPPViewImplementation.PROPERTY_ID, viewName)));
 
@@ -198,7 +206,7 @@ public class ViewComponent extends BaseComponent {
   @Override
   public Module getModule() {
     final String id = getParameter("viewId");
-    final Window window = OBDal.getInstance().get(Window.class, correctViewId(id));
+    final Window window = adcs.getWindow(correctViewId(id));
     if (window != null) {
       return window.getModule();
     } else if (id.startsWith("processDefinition_")) {
@@ -211,7 +219,7 @@ public class ViewComponent extends BaseComponent {
     } else if (id.startsWith("attachment_")) {
       String[] keys = id.split(KernelConstants.ID_PREFIX);
       String tabId = keys[1];
-      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      Tab tab = adcs.getTab(tabId);
       if (tab == null) {
         throw new IllegalArgumentException("Not found tab with ID " + tabId);
       }
@@ -273,17 +281,17 @@ public class ViewComponent extends BaseComponent {
     }
 
     String tabHql = "select max(updated) from OBUIAPP_GC_Tab where tab.window.id = :windowId";
-    Query qryTabData = OBDal.getInstance().getSession().createQuery(tabHql);
+    Query<Date> qryTabData = OBDal.getInstance().getSession().createQuery(tabHql, Date.class);
     qryTabData.setParameter("windowId", window.getId());
-    Date tabUpdated = (Date) qryTabData.uniqueResult();
+    Date tabUpdated = qryTabData.uniqueResult();
     if (tabUpdated != null && lastModification.compareTo(tabUpdated) < 0) {
       lastModification = tabUpdated;
     }
 
     String fieldHql = "select max(updated) from OBUIAPP_GC_Field where obuiappGcTab.tab.window.id = :windowId";
-    Query qryFieldData = OBDal.getInstance().getSession().createQuery(fieldHql);
+    Query<Date> qryFieldData = OBDal.getInstance().getSession().createQuery(fieldHql, Date.class);
     qryFieldData.setParameter("windowId", window.getId());
-    Date fieldUpdated = (Date) qryFieldData.uniqueResult();
+    Date fieldUpdated = qryFieldData.uniqueResult();
     if (fieldUpdated != null && lastModification.compareTo(fieldUpdated) < 0) {
       lastModification = fieldUpdated;
     }
@@ -295,17 +303,20 @@ public class ViewComponent extends BaseComponent {
     final String viewId = getParameter("viewId");
     OBContext.setAdminMode();
     try {
-      Window window = OBDal.getInstance().get(Window.class, correctViewId(viewId));
+      String fixedViewId = correctViewId(viewId);
+      Window window = null;
+      if (!"processDefinition".equals(fixedViewId)) {
+        window = adcs.getWindow(correctViewId(viewId));
+      }
       if (window == null) {
         return "";
       }
 
       StringBuilder viewVersions = new StringBuilder();
-      for (Tab t : window.getADTabList()) {
-        viewVersions.append(t.getTable().isFullyAudited()).append("|");
-      }
-      viewVersions.append(getLastGridConfigurationChange(window)).append("|");
-      viewVersions.append(getLastSystemPreferenceChange(window)).append("|");
+      viewVersions.append(getAuditStatus(window)) //
+          .append(getLastGridConfigurationChange(window))
+          .append("|") //
+          .append(getLastSystemPreferenceChange(window));
       return DigestUtils.md5Hex(viewVersions.toString());
     } finally {
       OBContext.restorePreviousMode();
@@ -327,39 +338,47 @@ public class ViewComponent extends BaseComponent {
     return updated == null ? "" : updated.toString();
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getFieldsWithDisplayLogicAtServerLevel(String windowID) {
-    StringBuilder where = new StringBuilder();
-    where.append(" select displayLogicEvaluatedInTheServer");
-    where.append(" from ADField as f");
-    where.append(" where f.displayLogicEvaluatedInTheServer is not null");
-    where.append(" and f.tab.id in (select t.id");
-    where.append("                  from ADTab t");
-    where.append("                  where t.window.id = :windowId)");
+    String where = " select displayLogicEvaluatedInTheServer" //
+        + " from ADField as f" //
+        + " where f.displayLogicEvaluatedInTheServer is not null" //
+        + " and f.tab.id in (select t.id" //
+        + "                  from ADTab t" //
+        + "                  where t.window.id = :windowId)";
 
     Session session = OBDal.getInstance().getSession();
-    Query query = session.createQuery(where.toString());
+    Query<String> query = session.createQuery(where, String.class);
     query.setParameter("windowId", windowID);
 
     return query.list();
   }
 
   private Date getLastUpdated(Set<String> preferenceSet) {
-    StringBuilder where = new StringBuilder();
-    where.append(" select max(p.updated)");
-    where.append(" from ADPreference p");
-    where.append(" where p.propertyList = true");
-    where.append(" and p.property in :properties");
-    where.append(" and p.client.id = '0'");
-    where.append(" and p.organization = '0'");
-    where.append(" and coalesce(p.visibleAtClient, '0') = '0'");
-    where.append(" and coalesce(p.visibleAtOrganization, '0') = '0'");
+    String where = " select max(p.updated)" //
+        + " from ADPreference p" //
+        + " where p.propertyList = true" //
+        + " and p.property in :properties" //
+        + " and p.client.id = '0'" //
+        + " and p.organization = '0'" //
+        + " and coalesce(p.visibleAtClient, '0') = '0'" //
+        + " and coalesce(p.visibleAtOrganization, '0') = '0'";
 
     Session session = OBDal.getInstance().getSession();
-    Query query = session.createQuery(where.toString());
+    Query<Date> query = session.createQuery(where, Date.class);
     query.setParameterList("properties", preferenceSet);
-    Date lastUpdated = (Date) query.uniqueResult();
+    Date lastUpdated = query.uniqueResult();
 
     return lastUpdated;
+  }
+
+  private String getAuditStatus(Window window) {
+    String where = "select t.table.isFullyAudited " //
+        + "  from ADTab t " //
+        + " where t.window = :window " //
+        + " order by t.sequenceNumber, t.id"; //
+    Query<Boolean> q = OBDal.getInstance().getSession().createQuery(where, Boolean.class);
+    q.setParameter("window", window);
+
+    return Arrays.asList(q.list()).toString();
   }
 }

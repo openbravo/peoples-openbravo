@@ -23,7 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
@@ -47,7 +48,7 @@ import org.openbravo.test.base.OBBaseTest;
 
 public class DatasetServiceTest extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(DatasetServiceTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Tests that all data sets have correct queries defined in the DataSetTable.
@@ -151,8 +152,8 @@ public class DatasetServiceTest extends OBBaseTest {
   }
 
   private List<DataSet> getDatasetsOfModulesInOb3Distribution() {
-    OBQuery<DataSet> query = OBDal.getInstance().createQuery(DataSet.class,
-        " as e where e.module.id in (:moduleList)");
+    OBQuery<DataSet> query = OBDal.getInstance()
+        .createQuery(DataSet.class, " as e where e.module.id in (:moduleList)");
     query.setNamedParameter("moduleList", ModulesInOB3Distribution.getModules());
     return query.list();
   }

@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
@@ -40,7 +41,7 @@ import org.openbravo.service.db.DalBaseProcess;
 
 public class GenerateAggregatedDataBackground extends DalBaseProcess {
 
-  private static final Logger log4j = Logger.getLogger(GenerateAggregatedDataBackground.class);
+  private static final Logger log4j = LogManager.getLogger();
   private ProcessLogger logger;
 
   @Override
@@ -85,8 +86,8 @@ public class GenerateAggregatedDataBackground extends DalBaseProcess {
       for (Organization legalEntity : legalEntities) {
 
         // Get Closed Periods that need to be aggregated
-        List<Period> periodList = ResetValuedStockAggregated.getClosedPeriodsToAggregate(
-            new Date(), legalEntity.getClient().getId(), legalEntity.getId());
+        List<Period> periodList = ResetValuedStockAggregated.getClosedPeriodsToAggregate(new Date(),
+            legalEntity.getClient().getId(), legalEntity.getId());
 
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         Date startingDate = formatter.parse("01-01-0000");
@@ -112,12 +113,12 @@ public class GenerateAggregatedDataBackground extends DalBaseProcess {
           contPeriodNumber++;
           log4j.debug("[GenerateAggregatedDataBackground] Periods processed: " + contPeriodNumber
               + " of " + totalNumberOfPeriods);
-          log4j.debug("[GenerateAggregatedDataBackground] Time to process period: "
-              + elapsedTimePeriod);
+          log4j.debug(
+              "[GenerateAggregatedDataBackground] Time to process period: " + elapsedTimePeriod);
         }
         long elapsedTime = (System.currentTimeMillis() - start);
-        log4j.debug("[GenerateAggregatedDataBackground] Time to process all periods: "
-            + elapsedTime);
+        log4j.debug(
+            "[GenerateAggregatedDataBackground] Time to process all periods: " + elapsedTime);
       }
 
       logger.logln(OBMessageUtils.messageBD("Success"));
@@ -126,8 +127,9 @@ public class GenerateAggregatedDataBackground extends DalBaseProcess {
 
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      String message = OBMessageUtils.parseTranslation(bundle.getConnection(), bundle.getContext()
-          .toVars(), OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
+      String message = OBMessageUtils.parseTranslation(bundle.getConnection(),
+          bundle.getContext().toVars(), OBContext.getOBContext().getLanguage().getLanguage(),
+          e.getMessage());
       result.setMessage(message);
       result.setType("Error");
       result.setTitle(OBMessageUtils.messageBD("Error"));

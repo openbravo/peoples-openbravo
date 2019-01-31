@@ -20,7 +20,8 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -37,7 +38,7 @@ import org.openbravo.model.common.plm.ProductCharacteristicConf;
 
 public class ProductEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Product.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -71,8 +72,8 @@ public class ProductEventHandler extends EntityPersistenceEventObserver {
             for (CharacteristicValue chValue : productCh.getCharacteristic()
                 .getCharacteristicValueList()) {
               if (!chValue.isSummaryLevel()) {
-                ProductCharacteristicConf charConf = OBProvider.getInstance().get(
-                    ProductCharacteristicConf.class);
+                ProductCharacteristicConf charConf = OBProvider.getInstance()
+                    .get(ProductCharacteristicConf.class);
                 charConf.setCharacteristicOfProduct(productCh);
                 charConf.setOrganization(productCh.getOrganization());
                 charConf.setCharacteristicValue(chValue);

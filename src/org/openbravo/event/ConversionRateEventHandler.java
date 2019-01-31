@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,9 @@ import java.util.Date;
 
 import javax.enterprise.event.Observes;
 
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -34,22 +36,19 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ConversionRateEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      ConversionRate.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(ConversionRate.ENTITY_NAME) };
 
-  protected Logger logger = LoggerFactory.getLogger(ConversionRateEventHandler.class);
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
   }
 
-  public void onNew(@Observes
-  EntityNewEvent event) {
+  public void onNew(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -63,8 +62,7 @@ public class ConversionRateEventHandler extends EntityPersistenceEventObserver {
     }
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -79,8 +77,8 @@ public class ConversionRateEventHandler extends EntityPersistenceEventObserver {
   }
 
   // Check if exists another record using this currencyFrom - currencyTo in the same dates
-  private boolean existsRecord(String id, Client client, Currency currencyFrom,
-      Currency currencyTo, Date validFrom, Date validTo) {
+  private boolean existsRecord(String id, Client client, Currency currencyFrom, Currency currencyTo,
+      Date validFrom, Date validTo) {
     StringBuilder hql = new StringBuilder();
     hql.append(" SELECT t." + ConversionRate.PROPERTY_ID);
     hql.append(" FROM " + ConversionRate.ENTITY_NAME + " as t");
@@ -92,10 +90,12 @@ public class ConversionRateEventHandler extends EntityPersistenceEventObserver {
         + ConversionRate.PROPERTY_VALIDTODATE);
     hql.append(" OR :validTo between t." + ConversionRate.PROPERTY_VALIDFROMDATE + " AND t."
         + ConversionRate.PROPERTY_VALIDTODATE + ")");
-    hql.append(" OR (:validFrom < t." + ConversionRate.PROPERTY_VALIDFROMDATE
-        + " AND :validTo > t." + ConversionRate.PROPERTY_VALIDTODATE + "))");
+    hql.append(" OR (:validFrom < t." + ConversionRate.PROPERTY_VALIDFROMDATE + " AND :validTo > t."
+        + ConversionRate.PROPERTY_VALIDTODATE + "))");
 
-    final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    final Query<String> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql.toString(), String.class);
     query.setParameter("id", id);
     query.setParameter("client", client);
     query.setParameter("currencyFrom", currencyFrom);

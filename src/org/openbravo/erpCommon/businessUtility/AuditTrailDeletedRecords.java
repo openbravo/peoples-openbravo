@@ -20,7 +20,8 @@ package org.openbravo.erpCommon.businessUtility;
 
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
@@ -32,7 +33,7 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Tab;
 
 class AuditTrailDeletedRecords {
-  private static final Logger log4j = Logger.getLogger(AuditTrailDeletedRecords.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /**
    * Same as
@@ -104,11 +105,13 @@ class AuditTrailDeletedRecords {
       if (hasRange && conn.getRDBMS().equalsIgnoreCase("ORACLE")) {
         sql.append("SELECT ROWNUM AS RN1, ").append(tableName).append(".* FROM(\n");
       }
-      sql.append("SELECT record_id as rowkey, event_time as audittrailtime, ad_user_id as audittrailuser, processType as audittrailprocesstype, process_id as audittrailprocessid\n");
+      sql.append(
+          "SELECT record_id as rowkey, event_time as audittrailtime, ad_user_id as audittrailuser, processType as audittrailprocesstype, process_id as audittrailprocessid\n");
       for (Column col : tab.getTable().getADColumnList()) {
         // obtain information for all columns
         sql.append(", ");
-        sql.append("(SELECT COALESCE(OLD_CHAR, TO_CHAR(OLD_NCHAR), TO_CHAR(OLD_NUMBER), TO_CHAR(OLD_DATE), TO_CHAR(OLD_TEXT))\n");
+        sql.append(
+            "(SELECT COALESCE(OLD_CHAR, TO_CHAR(OLD_NCHAR), TO_CHAR(OLD_NUMBER), TO_CHAR(OLD_DATE), TO_CHAR(OLD_TEXT))\n");
         sql.append("  FROM AD_AUDIT_TRAIL\n");
         sql.append(" WHERE AD_TABLE_ID='").append(tab.getTable().getId()).append("'\n");
         sql.append("   AND AD_COLUMN_ID='").append(col.getId()).append("'\n");
@@ -121,28 +124,31 @@ class AuditTrailDeletedRecords {
       sql.append("WHERE ACTION='D'\n");
       sql.append("  AND AD_TABLE_ID = '").append(tab.getTable().getId()).append("'\n");
       sql.append("  AND AD_COLUMN_ID = '")
-          .append(
-              ModelProvider.getInstance().getEntityByTableName(tableName).getIdProperties().get(0)
-                  .getColumnId()).append("'\n");
+          .append(ModelProvider.getInstance()
+              .getEntityByTableName(tableName)
+              .getIdProperties()
+              .get(0)
+              .getColumnId())
+          .append("'\n");
 
       // Add security filter
       sql.append(" AND AD_CLIENT_ID IN (")
           .append(Utility.getContext(conn, vars, "#User_Client", tab.getWindow().getId()))
           .append(")\n");
       sql.append(" AND AD_ORG_ID IN (")
-          .append(
-              Utility.getContext(conn, vars, "#AccessibleOrgTree", tab.getWindow().getId(),
-                  Integer.parseInt(tab.getTable().getDataAccessLevel()))).append(")\n");
+          .append(Utility.getContext(conn, vars, "#AccessibleOrgTree", tab.getWindow().getId(),
+              Integer.parseInt(tab.getTable().getDataAccessLevel())))
+          .append(")\n");
       // optional filters from UI - pass via params as they come in unfiltered
       Vector<String> params = new Vector<String>();
       if (dateFrom != null && !dateFrom.isEmpty()) {
-        sql.append(" AND event_time >= TO_DATE(?, '"
-            + vars.getSessionValue("#AD_SqlDateTimeFormat") + "')");
+        sql.append(" AND event_time >= TO_DATE(?, '" + vars.getSessionValue("#AD_SqlDateTimeFormat")
+            + "')");
         params.add(dateFrom);
       }
       if (dateTo != null && !dateTo.isEmpty()) {
-        sql.append(" AND event_time <= TO_DATE(?, '"
-            + vars.getSessionValue("#AD_SqlDateTimeFormat") + "')");
+        sql.append(" AND event_time <= TO_DATE(?, '" + vars.getSessionValue("#AD_SqlDateTimeFormat")
+            + "')");
         params.add(dateTo);
 
       }
@@ -179,13 +185,15 @@ class AuditTrailDeletedRecords {
         String rangeEnd = Integer.toString(startPosition + rangeLength);
         if (conn.getRDBMS().equalsIgnoreCase("ORACLE")) {
           sql.append(") WHERE RN1 ");
-          if (hasRangeLimit)
+          if (hasRangeLimit) {
             sql.append("BETWEEN " + rangeStart + " AND " + rangeEnd);
-          else
+          } else {
             sql.append(">= ").append(rangeStart);
+          }
         } else {
-          if (hasRangeLimit)
+          if (hasRangeLimit) {
             sql.append(" LIMIT " + Integer.toString(rangeLength));
+          }
           sql.append(" OFFSET " + Integer.toString(startPosition));
         }
       }

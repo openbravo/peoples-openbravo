@@ -16,18 +16,23 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009-2016 Openbravo SLU
+* All portions are Copyright (C) 2009-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
 /*
-* It returns the organization that is period control allowed for the p_organization Organization.
-* If no organization is found, it returns NULL.
+* It returns the period allowed organization of the p_organization Organization.
+* If period allowed organization is not set, it returns NULL.
+*
+* This function works only for organizations set as ready. For the flows where 
+* the organization is not set as ready yet, please use AD_ORG_GETPERIODCONTROLALLOWTN instead.
+*
+* Only when working with ready organizations, and in processes where performance is important, 
+* it is highly recommended to directly query AD_Org.AD_PERIODCONTROLALLOWED_ORG_ID column. 
 */
 
-  v_isperiodcontrolallowed AD_Org.IsPeriodControlAllowed%TYPE;  
-  v_parent_id ad_treenode.parent_id%TYPE;
+  v_periodcontrolallowed_org_id AD_Org.AD_periodcontrolallowed_org_id%TYPE;
 
 BEGIN
 
@@ -35,25 +40,16 @@ BEGIN
     RETURN NULL;
   END IF;
 
-  SELECT IsPeriodControlAllowed
-  INTO v_isperiodcontrolallowed
-  FROM AD_Org
-  WHERE AD_Org_ID=p_organization;
+  BEGIN
+    SELECT AD_periodcontrolallowed_org_id
+    INTO v_periodcontrolallowed_org_id
+    FROM AD_Org
+    WHERE AD_Org_ID = p_organization;
+  EXCEPTION WHEN NO_DATA_FOUND THEN
+    v_periodcontrolallowed_org_id := NULL;
+  END;
   
-  IF (v_isperiodcontrolallowed='Y') THEN
-    RETURN p_organization;
-  ELSIF (p_organization='0') THEN
-    RETURN NULL;
-  ELSE
-    SELECT tn.parent_id
-    INTO v_parent_id
-    FROM ad_tree t JOIN ad_treenode tn
-    ON t.ad_tree_id = tn.ad_tree_id
-    WHERE tn.node_id=p_organization
-    AND t.ad_table_id='155';
-    RETURN ad_org_getperiodcontrolallow(v_parent_id);
-  END IF;
-RETURN NULL;
+RETURN v_periodcontrolallowed_org_id;
 END AD_ORG_GETPERIODCONTROLALLOW
 ]]></body>
     </function>

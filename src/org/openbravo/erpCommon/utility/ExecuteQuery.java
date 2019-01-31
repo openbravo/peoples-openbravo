@@ -26,7 +26,8 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
@@ -38,7 +39,7 @@ import org.openbravo.database.ConnectionProvider;
  */
 public class ExecuteQuery {
 
-  private static final Logger log4j = Logger.getLogger(ExecuteQuery.class);
+  private static final Logger log4j = LogManager.getLogger();
   private ConnectionProvider pool;
   private Vector<String> parameters = new Vector<String>();
   private String sql;
@@ -75,8 +76,9 @@ public class ExecuteQuery {
    * @throws Exception
    */
   private void setPool(ConnectionProvider _conn) throws Exception {
-    if (_conn == null)
+    if (_conn == null) {
       throw new Exception("The pool is null");
+    }
     this.pool = _conn;
   }
 
@@ -137,10 +139,11 @@ public class ExecuteQuery {
    * @return String with the parameter.
    */
   private String getParameter(int position) {
-    if (this.parameters == null || this.parameters.size() < position)
+    if (this.parameters == null || this.parameters.size() < position) {
       return "";
-    else
+    } else {
       return this.parameters.elementAt(position);
+    }
   }
 
   /**
@@ -155,16 +158,18 @@ public class ExecuteQuery {
     Vector<SQLReturnObject> vector = new Vector<SQLReturnObject>(0);
 
     String strSQL = getSQL();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("SQL: " + strSQL);
+    }
 
     try {
       st = getPool().getPreparedStatement(strSQL);
       Vector<String> params = getParameters();
       if (params != null) {
         for (int iParameter = 0; iParameter < params.size(); iParameter++) {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("PARAMETER " + iParameter + ":" + getParameter(iParameter));
+          }
           UtilSql.setValue(st, iParameter + 1, 12, null, getParameter(iParameter));
         }
       }
@@ -191,8 +196,8 @@ public class ExecuteQuery {
       result.close();
     } catch (SQLException e) {
       log4j.error("SQL error in query: " + strSQL.toString() + "Exception:" + e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage(), e);
+      throw new ServletException(
+          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage(), e);
     } catch (Exception ex) {
       log4j.error("Exception in query: " + strSQL.toString() + "Exception:" + ex);
       throw new ServletException("@CODE=@" + ex.getMessage());

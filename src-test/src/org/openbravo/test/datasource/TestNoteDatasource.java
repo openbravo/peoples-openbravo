@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,7 @@ package org.openbravo.test.datasource;
  * 
  * @author NaroaIriarte
  */
+
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -36,6 +37,7 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.client.application.Note;
 import org.openbravo.dal.core.OBContext;
@@ -54,6 +56,14 @@ public class TestNoteDatasource extends BaseDataSourceTestDal {
   private static final String RECORD_ID = "3EFF470687024F099FB40438AAB20BED";
   private static final String LANGUAGE_ID = "192";
   private static final String WAREHOUSE_ID = "4D45FE4C515041709047F51D139A21AC";
+
+  /**
+   * Required in order to have the CSRF token available
+   */
+  @Before
+  public void authenticateUser() throws Exception {
+    authenticate();
+  }
 
   /**
    * Test to fetch values from NoteDataSource. At first a note is added by a user. After that the
@@ -75,8 +85,8 @@ public class TestNoteDatasource extends BaseDataSourceTestDal {
       JSONArray noteData = new JSONArray();
       JSONObject noteResponseMid = new JSONObject();
       JSONArray noteResponseFetch = new JSONArray();
-      
-      //A request for adding a note is sent
+
+      // A request for adding a note is sent
       responseAdd = addANote();
       JSONObject jsonResponse = new JSONObject(responseAdd);
       noteDataMid = jsonResponse.getJSONObject("response");
@@ -87,14 +97,14 @@ public class TestNoteDatasource extends BaseDataSourceTestDal {
       assertThat(getStatus(jsonResponseAdd),
           is(String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
       assertThat(note, is(notNullValue()));
-   
+
       // change the note's organization, the current user has no access to
       // the organization, but should have access to the note
       Organization org = OBDal.getInstance().get(Organization.class, SPANISH_ORGANIZATION);
       note.setOrganization(org);
       OBDal.getInstance().commitAndClose();
-      
-      //A request for doing the fetch of the notes is sent
+
+      // A request for doing the fetch of the notes is sent
       response = fetchNote();
       JSONObject jsonResponseFetch = new JSONObject(response);
       assertThat(getStatus(jsonResponseFetch),
@@ -104,8 +114,8 @@ public class TestNoteDatasource extends BaseDataSourceTestDal {
       assertThat(noteResponseFetch.length(), is(not(0)));
       assertThat(noteResponseFetch.toString(), containsString(noteId));
       OBDal.getInstance().commitAndClose();
-      
-      //A request for removing the note is sent
+
+      // A request for removing the note is sent
       responseRemove = removeNote(noteId);
       JSONObject jsonResponseRemove = new JSONObject(responseRemove);
       assertThat(getStatus(jsonResponseRemove),
@@ -131,6 +141,7 @@ public class TestNoteDatasource extends BaseDataSourceTestDal {
     JSONObject contentJson = new JSONObject();
     contentJson.put("operationType", "add");
     contentJson.put("data", dataObject);
+    contentJson.put("csrfToken", getSessionCsrfToken());
     String responseAdd = doRequest("/org.openbravo.service.datasource/" + DATASOURCE_ID,
         contentJson.toString(), 200, "POST", "application/json");
     return responseAdd;
@@ -161,7 +172,8 @@ public class TestNoteDatasource extends BaseDataSourceTestDal {
   private String removeNote(String noteId) throws Exception {
     Map<String, String> paramsRemove = new HashMap<String, String>();
     String responseRemove = doRequest("/org.openbravo.service.datasource/" + DATASOURCE_ID
-        + "?_operationType=remove&id=" + noteId, paramsRemove, 200, "DELETE");
+        + "?_operationType=remove&id=" + noteId + "&csrfToken=" + getSessionCsrfToken(),
+        paramsRemove, 200, "DELETE");
     return responseRemove;
   }
 

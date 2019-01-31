@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +38,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tika.Tika;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -68,8 +72,6 @@ import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class that centralizes the Attachment Management. Any action to manage an attachment in Openbravo
@@ -80,7 +82,8 @@ import org.slf4j.LoggerFactory;
  */
 public class AttachImplementationManager {
 
-  private static final Logger log = LoggerFactory.getLogger(AttachImplementationManager.class);
+  private static final Logger log = LogManager.getLogger();
+  private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
   public static final String REFERENCE_LIST = "17";
   public static final String REFERENCE_SELECTOR_REFERENCE = "95E2A8B50A254B2AAE6774B8C2F28120";
@@ -93,7 +96,9 @@ public class AttachImplementationManager {
   private ApplicationDictionaryCachedStructures adcs;
 
   private static final int DATA_TYPE_MAX_LENGTH = ModelProvider.getInstance()
-      .getEntity(Attachment.class).getProperty(Attachment.PROPERTY_DATATYPE).getFieldLength();
+      .getEntity(Attachment.class)
+      .getProperty(Attachment.PROPERTY_DATATYPE)
+      .getFieldLength();
 
   /**
    * Method to upload files. This method calls needed handler class
@@ -262,13 +267,28 @@ public class AttachImplementationManager {
 
       boolean isTempFile = handler.isTempFile();
       if (isTempFile) {
-        file.delete();
+        deleteTempFile(file);
       }
 
     } catch (IOException e) {
       throw new OBException(OBMessageUtils.messageBD("Error downloading file"), e);
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  private void deleteTempFile(File file) {
+    Path parent = file.toPath().getParent();
+    Path tmpDir = Paths.get(TEMP_DIR);
+    file.delete();
+    if (parent.equals(tmpDir)) {
+      return;
+    }
+    try {
+      // Delete also temporary file's parent directory if it is empty
+      Files.delete(parent);
+    } catch (IOException ioex) {
+      log.error("Could not delete directory {}", parent, ioex);
     }
   }
 
@@ -294,19 +314,21 @@ public class AttachImplementationManager {
       final ZipOutputStream dest = new ZipOutputStream(os);
       HashMap<String, Integer> writtenFiles = new HashMap<String, Integer>();
       OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
-          Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
+          Restrictions.eq("table.id", tableId),
+          Restrictions.in("record", (Object[]) recordIds.split(",")));
       attachmentFiles.setFilterOnReadableOrganization(false);
       for (Attachment attachmentFile : attachmentFiles.list()) {
         checkReadableAccess(attachmentFile);
-        AttachImplementation handler = getHandler(attachmentFile.getAttachmentConf() == null ? "Default"
-            : attachmentFile.getAttachmentConf().getAttachmentMethod().getValue());
+        AttachImplementation handler = getHandler(
+            attachmentFile.getAttachmentConf() == null ? "Default"
+                : attachmentFile.getAttachmentConf().getAttachmentMethod().getValue());
         if (handler == null) {
           throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod"));
         }
         File file = handler.downloadFile(attachmentFile);
         if (!file.exists()) {
-          throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoAttachmentFound") + " :"
-              + file.getName());
+          throw new OBException(
+              OBMessageUtils.messageBD("OBUIAPP_NoAttachmentFound") + " :" + file.getName());
         }
         String zipName = "";
         if (!writtenFiles.containsKey(file.getName())) {
@@ -335,7 +357,7 @@ public class AttachImplementationManager {
         in.close();
         boolean isTempFile = handler.isTempFile();
         if (isTempFile) {
-          file.delete();
+          deleteTempFile(file);
         }
       }
       dest.close();
@@ -471,16 +493,15 @@ public class AttachImplementationManager {
    * @throws OBException
    *           any exception thrown while saving metadata
    */
-  private Map<String, Object> saveMetadata(Map<String, String> requestParams,
-      Attachment attachment, String tabId, String strKey, AttachmentMethod attachMethod)
-      throws OBException {
+  private Map<String, Object> saveMetadata(Map<String, String> requestParams, Attachment attachment,
+      String tabId, String strKey, AttachmentMethod attachMethod) throws OBException {
     Map<String, Object> metadataValues = new HashMap<String, Object>();
     for (Parameter parameter : adcs.getMethodMetadataParameters(attachMethod.getId(), tabId)) {
       final String strMetadataId = parameter.getId();
 
       ParameterValue metadataStoredValue = null;
-      final OBCriteria<ParameterValue> critStoredMetadata = OBDal.getInstance().createCriteria(
-          ParameterValue.class);
+      final OBCriteria<ParameterValue> critStoredMetadata = OBDal.getInstance()
+          .createCriteria(ParameterValue.class);
       critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
       critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER, parameter));
       critStoredMetadata.setMaxResults(1);
@@ -546,8 +567,8 @@ public class AttachImplementationManager {
           strValue = (String) value;
           Reference reference = parameter.getReferenceSearchKey();
           Selector selector = reference.getADSelectorList().get(0);
-          BaseOBObject object = OBDal.getInstance().get(selector.getTable().getEntityName(),
-              strValue);
+          BaseOBObject object = OBDal.getInstance()
+              .get(selector.getTable().getEntityName(), strValue);
           metadataStoredValue.setValueKey(object.getId().toString());
           metadataStoredValue.setValueString(object.getIdentifier());
           JSONObject jsonValue = new JSONObject();

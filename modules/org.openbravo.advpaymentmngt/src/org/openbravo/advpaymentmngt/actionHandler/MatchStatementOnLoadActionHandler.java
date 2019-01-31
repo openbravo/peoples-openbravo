@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
@@ -40,12 +42,9 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.model.financialmgmt.payment.MatchingAlgorithm;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(MatchStatementOnLoadActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -61,12 +60,12 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       boolean executeAutoMatchingAlgm = "true".equals(parameters.get("executeMatching")) ? true
           : false;
 
-      final FIN_FinancialAccount financialAccount = OBDal.getInstance().get(
-          FIN_FinancialAccount.class, strFinancialAccountId);
+      final FIN_FinancialAccount financialAccount = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, strFinancialAccountId);
 
       /* Get the right reconciliation */
-      FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal.getInstance()
-          .get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
+      FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(
+          OBDal.getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
       if (reconciliation == null) {
         // Create a new reconciliation
         reconciliation = APRM_MatchingUtility.addNewDraftReconciliation(financialAccount);
@@ -92,8 +91,8 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
           actions = APRM_MatchingUtility.createMessageInProcessView("@APRM_AutomaticMatchedLines@",
               "success", matchedLines);
         } else {
-          actions = APRM_MatchingUtility.createMessageInProcessView(
-              "@APRM_NoAutomaticMatchedLines@", "warning");
+          actions = APRM_MatchingUtility
+              .createMessageInProcessView("@APRM_NoAutomaticMatchedLines@", "warning");
         }
         jsonResponse.put("responseActions", actions);
       }
@@ -138,8 +137,8 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       bankLinesSR.close();
       i = 0;
       for (i = 0; i < bankLines.size(); i++) {
-        final FIN_BankStatementLine bankStatementLine = OBDal.getInstance().get(
-            FIN_BankStatementLine.class, bankLines.get(i));
+        final FIN_BankStatementLine bankStatementLine = OBDal.getInstance()
+            .get(FIN_BankStatementLine.class, bankLines.get(i));
         FIN_MatchedTransaction matched;
         // try to match if exception is thrown continue
         try {
@@ -149,9 +148,8 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
         }
 
         FIN_FinaccTransaction transaction = matched.getTransaction();
-        if (transaction != null
-            && APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, transaction,
-                reconciliation, matched.getMatchLevel(), false)) {
+        if (transaction != null && APRM_MatchingUtility.matchBankStatementLine(bankStatementLine,
+            transaction, reconciliation, matched.getMatchLevel(), false)) {
           excluded.add(transaction);
           matchedLines++;
           // Required to persist current matching so that it is not rollbacked afterwards because

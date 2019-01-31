@@ -21,12 +21,13 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public final class AcctSchemaElement implements Serializable {
   private static final long serialVersionUID = 1L;
-  static Logger log4jAcctSchemaElement = Logger.getLogger(AcctSchemaElement.class);
+  static Logger log4jAcctSchemaElement = LogManager.getLogger();
 
   public AcctSchemaElement(String id, String seqNo, String name, String segmentType,
       String C_Element_ID, String defaultValue, String mandatory, String balanced) {
@@ -61,37 +62,39 @@ public final class AcctSchemaElement implements Serializable {
         // and String SEGMENT_Account for the next, etc. What's the
         // point
         // defining constants that we do not use
-        if (segmentType.equals("OO"))
+        if (segmentType.equals("OO")) {
           defaultValue = data[i].orgId;
-        else if (segmentType.equals("AC"))
+        } else if (segmentType.equals("AC")) {
           defaultValue = data[i].cElementvalueId;
-        else if (segmentType.equals("BP"))
+        } else if (segmentType.equals("BP")) {
           defaultValue = data[i].cBpartnerId;
-        else if (segmentType.equals("PR"))
+        } else if (segmentType.equals("PR")) {
           defaultValue = data[i].mProductId;
-        else if (segmentType.equals("AY"))
+        } else if (segmentType.equals("AY")) {
           defaultValue = data[i].cActivityId;
-        else if (segmentType.equals("LF"))
+        } else if (segmentType.equals("LF")) {
           defaultValue = data[i].cLocationId;
-        else if (segmentType.equals("LT"))
+        } else if (segmentType.equals("LT")) {
           defaultValue = data[i].cLocationId;
-        else if (segmentType.equals("MC"))
+        } else if (segmentType.equals("MC")) {
           defaultValue = data[i].cCampaignId;
-        else if (segmentType.equals("OT"))
+        } else if (segmentType.equals("OT")) {
           defaultValue = data[i].orgId;
-        else if (segmentType.equals("PJ"))
+        } else if (segmentType.equals("PJ")) {
           defaultValue = data[i].cProjectId;
-        else if (segmentType.equals("SR"))
+        } else if (segmentType.equals("SR")) {
           defaultValue = data[i].cSalesregionId;
-        else if (segmentType.equals("U1"))
+        } else if (segmentType.equals("U1")) {
           defaultValue = data[i].cElementvalueId;
-        else if (segmentType.equals("U2"))
+        } else if (segmentType.equals("U2")) {
           defaultValue = data[i].cElementvalueId;
+        }
         log4jAcctSchemaElement.debug(seqNo + " " + name + " " + segmentType + "=" + defaultValue);
-        if (mandatory.equals("Y") && defaultValue.equals(""))
+        if (mandatory.equals("Y") && defaultValue.equals("")) {
           log4jAcctSchemaElement
               .debug("AcctSchameElement.getAcctSchemaElementList - No default value for " + name
                   + " for AccountingSchema: " + C_AcctSchema_ID);
+        }
         e = new AcctSchemaElement(id, seqNo, name, segmentType, C_Element_ID, defaultValue,
             mandatory, balanced);
         list.add(e);

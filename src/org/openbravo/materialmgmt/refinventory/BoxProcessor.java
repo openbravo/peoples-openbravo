@@ -79,8 +79,9 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
   protected AttributeSetInstance getAttributeSetInstanceTo(final StorageDetail storageDetail) {
     // Attribute previously created in this box execution
     if (storageDetailNewAttributeIdMap.containsKey(storageDetail.getId())) {
-      return OBDal.getInstance().getProxy(AttributeSetInstance.class,
-          storageDetailNewAttributeIdMap.get(storageDetail.getId()));
+      return OBDal.getInstance()
+          .getProxy(AttributeSetInstance.class,
+              storageDetailNewAttributeIdMap.get(storageDetail.getId()));
     }
 
     // Attribute previously created in other box executions for this refInventory
@@ -89,7 +90,8 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
             getReferencedInventory());
     if (previouslyClonedAttributeSetInstance == null) {
       final AttributeSetInstance newAttributeSetInstance = ReferencedInventoryUtil
-          .cloneAttributeSetInstance(storageDetail.getAttributeSetValue(), getReferencedInventory());
+          .cloneAttributeSetInstance(storageDetail.getAttributeSetValue(),
+              getReferencedInventory());
       storageDetailNewAttributeIdMap.put(storageDetail.getId(), newAttributeSetInstance.getId());
       return newAttributeSetInstance;
     } else {

@@ -26,7 +26,8 @@ import static org.junit.Assert.fail;
 import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -51,7 +52,7 @@ import org.openbravo.model.common.geography.Region;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WSUpdateTest extends BaseWSTest {
 
-  private static final Logger log = Logger.getLogger(WSUpdateTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static String cityId = null;
 
@@ -163,8 +164,8 @@ public class WSUpdateTest extends BaseWSTest {
 
   private void doTestReadAddDeleteCity(boolean doDeleteQuery) throws Exception {
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
-    String newCity = city.replaceAll("</name>", (System.currentTimeMillis() + "").substring(6)
-        + "</name>");
+    String newCity = city.replaceAll("</name>",
+        (System.currentTimeMillis() + "").substring(6) + "</name>");
     final String newName = getTagValue(newCity, "name");
 
     // newCity = newCity.replaceAll("City id=\"", "City id=\"test");
@@ -195,8 +196,8 @@ public class WSUpdateTest extends BaseWSTest {
         "<ob:result xmlns:ob=\"http://www.openbravo.com\">1</ob:result>", 200);
 
     // and then get a result, should only be one City
-    final String queriedCities = doTestGetRequest("/ws/dal/City?where=name='" + newName + "'",
-        null, 200);
+    final String queriedCities = doTestGetRequest("/ws/dal/City?where=name='" + newName + "'", null,
+        200);
     final int queryIndex = queriedCities.indexOf("<City");
     assertTrue(queryIndex != -1);
     assertTrue(queriedCities.indexOf("<City", queryIndex + 5) == -1);
@@ -248,8 +249,8 @@ public class WSUpdateTest extends BaseWSTest {
   public void testGReadAddCityWrongMethodError() throws Exception {
     initializeCreateCity();
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
-    String newCity = city.replaceAll("</name>", (System.currentTimeMillis() + "").substring(6)
-        + "</name>");
+    String newCity = city.replaceAll("</name>",
+        (System.currentTimeMillis() + "").substring(6) + "</name>");
     newCity = newCity.replaceAll("id=\"", "id=\"test");
     final int index = newCity.indexOf("<id>");
     newCity = newCity.substring(0, index) + "<id>test" + newCity.substring(index + "<id>".length());

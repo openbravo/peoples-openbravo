@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017 Openbravo SLU
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -27,7 +27,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
@@ -41,9 +41,7 @@ public class PriceDifferenceUtil {
       Date movementdate, Organization organization) throws JSONException {
 
     String strUpdate = "UPDATE MaterialMgmtMaterialTransaction trx"
-        + " SET checkpricedifference = 'Y'"
-        + " WHERE exists ("
-        + " SELECT 1"
+        + " SET checkpricedifference = 'Y'" + " WHERE exists (" + " SELECT 1"
         + " FROM  ProcurementReceiptInvoiceMatch mpo"
         + " WHERE trx.isCostCalculated = 'Y' and mpo.goodsShipmentLine.id = trx.goodsShipmentLine.id  "
         + " AND trx.movementDate >= :date and trx.organization.id in (:orgIds)"
@@ -55,6 +53,7 @@ public class PriceDifferenceUtil {
 
     Set<String> products = new HashSet<String>();
     products.addAll(productIds);
+    @SuppressWarnings("rawtypes")
     Query update = OBDal.getInstance().getSession().createQuery(strUpdate);
 
     if (!productIds.isEmpty()) {
@@ -62,7 +61,7 @@ public class PriceDifferenceUtil {
     }
     update.setParameterList("orgIds",
         new OrganizationStructureProvider().getChildTree(organization.getId(), true));
-    update.setDate("date", movementdate);
+    update.setParameter("date", movementdate);
     update.setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId());
 
     update.executeUpdate();

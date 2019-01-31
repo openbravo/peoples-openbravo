@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -81,7 +81,7 @@ isc.OBViewDataSource.addProperties({
     requestProperties = requestProperties || {};
     requestProperties.clientContext = requestProperties.clientContext || {};
 
-    // only update the values of the record itself but not of any referenced 
+    // only update the values of the record itself but not of any referenced
     // entity
     if (operationType === 'update' || operationType === 'add') {
       var correctedData = {},
@@ -133,6 +133,7 @@ isc.OBViewDataSource.addProperties({
       sendOriginalIDBack: true,
       _extraProperties: this.getAdditionalProps()
     };
+
     isc.addProperties(newRequestProperties.params, additionalPara);
     if (!newRequestProperties.dataSource) {
       newRequestProperties.dataSource = this;
@@ -172,7 +173,7 @@ isc.OBViewDataSource.addProperties({
   },
 
   getAdditionalProps: function () {
-    var prop, length, i, fld;
+    var length, i, fld;
     if (this.additionalProps !== null) {
       return this.additionalProps;
     }
@@ -212,7 +213,10 @@ isc.OBViewDataSource.addProperties({
     if (jsonData) {
       var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
       if (errorStatus) {
-        var handled = this.view.setErrorMessageFromResponse(dsResponse, jsonData, dsRequest);
+        var handled = false;
+        if (!this.view.destroyed) {
+          handled = this.view.setErrorMessageFromResponse(dsResponse, jsonData, dsRequest);
+        }
 
         if (!handled && !dsRequest.willHandleError && jsonData.response && jsonData.response.error) {
           OB.KernelUtilities.handleSystemException(jsonData.response.error.message);

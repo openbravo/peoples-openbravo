@@ -11,25 +11,25 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017 Openbravo SLU
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.process;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is a helper that can be used to build the standard response actions of a
  * {@link BaseProcessActionHandler} in an easy way.
  */
 public class ResponseActionsBuilder {
-  private static final Logger log = LoggerFactory.getLogger(ResponseActionsBuilder.class);
+  private static final Logger log = LogManager.getLogger();
 
   private JSONArray responseActions;
   private JSONObject retryExecutionMsg;
@@ -79,7 +79,8 @@ public class ResponseActionsBuilder {
    *          The text of the message.
    * @return a ResponseActionsBuilder that contains a 'show message in view' response action.
    */
-  public ResponseActionsBuilder showMsgInView(MessageType msgType, String msgTitle, String msgText) {
+  public ResponseActionsBuilder showMsgInView(MessageType msgType, String msgTitle,
+      String msgText) {
     addResponseAction("showMsgInView", buildResponseMessage(msgType, msgTitle, msgText));
     return this;
   }
@@ -196,7 +197,8 @@ public class ResponseActionsBuilder {
    *          The identifier of the record to be set in the selector.
    * @return a ResponseActionsBuilder that contains a 'set selector value' response action.
    */
-  public ResponseActionsBuilder setSelectorValueFromRecord(String recordId, String recordIdentifier) {
+  public ResponseActionsBuilder setSelectorValueFromRecord(String recordId,
+      String recordIdentifier) {
     try {
       final JSONObject setSelectorValueFromRecord = new JSONObject();
       final JSONObject record = new JSONObject();
@@ -266,7 +268,34 @@ public class ResponseActionsBuilder {
     try {
       retryExecution = true;
       retryExecutionMsg = new JSONObject();
-      retryExecutionMsg.put("msgType", msgType.getType());
+      retryExecutionMsg.put("severity", msgType.getType());
+      retryExecutionMsg.put("text", msgText);
+    } catch (JSONException ignore) {
+    }
+    return this;
+  }
+
+  /**
+   * Allows to re-execute the process again, by enabling the process UI. This is useful to do
+   * backend validations as this allows the user to fix data and resubmit again. In addition, a
+   * message will be displayed with the severity, title and text specified with the parameters of
+   * this method.
+   *
+   * @param msgType
+   *          The message type.
+   * @param msgTitle
+   *          The title of the message.
+   * @param msgText
+   *          The text of the message.
+   * @return a ResponseActionsBuilder configured to retry the process execution.
+   */
+  public ResponseActionsBuilder retryExecution(MessageType msgType, String msgTitle,
+      String msgText) {
+    try {
+      retryExecution = true;
+      retryExecutionMsg = new JSONObject();
+      retryExecutionMsg.put("severity", msgType.getType());
+      retryExecutionMsg.put("title", msgTitle);
       retryExecutionMsg.put("text", msgText);
     } catch (JSONException ignore) {
     }

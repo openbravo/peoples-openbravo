@@ -27,14 +27,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Zips a file/directory
  * 
  */
 public class Zip {
-  private static Logger log4j = Logger.getLogger(Zip.class);
+  private static Logger log4j = LogManager.getLogger();
 
   private static void zip(File[] list, ZipOutputStream dest, String relativeDir) throws Exception {
     for (int i = 0; i < list.length; i++) {
@@ -56,6 +57,7 @@ public class Zip {
 
   private static void zip(File orig, ZipOutputStream dest, String relativeDir) throws Exception {
     File[] list = orig.listFiles(new FilenameFilter() {
+      @Override
       public boolean accept(File f, String s) {
         return !s.equals(".svn");
       }
@@ -67,8 +69,8 @@ public class Zip {
   public static void zip(File[] list, String dest, String relativeDir) throws Exception {
     String localRelativeDir = relativeDir;
     ZipOutputStream destZip = new ZipOutputStream(new FileOutputStream(dest));
-    localRelativeDir = (localRelativeDir + (localRelativeDir.endsWith("/") ? "" : "/")).replace(
-        "/", File.separator);
+    localRelativeDir = (localRelativeDir + (localRelativeDir.endsWith("/") ? "" : "/")).replace("/",
+        File.separator);
     zip(list, destZip, localRelativeDir);
     destZip.close();
     log4j.info("zipped in " + dest);
@@ -77,8 +79,8 @@ public class Zip {
   public static void zip(String orig, String dest, String relativeDir) throws Exception {
     String localRelativeDir = relativeDir;
     File file = new File(orig);
-    localRelativeDir = (localRelativeDir + (localRelativeDir.endsWith("/") ? "" : "/")).replace(
-        "/", File.separator);
+    localRelativeDir = (localRelativeDir + (localRelativeDir.endsWith("/") ? "" : "/")).replace("/",
+        File.separator);
     ZipOutputStream destZip = new ZipOutputStream(new FileOutputStream(dest));
     zip(file, destZip, localRelativeDir);
     destZip.close();

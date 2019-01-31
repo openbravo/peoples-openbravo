@@ -22,6 +22,8 @@ package org.openbravo.common.actionhandler;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
@@ -31,12 +33,9 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.ServicePriceUtils;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(ServiceRelatedLinePriceActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String RFC_ORDERLINE_TAB_ID = "AF4090093D471431E040007F010048A5";
 
   @Override
@@ -49,15 +48,15 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
       jsonRequest = new JSONObject(content);
       log.debug("{}", jsonRequest);
 
-      final OrderLine serviceOrderline = OBDal.getInstance().get(OrderLine.class,
-          jsonRequest.getString("orderlineId"));
+      final OrderLine serviceOrderline = OBDal.getInstance()
+          .get(OrderLine.class, jsonRequest.getString("orderlineId"));
       BigDecimal amount = new BigDecimal(jsonRequest.getString("amount"));
       BigDecimal discounts = new BigDecimal(jsonRequest.getString("discounts"));
       BigDecimal priceamount = new BigDecimal(jsonRequest.getString("priceamount"));
       BigDecimal relatedQty = new BigDecimal(jsonRequest.getString("relatedqty"));
       BigDecimal unitDiscountsAmt = new BigDecimal(jsonRequest.getString("unitdiscountsamt"));
-      final OrderLine orderLineToRelate = OBDal.getInstance().get(OrderLine.class,
-          jsonRequest.getString("orderLineToRelateId"));
+      final OrderLine orderLineToRelate = OBDal.getInstance()
+          .get(OrderLine.class, jsonRequest.getString("orderLineToRelateId"));
       String tabId = jsonRequest.getString("tabId");
       boolean state = false;
       if (jsonRequest.has("state") && jsonRequest.get("state") != JSONObject.NULL) {
@@ -78,8 +77,8 @@ public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
       try {
         result = new JSONObject();
         String message = OBMessageUtils.parseTranslation(new DalConnectionProvider(false),
-            RequestContext.get().getVariablesSecureApp(), OBContext.getOBContext().getLanguage()
-                .getLanguage(), e.getMessage());
+            RequestContext.get().getVariablesSecureApp(),
+            OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
         errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("title", "Error");

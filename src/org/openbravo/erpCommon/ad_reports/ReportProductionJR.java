@@ -27,9 +27,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -45,11 +42,15 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
+
 public class ReportProductionJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -71,19 +72,20 @@ public class ReportProductionJR extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strRawMaterial) throws IOException,
-      ServletException {
+      String strDateFrom, String strDateTo, String strRawMaterial)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportProductionJR").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProductionJR")
+        .createXmlDocument();
 
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportProduction", false, "",
-        "", "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportProduction", false, "", "",
+        "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -129,8 +131,8 @@ public class ReportProductionJR extends HttpSecureAppServlet {
   }
 
   private void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strRawMaterial) throws IOException,
-      ServletException {
+      String strDateFrom, String strDateTo, String strRawMaterial)
+      throws IOException, ServletException {
 
     String localStrRawMaterial = strRawMaterial;
     if (log4j.isDebugEnabled()) {
@@ -167,8 +169,8 @@ public class ReportProductionJR extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) {
       log4j.debug("inpDateFrom:"
           + vars.getRequestGlobalVariable("inpDateFrom", "ReportProductionJR|DateFrom"));
-      log4j.debug("inpDateTo:"
-          + vars.getRequestGlobalVariable("inpDateTo", "ReportProductionJR|DateFrom"));
+      log4j.debug(
+          "inpDateTo:" + vars.getRequestGlobalVariable("inpDateTo", "ReportProductionJR|DateFrom"));
     }
 
     String strLanguage = vars.getLanguage();
@@ -176,8 +178,8 @@ public class ReportProductionJR extends HttpSecureAppServlet {
 
     JasperReport jasperReportLines;
     try {
-      jasperReportLines = ReportingUtils.compileReport(strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/productionSubReport.jrxml");
+      jasperReportLines = ReportingUtils.compileReport(
+          strBaseDesign + "/org/openbravo/erpCommon/ad_reports/productionSubReport.jrxml");
     } catch (JRException e) {
       e.printStackTrace();
       throw new ServletException(e.getMessage());
@@ -207,6 +209,7 @@ public class ReportProductionJR extends HttpSecureAppServlet {
 
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportProduction. This Servlet was made by Jon Alegria";
   } // end of getServletInfo() method

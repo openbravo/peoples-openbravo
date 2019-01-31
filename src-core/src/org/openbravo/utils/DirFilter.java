@@ -27,6 +27,7 @@ public class DirFilter implements FilenameFilter {
     this.files = files;
   }
 
+  @Override
   public boolean accept(File dir, String name) {
     if (files != null) {
       return (files.contains(name)) || new File(dir, name).isDirectory();

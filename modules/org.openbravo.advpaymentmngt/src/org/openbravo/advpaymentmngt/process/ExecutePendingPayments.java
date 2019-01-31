@@ -64,10 +64,9 @@ public class ExecutePendingPayments extends DalBaseProcess {
       // Is it right?
       try {
         for (APRMPendingPaymentFromInvoice pendingPayment : pendingPayments) {
-          if (executionProcess != null
-              && organization != null
-              && (executionProcess != pendingPayment.getPaymentExecutionProcess() || organization != pendingPayment
-                  .getOrganization())) {
+          if (executionProcess != null && organization != null
+              && (executionProcess != pendingPayment.getPaymentExecutionProcess()
+                  || organization != pendingPayment.getOrganization())) {
             logger.logln(executionProcess.getIdentifier());
             if (dao.isAutomaticExecutionProcess(executionProcess)) {
               FIN_ExecutePayment executePayment = new FIN_ExecutePayment();

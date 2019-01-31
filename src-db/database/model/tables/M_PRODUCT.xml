@@ -405,6 +405,22 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_PRODUCT_STATUS_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISMODIFYTAX" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="RELATEPRODCATTAXTOSERVICE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="COPYSERVICEMODIFYTAXCONFIG" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -447,6 +463,9 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_PRODUCT_M_PRODUCT_CATEGORY">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_STATUS" name="M_PRODUCT_M_PRODUCT_STATUS">
+        <reference local="M_PRODUCT_STATUS_ID" foreign="M_PRODUCT_STATUS_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="MRP_PLANNER" name="M_PRODUCT_MRP_PLANNER">
         <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
       </foreign-key>
@@ -487,6 +506,10 @@
       <index name="M_PRODUCT_PRODUCTCATEGORY" unique="false">
         <index-column name="M_PRODUCT_CATEGORY_ID"/>
       </index>
+      <index name="M_PRODUCT_SALESREP" unique="false">
+        <index-column name="SALESREP_ID"/>
+        <whereClause><![CDATA[SALESREP_ID IS NOT NULL]]></whereClause>
+      </index>
       <index name="M_PRODUCT_UPC_ID" unique="false">
         <index-column name="UPC"/>
         <index-column name="M_PRODUCT_ID"/>
@@ -518,6 +541,7 @@
       <check name="M_PRODUCT_ISEXPDEFERRED_CHK"><![CDATA[ISDEFERREDEXPENSE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISGENERIC"><![CDATA[ISGENERIC IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISINVOICEPRINTDE_CHK"><![CDATA[ISINVOICEPRINTDETAILS IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_ISMODIFYTAX_CHK"><![CDATA[ISMODIFYTAX IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISPICKLISTPRINTD_CHK"><![CDATA[ISPICKLISTPRINTDETAILS IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISPURCHASED_CHECK"><![CDATA[ISPURCHASED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISQTYVAR_CHECK"><![CDATA[ISQUANTITYVARIABLE IN ('Y', 'N')]]></check>
@@ -531,6 +555,7 @@
       <check name="M_PRODUCT_PRICERULEBASED_CHECK"><![CDATA[ISPRICERULEBASED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_PRINT_DESCRIP_CHECK"><![CDATA[PRINT_DESCRIPTION IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_RETURNABLE_CHECK"><![CDATA[RETURNABLE IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_STATUS_CHK"><![CDATA[M_PRODUCT_STATUS_ID IS NULL OR ISSTOCKED = 'Y']]></check>
       <check name="M_PRODUCT_UN_PERDOCUMENT_CHECK"><![CDATA[UNIQUE_PER_DOCUMENT IN ('Y', 'N')]]></check>
     </table>
   </database>

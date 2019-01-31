@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,8 @@ import java.util.Date;
 
 import javax.servlet.ServletException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -44,8 +46,6 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author awolski
@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 public class OBScheduler {
   private static final OBScheduler INSTANCE = new OBScheduler();
 
-  private static Logger log = LoggerFactory.getLogger(OBScheduler.class);
+  private static Logger log = LogManager.getLogger();
 
   private static final String OB_GROUP = "OB_QUARTZ_GROUP";
 
@@ -174,8 +174,8 @@ public class OBScheduler {
    *          the context bundle
    * @throws SchedulerException
    */
-  public void schedule(String requestId, ProcessBundle bundle) throws SchedulerException,
-      ServletException {
+  public void schedule(String requestId, ProcessBundle bundle)
+      throws SchedulerException, ServletException {
     schedule(requestId, bundle, DefaultJob.class.asSubclass(Job.class));
   }
 
@@ -215,7 +215,8 @@ public class OBScheduler {
    * process scheduling.
    */
   public static boolean isNoExecuteBackgroundPolicy() {
-    String policy = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String policy = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty(BACKGROUND_POLICY, "default");
     return NO_EXECUTE_POLICY.equals(policy);
   }
@@ -226,8 +227,8 @@ public class OBScheduler {
    * @throws SchedulerException
    * @throws ServletException
    */
-  public void reschedule(String requestId, ProcessBundle bundle) throws SchedulerException,
-      ServletException {
+  public void reschedule(String requestId, ProcessBundle bundle)
+      throws SchedulerException, ServletException {
     try {
       sched.unscheduleJob(requestId, OB_GROUP);
       sched.deleteJob(requestId, OB_GROUP);
@@ -243,7 +244,7 @@ public class OBScheduler {
       sched.unscheduleJob(requestId, OB_GROUP);
       sched.deleteJob(requestId, OB_GROUP);
       ProcessRequestData.update(getConnection(), UNSCHEDULED, null, sqlDateTimeFormat,
-          format(new Date()), requestId);
+          format(new Date()), context.getUser(), requestId);
     } catch (final Exception e) {
       log.error("An error occurred unscheduling process " + requestId, e);
     }
@@ -279,16 +280,19 @@ public class OBScheduler {
 
       for (final ProcessRequestData request : data) {
         final String requestId = request.id;
+        final VariablesSecureApp vars = ProcessContext.newInstance(request.obContext).toVars();
+
         if ("Direct".equals(request.channel)
             || TriggerProvider.TIMING_OPTION_IMMEDIATE.equals(request.timingOption)) {
           // do not re-schedule immediate and direct requests that were in execution last time
           // Tomcat stopped
-          ProcessRequestData.update(getConnection(), Process.SYSTEM_RESTART, requestId);
+          ProcessRequestData.update(getConnection(), Process.SYSTEM_RESTART, vars.getUser(),
+              requestId);
           log.debug(request.channel + " run of process id " + request.processId
               + " was scheduled, marked as 'System Restart'");
           continue;
         }
-        final VariablesSecureApp vars = ProcessContext.newInstance(request.obContext).toVars();
+
         try {
           final ProcessBundle bundle = ProcessBundle.request(requestId, vars, getConnection());
           schedule(requestId, bundle);
@@ -460,20 +464,27 @@ public class OBScheduler {
 
           } else if (data.frequency.equals(FREQUENCY_WEEKLY)) {
             final StringBuilder sb = new StringBuilder();
-            if (data.daySun.equals("Y"))
+            if (data.daySun.equals("Y")) {
               sb.append("SUN");
-            if (data.dayMon.equals("Y"))
+            }
+            if (data.dayMon.equals("Y")) {
               sb.append(sb.length() == 0 ? "MON" : ",MON");
-            if (data.dayTue.equals("Y"))
+            }
+            if (data.dayTue.equals("Y")) {
               sb.append(sb.length() == 0 ? "TUE" : ",TUE");
-            if (data.dayWed.equals("Y"))
+            }
+            if (data.dayWed.equals("Y")) {
               sb.append(sb.length() == 0 ? "WED" : ",WED");
-            if (data.dayThu.equals("Y"))
+            }
+            if (data.dayThu.equals("Y")) {
               sb.append(sb.length() == 0 ? "THU" : ",THU");
-            if (data.dayFri.equals("Y"))
+            }
+            if (data.dayFri.equals("Y")) {
               sb.append(sb.length() == 0 ? "FRI" : ",FRI");
-            if (data.daySat.equals("Y"))
+            }
+            if (data.daySat.equals("Y")) {
               sb.append(sb.length() == 0 ? "SAT" : ",SAT");
+            }
 
             if (sb.length() != 0) {
               sb.insert(0, second + " " + minute + " " + hour + " ? * ");
@@ -524,22 +535,24 @@ public class OBScheduler {
 
         }
       } catch (final ParseException e) {
-        final String msg = Utility.messageBD(conn, "TRIG_INVALID_DATA", bundle.getContext()
-            .getLanguage());
+        final String msg = Utility.messageBD(conn, "TRIG_INVALID_DATA",
+            bundle.getContext().getLanguage());
         log.error("Error scheduling process {}", data.processName + " " + data.processGroupName, e);
         throw new ServletException(msg + " " + e.getMessage());
       }
 
-      if (trigger.getName() == null)
+      if (trigger.getName() == null) {
         trigger.setName(name);
-      if (trigger.getGroup() == null)
+      }
+      if (trigger.getGroup() == null) {
         trigger.setGroup(OB_GROUP);
+      }
 
       trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
-      trigger.getJobDataMap().put(Process.PREVENT_CONCURRENT_EXECUTIONS,
-          "Y".equals(data.preventconcurrent));
-      trigger.getJobDataMap().put(Process.PROCESS_NAME,
-          data.processName + " " + data.processGroupName);
+      trigger.getJobDataMap()
+          .put(Process.PREVENT_CONCURRENT_EXECUTIONS, "Y".equals(data.preventconcurrent));
+      trigger.getJobDataMap()
+          .put(Process.PROCESS_NAME, data.processName + " " + data.processGroupName);
 
       trigger.getJobDataMap().put(Process.PROCESS_ID, data.adProcessId);
 
@@ -550,8 +563,8 @@ public class OBScheduler {
         trigger.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
       }
 
-      log.debug("Scheduled process {}. Start time:{}.", data.processName + " "
-          + data.processGroupName, trigger.getStartTime());
+      log.debug("Scheduled process {}. Start time:{}.",
+          data.processName + " " + data.processGroupName, trigger.getStartTime());
 
       return trigger;
     }
@@ -599,8 +612,8 @@ public class OBScheduler {
 
       if (time != null && !time.equals("")) {
         final int hour = Integer.parseInt(time.substring(time.indexOf(" ") + 1, time.indexOf(':')));
-        final int minute = Integer.parseInt(time.substring(time.indexOf(':') + 1,
-            time.lastIndexOf(':')));
+        final int minute = Integer
+            .parseInt(time.substring(time.indexOf(':') + 1, time.lastIndexOf(':')));
         final int second = Integer
             .parseInt(time.substring(time.lastIndexOf(':') + 1, time.length()));
 

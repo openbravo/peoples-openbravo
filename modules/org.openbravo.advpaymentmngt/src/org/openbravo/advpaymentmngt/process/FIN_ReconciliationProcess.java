@@ -20,7 +20,8 @@ package org.openbravo.advpaymentmngt.process;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
@@ -42,14 +43,15 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Process {
   private static AdvPaymentMngtDao dao;
-  private static final Logger log = Logger.getLogger(FIN_ReconciliationProcess.class);
+  private static final Logger log = LogManager.getLogger();
 
+  @Override
   public void execute(ProcessBundle bundle) throws Exception {
     dao = new AdvPaymentMngtDao();
     OBError msg = new OBError();
     msg.setType("Success");
-    msg.setTitle(Utility.messageBD(bundle.getConnection(), "Success", bundle.getContext()
-        .getLanguage()));
+    msg.setTitle(
+        Utility.messageBD(bundle.getConnection(), "Success", bundle.getContext().getLanguage()));
 
     OBContext.setAdminMode();
     try {
@@ -76,11 +78,13 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
           recLine.getFinancialAccountTransaction().getReconciliation();
           recLine.getFinancialAccountTransaction().getReconciliation();
           boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(
-              FIN_Reconciliation.TABLE_NAME, recLine.getFinancialAccountTransaction()
-                  .getReconciliation().getId(), FIN_Reconciliation.TABLE_NAME + "_ID", "LE");
-          if (!FIN_Utility.isPeriodOpen(recLine.getFinancialAccountTransaction().getClient()
-              .getId(), AcctServer.DOCTYPE_Reconciliation, recLine.getFinancialAccountTransaction()
-              .getOrganization().getId(),
+              FIN_Reconciliation.TABLE_NAME,
+              recLine.getFinancialAccountTransaction().getReconciliation().getId(),
+              FIN_Reconciliation.TABLE_NAME + "_ID", "LE");
+          if (!FIN_Utility.isPeriodOpen(
+              recLine.getFinancialAccountTransaction().getClient().getId(),
+              AcctServer.DOCTYPE_Reconciliation,
+              recLine.getFinancialAccountTransaction().getOrganization().getId(),
               OBDateUtils.formatDate(recLine.getFinancialAccountTransaction().getDateAcct()))
               && orgLegalWithAccounting) {
             msg.setType("Error");
@@ -109,13 +113,13 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
         if ("Y".equals(reconciliation.getPosted())) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, language, "@PostedDocument@"
-              + ": " + reconciliation.getDocumentNo()));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+              "@PostedDocument@" + ": " + reconciliation.getDocumentNo()));
           bundle.setResult(msg);
           return;
         }
-        final boolean isForceProcess = "6BF16EFC772843AC9A17552AE0B26AB7".equals(bundle
-            .getProcessId());
+        final boolean isForceProcess = "6BF16EFC772843AC9A17552AE0B26AB7"
+            .equals(bundle.getProcessId());
         // Transaction exists
         if (!isForceProcess && !MatchTransactionDao.islastreconciliation(reconciliation)) {
           msg.setType("Error");
@@ -137,11 +141,13 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
           recLine.getFinancialAccountTransaction().getReconciliation();
           recLine.getFinancialAccountTransaction().getReconciliation();
           boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(
-              FIN_Reconciliation.TABLE_NAME, recLine.getFinancialAccountTransaction()
-                  .getReconciliation().getId(), FIN_Reconciliation.TABLE_NAME + "_ID", "LE");
-          if (!FIN_Utility.isPeriodOpen(recLine.getFinancialAccountTransaction().getClient()
-              .getId(), AcctServer.DOCTYPE_Reconciliation, recLine.getFinancialAccountTransaction()
-              .getOrganization().getId(),
+              FIN_Reconciliation.TABLE_NAME,
+              recLine.getFinancialAccountTransaction().getReconciliation().getId(),
+              FIN_Reconciliation.TABLE_NAME + "_ID", "LE");
+          if (!FIN_Utility.isPeriodOpen(
+              recLine.getFinancialAccountTransaction().getClient().getId(),
+              AcctServer.DOCTYPE_Reconciliation,
+              recLine.getFinancialAccountTransaction().getOrganization().getId(),
               OBDateUtils.formatDate(recLine.getFinancialAccountTransaction().getDateAcct()))
               && orgLegalWithAccounting) {
             msg.setType("Error");
@@ -171,8 +177,8 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
       OBDal.getInstance().rollbackAndClose();
       log.error("Error while executing FIN_ReconciliationProcess", e);
       msg.setType("Error");
-      msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
+      msg.setTitle(
+          Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext().getLanguage()));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
     } finally {
@@ -183,8 +189,8 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
   private boolean existsDraftReconciliation(FIN_FinancialAccount account) {
     OBContext.setAdminMode(false);
     try {
-      OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance().createCriteria(
-          FIN_Reconciliation.class);
+      OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance()
+          .createCriteria(FIN_Reconciliation.class);
       obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_DOCUMENTSTATUS, "DR"));
       obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_PROCESSED, false));
       obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, account));
@@ -196,9 +202,10 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
   }
 
   private void updateReconciliations(FIN_Reconciliation reconciliation) {
-    final OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance().createCriteria(
-        FIN_Reconciliation.class);
-    obc.add(Restrictions.ge(FIN_Reconciliation.PROPERTY_ENDINGDATE, reconciliation.getEndingDate()));
+    final OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance()
+        .createCriteria(FIN_Reconciliation.class);
+    obc.add(
+        Restrictions.ge(FIN_Reconciliation.PROPERTY_ENDINGDATE, reconciliation.getEndingDate()));
     obc.add(Restrictions.ge(FIN_Reconciliation.PROPERTY_CREATIONDATE,
         reconciliation.getCreationDate()));
     obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, reconciliation.getAccount()));

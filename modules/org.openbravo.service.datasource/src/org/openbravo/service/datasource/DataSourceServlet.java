@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.servlet.ServletConfig;
@@ -43,13 +45,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.SQLGrammarException;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
@@ -108,11 +111,13 @@ import org.openbravo.utils.Replace;
  * @author mtaal
  */
 public class DataSourceServlet extends BaseKernelServlet {
-  private static final Logger log = Logger.getLogger(DataSourceServlet.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final long serialVersionUID = 1L;
 
   private static String servletPathPart = "org.openbravo.service.datasource";
+  private static Pattern csrfTokenPattern = Pattern
+      .compile("\"csrfToken\":\"(?<token>[A-Z0-9]+)\"");
 
   public static String getServletPathPart() {
     return servletPathPart;
@@ -133,6 +138,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     super.init(config);
   }
 
+  @Override
   public void service(final HttpServletRequest request, final HttpServletResponse response)
       throws ServletException, IOException {
 
@@ -191,8 +197,8 @@ public class DataSourceServlet extends BaseKernelServlet {
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final Map<String, String> parameters = getParameterMap(request);
     doFetch(request, response, parameters);
   }
@@ -241,13 +247,15 @@ public class DataSourceServlet extends BaseKernelServlet {
           try {
             OBContext.setAdminMode();
             try {
-              Window window = JsonUtils.isValueEmpty(parameters.get(JsonConstants.TAB_PARAMETER)) ? null
-                  : OBDal.getInstance().get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER))
+              Window window = JsonUtils.isValueEmpty(parameters.get(JsonConstants.TAB_PARAMETER))
+                  ? null
+                  : OBDal.getInstance()
+                      .get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER))
                       .getWindow();
               String encoding = Preferences.getPreferenceValue("OBSERDS_CSVTextEncoding", true,
-                  OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                      .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                      .getOBContext().getRole(), window);
+                  OBContext.getOBContext().getCurrentClient(),
+                  OBContext.getOBContext().getCurrentOrganization(),
+                  OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), window);
               response.setContentType("text/csv; charset=" + encoding);
             } catch (PropertyNotFoundException e) {
               // There is no preference for encoding, using standard one which works on Excel
@@ -259,8 +267,8 @@ public class DataSourceServlet extends BaseKernelServlet {
           response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
           QueryJSONWriterToCSV writer;
           if (getDataSource(request) instanceof DefaultDataSourceService) {
-            writer = new QueryJSONWriterToCSV(request, response, parameters, getDataSourceEntity(
-                request, parameters));
+            writer = new QueryJSONWriterToCSV(request, response, parameters,
+                getDataSourceEntity(request, parameters));
             // when exporting a OB grid, the isActive filter should not be set
             parameters.put(JsonConstants.NO_ACTIVE_FILTER, "true");
 
@@ -272,8 +280,8 @@ public class DataSourceServlet extends BaseKernelServlet {
             String result = getDataSource(request).fetch(parameters);
             JSONObject jsonResult = new JSONObject(result);
             JSONArray data = jsonResult.getJSONObject("response").getJSONArray("data");
-            writer = new QueryJSONWriterToCSV(request, response, parameters, getDataSourceEntity(
-                request, parameters));
+            writer = new QueryJSONWriterToCSV(request, response, parameters,
+                getDataSourceEntity(request, parameters));
             for (int i = 0; i < data.length(); i++) {
               writer.write(data.getJSONObject(i));
             }
@@ -339,23 +347,24 @@ public class DataSourceServlet extends BaseKernelServlet {
         writer = response.getWriter();
         VariablesSecureApp vars = new VariablesSecureApp(request);
         Window window = JsonUtils.isValueEmpty(parameters.get(JsonConstants.TAB_PARAMETER)) ? null
-            : OBDal.getInstance().get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER))
+            : OBDal.getInstance()
+                .get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER))
                 .getWindow();
         try {
-          prefDecimalSeparator = Preferences.getPreferenceValue("OBSERDS_CSVDecimalSeparator",
-              true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), window);
+          prefDecimalSeparator = Preferences.getPreferenceValue("OBSERDS_CSVDecimalSeparator", true,
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), window);
         } catch (PropertyNotFoundException e) {
           // There is no preference for the decimal separator.
         }
-        decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition").substring(0,
-            1);
+        decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition")
+            .substring(0, 1);
         try {
           fieldSeparator = Preferences.getPreferenceValue("OBSERDS_CSVFieldSeparator", true,
-              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), window);
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), window);
         } catch (PropertyNotFoundException e) {
           // There is no preference for the field separator. Using the default one.
           fieldSeparator = ",";
@@ -367,8 +376,9 @@ public class DataSourceServlet extends BaseKernelServlet {
           } else {
             fieldSeparator = ",";
           }
-          log.warn("Warning: CSV Field separator is identical to the decimal separator. Changing the field separator to "
-              + fieldSeparator + " to avoid generating a wrong CSV file");
+          log.warn(
+              "Warning: CSV Field separator is identical to the decimal separator. Changing the field separator to "
+                  + fieldSeparator + " to avoid generating a wrong CSV file");
         }
         if (parameters.get("_UTCOffsetMiliseconds").length() > 0) {
           clientUTCOffsetMiliseconds = Integer.parseInt(parameters.get("_UTCOffsetMiliseconds"));
@@ -379,20 +389,19 @@ public class DataSourceServlet extends BaseKernelServlet {
         clientTimeZone = null;
         try {
           String clientTimeZoneId = Preferences.getPreferenceValue("localTimeZoneID", true,
-              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), null);
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null);
           List<String> validTimeZoneIDs = Arrays.asList(TimeZone.getAvailableIDs());
           if (validTimeZoneIDs.contains(clientTimeZoneId)) {
             clientTimeZone = TimeZone.getTimeZone(clientTimeZoneId);
           } else {
-            log4j
-                .error(clientTimeZoneId
-                    + " is not a valid time zone identifier. For a list of all accepted identifiers check http://www.java2s.com/Tutorial/Java/0120__Development/GettingallthetimezonesIDs.htm");
+            log4j.error(clientTimeZoneId
+                + " is not a valid time zone identifier. For a list of all accepted identifiers check http://www.java2s.com/Tutorial/Java/0120__Development/GettingallthetimezonesIDs.htm");
           }
         } catch (PropertyException pe) {
-          log4j
-              .warn("The local Local Timezone ID property is not defined. It can be defined in a preference. For a list of all accepted values check http://www.java2s.com/Tutorial/Java/0120__Development/GettingallthetimezonesIDs.htm");
+          log4j.warn(
+              "The local Local Timezone ID property is not defined. It can be defined in a preference. For a list of all accepted values check http://www.java2s.com/Tutorial/Java/0120__Development/GettingallthetimezonesIDs.htm");
         }
 
         fieldProperties = new ArrayList<String>();
@@ -458,8 +467,8 @@ public class DataSourceServlet extends BaseKernelServlet {
               }
             } else if (parameters.get(JsonConstants.TAB_PARAMETER) != null
                 && !parameters.get(JsonConstants.TAB_PARAMETER).equals("")) {
-              Tab tab = OBDal.getInstance().get(Tab.class,
-                  parameters.get(JsonConstants.TAB_PARAMETER));
+              Tab tab = OBDal.getInstance()
+                  .get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER));
               for (Field field : tab.getADFieldList()) {
                 if (field.getProperty() != null && !formattedPropKey.equals(field.getProperty())) {
                   continue;
@@ -508,23 +517,25 @@ public class DataSourceServlet extends BaseKernelServlet {
               continue;
             }
             String referenceId = col.getReferenceSearchKey().getId();
-            Map<String, String> reflists = new HashMap<String, String>();
+            Map<String, String> reflists = new HashMap<>();
             final String hql = "select al.searchKey, al.name from ADList al where "
-                + " al.reference.id=? and al.active=true";
-            final Query qry = OBDal.getInstance().getSession().createQuery(hql);
-            qry.setString(0, referenceId);
-            for (Object o : qry.list()) {
-              final Object[] row = (Object[]) o;
+                + " al.reference.id=:referenceId and al.active=true";
+            final Query<Object[]> qry = OBDal.getInstance()
+                .getSession()
+                .createQuery(hql, Object[].class);
+            qry.setParameter("referenceId", referenceId);
+            for (Object[] row : qry.list()) {
               reflists.put(row[0].toString(), row[1].toString());
             }
             final String hqltrl = "select al.searchKey, trl.name from ADList al, ADListTrl trl where "
-                + " al.reference.id=? and trl.listReference=al and trl.language.id=?"
+                + " al.reference.id=:referenceId and trl.listReference=al and trl.language.id=:languageId"
                 + " and al.active=true and trl.active=true";
-            final Query qrytrl = OBDal.getInstance().getSession().createQuery(hqltrl);
-            qrytrl.setString(0, referenceId);
-            qrytrl.setString(1, userLanguageId);
-            for (Object o : qrytrl.list()) {
-              final Object[] row = (Object[]) o;
+            final Query<Object[]> qrytrl = OBDal.getInstance()
+                .getSession()
+                .createQuery(hqltrl, Object[].class);
+            qrytrl.setParameter("referenceId", referenceId);
+            qrytrl.setParameter("languageId", userLanguageId);
+            for (Object[] row : qrytrl.list()) {
               reflists.put(row[0].toString(), row[1].toString());
             }
             refListCols.add(propKey);
@@ -540,7 +551,8 @@ public class DataSourceServlet extends BaseKernelServlet {
               writer.append(fieldSeparator);
             }
             if (niceFieldProperties.get(fieldProperties.get(i)) != null) {
-              writer.append("\"").append(niceFieldProperties.get(fieldProperties.get(i)))
+              writer.append("\"")
+                  .append(niceFieldProperties.get(fieldProperties.get(i)))
                   .append("\"");
             }
           }
@@ -562,9 +574,10 @@ public class DataSourceServlet extends BaseKernelServlet {
       boolean shouldCheck = false;
       try {
         shouldCheck = Preferences.YES.equals(Preferences.getPreferenceValue(
-            "OBSERDS_CSVExportTranslateYesNoReference", true, OBContext.getOBContext()
-                .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-                .getOBContext().getUser(), OBContext.getOBContext().getRole(), windowToCsv));
+            "OBSERDS_CSVExportTranslateYesNoReference", true,
+            OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), windowToCsv));
       } catch (PropertyException prefNotDefined) {
       }
       return shouldCheck;
@@ -598,6 +611,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       }
     }
 
+    @Override
     public void write(JSONObject json) {
       try {
         if (!propertiesWritten) {
@@ -629,8 +643,9 @@ public class DataSourceServlet extends BaseKernelServlet {
           if (!json.has(key)) {
             continue;
           }
-          Object keyValue = json.has(key + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER) ? json
-              .get(key + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER) : json.get(key);
+          Object keyValue = json.has(key + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER)
+              ? json.get(key + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER)
+              : json.get(key);
           if (refListCols.contains(key)) {
             keyValue = refLists.get(key).get(keyValue);
           } else if (keyValue instanceof Number && keyValue != null) {
@@ -638,13 +653,13 @@ public class DataSourceServlet extends BaseKernelServlet {
             if (format == null) {
               // if the CSV decimal separator property is defined, used it over the character
               // defined in Format.xml
-              keyValue = keyValue.toString().replace(".",
-                  prefDecimalSeparator != null ? prefDecimalSeparator : decimalSeparator);
+              keyValue = keyValue.toString()
+                  .replace(".",
+                      prefDecimalSeparator != null ? prefDecimalSeparator : decimalSeparator);
             } else {
               keyValue = format.format(new BigDecimal(keyValue.toString()));
               if (prefDecimalSeparator != null) {
-                keyValue = keyValue
-                    .toString()
+                keyValue = keyValue.toString()
                     .replace(
                         Character.valueOf(format.getDecimalFormatSymbols().getDecimalSeparator())
                             .toString(),
@@ -655,7 +670,8 @@ public class DataSourceServlet extends BaseKernelServlet {
           } else if (dateCols.contains(key) && keyValue != null
               && !keyValue.toString().equals("null")) {
             Date date = JsonUtils.createDateFormat().parse(keyValue.toString());
-            String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATEFORMAT")
+            String pattern = RequestContext.get()
+                .getSessionAttribute("#AD_JAVADATEFORMAT")
                 .toString();
             SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
             dateFormat.setLenient(true);
@@ -666,7 +682,8 @@ public class DataSourceServlet extends BaseKernelServlet {
             Date localDate = JsonUtils.createDateTimeFormat().parse(repairedString);
             Date clientTimezoneDate = null;
             clientTimezoneDate = convertFromLocalToClientTimezone(localDate);
-            String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATETIMEFORMAT")
+            String pattern = RequestContext.get()
+                .getSessionAttribute("#AD_JAVADATETIMEFORMAT")
                 .toString();
             SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
             dateFormat.setLenient(true);
@@ -731,8 +748,8 @@ public class DataSourceServlet extends BaseKernelServlet {
       if (clientTimeZone != null) {
         calendar = Calendar.getInstance(clientTimeZone);
         calendar.setTime(UTCdate);
-        int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET) + calendar
-            .get(Calendar.DST_OFFSET));
+        int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET)
+            + calendar.get(Calendar.DST_OFFSET));
         calendar.add(Calendar.MILLISECOND, gmtMillisecondOffset);
       } else {
         calendar = Calendar.getInstance();
@@ -746,15 +763,15 @@ public class DataSourceServlet extends BaseKernelServlet {
       Calendar calendar = Calendar.getInstance();
       calendar.setTime(localDate);
 
-      int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET) + calendar
-          .get(Calendar.DST_OFFSET));
+      int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET)
+          + calendar.get(Calendar.DST_OFFSET));
       calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
 
       return calendar.getTime();
     }
 
-    private void writeCSVHeaderNote(Map<String, String> parameters) throws IOException,
-        PropertyException {
+    private void writeCSVHeaderNote(Map<String, String> parameters)
+        throws IOException, PropertyException {
       final String csvHeaderMsg = getMessage(parameters, "OBSERDS_CSVHeaderMessage");
 
       if (StringUtils.isNotBlank(csvHeaderMsg)) {
@@ -764,8 +781,8 @@ public class DataSourceServlet extends BaseKernelServlet {
       }
     }
 
-    private void writeCSVFooterNote(Map<String, String> parameters) throws IOException,
-        PropertyException {
+    private void writeCSVFooterNote(Map<String, String> parameters)
+        throws IOException, PropertyException {
       final String csvFooterMsg = getMessage(parameters, "OBSERDS_CSVFooterMessage");
 
       if (StringUtils.isNotBlank(csvFooterMsg)) {
@@ -781,19 +798,22 @@ public class DataSourceServlet extends BaseKernelServlet {
         String csvMessage = null;
         try {
           Window window = JsonUtils.isValueEmpty(parameters.get(JsonConstants.TAB_PARAMETER)) ? null
-              : OBDal.getInstance().get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER))
+              : OBDal.getInstance()
+                  .get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER))
                   .getWindow();
-          csvMessage = Preferences.getPreferenceValue(property, true, OBContext.getOBContext()
-              .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-              .getOBContext().getUser(), OBContext.getOBContext().getRole(), window);
+          csvMessage = Preferences.getPreferenceValue(property, true,
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), window);
         } catch (PropertyNotFoundException e) {
           // There is no preference defined
           csvMessage = null;
         }
 
         if (StringUtils.isNotBlank(csvMessage)) {
-          csvMessage = Replace.replace(Replace.replace(
-              Replace.replace(OBMessageUtils.messageBD(csvMessage), "\\n", "\n"), "&quot;", "\""),
+          csvMessage = Replace.replace(
+              Replace.replace(Replace.replace(OBMessageUtils.messageBD(csvMessage), "\\n", "\n"),
+                  "&quot;", "\""),
               "\"", "\"\"");
         }
 
@@ -835,13 +855,13 @@ public class DataSourceServlet extends BaseKernelServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final Map<String, String> parameters = getParameterMap(request);
 
     try {
-      if (DataSourceConstants.FETCH_OPERATION.equals(parameters
-          .get(DataSourceConstants.OPERATION_TYPE_PARAM))) {
+      if (DataSourceConstants.FETCH_OPERATION
+          .equals(parameters.get(DataSourceConstants.OPERATION_TYPE_PARAM))) {
         doFetch(request, response, parameters);
         return;
       }
@@ -850,9 +870,12 @@ public class DataSourceServlet extends BaseKernelServlet {
         throw new OBUserException("AccessTableNoView");
       }
 
+      String content = getRequestContent(request);
+
+      checkCsrfToken(getCsrfTokenFromRequestContent(content), request);
+
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
-        String content = getRequestContent(request);
         parameters.put(DataSourceConstants.ADD_CONTENT_OPERATION, content);
         getDataSource(request).checkEditDatasourceAccess(parameters);
         final String result = getDataSource(request).add(parameters, content);
@@ -876,6 +899,8 @@ public class DataSourceServlet extends BaseKernelServlet {
         throw new OBUserException("AccessTableNoView");
       }
 
+      checkCsrfToken(parameters.get(JsonConstants.CSRF_TOKEN_PARAMETER), request);
+
       final String id = parameters.get(JsonConstants.ID);
       if (id == null) {
         throw new InvalidRequestException("No id parameter");
@@ -896,8 +921,8 @@ public class DataSourceServlet extends BaseKernelServlet {
     }
     final int startIndex = 1 + url.indexOf(getServletPathPart()) + getServletPathPart().length();
     final int endIndex = url.indexOf("/", startIndex + 1);
-    final String dsName = (endIndex == -1 ? url.substring(startIndex) : url.substring(startIndex,
-        endIndex));
+    final String dsName = (endIndex == -1 ? url.substring(startIndex)
+        : url.substring(startIndex, endIndex));
 
     if (dsName.length() == 0) {
       throw new ResourceNotFoundException("Data source not found using url " + url);
@@ -906,24 +931,57 @@ public class DataSourceServlet extends BaseKernelServlet {
   }
 
   @Override
-  public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPut(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final Map<String, String> parameters = getParameterMap(request);
     try {
       if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
       }
 
+      String requestContent = getRequestContent(request);
+
+      checkCsrfToken(getCsrfTokenFromRequestContent(requestContent), request);
+
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
         getDataSource(request).checkEditDatasourceAccess(parameters);
-        final String result = getDataSource(request).update(parameters, getRequestContent(request));
+        final String result = getDataSource(request).update(parameters, requestContent);
         writeResult(response, result);
       }
 
     } catch (Exception e) {
       handleException(e, response);
     }
+  }
+
+  private void checkCsrfToken(String requestToken, HttpServletRequest request) {
+    String sessionToken = getSessionCsrfToken(request);
+    if (!hasValidCsrfToken(requestToken, sessionToken)) {
+      log.error("CSRF token check failed. Request=" + request.getRequestURI() + ", SessionID="
+          + request.getSession(false).getId() + ", SessionToken=" + sessionToken + ", RequestToken="
+          + requestToken);
+      throw new OBUserException("InvalidCSRFToken");
+    }
+  }
+
+  private boolean hasValidCsrfToken(String requestToken, String sessionToken) {
+    return StringUtils.isNotEmpty(requestToken) && StringUtils.isNotEmpty(sessionToken)
+        && requestToken.equals(sessionToken);
+  }
+
+  private String getCsrfTokenFromRequestContent(String requestContent) {
+    Matcher matcher = csrfTokenPattern.matcher(requestContent);
+    if (matcher.find()) {
+      return matcher.group("token");
+    }
+
+    return "";
+  }
+
+  private String getSessionCsrfToken(HttpServletRequest request) {
+    String token = (String) request.getSession(false).getAttribute("#CSRF_TOKEN");
+    return token != null ? token : "";
   }
 
   private boolean checkSetParameters(HttpServletRequest request, HttpServletResponse response,
@@ -937,10 +995,8 @@ public class DataSourceServlet extends BaseKernelServlet {
     final String servicePart = request.getRequestURI().substring(nameIndex);
     final String[] pathParts = WebServiceUtil.getInstance().getSegments(servicePart);
     if (pathParts.length == 0 || !pathParts[0].equals(servletPathPart)) {
-      writeResult(
-          response,
-          JsonUtils.convertExceptionToJson(new InvalidRequestException("Invalid url: "
-              + request.getRequestURI())));
+      writeResult(response, JsonUtils.convertExceptionToJson(
+          new InvalidRequestException("Invalid url: " + request.getRequestURI())));
       return false;
     }
     if (pathParts.length == 1) {
@@ -987,8 +1043,8 @@ public class DataSourceServlet extends BaseKernelServlet {
   }
 
   // NOTE: parameters parameter is updated inside this method
-  private boolean checkSetIDDataSourceName(HttpServletRequest request,
-      HttpServletResponse response, Map<String, String> parameters) throws IOException {
+  private boolean checkSetIDDataSourceName(HttpServletRequest request, HttpServletResponse response,
+      Map<String, String> parameters) throws IOException {
     if (!request.getRequestURI().contains("/" + servletPathPart)) {
       writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
           "Invalid url, the path should contain the service name: " + servletPathPart)));
@@ -998,10 +1054,8 @@ public class DataSourceServlet extends BaseKernelServlet {
     final String servicePart = request.getRequestURI().substring(nameIndex);
     final String[] pathParts = WebServiceUtil.getInstance().getSegments(servicePart);
     if (pathParts.length == 0 || !pathParts[0].equals(servletPathPart)) {
-      writeResult(
-          response,
-          JsonUtils.convertExceptionToJson(new InvalidRequestException("Invalid url: "
-              + request.getRequestURI())));
+      writeResult(response, JsonUtils.convertExceptionToJson(
+          new InvalidRequestException("Invalid url: " + request.getRequestURI())));
       return false;
     }
     if (pathParts.length == 1) {
@@ -1136,8 +1190,8 @@ public class DataSourceServlet extends BaseKernelServlet {
           if (!windowCheck.contains(windowId)) {
             windowCheck.add(windowId);
             parameters.put("windowId", windowId);
-            boolean hasAccessEntity = BaseProcessActionHandler.hasAccess(f.getColumn()
-                .getOBUIAPPProcess(), parameters);
+            boolean hasAccessEntity = BaseProcessActionHandler
+                .hasAccess(f.getColumn().getOBUIAPPProcess(), parameters);
             if (hasAccessEntity) {
               return true;
             }

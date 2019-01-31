@@ -52,10 +52,11 @@ public class ModelObject {
 
   public Object get(String propertyName) {
     // TODO: externalise the strings
-    if (propertyName.compareTo("id") == 0)
+    if (propertyName.compareTo("id") == 0) {
       return getId();
-    else if (propertyName.compareTo("active") == 0)
+    } else if (propertyName.compareTo("active") == 0) {
       return isActive();
+    }
     return data.get(propertyName);
   }
 
@@ -103,6 +104,7 @@ public class ModelObject {
     this.updated = updated;
   }
 
+  @Override
   public String toString() {
     return this.getClass().getName() + " [id: " + id + ", name: " + name + "]";
   }

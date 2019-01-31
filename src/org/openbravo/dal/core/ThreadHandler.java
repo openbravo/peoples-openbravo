@@ -21,7 +21,8 @@ package org.openbravo.dal.core;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 
 /**
@@ -32,7 +33,7 @@ import org.openbravo.base.exception.OBException;
  */
 
 public abstract class ThreadHandler {
-  private static final Logger log = Logger.getLogger(ThreadHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Run the thread, this method will call the protected methods doBefore, doAction and doFinal.

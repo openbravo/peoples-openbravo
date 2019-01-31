@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,8 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.FetchMode;
@@ -33,7 +34,10 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -53,7 +57,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  * @author mtaal
  */
 public class KernelUtils {
-  private static final Logger log = Logger.getLogger(KernelUtils.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static KernelUtils instance = new KernelUtils();
 
@@ -64,11 +68,22 @@ public class KernelUtils {
       "org.openbravo.userinterface.smartclient", "org.openbravo.service.datasource",
       "org.openbravo.client.application", "org.openbravo.userinterface.selector" };
 
+  private ApplicationDictionaryCachedStructures adcs;
+
   public static synchronized KernelUtils getInstance() {
     if (instance == null) {
       instance = new KernelUtils();
     }
     return instance;
+  }
+
+  /** Note this constructor should not be generally used, use instead {@link #getInstance()} */
+  public KernelUtils() {
+    if (SessionFactoryController.isRunningInWebContainer()) {
+      // allow running outside Web container for tests
+      adcs = WeldUtils
+          .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+    }
   }
 
   public static synchronized void setInstance(KernelUtils instance) {
@@ -114,8 +129,8 @@ public class KernelUtils {
         return property;
       }
     }
-    throw new IllegalArgumentException("Column " + column
-        + " does not have a corresponding property in the model");
+    throw new IllegalArgumentException(
+        "Column " + column + " does not have a corresponding property in the model");
   }
 
   /**
@@ -243,6 +258,7 @@ public class KernelUtils {
       // a module is returned for each module dependency, take care of this in
       // the for-loop below
       final OBCriteria<Module> modules = OBDal.getInstance().createCriteria(Module.class);
+      modules.addOrderBy(Module.PROPERTY_ID, true);
       modules.setFetchMode(Module.PROPERTY_MODULEDEPENDENCYLIST, FetchMode.JOIN);
       final List<Module> handledModules = new ArrayList<Module>();
       try {
@@ -285,6 +301,7 @@ public class KernelUtils {
         result.add(moduleLowLevelCode.getModule());
       }
       sortedModules = result;
+      log.debug("Modules ordered by dependency: " + sortedModules);
       return result;
     } finally {
       OBContext.restorePreviousMode();
@@ -394,10 +411,10 @@ public class KernelUtils {
     Tab targetTab = null;
     String tabId = null;
     try {
-      tabId = KernelUtilsData.getParentTab(connection, tab.getWindow().getId(), tab.getTabLevel()
-          .toString(), tab.getSequenceNumber().toString());
+      tabId = KernelUtilsData.getParentTab(connection, tab.getWindow().getId(),
+          tab.getTabLevel().toString(), tab.getSequenceNumber().toString());
       if (tabId != null) {
-        targetTab = OBDal.getInstance().get(Tab.class, tabId);
+        targetTab = adcs != null ? adcs.getTab(tabId) : OBDal.getInstance().get(Tab.class, tabId);
       }
     } catch (ServletException e) {
       log.error(e.getMessage(), e);

@@ -23,7 +23,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -38,9 +39,10 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class InitialClientSetup extends HttpSecureAppServlet {
 
-  private static final Logger initialClientSetupLog4j = Logger.getLogger(InitialClientSetup.class);
+  private static final Logger initialClientSetupLog4j = LogManager.getLogger();
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -53,27 +55,29 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       OBError obeResultado = process(request, response, vars, strModules, strLog);
       initialClientSetupLog4j.debug("InitialClientSetup - after processFile");
       printPageResult(response, vars, obeResultado, strLog);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     ModuleReferenceDataClientTree tree = new ModuleReferenceDataClientTree(this, true);
     XmlDocument xmlDocument = null;
     String[] discard = { "selEliminar" };
-    if (tree.getData() == null || tree.getData().length == 0)
-      xmlDocument = xmlEngine
-          .readXmlTemplate("org/openbravo/erpCommon/ad_forms/InitialClientSetup")
+    if (tree.getData() == null || tree.getData().length == 0) {
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/InitialClientSetup")
           .createXmlDocument();
-    else
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_forms/InitialClientSetup", discard).createXmlDocument();
+    } else {
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_forms/InitialClientSetup", discard)
+          .createXmlDocument();
+    }
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InitialClientSetup", false, "", "",
-        "", false, "ad_forms", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InitialClientSetup", false, "", "", "",
+        false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
@@ -113,15 +117,16 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
   private void printPageResult(HttpServletResponse response, VariablesSecureApp vars,
       OBError obeResult, StringBuffer strLog) throws IOException, ServletException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/Resultado").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/Resultado")
+        .createXmlDocument();
     String strLanguage = vars.getLanguage();
 
     xmlDocument.setParameter("resultado",
         Utility.parseTranslation(this, vars, strLanguage, strLog.toString()));
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InitialClientSetup", false, "", "",
-        "", false, "ad_forms", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InitialClientSetup", false, "", "", "",
+        false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
@@ -165,7 +170,8 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   private OBError process(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strModules, StringBuffer strLog) throws IOException {
 
-    initialClientSetupLog4j.debug("process() - Initial Client Setup Process Start - strModules - " + strModules);
+    initialClientSetupLog4j
+        .debug("process() - Initial Client Setup Process Start - strModules - " + strModules);
 
     String strClientName = vars.getStringParameter("inpClient");
     String strClientUser = vars.getStringParameter("inpClientUser");
@@ -173,8 +179,8 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     String strCurrency = vars.getStringParameter("inpCurrency");
     org.apache.commons.fileupload.FileItem fileCoAFilePath = vars.getMultiFile("inpFile");
     boolean bCreateAccounting = isTrue(vars.getStringParameter("inpCreateAccounting"));
-    initialClientSetupLog4j.debug("process() - Client name: " + strClientName + ". Client user name: "
-        + strClientUser);
+    initialClientSetupLog4j.debug(
+        "process() - Client name: " + strClientName + ". Client user name: " + strClientUser);
     org.openbravo.erpCommon.businessUtility.InitialClientSetup ics = new org.openbravo.erpCommon.businessUtility.InitialClientSetup();
     OBError obeResult = ics.createClient(vars, strCurrency, strClientName, strClientUser,
         strPassword, strModules, Utility.messageBD(this, "Account_ID", vars.getLanguage()),
@@ -187,10 +193,11 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   }
 
   private boolean isTrue(String s) {
-    if (s == null || s.equals(""))
+    if (s == null || s.equals("")) {
       return false;
-    else
+    } else {
       return true;
+    }
   }
 
 }

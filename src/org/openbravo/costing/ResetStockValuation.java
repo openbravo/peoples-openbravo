@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -17,7 +18,7 @@ import org.openbravo.service.db.CallStoredProcedure;
 
 public class ResetStockValuation extends BaseProcessActionHandler {
 
-  private static final Logger log = Logger.getLogger(ResetStockValuation.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -58,6 +59,7 @@ public class ResetStockValuation extends BaseProcessActionHandler {
         sql.append("\n and sv." + StockValuation.PROPERTY_ORGANIZATION + ".id = :org");
       }
 
+      @SuppressWarnings("rawtypes")
       Query delQry = OBDal.getInstance().getSession().createQuery(sql.toString());
       delQry.setParameter("client", OBContext.getOBContext().getCurrentClient().getId());
       if (strOrgID != null) {
@@ -70,8 +72,8 @@ public class ResetStockValuation extends BaseProcessActionHandler {
       storedProcedureParams.add(strOrgID);
       storedProcedureParams.add(null);
       try {
-        CallStoredProcedure.getInstance().call("M_INITIALIZE_STOCK_VALUATION",
-            storedProcedureParams, null, false, false);
+        CallStoredProcedure.getInstance()
+            .call("M_INITIALIZE_STOCK_VALUATION", storedProcedureParams, null, false, false);
       } catch (Exception e) {
         errorMessage = true;
         msg.put("severity", "error");

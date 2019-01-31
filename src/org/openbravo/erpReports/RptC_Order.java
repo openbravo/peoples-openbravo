@@ -22,55 +22,63 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
+
 public class RptC_Order extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       String strcOrderId = vars.getSessionValue("RptC_Order.inpcOrderId_R");
 
-      if (strcOrderId.equals(""))
+      if (strcOrderId.equals("")) {
         strcOrderId = vars.getSessionValue("RptC_Order.inpcOrderId");
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("strcOrderId: " + strcOrderId);
+      }
       printPagePartePDF(response, vars, strcOrderId);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars,
       String strcOrderId) throws IOException, ServletException {
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: RptC_Order - pdf");
+    }
     RptCOrderHeaderData[] data = RptCOrderHeaderData.select(this, strcOrderId);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("data: " + (data == null ? "null" : "not null"));
-    if (data == null || data.length == 0)
+    }
+    if (data == null || data.length == 0) {
       data = RptCOrderHeaderData.set();
+    }
 
     String strLanguage = vars.getLanguage();
     String strBaseDesign = getBaseDesignPath(strLanguage);
 
     JasperReport jasperReportLines;
     try {
-      jasperReportLines = ReportingUtils.compileReport(strBaseDesign
-          + "/org/openbravo/erpReports/C_OrderLinesJR.jrxml");
+      jasperReportLines = ReportingUtils
+          .compileReport(strBaseDesign + "/org/openbravo/erpReports/C_OrderLinesJR.jrxml");
     } catch (JRException e) {
       e.printStackTrace();
       throw new ServletException(e.getMessage());
@@ -84,6 +92,7 @@ public class RptC_Order extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, "pdf", parameters, data, null);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the RptCOrders seeker";
   } // End of getServletInfo() method

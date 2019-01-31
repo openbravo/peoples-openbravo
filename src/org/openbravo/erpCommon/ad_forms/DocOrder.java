@@ -22,14 +22,15 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocOrder extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocOrder = Logger.getLogger(DocOrder.class);
+  private static final Logger log4jDocOrder = LogManager.getLogger();
 
   /** Contained Optional Tax Lines */
   private DocTax[] m_taxes = null;
@@ -44,6 +45,7 @@ public class DocOrder extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID, String Id)
       throws ServletException {
     setObjectFieldProvider(DocOrderData.selectRegistro(conn, aD_Client_ID, Id));
@@ -54,20 +56,24 @@ public class DocOrder extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DateDoc = data[0].getField("DateOrdered");
     TaxIncluded = data[0].getField("IsTaxIncluded");
 
     // Amounts
     Amounts[AcctServer.AMTTYPE_Gross] = data[0].getField("GrandTotal");
-    if (Amounts[AcctServer.AMTTYPE_Gross] == null)
+    if (Amounts[AcctServer.AMTTYPE_Gross] == null) {
       Amounts[AcctServer.AMTTYPE_Gross] = ZERO.toString();
+    }
     Amounts[AcctServer.AMTTYPE_Net] = data[0].getField("TotalLines");
-    if (Amounts[AcctServer.AMTTYPE_Net] == null)
+    if (Amounts[AcctServer.AMTTYPE_Net] == null) {
       Amounts[AcctServer.AMTTYPE_Net] = ZERO.toString();
+    }
     Amounts[AcctServer.AMTTYPE_Charge] = data[0].getField("ChargeAmt");
-    if (Amounts[AcctServer.AMTTYPE_Charge] == null)
+    if (Amounts[AcctServer.AMTTYPE_Charge] == null) {
       Amounts[AcctServer.AMTTYPE_Charge] = ZERO.toString();
+    }
     loadDocumentType(); // lines require doc type
     // Contained Objects
     p_lines = loadLines(conn);
@@ -148,6 +154,7 @@ public class DocOrder extends AcctServer {
    * 
    * @return positive amount, if total invoice is bigger than lines
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = new BigDecimal("0");
     StringBuffer sb = new StringBuffer(" [");
@@ -184,45 +191,34 @@ public class DocOrder extends AcctServer {
    *          accounting schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocOrderTemplate newTemplate = (DocOrderTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocOrderTemplate - " + e);
       }
     }
     // Purchase Order
-    if (DocumentType.equals(AcctServer.DOCTYPE_POrder))
+    if (DocumentType.equals(AcctServer.DOCTYPE_POrder)) {
       updateProductInfo(as.getC_AcctSchema_ID(), conn, con);
+    }
 
     // create Fact Header
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     return fact;
   } // createFact
-
-  /**
-   * @return the log4jDocOrder
-   */
-  public static Logger getLog4jDocOrder() {
-    return log4jDocOrder;
-  }
-
-  /**
-   * @param log4jDocOrder
-   *          the log4jDocOrder to set
-   */
-  public static void setLog4jDocOrder(Logger log4jDocOrder) {
-    DocOrder.log4jDocOrder = log4jDocOrder;
-  }
 
   /**
    * @return the m_taxes
@@ -278,10 +274,12 @@ public class DocOrder extends AcctServer {
    * 
    * not used
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

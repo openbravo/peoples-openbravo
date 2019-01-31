@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2017 Openbravo SLU
+* All portions are Copyright (C) 2001-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -98,6 +98,7 @@
   END_PROCESSING BOOLEAN:=FALSE;
   v_CBPartner_ID VARCHAR2(32);
   rowcount NUMBER;
+  v_stockqty NUMBER;
 
   v_CumDiscount NUMBER;
   v_OldCumDiscount NUMBER;
@@ -353,6 +354,37 @@
       WHERE ol.c_order_id = v_record_id
         AND p.isgeneric = 'Y';
       RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
+    END IF;
+
+    /*PLM Status*/
+    IF (v_DocAction = 'CO' AND v_IsSOTrx = 'Y' AND v_isreturndoctype = 'N') THEN
+      FOR Cur_line IN
+        (SELECT SUM(ol.qtyordered) AS qtyordered, ol.m_product_id, ol.c_uom_id, p.name, ps.restrictsalefrombackend, ps.restrictsaleoutofstock
+         FROM c_orderline ol
+         JOIN m_product p ON ol.m_product_id = p.m_product_id
+         JOIN m_product_status ps ON p.m_product_status_id = ps.m_product_status_id
+         WHERE ol.c_order_id = v_Record_ID
+         AND (ps.restrictsalefrombackend = 'Y' OR ps.restrictsaleoutofstock = 'Y')
+         GROUP BY ol.m_product_id, ol.c_uom_id, p.name, ps.restrictsalefrombackend, ps.restrictsaleoutofstock)
+      LOOP
+        IF (Cur_line.restrictsalefrombackend = 'Y') THEN
+          RAISE_APPLICATION_ERROR(-20000, '@CannotUseLockedProduct@ ' || Cur_line.name || '. @VerifyPLMStatus@.');
+        ELSIF (Cur_line.restrictsaleoutofstock = 'Y') THEN
+          SELECT COALESCE(SUM(sd.qtyonhand - sd.reservedqty), 0) INTO v_stockqty
+          FROM m_storage_detail sd
+          JOIN m_locator loc on loc.m_locator_id = sd.m_locator_id
+          WHERE sd.m_product_id = Cur_line.m_product_id
+          AND sd.c_uom_id = Cur_line.c_uom_id
+          AND EXISTS (SELECT 1
+                      FROM AD_Org_Warehouse w
+                      WHERE w.ad_org_id = v_Org_ID
+                      AND w.m_warehouse_id = loc.m_warehouse_id);
+
+          IF (Cur_line.qtyordered > v_stockqty) THEN
+            RAISE_APPLICATION_ERROR(-20000, '@CannotUseDiscontinuedProduct@ ' || Cur_line.name || '. @ProductDiscontinuedNoStock@ (' || v_stockqty || '). @VerifyPLMStatus@.');
+          END IF;
+        END IF;
+      END LOOP;
     END IF;
 
     /** 
@@ -644,7 +676,8 @@
         FROM ad_preference
         WHERE property = 'StockReservations';
         IF (v_count > 1) THEN
-          v_dummy := AD_GET_PREFERENCE_VALUE('StockReservations', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
+          v_dummy := AD_GET_PREFERENCE_VALUE('StockReservations', 'Y', v_client_id, v_org_id, v_User, NULL, NULL);
+          DBMS_OUTPUT.PUT_LINE('StockReservations preference value: ' || v_dummy);
         ELSIF (v_count = 1) THEN
           UPDATE c_orderline
           SET so_res_status = NULL
@@ -1051,7 +1084,7 @@
                 (
                   v_OrderLine, v_Client_ID, v_Org_ID, 'Y', now(), v_UpdatedBy,
                   now(), v_UpdatedBy, v_Record_ID, v_OrderLineSeqNo, NULL, NULL,
-                  now(), now(), now(), now(), Cur_COrderDiscount.NAME,
+                  TO_DATE(v_Date), now(), now(), now(), Cur_COrderDiscount.NAME,
                   Cur_COrderDiscount.M_PRODUCT_ID, v_M_Warehouse_ID, 'N', Cur_COrderDiscount.C_UOM_ID, 1,
                   0, 0, 0, NULL, v_c_currency_id,
                   ROUND(v_Discount, v_pricePrecision), ROUND(v_Discount, v_pricePrecision), ROUND(v_Discount, v_pricePrecision), ROUND(v_Discount, v_pricePrecision), 0, 0,
@@ -1275,7 +1308,8 @@
       WHERE property = 'StockReservations';
       IF (v_count > 0) THEN
         IF (v_count > 1) THEN
-          v_dummy := AD_GET_PREFERENCE_VALUE('StockReservations', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
+          v_dummy := AD_GET_PREFERENCE_VALUE('StockReservations', 'Y', v_client_id, v_org_id, v_User, NULL, NULL);
+          DBMS_OUTPUT.PUT_LINE('StockReservations preference value: ' || v_dummy);
         END IF;
         DECLARE
           v_reservation_id      VARCHAR2(32);
@@ -1340,6 +1374,9 @@
                   IF (cur_orderline.qtyordered < v_reservedqty) OR (v_releasedqty = 0 AND cur_orderline.qtyordered > 0) THEN
                     --Reservation quantity to decrease with more reserved quantity than new quantity, unreserve stock
                     v_pendingtounreserve := v_reservedqty - cur_orderline.qtyordered;
+                    IF(v_pendingtounreserve < 0) THEN
+                      v_pendingtounreserve := 0;
+                    END IF;
                     FOR cur_res_stock IN (
                         SELECT m_reservation_stock_id, quantity - COALESCE(releasedqty, 0) AS reservedqty
                         FROM m_reservation_stock
@@ -1382,7 +1419,7 @@
                       updated = now(),
                       updatedby = v_user
                   WHERE m_reservation_id = v_reservation_id;
-                  IF (v_quantity < cur_orderline.qtyordered AND v_res_status = 'CO' AND v_DocAction <> 'CO') THEN
+                  IF (v_quantity < cur_orderline.qtyordered AND v_res_status = 'CO') THEN
                     --Reservation processed with higher quantity. Try to reserve the new quantity.
                     M_RESERVE_STOCK_AUTO(v_reservation_id, v_user, v_reservedqty);
                   END IF;

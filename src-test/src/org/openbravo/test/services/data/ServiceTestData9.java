@@ -21,13 +21,13 @@ package org.openbravo.test.services.data;
 
 import java.math.BigDecimal;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.erpCommon.utility.OBDateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ServiceTestData9 extends ServiceTestData {
 
-  final static private Logger log = LoggerFactory.getLogger(ServiceTestData9.class);
+  final static private Logger log = LogManager.getLogger();
 
   @Override
   public void initialize() {
@@ -42,9 +42,9 @@ public class ServiceTestData9 extends ServiceTestData {
     setBpartnerId(BP_CUSTOMER_A);
     setOrderDate("01-04-2015");
     setServiceId(SERVICE_WARRANTY);
-    setProducts(new String[][] {//
-    // ProductId, quantity, price, amount
-    { PRODUCT_DISTRIBUTION_GOOD_A, "1", "10.00", "10.00" } //
+    setProducts(new String[][] { //
+        // ProductId, quantity, price, amount
+        { PRODUCT_DISTRIBUTION_GOOD_A, "1", "10.00", "10.00" } //
     });
     setQuantity(BigDecimal.ONE);
     setPrice(new BigDecimal("250.00"));

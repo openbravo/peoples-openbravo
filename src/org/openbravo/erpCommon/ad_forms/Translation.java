@@ -10,7 +10,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2018 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -21,7 +21,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
@@ -38,8 +37,8 @@ public class Translation extends HttpSecureAppServlet {
   private static ConnectionProvider cp;
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
     System.setProperty("javax.xml.transform.TransformerFactory",
         "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl"); // added
@@ -52,15 +51,17 @@ public class Translation extends HttpSecureAppServlet {
       final String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
       // import/export translation is currently always on system level
       final String strClient = "0";
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Lang " + strLang + " Client " + strClient);
+      }
 
       // New message system
-      final OBError myMessage = TranslationManager.exportTrl(this,
-          globalParameters.strFTPDirectory, strLang, strClient, vars.getLanguage());
+      final OBError myMessage = TranslationManager.exportTrl(this, globalParameters.strFTPDirectory,
+          strLang, strClient, vars.getLanguage());
 
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("message:" + myMessage.getMessage());
+      }
       vars.setMessage("Translation", myMessage);
       response.sendRedirect(strDireccion + request.getServletPath());
 
@@ -68,14 +69,16 @@ public class Translation extends HttpSecureAppServlet {
       final String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
       // import/export translation is currently always on system level
       final String strClient = "0";
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Lang " + strLang + " Client " + strClient);
+      }
 
       final String directory = globalParameters.strFTPDirectory + "/lang/" + strLang + "/";
       final OBError myMessage = TranslationManager.importTrlDirectory(this, directory, strLang,
           strClient, vars.getLanguage());
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("message:" + myMessage.getMessage());
+      }
       vars.setMessage("Translation", myMessage);
       response.sendRedirect(strDireccion + request.getServletPath());
 
@@ -85,13 +88,6 @@ public class Translation extends HttpSecureAppServlet {
   @Deprecated
   public static void setConnectionProvicer(ConnectionProvider conn) {
     cp = conn;
-  }
-
-  @Deprecated
-  public static void setLog4j(Logger logger) {
-    // Note: This method does not do anything anymore, however is kept to keep the API stable.
-    // Logging of the import/export code is not always done using the same static logger as the rest
-    // of the openbravo code instead of using the callers logger like before.
   }
 
   /**
@@ -120,8 +116,9 @@ public class Translation extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
@@ -157,8 +154,9 @@ public class Translation extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
 
-      if (log4j.isDebugEnabled() && myMessage != null)
+      if (log4j.isDebugEnabled() && myMessage != null) {
         log4j.debug("datasheet message:" + myMessage.getMessage());
+      }
 
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");

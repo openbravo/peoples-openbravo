@@ -19,17 +19,21 @@
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.dal.service.OBDal;
@@ -42,14 +46,14 @@ import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.domain.ReferencedTreeField;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class caches some AD structures used by the Form Initialization component. Basically, it
@@ -59,8 +63,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class ApplicationDictionaryCachedStructures {
-  private static final Logger log = LoggerFactory
-      .getLogger(ApplicationDictionaryCachedStructures.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Map<String, Window> windowMap;
   private Map<String, Tab> tabMap;
@@ -106,10 +109,11 @@ public class ApplicationDictionaryCachedStructures {
     log.info("ADCS initialized, use cache: {}", useCache);
   }
 
-  @SuppressWarnings("unchecked")
   private Set<String> getModulesInDevelopment() {
     final String query = "select m.id from ADModule m where m.inDevelopment=true";
-    final Query indevelMods = OBDal.getInstance().getSession().createQuery(query);
+    final Query<String> indevelMods = OBDal.getInstance()
+        .getSession()
+        .createQuery(query, String.class);
     return new HashSet<>(indevelMods.list());
   }
 
@@ -203,6 +207,11 @@ public class ApplicationDictionaryCachedStructures {
       }
 
       Window window = OBDal.getInstance().get(Window.class, windowId);
+      if (window == null) {
+        return;
+      }
+
+      initializeDALObject(window.getModule());
       for (Tab tab : window.getADTabList()) {
         initializeTab(tab);
       }
@@ -230,6 +239,8 @@ public class ApplicationDictionaryCachedStructures {
     getFieldsOfTab(tab);
     initializeDALObject(tab.getTable());
     getColumnsOfTable(tab.getTable().getId());
+    initializeProcess(tab.getProcess());
+    initializeDALObject(tab.getTableTree());
 
     if (useCache()) {
       tabMap.put(tabId, tab);
@@ -244,6 +255,7 @@ public class ApplicationDictionaryCachedStructures {
     Table table = OBDal.getInstance().get(Table.class, tableId);
     initializeDALObject(table);
     initializeDALObject(table.getADColumnList());
+    initializeDALObject(table.getObserdsDatasource());
     if (useCache()) {
       tableMap.put(tableId, table);
     }
@@ -262,10 +274,11 @@ public class ApplicationDictionaryCachedStructures {
     String tableId = tab.getTable().getId();
     List<Field> fields = tab.getADFieldList();
     for (Field f : fields) {
+      initializeDALObject(f.getFieldGroup());
+
       if (f.getColumn() == null) {
         continue;
       }
-      initializeDALObject(f.getColumn());
       initializeColumn(f.getColumn());
 
       // Property fields can link to columns in a different table than tab's one, in this case
@@ -296,6 +309,7 @@ public class ApplicationDictionaryCachedStructures {
   }
 
   private void initializeColumn(Column c) {
+    initializeDALObject(c);
     initializeDALObject(c.getValidation());
     if (c.getValidation() != null) {
       initializeDALObject(c.getValidation().getValidationCode());
@@ -315,12 +329,32 @@ public class ApplicationDictionaryCachedStructures {
     if (c.getReferenceSearchKey() != null) {
       initializeReference(c.getReferenceSearchKey());
     }
+
+    initializeDALObject(c.getOBUIAPPProcess());
+    initializeProcess(c.getProcess());
+
+  }
+
+  private void initializeProcess(Process p) {
+    if (p == null) {
+      return;
+    }
+    initializeDALObject(p);
+    initializeDALObject(p.getModule());
+    initializeDALObject(p.getADModelImplementationList());
+    p.getADModelImplementationList()
+        .stream()
+        //
+        .filter(ModelImplementation::isDefault)
+        .forEach(m -> initializeDALObject(m.getADModelImplementationMappingList()));
+
   }
 
   private void initializeReference(Reference reference) {
     initializeDALObject(reference.getADReferencedTableList());
     for (ReferencedTable t : reference.getADReferencedTableList()) {
       initializeDALObject(t);
+      initializeDALObject(t.getDisplayedColumn().getTable());
     }
 
     initializeDALObject(reference.getOBUISELSelectorList());
@@ -342,6 +376,13 @@ public class ApplicationDictionaryCachedStructures {
       initializeDALObject(list);
     }
     initializeDALObject(reference.getOBUIAPPRefWindowList());
+
+    for (ReferencedTree refTree : reference.getADReferencedTreeList()) {
+      initializeDALObject(refTree);
+      for (ReferencedTreeField refTreeField : refTree.getADReferencedTreeFieldList()) {
+        initializeDALObject(refTreeField);
+      }
+    }
   }
 
   public List<AuxiliaryInput> getAuxiliarInputList(String tabId) {
@@ -420,8 +461,8 @@ public class ApplicationDictionaryCachedStructures {
         + ".id = :tab)");
     where.append(" order by CASE WHEN " + Parameter.PROPERTY_FIXED + " is true THEN 1 ELSE 2 END");
     where.append(" , " + Parameter.PROPERTY_SEQUENCENUMBER);
-    final OBQuery<Parameter> qryParams = OBDal.getInstance().createQuery(Parameter.class,
-        where.toString());
+    final OBQuery<Parameter> qryParams = OBDal.getInstance()
+        .createQuery(Parameter.class, where.toString());
     qryParams.setNamedParameter("attMethod", strAttMethodId);
     qryParams.setNamedParameter("tab", strTabId);
     List<Parameter> metadatas = qryParams.list();
@@ -475,5 +516,30 @@ public class ApplicationDictionaryCachedStructures {
    */
   public boolean isInDevelopment(String moduleId) {
     return this.inDevelopmentModules.contains(moduleId);
+  }
+
+  /**
+   * Marks all modules as not in development and updates the cache status
+   */
+  public void setNotInDevelopment() {
+    setAllModulesAsNotInDevelopment();
+    inDevelopmentModules.clear();
+    useCache = true;
+    log.info("Setting all modules as not In Development");
+  }
+
+  private void setAllModulesAsNotInDevelopment() {
+    OBDal.getInstance()
+        .getSession()
+        .createQuery(
+            "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
+        .executeUpdate();
+  }
+
+  Collection<String> getCachedWindows() {
+    return windowMap.values()
+        .stream() //
+        .map(Window::toString) //
+        .collect(Collectors.toList());
   }
 }

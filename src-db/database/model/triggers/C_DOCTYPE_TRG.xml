@@ -70,6 +70,20 @@ BEGIN
     WHERE C_DocType_ID=:new.C_DocType_ID;
   END IF;
  END IF;
+
+ IF (UPDATING) THEN
+   IF(COALESCE(:OLD.isreturn, '.') <> COALESCE(:NEW.isreturn, '.')) THEN
+         UPDATE c_orderline ol
+         SET returnline = (CASE WHEN (:NEW.isreturn = 'Y') THEN 'Y' ELSE NULL END)
+         WHERE EXISTS(
+            SELECT 1
+            FROM c_order o
+            WHERE 
+              ol.c_order_id = o.c_order_id
+              AND o.c_doctypetarget_id = :NEW.c_doctype_id 
+         );
+   END IF;
+ END IF;
 -- Updating
 END C_DOCTYPE_TRG
 ]]></body>

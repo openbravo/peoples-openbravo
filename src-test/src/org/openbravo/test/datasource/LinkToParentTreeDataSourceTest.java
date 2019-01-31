@@ -25,6 +25,8 @@ import static org.junit.Assert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
@@ -36,8 +38,6 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Test case for LinkToParent tree Datasource
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class LinkToParentTreeDataSourceTest extends BaseDataSourceTestDal {
 
-  private static final Logger log = LoggerFactory.getLogger(LinkToParentTreeDataSourceTest.class);
+  private static final Logger log = LogManager.getLogger();
   private static final int STATUS_OK = 0;
   private static final int NUMBER_OF_COST_ADJUSTMENT_LINES = 2;
 
@@ -135,7 +135,7 @@ public class LinkToParentTreeDataSourceTest extends BaseDataSourceTestDal {
 
     return new JSONObject(this.doRequest(
         "/org.openbravo.service.datasource/610BEAE5E223447DBE6FF672B703F72F", params, 200, "POST"))
-        .getJSONObject("response");
+            .getJSONObject("response");
   }
 
   private Map<String, String> generateCostAdjustmentLinesParams(String id) {
@@ -147,10 +147,8 @@ public class LinkToParentTreeDataSourceTest extends BaseDataSourceTestDal {
     params.put("parentRecordId", id);
     params.put("tabId", "06DCB72BB6D24F82BCDA5FFF8EA0425C");
     params.put("@CostAdjustment.id@", id);
-    params
-        .put(
-            "criteria",
-            "{\"_constructor\":\"AdvancedCriteria\",\"fieldName\":\"parentId\",\"value\":\"-1\",\"operator\":\"equals\"}");
+    params.put("criteria",
+        "{\"_constructor\":\"AdvancedCriteria\",\"fieldName\":\"parentId\",\"value\":\"-1\",\"operator\":\"equals\"}");
 
     return params;
   }

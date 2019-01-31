@@ -20,7 +20,8 @@ package org.openbravo.erpCommon.utility;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -40,7 +41,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 
 public class OBMessageUtils {
-  static Logger log4j = Logger.getLogger(OBMessageUtils.class);
+  static Logger log4j = LogManager.getLogger();
 
   public static String messageBD(String strCode, boolean escape) {
     return messageBD(strCode, true, escape);
@@ -426,8 +427,8 @@ public class OBMessageUtils {
       final String rdbms = conn.getRDBMS();
       ErrorTextParser myParser = null;
       try {
-        final Class<?> c = Class.forName("org.openbravo.erpCommon.utility.ErrorTextParser"
-            + rdbms.toUpperCase());
+        final Class<?> c = Class
+            .forName("org.openbravo.erpCommon.utility.ErrorTextParser" + rdbms.toUpperCase());
         myParser = (ErrorTextParser) c.getDeclaredConstructor().newInstance();
       } catch (final ClassNotFoundException ex) {
         log4j.warn("Couldn´t find class: org.openbravo.erpCommon.utility.ErrorTextParser"
@@ -445,11 +446,11 @@ public class OBMessageUtils {
         myParser.setVars(vars);
         try {
           final OBError myErrorAux = myParser.parse();
-          if (myErrorAux != null
-              && !myErrorAux.getMessage().equals("")
-              && (code == null || code.equals("") || code.equals("0") || !myErrorAux.getMessage()
-                  .equalsIgnoreCase(message)))
+          if (myErrorAux != null && !myErrorAux.getMessage().equals("")
+              && (code == null || code.equals("") || code.equals("0")
+                  || !myErrorAux.getMessage().equalsIgnoreCase(message))) {
             return myErrorAux;
+          }
         } catch (final Exception ex) {
           log4j.error("Error while parsing text: " + ex);
         }
@@ -463,9 +464,9 @@ public class OBMessageUtils {
     if (code != null && !code.equals("")) {
       final FieldProvider fldMessage = locateMessage(conn, code, strLanguage);
       if (fldMessage != null) {
-        myError.setType((fldMessage.getField("msgtype").equals("E") ? "Error" : (fldMessage
-            .getField("msgtype").equals("I") ? "Info"
-            : (fldMessage.getField("msgtype").equals("S") ? "Success" : "Warning"))));
+        myError.setType((fldMessage.getField("msgtype").equals("E") ? "Error"
+            : (fldMessage.getField("msgtype").equals("I") ? "Info"
+                : (fldMessage.getField("msgtype").equals("S") ? "Success" : "Warning"))));
         myError.setMessage(fldMessage.getField("msgtext"));
         return myError;
       }
@@ -517,8 +518,8 @@ public class OBMessageUtils {
     try {
 
       // first read the labels from the base table
-      final OBQuery<Message> messages = OBDal.getInstance().createQuery(Message.class,
-          Message.PROPERTY_SEARCHKEY + "=:key");
+      final OBQuery<Message> messages = OBDal.getInstance()
+          .createQuery(Message.class, Message.PROPERTY_SEARCHKEY + "=:key");
       messages.setNamedParameter("key", key);
 
       // ad_message.value has unique constraint

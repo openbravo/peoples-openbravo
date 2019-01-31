@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2018 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -259,8 +259,11 @@ isc.OBFKFilterTextItem.addProperties({
       if (isc.EH.getKeyName() === 'Tab') {
         this.pickList.hide();
       }
-      // restore the filter editor with the previous criteria
-      this.setCriterion(this.getAppliedCriteria());
+      if (!this.grid.sourceWidget.lazyFiltering) {
+        // restore the filter editor with the previous criteria
+        // if lazy filtering is enabled don't do this because the filter criteria may have not been applied into the grid yet
+        this.setCriterion(this.getAppliedCriteria());
+      }
       // do not perform a filter action on blur if the filtering by identifier is not allowed
     } else if (this._hasChanged && this.allowFkFilterByIdentifier !== false) {
       this.form.grid.performAction();
@@ -650,10 +653,7 @@ isc.OBFKFilterTextItem.addProperties({
           continue;
         }
 
-        same = opDefs[prop].symbol && val.startsWith(opDefs[prop].symbol);
-        if (same) {
-          return true;
-        }
+        return opDefs[prop].symbol && val.startsWith(opDefs[prop].symbol);
       }
     }
     return false;
@@ -686,7 +686,7 @@ isc.OBFKFilterTextItem.addProperties({
   // if the filterType is ID, try to return the record ids instead of the record identifiers
   getCriteriaValue: function () {
     var value, values = this.getValue(),
-        record, i, j, criteriaValues = [],
+        i, j, criteriaValues = [],
         recordIds;
     if (values && this.filterType === 'id') {
       for (i = 0; i < values.length; i++) {

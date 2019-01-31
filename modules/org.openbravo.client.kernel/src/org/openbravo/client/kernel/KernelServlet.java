@@ -34,7 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBSecurityException;
@@ -50,8 +51,8 @@ import org.openbravo.service.web.WebServiceUtil;
  * @author mtaal
  */
 public class KernelServlet extends BaseKernelServlet {
-  // private static final Logger log = Logger.getLogger(DataSourceServlet.class);
-  private static final Logger log = Logger.getLogger(KernelServlet.class);
+  // private static final Logger log = LogManager.getLogger();
+  private static final Logger log = LogManager.getLogger();
 
   // this is needed to support logout deep in the code...
   // TODO: make it easier to get to the authentication manager from
@@ -87,7 +88,8 @@ public class KernelServlet extends BaseKernelServlet {
   private static synchronized void incBypassAuthenticationCount(HttpServletRequest request) {
     HttpSession session = request.getSession(true);
     OBContext context = OBContext.getOBContext();
-    boolean sessionForThisRequest = (context == null || session.getAttribute("#Authenticated_user") == null)
+    boolean sessionForThisRequest = (context == null
+        || session.getAttribute("#Authenticated_user") == null)
         && !"Y".equals(session.getAttribute("#LOGGINGIN"));
 
     if (sessionForThisRequest) {
@@ -106,9 +108,7 @@ public class KernelServlet extends BaseKernelServlet {
       }
       session.setAttribute("forcedSessionsRequestCount", count);
       log.warn("The KernelServlet should not be used for unauthenticated access (this request url: "
-          + request.getRequestURL()
-          + " - "
-          + request.getQueryString()
+          + request.getRequestURL() + " - " + request.getQueryString()
           + "). This functionality is deprecated, "
           + "use 'org.openbravo.mobile.core' instead of 'org.openbravo.client.kernel'; "
           + "see this issue https://issues.openbravo.com/view.php?id=27248 for more information");
@@ -128,9 +128,7 @@ public class KernelServlet extends BaseKernelServlet {
         session.setAttribute("forcedSessionsRequestCount", count);
       }
       log.warn("The KernelServlet should not be used for unauthenticated access (this request url: "
-          + request.getRequestURL()
-          + " - "
-          + request.getQueryString()
+          + request.getRequestURL() + " - " + request.getQueryString()
           + "). This functionality is deprecated, "
           + "use 'org.openbravo.mobile.core' instead of 'org.openbravo.client.kernel'; "
           + "see this issue https://issues.openbravo.com/view.php?id=27248 for more information");
@@ -144,12 +142,14 @@ public class KernelServlet extends BaseKernelServlet {
   @Inject
   private WeldUtils weldUtils;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     kernelServletglobalParameters = ConfigParameters.retrieveFrom(config.getServletContext());
     servletContext = config.getServletContext();
   }
 
+  @Override
   public void service(final HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
@@ -159,7 +159,8 @@ public class KernelServlet extends BaseKernelServlet {
     if (action == null) {
       Component component = getComponent(request);
 
-      if (component instanceof BaseComponent && ((BaseComponent) component).bypassAuthentication()) {
+      if (component instanceof BaseComponent
+          && ((BaseComponent) component).bypassAuthentication()) {
         bypassAuthentication = true;
         incBypassAuthenticationCount(request);
       }
@@ -194,8 +195,8 @@ public class KernelServlet extends BaseKernelServlet {
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     if (!request.getRequestURI().contains("/" + servletPathPart)) {
       throw new UnsupportedOperationException("Invalid url " + request.getRequestURI());
@@ -217,13 +218,14 @@ public class KernelServlet extends BaseKernelServlet {
     final String servicePart = request.getRequestURI().substring(nameIndex);
     final String[] pathParts = WebServiceUtil.getInstance().getSegments(servicePart);
     if (pathParts.length < 2) {
-      throw new UnsupportedOperationException("No service name present in url "
-          + request.getRequestURI());
+      throw new UnsupportedOperationException(
+          "No service name present in url " + request.getRequestURI());
     }
     final String componentProviderName = pathParts[1];
 
-    final ComponentProvider componentProvider = componentProviders.select(
-        new ComponentProvider.Selector(componentProviderName)).get();
+    final ComponentProvider componentProvider = componentProviders
+        .select(new ComponentProvider.Selector(componentProviderName))
+        .get();
 
     final String componentId;
     if (pathParts.length > 2) {
@@ -282,8 +284,8 @@ public class KernelServlet extends BaseKernelServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     doGet(request, response);
   }
 
@@ -298,7 +300,8 @@ public class KernelServlet extends BaseKernelServlet {
     try {
       @SuppressWarnings("unchecked")
       final Class<ActionHandler> actionHandlerClass = (Class<ActionHandler>) OBClassLoader
-          .getInstance().loadClass(action);
+          .getInstance()
+          .loadClass(action);
       final ActionHandler actionHandler = weldUtils.getInstance(actionHandlerClass);
 
       if (OBContext.getOBContext() != null && OBContext.getOBContext().isPortalRole()) {
@@ -331,8 +334,8 @@ public class KernelServlet extends BaseKernelServlet {
   }
 
   @Override
-  public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPut(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     throw new UnsupportedOperationException("Only GET/POST is supported");
   }
 

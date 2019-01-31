@@ -67,8 +67,8 @@ public class FieldProviderTest extends OBBaseTest {
           } else if (value instanceof String) {
             assertTrue(value.equals(strValue));
           } else {
-            assertTrue((value != null && strValue != null)
-                || (value == null && strValue.equals("")));
+            assertTrue(
+                (value != null && strValue != null) || (value == null && strValue.equals("")));
           }
         }
       }

@@ -48,7 +48,8 @@ public class SL_Invoice_DocType extends SimpleCallout {
           strCInvoiceId);
       if (StringUtils.isEmpty(strDoctypetargetinvoice)
           || !StringUtils.equals(strDoctypetargetinvoice, strDocTypeTarget)) {
-        String strDocumentNo = StringUtils.equals(data[0].isdocnocontrolled, "Y") ? data[0].currentnext
+        String strDocumentNo = StringUtils.equals(data[0].isdocnocontrolled, "Y")
+            ? data[0].currentnext
             : Utility.getDocumentNo(this, info.vars.getClient(), "C_Invoice", false);
         info.addResult("inpdocumentno", "<" + strDocumentNo + ">");
       } else if (StringUtils.isNotEmpty(strDoctypetargetinvoice)

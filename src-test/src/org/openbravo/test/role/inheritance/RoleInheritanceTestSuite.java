@@ -31,7 +31,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-// Propagation Tests
+    // Propagation Tests
     AccessPropagationNotInherited.class, //
     AccessPropagation.class, //
     DeletedAccessPropagation.class,

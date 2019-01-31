@@ -45,8 +45,8 @@ public class SL_PC_Case_Product extends SimpleCallout {
     try {
       final Product product = OBDal.getInstance().get(Product.class, strMProductID);
       if (product != null) {
-        info.addResult("inpattributeset", product.getAttributeSet() != null ? product
-            .getAttributeSet().getId() : "");
+        info.addResult("inpattributeset",
+            product.getAttributeSet() != null ? product.getAttributeSet().getId() : "");
         info.addResult("inpattrsetvaluetype",
             FormatUtilities.replaceJS(product.getUseAttributeSetValueAs()));
       }

@@ -19,13 +19,16 @@
 package org.openbravo.userinterface.selector;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -51,13 +54,14 @@ import org.openbravo.model.ad.datamodel.Table;
  */
 @ApplicationScoped
 public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
-  private Logger log = Logger.getLogger(SelectorDefaultFilterActionHandler.class);
+  private Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     JSONObject result = new JSONObject();
 
     Map<String, String> params = getParameterMap(parameters);
+    addParametersFromRequestContent(params, content);
 
     OBContext.setAdminMode();
 
@@ -88,16 +92,14 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
       obc.add(Restrictions.isNotNull(SelectorField.PROPERTY_DEFAULTEXPRESSION));
 
       List<SelectorField> selFields = obc.list();
-      if (selFields.size() == 0) {
+      if (selFields.isEmpty()) {
         return result;
       }
 
       Map<String, Object> bindings = new HashMap<>();
 
-      bindings.put(
-          "OB",
-          new OBBindings(OBContext.getOBContext(), params, (HttpSession) parameters
-              .get(KernelConstants.HTTP_SESSION)));
+      bindings.put("OB", new OBBindings(OBContext.getOBContext(), params,
+          (HttpSession) parameters.get(KernelConstants.HTTP_SESSION)));
 
       boolean isFilterByIdSupported = params
           .containsKey(SelectorConstants.DS_REQUEST_IS_FILTER_BY_ID_SUPPORTED)
@@ -117,8 +119,8 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
               property = DalUtil.getPropertyFromPath(entity, f.getProperty());
             }
             if (property != null && property.getTargetEntity() != null && !property.isOneToMany()) {
-              final BaseOBObject bob = OBDal.getInstance().get(
-                  property.getTargetEntity().getName(), exprResult);
+              final BaseOBObject bob = OBDal.getInstance()
+                  .get(property.getTargetEntity().getName(), exprResult);
               bobId = exprResult;
               exprResult = bob.getIdentifier();
             }
@@ -136,9 +138,8 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
             }
           }
         } catch (Exception e) {
-          log.error(
-              "Error evaluating expression for property " + f.getProperty()
-                  + f.getDisplayColumnAlias() + ": " + e.getMessage(), e);
+          log.error("Error evaluating expression for property " + f.getProperty()
+              + f.getDisplayColumnAlias() + ": " + e.getMessage(), e);
         }
       }
 
@@ -149,8 +150,8 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
       // https://issues.openbravo.com/view.php?id=21541
       Object dynamicFilterExpression = null;
       if (sel.getFilterExpression() != null) {
-        dynamicFilterExpression = OBScriptEngine.getInstance().eval(sel.getFilterExpression(),
-            bindings);
+        dynamicFilterExpression = OBScriptEngine.getInstance()
+            .eval(sel.getFilterExpression(), bindings);
         result.put(SelectorConstants.PARAM_FILTER_EXPRESSION, dynamicFilterExpression.toString());
       }
 
@@ -163,6 +164,23 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
     return result;
   }
 
+  private void addParametersFromRequestContent(Map<String, String> params, String content) {
+    JSONObject jsonContent;
+    try {
+      jsonContent = new JSONObject(content);
+      @SuppressWarnings("unchecked")
+      Iterator<String> keys = jsonContent.keys();
+      while (keys.hasNext()) {
+        String key = keys.next();
+        String value = jsonContent.getString(key);
+        params.put(key, value);
+      }
+    } catch (JSONException e) {
+      log.error("Could not retrieve JSON from content: " + content);
+      return;
+    }
+  }
+
   private JSONObject createJSONObjectFilter(String fieldName, String id, String identifier)
       throws JSONException {
     JSONObject jsonResult = new JSONObject();
@@ -173,12 +191,13 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
   }
 
   private Map<String, String> getParameterMap(Map<String, Object> parameters) {
-    Map<String, String> params = new HashMap<String, String>();
-    for (String key : parameters.keySet()) {
+    Map<String, String> params = new HashMap<>();
+    for (Entry<String, Object> entry : parameters.entrySet()) {
+      String key = entry.getKey();
       if (key.equals(KernelConstants.HTTP_SESSION) || key.equals(KernelConstants.HTTP_REQUEST)) {
         continue;
       }
-      params.put(key, (String) parameters.get(key));
+      params.put(key, (String) entry.getValue());
     }
     return params;
   }

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.xerces.parsers.SAXParser;
 import org.openbravo.database.ConnectionProvider;
 import org.xml.sax.InputSource;
@@ -58,8 +58,8 @@ public class XmlEngine extends HttpServlet {
 
   static public String strTextDividedByZero;
 
-  static Logger log4jXmlEngine = Logger.getLogger(XmlEngine.class);
-  static Logger log4jReloadXml = Logger.getLogger("reloadXml");
+  static Logger log4jXmlEngine = LogManager.getLogger();
+  static Logger log4jReloadXml = LogManager.getLogger("reloadXml");
 
   ConnectionProvider connProvider;
 
@@ -68,36 +68,41 @@ public class XmlEngine extends HttpServlet {
   }
 
   public XmlEngine() {
-    // init();
   }
 
+  @Override
   public void init(ServletConfig config) throws ServletException {
-    if (log4jXmlEngine.isDebugEnabled())
+    if (log4jXmlEngine.isDebugEnabled()) {
       log4jXmlEngine.debug("XmlEngine v0.846-2");
+    }
     super.init(config);
     configXMLEngine = config;
-    configureLog4j(getInitParameter("fileConfigurationLog4j"));
     strBaseLocation = getInitParameter("BaseLocation");
     strDriverDefault = getInitParameter("driver");
     strUrlDefault = getInitParameter("URL");
-    if (log4jXmlEngine.isDebugEnabled())
+    if (log4jXmlEngine.isDebugEnabled()) {
       log4jXmlEngine.debug("driver: " + strDriverDefault + " URL: " + strUrlDefault);
+    }
     strFormatFile = getInitParameter("FormatFile");
     fileBaseLocation = new File(strBaseLocation);
     fileXmlEngineFormat = new File(fileBaseLocation, strFormatFile);
-    if (log4jXmlEngine.isDebugEnabled())
+    if (log4jXmlEngine.isDebugEnabled()) {
       log4jXmlEngine.debug("BaseLocation: " + strBaseLocation);
+    }
     strReplaceWhat = getInitParameter("ReplaceWhat");
     strReplaceWith = getInitParameter("ReplaceWith");
-    if (log4jXmlEngine.isDebugEnabled())
-      log4jXmlEngine.debug("Replace attribute value: \"" + strReplaceWhat + "\" with: \""
-          + strReplaceWith + "\".");
+    if (log4jXmlEngine.isDebugEnabled()) {
+      log4jXmlEngine.debug(
+          "Replace attribute value: \"" + strReplaceWhat + "\" with: \"" + strReplaceWith + "\".");
+    }
     strTextDividedByZero = getInitParameter("TextDividedByZero");
-    if (log4jXmlEngine.isDebugEnabled())
+    if (log4jXmlEngine.isDebugEnabled()) {
       log4jXmlEngine.debug("TextDividedByZero: " + strTextDividedByZero);
+    }
     try {
-      if (log4jXmlEngine.isDebugEnabled())
+      if (log4jXmlEngine.isDebugEnabled()) {
         log4jXmlEngine.debug("fileBaseLocation: " + fileBaseLocation.getCanonicalPath());
+      }
     } catch (IOException e) {
       log4jXmlEngine.error("Error in BaseLocation: " + strBaseLocation);
     }
@@ -199,23 +204,25 @@ public class XmlEngine extends HttpServlet {
     formatHashtable = new Hashtable<String, FormatCouple>();
     XMLReader xmlParserFormat = new SAXParser();
     xmlParserFormat.setContentHandler(new FormatRead(formatHashtable));
-    if (log4jXmlEngine.isDebugEnabled())
+    if (log4jXmlEngine.isDebugEnabled()) {
       log4jXmlEngine.debug("XmlEngine file formats: " + strFormatFile);
+    }
     // File fileXmlEngineFormat = new File (fileBaseLocation,
     // strFormatFile);
     // String strFormatFile =
     // "c:\\Apps\\src\\org\\openbravo\\data\\examples\\FormatExample1.xml";
     // File fileXmlEngineFormat = new File (strFormatFile);
-    if (log4jXmlEngine.isDebugEnabled())
+    if (log4jXmlEngine.isDebugEnabled()) {
       log4jXmlEngine.debug("fileXmlEngineFormat: " + fileXmlEngineFormat.toString());
+    }
     try {
       // xmlParserFormat.parse(new InputSource(new
       // FileReader(fileXmlEngineFormat)));
-      xmlParserFormat.parse(new InputSource(new InputStreamReader(new FileInputStream(
-          fileXmlEngineFormat), "UTF-8")));
+      xmlParserFormat.parse(new InputSource(
+          new InputStreamReader(new FileInputStream(fileXmlEngineFormat), "UTF-8")));
     } catch (FileNotFoundException e) {
-      log4jXmlEngine.error("not found fileXmlEngineFormat: " + fileXmlEngineFormat + "\n"
-          + e.getMessage());
+      log4jXmlEngine
+          .error("not found fileXmlEngineFormat: " + fileXmlEngineFormat + "\n" + e.getMessage());
       return;
     } catch (IOException e) {
       log4jXmlEngine.error("IOException in fileXmlEngineFormat: " + fileXmlEngineFormat);
@@ -296,8 +303,9 @@ public class XmlEngine extends HttpServlet {
    */
   private XmlTemplate addXmlTemplate(String strXmlTemplateName, String strXmlTemplateFile,
       String[] discard) {
-    if (log4jXmlEngine.isDebugEnabled())
+    if (log4jXmlEngine.isDebugEnabled()) {
       log4jXmlEngine.debug("Adding: " + strXmlTemplateName);
+    }
     XmlTemplate xmlTemplate = hasXmlTemplate.get(strXmlTemplateName);
     if (xmlTemplate != null) {
       return xmlTemplate;
@@ -327,49 +335,54 @@ public class XmlEngine extends HttpServlet {
     // parser of the configuration file
     xmlParser.setContentHandler(xmlTemplate.configuration);
     String strFile = xmlTemplate.fileConfiguration() + ".xml";
-    if (log4jXmlEngine.isDebugEnabled())
+    if (log4jXmlEngine.isDebugEnabled()) {
       log4jXmlEngine.debug("XmlEngine name: " + strFile);
+    }
     File fileXmlEngineConfiguration = null;
     if (!isResource) {
       fileXmlEngineConfiguration = new File(fileBaseLocation, strFile);
       if (log4jXmlEngine.isDebugEnabled()) {
         log4jXmlEngine
             .debug("fileXmlEngineConfiguration: " + fileXmlEngineConfiguration.toString());
-        log4jXmlEngine.debug("Parent fileXmlEngineConfiguration: "
-            + fileXmlEngineConfiguration.getParent());
+        log4jXmlEngine
+            .debug("Parent fileXmlEngineConfiguration: " + fileXmlEngineConfiguration.getParent());
       }
     }
     xmlTemplate.clear();
     try {
       // if (!isResource) xmlParser.parse(new InputSource(new
       // FileReader(fileXmlEngineConfiguration)));
-      if (!isResource)
-        xmlParser.parse(new InputSource(new InputStreamReader(new FileInputStream(
-            fileXmlEngineConfiguration), "UTF-8")));
-      else
+      if (!isResource) {
+        xmlParser.parse(new InputSource(
+            new InputStreamReader(new FileInputStream(fileXmlEngineConfiguration), "UTF-8")));
+      } else {
         xmlParser.parse(new InputSource(ClassLoader.getSystemResourceAsStream(strFile)));
+      }
     } catch (FileNotFoundException e) {
-      if (!isResource)
+      if (!isResource) {
         log4jXmlEngine.error("not found fileXmlEngineConfiguration: " + fileXmlEngineConfiguration
             + "\n" + e.getMessage());
-      else
-        log4jXmlEngine.error("not found fileXmlEngineConfiguration: " + strFile + "\n"
-            + e.getMessage());
+      } else {
+        log4jXmlEngine
+            .error("not found fileXmlEngineConfiguration: " + strFile + "\n" + e.getMessage());
+      }
       return;
     } catch (IOException e) {
-      if (!isResource)
-        log4jXmlEngine.error("IOException in fileXmlEngineConfiguration: "
-            + fileXmlEngineConfiguration);
-      else
+      if (!isResource) {
+        log4jXmlEngine
+            .error("IOException in fileXmlEngineConfiguration: " + fileXmlEngineConfiguration);
+      } else {
         log4jXmlEngine.error("IOException in fileXmlEngineConfiguration: " + strFile);
+      }
       e.printStackTrace();
       return;
     } catch (Exception e) {
-      if (!isResource)
-        log4jXmlEngine.error("Exception in fileXmlEngineConfiguration: "
-            + fileXmlEngineConfiguration);
-      else
+      if (!isResource) {
+        log4jXmlEngine
+            .error("Exception in fileXmlEngineConfiguration: " + fileXmlEngineConfiguration);
+      } else {
         log4jXmlEngine.error("Exception in fileXmlEngineConfiguration: " + strFile);
+      }
       e.printStackTrace();
       return;
     }
@@ -378,75 +391,86 @@ public class XmlEngine extends HttpServlet {
     int posExtension = xmlTemplate.configuration.strTemplate.lastIndexOf(".");
     XMLReader templateParser;
     if (xmlTemplate.configuration.strTemplate.substring(posExtension).equals(".html")) {
-      if (log4jXmlEngine.isDebugEnabled())
-        log4jXmlEngine.debug("Html file: -"
-            + xmlTemplate.configuration.strTemplate.substring(posExtension) + "-");
+      if (log4jXmlEngine.isDebugEnabled()) {
+        log4jXmlEngine.debug(
+            "Html file: -" + xmlTemplate.configuration.strTemplate.substring(posExtension) + "-");
+      }
       templateParser = htmlParser;
     } else {
-      if (log4jXmlEngine.isDebugEnabled())
-        log4jXmlEngine.debug("Xml file: -"
-            + xmlTemplate.configuration.strTemplate.substring(posExtension) + "-");
+      if (log4jXmlEngine.isDebugEnabled()) {
+        log4jXmlEngine.debug(
+            "Xml file: -" + xmlTemplate.configuration.strTemplate.substring(posExtension) + "-");
+      }
       templateParser = xmlParser;
     }
     templateParser.setContentHandler(xmlTemplate);
-    if (log4jXmlEngine.isDebugEnabled())
+    if (log4jXmlEngine.isDebugEnabled()) {
       log4jXmlEngine.debug("XmlEngine file template: " + xmlTemplate.configuration.strTemplate);
+    }
     File fileXmlEngineTemplate = null;
     String strPath = "";
     if (!isResource) {
       fileXmlEngineTemplate = new File(fileXmlEngineConfiguration.getParent(),
           xmlTemplate.configuration.strTemplate);
-      if (log4jXmlEngine.isDebugEnabled())
+      if (log4jXmlEngine.isDebugEnabled()) {
         log4jXmlEngine.debug("fileXmlEngineTemplate: " + fileXmlEngineTemplate.toString());
+      }
     } else {
       int finPath = -1;
       if ((finPath = strFile.lastIndexOf("/")) != -1) {
         strPath = strFile.substring(0, finPath);
-        if (!strPath.endsWith("/"))
+        if (!strPath.endsWith("/")) {
           strPath += "/";
+        }
       }
     }
     try {
       // if (!isResource) templateParser.parse(new InputSource(new
       // FileReader(fileXmlEngineTemplate)));
-      if (!isResource)
-        templateParser.parse(new InputSource(new InputStreamReader(new FileInputStream(
-            fileXmlEngineTemplate), "UTF-8")));
-      else
-        templateParser.parse(new InputSource(ClassLoader.getSystemResourceAsStream(strPath
-            + xmlTemplate.configuration.strTemplate)));
+      if (!isResource) {
+        templateParser.parse(new InputSource(
+            new InputStreamReader(new FileInputStream(fileXmlEngineTemplate), "UTF-8")));
+      } else {
+        templateParser.parse(new InputSource(ClassLoader
+            .getSystemResourceAsStream(strPath + xmlTemplate.configuration.strTemplate)));
+      }
     } catch (FileNotFoundException e) {
-      if (!isResource)
-        log4jXmlEngine.error("not found fileXmlEngineTemplate: " + fileXmlEngineTemplate + "\n"
-            + e.getMessage());
-      else
+      if (!isResource) {
+        log4jXmlEngine.error(
+            "not found fileXmlEngineTemplate: " + fileXmlEngineTemplate + "\n" + e.getMessage());
+      } else {
         log4jXmlEngine.error("not found fileXmlEngineTemplate: " + strPath
             + xmlTemplate.configuration.strTemplate + "\n" + e.getMessage());
+      }
       return;
     } catch (IOException e) {
-      if (!isResource)
+      if (!isResource) {
         log4jXmlEngine.error("IOException in fileXmlEngineTemplate: " + fileXmlEngineTemplate);
-      else
+      } else {
         log4jXmlEngine.error("IOException in fileXmlEngineTemplate: " + strPath
             + xmlTemplate.configuration.strTemplate);
+      }
       e.printStackTrace();
       return;
     } catch (Exception e) {
-      if (!isResource)
+      if (!isResource) {
         log4jXmlEngine.error("Exception in fileXmlEngineTemplate: " + fileXmlEngineTemplate);
-      else
+      } else {
         log4jXmlEngine.error("Exception in fileXmlEngineTemplate: " + strPath
             + xmlTemplate.configuration.strTemplate);
+      }
       e.printStackTrace();
       return;
     }
   }
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     doGet(request, response);
   }
 
+  @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     String strReportName = request.getParameter("report");
@@ -463,13 +487,15 @@ public class XmlEngine extends HttpServlet {
         ParameterValue parameter = (ParameterValue) e2.nextElement();
         parameter.strValue = request.getParameter(parameter.parameterTemplate.strName);
         if (parameter.strValue == null) {
-          if (log4jXmlEngine.isDebugEnabled())
+          if (log4jXmlEngine.isDebugEnabled()) {
             log4jXmlEngine.debug("getParameter: default assigned");
+          }
           parameter.strValue = parameter.parameterTemplate.strDefault;
         }
-        if (log4jXmlEngine.isDebugEnabled())
+        if (log4jXmlEngine.isDebugEnabled()) {
           log4jXmlEngine.debug("getParameter: " + parameter.parameterTemplate.strName + " valor: "
               + parameter.strValue);
+        }
       }
     }
 
@@ -484,12 +510,12 @@ public class XmlEngine extends HttpServlet {
     for (ParameterValue parameter : report.xmlDocument.hasParameterValue.values()) {
       parameter.strValue = request.getParameter(parameter.parameterTemplate.strName);
       if (parameter.strValue == null) {
-        log4jXmlEngine.debug("getParameter of: " + parameter.parameterTemplate.strName
-            + " default assigned");
+        log4jXmlEngine
+            .debug("getParameter of: " + parameter.parameterTemplate.strName + " default assigned");
         parameter.strValue = parameter.parameterTemplate.strDefault;
       }
-      log4jXmlEngine.debug("getParameter: " + parameter.parameterTemplate.strName + " value: "
-          + parameter.strValue);
+      log4jXmlEngine.debug(
+          "getParameter: " + parameter.parameterTemplate.strName + " value: " + parameter.strValue);
     }
 
     // Label of the report (not for the SQL query's)
@@ -539,21 +565,13 @@ public class XmlEngine extends HttpServlet {
     }
   }
 
+  @Override
   public void destroy() {
     closeConnections();
   }
 
-  static void configureLog4j(String file) {
-    if (file != null) {
-      PropertyConfigurator.configure(file);
-    } else {
-      PropertyConfigurator.configure("log4j.lcf");
-    }
-  }
-
   public static void main(String argv[]) {
     int i;
-    configureLog4j(null);
     String strFile;
     if (argv.length < 1) {
       log4jXmlEngine.error("Usage: java XmlEngine [driver URL] file");
@@ -579,36 +597,43 @@ public class XmlEngine extends HttpServlet {
         i++;
         parameter.strValue = argv[i];
         if (parameter.strValue == null) {
-          if (log4jXmlEngine.isDebugEnabled())
+          if (log4jXmlEngine.isDebugEnabled()) {
             log4jXmlEngine.debug("Parameter(main): default assigned");
+          }
           parameter.strValue = parameter.parameterTemplate.strDefault;
         }
-        if (log4jXmlEngine.isDebugEnabled())
+        if (log4jXmlEngine.isDebugEnabled()) {
           log4jXmlEngine.debug("Parameter(main): " + parameter.parameterTemplate.strName
               + " valor: " + parameter.strValue);
+        }
       }
-      for (Enumeration<Object> e3 = elementDataValue.vecLabelValue.elements(); e3.hasMoreElements();) {
+      for (Enumeration<Object> e3 = elementDataValue.vecLabelValue.elements(); e3
+          .hasMoreElements();) {
         LabelValue labelValue = (LabelValue) e3.nextElement();
         i++;
         labelValue.strValue = argv[1];
         if (labelValue.strValue == null) {
-          if (log4jXmlEngine.isDebugEnabled())
+          if (log4jXmlEngine.isDebugEnabled()) {
             log4jXmlEngine.debug("Label(main): default assigned");
+          }
           labelValue.strValue = labelValue.labelTemplate.strName;
         }
-        if (log4jXmlEngine.isDebugEnabled())
+        if (log4jXmlEngine.isDebugEnabled()) {
           log4jXmlEngine.debug("Label(main): " + labelValue.labelTemplate.strName + " valor: "
               + labelValue.strValue);
+        }
       }
     }
 
-    if (log4jXmlEngine.isDebugEnabled())
+    if (log4jXmlEngine.isDebugEnabled()) {
       log4jXmlEngine.debug("Hashtable: ");
+    }
     for (String id : report.xmlDocument.xmlTemplate.configuration.hashtable.vecKeys) {
       IDComponent iDComponent = (IDComponent) report.xmlDocument.xmlTemplate.configuration.hashtable
           .get(id);
-      if (log4jXmlEngine.isDebugEnabled())
+      if (log4jXmlEngine.isDebugEnabled()) {
         log4jXmlEngine.debug("id: " + id + " type: " + iDComponent.type());
+      }
     }
     if (log4jXmlEngine.isDebugEnabled()) {
       log4jXmlEngine.debug("Template: " + report.xmlDocument.xmlTemplate.configuration.strTemplate);

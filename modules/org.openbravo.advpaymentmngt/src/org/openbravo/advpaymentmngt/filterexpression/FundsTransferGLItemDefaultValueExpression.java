@@ -21,16 +21,16 @@ package org.openbravo.advpaymentmngt.filterexpression;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class returns the default value for the GL Item Parameter of the Funds Transfer Process in
@@ -40,8 +40,7 @@ import org.slf4j.LoggerFactory;
 public class FundsTransferGLItemDefaultValueExpression implements FilterExpression {
   private static final String INPAD_ORG_ID_PARAM = "inpadOrgId";
   private static final String AD_ORG_ID_PARAM = "ad_org_id";
-  private static final Logger log = LoggerFactory
-      .getLogger(FundsTransferGLItemDefaultValueExpression.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public String getExpression(Map<String, String> requestMap) {
@@ -91,10 +90,12 @@ public class FundsTransferGLItemDefaultValueExpression implements FilterExpressi
     hql.append(" and p.aPRMGlitem is not null ");
     hql.append(" order by t.levelno asc ");
 
-    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<GLItem> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql.toString(), GLItem.class);
     query.setParameter("organizationId", organization.getId());
     query.setMaxResults(1);
-    final GLItem glItem = (GLItem) query.uniqueResult();
+    final GLItem glItem = query.uniqueResult();
     return glItem != null ? glItem.getId() : null;
   }
 

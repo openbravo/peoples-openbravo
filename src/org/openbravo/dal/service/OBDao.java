@@ -88,7 +88,8 @@ public class OBDao {
    *          String containing the comma separated list of id's
    * @return a List object containing the parsed OBObjects
    */
-  public static <T extends BaseOBObject> List<T> getOBObjectListFromString(Class<T> t, String _IDs) {
+  public static <T extends BaseOBObject> List<T> getOBObjectListFromString(Class<T> t,
+      String _IDs) {
     String strBaseOBOBjectIDs = _IDs;
     final List<T> baseOBObjectList = new ArrayList<T>();
     if (strBaseOBOBjectIDs.startsWith("(")) {

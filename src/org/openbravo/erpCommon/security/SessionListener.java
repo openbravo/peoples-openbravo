@@ -33,7 +33,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.database.ConnectionProvider;
@@ -47,7 +48,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
 
   private static final int PING_TIMEOUT_SECS = 120;
 
-  private static final Logger log = Logger.getLogger(SessionListener.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static Set<String> sessionsInContext = Collections
       .newSetFromMap(new ConcurrentHashMap<String, Boolean>());
@@ -83,9 +84,9 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
     for (String sessionId : sessionsInContext) {
       try {
         // cannot use dal at this point, use sqlc
-        SessionLoginData
-            .deactivate((ConnectionProvider) event.getServletContext()
-                .getAttribute("openbravoPool"), sessionId);
+        SessionLoginData.deactivate(
+            (ConnectionProvider) event.getServletContext().getAttribute("openbravoPool"),
+            sessionId);
       } catch (ServletException e1) {
         log.error(e1.getMessage(), e1);
       }
@@ -128,9 +129,9 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
         String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(cal.getTime());
         long t = System.currentTimeMillis();
         int deactivatedSessions = SessionLoginData.deactivateExpiredSessions(cp, strDate);
-        log.debug("Deactivated " + deactivatedSessions
-            + " old session(s) while starting server. Took: " + (System.currentTimeMillis() - t)
-            + "ms.");
+        log.debug(
+            "Deactivated " + deactivatedSessions + " old session(s) while starting server. Took: "
+                + (System.currentTimeMillis() - t) + "ms.");
       } catch (Exception e) {
         log.error("Error deactivating expired sessions", e);
       }
@@ -216,8 +217,8 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
     }
 
     try {
-      return SessionLoginData.isSessionActive(
-          (ConnectionProvider) context.getAttribute("openbravoPool"), sessionId);
+      return SessionLoginData
+          .isSessionActive((ConnectionProvider) context.getAttribute("openbravoPool"), sessionId);
     } catch (ServletException e) {
       log.error("Error checking active session " + sessionId, e);
       return false;

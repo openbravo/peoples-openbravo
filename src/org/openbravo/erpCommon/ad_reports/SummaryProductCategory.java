@@ -1,6 +1,6 @@
 /*
  *************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -11,12 +11,13 @@ package org.openbravo.erpCommon.ad_reports;
 
 import java.math.BigDecimal;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("serial")
 public class SummaryProductCategory implements FieldProvider {
-  static Logger log4j = LoggerFactory.getLogger(SummaryProductCategory.class);
+  static Logger log4j = LogManager.getLogger();
 
   public String category;
   public BigDecimal cost;

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,22 +80,6 @@
         'tabId': tabId,
         'recordId': recordId
       }, doOpenClassicWindow);
-    },
-
-    // ** {{{ openInstanceManagementForm() }}} **
-    //
-    // Opens the Instance Activation window.
-    //
-    openInstanceManagementForm: function () {
-      L.ViewManager.openView('OBClassicWindow', {
-        command: 'DEFAULT',
-        formId: '8D6282279F464B1696B0EE3E23023B65',
-        icon: 'Form',
-        id: '/ad_forms/InstanceManagement.html',
-        obManualURL: '/ad_forms/InstanceManagement.html',
-        tabTitle: OB.I18N.getLabel('OBUIAPP_InstanceActivation'),
-        viewId: 'OBClassicWindow'
-      });
     },
 
     // ** {{{ sendDirectLink(action, form) }}} **
@@ -221,7 +205,7 @@
           useSimpleHttp: true,
           actionURL: actionURL
         };
-        var request = rpcMgr.sendRequest(reqObj);
+        rpcMgr.sendRequest(reqObj);
       }
       fetchSendDirectLink(action, form);
     },
@@ -674,13 +658,6 @@
       // Opens directly the "Heartbeat" window inside a popup
       openHeartbeat: function () {
         cobcomp.Popup.open('Heartbeat', 600, 500, OB.Application.contextUrl + 'ad_forms/Heartbeat.html', '', window, false, false, true);
-      },
-
-      // ** {{{ Popup.openRegistration() }}} **
-      //
-      // Opens directly the "Registration" window inside a popup
-      openRegistration: function () {
-        cobcomp.Popup.open('Registration', 600, 500, OB.Application.contextUrl + 'ad_forms/Registration.html', '', window, false, false, true);
       }
     }
   };
@@ -688,10 +665,3 @@
   // Initialize ClassicOBCompatibility object
   cobcomp = L.ClassicOBCompatibility = new ClassicOBCompatibility();
 }(OB, isc));
-
-isc.ClassFactory.defineClass('OBUIAPP_RegistrationView', isc.Layout).addProperties({
-  showsItself: true,
-  show: function () {
-    OB.Layout.ClassicOBCompatibility.Popup.openRegistration();
-  }
-});

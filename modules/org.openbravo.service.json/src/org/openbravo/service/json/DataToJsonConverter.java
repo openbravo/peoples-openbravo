@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,10 +27,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ObjectNotFoundException;
@@ -46,8 +49,6 @@ import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Is responsible for converting Openbravo business objects ({@link BaseOBObject} to a json
@@ -88,7 +89,7 @@ public class DataToJsonConverter {
   // BaseOBObjects from which to infer the entity
   private Entity entity;
 
-  private static final Logger log = LoggerFactory.getLogger(DataToJsonConverter.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Convert a list of Maps with key value pairs to a list of {@link JSONObject}.
@@ -99,17 +100,20 @@ public class DataToJsonConverter {
    */
   public List<JSONObject> convertToJsonObjects(List<Map<String, Object>> data) {
     try {
-      final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
+      final List<JSONObject> jsonObjects = new ArrayList<>();
       for (Map<String, Object> dataInstance : data) {
         final JSONObject jsonObject = new JSONObject();
-        for (String key : dataInstance.keySet()) {
+        for (Entry<String, Object> entry : dataInstance.entrySet()) {
+          String key = entry.getKey();
           Property property = null;
           if (this.entity != null) {
             property = entity.getProperty(key, false);
           }
-          final Object value = dataInstance.get(key);
+          final Object value = entry.getValue();
           if (value instanceof BaseOBObject) {
-            addBaseOBObject(jsonObject, null, key, null, (BaseOBObject) value);
+            Property referencedProperty = property != null ? property.getReferencedProperty()
+                : null;
+            addBaseOBObject(jsonObject, property, key, referencedProperty, (BaseOBObject) value);
           } else {
             Object convertedValue = null;
             if (value != null && property != null && property.isPrimitive()) {
@@ -119,7 +123,6 @@ public class DataToJsonConverter {
               // server timezone offset to UTC, among other things
               convertedValue = convertPrimitiveValue(property, value);
             } else {
-              // TODO: format!
               convertedValue = convertPrimitiveValue(value);
             }
             jsonObject.put(key, convertedValue);
@@ -171,7 +174,8 @@ public class DataToJsonConverter {
         }
         return jsonObject;
       }
-      final boolean isDerivedReadable = OBContext.getOBContext().getEntityAccessChecker()
+      final boolean isDerivedReadable = OBContext.getOBContext()
+          .getEntityAccessChecker()
           .isDerivedReadable(bob.getEntity());
 
       for (Property property : bob.getEntity().getProperties()) {
@@ -221,8 +225,8 @@ public class DataToJsonConverter {
           addBaseOBObject(jsonObject, additonalPropertyObject, additionalProperty,
               additonalPropertyObject.getReferencedProperty(), (BaseOBObject) value);
         } else {
-          final Property property = DalUtil
-              .getPropertyFromPath(bob.getEntity(), additionalProperty);
+          final Property property = DalUtil.getPropertyFromPath(bob.getEntity(),
+              additionalProperty);
           // identifier
           if (additionalProperty.endsWith(JsonConstants.IDENTIFIER)) {
             jsonObject.put(replaceDots(additionalProperty), value);
@@ -260,7 +264,8 @@ public class DataToJsonConverter {
   }
 
   private void addBaseOBObject(JSONObject jsonObject, Property referencingProperty,
-      String propertyName, Property referencedProperty, BaseOBObject obObject) throws JSONException {
+      String propertyName, Property referencedProperty, BaseOBObject obObject)
+      throws JSONException {
     String identifier = null;
     // jsonObject.put(propertyName, toJsonObject(obObject, DataResolvingMode.SHORT));
     if (referencedProperty != null) {
@@ -305,8 +310,7 @@ public class DataToJsonConverter {
               identifier = " - " + identifier;
             }
           } else {
-            log.warn("Entity "
-                + obObject.getEntity().getName()
+            log.warn("Entity " + obObject.getEntity().getName()
                 + " does not have a searchKey property, the flag Displayed Value should not be used");
           }
         }
@@ -315,9 +319,11 @@ public class DataToJsonConverter {
             + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, identifier);
       } else if (!displayColumnProperty.isPrimitive()) {
         // Displaying identifier for non primitive properties
-        jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
-            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, ((BaseOBObject) obObject
-            .get(referencingProperty.getDisplayPropertyName())).getIdentifier());
+        jsonObject.put(
+            propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR) + DalUtil.FIELDSEPARATOR
+                + JsonConstants.IDENTIFIER,
+            ((BaseOBObject) obObject.get(referencingProperty.getDisplayPropertyName()))
+                .getIdentifier());
       } else {
         Object referenceObject = obObject.get(referencingProperty.getDisplayPropertyName(),
             OBContext.getOBContext().getLanguage(), (String) obObject.getId());
@@ -410,8 +416,9 @@ public class DataToJsonConverter {
       return;
     }
     for (String selectedProp : selectedPropertiesStr.split(",")) {
-      if (!selectedProp.isEmpty())
+      if (!selectedProp.isEmpty()) {
         selectedProperties.add(selectedProp);
+      }
     }
   }
 

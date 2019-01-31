@@ -42,13 +42,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class InvoicePaymentMonitor extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     log4j.debug("InvoicePaymentMonitor: doPost");
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -79,8 +81,9 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
       OBError messageResult = process(vars, strKey);
       vars.setMessage(strTabId, messageResult);
       printPageClosePopUp(response, vars, strPath);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private OBError process(VariablesSecureApp vars, String strKey) throws ServletException {
@@ -90,12 +93,13 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
       // Extra check for PaymentMonitor-disabling switch, to build correct message for users
       // Use Utility.getPropertyValue for backward compatibility
       try {
-        Preferences.getPreferenceValue("PaymentMonitor", true, invoice.getClient(), invoice
-            .getOrganization(), OBContext.getOBContext().getUser(), OBContext.getOBContext()
-            .getRole(), null);
+        Preferences.getPreferenceValue("PaymentMonitor", true, invoice.getClient(),
+            invoice.getOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), null);
       } catch (PropertyNotFoundException e) {
-        if (invoice.isProcessed())
+        if (invoice.isProcessed()) {
           PaymentMonitor.updateInvoice(invoice);
+        }
       }
 
       myError = new OBError();
@@ -117,20 +121,22 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
 
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
     String[] discard = { "", "" };
-    if (strHelp.equals(""))
+    if (strHelp.equals("")) {
       discard[0] = "helpDiscard";
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/InvoicePaymentMonitor", discard)
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/InvoicePaymentMonitor", discard)
         .createXmlDocument();
     xmlDocument.setParameter("key", strKey);
     xmlDocument.setParameter("window", windowId);
@@ -162,6 +168,7 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet InvoicePaymentMonitor";
   }

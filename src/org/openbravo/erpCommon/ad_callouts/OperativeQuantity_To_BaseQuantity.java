@@ -23,7 +23,8 @@ import java.math.BigDecimal;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
@@ -41,7 +42,7 @@ import org.openbravo.model.ad.ui.Window;
  */
 public class OperativeQuantity_To_BaseQuantity extends SimpleCallout {
 
-  private static final Logger logger = Logger.getLogger(OperativeQuantity_To_BaseQuantity.class);
+  private static final Logger logger = LogManager.getLogger();
 
   private static final String ADWINDOW_SalesOrder = "143";
   private static final String ADWINDOW_PurchaseOrder = "181";

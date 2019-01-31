@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,8 +34,6 @@ isc.defineClass('OBAboutPopupWindow', isc.OBPopup).addProperties({
   aboutFieldDefinitions: [],
 
   initWidget: function (args) {
-
-    var aboutFieldDefinitions = args.aboutFieldDefinitions;
     this.aboutPopupWindowLayout = this.createPopupWindowLayout();
     this.items = [this.aboutPopupWindowLayout];
 
@@ -53,7 +51,7 @@ isc.defineClass('OBAboutPopupWindow', isc.OBPopup).addProperties({
     });
 
     if (this.aboutFieldDefinitions.authorUrl) {
-      urlRegex = /((\http?:\/\/)|(\https?:\/\/))/;
+      urlRegex = /((http?:\/\/)|(https?:\/\/))/;
       url = this.aboutFieldDefinitions.authorUrl.match(urlRegex);
       if (!url) {
         this.aboutFieldDefinitions.authorUrl = 'http://' + this.aboutFieldDefinitions.authorUrl;

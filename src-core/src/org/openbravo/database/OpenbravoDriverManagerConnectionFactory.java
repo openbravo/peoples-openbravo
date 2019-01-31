@@ -48,18 +48,21 @@ class OpenbravoDriverManagerConnectionFactory implements ConnectionFactory {
     _rdbsm = rdbsm;
   }
 
+  @Override
   public Connection createConnection() throws SQLException {
     Connection conn = null;
     if (null == _props) {
-      if (_uname == null)
+      if (_uname == null) {
         conn = DriverManager.getConnection(_connectUri);
-      else
+      } else {
         conn = DriverManager.getConnection(_connectUri, _uname, _passwd);
+      }
     } else {
       conn = DriverManager.getConnection(_connectUri, _props);
     }
-    if (conn != null && _dbSessionConfig != null)
+    if (conn != null && _dbSessionConfig != null) {
       executeDefaultSQL(conn);
+    }
     return conn;
   }
 
@@ -69,21 +72,24 @@ class OpenbravoDriverManagerConnectionFactory implements ConnectionFactory {
 
     try {
       stmt = conn.createStatement();
-      if (!_dbSessionConfig.equals(""))
+      if (!_dbSessionConfig.equals("")) {
         rset = stmt.executeQuery(_dbSessionConfig);
+      }
       // set infrastructure for auditing
       SessionInfo.initDB(conn, _rdbsm);
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {
       try {
-        if (rset != null)
+        if (rset != null) {
           rset.close();
+        }
       } catch (Exception e) {
       }
       try {
-        if (stmt != null)
+        if (stmt != null) {
           stmt.close();
+        }
       } catch (Exception e) {
       }
       try {

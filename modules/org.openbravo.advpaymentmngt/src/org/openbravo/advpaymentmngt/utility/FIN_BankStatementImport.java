@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -26,15 +26,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.base.exception.OBException;
@@ -63,7 +65,7 @@ public abstract class FIN_BankStatementImport {
   private FIN_FinancialAccount financialAccount;
   OBError myError = null;
   String filename = "";
-  private static Logger log4j = Logger.getLogger(FIN_BankStatementImport.class);
+  private static Logger log4j = LogManager.getLogger();
 
   public static final String DOCUMENT_BankStatementFile = "BSF";
 
@@ -101,12 +103,14 @@ public abstract class FIN_BankStatementImport {
 
   private InputStream getFile(VariablesSecureApp vars) throws IOException {
     FileItem fi = vars.getMultiFile("inpFile");
-    if (fi == null)
+    if (fi == null) {
       throw new IOException("Invalid filename");
+    }
     filename = fi.getName();
     InputStream in = fi.getInputStream();
-    if (in == null)
+    if (in == null) {
       throw new IOException("Corrupted file");
+    }
     return in;
   }
 
@@ -234,8 +238,8 @@ public abstract class FIN_BankStatementImport {
         HashMap<String, String> previous = matchPreviousBSL(bankStatementLine.getBpartnername(),
             bankStatementLine.getOrganization(), bankStatementLine.getBankStatement().getAccount());
         if ((previous != null) && (!"".equals(previous.get("BPartnerID")))) {
-          businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-              previous.get("BPartnerID"));
+          businessPartner = OBDal.getInstance()
+              .get(BusinessPartner.class, previous.get("BPartnerID"));
         }
         if ((previous != null) && (!"".equals(previous.get("GLItemID")))) {
           glItem = OBDal.getInstance().get(GLItem.class, previous.get("GLItemID"));
@@ -244,8 +248,8 @@ public abstract class FIN_BankStatementImport {
         if (businessPartner == null) {
           try {
             businessPartner = matchBusinessPartner(bankStatementLine.getBpartnername(),
-                bankStatementLine.getOrganization(), bankStatementLine.getBankStatement()
-                    .getAccount());
+                bankStatementLine.getOrganization(),
+                bankStatementLine.getBankStatement().getAccount());
           } catch (Exception e) {
             businessPartner = null;
           }
@@ -269,8 +273,8 @@ public abstract class FIN_BankStatementImport {
     parameters.add(financialAccount.getClient());
     parameters.add(financialAccount.getOrganization());
     parameters.add(DOCUMENT_BankStatementFile);
-    String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
-        parameters, null);
+    String strDocTypeId = (String) CallStoredProcedure.getInstance()
+        .call("AD_GET_DOCTYPE", parameters, null);
     if (strDocTypeId == null) {
       throw new Exception("The Document Type is missing for the Bank Statement");
     }
@@ -303,27 +307,26 @@ public abstract class FIN_BankStatementImport {
       return null;
     }
     final StringBuilder whereClause = new StringBuilder();
-    List<Object> parameters = new ArrayList<Object>();
+    Map<String, Object> parameters = new HashMap<>(2);
     OBContext.setAdminMode();
     try {
       whereClause.append(" as bsl ");
-      whereClause
-          .append(" where translate(replace(bsl."
-              + FIN_BankStatementLine.PROPERTY_BPARTNERNAME
-              + ",' ', ''),'0123456789', '          ') = translate( replace(?,' ',''),'0123456789', '          ')");
-      parameters.add(partnername.replaceAll("\\r\\n|\\r|\\n", " "));
+      whereClause.append(" where translate(replace(bsl."
+          + FIN_BankStatementLine.PROPERTY_BPARTNERNAME
+          + ",' ', ''),'0123456789', '          ') = translate( replace(:bpName,' ',''),'0123456789', '          ')");
+      parameters.put("bpName", partnername.replaceAll("\\r\\n|\\r|\\n", " "));
       whereClause.append(" and (bsl." + FIN_BankStatementLine.PROPERTY_BUSINESSPARTNER
           + " is not null or bsl." + FIN_BankStatementLine.PROPERTY_GLITEM + " is not null)");
       whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BANKSTATEMENT + ".");
-      whereClause.append(FIN_BankStatement.PROPERTY_ACCOUNT + ".id = ?");
-      parameters.add(account.getId());
+      whereClause.append(FIN_BankStatement.PROPERTY_ACCOUNT + ".id = :account");
+      parameters.put("account", account.getId());
       whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_ORGANIZATION + ".id in (");
-      whereClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
-          .getNaturalTree(organization.getId())) + ") ");
+      whereClause.append(Utility.getInStrSet(
+          new OrganizationStructureProvider().getNaturalTree(organization.getId())) + ") ");
       whereClause.append(" and bsl.bankStatement.processed = 'Y'");
       whereClause.append(" order by bsl." + FIN_BankStatementLine.PROPERTY_CREATIONDATE + " desc");
-      final OBQuery<FIN_BankStatementLine> bsl = OBDal.getInstance().createQuery(
-          FIN_BankStatementLine.class, whereClause.toString(), parameters);
+      final OBQuery<FIN_BankStatementLine> bsl = OBDal.getInstance()
+          .createQuery(FIN_BankStatementLine.class, whereClause.toString(), parameters);
       bsl.setFilterOnReadableOrganization(false);
       // Just look in 10 matches
       bsl.setMaxResult(10);
@@ -349,25 +352,26 @@ public abstract class FIN_BankStatementImport {
       return null;
     }
     final StringBuilder whereClause = new StringBuilder();
-    List<Object> parameters = new ArrayList<Object>();
+    Map<String, Object> parameters = new HashMap<>(1);
 
     OBContext.setAdminMode();
     try {
       whereClause.append(" as bp ");
-      whereClause.append(" where bp." + BusinessPartner.PROPERTY_NAME + " = ?");
-      parameters.add(partnername);
+      whereClause.append(" where bp." + BusinessPartner.PROPERTY_NAME + " = :bpName");
+      parameters.put("bpName", partnername);
       whereClause.append(" and bp." + BusinessPartner.PROPERTY_ORGANIZATION + ".id in (");
-      whereClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
-          .getNaturalTree(organization.getId())) + ") ");
-      final OBQuery<BusinessPartner> bp = OBDal.getInstance().createQuery(BusinessPartner.class,
-          whereClause.toString(), parameters);
+      whereClause.append(Utility.getInStrSet(
+          new OrganizationStructureProvider().getNaturalTree(organization.getId())) + ") ");
+      final OBQuery<BusinessPartner> bp = OBDal.getInstance()
+          .createQuery(BusinessPartner.class, whereClause.toString(), parameters);
       bp.setFilterOnReadableOrganization(false);
       bp.setMaxResult(1);
       List<BusinessPartner> matchedBP = bp.list();
-      if (matchedBP.size() == 0)
+      if (matchedBP.isEmpty()) {
         return null;
-      else
+      } else {
         return matchedBP.get(0);
+      }
 
     } finally {
       OBContext.restorePreviousMode();
@@ -406,14 +410,16 @@ public abstract class FIN_BankStatementImport {
       whereClause.append(" BusinessPartner b ");
       whereClause.append(" where (");
       for (String token : list) {
-        whereClause.append(" lower(b." + BusinessPartner.PROPERTY_NAME + ") like lower('%" + token
-            + "%') or ");
+        whereClause.append(
+            " lower(b." + BusinessPartner.PROPERTY_NAME + ") like lower('%" + token + "%') or ");
       }
       whereClause.delete(whereClause.length() - 3, whereClause.length()).append(")");
       whereClause.append(" and b." + BusinessPartner.PROPERTY_ORGANIZATION + ".id in (");
-      whereClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
-          .getNaturalTree(organization.getId())) + ") ");
-      final Query bl = OBDal.getInstance().getSession().createQuery(whereClause.toString());
+      whereClause.append(Utility.getInStrSet(
+          new OrganizationStructureProvider().getNaturalTree(organization.getId())) + ") ");
+      final Query<Object[]> bl = OBDal.getInstance()
+          .getSession()
+          .createQuery(whereClause.toString(), Object[].class);
       businessPartnersScroll = bl.scroll(ScrollMode.SCROLL_SENSITIVE);
 
       if (!businessPartnersScroll.next()) {
@@ -488,8 +494,8 @@ public abstract class FIN_BankStatementImport {
         // Calculates distance between two strings meaning number of changes required for a string
         // to
         // convert in another string
-        int bpDistance = StringUtils
-            .getLevenshteinDistance(parsedPartnername, bpName.toLowerCase());
+        int bpDistance = StringUtils.getLevenshteinDistance(parsedPartnername,
+            bpName.toLowerCase());
         if (bpDistance < distance) {
           distance = bpDistance;
           targetBusinessPartnerId = bpId;
@@ -526,8 +532,8 @@ public abstract class FIN_BankStatementImport {
     List<BankFileException> bankFileExceptions = new ArrayList<BankFileException>();
     OBContext.setAdminMode();
     try {
-      OBCriteria<BankFileException> obc = OBDal.getInstance().createCriteria(
-          BankFileException.class);
+      OBCriteria<BankFileException> obc = OBDal.getInstance()
+          .createCriteria(BankFileException.class);
       obc.createAlias(BankFileException.PROPERTY_BANKFILEFORMAT, "BFF");
       obc.add(Restrictions.eq("BFF." + BankFileFormat.PROPERTY_JAVACLASSNAME,
           bankFileFormat.getJavaClassName()));

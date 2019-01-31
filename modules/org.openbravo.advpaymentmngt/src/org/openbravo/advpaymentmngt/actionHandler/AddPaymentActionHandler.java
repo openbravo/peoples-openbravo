@@ -30,6 +30,8 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -77,11 +79,9 @@ import org.openbravo.model.project.Project;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AddPaymentActionHandler extends BaseProcessActionHandler {
-  final private static Logger log = LoggerFactory.getLogger(AddPaymentActionHandler.class);
+  final private static Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -106,7 +106,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       String strOrgId = null;
       if (jsonparams.has("ad_org_id") && jsonparams.get("ad_org_id") != JSONObject.NULL) {
         strOrgId = jsonparams.getString("ad_org_id");
-      } else if (jsonRequest.has("inpadOrgId") && jsonRequest.get("inpadOrgId") != JSONObject.NULL) {
+      } else if (jsonRequest.has("inpadOrgId")
+          && jsonRequest.get("inpadOrgId") != JSONObject.NULL) {
         strOrgId = jsonRequest.getString("inpadOrgId");
       }
       Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
@@ -114,15 +115,15 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
       // Action to do
       final String strActionId = jsonparams.getString("document_action");
-      final org.openbravo.model.ad.domain.List actionList = OBDal.getInstance().get(
-          org.openbravo.model.ad.domain.List.class, strActionId);
+      final org.openbravo.model.ad.domain.List actionList = OBDal.getInstance()
+          .get(org.openbravo.model.ad.domain.List.class, strActionId);
       final String strAction = actionList.getSearchKey();
 
       final String strCurrencyId = jsonparams.getString("c_currency_id");
       Currency currency = OBDal.getInstance().get(Currency.class, strCurrencyId);
       final String strBPartnerID = jsonparams.getString("received_from");
-      BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-          strBPartnerID);
+      BusinessPartner businessPartner = OBDal.getInstance()
+          .get(BusinessPartner.class, strBPartnerID);
       String strActualPayment = jsonparams.getString("actual_payment");
 
       // Format Date
@@ -243,8 +244,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
   private FIN_Payment createNewPayment(JSONObject jsonparams, boolean isReceipt, Organization org,
       BusinessPartner bPartner, Date paymentDate, Currency currency, BigDecimal conversionRate,
-      BigDecimal convertedAmt, String strActualPayment) throws OBException, JSONException,
-      SQLException {
+      BigDecimal convertedAmt, String strActualPayment)
+      throws OBException, JSONException, SQLException {
 
     String strPaymentDocumentNo = jsonparams.getString("payment_documentno");
     String strReferenceNo = "";
@@ -252,18 +253,18 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       strReferenceNo = jsonparams.getString("reference_no");
     }
     String strFinancialAccountId = jsonparams.getString("fin_financial_account_id");
-    FIN_FinancialAccount finAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-        strFinancialAccountId);
+    FIN_FinancialAccount finAccount = OBDal.getInstance()
+        .get(FIN_FinancialAccount.class, strFinancialAccountId);
     String strPaymentMethodId = jsonparams.getString("fin_paymentmethod_id");
-    FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-        strPaymentMethodId);
+    FIN_PaymentMethod paymentMethod = OBDal.getInstance()
+        .get(FIN_PaymentMethod.class, strPaymentMethodId);
 
     boolean paymentDocumentEnabled = getDocumentConfirmation(finAccount, paymentMethod, isReceipt,
         strActualPayment, true);
     String strAction = (isReceipt ? "PRP" : "PPP");
     boolean documentEnabled = true;
-    if ((strAction.equals("PRD") || strAction.equals("PPW") || FIN_Utility
-        .isAutomaticDepositWithdrawn(finAccount, paymentMethod, isReceipt))
+    if ((strAction.equals("PRD") || strAction.equals("PPW")
+        || FIN_Utility.isAutomaticDepositWithdrawn(finAccount, paymentMethod, isReceipt))
         && new BigDecimal(strActualPayment).signum() != 0) {
       documentEnabled = paymentDocumentEnabled
           || getDocumentConfirmation(finAccount, paymentMethod, isReceipt, strActualPayment, false);
@@ -274,9 +275,10 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     DocumentType documentType = FIN_Utility.getDocumentType(org, isReceipt ? "ARR" : "APP");
     String strDocBaseType = documentType.getDocumentCategory();
 
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        OBContext.getOBContext().getCurrentClient().getId());
-    boolean orgLegalWithAccounting = osp.getLegalEntityOrBusinessUnit(org).getOrganizationType()
+    OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId());
+    boolean orgLegalWithAccounting = osp.getLegalEntityOrBusinessUnit(org)
+        .getOrganizationType()
         .isLegalEntityWithAccounting();
     if (documentEnabled
         && !FIN_Utility.isPeriodOpen(OBContext.getOBContext().getCurrentClient().getId(),
@@ -339,7 +341,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         }
         // Manage negative amounts
         if ((remainingAmount.signum() > 0 && remainingAmount.compareTo(outstandingAmount) >= 0)
-            || (remainingAmount.signum() < 0 && remainingAmount.compareTo(outstandingAmount) <= 0)) {
+            || (remainingAmount.signum() < 0
+                && remainingAmount.compareTo(outstandingAmount) <= 0)) {
           assignAmount = outstandingAmount;
           remainingAmount = remainingAmount.subtract(outstandingAmount);
         } else {
@@ -398,13 +401,15 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         if (usedCreditAmt.compareTo(BigDecimal.ZERO) > 0) {
           // Set Credit description only when it is actually used
           final StringBuffer description = new StringBuffer();
-          if (creditPayment.getDescription() != null && !creditPayment.getDescription().equals("")) {
+          if (creditPayment.getDescription() != null
+              && !creditPayment.getDescription().equals("")) {
             description.append(creditPayment.getDescription()).append("\n");
           }
           description.append(String.format(OBMessageUtils.messageBD("APRM_CreditUsedPayment"),
               payment.getDocumentNo()));
-          String truncateDescription = (description.length() > 255) ? description.substring(0, 251)
-              .concat("...").toString() : description.toString();
+          String truncateDescription = (description.length() > 255)
+              ? description.substring(0, 251).concat("...").toString()
+              : description.toString();
           creditPayment.setDescription(truncateDescription);
           FIN_PaymentProcess.linkCreditPayment(payment, usedCreditAmt, creditPayment);
         }
@@ -413,8 +418,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     }
   }
 
-  private void addGLItems(FIN_Payment payment, JSONObject jsonparams) throws JSONException,
-      ServletException {
+  private void addGLItems(FIN_Payment payment, JSONObject jsonparams)
+      throws JSONException, ServletException {
     // Add GL Item lines
     JSONObject gLItemsGrid = jsonparams.getJSONObject("glitem");
     JSONArray addedGLITemsArray = gLItemsGrid.getJSONArray("_allRows");
@@ -504,14 +509,14 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
       List<String> pdsIds = OBDao.getIDListFromOBObject(pd.getFINPaymentScheduleDetailList());
       for (String strPDSId : pdsIds) {
-        FIN_PaymentScheduleDetail psd = OBDal.getInstance().get(FIN_PaymentScheduleDetail.class,
-            strPDSId);
+        FIN_PaymentScheduleDetail psd = OBDal.getInstance()
+            .get(FIN_PaymentScheduleDetail.class, strPDSId);
 
         if (pd.getGLItem() == null) {
           List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment.getOutstandingPSDs(psd);
           if (outStandingPSDs.size() == 0) {
-            FIN_PaymentScheduleDetail newOutstanding = (FIN_PaymentScheduleDetail) DalUtil.copy(
-                psd, false);
+            FIN_PaymentScheduleDetail newOutstanding = (FIN_PaymentScheduleDetail) DalUtil.copy(psd,
+                false);
             newOutstanding.setPaymentDetails(null);
             newOutstanding.setWriteoffAmount(BigDecimal.ZERO);
             newOutstanding.setAmount(psd.getAmount().add(psd.getWriteoffAmount()));
@@ -519,15 +524,17 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           } else {
             FIN_PaymentScheduleDetail outStandingPSD = outStandingPSDs.get(0);
             // First make sure outstanding amount is not equal zero
-            if (outStandingPSD.getAmount().add(psd.getAmount()).add(psd.getWriteoffAmount())
+            if (outStandingPSD.getAmount()
+                .add(psd.getAmount())
+                .add(psd.getWriteoffAmount())
                 .signum() == 0) {
               OBDal.getInstance().remove(outStandingPSD);
             } else {
               // update existing PD with difference
-              outStandingPSD.setAmount(outStandingPSD.getAmount().add(psd.getAmount())
-                  .add(psd.getWriteoffAmount()));
-              outStandingPSD.setDoubtfulDebtAmount(outStandingPSD.getDoubtfulDebtAmount().add(
-                  psd.getDoubtfulDebtAmount()));
+              outStandingPSD.setAmount(
+                  outStandingPSD.getAmount().add(psd.getAmount()).add(psd.getWriteoffAmount()));
+              outStandingPSD.setDoubtfulDebtAmount(
+                  outStandingPSD.getDoubtfulDebtAmount().add(psd.getDoubtfulDebtAmount()));
               OBDal.getInstance().save(outStandingPSD);
             }
           }
@@ -568,9 +575,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
     OBError message = FIN_AddPayment.processPayment(vars, conn,
         (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment, comingFrom);
-    String strNewPaymentMessage = OBMessageUtils.parseTranslation("@PaymentCreated@" + " "
-        + payment.getDocumentNo())
-        + ".";
+    String strNewPaymentMessage = OBMessageUtils
+        .parseTranslation("@PaymentCreated@" + " " + payment.getDocumentNo()) + ".";
     if (!"Error".equalsIgnoreCase(message.getType())) {
       message.setMessage(strNewPaymentMessage + " " + message.getMessage());
       message.setType(message.getType().toLowerCase());
@@ -601,8 +607,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     }
 
     OBError auxMessage = FIN_AddPayment.processPayment(vars, conn,
-        (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment,
-        comingFrom, strSelectedCreditLinesIds);
+        (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment, comingFrom,
+        strSelectedCreditLinesIds);
     if (newPayment && !"Error".equalsIgnoreCase(auxMessage.getType())) {
       final String strNewRefundPaymentMessage = OBMessageUtils
           .parseTranslation("@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo()) + ".";
@@ -625,8 +631,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     where.append(" where psd." + FIN_PaymentScheduleDetail.PROPERTY_ID + " in (:psdSet)");
     where.append(" order by psd." + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
     where.append(", abs(psd." + FIN_PaymentScheduleDetail.PROPERTY_AMOUNT + ")");
-    OBQuery<FIN_PaymentScheduleDetail> orderedPSDs = OBDal.getInstance().createQuery(
-        FIN_PaymentScheduleDetail.class, where.toString());
+    OBQuery<FIN_PaymentScheduleDetail> orderedPSDs = OBDal.getInstance()
+        .createQuery(FIN_PaymentScheduleDetail.class, where.toString());
     orderedPSDs.setNamedParameter("psdSet", psdSet);
     return orderedPSDs.list();
   }
@@ -677,8 +683,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     boolean confirmation = false;
     OBContext.setAdminMode(true);
     try {
-      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
-          FinAccPaymentMethod.class);
+      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance()
+          .createCriteria(FinAccPaymentMethod.class);
       obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, finAccount));
       obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, finPaymentMethod));
       obCriteria.setFilterOnReadableClients(false);

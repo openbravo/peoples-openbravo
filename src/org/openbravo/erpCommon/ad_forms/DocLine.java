@@ -20,12 +20,13 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocLine {
-  static Logger log4jDocLine = Logger.getLogger(DocLine.class);
+  static Logger log4jDocLine = LogManager.getLogger();
 
   public BigDecimal ZERO = BigDecimal.ZERO;
 
@@ -101,8 +102,9 @@ public class DocLine {
   public String m_Record_Id2 = "";
 
   public DocLine(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
-    if (DocumentType == null)
+    if (DocumentType == null) {
       throw new IllegalArgumentException("DocLine - DocumentType is null");
+    }
     p_DocumentType = DocumentType;
     m_TrxHeader_ID = TrxHeader_ID;
     m_TrxLine_ID = TrxLine_ID;
@@ -146,10 +148,12 @@ public class DocLine {
     p_productInfo = new ProductInfo(m_M_Product_ID, vo.getConnectionProvider());
 
     // Document Consistency
-    if (m_AD_Org_ID != null && m_AD_Org_ID.equals(""))
+    if (m_AD_Org_ID != null && m_AD_Org_ID.equals("")) {
       m_AD_Org_ID = vo.AD_Org_ID;
-    if (m_C_Currency_ID != null && m_C_Currency_ID.equals(""))
+    }
+    if (m_C_Currency_ID != null && m_C_Currency_ID.equals("")) {
       m_C_Currency_ID = vo.C_Currency_ID;
+    }
   } // loadAttributes
 
   public void copyInfo(DocLine source) {
@@ -252,8 +256,9 @@ public class DocLine {
    * @return Charge Account or null
    */
   public Account getChargeAccount(AcctSchema as, BigDecimal amount, ConnectionProvider conn) {
-    if (m_C_Charge_ID.equals(""))
+    if (m_C_Charge_ID.equals("")) {
       return null;
+    }
     String Account_ID = "";
     DocLineData[] data = null;
     Account acct = null;
@@ -261,8 +266,9 @@ public class DocLine {
       data = DocLineData.select(conn, m_C_Charge_ID, as.getC_AcctSchema_ID());
       if (data.length > 0) {
         Account_ID = data[0].expense; // Expense (positive amt)
-        if (amount != null && amount.signum() < 0)
+        if (amount != null && amount.signum() < 0) {
           Account_ID = data[0].revenue; // Revenue (negative amt)
+        }
       }
       // No account
       if (Account_ID.equals("")) {

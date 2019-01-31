@@ -29,6 +29,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.util.AnnotationLiteral;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.InheritedAccessEnabled;
@@ -36,8 +38,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.role.inheritance.RoleInheritanceManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An AccessTypeInjector is used by {@link RoleInheritanceManager} to retrieve the access types that
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public abstract class AccessTypeInjector implements Comparable<AccessTypeInjector> {
 
-  private static final Logger log = LoggerFactory.getLogger(AccessTypeInjector.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Returns the name of the inheritable class.
@@ -89,6 +89,7 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
    * @return a negative integer, zero, or a positive integer as this object priority is less than,
    *         equal to, or greater than the priority of the specified AccessTypeInjector object.
    */
+  @Override
   public int compareTo(AccessTypeInjector accessType) {
     return this.getPriority() - accessType.getPriority();
   }
@@ -129,8 +130,8 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
       Role role) {
     try {
       Class<?> myClass = Class.forName(getClassName());
-      myClass.getMethod("setRole", new Class[] { Role.class }).invoke(newAccess,
-          new Object[] { role });
+      myClass.getMethod("setRole", new Class[] { Role.class })
+          .invoke(newAccess, new Object[] { role });
     } catch (Exception ex) {
       log.error("Error setting {} as parent role", role, ex);
       throw new OBException("Error setting parent role");
@@ -270,8 +271,8 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
    * @return the list of the properties that will not be copied
    */
   public List<String> getSkippedProperties() {
-    List<String> skippedProperties = new ArrayList<String>(Arrays.asList("creationDate",
-        "createdBy"));
+    List<String> skippedProperties = new ArrayList<String>(
+        Arrays.asList("creationDate", "createdBy"));
     return skippedProperties;
   }
 
@@ -348,8 +349,8 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
    * A class used to select the correct access type injector.
    */
   @SuppressWarnings("all")
-  public static class Selector extends AnnotationLiteral<AccessTypeInjector.Qualifier> implements
-      AccessTypeInjector.Qualifier {
+  public static class Selector extends AnnotationLiteral<AccessTypeInjector.Qualifier>
+      implements AccessTypeInjector.Qualifier {
 
     Class<? extends InheritedAccessEnabled> clazz;
 
@@ -368,6 +369,7 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
       this.clazz = (Class<? extends InheritedAccessEnabled>) Class.forName(className);
     }
 
+    @Override
     public Class<? extends InheritedAccessEnabled> value() {
       return this.clazz;
     }

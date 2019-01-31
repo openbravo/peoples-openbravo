@@ -18,10 +18,11 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DocLine_FinPaymentSchedule extends DocLine {
-  static Logger log4jDocLine_Payment = Logger.getLogger(DocLine_Payment.class);
+  static Logger log4jDocLine_Payment = LogManager.getLogger();
 
   String Line_ID = "";
   String Amount = "";
@@ -48,10 +49,12 @@ public class DocLine_FinPaymentSchedule extends DocLine {
     Line_ID = line_ID;
   }
 
+  @Override
   public String getAmount() {
     return Amount;
   }
 
+  @Override
   public void setAmount(String amount) {
     Amount = amount;
   }
@@ -120,6 +123,7 @@ public class DocLine_FinPaymentSchedule extends DocLine {
     PrepaidAmount = prepaidAmount;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for accounting";
   } // end of getServletInfo() method

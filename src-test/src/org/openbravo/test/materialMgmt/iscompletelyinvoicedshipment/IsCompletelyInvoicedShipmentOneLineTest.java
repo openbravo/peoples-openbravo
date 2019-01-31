@@ -23,6 +23,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
@@ -33,12 +35,9 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IsCompletelyInvoicedShipmentOneLineTest extends OBBaseTest {
-  private static final Logger log = LoggerFactory
-      .getLogger(IsCompletelyInvoicedShipmentOneLineTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Before
   public void setUpTestIsCompletelyInvoicedOneLine() throws Exception {
@@ -163,8 +162,8 @@ public class IsCompletelyInvoicedShipmentOneLineTest extends OBBaseTest {
 
       ICIInvoiceLineParameters invoiceLineParameters = new ICIInvoiceLineParameters(invoice);
       // Subtract one unit to the invoiced quantity to have a partial invoice line
-      invoiceLineParameters.setInvoicedQuantity(invoiceLineParameters.getInvoicedQuantity()
-          .subtract(BigDecimal.ONE));
+      invoiceLineParameters.setInvoicedQuantity(
+          invoiceLineParameters.getInvoicedQuantity().subtract(BigDecimal.ONE));
       InvoiceLine invoiceLine = ICIUtility.createNewInvoiceLine(invoiceLineParameters);
 
       // Order is associated both to header and lines

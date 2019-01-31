@@ -13,33 +13,36 @@ package org.openbravo.xmlEngine;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionMaxValue extends FunctionEvaluationValue {
 
-  static Logger log4jFunctionMaxValue = Logger.getLogger(FunctionMaxValue.class);
+  static Logger log4jFunctionMaxValue = LogManager.getLogger();
 
   public FunctionMaxValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      return functionTemplate.printFormatOutput(new BigDecimal(arg1Value.printSimple())
-          .max(new BigDecimal(arg2Value.printSimple())));
+      return functionTemplate.printFormatOutput(
+          new BigDecimal(arg1Value.printSimple()).max(new BigDecimal(arg2Value.printSimple())));
     }
   }
 
+  @Override
   public String printSimple() {
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      return functionTemplate.printFormatSimple(new BigDecimal(arg1Value.printSimple())
-          .max(new BigDecimal(arg2Value.printSimple())));
+      return functionTemplate.printFormatSimple(
+          new BigDecimal(arg1Value.printSimple()).max(new BigDecimal(arg2Value.printSimple())));
     }
   }
 

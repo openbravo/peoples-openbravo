@@ -29,12 +29,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
 
 class WadConnection implements ConnectionProvider {
-  private static final Logger log4j = Logger.getLogger(WadConnection.class);
+  private static final Logger log4j = LogManager.getLogger();
   private Connection myPool;
   private String defaultPoolName = "";
   private String bbdd = "";
@@ -51,8 +52,9 @@ class WadConnection implements ConnectionProvider {
   }
 
   public void connect(String file) throws ClassNotFoundException, SQLException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Creating Connection");
+    }
 
     String dbDriver = null;
     String dbLogin = null;
@@ -75,14 +77,16 @@ class WadConnection implements ConnectionProvider {
       maxConnTime = Double.parseDouble(properties.getProperty("maxConnTime", "0.5"));
       dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
       this.rdbms = properties.getProperty("bbdd.rdbms");
-      if (this.rdbms.equalsIgnoreCase("POSTGRE"))
+      if (this.rdbms.equalsIgnoreCase("POSTGRE")) {
         this.bbdd += '/' + properties.getProperty("bbdd.sid");
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("poolName: " + this.defaultPoolName);
+    }
     {
       log4j.debug("dbDriver: " + dbDriver);
       log4j.debug("dbServer: " + this.bbdd);
@@ -107,27 +111,32 @@ class WadConnection implements ConnectionProvider {
     }
   }
 
+  @Override
   public void destroy() {
     try {
-      if (myPool != null)
+      if (myPool != null) {
         myPool.close();
+      }
       myPool = null;
     } catch (SQLException e) {
       log4j.error("SQL error in closeConnection: " + e);
     }
   }
 
+  @Override
   public Connection getConnection() throws NoConnectionAvailableException {
     return this.myPool;
   }
 
+  @Override
   public String getRDBMS() {
     return rdbms;
   }
 
   public boolean releaseConnection(Connection conn) {
-    if (conn == null)
+    if (conn == null) {
       return false;
+    }
     try {
       conn.setAutoCommit(true);
       // conn.close();
@@ -138,54 +147,68 @@ class WadConnection implements ConnectionProvider {
     return true;
   }
 
+  @Override
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
     Connection conn = getConnection();
-    if (conn == null)
+    if (conn == null) {
       throw new NoConnectionAvailableException("Couldn´t get an available connection");
+    }
     conn.setAutoCommit(false);
     return conn;
   }
 
+  @Override
   public void releaseCommitConnection(Connection conn) throws SQLException {
-    if (conn == null)
+    if (conn == null) {
       return;
+    }
     conn.commit();
     releaseConnection(conn);
   }
 
+  @Override
   public void releaseRollbackConnection(Connection conn) throws SQLException {
-    if (conn == null)
+    if (conn == null) {
       return;
+    }
     conn.rollback();
     releaseConnection(conn);
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(String poolName, String SQLPreparedStatement)
       throws Exception {
     return getPreparedStatement(SQLPreparedStatement);
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(String SQLPreparedStatement) throws Exception {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("connection requested");
+    }
     Connection conn = getConnection();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("connection established");
+    }
     return getPreparedStatement(conn, SQLPreparedStatement);
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(Connection conn, String SQLPreparedStatement)
       throws SQLException {
-    if (conn == null || SQLPreparedStatement == null || SQLPreparedStatement.equals(""))
+    if (conn == null || SQLPreparedStatement == null || SQLPreparedStatement.equals("")) {
       return null;
+    }
     PreparedStatement ps = null;
     try {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("preparedStatement requested");
+      }
       ps = conn.prepareStatement(SQLPreparedStatement, ResultSet.TYPE_SCROLL_INSENSITIVE,
           ResultSet.CONCUR_READ_ONLY);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("preparedStatement received");
+      }
     } catch (SQLException e) {
       log4j.error("getPreparedStatement: " + SQLPreparedStatement + "\n" + e);
       releaseConnection(conn);
@@ -194,20 +217,24 @@ class WadConnection implements ConnectionProvider {
     return (ps);
   }
 
+  @Override
   public CallableStatement getCallableStatement(String poolName, String SQLCallableStatement)
       throws Exception {
     return getCallableStatement(SQLCallableStatement);
   }
 
+  @Override
   public CallableStatement getCallableStatement(String SQLCallableStatement) throws Exception {
     Connection conn = getConnection();
     return getCallableStatement(conn, SQLCallableStatement);
   }
 
+  @Override
   public CallableStatement getCallableStatement(Connection conn, String SQLCallableStatement)
       throws SQLException {
-    if (conn == null || SQLCallableStatement == null || SQLCallableStatement.equals(""))
+    if (conn == null || SQLCallableStatement == null || SQLCallableStatement.equals("")) {
       return null;
+    }
     CallableStatement cs = null;
     try {
       cs = conn.prepareCall(SQLCallableStatement);
@@ -219,18 +246,22 @@ class WadConnection implements ConnectionProvider {
     return (cs);
   }
 
+  @Override
   public Statement getStatement(String name) throws Exception {
     return getStatement();
   }
 
+  @Override
   public Statement getStatement() throws Exception {
     Connection conn = getConnection();
     return getStatement(conn);
   }
 
+  @Override
   public Statement getStatement(Connection conn) throws SQLException {
-    if (conn == null)
+    if (conn == null) {
       return null;
+    }
     try {
       return (conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY));
     } catch (SQLException e) {
@@ -240,9 +271,11 @@ class WadConnection implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releasePreparedStatement(PreparedStatement preparedStatement) throws SQLException {
-    if (preparedStatement == null)
+    if (preparedStatement == null) {
       return;
+    }
     Connection conn = null;
     try {
       conn = preparedStatement.getConnection();
@@ -255,9 +288,11 @@ class WadConnection implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releaseCallableStatement(CallableStatement callableStatement) throws SQLException {
-    if (callableStatement == null)
+    if (callableStatement == null) {
       return;
+    }
     Connection conn = null;
     try {
       conn = callableStatement.getConnection();
@@ -270,9 +305,11 @@ class WadConnection implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releaseStatement(Statement statement) throws SQLException {
-    if (statement == null)
+    if (statement == null) {
       return;
+    }
     Connection conn = null;
     try {
       conn = statement.getConnection();
@@ -285,22 +322,27 @@ class WadConnection implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releaseTransactionalStatement(Statement statement) throws SQLException {
-    if (statement == null)
+    if (statement == null) {
       return;
+    }
     statement.close();
   }
 
+  @Override
   public void releaseTransactionalPreparedStatement(PreparedStatement preparedStatement)
       throws SQLException {
-    if (preparedStatement == null)
+    if (preparedStatement == null) {
       return;
+    }
     preparedStatement.close();
   }
 
   /**
    * Returns the actual status of the dynamic pool.
    */
+  @Override
   public String getStatus() {
     StringBuffer strResultado = new StringBuffer();
     strResultado.append("Not implemented yet");

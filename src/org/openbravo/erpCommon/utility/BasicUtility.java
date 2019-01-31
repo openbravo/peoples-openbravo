@@ -26,7 +26,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.utils.Replace;
 
@@ -42,7 +43,7 @@ import org.openbravo.utils.Replace;
  * 
  */
 public class BasicUtility {
-  private static final Logger log4j = Logger.getLogger(BasicUtility.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /**
    * @see Utility#messageBD(ConnectionProvider, String, String, boolean)
@@ -68,8 +69,9 @@ public class BasicUtility {
       boolean escape) {
     String localStrLanguage = strLanguage;
     String strMessage = "";
-    if (localStrLanguage == null || localStrLanguage.equals(""))
+    if (localStrLanguage == null || localStrLanguage.equals("")) {
       localStrLanguage = "en_US";
+    }
 
     try {
       log4j.debug("Utility.messageBD - Message Code: " + strCode);
@@ -97,24 +99,48 @@ public class BasicUtility {
 
   /**
    * 
-   * Formats a message String into a String for html presentation. Escapes the &amp;, &lt;, &gt;, " and ®, and
-   * replace the \n by &lt;br/&gt;
-   * and \r for space.
+   * Formats a message String into a String for html presentation. Escapes the &amp;, &lt;, &gt;, "
+   * and ®, and replace the \n by &lt;br/&gt; and \r for space.
    * 
    * IMPORTANT! : this method is designed to transform the output of Utility.messageBD method, and
-   * this method replaces \n by \\n and \" by &amp;quote. Because of that, the first replacements revert
-   * this previous replacements.
+   * this method replaces \n by \\n and \" by &amp;quote. Because of that, the first replacements
+   * revert this previous replacements.
    * 
    * @param message
    *          message with java formating
    * @return html format message
    */
   public static String formatMessageBDToHtml(String message) {
-    return Replace.replace(Replace.replace(Replace.replace(Replace.replace(Replace.replace(Replace
-        .replace(Replace.replace(Replace.replace(Replace.replace(
-            Replace.replace(Replace.replace(message, "\\n", "\n"), "&quot", "\""), "&", "&amp;"),
-            "\"", "&quot;"), "<", "&lt;"), ">", "&gt;"), "\n", "<br/>"), "\r", " "), "®", "&reg;"),
-        "&lt;![CDATA[", "<![CDATA["), "]]&gt;", "]]>");
+    return Replace
+        .replace(
+            Replace
+                .replace(
+                    Replace
+                        .replace(
+                            Replace
+                                .replace(
+                                    Replace
+                                        .replace(
+                                            Replace
+                                                .replace(
+                                                    Replace
+                                                        .replace(
+                                                            Replace
+                                                                .replace(
+                                                                    Replace.replace(
+                                                                        Replace.replace(
+                                                                            Replace.replace(message,
+                                                                                "\\n", "\n"),
+                                                                            "&quot", "\""),
+                                                                        "&", "&amp;"),
+                                                                    "\"", "&quot;"),
+                                                            "<", "&lt;"),
+                                                    ">", "&gt;"),
+                                            "\n", "<br/>"),
+                                    "\r", " "),
+                            "®", "&reg;"),
+                    "&lt;![CDATA[", "<![CDATA["),
+            "]]&gt;", "]]>");
   }
 
   /**
@@ -136,9 +162,9 @@ public class BasicUtility {
       strMyFile.append(strTemp);
       while (strTemp != null) {
         strTemp = mybr.readLine();
-        if (strTemp != null)
+        if (strTemp != null) {
           strMyFile.append("\n").append(strTemp);
-        else {
+        } else {
           mybr.close();
           fis.close();
         }
@@ -157,20 +183,22 @@ public class BasicUtility {
    */
   public static String wikifiedName(String strSource) throws FileNotFoundException {
     String localStrSource = strSource;
-    if (localStrSource == null || localStrSource.equals(""))
+    if (localStrSource == null || localStrSource.equals("")) {
       return localStrSource;
+    }
     localStrSource = localStrSource.trim();
-    if (localStrSource.equals(""))
+    if (localStrSource.equals("")) {
       return localStrSource;
+    }
     final StringTokenizer source = new StringTokenizer(localStrSource, " ", false);
     String strTarget = "";
     String strTemp = "";
     int i = 0;
     while (source.hasMoreTokens()) {
       strTemp = source.nextToken();
-      if (i != 0)
+      if (i != 0) {
         strTarget = strTarget + "_" + strTemp;
-      else {
+      } else {
         final String strFirstChar = strTemp.substring(0, 1);
         strTemp = strFirstChar.toUpperCase() + strTemp.substring(1, strTemp.length());
         strTarget = strTarget + strTemp;

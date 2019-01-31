@@ -20,7 +20,8 @@ package org.openbravo.erpCommon.modules;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.ad_forms.ModuleManagement;
@@ -35,7 +36,7 @@ import org.openbravo.xmlEngine.XmlDocument;
  * It implements GenericTree, detailed description is in that API doc.
  */
 public class ModuleTree extends GenericTree {
-  private final static Logger log4j = Logger.getLogger(ModuleTree.class);
+  private final static Logger log4j = LogManager.getLogger();
 
   /**
    * Constructor to generate a root tree
@@ -68,6 +69,7 @@ public class ModuleTree extends GenericTree {
   /**
    * sets to data the root tree
    */
+  @Override
   public void setRootTree() {
     try {
       String language = (lang.equals("") ? "en_US" : lang);
@@ -87,6 +89,7 @@ public class ModuleTree extends GenericTree {
    * 
    * @param nodeId
    */
+  @Override
   public void setSubTree(String nodeId, String level) {
     setIsSubTree(true);
     try {
@@ -108,6 +111,7 @@ public class ModuleTree extends GenericTree {
    * @param node
    * @return a HTML String with the description for the given node
    */
+  @Override
   public String getHTMLDescription(String node) {
     try {
       ModuleTreeData[] moduleDescription = ModuleTreeData.selectDescription(conn, lang, node);
@@ -132,8 +136,9 @@ public class ModuleTree extends GenericTree {
         }
       }
 
-      XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/modules/ModuleTreeDescription", discard).createXmlDocument();
+      XmlDocument xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/modules/ModuleTreeDescription", discard)
+          .createXmlDocument();
       xmlDocument.setData("structureDesc", moduleDescription);
       return xmlDocument.print();
 
@@ -155,8 +160,9 @@ public class ModuleTree extends GenericTree {
       return;
     }
 
-    String rebuildMsg = ModuleManagement.canRebuildFromMMC() ? Utility.messageBD(conn,
-        "RebuildNow", lang) : Utility.messageBD(conn, "RebuildRequired", lang);
+    String rebuildMsg = ModuleManagement.canRebuildFromMMC()
+        ? Utility.messageBD(conn, "RebuildNow", lang)
+        : Utility.messageBD(conn, "RebuildRequired", lang);
 
     for (int i = 0; i < modules.length; i++) {
       if (!modules[i].updateAvailable.equals("")) {
@@ -224,23 +230,28 @@ public class ModuleTree extends GenericTree {
    * @param modules
    */
   private void setIcons(FieldProvider[] modules) {
-    if (modules == null || modules.length == 0)
+    if (modules == null || modules.length == 0) {
       return;
+    }
     for (int i = 0; i < modules.length; i++) {
-      if (modules[i].getField("type").equals("M"))
+      if (modules[i].getField("type").equals("M")) {
         FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Module");
-      if (modules[i].getField("type").equals("P"))
+      }
+      if (modules[i].getField("type").equals("P")) {
         FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Pack");
-      if (modules[i].getField("type").equals("T"))
+      }
+      if (modules[i].getField("type").equals("T")) {
         FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Template");
+      }
 
       boolean updateAvailable = modules[i].getField("updateAvailable") != null
           && !modules[i].getField("updateAvailable").equals("");
       boolean updateAvailableInChildNode = !updateAvailable
           && hasChildUpdate(modules[i].getField("nodeId"));
 
-      if (updateAvailable || updateAvailableInChildNode)
+      if (updateAvailable || updateAvailableInChildNode) {
         FieldProviderFactory.setField(modules[i], "icon2", "Tree_Icon_Update");
+      }
     }
   }
 
@@ -250,13 +261,17 @@ public class ModuleTree extends GenericTree {
   private boolean hasChildUpdate(String node) {
     try {
       ModuleTreeData moduleTreeData[] = ModuleTreeData.selectSubTree(conn, "", node);
-      if (moduleTreeData == null || moduleTreeData.length == 0)
+      if (moduleTreeData == null || moduleTreeData.length == 0) {
         return false;
+      }
       for (int i = 0; i < moduleTreeData.length; i++) {
-        if (moduleTreeData[i].updateAvailable != null && !moduleTreeData[i].updateAvailable.equals(""))
+        if (moduleTreeData[i].updateAvailable != null
+            && !moduleTreeData[i].updateAvailable.equals("")) {
           return true;
-        if (hasChildUpdate(moduleTreeData[i].nodeId))
+        }
+        if (hasChildUpdate(moduleTreeData[i].nodeId)) {
           return true;
+        }
       }
       return false;
     } catch (Exception e) {
@@ -265,17 +280,20 @@ public class ModuleTree extends GenericTree {
     }
   }
 
+  @Override
   protected String getNodePosition(String nodeID) {
     try {
       String parentNodeID = getParent(nodeID);
       ModuleTreeData[] tree;
-      if (parentNodeID.equals(""))
+      if (parentNodeID.equals("")) {
         tree = ModuleTreeData.select(conn, (lang.equals("") ? "en_US" : lang)); // Root
-      else
+      } else {
         tree = ModuleTreeData.selectSubTree(conn, (lang.equals("") ? "en_US" : lang), parentNodeID); // Subtree
+      }
 
-      if (tree == null || tree.length == 0)
+      if (tree == null || tree.length == 0) {
         return "0";
+      }
       for (int i = 0; i < tree.length; i++) {
         if (tree[i].nodeId.equals(nodeID)) {
           return Integer.valueOf(i + 1).toString();
@@ -294,6 +312,7 @@ public class ModuleTree extends GenericTree {
    * @param node
    * @return the node id for the parent of the passed node
    */
+  @Override
   protected String getParent(String node) {
     try {
       return ModuleTreeData.selectParent(conn, node);
@@ -303,17 +322,20 @@ public class ModuleTree extends GenericTree {
     }
   }
 
+  @Override
   protected boolean isLastLevelNode(String nodeID) {
     try {
       String parentNodeID = getParent(nodeID);
       ModuleTreeData[] tree;
-      if (parentNodeID.equals(""))
+      if (parentNodeID.equals("")) {
         tree = ModuleTreeData.select(conn, (lang.equals("") ? "en_US" : lang)); // Root
-      else
+      } else {
         tree = ModuleTreeData.selectSubTree(conn, (lang.equals("") ? "en_US" : lang), parentNodeID); // Subtree
+      }
 
-      if (tree == null || tree.length == 0)
+      if (tree == null || tree.length == 0) {
         return true;
+      }
       for (int i = 0; i < tree.length; i++) {
         if (tree[i].nodeId.equals(nodeID)) {
           return i == (tree.length - 1);

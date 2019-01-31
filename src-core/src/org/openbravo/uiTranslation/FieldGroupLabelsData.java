@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2008-2010 Openbravo S.L.U.
+ * Copyright (C) 2008-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -19,28 +19,31 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 
+@SuppressWarnings("serial")
 class FieldGroupLabelsData implements FieldProvider {
-  static Logger log4j = Logger.getLogger(FieldGroupLabelsData.class);
+  static Logger log4j = LogManager.getLogger();
   public String tabname;
   public String fieldgroupid;
   public String fieldgroupname;
   public String fieldgrouptrlname;
 
+  @Override
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("TABNAME"))
+    if (fieldName.equalsIgnoreCase("TABNAME")) {
       return tabname;
-    else if (fieldName.equalsIgnoreCase("FIELDGROUPID"))
+    } else if (fieldName.equalsIgnoreCase("FIELDGROUPID")) {
       return fieldgroupid;
-    else if (fieldName.equalsIgnoreCase("FIELDGROUPNAME"))
+    } else if (fieldName.equalsIgnoreCase("FIELDGROUPNAME")) {
       return fieldgroupname;
-    else if (fieldName.equalsIgnoreCase("FIELDGROUPTRLNAME"))
+    } else if (fieldName.equalsIgnoreCase("FIELDGROUPTRLNAME")) {
       return fieldgrouptrlname;
-    else {
+    } else {
       log4j.debug("Field does not exist: " + fieldName);
       return null;
     }
@@ -53,8 +56,8 @@ class FieldGroupLabelsData implements FieldProvider {
   public static FieldGroupLabelsData[] selectFieldGroupTrl(ConnectionProvider connectionProvider,
       String ad_tab_id, String language) throws ServletException {
     StringBuffer strSql = new StringBuffer();
-    strSql
-        .append("    select t.name as tabName, fg.ad_fieldGroup_ID as fieldGroupId, fg.name as fieldGroupName, fg.name as fieldGroupTrlName");
+    strSql.append(
+        "    select t.name as tabName, fg.ad_fieldGroup_ID as fieldGroupId, fg.name as fieldGroupName, fg.name as fieldGroupTrlName");
     strSql.append("    from ad_tab t,");
     strSql.append("         ad_field f,");
     strSql.append("         ad_fieldGroup fg,");
@@ -65,8 +68,8 @@ class FieldGroupLabelsData implements FieldProvider {
     strSql.append("     and mg.ad_module_id = fg.ad_module_id");
     strSql.append("     and mg.ad_language = ?");
     strSql.append("  union ");
-    strSql
-        .append("  select t.name as tabName, fg.ad_fieldGroup_ID, fg.name, coalesce(fgt.name, fg.name)");
+    strSql.append(
+        "  select t.name as tabName, fg.ad_fieldGroup_ID, fg.name, coalesce(fgt.name, fg.name)");
     strSql.append("    from ad_tab t,");
     strSql.append("         ad_field f,");
     strSql.append("         ad_module mg,");
@@ -81,8 +84,8 @@ class FieldGroupLabelsData implements FieldProvider {
 
     // Audit Field group
     strSql.append("  union");
-    strSql
-        .append("   select t.name as tabName, fg.ad_fieldGroup_ID, fg.name, coalesce(fgt.name, fg.name) ");
+    strSql.append(
+        "   select t.name as tabName, fg.ad_fieldGroup_ID, fg.name, coalesce(fgt.name, fg.name) ");
     strSql.append("     from ad_tab t,");
     strSql.append("          ad_fieldGroup fg left join ad_fieldGroup_Trl fgt");
     strSql.append("                             on fg.ad_fieldGroup_ID = fgt.ad_fieldGroup_ID");
@@ -114,15 +117,15 @@ class FieldGroupLabelsData implements FieldProvider {
         objectFieldGroupLabelsData.tabname = UtilSql.getValue(result, "TABNAME");
         objectFieldGroupLabelsData.fieldgroupid = UtilSql.getValue(result, "FIELDGROUPID");
         objectFieldGroupLabelsData.fieldgroupname = UtilSql.getValue(result, "FIELDGROUPNAME");
-        objectFieldGroupLabelsData.fieldgrouptrlname = UtilSql
-            .getValue(result, "FIELDGROUPTRLNAME");
+        objectFieldGroupLabelsData.fieldgrouptrlname = UtilSql.getValue(result,
+            "FIELDGROUPTRLNAME");
         vector.addElement(objectFieldGroupLabelsData);
       }
       result.close();
     } catch (SQLException e) {
       log4j.error("SQL error in query: " + strSql + "Exception:", e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
+      throw new ServletException(
+          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
     } catch (Exception ex) {
       log4j.error("Exception in query: " + strSql + "Exception:", ex);
       throw new ServletException("@CODE=@" + ex.getMessage());

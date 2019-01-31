@@ -22,7 +22,8 @@ package org.openbravo.common.actionhandler;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -33,7 +34,7 @@ import org.openbravo.materialmgmt.UOMUtil;
  *
  */
 public class GetConvertedQtyActionHandler extends BaseActionHandler {
-  private static final Logger log4j = Logger.getLogger(GetConvertedQtyActionHandler.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {

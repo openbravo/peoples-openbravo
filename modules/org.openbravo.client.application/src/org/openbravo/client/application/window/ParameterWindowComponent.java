@@ -26,6 +26,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -41,8 +43,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Validation;
 import org.openbravo.model.ad.ui.Window;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The component which takes care of creating a class for a specific paramter window.
@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ParameterWindowComponent extends BaseTemplateComponent {
   private static final String DEFAULT_TEMPLATE_ID = "FF80818132F916130132F9357DE10016";
-  private static final Logger log = LoggerFactory.getLogger(ParameterWindowComponent.class);
+  private static final Logger log = LogManager.getLogger();
 
   static final String BUTTON_LIST_REFERENCE_ID = "FF80818132F94B500132F9575619000A";
 
@@ -64,6 +64,7 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
   private boolean popup;
   Window parentWindow;
 
+  @Override
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
   }
@@ -95,6 +96,7 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
     return inDevelopment;
   }
 
+  @Override
   public String generate() {
     final String jsCode = super.generate();
     return jsCode;
@@ -145,8 +147,8 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
   public List<org.openbravo.model.ad.domain.List> getButtonList() {
     for (Parameter p : process.getOBUIAPPParameterList()) {
       if (p.isActive() && p.getReference().getId().equals(BUTTON_LIST_REFERENCE_ID)) {
-        OBCriteria<org.openbravo.model.ad.domain.List> qList = OBDal.getInstance().createCriteria(
-            org.openbravo.model.ad.domain.List.class);
+        OBCriteria<org.openbravo.model.ad.domain.List> qList = OBDal.getInstance()
+            .createCriteria(org.openbravo.model.ad.domain.List.class);
         qList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE,
             p.getReferenceSearchKey()));
         qList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_ACTIVE, true));
@@ -212,8 +214,8 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
         if (validation.getType().equals("HQL_JS")) {
           paramsWithValidation.add(param);
         } else {
-          log.error("Unsupported validation type {} for param {} in process {}", new Object[] {
-              "HQL_JS", param, process });
+          log.error("Unsupported validation type {} for param {} in process {}",
+              new Object[] { "HQL_JS", param, process });
         }
       }
       allParams.add(param.getDBColumnName());

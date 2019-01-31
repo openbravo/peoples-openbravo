@@ -25,7 +25,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
@@ -55,16 +56,20 @@ public abstract class CostingAlgorithm {
   protected Currency costCurrency;
   protected TrxType trxType;
   protected CostingRule costingRule;
-  protected static Logger log4j = Logger.getLogger(CostingAlgorithm.class);
+  protected static Logger log4j = LogManager.getLogger();
 
   /**
    * Initializes the instance of the CostingAlgorith with the MaterialTransaction that is being to
    * be calculated and the cost dimensions values in case they have to be used.
    * 
-   * It initializes several values: <ul> <li>Organization, it's used the Legal Entity dimension.
-   * If this is null Asterisk organization is used. <li>Currency, it takes the currency defined for
-   * the Organization. If this is null it uses the currency defined for the Client. <li>Transaction
-   * Type, it calculates its type. </ul>
+   * It initializes several values:
+   * <ul>
+   * <li>Organization, it's used the Legal Entity dimension. If this is null Asterisk organization
+   * is used.
+   * <li>Currency, it takes the currency defined for the Organization. If this is null it uses the
+   * currency defined for the Client.
+   * <li>Transaction Type, it calculates its type.
+   * </ul>
    * 
    * @param costingServer
    *          CostingServer instance calculating the cost of the transaction.
@@ -104,54 +109,54 @@ public abstract class CostingAlgorithm {
         return getZeroMovementQtyCost();
       }
       switch (trxType) {
-      case Shipment:
-        return getShipmentCost();
-      case ShipmentReturn:
-        return getShipmentReturnCost();
-      case ShipmentVoid:
-        return getShipmentVoidCost();
-      case ShipmentNegative:
-        return getShipmentNegativeCost();
-      case Receipt:
-        return getReceiptCost();
-      case ReceiptReturn:
-        return getReceiptReturnCost();
-      case ReceiptVoid:
-        return getReceiptVoidCost();
-      case ReceiptNegative:
-        return getReceiptNegativeCost();
-      case InventoryDecrease:
-        return getInventoryDecreaseCost();
-      case InventoryIncrease:
-        return getInventoryIncreaseCost();
-      case InventoryOpening:
-        return getInventoryOpeningCost();
-      case InventoryClosing:
-        return getInventoryClosingCost();
-      case IntMovementFrom:
-        return getIntMovementFromCost();
-      case IntMovementTo:
-        return getIntMovementToCost();
-      case InternalCons:
-        return getInternalConsCost();
-      case InternalConsNegative:
-        return getInternalConsNegativeCost();
-      case InternalConsVoid:
-        return getInternalConsVoidCost();
-      case BOMPart:
-        return getBOMPartCost();
-      case BOMProduct:
-        return getBOMProductCost();
-      case ManufacturingConsumed:
-        // Manufacturing transactions are not fully implemented.
-        return getManufacturingConsumedCost();
-      case ManufacturingProduced:
-        // Manufacturing transactions are not fully implemented.
-        return getManufacturingProducedCost();
-      case Unknown:
-        throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
-      default:
-        throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
+        case Shipment:
+          return getShipmentCost();
+        case ShipmentReturn:
+          return getShipmentReturnCost();
+        case ShipmentVoid:
+          return getShipmentVoidCost();
+        case ShipmentNegative:
+          return getShipmentNegativeCost();
+        case Receipt:
+          return getReceiptCost();
+        case ReceiptReturn:
+          return getReceiptReturnCost();
+        case ReceiptVoid:
+          return getReceiptVoidCost();
+        case ReceiptNegative:
+          return getReceiptNegativeCost();
+        case InventoryDecrease:
+          return getInventoryDecreaseCost();
+        case InventoryIncrease:
+          return getInventoryIncreaseCost();
+        case InventoryOpening:
+          return getInventoryOpeningCost();
+        case InventoryClosing:
+          return getInventoryClosingCost();
+        case IntMovementFrom:
+          return getIntMovementFromCost();
+        case IntMovementTo:
+          return getIntMovementToCost();
+        case InternalCons:
+          return getInternalConsCost();
+        case InternalConsNegative:
+          return getInternalConsNegativeCost();
+        case InternalConsVoid:
+          return getInternalConsVoidCost();
+        case BOMPart:
+          return getBOMPartCost();
+        case BOMProduct:
+          return getBOMProductCost();
+        case ManufacturingConsumed:
+          // Manufacturing transactions are not fully implemented.
+          return getManufacturingConsumedCost();
+        case ManufacturingProduced:
+          // Manufacturing transactions are not fully implemented.
+          return getManufacturingProducedCost();
+        case Unknown:
+          throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
+        default:
+          throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
       }
     } finally {
       long t2 = System.currentTimeMillis();
@@ -234,11 +239,11 @@ public abstract class CostingAlgorithm {
     }
     for (org.openbravo.model.procurement.POInvoiceMatch matchPO : receiptline
         .getProcurementPOInvoiceMatchList()) {
-      BigDecimal orderAmt = matchPO.getQuantity().multiply(
-          matchPO.getSalesOrderLine().getUnitPrice());
-      trxCost = trxCost.add(FinancialUtils.getConvertedAmount(orderAmt, matchPO.getSalesOrderLine()
-          .getCurrency(), costCurrency, transaction.getMovementDate(), costOrg,
-          FinancialUtils.PRECISION_STANDARD));
+      BigDecimal orderAmt = matchPO.getQuantity()
+          .multiply(matchPO.getSalesOrderLine().getUnitPrice());
+      trxCost = trxCost.add(FinancialUtils.getConvertedAmount(orderAmt,
+          matchPO.getSalesOrderLine().getCurrency(), costCurrency, transaction.getMovementDate(),
+          costOrg, FinancialUtils.PRECISION_STANDARD));
     }
     return trxCost;
   }
@@ -276,7 +281,8 @@ public abstract class CostingAlgorithm {
   protected BigDecimal getReceiptDefaultCost() {
     Costing stdCost = CostingUtils.getStandardCostDefinition(transaction.getProduct(), costOrg,
         transaction.getTransactionProcessDate(), costDimensions);
-    BusinessPartner bp = transaction.getGoodsShipmentLine().getShipmentReceipt()
+    BusinessPartner bp = transaction.getGoodsShipmentLine()
+        .getShipmentReceipt()
         .getBusinessPartner();
 
     PriceList pricelist = bp.getPurchasePricelist();
@@ -326,11 +332,13 @@ public abstract class CostingAlgorithm {
   protected BigDecimal getOriginalInOutLineCost() throws OBException {
     if (transaction.getGoodsShipmentLine().getCanceledInoutLine() == null) {
       log4j.error("No canceled line found for transaction: " + transaction.getId());
-      throw new OBException("@NoCanceledLineFoundForTrx@ @Transaction@: "
-          + transaction.getIdentifier());
+      throw new OBException(
+          "@NoCanceledLineFoundForTrx@ @Transaction@: " + transaction.getIdentifier());
     }
     MaterialTransaction origInOutLineTrx = transaction.getGoodsShipmentLine()
-        .getCanceledInoutLine().getMaterialMgmtMaterialTransactionList().get(0);
+        .getCanceledInoutLine()
+        .getMaterialMgmtMaterialTransactionList()
+        .get(0);
 
     return CostingUtils.getTransactionCost(origInOutLineTrx,
         transaction.getTransactionProcessDate(), costCurrency);
@@ -347,17 +355,20 @@ public abstract class CostingAlgorithm {
   protected BigDecimal getReturnedInOutLineCost() throws OBException {
     MaterialTransaction originalTrx = null;
     try {
-      originalTrx = transaction.getGoodsShipmentLine().getSalesOrderLine().getGoodsShipmentLine()
-          .getMaterialMgmtMaterialTransactionList().get(0);
+      originalTrx = transaction.getGoodsShipmentLine()
+          .getSalesOrderLine()
+          .getGoodsShipmentLine()
+          .getMaterialMgmtMaterialTransactionList()
+          .get(0);
     } catch (Exception e) {
-      throw new OBException("@NoReturnedLineFoundForTrx@ @Transaction@: "
-          + transaction.getIdentifier());
+      throw new OBException(
+          "@NoReturnedLineFoundForTrx@ @Transaction@: " + transaction.getIdentifier());
     }
     BigDecimal originalCost = CostingUtils.getTransactionCost(originalTrx,
         transaction.getTransactionProcessDate(), costCurrency);
-    return originalCost.multiply(transaction.getMovementQuantity().abs()).divide(
-        originalTrx.getMovementQuantity().abs(), costCurrency.getStandardPrecision().intValue(),
-        RoundingMode.HALF_UP);
+    return originalCost.multiply(transaction.getMovementQuantity().abs())
+        .divide(originalTrx.getMovementQuantity().abs(),
+            costCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
   }
 
   /**
@@ -378,7 +389,8 @@ public abstract class CostingAlgorithm {
    */
   protected BigDecimal getInventoryIncreaseCost() {
     if (transaction.getPhysicalInventoryLine().getCost() != null) {
-      return transaction.getPhysicalInventoryLine().getCost()
+      return transaction.getPhysicalInventoryLine()
+          .getCost()
           .multiply(transaction.getMovementQuantity().abs());
     }
     return getDefaultCost();
@@ -435,8 +447,8 @@ public abstract class CostingAlgorithm {
           transaction.getTransactionProcessDate(), true, costCurrency);
     }
     // If no transaction is found throw an exception.
-    throw new OBException("@NoInternalMovementTransactionFound@ @Transaction@: "
-        + transaction.getIdentifier());
+    throw new OBException(
+        "@NoInternalMovementTransactionFound@ @Transaction@: " + transaction.getIdentifier());
   }
 
   /**
@@ -465,8 +477,9 @@ public abstract class CostingAlgorithm {
    */
   protected BigDecimal getInternalConsVoidCost() {
     return CostingUtils.getTransactionCost(transaction.getInternalConsumptionLine()
-        .getVoidedInternalConsumptionLine().getMaterialMgmtMaterialTransactionList().get(0),
-        transaction.getTransactionProcessDate(), true, costCurrency);
+        .getVoidedInternalConsumptionLine()
+        .getMaterialMgmtMaterialTransactionList()
+        .get(0), transaction.getTransactionProcessDate(), true, costCurrency);
   }
 
   /**
@@ -488,8 +501,8 @@ public abstract class CostingAlgorithm {
    */
   private void calculateWIPBOMCost() {
     for (MaterialTransaction wipBOMtrx : getPendingWIPBOMTransactions()) {
-      log4j
-          .debug("BOM Part produced in previous Production Plan detected. Calculating its cost. TrxId: "
+      log4j.debug(
+          "BOM Part produced in previous Production Plan detected. Calculating its cost. TrxId: "
               + wipBOMtrx.getId());
       CostingServer transactionCost = new CostingServer(wipBOMtrx);
       transactionCost.process();
@@ -507,8 +520,8 @@ public abstract class CostingAlgorithm {
     where.append("   and pl." + ProductionLine.PROPERTY_MOVEMENTQUANTITY + " > 0");
     where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
 
-    OBQuery<MaterialTransaction> pendingWIPBOMs = OBDal.getInstance().createQuery(
-        MaterialTransaction.class, where.toString());
+    OBQuery<MaterialTransaction> pendingWIPBOMs = OBDal.getInstance()
+        .createQuery(MaterialTransaction.class, where.toString());
 
     ProductionPlan productionPlan = transaction.getProductionLine().getProductionPlan();
     pendingWIPBOMs.setNamedParameter("line", productionPlan.getLineNo());
@@ -525,7 +538,8 @@ public abstract class CostingAlgorithm {
    * @return BigDecimal object representing the total cost amount of the transaction.
    */
   protected BigDecimal getBOMProductCost() {
-    List<ProductionLine> productionLines = transaction.getProductionLine().getProductionPlan()
+    List<ProductionLine> productionLines = transaction.getProductionLine()
+        .getProductionPlan()
         .getManufacturingProductionLineList();
     // Remove produced BOM line.
     List<ProductionLine> parts = new ArrayList<ProductionLine>(productionLines);
@@ -533,21 +547,22 @@ public abstract class CostingAlgorithm {
     BigDecimal totalCost = BigDecimal.ZERO;
     for (ProductionLine prodLine : parts) {
       // Reload from database in case previous partTrx cost calculation has cleared the session.
-      prodLine = (ProductionLine) OBDal.getInstance().getProxy(ProductionLine.ENTITY_NAME,
-          prodLine.getId());
+      prodLine = (ProductionLine) OBDal.getInstance()
+          .getProxy(ProductionLine.ENTITY_NAME, prodLine.getId());
 
       BigDecimal trxCost;
       List<MaterialTransaction> trxList = prodLine.getMaterialMgmtMaterialTransactionList();
       if (trxList.isEmpty()) {
         // If there isn't any material transaction get the default cost of the product.
-        trxCost = CostingUtils.getStandardCost(prodLine.getProduct(), costOrg,
-            transaction.getTransactionProcessDate(), costDimensions, costCurrency).multiply(
-            prodLine.getMovementQuantity().abs());
+        trxCost = CostingUtils
+            .getStandardCost(prodLine.getProduct(), costOrg,
+                transaction.getTransactionProcessDate(), costDimensions, costCurrency)
+            .multiply(prodLine.getMovementQuantity().abs());
       } else {
         MaterialTransaction partTransaction = trxList.get(0);
         // Reload from database in case previous partTrx cost calculation has cleared the session.
-        partTransaction = OBDal.getInstance().get(MaterialTransaction.class,
-            partTransaction.getId());
+        partTransaction = OBDal.getInstance()
+            .get(MaterialTransaction.class, partTransaction.getId());
         // Calculate transaction cost if it is not calculated yet.
         trxCost = CostingUtils.getTransactionCost(partTransaction,
             transaction.getTransactionProcessDate(), true, costCurrency);
@@ -576,8 +591,10 @@ public abstract class CostingAlgorithm {
       calculateWorkEffortCost(transaction.getProductionLine().getProductionPlan().getProduction());
     }
     OBDal.getInstance().refresh(transaction.getProductionLine());
-    return transaction.getProductionLine().getEstimatedCost() != null ? transaction
-        .getProductionLine().getEstimatedCost().multiply(transaction.getMovementQuantity().abs())
+    return transaction.getProductionLine().getEstimatedCost() != null
+        ? transaction.getProductionLine()
+            .getEstimatedCost()
+            .multiply(transaction.getMovementQuantity().abs())
         : BigDecimal.ZERO;
   }
 
@@ -596,8 +613,9 @@ public abstract class CostingAlgorithm {
       calculateWorkEffortCost(transaction.getProductionLine().getProductionPlan().getProduction());
     }
     OBDal.getInstance().refresh(transaction.getProductionLine());
-    return transaction.getProductionLine().getEstimatedCost() != null ? transaction
-        .getProductionLine().getEstimatedCost() : BigDecimal.ZERO;
+    return transaction.getProductionLine().getEstimatedCost() != null
+        ? transaction.getProductionLine().getEstimatedCost()
+        : BigDecimal.ZERO;
   }
 
   private void calculateWorkEffortCost(ProductionTransaction production) {
@@ -651,13 +669,17 @@ public abstract class CostingAlgorithm {
     ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
         transaction.getMovementDate(), false, pricelist, true, false);
     BigDecimal cost = pp.getStandardPrice().multiply(transaction.getMovementQuantity().abs());
-    if (pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(costCurrency.getId())) {
+    if (pp.getPriceListVersion()
+        .getPriceList()
+        .getCurrency()
+        .getId()
+        .equals(costCurrency.getId())) {
       // no conversion needed
       return cost;
     }
-    return FinancialUtils.getConvertedAmount(cost, pp.getPriceListVersion().getPriceList()
-        .getCurrency(), costCurrency, transaction.getMovementDate(), costOrg,
-        FinancialUtils.PRECISION_STANDARD);
+    return FinancialUtils.getConvertedAmount(cost,
+        pp.getPriceListVersion().getPriceList().getCurrency(), costCurrency,
+        transaction.getMovementDate(), costOrg, FinancialUtils.PRECISION_STANDARD);
   }
 
   /**

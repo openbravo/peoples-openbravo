@@ -45,7 +45,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * 
@@ -65,7 +66,7 @@ import org.apache.log4j.Logger;
  */
 class CSSMinimizer {
 
-  private static Logger log = Logger.getLogger(CSSMinimizer.class);
+  private static Logger log = LogManager.getLogger();
 
   /**
    * Minify CSS from a reader to a printstream.
@@ -77,7 +78,7 @@ class CSSMinimizer {
     StringBuffer generatedSB = new StringBuffer();
     try {
       int k, j, // Number of open braces
-      n; // Current position in stream
+          n; // Current position in stream
       char curr;
 
       BufferedReader br = new BufferedReader(new StringReader(input));
@@ -88,8 +89,9 @@ class CSSMinimizer {
       }
       String s;
       while ((s = br.readLine()) != null) {
-        if (s.trim().equals(""))
+        if (s.trim().equals("")) {
           continue;
+        }
         sb.append(s);
       }
 
@@ -167,7 +169,7 @@ class Selector {
   private Property[] properties = null;
   private Vector<Selector> subSelectors = null;
   private String selector;
-  private static final Logger log = Logger.getLogger(Selector.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Creates a new Selector using the supplied strings.
@@ -224,6 +226,7 @@ class Selector {
    * 
    * @returns A string representing this selector, minified.
    */
+  @Override
   public String toString() {
     StringBuffer sb = new StringBuffer();
     sb.append(this.selector).append("{");
@@ -268,14 +271,16 @@ class Selector {
         bInsideURL = true;
       } else if (contents.charAt(i) == ';') {
         substr = contents.substring(j, i);
-        if (!(substr.trim().equals("") || (substr == null)))
+        if (!(substr.trim().equals("") || (substr == null))) {
           parts.add(substr);
+        }
         j = i + 1;
       }
     }
     substr = contents.substring(j, contents.length());
-    if (!(substr.trim().equals("") || (substr == null)))
+    if (!(substr.trim().equals("") || (substr == null))) {
       parts.add(substr);
+    }
     Property[] results = new Property[parts.size()];
 
     for (int i = 0; i < parts.size(); i++) {
@@ -304,15 +309,15 @@ class Selector {
 class Property implements Comparable<Property> {
   protected String property;
   protected Part[] parts;
-  private static final Logger log = Logger.getLogger(Property.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Creates a new Property using the supplied strings. Parses out the values of the property
    * selector.
    * 
    * @param property
-   *          The property; for example, "border: solid 1px red;" or
-   *          "-moz-box-shadow: 3px 3px 3px rgba(255, 255, 0, 0.5);".
+   *          The property; for example, "border: solid 1px red;" or "-moz-box-shadow: 3px 3px 3px
+   *          rgba(255, 255, 0, 0.5);".
    * @throws Exception
    *           If the property is incomplete and cannot be parsed.
    */
@@ -333,14 +338,16 @@ class Property implements Comparable<Property> {
           bCanSplit = false;
         } else if (property.charAt(i) == ':' && partList.size() < 1) {
           substr = property.substring(j, i);
-          if (!(substr.trim().equals("") || (substr == null)))
+          if (!(substr.trim().equals("") || (substr == null))) {
             partList.add(substr);
+          }
           j = i + 1;
         }
       }
       substr = property.substring(j, property.length());
-      if (!(substr.trim().equals("") || (substr == null)))
+      if (!(substr.trim().equals("") || (substr == null))) {
         partList.add(substr);
+      }
       if (partList.size() < 2) {
         throw new Exception("\t\tWarning: Incomplete property: " + property);
       }
@@ -358,6 +365,7 @@ class Property implements Comparable<Property> {
    * 
    * @returns A string representing this property, minified.
    */
+  @Override
   public String toString() {
     StringBuffer sb = new StringBuffer();
     sb.append(this.property).append(":");
@@ -375,6 +383,7 @@ class Property implements Comparable<Property> {
   /**
    * Compare this property with another.
    */
+  @Override
   public int compareTo(Property other) {
     // We can't just use String.compareTo(), because we need to sort properties that have hack
     // prefixes last -- eg, *display should come after display.
@@ -496,12 +505,15 @@ class Part {
     this.contents = this.contents.trim();
 
     // Simplify multiple zeroes
-    if (this.contents.equals("0 0 0 0"))
+    if (this.contents.equals("0 0 0 0")) {
       this.contents = "0";
-    if (this.contents.equals("0 0 0"))
+    }
+    if (this.contents.equals("0 0 0")) {
       this.contents = "0";
-    if (this.contents.equals("0 0"))
+    }
+    if (this.contents.equals("0 0")) {
       this.contents = "0";
+    }
 
     // Simplify multiple-parameter properties
     simplifyParameters();
@@ -519,8 +531,7 @@ class Part {
   }
 
   private void simplifyParameters() {
-    if (this.property.equals("transform-origin")
-        || this.property.equals("background-size")
+    if (this.property.equals("transform-origin") || this.property.equals("background-size")
         || this.property.equals("quotes")) {
       // These properties have several parameters, typically one per axis, and having
       // just one does not imply that the remaining ones will take the same value
@@ -561,8 +572,9 @@ class Part {
   }
 
   private void simplifyFontWeights() {
-    if (!this.property.equals("font-weight"))
+    if (!this.property.equals("font-weight")) {
       return;
+    }
 
     String lcContents = this.contents.toLowerCase();
 
@@ -631,6 +643,7 @@ class Part {
    * 
    * @returns this part's string representation.
    */
+  @Override
   public String toString() {
     return this.contents;
   }
@@ -652,6 +665,7 @@ class IncompletePropertyException extends Exception {
     this.message = message;
   }
 
+  @Override
   public String getMessage() {
     return this.message;
   }
@@ -665,6 +679,7 @@ class EmptySelectorBodyException extends Exception {
     this.message = message;
   }
 
+  @Override
   public String getMessage() {
     return this.message;
   }
@@ -678,6 +693,7 @@ class UnterminatedSelectorException extends Exception {
     this.message = message;
   }
 
+  @Override
   public String getMessage() {
     return this.message;
   }
@@ -691,6 +707,7 @@ class IncompleteSelectorException extends Exception {
     this.message = message;
   }
 
+  @Override
   public String getMessage() {
     return this.message;
   }
@@ -702,22 +719,22 @@ class Constants {
       "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk",
       "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgreen",
       "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred",
-      "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkturquoise",
-      "darkviolet", "deeppink", "deepskyblue", "dimgray", "dodgerblue", "firebrick", "floralwhite",
-      "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "green",
-      "greenyellow", "honeydew", "hotpink", "indianred ", "indigo ", "ivory", "khaki", "lavender",
-      "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan",
-      "lightgoldenrodyellow", "lightgrey", "lightgreen", "lightpink", "lightsalmon",
-      "lightseagreen", "lightskyblue", "lightslategray", "lightsteelblue", "lightyellow", "lime",
-      "limegreen", "linen", "magenta", "maroon", "mediumaquamarine", "mediumblue", "mediumorchid",
-      "mediumpurple", "mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise",
-      "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin", "navajowhite",
-      "navy", "oldlace", "olive", "olivedrab", "orange", "orangered", "orchid", "palegoldenrod",
-      "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink",
-      "plum", "powderblue", "purple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon",
-      "sandybrown", "seagreen", "seashell", "sienna", "silver", "skyblue", "slateblue",
-      "slategray", "snow", "springgreen", "steelblue", "tan", "teal", "thistle", "tomato",
-      "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen" };
+      "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkturquoise", "darkviolet",
+      "deeppink", "deepskyblue", "dimgray", "dodgerblue", "firebrick", "floralwhite", "forestgreen",
+      "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "green", "greenyellow",
+      "honeydew", "hotpink", "indianred ", "indigo ", "ivory", "khaki", "lavender", "lavenderblush",
+      "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow",
+      "lightgrey", "lightgreen", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue",
+      "lightslategray", "lightsteelblue", "lightyellow", "lime", "limegreen", "linen", "magenta",
+      "maroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen",
+      "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue",
+      "mintcream", "mistyrose", "moccasin", "navajowhite", "navy", "oldlace", "olive", "olivedrab",
+      "orange", "orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise",
+      "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple",
+      "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen",
+      "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "snow", "springgreen",
+      "steelblue", "tan", "teal", "thistle", "tomato", "turquoise", "violet", "wheat", "white",
+      "whitesmoke", "yellow", "yellowgreen" };
 
   static final String[] htmlColourValues = { "#f0f8ff", "#faebd7", "#00ffff", "#7fffd4", "#f0ffff",
       "#f5f5dc", "#ffe4c4", "#000", "#ffebcd", "#00f", "#8a2be2", "#a52a2a", "#deb887", "#5f9ea0",

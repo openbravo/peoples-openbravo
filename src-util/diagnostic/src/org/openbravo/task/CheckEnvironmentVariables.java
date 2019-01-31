@@ -24,7 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -36,7 +37,7 @@ import org.apache.tools.ant.Task;
  */
 public class CheckEnvironmentVariables extends Task {
 
-  static Logger log4j = Logger.getLogger(CheckEnvironmentVariables.class);
+  static Logger log4j = LogManager.getLogger();
 
   /**
    * A mapping of the required variables and the message to display if not found.

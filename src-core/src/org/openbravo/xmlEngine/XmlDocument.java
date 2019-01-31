@@ -14,7 +14,8 @@ package org.openbravo.xmlEngine;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.uiTranslation.TranslationHandler;
 
@@ -42,7 +43,7 @@ public class XmlDocument implements XmlComponentValue {
   public boolean ignoreTranslation = false;
   // it store pairs of XmlComponentTemplate (key), XmlComponentValue (value)
 
-  static Logger log4jXmlDocument = Logger.getLogger(XmlDocument.class);
+  static Logger log4jXmlDocument = LogManager.getLogger();
 
   public XmlDocument(XmlTemplate xmlTemplate, XmlDocument parentXmlDocument) {
     this.xmlTemplate = xmlTemplate;
@@ -101,8 +102,8 @@ public class XmlDocument implements XmlComponentValue {
       log4jXmlDocument.debug("parameters of subdocument: " + subXmlDocument.xmlTemplate.strName);
       subXmlDocument.setXmlComponentValueParameters();
       subXmlDocument.setXmlComponentValueLabels();
-      log4jXmlDocument.debug("parameters of data values of subdocument: "
-          + subXmlDocument.xmlTemplate.strName);
+      log4jXmlDocument
+          .debug("parameters of data values of subdocument: " + subXmlDocument.xmlTemplate.strName);
       subXmlDocument.setXmlComponentValueParametersOfDataValues();
     }
 
@@ -131,8 +132,8 @@ public class XmlDocument implements XmlComponentValue {
   }
 
   private void setXmlComponentValueLabels() {
-    log4jXmlDocument.debug("setXmlComponentValueLabels() - hasLabelValues size: "
-        + hasLabelValue.size());
+    log4jXmlDocument
+        .debug("setXmlComponentValueLabels() - hasLabelValues size: " + hasLabelValue.size());
     for (final LabelValue labelValue : hasLabelValue.values()) {
       labelValue.setXmlComponentValue(this);
       log4jXmlDocument.debug("setXmlComponentValueLabels() - labelValue.labelTemplate.strName: "
@@ -172,34 +173,36 @@ public class XmlDocument implements XmlComponentValue {
   public void setData(String subXmlDocumentName, String dataName, FieldProvider[] data) {
     log4jXmlDocument.debug("setData FieldProvider[] of dataName: " + dataName + " in subDocument "
         + subXmlDocumentName + " in " + xmlTemplate.strName);
-    final XmlDocument xmlDocument = hasSubXmlDocuments.get(xmlTemplate.strName + "&"
-        + subXmlDocumentName);
+    final XmlDocument xmlDocument = hasSubXmlDocuments
+        .get(xmlTemplate.strName + "&" + subXmlDocumentName);
     if (xmlDocument == null) {
-      log4jXmlDocument.warn("Subdocument: " + subXmlDocumentName + " not found in "
-          + xmlTemplate.strName);
+      log4jXmlDocument
+          .warn("Subdocument: " + subXmlDocumentName + " not found in " + xmlTemplate.strName);
     }
     xmlDocument.setData(dataName, data);
   }
 
-  public void setDataArray(String subXmlDocumentName, String dataName, FieldProvider[][] dataArray) {
-    log4jXmlDocument.debug("setData FieldProvider[][] of dataName: " + dataName
-        + " in subDocument " + subXmlDocumentName + " in " + xmlTemplate.strName);
-    final XmlDocument xmlDocument = hasSubXmlDocuments.get(xmlTemplate.strName + "&"
-        + subXmlDocumentName);
+  public void setDataArray(String subXmlDocumentName, String dataName,
+      FieldProvider[][] dataArray) {
+    log4jXmlDocument.debug("setData FieldProvider[][] of dataName: " + dataName + " in subDocument "
+        + subXmlDocumentName + " in " + xmlTemplate.strName);
+    final XmlDocument xmlDocument = hasSubXmlDocuments
+        .get(xmlTemplate.strName + "&" + subXmlDocumentName);
     if (xmlDocument == null) {
-      log4jXmlDocument.warn("Subdocument: " + subXmlDocumentName + " not found in "
-          + xmlTemplate.strName);
+      log4jXmlDocument
+          .warn("Subdocument: " + subXmlDocumentName + " not found in " + xmlTemplate.strName);
     }
     xmlDocument.setDataArray(dataName, dataArray);
   }
 
   public void setParameter(String strName, String strValue) {
     final ParameterValue parameter = hasParameterValue.get(strName);
-    if (parameter != null)
+    if (parameter != null) {
       parameter.setValue(strValue);
+    }
     if (parameter != null && !parameter.parameterTemplate.strName.equals("menu")) {
-      log4jXmlDocument.debug("Parameter: " + parameter.parameterTemplate.strName + " valor: "
-          + parameter.print());
+      log4jXmlDocument.debug(
+          "Parameter: " + parameter.parameterTemplate.strName + " valor: " + parameter.print());
     }
   }
 
@@ -208,16 +211,18 @@ public class XmlDocument implements XmlComponentValue {
     if (strName != null && !strName.equals("")) {
       if (hasLabelValue.get(strName) != null) {
         final LabelValue label = hasLabelValue.get(strName);
-        if (label != null)
+        if (label != null) {
           label.setValue(strValue);
+        }
         if (label != null && !label.labelTemplate.strName.equals("menu")) {
-          log4jXmlDocument.debug("###setLabel(): " + label.labelTemplate.strName + " value: "
-              + label.print());
+          log4jXmlDocument
+              .debug("###setLabel(): " + label.labelTemplate.strName + " value: " + label.print());
         }
       }
     }
   }
 
+  @Override
   public String print() {
     return print(null);
   }
@@ -225,8 +230,9 @@ public class XmlDocument implements XmlComponentValue {
   public String print(String strBlank) {
     // Pre-process template to translate it in case it is necessary
     if (!ignoreTranslation && xmlTemplate != null && xmlTemplate.strName != null) {
-      if (log4jXmlDocument.isDebugEnabled())
+      if (log4jXmlDocument.isDebugEnabled()) {
         log4jXmlDocument.debug("Start of print of: " + xmlTemplate.strName);
+      }
       final TranslationHandler handler = new TranslationHandler(
           this.xmlTemplate.xmlEngine.connProvider, this);
       String baseDirectory = xmlTemplate.strName.substring(0, xmlTemplate.strName.lastIndexOf("/"))
@@ -244,14 +250,14 @@ public class XmlDocument implements XmlComponentValue {
         if (hasParameterValue.get("isGeneratedWindow") != null) {
           if (hasParameterValue.get("tabId") != null
               && hasParameterValue.get("tabId").strValue != null) {
-            log4jXmlDocument.debug("print(strBlank) - tabId: "
-                + hasParameterValue.get("tabId").strValue);
+            log4jXmlDocument
+                .debug("print(strBlank) - tabId: " + hasParameterValue.get("tabId").strValue);
             handler.setTabId(hasParameterValue.get("tabId").strValue);
             handler.setXmlDocumentType(TranslationHandler.ADWINDOW);
           } else {
-            log4jXmlDocument.error("Generated window with templateFile: "
-                + xmlTemplate.fileConfiguration
-                + " has no tabId parameter; no translation will be done.");
+            log4jXmlDocument
+                .error("Generated window with templateFile: " + xmlTemplate.fileConfiguration
+                    + " has no tabId parameter; no translation will be done.");
           }
         }
         if (hasParameterValue.get("processId") != null
@@ -269,8 +275,9 @@ public class XmlDocument implements XmlComponentValue {
             && !handler.getFormLabels().isEmpty()) {
           xmlVectorValue.setTextMap(handler.getFormLabels());
         }
-        if (xmlVectorValue != null)
+        if (xmlVectorValue != null) {
           xmlVectorValue.handler = handler;
+        }
       } else {
         log4jXmlDocument.debug("print(String strBlank) - properties file not found");
         try {
@@ -362,14 +369,17 @@ public class XmlDocument implements XmlComponentValue {
     }
   }
 
+  @Override
   public String printPrevious() {
     return print();
   }
 
+  @Override
   public String printSimple() {
     return print();
   }
 
+  @Override
   public String printPreviousSimple() {
     return printPrevious();
   }

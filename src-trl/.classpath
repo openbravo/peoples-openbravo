@@ -6,7 +6,9 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenbravoCore"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/nekohtml.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="/openbravo/lib/runtime/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/build/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/log4j-1.2-api-2.11.1.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/log4j-api-2.11.1.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/log4j-core-2.11.1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

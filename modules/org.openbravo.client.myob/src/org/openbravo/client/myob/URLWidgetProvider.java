@@ -18,7 +18,8 @@
  */
 package org.openbravo.client.myob;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.NonUniqueResultException;
@@ -32,7 +33,7 @@ import org.openbravo.dal.service.OBDao;
  * @author mtaal
  */
 public class URLWidgetProvider extends WidgetProvider {
-  private static final Logger log = Logger.getLogger(URLWidgetProvider.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String URLWIDGETCLASSNAME = "OBUrlWidget";
   private static final String SRC = "src";
@@ -55,8 +56,10 @@ public class URLWidgetProvider extends WidgetProvider {
       final JSONObject parameters = new JSONObject();
       jsonObject.put(WidgetProvider.PARAMETERS, parameters);
       try {
-        final WidgetURL widgetURL = (WidgetURL) OBDao.getFilteredCriteria(WidgetURL.class,
-            Restrictions.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass())).uniqueResult();
+        final WidgetURL widgetURL = (WidgetURL) OBDao
+            .getFilteredCriteria(WidgetURL.class,
+                Restrictions.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass()))
+            .uniqueResult();
         if (widgetURL != null) {
           parameters.put(SRC, widgetURL.getURL());
         } else {
@@ -77,20 +80,24 @@ public class URLWidgetProvider extends WidgetProvider {
     }
   }
 
+  @Override
   public JSONObject getWidgetInstanceDefinition(WidgetInstance widgetInstance) {
     final JSONObject jsonObject = new JSONObject();
     try {
       addDefaultWidgetProperties(jsonObject, widgetInstance);
       final JSONObject parameters = jsonObject.getJSONObject(WidgetProvider.PARAMETERS);
-      final WidgetURL widgetURL = (WidgetURL) OBDao.getFilteredCriteria(WidgetURL.class,
-          Restrictions.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass())).uniqueResult();
+      final WidgetURL widgetURL = (WidgetURL) OBDao
+          .getFilteredCriteria(WidgetURL.class,
+              Restrictions.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass()))
+          .uniqueResult();
       if (widgetURL != null) {
         parameters.put(SRC, widgetURL.getURL());
       } else {
         log.error("No url widget defined for widget class " + widgetInstance.getWidgetClass());
       }
     } catch (NonUniqueResultException e) {
-      log.error("More than one active url defined for widget " + widgetInstance.getWidgetClass(), e);
+      log.error("More than one active url defined for widget " + widgetInstance.getWidgetClass(),
+          e);
     } catch (Exception e) {
       throw new OBException(e);
     }

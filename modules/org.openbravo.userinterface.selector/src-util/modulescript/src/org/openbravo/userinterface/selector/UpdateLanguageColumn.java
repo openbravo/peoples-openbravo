@@ -20,7 +20,8 @@ package org.openbravo.userinterface.selector;
 
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 import org.openbravo.modulescript.ModuleScriptExecutionLimits;
@@ -28,7 +29,7 @@ import org.openbravo.modulescript.OpenbravoVersion;
 
 public class UpdateLanguageColumn extends ModuleScript {
 
-  private static final Logger log4j = Logger.getLogger(UpdateLanguageColumn.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   // obuisel_selector_field_trl table have & must use ad_language column instead of ad_language_id

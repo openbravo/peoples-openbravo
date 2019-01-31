@@ -25,7 +25,8 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
@@ -53,7 +54,7 @@ import org.openbravo.model.ad.ui.Window;
  */
 public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
 
-  private static final Logger log = Logger.getLogger(DefaultsProcessActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String WINDOW_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
 
   @Override
@@ -92,7 +93,9 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
           }
           if (WINDOW_REFERENCE_ID.equals(param.getReference().getId())) {
             if (param.getReferenceSearchKey().getOBUIAPPRefWindowList().size() > 0) {
-              final Window window = param.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0)
+              final Window window = param.getReferenceSearchKey()
+                  .getOBUIAPPRefWindowList()
+                  .get(0)
                   .getWindow();
               final Tab tab = window.getADTabList().get(0);
               final String entityName = tab.getTable().getName();
@@ -103,8 +106,8 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
                 if (field.getObuiappDefaultExpression() != null) {
                   String rawDefaultExpression = field.getObuiappDefaultExpression();
                   Object defaultExpression;
-                  fixedParameters.put("filterExpressionColumnName", field.getColumn()
-                      .getDBColumnName());
+                  fixedParameters.put("filterExpressionColumnName",
+                      field.getColumn().getDBColumnName());
                   defaultExpression = ParameterUtils.getJSExpressionResult(fixedParameters,
                       (HttpSession) parameters.get(KernelConstants.HTTP_SESSION),
                       rawDefaultExpression);
@@ -119,8 +122,8 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
                     }
                     if (property != null && property.getTargetEntity() != null
                         && !property.isOneToMany()) {
-                      final BaseOBObject bob = OBDal.getInstance().get(
-                          property.getTargetEntity().getName(), defaultExpression);
+                      final BaseOBObject bob = OBDal.getInstance()
+                          .get(property.getTargetEntity().getName(), defaultExpression);
                       defaultExpression = bob.getIdentifier();
                     }
                   }
@@ -132,10 +135,10 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
                       gridJson.put(fieldName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR),
                           defaultExpression);
                     } else {
-                      gridJson.put(
-                          entity.getPropertyByColumnName(field.getColumn().getDBColumnName())
-                              .getName().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR),
-                          defaultExpression);
+                      gridJson
+                          .put(entity.getPropertyByColumnName(field.getColumn().getDBColumnName())
+                              .getName()
+                              .replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR), defaultExpression);
                     }
                   }
                 }

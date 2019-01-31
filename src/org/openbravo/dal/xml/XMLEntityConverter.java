@@ -24,7 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -65,7 +66,7 @@ import org.openbravo.model.common.enterprise.Organization;
 public class XMLEntityConverter extends BaseXMLEntityConverter {
   // This class should translate the
 
-  private static final Logger log = Logger.getLogger(EntityXMLConverter.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static XMLEntityConverter newInstance() {
     return OBProvider.getInstance().get(XMLEntityConverter.class);
@@ -168,8 +169,8 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
       BaseOBObject bob = resolve(entityName, id, false, filterOrganizations);
 
       // should never be null at this point
-      Check.isNotNull(bob, "The business object " + entityName + " (" + id
-          + ") can not be resolved");
+      Check.isNotNull(bob,
+          "The business object " + entityName + " (" + id + ") can not be resolved");
 
       // warn/error is logged below if the entity is updated
       // update is prevented below

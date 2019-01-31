@@ -24,7 +24,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -41,7 +42,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 public class DelegateConnectionProvider implements ConnectionProvider {
   protected ConnectionProvider myPool;
-  protected Logger log4j = Logger.getLogger(this.getClass());
+  protected Logger log4j = LogManager.getLogger();
 
   public void init(CalloutServletConfig config) {
     myPool = getPool();
@@ -54,87 +55,110 @@ public class DelegateConnectionProvider implements ConnectionProvider {
     return myPool;
   }
 
+  @Override
   public Connection getConnection() throws NoConnectionAvailableException {
     return getPool().getConnection();
   }
 
+  @Override
   public String getRDBMS() {
     return getPool().getRDBMS();
   }
 
+  @Override
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
     return getPool().getTransactionConnection();
   }
 
+  @Override
   public void releaseCommitConnection(Connection conn) throws SQLException {
     getPool().releaseCommitConnection(conn);
   }
 
+  @Override
   public void releaseRollbackConnection(Connection conn) throws SQLException {
     getPool().releaseRollbackConnection(conn);
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(String poolName, String strSql) throws Exception {
     return getPool().getPreparedStatement(poolName, strSql);
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(String strSql) throws Exception {
     return getPool().getPreparedStatement(strSql);
   }
 
-  public PreparedStatement getPreparedStatement(Connection conn, String strSql) throws SQLException {
+  @Override
+  public PreparedStatement getPreparedStatement(Connection conn, String strSql)
+      throws SQLException {
     return getPool().getPreparedStatement(conn, strSql);
   }
 
+  @Override
   public void releasePreparedStatement(PreparedStatement preparedStatement) throws SQLException {
     getPool().releasePreparedStatement(preparedStatement);
   }
 
+  @Override
   public Statement getStatement(String poolName) throws Exception {
     return getPool().getStatement(poolName);
   }
 
+  @Override
   public Statement getStatement() throws Exception {
     return getPool().getStatement();
   }
 
+  @Override
   public Statement getStatement(Connection conn) throws SQLException {
     return getPool().getStatement(conn);
   }
 
+  @Override
   public void releaseStatement(Statement statement) throws SQLException {
     getPool().releaseStatement(statement);
   }
 
+  @Override
   public void releaseTransactionalStatement(Statement statement) throws SQLException {
     getPool().releaseTransactionalStatement(statement);
   }
 
+  @Override
   public void releaseTransactionalPreparedStatement(PreparedStatement preparedStatement)
       throws SQLException {
     getPool().releaseTransactionalPreparedStatement(preparedStatement);
   }
 
+  @Override
   public CallableStatement getCallableStatement(String poolName, String strSql) throws Exception {
     return getPool().getCallableStatement(poolName, strSql);
   }
 
+  @Override
   public CallableStatement getCallableStatement(String strSql) throws Exception {
     return getPool().getCallableStatement(strSql);
   }
 
-  public CallableStatement getCallableStatement(Connection conn, String strSql) throws SQLException {
+  @Override
+  public CallableStatement getCallableStatement(Connection conn, String strSql)
+      throws SQLException {
     return getPool().getCallableStatement(conn, strSql);
   }
 
+  @Override
   public void releaseCallableStatement(CallableStatement callableStatement) throws SQLException {
     getPool().releaseCallableStatement(callableStatement);
   }
 
+  @Override
   public void destroy() throws Exception {
     getPool().destroy();
   }
 
+  @Override
   public String getStatus() {
     return getPool().getStatus();
   }

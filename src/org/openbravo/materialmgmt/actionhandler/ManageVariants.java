@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -45,11 +47,9 @@ import org.openbravo.model.common.plm.ProductCharacteristicConf;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ManageVariants extends BaseProcessActionHandler {
-  final static private Logger log = LoggerFactory.getLogger(ManageVariants.class);
+  final static private Logger log = LogManager.getLogger();
   private static final String SALES_PRICELIST = "SALES";
   private static final String PURCHASE_PRICELIST = "PURCHASE";
 
@@ -59,7 +59,8 @@ public class ManageVariants extends BaseProcessActionHandler {
     OBContext.setAdminMode(true);
     try {
       jsonRequest = new JSONObject(content);
-      JSONArray selection = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+      JSONArray selection = jsonRequest.getJSONObject("_params")
+          .getJSONObject("grid")
           .getJSONArray("_selection");
       String strProductId = jsonRequest.getString("M_Product_ID");
       final Product generic = OBDal.getInstance().get(Product.class, strProductId);
@@ -125,20 +126,20 @@ public class ManageVariants extends BaseProcessActionHandler {
     OBDal.getInstance().flush();
     for (int i = 0; i < variantValues.length(); i++) {
       JSONObject chValue = variantValues.getJSONObject(i);
-      ProductCharacteristicValue newPrChValue = OBProvider.getInstance().get(
-          ProductCharacteristicValue.class);
-      newPrChValue.setCharacteristic((Characteristic) OBDal.getInstance().getProxy(
-          Characteristic.ENTITY_NAME, chValue.getString("characteristic")));
-      newPrChValue.setCharacteristicValue((CharacteristicValue) OBDal.getInstance().getProxy(
-          CharacteristicValue.ENTITY_NAME, chValue.getString("characteristicValue")));
+      ProductCharacteristicValue newPrChValue = OBProvider.getInstance()
+          .get(ProductCharacteristicValue.class);
+      newPrChValue.setCharacteristic((Characteristic) OBDal.getInstance()
+          .getProxy(Characteristic.ENTITY_NAME, chValue.getString("characteristic")));
+      newPrChValue.setCharacteristicValue((CharacteristicValue) OBDal.getInstance()
+          .getProxy(CharacteristicValue.ENTITY_NAME, chValue.getString("characteristicValue")));
       newPrChValue.setProduct(variant);
       OBDal.getInstance().save(newPrChValue);
-      ProductCharacteristicConf prChConf = OBDal.getInstance().get(ProductCharacteristicConf.class,
-          chValue.getString("characteristicConf"));
+      ProductCharacteristicConf prChConf = OBDal.getInstance()
+          .get(ProductCharacteristicConf.class, chValue.getString("characteristicConf"));
       if (prChConf.getCharacteristicOfProduct().isDefinesPrice()
           && prChConf.getNetUnitPrice() != null) {
-        setPrice(variant, prChConf.getNetUnitPrice(), prChConf.getCharacteristicOfProduct()
-            .getPriceListType());
+        setPrice(variant, prChConf.getNetUnitPrice(),
+            prChConf.getCharacteristicOfProduct().getPriceListType());
       }
       if (prChConf.getCharacteristicOfProduct().isDefinesImage() && prChConf.getImage() != null) {
         Image newImage = (Image) DalUtil.copy(prChConf.getImage(), false);

@@ -54,8 +54,8 @@ public class PriceListTestData8 extends PriceListTestData {
      * following structure: <Product name, [Unit Price Expected, List Price Expected]>
      */
     HashMap<String, String[]> productPriceLines = new HashMap<String, String[]>();
-    productPriceLines.put(PriceListTestConstants.TENNIS_BALL_PRODUCT_NAME, new String[] { "11.00",
-        "11.73" });
+    productPriceLines.put(PriceListTestConstants.TENNIS_BALL_PRODUCT_NAME,
+        new String[] { "11.00", "11.73" });
     setExpectedProductPrices(productPriceLines);
 
     // Price List Header

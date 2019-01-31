@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -23,11 +23,13 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -37,17 +39,13 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
-import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
-  private static final Logger log4j = LoggerFactory
-      .getLogger(FixBackdatedTransactionsProcess.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static CostAdjustment costAdjHeader = null;
 
   @Override
@@ -69,8 +67,8 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
       if (jsonparams.has("fixbackdatedfrom")
           && !jsonparams.getString("fixbackdatedfrom").equals("null")) {
         try {
-          final String repairedfixbackdatedfrom = JsonUtils.convertFromXSDToJavaFormat(jsonparams
-              .getString("fixbackdatedfrom"));
+          final String repairedfixbackdatedfrom = JsonUtils
+              .convertFromXSDToJavaFormat(jsonparams.getString("fixbackdatedfrom"));
           fixbackdatedfrom = JsonUtils.createDateTimeFormat().parse(repairedfixbackdatedfrom);
         } catch (ParseException ignore) {
         }
@@ -87,8 +85,8 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
           throw new OBException(
               OBMessageUtils.parseTranslation("@FixBackdateFromBeforeStartingDate2@"));
         }
-        CostAdjustmentProcess.doGetAlgorithmAdjustmentImp(rule.getCostingAlgorithm()
-            .getJavaClassName());
+        CostAdjustmentProcess
+            .doGetAlgorithmAdjustmentImp(rule.getCostingAlgorithm().getJavaClassName());
 
         OrganizationStructureProvider osp = OBContext.getOBContext()
             .getOrganizationStructureProvider(rule.getClient().getId());
@@ -102,10 +100,11 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
             if (CostAdjustmentUtils.isNeededBackdatedCostAdjustment(trx,
                 rule.isWarehouseDimension(), CostingUtils.getCostingRuleStartingDate(rule))) {
               createCostAdjustmenHeader(rule.getOrganization());
-              CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
-                  costAdjHeader, null, Boolean.TRUE, trx.getMovementDate());
-              cal.setBackdatedTrx(Boolean.TRUE);
-              OBDal.getInstance().save(cal);
+              final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+                  trx, null, costAdjHeader);
+              lineParameters.setSource(true);
+              lineParameters.setBackdatedTransaction(true);
+              CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, trx.getMovementDate());
               i++;
               OBDal.getInstance().flush();
               if ((i % 100) == 0) {
@@ -140,8 +139,8 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
           JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
 
           if (message.get("severity") != "success") {
-            throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@")
-                + ": " + costAdjHeader.getDocumentNo() + " - " + message.getString("text"));
+            throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
+                + costAdjHeader.getDocumentNo() + " - " + message.getString("text"));
           }
 
           msg.setType((String) message.get("severity"));
@@ -187,19 +186,21 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
     select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
     select.append(" where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     select.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    select.append(" and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " >= (:startDate)");
+    select.append(
+        " and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= (:startDate)");
     if (endDate != null) {
-      select.append(" and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " < (:endDate)");
+      select.append(
+          " and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < (:endDate)");
     }
     select.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
 
-    Query stockLinesQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<MaterialTransaction> stockLinesQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(select.toString(), MaterialTransaction.class);
     stockLinesQry.setParameterList("orgs", childOrgs);
-    stockLinesQry.setTimestamp("startDate", startDate);
+    stockLinesQry.setParameter("startDate", startDate);
     if (endDate != null) {
-      stockLinesQry.setTimestamp("endDate", endDate);
+      stockLinesQry.setParameter("endDate", endDate);
     }
 
     stockLinesQry.setFetchSize(1000);

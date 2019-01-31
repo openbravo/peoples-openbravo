@@ -13,19 +13,21 @@ package org.openbravo.xmlEngine;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionMultiplyValue extends FunctionEvaluationValue {
 
-  static Logger log4jFunctionMultiplyValue = Logger.getLogger(FunctionMultiplyValue.class);
+  static Logger log4jFunctionMultiplyValue = LogManager.getLogger();
 
   public FunctionMultiplyValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
-    log4jFunctionMultiplyValue.debug("Arg1: " + arg1Value.printSimple() + " Arg2: "
-        + arg2Value.printSimple());
+    log4jFunctionMultiplyValue
+        .debug("Arg1: " + arg1Value.printSimple() + " Arg2: " + arg2Value.printSimple());
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
@@ -35,9 +37,10 @@ class FunctionMultiplyValue extends FunctionEvaluationValue {
     }
   }
 
+  @Override
   public String printSimple() {
-    log4jFunctionMultiplyValue.debug("Arg1: " + arg1Value.printSimple() + " Arg2: "
-        + arg2Value.printSimple());
+    log4jFunctionMultiplyValue
+        .debug("Arg1: " + arg1Value.printSimple() + " Arg2: " + arg2Value.printSimple());
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;

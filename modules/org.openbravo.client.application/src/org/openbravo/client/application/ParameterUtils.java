@@ -29,7 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.axis.utils.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.expression.OBScriptEngine;
@@ -59,7 +60,7 @@ import org.openbravo.model.ad.domain.Reference;
  */
 public class ParameterUtils {
 
-  private static Logger log = Logger.getLogger(ParameterUtils.class);
+  private static Logger log = LogManager.getLogger();
 
   public static void setParameterValue(ParameterValue parameterValue, JSONObject requestValue) {
     try {
@@ -69,8 +70,8 @@ public class ParameterUtils {
       }
       setValue(parameterValue, value);
     } catch (Exception e) {
-      log.error("Error trying to set value for paramter: "
-          + parameterValue.getParameter().getName(), e);
+      log.error(
+          "Error trying to set value for paramter: " + parameterValue.getParameter().getName(), e);
     }
   }
 
@@ -101,8 +102,8 @@ public class ParameterUtils {
         parameterValue.setValueString(stringValue);
       }
     } catch (Exception e) {
-      log.error("Error trying to set value for paramter: "
-          + parameterValue.getParameter().getName(), e);
+      log.error(
+          "Error trying to set value for paramter: " + parameterValue.getParameter().getName(), e);
     }
   }
 
@@ -193,8 +194,8 @@ public class ParameterUtils {
    * @throws ScriptException
    *           Error occurred executing the script to calculate the defaultValue of the parameter
    */
-  public static Object getParameterDefaultValue(Map<String, String> parameters,
-      Parameter parameter, HttpSession session, JSONObject _context) throws ScriptException {
+  public static Object getParameterDefaultValue(Map<String, String> parameters, Parameter parameter,
+      HttpSession session, JSONObject _context) throws ScriptException {
     JSONObject context = _context != null ? _context : new JSONObject();
     Reference reference = parameter.getReferenceSearchKey();
     if (reference == null) {
@@ -232,7 +233,9 @@ public class ParameterUtils {
         && domainType instanceof ForeignKeyDomainType) {
       // default value is ID of a FK, look for the identifier
       Entity referencedEntity = ((ForeignKeyDomainType) domainType)
-          .getForeignKeyColumn(parameter.getDBColumnName()).getProperty().getEntity();
+          .getForeignKeyColumn(parameter.getDBColumnName())
+          .getProperty()
+          .getEntity();
 
       BaseOBObject record = OBDal.getInstance().get(referencedEntity.getName(), defaultValue);
       if (record != null) {

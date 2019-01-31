@@ -20,11 +20,12 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocLine_Bank extends DocLine {
-  static Logger log4jDocLine_Bank = Logger.getLogger(DocLine_Bank.class);
+  static Logger log4jDocLine_Bank = LogManager.getLogger();
 
   public String m_C_Payment_ID = "";
   public String m_C_GLItem_ID = "";
@@ -48,14 +49,17 @@ public class DocLine_Bank extends DocLine {
    * @param TrxAmt
    *          transaction amount
    */
+  @Override
   public void setAmount(String StmtAmt/* , String InterestAmt */, String TrxAmt) {
-    if (StmtAmt != null && !StmtAmt.equals(""))
+    if (StmtAmt != null && !StmtAmt.equals("")) {
       m_StmtAmt = StmtAmt;
+    }
     /*
      * if (InterestAmt != null && !StmtAmt.equals("")) m_InterestAmt = InterestAmt;
      */
-    if (TrxAmt != null && !StmtAmt.equals(""))
+    if (TrxAmt != null && !StmtAmt.equals("")) {
       m_TrxAmt = TrxAmt;
+    }
   } // setAmount
 
   /**
@@ -68,8 +72,9 @@ public class DocLine_Bank extends DocLine {
    * @return Charge Account or null
    */
   public Account getGlitemAccount(AcctSchema as, BigDecimal amount, ConnectionProvider conn) {
-    if (m_C_GLItem_ID.equals(""))
+    if (m_C_GLItem_ID.equals("")) {
       return null;
+    }
     String Account_ID = "";
     DocLineBankData[] data = null;
     Account acct = null;
@@ -77,8 +82,9 @@ public class DocLine_Bank extends DocLine {
       data = DocLineBankData.selectGlitem(conn, m_C_GLItem_ID, as.getC_AcctSchema_ID());
       if (data.length > 0) {
         Account_ID = data[0].glitemDebitAcct;
-        if (amount != null && amount.signum() < 0)
+        if (amount != null && amount.signum() < 0) {
           Account_ID = data[0].glitemCreditAcct;
+        }
       }
       // No account
       if (Account_ID.equals("")) {
@@ -93,6 +99,7 @@ public class DocLine_Bank extends DocLine {
     return acct;
   } // getGlitemAccount
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

@@ -43,21 +43,21 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
     try {
       OBContext.setAdminMode(true);
       String strChanged = info.getLastFieldChanged();
-      String strmSequenceProductId = info
-          .getStringParameter("inpmaSequenceproductfromId", idFilter);
+      String strmSequenceProductId = info.getStringParameter("inpmaSequenceproductfromId",
+          idFilter);
       String strmProductSequenceId = info.getStringParameter("inpmaSequenceproductId", idFilter);
       String strCopySpecialIntoNormal = info.getStringParameter("inpcopySpecialIntoNormal", null);
 
-      OperationProduct fromOpProduct = OBDal.getInstance().get(OperationProduct.class,
-          strmSequenceProductId);
+      OperationProduct fromOpProduct = OBDal.getInstance()
+          .get(OperationProduct.class, strmSequenceProductId);
       if (fromOpProduct.getProduct().getAttributeSet() != null) {
         // fill normal attributes
-        OperationProduct opProduct = OBDal.getInstance().get(OperationProduct.class,
-            strmProductSequenceId);
+        OperationProduct opProduct = OBDal.getInstance()
+            .get(OperationProduct.class, strmProductSequenceId);
 
         if (!strChanged.equals("inpcopySpecialIntoNormal")) {
-          OBCriteria<AttributeUse> attributeUseCriteria = OBDal.getInstance().createCriteria(
-              AttributeUse.class);
+          OBCriteria<AttributeUse> attributeUseCriteria = OBDal.getInstance()
+              .createCriteria(AttributeUse.class);
           attributeUseCriteria.add(Restrictions.eq(AttributeUse.PROPERTY_ATTRIBUTESET,
               fromOpProduct.getProduct().getAttributeSet()));
           attributeUseCriteria.addOrderBy(AttributeUse.PROPERTY_SEQUENCENUMBER, true);
@@ -75,20 +75,22 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
           info.addSelect("inpspecialatt");
           // lot
           if (fromOpProduct.getProduct().getAttributeSet().isLot()
-              && (opProduct.getProduct().getAttributeSet().isLot() || strCopySpecialIntoNormal
-                  .equals("Y"))) {
+              && (opProduct.getProduct().getAttributeSet().isLot()
+                  || strCopySpecialIntoNormal.equals("Y"))) {
             org.openbravo.model.ad.domain.List lot = SpecialAttListValue(lotSearchKey);
-            if (lot != null)
+            if (lot != null) {
               info.addSelectResult(lot.getSearchKey(), lot.getName());
+            }
           }
 
           // serial no.
           if (fromOpProduct.getProduct().getAttributeSet().isSerialNo()
-              && (opProduct.getProduct().getAttributeSet().isSerialNo() || strCopySpecialIntoNormal
-                  .equals("Y"))) {
+              && (opProduct.getProduct().getAttributeSet().isSerialNo()
+                  || strCopySpecialIntoNormal.equals("Y"))) {
             org.openbravo.model.ad.domain.List sn = SpecialAttListValue(serialNoSearchKey);
-            if (sn != null)
+            if (sn != null) {
               info.addSelectResult(sn.getSearchKey(), sn.getName());
+            }
           }
 
           // expirationDate
@@ -96,8 +98,9 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
               && opProduct.getProduct().getAttributeSet().isExpirationDate()
               && strCopySpecialIntoNormal.equals("N")) {
             org.openbravo.model.ad.domain.List ed = SpecialAttListValue(expirationDateSearchKey);
-            if (ed != null)
+            if (ed != null) {
               info.addSelectResult(ed.getSearchKey(), ed.getName());
+            }
           }
           info.endSelect();
         }
@@ -110,12 +113,12 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
   private org.openbravo.model.ad.domain.List SpecialAttListValue(String Value)
       throws ServletException {
     Reference specialAttList = OBDal.getInstance().get(Reference.class, specialAttListId);
-    OBCriteria<List> specialAttListValuesCriteria = OBDal.getInstance().createCriteria(
-        org.openbravo.model.ad.domain.List.class);
-    specialAttListValuesCriteria.add(Restrictions.eq(
-        org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, specialAttList));
-    specialAttListValuesCriteria.add(Restrictions.eq(
-        org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY, Value));
+    OBCriteria<List> specialAttListValuesCriteria = OBDal.getInstance()
+        .createCriteria(org.openbravo.model.ad.domain.List.class);
+    specialAttListValuesCriteria.add(
+        Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, specialAttList));
+    specialAttListValuesCriteria
+        .add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY, Value));
     java.util.List<org.openbravo.model.ad.domain.List> specialAttListValues = specialAttListValuesCriteria
         .list();
     if (specialAttListValues.isEmpty()) {

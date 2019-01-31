@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,17 +37,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import javax.persistence.Tuple;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.hibernate.type.StandardBasicTypes;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -65,6 +69,7 @@ import org.openbravo.dal.core.DalThreadHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
+import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -177,22 +182,27 @@ import org.openbravo.test.base.OBBaseTest;
  */
 
 public class IssuesTest extends OBBaseTest {
-  private static final Logger log = Logger.getLogger(IssuesTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * https://issues.openbravo.com/view.php?id=18688
+   * 
+   * @throws Exception
    */
   @Test
-  public void test18688() {
-    final Session session = OBDal.getInstance().getSession();
-    OBDal.getInstance().registerSQLFunction("ad_column_identifier_std",
+  public void test18688() throws Exception {
+    // define the map containing the SQL function to be registered in Hibernate
+    Map<String, SQLFunction> sqlFunctions = new HashMap<>();
+    sqlFunctions.put("ad_column_identifier_std",
         new StandardSQLFunction("ad_column_identifier_std", StandardBasicTypes.STRING));
+    initializeDalLayer(sqlFunctions);
+
+    final Session session = OBDal.getInstance().getSession();
     final String qryStr = "select bc.id, ad_column_identifier_std('C_BP_Group', bc.id) from "
         + Category.ENTITY_NAME + " bc";
-    final Query qry = session.createQuery(qryStr);
-    for (Object o : qry.list()) {
-      final Object[] os = (Object[]) o;
-      assertTrue(os[1] instanceof String && os[1].toString().length() > 0);
+    final Query<Tuple> qry = session.createQuery(qryStr, Tuple.class);
+    for (Tuple tuple : qry.list()) {
+      assertTrue(tuple.get(1) instanceof String && tuple.get(1).toString().length() > 0);
     }
   }
 
@@ -203,8 +213,8 @@ public class IssuesTest extends OBBaseTest {
   public void test13749() {
     setTestAdminContext();
     try {
-      org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
-          org.openbravo.model.ad.ui.Process.class, "1004400000"); // Has a Date parameter
+      org.openbravo.model.ad.ui.Process process = OBDal.getInstance()
+          .get(org.openbravo.model.ad.ui.Process.class, "1004400000"); // Has a Date parameter
       Map<String, Date> params = new HashMap<String, Date>();
       params.put("DateOrdered", new Date());
       ProcessInstance pi = CallProcess.getInstance().callProcess(process, null, params);
@@ -269,8 +279,8 @@ public class IssuesTest extends OBBaseTest {
       params.add("C_ORDER");
       params.add(orderId);
       params.add("en_US");
-      final String sqlIdentifier = (String) CallStoredProcedure.getInstance().call(
-          "AD_COLUMN_IDENTIFIER", params, null);
+      final String sqlIdentifier = (String) CallStoredProcedure.getInstance()
+          .call("AD_COLUMN_IDENTIFIER", params, null);
       final Order order = OBDal.getInstance().get(Order.class, orderId);
       final String dalIdentifier = IdentifierProvider.getInstance().getIdentifier(order);
 
@@ -282,10 +292,10 @@ public class IssuesTest extends OBBaseTest {
       params.add("M_PRODUCT");
       params.add(id);
       params.add("en_US");
-      final String sqlIdentifier = (String) CallStoredProcedure.getInstance().call(
-          "AD_COLUMN_IDENTIFIER", params, null);
-      final String dalIdentifier = IdentifierProvider.getInstance().getIdentifier(
-          OBDal.getInstance().get(Product.class, id));
+      final String sqlIdentifier = (String) CallStoredProcedure.getInstance()
+          .call("AD_COLUMN_IDENTIFIER", params, null);
+      final String dalIdentifier = IdentifierProvider.getInstance()
+          .getIdentifier(OBDal.getInstance().get(Product.class, id));
       assertEquals(sqlIdentifier, dalIdentifier);
     }
 
@@ -303,8 +313,8 @@ public class IssuesTest extends OBBaseTest {
     setSystemAdministratorContext();
     final List<Module> modules = OBDal.getInstance().createCriteria(Module.class).list();
 
-    final OBQuery<Message> messages = OBDal.getInstance().createQuery(Message.class,
-        "module in (:modules)");
+    final OBQuery<Message> messages = OBDal.getInstance()
+        .createQuery(Message.class, "module in (:modules)");
     messages.setNamedParameter("modules", modules);
     assertFalse(messages.list().isEmpty());
 
@@ -334,8 +344,8 @@ public class IssuesTest extends OBBaseTest {
     } catch (Exception e) {
       // should fail as there is more than one result
     }
-    final OBQuery<Organization> organizations = OBDal.getInstance().createQuery(Organization.class,
-        "id='0'");
+    final OBQuery<Organization> organizations = OBDal.getInstance()
+        .createQuery(Organization.class, "id='0'");
     final Organization organization = organizations.uniqueResult();
     assertNotNull(organization);
   }
@@ -379,7 +389,7 @@ public class IssuesTest extends OBBaseTest {
     formTrl.setDescription("description");
     formTrl.setName("name");
     formTrl.setSpecialForm(form);
-    formTrl.setLanguage(OBDal.getInstance().createCriteria(Language.class).list().get(0));
+    formTrl.setLanguage(getNonInstalledLanguage());
 
     form.getADFormTrlList().add(formTrl);
     OBDal.getInstance().save(form);
@@ -389,6 +399,13 @@ public class IssuesTest extends OBBaseTest {
 
     // don't save anything
     OBDal.getInstance().rollbackAndClose();
+  }
+
+  private Language getNonInstalledLanguage() {
+    OBQuery<Language> query = OBDal.getInstance()
+        .createQuery(Language.class, "as l where l.systemLanguage = false");
+    query.setMaxResult(1);
+    return query.uniqueResult();
   }
 
   /**
@@ -449,8 +466,8 @@ public class IssuesTest extends OBBaseTest {
   @Test
   public void test12853() {
     setSystemAdministratorContext();
-    final OBQuery<Product> products = OBDal.getInstance().createQuery(Product.class,
-        " as e where e.name is not null");
+    final OBQuery<Product> products = OBDal.getInstance()
+        .createQuery(Product.class, " as e where e.name is not null");
     products.setFilterOnReadableOrganization(false);
     products.setFilterOnReadableClients(false);
     assertTrue(products.count() > 0);
@@ -464,8 +481,8 @@ public class IssuesTest extends OBBaseTest {
     setSystemAdministratorContext();
     OBQuery<Product> products;
 
-    products = OBDal.getInstance().createQuery(Product.class,
-        " as e where e.name is not null order by name");
+    products = OBDal.getInstance()
+        .createQuery(Product.class, " as e where e.name is not null order by name");
     products.setFilterOnReadableOrganization(false);
     products.setFilterOnReadableClients(false);
     assertTrue(products.count() > 0);
@@ -646,7 +663,9 @@ public class IssuesTest extends OBBaseTest {
 
       @Override
       protected void doAction() throws Exception {
-        OBDal.getInstance().getSession().beginTransaction();
+        if (!SessionHandler.getInstance().isCurrentTransactionActive()) {
+          OBDal.getInstance().getSession().beginTransaction();
+        }
         OBDal.getInstance().getSession().getTransaction().commit();
       }
     };
@@ -698,14 +717,15 @@ public class IssuesTest extends OBBaseTest {
     setSystemAdministratorContext();
 
     final Session session = OBDal.getInstance().getSession();
-    SQLQuery query = session
-        .createSQLQuery("SELECT AD_REF_LIST.VALUE AS VALUE, AD_REF_LIST.NAME AS LISTNAME, TRL.NAME AS TRLNAME "
+    @SuppressWarnings("rawtypes")
+    NativeQuery query = session.createNativeQuery(
+        "SELECT AD_REF_LIST.VALUE AS VALUE, AD_REF_LIST.NAME AS LISTNAME, TRL.NAME AS TRLNAME "
             + "FROM AD_REF_LIST LEFT OUTER JOIN "
-            + "(SELECT AD_REF_LIST_ID, NAME FROM AD_REF_LIST_TRL WHERE AD_REF_LIST_TRL.AD_LANGUAGE = ?) TRL "
+            + "(SELECT AD_REF_LIST_ID, NAME FROM AD_REF_LIST_TRL WHERE AD_REF_LIST_TRL.AD_LANGUAGE = :language) TRL "
             + "ON AD_REF_LIST.AD_REF_LIST_ID = TRL.AD_REF_LIST_ID "
-            + "WHERE AD_REF_LIST.AD_REFERENCE_ID = ?");
-    query.setString(0, "en_US");
-    query.setString(1, "800025");
+            + "WHERE AD_REF_LIST.AD_REFERENCE_ID = :referenceId");
+    query.setParameter("language", "en_US");
+    query.setParameter("referenceId", "800025");
     query.list();
   }
 
@@ -718,11 +738,11 @@ public class IssuesTest extends OBBaseTest {
     final String clientId = OBContext.getOBContext().getCurrentClient().getId();
     final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(clientId);
-    final Set<String> childOrg = osp.getChildOrg(OBContext.getOBContext().getCurrentOrganization()
-        .getId());
+    final Set<String> childOrg = osp
+        .getChildOrg(OBContext.getOBContext().getCurrentOrganization().getId());
     childOrg.removeAll(childOrg);
-    final Set<String> childOrg2 = osp.getChildOrg(OBContext.getOBContext().getCurrentOrganization()
-        .getId());
+    final Set<String> childOrg2 = osp
+        .getChildOrg(OBContext.getOBContext().getCurrentOrganization().getId());
     assertFalse(childOrg2.isEmpty());
   }
 
@@ -735,11 +755,11 @@ public class IssuesTest extends OBBaseTest {
     final String clientId = OBContext.getOBContext().getCurrentClient().getId();
     final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(clientId);
-    final Set<String> naturalTree = osp.getNaturalTree(OBContext.getOBContext()
-        .getCurrentOrganization().getId());
+    final Set<String> naturalTree = osp
+        .getNaturalTree(OBContext.getOBContext().getCurrentOrganization().getId());
     naturalTree.removeAll(naturalTree);
-    final Set<String> naturalTree2 = osp.getNaturalTree(OBContext.getOBContext()
-        .getCurrentOrganization().getId());
+    final Set<String> naturalTree2 = osp
+        .getNaturalTree(OBContext.getOBContext().getCurrentOrganization().getId());
     assertFalse(naturalTree2.isEmpty());
   }
 
@@ -843,9 +863,9 @@ public class IssuesTest extends OBBaseTest {
   @Test
   public void test22235() throws Exception {
     final OBContext obContext = OBContext.getOBContext();
-    final VariablesSecureApp vars = new VariablesSecureApp(obContext.getUser().getId(), obContext
-        .getCurrentClient().getId(), obContext.getCurrentOrganization().getId(), obContext
-        .getRole().getId(), obContext.getLanguage().getLanguage());
+    final VariablesSecureApp vars = new VariablesSecureApp(obContext.getUser().getId(),
+        obContext.getCurrentClient().getId(), obContext.getCurrentOrganization().getId(),
+        obContext.getRole().getId(), obContext.getLanguage().getLanguage());
     final ProcessBundle processBundle = new ProcessBundle("test", vars);
     processBundle.setProcessClass(Test22235.class);
 

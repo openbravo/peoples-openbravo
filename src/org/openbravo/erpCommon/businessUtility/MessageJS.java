@@ -36,8 +36,8 @@ public class MessageJS extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     final String strValue = vars.getRequiredStringParameter("inpvalue");
@@ -65,8 +65,9 @@ public class MessageJS extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strLanguage = vars.getStringParameter("inplanguage");
-    if (strLanguage == null || strLanguage.equals(""))
+    if (strLanguage == null || strLanguage.equals("")) {
       strLanguage = vars.getLanguage();
+    }
     MessageJSData[] data = null;
     try {
       data = MessageJSData.getMessage(this, strLanguage, strValue);
@@ -76,8 +77,9 @@ public class MessageJS extends HttpSecureAppServlet {
       description = ex.toString();
     }
     if (data != null && data.length > 0) {
-      type = (data[0].msgtype.equals("E") ? "Error" : (data[0].msgtype.equals("I") ? "Info"
-          : (data[0].msgtype.equals("S") ? "Success" : "Warning")));
+      type = (data[0].msgtype.equals("E") ? "Error"
+          : (data[0].msgtype.equals("I") ? "Info"
+              : (data[0].msgtype.equals("S") ? "Success" : "Warning")));
       title = Utility.messageBD(this, type, strLanguage);
       String msgtext = data[0].msgtext;
       for (int i = 0; i < array.length(); i++) {

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,11 +67,17 @@ public class DbUtility implements OBSingleton {
     }
     if (throwable.getCause() instanceof org.hibernate.exception.ConstraintViolationException
         && ((org.hibernate.exception.ConstraintViolationException) throwable.getCause())
-            .getSQLException().getNextException() != null) {
+            .getSQLException()
+            .getNextException() != null) {
       final org.hibernate.exception.ConstraintViolationException cve = (org.hibernate.exception.ConstraintViolationException) throwable
           .getCause();
       return cve.getSQLException().getNextException();
     }
+
+    if (throwable.getCause() instanceof SQLException) {
+      return throwable.getCause();
+    }
+
     return throwable;
   }
 

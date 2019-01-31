@@ -45,8 +45,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -113,7 +114,8 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
 
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strDate, String strProductCategory, String strmProductId, String strmLocatorId,
-      String strX, String strY, String strZ, String strOutput) throws IOException, ServletException {
+      String strX, String strY, String strZ, String strOutput)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
@@ -142,12 +144,13 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
     }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportWarehousePartnerJR").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportWarehousePartnerJR")
+        .createXmlDocument();
 
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportWarehousePartnerJR",
-        false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportWarehousePartnerJR", false,
+        "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -190,9 +193,9 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("mProductCategoryId", strProductCategory);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportPricelist"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportPricelist"), 0);
+          "M_Product_Category_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportPricelist"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportPricelist"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportPricelist",
           strProductCategory);
       xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
@@ -201,15 +204,11 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    xmlDocument.setData(
-        "reportMProductId_IN",
-        "liststructure",
+    xmlDocument.setData("reportMProductId_IN", "liststructure",
         SelectorUtilityData.selectMproduct(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
             Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strmProductId));
-    xmlDocument.setData(
-        "reportMLocatorId_IN",
-        "liststructure",
+    xmlDocument.setData("reportMLocatorId_IN", "liststructure",
         SelectorUtilityData.selectMlocator(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
             Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strmLocatorId));
@@ -218,6 +217,7 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportWarehousePartner. This Servlet was made by Jon Alegria";
   } // end of getServletInfo() method

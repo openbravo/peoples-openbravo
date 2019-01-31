@@ -42,6 +42,7 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
   private Tab tab;
   private OBViewTab viewTab;
 
+  @Override
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
   }

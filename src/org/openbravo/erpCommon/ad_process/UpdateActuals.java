@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,8 +23,9 @@ import static org.openbravo.erpCommon.utility.StringCollectionUtils.commaSeparat
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
@@ -35,7 +36,7 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalBaseProcess;
 
 public class UpdateActuals extends DalBaseProcess {
-  private static final Logger log4j = Logger.getLogger(UpdateActuals.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
@@ -66,25 +67,31 @@ public class UpdateActuals extends DalBaseProcess {
       Budget myBudget = OBDal.getInstance().get(Budget.class, cBudgetId);
       for (BudgetLine budgetLine : myBudget.getFinancialMgmtBudgetLineList()) {
         activity = (budgetLine.getActivity() != null) ? budgetLine.getActivity().getId() : "";
-        accountingSchema = (budgetLine.getAccountingSchema() != null) ? budgetLine
-            .getAccountingSchema().getId() : "";
+        accountingSchema = (budgetLine.getAccountingSchema() != null)
+            ? budgetLine.getAccountingSchema().getId()
+            : "";
         asset = (budgetLine.getAsset() != null) ? budgetLine.getAsset().getId() : "";
-        businessPartner = (budgetLine.getBusinessPartner() != null) ? budgetLine
-            .getBusinessPartner().getId() : "";
-        businessPartnerCategory = (budgetLine.getBusinessPartnerCategory() != null) ? budgetLine
-            .getBusinessPartnerCategory().getId() : "";
+        businessPartner = (budgetLine.getBusinessPartner() != null)
+            ? budgetLine.getBusinessPartner().getId()
+            : "";
+        businessPartnerCategory = (budgetLine.getBusinessPartnerCategory() != null)
+            ? budgetLine.getBusinessPartnerCategory().getId()
+            : "";
         costcenter = (budgetLine.getCostcenter() != null) ? budgetLine.getCostcenter().getId() : "";
         account = (budgetLine.getAccountElement() != null) ? budgetLine.getAccountElement().getId()
             : "";
-        accountSign = (budgetLine.getAccountElement() != null) ? budgetLine.getAccountElement()
-            .getAccountSign() : "";
+        accountSign = (budgetLine.getAccountElement() != null)
+            ? budgetLine.getAccountElement().getAccountSign()
+            : "";
         period = (budgetLine.getPeriod() != null) ? budgetLine.getPeriod().getId() : "";
         product = (budgetLine.getProduct() != null) ? budgetLine.getProduct().getId() : "";
-        productCategory = (budgetLine.getProductCategory() != null) ? budgetLine
-            .getProductCategory().getId() : "";
+        productCategory = (budgetLine.getProductCategory() != null)
+            ? budgetLine.getProductCategory().getId()
+            : "";
         project = (budgetLine.getProject() != null) ? budgetLine.getProject().getId() : "";
-        salesCampaign = (budgetLine.getSalesCampaign() != null) ? budgetLine.getSalesCampaign()
-            .getId() : "";
+        salesCampaign = (budgetLine.getSalesCampaign() != null)
+            ? budgetLine.getSalesCampaign().getId()
+            : "";
         salesRegion = (budgetLine.getSalesRegion() != null) ? budgetLine.getSalesRegion().getId()
             : "";
         user1 = (budgetLine.getStDimension() != null) ? budgetLine.getStDimension().getId() : "";
@@ -92,31 +99,38 @@ public class UpdateActuals extends DalBaseProcess {
 
         // get the natural tree
         TreeUtility treeUtility = new TreeUtility();
-        String activityTree = activity != null ? commaSeparated(treeUtility.getChildTree(activity,
-            "AY", true)) : activity;
-        String productCategoryTree = productCategory != null ? commaSeparated(treeUtility
-            .getChildTree(productCategory, "PC", true)) : productCategory;
-        String assetTree = asset != null ? commaSeparated(treeUtility.getChildTree(asset, "AS",
-            true)) : asset;
-        String costcenterTree = costcenter != null ? commaSeparated(treeUtility.getChildTree(
-            costcenter, "CC", true)) : costcenter;
-        String accountTree = account != null ? commaSeparated(treeUtility.getChildTree(account,
-            "EV", true)) : account;
-        String projectTree = project != null ? commaSeparated(treeUtility.getChildTree(project,
-            "PJ", true)) : project;
-        String campaignTree = salesCampaign != null ? commaSeparated(treeUtility.getChildTree(
-            salesCampaign, "MC", true)) : salesCampaign;
-        String regionTree = salesRegion != null ? commaSeparated(treeUtility.getChildTree(
-            salesRegion, "SR", true)) : salesRegion;
-        String user1Tree = user1 != null ? commaSeparated(treeUtility.getChildTree(user1, "U1",
-            true)) : user1;
-        String user2Tree = user2 != null ? commaSeparated(treeUtility.getChildTree(user2, "U2",
-            true)) : user2;
+        String activityTree = activity != null
+            ? commaSeparated(treeUtility.getChildTree(activity, "AY"))
+            : activity;
+        String productCategoryTree = productCategory != null
+            ? commaSeparated(treeUtility.getChildTree(productCategory, "PC"))
+            : productCategory;
+        String assetTree = asset != null ? commaSeparated(treeUtility.getChildTree(asset, "AS"))
+            : asset;
+        String costcenterTree = costcenter != null
+            ? commaSeparated(treeUtility.getChildTree(costcenter, "CC"))
+            : costcenter;
+        String accountTree = account != null
+            ? commaSeparated(treeUtility.getChildTree(account, "EV"))
+            : account;
+        String projectTree = project != null
+            ? commaSeparated(treeUtility.getChildTree(project, "PJ"))
+            : project;
+        String campaignTree = salesCampaign != null
+            ? commaSeparated(treeUtility.getChildTree(salesCampaign, "MC"))
+            : salesCampaign;
+        String regionTree = salesRegion != null
+            ? commaSeparated(treeUtility.getChildTree(salesRegion, "SR"))
+            : salesRegion;
+        String user1Tree = user1 != null ? commaSeparated(treeUtility.getChildTree(user1, "U1"))
+            : user1;
+        String user2Tree = user2 != null ? commaSeparated(treeUtility.getChildTree(user2, "U2"))
+            : user2;
 
         final String orgId = myBudget.getOrganization().getId();
 
-        String OrgTreeList = commaSeparated(OBContext.getOBContext()
-            .getOrganizationStructureProvider().getChildTree(orgId, true));
+        String OrgTreeList = commaSeparated(
+            OBContext.getOBContext().getOrganizationStructureProvider().getChildTree(orgId, true));
 
         StringBuilder queryString = new StringBuilder();
         queryString.append("select SUM(e.credit) as credit,");
@@ -124,6 +138,9 @@ public class UpdateActuals extends DalBaseProcess {
         queryString.append(" from FinancialMgmtAccountingFact e where");
         queryString.append(" e.client.id='").append(myBudget.getClient().getId()).append("'");
         queryString.append(" and e.organization.id in (").append(OrgTreeList).append(")");
+        queryString.append(" and e.period.year.id='")
+            .append(myBudget.getYear().getId())
+            .append("'");
 
         if (!"".equals(activity)) {
           queryString.append(" and e.activity.id in (").append(activityTree).append(")");
@@ -150,7 +167,8 @@ public class UpdateActuals extends DalBaseProcess {
           queryString.append(" and e.product.id=:product");
         }
         if (StringUtils.isNotEmpty(productCategory)) {
-          queryString.append(" and e.product.productCategory.id in (").append(productCategoryTree)
+          queryString.append(" and e.product.productCategory.id in (")
+              .append(productCategoryTree)
               .append(")");
         }
         if (!"".equals(project)) {
@@ -168,28 +186,32 @@ public class UpdateActuals extends DalBaseProcess {
         if (!"".equals(user1)) {
           queryString.append(" and e.ndDimension.id in (").append(user2Tree).append(")");
         }
-        Query query = OBDal.getInstance().getSession().createQuery(queryString.toString());
+        Query<Object[]> query = OBDal.getInstance()
+            .getSession()
+            .createQuery(queryString.toString(), Object[].class);
         query.setReadOnly(true);
-        query.setString("accountingSchema", accountingSchema);
-        if (!"".equals(businessPartner))
-          query.setString("businessPartner", businessPartner);
-        if (StringUtils.isNotEmpty(businessPartnerCategory)) {
-          query.setString("businessPartnerCategory", businessPartnerCategory);
+        query.setParameter("accountingSchema", accountingSchema);
+        if (!"".equals(businessPartner)) {
+          query.setParameter("businessPartner", businessPartner);
         }
-        if (!"".equals(period))
-          query.setString("period", period);
-        if (!"".equals(product))
-          query.setString("product", product);
+        if (StringUtils.isNotEmpty(businessPartnerCategory)) {
+          query.setParameter("businessPartnerCategory", businessPartnerCategory);
+        }
+        if (!"".equals(period)) {
+          query.setParameter("period", period);
+        }
+        if (!"".equals(product)) {
+          query.setParameter("product", product);
+        }
 
         log4j.debug("Query String" + query.getQueryString());
 
         BigDecimal credit = BigDecimal.ZERO;
         BigDecimal debit = BigDecimal.ZERO;
-        for (Object obj : query.list()) {
-          if (obj != null) {
-            Object[] row = (Object[]) obj;
-            credit = (BigDecimal) ((row[0] != null) ? row[0] : new BigDecimal(0));
-            debit = (BigDecimal) ((row[1] != null) ? row[1] : new BigDecimal(0));
+        for (Object[] row : query.list()) {
+          if (row != null) {
+            credit = (row[0] != null) ? (BigDecimal) row[0] : new BigDecimal(0);
+            debit = (row[1] != null) ? (BigDecimal) row[1] : new BigDecimal(0);
           }
         }
 

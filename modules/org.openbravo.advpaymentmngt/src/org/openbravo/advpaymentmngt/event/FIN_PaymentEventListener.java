@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,7 +24,7 @@ import java.util.List;
 import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -45,8 +45,8 @@ import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      FIN_Payment.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME) };
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -76,29 +76,28 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     final String documentNo = payment.getDocumentNo();
     final int documentNoLength = documentNo.length();
 
-    if (!oldPaymentProcessed
-        && currentPaymentProcessed
+    if (!oldPaymentProcessed && currentPaymentProcessed
         && currentPaymentAmount.compareTo(BigDecimal.ZERO) == 0
-        && (documentNoLength < CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length() || !CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX
-            .equals(documentNo.substring(documentNoLength
-                - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length())))) {
+        && (documentNoLength < CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()
+            || !CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo.substring(
+                documentNoLength - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length())))) {
       // Processing a zero payment: add sufix
       final int documentNoLimit = CancelAndReplaceUtils.PAYMENT_DOCNO_LENGTH
           - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length();
-      String newDocumentNo = (documentNoLength > documentNoLimit ? documentNo.substring(0,
-          documentNoLimit) : documentNo) + CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX;
+      String newDocumentNo = (documentNoLength > documentNoLimit
+          ? documentNo.substring(0, documentNoLimit)
+          : documentNo) + CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX;
       setDocumentNoToPayment(event, newDocumentNo);
     }
 
-    else if (oldPaymentProcessed
-        && !currentPaymentProcessed
+    else if (oldPaymentProcessed && !currentPaymentProcessed
         && oldPaymentAmount.compareTo(BigDecimal.ZERO) == 0
         && documentNoLength > CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()
-        && CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo.substring(documentNoLength
-            - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()))) {
+        && CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo
+            .substring(documentNoLength - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()))) {
       // Reactivating a zero payment: remove sufix
-      String newDocumentNo = documentNo.substring(0, documentNoLength
-          - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length());
+      String newDocumentNo = documentNo.substring(0,
+          documentNoLength - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length());
       setDocumentNoToPayment(event, newDocumentNo);
     }
 
@@ -150,8 +149,8 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
           rowCount = updateAPRMPendingPaymentFromInvoiceRecord(payment, executionProcess);
         }
       } else if (StringUtils.equals("RPAE", oldPaymentStatus)
-          && (StringUtils.equals(currentPaymentStatus, "RPAP") || StringUtils.equals(
-              currentPaymentStatus, "RPVOID"))) {
+          && (StringUtils.equals(currentPaymentStatus, "RPAP")
+              || StringUtils.equals(currentPaymentStatus, "RPVOID"))) {
         rowCount = deleteAPRMPendingPaymentFromInvoiceRecord(payment);
       }
 
@@ -179,9 +178,10 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     hql.append("where paymentExecutionProcess.id <> :paymentExecutionProcessId ");
     hql.append("and payment.id = :paymentId ");
 
+    @SuppressWarnings("rawtypes")
     Query updateQry = OBDal.getInstance().getSession().createQuery(hql.toString());
-    updateQry.setString("paymentExecutionProcessId", executionProcess.getId());
-    updateQry.setString("paymentId", payment.getId());
+    updateQry.setParameter("paymentExecutionProcessId", executionProcess.getId());
+    updateQry.setParameter("paymentId", payment.getId());
     rowCount = updateQry.executeUpdate();
     return rowCount;
   }
@@ -201,8 +201,9 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     hql.append("delete from APRM_PendingPaymentInvoice ");
     hql.append("where payment.id = :paymentId ");
 
+    @SuppressWarnings("rawtypes")
     Query updateQry = OBDal.getInstance().getSession().createQuery(hql.toString());
-    updateQry.setString("paymentId", payment.getId());
+    updateQry.setParameter("paymentId", payment.getId());
     rowCount = updateQry.executeUpdate();
     return rowCount;
   }

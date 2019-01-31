@@ -22,7 +22,8 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
@@ -34,7 +35,7 @@ import org.openbravo.erpCommon.utility.OBError;
  */
 @ApplicationScoped
 public class GetTabMessageActionHandler extends BaseActionHandler {
-  private static final Logger log = Logger.getLogger(GetTabMessageActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {

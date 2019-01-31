@@ -46,8 +46,8 @@ public class SL_CashJournal_Amounts extends SimpleCallout {
     if (StringUtils.equals(strChanged, "inpcOrderId")) {
       amount = new BigDecimal(SLCashJournalAmountsData.amountOrder(this, strOrder));
     } else if (StringUtils.equals(strChanged, "inpcDebtPaymentId")) {
-      amount = new BigDecimal(SLCashJournalAmountsData.amountDebtPayment(this, strCashId,
-          strDebtPayment));
+      amount = new BigDecimal(
+          SLCashJournalAmountsData.amountDebtPayment(this, strCashId, strDebtPayment));
     }
 
     if (StringUtils.isNotEmpty(strDebtPayment)) {

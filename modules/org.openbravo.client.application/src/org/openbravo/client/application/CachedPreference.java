@@ -27,14 +27,14 @@ import java.util.Map;
 
 import javax.enterprise.context.SessionScoped;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is used to keep the value of some preferences in cache during the life cycle of a
@@ -46,16 +46,16 @@ import org.slf4j.LoggerFactory;
 public class CachedPreference implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  private static final Logger log = LoggerFactory.getLogger(CachedPreference.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static final String ALLOW_UNPAGED_DS_MANUAL_REQUEST = "OBJSON_AllowUnpagedDatasourceManualRequest";
   public static final String ALLOW_UNSECURED_DS_REQUEST = "OBSERDS_AllowUnsecuredDatasourceRequest";
   public static final String ALLOW_WHERE_PARAMETER = "OBSERDS_AllowWhereParameter";
   public static final String RESTRICT_ERP_ACCESS_IN_STORE_SERVER = "RestrictErpAccessInStoreServer";
 
-  private List<String> propertyList = new ArrayList<String>(Arrays.asList(
-      ALLOW_UNPAGED_DS_MANUAL_REQUEST, ALLOW_UNSECURED_DS_REQUEST, ALLOW_WHERE_PARAMETER,
-      RESTRICT_ERP_ACCESS_IN_STORE_SERVER));
+  private List<String> propertyList = new ArrayList<String>(
+      Arrays.asList(ALLOW_UNPAGED_DS_MANUAL_REQUEST, ALLOW_UNSECURED_DS_REQUEST,
+          ALLOW_WHERE_PARAMETER, RESTRICT_ERP_ACCESS_IN_STORE_SERVER));
   private transient Map<String, String> cachedPreference;
 
   /**

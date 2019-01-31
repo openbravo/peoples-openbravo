@@ -23,7 +23,8 @@ import java.util.List;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -44,9 +45,9 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class WindowPersonalizationEventHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      UIPersonalization.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(UIPersonalization.ENTITY_NAME) };
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -110,8 +111,8 @@ public class WindowPersonalizationEventHandler extends EntityPersistenceEventObs
     OBCriteria<Preference> preferenceCriteria = OBDal.getInstance()
         .createCriteria(Preference.class);
     // filter out the preferences that do not store the default view
-    preferenceCriteria.add(Restrictions
-        .eq(Preference.PROPERTY_PROPERTY, "OBUIAPP_DefaultSavedView"));
+    preferenceCriteria
+        .add(Restrictions.eq(Preference.PROPERTY_PROPERTY, "OBUIAPP_DefaultSavedView"));
     // filter out the preferences whose default view is not the one being deleted
     preferenceCriteria
         .add(Restrictions.eq(Preference.PROPERTY_SEARCHKEY, uiPersonalization.getId()));

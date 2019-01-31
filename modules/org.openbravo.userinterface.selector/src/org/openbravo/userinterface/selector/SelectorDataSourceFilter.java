@@ -30,7 +30,8 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBSecurityException;
@@ -64,7 +65,7 @@ import org.openbravo.service.json.JsonUtils;
  */
 public class SelectorDataSourceFilter implements DataSourceFilter {
 
-  private static Logger log = Logger.getLogger(SelectorDataSourceFilter.class);
+  private static Logger log = LogManager.getLogger();
   private String dateFormat = null;
   private DateFormat systemDateFormat = null;
   private TextMatching textMatching = TextMatching.exact;
@@ -98,8 +99,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
       String processId = parameters.get(SelectorConstants.DS_REQUEST_PROCESS_DEFINITION_ID);
       if (!StringUtils.isEmpty(processId)) {
-        Parameter param = OBDal.getInstance().get(Parameter.class,
-            parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_FIELD_ID));
+        Parameter param = OBDal.getInstance()
+            .get(Parameter.class, parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_FIELD_ID));
         Validation validation = param.getValidation();
         if (validation != null) {
           if (validation.getType().equals("HQL_JS")) {
@@ -142,8 +143,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
           if (StringUtils.isBlank(currentWhere)) {
             parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, filterHQL);
           } else {
-            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, currentWhere + " and "
-                + filterHQL);
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
+                currentWhere + " and " + filterHQL);
           }
         } else {
           currentWhere = sel.getHQLWhereClause();
@@ -193,8 +194,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       // don't do verifications on selectors not based on tables
       return;
     }
-    Entity entity = ModelProvider.getInstance().getEntityByTableName(
-        sel.getTable().getDBTableName());
+    Entity entity = ModelProvider.getInstance()
+        .getEntityByTableName(sel.getTable().getDBTableName());
     Entity cEntity = null;
     try {
       OBContext.setAdminMode(true);
@@ -217,8 +218,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
             for (SelectorField field : sel.getOBUISELSelectorFieldList()) {
               if (field.isSearchinsuggestionbox()) {
                 if (field.getDisplayColumnAlias().equals(fieldName)) {
-                  UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
-                      field.getReference());
+                  UIDefinition uiDef = UIDefinitionController.getInstance()
+                      .getUIDefinition(field.getReference());
                   if (!(uiDef instanceof StringUIDefinition)) {
                     filterParameter = true;
                   }
@@ -295,9 +296,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         dynamicWhere = result.toString();
       }
     } catch (Exception e) {
-      log.error(
-          "Error evaluating filter expression: " + filterExpression + " Selector id: "
-              + sel.getId() + " " + e.getMessage(), e);
+      log.error("Error evaluating filter expression: " + filterExpression + " Selector id: "
+          + sel.getId() + " " + e.getMessage(), e);
     }
 
     return dynamicWhere;
@@ -439,8 +439,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
   }
 
   private boolean manualWhereClausePreferenceIsEnabled() {
-    return Preferences.YES.equals(cachedPreference
-        .getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER));
+    return Preferences.YES
+        .equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER));
   }
 
   private boolean whereParameterIsNotBlank(Map<String, String> parameters) {

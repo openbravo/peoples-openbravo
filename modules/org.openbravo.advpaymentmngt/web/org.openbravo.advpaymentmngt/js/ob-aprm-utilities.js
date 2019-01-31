@@ -52,7 +52,7 @@ OB.APRM.validateModifyPaymentPlanAmounts = function (item, validator, value, rec
       totalReceived = new BigDecimal("0"),
       totalOutstanding = new BigDecimal("0"),
       isNumber = isc.isA.Number,
-      invoiceOutstanding = new BigDecimal(String(item.grid.view.parentWindow.views[0].getParentRecord().outstandingAmount));
+      invoiceOutstanding = new BigDecimal(String(item.grid.view.parentWindow.activeView.getContextInfo(false, true, true, false).inpoutstandingamt));
 
   if (new BigDecimal(String(value)).compareTo(new BigDecimal("0")) !== 0 && (new BigDecimal(String(value)).compareTo(new BigDecimal("0")) !== invoiceOutstanding.compareTo(new BigDecimal("0")))) {
     if (!OB.APRM.validateMPPUserWarnedSign) {
@@ -160,7 +160,7 @@ OB.APRM.addNew = function (grid) {
     row = allRows[indRow];
     totalOutstanding = totalOutstanding.add(new BigDecimal(String(row.outstanding)));
   }
-  returnObject.outstanding = Number(new BigDecimal(String(selectedRecord.outstandingAmount)).subtract(totalOutstanding));
+  returnObject.outstanding = Number(new BigDecimal(String(grid.view.parentWindow.activeView.getContextInfo(false, true, true, false).inpoutstandingamt)).subtract(totalOutstanding));
   returnObject.received = 0;
   returnObject.expected = 0;
   returnObject.awaitingExecutionAmount = 0;

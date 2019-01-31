@@ -29,6 +29,7 @@ public class PaymentOutAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogics
 
   private static final long SEQUENCE = 100l;
 
+  @Override
   protected long getSeq() {
     return SEQUENCE;
   }
@@ -45,12 +46,14 @@ public class PaymentOutAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogics
   }
 
   @Override
-  public boolean getPaymentMethodReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getPaymentMethodReadOnlyLogic(Map<String, String> requestMap)
+      throws JSONException {
     return true;
   }
 
   @Override
-  public boolean getActualPaymentReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getActualPaymentReadOnlyLogic(Map<String, String> requestMap)
+      throws JSONException {
     return true;
   }
 

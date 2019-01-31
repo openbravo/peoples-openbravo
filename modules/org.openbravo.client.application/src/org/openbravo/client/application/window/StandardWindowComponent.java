@@ -11,24 +11,37 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.window;
 
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toMap;
+
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.criterion.Order;
+import org.openbravo.client.application.GCSystem;
+import org.openbravo.client.application.GCTab;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.Template;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
-import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 
@@ -38,15 +51,15 @@ import org.openbravo.model.ad.ui.Window;
  * @author mtaal
  */
 public class StandardWindowComponent extends BaseTemplateComponent {
-  private static final Logger log = Logger.getLogger(StandardWindowComponent.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String DEFAULT_TEMPLATE_ID = "ADD5EF45333C458098286D0E639B3290";
 
   private Window window;
   private OBViewTab rootTabComponent = null;
-  private Boolean inDevelopment = null;
   private String uniqueString = "" + System.currentTimeMillis();
   private List<String> processViews = new ArrayList<String>();
 
+  @Override
   protected Template getComponentTemplate() {
 
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
@@ -66,35 +79,10 @@ public class StandardWindowComponent extends BaseTemplateComponent {
   }
 
   public boolean isIndevelopment() {
-    if (inDevelopment != null) {
-      return inDevelopment;
-    }
-
-    // check window, tabs and fields
-    inDevelopment = Boolean.FALSE;
-    if (window.getModule().isInDevelopment() && window.getModule().isEnabled()) {
-      inDevelopment = Boolean.TRUE;
-    } else {
-      for (Tab tab : window.getADTabList()) {
-        if (tab.isActive() && tab.getModule().isInDevelopment() && tab.getModule().isEnabled()) {
-          inDevelopment = Boolean.TRUE;
-          break;
-        }
-        for (Field field : tab.getADFieldList()) {
-          if (field.isActive() && field.getModule().isInDevelopment()
-              && field.getModule().isEnabled()) {
-            inDevelopment = Boolean.TRUE;
-            break;
-          }
-        }
-        if (inDevelopment) {
-          break;
-        }
-      }
-    }
-    return inDevelopment;
+    return adcs.isInDevelopment();
   }
 
+  @Override
   public String generate() {
     final String jsCode = super.generate();
     return jsCode;
@@ -122,6 +110,11 @@ public class StandardWindowComponent extends BaseTemplateComponent {
 
   public void setWindow(Window window) {
     this.window = window;
+
+    // reset fields here to be able to use this code in testing: being request scoped will share
+    // instance if it is invoked several times in same test case.
+    rootTabComponent = null;
+    processViews = new ArrayList<>();
   }
 
   public OBViewTab getRootTabComponent() {
@@ -129,17 +122,20 @@ public class StandardWindowComponent extends BaseTemplateComponent {
       return rootTabComponent;
     }
 
+    Optional<GCSystem> systemGridConfig = getSystemGridConfig();
+    Map<String, Optional<GCTab>> tabsGridConfig = getTabsGridConfig(window);
+
     final List<OBViewTab> tempTabs = new ArrayList<OBViewTab>();
     for (Tab tab : getWindow().getADTabList()) {
       // NOTE: grid sequence and field sequence tabs do not have any fields defined!
-      if (!tab.isActive()
-          || tab.getADFieldList().isEmpty()
-          || ActivationKey.getInstance().hasLicencesTabAccess(tab.getId()) != FeatureRestriction.NO_RESTRICTION) {
+      if (!tab.isActive() || tab.getADFieldList().isEmpty() || ActivationKey.getInstance()
+          .hasLicencesTabAccess(tab.getId()) != FeatureRestriction.NO_RESTRICTION) {
         continue;
       }
       final OBViewTab tabComponent = createComponent(OBViewTab.class);
       tabComponent.setTab(tab);
       tabComponent.setUniqueString(uniqueString);
+      tabComponent.setGCSettings(systemGridConfig, tabsGridConfig);
       tempTabs.add(tabComponent);
       final String processView = tabComponent.getProcessViews();
       if (!"".equals(processView)) {
@@ -199,5 +195,47 @@ public class StandardWindowComponent extends BaseTemplateComponent {
 
   public List<String> getProcessViews() {
     return processViews;
+  }
+
+  /** Returns the applicable System Grid Configuration if any. */
+  public static Optional<GCSystem> getSystemGridConfig() {
+    OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
+    gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_SEQNO));
+    gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_ID));
+    gcSystemCriteria.setMaxResults(1);
+    return Optional.ofNullable((GCSystem) gcSystemCriteria.uniqueResult());
+  }
+
+  /**
+   * For a given window, it returns a Map being its key all the tab ids in that window and the
+   * values the applicable Tab Grid Configuration for each tab if any.
+   */
+  public static Map<String, Optional<GCTab>> getTabsGridConfig(Window window) {
+    // window comes from ADCS, we need to retrieve GC from DB as it might have changed
+    OBQuery<GCTab> qGCTab = OBDal.getInstance()
+        .createQuery(GCTab.class, "as g where g.tab.window = :window");
+    qGCTab.setNamedParameter("window", window);
+    Map<String, List<GCTab>> gcsByTab = qGCTab.stream() //
+        .collect(groupingBy(gcTab -> gcTab.getTab().getId()));
+
+    return window.getADTabList()
+        .stream() //
+        .map(tab -> getTabConfig(tab, gcsByTab)) //
+        .collect(toMap(SimpleEntry::getKey, SimpleEntry::getValue));
+  }
+
+  private static SimpleEntry<String, Optional<GCTab>> getTabConfig(Tab tab,
+      Map<String, List<GCTab>> gcsByTab) {
+    Stream<GCTab> candidates = gcsByTab.containsKey(tab.getId())
+        ? gcsByTab.get(tab.getId()).stream()
+        : Stream.empty();
+
+    Optional<GCTab> selectedGC = candidates //
+        .sorted( //
+            comparing(GCTab::getSeqno) //
+                .thenComparing(GCTab::getId)) //
+        .findFirst();
+
+    return new SimpleEntry<>(tab.getId(), selectedGC);
   }
 }

@@ -43,11 +43,13 @@ public abstract class BaseKernelServlet extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
+  @Override
   public void service(final HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     // encapsulate the response to catch any redirects
@@ -87,6 +89,7 @@ public abstract class BaseKernelServlet extends HttpSecureAppServlet {
     super.service(request, response);
   }
 
+  @Override
   protected void invalidateSession(HttpServletRequest request) {
     HttpSession session = request.getSession(false);
     if (session != null) {

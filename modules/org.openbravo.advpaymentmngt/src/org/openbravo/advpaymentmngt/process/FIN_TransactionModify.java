@@ -20,7 +20,8 @@ package org.openbravo.advpaymentmngt.process;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -47,14 +48,15 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class FIN_TransactionModify implements org.openbravo.scheduling.Process {
   private static AdvPaymentMngtDao dao;
-  private static final Logger log = Logger.getLogger(FIN_TransactionModify.class);
+  private static final Logger log = LogManager.getLogger();
 
+  @Override
   public void execute(ProcessBundle bundle) throws Exception {
     dao = new AdvPaymentMngtDao();
     OBError msg = new OBError();
     msg.setType("Success");
-    msg.setTitle(Utility.messageBD(bundle.getConnection(), "Success", bundle.getContext()
-        .getLanguage()));
+    msg.setTitle(
+        Utility.messageBD(bundle.getConnection(), "Success", bundle.getContext().getLanguage()));
 
     OBContext.setAdminMode();
     try {
@@ -62,15 +64,15 @@ public class FIN_TransactionModify implements org.openbravo.scheduling.Process {
       if (recordID == null || "".equals(recordID)) {
         recordID = (String) bundle.getParams().get("Aprm_Finacc_Transaction_V_ID");
       }
-      final FIN_FinaccTransaction transaction = dao
-          .getObject(FIN_FinaccTransaction.class, recordID);
+      final FIN_FinaccTransaction transaction = dao.getObject(FIN_FinaccTransaction.class,
+          recordID);
       // Checks
       if ("Y".equals(transaction.getPosted()) && isTransactionPostingEnabled(transaction)) {
         msg.setType("Error");
-        msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-            .getLanguage()));
-        msg.setMessage(Utility.parseTranslation(bundle.getConnection(), bundle.getContext()
-            .toVars(), bundle.getContext().getLanguage(), "@PostedDocument@"));
+        msg.setTitle(
+            Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext().getLanguage()));
+        msg.setMessage(Utility.parseTranslation(bundle.getConnection(),
+            bundle.getContext().toVars(), bundle.getContext().getLanguage(), "@PostedDocument@"));
         bundle.setResult(msg);
         return;
       }
@@ -79,10 +81,11 @@ public class FIN_TransactionModify implements org.openbravo.scheduling.Process {
           && "Y".equals(transaction.getReconciliation().getPosted())
           && !isTransactionPostingEnabled(transaction)) {
         msg.setType("Error");
-        msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-            .getLanguage()));
-        msg.setMessage(Utility.parseTranslation(bundle.getConnection(), bundle.getContext()
-            .toVars(), bundle.getContext().getLanguage(), "@APRM_RelatedPostedDocument@"));
+        msg.setTitle(
+            Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext().getLanguage()));
+        msg.setMessage(
+            Utility.parseTranslation(bundle.getConnection(), bundle.getContext().toVars(),
+                bundle.getContext().getLanguage(), "@APRM_RelatedPostedDocument@"));
         bundle.setResult(msg);
         return;
       }
@@ -113,8 +116,8 @@ public class FIN_TransactionModify implements org.openbravo.scheduling.Process {
         transaction.setProduct(null);
       }
       if (strBPartnerId != null && !"".equals(strBPartnerId)) {
-        transaction.setBusinessPartner(OBDal.getInstance()
-            .get(BusinessPartner.class, strBPartnerId));
+        transaction
+            .setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class, strBPartnerId));
       } else {
         transaction.setBusinessPartner(null);
       }
@@ -154,18 +157,16 @@ public class FIN_TransactionModify implements org.openbravo.scheduling.Process {
         transaction.setNdDimension(null);
       }
       String description = transaction.getDescription();
-      String oldGlItemString = Utility.messageBD(bundle.getConnection(), "APRM_GLItem", bundle
-          .getContext().getLanguage())
-          + ": " + oldGLItem.getName();
-      String newGlItemString = Utility.messageBD(bundle.getConnection(), "APRM_GLItem", bundle
-          .getContext().getLanguage())
-          + ": " + newGLItem.getName();
+      String oldGlItemString = Utility.messageBD(bundle.getConnection(), "APRM_GLItem",
+          bundle.getContext().getLanguage()) + ": " + oldGLItem.getName();
+      String newGlItemString = Utility.messageBD(bundle.getConnection(), "APRM_GLItem",
+          bundle.getContext().getLanguage()) + ": " + newGLItem.getName();
       if (!description.isEmpty()) {
-        description = description.indexOf(oldGlItemString) != -1 ? description.substring(0,
-            description.indexOf(oldGlItemString))
-            + description.substring(
-                oldGlItemString.length() + description.indexOf(oldGlItemString),
-                description.length()) : description;
+        description = description.indexOf(oldGlItemString) != -1
+            ? description.substring(0, description.indexOf(oldGlItemString)) + description
+                .substring(oldGlItemString.length() + description.indexOf(oldGlItemString),
+                    description.length())
+            : description;
       }
       description = description.isEmpty() ? newGlItemString : description + "\n" + newGlItemString;
       transaction.setDescription(description);
@@ -177,8 +178,8 @@ public class FIN_TransactionModify implements org.openbravo.scheduling.Process {
       OBDal.getInstance().rollbackAndClose();
       log.error("Error while executing FIN_TransactionModify", e);
       msg.setType("Error");
-      msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
+      msg.setTitle(
+          Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext().getLanguage()));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
     } finally {
@@ -197,8 +198,8 @@ public class FIN_TransactionModify implements org.openbravo.scheduling.Process {
           .getFINFinancialAccountAcctList();
       FIN_Payment payment = transaction.getFinPayment();
       if (payment != null) {
-        OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
-            FinAccPaymentMethod.class);
+        OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance()
+            .createCriteria(FinAccPaymentMethod.class);
         obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
         obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
             payment.getPaymentMethod()));
@@ -206,41 +207,46 @@ public class FIN_TransactionModify implements org.openbravo.scheduling.Process {
         obCriteria.setFilterOnReadableOrganization(false);
         List<FinAccPaymentMethod> lines = obCriteria.list();
         for (FIN_FinancialAccountAccounting account : accounts) {
-          if (confirmation)
+          if (confirmation) {
             return confirmation;
+          }
           if (payment.isReceipt()) {
             if (("INT").equals(lines.get(0).getUponDepositUse())
-                && account.getInTransitPaymentAccountIN() != null)
+                && account.getInTransitPaymentAccountIN() != null) {
               confirmation = true;
-            else if (("DEP").equals(lines.get(0).getUponDepositUse())
-                && account.getDepositAccount() != null)
+            } else if (("DEP").equals(lines.get(0).getUponDepositUse())
+                && account.getDepositAccount() != null) {
               confirmation = true;
-            else if (("CLE").equals(lines.get(0).getUponDepositUse())
-                && account.getClearedPaymentAccount() != null)
+            } else if (("CLE").equals(lines.get(0).getUponDepositUse())
+                && account.getClearedPaymentAccount() != null) {
               confirmation = true;
+            }
           } else {
             if (("INT").equals(lines.get(0).getUponWithdrawalUse())
-                && account.getFINOutIntransitAcct() != null)
+                && account.getFINOutIntransitAcct() != null) {
               confirmation = true;
-            else if (("WIT").equals(lines.get(0).getUponWithdrawalUse())
-                && account.getWithdrawalAccount() != null)
+            } else if (("WIT").equals(lines.get(0).getUponWithdrawalUse())
+                && account.getWithdrawalAccount() != null) {
               confirmation = true;
-            else if (("CLE").equals(lines.get(0).getUponWithdrawalUse())
-                && account.getClearedPaymentAccountOUT() != null)
+            } else if (("CLE").equals(lines.get(0).getUponWithdrawalUse())
+                && account.getClearedPaymentAccountOUT() != null) {
               confirmation = true;
+            }
           }
         }
       } else {
         for (FIN_FinancialAccountAccounting account : accounts) {
-          if (confirmation)
+          if (confirmation) {
             return confirmation;
-          if ((TRXTYPE_BPDeposit.equals(transaction.getTransactionType()) && account
-              .getDepositAccount() != null)
-              || (TRXTYPE_BPWithdrawal.equals(transaction.getTransactionType()) && account
-                  .getWithdrawalAccount() != null)
-              || (TRXTYPE_BankFee.equals(transaction.getTransactionType()) && account
-                  .getWithdrawalAccount() != null))
+          }
+          if ((TRXTYPE_BPDeposit.equals(transaction.getTransactionType())
+              && account.getDepositAccount() != null)
+              || (TRXTYPE_BPWithdrawal.equals(transaction.getTransactionType())
+                  && account.getWithdrawalAccount() != null)
+              || (TRXTYPE_BankFee.equals(transaction.getTransactionType())
+                  && account.getWithdrawalAccount() != null)) {
             confirmation = true;
+          }
         }
       }
     } catch (Exception e) {

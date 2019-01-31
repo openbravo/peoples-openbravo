@@ -22,7 +22,8 @@ package org.openbravo.base.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Table table in the application
@@ -32,7 +33,7 @@ import org.apache.log4j.Logger;
  */
 
 public class Table extends ModelObject {
-  private static final Logger log = Logger.getLogger(Table.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Entity entity;
   private String dataOrigin;
@@ -104,8 +105,9 @@ public class Table extends ModelObject {
       primaryKeyColumns = new ArrayList<Column>();
 
       for (final Column c : getColumns()) {
-        if (c.isKey())
+        if (c.isKey()) {
           primaryKeyColumns.add(c);
+        }
       }
     }
     return primaryKeyColumns;
@@ -119,8 +121,9 @@ public class Table extends ModelObject {
     if (identifierColumns == null) {
       identifierColumns = new ArrayList<Column>();
       for (final Column c : getColumns()) {
-        if (c.isIdentifier())
+        if (c.isIdentifier()) {
           identifierColumns.add(c);
+        }
       }
     }
     return identifierColumns;
@@ -134,8 +137,9 @@ public class Table extends ModelObject {
     if (parentColumns == null) {
       parentColumns = new ArrayList<Column>();
       for (final Column c : getColumns()) {
-        if (c.isParent())
+        if (c.isParent()) {
           parentColumns.add(c);
+        }
       }
     }
     return parentColumns;
@@ -170,8 +174,9 @@ public class Table extends ModelObject {
 
   public void setReferenceTypes(ModelProvider modelProvider) {
     for (final Column c : columns) {
-      if (!c.isPrimitiveType())
+      if (!c.isPrimitiveType()) {
         c.setReferenceType();
+      }
     }
   }
 

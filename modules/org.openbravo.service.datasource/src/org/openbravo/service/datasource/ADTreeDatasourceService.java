@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2017 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,13 +22,14 @@ package org.openbravo.service.datasource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -61,11 +62,9 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ADTreeDatasourceService extends TreeDatasourceService {
-  private static final Logger logger = LoggerFactory.getLogger(ADTreeDatasourceService.class);
+  private static final Logger logger = LogManager.getLogger();
   private static final String AD_MENU_TABLE_ID = "116";
   private static final String AD_ORG_TABLE_ID = "155";
   private static final int PARENT_ID = 1;
@@ -75,8 +74,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
   @Override
   /**
-   * Creates the treenode for the new node.
-   * If the tree does not exist yet, it creates it too
+   * Creates the treenode for the new node. If the tree does not exist yet, it creates it too
    */
   protected void addNewNode(JSONObject bobProperties) {
     try {
@@ -202,8 +200,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     if (tabId != null) {
       tab = OBDal.getInstance().get(Tab.class, tabId);
     } else if (treeReferenceId == null) {
-      logger
-          .error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      logger.error(
+          "A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return new JSONArray();
     }
     Tree tree = (Tree) datasourceParameters.get("tree");
@@ -213,8 +211,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       return responseData;
     }
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tree.getTable().getId());
-    final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
-        DataToJsonConverter.class);
+    final DataToJsonConverter toJsonConverter = OBProvider.getInstance()
+        .get(DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
 
     OBQuery<BaseOBObject> obq = getNodeChildrenQuery(parameters, parentId, hqlWhereClause,
@@ -236,7 +234,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
     boolean fetchRoot = ROOT_NODE_CLIENT.equals(parentId);
     int cont = 0;
-    ScrollableResults scrollNodes = obq.createQuery().scroll(ScrollMode.FORWARD_ONLY);
+    ScrollableResults scrollNodes = obq.createQuery(Object[].class).scroll(ScrollMode.FORWARD_ONLY);
     try {
       while (scrollNodes.next()) {
         Object[] node = scrollNodes.get();
@@ -252,9 +250,9 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
           }
           addNodeCommonAttributes(entity, bob, value);
           value.put("seqno", node[SEQNO]);
-          value
-              .put("_hasChildren", (this.nodeHasChildren(entity, (String) node[NODE_ID],
-                  hqlWhereClause)) ? true : false);
+          value.put("_hasChildren",
+              (this.nodeHasChildren(entity, (String) node[NODE_ID], hqlWhereClause)) ? true
+                  : false);
         } catch (JSONException e) {
           logger.error("Error while constructing JSON reponse", e);
         }
@@ -284,8 +282,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     }
     joinClause.append(" and tn.tree.id = '" + tree.getId() + "' ");
     if (!AD_ORG_TABLE_ID.equals(tree.getTable().getId())) {
-      joinClause.append(" and e.organization.id "
-          + OBDal.getInstance().getReadableOrganizationsInClause());
+      joinClause.append(
+          " and e.organization.id " + OBDal.getInstance().getReadableOrganizationsInClause());
     }
     if (hqlWhereClauseRootNodes != null) {
       joinClause.append(" and (" + hqlWhereClauseRootNodes + ") ");
@@ -322,8 +320,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     // Selects the relevant properties from ADTreeNode and all the properties from the referenced
     // table
     String selectClause = " tn.id as treeNodeId, tn.reportSet as parentId, tn.sequenceNumber as seqNo, tn.node as nodeId, e as entity";
-    OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(TreeNode.ENTITY_NAME,
-        joinClause.toString());
+    OBQuery<BaseOBObject> obq = OBDal.getInstance()
+        .createQuery(TreeNode.ENTITY_NAME, joinClause.toString());
     obq.setFilterOnActive(false);
     obq.setSelectClause(selectClause);
     obq.setFilterOnReadableOrganization(false);
@@ -350,14 +348,14 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     if (hqlWhereClause != null) {
       joinClause.append(" and (" + hqlWhereClause + ")");
     }
-    joinClause.append(" and tn.reportSet = ? order by tn.sequenceNumber ");
+    joinClause.append(" and tn.reportSet = :nodeId order by tn.sequenceNumber ");
     OBQuery<BaseOBObject> obq = OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause.toString());
     obq.setFilterOnActive(false);
     obq.setFilterOnReadableOrganization(entity.getMappingClass() != Organization.class);
-    final List<Object> parameters = new ArrayList<>();
-    parameters.add(nodeId);
-    obq.setParameters(parameters);
+    final Map<String, Object> parameters = new HashMap<>(1);
+    parameters.put("nodeId", nodeId);
+    obq.setNamedParameters(parameters);
     return obq.count() > 0;
   }
 
@@ -520,8 +518,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     OBCriteria<Tree> treeCriteria = OBDal.getInstance().createCriteria(Tree.class);
     treeCriteria.setFilterOnActive(false);
     treeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, referencedTable));
-    treeCriteria.add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext()
-        .getCurrentClient()));
+    treeCriteria
+        .add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext().getCurrentClient()));
     return (Tree) treeCriteria.uniqueResult();
   }
 
@@ -562,6 +560,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    * Updates the parent of a given node a returns its definition in a JSONObject and recomputes the
    * sequence number of the nodes if the tree is ordered
    */
+  @Override
   protected JSONObject moveNode(Map<String, String> parameters, String nodeId, String newParentId,
       String prevNodeId, String nextNodeId) throws Exception {
     String tableId = null;
@@ -573,8 +572,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
       tableId = treeReference.getTable().getId();
     } else {
-      logger
-          .error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      logger.error(
+          "A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return new JSONObject();
     }
 
@@ -632,8 +631,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
       hqlWhereClause = treeReference.getHQLSQLWhereClause();
     } else {
-      logger
-          .error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      logger.error(
+          "A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return new JSONObject();
     }
     Tree tree = (Tree) datasourceParameters.get("tree");
@@ -644,8 +643,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tree.getTable().getId());
 
-    final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
-        DataToJsonConverter.class);
+    final DataToJsonConverter toJsonConverter = OBProvider.getInstance()
+        .get(DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
 
     JSONObject json = null;
@@ -675,6 +674,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   /**
    * Checks if the provided node complies with the hql where clause
    */
+  @Override
   protected boolean nodeConformsToWhereClause(TableTree tableTree, String nodeId,
       String hqlWhereClause) {
 
@@ -686,23 +686,23 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     if (hqlWhereClause != null) {
       joinClause.append(" and (" + hqlWhereClause + ")");
     }
-    joinClause.append(" and tn.node = ?");
+    joinClause.append(" and tn.node = :nodeId");
     OBQuery<BaseOBObject> obq = OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause.toString());
     obq.setFilterOnActive(false);
 
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add(nodeId);
-    obq.setParameters(parameters);
+    final Map<String, Object> parameters = new HashMap<>();
+    parameters.put("nodeId", nodeId);
+    obq.setNamedParameters(parameters);
 
     return obq.count() > 0;
   }
 
   @Override
-  protected JSONArray fetchFilteredNodesForTreesWithMultiParentNodes(
-      Map<String, String> parameters, Map<String, Object> datasourceParameters,
-      TableTree tableTree, List<String> filteredNodes, String hqlTreeWhereClause,
-      String hqlTreeWhereClauseRootNodes, boolean allowNotApplyingWhereClauseToChildren)
+  protected JSONArray fetchFilteredNodesForTreesWithMultiParentNodes(Map<String, String> parameters,
+      Map<String, Object> datasourceParameters, TableTree tableTree, List<String> filteredNodes,
+      String hqlTreeWhereClause, String hqlTreeWhereClauseRootNodes,
+      boolean allowNotApplyingWhereClauseToChildren)
       throws MultipleParentsException, TooManyTreeNodesException {
     // Not applicable, an ADTreeNode can only have one parent node
     return new JSONArray();
@@ -721,8 +721,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
       tableId = treeReference.getTable().getId();
     } else {
-      logger
-          .error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      logger.error(
+          "A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return datasourceParams;
     }
     Tree tree = this.getTree(tableId);

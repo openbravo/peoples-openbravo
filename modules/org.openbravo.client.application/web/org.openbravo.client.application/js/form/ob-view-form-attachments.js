@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -277,7 +277,7 @@ isc.OBAttachmentsLayout.addProperties({
 
   fillAttachments: function (attachments) {
     var attachLayout = this,
-        id, i, length, editDescActions;
+        i, editDescActions;
 
     attachments = attachments || [];
     this.getForm().getItem('_attachments_').setAttachmentCount(attachments.length);
@@ -374,7 +374,7 @@ isc.OBAttachmentsLayout.addProperties({
 
     var removeActions;
     removeActions = function () {
-      var i, length, d = {
+      var d = {
         Command: 'DELETE',
         tabId: attachLayout.tabId,
         buttonId: attachLayout.ID,
@@ -401,7 +401,6 @@ isc.OBAttachmentsLayout.addProperties({
       attachLayout.openAttachPopup(false, this.attachment);
     };
 
-    length = attachments.length;
     for (i = 0; i < attachments.length; i++) {
       var attachment = attachments[i];
       var buttonLayout = isc.HLayout.create();

@@ -142,6 +142,7 @@ public class DocLine_FINPayment extends DocLineCashVATReady_PaymentTransactionRe
   /**
    * @return the amount
    */
+  @Override
   public String getAmount() {
     return Amount;
   }
@@ -195,6 +196,7 @@ public class DocLine_FINPayment extends DocLineCashVATReady_PaymentTransactionRe
    * @param amount
    *          the amount to set
    */
+  @Override
   public void setAmount(String amount) {
     Amount = amount;
   }
@@ -214,6 +216,7 @@ public class DocLine_FINPayment extends DocLineCashVATReady_PaymentTransactionRe
     // m_Record_Id2 = Line_ID;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for accounting";
   } // end of getServletInfo() method

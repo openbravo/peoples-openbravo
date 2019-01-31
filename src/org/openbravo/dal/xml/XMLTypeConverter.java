@@ -170,8 +170,8 @@ public class XMLTypeConverter implements OBSingleton {
         return (T) Base64.decodeBase64(xml.getBytes("UTF-8"));
       }
     } catch (final Exception e) {
-      throw new EntityXMLException("Value " + xml + " can not be parsed to an instance of class "
-          + targetClass.getName());
+      throw new EntityXMLException(
+          "Value " + xml + " can not be parsed to an instance of class " + targetClass.getName());
     }
     throw new EntityXMLException("Unsupported target class " + targetClass.getName());
   }

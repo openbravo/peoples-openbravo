@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2011 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2018 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 
@@ -39,26 +39,25 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class Heartbeat extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    updateServletContainer(request.getSession().getServletContext().getServerInfo());
 
     if (vars.commandIn("DEFAULT", "DEFAULT_MODULE", "UPDATE_MODULE", "UPGRADE_MODULE")) {
       printPageDataSheet(response, vars);
     } else if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE_UPDATE", "CONFIGURE_MODULE_INSTALL",
         "CONFIGURE_MODULE_UPGRADE")) {
-      response.sendRedirect(strDireccion + "/ad_process/TestHeartbeat.html?Command="
-          + vars.getCommand() + "&inpcRecordId="
-          + vars.getStringParameter("inpcRecordId", IsIDFilter.instance) + "&version="
-          + vars.getStringParameter("version"));
+      response
+          .sendRedirect(strDireccion + "/ad_process/TestHeartbeat.html?Command=" + vars.getCommand()
+              + "&inpcRecordId=" + vars.getStringParameter("inpcRecordId", IsIDFilter.instance)
+              + "&version=" + vars.getStringParameter("version"));
     } else if (vars.commandIn("DEFER")) {
       setPostponeDate();
       sendBeat(vars, "DEFER");
@@ -100,44 +99,15 @@ public class Heartbeat extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       jsCommand += "CONFIGURE";
     } else {
-      String moduleAction = vars.getCommand().equals("UPDATE_MODULE") ? "UPDATE" : vars
-          .getCommand().equals("UPGRADE_MODULE") ? "UPGRADE" : "INSTALL";
+      String moduleAction = vars.getCommand().equals("UPDATE_MODULE") ? "UPDATE"
+          : vars.getCommand().equals("UPGRADE_MODULE") ? "UPGRADE" : "INSTALL";
       jsCommand += "CONFIGURE_MODULE_" + moduleAction;
     }
     jsCommand += "';";
     xmlDocument.setParameter("cmd", jsCommand);
 
-    if (HeartbeatProcess.isShowRegistrationRequired(vars, myPool)
-        && vars.getCommand().equals("DEFAULT")) {
-      xmlDocument.setParameter("registration", "Y");
-    }
-
     out.println(xmlDocument.print());
     out.close();
-  }
-
-  /**
-   * Updates the servlet container information on the System Information table.
-   * 
-   * @param serverInfo
-   * @throws ServletException
-   */
-  private void updateServletContainer(String serverInfo) throws ServletException {
-    final org.openbravo.erpCommon.businessUtility.HeartbeatData[] data = org.openbravo.erpCommon.businessUtility.HeartbeatData
-        .selectSystemProperties(this);
-    if (data.length > 0) {
-      String servletContainer = data[0].servletContainer;
-      String servletContainerVersion = data[0].servletContainerVersion;
-      if ((servletContainer == null || servletContainer.equals(""))
-          && (servletContainerVersion == null || servletContainerVersion.equals(""))) {
-        if (serverInfo != null && serverInfo.contains("/")) {
-          servletContainer = serverInfo.split("/")[0];
-          servletContainerVersion = serverInfo.split("/")[1];
-
-          HeartbeatData.updateServletContainer(this, servletContainer, servletContainerVersion);
-        }
-      }
-    }
   }
 
   /**
@@ -160,8 +130,8 @@ public class Heartbeat extends HttpSecureAppServlet {
   private void setPostponeDate() {
     final Calendar cal = Calendar.getInstance();
     cal.add(Calendar.DATE, 3);
-    org.openbravo.model.ad.system.SystemInformation sysInfo = OBDal.getInstance().get(
-        org.openbravo.model.ad.system.SystemInformation.class, "0");
+    org.openbravo.model.ad.system.SystemInformation sysInfo = OBDal.getInstance()
+        .get(org.openbravo.model.ad.system.SystemInformation.class, "0");
     sysInfo.setPostponeDate(cal.getTime());
     OBDal.getInstance().save(sysInfo);
   }

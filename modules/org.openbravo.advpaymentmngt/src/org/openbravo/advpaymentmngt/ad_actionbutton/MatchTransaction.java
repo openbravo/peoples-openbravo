@@ -92,6 +92,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
   VariablesSecureApp vars = null;
   static ArrayList<String> runingReconciliations = new ArrayList<String>();
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     // long init = System.currentTimeMillis();
@@ -108,12 +109,12 @@ public class MatchTransaction extends HttpSecureAppServlet {
             "MatchTransaction.paymentTypeFilter", "ALL");
         String strShowCleared = vars.getGlobalVariable("inpShowCleared",
             "MatchTransaction.showCleared", "N");
-        String strHideDate = vars
-            .getGlobalVariable("inpHideDate", "MatchTransaction.hideDate", "Y");
-        FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-            strFinancialAccountId);
-        FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal
-            .getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
+        String strHideDate = vars.getGlobalVariable("inpHideDate", "MatchTransaction.hideDate",
+            "Y");
+        FIN_FinancialAccount account = OBDal.getInstance()
+            .get(FIN_FinancialAccount.class, strFinancialAccountId);
+        FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(
+            OBDal.getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
         int reconciledItems = 0;
         if (reconciliation != null) {
           strReconciliationId = reconciliation.getId();
@@ -124,15 +125,15 @@ public class MatchTransaction extends HttpSecureAppServlet {
           List<FIN_FinaccTransaction> mixedLines = getManualReconciliationLines(reconciliation);
           if (mixedLines.size() > 0) {
             // Fix mixing Reconciliation and log the issue
-            log4j
-                .warn("Mixing Reconciliations: An error occured which left an inconsistent status for the current reconciliation: "
+            log4j.warn(
+                "Mixing Reconciliations: An error occured which left an inconsistent status for the current reconciliation: "
                     + reconciliation.getIdentifier());
             OBContext.setAdminMode(false);
             try {
               for (FIN_FinaccTransaction mixedLine : mixedLines) {
                 fixMixedLine(mixedLine);
-                log4j
-                    .warn("Fixing Mixed Line (transaction appears as cleared but no bank statement line is linked to it): "
+                log4j.warn(
+                    "Fixing Mixed Line (transaction appears as cleared but no bank statement line is linked to it): "
                         + mixedLine.getLineNo() + " - " + mixedLine.getIdentifier());
               }
               OBDal.getInstance().flush();
@@ -233,9 +234,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
         runingReconciliations.add(strReconciliationId);
         String strMatchedBankStatementLineId = vars
             .getRequiredStringParameter("inpFinBankStatementLineId");
-        String strFinancialTransactionId = vars
-            .getRequiredStringParameter("inpFinancialTransactionId_"
-                + strMatchedBankStatementLineId);
+        String strFinancialTransactionId = vars.getRequiredStringParameter(
+            "inpFinancialTransactionId_" + strMatchedBankStatementLineId);
         matchBankStatementLine(strMatchedBankStatementLineId, strFinancialTransactionId,
             strReconciliationId, null);
         response.setContentType("text/html; charset=UTF-8");
@@ -252,8 +252,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
         restoreSnapShot(OBDal.getInstance().get(FIN_Reconciliation.class, strReconciliationId));
         String strTabId = vars.getGlobalVariable("inpTabId", "MatchTransaction.adTabId");
         String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-        if (strWindowPath.equals(""))
+        if (strWindowPath.equals("")) {
           strWindowPath = strDefaultServlet;
+        }
         printPageClosePopUp(response, vars, strWindowPath);
         // log4j.error("Cancel took: " + (System.currentTimeMillis() - init));
       } else if (vars.commandIn("SPLIT")) {
@@ -293,8 +294,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
           }
           // }
           String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-          if (strWindowPath.equals(""))
+          if (strWindowPath.equals("")) {
             strWindowPath = strDefaultServlet;
+          }
 
           printPageClosePopUp(response, vars, strWindowPath);
         } finally {
@@ -313,8 +315,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
     try {
       FIN_Reconciliation reconciliation = MatchTransactionDao.getObject(FIN_Reconciliation.class,
           strReconciliationId);
-      FIN_FinancialAccount financialAccount = MatchTransactionDao.getObject(
-          FIN_FinancialAccount.class, strFinancialAccountId);
+      FIN_FinancialAccount financialAccount = MatchTransactionDao
+          .getObject(FIN_FinancialAccount.class, strFinancialAccountId);
       if (MatchTransactionDao.islastreconciliation(reconciliation)) {
         Date maxBSLDate = MatchTransactionDao.getBankStatementLineMaxDate(financialAccount);
         reconciliation.setEndingDate(maxBSLDate);
@@ -352,8 +354,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
   }
 
   private Date getClearItemsMaxDate(FIN_Reconciliation reconciliation) {
-    OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance().createCriteria(
-        FIN_ReconciliationLine_v.class);
+    OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance()
+        .createCriteria(FIN_ReconciliationLine_v.class);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
     obc.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION, reconciliation));
@@ -366,11 +368,12 @@ public class MatchTransaction extends HttpSecureAppServlet {
       String strOrgId, String strWindowId, String strTabId, String strPaymentTypeFilter,
       String strFinancialAccountId, String reconciliationId, String strShowCleared,
       String strHideDate) throws IOException, ServletException {
-    log4j
-        .debug("Output: Match using imported Bank Statement Lines pressed on Financial Account || Transaction tab");
+    log4j.debug(
+        "Output: Match using imported Bank Statement Lines pressed on Financial Account || Transaction tab");
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/MatchTransaction").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/MatchTransaction")
+        .createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + variables.getLanguage() + "\";");
@@ -378,8 +381,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
     final String MATCHED_AGAINST_TRANSACTION = FIN_Utility.messageBD("APRM_Transaction");
     final String CONFIRMATION_MESSAGE = FIN_Utility.messageBD("APRM_AlgorithmConfirm");
 
-    FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
-        reconciliationId);
+    FIN_Reconciliation reconciliation = OBDal.getInstance()
+        .get(FIN_Reconciliation.class, reconciliationId);
 
     xmlDocument.setParameter("windowId", strWindowId);
     xmlDocument.setParameter("tabId", strTabId);
@@ -391,7 +394,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("trlSplitConfirmText",
         FIN_Utility.messageBD("APRM_SplitBankStatementLineConfirm"));
 
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
     OBContext.setAdminMode();
@@ -407,15 +411,15 @@ public class MatchTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("jsDateFormat",
         "var sc_JsDateFormat =\"" + variables.getJsDateFormat() + "\";");
     // Check if There is a matching algorithm for the given financial account
-    FIN_FinancialAccount financial = OBDal.getInstance().get(FIN_FinancialAccount.class,
-        strFinancialAccountId);
+    FIN_FinancialAccount financial = OBDal.getInstance()
+        .get(FIN_FinancialAccount.class, strFinancialAccountId);
     try {
       OBContext.setAdminMode(true);
       new FIN_MatchingTransaction(financial.getMatchingAlgorithm().getJavaClassName());
     } catch (Exception ex) {
       OBDal.getInstance().rollbackAndClose();
-      OBError message = Utility.translateError(this, variables, variables.getLanguage(), Utility
-          .parseTranslation(this, variables, variables.getLanguage(),
+      OBError message = Utility.translateError(this, variables, variables.getLanguage(),
+          Utility.parseTranslation(this, variables, variables.getLanguage(),
               "@APRM_MissingMatchingAlgorithm@"));
       variables.setMessage(strTabId, message);
       printPageClosePopUp(response, variables, Utility.getTabURL(strTabId, "R", true));
@@ -425,9 +429,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
     }
     try {
       ComboTableData comboTableData = new ComboTableData(variables, this, "LIST", "",
-          "0CC268ED2E8D4B0397A0DCBBFA2237DE", "", Utility.getContext(this, variables,
-              "#AccessibleOrgTree", "MatchTransaction"), Utility.getContext(this, variables,
-              "#User_Client", "MatchTransaction"), 0);
+          "0CC268ED2E8D4B0397A0DCBBFA2237DE", "",
+          Utility.getContext(this, variables, "#AccessibleOrgTree", "MatchTransaction"),
+          Utility.getContext(this, variables, "#User_Client", "MatchTransaction"), 0);
       Utility.fillSQLParameters(this, variables, null, comboTableData, "MatchTransaction", "");
       xmlDocument.setData("reportPaymentTypeFilter", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -447,15 +451,16 @@ public class MatchTransaction extends HttpSecureAppServlet {
       throws IOException, ServletException {
     log4j.debug("Output: Grid Match using imported Bank Statement Lines");
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/MatchTransactionGrid").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/MatchTransactionGrid")
+        .createXmlDocument();
 
     FieldProvider[] data = null;
     try {
       OBContext.setAdminMode(true);
       // long init = System.currentTimeMillis();
-      data = getMatchedBankStatementLinesData(variables, strFinancialAccountId,
-          strReconciliationId, strPaymentTypeFilter, strShowCleared, strHideDate, executeMatching);
+      data = getMatchedBankStatementLinesData(variables, strFinancialAccountId, strReconciliationId,
+          strPaymentTypeFilter, strShowCleared, strHideDate, executeMatching);
       // log4j.error("Getting Grid Data: " + (System.currentTimeMillis() - init));
     } catch (Exception e) {
       log4j.error("Output: Exception ocurred while retrieving Bank Statement Lines.", e);
@@ -483,8 +488,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
   private void unMatchBankStatementLine(HttpServletResponse response,
       String strUnmatchBankStatementLineId) throws IOException, ServletException {
     try {
-      FIN_BankStatementLine bsl = OBDal.getInstance().get(FIN_BankStatementLine.class,
-          strUnmatchBankStatementLineId);
+      FIN_BankStatementLine bsl = OBDal.getInstance()
+          .get(FIN_BankStatementLine.class, strUnmatchBankStatementLineId);
       boolean splitedBSL = isSplitBankStatementLine(bsl);
 
       unmatch(bsl);
@@ -511,13 +516,14 @@ public class MatchTransaction extends HttpSecureAppServlet {
     FIN_FinancialAccount financial = new AdvPaymentMngtDao().getObject(FIN_FinancialAccount.class,
         strFinancialAccountId);
     MatchingAlgorithm ma = financial.getMatchingAlgorithm();
-    FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(ma.getJavaClassName());
+    FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(
+        ma.getJavaClassName());
     // long init = System.currentTimeMillis();
     List<FIN_BankStatementLine> bankLines = MatchTransactionDao.getMatchingBankStatementLines(
         strFinancialAccountId, strReconciliationId, strPaymentTypeFilter, strShowCleared);
     // log4j.error("Getting bankLines took: " + (System.currentTimeMillis() - init));
-    FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
-        strReconciliationId);
+    FIN_Reconciliation reconciliation = OBDal.getInstance()
+        .get(FIN_Reconciliation.class, strReconciliationId);
     FIN_BankStatementLine[] FIN_BankStatementLines = new FIN_BankStatementLine[0];
     FIN_BankStatementLines = bankLines.toArray(FIN_BankStatementLines);
     FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(bankLines);
@@ -537,8 +543,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
         final String COLOR_WEAK = "#99CC66";
         final String COLOR_WHITE = "white";
 
-        FIN_BankStatementLine line = OBDal.getInstance().get(FIN_BankStatementLine.class,
-            FIN_BankStatementLines[i].getId());
+        FIN_BankStatementLine line = OBDal.getInstance()
+            .get(FIN_BankStatementLine.class, FIN_BankStatementLines[i].getId());
 
         String matchingType = line.getMatchingtype();
         FIN_FinaccTransaction transaction = line.getFinancialAccountTransaction();
@@ -552,8 +558,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
               OBDal.getInstance().getConnection().commit();
             } catch (Exception e) {
               OBDal.getInstance().rollbackAndClose();
-              line = OBDal.getInstance().get(FIN_BankStatementLine.class,
-                  FIN_BankStatementLines[i].getId());
+              line = OBDal.getInstance()
+                  .get(FIN_BankStatementLine.class, FIN_BankStatementLines[i].getId());
               matchingType = line.getMatchingtype();
               transaction = line.getFinancialAccountTransaction();
               matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
@@ -567,15 +573,15 @@ public class MatchTransaction extends HttpSecureAppServlet {
                 matched.getMatchLevel());
           }
           // When hide flag checked then exclude matchings for transactions out of date range
-          if ("Y".equals(strHideDate)
-              && matched.getTransaction() != null
-              && matched.getTransaction().getTransactionDate()
+          if ("Y".equals(strHideDate) && matched.getTransaction() != null
+              && matched.getTransaction()
+                  .getTransactionDate()
                   .compareTo(reconciliation.getEndingDate()) > 0) {
             transaction = null;
             matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
             unmatch(line);
-            line = OBDal.getInstance().get(FIN_BankStatementLine.class,
-                FIN_BankStatementLines[i].getId());
+            line = OBDal.getInstance()
+                .get(FIN_BankStatementLine.class, FIN_BankStatementLines[i].getId());
           }
           if (transaction != null) {
             excluded.add(transaction);
@@ -587,32 +593,25 @@ public class MatchTransaction extends HttpSecureAppServlet {
         FieldProviderFactory.setField(data[i], "rownum", Integer.toString(i + 1));
         FieldProviderFactory.setField(data[i], "yes", "Y");
         FieldProviderFactory.setField(data[i], "finBankLineId", FIN_BankStatementLines[i].getId());
-        FieldProviderFactory.setField(
-            data[i],
-            "bankLineTransactionDate",
-            Utility.formatDate(FIN_BankStatementLines[i].getTransactionDate(),
-                variables.getJavaDateFormat()));
-        FieldProviderFactory.setField(
-            data[i],
-            "bankLineBusinessPartner",
-            line.getBusinessPartner() != null ? line.getBusinessPartner().getIdentifier() : line
-                .getBpartnername());
+        FieldProviderFactory.setField(data[i], "bankLineTransactionDate", Utility.formatDate(
+            FIN_BankStatementLines[i].getTransactionDate(), variables.getJavaDateFormat()));
+        FieldProviderFactory.setField(data[i], "bankLineBusinessPartner",
+            line.getBusinessPartner() != null ? line.getBusinessPartner().getIdentifier()
+                : line.getBpartnername());
         FieldProviderFactory.setField(data[i], "textcolor",
             line.getBusinessPartner() != null ? "bold" : "normal");
         FieldProviderFactory.setField(data[i], "bankLineReferenceNo", line.getReferenceNo());
         // CREDIT - DEBIT
         FieldProviderFactory.setField(data[i], "bankLineAmount",
             line.getCramount().subtract(line.getDramount()).toString());
-        FieldProviderFactory.setField(data[i], "bankLineDescription", line.getDescription() + " "
-            + line.getBpartnername());
-        FieldProviderFactory
-            .setField(
-                data[i],
-                "matchStyle",
-                FIN_MatchedTransaction.STRONG.equals(matchingType) ? COLOR_STRONG
-                    : ((FIN_MatchedTransaction.WEAK.equals(matchingType)) ? COLOR_WEAK
-                        : ((FIN_MatchedTransaction.NOMATCH.equals(matchingType) || FIN_MatchedTransaction.MANUALMATCH
-                            .equals(matchingType)) ? COLOR_WHITE : matchingType)));
+        FieldProviderFactory.setField(data[i], "bankLineDescription",
+            line.getDescription() + " " + line.getBpartnername());
+        FieldProviderFactory.setField(data[i], "matchStyle",
+            FIN_MatchedTransaction.STRONG.equals(matchingType) ? COLOR_STRONG
+                : ((FIN_MatchedTransaction.WEAK.equals(matchingType)) ? COLOR_WEAK
+                    : ((FIN_MatchedTransaction.NOMATCH.equals(matchingType)
+                        || FIN_MatchedTransaction.MANUALMATCH.equals(matchingType)) ? COLOR_WHITE
+                            : matchingType)));
         FieldProviderFactory.setField(data[i], "matchingType", matchingType);
         FieldProviderFactory.setField(data[i], "matchingTypeDescription", "");
 
@@ -626,28 +625,33 @@ public class MatchTransaction extends HttpSecureAppServlet {
           FieldProviderFactory.setField(data[i], "checked", "Y");
           FieldProviderFactory.setField(data[i], "finTransactionId", transaction.getId());
           FieldProviderFactory.setField(data[i], "trxDescription", transaction.getDescription());
-          FieldProviderFactory
-              .setField(
-                  data[i],
-                  "transactionDate",
-                  Utility.formatDate(
-                      transaction.getTransactionDate().compareTo(reconciliation.getEndingDate()) > 0 ? reconciliation
-                          .getEndingDate() : transaction.getTransactionDate(), variables
-                          .getJavaDateFormat()));
-          FieldProviderFactory
-              .setField(
-                  data[i],
-                  "matchedDocument",
-                  (!transaction.isCreatedByAlgorithm() || transaction.getFinPayment() == null) ? MATCHED_AGAINST_TRANSACTION
-                      : (!transaction.getFinPayment().isCreatedByAlgorithm() ? MATCHED_AGAINST_PAYMENT
-                          : (transaction.getFinPayment().getFINPaymentDetailList().get(0)
-                              .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() == null && transaction
-                              .getFinPayment().getFINPaymentDetailList().get(0)
-                              .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() == null) ? MATCHED_AGAINST_CREDIT
-                              : (isInvoiceMatch(transaction) ? MATCHED_AGAINST_INVOICE
-                                  : MATCHED_AGAINST_ORDER)));
-          String bpName = transaction.getBusinessPartner() != null ? transaction
-              .getBusinessPartner().getName() : "";
+          FieldProviderFactory.setField(data[i], "transactionDate",
+              Utility.formatDate(
+                  transaction.getTransactionDate().compareTo(reconciliation.getEndingDate()) > 0
+                      ? reconciliation.getEndingDate()
+                      : transaction.getTransactionDate(),
+                  variables.getJavaDateFormat()));
+          FieldProviderFactory.setField(data[i], "matchedDocument",
+              (!transaction.isCreatedByAlgorithm() || transaction.getFinPayment() == null)
+                  ? MATCHED_AGAINST_TRANSACTION
+                  : (!transaction.getFinPayment().isCreatedByAlgorithm() ? MATCHED_AGAINST_PAYMENT
+                      : (transaction.getFinPayment()
+                          .getFINPaymentDetailList()
+                          .get(0)
+                          .getFINPaymentScheduleDetailList()
+                          .get(0)
+                          .getInvoicePaymentSchedule() == null
+                          && transaction.getFinPayment()
+                              .getFINPaymentDetailList()
+                              .get(0)
+                              .getFINPaymentScheduleDetailList()
+                              .get(0)
+                              .getOrderPaymentSchedule() == null) ? MATCHED_AGAINST_CREDIT
+                                  : (isInvoiceMatch(transaction) ? MATCHED_AGAINST_INVOICE
+                                      : MATCHED_AGAINST_ORDER)));
+          String bpName = transaction.getBusinessPartner() != null
+              ? transaction.getBusinessPartner().getName()
+              : "";
           if ("".equals(bpName) && transaction.getFinPayment() != null) {
             if (transaction.getFinPayment().getBusinessPartner() != null) {
               bpName = transaction.getFinPayment().getBusinessPartner().getName();
@@ -655,16 +659,14 @@ public class MatchTransaction extends HttpSecureAppServlet {
           }
           FieldProviderFactory.setField(data[i], "transactionBPartner", bpName);
 
-          FieldProviderFactory
-              .setField(
-                  data[i],
-                  "transactionReferenceNo",
-                  transaction.getFinPayment() != null ? (transaction.getFinPayment().isReceipt() ? transaction
-                      .getFinPayment().getDocumentNo() : transaction.getFinPayment()
-                      .getReferenceNo())
-                      : "");
-          FieldProviderFactory.setField(data[i], "transactionAmount", transaction
-              .getDepositAmount().subtract(transaction.getPaymentAmount()).toString());
+          FieldProviderFactory.setField(data[i], "transactionReferenceNo",
+              transaction.getFinPayment() != null
+                  ? (transaction.getFinPayment().isReceipt()
+                      ? transaction.getFinPayment().getDocumentNo()
+                      : transaction.getFinPayment().getReferenceNo())
+                  : "");
+          FieldProviderFactory.setField(data[i], "transactionAmount",
+              transaction.getDepositAmount().subtract(transaction.getPaymentAmount()).toString());
         } else {
           FieldProviderFactory.setField(data[i], "disabled", "Y");
           FieldProviderFactory.setField(data[i], "checked", "N");
@@ -685,13 +687,13 @@ public class MatchTransaction extends HttpSecureAppServlet {
   }
 
   private HashMap<String, String> getMatchingTypes() {
-    final Reference MATCHING_TYPE_REFERENCE = OBDal.getInstance().get(Reference.class,
-        "BCABCED4983A4ECB814A6D142593ACEA");
+    final Reference MATCHING_TYPE_REFERENCE = OBDal.getInstance()
+        .get(Reference.class, "BCABCED4983A4ECB814A6D142593ACEA");
     HashMap<String, String> result = new HashMap<String, String>();
     OBContext.setAdminMode(false);
     try {
-      OBCriteria<org.openbravo.model.ad.domain.List> obc = OBDal.getInstance().createCriteria(
-          org.openbravo.model.ad.domain.List.class);
+      OBCriteria<org.openbravo.model.ad.domain.List> obc = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.domain.List.class);
       obc.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE,
           MATCHING_TYPE_REFERENCE));
       for (org.openbravo.model.ad.domain.List element : obc.list()) {
@@ -699,7 +701,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
         if (trlList.size() > 0) {
           boolean found = false;
           for (ListTrl trl : trlList) {
-            if (trl.getLanguage().getLanguage()
+            if (trl.getLanguage()
+                .getLanguage()
                 .equals(OBContext.getOBContext().getLanguage().getLanguage())) {
               result.put(element.getSearchKey(), trl.getName());
               found = true;
@@ -726,7 +729,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
     OBContext.setAdminMode();
     try {
       String text = "Closed or Invalid Reconciliation";
-      if (reconciliation != null && !reconciliation.isNewOBObject() && reconciliation.isProcessed()) {
+      if (reconciliation != null && !reconciliation.isNewOBObject()
+          && reconciliation.isProcessed()) {
         OBError menssage = Utility.translateError(this, variables, variables.getLanguage(), text);
         variables.setMessage(strTabId, menssage);
         return text;
@@ -750,12 +754,13 @@ public class MatchTransaction extends HttpSecureAppServlet {
     }
   }
 
-  private List<FIN_FinaccTransaction> getManualReconciliationLines(FIN_Reconciliation reconciliation) {
+  private List<FIN_FinaccTransaction> getManualReconciliationLines(
+      FIN_Reconciliation reconciliation) {
     List<FIN_FinaccTransaction> result = new ArrayList<FIN_FinaccTransaction>();
     OBContext.setAdminMode();
     try {
-      final OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance().createCriteria(
-          FIN_ReconciliationLine_v.class);
+      final OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance()
+          .createCriteria(FIN_ReconciliationLine_v.class);
       obc.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION, reconciliation));
       obc.add(Restrictions.isNull(FIN_ReconciliationLine_v.PROPERTY_BANKSTATEMENTLINE));
       obc.setMaxResults(1);
@@ -786,8 +791,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
       List<FIN_ReconciliationLine_v> reconciledlines = reconciliation
           .getFINReconciliationLineVList();
       for (FIN_ReconciliationLine_v reconciledLine : reconciledlines) {
-        FIN_ReconciliationLineTemp lineTemp = OBProvider.getInstance().get(
-            FIN_ReconciliationLineTemp.class);
+        FIN_ReconciliationLineTemp lineTemp = OBProvider.getInstance()
+            .get(FIN_ReconciliationLineTemp.class);
         lineTemp.setClient(reconciledLine.getClient());
         lineTemp.setOrganization(reconciledLine.getOrganization());
         lineTemp.setReconciliation(reconciledLine.getReconciliation());
@@ -795,35 +800,57 @@ public class MatchTransaction extends HttpSecureAppServlet {
         if (reconciledLine.getFinancialAccountTransaction() != null
             && reconciledLine.getFinancialAccountTransaction().isCreatedByAlgorithm()) {
           if (reconciledLine.getFinancialAccountTransaction().getFinPayment() != null
-              && !reconciledLine.getFinancialAccountTransaction().getFinPayment()
+              && !reconciledLine.getFinancialAccountTransaction()
+                  .getFinPayment()
                   .isCreatedByAlgorithm()) {
             lineTemp.setPayment(reconciledLine.getPayment());
           } else if (reconciledLine.getFinancialAccountTransaction() != null
               && reconciledLine.getFinancialAccountTransaction().getFinPayment() != null
-              && reconciledLine.getFinancialAccountTransaction().getFinPayment()
-                  .getFINPaymentDetailList().size() > 0
-              && reconciledLine.getFinancialAccountTransaction().getFinPayment()
-                  .getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList() != null
-              && reconciledLine.getFinancialAccountTransaction().getFinPayment()
-                  .getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList().size() > 0
-              && (reconciledLine.getFinancialAccountTransaction().getFinPayment()
-                  .getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList().get(0)
-                  .getInvoicePaymentSchedule() != null || reconciledLine
-                  .getFinancialAccountTransaction().getFinPayment().getFINPaymentDetailList()
-                  .get(0).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null)) {
+              && reconciledLine.getFinancialAccountTransaction()
+                  .getFinPayment()
+                  .getFINPaymentDetailList()
+                  .size() > 0
+              && reconciledLine.getFinancialAccountTransaction()
+                  .getFinPayment()
+                  .getFINPaymentDetailList()
+                  .get(0)
+                  .getFINPaymentScheduleDetailList() != null
+              && reconciledLine.getFinancialAccountTransaction()
+                  .getFinPayment()
+                  .getFINPaymentDetailList()
+                  .get(0)
+                  .getFINPaymentScheduleDetailList()
+                  .size() > 0
+              && (reconciledLine.getFinancialAccountTransaction()
+                  .getFinPayment()
+                  .getFINPaymentDetailList()
+                  .get(0)
+                  .getFINPaymentScheduleDetailList()
+                  .get(0)
+                  .getInvoicePaymentSchedule() != null
+                  || reconciledLine.getFinancialAccountTransaction()
+                      .getFinPayment()
+                      .getFINPaymentDetailList()
+                      .get(0)
+                      .getFINPaymentScheduleDetailList()
+                      .get(0)
+                      .getOrderPaymentSchedule() != null)) {
             lineTemp.setPaymentScheduleDetail(reconciledLine.getFinancialAccountTransaction()
-                .getFinPayment().getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList()
+                .getFinPayment()
+                .getFINPaymentDetailList()
+                .get(0)
+                .getFINPaymentScheduleDetailList()
                 .get(0));
           }
         } else {
           lineTemp.setFinancialAccountTransaction(reconciledLine.getFinancialAccountTransaction());
         }
         if (reconciledLine.getFinancialAccountTransaction().getFinPayment() != null) {
-          lineTemp.setPaymentDocumentno(reconciledLine.getFinancialAccountTransaction()
-              .getFinPayment().getDocumentNo());
+          lineTemp.setPaymentDocumentno(
+              reconciledLine.getFinancialAccountTransaction().getFinPayment().getDocumentNo());
         }
-        lineTemp
-            .setMatched(reconciledLine.getBankStatementLine().getFinancialAccountTransaction() != null);
+        lineTemp.setMatched(
+            reconciledLine.getBankStatementLine().getFinancialAccountTransaction() != null);
         lineTemp.setMatchlevel(reconciledLine.getBankStatementLine().getMatchingtype());
         OBDal.getInstance().save(lineTemp);
       }
@@ -874,16 +901,18 @@ public class MatchTransaction extends HttpSecureAppServlet {
       localBsline = OBDal.getInstance().get(FIN_BankStatementLine.class, localBsline.getId());
       FIN_FinaccTransaction finTrans = localBsline.getFinancialAccountTransaction();
       if (finTrans == null) {
-        String strTransactionId = vars.getStringParameter("inpFinancialTransactionId_"
-            + localBsline.getId());
+        String strTransactionId = vars
+            .getStringParameter("inpFinancialTransactionId_" + localBsline.getId());
         if (strTransactionId != null && !"".equals(strTransactionId)) {
           finTrans = OBDal.getInstance().get(FIN_FinaccTransaction.class, strTransactionId);
         }
       }
       if (finTrans != null) {
         finTrans.setReconciliation(null);
-        finTrans.setStatus((finTrans.getDepositAmount().subtract(finTrans.getPaymentAmount())
-            .signum() == 1) ? "RDNC" : "PWNC");
+        finTrans.setStatus(
+            (finTrans.getDepositAmount().subtract(finTrans.getPaymentAmount()).signum() == 1)
+                ? "RDNC"
+                : "PWNC");
         localBsline.setFinancialAccountTransaction(null);
         OBDal.getInstance().save(finTrans);
         // OBDal.getInstance().flush();
@@ -897,8 +926,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
 
       if (finTrans != null) {
         if (finTrans.getFinPayment() != null) {
-          finTrans.getFinPayment().setStatus(
-              (finTrans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");
+          finTrans.getFinPayment()
+              .setStatus((finTrans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");
         }
         boolean isReceipt = false;
         if (finTrans.getFinPayment() != null) {
@@ -1013,8 +1042,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
       // get DocumentNo
       String strPaymentDocumentNo = toMatch.getPaymentDocumentno();
       // If the payment remains in the system, it is used
-      FIN_Payment alreadyExistingPayment = getAlreadyExistingPayment(strPaymentDocumentNo, toMatch
-          .getBankStatementLine().getOrganization());
+      FIN_Payment alreadyExistingPayment = getAlreadyExistingPayment(strPaymentDocumentNo,
+          toMatch.getBankStatementLine().getOrganization());
       if (alreadyExistingPayment != null) {
         AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
         return dao.getFinancialTransaction(alreadyExistingPayment);
@@ -1022,48 +1051,54 @@ public class MatchTransaction extends HttpSecureAppServlet {
       // Create a payment and a transaction to match
       AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
       FIN_PaymentScheduleDetail paymentScheduleDetail = toMatch.getPaymentScheduleDetail();
-      BigDecimal amount = toMatch.getBankStatementLine().getCramount()
+      BigDecimal amount = toMatch.getBankStatementLine()
+          .getCramount()
           .subtract(toMatch.getBankStatementLine().getDramount());
       boolean isReceipt = amount.signum() > 0;
-      BusinessPartner bp = paymentScheduleDetail == null ? toMatch.getBankStatementLine()
-          .getBusinessPartner()
-          : (paymentScheduleDetail.getInvoicePaymentSchedule() != null ? paymentScheduleDetail
-              .getInvoicePaymentSchedule().getInvoice().getBusinessPartner()
-              : (paymentScheduleDetail.getOrderPaymentSchedule() != null ? paymentScheduleDetail
-                  .getOrderPaymentSchedule().getOrder().getBusinessPartner()
-                  : paymentScheduleDetail.getPaymentDetails().getFinPayment().getBusinessPartner()));
-      FIN_PaymentMethod pm = paymentScheduleDetail == null ? (isReceipt ? bp.getPaymentMethod()
-          : bp.getPOPaymentMethod())
-          : (paymentScheduleDetail.getInvoicePaymentSchedule() != null ? paymentScheduleDetail
-              .getInvoicePaymentSchedule().getInvoice().getPaymentMethod() : (paymentScheduleDetail
-              .getOrderPaymentSchedule() != null ? paymentScheduleDetail.getOrderPaymentSchedule()
-              .getOrder().getPaymentMethod() : paymentScheduleDetail.getPaymentDetails()
-              .getFinPayment().getPaymentMethod()));
-      DocumentType docType = FIN_Utility.getDocumentType(toMatch.getBankStatementLine()
-          .getOrganization(), isReceipt ? "ARR" : "APP");
+      BusinessPartner bp = paymentScheduleDetail == null
+          ? toMatch.getBankStatementLine().getBusinessPartner()
+          : (paymentScheduleDetail.getInvoicePaymentSchedule() != null
+              ? paymentScheduleDetail.getInvoicePaymentSchedule().getInvoice().getBusinessPartner()
+              : (paymentScheduleDetail.getOrderPaymentSchedule() != null
+                  ? paymentScheduleDetail.getOrderPaymentSchedule().getOrder().getBusinessPartner()
+                  : paymentScheduleDetail.getPaymentDetails()
+                      .getFinPayment()
+                      .getBusinessPartner()));
+      FIN_PaymentMethod pm = paymentScheduleDetail == null
+          ? (isReceipt ? bp.getPaymentMethod() : bp.getPOPaymentMethod())
+          : (paymentScheduleDetail.getInvoicePaymentSchedule() != null
+              ? paymentScheduleDetail.getInvoicePaymentSchedule().getInvoice().getPaymentMethod()
+              : (paymentScheduleDetail.getOrderPaymentSchedule() != null
+                  ? paymentScheduleDetail.getOrderPaymentSchedule().getOrder().getPaymentMethod()
+                  : paymentScheduleDetail.getPaymentDetails().getFinPayment().getPaymentMethod()));
+      DocumentType docType = FIN_Utility.getDocumentType(
+          toMatch.getBankStatementLine().getOrganization(), isReceipt ? "ARR" : "APP");
       HashMap<String, BigDecimal> hm = new HashMap<String, BigDecimal>();
       List<FIN_PaymentScheduleDetail> psdList = new ArrayList<FIN_PaymentScheduleDetail>();
       if (paymentScheduleDetail != null) {
         hm.put(paymentScheduleDetail.getId(), amount);
         psdList.add(paymentScheduleDetail);
       }
-      if ("".equals(strPaymentDocumentNo))
+      if ("".equals(strPaymentDocumentNo)) {
         strPaymentDocumentNo = FIN_Utility.getDocumentNo(docType,
             docType.getTable() != null ? docType.getTable().getDBTableName() : "");
+      }
       FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt, docType,
-          strPaymentDocumentNo, bp, pm, toMatch.getBankStatementLine().getBankStatement()
-              .getAccount(), amount.abs().toString(), toMatch.getBankStatementLine()
-              .getTransactionDate(), toMatch.getBankStatementLine().getOrganization(), toMatch
-              .getBankStatementLine().getReferenceNo(), psdList, hm, false, false);
+          strPaymentDocumentNo, bp, pm,
+          toMatch.getBankStatementLine().getBankStatement().getAccount(), amount.abs().toString(),
+          toMatch.getBankStatementLine().getTransactionDate(),
+          toMatch.getBankStatementLine().getOrganization(),
+          toMatch.getBankStatementLine().getReferenceNo(), psdList, hm, false, false);
       // Flag payment as created by algorithm
       payment.setCreatedByAlgorithm(true);
       OBDal.getInstance().save(payment);
       OBDal.getInstance().flush();
       try {
-        FIN_AddPayment.processPayment(new VariablesSecureApp(OBContext.getOBContext().getUser()
-            .getId(), OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId()), this,
-            "P", payment);
+        FIN_AddPayment
+            .processPayment(new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
+                OBContext.getOBContext().getCurrentClient().getId(),
+                OBContext.getOBContext().getCurrentOrganization().getId(),
+                OBContext.getOBContext().getRole().getId()), this, "P", payment);
       } catch (Exception e) {
         return null;
       }
@@ -1118,10 +1153,10 @@ public class MatchTransaction extends HttpSecureAppServlet {
     JSONObject table = new JSONObject();
     boolean returnError = false;
     FIN_Reconciliation rec = OBDal.getInstance().get(FIN_Reconciliation.class, strReconciliationId);
-    FIN_BankStatementLine bsl = OBDal.getInstance().get(FIN_BankStatementLine.class,
-        strBankStatementLineId);
-    FIN_FinaccTransaction trx = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-        strTransactionId);
+    FIN_BankStatementLine bsl = OBDal.getInstance()
+        .get(FIN_BankStatementLine.class, strBankStatementLineId);
+    FIN_FinaccTransaction trx = OBDal.getInstance()
+        .get(FIN_FinaccTransaction.class, strTransactionId);
     try {
       OBContext.setAdminMode(true);
       if (rec != null && "Y".equals(rec.getPosted())) {
@@ -1219,9 +1254,10 @@ public class MatchTransaction extends HttpSecureAppServlet {
     BigDecimal totalCredit = bsline.getCramount();
     BigDecimal totalDebit = bsline.getDramount();
     FIN_BankStatement bs = bsline.getBankStatement();
-    OBCriteria<FIN_BankStatementLine> obc = OBDal.getInstance().createCriteria(
-        FIN_BankStatementLine.class);
-    obc.add(Restrictions.eq(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, bsline.getBankStatement()));
+    OBCriteria<FIN_BankStatementLine> obc = OBDal.getInstance()
+        .createCriteria(FIN_BankStatementLine.class);
+    obc.add(
+        Restrictions.eq(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, bsline.getBankStatement()));
     obc.add(Restrictions.eq(FIN_BankStatementLine.PROPERTY_LINENO, bsline.getLineNo()));
     obc.add(Restrictions.ne(FIN_BankStatementLine.PROPERTY_ID, bsline.getId()));
     obc.add(Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
@@ -1241,7 +1277,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
         OBDal.getInstance().remove(bsl);
       }
 
-      if (totalCredit.compareTo(BigDecimal.ZERO) != 0 && totalDebit.compareTo(BigDecimal.ZERO) != 0) {
+      if (totalCredit.compareTo(BigDecimal.ZERO) != 0
+          && totalDebit.compareTo(BigDecimal.ZERO) != 0) {
         BigDecimal total = totalCredit.subtract(totalDebit);
         if (total.compareTo(BigDecimal.ZERO) == -1) {
           bsline.setCramount(BigDecimal.ZERO);
@@ -1276,8 +1313,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
   private List<FIN_ReconciliationLineTemp> getRecTempLines(FIN_BankStatementLine bsline) {
     OBContext.setAdminMode();
     try {
-      final OBCriteria<FIN_ReconciliationLineTemp> obc = OBDal.getInstance().createCriteria(
-          FIN_ReconciliationLineTemp.class);
+      final OBCriteria<FIN_ReconciliationLineTemp> obc = OBDal.getInstance()
+          .createCriteria(FIN_ReconciliationLineTemp.class);
       obc.add(Restrictions.eq(FIN_ReconciliationLineTemp.PROPERTY_BANKSTATEMENTLINE, bsline));
       return obc.list();
     } finally {
@@ -1294,9 +1331,10 @@ public class MatchTransaction extends HttpSecureAppServlet {
    *         number and not matched to any transaction. False in other case.
    */
   private boolean isSplitBankStatementLine(FIN_BankStatementLine bsline) {
-    OBCriteria<FIN_BankStatementLine> obc = OBDal.getInstance().createCriteria(
-        FIN_BankStatementLine.class);
-    obc.add(Restrictions.eq(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, bsline.getBankStatement()));
+    OBCriteria<FIN_BankStatementLine> obc = OBDal.getInstance()
+        .createCriteria(FIN_BankStatementLine.class);
+    obc.add(
+        Restrictions.eq(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, bsline.getBankStatement()));
     obc.add(Restrictions.eq(FIN_BankStatementLine.PROPERTY_LINENO, bsline.getLineNo()));
 
     return (obc.list().size() > 1);
@@ -1331,8 +1369,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
     if (transaction.getFinPayment() == null) {
       return false;
     } else {
-      OBCriteria<FIN_PaymentScheduleDetail> obc = OBDal.getInstance().createCriteria(
-          FIN_PaymentScheduleDetail.class);
+      OBCriteria<FIN_PaymentScheduleDetail> obc = OBDal.getInstance()
+          .createCriteria(FIN_PaymentScheduleDetail.class);
       obc.createAlias(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS, "pd");
       obc.add(Restrictions.eq("pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT,
           transaction.getFinPayment()));
@@ -1365,6 +1403,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     return myMessage;
   }
 
+  @Override
   public String getServletInfo() {
     return "This servlet match imported bank statement lines for a financial account";
   }
@@ -1374,12 +1413,12 @@ public class MatchTransaction extends HttpSecureAppServlet {
     String localMatchLevel = matchLevel;
     OBContext.setAdminMode(false);
     try {
-      FIN_BankStatementLine bsl = OBDal.getInstance().get(FIN_BankStatementLine.class,
-          strFinBankStatementLineId);
+      FIN_BankStatementLine bsl = OBDal.getInstance()
+          .get(FIN_BankStatementLine.class, strFinBankStatementLineId);
       // OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
       // .lock(BankStatementLine.ENTITY_NAME, bsl);
-      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-          strFinancialTransactionId);
+      FIN_FinaccTransaction transaction = OBDal.getInstance()
+          .get(FIN_FinaccTransaction.class, strFinancialTransactionId);
       if (transaction != null) {
         if (bsl.getFinancialAccountTransaction() != null) {
           log4j.error("Bank Statement Line Already Matched: " + bsl.getIdentifier());
@@ -1391,8 +1430,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
         }
         bsl.setMatchingtype(localMatchLevel);
         transaction.setStatus("RPPC");
-        transaction.setReconciliation(MatchTransactionDao.getObject(FIN_Reconciliation.class,
-            strReconciliationId));
+        transaction.setReconciliation(
+            MatchTransactionDao.getObject(FIN_Reconciliation.class, strReconciliationId));
         if (transaction.getFinPayment() != null) {
           transaction.getFinPayment().setStatus("RPPC");
         }

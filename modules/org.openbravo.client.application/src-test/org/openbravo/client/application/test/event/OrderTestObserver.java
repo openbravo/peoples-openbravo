@@ -83,4 +83,11 @@ public class OrderTestObserver extends EntityPersistenceEventObserver {
     final Entity orderEntity = ModelProvider.getInstance().getEntity(Order.ENTITY_NAME);
     return orderEntity.getProperty(Order.PROPERTY_ORDERLINELIST);
   }
+
+  public static void refreshObservedEntities() {
+    Entity currentEntity = ModelProvider.getInstance().getEntity(Order.ENTITY_NAME);
+    if (entities[0] != currentEntity) {
+      entities[0] = currentEntity;
+    }
+  }
 }

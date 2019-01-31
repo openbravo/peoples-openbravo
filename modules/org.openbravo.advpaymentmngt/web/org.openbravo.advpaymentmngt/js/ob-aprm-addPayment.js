@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -128,6 +128,8 @@ OB.APRM.AddPayment.onLoad = function (view) {
   orderInvoiceGrid.dataProperties.transformData = OB.APRM.AddPayment.ordInvTransformData;
   glitemGrid.removeRecordClick = OB.APRM.AddPayment.removeRecordClick;
   creditUseGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedCredit;
+  creditUseGrid.userSelectAllRecords = OB.APRM.AddPayment.userSelectAllRecords;
+  creditUseGrid.deselectAllRecords = OB.APRM.AddPayment.deselectAllRecords;
   orderInvoiceGrid.dataArrived = OB.APRM.AddPayment.ordInvDataArrived;
 
   form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined && form.getItem('received_from').getValue() !== null;
@@ -336,6 +338,9 @@ OB.APRM.AddPayment.glitemsOnLoadGrid = function (grid) {
 
 OB.APRM.AddPayment.creditOnLoadGrid = function (grid) {
   grid.isReady = true;
+  if (grid.obaprmAllRecordsSelectedByUser) {
+    delete grid.obaprmAllRecordsSelectedByUser;
+  }
   OB.APRM.AddPayment.updateCreditTotal(this.view.theForm);
   OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
 };
@@ -386,6 +391,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       if (showMessage) {
         orderInvoice.contentView.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + OB.I18N.getLabel('APRM_NoDistributeMsg') + '</div><div class="' + OB.Styles.MessageBar.rightMsgContainerStyle + '"><a href="#" class="' + OB.Styles.MessageBar.rightMsgTextStyle + '" onclick="' + 'window[\'' + orderInvoice.contentView.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'APRM_ShowNoDistributeMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
       }
+      OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
       return;
     } else {
       // hide the message bar if it is still showing the APRM_NoDistributeMsg message and the distribution is about to be done
@@ -470,8 +476,8 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       }
     }
     OB.APRM.AddPayment.updateActualExpected(form);
-    OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
   }
+  OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
 };
 
 OB.APRM.AddPayment.updateTotal = function (form) {
@@ -494,12 +500,10 @@ OB.APRM.AddPayment.updateDifference = function (form) {
       credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0)),
       differenceItem = form.getItem('difference'),
       expectedDifferenceItem = form.getItem('expectedDifference'),
-      receivedFrom = form.getItem('received_from').getValue() || '',
       totalGLItems = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       diffAmt = actualPayment.add(credit).subtract(total),
       expectedDiffAmt = expectedPayment.add(credit).subtract(total).add(totalGLItems),
-      affectedParams = [],
-      displayLogicValues = {};
+      affectedParams = [];
   differenceItem.setValue(Number(diffAmt.toString()));
   if (expectedDiffAmt.signum() === 0) {
     expectedDifferenceItem.setValue(Number(diffAmt.toString()));
@@ -700,7 +704,7 @@ OB.APRM.AddPayment.updateGLItemsTotal = function (form, rowNum, remove) {
       glItemTotalItem = form.getItem('amount_gl_items'),
       issotrx = form.getItem('issotrx').getValue(),
       affectedParams = [],
-      amt, i, bdAmt, receivedInAmt, paidOutAmt, allRecords;
+      i, receivedInAmt, paidOutAmt, allRecords;
 
   grid.saveAllEdits();
   // allRecords should be initialized after grid.saveAllEdits()
@@ -842,10 +846,12 @@ OB.APRM.AddPayment.doSelectionChangedCredit = function (record, state, view) {
   } else {
     grid.setEditValue(grid.getRecordIndex(record), amountField, '0');
   }
-  OB.APRM.AddPayment.updateCreditTotal(view.theForm);
-  OB.APRM.AddPayment.updateActualExpected(view.theForm);
-  if (issotrx) {
-    OB.APRM.AddPayment.distributeAmount(view, view.theForm, true);
+  if (!grid.obaprmAllRecordsSelectedByUser || (grid.obaprmAllRecordsSelectedByUser && (grid.getRecordIndex(record) === grid.getTotalRows() - 1))) {
+    OB.APRM.AddPayment.updateCreditTotal(view.theForm);
+    OB.APRM.AddPayment.updateActualExpected(view.theForm);
+    if (issotrx) {
+      OB.APRM.AddPayment.distributeAmount(view, view.theForm, true);
+    }
   }
 };
 
@@ -899,7 +905,7 @@ OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeR
  */
 OB.APRM.AddPayment.orderAndRemoveDuplicates = function (val) {
   var valArray = val.replaceAll(' ', '').split(',').sort(),
-      retVal, length;
+      retVal;
 
   valArray = valArray.filter(function (elem, pos, self) {
     return self.indexOf(elem) === pos;
@@ -1107,7 +1113,6 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall, clientSideVali
       overpaymentAction = overpaymentField.getValue(),
       creditTotalItem = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0)),
       document = (view.theForm.getItem('trxtype')) ? view.theForm.getItem('trxtype').getValue() : "",
-      amountField = orderInvoiceGrid.getFieldByColumnName('amount'),
       selectedRecords = orderInvoiceGrid.getSelectedRecords(),
       writeOffLimitPreference = OB.PropertyStore.get('WriteOffLimitPreference', view.windowId),
       totalWriteOffAmount = BigDecimal.prototype.ZERO,

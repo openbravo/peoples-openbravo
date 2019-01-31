@@ -40,8 +40,8 @@ import org.openbravo.model.ad.access.RoleInheritance;
  * takes care of recalculating the access of the role affected by the changes on its inheritance.
  */
 public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      RoleInheritance.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(RoleInheritance.ENTITY_NAME) };
 
   @Inject
   private RoleInheritanceManager manager;
@@ -106,8 +106,8 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
       return;
     }
     final RoleInheritance inheritance = (RoleInheritance) event.getTargetInstance();
-    boolean notDeletingParent = OBDal.getInstance().exists(Role.ENTITY_NAME,
-        inheritance.getRole().getId());
+    boolean notDeletingParent = OBDal.getInstance()
+        .exists(Role.ENTITY_NAME, inheritance.getRole().getId());
     if (notDeletingParent) {
       manager.applyRemoveInheritance(inheritance);
     }

@@ -31,7 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -52,7 +53,7 @@ class ImageUtils {
   protected static final String RESPONSE_HEADER_CONTENTTYPE = "Content-Type";
   private static final String REQUEST_HEADER_IFNONEMATCH = "If-None-Match";
   private static final String REQUEST_HEADER_IFMODIFIEDSINCE = "If-Modified-Since";
-  private static Logger log4j = Logger.getLogger(ImageUtils.class);
+  private static Logger log4j = LogManager.getLogger();
 
   /**
    * Checks if the content is to be send in response.
@@ -167,7 +168,8 @@ class ImageUtils {
   private static void updateMimeType(String id, String mimeType) {
     PreparedStatement ps = null;
     try {
-      ps = OBDal.getInstance().getConnection(true)
+      ps = OBDal.getInstance()
+          .getConnection(true)
           .prepareStatement("UPDATE ad_image SET mimetype=? WHERE ad_image_id=?");
       ps.setString(1, mimeType);
       ps.setString(2, id);

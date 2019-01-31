@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,7 +59,8 @@ public class ApplicationDynamicComponent extends SessionDynamicTemplateComponent
   }
 
   public Set<Entity> getAccessibleEntities() {
-    final Set<Entity> entities = OBContext.getOBContext().getEntityAccessChecker()
+    final Set<Entity> entities = OBContext.getOBContext()
+        .getEntityAccessChecker()
         .getReadableEntities();
     entities.addAll(OBContext.getOBContext().getEntityAccessChecker().getWritableEntities());
     return entities;
@@ -115,7 +116,8 @@ public class ApplicationDynamicComponent extends SessionDynamicTemplateComponent
   }
 
   public String getInstancePurpose() {
-    final String purpose = OBDal.getInstance().get(SystemInformation.class, "0")
+    final String purpose = OBDal.getInstance()
+        .get(SystemInformation.class, "0")
         .getInstancePurpose();
     if (purpose == null) {
       return "";
@@ -162,12 +164,17 @@ public class ApplicationDynamicComponent extends SessionDynamicTemplateComponent
 
     if (ak.isTrial()) {
       strVersion += " - ";
-      strVersion += Utility.messageBD(new DalConnectionProvider(false), "OPSTrial", OBContext
-          .getOBContext().getLanguage().getLanguage());
+      strVersion += Utility.messageBD(new DalConnectionProvider(false), "OPSTrial",
+          OBContext.getOBContext().getLanguage().getLanguage());
     }
 
     strVersion += " - ";
     strVersion += OBVersion.getInstance().getMP();
     return strVersion;
+  }
+
+  public String getCsrfToken() {
+    String token = (String) RequestContext.get().getSessionAttribute("#CSRF_TOKEN");
+    return token != null ? token : "";
   }
 }

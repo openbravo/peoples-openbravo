@@ -13,11 +13,12 @@ package org.openbravo.xmlEngine;
 
 import java.text.DecimalFormat;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionMultiplyTemplate extends FunctionTemplate {
 
-  static Logger log4jFunctionMultiplyTemplate = Logger.getLogger(FunctionMultiplyTemplate.class);
+  static Logger log4jFunctionMultiplyTemplate = LogManager.getLogger();
 
   public FunctionMultiplyTemplate(String fieldName, DecimalFormat formatOutput,
       DecimalFormat formatSimple, DataTemplate dataTemplate, XmlComponentTemplate arg1,
@@ -25,11 +26,13 @@ class FunctionMultiplyTemplate extends FunctionTemplate {
     super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
   }
 
+  @Override
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      if (log4jFunctionMultiplyTemplate.isDebugEnabled())
+      if (log4jFunctionMultiplyTemplate.isDebugEnabled()) {
         log4jFunctionMultiplyTemplate.debug("New FunctionMultiplyValue");
+      }
       functionValue = new FunctionMultiplyValue(this, xmlDocument);
     }
     return functionValue;

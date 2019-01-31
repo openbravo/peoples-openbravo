@@ -50,8 +50,8 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     // Get user Client's base currency
@@ -111,8 +111,9 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
           "ReportAgingBalance|currency", strUserCurrencyId);
       printPageDataPdf(request, response, vars, strisReceipt, strcolumn1, strcolumn2, strcolumn3,
           strcolumn4, strcBpartnerId, strOrg, "N", strCurrencyId);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataPdf(final HttpServletRequest request, HttpServletResponse response,
@@ -131,14 +132,13 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     }
 
     try {
-      data = ReportAgingBalanceData.select(readOnlyCP, vars.getLanguage(), strOrgTrx,
-          strCurrencyId, strcolumn1, strcolumn2, strcolumn3, strcolumn4, localStrisReceipt,
-          strcBpartnerId, strOrgFamily,
-          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportAgingBalance"),
+      data = ReportAgingBalanceData.select(readOnlyCP, vars.getLanguage(), strOrgTrx, strCurrencyId,
+          strcolumn1, strcolumn2, strcolumn3, strcolumn4, localStrisReceipt, strcBpartnerId,
+          strOrgFamily, Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportAgingBalance"),
           Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportAgingBalance"));
     } catch (ServletException ex) {
-      advisePopUp(request, response, Utility.messageBD(readOnlyCP, "NoConversionRateHeader",
-          vars.getLanguage()),
+      advisePopUp(request, response,
+          Utility.messageBD(readOnlyCP, "NoConversionRateHeader", vars.getLanguage()),
           Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage())
               .getMessage());
     }
@@ -187,18 +187,21 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
         message.setType("Error");
         message
             .setTitle(Utility.messageBD(readOnlyCP, "NoConversionRateHeader", vars.getLanguage()));
-        message.setMessage(Utility.translateError(readOnlyCP, vars, vars.getLanguage(),
-            ex.getMessage()).getMessage());
+        message.setMessage(
+            Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage())
+                .getMessage());
         vars.setMessage("ReportAgingBalance", message);
       }
     }
     if (strfirstPrint == "Y" || data == null || data.length == 0) {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportAgingBalance", discard).createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportAgingBalance", discard)
+          .createXmlDocument();
       data = ReportAgingBalanceData.set();
     } else {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportAgingBalance").createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportAgingBalance")
+          .createXmlDocument();
     }
 
     ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportAgingBalance", false, "",
@@ -256,9 +259,9 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportProductionCost"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportProductionCost"), 0);
+          "C_Currency_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductionCost"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductionCost"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportProductionCost",
           strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -301,9 +304,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
         DateTimeData.nDaysAfter(readOnlyCP, DateTimeData.today(readOnlyCP), iAux.toString()));
     xmlDocument.setParameter("dateToCol5", "");
 
-    xmlDocument.setData(
-        "reportCBPartnerId_IN",
-        "liststructure",
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         SelectorUtilityData.selectBpartner(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
             Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strcBpartnerId));

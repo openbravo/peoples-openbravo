@@ -21,13 +21,14 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 
 public final class AcctSchema implements Serializable {
   private static final long serialVersionUID = 1L;
-  static Logger log4jAcctSchema = Logger.getLogger(AcctSchema.class);
+  static Logger log4jAcctSchema = LogManager.getLogger();
 
   public AcctSchema(ConnectionProvider conn, String C_AcctSchema_ID) {
     m_C_AcctSchema_ID = "";
@@ -75,38 +76,43 @@ public final class AcctSchema implements Serializable {
       if (data.length == 1) {
         m_UseSuspenseBalancing = data[0].usesuspensebalancing;
         String ID = data[0].suspensebalancingAcct;
-        if ("Y".equals(m_UseSuspenseBalancing) && !ID.equals(""))// antes
+        if ("Y".equals(m_UseSuspenseBalancing) && !ID.equals("")) {
           // era
           // "0"
           m_SuspenseBalancing_Acct = Account.getAccount(conn, ID);
-        else
+        } else {
           m_UseSuspenseBalancing = "N";
-        log4jAcctSchema.debug("SuspenseBalancing=" + m_UseSuspenseBalancing + " "
-            + m_SuspenseBalancing_Acct);
+        }
+        log4jAcctSchema
+            .debug("SuspenseBalancing=" + m_UseSuspenseBalancing + " " + m_SuspenseBalancing_Acct);
         m_UseSuspenseError = data[0].usesuspenseerror;
         ID = data[0].suspenseerrorAcct;
-        if ("Y".equals(m_UseSuspenseError) && !ID.equals(""))// antes
+        if ("Y".equals(m_UseSuspenseError) && !ID.equals("")) {
           // era "0"
           m_SuspenseError_Acct = Account.getAccount(conn, ID);
-        else
+        } else {
           m_UseSuspenseError = "N";
+        }
         log4jAcctSchema.debug("SuspenseError=" + m_UseSuspenseError + " " + m_SuspenseError_Acct);
         m_UseCurrencyBalancing = data[0].usecurrencybalancing;
         ID = data[0].currencybalancingAcct;
-        if ("Y".equals(m_UseCurrencyBalancing) && !ID.equals(""))// antes
+        if ("Y".equals(m_UseCurrencyBalancing) && !ID.equals("")) {
           // era
           // "0"
           m_CurrencyBalancing_Acct = Account.getAccount(conn, ID);
-        else
+        } else {
           m_UseCurrencyBalancing = "N";
-        log4jAcctSchema.debug("CurrencyBalancing=" + m_UseCurrencyBalancing + " "
-            + m_CurrencyBalancing_Acct);
+        }
+        log4jAcctSchema
+            .debug("CurrencyBalancing=" + m_UseCurrencyBalancing + " " + m_CurrencyBalancing_Acct);
         ID = data[0].intercompanyduetoAcct;
-        if (!ID.equals(""))// antes era "0"
+        if (!ID.equals("")) {
           m_DueTo_Acct = Account.getAccount(conn, ID);
+        }
         ID = data[0].intercompanyduefromAcct;
-        if (!ID.equals(""))// antes era "0"
+        if (!ID.equals("")) {
           m_DueFrom_Acct = Account.getAccount(conn, ID);
+        }
       }
       m_elementList = AcctSchemaElement.getAcctSchemaElementList(conn, m_C_AcctSchema_ID);
     } catch (ServletException e) {
@@ -144,8 +150,9 @@ public final class AcctSchema implements Serializable {
     int size = m_elementList.size();
     for (int i = 0; i < size; i++) {
       AcctSchemaElement ase = (AcctSchemaElement) m_elementList.get(i);
-      if (ase.m_segmentType.equals(segmentType))
+      if (ase.m_segmentType.equals(segmentType)) {
         return ase;
+      }
     }
     return null;
   } // getAcctSchemaElement
@@ -241,7 +248,8 @@ public final class AcctSchema implements Serializable {
       String AD_Client_ID, String AD_Org_ID) {
     // Create New
     ArrayList<Object> list = new ArrayList<Object>();
-    for (String as : OBContext.getOBContext().getAcctSchemaStructureProvider()
+    for (String as : OBContext.getOBContext()
+        .getAcctSchemaStructureProvider()
         .getAcctSchemas(AD_Org_ID, AD_Client_ID)) {
       list.add(new AcctSchema(conn, as));
     }

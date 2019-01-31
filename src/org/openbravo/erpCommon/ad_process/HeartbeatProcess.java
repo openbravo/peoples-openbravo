@@ -30,7 +30,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -38,26 +37,25 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.Tuple;
+import javax.persistence.TupleElement;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.businessUtility.HeartbeatData;
-import org.openbravo.erpCommon.businessUtility.RegistrationData;
 import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.utility.Alert;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.SystemInfo;
@@ -75,7 +73,7 @@ import org.openbravo.scheduling.ProcessLogger;
 
 public class HeartbeatProcess implements Process {
 
-  private static Logger log = Logger.getLogger(HeartbeatProcess.class);
+  private static Logger log = LogManager.getLogger();
 
   private static final String HEARTBEAT_URL = "https://butler.openbravo.com:443/heartbeat-server/heartbeat";
 
@@ -98,6 +96,7 @@ public class HeartbeatProcess implements Process {
   private Channel channel;
   private HeartbeatLog hbLog;
 
+  @Override
   public void execute(ProcessBundle bundle) throws Exception {
 
     connection = bundle.getConnection();
@@ -112,12 +111,14 @@ public class HeartbeatProcess implements Process {
     if (this.channel == Channel.SCHEDULED && !isHeartbeatActive()) {
       msg = Utility.messageBD(connection, "HB_INACTIVE", ctx.getLanguage());
       logger.logln(msg);
+      OBDal.getInstance().commitAndClose();
       return;
     }
 
     if (!HttpsUtils.isInternetAvailable()) {
       msg = Utility.messageBD(connection, "HB_INTERNET_UNAVAILABLE", ctx.getLanguage());
       logger.logln(msg);
+      OBDal.getInstance().commitAndClose();
       throw new Exception(msg);
     }
 
@@ -130,8 +131,8 @@ public class HeartbeatProcess implements Process {
       } else {
         final String active = SystemInfoData.isHeartbeatActive(connection);
         if (active.equals("") || active.equals("N")) {
-          String action = bundle.getParams().get("action") == null ? "" : ((String) bundle
-              .getParams().get("action"));
+          String action = bundle.getParams().get("action") == null ? ""
+              : ((String) bundle.getParams().get("action"));
           if ("DECLINE".equals(action)) {
             beatType = DECLINING_BEAT;
           } else if ("DEFER".equals(action)) {
@@ -200,8 +201,8 @@ public class HeartbeatProcess implements Process {
    */
   private boolean isHeartbeatActive() {
     String isheartbeatactive = SystemInfo.get(SystemInfo.Item.ISHEARTBEATACTIVE);
-    return (isheartbeatactive != null && !isheartbeatactive.equals("") && !isheartbeatactive
-        .equals("N"));
+    return (isheartbeatactive != null && !isheartbeatactive.equals("")
+        && !isheartbeatactive.equals("N"));
   }
 
   /**
@@ -290,7 +291,6 @@ public class HeartbeatProcess implements Process {
         hbLog.setAntVersion(systemInfo.getProperty("antVersion"));
         hbLog.setOpenbravoVersion(systemInfo.getProperty("obVersion"));
         hbLog.setOpenbravoInstallMode(systemInfo.getProperty("obInstallMode"));
-        hbLog.setCodeRevision(systemInfo.getProperty("codeRevision"));
         hbLog.setWebServer(systemInfo.getProperty("webserver"));
         hbLog.setWebServerVersion(systemInfo.getProperty("webserverVersion"));
         hbLog.setOperatingSystem(systemInfo.getProperty("os"));
@@ -300,8 +300,8 @@ public class HeartbeatProcess implements Process {
         hbLog.setJavaVersion(systemInfo.getProperty("javaVersion"));
         hbLog.setProxyRequired("Y".equals(systemInfo.getProperty("isproxyrequired")));
         hbLog.setProxyServer(systemInfo.getProperty("proxyServer"));
-        hbLog.setUsageAuditEnabled("true".equals(systemInfo.getProperty(SystemInfo.Item.USAGE_AUDIT
-            .getLabel())));
+        hbLog.setUsageAuditEnabled(
+            "true".equals(systemInfo.getProperty(SystemInfo.Item.USAGE_AUDIT.getLabel())));
         hbLog.setInstancePurpose(systemInfo.getProperty("instancePurpose"));
         if (systemInfo.getProperty("proxyPort") != null
             && !systemInfo.getProperty("proxyPort").isEmpty()) {
@@ -312,19 +312,19 @@ public class HeartbeatProcess implements Process {
           }
         }
         try {
-          hbLog.setNumberOfRegisteredUsers(Long.parseLong(systemInfo
-              .getProperty("numRegisteredUsers")));
+          hbLog.setNumberOfRegisteredUsers(
+              Long.parseLong(systemInfo.getProperty("numRegisteredUsers")));
         } catch (NumberFormatException e) {
           log.warn("Incorrect number of registered users: "
               + systemInfo.getProperty("numRegisteredUsers"));
         }
         hbLog.setInstalledModules(systemInfo.getProperty(SystemInfo.Item.MODULES.getLabel()));
-        hbLog.setActivationKeyIdentifier(systemInfo.getProperty(SystemInfo.Item.OBPS_INSTANCE
-            .getLabel()));
+        hbLog.setActivationKeyIdentifier(
+            systemInfo.getProperty(SystemInfo.Item.OBPS_INSTANCE.getLabel()));
         if (ActivationKey.getInstance().isOPSInstance()) {
           try {
-            hbLog.setInstanceNumber(Long.parseLong(systemInfo
-                .getProperty(SystemInfo.Item.INSTANCE_NUMBER.getLabel())));
+            hbLog.setInstanceNumber(
+                Long.parseLong(systemInfo.getProperty(SystemInfo.Item.INSTANCE_NUMBER.getLabel())));
           } catch (NumberFormatException e) {
             log.warn("Incorrect instance number: "
                 + systemInfo.getProperty(SystemInfo.Item.INSTANCE_NUMBER.getLabel()));
@@ -332,123 +332,123 @@ public class HeartbeatProcess implements Process {
         }
 
         try {
-          hbLog.setFirstLogin(SystemInfo.parseDate(systemInfo
-              .getProperty(SystemInfo.Item.FIRST_LOGIN.getLabel())));
+          hbLog.setFirstLogin(
+              SystemInfo.parseDate(systemInfo.getProperty(SystemInfo.Item.FIRST_LOGIN.getLabel())));
         } catch (ParseException e) {
           log.warn("Incorrect date of first login: "
               + systemInfo.getProperty(SystemInfo.Item.FIRST_LOGIN.getLabel()));
         }
         try {
-          hbLog.setLastLogin(SystemInfo.parseDate(systemInfo.getProperty(SystemInfo.Item.LAST_LOGIN
-              .getLabel())));
+          hbLog.setLastLogin(
+              SystemInfo.parseDate(systemInfo.getProperty(SystemInfo.Item.LAST_LOGIN.getLabel())));
         } catch (ParseException e) {
           log.warn("Incorrect date of last login: "
               + systemInfo.getProperty(SystemInfo.Item.LAST_LOGIN.getLabel()));
         }
         try {
-          hbLog.setTotalLogins(Long.parseLong(systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS
-              .getLabel())));
+          hbLog.setTotalLogins(
+              Long.parseLong(systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect number of total logins: "
               + systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS.getLabel()));
         }
         try {
-          hbLog.setTotalLoginsLastMonth(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.TOTAL_LOGINS_LAST_MOTH.getLabel())));
+          hbLog.setTotalLoginsLastMonth(Long.parseLong(
+              systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS_LAST_MOTH.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect number of total logins of last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS_LAST_MOTH.getLabel()));
         }
         try {
-          hbLog.setConcurrentUsersAverage(new BigDecimal(systemInfo
-              .getProperty(SystemInfo.Item.AVG_CONCURRENT_USERS.getLabel())));
+          hbLog.setConcurrentUsersAverage(new BigDecimal(
+              systemInfo.getProperty(SystemInfo.Item.AVG_CONCURRENT_USERS.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect avg users last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.AVG_CONCURRENT_USERS.getLabel()));
         }
         try {
-          hbLog.setUsagePercentage(new BigDecimal(systemInfo
-              .getProperty(SystemInfo.Item.PERC_TIME_USAGE.getLabel())));
+          hbLog.setUsagePercentage(
+              new BigDecimal(systemInfo.getProperty(SystemInfo.Item.PERC_TIME_USAGE.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect usage percentage last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.PERC_TIME_USAGE.getLabel()));
         }
         try {
-          hbLog.setMaximumConcurrentUsers(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.MAX_CONCURRENT_USERS.getLabel())));
+          hbLog.setMaximumConcurrentUsers(Long
+              .parseLong(systemInfo.getProperty(SystemInfo.Item.MAX_CONCURRENT_USERS.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect maximum number of concurrent users during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.MAX_CONCURRENT_USERS.getLabel()));
         }
 
         try {
-          hbLog.setWSCallsMaximum(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.WS_CALLS_MAX.getLabel())));
+          hbLog.setWSCallsMaximum(
+              Long.parseLong(systemInfo.getProperty(SystemInfo.Item.WS_CALLS_MAX.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect max number of ws calls during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.WS_CALLS_MAX.getLabel()));
         }
         try {
-          hbLog.setWSCallsAverage(new BigDecimal(systemInfo
-              .getProperty(SystemInfo.Item.WS_CALLS_AVG.getLabel())));
+          hbLog.setWSCallsAverage(
+              new BigDecimal(systemInfo.getProperty(SystemInfo.Item.WS_CALLS_AVG.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect avg number of ws calls during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.WS_CALLS_AVG.getLabel()));
         }
 
         try {
-          hbLog.setConnectorCallsMax(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.WSC_CALLS_MAX.getLabel())));
+          hbLog.setConnectorCallsMax(
+              Long.parseLong(systemInfo.getProperty(SystemInfo.Item.WSC_CALLS_MAX.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect max number of wsc calls during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.WSC_CALLS_MAX.getLabel()));
         }
         try {
-          hbLog.setConnectorCallsAverage(new BigDecimal(systemInfo
-              .getProperty(SystemInfo.Item.WSC_CALLS_AVG.getLabel())));
+          hbLog.setConnectorCallsAverage(
+              new BigDecimal(systemInfo.getProperty(SystemInfo.Item.WSC_CALLS_AVG.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect avg number of wsc calls during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.WSC_CALLS_AVG.getLabel()));
         }
 
         try {
-          hbLog.setWSRejectedMaximum(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.WSR_CALLS_MAX.getLabel())));
+          hbLog.setWSRejectedMaximum(
+              Long.parseLong(systemInfo.getProperty(SystemInfo.Item.WSR_CALLS_MAX.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect max number of ws rejected calls during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.WSR_CALLS_MAX.getLabel()));
         }
         try {
-          hbLog.setWSRejectedAverage(new BigDecimal(systemInfo
-              .getProperty(SystemInfo.Item.WSR_CALLS_AVG.getLabel())));
+          hbLog.setWSRejectedAverage(
+              new BigDecimal(systemInfo.getProperty(SystemInfo.Item.WSR_CALLS_AVG.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect avg number of ws rejected calls during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.WSR_CALLS_AVG.getLabel()));
         }
 
         try {
-          hbLog.setNumberOfClients(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.NUMBER_OF_CLIENTS.getLabel())));
+          hbLog.setNumberOfClients(
+              Long.parseLong(systemInfo.getProperty(SystemInfo.Item.NUMBER_OF_CLIENTS.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect number of clients: "
               + systemInfo.getProperty(SystemInfo.Item.NUMBER_OF_CLIENTS.getLabel()));
         }
         try {
-          hbLog.setNumberOfOrganizations(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.NUMBER_OF_ORGS.getLabel())));
+          hbLog.setNumberOfOrganizations(
+              Long.parseLong(systemInfo.getProperty(SystemInfo.Item.NUMBER_OF_ORGS.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect number of orgs: "
               + systemInfo.getProperty(SystemInfo.Item.NUMBER_OF_ORGS.getLabel()));
         }
         try {
-          hbLog.setRejectedLoginsDueConcUsers(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.REJECTED_LOGINS_DUE_CONC_USERS.getLabel())));
+          hbLog.setRejectedLoginsDueConcUsers(Long.parseLong(
+              systemInfo.getProperty(SystemInfo.Item.REJECTED_LOGINS_DUE_CONC_USERS.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect number of rejected logins: "
               + SystemInfo.Item.REJECTED_LOGINS_DUE_CONC_USERS.getLabel());
         }
-        hbLog.setEnableCustomQueries("Y".equals(systemInfo
-            .getProperty(SystemInfo.Item.CUSTOM_QUERY_ENABLED.getLabel())));
+        hbLog.setEnableCustomQueries(
+            "Y".equals(systemInfo.getProperty(SystemInfo.Item.CUSTOM_QUERY_ENABLED.getLabel())));
       }
       OBDal.getInstance().save(hbLog);
     } finally {
@@ -515,7 +515,7 @@ public class HeartbeatProcess implements Process {
       logger.logln("No Updates found...");
       return;
     }
-    // info("  ");
+    // info(" ");
     for (Alert update : updates) {
       update.save(connection);
     }
@@ -523,18 +523,22 @@ public class HeartbeatProcess implements Process {
 
   /**
    * Gets a JSON Array with the custom queries and sends back to the heartbeat server the results.
-   * The results of the queries are also stored on the heartbeat local log.</p>
+   * The results of the queries are also stored on the heartbeat local log.
+   * </p>
    * 
    * The result that is sent to the heartbeat server is a JSON Object that contains the beat type,
-   * the beat id and another JSON Object with the results of the queries.</p>
+   * the beat id and another JSON Object with the results of the queries.
+   * </p>
    * 
    * The JSON Object with the results contains one JSON Object for each executed query identified by
    * the Query Id. This JSON Object is formed by 2 JSON Arrays. The first one, identified by
    * "properties" contains a String array with the header of each returned property. The second one
    * identified by "values" contains a JSON Array for each returned row, each row is a JSON Array
-   * with the value of each returned property.</p>
+   * with the value of each returned property.
+   * </p>
    * 
-   * Example of a returned JSON Object string:</p>
+   * Example of a returned JSON Object string:
+   * </p>
    * 
    * <code>
    * {<br>
@@ -550,7 +554,8 @@ public class HeartbeatProcess implements Process {
    * &nbsp;&nbsp;&nbsp;values:[[row1value1,row1value2],[row2value1, row2value2],[row3value1, row3value2]]<br>
    * &nbsp;&nbsp;}<br>
    * &nbsp;}<br>
-   * }<br></code></p>
+   * }<br></code>
+   * </p>
    * 
    * @param jsonArrayCQueries
    *          An array of JSON Objects with all the custom queries to be executed. Each JSON Object
@@ -560,12 +565,11 @@ public class HeartbeatProcess implements Process {
    *          The identifier of the beat on the heartbeat server.
    * @throws JSONException
    */
-  @SuppressWarnings("unchecked")
   private void processCustomQueries(JSONArray jsonArrayCQueries, String beatId)
       throws JSONException {
-    if ("null".equals(jsonArrayCQueries.get(0)))
+    if ("null".equals(jsonArrayCQueries.get(0))) {
       return;
-
+    }
     JSONObject jsonObjectCQReturn = new JSONObject();
     for (int i = 0; i < jsonArrayCQueries.length(); i++) {
       JSONObject jsonCustomQuery = (JSONObject) jsonArrayCQueries.get(i);
@@ -579,41 +583,36 @@ public class HeartbeatProcess implements Process {
           HeartbeatLogCustomQuery hbLogCQ = logCustomQuery(strQName, strQType, strHQL);
 
           Session obSession = OBDal.getInstance().getSession();
-          Query customQuery = obSession.createQuery(strHQL);
-          String[] properties = customQuery.getReturnAliases();
+          Query<Tuple> customQuery = obSession.createQuery(strHQL, Tuple.class);
           JSONArray jsonArrayResultRows = new JSONArray();
           int row = 0;
-
-          for (Object objResult : (List<Object>) customQuery.list()) {
+          List<Tuple> tupleList = customQuery.list();
+          List<String> properties = null;
+          boolean initProperties = true;
+          for (Tuple tuple : tupleList) {
             row += 1;
             JSONArray jsonArrayResultRowValues = new JSONArray();
-
-            Object[] resultList = new Object[1];
-            if (objResult instanceof Object[])
-              resultList = (Object[]) objResult;
-            else
-              resultList[0] = objResult;
-
-            for (int j = 0; j < resultList.length; j++) {
-              jsonArrayResultRowValues.put(resultList[j]);
-
-              String fieldName = null;
-              if (properties != null && properties.length > j) {
-                fieldName = properties[j];
+            properties = new ArrayList<>();
+            int j = 0;
+            for (TupleElement<?> tupleElement : tuple.getElements()) {
+              jsonArrayResultRowValues.put(tuple.get(j));
+              String alias = tupleElement.getAlias();
+              if (initProperties) {
+                properties.add(alias);
               }
-              if (fieldName == null) {
-                fieldName = "??";
-              }
-              logCustomQueryResult(hbLogCQ, row, fieldName, resultList[j].toString());
+              String fieldName = alias != null ? alias : "??";
+              logCustomQueryResult(hbLogCQ, row, fieldName, tuple.get(j).toString());
             }
             jsonArrayResultRows.put(jsonArrayResultRowValues);
+            initProperties = false;
           }
 
-          if (customQuery.list().isEmpty())
+          if (tupleList.isEmpty()) {
             jsonArrayResultRows.put("null");
+          }
 
           JSONObject jsonResult = new JSONObject();
-          jsonResult.put("properties", properties == null ? null : Arrays.asList(properties));
+          jsonResult.put("properties", properties == null ? null : properties);
           jsonResult.put("values", jsonArrayResultRows);
           jsonObjectCQReturn.put(strQId, jsonResult);
         } else {
@@ -657,8 +656,8 @@ public class HeartbeatProcess implements Process {
 
   private void logCustomQueryResult(HeartbeatLogCustomQuery hbLogCQ, int row, String strProperty,
       String strValue) {
-    HeartbeatLogCustomQueryRow hbLogCQRow = OBProvider.getInstance().get(
-        HeartbeatLogCustomQueryRow.class);
+    HeartbeatLogCustomQueryRow hbLogCQRow = OBProvider.getInstance()
+        .get(HeartbeatLogCustomQueryRow.class);
     hbLogCQRow.setExecutedCustomQuery(hbLogCQ);
     hbLogCQRow.setPropertyname(strProperty);
     hbLogCQRow.setPropertyvalue(strValue);
@@ -672,7 +671,7 @@ public class HeartbeatProcess implements Process {
   }
 
   public enum HeartBeatOrRegistration {
-    HeartBeat, Registration, None, InstancePurpose, OutOfDemandPlatform;
+    HeartBeat, None, InstancePurpose;
   }
 
   /**
@@ -691,10 +690,6 @@ public class HeartbeatProcess implements Process {
   public static HeartBeatOrRegistration isLoginPopupRequired(String roleId, String javaDateFormat,
       ConnectionProvider connectionProvider) throws ServletException {
     if (roleId != null && "0".equals(roleId)) {
-      String sessionId = (String) RequestContext.get().getSession().getAttribute("#AD_SESSION_ID");
-      if (ActivationKey.getInstance().checkOPSLimitations(sessionId) == LicenseRestriction.ON_DEMAND_OFF_PLATFORM) {
-        return HeartBeatOrRegistration.OutOfDemandPlatform;
-      }
       // Check if the instance purpose is set.
       if (isShowInstancePurposeRequired()) {
         return HeartBeatOrRegistration.InstancePurpose;
@@ -705,16 +700,13 @@ public class HeartbeatProcess implements Process {
       if (isShowHeartbeatRequired(javaDateFormat, connectionProvider)) {
         return HeartBeatOrRegistration.HeartBeat;
       }
-      if (isShowRegistrationRequired(javaDateFormat, connectionProvider)) {
-        return HeartBeatOrRegistration.Registration;
-      }
     }
     return HeartBeatOrRegistration.None;
   }
 
   public static boolean isShowInstancePurposeRequired() {
-    final SystemInformation systemInformation = OBDal.getInstance().get(SystemInformation.class,
-        "0");
+    final SystemInformation systemInformation = OBDal.getInstance()
+        .get(SystemInformation.class, "0");
     if (systemInformation.getInstancePurpose() == null
         || systemInformation.getInstancePurpose().isEmpty()) {
       if (ActivationKey.isActiveInstance()) {
@@ -738,11 +730,11 @@ public class HeartbeatProcess implements Process {
     OBContext.setAdminMode();
     try {
       HeartbeatLog lastBeat = getLastHBLog();
-      if ((lastBeat != null && lastBeat.getDatabaseIdentifier() != null && lastBeat
-          .getMacIdentifier() != null)
+      if ((lastBeat != null && lastBeat.getDatabaseIdentifier() != null
+          && lastBeat.getMacIdentifier() != null)
           && (!lastBeat.getSystemIdentifier().equals(SystemInfo.getSystemIdentifier())
-              || !lastBeat.getDatabaseIdentifier().equals(SystemInfo.getDBIdentifier()) || !lastBeat
-              .getMacIdentifier().equals(SystemInfo.getMacAddress()))) {
+              || !lastBeat.getDatabaseIdentifier().equals(SystemInfo.getDBIdentifier())
+              || !lastBeat.getMacIdentifier().equals(SystemInfo.getMacAddress()))) {
         return true;
       } else {
         return false;
@@ -779,7 +771,7 @@ public class HeartbeatProcess implements Process {
    */
   public static boolean isShowHeartbeatRequired(String javaDateFormat,
       ConnectionProvider connectionProvider) throws ServletException {
-    final HeartbeatData[] hbData = HeartbeatData.selectSystemProperties(connectionProvider);
+    final SystemInfoData[] hbData = SystemInfoData.selectSystemProperties(connectionProvider);
     if (hbData.length > 0) {
       final String isheartbeatactive = hbData[0].isheartbeatactive;
       final String postponeDate = hbData[0].postponeDate;
@@ -802,56 +794,20 @@ public class HeartbeatProcess implements Process {
     return false;
   }
 
-  /**
-   * @see HeartbeatProcess#isShowRegistrationRequired(String, ConnectionProvider)
-   */
-  public static boolean isShowRegistrationRequired(VariablesSecureApp vars,
-      ConnectionProvider connectionProvider) throws ServletException {
-    return isShowRegistrationRequired(vars.getJavaDateFormat(), connectionProvider);
-  }
-
-  /**
-   * Check if the Registration popup must be displayed.
-   * 
-   * @return {@code true} if the Registration popup must be displayed, {@code false} otherwise.
-   */
-  public static boolean isShowRegistrationRequired(String javaDateFormat,
-      ConnectionProvider connectionProvider) throws ServletException {
-    final RegistrationData[] rData = RegistrationData.select(connectionProvider);
-    if (rData.length > 0) {
-      final String isregistrationactive = rData[0].isregistrationactive;
-      final String rPostponeDate = rData[0].postponeDate;
-      if (isregistrationactive == null || isregistrationactive.equals("")) {
-        if (rPostponeDate == null || rPostponeDate.equals("")) {
-          return true;
-        } else {
-          Date date = null;
-          try {
-            date = new SimpleDateFormat(javaDateFormat).parse(rPostponeDate);
-            if (date.before(new Date())) {
-              return true;
-            }
-          } catch (final ParseException e) {
-            log.error(e.getMessage(), e);
-          }
-        }
-      }
-    }
-    return false;
-  }
-
   public static boolean isHeartbeatEnabled() {
     SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
 
-    final org.openbravo.model.ad.ui.Process HBProcess = OBDal.getInstance().get(
-        org.openbravo.model.ad.ui.Process.class, HB_PROCESS_ID);
+    final org.openbravo.model.ad.ui.Process HBProcess = OBDal.getInstance()
+        .get(org.openbravo.model.ad.ui.Process.class, HB_PROCESS_ID);
 
-    final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
-        ProcessRequest.class);
+    final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance()
+        .createCriteria(ProcessRequest.class);
     prCriteria.add(Restrictions.and(Restrictions.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
-        Restrictions.or(Restrictions.eq(ProcessRequest.PROPERTY_STATUS,
-            org.openbravo.scheduling.Process.SCHEDULED), Restrictions.eq(
-            ProcessRequest.PROPERTY_STATUS, org.openbravo.scheduling.Process.MISFIRED))));
+        Restrictions.or(
+            Restrictions.eq(ProcessRequest.PROPERTY_STATUS,
+                org.openbravo.scheduling.Process.SCHEDULED),
+            Restrictions.eq(ProcessRequest.PROPERTY_STATUS,
+                org.openbravo.scheduling.Process.MISFIRED))));
     final List<ProcessRequest> prRequestList = prCriteria.list();
 
     if (prRequestList.size() == 0) { // Resetting state to disabled

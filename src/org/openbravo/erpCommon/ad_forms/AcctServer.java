@@ -36,7 +36,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
@@ -83,7 +84,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public abstract class AcctServer {
-  static Logger log4j = Logger.getLogger(AcctServer.class);
+  static Logger log4j = LogManager.getLogger();
 
   protected ConnectionProvider connectionProvider;
 
@@ -357,12 +358,14 @@ public abstract class AcctServer {
    * @param connectionProvider
    *          Provider for db connections.
    */
-  public AcctServer(String m_AD_Client_ID, String m_AD_Org_ID, ConnectionProvider connectionProvider) {
+  public AcctServer(String m_AD_Client_ID, String m_AD_Org_ID,
+      ConnectionProvider connectionProvider) {
     AD_Client_ID = m_AD_Client_ID;
     AD_Org_ID = m_AD_Org_ID;
     this.connectionProvider = connectionProvider;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AcctServer - LOADING ARRAY: " + m_AD_Client_ID);
+    }
     m_as = AcctSchema.getAcctSchemaArray(connectionProvider, m_AD_Client_ID, m_AD_Org_ID);
   } //
 
@@ -385,8 +388,9 @@ public abstract class AcctServer {
 
   public void run(VariablesSecureApp vars, String strDateFrom, String strDateTo)
       throws IOException, ServletException {
-    if (AD_Client_ID.equals(""))
+    if (AD_Client_ID.equals("")) {
       AD_Client_ID = vars.getClient();
+    }
     Connection con = null;
     try {
       String strIDs = "";
@@ -399,11 +403,13 @@ public abstract class AcctServer {
 
       AcctServerData[] data = null;
       final Set<String> orgSet = OBContext.getOBContext()
-          .getOrganizationStructureProvider(AD_Client_ID).getChildTree(AD_Org_ID, true);
+          .getOrganizationStructureProvider(AD_Client_ID)
+          .getChildTree(AD_Org_ID, true);
       String strOrgs = Utility.getInStrSet(orgSet);
       // Send limit manually to SQL because auto-generated query doesn't limit properly
-      String limit = StringUtils.equals(connectionProvider.getRDBMS(), "ORACLE") ? " AND ROWNUM < "
-          + batchSize : " LIMIT " + batchSize;
+      String limit = StringUtils.equals(connectionProvider.getRDBMS(), "ORACLE")
+          ? " AND ROWNUM < " + batchSize
+          : " LIMIT " + batchSize;
       data = AcctServerData.select(connectionProvider, tableName, strDateColumn, AD_Client_ID,
           strOrgs, strDateFrom, strDateTo, limit);
       if (data != null && data.length > 0) {
@@ -430,10 +436,11 @@ public abstract class AcctServer {
           OBDal.getInstance().commitAndClose();
         }
       }
-      if (log4j.isDebugEnabled() && data != null)
+      if (log4j.isDebugEnabled() && data != null) {
         log4j.debug("AcctServer - Run -" + data.length + " IDs [" + strIDs + "]");
-      // Create Automatic Matching
-      // match (vars, this,con);
+        // Create Automatic Matching
+        // match (vars, this,con);
+      }
     } catch (NoConnectionAvailableException ex) {
       throw new ServletException("@CODE=NoConnectionAvailable", ex);
     } catch (SQLException ex2) {
@@ -442,8 +449,8 @@ public abstract class AcctServer {
       } catch (SQLException se) {
         log4j.error("Failed to close connection after an error", se);
       }
-      throw new ServletException("@CODE=" + Integer.toString(ex2.getErrorCode()) + "@"
-          + ex2.getMessage(), ex2);
+      throw new ServletException(
+          "@CODE=" + Integer.toString(ex2.getErrorCode()) + "@" + ex2.getMessage(), ex2);
     } catch (Exception ex3) {
       log4j.error("Exception in AcctServer.run", ex3);
       try {
@@ -483,127 +490,130 @@ public abstract class AcctServer {
   public static AcctServer get(String AD_Table_ID, String AD_Client_ID, String AD_Org_ID,
       ConnectionProvider connectionProvider) throws ServletException {
     AcctServer acct = null;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("get - table: " + AD_Table_ID);
+    }
     if (AD_Table_ID.equals("318") || AD_Table_ID.equals("800060") || AD_Table_ID.equals("800176")
         || AD_Table_ID.equals("407") || AD_Table_ID.equals("392") || AD_Table_ID.equals("259")
         || AD_Table_ID.equals("800019") || AD_Table_ID.equals("319") || AD_Table_ID.equals("321")
         || AD_Table_ID.equals("323") || AD_Table_ID.equals("325") || AD_Table_ID.equals("224")
         || AD_Table_ID.equals("472") || AD_Table_ID.equals("800168")) {
       switch (Integer.parseInt(AD_Table_ID)) {
-      case 318:
-        acct = new DocInvoice(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "C_Invoice";
-        acct.AD_Table_ID = "318";
-        acct.strDateColumn = "DateAcct";
-        acct.reloadAcctSchemaArray();
-        acct.groupLines = AcctServerData.selectGroupLines(acct.connectionProvider, AD_Client_ID);
-        break;
-      /*
-       * case 390: acct = new DocAllocation (AD_Client_ID); acct.strDateColumn = "";
-       * acct.AD_Table_ID = "390"; acct.reloadAcctSchemaArray(); acct.break;
-       */
-      case 800060:
-        acct = new DocAmortization(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "A_Amortization";
-        acct.AD_Table_ID = "800060";
-        acct.strDateColumn = "DateAcct";
-        acct.reloadAcctSchemaArray();
-        break;
+        case 318:
+          acct = new DocInvoice(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "C_Invoice";
+          acct.AD_Table_ID = "318";
+          acct.strDateColumn = "DateAcct";
+          acct.reloadAcctSchemaArray();
+          acct.groupLines = AcctServerData.selectGroupLines(acct.connectionProvider, AD_Client_ID);
+          break;
+        /*
+         * case 390: acct = new DocAllocation (AD_Client_ID); acct.strDateColumn = "";
+         * acct.AD_Table_ID = "390"; acct.reloadAcctSchemaArray(); acct.break;
+         */
+        case 800060:
+          acct = new DocAmortization(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "A_Amortization";
+          acct.AD_Table_ID = "800060";
+          acct.strDateColumn = "DateAcct";
+          acct.reloadAcctSchemaArray();
+          break;
 
-      case 800176:
-        if (log4j.isDebugEnabled())
-          log4j.debug("AcctServer - Get DPM");
-        acct = new DocDPManagement(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "C_DP_Management";
-        acct.AD_Table_ID = "800176";
-        acct.strDateColumn = "DateAcct";
-        acct.reloadAcctSchemaArray();
-        break;
-      case 407:
-        acct = new DocCash(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "C_Cash";
-        acct.strDateColumn = "DateAcct";
-        acct.AD_Table_ID = "407";
-        acct.reloadAcctSchemaArray();
-        break;
-      case 392:
-        acct = new DocBank(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "C_Bankstatement";
-        acct.strDateColumn = "StatementDate";
-        acct.AD_Table_ID = "392";
-        acct.reloadAcctSchemaArray();
-        break;
-      case 259:
-        acct = new DocOrder(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "C_Order";
-        acct.strDateColumn = "DateAcct";
-        acct.AD_Table_ID = "259";
-        acct.reloadAcctSchemaArray();
-        break;
-      case 800019:
-        acct = new DocPayment(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "C_Settlement";
-        acct.strDateColumn = "Dateacct";
-        acct.AD_Table_ID = "800019";
-        acct.reloadAcctSchemaArray();
-        break;
-      case 319:
-        acct = new DocInOut(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "M_InOut";
-        acct.strDateColumn = "DateAcct";
-        acct.AD_Table_ID = "319";
-        acct.reloadAcctSchemaArray();
-        break;
-      case 321:
-        acct = new DocInventory(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "M_Inventory";
-        acct.strDateColumn = "MovementDate";
-        acct.AD_Table_ID = "321";
-        acct.reloadAcctSchemaArray();
-        break;
-      case 323:
-        acct = new DocMovement(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "M_Movement";
-        acct.strDateColumn = "MovementDate";
-        acct.AD_Table_ID = "323";
-        acct.reloadAcctSchemaArray();
-        break;
-      case 325:
-        acct = new DocProduction(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "M_Production";
-        acct.strDateColumn = "MovementDate";
-        acct.AD_Table_ID = "325";
-        acct.reloadAcctSchemaArray();
-        break;
-      case 224:
-        if (log4j.isDebugEnabled())
-          log4j.debug("AcctServer - Before OBJECT CREATION");
-        acct = new DocGLJournal(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "GL_Journal";
-        acct.strDateColumn = "DateAcct";
-        acct.AD_Table_ID = "224";
-        acct.reloadAcctSchemaArray();
-        break;
-      case 472:
-        acct = new DocMatchInv(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "M_MatchInv";
-        acct.strDateColumn = "DateTrx";
-        acct.AD_Table_ID = "472";
-        acct.reloadAcctSchemaArray();
-        break;
-      case 800168:
-        acct = new DocInternalConsumption(AD_Client_ID, AD_Org_ID, connectionProvider);
-        acct.tableName = "M_Internal_Consumption";
-        acct.strDateColumn = "MovementDate";
-        acct.AD_Table_ID = "800168";
-        acct.reloadAcctSchemaArray();
-        break;
-      // case 473: acct = new
-      // DocMatchPO (AD_Client_ID); acct.strDateColumn = "MovementDate";
-      // acct.reloadAcctSchemaArray(); break; case DocProjectIssue.AD_TABLE_ID: acct = new
-      // DocProjectIssue (AD_Client_ID); acct.strDateColumn = "MovementDate";
-      // acct.reloadAcctSchemaArray(); break;
+        case 800176:
+          if (log4j.isDebugEnabled()) {
+            log4j.debug("AcctServer - Get DPM");
+          }
+          acct = new DocDPManagement(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "C_DP_Management";
+          acct.AD_Table_ID = "800176";
+          acct.strDateColumn = "DateAcct";
+          acct.reloadAcctSchemaArray();
+          break;
+        case 407:
+          acct = new DocCash(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "C_Cash";
+          acct.strDateColumn = "DateAcct";
+          acct.AD_Table_ID = "407";
+          acct.reloadAcctSchemaArray();
+          break;
+        case 392:
+          acct = new DocBank(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "C_Bankstatement";
+          acct.strDateColumn = "StatementDate";
+          acct.AD_Table_ID = "392";
+          acct.reloadAcctSchemaArray();
+          break;
+        case 259:
+          acct = new DocOrder(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "C_Order";
+          acct.strDateColumn = "DateAcct";
+          acct.AD_Table_ID = "259";
+          acct.reloadAcctSchemaArray();
+          break;
+        case 800019:
+          acct = new DocPayment(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "C_Settlement";
+          acct.strDateColumn = "Dateacct";
+          acct.AD_Table_ID = "800019";
+          acct.reloadAcctSchemaArray();
+          break;
+        case 319:
+          acct = new DocInOut(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "M_InOut";
+          acct.strDateColumn = "DateAcct";
+          acct.AD_Table_ID = "319";
+          acct.reloadAcctSchemaArray();
+          break;
+        case 321:
+          acct = new DocInventory(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "M_Inventory";
+          acct.strDateColumn = "MovementDate";
+          acct.AD_Table_ID = "321";
+          acct.reloadAcctSchemaArray();
+          break;
+        case 323:
+          acct = new DocMovement(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "M_Movement";
+          acct.strDateColumn = "MovementDate";
+          acct.AD_Table_ID = "323";
+          acct.reloadAcctSchemaArray();
+          break;
+        case 325:
+          acct = new DocProduction(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "M_Production";
+          acct.strDateColumn = "MovementDate";
+          acct.AD_Table_ID = "325";
+          acct.reloadAcctSchemaArray();
+          break;
+        case 224:
+          if (log4j.isDebugEnabled()) {
+            log4j.debug("AcctServer - Before OBJECT CREATION");
+          }
+          acct = new DocGLJournal(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "GL_Journal";
+          acct.strDateColumn = "DateAcct";
+          acct.AD_Table_ID = "224";
+          acct.reloadAcctSchemaArray();
+          break;
+        case 472:
+          acct = new DocMatchInv(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "M_MatchInv";
+          acct.strDateColumn = "DateTrx";
+          acct.AD_Table_ID = "472";
+          acct.reloadAcctSchemaArray();
+          break;
+        case 800168:
+          acct = new DocInternalConsumption(AD_Client_ID, AD_Org_ID, connectionProvider);
+          acct.tableName = "M_Internal_Consumption";
+          acct.strDateColumn = "MovementDate";
+          acct.AD_Table_ID = "800168";
+          acct.reloadAcctSchemaArray();
+          break;
+        // case 473: acct = new
+        // DocMatchPO (AD_Client_ID); acct.strDateColumn = "MovementDate";
+        // acct.reloadAcctSchemaArray(); break; case DocProjectIssue.AD_TABLE_ID: acct = new
+        // DocProjectIssue (AD_Client_ID); acct.strDateColumn = "MovementDate";
+        // acct.reloadAcctSchemaArray(); break;
 
       }
     } else {
@@ -611,7 +621,8 @@ public abstract class AcctServer {
       if (acctinfo != null && acctinfo.length != 0) {
         if (!acctinfo[0].acctclassname.equals("") && !acctinfo[0].acctdatecolumn.equals("")) {
           try {
-            acct = (AcctServer) Class.forName(acctinfo[0].acctclassname).getDeclaredConstructor()
+            acct = (AcctServer) Class.forName(acctinfo[0].acctclassname)
+                .getDeclaredConstructor()
                 .newInstance();
             acct.set(AD_Table_ID, AD_Client_ID, AD_Org_ID, connectionProvider,
                 acctinfo[0].tablename, acctinfo[0].acctdatecolumn);
@@ -623,12 +634,14 @@ public abstract class AcctServer {
       }
     }
 
-    if (acct == null)
+    if (acct == null) {
       log4j.warn("AcctServer - get - Unknown AD_Table_ID=" + AD_Table_ID);
-    else if (log4j.isDebugEnabled())
+    } else if (log4j.isDebugEnabled()) {
       log4j.debug("AcctServer - get - AcctSchemaArray length=" + (acct.m_as).length);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AcctServer - get - AD_Table_ID=" + AD_Table_ID);
+    }
     return acct;
   } // get
 
@@ -640,14 +653,16 @@ public abstract class AcctServer {
     tableName = tablename;
     strDateColumn = acctdatecolumn;
     AD_Table_ID = m_AD_Table_ID;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AcctServer - LOADING ARRAY: " + m_AD_Client_ID);
+    }
     m_as = AcctSchema.getAcctSchemaArray(connectionProvider, m_AD_Client_ID, m_AD_Org_ID);
   }
 
   public void reloadAcctSchemaArray() throws ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AcctServer - reloadAcctSchemaArray - " + AD_Table_ID);
+    }
     AcctSchema acct = null;
     ArrayList<Object> new_as = new ArrayList<Object>();
     for (int i = 0; i < (this.m_as).length; i++) {
@@ -659,15 +674,17 @@ public abstract class AcctServer {
     }
     AcctSchema[] retValue = new AcctSchema[new_as.size()];
     new_as.toArray(retValue);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AcctServer - RELOADING ARRAY: " + retValue.length);
+    }
     this.m_as = retValue;
   }
 
   private void reloadAcctSchemaArray(String adOrgId) throws ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j
           .debug("AcctServer - reloadAcctSchemaArray - " + AD_Table_ID + ", AD_ORG_ID: " + adOrgId);
+    }
     AcctSchema acct = null;
     ArrayList<Object> new_as = new ArrayList<Object>();
     // We reload again all the acct schemas of the client
@@ -682,8 +699,9 @@ public abstract class AcctServer {
     }
     AcctSchema[] retValue = new AcctSchema[new_as.size()];
     new_as.toArray(retValue);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AcctServer - RELOADING ARRAY: " + retValue.length);
+    }
     this.m_as = retValue;
   }
 
@@ -697,20 +715,23 @@ public abstract class AcctServer {
   public boolean post(String strClave, boolean force, VariablesSecureApp vars,
       ConnectionProvider conn, Connection con) throws ServletException {
     Record_ID = strClave;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("post " + strClave + " tablename: " + tableName);
+    }
     try {
       if (AcctServerData.update(conn, tableName, strClave) != 1) {
-        log4j.warn("AcctServer - Post -Cannot lock Document - ignored: " + tableName + "_ID="
-            + strClave);
+        log4j.warn(
+            "AcctServer - Post -Cannot lock Document - ignored: " + tableName + "_ID=" + strClave);
         setStatus(STATUS_DocumentLocked); // Status locked document
         this.setMessageResult(conn, vars, STATUS_DocumentLocked, "Error");
         return false;
-      } else
+      } else {
         AcctServerData.delete(connectionProvider, AD_Table_ID, Record_ID);
-      if (log4j.isDebugEnabled())
-        log4j.debug("AcctServer - Post -TableName -" + tableName + "- ad_client_id -"
-            + AD_Client_ID + "- " + tableName + "_id -" + strClave);
+      }
+      if (log4j.isDebugEnabled()) {
+        log4j.debug("AcctServer - Post -TableName -" + tableName + "- ad_client_id -" + AD_Client_ID
+            + "- " + tableName + "_id -" + strClave);
+      }
       try {
         loadObjectFieldProvider(connectionProvider, AD_Client_ID, strClave);
       } catch (ServletException e) {
@@ -726,16 +747,17 @@ public abstract class AcctServer {
           success++;
         } else {
           errors++;
-          if (messageResult == null)
+          if (messageResult == null) {
             setMessageResult(conn, vars, getStatus(), "");
+          }
           save(conn, vars.getUser());
         }
       } catch (Exception e) {
         errors++;
         Status = AcctServer.STATUS_Error;
         save(conn, vars.getUser());
-        log4j.error(
-            "An error ocurred posting RecordId: " + strClave + " - tableId: " + AD_Table_ID, e);
+        log4j.error("An error ocurred posting RecordId: " + strClave + " - tableId: " + AD_Table_ID,
+            e);
       }
     } catch (ServletException e) {
       log4j.error(e);
@@ -746,16 +768,18 @@ public abstract class AcctServer {
 
   private boolean post(FieldProvider[] data, boolean force, VariablesSecureApp vars,
       ConnectionProvider conn, Connection con) throws ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("post data" + C_Currency_ID);
+    }
     if (!loadDocument(data, force, conn, con)) {
       log4j.warn("AcctServer - post - Error loading document");
       return false;
     }
     // Set Currency precision
     conversionRatePrecision = getConversionRatePrecision(vars);
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       return false;
+    }
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Post - Antes de getAcctSchemaArray - C_CURRENCY_ID = "
     // + C_Currency_ID);
@@ -796,34 +820,43 @@ public abstract class AcctServer {
     }
     // for all Accounting Schema
     boolean OK = true;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AcctServer - Post -Beforde the loop - C_CURRENCY_ID = " + C_Currency_ID);
+    }
     for (int i = 0; OK && i < m_as.length; i++) {
       setStatus(STATUS_NotPosted);
       if (isBackground && !isBackGroundEnabled(conn, m_as[i], AD_Table_ID)) {
         setStatus(STATUS_BackgroundDisabled);
         break;
       }
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("AcctServer - Post - Before the postLogic - C_CURRENCY_ID = " + C_Currency_ID);
+      }
       Status = postLogic(i, conn, con, vars, m_as[i]);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("AcctServer - Post - After postLogic");
-      if (!Status.equals(STATUS_Posted))
+      }
+      if (!Status.equals(STATUS_Posted)) {
         return false;
+      }
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AcctServer - Post - Before the postCommit - C_CURRENCY_ID = " + C_Currency_ID);
-    for (int i = 0; i < m_fact.length; i++)
-      if (m_fact[i] != null && (m_fact[i].getLines() == null || m_fact[i].getLines().length == 0))
+    }
+    for (int i = 0; i < m_fact.length; i++) {
+      if (m_fact[i] != null && (m_fact[i].getLines() == null || m_fact[i].getLines().length == 0)) {
         return false;
+      }
+    }
     // commitFact
     Status = postCommit(Status, conn, vars, con);
 
     // dispose facts
-    for (int i = 0; i < m_fact.length; i++)
-      if (m_fact[i] != null)
+    for (int i = 0; i < m_fact.length; i++) {
+      if (m_fact[i] != null) {
         m_fact[i].dispose();
+      }
+    }
     p_lines = null;
     return Status.equals(STATUS_Posted);
   } // post
@@ -842,8 +875,8 @@ public abstract class AcctServer {
    */
   private final String postCommit(String status, ConnectionProvider conn, VariablesSecureApp vars,
       Connection con) throws ServletException {
-    log4j.debug("AcctServer - postCommit Sta=" + status + " DT=" + DocumentType + " ID="
-        + Record_ID);
+    log4j.debug(
+        "AcctServer - postCommit Sta=" + status + " DT=" + DocumentType + " ID=" + Record_ID);
     Status = status;
     try {
       // *** Transaction Start ***
@@ -852,9 +885,9 @@ public abstract class AcctServer {
         if (m_fact != null && m_fact.length != 0) {
           log4j.debug("AcctServer - postCommit - m_fact.length = " + m_fact.length);
           for (int i = 0; i < m_fact.length; i++) {
-            if (m_fact[i] != null && m_fact[i].save(con, conn, vars))
+            if (m_fact[i] != null && m_fact[i].save(con, conn, vars)) {
               ;
-            else {
+            } else {
               // conn.releaseRollbackConnection(con);
               unlock(conn);
               Status = AcctServer.STATUS_Error;
@@ -925,8 +958,9 @@ public abstract class AcctServer {
 
   public boolean loadDocument(FieldProvider[] data, boolean force, ConnectionProvider conn,
       Connection con) {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("loadDocument " + data.length);
+    }
 
     setStatus(STATUS_NotPosted);
     Name = "";
@@ -956,46 +990,58 @@ public abstract class AcctServer {
     ChargeAmt = data[0].getField("ChargeAmt");
     C_BankAccount_ID = data[0].getField("C_BankAccount_ID");
     FIN_Financial_Account_ID = data[0].getField("FIN_Financial_Account_ID");
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AcctServer - loadDocument - C_BankAccount_ID : " + C_BankAccount_ID);
+    }
     Posted = data[0].getField("Posted");
-    if (!loadDocumentDetails(data, conn))
+    if (!loadDocumentDetails(data, conn)) {
       loadDocumentType();
+    }
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - loadDocument - DocumentDetails Loaded");
-    if ((DateAcct == null || DateAcct.equals("")) && (DateDoc != null && !DateDoc.equals("")))
+    if ((DateAcct == null || DateAcct.equals("")) && (DateDoc != null && !DateDoc.equals(""))) {
       DateAcct = DateDoc;
-    else if ((DateDoc == null || DateDoc.equals("")) && (DateAcct != null && !DateAcct.equals("")))
+    } else if ((DateDoc == null || DateDoc.equals(""))
+        && (DateAcct != null && !DateAcct.equals(""))) {
       DateDoc = DateAcct;
+    }
     // DocumentNo (or Name)
-    if (DocumentNo == null || DocumentNo.length() == 0)
+    if (DocumentNo == null || DocumentNo.length() == 0) {
       DocumentNo = Name;
-    // if (DocumentNo == null || DocumentNo.length() ==
-    // 0)(DateDoc.equals("") && !DateAcct.equals(""))
-    // DocumentNo = "";
+      // if (DocumentNo == null || DocumentNo.length() ==
+      // 0)(DateDoc.equals("") && !DateAcct.equals(""))
+      // DocumentNo = "";
+    }
 
     // Check Mandatory Info
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - loadDocument - C_Currency_ID : " +
     // C_Currency_ID);
     String error = "";
-    if (AD_Table_ID == null || AD_Table_ID.equals(""))
+    if (AD_Table_ID == null || AD_Table_ID.equals("")) {
       error += " AD_Table_ID";
-    if (Record_ID == null || Record_ID.equals(""))
+    }
+    if (Record_ID == null || Record_ID.equals("")) {
       error += " Record_ID";
-    if (AD_Client_ID == null || AD_Client_ID.equals(""))
+    }
+    if (AD_Client_ID == null || AD_Client_ID.equals("")) {
       error += " AD_Client_ID";
-    if (AD_Org_ID == null || AD_Org_ID.equals(""))
+    }
+    if (AD_Org_ID == null || AD_Org_ID.equals("")) {
       error += " AD_Org_ID";
-    if (C_Currency_ID == null || C_Currency_ID.equals(""))
+    }
+    if (C_Currency_ID == null || C_Currency_ID.equals("")) {
       error += " C_Currency_ID";
-    if (DateAcct == null || DateAcct.equals(""))
+    }
+    if (DateAcct == null || DateAcct.equals("")) {
       error += " DateAcct";
-    if (DateDoc == null || DateDoc.equals(""))
+    }
+    if (DateDoc == null || DateDoc.equals("")) {
       error += " DateDoc";
+    }
     if (error.length() > 0) {
-      log4j.warn("AcctServer - loadDocument - " + DocumentNo + " - Mandatory info missing: "
-          + error);
+      log4j.warn(
+          "AcctServer - loadDocument - " + DocumentNo + " - Mandatory info missing: " + error);
       return false;
     }
     try {
@@ -1056,8 +1102,9 @@ public abstract class AcctServer {
           IsReturn = data[0].isreturn;
         }
       }
-      if (!supressWarnings && DocumentType != null && DocumentType.equals(""))
+      if (!supressWarnings && DocumentType != null && DocumentType.equals("")) {
         log4j.warn("AcctServer - loadDocumentType - No DocType for GL Info");
+      }
       if (GL_Category_ID != null && GL_Category_ID.equals("")) {
         AcctServerData[] data = AcctServerData.selectDefaultGLCategory(connectionProvider,
             AD_Client_ID);
@@ -1067,12 +1114,13 @@ public abstract class AcctServer {
       log4j.warn(e);
       e.printStackTrace();
     }
-    if (GL_Category_ID != null && GL_Category_ID.equals(""))
+    if (GL_Category_ID != null && GL_Category_ID.equals("")) {
       log4j.warn("AcctServer - loadDocumentType - No GL Info");
-    // if (log4j.isDebugEnabled())
-    // log4j.debug("AcctServer - loadDocumentType -" + tableName + "_ID : "
-    // + Record_ID + " - C_DocType_ID: " + C_DocType_ID +
-    // " - DocumentType: " + DocumentType);
+      // if (log4j.isDebugEnabled())
+      // log4j.debug("AcctServer - loadDocumentType -" + tableName + "_ID : "
+      // + Record_ID + " - C_DocType_ID: " + C_DocType_ID +
+      // " - DocumentType: " + DocumentType);
+    }
   }
 
   /**
@@ -1097,27 +1145,30 @@ public abstract class AcctServer {
   private final String postLogic(int index, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars, AcctSchema as) throws ServletException {
     // rejectUnbalanced
-    if (!m_as[index].isSuspenseBalancing() && !isBalanced())
+    if (!m_as[index].isSuspenseBalancing() && !isBalanced()) {
       return STATUS_NotBalanced;
+    }
 
     // rejectUnconvertible
-    if (!isConvertible(m_as[index], conn))
+    if (!isConvertible(m_as[index], conn)) {
       return STATUS_NotConvertible;
+    }
 
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Before isPeriodOpen");
     // rejectPeriodClosed
-    if (!isPeriodOpen())
+    if (!isPeriodOpen()) {
       return STATUS_PeriodClosed;
-    // if (log4j.isDebugEnabled())
-    // log4j.debug("AcctServer - After isPeriodOpen");
+      // if (log4j.isDebugEnabled())
+      // log4j.debug("AcctServer - After isPeriodOpen");
+    }
 
     // createFacts
     try {
       m_fact[index] = createFact(m_as[index], conn, con, vars);
     } catch (OBException e) {
-      log4j.warn(
-          "Accounting process failed. RecordID: " + Record_ID + " - TableId: " + AD_Table_ID, e);
+      log4j.warn("Accounting process failed. RecordID: " + Record_ID + " - TableId: " + AD_Table_ID,
+          e);
       String strMessageError = e.getMessage();
       if (strMessageError.indexOf("") != -1) {
         if (messageResult == null
@@ -1134,14 +1185,16 @@ public abstract class AcctServer {
       }
       return STATUS_Error;
     } catch (Exception e) {
-      log4j.warn(
-          "Accounting process failed. RecordID: " + Record_ID + " - TableId: " + AD_Table_ID, e);
+      log4j.warn("Accounting process failed. RecordID: " + Record_ID + " - TableId: " + AD_Table_ID,
+          e);
       return STATUS_Error;
     }
-    if (!Status.equals(STATUS_NotPosted))
+    if (!Status.equals(STATUS_NotPosted)) {
       return Status;
-    if (m_fact[index] == null)
+    }
+    if (m_fact[index] == null) {
       return STATUS_Error;
+    }
     Status = STATUS_PostPrepared;
 
     // Distinguish multi-currency Documents
@@ -1149,22 +1202,25 @@ public abstract class AcctServer {
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Before balanceSource");
     // balanceSource
-    if (!MultiCurrency && !m_fact[index].isSourceBalanced())
+    if (!MultiCurrency && !m_fact[index].isSourceBalanced()) {
       m_fact[index].balanceSource(conn);
-    // if (log4j.isDebugEnabled())
-    // log4j.debug("AcctServer - After balanceSource");
+      // if (log4j.isDebugEnabled())
+      // log4j.debug("AcctServer - After balanceSource");
+    }
 
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Before isSegmentBalanced");
     // balanceSegments
-    if (!MultiCurrency && !m_fact[index].isSegmentBalanced(conn))
+    if (!MultiCurrency && !m_fact[index].isSegmentBalanced(conn)) {
       m_fact[index].balanceSegments(conn);
-    // if (log4j.isDebugEnabled())
-    // log4j.debug("AcctServer - After isSegmentBalanced");
+      // if (log4j.isDebugEnabled())
+      // log4j.debug("AcctServer - After isSegmentBalanced");
+    }
 
     // balanceAccounting
-    if (!m_fact[index].isAcctBalanced())
+    if (!m_fact[index].isAcctBalanced()) {
       m_fact[index].balanceAccounting(conn);
+    }
 
     // Here processes defined to be executed at posting time, when existing, will be executed
     AcctServerData[] data = AcctServerData.selectAcctProcess(conn, as.m_C_AcctSchema_ID);
@@ -1173,7 +1229,8 @@ public abstract class AcctServer {
       if (!strClassname.equals("")) {
         try {
           AcctProcessTemplate newTemplate = (AcctProcessTemplate) Class.forName(strClassname)
-              .getDeclaredConstructor().newInstance();
+              .getDeclaredConstructor()
+              .newInstance();
           if (!newTemplate.execute(this, as, conn, con, vars)) {
             OBDal.getInstance().rollbackAndClose();
             return getStatus();
@@ -1184,8 +1241,9 @@ public abstract class AcctServer {
         }
       }
     }
-    if (messageResult != null)
+    if (messageResult != null) {
       return getStatus();
+    }
     return STATUS_Posted;
   } // postLogic
 
@@ -1196,15 +1254,18 @@ public abstract class AcctServer {
    */
   public boolean isBalanced() {
     // Multi-Currency documents are source balanced by definition
-    if (MultiCurrency)
+    if (MultiCurrency) {
       return true;
+    }
     //
     boolean retValue = (getBalance().compareTo(ZERO) == 0);
     if (retValue) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("AcctServer - isBalanced - " + DocumentNo);
-    } else
+      }
+    } else {
       log4j.warn("AcctServer - is not Balanced - " + DocumentNo);
+    }
     return retValue;
   } // isBalanced
 
@@ -1228,8 +1289,9 @@ public abstract class AcctServer {
     set.addElement(C_Currency_ID);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       String currency = p_lines[i].m_C_Currency_ID;
-      if (currency != null && !currency.equals(""))
+      if (currency != null && !currency.equals("")) {
         set.addElement(currency);
+      }
     }
 
     // just one and the same
@@ -1244,8 +1306,9 @@ public abstract class AcctServer {
       // if (log4j.isDebugEnabled()) log4j.debug
       // ("AcctServer - get currency");
       String currency = (String) set.elementAt(i);
-      if (currency == null)
+      if (currency == null) {
         currency = "";
+      }
       // if (log4j.isDebugEnabled()) log4j.debug
       // ("AcctServer - currency = " + currency);
       if (!currency.equals(acctSchema.m_C_Currency_ID)) {
@@ -1255,25 +1318,23 @@ public abstract class AcctServer {
         OBQuery<ConversionRateDoc> conversionQuery = null;
         int conversionCount = 0;
         if (AD_Table_ID.equals(TABLEID_Invoice)) {
-          conversionQuery = OBDal.getInstance().createQuery(
-              ConversionRateDoc.class,
-              "invoice = '" + Record_ID + "' and currency='" + currency + "' and toCurrency='"
-                  + acctSchema.m_C_Currency_ID + "'");
+          conversionQuery = OBDal.getInstance()
+              .createQuery(ConversionRateDoc.class, "invoice = '" + Record_ID + "' and currency='"
+                  + currency + "' and toCurrency='" + acctSchema.m_C_Currency_ID + "'");
         } else if (AD_Table_ID.equals(TABLEID_Payment)) {
-          conversionQuery = OBDal.getInstance().createQuery(
-              ConversionRateDoc.class,
-              "payment = '" + Record_ID + "' and currency='" + currency + "' and toCurrency='"
-                  + acctSchema.m_C_Currency_ID + "'");
+          conversionQuery = OBDal.getInstance()
+              .createQuery(ConversionRateDoc.class, "payment = '" + Record_ID + "' and currency='"
+                  + currency + "' and toCurrency='" + acctSchema.m_C_Currency_ID + "'");
         } else if (AD_Table_ID.equals(TABLEID_Transaction)) {
-          conversionQuery = OBDal.getInstance().createQuery(
-              ConversionRateDoc.class,
-              "financialAccountTransaction = '" + Record_ID + "' and currency='" + currency
-                  + "' and toCurrency='" + acctSchema.m_C_Currency_ID + "'");
+          conversionQuery = OBDal.getInstance()
+              .createQuery(ConversionRateDoc.class,
+                  "financialAccountTransaction = '" + Record_ID + "' and currency='" + currency
+                      + "' and toCurrency='" + acctSchema.m_C_Currency_ID + "'");
         } else if (AD_Table_ID.equals(TABLEID_GLJournal)) {
-          conversionQuery = OBDal.getInstance().createQuery(
-              ConversionRateDoc.class,
-              "journalEntry = '" + Record_ID + "' and currency='" + currency + "' and toCurrency='"
-                  + acctSchema.m_C_Currency_ID + "'");
+          conversionQuery = OBDal.getInstance()
+              .createQuery(ConversionRateDoc.class,
+                  "journalEntry = '" + Record_ID + "' and currency='" + currency
+                      + "' and toCurrency='" + acctSchema.m_C_Currency_ID + "'");
         }
         if (conversionQuery != null) {
           conversionCount = conversionQuery.count();
@@ -1290,23 +1351,25 @@ public abstract class AcctServer {
               List<Currency> toCurrency = currencyCrit.list();
               precision = toCurrency.get(0).getStandardPrecision();
             }
-            BigDecimal convertedAmount = new BigDecimal("1").multiply(conversionRate.get(0)
-                .getRate());
+            BigDecimal convertedAmount = new BigDecimal("1")
+                .multiply(conversionRate.get(0).getRate());
             amt = convertedAmount.setScale(precision.intValue(), RoundingMode.HALF_UP).toString();
           }
         } finally {
           OBContext.restorePreviousMode();
         }
-        if (("").equals(amt) || amt == null)
+        if (("").equals(amt) || amt == null) {
           amt = getConvertedAmt("1", currency, acctSchema.m_C_Currency_ID, DateAcct,
               acctSchema.m_CurrencyRateType, AD_Client_ID, AD_Org_ID, conn);
+        }
         // if (log4j.isDebugEnabled()) log4j.debug
         // ("get converted amount (end)");
         if (amt == null || ("").equals(amt)) {
           convertible = false;
           log4j.warn("AcctServer - isConvertible NOT from " + currency + " - " + DocumentNo);
-        } else if (log4j.isDebugEnabled())
+        } else if (log4j.isDebugEnabled()) {
           log4j.debug("AcctServer - isConvertible from " + currency);
+        }
       }
     }
     // if (log4j.isDebugEnabled()) log4j.debug
@@ -1323,8 +1386,9 @@ public abstract class AcctServer {
    * @return Amount
    */
   public String getAmount(int AmtType) {
-    if (AmtType < 0 || Amounts == null || AmtType >= Amounts.length)
+    if (AmtType < 0 || Amounts == null || AmtType >= Amounts.length) {
       return null;
+    }
     return (Amounts[AmtType].equals("")) ? "0" : Amounts[AmtType];
   } // getAmount
 
@@ -1354,8 +1418,9 @@ public abstract class AcctServer {
    */
   public static String getConvertedAmt(String Amt, String CurFrom_ID, String CurTo_ID,
       String ConvDate, String RateType, ConnectionProvider conn) {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AcctServer - getConvertedAmount no client nor org");
+    }
     return getConvertedAmt(Amt, CurFrom_ID, CurTo_ID, ConvDate, RateType, "", "", conn);
   }
 
@@ -1363,24 +1428,28 @@ public abstract class AcctServer {
       String ConvDate, String RateType, String client, String org, ConnectionProvider conn) {
     String localRateType = RateType;
     String localConvDate = ConvDate;
-    if (log4j.isDebugEnabled())
-      log4j
-          .debug("AcctServer - getConvertedAmount - starting method - Amt : " + Amt
-              + " - CurFrom_ID : " + CurFrom_ID + " - CurTo_ID : " + CurTo_ID + "- ConvDate: "
-              + localConvDate + " - RateType:" + localRateType + " - client:" + client + "- org:"
-              + org);
-    if (Amt.equals(""))
+    if (log4j.isDebugEnabled()) {
+      log4j.debug(
+          "AcctServer - getConvertedAmount - starting method - Amt : " + Amt + " - CurFrom_ID : "
+              + CurFrom_ID + " - CurTo_ID : " + CurTo_ID + "- ConvDate: " + localConvDate
+              + " - RateType:" + localRateType + " - client:" + client + "- org:" + org);
+    }
+    if (Amt.equals("")) {
       throw new IllegalArgumentException(
           "AcctServer - getConvertedAmt - required parameter missing - Amt");
-    if (CurFrom_ID.equals(CurTo_ID) || Amt.equals("0"))
+    }
+    if (CurFrom_ID.equals(CurTo_ID) || Amt.equals("0")) {
       return Amt;
+    }
     AcctServerData[] data = null;
     try {
-      if (localConvDate != null && localConvDate.equals(""))
+      if (localConvDate != null && localConvDate.equals("")) {
         localConvDate = DateTimeData.today(conn);
+      }
       // ConvDate IN DATE
-      if (localRateType == null || localRateType.equals(""))
+      if (localRateType == null || localRateType.equals("")) {
         localRateType = "S";
+      }
       data = AcctServerData.currencyConvert(conn, Amt, CurFrom_ID, CurTo_ID, localConvDate,
           localRateType, client, org);
     } catch (ServletException e) {
@@ -1394,8 +1463,9 @@ public abstract class AcctServer {
        */
       return "";
     } else {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("getConvertedAmount - converted:" + data[0].converted);
+      }
       return data[0].converted;
     }
   } // getConvertedAmt
@@ -1404,15 +1474,18 @@ public abstract class AcctServer {
       String RateType, String client, String org, ConnectionProvider conn) {
     String localRateType = RateType;
     String localConvDate = ConvDate;
-    if (CurFrom_ID.equals(CurTo_ID))
+    if (CurFrom_ID.equals(CurTo_ID)) {
       return BigDecimal.ONE;
+    }
     AcctServerData[] data = null;
     try {
-      if (localConvDate != null && localConvDate.equals(""))
+      if (localConvDate != null && localConvDate.equals("")) {
         localConvDate = DateTimeData.today(conn);
+      }
       // ConvDate IN DATE
-      if (localRateType == null || localRateType.equals(""))
+      if (localRateType == null || localRateType.equals("")) {
         localRateType = "S";
+      }
       data = AcctServerData.currencyConvertionRate(conn, CurFrom_ID, CurTo_ID, localConvDate,
           localRateType, client, org);
     } catch (ServletException e) {
@@ -1423,8 +1496,9 @@ public abstract class AcctServer {
       log4j.error("No conversion ratio");
       return BigDecimal.ZERO;
     } else {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("getConvertionRate - rate:" + data[0].converted);
+      }
       return new BigDecimal(data[0].converted);
     }
   } // getConvertedAmt
@@ -1442,8 +1516,9 @@ public abstract class AcctServer {
     setC_Period_ID();
     boolean open = (!C_Period_ID.equals(""));
     if (open) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("AcctServer - isPeriodOpen - " + DocumentNo);
+      }
     } else {
       log4j.warn("AcctServer - isPeriodOpen NO - " + DocumentNo);
     }
@@ -1454,29 +1529,33 @@ public abstract class AcctServer {
    * Calculate Period ID. Set to -1 if no period open, 0 if no period control
    */
   public void setC_Period_ID() {
-    if (C_Period_ID != null)
+    if (C_Period_ID != null) {
       return;
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AcctServer - setC_Period_ID - AD_Client_ID - " + AD_Client_ID + "--DateAcct - "
           + DateAcct + "--DocumentType -" + DocumentType);
+    }
     AcctServerData[] data = null;
     try {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("setC_Period_ID - inside try - AD_Client_ID - " + AD_Client_ID
             + " -- DateAcct - " + DateAcct + " -- DocumentType - " + DocumentType);
+      }
 
-      String strOrgCalendarOwner = OBContext
-          .getOBContext()
+      String strOrgCalendarOwner = OBContext.getOBContext()
           .getOrganizationStructureProvider(AD_Client_ID)
           .getPeriodControlAllowedOrganization(
-              OBDal.getInstance().get(Organization.class, AD_Org_ID)).getId();
+              OBDal.getInstance().get(Organization.class, AD_Org_ID))
+          .getId();
       data = AcctServerData.selectPeriodOpen(connectionProvider, AD_Client_ID, DocumentType,
           strOrgCalendarOwner, DateAcct);
       C_Period_ID = data[0].period;
 
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("AcctServer - setC_Period_ID - " + AD_Client_ID + "/" + DateAcct + "/"
             + DocumentType + " => " + C_Period_ID);
+      }
     } catch (ServletException e) {
       log4j.warn(e);
       e.printStackTrace();
@@ -1517,8 +1596,9 @@ public abstract class AcctServer {
         BigDecimal qty1 = new BigDecimal(data[i].qty1);
         BigDecimal qty2 = new BigDecimal(data[i].qty2);
         BigDecimal qty = qty1.min(qty2);
-        if (qty.toString().equals("0"))
+        if (qty.toString().equals("0")) {
           continue;
+        }
         // if (log4j.isDebugEnabled())
         // log4j.debug("AcctServer - Match--dateTrx1 :->" + data[i].datetrx1
         // + "Match--dateTrx2: ->" + data[i].datetrx2);
@@ -1532,8 +1612,9 @@ public abstract class AcctServer {
           e.printStackTrace();
         }
         String DateTrx = dateTrx1;
-        if (compare.equals("-1"))
+        if (compare.equals("-1")) {
           DateTrx = dateTrx2;
+        }
         //
         String strQty = qty.toString();
         String strDateTrx = DateTrx;
@@ -1544,8 +1625,9 @@ public abstract class AcctServer {
         String mProductId = data[i].mProductId;
         //
         if (createMatchInv(adClientId, adOrgId, M_InOutLine_ID, C_InvoiceLine_ID, mProductId,
-            strDateTrx, strQty, vars, conn, con) == 1)
+            strDateTrx, strQty, vars, conn, con) == 1) {
           counter++;
+        }
       }
     } catch (ServletException e) {
       log4j.warn(e);
@@ -1624,14 +1706,15 @@ public abstract class AcctServer {
         int cmp = AMT.compareTo(BigDecimal.ZERO);
         // if (log4j.isDebugEnabled())
         // log4j.debug("AcctServer - ******************* CMP: " + cmp);
-        if (cmp == 0)
+        if (cmp == 0) {
           return null;
-        else if (cmp < 0)
+        } else if (cmp < 0) {
           data = AcctServerData.selectExpenseAcct(conn, C_Charge_ID, as.getC_AcctSchema_ID());
-        else
+        } else {
           data = AcctServerData.selectRevenueAcct(conn, C_Charge_ID, as.getC_AcctSchema_ID());
-        // if (log4j.isDebugEnabled())
-        // log4j.debug("AcctServer - *******************************getAccount 2");
+          // if (log4j.isDebugEnabled())
+          // log4j.debug("AcctServer - *******************************getAccount 2");
+        }
       } else if (AcctType.equals(ACCTTYPE_V_Liability)) {
         data = AcctServerData.selectLiabilityAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_V_Liability_Services)) {
@@ -1678,11 +1761,11 @@ public abstract class AcctServer {
       } else if (AcctType.equals(ACCTTYPE_BankAsset)) {
         data = AcctServerData.selectAssetAcct(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_InterestRev)) {
-        data = AcctServerData
-            .selectInterestRevAcct(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
+        data = AcctServerData.selectInterestRevAcct(conn, C_BankAccount_ID,
+            as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_InterestExp)) {
-        data = AcctServerData
-            .selectInterestExpAcct(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
+        data = AcctServerData.selectInterestExpAcct(conn, C_BankAccount_ID,
+            as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_CashAsset)) {
         /** Account Type - Cash */
         data = AcctServerData.selectCBAssetAcct(conn, C_CashBook_ID, as.getC_AcctSchema_ID());
@@ -1698,9 +1781,10 @@ public abstract class AcctServer {
         /** Inventory Accounts */
         data = AcctServerData.selectWDifferencesAcct(conn, M_Warehouse_ID, as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_NotInvoicedReceipts)) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("AcctServer - getAccount - ACCTYPE_NotInvoicedReceipts - C_BPartner_ID - "
               + C_BPartner_ID);
+        }
         data = AcctServerData.selectNotInvoicedReceiptsAcct(conn, C_BPartner_ID,
             as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_ProjectAsset)) {
@@ -1725,8 +1809,9 @@ public abstract class AcctServer {
     String Account_ID = "";
     if (data != null && data.length != 0) {
       Account_ID = data[0].accountId;
-    } else
+    } else {
       return null;
+    }
     // No account
     if (Account_ID.equals("")) {
       log4j.warn("AcctServer - getAccount - NO account Type=" + AcctType + ", Record=" + Record_ID);
@@ -1783,8 +1868,8 @@ public abstract class AcctServer {
           whereClause.append(" where cuscata.businessPartnerCategory.id = :bpCategoryID");
           whereClause.append(" and cuscata.accountingSchema.id = :acctSchemaID");
 
-          final OBQuery<CategoryAccounts> obqParameters = OBDal.getInstance().createQuery(
-              CategoryAccounts.class, whereClause.toString());
+          final OBQuery<CategoryAccounts> obqParameters = OBDal.getInstance()
+              .createQuery(CategoryAccounts.class, whereClause.toString());
           obqParameters.setFilterOnReadableClients(false);
           obqParameters.setFilterOnReadableOrganization(false);
           obqParameters.setNamedParameter("bpCategoryID", bp.getBusinessPartnerCategory().getId());
@@ -1798,12 +1883,11 @@ public abstract class AcctServer {
             Map<String, String> parameters = new HashMap<String, String>();
             parameters.put("Account", "@DoubtfulDebt@");
             parameters.put("Entity", bp.getBusinessPartnerCategory().getIdentifier());
-            parameters.put(
-                "AccountingSchema",
-                OBDal
-                    .getInstance()
+            parameters.put("AccountingSchema",
+                OBDal.getInstance()
                     .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-                        as.getC_AcctSchema_ID()).getIdentifier());
+                        as.getC_AcctSchema_ID())
+                    .getIdentifier());
             setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
             throw new IllegalStateException();
           }
@@ -1815,8 +1899,8 @@ public abstract class AcctServer {
         whereClause.append(" and cusa.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
         whereClause.append(" and (cusa.status is null or cusa.status = 'DE')");
 
-        final OBQuery<CustomerAccounts> obqParameters = OBDal.getInstance().createQuery(
-            CustomerAccounts.class, whereClause.toString());
+        final OBQuery<CustomerAccounts> obqParameters = OBDal.getInstance()
+            .createQuery(CustomerAccounts.class, whereClause.toString());
         obqParameters.setFilterOnReadableClients(false);
         obqParameters.setFilterOnReadableOrganization(false);
         final List<CustomerAccounts> customerAccounts = obqParameters.list();
@@ -1836,8 +1920,8 @@ public abstract class AcctServer {
         whereClause.append(" and vena.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
         whereClause.append(" and (vena.status is null or vena.status = 'DE')");
 
-        final OBQuery<VendorAccounts> obqParameters = OBDal.getInstance().createQuery(
-            VendorAccounts.class, whereClause.toString());
+        final OBQuery<VendorAccounts> obqParameters = OBDal.getInstance()
+            .createQuery(VendorAccounts.class, whereClause.toString());
         obqParameters.setFilterOnReadableClients(false);
         obqParameters.setFilterOnReadableOrganization(false);
         final List<VendorAccounts> vendorAccounts = obqParameters.list();
@@ -1852,19 +1936,18 @@ public abstract class AcctServer {
       }
       if (strValidCombination.equals("")) {
         Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put("Account", isReceipt ? (isPrepayment ? "@CustomerPrepayment@"
-            : "@CustomerReceivables@")
-            : (isPrepayment ? "@VendorPrepayment@" : "@VendorLiability@"));
+        parameters.put("Account",
+            isReceipt ? (isPrepayment ? "@CustomerPrepayment@" : "@CustomerReceivables@")
+                : (isPrepayment ? "@VendorPrepayment@" : "@VendorLiability@"));
         BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, cBPartnerId);
         if (bp != null) {
           parameters.put("Entity", bp.getIdentifier());
         }
-        parameters.put(
-            "AccountingSchema",
-            OBDal
-                .getInstance()
+        parameters.put("AccountingSchema",
+            OBDal.getInstance()
                 .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-                    as.getC_AcctSchema_ID()).getIdentifier());
+                    as.getC_AcctSchema_ID())
+                .getIdentifier());
         setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
@@ -1898,8 +1981,8 @@ public abstract class AcctServer {
     whereClause.append(" where cuscata.businessPartnerCategory.id = :bpCategoryID");
     whereClause.append(" and cuscata.accountingSchema.id = :acctSchemaID");
 
-    final OBQuery<CategoryAccounts> obqParameters = OBDal.getInstance().createQuery(
-        CategoryAccounts.class, whereClause.toString());
+    final OBQuery<CategoryAccounts> obqParameters = OBDal.getInstance()
+        .createQuery(CategoryAccounts.class, whereClause.toString());
     obqParameters.setFilterOnReadableClients(false);
     obqParameters.setFilterOnReadableOrganization(false);
     obqParameters.setNamedParameter("bpCategoryID", bp.getBusinessPartnerCategory().getId());
@@ -1920,12 +2003,11 @@ public abstract class AcctServer {
         parameters.put("Account", "@BadDebtRevenueAccount@");
       }
       parameters.put("Entity", bp.getBusinessPartnerCategory().getIdentifier());
-      parameters.put(
-          "AccountingSchema",
-          OBDal
-              .getInstance()
+      parameters.put("AccountingSchema",
+          OBDal.getInstance()
               .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-                  as.getC_AcctSchema_ID()).getIdentifier());
+                  as.getC_AcctSchema_ID())
+              .getIdentifier());
       setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
       throw new IllegalStateException();
     }
@@ -1954,8 +2036,8 @@ public abstract class AcctServer {
     whereClause.append(" where cuscata.businessPartnerCategory.id = :bpCategoryID");
     whereClause.append(" and cuscata.accountingSchema.id = :acctSchemaID");
 
-    final OBQuery<CategoryAccounts> obqParameters = OBDal.getInstance().createQuery(
-        CategoryAccounts.class, whereClause.toString());
+    final OBQuery<CategoryAccounts> obqParameters = OBDal.getInstance()
+        .createQuery(CategoryAccounts.class, whereClause.toString());
     obqParameters.setFilterOnReadableClients(false);
     obqParameters.setFilterOnReadableOrganization(false);
     obqParameters.setNamedParameter("bpCategoryID", bp.getBusinessPartnerCategory().getId());
@@ -1969,12 +2051,11 @@ public abstract class AcctServer {
       Map<String, String> parameters = new HashMap<String, String>();
       parameters.put("Account", "@AllowanceForDoubtfulDebtAccount@");
       parameters.put("Entity", bp.getBusinessPartnerCategory().getIdentifier());
-      parameters.put(
-          "AccountingSchema",
-          OBDal
-              .getInstance()
+      parameters.put("AccountingSchema",
+          OBDal.getInstance()
               .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-                  as.getC_AcctSchema_ID()).getIdentifier());
+                  as.getC_AcctSchema_ID())
+              .getIdentifier());
       setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
       throw new IllegalStateException();
     }
@@ -1992,21 +2073,22 @@ public abstract class AcctServer {
       OBCriteria<GLItemAccounts> accounts = OBDal.getInstance()
           .createCriteria(GLItemAccounts.class);
       accounts.add(Restrictions.eq(GLItemAccounts.PROPERTY_GLITEM, glItem));
-      accounts.add(Restrictions.eq(
-          GLItemAccounts.PROPERTY_ACCOUNTINGSCHEMA,
-          OBDal.getInstance().get(
-              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-              as.m_C_AcctSchema_ID)));
+      accounts.add(Restrictions.eq(GLItemAccounts.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance()
+              .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+                  as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(GLItemAccounts.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
       accounts.setFilterOnReadableOrganization(false);
       List<GLItemAccounts> accountList = accounts.list();
-      if (accountList == null || accountList.size() == 0)
+      if (accountList == null || accountList.size() == 0) {
         return null;
-      if (bIsReceipt)
+      }
+      if (bIsReceipt) {
         account = new Account(conn, accountList.get(0).getGlitemCreditAcct().getId());
-      else
+      } else {
         account = new Account(conn, accountList.get(0).getGlitemDebitAcct().getId());
+      }
     } finally {
       OBContext.restorePreviousMode();
       if (account == null) {
@@ -2015,12 +2097,11 @@ public abstract class AcctServer {
         if (glItem != null) {
           parameters.put("Entity", glItem.getIdentifier());
         }
-        parameters.put(
-            "AccountingSchema",
-            OBDal
-                .getInstance()
+        parameters.put("AccountingSchema",
+            OBDal.getInstance()
                 .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-                    as.getC_AcctSchema_ID()).getIdentifier());
+                    as.getC_AcctSchema_ID())
+                .getIdentifier());
         setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
@@ -2033,20 +2114,20 @@ public abstract class AcctServer {
     Account account = null;
     OBContext.setAdminMode();
     try {
-      OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
-          FIN_FinancialAccountAccounting.class);
+      OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance()
+          .createCriteria(FIN_FinancialAccountAccounting.class);
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Restrictions.eq(
-          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
-          OBDal.getInstance().get(
-              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-              as.m_C_AcctSchema_ID)));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance()
+              .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+                  as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
       accounts.setFilterOnReadableOrganization(false);
       List<FIN_FinancialAccountAccounting> accountList = accounts.list();
-      if (accountList == null || accountList.size() == 0)
+      if (accountList == null || accountList.size() == 0) {
         return account;
+      }
       account = new Account(conn, accountList.get(0).getFINBankfeeAcct().getId());
     } finally {
       OBContext.restorePreviousMode();
@@ -2056,12 +2137,11 @@ public abstract class AcctServer {
         if (finAccount != null) {
           parameters.put("Entity", finAccount.getIdentifier());
         }
-        parameters.put(
-            "AccountingSchema",
-            OBDal
-                .getInstance()
+        parameters.put("AccountingSchema",
+            OBDal.getInstance()
                 .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-                    as.getC_AcctSchema_ID()).getIdentifier());
+                    as.getC_AcctSchema_ID())
+                .getIdentifier());
         setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
@@ -2080,34 +2160,37 @@ public abstract class AcctServer {
     Account account = null;
     String strvalidCombination = "";
     try {
-      if ("INT".equals(use))
-        strvalidCombination = bIsReceipt ? financialAccountAccounting
-            .getInTransitPaymentAccountIN().getId() : financialAccountAccounting
-            .getFINOutIntransitAcct().getId();
-      else if ("DEP".equals(use))
+      if ("INT".equals(use)) {
+        strvalidCombination = bIsReceipt
+            ? financialAccountAccounting.getInTransitPaymentAccountIN().getId()
+            : financialAccountAccounting.getFINOutIntransitAcct().getId();
+      } else if ("DEP".equals(use)) {
         strvalidCombination = financialAccountAccounting.getDepositAccount().getId();
-      else if ("CLE".equals(use))
-        strvalidCombination = bIsReceipt ? financialAccountAccounting.getClearedPaymentAccount()
-            .getId() : financialAccountAccounting.getClearedPaymentAccountOUT().getId();
-      else if ("WIT".equals(use))
+      } else if ("CLE".equals(use)) {
+        strvalidCombination = bIsReceipt
+            ? financialAccountAccounting.getClearedPaymentAccount().getId()
+            : financialAccountAccounting.getClearedPaymentAccountOUT().getId();
+      } else if ("WIT".equals(use)) {
         strvalidCombination = financialAccountAccounting.getWithdrawalAccount().getId();
-      else
+      } else {
         return account;
+      }
       account = new Account(conn, strvalidCombination);
     } finally {
       OBContext.restorePreviousMode();
       if (account == null) {
         Map<String, String> parameters = new HashMap<String, String>();
-        String strAccount = bIsReceipt ? ("INT".equals(use) ? "@InTransitPaymentAccountIN@"
-            : ("DEP".equals(use) ? "@DepositAccount@" : "@ClearedPaymentAccount@")) : ("INT"
-            .equals(use) ? "@InTransitPaymentAccountOUT@"
-            : ("CLE".equals(use) ? "@ClearedPaymentAccountOUT@" : "@WithdrawalAccount@"));
+        String strAccount = bIsReceipt
+            ? ("INT".equals(use) ? "@InTransitPaymentAccountIN@"
+                : ("DEP".equals(use) ? "@DepositAccount@" : "@ClearedPaymentAccount@"))
+            : ("INT".equals(use) ? "@InTransitPaymentAccountOUT@"
+                : ("CLE".equals(use) ? "@ClearedPaymentAccountOUT@" : "@WithdrawalAccount@"));
         parameters.put("Account", strAccount);
         if (financialAccountAccounting.getAccount() != null) {
           parameters.put("Entity", financialAccountAccounting.getAccount().getIdentifier());
         }
-        parameters.put("AccountingSchema", financialAccountAccounting.getAccountingSchema()
-            .getIdentifier());
+        parameters.put("AccountingSchema",
+            financialAccountAccounting.getAccountingSchema().getIdentifier());
         setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
         throw new IllegalStateException();
       }
@@ -2166,14 +2249,16 @@ public abstract class AcctServer {
   }
 
   public boolean checkDocuments(String dateFrom, String dateTo) throws ServletException {
-    if (m_as.length == 0)
+    if (m_as.length == 0) {
       return false;
+    }
     AcctServerData[] docTypes = AcctServerData.selectDocTypes(connectionProvider, AD_Table_ID,
         AD_Client_ID);
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - AcctSchema length-" + (this.m_as).length);
     final Set<String> orgSet = OBContext.getOBContext()
-        .getOrganizationStructureProvider(AD_Client_ID).getChildTree(AD_Org_ID, true);
+        .getOrganizationStructureProvider(AD_Client_ID)
+        .getChildTree(AD_Org_ID, true);
     String strorgs = Utility.getInStrSet(orgSet);
 
     for (int i = 0; i < docTypes.length; i++) {
@@ -2225,8 +2310,9 @@ public abstract class AcctServer {
     } else {
       // there is no session, getting context info from OBContext
       OBContext ctx = OBContext.getOBContext();
-      vars = new VariablesSecureApp(ctx.getUser().getId(), ctx.getCurrentClient().getId(), ctx
-          .getCurrentOrganization().getId(), ctx.getRole().getId(), ctx.getLanguage().getLanguage());
+      vars = new VariablesSecureApp(ctx.getUser().getId(), ctx.getCurrentClient().getId(),
+          ctx.getCurrentOrganization().getId(), ctx.getRole().getId(),
+          ctx.getLanguage().getLanguage());
     }
     setMessageResult(conn, vars, _strStatus, strMessageType, _parameters);
   }
@@ -2241,15 +2327,17 @@ public abstract class AcctServer {
     String strTitle = "";
     Map<String, String> parameters = _parameters != null ? _parameters
         : new HashMap<String, String>();
-    if (messageResult == null)
+    if (messageResult == null) {
       messageResult = new OBError();
-    if (strMessageType == null || strMessageType.equals(""))
+    }
+    if (strMessageType == null || strMessageType.equals("")) {
       messageResult.setType("Error");
-    else
+    } else {
       messageResult.setType(strMessageType);
-    if (strStatus.equals(STATUS_Error))
+    }
+    if (strStatus.equals(STATUS_Error)) {
       strTitle = "@ProcessRunError@";
-    else if (strStatus.equals(STATUS_DocumentLocked)) {
+    } else if (strStatus.equals(STATUS_DocumentLocked)) {
       strTitle = "@OtherPostingProcessActive@";
       messageResult.setType("Warning");
     } else if (strStatus.equals(STATUS_NotCalculatedCost)) {
@@ -2360,27 +2448,27 @@ public abstract class AcctServer {
 
   public ConversionRateDoc getConversionRateDoc(String table_ID, String record_ID,
       String curFrom_ID, String curTo_ID) {
-    OBCriteria<ConversionRateDoc> docRateCriteria = OBDal.getInstance().createCriteria(
-        ConversionRateDoc.class);
+    OBCriteria<ConversionRateDoc> docRateCriteria = OBDal.getInstance()
+        .createCriteria(ConversionRateDoc.class);
     docRateCriteria.setFilterOnReadableClients(false);
     docRateCriteria.setFilterOnReadableOrganization(false);
-    docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, OBDal.getInstance()
-        .get(Currency.class, curTo_ID)));
-    docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, OBDal.getInstance()
-        .get(Currency.class, curFrom_ID)));
+    docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY,
+        OBDal.getInstance().get(Currency.class, curTo_ID)));
+    docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY,
+        OBDal.getInstance().get(Currency.class, curFrom_ID)));
     if (record_ID != null) {
       if (table_ID.equals(TABLEID_Invoice)) {
-        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, OBDal.getInstance()
-            .get(Invoice.class, record_ID)));
+        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE,
+            OBDal.getInstance().get(Invoice.class, record_ID)));
       } else if (table_ID.equals(TABLEID_Payment)) {
-        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_PAYMENT, OBDal.getInstance()
-            .get(FIN_Payment.class, record_ID)));
+        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_PAYMENT,
+            OBDal.getInstance().get(FIN_Payment.class, record_ID)));
       } else if (table_ID.equals(TABLEID_Transaction)) {
         docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION,
             OBDal.getInstance().get(FIN_FinaccTransaction.class, record_ID)));
       } else if (table_ID.equals(TABLEID_GLJournal)) {
-        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_JOURNALENTRY, OBDal
-            .getInstance().get(GLJournal.class, record_ID)));
+        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_JOURNALENTRY,
+            OBDal.getInstance().get(GLJournal.class, record_ID)));
       } else {
         return null;
       }
@@ -2445,7 +2533,8 @@ public abstract class AcctServer {
       return _amount;
     }
     String conversionDate = acctDate;
-    String strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String strDateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
     ConversionRateDoc conversionRateDoc = getConversionRateDoc(table_ID, record_ID, currencyIDFrom,
@@ -2460,8 +2549,8 @@ public abstract class AcctServer {
       FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, record_ID);
       conversionDate = dateFormat.format(payment.getPaymentDate());
     } else if (table_ID.equals(TABLEID_Transaction)) {
-      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-          record_ID);
+      FIN_FinaccTransaction transaction = OBDal.getInstance()
+          .get(FIN_FinaccTransaction.class, record_ID);
       conversionDate = dateFormat.format(transaction.getDateAcct());
     }
     if (conversionRateDoc != null && record_ID != null) {
@@ -2497,8 +2586,8 @@ public abstract class AcctServer {
           && line instanceof DocLine_FINReconciliation) {
         transactionID = ((DocLine_FINReconciliation) line).getFinFinAccTransactionId();
       }
-      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-          transactionID);
+      FIN_FinaccTransaction transaction = OBDal.getInstance()
+          .get(FIN_FinaccTransaction.class, transactionID);
       conversionDate = dateFormat.format(transaction.getDateAcct());
       conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Transaction, transaction.getId(),
           currencyIDFrom, currencyIDTo);
@@ -2530,47 +2619,49 @@ public abstract class AcctServer {
         } else {
           throw new OBException("@NotConvertible@");
         }
-        if (amtTo.compareTo(BigDecimal.ZERO) != 0)
-          amtFromSourcecurrency = amtFrom.multiply(_amount).divide(amtTo, conversionRatePrecision,
-              RoundingMode.HALF_EVEN);
-        else
+        if (amtTo.compareTo(BigDecimal.ZERO) != 0) {
+          amtFromSourcecurrency = amtFrom.multiply(_amount)
+              .divide(amtTo, conversionRatePrecision, RoundingMode.HALF_EVEN);
+        } else {
           amtFromSourcecurrency = amtFrom;
+        }
       }
     }
     amtDiff = (amtTo).subtract(amtFrom);
     // Add differences related to Different rates for accounting among currencies
     // _amount * ((TrxRate *
     // AccountingRateCurrencyFromCurrencyTo)-AccountingRateCurrencyDocCurrencyTo)
-    amtDiff = amtDiff.add(calculateMultipleRatesDifferences(_amount, currencyIDFrom, currencyIDTo,
-        line, conn));
-    Currency currencyTo = OBDal.getInstance().get(Currency.class, currencyIDTo);
     amtDiff = amtDiff
-        .setScale(currencyTo.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN);
+        .add(calculateMultipleRatesDifferences(_amount, currencyIDFrom, currencyIDTo, line, conn));
+    Currency currencyTo = OBDal.getInstance().get(Currency.class, currencyIDTo);
+    amtDiff = amtDiff.setScale(currencyTo.getStandardPrecision().intValue(),
+        RoundingMode.HALF_EVEN);
     if (bookDifferences) {
       if ((!isReceipt && amtDiff.compareTo(BigDecimal.ZERO) == 1)
           || (isReceipt && amtDiff.compareTo(BigDecimal.ZERO) == -1)) {
         String convertAccount = StringUtils.isNotEmpty(FIN_Financial_Account_ID)
-            && StringUtils.equals(
-                OBDal.getInstance().get(FIN_FinancialAccount.class, FIN_Financial_Account_ID)
-                    .getType(), "B") ? AcctServer.ACCTTYPE_ConvertChargeGainAmt
-            : AcctServer.ACCTTYPE_ConvertGainDefaultAmt;
-        fact.createLine(line, getAccount(convertAccount, as, conn), currencyIDTo, "", amtDiff.abs()
-            .toString(), Fact_Acct_Group_ID, seqNo, DocumentType, conn);
+            && StringUtils.equals(OBDal.getInstance()
+                .get(FIN_FinancialAccount.class, FIN_Financial_Account_ID)
+                .getType(), "B") ? AcctServer.ACCTTYPE_ConvertChargeGainAmt
+                    : AcctServer.ACCTTYPE_ConvertGainDefaultAmt;
+        fact.createLine(line, getAccount(convertAccount, as, conn), currencyIDTo, "",
+            amtDiff.abs().toString(), Fact_Acct_Group_ID, seqNo, DocumentType, conn);
       } else if (amtDiff.compareTo(BigDecimal.ZERO) != 0) {
         String convertAccount = StringUtils.isNotEmpty(FIN_Financial_Account_ID)
-            && StringUtils.equals(
-                OBDal.getInstance().get(FIN_FinancialAccount.class, FIN_Financial_Account_ID)
-                    .getType(), "B") ? AcctServer.ACCTTYPE_ConvertChargeLossAmt
-            : AcctServer.ACCTTYPE_ConvertChargeDefaultAmt;
-        fact.createLine(line, getAccount(convertAccount, as, conn), currencyIDTo, amtDiff.abs()
-            .toString(), "", Fact_Acct_Group_ID, seqNo, DocumentType, conn);
+            && StringUtils.equals(OBDal.getInstance()
+                .get(FIN_FinancialAccount.class, FIN_Financial_Account_ID)
+                .getType(), "B") ? AcctServer.ACCTTYPE_ConvertChargeLossAmt
+                    : AcctServer.ACCTTYPE_ConvertChargeDefaultAmt;
+        fact.createLine(line, getAccount(convertAccount, as, conn), currencyIDTo,
+            amtDiff.abs().toString(), "", Fact_Acct_Group_ID, seqNo, DocumentType, conn);
       } else {
         return amtFromSourcecurrency;
       }
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Amt from: " + amtFrom + "[" + currencyIDFrom + "]" + " Amt to: " + amtTo + "["
           + currencyIDTo + "] - amtFromSourcecurrency: " + amtFromSourcecurrency);
+    }
     // return value in original currency
     return amtFromSourcecurrency;
   }
@@ -2583,85 +2674,90 @@ public abstract class AcctServer {
     String localConvDate = ConvDate;
     String amt = Amt;
     boolean useSystemConversionRate = true;
-    if (log4j.isDebugEnabled())
-      log4j
-          .debug("AcctServer - getConvertedAmount - starting method - Amt : " + amt
-              + " - CurFrom_ID : " + CurFrom_ID + " - CurTo_ID : " + CurTo_ID + "- ConvDate: "
-              + localConvDate + " - RateType:" + localRateType + " - client:" + client + "- org:"
-              + org);
+    if (log4j.isDebugEnabled()) {
+      log4j.debug(
+          "AcctServer - getConvertedAmount - starting method - Amt : " + amt + " - CurFrom_ID : "
+              + CurFrom_ID + " - CurTo_ID : " + CurTo_ID + "- ConvDate: " + localConvDate
+              + " - RateType:" + localRateType + " - client:" + client + "- org:" + org);
+    }
 
-    if (amt.equals(""))
+    if (amt.equals("")) {
       throw new IllegalArgumentException(
           "AcctServer - getConvertedAmt - required parameter missing - Amt");
+    }
     if ((CurFrom_ID.equals(CurTo_ID) && !docType.equals(EXCHANGE_DOCTYPE_Transaction))
-        || amt.equals("0"))
+        || amt.equals("0")) {
       return amt;
+    }
     AcctServerData[] data = null;
     OBContext.setAdminMode();
     try {
-      if (localConvDate != null && localConvDate.equals(""))
+      if (localConvDate != null && localConvDate.equals("")) {
         localConvDate = DateTimeData.today(conn);
+      }
       // ConvDate IN DATE
-      if (localRateType == null || localRateType.equals(""))
+      if (localRateType == null || localRateType.equals("")) {
         localRateType = "S";
+      }
       data = AcctServerData.currencyConvert(conn, amt, CurFrom_ID, CurTo_ID, localConvDate,
           localRateType, client, org);
       // Search if exists any conversion rate at document level
 
-      OBCriteria<ConversionRateDoc> docRateCriteria = OBDal.getInstance().createCriteria(
-          ConversionRateDoc.class);
+      OBCriteria<ConversionRateDoc> docRateCriteria = OBDal.getInstance()
+          .createCriteria(ConversionRateDoc.class);
       if (docType.equals(EXCHANGE_DOCTYPE_Invoice) && recordId != null) {
-        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, OBDal
-            .getInstance().get(Currency.class, CurTo_ID)));
-        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, OBDal
-            .getInstance().get(Currency.class, CurFrom_ID)));
+        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY,
+            OBDal.getInstance().get(Currency.class, CurTo_ID)));
+        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY,
+            OBDal.getInstance().get(Currency.class, CurFrom_ID)));
         // get reversed invoice id if exist.
-        OBCriteria<ReversedInvoice> reversedCriteria = OBDal.getInstance().createCriteria(
-            ReversedInvoice.class);
-        reversedCriteria.add(Restrictions.eq(ReversedInvoice.PROPERTY_INVOICE, OBDal.getInstance()
-            .get(Invoice.class, recordId)));
+        OBCriteria<ReversedInvoice> reversedCriteria = OBDal.getInstance()
+            .createCriteria(ReversedInvoice.class);
+        reversedCriteria.add(Restrictions.eq(ReversedInvoice.PROPERTY_INVOICE,
+            OBDal.getInstance().get(Invoice.class, recordId)));
         if (!reversedCriteria.list().isEmpty()) {
           String strDateFormat;
-          strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          strDateFormat = OBPropertiesProvider.getInstance()
+              .getOpenbravoProperties()
               .getProperty("dateFormat.java");
           final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
-          localConvDate = dateFormat.format(reversedCriteria.list().get(0).getReversedInvoice()
-              .getAccountingDate());
+          localConvDate = dateFormat
+              .format(reversedCriteria.list().get(0).getReversedInvoice().getAccountingDate());
           data = AcctServerData.currencyConvert(conn, amt, CurFrom_ID, CurTo_ID, localConvDate,
               localRateType, client, org);
-          docRateCriteria.add(Restrictions.eq(
-              ConversionRateDoc.PROPERTY_INVOICE,
-              OBDal.getInstance().get(Invoice.class,
-                  reversedCriteria.list().get(0).getReversedInvoice().getId())));
+          docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE,
+              OBDal.getInstance()
+                  .get(Invoice.class,
+                      reversedCriteria.list().get(0).getReversedInvoice().getId())));
         } else {
-          docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, OBDal
-              .getInstance().get(Invoice.class, recordId)));
+          docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE,
+              OBDal.getInstance().get(Invoice.class, recordId)));
         }
         useSystemConversionRate = false;
       } else if (docType.equals(EXCHANGE_DOCTYPE_Payment)) {
-        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, OBDal
-            .getInstance().get(Currency.class, CurTo_ID)));
-        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, OBDal
-            .getInstance().get(Currency.class, CurFrom_ID)));
-        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_PAYMENT, OBDal.getInstance()
-            .get(FIN_Payment.class, recordId)));
+        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY,
+            OBDal.getInstance().get(Currency.class, CurTo_ID)));
+        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY,
+            OBDal.getInstance().get(Currency.class, CurFrom_ID)));
+        docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_PAYMENT,
+            OBDal.getInstance().get(FIN_Payment.class, recordId)));
         useSystemConversionRate = false;
       } else if (docType.equals(EXCHANGE_DOCTYPE_Transaction)) {
         APRM_FinaccTransactionV a = OBDal.getInstance()
             .get(APRM_FinaccTransactionV.class, recordId);
         if (a.getForeignCurrency() != null) { // && !a.getForeignCurrency().getId().equals(CurTo_ID)
           amt = a.getForeignAmount().toString();
-          data = AcctServerData.currencyConvert(conn, amt, a.getForeignCurrency().getId(),
-              CurTo_ID, localConvDate, localRateType, client, org);
-          docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, OBDal
-              .getInstance().get(Currency.class, CurTo_ID)));
-          docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, OBDal
-              .getInstance().get(Currency.class, a.getForeignCurrency().getId())));
+          data = AcctServerData.currencyConvert(conn, amt, a.getForeignCurrency().getId(), CurTo_ID,
+              localConvDate, localRateType, client, org);
+          docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY,
+              OBDal.getInstance().get(Currency.class, CurTo_ID)));
+          docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY,
+              OBDal.getInstance().get(Currency.class, a.getForeignCurrency().getId())));
         } else {
-          docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, OBDal
-              .getInstance().get(Currency.class, CurTo_ID)));
-          docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, OBDal
-              .getInstance().get(Currency.class, CurFrom_ID)));
+          docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY,
+              OBDal.getInstance().get(Currency.class, CurTo_ID)));
+          docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY,
+              OBDal.getInstance().get(Currency.class, CurFrom_ID)));
         }
         docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION,
             OBDal.getInstance().get(APRM_FinaccTransactionV.class, recordId)));
@@ -2672,8 +2768,8 @@ public abstract class AcctServer {
         List<ConversionRateDoc> conversionRates = docRateCriteria.list();
         if (!conversionRates.isEmpty() && !useSystemConversionRate) {
           BigDecimal Amount = new BigDecimal(amt);
-          BigDecimal AmountConverted = Amount.multiply(conversionRates.get(0).getRate()).setScale(
-              2, RoundingMode.HALF_UP);
+          BigDecimal AmountConverted = Amount.multiply(conversionRates.get(0).getRate())
+              .setScale(2, RoundingMode.HALF_UP);
           return AmountConverted.toString();
         }
       }
@@ -2690,8 +2786,9 @@ public abstract class AcctServer {
        */
       return "";
     } else {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("getConvertedAmount - converted:" + data[0].converted);
+      }
       return data[0].converted;
     }
   } // getConvertedAmt
@@ -2701,7 +2798,8 @@ public abstract class AcctServer {
     // _amount * ((TrxRate *
     // AccountingRateCurrencyFromCurrencyTo)-AccountingRateCurrencyDocCurrencyTo)
     String conversionDate = DateAcct;
-    String strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String strDateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
     // Calculate accountingRateCurrencyFromCurrencyTo
@@ -2712,8 +2810,8 @@ public abstract class AcctServer {
       if (AD_Table_ID.equals(AcctServer.TABLEID_Reconciliation)
           && line instanceof DocLine_FINReconciliation) {
         String transactionID = ((DocLine_FINReconciliation) line).getFinFinAccTransactionId();
-        FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-            transactionID);
+        FIN_FinaccTransaction transaction = OBDal.getInstance()
+            .get(FIN_FinaccTransaction.class, transactionID);
         conversionDate = dateFormat.format(transaction.getDateAcct());
         conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Transaction, transaction.getId(),
             currencyIDFrom, currencyIDTo);
@@ -2725,8 +2823,8 @@ public abstract class AcctServer {
         if (AD_Table_ID.equals(AcctServer.TABLEID_Reconciliation)
             && line instanceof DocLine_FINReconciliation) {
           String transactionID = ((DocLine_FINReconciliation) line).getFinFinAccTransactionId();
-          FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-              transactionID);
+          FIN_FinaccTransaction transaction = OBDal.getInstance()
+              .get(FIN_FinaccTransaction.class, transactionID);
           conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Transaction, transaction.getId(),
               currencyIDTo, currencyIDFrom);
         } else {
@@ -2734,8 +2832,8 @@ public abstract class AcctServer {
               currencyIDFrom);
         }
         if (conversionRateCurrentDoc != null) {
-          accountingRateCurrencyFromCurrencyTo = BigDecimal.ONE.divide(
-              conversionRateCurrentDoc.getRate(), MathContext.DECIMAL64);
+          accountingRateCurrencyFromCurrencyTo = BigDecimal.ONE
+              .divide(conversionRateCurrentDoc.getRate(), MathContext.DECIMAL64);
         } else {
           accountingRateCurrencyFromCurrencyTo = getConvertionRate(currencyIDFrom, currencyIDTo,
               conversionDate, "", AD_Client_ID, AD_Org_ID, conn);
@@ -2751,8 +2849,8 @@ public abstract class AcctServer {
       if (AD_Table_ID.equals(AcctServer.TABLEID_Reconciliation)
           && line instanceof DocLine_FINReconciliation) {
         String transactionID = ((DocLine_FINReconciliation) line).getFinFinAccTransactionId();
-        FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-            transactionID);
+        FIN_FinaccTransaction transaction = OBDal.getInstance()
+            .get(FIN_FinaccTransaction.class, transactionID);
         conversionDate = dateFormat.format(transaction.getTransactionDate());
         conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Transaction, transaction.getId(),
             C_Currency_ID, currencyIDTo);
@@ -2764,8 +2862,8 @@ public abstract class AcctServer {
         if (AD_Table_ID.equals(AcctServer.TABLEID_Reconciliation)
             && line instanceof DocLine_FINReconciliation) {
           String transactionID = ((DocLine_FINReconciliation) line).getFinFinAccTransactionId();
-          FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-              transactionID);
+          FIN_FinaccTransaction transaction = OBDal.getInstance()
+              .get(FIN_FinaccTransaction.class, transactionID);
           conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Transaction, transaction.getId(),
               currencyIDTo, C_Currency_ID);
         } else {
@@ -2773,8 +2871,8 @@ public abstract class AcctServer {
               C_Currency_ID);
         }
         if (conversionRateCurrentDoc != null) {
-          accountingRateCurrencyDocCurrencyTo = BigDecimal.ONE.divide(
-              conversionRateCurrentDoc.getRate(), MathContext.DECIMAL64);
+          accountingRateCurrencyDocCurrencyTo = BigDecimal.ONE
+              .divide(conversionRateCurrentDoc.getRate(), MathContext.DECIMAL64);
         } else {
           accountingRateCurrencyDocCurrencyTo = getConvertionRate(C_Currency_ID, currencyIDTo,
               conversionDate, "", AD_Client_ID, AD_Org_ID, conn);
@@ -2795,16 +2893,16 @@ public abstract class AcctServer {
             && line instanceof DocLine_FINReconciliation) {
           transactionID = ((DocLine_FINReconciliation) line).getFinFinAccTransactionId();
         }
-        FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-            transactionID);
+        FIN_FinaccTransaction transaction = OBDal.getInstance()
+            .get(FIN_FinaccTransaction.class, transactionID);
         trxRate = transaction.getForeignConversionRate();
       }
     }
     Currency currencyFrom = OBDal.getInstance().get(Currency.class, currencyIDTo);
-    return _amount.multiply(
-        trxRate.multiply(accountingRateCurrencyDocCurrencyTo).subtract(
-            accountingRateCurrencyFromCurrencyTo)).setScale(
-        currencyFrom.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN);
+    return _amount
+        .multiply(trxRate.multiply(accountingRateCurrencyDocCurrencyTo)
+            .subtract(accountingRateCurrencyFromCurrencyTo))
+        .setScale(currencyFrom.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN);
   }
 
   /*
@@ -2857,8 +2955,8 @@ public abstract class AcctServer {
         if (!"".equals(DocumentType)) {
           whereClause.append(" and astdt.documentCategory = '" + DocumentType + "'");
         }
-        final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance().createQuery(
-            AcctSchemaTableDocType.class, whereClause.toString());
+        final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance()
+            .createQuery(AcctSchemaTableDocType.class, whereClause.toString());
         final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
         if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
             && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
@@ -2868,8 +2966,8 @@ public abstract class AcctServer {
         whereClause2.append(" as ast ");
         whereClause2.append(" where ast.accountingSchema.id = '" + m_as[i].m_C_AcctSchema_ID + "'");
         whereClause2.append(" and ast.table.id = '" + AD_Table_ID + "'");
-        final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance().createQuery(
-            AcctSchemaTable.class, whereClause2.toString());
+        final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance()
+            .createQuery(AcctSchemaTable.class, whereClause2.toString());
         final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
         if (acctSchemaTables != null && acctSchemaTables.size() > 0
             && acctSchemaTables.get(0).getCreatefactTemplate() != null) {
@@ -2909,11 +3007,14 @@ public abstract class AcctServer {
     // If the actual Payment Detail belongs to the same Invoice Payment Schedule as the previous
     // record, or it has no Order related.
     if ((psi != null && psi.equals(ps)) || pso == null) {
-      FIN_PaymentScheduleDetail psdNext = (currentPaymentDetailIndex == paymentDetails.size() - 1) ? null
-          : paymentDetails.get(currentPaymentDetailIndex + 1).getFINPaymentScheduleDetailList()
+      FIN_PaymentScheduleDetail psdNext = (currentPaymentDetailIndex == paymentDetails.size() - 1)
+          ? null
+          : paymentDetails.get(currentPaymentDetailIndex + 1)
+              .getFINPaymentScheduleDetailList()
               .get(0);
       FIN_PaymentScheduleDetail psdPrevious = (currentPaymentDetailIndex == 0) ? null
-          : paymentDetails.get(currentPaymentDetailIndex - 1).getFINPaymentScheduleDetailList()
+          : paymentDetails.get(currentPaymentDetailIndex - 1)
+              .getFINPaymentScheduleDetailList()
               .get(0);
       // If it has no Order related, and the next record belongs to the same Invoice Payment
       // Schedule and the next record has an Order related.
@@ -2924,7 +3025,8 @@ public abstract class AcctServer {
         // record has no Order related.
       } else if (psdPrevious != null && psdPrevious.getInvoicePaymentSchedule() == psi
           && psdPrevious.getOrderPaymentSchedule() == null) {
-        return paymentDetails.get(currentPaymentDetailIndex).getAmount()
+        return paymentDetails.get(currentPaymentDetailIndex)
+            .getAmount()
             .add(paymentDetails.get(currentPaymentDetailIndex - 1).getAmount());
       } else {
         return paymentDetails.get(currentPaymentDetailIndex).getAmount();
@@ -2981,8 +3083,8 @@ public abstract class AcctServer {
   public HashMap<String, BigDecimal> getPaymentDetailIdWriteOffAndAmount(
       List<String> paymentDetailsIds, FIN_PaymentSchedule ps, FIN_PaymentSchedule psi,
       FIN_PaymentSchedule pso, int currentPaymentDetailIndex) {
-    FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
-        paymentDetailsIds.get(currentPaymentDetailIndex));
+    FIN_PaymentDetail paymentDetail = OBDal.getInstance()
+        .get(FIN_PaymentDetail.class, paymentDetailsIds.get(currentPaymentDetailIndex));
     String paymentDetailNextId = null;
     String paymentDetailPreviousId = null;
     if (currentPaymentDetailIndex < paymentDetailsIds.size() - 1) {
@@ -3088,8 +3190,8 @@ public abstract class AcctServer {
           psdNext = paymentDetailNext.getFINPaymentScheduleDetailList().get(0);
         }
         if (paymentDetailPreviousId != null) {
-          paymentDetailPrevious = OBDal.getInstance().get(FIN_PaymentDetail.class,
-              paymentDetailPreviousId);
+          paymentDetailPrevious = OBDal.getInstance()
+              .get(FIN_PaymentDetail.class, paymentDetailPreviousId);
           psdPrevious = paymentDetailPrevious.getFINPaymentScheduleDetailList().get(0);
         }
         // If the Payment Detail has no Order associated, and the next Payment Detail belongs to the

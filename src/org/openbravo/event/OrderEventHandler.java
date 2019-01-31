@@ -25,9 +25,10 @@ import javax.enterprise.event.Observes;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -52,7 +53,7 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
   private static final String DO_NOT_SYNC_DATE_DELIVERED_PREFERENCE = "DoNotSyncDateDelivered";
   private static final String DO_NOT_SYNC_DATE_ORDERED_PREFERENCE = "DoNotSyncDateOrdered";
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Order.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -105,10 +106,10 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
     orderParameters.setOldScheduledDate((Date) event.getPreviousState(scheduledDateProperty));
     orderParameters.setNewWarehouse((Warehouse) event.getCurrentState(warehouseProperty));
     orderParameters.setOldWarehouse((Warehouse) event.getPreviousState(warehouseProperty));
-    orderParameters.setNewBPId(((BusinessPartner) event.getCurrentState(businessPartnerProperty))
-        .getId());
-    orderParameters.setOldBPId(((BusinessPartner) event.getPreviousState(businessPartnerProperty))
-        .getId());
+    orderParameters
+        .setNewBPId(((BusinessPartner) event.getCurrentState(businessPartnerProperty)).getId());
+    orderParameters
+        .setOldBPId(((BusinessPartner) event.getPreviousState(businessPartnerProperty)).getId());
 
     return orderParameters;
   }
@@ -123,7 +124,8 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
   private void updateOrderLinesValues(final OrderParameters orderParameters,
       final List<OrderLine> orderLines) {
     final boolean syncOrderDate = isOrderDateChangedAndPreferenceIsNotActivated(orderParameters);
-    final boolean syncDeliveredDate = isScheduledDateChangedAndPreferenceIsNotActivated(orderParameters);
+    final boolean syncDeliveredDate = isScheduledDateChangedAndPreferenceIsNotActivated(
+        orderParameters);
     final boolean syncWarehouse = isWarehouseChangedAndPreferenceIsNotActivated(orderParameters);
 
     if (syncOrderDate || syncDeliveredDate || syncWarehouse) {
@@ -184,9 +186,10 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
   private String getPreferenceValue(final String preferenceKey) {
     String syncField;
     try {
-      syncField = Preferences.getPreferenceValue(preferenceKey, true, OBContext.getOBContext()
-          .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-          .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+      syncField = Preferences.getPreferenceValue(preferenceKey, true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null);
     } catch (PropertyException e) {
       // if property not found, sync the field
       syncField = Preferences.NO;
@@ -202,6 +205,7 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
     StringBuilder deleteHql = new StringBuilder();
     deleteHql.append(" delete from " + OrderDiscount.ENTITY_NAME);
     deleteHql.append(" where " + OrderDiscount.PROPERTY_SALESORDER + ".id = :orderId");
+    @SuppressWarnings("rawtypes")
     Query deleteQry = OBDal.getInstance().getSession().createQuery(deleteHql.toString());
     deleteQry.setParameter("orderId", orderParameters.getOrderId());
     deleteQry.executeUpdate();

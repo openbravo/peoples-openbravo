@@ -24,15 +24,15 @@ import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.DalContextListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is intended to register the jmx beans defined in the application.
  */
 public class MBeanRegistry {
-  private static final Logger log = LoggerFactory.getLogger(MBeanRegistry.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Registers a pre-existing object as an MBean with the platform MBean server. The MBean will be

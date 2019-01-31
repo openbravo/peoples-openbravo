@@ -26,7 +26,8 @@ import java.sql.Statement;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -37,7 +38,7 @@ import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 
 public class FactLine {
-  static Logger log4jFactLine = Logger.getLogger(FactLine.class);
+  static Logger log4jFactLine = LogManager.getLogger();
 
   public final BigDecimal ZERO = new BigDecimal("0");
 
@@ -147,14 +148,17 @@ public class FactLine {
   public boolean setAmtSource(String C_Currency_ID, String AmtSourceDr, String AmtSourceCr) {
     m_C_Currency_ID = C_Currency_ID;
     m_AmtSourceDr = AmtSourceDr;
-    if (m_AmtSourceDr.equals(""))
+    if (m_AmtSourceDr.equals("")) {
       m_AmtSourceDr = "0";
+    }
     m_AmtSourceCr = AmtSourceCr;
-    if (m_AmtSourceCr.equals(""))
+    if (m_AmtSourceCr.equals("")) {
       m_AmtSourceCr = "0";
+    }
     // one needs to be non zero
-    if (m_AmtSourceDr.equals("0") && m_AmtSourceCr.equals("0"))
+    if (m_AmtSourceDr.equals("0") && m_AmtSourceCr.equals("0")) {
       return false;
+    }
     return true;
   } // setAmtSource
 
@@ -234,8 +238,9 @@ public class FactLine {
     // Document has no currency
     log4jFactLine.debug("convert - beginning");
     log4jFactLine.debug("convert - m_C_Currency_ID : " + m_C_Currency_ID);
-    if (m_C_Currency_ID == null || m_C_Currency_ID.equals(AcctServer.NO_CURRENCY))
+    if (m_C_Currency_ID == null || m_C_Currency_ID.equals(AcctServer.NO_CURRENCY)) {
       m_C_Currency_ID = Acct_Currency_ID;
+    }
     log4jFactLine.debug("convert - Acct_Currency_ID : " + Acct_Currency_ID);
     if (Acct_Currency_ID.equals(m_C_Currency_ID)) {
       m_AmtAcctDr = m_AmtSourceDr;
@@ -272,13 +277,15 @@ public class FactLine {
       ConversionRateDoc reversalConversionRateDoc = m_docVO.getConversionRateDoc(tableID, recordId,
           Acct_Currency_ID, m_C_Currency_ID);
       if (reversalConversionRateDoc != null) {
-        m_AmtAcctDr = AcctServer.applyRate(new BigDecimal(m_AmtSourceDr),
-            reversalConversionRateDoc, false).toString();
+        m_AmtAcctDr = AcctServer
+            .applyRate(new BigDecimal(m_AmtSourceDr), reversalConversionRateDoc, false)
+            .toString();
         if (StringUtils.isEmpty(m_AmtAcctDr)) {
           return false;
         }
-        m_AmtAcctCr = AcctServer.applyRate(new BigDecimal(m_AmtSourceCr),
-            reversalConversionRateDoc, false).toString();
+        m_AmtAcctCr = AcctServer
+            .applyRate(new BigDecimal(m_AmtSourceCr), reversalConversionRateDoc, false)
+            .toString();
         if (StringUtils.isEmpty(m_AmtAcctCr)) {
           return false;
         }
@@ -311,8 +318,9 @@ public class FactLine {
     // Document has no currency
     log4jFactLine.debug("convert - beginning");
     log4jFactLine.debug("convert - m_C_Currency_ID : " + m_C_Currency_ID);
-    if (m_C_Currency_ID == null || m_C_Currency_ID.equals(AcctServer.NO_CURRENCY))
+    if (m_C_Currency_ID == null || m_C_Currency_ID.equals(AcctServer.NO_CURRENCY)) {
       m_C_Currency_ID = Acct_Currency_ID;
+    }
     log4jFactLine.debug("convert - Acct_Currency_ID : " + Acct_Currency_ID);
     if (Acct_Currency_ID.equals(m_C_Currency_ID)) {
       m_AmtAcctDr = m_AmtSourceDr;
@@ -330,10 +338,10 @@ public class FactLine {
     BigDecimal sourceDr = new BigDecimal(m_AmtSourceDr);
     BigDecimal sourceCr = new BigDecimal(m_AmtSourceCr);
 
-    BigDecimal acctDr = sourceDr.multiply(conversionRate).setScale(
-        acctCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN);
-    BigDecimal acctCr = sourceCr.multiply(conversionRate).setScale(
-        acctCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN);
+    BigDecimal acctDr = sourceDr.multiply(conversionRate)
+        .setScale(acctCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN);
+    BigDecimal acctCr = sourceCr.multiply(conversionRate)
+        .setScale(acctCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN);
 
     m_AmtAcctDr = toStringWithPrecision(acctDr, acctCurrency.getStandardPrecision());
     m_AmtAcctCr = toStringWithPrecision(acctCr, acctCurrency.getStandardPrecision());
@@ -349,8 +357,9 @@ public class FactLine {
    *          from
    */
   public void setLocationFromOrg(String AD_Org_ID, boolean isFrom, ConnectionProvider conn) {
-    if (AD_Org_ID.equals(""))
+    if (AD_Org_ID.equals("")) {
       return;
+    }
     String C_Location_ID = "";
     FactLineData[] data = null;
     try {
@@ -358,10 +367,12 @@ public class FactLine {
     } catch (ServletException e) {
       log4jFactLine.warn(e);
     }
-    if (data.length > 0)
+    if (data.length > 0) {
       C_Location_ID = data[0].location;
-    if (!C_Location_ID.equals(""))
+    }
+    if (!C_Location_ID.equals("")) {
       setLocation(C_Location_ID, isFrom);
+    }
   } // setLocationFromOrg
 
   /**
@@ -373,8 +384,9 @@ public class FactLine {
    *          from
    */
   public void setLocation(String C_Location_ID, boolean isFrom) {
-    if (isFrom)
+    if (isFrom) {
       m_C_LocFrom_ID = C_Location_ID;
+    }
   } // setLocator
 
   /**
@@ -387,8 +399,9 @@ public class FactLine {
    * @return AD_Org_ID
    */
   public String getAD_Org_ID(ConnectionProvider conn) {
-    if (m_AD_Org_ID != null && !m_AD_Org_ID.equals("")) // set earlier
+    if (m_AD_Org_ID != null && !m_AD_Org_ID.equals("")) {
       return m_AD_Org_ID;
+    }
     // Prio 1 - get from locator - if exist
     if (m_M_Locator_ID != null && !m_M_Locator_ID.equals("")) {
       FactLineData[] data = null;
@@ -399,10 +412,11 @@ public class FactLine {
       }
       if (data != null && data.length > 0) {
         m_AD_Org_ID = data[0].org;
-        log4jFactLine.debug("setAD_Org_ID=" + m_AD_Org_ID + " (1 from M_Locator_ID="
-            + m_M_Locator_ID + ")");
-      } else
+        log4jFactLine
+            .debug("setAD_Org_ID=" + m_AD_Org_ID + " (1 from M_Locator_ID=" + m_M_Locator_ID + ")");
+      } else {
         log4jFactLine.warn("getAD_Org_ID - Did not find M_Locator_ID=" + m_M_Locator_ID);
+      }
     } // M_Locator_ID != 0
 
     // Prio 2 - get from doc line - if exists (document context overwrites)
@@ -442,8 +456,9 @@ public class FactLine {
    *          org
    */
   public void setAD_Org_ID(String AD_Org_ID) {
-    if (!AD_Org_ID.equals(""))
+    if (!AD_Org_ID.equals("")) {
       m_AD_Org_ID = AD_Org_ID;
+    }
   } // setAD_Org_ID
 
   /**
@@ -456,8 +471,9 @@ public class FactLine {
     m_M_Locator_ID = M_Locator_ID;
     // should not happen - consequence is potentially screwed Org segment
     // balancing
-    if (!m_AD_Org_ID.equals(""))
+    if (!m_AD_Org_ID.equals("")) {
       log4jFactLine.debug("setM_Locator_ID - Organization already calculated");
+    }
   } // setM_Locator_ID
 
   public String getM_AmtAcctDr() {
@@ -482,10 +498,12 @@ public class FactLine {
    * @return source balance
    */
   public BigDecimal getSourceBalance() {
-    if (m_AmtSourceDr.equals(""))
+    if (m_AmtSourceDr.equals("")) {
       m_AmtSourceDr = "0";
-    if (m_AmtSourceCr.equals(""))
+    }
+    if (m_AmtSourceCr.equals("")) {
       m_AmtSourceCr = "0";
+    }
     BigDecimal AmtSourceDr = new BigDecimal(m_AmtSourceDr);
     BigDecimal AmtSourceCr = new BigDecimal(m_AmtSourceCr);
     //
@@ -502,8 +520,9 @@ public class FactLine {
    */
   public void setLocationFromBPartner(String C_BPartner_Location_ID, boolean isFrom,
       ConnectionProvider conn) {
-    if (C_BPartner_Location_ID.equals(""))
+    if (C_BPartner_Location_ID.equals("")) {
       return;
+    }
     String C_Location_ID = "";
     FactLineData[] data = null;
     try {
@@ -514,8 +533,9 @@ public class FactLine {
     } catch (ServletException e) {
       log4jFactLine.warn(e);
     }
-    if (!C_Location_ID.equals(""))
+    if (!C_Location_ID.equals("")) {
       setLocation(C_Location_ID, isFrom);
+    }
   } // setLocationFromBPartner
 
   /**
@@ -527,15 +547,17 @@ public class FactLine {
    *          from
    */
   public void setLocationFromLocator(String M_Locator_ID, boolean isFrom, ConnectionProvider conn) {
-    if (M_Locator_ID.equals(""))
+    if (M_Locator_ID.equals("")) {
       return;
+    }
     String C_Location_ID = "";
     FactLineData[] data = null;
     try {
       data = FactLineData.selectLocationFromLocator(conn, M_Locator_ID);
       C_Location_ID = data[0].location;
-      if (!C_Location_ID.equals(""))
+      if (!C_Location_ID.equals("")) {
         setLocation(C_Location_ID, isFrom);
+      }
     } catch (ServletException e) {
       log4jFactLine.debug(e);
     }
@@ -556,35 +578,45 @@ public class FactLine {
      */
     String AD_Client_ID = getAD_Client_ID();
     String AD_Org_ID = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       AD_Org_ID = m_docLine.m_AD_Org_ID;
-    if (AD_Org_ID == null || AD_Org_ID.equals(""))
+    }
+    if (AD_Org_ID == null || AD_Org_ID.equals("")) {
       AD_Org_ID = getAD_Org_ID(conn);
+    }
 
     // Set Account
     String Account_ID = "";
-    if (m_acct != null)
+    if (m_acct != null) {
       Account_ID = m_acct.Account_ID;
-    if (Account_ID == null || Account_ID == "")
+    }
+    if (Account_ID == null || Account_ID == "") {
       return false;
+    }
     // Doc Dates
     String DateDoc = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       DateDoc = m_docLine.m_DateDoc;
-    if (DateDoc == null || DateDoc.equals(""))
+    }
+    if (DateDoc == null || DateDoc.equals("")) {
       DateDoc = m_docVO.DateDoc;
+    }
     String DateAcct = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       DateAcct = m_docLine.m_DateAcct;
-    if (DateAcct == null || DateAcct.equals(""))
+    }
+    if (DateAcct == null || DateAcct.equals("")) {
       DateAcct = m_docVO.DateAcct;
+    }
     log4jFactLine.debug("FactLine - save - before Record_ID2 " + m_Record_ID);
 
     String C_Period_ID = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       C_Period_ID = setC_Period_ID(m_docVO, m_docLine.m_DateAcct, conn);
-    if (C_Period_ID == null || C_Period_ID.equals(""))
+    }
+    if (C_Period_ID == null || C_Period_ID.equals("")) {
       C_Period_ID = m_docVO.C_Period_ID;
+    }
 
     // Set Line Optional Info
     String C_UOM_ID = "";
@@ -598,166 +630,232 @@ public class FactLine {
     log4jFactLine.debug("FactLine - save - after line optional info");
     // Set Account Info
     String M_Product_ID = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       M_Product_ID = m_docLine.m_M_Product_ID;
-    if (M_Product_ID == null)
+    }
+    if (M_Product_ID == null) {
       M_Product_ID = "";
-    if (M_Product_ID.equals(""))
+    }
+    if (M_Product_ID.equals("")) {
       M_Product_ID = m_docVO.M_Product_ID;
-    if (M_Product_ID == null)
+    }
+    if (M_Product_ID == null) {
       M_Product_ID = "";
-    if (M_Product_ID.equals(""))
+    }
+    if (M_Product_ID.equals("")) {
       M_Product_ID = m_acct.M_Product_ID;
-    if (M_Product_ID == null)
+    }
+    if (M_Product_ID == null) {
       M_Product_ID = "";
+    }
 
     String C_LocFrom_ID = m_C_LocFrom_ID;
-    if (C_LocFrom_ID == null)
+    if (C_LocFrom_ID == null) {
       C_LocFrom_ID = "";
-    if (C_LocFrom_ID.equals("") && m_docLine != null)
+    }
+    if (C_LocFrom_ID.equals("") && m_docLine != null) {
       C_LocFrom_ID = m_docLine.m_C_LocFrom_ID;
-    if (C_LocFrom_ID == null)
+    }
+    if (C_LocFrom_ID == null) {
       C_LocFrom_ID = "";
-    if (C_LocFrom_ID.equals(""))
+    }
+    if (C_LocFrom_ID.equals("")) {
       C_LocFrom_ID = m_docVO.C_LocFrom_ID;
-    if (C_LocFrom_ID == null)
+    }
+    if (C_LocFrom_ID == null) {
       C_LocFrom_ID = "";
-    if (C_LocFrom_ID.equals(""))
+    }
+    if (C_LocFrom_ID.equals("")) {
       C_LocFrom_ID = m_acct.C_LocFrom_ID;
-    if (C_LocFrom_ID == null)
+    }
+    if (C_LocFrom_ID == null) {
       C_LocFrom_ID = "";
+    }
 
     String C_LocTo_ID = m_C_LocFrom_ID;// Here Compiere was wrong, they had
     // locFrom
-    if (C_LocTo_ID == null)
+    if (C_LocTo_ID == null) {
       C_LocTo_ID = "";
-    if (C_LocTo_ID.equals("") && m_docLine != null)
+    }
+    if (C_LocTo_ID.equals("") && m_docLine != null) {
       C_LocTo_ID = m_docLine.m_C_LocTo_ID;
-    if (C_LocTo_ID == null)
+    }
+    if (C_LocTo_ID == null) {
       C_LocTo_ID = "";
-    if (C_LocTo_ID.equals(""))
+    }
+    if (C_LocTo_ID.equals("")) {
       C_LocTo_ID = m_docVO.C_LocTo_ID;
-    if (C_LocTo_ID == null)
+    }
+    if (C_LocTo_ID == null) {
       C_LocTo_ID = "";
-    if (C_LocTo_ID.equals(""))
+    }
+    if (C_LocTo_ID.equals("")) {
       C_LocTo_ID = m_acct.C_LocTo_ID;
-    if (C_LocTo_ID == null)
+    }
+    if (C_LocTo_ID == null) {
       C_LocTo_ID = "";
+    }
 
     String C_BPartner_ID = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       C_BPartner_ID = m_docLine.m_C_BPartner_ID;
-    if (C_BPartner_ID == null)
+    }
+    if (C_BPartner_ID == null) {
       C_BPartner_ID = "";
-    if (C_BPartner_ID.equals(""))
+    }
+    if (C_BPartner_ID.equals("")) {
       C_BPartner_ID = m_docVO.C_BPartner_ID;
-    if (C_BPartner_ID == null)
+    }
+    if (C_BPartner_ID == null) {
       C_BPartner_ID = "";
-    if (C_BPartner_ID.equals(""))
+    }
+    if (C_BPartner_ID.equals("")) {
       C_BPartner_ID = m_acct.C_BPartner_ID;
-    if (C_BPartner_ID == null)
+    }
+    if (C_BPartner_ID == null) {
       C_BPartner_ID = "";
+    }
 
     String AD_OrgTrx_ID = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       AD_OrgTrx_ID = m_docLine.m_AD_OrgTrx_ID;
-    if (AD_OrgTrx_ID == null)
+    }
+    if (AD_OrgTrx_ID == null) {
       AD_OrgTrx_ID = "";
-    if (AD_OrgTrx_ID.equals(""))
+    }
+    if (AD_OrgTrx_ID.equals("")) {
       AD_OrgTrx_ID = m_docVO.AD_OrgTrx_ID;
-    if (AD_OrgTrx_ID == null)
+    }
+    if (AD_OrgTrx_ID == null) {
       AD_OrgTrx_ID = "";
-    if (AD_OrgTrx_ID.equals(""))
+    }
+    if (AD_OrgTrx_ID.equals("")) {
       AD_OrgTrx_ID = m_acct.AD_OrgTrx_ID;
-    if (AD_OrgTrx_ID == null)
+    }
+    if (AD_OrgTrx_ID == null) {
       AD_OrgTrx_ID = "";
+    }
 
     String C_SalesRegion_ID = getC_SalesRegion_ID(conn);
 
     String C_Project_ID = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       C_Project_ID = m_docLine.m_C_Project_ID;
-    if (C_Project_ID == null)
+    }
+    if (C_Project_ID == null) {
       C_Project_ID = "";
-    if (C_Project_ID.equals(""))
+    }
+    if (C_Project_ID.equals("")) {
       C_Project_ID = m_docVO.C_Project_ID;
-    if (C_Project_ID == null)
+    }
+    if (C_Project_ID == null) {
       C_Project_ID = "";
-    if (C_Project_ID.equals(""))
+    }
+    if (C_Project_ID.equals("")) {
       C_Project_ID = m_acct.C_Project_ID;
-    if (C_Project_ID == null)
+    }
+    if (C_Project_ID == null) {
       C_Project_ID = "";
+    }
 
     String C_Campaign_ID = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       C_Campaign_ID = m_docLine.m_C_Campaign_ID;
-    if (C_Campaign_ID == null)
+    }
+    if (C_Campaign_ID == null) {
       C_Campaign_ID = "";
-    if (C_Campaign_ID.equals(""))
+    }
+    if (C_Campaign_ID.equals("")) {
       C_Campaign_ID = m_docVO.C_Campaign_ID;
-    if (C_Campaign_ID == null)
+    }
+    if (C_Campaign_ID == null) {
       C_Campaign_ID = "";
-    if (C_Campaign_ID.equals(""))
+    }
+    if (C_Campaign_ID.equals("")) {
       C_Campaign_ID = m_acct.C_Campaign_ID;
-    if (C_Campaign_ID == null)
+    }
+    if (C_Campaign_ID == null) {
       C_Campaign_ID = "";
+    }
 
     String C_Activity_ID = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       C_Activity_ID = m_docLine.m_C_Activity_ID;
-    if (C_Activity_ID == null)
+    }
+    if (C_Activity_ID == null) {
       C_Activity_ID = "";
-    if (C_Activity_ID.equals(""))
+    }
+    if (C_Activity_ID.equals("")) {
       C_Activity_ID = m_docVO.C_Activity_ID;
-    if (C_Activity_ID == null)
+    }
+    if (C_Activity_ID == null) {
       C_Activity_ID = "";
-    if (C_Activity_ID.equals(""))
+    }
+    if (C_Activity_ID.equals("")) {
       C_Activity_ID = m_acct.C_Activity_ID;
-    if (C_Activity_ID == null)
+    }
+    if (C_Activity_ID == null) {
       C_Activity_ID = "";
+    }
 
     String User1_ID = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       User1_ID = m_docLine.m_User1_ID;
-    if (User1_ID == null)
+    }
+    if (User1_ID == null) {
       User1_ID = "";
-    if (User1_ID.equals(""))
+    }
+    if (User1_ID.equals("")) {
       User1_ID = m_docVO.User1_ID;
-    if (User1_ID == null)
+    }
+    if (User1_ID == null) {
       User1_ID = "";
-    if (User1_ID.equals(""))
+    }
+    if (User1_ID.equals("")) {
       User1_ID = m_acct.User1_ID;
-    if (User1_ID == null)
+    }
+    if (User1_ID == null) {
       User1_ID = "";
+    }
 
     String User2_ID = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       User2_ID = m_docLine.m_User2_ID;
-    if (User2_ID == null)
+    }
+    if (User2_ID == null) {
       User2_ID = "";
-    if (User2_ID.equals(""))
+    }
+    if (User2_ID.equals("")) {
       User2_ID = m_docVO.User2_ID;
-    if (User2_ID == null)
+    }
+    if (User2_ID == null) {
       User2_ID = "";
-    if (User2_ID.equals(""))
+    }
+    if (User2_ID.equals("")) {
       User2_ID = m_acct.User2_ID;
-    if (User2_ID == null)
+    }
+    if (User2_ID == null) {
       User2_ID = "";
+    }
 
     String C_Costcenter_ID = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       C_Costcenter_ID = m_docLine.m_C_Costcenter_ID;
-    if (C_Costcenter_ID == null)
+    }
+    if (C_Costcenter_ID == null) {
       C_Costcenter_ID = "";
-    if (C_Costcenter_ID.equals(""))
+    }
+    if (C_Costcenter_ID.equals("")) {
       C_Costcenter_ID = m_docVO.C_Costcenter_ID;
-    if (C_Costcenter_ID == null)
+    }
+    if (C_Costcenter_ID == null) {
       C_Costcenter_ID = "";
+    }
 
     // Description
     StringBuffer description = new StringBuffer();
-    description = getDescription(conn, C_BPartner_ID, m_C_AcctSchema_ID, m_AD_Table_ID,
-        m_Record_ID, (m_docLine != null ? m_docLine.m_TrxLine_ID : null));
+    description = getDescription(conn, C_BPartner_ID, m_C_AcctSchema_ID, m_AD_Table_ID, m_Record_ID,
+        (m_docLine != null ? m_docLine.m_TrxLine_ID : null));
     int no = 0;
     try {
       /**
@@ -767,16 +865,16 @@ public class FactLine {
       /**
        * Save to DB
        */
-      log4jFactLine.debug("FactLine - save - m_Record_ID = " + m_Record_ID + " - Account_ID = "
-          + Account_ID + " - m_Fact_Acct_Group_ID = " + m_Fact_Acct_Group_ID + " - m_SeqNo = "
-          + m_SeqNo);
+      log4jFactLine
+          .debug("FactLine - save - m_Record_ID = " + m_Record_ID + " - Account_ID = " + Account_ID
+              + " - m_Fact_Acct_Group_ID = " + m_Fact_Acct_Group_ID + " - m_SeqNo = " + m_SeqNo);
       FactLineData[] cuenta = FactLineData.selectAccountValue(conn, Account_ID);
       log4jFactLine.debug("FactLine - After selectAccountValue - cuenta.length - " + cuenta.length);
       BigDecimal zero = new BigDecimal("0.0");
-      log4jFactLine.debug("FactLine - m_AmtSourceDr " + m_AmtSourceDr + " - m_AmtSourceDr "
-          + m_AmtSourceDr);
-      log4jFactLine.debug("FactLine - m_AmtAcctDr " + m_AmtAcctDr + " - m_AmtSourceDr "
-          + m_AmtAcctCr);
+      log4jFactLine
+          .debug("FactLine - m_AmtSourceDr " + m_AmtSourceDr + " - m_AmtSourceDr " + m_AmtSourceDr);
+      log4jFactLine
+          .debug("FactLine - m_AmtAcctDr " + m_AmtAcctDr + " - m_AmtSourceDr " + m_AmtAcctCr);
       if (zero.compareTo(new BigDecimal(m_AmtSourceDr)) == 0
           && zero.compareTo(new BigDecimal(m_AmtSourceCr)) == 0
           && zero.compareTo(new BigDecimal(m_AmtAcctDr)) == 0
@@ -785,56 +883,55 @@ public class FactLine {
         return true;
       } else {
         log4jFactLine.debug("FactLine - Before insertFactAct");
-        log4jFactLine.debug("FactLine - m_Fact_Acct_ID " + m_Fact_Acct_ID + " - AD_Client_ID "
-            + AD_Client_ID);
-        log4jFactLine.debug("FactLine - m_C_AcctSchema_ID " + m_C_AcctSchema_ID + " - Account_ID "
-            + Account_ID);
+        log4jFactLine.debug(
+            "FactLine - m_Fact_Acct_ID " + m_Fact_Acct_ID + " - AD_Client_ID " + AD_Client_ID);
+        log4jFactLine.debug(
+            "FactLine - m_C_AcctSchema_ID " + m_C_AcctSchema_ID + " - Account_ID " + Account_ID);
         log4jFactLine.debug("FactLine - cuenta[0].value " + cuenta[0].value
             + " - cuenta[0].description " + cuenta[0].description);
         log4jFactLine.debug("FactLine - DateDoc " + DateDoc + " - DateAcct " + DateAcct);
-        log4jFactLine.debug("FactLine - C_Period_ID " + C_Period_ID + " - m_AD_Table_ID "
-            + m_AD_Table_ID);
+        log4jFactLine
+            .debug("FactLine - C_Period_ID " + C_Period_ID + " - m_AD_Table_ID " + m_AD_Table_ID);
         log4jFactLine.debug("FactLine - m_Record_ID " + m_Record_ID + " - m_Line_ID " + m_Line_ID);
         log4jFactLine.debug("FactLine - m_GL_Category_ID " + m_GL_Category_ID);
         log4jFactLine
             .debug("FactLine - C_Tax_ID " + C_Tax_ID + " - m_PostingType " + m_PostingType);
-        log4jFactLine.debug("FactLine - m_C_Currency_ID " + m_C_Currency_ID + " - m_AmtSourceDr "
-            + m_AmtSourceDr);
-        log4jFactLine.debug("FactLine - m_AmtSourceCr " + m_AmtSourceCr + " - m_AmtAcctDr "
-            + m_AmtAcctDr);
+        log4jFactLine.debug(
+            "FactLine - m_C_Currency_ID " + m_C_Currency_ID + " - m_AmtSourceDr " + m_AmtSourceDr);
+        log4jFactLine
+            .debug("FactLine - m_AmtSourceCr " + m_AmtSourceCr + " - m_AmtAcctDr " + m_AmtAcctDr);
         log4jFactLine.debug("FactLine - m_AmtAcctCr " + m_AmtAcctCr + " - C_UOM_ID " + C_UOM_ID);
         log4jFactLine.debug("FactLine - Qty " + Qty + " - m_M_Locator_ID " + m_M_Locator_ID);
-        log4jFactLine.debug("FactLine - M_Product_ID " + M_Product_ID + " - C_BPartner_ID "
-            + C_BPartner_ID);
-        log4jFactLine.debug("FactLine - AD_OrgTrx_ID " + AD_OrgTrx_ID + " - C_LocFrom_ID "
-            + C_LocFrom_ID);
-        log4jFactLine.debug("FactLine - C_LocTo_ID " + C_LocTo_ID + " - C_SalesRegion_ID "
-            + C_SalesRegion_ID);
-        log4jFactLine.debug("FactLine - C_Project_ID " + C_Project_ID + " - C_Campaign_ID "
-            + C_Campaign_ID);
+        log4jFactLine
+            .debug("FactLine - M_Product_ID " + M_Product_ID + " - C_BPartner_ID " + C_BPartner_ID);
+        log4jFactLine
+            .debug("FactLine - AD_OrgTrx_ID " + AD_OrgTrx_ID + " - C_LocFrom_ID " + C_LocFrom_ID);
+        log4jFactLine.debug(
+            "FactLine - C_LocTo_ID " + C_LocTo_ID + " - C_SalesRegion_ID " + C_SalesRegion_ID);
+        log4jFactLine
+            .debug("FactLine - C_Project_ID " + C_Project_ID + " - C_Campaign_ID " + C_Campaign_ID);
         log4jFactLine
             .debug("FactLine - C_Activity_ID " + C_Activity_ID + " - User1_ID " + User1_ID);
-        log4jFactLine.debug("FactLine - User2_ID " + User2_ID + " - description "
-            + description.toString());
+        log4jFactLine
+            .debug("FactLine - User2_ID " + User2_ID + " - description " + description.toString());
         log4jFactLine.debug("FactLine - C_Costcenter_ID " + C_Costcenter_ID);
-        log4jFactLine.debug("FactLine - m_Fact_Acct_Group_ID " + m_Fact_Acct_Group_ID
-            + " - m_SeqNo " + m_SeqNo);
-        log4jFactLine.debug("FactLine - m_DocBaseType " + m_DocBaseType + " - Record_ID2 "
-            + m_Record_ID2);
-        log4jFactLine.debug("FactLine - m_A_Asset_ID "
-            + ((m_docLine != null) ? m_docLine.m_A_Asset_ID : ""));
+        log4jFactLine.debug(
+            "FactLine - m_Fact_Acct_Group_ID " + m_Fact_Acct_Group_ID + " - m_SeqNo " + m_SeqNo);
+        log4jFactLine
+            .debug("FactLine - m_DocBaseType " + m_DocBaseType + " - Record_ID2 " + m_Record_ID2);
+        log4jFactLine.debug(
+            "FactLine - m_A_Asset_ID " + ((m_docLine != null) ? m_docLine.m_A_Asset_ID : ""));
         log4jFactLine.debug("FactLine - m_C_WithHolding_ID "
             + ((m_docLine != null) ? m_docLine.m_C_WithHolding_ID : ""));
 
-        no = FactLineData.insertFactAct(con, conn, m_Fact_Acct_ID, AD_Client_ID, AD_Org_ID, vars
-            .getUser(), m_C_AcctSchema_ID, Account_ID, cuenta[0].value, cuenta[0].description,
-            DateDoc, DateAcct, C_Period_ID, m_AD_Table_ID, m_Record_ID, m_Line_ID,
-            m_GL_Category_ID, C_Tax_ID, m_PostingType, m_C_Currency_ID, m_AmtSourceDr,
-            m_AmtSourceCr, m_AmtAcctDr, m_AmtAcctCr, C_UOM_ID, Qty, m_M_Locator_ID, M_Product_ID,
-            C_BPartner_ID, AD_OrgTrx_ID, C_LocFrom_ID, C_LocTo_ID, C_SalesRegion_ID, C_Project_ID,
-            C_Campaign_ID, C_Activity_ID, User1_ID, User2_ID, description.toString(),
-            m_Fact_Acct_Group_ID, m_SeqNo, m_DocBaseType, m_Record_ID2,
-            (m_docLine != null) ? m_docLine.m_A_Asset_ID : "",
+        no = FactLineData.insertFactAct(con, conn, m_Fact_Acct_ID, AD_Client_ID, AD_Org_ID,
+            vars.getUser(), m_C_AcctSchema_ID, Account_ID, cuenta[0].value, cuenta[0].description,
+            DateDoc, DateAcct, C_Period_ID, m_AD_Table_ID, m_Record_ID, m_Line_ID, m_GL_Category_ID,
+            C_Tax_ID, m_PostingType, m_C_Currency_ID, m_AmtSourceDr, m_AmtSourceCr, m_AmtAcctDr,
+            m_AmtAcctCr, C_UOM_ID, Qty, m_M_Locator_ID, M_Product_ID, C_BPartner_ID, AD_OrgTrx_ID,
+            C_LocFrom_ID, C_LocTo_ID, C_SalesRegion_ID, C_Project_ID, C_Campaign_ID, C_Activity_ID,
+            User1_ID, User2_ID, description.toString(), m_Fact_Acct_Group_ID, m_SeqNo,
+            m_DocBaseType, m_Record_ID2, (m_docLine != null) ? m_docLine.m_A_Asset_ID : "",
             (m_docLine != null) ? m_docLine.m_C_WithHolding_ID : "", m_docVO.C_DocType_ID,
             C_Costcenter_ID, (m_docVO.m_IsOpening.equals("Y")) ? "O" : "N");
         log4jFactLine.debug("FactLine - After insertFactAct");
@@ -852,17 +949,20 @@ public class FactLine {
     try {
       // Applies currency precision
       Currency currency = OBDal.getInstance().get(Currency.class, m_C_Currency_ID);
-      org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance().get(
-          org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class, m_C_AcctSchema_ID);
-      m_AmtSourceCr = new BigDecimal(m_AmtSourceCr).setScale(
-          currency.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN).toString();
-      m_AmtSourceDr = new BigDecimal(m_AmtSourceDr).setScale(
-          currency.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN).toString();
-      m_AmtAcctCr = new BigDecimal(m_AmtAcctCr).setScale(
-          schema.getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_EVEN)
+      org.openbravo.model.financialmgmt.accounting.coa.AcctSchema schema = OBDal.getInstance()
+          .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+              m_C_AcctSchema_ID);
+      m_AmtSourceCr = new BigDecimal(m_AmtSourceCr)
+          .setScale(currency.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN)
           .toString();
-      m_AmtAcctDr = new BigDecimal(m_AmtAcctDr).setScale(
-          schema.getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_EVEN)
+      m_AmtSourceDr = new BigDecimal(m_AmtSourceDr)
+          .setScale(currency.getStandardPrecision().intValue(), RoundingMode.HALF_EVEN)
+          .toString();
+      m_AmtAcctCr = new BigDecimal(m_AmtAcctCr)
+          .setScale(schema.getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_EVEN)
+          .toString();
+      m_AmtAcctDr = new BigDecimal(m_AmtAcctDr)
+          .setScale(schema.getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_EVEN)
           .toString();
     } finally {
       OBContext.restorePreviousMode();
@@ -876,8 +976,9 @@ public class FactLine {
    */
   private String getAD_Client_ID() {
     String AD_Client_ID = m_docVO.AD_Client_ID;
-    if (AD_Client_ID == null || AD_Client_ID.equals(""))
+    if (AD_Client_ID == null || AD_Client_ID.equals("")) {
       AD_Client_ID = m_acct.AD_Client_ID;
+    }
     return (AD_Client_ID == null) ? "" : AD_Client_ID;
   } // getAD_Client_ID
 
@@ -888,18 +989,24 @@ public class FactLine {
    */
   private String getC_SalesRegion_ID(ConnectionProvider conn) {
     String C_SalesRegion_ID = "";
-    if (m_docLine != null)
+    if (m_docLine != null) {
       C_SalesRegion_ID = m_docLine.m_C_SalesRegion_ID;
-    if (C_SalesRegion_ID == null)
+    }
+    if (C_SalesRegion_ID == null) {
       C_SalesRegion_ID = "";
-    if (C_SalesRegion_ID.equals(""))
+    }
+    if (C_SalesRegion_ID.equals("")) {
       C_SalesRegion_ID = m_docVO.C_SalesRegion_ID;
-    if (C_SalesRegion_ID == null)
+    }
+    if (C_SalesRegion_ID == null) {
       C_SalesRegion_ID = "";
-    if (C_SalesRegion_ID.equals("") && !m_docVO.BP_C_SalesRegion_ID.equals(""))
+    }
+    if (C_SalesRegion_ID.equals("") && !m_docVO.BP_C_SalesRegion_ID.equals("")) {
       C_SalesRegion_ID = m_docVO.BP_C_SalesRegion_ID;
-    if (C_SalesRegion_ID == null)
+    }
+    if (C_SalesRegion_ID == null) {
       C_SalesRegion_ID = "";
+    }
     // derive SalesRegion if AcctSegment
     if (C_SalesRegion_ID.equals("") && !m_docVO.C_BPartner_Location_ID.equals("")
         && m_docVO.BP_C_SalesRegion_ID.equals("")// never tried
@@ -914,14 +1021,16 @@ public class FactLine {
         log4jFactLine.warn(e);
       }
 
-      if (C_SalesRegion_ID != null && !C_SalesRegion_ID.equals(""))
+      if (C_SalesRegion_ID != null && !C_SalesRegion_ID.equals("")) {
         m_docVO.BP_C_SalesRegion_ID = C_SalesRegion_ID;// save
-      else
+      } else {
         m_docVO.BP_C_SalesRegion_ID = ""; // don't try again
+      }
       log4jFactLine.debug("getC_SalesRegion_ID=" + C_SalesRegion_ID + " (from BPL)");
     }
-    if (C_SalesRegion_ID == null || C_SalesRegion_ID.equals(""))
+    if (C_SalesRegion_ID == null || C_SalesRegion_ID.equals("")) {
       C_SalesRegion_ID = m_acct.C_SalesRegion_ID;
+    }
     //
     return (C_SalesRegion_ID == null) ? "" : C_SalesRegion_ID;
   } // getC_SalesRegion_ID
@@ -932,10 +1041,12 @@ public class FactLine {
    * @return accounting balance
    */
   public BigDecimal getAccountingBalance() {
-    if (m_AmtAcctDr.equals(""))
+    if (m_AmtAcctDr.equals("")) {
       m_AmtAcctDr = "0";
-    if (m_AmtAcctCr.equals(""))
+    }
+    if (m_AmtAcctCr.equals("")) {
       m_AmtAcctCr = "0";
+    }
     BigDecimal AmtAcctDr = new BigDecimal(m_AmtAcctDr);
     BigDecimal AmtAcctCr = new BigDecimal(m_AmtAcctCr);
     return AmtAcctDr.subtract(AmtAcctCr);
@@ -980,19 +1091,21 @@ public class FactLine {
     BigDecimal AmtAcctCr = new BigDecimal(m_AmtAcctCr);
     boolean adjustDr = AmtAcctDr.compareTo(AmtAcctCr) > 0;
 
-    log4jFactLine.debug("currencyCorrect - " + deltaAmount.toString() + "; Old-AcctDr="
-        + m_AmtAcctDr + ",AcctCr=" + m_AmtAcctCr + "; Negative=" + negative + "; AdjustDr="
-        + adjustDr);
+    log4jFactLine
+        .debug("currencyCorrect - " + deltaAmount.toString() + "; Old-AcctDr=" + m_AmtAcctDr
+            + ",AcctCr=" + m_AmtAcctCr + "; Negative=" + negative + "; AdjustDr=" + adjustDr);
     BigDecimal diff = deltaAmount.abs();
-    if (adjustDr)
-      if (!negative)
+    if (adjustDr) {
+      if (!negative) {
         m_AmtAcctDr = AmtAcctDr.subtract(diff).toString();
-      else
+      } else {
         m_AmtAcctDr = AmtAcctDr.add(diff).toString();
-    else if (!negative)
+      }
+    } else if (!negative) {
       m_AmtAcctCr = AmtAcctCr.add(diff).toString();
-    else
+    } else {
       m_AmtAcctCr = AmtAcctCr.subtract(diff).toString();
+    }
     log4jFactLine.debug("currencyCorrect - New-AcctDr=" + m_AmtAcctDr + ",AcctCr=" + m_AmtAcctCr);
   } // currencyCorrect
 
@@ -1011,9 +1124,9 @@ public class FactLine {
     return null; // if exception occurred, as caller handles this
   } // setC_Period_ID
 
-  public StringBuffer getDescription(ConnectionProvider connectionProvider,
-      String strC_Bpartner_ID, String strC_AcctSchema_ID, String strAD_Table_ID,
-      String strRecord_ID, String strLine) throws ServletException {
+  public StringBuffer getDescription(ConnectionProvider connectionProvider, String strC_Bpartner_ID,
+      String strC_AcctSchema_ID, String strAD_Table_ID, String strRecord_ID, String strLine)
+      throws ServletException {
     String localStrLine = strLine;
     StringBuffer description = new StringBuffer();
     String strSql = AcctServerData.selectDescription(connectionProvider, strAD_Table_ID,
@@ -1021,10 +1134,11 @@ public class FactLine {
     try {
       if (!strSql.equals("")/* && strLine!=null && !strLine.equals("") */) {
         strSql = strSql.replaceAll("@RecordId@", "'" + strRecord_ID + "'");
-        if (localStrLine == null || localStrLine.equals(""))
+        if (localStrLine == null || localStrLine.equals("")) {
           localStrLine = "NULL";
-        else
+        } else {
           localStrLine = "'" + localStrLine + "'";
+        }
         strSql = strSql.replaceAll("@Line@", localStrLine);
         Statement st = connectionProvider.getStatement();
         ResultSet result;
@@ -1048,30 +1162,35 @@ public class FactLine {
       }
       if (description.length() == 0) {
         description.append((m_docVO.DocumentNo == null) ? "" : m_docVO.DocumentNo);
-        if (!strC_Bpartner_ID.equals(""))
-          description.append(" # ").append(
-              AcctServerData.selectBpartnerName(connectionProvider, strC_Bpartner_ID));
+        if (!strC_Bpartner_ID.equals("")) {
+          description.append(" # ")
+              .append(AcctServerData.selectBpartnerName(connectionProvider, strC_Bpartner_ID));
+        }
         // ... line
         if (m_docLine != null) {
-          if (m_docLine.m_Line != null && !m_docLine.m_Line.equals(""))
+          if (m_docLine.m_Line != null && !m_docLine.m_Line.equals("")) {
             description.append(" # ").append(m_docLine.m_Line);
-          if (m_docLine.m_description != null && !m_docLine.m_description.equals(""))
+          }
+          if (m_docLine.m_description != null && !m_docLine.m_description.equals("")) {
             description.append(" (").append(m_docLine.m_description).append(")");
+          }
         }
         // ... cannot distinguish between header and tax
       }
-      if (description.length() > 255)
+      if (description.length() > 255) {
         description = new StringBuffer(description.substring(0, 254));
+      }
     } catch (NoConnectionAvailableException ex) {
       throw new ServletException("@CODE=NoConnectionAvailable");
     } catch (SQLException ex2) {
-      throw new ServletException("@CODE=" + Integer.toString(ex2.getErrorCode()) + "@"
-          + ex2.getMessage());
+      throw new ServletException(
+          "@CODE=" + Integer.toString(ex2.getErrorCode()) + "@" + ex2.getMessage());
     } catch (Exception ex3) {
       throw new ServletException("@CODE=@" + ex3.getMessage());
     }
-    if (description.length() > 255)
+    if (description.length() > 255) {
       description = new StringBuffer(description.substring(0, 254));
+    }
     return description;
   }
 

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -56,7 +57,7 @@ import org.openbravo.model.common.enterprise.Organization;
  * @author Martin Taal
  */
 public class DataSetService implements OBSingleton {
-  private static final Logger log = Logger.getLogger(DataSetService.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static DataSetService instance;
 
@@ -84,8 +85,8 @@ public class DataSetService implements OBSingleton {
   public boolean hasData(DataSet dataSet) {
     long totalCnt = 0;
     for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
-      final Entity entity = ModelProvider.getInstance().getEntityByTableName(
-          dataSetTable.getTable().getDBTableName());
+      final Entity entity = ModelProvider.getInstance()
+          .getEntityByTableName(dataSetTable.getTable().getDBTableName());
       final OBCriteria<BaseOBObject> obc = OBDal.getInstance().createCriteria(entity.getName());
       totalCnt += obc.count();
       if (totalCnt > 0) {
@@ -109,14 +110,15 @@ public class DataSetService implements OBSingleton {
    */
   public <T extends BaseOBObject> boolean hasChanged(DataSet dataSet, Date afterDate) {
     for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
-      final Entity entity = ModelProvider.getInstance().getEntityByTableName(
-          dataSetTable.getTable().getDBTableName());
+      final Entity entity = ModelProvider.getInstance()
+          .getEntityByTableName(dataSetTable.getTable().getDBTableName());
       final OBCriteria<T> obc = OBDal.getInstance().createCriteria(entity.getName());
       obc.add(Restrictions.gt(Organization.PROPERTY_UPDATED, afterDate));
       // todo: count is slower than exists, is exists possible?
       List<?> list = obc.list();
       if (obc.count() < 20 && obc.count() > 0) {
-        log.warn("The following rows were changed after your last update.database or export.database:");
+        log.warn(
+            "The following rows were changed after your last update.database or export.database:");
         for (Object obj : list) {
           log.warn("     -" + obj);
         }
@@ -280,8 +282,8 @@ public class DataSetService implements OBSingleton {
         }
       }
 
-      final OBQuery<BaseOBObject> oq = OBDal.getInstance().createQuery(entity.getName(),
-          whereClause);
+      final OBQuery<BaseOBObject> oq = OBDal.getInstance()
+          .createQuery(entity.getName(), whereClause);
       oq.setFilterOnActive(false);
       oq.setNamedParameters(existingParams);
 
@@ -351,8 +353,9 @@ public class DataSetService implements OBSingleton {
       alias += ".";
     }
 
-    final OBQuery<BaseOBObject> oq = OBDal.getInstance().createQuery(entity.getName(),
-        (whereClause != null ? whereClause : "") + " order by " + alias + "id");
+    final OBQuery<BaseOBObject> oq = OBDal.getInstance()
+        .createQuery(entity.getName(),
+            (whereClause != null ? whereClause : "") + " order by " + alias + "id");
     oq.setFilterOnActive(false);
     oq.setNamedParameters(existingParams);
 
@@ -362,7 +365,7 @@ public class DataSetService implements OBSingleton {
       oq.setFilterOnReadableClients(false);
     }
     try {
-      return oq.iterate();
+      return oq.list().iterator();
     } catch (final Exception e) {
       throw new OBException(e);
     }
@@ -475,6 +478,7 @@ public class DataSetService implements OBSingleton {
   // compares the content of a list by converting the id to a hex
   public static class BaseOBIDHexComparator implements Comparator<Object> {
 
+    @Override
     public int compare(Object o1, Object o2) {
       if (!(o1 instanceof BaseOBObject) || !(o2 instanceof BaseOBObject)) {
         return 0;
@@ -497,6 +501,7 @@ public class DataSetService implements OBSingleton {
 
   public static class BaseStringComparator implements Comparator<Object> {
 
+    @Override
     public int compare(Object o1, Object o2) {
       if (!(o1 instanceof BaseOBObject) || !(o2 instanceof BaseOBObject)) {
         return 0;

@@ -21,6 +21,8 @@ package org.openbravo.client.application.event;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -39,8 +41,6 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.WindowAccessData;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Checks if the Role has access to add notes for a particular tab
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * @author shankar balachandran
  */
 public class NoteEventHandler extends EntityPersistenceEventObserver {
-  private static Logger log = LoggerFactory.getLogger(NoteEventHandler.class);
+  private static Logger log = LogManager.getLogger();
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Note.ENTITY_NAME) };
 
   @Override
@@ -88,9 +88,9 @@ public class NoteEventHandler extends EntityPersistenceEventObserver {
       OBContext.setAdminMode();
       try {
         disableNotesForReadOnly = Preferences.getPreferenceValue("DisableNotesForReadOnlyTabs",
-            true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                .getOBContext().getRole(), null);
+            true, OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), null);
       } catch (PropertyException e) {
         // if property not found, do not disable notes
         disableNotesForReadOnly = "N";
@@ -123,7 +123,8 @@ public class NoteEventHandler extends EntityPersistenceEventObserver {
     if (isReadOnly) {
       language = OBContext.getOBContext().getLanguage().getLanguage();
       connection = new DalConnectionProvider(false);
-      throw new OBException(Utility.messageBD(connection, "NotesDisabledForReadOnlyTabs", language));
+      throw new OBException(
+          Utility.messageBD(connection, "NotesDisabledForReadOnlyTabs", language));
     }
   }
 }

@@ -96,10 +96,21 @@ export.database: exports database structure and data to xml files.
   <property name="buildValidation" value="true"/>
   <property name="modules" value=""/> 
  
-  <available file=".hg" property="is.hg" />
-
   <condition property="xdoclint.missing" value="" else="-Xdoclint:-missing">
     <equals arg1="${ant.java.version}" arg2="1.7"/>
+  </condition>
+
+  <condition property="html.version" value="-html5" else="">
+    <not>
+      <or>
+        <equals arg1="${ant.java.version}" arg2="1.7"/>
+        <equals arg1="${ant.java.version}" arg2="1.8"/>
+      </or>
+    </not>
+  </condition>
+  
+  <condition property="jvm.arg.line" value="" else="--add-opens java.base/java.lang=ALL-UNNAMED">
+    <equals arg1="${ant.java.version}" arg2="1.8"/>
   </condition>
 
   <condition property="calculate.core.rev">
@@ -223,6 +234,7 @@ export.database: exports database structure and data to xml files.
     <fileset dir="${build.wad.lib}">
       <include name="openbravo-wad.jar" />
     </fileset>
+    <pathelement path="${base.config}" />
   </path>
 
   <path id="project.class.path">
@@ -230,6 +242,7 @@ export.database: exports database structure and data to xml files.
       <include name="*/build/classes/" />
     </dirset>
     <pathelement path="${basedir}/src-util/modulescript/build/classes/" />
+    <pathelement path="${base.config}" />
     <pathelement path="${build}" />
     <pathelement path="${base.src}" />
     <fileset dir="${base.lib}">
@@ -264,6 +277,7 @@ export.database: exports database structure and data to xml files.
     </dirset>
     <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
     <pathelement path="${build.apply.module}" />
+    <pathelement path="${base.config}" />
     <pathelement path="${base.src}" />
     <fileset dir="${base.lib}">
       <include name="**/*.jar" />
@@ -294,6 +308,7 @@ export.database: exports database structure and data to xml files.
       <include name="*/build/classes/" />
     </dirset>
     <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
+    <pathelement path="${base.config}" />
     <pathelement path="${build.apply.module}" />
     <pathelement path="${build}" />
     <pathelement path="${base.src}" />
@@ -347,22 +362,26 @@ export.database: exports database structure and data to xml files.
   
   <taskdef resource="axis-tasks.properties" classpathref="project.class.path" />
   
-  <target name="init" depends="code.rev">
+  <target name="init">
     <fail if="root.user" message="Don't run ant tasks with the root user" />
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set." />
-  </target>
-
-  <target name="code.rev" depends="set.code.rev">
-    <condition property="code.revision" value="${hg.id}" else="0">
-      <isset property="hg.id" />
-    </condition>
-  </target>
-
-  <target name="set.code.rev" if="is.hg">
-    <exec executable="hg" outputproperty="hg.id" failifexecutionfails="false">
-      <arg value="id"/>
-      <arg value="-i"/>
-    </exec>
+    <fail message="Unsupported Java version ${ant.java.version}. Minimum required is 8 (1.8).">
+      <condition>
+        <or>
+          <equals arg1="${ant.java.version}" arg2="1.6"/>
+          <equals arg1="${ant.java.version}" arg2="1.7"/>
+        </or>
+      </condition>
+    </fail>
+    <antversion property="min.ant.version" atleast="1.9.2" />
+    <antversion property="actual.ant.version" />
+    <fail message="Unsupported ant version ${actual.ant.version}. Minimum required is 1.9.2.">
+      <condition>
+        <not>
+          <isset property="min.ant.version"/>
+        </not>
+      </condition>
+    </fail>
   </target>
 
   <target name="compile.complete" depends="init, core.lib, wad.lib, trl.lib">
@@ -411,11 +430,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
     <antcall target="build.deploy" />
     <updatesystemstatuswhennot v="RB51" previous="RB12"/>
-    <!-- only restart tomcat if the restart prop was set to true -->
-    <condition property="dorestart">
-      <istrue value="${restart}" />
-    </condition>
-    <antcall target="if.restart.tomcat" />
   </target>
 
   <target name="update.database.if.no.local" if="no.local">
@@ -442,10 +456,6 @@ export.database: exports database structure and data to xml files.
 
   <target name="build.deploy.war" if="mode.war">
     <antcall target="war" />
-  </target>
-
-  <target name="if.restart.tomcat" if="dorestart">
-    <antcall target="tomcat.restart" />
   </target>
 
   <target name="compile" depends="init,core.lib, wad.lib, trl.lib">
@@ -526,7 +536,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="generate.java.doc">
-    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes" additionalparam="${xdoclint.missing}">
+    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes" additionalparam="${xdoclint.missing} ${html.version}">
       <sourcepath>
         <pathelement path="${base.src}" />
         <pathelement path="${base.src.test}/src" />
@@ -548,7 +558,7 @@ export.database: exports database structure and data to xml files.
           <include name="*/lib/test/*.jar" />
         </fileset>
       </classpath>
-      <link href="http://docs.oracle.com/javase/7/docs/api/"/>
+      <link href="https://docs.oracle.com/javase/8/docs/api/"/>
     </javadoc>
   </target>
 
@@ -600,7 +610,6 @@ export.database: exports database structure and data to xml files.
                   password="${bbdd.password}" 
                   stableDBdir="${stableDBdir}"
                   testDBdir="${basedir}"
-                  verbosity="${bbdd.verbosity}"
                   modules="${modules}"
     />    
   </target>
@@ -763,6 +772,7 @@ export.database: exports database structure and data to xml files.
   <target name="apply.module" depends="compile.apply.module">
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}' '${friendlyWarnings}' '${forceRefData}'" />
+      <jvmarg line="${jvm.arg.line}" />
       <classpath refid="apply.module.runtime.classpath" />
     </java>
    <delete includeEmptyDirs="true"  dir="${build.apply.module}" />
@@ -791,7 +801,7 @@ export.database: exports database structure and data to xml files.
 		This task is called from the Openbravo ui, it spawns a java call which again
 		calls the restart.tomcat.do task as a spawned task.
 	-->
-  <target name="tomcat.restart" description="Restart the tomcat server process">
+  <target name="tomcat.restart">
     <echo message="Restarting tomcat..." />
     <java classname="org.openbravo.service.system.RestartTomcat" spawn="true" fork="true" maxmemory="${build.maxmemory}">
       <arg line="${base.src}" />
@@ -802,7 +812,7 @@ export.database: exports database structure and data to xml files.
   <!--
 		Is called by the org.openbravo.service.system.RestartTomcat class.
 	-->
-  <target name="tomcat.restart.do" description="Restart the tomcat server process">
+  <target name="tomcat.restart.do">
     <echo message="Restarting Tomcat at ${env.CATALINA_HOME}" />
     <java classname="org.apache.catalina.startup.Bootstrap" fork="true">
       <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar:${env.CATALINA_HOME}/bin/tomcat-juli.jar" />
@@ -826,25 +836,6 @@ export.database: exports database structure and data to xml files.
       <jvmarg value="-Djava.io.tmpdir=${env.CATALINA_BASE}/temp" />
       <arg line="start" />
     </java>
-  </target>
-
-  <!-- 
-		This task is called from the Openbravo ui, it spawns a java call which again
-		calls the tomcat.reload.do task as a spawned task.
-	-->
-  <target name="tomcat.reload" description="Reload the Openbravo context">
-    <echo message="Reloading webapp..." />
-    <java classname="org.openbravo.service.system.ReloadContext" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" spawn="true" fork="true">
-      <arg line="${base.src}" />
-      <classpath refid="project.class.path" />
-    </java>
-  </target>
-
-  <target name="tomcat.reload.do">
-    <taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <reload url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${context.name}" />
   </target>
 
   <target name="tomcat.list">
@@ -934,7 +925,7 @@ export.database: exports database structure and data to xml files.
     <taskdef name="configurationApp" classname="org.openbravo.configuration.ConfigurationApp">
       <classpath refid="project.class.path" />
     </taskdef>
-    <configurationApp/>
+    <configurationApp nonInteractive="${nonInteractive}" acceptLicense="${acceptLicense}"/>
     </target>
   
   <target name="package.core" depends="init, set.version.number">
@@ -950,8 +941,6 @@ export.database: exports database structure and data to xml files.
                    replace="\1${core.rev}\3"
                    byline="true"/>
     
-    <echo message="${hg.id}" file="${tmpdir}/config/instance.revision"/>
-	
     <delete includeEmptyDirs="true">
       <fileset dir="${tmpdir}/modules" includes="**/*" defaultexcludes="no"/>
     </delete>
@@ -1008,7 +997,9 @@ export.database: exports database structure and data to xml files.
       <arg line="'${base.config}/Openbravo.properties' ${logFileName}" />
       <classpath>
         <pathelement path="${build.core.lib}/openbravo-core.jar" />
-        <pathelement path="${base.lib}/runtime/log4j-1.2.16.jar" />
+        <pathelement path="${base.lib}/runtime/log4j-1.2-api-2.11.1.jar" />
+        <pathelement path="${base.lib}/runtime/log4j-api-2.11.1.jar" />
+        <pathelement path="${base.lib}/runtime/log4j-core-2.11.1.jar" />
         <pathelement path="${base.lib}/runtime/commons-pool-1.5.6.jar" />
         <pathelement path="${base.lib}/runtime/commons-dbcp-1.4.jar" />
         <pathelement path="${base.lib}/runtime/postgresql-42.2.2.jre7.jar" />

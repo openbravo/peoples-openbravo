@@ -51,10 +51,14 @@ public class ObserverBaseTest extends WeldBaseTest {
     OrderTestObserver.resetExecutionCount();
     OrderLineTestObserver.resetExecutionCount();
     super.setUp();
+    OrderTestObserver.refreshObservedEntities();
+    OrderLineTestObserver.refreshObservedEntities();
   }
 
   protected OrderLine pickARandomOrderLine() {
-    return (OrderLine) OBDal.getInstance().createCriteria(OrderLine.class).setMaxResults(1)
+    return (OrderLine) OBDal.getInstance()
+        .createCriteria(OrderLine.class)
+        .setMaxResults(1)
         .uniqueResult();
   }
 

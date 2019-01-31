@@ -24,6 +24,8 @@ import static org.junit.Assert.assertThat;
 
 import java.math.BigDecimal;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -34,22 +36,19 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper class to develop Referenced Inventory related tests
  */
 public abstract class ReferencedInventoryTest extends WeldBaseTest {
-  protected static final Logger log = LoggerFactory.getLogger(ReferencedInventoryTest.class);
+  protected static final Logger log = LogManager.getLogger();
 
   // All tests creates a new product with 10 units
   protected static final BigDecimal RECEIVEDQTY_10 = new BigDecimal("10");
 
   protected final String[] BINS = { ReferencedInventoryTestUtils.BIN_SPAIN_L01,
       ReferencedInventoryTestUtils.BIN_SPAIN_L02 };
-  protected final String[][] PRODUCTS = {
-      { ReferencedInventoryTestUtils.PRODUCT_TSHIRT_ID, null },
+  protected final String[][] PRODUCTS = { { ReferencedInventoryTestUtils.PRODUCT_TSHIRT_ID, null },
       { ReferencedInventoryTestUtils.PRODUCT_BALL_COLORATTRIBUTE,
           ReferencedInventoryTestUtils.ATTRIBUTE_COLOR_YELLOW },
       { ReferencedInventoryTestUtils.PRODUCT_LAPTOP_SERIALATTRIBUTE,
@@ -63,8 +62,8 @@ public abstract class ReferencedInventoryTest extends WeldBaseTest {
   public void initialize() {
     setUserContext(QA_TEST_ADMIN_USER_ID);
     VariablesSecureApp vsa = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-        OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-            .getCurrentOrganization().getId());
+        OBContext.getOBContext().getCurrentClient().getId(),
+        OBContext.getOBContext().getCurrentOrganization().getId());
     RequestContext.get().setVariableSecureApp(vsa);
     ReferencedInventoryTestUtils.initializeReservationsPreferenceIfDoesnotExist();
   }
@@ -75,8 +74,9 @@ public abstract class ReferencedInventoryTest extends WeldBaseTest {
 
   void assertsGoodsMovementNumberOfLines(final InternalMovement boxMovement,
       final int expectedNumberOfLines) {
-    assertThat("Box Movement has one line", boxMovement.getMaterialMgmtInternalMovementLineList()
-        .size(), equalTo(expectedNumberOfLines));
+    assertThat("Box Movement has one line",
+        boxMovement.getMaterialMgmtInternalMovementLineList().size(),
+        equalTo(expectedNumberOfLines));
   }
 
   @After

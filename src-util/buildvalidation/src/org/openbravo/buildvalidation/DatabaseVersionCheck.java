@@ -24,7 +24,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ExecutionLimits;
 import org.openbravo.buildvalidation.BuildValidation;
 import org.openbravo.database.ConnectionProvider;
@@ -34,7 +35,7 @@ import org.openbravo.modulescript.OpenbravoVersion;
  * This validation prevents system to be built in unsupported database versions.
  */
 public class DatabaseVersionCheck extends BuildValidation {
-  private static Logger log4j = Logger.getLogger(DatabaseVersionCheck.class);
+  private static Logger log4j = LogManager.getLogger();
   private final static String POSTGRES = "PostgreSQL";
   private final static String ORACLE = "Oracle";
   private final static String MIN_PG_VERSION = "9.3";

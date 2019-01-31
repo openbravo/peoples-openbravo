@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,8 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -41,13 +43,11 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Dependent
 @Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
 class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
-  private static final Logger log = LoggerFactory.getLogger(UpdateTax.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public int getOrder() {
@@ -62,8 +62,8 @@ class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
    */
   @Override
   public void exec(final Order processingOrder, final OrderLine orderLine, OrderLine newOrderLine) {
-    TaxRate tax = OBDal.getInstance().getProxy(TaxRate.class,
-        getCurrentTaxId(newOrderLine.getProduct(), processingOrder));
+    TaxRate tax = OBDal.getInstance()
+        .getProxy(TaxRate.class, getCurrentTaxId(newOrderLine.getProduct(), processingOrder));
     newOrderLine.setTax(tax);
   }
 
@@ -78,19 +78,24 @@ class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
    * @throws ServletException
    */
   private String getCurrentTaxId(final Product product, final Order processingOrder) {
-    String bpLocationId = getMaxBusinessPartnerLocationId(processingOrder.getBusinessPartner());
-    String orderWarehouseId = processingOrder.getWarehouse() != null ? processingOrder
-        .getWarehouse().getId() : "";
-    String orderProjectId = processingOrder.getProject() != null ? processingOrder.getProject()
-        .getId() : "";
+    String bpBillToLocationId = (processingOrder.getInvoiceAddress() != null)
+        ? processingOrder.getInvoiceAddress().getId()
+        : getMaxBusinessPartnerLocationId(processingOrder.getBusinessPartner());
+    String bpLocationId = processingOrder.getPartnerAddress().getId();
+    String orderWarehouseId = processingOrder.getWarehouse() != null
+        ? processingOrder.getWarehouse().getId()
+        : "";
+    String orderProjectId = processingOrder.getProject() != null
+        ? processingOrder.getProject().getId()
+        : "";
     String strDatePromised = DateFormatUtils.format(processingOrder.getScheduledDeliveryDate(),
         OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("dateFormat.java"));
 
     String taxID;
     try {
       taxID = Tax.get(new DalConnectionProvider(), product.getId(), strDatePromised,
-          processingOrder.getOrganization().getId(), orderWarehouseId, bpLocationId, bpLocationId,
-          orderProjectId, processingOrder.isSalesTransaction());
+          processingOrder.getOrganization().getId(), orderWarehouseId, bpBillToLocationId,
+          bpLocationId, orderProjectId, processingOrder.isSalesTransaction());
     } catch (IOException | ServletException e) {
       log.error("Error in CopyFromOrdersProcess while retrieving the TaxID for a Product", e);
       throw new OBException(e);

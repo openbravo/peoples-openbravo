@@ -22,12 +22,13 @@ import java.sql.Connection;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
 public abstract class DocInventoryTemplate {
-  static Logger log4jDocInventory = Logger.getLogger(DocInvoice.class);
+  static Logger log4jDocInventory = LogManager.getLogger();
 
   /**
    * Constructor
@@ -49,8 +50,8 @@ public abstract class DocInventoryTemplate {
    *          account schema
    * @return Fact
    */
-  public abstract Fact createFact(DocInventory docInventory, AcctSchema as,
-      ConnectionProvider conn, Connection con, VariablesSecureApp vars) throws ServletException;
+  public abstract Fact createFact(DocInventory docInventory, AcctSchema as, ConnectionProvider conn,
+      Connection con, VariablesSecureApp vars) throws ServletException;
 
   public String getServletInfo() {
     return "Servlet for the accounting";

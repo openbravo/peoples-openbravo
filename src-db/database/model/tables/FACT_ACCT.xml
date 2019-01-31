@@ -292,15 +292,22 @@
         <index-column name="C_ACCTSCHEMA_ID"/>
         <index-column name="ACCOUNT_ID"/>
       </index>
+      <index name="FACT_ACCT_ACCOUNT_IDX" unique="false">
+        <index-column name="ACCOUNT_ID"/>
+      </index>
       <index name="FACT_ACCT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
         <whereClause><![CDATA[C_BPARTNER_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="FACT_ACCT_DATEACCT" unique="false">
         <index-column name="DATEACCT"/>
+        <index-column name="FACT_ACCT_ID"/>
       </index>
       <index name="FACT_ACCT_DATEBALANCED" unique="false">
         <index-column name="DATEBALANCED"/>
+      </index>
+      <index name="FACT_ACCT_DOCBASETYPE" unique="false">
+        <index-column name="DOCBASETYPE"/>
       </index>
       <index name="FACT_ACCT_GROUP" unique="false">
         <index-column name="FACT_ACCT_GROUP_ID"/>
@@ -315,6 +322,9 @@
       <index name="FACT_ACCT_TABLE_RECORD_ID" unique="false">
         <index-column name="AD_TABLE_ID"/>
         <index-column name="RECORD_ID"/>
+      </index>
+      <index name="FACT_ACCT_TYPE" unique="false">
+        <index-column name="FACTACCTTYPE"/>
       </index>
       <check name="FACT_ACCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="FACT_ACCT_ISMODIFY_CHECK"><![CDATA[ISMODIFY IN ('Y', 'N')]]></check>

@@ -19,7 +19,8 @@
 
 package org.openbravo.base.model;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.TableDomainType;
 
@@ -31,7 +32,7 @@ import org.openbravo.base.model.domaintype.TableDomainType;
  */
 
 public class RefTable extends ModelObject {
-  private static final Logger log = Logger.getLogger(RefTable.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Reference reference;
 
@@ -57,8 +58,8 @@ public class RefTable extends ModelObject {
     this.reference = reference;
     final DomainType domainType = reference.getDomainType();
     if (!(domainType instanceof TableDomainType)) {
-      log.error("Domain type of reference " + reference.getId()
-          + " is not a TableDomainType but a " + domainType);
+      log.error("Domain type of reference " + reference.getId() + " is not a TableDomainType but a "
+          + domainType);
     } else {
       ((TableDomainType) domainType).setRefTable(this);
     }

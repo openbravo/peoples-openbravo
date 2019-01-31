@@ -29,6 +29,7 @@ public class UIGeneralQuantity extends UIReference {
     super(reference, subreference);
   }
 
+  @Override
   public String formatGridValue(VariablesSecureApp vars, String value) {
     String rt = value;
     try {

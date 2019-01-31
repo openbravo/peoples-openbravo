@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -41,12 +43,9 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ReservedGoodMovementActionHandler extends BaseProcessActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(ReservedGoodMovementActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -55,7 +54,8 @@ public class ReservedGoodMovementActionHandler extends BaseProcessActionHandler 
     try {
       jsonRequest = new JSONObject(content);
       log.debug("{}", jsonRequest);
-      JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+      JSONArray selectedLines = jsonRequest.getJSONObject("_params")
+          .getJSONObject("grid")
           .getJSONArray("_selection");
       if (selectedLines.length() == 0) {
         return jsonRequest;
@@ -73,8 +73,8 @@ public class ReservedGoodMovementActionHandler extends BaseProcessActionHandler 
         String strReservationStockId = selectedLine
             .getString(ReservedGoodMovementPickEdit.PROPERTY_ID);
 
-        ReservationStock resStock = OBDal.getInstance().get(ReservationStock.class,
-            strReservationStockId);
+        ReservationStock resStock = OBDal.getInstance()
+            .get(ReservationStock.class, strReservationStockId);
 
         final BigDecimal qty = new BigDecimal(
             selectedLine.getString(ReservedGoodMovementPickEdit.PROPERTY_MOVEMENTQUANTITY));
@@ -116,8 +116,8 @@ public class ReservedGoodMovementActionHandler extends BaseProcessActionHandler 
         gmLines.setMovementQuantity(qty);
         gmLines.setUOM(resStock.getReservation().getUOM());
         gmLines.setStorageBin(resStock.getStorageBin());
-        Locator newStorageBin = (Locator) OBDal.getInstance().getProxy(Locator.ENTITY_NAME,
-            strStorageBin);
+        Locator newStorageBin = (Locator) OBDal.getInstance()
+            .getProxy(Locator.ENTITY_NAME, strStorageBin);
         gmLines.setNewStorageBin(newStorageBin);
         gmLines.setStockReservation(resStock.getReservation());
         OBDal.getInstance().save(gmLines);

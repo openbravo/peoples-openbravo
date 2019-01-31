@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,14 +21,15 @@ package org.openbravo.service.json;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -54,7 +55,7 @@ import org.openbravo.model.ad.datamodel.Column;
  * @author mtaal
  */
 public class DataEntityQueryService {
-  private static final Logger log = Logger.getLogger(DataEntityQueryService.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static final String PARAM_DELIMITER = "@";
 
@@ -80,8 +81,8 @@ public class DataEntityQueryService {
    */
   public int count() {
     Check.isNotNull(entityName, "entityName must be set");
-    final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
-        queryBuilder.getJoinClause() + queryBuilder.getWhereClause());
+    final OBQuery<BaseOBObject> obq = OBDal.getInstance()
+        .createQuery(entityName, queryBuilder.getJoinClause() + queryBuilder.getWhereClause());
     obq.setFilterOnReadableClients(isFilterOnReadableClients());
     obq.setFilterOnReadableOrganization(isFilterOnReadableOrganizations());
 
@@ -110,7 +111,7 @@ public class DataEntityQueryService {
    * @return a result which can be scrolled forward only and the results are not cached
    */
   public ScrollableResults scroll() {
-    final Query qry = buildOBQuery().createQuery();
+    final Query<BaseOBObject> qry = buildOBQuery().createQuery();
     qry.setFetchSize(1000);
     qry.setCacheable(false);
     return qry.scroll(ScrollMode.FORWARD_ONLY);
@@ -151,14 +152,13 @@ public class DataEntityQueryService {
     }
     obq.setFilterOnActive(isFilterOnActive());
 
-    if (log.isDebugEnabled()) {
-      String params = "";
-      Map<String, Object> namedParams = queryBuilder.getNamedParameters();
-      for (String paramName : namedParams.keySet()) {
-        params += "  -" + paramName + ": " + namedParams.get(paramName) + "\n";
-      }
-      log.debug("Setting params:\n" + params);
-    }
+    log.debug("Setting params:\n{}",
+        () -> queryBuilder.getNamedParameters()
+            .entrySet()
+            .stream()
+            .map(e -> "  -" + e.getKey() + ": " + e.getValue())
+            .collect(Collectors.joining("\n")));
+
     obq.setNamedParameters(queryBuilder.getNamedParameters());
 
     return obq;
@@ -172,15 +172,15 @@ public class DataEntityQueryService {
   List<Property> getDistinctDisplayProperties() {
     final String localDistinct = getDistinct();
     final List<Property> properties = new ArrayList<Property>();
-    final Property property = DalUtil.getPropertyFromPath(
-        ModelProvider.getInstance().getEntity(getEntityName()), localDistinct);
+    final Property property = DalUtil
+        .getPropertyFromPath(ModelProvider.getInstance().getEntity(getEntityName()), localDistinct);
 
     // now use the table reference definition or select on the identifier properties
     if (property.getDomainType() instanceof TableDomainType
         && ((TableDomainType) property.getDomainType()).getRefTable() != null) {
       final TableDomainType domainType = (TableDomainType) property.getDomainType();
-      final Property displayProp = KernelUtils.getInstance().getPropertyFromColumn(
-          OBDal.getInstance()
+      final Property displayProp = KernelUtils.getInstance()
+          .getPropertyFromColumn(OBDal.getInstance()
               .get(Column.class, domainType.getRefTable().getDisplayColumn().getId()));
       if (displayProp != null) {
         properties.add(displayProp);

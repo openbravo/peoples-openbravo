@@ -27,6 +27,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.junit.Rule;
@@ -54,8 +56,6 @@ import org.openbravo.test.services.data.ServiceTestData3;
 import org.openbravo.test.services.data.ServiceTestData4;
 import org.openbravo.test.services.data.ServiceTestData5;
 import org.openbravo.test.services.data.ServiceTestData6;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Tests cases to check service Price computation
@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class ServicesTest extends WeldBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(ServicesTest.class);
+  final static private Logger log = LogManager.getLogger();
   // User Openbravo
   private final String USER_ID = "100";
   // Client QA Testing
@@ -109,8 +109,8 @@ public class ServicesTest extends WeldBaseTest {
       Order testOrder = (Order) DalUtil.copy(order, false);
       testOrderId = testOrder.getId();
       testOrder.setDocumentNo("Service Test " + parameter.getTestNumber());
-      testOrder.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
-          parameter.getBpartnerId()));
+      testOrder.setBusinessPartner(
+          OBDal.getInstance().get(BusinessPartner.class, parameter.getBpartnerId()));
       PriceList priceList = OBDal.getInstance().get(PriceList.class, parameter.getPricelistId());
       testOrder.setPriceList(priceList);
       isPriceIncludingTaxes = priceList.isPriceIncludesTax();
@@ -131,8 +131,8 @@ public class ServicesTest extends WeldBaseTest {
       for (String[] product : parameter.getProducts()) {
         OrderLine orderLine = insertLine(order, testOrder, product[0], new BigDecimal(product[1]),
             new BigDecimal(product[2]));
-        insertRelation(serviceOrderLine, orderLine, new BigDecimal(product[1]), new BigDecimal(
-            product[3]));
+        insertRelation(serviceOrderLine, orderLine, new BigDecimal(product[1]),
+            new BigDecimal(product[3]));
       }
       OBDal.getInstance().flush();
       OBDal.getInstance().refresh(testOrder);
@@ -184,8 +184,9 @@ public class ServicesTest extends WeldBaseTest {
       }
       assertThat("Wrong Quantity for Service", serviceOrderLine.getOrderedQuantity(),
           closeTo(parameter.getQuantity(), BigDecimal.ZERO));
-      assertThat("Wrong Service Relations", new BigDecimal(serviceOrderLine
-          .getOrderlineServiceRelationCOrderlineRelatedIDList().size()),
+      assertThat("Wrong Service Relations",
+          new BigDecimal(
+              serviceOrderLine.getOrderlineServiceRelationCOrderlineRelatedIDList().size()),
           closeTo(BigDecimal.ZERO, BigDecimal.ZERO));
 
     } catch (Exception e) {
@@ -205,10 +206,10 @@ public class ServicesTest extends WeldBaseTest {
   private void removeServiceRelations(OrderLine serviceOrderLine) {
     StringBuffer where = new StringBuffer();
     where.append(" as olsr");
-    where.append(" where olsr." + OrderlineServiceRelation.PROPERTY_SALESORDERLINE
-        + " = :salesorderline");
-    OBQuery<OrderlineServiceRelation> olsrQry = OBDal.getInstance().createQuery(
-        OrderlineServiceRelation.class, where.toString());
+    where.append(
+        " where olsr." + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + " = :salesorderline");
+    OBQuery<OrderlineServiceRelation> olsrQry = OBDal.getInstance()
+        .createQuery(OrderlineServiceRelation.class, where.toString());
     olsrQry.setNamedParameter("salesorderline", serviceOrderLine);
 
     ScrollableResults olsrScroller = olsrQry.scroll(ScrollMode.FORWARD_ONLY);
@@ -225,10 +226,10 @@ public class ServicesTest extends WeldBaseTest {
       BigDecimal quantity) {
     StringBuffer where = new StringBuffer();
     where.append(" as olsr");
-    where.append(" where olsr." + OrderlineServiceRelation.PROPERTY_SALESORDERLINE
-        + " = :salesorderline");
-    OBQuery<OrderlineServiceRelation> olsrQry = OBDal.getInstance().createQuery(
-        OrderlineServiceRelation.class, where.toString());
+    where.append(
+        " where olsr." + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + " = :salesorderline");
+    OBQuery<OrderlineServiceRelation> olsrQry = OBDal.getInstance()
+        .createQuery(OrderlineServiceRelation.class, where.toString());
     olsrQry.setNamedParameter("salesorderline", serviceOrderLine);
 
     ScrollableResults olsrScroller = olsrQry.scroll(ScrollMode.FORWARD_ONLY);
@@ -272,8 +273,8 @@ public class ServicesTest extends WeldBaseTest {
     }
     testOrderLine.setTax(OBDal.getInstance().get(TaxRate.class, TAX_EXEMPT));
     if (parameter.getBpartnerId() != null) {
-      testOrderLine.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
-          parameter.getBpartnerId()));
+      testOrderLine.setBusinessPartner(
+          OBDal.getInstance().get(BusinessPartner.class, parameter.getBpartnerId()));
     }
     testOrderLine.setSalesOrder(testOrder);
     testOrder.getOrderLineList().add(testOrderLine);

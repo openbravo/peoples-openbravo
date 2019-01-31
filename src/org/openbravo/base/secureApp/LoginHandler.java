@@ -1,7 +1,6 @@
 /*
  ************************************************************************************
-
- * Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Copyright (C) 2001-2019 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -30,6 +29,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
+import org.openbravo.authentication.ChangePasswordException;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.client.application.CachedPreference;
@@ -54,6 +54,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.server.ServerControllerHandler;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.password.PasswordStrengthChecker;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -79,9 +80,12 @@ public class LoginHandler extends HttpBaseServlet {
   @Inject
   private CachedPreference cachedPreference;
 
+  @Inject
+  private PasswordStrengthChecker passwordStrengthChecker;
+
   @Override
-  public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest req, HttpServletResponse res)
+      throws IOException, ServletException {
 
     log4j.debug("start doPost");
 
@@ -137,14 +141,12 @@ public class LoginHandler extends HttpBaseServlet {
           if (StringUtils.isEmpty(strUserAuth)) {
             throw new AuthenticationException("Message");// FIXME
           }
+
           checkLicenseAndGo(res, vars, strUserAuth, user, sessionId);
 
-        } catch (AuthenticationExpirationPasswordException aepe) {
-
+        } catch (AuthenticationExpirationPasswordException | ChangePasswordException exception) {
           vars.removeSessionValue("#LoginErrorMsg");
-          goToUpdatePassword(res, vars, aepe.getOBError().getMessage(), aepe.getOBError()
-              .getTitle(), "Error", "../security/Login_FS.html");
-
+          goToUpdatePassword(res, vars, exception, "../security/Login_FS.html");
         } catch (AuthenticationException e) {
 
           final OBError errorMsg = e.getOBError();
@@ -155,7 +157,8 @@ public class LoginHandler extends HttpBaseServlet {
             final String failureTitle = Utility.messageBD(cp, errorMsg.getTitle(), language);
             final String failureMessage = Utility.messageBD(cp, errorMsg.getMessage(), language);
 
-            goToRetry(res, vars, failureMessage, failureTitle, "Error", "../security/Login_FS.html");
+            goToRetry(res, vars, failureMessage, failureTitle, "Error",
+                "../security/Login_FS.html");
 
           } else {
             throw new ServletException("Error"); // FIXME
@@ -229,11 +232,8 @@ public class LoginHandler extends HttpBaseServlet {
         msgType = "Error";
         action = "../security/Login_FS.html";
       }
-      // retrieve if multiple sessions for same user should be prevented
-      boolean forceNamedUserLogin = "FORCE_NAMED_USER".equals(vars.getCommand());
 
-      LicenseRestriction limitation = ak.checkOPSLimitations(sessionId, username,
-          forceNamedUserLogin, getSessionType());
+      LicenseRestriction limitation = ak.checkOPSLimitations(sessionId, getSessionType());
 
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
 
@@ -241,93 +241,72 @@ public class LoginHandler extends HttpBaseServlet {
       // or if the last rebuild didn't go well. If any of these are true, then the user is
       // allowed to login only as system administrator
       switch (limitation) {
-      case NUMBER_OF_CONCURRENT_USERS_REACHED:
-        String msg = Utility
-            .messageBD(cp, "NUMBER_OF_CONCURRENT_USERS_REACHED", vars.getLanguage());
-        String title = Utility.messageBD(cp, "NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE",
-            vars.getLanguage());
-        log4j.warn("Concurrent Users Reached - Session: " + sessionId);
-        updateDBSession(sessionId, msgType.equals("Warning"), "CUR");
-        goToRetry(res, vars, msg, title, msgType, action);
-        return;
-      case NUMBER_OF_SOFT_USERS_REACHED:
-        msg = Utility.messageBD(cp, "NUMBER_OF_SOFT_USERS_REACHED", vars.getLanguage());
-        title = Utility.messageBD(cp, "NUMBER_OF_SOFT_USERS_REACHED_TITLE", vars.getLanguage());
-        action = "../security/Menu.html";
-        msgType = "Warning";
-        log4j.warn("Soft Users Reached - Session: " + sessionId);
-        updateDBSession(sessionId, true, "SUR");
-        goToRetry(res, vars, msg, title, msgType, action);
-        return;
-      case OPS_INSTANCE_NOT_ACTIVE:
-        msg = Utility.messageBD(cp, "OPS_INSTANCE_NOT_ACTIVE", vars.getLanguage());
-        title = Utility.messageBD(cp, "OPS_INSTANCE_NOT_ACTIVE_TITLE", vars.getLanguage());
-        log4j.warn("Innactive OBPS instance - Session: " + sessionId);
-        updateDBSession(sessionId, msgType.equals("Warning"), "IOBPS");
-        goToRetry(res, vars, msg, title, msgType, action);
-        return;
-      case MODULE_EXPIRED:
-        msg = Utility.messageBD(cp, "OPS_MODULE_EXPIRED", vars.getLanguage());
-        title = Utility.messageBD(cp, "OPS_MODULE_EXPIRED_TITLE", vars.getLanguage());
-        StringBuffer expiredMoudules = new StringBuffer();
-        log4j.warn("Expired modules - Session: " + sessionId);
-        for (Module module : ak.getExpiredInstalledModules()) {
-          expiredMoudules.append("<br/>").append(module.getName());
-          log4j.warn("  module:" + module.getName());
-        }
-        msg += expiredMoudules.toString();
-        updateDBSession(sessionId, msgType.equals("Warning"), "ME");
-        goToRetry(res, vars, msg, title, msgType, action);
-        return;
-      case NOT_MATCHED_INSTANCE:
-        msg = Utility.messageBD(cp, "OPS_NOT_MATCHED_INSTANCE", vars.getLanguage());
-        title = Utility.messageBD(cp, "OPS_NOT_MATCHED_INSTANCE_TITLE", vars.getLanguage());
-        log4j.warn("No matched instance - Session: " + sessionId);
-        updateDBSession(sessionId, msgType.equals("Warning"), "IOBPS");
-        goToRetry(res, vars, msg, title, msgType, action);
-        return;
-      case HB_NOT_ACTIVE:
-        msg = Utility.messageBD(cp, "OPS_NOT_HB_ACTIVE", vars.getLanguage());
-        title = Utility.messageBD(cp, "OPS_NOT_HB_ACTIVE_TITLE", vars.getLanguage());
-        log4j.warn("HB not active - Session: " + sessionId);
-        updateDBSession(sessionId, msgType.equals("Warning"), "IOBPS");
-        goToRetry(res, vars, msg, title, msgType, action);
-        return;
-      case EXPIRED_GOLDEN:
-        msg = Utility.messageBD(cp, "OPS_EXPIRED_GOLDEN", vars.getLanguage());
-        title = Utility.messageBD(cp, "OPS_EXPIRED_GOLDEN_TITLE", vars.getLanguage());
-        updateDBSession(sessionId, false, "IOBPS");
-        goToRetry(res, vars, msg, title, "Error", "../security/Login_FS.html");
-        return;
-      case CONCURRENT_NAMED_USER:
-        if (sysInfo.getSystemStatus() == null || sysInfo.getSystemStatus().equals("RB70")) {
-          // Preventing concurrency of already logged in named user in case System Status is OK.
-          // While rebuilding or if problems in the rebuild, allow same user with Sys Admin role not
-          // to kill the session that started the rebuild.
-          msg = Utility.messageBD(cp, "CONCURRENT_NAMED_USER", vars.getLanguage());
-          title = Utility.messageBD(cp, "CONCURRENT_NAMED_USER_TITLE", vars.getLanguage());
-          log4j.warn("Named Concurrent Users Reached - Session: " + sessionId);
-          vars.clearSession(true);
-          goToRetry(res, vars, msg, title, "Confirmation", "../secureApp/LoginHandler.html");
+        case NUMBER_OF_CONCURRENT_USERS_REACHED:
+          String msg = Utility.messageBD(cp, "NUMBER_OF_CONCURRENT_USERS_REACHED",
+              vars.getLanguage());
+          String title = Utility.messageBD(cp, "NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE",
+              vars.getLanguage());
+          log4j.warn("Concurrent Users Reached - Session: " + sessionId);
+          updateDBSession(sessionId, msgType.equals("Warning"), "CUR");
+          goToRetry(res, vars, msg, title, msgType, action);
           return;
-        } else {
-          // System is being rebuild: allowing extra System Admin sessions
+        case NUMBER_OF_SOFT_USERS_REACHED:
+          msg = Utility.messageBD(cp, "NUMBER_OF_SOFT_USERS_REACHED", vars.getLanguage());
+          title = Utility.messageBD(cp, "NUMBER_OF_SOFT_USERS_REACHED_TITLE", vars.getLanguage());
+          action = "../security/Menu.html";
+          msgType = "Warning";
+          log4j.warn("Soft Users Reached - Session: " + sessionId);
+          updateDBSession(sessionId, true, "SUR");
+          goToRetry(res, vars, msg, title, msgType, action);
+          return;
+        case OPS_INSTANCE_NOT_ACTIVE:
+          msg = Utility.messageBD(cp, "OPS_INSTANCE_NOT_ACTIVE", vars.getLanguage());
+          title = Utility.messageBD(cp, "OPS_INSTANCE_NOT_ACTIVE_TITLE", vars.getLanguage());
+          log4j.warn("Innactive OBPS instance - Session: " + sessionId);
+          updateDBSession(sessionId, msgType.equals("Warning"), "IOBPS");
+          goToRetry(res, vars, msg, title, msgType, action);
+          return;
+        case MODULE_EXPIRED:
+          msg = Utility.messageBD(cp, "OPS_MODULE_EXPIRED", vars.getLanguage());
+          title = Utility.messageBD(cp, "OPS_MODULE_EXPIRED_TITLE", vars.getLanguage());
+          StringBuffer expiredMoudules = new StringBuffer();
+          log4j.warn("Expired modules - Session: " + sessionId);
+          for (Module module : ak.getExpiredInstalledModules()) {
+            expiredMoudules.append("<br/>").append(module.getName());
+            log4j.warn("  module:" + module.getName());
+          }
+          msg += expiredMoudules.toString();
+          updateDBSession(sessionId, msgType.equals("Warning"), "ME");
+          goToRetry(res, vars, msg, title, msgType, action);
+          return;
+        case NOT_MATCHED_INSTANCE:
+          msg = Utility.messageBD(cp, "OPS_NOT_MATCHED_INSTANCE", vars.getLanguage());
+          title = Utility.messageBD(cp, "OPS_NOT_MATCHED_INSTANCE_TITLE", vars.getLanguage());
+          log4j.warn("No matched instance - Session: " + sessionId);
+          updateDBSession(sessionId, msgType.equals("Warning"), "IOBPS");
+          goToRetry(res, vars, msg, title, msgType, action);
+          return;
+        case HB_NOT_ACTIVE:
+          msg = Utility.messageBD(cp, "OPS_NOT_HB_ACTIVE", vars.getLanguage());
+          title = Utility.messageBD(cp, "OPS_NOT_HB_ACTIVE_TITLE", vars.getLanguage());
+          log4j.warn("HB not active - Session: " + sessionId);
+          updateDBSession(sessionId, msgType.equals("Warning"), "IOBPS");
+          goToRetry(res, vars, msg, title, msgType, action);
+          return;
+        case EXPIRED_GOLDEN:
+          msg = Utility.messageBD(cp, "OPS_EXPIRED_GOLDEN", vars.getLanguage());
+          title = Utility.messageBD(cp, "OPS_EXPIRED_GOLDEN_TITLE", vars.getLanguage());
+          updateDBSession(sessionId, false, "IOBPS");
+          goToRetry(res, vars, msg, title, "Error", "../security/Login_FS.html");
+          return;
+        case POS_TERMINALS_EXCEEDED:
+          msg = Utility.messageBD(cp, "OPS_POS_TERMINALS_EXCEEDED", vars.getLanguage());
+          title = Utility.messageBD(cp, "OPS_POS_TERMINALS_EXCEEDED_TITLE", vars.getLanguage());
+          log4j.warn("Exceeded maximum number of pos terminals");
+          goToRetry(res, vars, msg, title, msgType, action);
+          return;
+        case NO_RESTRICTION:
           break;
-        }
-      case ON_DEMAND_OFF_PLATFORM:
-        msg = Utility.messageBD(cp, "ON_DEMAND_OFF_PLATFORM", vars.getLanguage());
-        title = Utility.messageBD(cp, "ON_DEMAND_OFF_PLATFORM_TITLE", vars.getLanguage());
-        log4j.warn("On demand off platform");
-        goToRetry(res, vars, msg, title, msgType, action);
-        return;
-      case POS_TERMINALS_EXCEEDED:
-        msg = Utility.messageBD(cp, "OPS_POS_TERMINALS_EXCEEDED", vars.getLanguage());
-        title = Utility.messageBD(cp, "OPS_POS_TERMINALS_EXCEEDED_TITLE", vars.getLanguage());
-        log4j.warn("Exceeded maximum number of pos terminals");
-        goToRetry(res, vars, msg, title, msgType, action);
-        return;
-      case NO_RESTRICTION:
-        break;
       }
 
       boolean hasNonRestrictedRole = false;
@@ -373,22 +352,22 @@ public class LoginHandler extends HttpBaseServlet {
         String title = Utility.messageBD(cp, "OPS_MAX_WS_CALLS_TITLE", vars.getLanguage());
 
         switch (ak.checkNewWSCall(false)) {
-        case NO_RESTRICTION:
-        case EXPIRED:
-        case EXPIRED_MODULES:
-          break;
-        case EXCEEDED_WARN_WS_CALLS:
-          msg = Utility.messageBD(cp, "OPS_MAX_WS_CALLS_SOFT_MSG", vars.getLanguage(), false)
-              .replace("@daysExceeding@", Integer.toString(ak.getWsCallsExceededDays()))
-              .replace("@extraDays@", Integer.toString(ak.getExtraWsExceededDaysAllowed()))
-              .replace("@numberOfDays@", Integer.toString(ak.getNumberOfDaysLeftInPeriod()));
-          goToRetry(res, vars, msg, title, msgType, action);
-          return;
-        case EXCEEDED_MAX_WS_CALLS:
-          msg = Utility.messageBD(cp, "OPS_MAX_WS_CALLS_MSG", vars.getLanguage(), false).replace(
-              "@daysExceeding@", Integer.toString(ak.getWsCallsExceededDays()));
-          goToRetry(res, vars, msg, title, msgType, action);
-          return;
+          case NO_RESTRICTION:
+          case EXPIRED:
+          case EXPIRED_MODULES:
+            break;
+          case EXCEEDED_WARN_WS_CALLS:
+            msg = Utility.messageBD(cp, "OPS_MAX_WS_CALLS_SOFT_MSG", vars.getLanguage(), false)
+                .replace("@daysExceeding@", Integer.toString(ak.getWsCallsExceededDays()))
+                .replace("@extraDays@", Integer.toString(ak.getExtraWsExceededDaysAllowed()))
+                .replace("@numberOfDays@", Integer.toString(ak.getNumberOfDaysLeftInPeriod()));
+            goToRetry(res, vars, msg, title, msgType, action);
+            return;
+          case EXCEEDED_MAX_WS_CALLS:
+            msg = Utility.messageBD(cp, "OPS_MAX_WS_CALLS_MSG", vars.getLanguage(), false)
+                .replace("@daysExceeding@", Integer.toString(ak.getWsCallsExceededDays()));
+            goToRetry(res, vars, msg, title, msgType, action);
+            return;
         }
       }
 
@@ -415,14 +394,14 @@ public class LoginHandler extends HttpBaseServlet {
         updateDBSession(sessionId, false, "F");
         String title = Utility.messageBD(cp, "InvalidDefaultLoginTitle", vars.getLanguage())
             .replace("%0", e.getDefaultField());
-        String msg = Utility.messageBD(cp, "InvalidDefaultLoginMsg", vars.getLanguage()).replace(
-            "%0", e.getDefaultField());
+        String msg = Utility.messageBD(cp, "InvalidDefaultLoginMsg", vars.getLanguage())
+            .replace("%0", e.getDefaultField());
         goToRetry(res, vars, msg, title, "Error", "../security/Menu.html");
         return;
       }
 
       String target = getUserStartPage(strUserAuth, userLoginDefaults,
-          vars.getSessionValue("target"), vars.getSessionValue("targetQueryString"));
+          vars.getSessionValue("target"), vars.getStringParameter("targetQueryString"));
       vars.removeSessionValue("target");
 
       goToTarget(res, target);
@@ -501,8 +480,8 @@ public class LoginHandler extends HttpBaseServlet {
 
   }
 
-  private void goToTarget(HttpServletResponse response, String target) throws IOException,
-      ServletException {
+  private void goToTarget(HttpServletResponse response, String target)
+      throws IOException, ServletException {
 
     // Return a JSON object with the target to redirect to
     try {
@@ -528,23 +507,28 @@ public class LoginHandler extends HttpBaseServlet {
   }
 
   protected final void goToRetry(HttpServletResponse response, VariablesSecureApp vars,
-      String message, String title, String msgType, String action) throws IOException,
-      ServletException {
-    String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
-        "CPEmptyUserPassword", vars.getLanguage());
+      String message, String title, String msgType, String action)
+      throws IOException, ServletException {
+    String msg = (message != null && !message.equals("")) ? message
+        : Utility.messageBD(myPool, "CPEmptyUserPassword", vars.getLanguage());
+    String targetQueryString = vars.getStringParameter("targetQueryString");
+    String target = StringUtils.isBlank(targetQueryString) ? action
+        : action + "?" + targetQueryString;
 
     // Show the message in the login window, return a JSON object with the info to print the message
     try {
+      boolean loginHasError = "Error".equals(msgType);
       JSONObject jsonMsg = new JSONObject();
       jsonMsg.put("showMessage", true);
-      jsonMsg.put("target", "Error".equals(msgType) ? null : action);
+      jsonMsg.put("target", loginHasError ? null : target);
       jsonMsg.put("messageType", msgType);
       jsonMsg.put("messageTitle", title);
       jsonMsg.put("messageText", msg);
 
-      if ("Confirmation".equals(msgType)) {
-        jsonMsg.put("command", "FORCE_NAMED_USER");
+      if (loginHasError) {
+        vars.clearSession(false);
       }
+
       response.setContentType("application/json;charset=UTF-8");
       final PrintWriter out = response.getWriter();
       out.print(jsonMsg.toString());
@@ -555,31 +539,27 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
-  @Deprecated
-  protected final void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
-      String message, String title, String msgType, String action, boolean doRedirect)
+  private void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
+      AuthenticationException authenticationException, String action)
       throws IOException, ServletException {
-    goToUpdatePassword(response, vars, message, title, msgType, action);
-  }
+    String title = authenticationException.getOBError().getTitle();
+    String message = authenticationException.getOBError().getMessage();
 
-  protected final void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
-      String message, String title, String msgType, String action) throws IOException,
-      ServletException {
-    String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
-        "CPEmptyUserPassword", vars.getLanguage());
+    String msg = (message != null && !message.equals("")) ? message
+        : Utility.messageBD(myPool, "CPEmptyUserPassword", vars.getLanguage());
 
     try {
       JSONObject jsonMsg = new JSONObject();
       jsonMsg.put("showMessage", true);
       jsonMsg.put("target", action);
-      jsonMsg.put("messageType", msgType);
+      jsonMsg.put("messageType", "Error");
       jsonMsg.put("messageTitle", title);
       jsonMsg.put("messageText", msg);
       jsonMsg.put("resetPassword", true);
-      jsonMsg.put("loggedUser", vars.getStringParameter("user"));
-      if ("Confirmation".equals(msgType)) {
-        jsonMsg.put("command", "FORCE_NAMED_USER");
+      if (authenticationException instanceof ChangePasswordException) {
+        jsonMsg.put("attemptedChange", true);
       }
+      jsonMsg.put("loggedUser", vars.getStringParameter("user"));
       response.setContentType("application/json;charset=UTF-8");
       final PrintWriter out = response.getWriter();
       out.print(jsonMsg.toString());
@@ -597,9 +577,8 @@ public class LoginHandler extends HttpBaseServlet {
 
   /**
    * Update user password for userId with unHashedPassword provided, throws
-   * AuthenticationExpirationPasswordException in case the new password is the same that the old
-   * one.
-   * 
+   * AuthenticationExpirationPasswordException when the provided password is the same as the old one
+   * or when the password is not strong enough.
    * 
    * @param userId
    *          the userId
@@ -623,11 +602,9 @@ public class LoginHandler extends HttpBaseServlet {
       String oldPassword = userOB.getPassword();
       String newPassword = FormatUtilities.sha1Base64(unHashedPassword);
       if (oldPassword.equals(newPassword)) {
-        OBError errorMsg = new OBError();
-        errorMsg.setType("Error");
-        errorMsg.setTitle(Utility.messageBD(myPool, "CPDifferentPassword", language));
-        errorMsg.setMessage(Utility.messageBD(myPool, "CPSamePasswordThanOld", language));
-        throw new AuthenticationExpirationPasswordException(errorMsg.getMessage(), errorMsg, false);
+        throwChangePasswordException("CPDifferentPassword", "CPSamePasswordThanOld", language);
+      } else if (!passwordStrengthChecker.isStrongPassword(unHashedPassword)) {
+        throwChangePasswordException("CPWeakPasswordTitle", "CPPasswordNotStrongEnough", language);
       } else {
         userOB.setPassword(newPassword);
         OBDal.getInstance().save(userOB);
@@ -637,5 +614,14 @@ public class LoginHandler extends HttpBaseServlet {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private void throwChangePasswordException(String titleKey, String messageKey, String language)
+      throws ChangePasswordException {
+    OBError errorMsg = new OBError();
+    errorMsg.setType("Error");
+    errorMsg.setTitle(Utility.messageBD(myPool, titleKey, language));
+    errorMsg.setMessage(Utility.messageBD(myPool, messageKey, language));
+    throw new ChangePasswordException(errorMsg.getMessage(), errorMsg);
   }
 }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,7 +33,9 @@ import org.junit.runners.Suite;
     TestCostingNoSourceAdjustments.class, //
     TestCostingLandedCost.class, //
     TestIssue37033.class, //
-    TestIssue37279.class //
+    TestIssue37279.class, //
+    TestIssue39616.class //
+
 })
 public class TestCosting {
   // No content is required, this is just the definition of a test suite.

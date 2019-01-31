@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +42,7 @@ import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.window.OBViewUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
@@ -54,6 +56,8 @@ import org.openbravo.model.common.enterprise.Organization;
 @RunWith(Parameterized.class)
 public class SortingFilteringGridConfiguration extends GridConfigurationTest {
 
+  private static Boolean coreWasInDevelopment;
+
   /**
    * Execute these test cases only if there is no custom grid config as it could make unstable
    * results
@@ -61,6 +65,34 @@ public class SortingFilteringGridConfiguration extends GridConfigurationTest {
   @BeforeClass
   public static void shouldExecuteOnlyIfThereIsNoGridConfig() {
     assumeThat("Number of custom grid configs", getNumberOfGridConfigurations(), is(0));
+
+    OBContext.setAdminMode(true);
+    try {
+      Module core = OBDal.getInstance().get(Module.class, "0");
+      coreWasInDevelopment = core.isInDevelopment();
+      if (!coreWasInDevelopment) {
+        core.setInDevelopment(true);
+        OBDal.getInstance().commitAndClose();
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @AfterClass
+  public static void cleanUp() {
+    if (getNumberOfGridConfigurations() > 0 || Boolean.TRUE.equals(coreWasInDevelopment)) {
+      return;
+    }
+    OBContext.setAdminMode(true);
+    try {
+      Module core = OBDal.getInstance().get(Module.class, "0");
+      core.setInDevelopment(coreWasInDevelopment);
+      OBDal.getInstance().commitAndClose();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
   }
 
   private enum ColumnLevel {
@@ -156,8 +188,8 @@ public class SortingFilteringGridConfiguration extends GridConfigurationTest {
         for (FieldLevel fieldLevel : FieldLevel.values()) {
           for (ColumnLevel columnLevel : ColumnLevel.values()) {
             if (!(fieldLevel != FieldLevel.NULL && tabLevel == TabLevel.NULL)) {
-              params.add(new Object[] { new ConfigSetting(sysLevel, tabLevel, fieldLevel,
-                  columnLevel) });
+              params.add(
+                  new Object[] { new ConfigSetting(sysLevel, tabLevel, fieldLevel, columnLevel) });
             }
           }
         }
@@ -172,11 +204,8 @@ public class SortingFilteringGridConfiguration extends GridConfigurationTest {
 
   @Test
   public void gridConfigurationShouldBeApplied() {
-    assertThat(
-        "Grid configuration at field level:",
-        setting.computeResultForField(),
-        allOf(containsString(setting.getExpectedFilter()),
-            containsString(setting.getExpectedSort())));
+    assertThat("Grid configuration at field level:", setting.computeResultForField(), allOf(
+        containsString(setting.getExpectedFilter()), containsString(setting.getExpectedSort())));
   }
 
   private static class ConfigSetting {
@@ -211,17 +240,16 @@ public class SortingFilteringGridConfiguration extends GridConfigurationTest {
           gcsystem.setSortable(sysLevel.sort);
           gcsystem.setSeqno(10L);
           OBDal.getInstance().save(gcsystem);
-          OBDal.getInstance().flush();
         }
         if (tabLevel != TabLevel.NULL) {
+          Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
           gctab = OBProvider.getInstance().get(GCTab.class);
           gctab.setClient(OBDal.getInstance().get(Client.class, "0"));
           gctab.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
           gctab.setFilterable(tabLevel.filter);
           gctab.setSortable(tabLevel.sort);
           gctab.setSeqno(10L);
-          Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
-          tab.getOBUIAPPGCTabList().add(gctab);
+          gctab.setTab(tab);
           OBDal.getInstance().save(gctab);
         }
         if (fieldLevel != FieldLevel.NULL) {
@@ -232,11 +260,14 @@ public class SortingFilteringGridConfiguration extends GridConfigurationTest {
           gcfield.setField(field);
           gcfield.setFilterable(fieldLevel.filter);
           gcfield.setSortable(fieldLevel.sort);
+          gcfield.setObuiappGcTab(gctab);
           gctab.getOBUIAPPGCFieldList().add(gcfield);
           OBDal.getInstance().save(gcfield);
         }
-        fieldConfig = OBViewUtil.getGridConfigurationSettings(OBDal.getInstance().get(Field.class,
-            BUSINESS_PARTNER_CATEGORY_FIELD_ID));
+        OBDal.getInstance().flush();
+        field = OBDal.getInstance().get(Field.class, BUSINESS_PARTNER_CATEGORY_FIELD_ID);
+        fieldConfig = OBViewUtil.getGridConfigurationSettings(field, getSystemGridConfig(),
+            getTabGridConfig(field.getTab()));
         return fieldConfig.toString();
       } finally {
         OBDal.getInstance().rollbackAndClose();

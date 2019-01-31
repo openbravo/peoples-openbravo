@@ -27,7 +27,8 @@ import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 
@@ -41,13 +42,13 @@ import org.openbravo.base.exception.OBException;
  */
 
 public class PerformanceTest extends BaseWSTest {
-  private static final Logger log = Logger.getLogger(PerformanceTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Test
   public void testPerformance() {
     try {
-      final HttpURLConnection hc = createConnection(
-          "/ws/dal/BusinessPartner?includeChildren=false", "GET");
+      final HttpURLConnection hc = createConnection("/ws/dal/BusinessPartner?includeChildren=false",
+          "GET");
       hc.connect();
       final InputStream is = hc.getInputStream();
       final OutputStream os = new FileOutputStream("/tmp/test.xml");
@@ -81,6 +82,7 @@ public class PerformanceTest extends BaseWSTest {
    * @return the created connection
    * @throws Exception
    */
+  @Override
   protected HttpURLConnection createConnection(String wsPart, String method) throws Exception {
     Authenticator.setDefault(new Authenticator() {
       @Override

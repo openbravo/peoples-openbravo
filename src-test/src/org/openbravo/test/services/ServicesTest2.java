@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
@@ -48,8 +50,6 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.test.services.data.ServiceTestData;
 import org.openbravo.test.services.data.ServiceTestData7;
 import org.openbravo.test.services.data.ServiceTestData8;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Tests cases to check modifications on quantities of a sales order lines with related service
@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class ServicesTest2 extends WeldBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(ServicesTest2.class);
+  final static private Logger log = LogManager.getLogger();
   // User Openbravo
   private final String USER_ID = "100";
   // Client QA Testing
@@ -104,8 +104,8 @@ public class ServicesTest2 extends WeldBaseTest {
       Order testOrder = (Order) DalUtil.copy(order, false);
       testOrderId = testOrder.getId();
       testOrder.setDocumentNo("Service Test " + parameter.getTestNumber());
-      testOrder.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
-          parameter.getBpartnerId()));
+      testOrder.setBusinessPartner(
+          OBDal.getInstance().get(BusinessPartner.class, parameter.getBpartnerId()));
       PriceList priceList = OBDal.getInstance().get(PriceList.class, parameter.getPricelistId());
       testOrder.setPriceList(priceList);
       isPriceIncludingTaxes = priceList.isPriceIncludesTax();
@@ -125,8 +125,8 @@ public class ServicesTest2 extends WeldBaseTest {
       OrderLine productOrderLine = insertLine(order, testOrder, parameter.getProductId(),
           parameter.getQuantity(), parameter.getPrice());
       for (String[] service : parameter.getServices()) {
-        OrderLine serviceOrderLine = insertLine(order, testOrder, service[0], new BigDecimal(
-            service[1]), new BigDecimal(service[2]));
+        OrderLine serviceOrderLine = insertLine(order, testOrder, service[0],
+            new BigDecimal(service[1]), new BigDecimal(service[2]));
         insertRelation(serviceOrderLine, productOrderLine, productOrderLine.getOrderedQuantity(),
             productOrderLine.getLineNetAmount());
         OBDal.getInstance().flush();
@@ -205,8 +205,8 @@ public class ServicesTest2 extends WeldBaseTest {
     }
     testOrderLine.setTax(OBDal.getInstance().get(TaxRate.class, TAX_EXEMPT));
     if (parameter.getBpartnerId() != null) {
-      testOrderLine.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
-          parameter.getBpartnerId()));
+      testOrderLine.setBusinessPartner(
+          OBDal.getInstance().get(BusinessPartner.class, parameter.getBpartnerId()));
     }
     testOrderLine.setSalesOrder(testOrder);
     testOrder.getOrderLineList().add(testOrderLine);

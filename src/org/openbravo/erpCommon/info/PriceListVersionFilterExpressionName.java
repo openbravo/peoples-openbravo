@@ -29,7 +29,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.client.application.OBBindingsConstants;
@@ -43,7 +44,7 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 
 public class PriceListVersionFilterExpressionName implements FilterExpression {
-  private Logger log = Logger.getLogger(PriceListVersionFilterExpressionName.class);
+  private Logger log = LogManager.getLogger();
   private Map<String, String> requestMap;
   private HttpSession httpSession;
   private String windowId;
@@ -97,7 +98,8 @@ public class PriceListVersionFilterExpressionName implements FilterExpression {
       priceListCrit.setFilterOnReadableOrganization(false);
     }
     if (priceListCrit.count() > 0) {
-      log.debug("Return client's default PriceList: " + priceListCrit.list().get(0).getIdentifier());
+      log.debug(
+          "Return client's default PriceList: " + priceListCrit.list().get(0).getIdentifier());
       return priceListCrit.list().get(0);
     }
     return null;
@@ -123,8 +125,8 @@ public class PriceListVersionFilterExpressionName implements FilterExpression {
   }
 
   private PriceListVersion getPriceListVersion(PriceList priceList, Date date) {
-    OBCriteria<PriceListVersion> plVersionCrit = OBDal.getInstance().createCriteria(
-        PriceListVersion.class);
+    OBCriteria<PriceListVersion> plVersionCrit = OBDal.getInstance()
+        .createCriteria(PriceListVersion.class);
     plVersionCrit.add(Restrictions.eq(PriceListVersion.PROPERTY_PRICELIST, priceList));
     plVersionCrit.add(Restrictions.le(PriceListVersion.PROPERTY_VALIDFROMDATE, date));
     plVersionCrit.addOrderBy(PriceListVersion.PROPERTY_VALIDFROMDATE, false);
@@ -160,7 +162,8 @@ public class PriceListVersionFilterExpressionName implements FilterExpression {
       String orgId = requestMap.get("inpadOrgId");
 
       if (StringUtils.isNotEmpty(orgId)) {
-        final Set<String> orgSet = OBContext.getOBContext().getOrganizationStructureProvider()
+        final Set<String> orgSet = OBContext.getOBContext()
+            .getOrganizationStructureProvider()
             .getNaturalTree(orgId);
         if (orgSet.size() > 0) {
           boolean addComma = false;

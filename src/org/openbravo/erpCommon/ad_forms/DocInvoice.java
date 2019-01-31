@@ -27,7 +27,8 @@ import java.util.HashMap;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
@@ -49,7 +50,7 @@ import org.openbravo.model.financialmgmt.calendar.Period;
 
 public class DocInvoice extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocInvoice = Logger.getLogger(DocInvoice.class);
+  private static final Logger log4jDocInvoice = LogManager.getLogger();
 
   DocTax[] m_taxes = null;
   DocLine_FinPaymentSchedule[] m_payments = null;
@@ -72,25 +73,30 @@ public class DocInvoice extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String stradClientId, String Id)
       throws ServletException {
     setObjectFieldProvider(DocInvoiceData.selectRegistro(conn, stradClientId, Id));
   }
 
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DateDoc = data[0].getField("DateInvoiced");
     TaxIncluded = data[0].getField("IsTaxIncluded");
     C_BPartner_Location_ID = data[0].getField("C_BPartner_Location_ID");
     // Amounts
     Amounts[AMTTYPE_Gross] = data[0].getField("GrandTotal");
-    if (Amounts[AMTTYPE_Gross] == null)
+    if (Amounts[AMTTYPE_Gross] == null) {
       Amounts[AMTTYPE_Gross] = "0";
+    }
     Amounts[AMTTYPE_Net] = data[0].getField("TotalLines");
-    if (Amounts[AMTTYPE_Net] == null)
+    if (Amounts[AMTTYPE_Net] == null) {
       Amounts[AMTTYPE_Net] = "0";
+    }
     Amounts[AMTTYPE_Charge] = data[0].getField("ChargeAmt");
-    if (Amounts[AMTTYPE_Charge] == null)
+    if (Amounts[AMTTYPE_Charge] == null) {
       Amounts[AMTTYPE_Charge] = "0";
+    }
 
     loadDocumentType(); // lines require doc type
     // Contained Objects
@@ -121,15 +127,17 @@ public class DocInvoice extends AcctServer {
     DocLineInvoiceData[] data = null;
     try {
       log4jDocInvoice.debug("############### groupLines = " + groupLines);
-      if (groupLines.equals("Y"))
+      if (groupLines.equals("Y")) {
         data = DocLineInvoiceData.selectTotal(connectionProvider, Record_ID);
-      else
+      } else {
         data = DocLineInvoiceData.select(connectionProvider, Record_ID);
+      }
     } catch (ServletException e) {
       log4jDocInvoice.warn(e);
     }
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       return null;
+    }
     for (int i = 0; i < data.length; i++) {
       String Line_ID = data[i].cInvoicelineId;
       DocLine_Invoice docLine = new DocLine_Invoice(DocumentType, Record_ID, Line_ID);
@@ -142,8 +150,8 @@ public class DocInvoice extends AcctServer {
       // Accruals & Deferrals for revenue products
       docLine.setIsDeferred("Y".equals(data[i].isdeferred));
       docLine.setDefPlanType(data[i].defplantype);
-      docLine.setPeriodNumber(!"".equals(data[i].periodnumber) ? Integer
-          .parseInt(data[i].periodnumber) : 0);
+      docLine.setPeriodNumber(
+          !"".equals(data[i].periodnumber) ? Integer.parseInt(data[i].periodnumber) : 0);
       docLine.setStartingPeriodId(data[i].cPeriodId);
 
       list.add(docLine);
@@ -292,17 +300,20 @@ public class DocInvoice extends AcctServer {
    *          accounting schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocInvoiceTemplate newTemplate = (DocInvoiceTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocInvoiceTemplate - " + e);
@@ -313,8 +324,9 @@ public class DocInvoice extends AcctServer {
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     // Cash based accounting
-    if (!as.isAccrual())
+    if (!as.isAccrual()) {
       return null;
+    }
 
     /** @todo Assumes TaxIncluded = N */
 
@@ -324,27 +336,25 @@ public class DocInvoice extends AcctServer {
         || DocumentType.equals(AcctServer.DOCTYPE_RMSalesInvoice)) {
       log4jDocInvoice.debug("Point 1");
       // Receivables DR
-      if (m_payments == null || m_payments.length == 0)
+      if (m_payments == null || m_payments.length == 0) {
         for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
-          if (m_debt_payments[i].isReceipt.equals("Y"))
-            fact.createLine(
-                m_debt_payments[i],
+          if (m_debt_payments[i].isReceipt.equals("Y")) {
+            fact.createLine(m_debt_payments[i],
                 getAccountBPartner(C_BPartner_ID, as, true, m_debt_payments[i].dpStatus, conn),
                 this.C_Currency_ID,
                 getConvertedAmt(m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
-                    this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn), "",
-                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-          else
-            fact.createLine(
-                m_debt_payments[i],
+                    this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn),
+                "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          } else {
+            fact.createLine(m_debt_payments[i],
                 getAccountBPartner(C_BPartner_ID, as, false, m_debt_payments[i].dpStatus, conn),
-                this.C_Currency_ID,
-                "",
+                this.C_Currency_ID, "",
                 getConvertedAmt(m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
                     this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn),
                 Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          }
         }
-      else
+      } else {
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
           fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, false, conn),
               this.C_Currency_ID, m_payments[i].Amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -373,13 +383,14 @@ public class DocInvoice extends AcctServer {
             }
           }
         }
+      }
       if ((m_payments == null || m_payments.length == 0)
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
         BigDecimal grossamt = new BigDecimal(Amounts[AMTTYPE_Gross]);
         BigDecimal prepayment = new BigDecimal(prepaymentamt);
-        BigDecimal difference = grossamt.abs().subtract(prepayment.abs());
+        BigDecimal difference = grossamt.subtract(prepayment);
         if (!prepaymentamt.equals("0")) {
-          if (grossamt.abs().compareTo(prepayment.abs()) > 0) {
+          if (grossamt.abs().compareTo(prepayment.abs()) != 0) {
             if (IsReturn.equals("Y") || isReversedInvoice) {
               fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, true, conn),
                   this.C_Currency_ID, "", prepaymentamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -445,14 +456,14 @@ public class DocInvoice extends AcctServer {
             if ((m_payments == null || m_payments.length == 0)
                 && (m_debt_payments == null || m_debt_payments.length == 0)
                 && (!prepaymentamt.equals("0"))) {
-              percentageFinalAccount = ((prepayment.multiply(new BigDecimal(100))).divide(
-                  grossamt.abs(), precission, RoundingMode.HALF_UP));
+              percentageFinalAccount = ((prepayment.multiply(new BigDecimal(100)))
+                  .divide(grossamt.abs(), precission, RoundingMode.HALF_UP));
               taxToTransAccount = CashVATUtil.calculatePercentageAmount(
                   CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
                   C_Currency_ID);
             } else {
-              percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
-                  m_taxes[i].m_C_Tax_ID, Record_ID);
+              percentageFinalAccount = CashVATUtil
+                  .calculatePrepaidPercentageForCashVATTax(m_taxes[i].m_C_Tax_ID, Record_ID);
               taxToTransAccount = CashVATUtil.calculatePercentageAmount(
                   CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
                   C_Currency_ID);
@@ -463,21 +474,21 @@ public class DocInvoice extends AcctServer {
           }
           final BigDecimal taxToFinalAccount = taxesAmountTotal.subtract(taxToTransAccount);
           fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
-              C_Currency_ID, taxToFinalAccount.toString(), "", Fact_Acct_Group_ID,
-              nextSeqNo(SeqNo), DocumentType, conn);
+              C_Currency_ID, taxToFinalAccount.toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
         } else {
           if (isCashVAT && m_taxes[i].m_isCashVAT) {
             if ((m_payments == null || m_payments.length == 0)
                 && (m_debt_payments == null || m_debt_payments.length == 0)
                 && (!prepaymentamt.equals("0"))) {
-              percentageFinalAccount = ((prepayment.multiply(new BigDecimal(100))).divide(
-                  grossamt.abs(), precission, RoundingMode.HALF_UP));
+              percentageFinalAccount = ((prepayment.multiply(new BigDecimal(100)))
+                  .divide(grossamt.abs(), precission, RoundingMode.HALF_UP));
               taxToTransAccount = CashVATUtil.calculatePercentageAmount(
                   CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
                   C_Currency_ID);
             } else {
-              percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
-                  m_taxes[i].m_C_Tax_ID, Record_ID);
+              percentageFinalAccount = CashVATUtil
+                  .calculatePrepaidPercentageForCashVATTax(m_taxes[i].m_C_Tax_ID, Record_ID);
               taxToTransAccount = CashVATUtil.calculatePercentageAmount(
                   CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
                   C_Currency_ID);
@@ -488,18 +499,18 @@ public class DocInvoice extends AcctServer {
           }
           final BigDecimal taxToFinalAccount = taxesAmountTotal.subtract(taxToTransAccount);
           fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
-              C_Currency_ID, "", taxToFinalAccount.toString(), Fact_Acct_Group_ID,
-              nextSeqNo(SeqNo), DocumentType, conn);
+              C_Currency_ID, "", taxToFinalAccount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
         }
       }
       // Revenue CR
       if (p_lines != null && p_lines.length > 0) {
         for (int i = 0; i < p_lines.length; i++) {
-          Account account = ((DocLine_Invoice) p_lines[i]).getAccount(
-              ProductInfo.ACCTTYPE_P_Revenue, as, conn);
+          Account account = ((DocLine_Invoice) p_lines[i])
+              .getAccount(ProductInfo.ACCTTYPE_P_Revenue, as, conn);
           if (DocumentType.equals(AcctServer.DOCTYPE_RMSalesInvoice)) {
-            Account accountReturnMaterial = ((DocLine_Invoice) p_lines[i]).getAccount(
-                ProductInfo.ACCTTYPE_P_RevenueReturn, as, conn);
+            Account accountReturnMaterial = ((DocLine_Invoice) p_lines[i])
+                .getAccount(ProductInfo.ACCTTYPE_P_RevenueReturn, as, conn);
             if (accountReturnMaterial != null) {
               account = accountReturnMaterial;
             }
@@ -516,9 +527,10 @@ public class DocInvoice extends AcctServer {
                 as.m_C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
           }
           if (((DocLine_Invoice) p_lines[i]).isDeferred()) {
-            amount = createAccDefRevenueFact(fact, (DocLine_Invoice) p_lines[i], account,
-                ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_DefRevenue, as,
-                    conn), amountConverted, as.m_C_Currency_ID, conn);
+            amount = createAccDefRevenueFact(
+                fact, (DocLine_Invoice) p_lines[i], account, ((DocLine_Invoice) p_lines[i])
+                    .getAccount(ProductInfo.ACCTTYPE_P_DefRevenue, as, conn),
+                amountConverted, as.m_C_Currency_ID, conn);
             if (IsReversal.equals("Y")) {
               fact.createLine(p_lines[i], account, as.m_C_Currency_ID, amount, "",
                   Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
@@ -539,13 +551,17 @@ public class DocInvoice extends AcctServer {
           if (((DocLine_Invoice) p_lines[i]).isDeferred() && !amount.equals(amountConverted)) {
             amount = new BigDecimal(amountConverted).subtract(new BigDecimal(amount)).toString();
             if (IsReversal.equals("Y")) {
-              fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
-                  ProductInfo.ACCTTYPE_P_DefRevenue, as, conn), as.m_C_Currency_ID, amount, "",
-                  Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+              fact.createLine(p_lines[i],
+                  ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_DefRevenue, as,
+                      conn),
+                  as.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
             } else {
-              fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
-                  ProductInfo.ACCTTYPE_P_DefRevenue, as, conn), as.m_C_Currency_ID, "", amount,
-                  Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+              fact.createLine(p_lines[i],
+                  ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_DefRevenue, as,
+                      conn),
+                  as.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
             }
           }
         }
@@ -563,21 +579,19 @@ public class DocInvoice extends AcctServer {
     else if (this.DocumentType.equals(AcctServer.DOCTYPE_ARCredit)) {
       log4jDocInvoice.debug("Point 2");
       // Receivables CR
-      if (m_payments == null || m_payments.length == 0)
+      if (m_payments == null || m_payments.length == 0) {
         for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
           BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
           // BigDecimal ZERO = BigDecimal.ZERO;
-          fact.createLine(
-              m_debt_payments[i],
+          fact.createLine(m_debt_payments[i],
               getAccountBPartner(C_BPartner_ID, as, true, m_debt_payments[i].dpStatus, conn),
-              this.C_Currency_ID,
-              "",
+              this.C_Currency_ID, "",
               getConvertedAmt(((amount.negate())).toPlainString(),
                   m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "",
-                  AD_Client_ID, AD_Org_ID, conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
+                  AD_Client_ID, AD_Org_ID, conn),
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
-      else
+      } else {
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
           BigDecimal amount = new BigDecimal(m_payments[i].Amount);
           BigDecimal prepaidAmount = new BigDecimal(m_payments[i].PrepaidAmount);
@@ -611,6 +625,7 @@ public class DocInvoice extends AcctServer {
             }
           }
         }
+      }
       if ((m_payments == null || m_payments.length == 0)
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
         fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, false, conn),
@@ -628,12 +643,12 @@ public class DocInvoice extends AcctServer {
         docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
 
         BigDecimal percentageFinalAccount = CashVATUtil._100;
-        final BigDecimal taxesAmountTotal = new BigDecimal(StringUtils.isBlank(m_taxes[i]
-            .getAmount()) ? "0" : m_taxes[i].getAmount());
+        final BigDecimal taxesAmountTotal = new BigDecimal(
+            StringUtils.isBlank(m_taxes[i].getAmount()) ? "0" : m_taxes[i].getAmount());
         BigDecimal taxToTransAccount = BigDecimal.ZERO;
         if (isCashVAT && m_taxes[i].m_isCashVAT) {
-          percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
-              m_taxes[i].m_C_Tax_ID, Record_ID);
+          percentageFinalAccount = CashVATUtil
+              .calculatePrepaidPercentageForCashVATTax(m_taxes[i].m_C_Tax_ID, Record_ID);
           taxToTransAccount = CashVATUtil.calculatePercentageAmount(
               CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal, C_Currency_ID);
           fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue_Trans, as, conn),
@@ -661,10 +676,10 @@ public class DocInvoice extends AcctServer {
         Account account = ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Revenue,
             as, conn);
         if (((DocLine_Invoice) p_lines[i]).isDeferred()) {
-          amount = createAccDefRevenueFact(fact, (DocLine_Invoice) p_lines[i], account,
-              ((DocLine_Invoice) p_lines[i])
-                  .getAccount(ProductInfo.ACCTTYPE_P_DefRevenue, as, conn), amountCoverted,
-              as.m_C_Currency_ID, conn);
+          amount = createAccDefRevenueFact(
+              fact, (DocLine_Invoice) p_lines[i], account, ((DocLine_Invoice) p_lines[i])
+                  .getAccount(ProductInfo.ACCTTYPE_P_DefRevenue, as, conn),
+              amountCoverted, as.m_C_Currency_ID, conn);
           fact.createLine(p_lines[i], account, as.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID,
               nextSeqNo(SeqNo), DocumentType, conn);
         } else {
@@ -674,9 +689,11 @@ public class DocInvoice extends AcctServer {
         // If revenue has been deferred
         if (((DocLine_Invoice) p_lines[i]).isDeferred() && !amount.equals(amountCoverted)) {
           amount = new BigDecimal(amountCoverted).subtract(new BigDecimal(amount)).toString();
-          fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
-              ProductInfo.ACCTTYPE_P_DefRevenue, as, conn), as.m_C_Currency_ID, amount, "",
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(p_lines[i],
+              ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_DefRevenue, as,
+                  conn),
+              as.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              conn);
         }
       }
       // Set Locations
@@ -692,37 +709,34 @@ public class DocInvoice extends AcctServer {
     else if (this.DocumentType.equals(AcctServer.DOCTYPE_APInvoice)) {
       log4jDocInvoice.debug("Point 3");
       // Liability CR
-      if (m_payments == null || m_payments.length == 0)
+      if (m_payments == null || m_payments.length == 0) {
         for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
-          if (m_debt_payments[i].isReceipt.equals("Y"))
-            fact.createLine(
-                m_debt_payments[i],
+          if (m_debt_payments[i].isReceipt.equals("Y")) {
+            fact.createLine(m_debt_payments[i],
                 getAccountBPartner(C_BPartner_ID, as, true, m_debt_payments[i].dpStatus, conn),
                 this.C_Currency_ID,
                 getConvertedAmt(m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
-                    this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn), "",
-                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-          else
-            fact.createLine(
-                m_debt_payments[i],
+                    this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn),
+                "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          } else {
+            fact.createLine(m_debt_payments[i],
                 getAccountBPartner(C_BPartner_ID, as, false, m_debt_payments[i].dpStatus, conn),
-                this.C_Currency_ID,
-                "",
+                this.C_Currency_ID, "",
                 getConvertedAmt(m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
                     this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn),
                 Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          }
         }
-      else
+      } else {
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
           fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, false, conn),
               this.C_Currency_ID, "", m_payments[i].Amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
               DocumentType, conn);
           if (m_payments[i].C_Currency_ID_From.equals(as.m_C_Currency_ID)
               && new BigDecimal(m_payments[i].PrepaidAmount).compareTo(ZERO) != 0) {
-            fact.createLine(m_payments[i],
-                getAccountBPartner(C_BPartner_ID, as, false, true, conn), this.C_Currency_ID, "",
-                m_payments[i].PrepaidAmount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-                conn);
+            fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, true, conn),
+                this.C_Currency_ID, "", m_payments[i].PrepaidAmount, Fact_Acct_Group_ID,
+                nextSeqNo(SeqNo), DocumentType, conn);
           } else if (!m_payments[i].C_Currency_ID_From.equals(as.m_C_Currency_ID)) {
             try {
               DocInvoiceData[] prepayments = DocInvoiceData.selectPrepayments(connectionProvider,
@@ -742,13 +756,14 @@ public class DocInvoice extends AcctServer {
             }
           }
         }
+      }
       if ((m_payments == null || m_payments.length == 0)
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
         BigDecimal grossamt = new BigDecimal(Amounts[AMTTYPE_Gross]);
         BigDecimal prepayment = new BigDecimal(prepaymentamt);
-        BigDecimal difference = grossamt.abs().subtract(prepayment.abs());
+        BigDecimal difference = grossamt.subtract(prepayment);
         if (!prepaymentamt.equals("0")) {
-          if (grossamt.abs().compareTo(prepayment.abs()) > 0) {
+          if (grossamt.abs().compareTo(prepayment.abs()) != 0) {
             if (IsReturn.equals("Y") || isReversedInvoice) {
               fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, true, conn),
                   this.C_Currency_ID, prepaymentamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -803,22 +818,22 @@ public class DocInvoice extends AcctServer {
         }
         if (!m_taxes[i].m_isTaxUndeductable) {
           BigDecimal percentageFinalAccount = CashVATUtil._100;
-          final BigDecimal taxesAmountTotal = new BigDecimal(StringUtils.isBlank(m_taxes[i]
-              .getAmount()) ? "0" : m_taxes[i].getAmount());
+          final BigDecimal taxesAmountTotal = new BigDecimal(
+              StringUtils.isBlank(m_taxes[i].getAmount()) ? "0" : m_taxes[i].getAmount());
           BigDecimal taxToTransAccount = BigDecimal.ZERO;
           if (IsReversal.equals("Y")) {
             if (isCashVAT && m_taxes[i].m_isCashVAT) {
               if ((m_payments == null || m_payments.length == 0)
                   && (m_debt_payments == null || m_debt_payments.length == 0)
                   && (!prepaymentamt.equals("0"))) {
-                percentageFinalAccount = ((prepayment.multiply(new BigDecimal(100))).divide(
-                    grossamt.abs(), precission, RoundingMode.HALF_UP));
+                percentageFinalAccount = ((prepayment.multiply(new BigDecimal(100)))
+                    .divide(grossamt.abs(), precission, RoundingMode.HALF_UP));
                 taxToTransAccount = CashVATUtil.calculatePercentageAmount(
                     CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
                     C_Currency_ID);
               } else {
-                percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
-                    m_taxes[i].m_C_Tax_ID, Record_ID);
+                percentageFinalAccount = CashVATUtil
+                    .calculatePrepaidPercentageForCashVATTax(m_taxes[i].m_C_Tax_ID, Record_ID);
                 taxToTransAccount = CashVATUtil.calculatePercentageAmount(
                     CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
                     C_Currency_ID);
@@ -837,14 +852,14 @@ public class DocInvoice extends AcctServer {
               if ((m_payments == null || m_payments.length == 0)
                   && (m_debt_payments == null || m_debt_payments.length == 0)
                   && (!prepaymentamt.equals("0"))) {
-                percentageFinalAccount = ((prepayment.multiply(new BigDecimal(100))).divide(
-                    grossamt.abs(), precission, RoundingMode.HALF_UP));
+                percentageFinalAccount = ((prepayment.multiply(new BigDecimal(100)))
+                    .divide(grossamt.abs(), precission, RoundingMode.HALF_UP));
                 taxToTransAccount = CashVATUtil.calculatePercentageAmount(
                     CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
                     C_Currency_ID);
               } else {
-                percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
-                    m_taxes[i].m_C_Tax_ID, Record_ID);
+                percentageFinalAccount = CashVATUtil
+                    .calculatePrepaidPercentageForCashVATTax(m_taxes[i].m_C_Tax_ID, Record_ID);
                 taxToTransAccount = CashVATUtil.calculatePercentageAmount(
                     CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
                     C_Currency_ID);
@@ -944,32 +959,28 @@ public class DocInvoice extends AcctServer {
         if (((DocLine_Invoice) p_lines[i]).isDeferred()) {
           amount = createAccDefExpenseFact(fact, (DocLine_Invoice) p_lines[i],
               ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
-              ((DocLine_Invoice) p_lines[i])
-                  .getAccount(ProductInfo.ACCTTYPE_P_DefExpense, as, conn), amountConverted,
-              as.m_C_Currency_ID, conn);
+              ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_DefExpense, as,
+                  conn),
+              amountConverted, as.m_C_Currency_ID, conn);
           if (IsReversal.equals("Y")) {
-            fact.createLine(
-                p_lines[i],
+            fact.createLine(p_lines[i],
                 ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
                 as.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
                 conn);
           } else {
-            fact.createLine(
-                p_lines[i],
+            fact.createLine(p_lines[i],
                 ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
                 as.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
                 conn);
           }
         } else {
           if (IsReversal.equals("Y")) {
-            fact.createLine(
-                p_lines[i],
+            fact.createLine(p_lines[i],
                 ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
                 this.C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
                 conn);
           } else {
-            fact.createLine(
-                p_lines[i],
+            fact.createLine(p_lines[i],
                 ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
                 this.C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
                 conn);
@@ -979,13 +990,17 @@ public class DocInvoice extends AcctServer {
         if (((DocLine_Invoice) p_lines[i]).isDeferred() && !amount.equals(amountConverted)) {
           amount = new BigDecimal(amountConverted).subtract(new BigDecimal(amount)).toString();
           if (IsReversal.equals("Y")) {
-            fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
-                ProductInfo.ACCTTYPE_P_DefExpense, as, conn), as.m_C_Currency_ID, "", amount,
-                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            fact.createLine(p_lines[i],
+                ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_DefExpense, as,
+                    conn),
+                as.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+                conn);
           } else {
-            fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
-                ProductInfo.ACCTTYPE_P_DefExpense, as, conn), as.m_C_Currency_ID, amount, "",
-                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            fact.createLine(p_lines[i],
+                ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_DefExpense, as,
+                    conn),
+                as.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+                conn);
           }
         }
       }
@@ -1003,20 +1018,19 @@ public class DocInvoice extends AcctServer {
     else if (this.DocumentType.equals(AcctServer.DOCTYPE_APCredit)) {
       log4jDocInvoice.debug("Point 4");
       // Liability DR
-      if (m_payments == null || m_payments.length == 0)
+      if (m_payments == null || m_payments.length == 0) {
         for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
           BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
           // BigDecimal ZERO = BigDecimal.ZERO;
-          fact.createLine(
-              m_debt_payments[i],
+          fact.createLine(m_debt_payments[i],
               getAccountBPartner(C_BPartner_ID, as, false, m_debt_payments[i].dpStatus, conn),
               this.C_Currency_ID,
               getConvertedAmt(((amount.negate())).toPlainString(),
                   m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "",
-                  AD_Client_ID, AD_Org_ID, conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
+                  AD_Client_ID, AD_Org_ID, conn),
+              "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
-      else
+      } else {
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
           BigDecimal amount = new BigDecimal(m_payments[i].Amount);
           BigDecimal prepaidAmount = new BigDecimal(m_payments[i].PrepaidAmount);
@@ -1027,10 +1041,9 @@ public class DocInvoice extends AcctServer {
           // against APC. Amount is negated
           if (m_payments[i].C_Currency_ID_From.equals(as.m_C_Currency_ID)
               && prepaidAmount.compareTo(ZERO) != 0) {
-            fact.createLine(m_payments[i],
-                getAccountBPartner(C_BPartner_ID, as, false, true, conn), this.C_Currency_ID,
-                prepaidAmount.negate().toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
+            fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, true, conn),
+                this.C_Currency_ID, prepaidAmount.negate().toString(), "", Fact_Acct_Group_ID,
+                nextSeqNo(SeqNo), DocumentType, conn);
           } else if (!m_payments[i].C_Currency_ID_From.equals(as.m_C_Currency_ID)) {
             try {
               DocInvoiceData[] prepayments = DocInvoiceData.selectPrepayments(connectionProvider,
@@ -1051,6 +1064,7 @@ public class DocInvoice extends AcctServer {
             }
           }
         }
+      }
       if ((m_payments == null || m_payments.length == 0)
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
         fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, false, conn),
@@ -1072,12 +1086,12 @@ public class DocInvoice extends AcctServer {
 
         } else {
           BigDecimal percentageFinalAccount = CashVATUtil._100;
-          final BigDecimal taxesAmountTotal = new BigDecimal(StringUtils.isBlank(m_taxes[i]
-              .getAmount()) ? "0" : m_taxes[i].getAmount());
+          final BigDecimal taxesAmountTotal = new BigDecimal(
+              StringUtils.isBlank(m_taxes[i].getAmount()) ? "0" : m_taxes[i].getAmount());
           BigDecimal taxToTransAccount = BigDecimal.ZERO;
           if (isCashVAT && m_taxes[i].m_isCashVAT) {
-            percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
-                m_taxes[i].m_C_Tax_ID, Record_ID);
+            percentageFinalAccount = CashVATUtil
+                .calculatePrepaidPercentageForCashVATTax(m_taxes[i].m_C_Tax_ID, Record_ID);
             taxToTransAccount = CashVATUtil.calculatePercentageAmount(
                 CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal, C_Currency_ID);
             fact.createLine(docLine,
@@ -1107,10 +1121,10 @@ public class DocInvoice extends AcctServer {
         Account account = ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense,
             as, conn);
         if (((DocLine_Invoice) p_lines[i]).isDeferred()) {
-          amount = createAccDefExpenseFact(fact, (DocLine_Invoice) p_lines[i], account,
-              ((DocLine_Invoice) p_lines[i])
-                  .getAccount(ProductInfo.ACCTTYPE_P_DefExpense, as, conn), amountConverted,
-              as.m_C_Currency_ID, conn);
+          amount = createAccDefExpenseFact(
+              fact, (DocLine_Invoice) p_lines[i], account, ((DocLine_Invoice) p_lines[i])
+                  .getAccount(ProductInfo.ACCTTYPE_P_DefExpense, as, conn),
+              amountConverted, as.m_C_Currency_ID, conn);
           fact.createLine(p_lines[i], account, as.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID,
               nextSeqNo(SeqNo), DocumentType, conn);
         } else {
@@ -1120,9 +1134,11 @@ public class DocInvoice extends AcctServer {
         // If expense has been deferred
         if (((DocLine_Invoice) p_lines[i]).isDeferred() && !amount.equals(amountConverted)) {
           amount = new BigDecimal(amountConverted).subtract(new BigDecimal(amount)).toString();
-          fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
-              ProductInfo.ACCTTYPE_P_DefExpense, as, conn), as.m_C_Currency_ID, "", amount,
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(p_lines[i],
+              ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_DefExpense, as,
+                  conn),
+              as.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              conn);
         }
 
       }
@@ -1185,13 +1201,16 @@ public class DocInvoice extends AcctServer {
     int stdPrecision = 0;
     OBContext.setAdminMode(true);
     try {
-      stdPrecision = OBDal.getInstance().get(Currency.class, this.C_Currency_ID)
-          .getStandardPrecision().intValue();
+      stdPrecision = OBDal.getInstance()
+          .get(Currency.class, this.C_Currency_ID)
+          .getStandardPrecision()
+          .intValue();
     } finally {
       OBContext.restorePreviousMode();
     }
-    BigDecimal periodAmount = amount.divide(new BigDecimal(periodNumber),
-        new MathContext(32, RoundingMode.HALF_UP)).setScale(stdPrecision, RoundingMode.HALF_UP);
+    BigDecimal periodAmount = amount
+        .divide(new BigDecimal(periodNumber), new MathContext(32, RoundingMode.HALF_UP))
+        .setScale(stdPrecision, RoundingMode.HALF_UP);
 
     while (i <= periodNumber) {
       if (!OBDateUtils.formatDate(date).equals(DateAcct)) {
@@ -1291,6 +1310,7 @@ public class DocInvoice extends AcctServer {
    * 
    * @return positive amount, if total invoice is bigger than lines
    */
+  @Override
   public BigDecimal getBalance() {
     // BigDecimal ZERO = new BigDecimal("0");
     BigDecimal retValue = ZERO;
@@ -1338,11 +1358,12 @@ public class DocInvoice extends AcctServer {
       String dpStatus, ConnectionProvider conn) {
     DocPaymentData[] data = null;
     try {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("DocInvoice - getAccountBPartner - DocumentType = " + DocumentType);
+      }
       if (isReceipt) {
-        data = DocPaymentData.selectBPartnerCustomerAcct(conn, cBPartnerId,
-            as.getC_AcctSchema_ID(), dpStatus);
+        data = DocPaymentData.selectBPartnerCustomerAcct(conn, cBPartnerId, as.getC_AcctSchema_ID(),
+            dpStatus);
       } else {
         data = DocPaymentData.selectBPartnerVendorAcct(conn, cBPartnerId, as.getC_AcctSchema_ID(),
             dpStatus);
@@ -1354,8 +1375,9 @@ public class DocInvoice extends AcctServer {
     String Account_ID = "";
     if (data != null && data.length != 0) {
       Account_ID = data[0].accountId;
-    } else
+    } else {
       return null;
+    }
     // No account
     if (Account_ID.equals("")) {
       log4j.warn("DocInvoice - getAccountBPartner - NO account BPartner=" + cBPartnerId
@@ -1371,21 +1393,6 @@ public class DocInvoice extends AcctServer {
     }
     return acct;
   } // getAccount
-
-  /**
-   * @return the log4jDocInvoice
-   */
-  public static Logger getLog4jDocInvoice() {
-    return log4jDocInvoice;
-  }
-
-  /**
-   * @param log4jDocInvoice
-   *          the log4jDocInvoice to set
-   */
-  public static void setLog4jDocInvoice(Logger log4jDocInvoice) {
-    DocInvoice.log4jDocInvoice = log4jDocInvoice;
-  }
 
   /**
    * @return the m_taxes
@@ -1460,6 +1467,7 @@ public class DocInvoice extends AcctServer {
    * Get Document Confirmation
    * 
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     DocInvoiceData[] data = null;
     FieldProvider dataFP[] = getObjectFieldProvider();
@@ -1527,6 +1535,7 @@ public class DocInvoice extends AcctServer {
     return m_aslocal;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method
@@ -1541,8 +1550,8 @@ public class DocInvoice extends AcctServer {
     try {
 
       // We can have some lines from product or some lines from general ledger
-      data = DocInvoiceData
-          .selectProductAcct(conn, as.getC_AcctSchema_ID(), taxId, Record_ID, null);
+      data = DocInvoiceData.selectProductAcct(conn, as.getC_AcctSchema_ID(), taxId, Record_ID,
+          null);
       cumulativeTaxLineAmount = createLineForTaxUndeductable(invoiceLineTaxCount,
           totalInvoiceLineTax, cumulativeTaxLineAmount, taxAmount, data, conn, fact, docLine,
           Fact_Acct_Group_ID);
@@ -1599,8 +1608,8 @@ public class DocInvoice extends AcctServer {
               this.C_Currency_ID, "", data[j].taxamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
               DocumentType, conn);
         }
-        localCumulativeTaxLineAmount = localCumulativeTaxLineAmount.add(new BigDecimal(
-            data[j].taxamt));
+        localCumulativeTaxLineAmount = localCumulativeTaxLineAmount
+            .add(new BigDecimal(data[j].taxamt));
       } catch (ServletException e) {
         log4jDocInvoice.error("Exception in createLineForTaxUndeductable method: " + e);
       }

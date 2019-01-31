@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -79,7 +79,7 @@ public class SL_RequisitionLine_Product extends SimpleCallout {
         PriceList priceListObj = OBDal.getInstance().get(PriceList.class, strPriceListId);
 
         // Set Auxiliary Input parameter Gross Price
-        info.addResult("inpgrossprice", priceListObj.isPriceIncludesTax());
+        info.addResult("inpgrossprice", priceListObj.isPriceIncludesTax() ? "Y" : "N");
 
         // Discount, Price List, Gross Unit Price, Price Actual
         String strMessage = "";
@@ -88,10 +88,8 @@ public class SL_RequisitionLine_Product extends SimpleCallout {
         if (StringUtils.isNotEmpty(strPriceListVersion)) {
           SLRequisitionLineProductData[] prices = SLRequisitionLineProductData.getPrices(this,
               strMProductID, strPriceListVersion);
-          if (prices != null
-              && prices.length > 0
-              && (!StringUtils.equals(prices[0].pricelist, "0") || !StringUtils.equals(
-                  prices[0].pricestd, "0"))) {
+          if (prices != null && prices.length > 0 && (!StringUtils.equals(prices[0].pricelist, "0")
+              || !StringUtils.equals(prices[0].pricestd, "0"))) {
             BigDecimal priceList = StringUtils.isEmpty(prices[0].pricelist) ? BigDecimal.ZERO
                 : new BigDecimal(prices[0].pricelist);
             BigDecimal priceActual = StringUtils.isEmpty(prices[0].pricestd) ? BigDecimal.ZERO
@@ -100,12 +98,13 @@ public class SL_RequisitionLine_Product extends SimpleCallout {
             if (priceList.compareTo(BigDecimal.ZERO) != 0) {
               discount = (((priceList.subtract(priceActual)).divide(priceList, 12,
                   RoundingMode.HALF_EVEN)).multiply(new BigDecimal("100"))).setScale(2,
-                  RoundingMode.HALF_UP);
+                      RoundingMode.HALF_UP);
             }
             info.addResult("inpdiscount", discount);
             info.addResult("inppricelist", priceList);
-            info.addResult(priceListObj.isPriceIncludesTax() ? "inpgrossUnitPrice"
-                : "inppriceactual", priceActual);
+            info.addResult(
+                priceListObj.isPriceIncludesTax() ? "inpgrossUnitPrice" : "inppriceactual",
+                priceActual);
           } else {
             strMessage = "PriceNotFound";
           }
@@ -115,14 +114,17 @@ public class SL_RequisitionLine_Product extends SimpleCallout {
 
         // Set Message either PriceListVersionNotFound or PriceNotFound if any
         if (StringUtils.isNotEmpty(strMessage)) {
-          info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this, strMessage,
-              info.vars.getLanguage())));
+          info.showMessage(FormatUtilities
+              .replaceJS(Utility.messageBD(this, strMessage, info.vars.getLanguage())));
         }
+      } else {
+        info.addResult("inpgrossprice", "");
       }
     }
 
     // Set AUM based on default
-    if (UOMUtil.isUomManagementEnabled() && StringUtils.isEmpty(strUOMProductId)) {
+    if (UOMUtil.isUomManagementEnabled() && StringUtils.isEmpty(strUOMProductId)
+        && StringUtils.isNotEmpty(strMProductID)) {
       String finalAUM = UOMUtil.getDefaultAUMForPurchase(strMProductID);
       if (finalAUM != null) {
         info.addResult("inpcAum", finalAUM);
@@ -139,8 +141,8 @@ public class SL_RequisitionLine_Product extends SimpleCallout {
       try {
         final Product product = OBDal.getInstance().get(Product.class, strMProductID);
         if (product != null) {
-          info.addResult("inpattributeset", product.getAttributeSet() != null ? product
-              .getAttributeSet().getId() : "");
+          info.addResult("inpattributeset",
+              product.getAttributeSet() != null ? product.getAttributeSet().getId() : "");
           info.addResult("inpattrsetvaluetype",
               FormatUtilities.replaceJS(product.getUseAttributeSetValueAs()));
         }
@@ -153,15 +155,14 @@ public class SL_RequisitionLine_Product extends SimpleCallout {
       info.addResult("inphasseconduom", Integer.parseInt(strHasSecondaryUOM));
 
       // Product UOM List
-      if (StringUtils.equals(strHasSecondaryUOM, "1")
-          && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && StringUtils
-              .isNotEmpty(strUOMProductId)))) {
+      if (StringUtils.equals(strHasSecondaryUOM, "1") && (!UOMUtil.isUomManagementEnabled()
+          || (UOMUtil.isUomManagementEnabled() && StringUtils.isNotEmpty(strUOMProductId)))) {
         FieldProvider[] tld = null;
         try {
           ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR",
-              "M_Product_UOM_ID", "", "M_Product_UOM_ID", Utility.getContext(this, info.vars,
-                  "#AccessibleOrgTree", "SLRequisitionLineProduct"), Utility.getContext(this,
-                  info.vars, "#User_Client", "SLRequisitionLineProduct"), 0);
+              "M_Product_UOM_ID", "", "M_Product_UOM_ID",
+              Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SLRequisitionLineProduct"),
+              Utility.getContext(this, info.vars, "#User_Client", "SLRequisitionLineProduct"), 0);
           Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getTabId(), "");
           tld = comboTableData.select(false);
           comboTableData = null;

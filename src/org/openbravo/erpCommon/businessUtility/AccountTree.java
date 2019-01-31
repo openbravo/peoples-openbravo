@@ -22,7 +22,8 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -35,7 +36,7 @@ import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
  *         This one is the class in charge of the report of accounting
  */
 public class AccountTree {
-  private static Logger log4j = Logger.getLogger(AccountTree.class);
+  private static Logger log4j = LogManager.getLogger();
   private VariablesSecureApp vars;
   private ConnectionProvider conn;
   private AccountTreeData[] accountsFacts;
@@ -67,8 +68,9 @@ public class AccountTree {
   public AccountTree(VariablesSecureApp _vars, ConnectionProvider _conn,
       AccountTreeData[] _accountsTree, AccountTreeData[] _accountsFacts, String _reportNode)
       throws ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AccountTree []");
+    }
     vars = _vars;
     conn = _conn;
     accountsTree = _accountsTree;
@@ -82,7 +84,9 @@ public class AccountTree {
       AccountTreeData[] operands = AccountTreeData.selectOperands(conn,
           Utility.getContext(conn, vars, "#AccessibleOrgTree", "AccountTree"),
           Utility.getContext(conn, vars, "#User_Client", "AccountTree"),
-          OBDal.getInstance().get(ElementValue.class, reportNodes[0]).getAccountingElement()
+          OBDal.getInstance()
+              .get(ElementValue.class, reportNodes[0])
+              .getAccountingElement()
               .getId());
       reportElements = calculateTree(operands, reportNodes, new Vector<String>());
     }
@@ -107,8 +111,9 @@ public class AccountTree {
   public AccountTree(VariablesSecureApp _vars, ConnectionProvider _conn,
       AccountTreeData[] _accountsTree, AccountTreeData[] _accountsFacts, String[] _reportNodes)
       throws ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AccountTree []");
+    }
     vars = _vars;
     conn = _conn;
     accountsTree = _accountsTree;
@@ -125,7 +130,9 @@ public class AccountTree {
       AccountTreeData[] operands = AccountTreeData.selectOperands(conn,
           Utility.getContext(conn, vars, "#AccessibleOrgTree", "AccountTree"),
           Utility.getContext(conn, vars, "#User_Client", "AccountTree"),
-          OBDal.getInstance().get(ElementValue.class, reportNodes[0]).getAccountingElement()
+          OBDal.getInstance()
+              .get(ElementValue.class, reportNodes[0])
+              .getAccountingElement()
               .getId());
 
       Vector<AccountTreeData> vec = new Vector<>();
@@ -133,8 +140,9 @@ public class AccountTree {
 
       for (int i = 0; i < reportNodes.length; i++) {
         r = calculateTree(operands, reportNodes[i], new Vector<String>());
-        for (int j = 0; j < r.length; j++)
+        for (int j = 0; j < r.length; j++) {
           vec.addElement(r[j]);
+        }
       }
 
       reportElements = new AccountTreeData[vec.size()];
@@ -182,10 +190,12 @@ public class AccountTree {
           total = BigDecimal.ZERO;
           resetFlag = true;
         }
-      } else
+      } else {
         total = qty;
-    } else
+      }
+    } else {
       total = qty;
+    }
     return total;
   }
 
@@ -200,8 +210,9 @@ public class AccountTree {
    * @return AccountTreeData object with the new element's information.
    */
   private AccountTreeData setDataQty(AccountTreeData reportElement, String isDebitCredit) {
-    if (reportElement == null || accountsFacts == null || accountsFacts.length == 0)
+    if (reportElement == null || accountsFacts == null || accountsFacts.length == 0) {
       return reportElement;
+    }
     for (int i = 0; i < accountsFacts.length; i++) {
       if (accountsFacts[i].id.equals(reportElement.id)) {
         if (isDebitCredit.equals("C")) {
@@ -237,26 +248,29 @@ public class AccountTree {
   private AccountTreeData[] updateTreeQuantitiesSign(String rootElement, int level,
       String accountSign) {
     String localRootElement = rootElement;
-    if (accountsTree == null || accountsTree.length == 0)
+    if (accountsTree == null || accountsTree.length == 0) {
       return accountsTree;
+    }
     AccountTreeData[] result = null;
     Vector<AccountTreeData> vec = new Vector<>();
     // if (log4j.isDebugEnabled())
     // log4j.debug("AccountTree.updateTreeQuantitiesSign() - elements: " +
     // elements.length);
-    if (localRootElement == null)
+    if (localRootElement == null) {
       localRootElement = "0";
+    }
     for (int i = 0; i < accountsTree.length; i++) {
       if (accountsTree[i].parentId.equals(localRootElement)) {
         // accountSign = accountsTree[i].accountsign;
-        AccountTreeData[] dataChilds = updateTreeQuantitiesSign(accountsTree[i].nodeId,
-            (level + 1), accountSign);
+        AccountTreeData[] dataChilds = updateTreeQuantitiesSign(accountsTree[i].nodeId, (level + 1),
+            accountSign);
         accountsTree[i].elementLevel = Integer.toString(level);
         accountsTree[i] = setDataQty(accountsTree[i], accountsTree[i].accountsign);
         vec.addElement(accountsTree[i]);
         if (dataChilds != null && dataChilds.length > 0) {
-          for (int j = 0; j < dataChilds.length; j++)
+          for (int j = 0; j < dataChilds.length; j++) {
             vec.addElement(dataChilds[j]);
+          }
         }
       }
     }
@@ -280,8 +294,9 @@ public class AccountTree {
       return false;
     }
     for (int i = 0; i < forms.length; i++) {
-      if (forms[i].id.equals(indice))
+      if (forms[i].id.equals(indice)) {
         return true;
+      }
     }
     return false;
   }
@@ -306,16 +321,19 @@ public class AccountTree {
     } else {
       recursiveOperands = false;
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AccountTree.formsCalculate");
-    if (reportElements == null || reportElements.length == 0)
+    }
+    if (reportElements == null || reportElements.length == 0) {
       return;
+    }
     if (accountId == null) {
       log4j.error("AccountTree.formsCalculate - Missing accountId");
       return;
     }
-    if (localVecTotal == null)
+    if (localVecTotal == null) {
       localVecTotal = new Vector<>();
+    }
     if (localVecTotal.size() == 0) {
       localVecTotal.addElement("0");
       localVecTotal.addElement("0");
@@ -344,28 +362,31 @@ public class AccountTree {
             total = total
                 .add(new BigDecimal(actual.qty).multiply(new BigDecimal(operands[i].sign)));
 
-            totalRef = totalRef.add(new BigDecimal(actual.qtyRef).multiply(new BigDecimal(
-                operands[i].sign)));
+            totalRef = totalRef
+                .add(new BigDecimal(actual.qtyRef).multiply(new BigDecimal(operands[i].sign)));
             break;
           }
         }
         /* (b) */if (!encontrado) {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("AccountTree.formsCalculate - C_ElementValue_ID: " + operands[i].nodeId
                 + " not found");
+          }
           Vector<String> amounts = new Vector<>();
           amounts.addElement("0");
           amounts.addElement("0");
           calculateTree(operands, operands[i].nodeId, amounts, true, true);
           BigDecimal parcial = new BigDecimal(amounts.elementAt(0));
           BigDecimal parcialRef = new BigDecimal(amounts.elementAt(1));
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("AccountTree.formsCalculate - parcial: " + parcial.toPlainString());
+          }
           parcial = parcial.multiply(new BigDecimal(operands[i].sign));
           parcialRef = parcialRef.multiply(new BigDecimal(operands[i].sign));
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("AccountTree.formsCalculate - C_ElementValue_ID: " + operands[i].nodeId
                 + " found with value: " + parcial + " account sign: " + operands[i].sign);
+          }
           total = total.add(parcial);
           totalRef = totalRef.add(parcialRef);
         }
@@ -408,9 +429,11 @@ public class AccountTree {
   }
 
   private boolean nodeIn(String node, String[] listOfNodes) {
-    for (int i = 0; i < listOfNodes.length; i++)
-      if (node.equals(listOfNodes[i]))
+    for (int i = 0; i < listOfNodes.length; i++) {
+      if (node.equals(listOfNodes[i])) {
         return true;
+      }
+    }
     return false;
   }
 
@@ -456,18 +479,21 @@ public class AccountTree {
       Vector<String> totalAmounts, boolean applysign, boolean isExactValue) {
     Vector<String> localTotalAmounts = totalAmounts;
     String[] localReportNode = reportNode;
-    if (reportElements == null || reportElements.length == 0)
+    if (reportElements == null || reportElements.length == 0) {
       return reportElements;
+    }
     if (localReportNode == null) {
       localReportNode = new String[1];
       localReportNode[0] = "0";
     }
     AccountTreeData[] result = null;
     Vector<AccountTreeData> report = new Vector<>();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AccountTree.calculateTree() - accounts: " + reportElements.length);
-    if (localTotalAmounts == null)
+    }
+    if (localTotalAmounts == null) {
       localTotalAmounts = new Vector<>();
+    }
     if (localTotalAmounts.size() == 0) {
       localTotalAmounts.addElement("0");
       localTotalAmounts.addElement("0");
@@ -537,9 +563,9 @@ public class AccountTree {
           reportElements[i].qty = (applyShowValueCond(
               new BigDecimal(reportElements[i].qtyOperation), SVC,
               reportElements[i].issummary.equals("Y"))).toPlainString();
-          reportElements[i].qtyRef = (applyShowValueCond(new BigDecimal(
-              reportElements[i].qtyOperationRef), SVC, reportElements[i].issummary.equals("Y")))
-              .toPlainString();
+          reportElements[i].qtyRef = (applyShowValueCond(
+              new BigDecimal(reportElements[i].qtyOperationRef), SVC,
+              reportElements[i].issummary.equals("Y"))).toPlainString();
           if (resetFlag) {
             reportElements[i].svcreset = "Y";
             reportElements[i].svcresetref = "Y";
@@ -555,15 +581,16 @@ public class AccountTree {
         }
         // If the element is not active and it has balance != 0 it must be shown otherwise, it must
         // not.
-        ElementValue repElementAccount = OBDal.getInstance().get(ElementValue.class,
-            reportElements[i].id);
+        ElementValue repElementAccount = OBDal.getInstance()
+            .get(ElementValue.class, reportElements[i].id);
         BigDecimal qtyOperation = new BigDecimal(reportElements[i].qtyOperation);
         if (repElementAccount.isActive() || (total.compareTo(BigDecimal.ZERO) != 0)
             || (qtyOperation.compareTo(BigDecimal.ZERO) != 0)) {
           report.addElement(reportElements[i]);
           if (reportElementChilds != null && reportElementChilds.length > 0) {
-            for (int j = 0; j < reportElementChilds.length; j++)
+            for (int j = 0; j < reportElementChilds.length; j++) {
               report.addElement(reportElementChilds[j]);
+            }
           }
         }
       }
@@ -590,12 +617,14 @@ public class AccountTree {
   private AccountTreeData[] levelFilter(String[] indice, boolean found, String strLevel) {
     String[] localIndice = indice;
     if (reportElements == null || reportElements.length == 0 || strLevel == null
-        || strLevel.equals(""))
+        || strLevel.equals("")) {
       return reportElements;
+    }
     AccountTreeData[] result = null;
     Vector<AccountTreeData> vec = new Vector<>();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AccountTree.levelFilter() - accounts: " + reportElements.length);
+    }
 
     // if (indice == null) indice="0";
     if (localIndice == null) {
@@ -609,12 +638,16 @@ public class AccountTree {
           && (!found || reportElements[i].elementlevel.equalsIgnoreCase(strLevel))) {
         AccountTreeData[] dataChilds = levelFilter(reportElements[i].nodeId,
             (found || reportElements[i].elementlevel.equals(strLevel)), strLevel);
-        if (isAccountLevelLower(strLevel, reportElements[i]))
+        if (isAccountLevelLower(strLevel, reportElements[i])) {
           vec.addElement(reportElements[i]);
-        if (dataChilds != null && dataChilds.length > 0)
-          for (int j = 0; j < dataChilds.length; j++)
-            if (isAccountLevelLower(strLevel, dataChilds[j]))
+        }
+        if (dataChilds != null && dataChilds.length > 0) {
+          for (int j = 0; j < dataChilds.length; j++) {
+            if (isAccountLevelLower(strLevel, dataChilds[j])) {
               vec.addElement(dataChilds[j]);
+            }
+          }
+        }
       }
     }
     result = new AccountTreeData[vec.size()];
@@ -638,8 +671,9 @@ public class AccountTree {
   private AccountTreeData[] levelFilter(String indice, boolean found, String strLevel) {
     String[] i = new String[1];
     i[0] = indice;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AccountTree.levelFilter1");
+    }
     return levelFilter(i, found, strLevel);
   }
 
@@ -658,10 +692,12 @@ public class AccountTree {
    */
   public AccountTreeData[] filterStructure(String[] indice, boolean notEmptyLines, String strLevel,
       boolean isLevel) {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AccountTree.filterStructure() - accounts: " + reportElements.length);
-    if (reportElements == null || reportElements.length == 0)
+    }
+    if (reportElements == null || reportElements.length == 0) {
       return reportElements;
+    }
     AccountTreeData[] result = null;
     Vector<AccountTreeData> vec = new Vector<>();
 
@@ -673,8 +709,9 @@ public class AccountTree {
             .toPlainString();
         r[i].qtyRef = (applyShowValueCond(new BigDecimal(r[i].qtyRef), r[i].showvaluecond, true))
             .toPlainString();
-        if ((!notEmptyLines || (new BigDecimal(r[i].qty).compareTo(BigDecimal.ZERO) != 0 || new BigDecimal(
-            r[i].qtyRef).compareTo(BigDecimal.ZERO) != 0)) || "Y".equals(r[i].isalwaysshown)) {
+        if ((!notEmptyLines || (new BigDecimal(r[i].qty).compareTo(BigDecimal.ZERO) != 0
+            || new BigDecimal(r[i].qtyRef).compareTo(BigDecimal.ZERO) != 0))
+            || "Y".equals(r[i].isalwaysshown)) {
           if ("Y".equals(r[i].isalwaysshown)) {
             r[i].qty = null;
             r[i].qtyRef = null;
@@ -696,10 +733,12 @@ public class AccountTree {
    * @param isLevel
    */
   public void filter(boolean notEmptyLines, String strLevel, boolean isLevel) {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("filter");
-    if (reportElements == null)
+    }
+    if (reportElements == null) {
       log4j.warn("No resultant Acct");
+    }
     reportElements = filterStructure(reportNodes, notEmptyLines, strLevel, isLevel);
   }
 
@@ -707,10 +746,12 @@ public class AccountTree {
    * Resets amounts of subaccounts which parents have been reset because of show value condition
    */
   public void filterSVC() {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("AccountTree.filterShowValueCond() - accounts: " + reportElements.length);
-    if (reportElements == null || reportElements.length == 0)
+    }
+    if (reportElements == null || reportElements.length == 0) {
       return;
+    }
 
     int[] levels = new int[2];
     levels[0] = Integer.MAX_VALUE; // Value of the min level flaged as
@@ -742,9 +783,11 @@ public class AccountTree {
   }
 
   private boolean isAccountLevelLower(String reportAccountLevel, AccountTreeData accountToBeAdded) {
-    if (reportAccountLevel.equalsIgnoreCase("D"))
-      if (accountToBeAdded.elementlevel.equalsIgnoreCase("S"))
+    if (reportAccountLevel.equalsIgnoreCase("D")) {
+      if (accountToBeAdded.elementlevel.equalsIgnoreCase("S")) {
         return false;
+      }
+    }
 
     return true;
   }

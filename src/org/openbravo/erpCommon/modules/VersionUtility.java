@@ -31,7 +31,8 @@ import javax.servlet.http.HttpServlet;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
@@ -47,7 +48,7 @@ import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 
 public class VersionUtility {
   protected static ConnectionProvider pool;
-  static Logger log4j = Logger.getLogger(VersionUtility.class);
+  static Logger log4j = LogManager.getLogger();
 
   private static class Mod {
     String modId;
@@ -76,11 +77,12 @@ public class VersionUtility {
   }
 
   static private void initPool() {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("init");
+    }
     try {
-      HttpServlet srv = (HttpServlet) MessageContext.getCurrentContext().getProperty(
-          HTTPConstants.MC_HTTP_SERVLET);
+      HttpServlet srv = (HttpServlet) MessageContext.getCurrentContext()
+          .getProperty(HTTPConstants.MC_HTTP_SERVLET);
       ServletContext context = srv.getServletContext();
       pool = ConnectionProviderContextListener.getPool(context);
     } catch (Exception e) {
@@ -89,52 +91,51 @@ public class VersionUtility {
     }
   }
 
-  static private boolean checkVersion(String depParentMod, Dep dep, Mod mod, Vector<String> errors) {
+  static private boolean checkVersion(String depParentMod, Dep dep, Mod mod,
+      Vector<String> errors) {
     String strModName = dep.modName != null ? dep.modName : "< @CR_NameNotAvailable@ >";
     if ("MINOR".equals(dep.enforcement)) {
       if (dep.maxVer == null || dep.maxVer.isEmpty()) {
         if (versionCompare(dep.minVer, mod.availableMaxVer, false) != 0) {
-          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
-              + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
-              + mod.availableMaxVer + "\". ");
+          errors
+              .add(depParentMod + " @CR_DependensOnModule@ \"" + strModName + "\" @CR_InVersion@ \""
+                  + dep.minVer + "\", @CR_MaxAvailableVersion@ \"" + mod.availableMaxVer + "\". ");
           return false;
         }
       } else {
         if (versionCompare(dep.minVer, mod.availableMaxVer, false) == 1) {
-          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
-              + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
-              + mod.availableMaxVer + "\". ");
+          errors
+              .add(depParentMod + " @CR_DependensOnModule@ \"" + strModName + "\" @CR_InVersion@ \""
+                  + dep.minVer + "\", @CR_MaxAvailableVersion@ \"" + mod.availableMaxVer + "\". ");
           return false;
         }
         if (versionCompare(mod.availableMinVer, dep.maxVer, false) == 1) {
-          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
-              + "\" @CR_InVersion@ \"" + dep.maxVer + "\", @CR_MaxAvailableVersion@ \""
-              + mod.availableMinVer + "\". ");
+          errors
+              .add(depParentMod + " @CR_DependensOnModule@ \"" + strModName + "\" @CR_InVersion@ \""
+                  + dep.maxVer + "\", @CR_MaxAvailableVersion@ \"" + mod.availableMinVer + "\". ");
           return false;
         }
       }
     } else if ("NONE".equals(dep.enforcement)) {
       if (versionCompare(dep.minVer, mod.availableMaxVer, false) == 1) {
-        errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
-            + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
-            + mod.availableMaxVer + "\". ");
+        errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName + "\" @CR_InVersion@ \""
+            + dep.minVer + "\", @CR_MaxAvailableVersion@ \"" + mod.availableMaxVer + "\". ");
         return false;
       }
     } else if ("MAJOR".equals(dep.enforcement)) {
       // installedVersion <= dep.fromVersion
       if (versionCompare(dep.minVer, mod.availableMaxVer, true) == 1) {
-        errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
-            + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
-            + mod.availableMaxVer + "\". ");
+        errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName + "\" @CR_InVersion@ \""
+            + dep.minVer + "\", @CR_MaxAvailableVersion@ \"" + mod.availableMaxVer + "\". ");
         return false;
       }
       if (dep.maxVer != null && !dep.maxVer.isEmpty()) {
         // if lastVersion!=null, firstVersion >= installedVersion >= lastVersion
         if (versionCompare(dep.minVer, mod.availableMaxVer, false) == 1
             || versionCompare(mod.availableMinVer, dep.maxVer, true) == 1) {
-          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
-              + "\" @CR_InVersion@ \"" + dep.maxVer + "\", @CR_MaxAvailableVersion@ \""
-              + mod.availableMinVer + "\". ");
+          errors
+              .add(depParentMod + " @CR_DependensOnModule@ \"" + strModName + "\" @CR_InVersion@ \""
+                  + dep.maxVer + "\", @CR_MaxAvailableVersion@ \"" + mod.availableMinVer + "\". ");
           return false;
         }
       } else {
@@ -177,9 +178,9 @@ public class VersionUtility {
         for (Module merge : modulesToMerge) {
           if (dependency.modId.equals(merge.getModuleID())) {
             merged = true;
-            errors.add(merge.getName() + " @CR_IsMergedBy@ "
-                + merge.getAdditionalInfo().get("mergedWith") + " @CR_MergeCannotUninstall@ "
-                + strModVersion);
+            errors.add(
+                merge.getName() + " @CR_IsMergedBy@ " + merge.getAdditionalInfo().get("mergedWith")
+                    + " @CR_MergeCannotUninstall@ " + strModVersion);
           }
         }
       }
@@ -195,8 +196,8 @@ public class VersionUtility {
 
   static private boolean checkVersionDependency(String strModVersion,
       HashMap<String, Mod> modulesMap, HashMap<String, Mod> modsToInstall,
-      HashMap<String, Mod> modsToUpdate, Module[] modulesToMerge, Ver version, Vector<String> errors)
-      throws Exception {
+      HashMap<String, Mod> modsToUpdate, Module[] modulesToMerge, Ver version,
+      Vector<String> errors) throws Exception {
     boolean checked = true;
     HashMap<String, Dep> depMap = version.dependencies;
     depMap.putAll(version.includes);
@@ -228,8 +229,9 @@ public class VersionUtility {
     HashMap<String, Mod> modulesInstalledLessToUpdate = new HashMap<String, Mod>();
     HashMap<String, Mod> modsForCheckDependencies = new HashMap<String, Mod>();
     modulesInstalledLessToUpdate.putAll(modulesMap);
-    for (String modUpKey : modsToUpdate.keySet())
+    for (String modUpKey : modsToUpdate.keySet()) {
       modulesInstalledLessToUpdate.remove(modUpKey);
+    }
 
     boolean checked = true;
 
@@ -294,18 +296,22 @@ public class VersionUtility {
   }
 
   static public String toCommaString(String[] arr, boolean parenthesys) {
-    if (arr == null || arr.length == 0)
+    if (arr == null || arr.length == 0) {
       return null;
+    }
     StringBuffer modNames = new StringBuffer(" ");
-    if (parenthesys)
+    if (parenthesys) {
       modNames.append("( ");
+    }
     for (int i = 0; i < arr.length; i++) {
-      if (i != 0)
+      if (i != 0) {
         modNames.append(", ");
+      }
       modNames.append("'").append(arr[i]).append("'");
     }
-    if (parenthesys)
+    if (parenthesys) {
       modNames.append(" ) ");
+    }
     return modNames.toString();
   }
 
@@ -317,7 +323,8 @@ public class VersionUtility {
     VersionUtilityData[] data = VersionUtilityData.readModules(pool);
     HashMap<String, Mod> modules = new HashMap<String, Mod>();
     for (int i = 0; i < data.length; i++) {
-      if (!isInList(data[i].adModuleId, modulesToMerge) && !modules.containsKey(data[i].adModuleId)) {
+      if (!isInList(data[i].adModuleId, modulesToMerge)
+          && !modules.containsKey(data[i].adModuleId)) {
         Mod mod = new Mod();
         mod.modId = data[i].adModuleId;
         mod.name = data[i].name;
@@ -402,6 +409,7 @@ public class VersionUtility {
 
   public static class VersionComparator implements Comparator<Object> {
 
+    @Override
     public int compare(Object o1, Object o2) {
       if (!(o1 instanceof String) || !(o2 instanceof String)) {
         return 0;
@@ -455,19 +463,23 @@ public class VersionUtility {
    * @param ver2
    *          Installed version to compare with (example core)
    * @param onlyMayorVersion
-   * @return <ul>
+   * @return
+   *         <ul>
    *         <li>-1 in case ver1 is lower than ver2
    *         <li>0 in case ver1 equals ver2
    *         <li>1 in case ver1 is higher than ver2
    *         </ul>
    */
   static private int versionCompare(String ver1, String ver2, boolean onlyMayorVersion) {
-    if ((ver1 == null || ver1.equals("")) && (ver2 == null || ver2.equals("")))
+    if ((ver1 == null || ver1.equals("")) && (ver2 == null || ver2.equals(""))) {
       return 0;
-    if ((ver1 == null || ver1.equals("")))
+    }
+    if ((ver1 == null || ver1.equals(""))) {
       return 1;
-    if ((ver2 == null || ver2.equals("")))
+    }
+    if ((ver2 == null || ver2.equals(""))) {
       return -1;
+    }
 
     String s1[] = ver1.split("[.]");
     String s2[] = ver2.split("[.]");
@@ -476,44 +488,51 @@ public class VersionUtility {
     int n2[] = new int[3];
 
     for (int i = 0; i < 3; i++) {
-      if (s1.length - 1 < i || s1[i] == null || s1[i].equals(""))
+      if (s1.length - 1 < i || s1[i] == null || s1[i].equals("")) {
         n1[i] = 0;
-      else
+      } else {
         n1[i] = Integer.parseInt(s1[i]);
+      }
 
-      if (s2.length - 1 < i || s2[i] == null || s2[i].equals(""))
+      if (s2.length - 1 < i || s2[i] == null || s2[i].equals("")) {
         n2[i] = 0;
-      else
+      } else {
         n2[i] = Integer.parseInt(s2[i]);
+      }
     }
 
-    if ((!onlyMayorVersion && (n1[0] > n2[0] || (n1[0] == n2[0] && n1[1] > n2[1]) || (n1[0] == n2[0]
-        && n1[1] == n2[1] && n1[2] > n2[2])))
-        || (onlyMayorVersion && (n1[0] > n2[0] || (n1[0] == n2[0] && n1[1] > n2[1]))))
+    if ((!onlyMayorVersion && (n1[0] > n2[0] || (n1[0] == n2[0] && n1[1] > n2[1])
+        || (n1[0] == n2[0] && n1[1] == n2[1] && n1[2] > n2[2])))
+        || (onlyMayorVersion && (n1[0] > n2[0] || (n1[0] == n2[0] && n1[1] > n2[1])))) {
       return 1;
-    else if ((onlyMayorVersion && n1[0] == n2[0] && n1[1] == n2[1] && n1[2] <= n2[2])
-        || (!onlyMayorVersion && n1[0] == n2[0] && n1[1] == n2[1] && n1[2] == n2[2]))
+    } else if ((onlyMayorVersion && n1[0] == n2[0] && n1[1] == n2[1] && n1[2] <= n2[2])
+        || (!onlyMayorVersion && n1[0] == n2[0] && n1[1] == n2[1] && n1[2] == n2[2])) {
       return 0;
-    else
+    } else {
       return -1;
+    }
   }
 
   /**
    * Compares 2 versions taking into account just their major versions.
    * 
-   * @return <ul>
+   * @return
+   *         <ul>
    *         <li>-1 in case ver1 is lower than ver2
    *         <li>0 in case ver1 equals ver2
    *         <li>1 in case ver1 is higher than ver2
    *         </ul>
    */
   static public int versionCompareStrictMajorVersion(String ver1, String ver2) {
-    if ((ver1 == null || ver1.equals("")) && (ver2 == null || ver2.equals("")))
+    if ((ver1 == null || ver1.equals("")) && (ver2 == null || ver2.equals(""))) {
       return 0;
-    if ((ver1 == null || ver1.equals("")))
+    }
+    if ((ver1 == null || ver1.equals(""))) {
       return 1;
-    if ((ver2 == null || ver2.equals("")))
+    }
+    if ((ver2 == null || ver2.equals(""))) {
       return -1;
+    }
 
     String s1[] = ver1.split("[.]");
     String s2[] = ver2.split("[.]");
@@ -522,30 +541,34 @@ public class VersionUtility {
     int n2[] = new int[3];
 
     for (int i = 0; i < 3; i++) {
-      if (s1.length - 1 < i || s1[i] == null || s1[i].equals(""))
+      if (s1.length - 1 < i || s1[i] == null || s1[i].equals("")) {
         n1[i] = 0;
-      else
+      } else {
         n1[i] = Integer.parseInt(s1[i]);
+      }
 
-      if (s2.length - 1 < i || s2[i] == null || s2[i].equals(""))
+      if (s2.length - 1 < i || s2[i] == null || s2[i].equals("")) {
         n2[i] = 0;
-      else
+      } else {
         n2[i] = Integer.parseInt(s2[i]);
+      }
     }
 
-    if (n1[0] > n2[0] || (n1[0] == n2[0] && n1[1] > n2[1]))
+    if (n1[0] > n2[0] || (n1[0] == n2[0] && n1[1] > n2[1])) {
       return 1;
-    else if (n1[0] == n2[0] && n1[1] == n2[1])
+    } else if (n1[0] == n2[0] && n1[1] == n2[1]) {
       return 0;
-    else
+    } else {
       return -1;
+    }
   }
 
   @SuppressWarnings("unchecked")
   static private HashMap<String, Mod> modules2mods(Module[] modules) {
     HashMap<String, Mod> mods = new HashMap<String, Mod>();
-    if (modules == null)
+    if (modules == null) {
       return mods;
+    }
 
     for (int i = 0; i < modules.length; i++) {
       if (!mods.containsKey(modules[i].getModuleID())) {
@@ -572,7 +595,8 @@ public class VersionUtility {
       ver.includes = new HashMap<String, Dep>();
 
       HashMap<String, String> enforcements = (HashMap<String, String>) modules[i]
-          .getAdditionalInfo().get("enforcements");
+          .getAdditionalInfo()
+          .get("enforcements");
 
       ModuleDependency[] dependencies = modules[i].getDependencies();
       if (dependencies != null) {
@@ -625,8 +649,9 @@ public class VersionUtility {
     if (errors.length != 0) {
       rt.setType("Error");
       StringBuffer strErrors = new StringBuffer();
-      for (String s : errors)
+      for (String s : errors) {
         strErrors.append(s).append("\n");
+      }
 
       if (vars != null) {
         String lang = vars.getLanguage();

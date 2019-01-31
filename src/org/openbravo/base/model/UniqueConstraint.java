@@ -22,7 +22,8 @@ package org.openbravo.base.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.util.Check;
 
 /**
@@ -33,7 +34,7 @@ import org.openbravo.base.util.Check;
  */
 
 public class UniqueConstraint {
-  private static final Logger log = Logger.getLogger(UniqueConstraint.class);
+  private static final Logger log = LogManager.getLogger();
 
   private List<Property> properties = new ArrayList<Property>();
   private String name;
@@ -46,10 +47,11 @@ public class UniqueConstraint {
     }
     for (final Property property : entity.getProperties()) {
       // one-to-many properties have a null columnname
-      if (property.getColumnName() != null && property.getColumnName().equalsIgnoreCase(columnName)) {
-        Check.isFalse(properties.contains(property), "Column " + columnName
-            + " occurs twice in uniqueconstraint " + name + " in entity " + entity + " table "
-            + entity.getTableName());
+      if (property.getColumnName() != null
+          && property.getColumnName().equalsIgnoreCase(columnName)) {
+        Check.isFalse(properties.contains(property),
+            "Column " + columnName + " occurs twice in uniqueconstraint " + name + " in entity "
+                + entity + " table " + entity.getTableName());
         properties.add(property);
         log.debug("Adding property " + property + " to uniqueconstraint " + name);
         return;

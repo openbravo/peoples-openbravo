@@ -22,6 +22,8 @@ package org.openbravo.advpaymentmngt.actionHandler;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.Parameter;
@@ -34,12 +36,9 @@ import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.ElementTrl;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AddPaymentReloadLabelsActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(AddPaymentReloadLabelsActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
@@ -58,9 +57,11 @@ public class AddPaymentReloadLabelsActionHandler extends BaseActionHandler {
       final Language lang = OBContext.getOBContext().getLanguage();
 
       final Element businessPartnerElement = OBDal.getInstance()
-          .get(Parameter.class, strBusinessPartner).getApplicationElement();
+          .get(Parameter.class, strBusinessPartner)
+          .getApplicationElement();
       final Element financialAccountElement = OBDal.getInstance()
-          .get(Parameter.class, strFinancialAccount).getApplicationElement();
+          .get(Parameter.class, strFinancialAccount)
+          .getApplicationElement();
 
       values.put("businessPartner", businessPartnerElement.get(labelProperty));
       values.put("financialAccount", financialAccountElement.get(labelProperty));

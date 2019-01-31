@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -63,6 +65,7 @@ import org.openbravo.test.pricelist.data.PriceListTestData13;
 import org.openbravo.test.pricelist.data.PriceListTestData14;
 import org.openbravo.test.pricelist.data.PriceListTestData15;
 import org.openbravo.test.pricelist.data.PriceListTestData16;
+import org.openbravo.test.pricelist.data.PriceListTestData17;
 import org.openbravo.test.pricelist.data.PriceListTestData2;
 import org.openbravo.test.pricelist.data.PriceListTestData3;
 import org.openbravo.test.pricelist.data.PriceListTestData4;
@@ -71,8 +74,6 @@ import org.openbravo.test.pricelist.data.PriceListTestData6;
 import org.openbravo.test.pricelist.data.PriceListTestData7;
 import org.openbravo.test.pricelist.data.PriceListTestData8;
 import org.openbravo.test.pricelist.data.PriceListTestData9;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Tests cases to check Price Lists Generation
@@ -82,7 +83,7 @@ import org.slf4j.LoggerFactory;
  */
 @RunWith(Parameterized.class)
 public class PriceListTest extends OBBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(PriceListTest.class);
+  final static private Logger log = LogManager.getLogger();
 
   // User Openbravo
   private final String USER_ID = "100";
@@ -108,6 +109,7 @@ public class PriceListTest extends OBBaseTest {
   private boolean isSalesPrice;
   private boolean isBasedOnCost;
   private boolean isPriceIncludesTax;
+  private boolean isDefault;
 
   // Price List Version
   private String basePriceListVersionId;
@@ -120,6 +122,7 @@ public class PriceListTest extends OBBaseTest {
     this.isSalesPrice = data.isSalesPrice();
     this.isBasedOnCost = data.isBasedOnCost();
     this.isPriceIncludesTax = data.isPriceIncludesTax();
+    this.isDefault = data.isDefault();
     this.basePriceListVersionId = data.getBasePriceListVersionId();
     this.expectedProductPricesData = data.getExpectedProductPrices();
   }
@@ -127,88 +130,74 @@ public class PriceListTest extends OBBaseTest {
   /** Parameterized possible combinations for price list computation */
   @Parameters(name = "idx:{0} name:{1}")
   public static Collection<Object[]> params() {
-    return Arrays
-        .asList(new Object[][] {
-            {
-                "01",
-                "PriceListSchema with one rule associated to the same Product Category. Unit Price and List Price discounts applied.",
-                new PriceListTestData1() //
-            },
-            {
-                "02",
-                "PriceListSchema with one rule associated to specific Product. Unit Price and List Price discounts applied.",
-                new PriceListTestData2() //
-            },
-            {
-                "03",
-                "PriceListSchema with more than one rule associated. First to an entire Product category and second one to specific Product. Unit Price and List Price discounts applied in both rules.",
-                new PriceListTestData3() //
-            },
-            {
-                "04",
-                "Price List Schema with Fixed Prices for an entire Product Category and selected base Price List.",
-                new PriceListTestData4() //
-            },
-            {
-                "05",
-                "Price List Schema with Cost Prices and an entire Product Category and without select base Price List.",
-                new PriceListTestData5() //
-            },
-            {
-                "06",
-                "Price List Schema with Cost Prices and an selected Product and without select base Price List.",
-                new PriceListTestData6() //
-            },
-            {
-                "07",
-                "Price List Schema with Fixed Price or Cost Based, an entire Product Category and base Price List.",
-                new PriceListTestData7() //
-            },
-            {
-                "08",
-                "Price List Schema with Fixed Price or Cost Based, and selected Product and base Price List.",
-                new PriceListTestData8() //
-            },
-            {
-                "09",
-                "Price List Schema with Fixed Price or Cost plus Margin Based, an entire Product Category and base Price List.",
-                new PriceListTestData9() //
-            },
-            {
-                "10",
-                "Price List Schema with Fixed Price or Cost plus Margin Based, and selected Product and base Price List.",
-                new PriceListTestData10() //
-            },
-            {
-                "11",
-                "Price List Schema with different unit price and list price discounts of ZERO percent, surcharge amounts and all products of a Product Category and base Price List.",
-                new PriceListTestData11() //
-            },
-            {
-                "12",
-                "Price List Schema with different unit price and list price discounts, surcharge amounts and all products of a Product Category and base Price List.",
-                new PriceListTestData12() //
-            },
-            {
-                "13",
-                "Price List Schema with different Limit (PO) price and Limit (PO) price discounts of ZERO percent, surcharge amounts and all products of a Product Category. Price List Based On Cost.",
-                new PriceListTestData13() //
-            },
-            {
-                "14",
-                "Price List Schema with different Limit (PO) price and Limit (PO) price discounts, surcharge amounts and all products of a Product Category and base Price List. Price list doesn't based on cost.",
-                new PriceListTestData14() //
-            },
-            {
-                "15",
-                "Price List Schema with more than one discount line, each associated to different Product Categories and rules. Price List Based on Cost.",
-                new PriceListTestData15() //
-            },
-            {
-                "16",
-                "Price List Schema with four different rules applied. Unit Price and List Price discounts applied.",
-                new PriceListTestData16() //
-            } });
+    return Arrays.asList(new Object[][] { { "01",
+        "PriceListSchema with one rule associated to the same Product Category. Unit Price and List Price discounts applied.",
+        new PriceListTestData1() //
+        },
+        { "02",
+            "PriceListSchema with one rule associated to specific Product. Unit Price and List Price discounts applied.",
+            new PriceListTestData2() //
+        },
+        { "03",
+            "PriceListSchema with more than one rule associated. First to an entire Product category and second one to specific Product. Unit Price and List Price discounts applied in both rules.",
+            new PriceListTestData3() //
+        },
+        { "04",
+            "Price List Schema with Fixed Prices for an entire Product Category and selected base Price List.",
+            new PriceListTestData4() //
+        },
+        { "05",
+            "Price List Schema with Cost Prices and an entire Product Category and without select base Price List.",
+            new PriceListTestData5() //
+        },
+        { "06",
+            "Price List Schema with Cost Prices and an selected Product and without select base Price List.",
+            new PriceListTestData6() //
+        },
+        { "07",
+            "Price List Schema with Fixed Price or Cost Based, an entire Product Category and base Price List.",
+            new PriceListTestData7() //
+        },
+        { "08",
+            "Price List Schema with Fixed Price or Cost Based, and selected Product and base Price List.",
+            new PriceListTestData8() //
+        },
+        { "09",
+            "Price List Schema with Fixed Price or Cost plus Margin Based, an entire Product Category and base Price List.",
+            new PriceListTestData9() //
+        },
+        { "10",
+            "Price List Schema with Fixed Price or Cost plus Margin Based, and selected Product and base Price List.",
+            new PriceListTestData10() //
+        },
+        { "11",
+            "Price List Schema with different unit price and list price discounts of ZERO percent, surcharge amounts and all products of a Product Category and base Price List.",
+            new PriceListTestData11() //
+        },
+        { "12",
+            "Price List Schema with different unit price and list price discounts, surcharge amounts and all products of a Product Category and base Price List.",
+            new PriceListTestData12() //
+        },
+        { "13",
+            "Price List Schema with different Limit (PO) price and Limit (PO) price discounts of ZERO percent, surcharge amounts and all products of a Product Category. Price List Based On Cost.",
+            new PriceListTestData13() //
+        },
+        { "14",
+            "Price List Schema with different Limit (PO) price and Limit (PO) price discounts, surcharge amounts and all products of a Product Category and base Price List. Price list doesn't based on cost.",
+            new PriceListTestData14() //
+        },
+        { "15",
+            "Price List Schema with more than one discount line, each associated to different Product Categories and rules. Price List Based on Cost.",
+            new PriceListTestData15() //
+        },
+        { "16",
+            "Price List Schema with four different rules applied. Unit Price and List Price discounts applied.",
+            new PriceListTestData16() //
+        },
+        { "17",
+            "Data used for Test: Price List Schema with more than one rule applied. One rule with 50% unit price for one product, and second one with one product of of same Category and an unit price of 50%",
+            new PriceListTestData17() //
+        }, });
   }
 
   @Test
@@ -297,13 +286,13 @@ public class PriceListTest extends OBBaseTest {
     // Reference section fields
     plsl.setConversionDate(new Date());
     if (StringUtils.isNotEmpty(priceListRuleData.getBusinessPartnerId())) {
-      BusinessPartner businessPartnerData = OBDal.getInstance().get(BusinessPartner.class,
-          priceListRuleData.getBusinessPartnerId());
+      BusinessPartner businessPartnerData = OBDal.getInstance()
+          .get(BusinessPartner.class, priceListRuleData.getBusinessPartnerId());
       plsl.setBusinessPartner(businessPartnerData);
     }
     if (StringUtils.isNotEmpty(priceListRuleData.getProductCategoryId())) {
-      ProductCategory productCategoryData = OBDal.getInstance().get(ProductCategory.class,
-          priceListRuleData.getProductCategoryId());
+      ProductCategory productCategoryData = OBDal.getInstance()
+          .get(ProductCategory.class, priceListRuleData.getProductCategoryId());
       plsl.setProductCategory(productCategoryData);
     }
     if (StringUtils.isNotEmpty(priceListRuleData.getProductId())) {
@@ -413,6 +402,7 @@ public class PriceListTest extends OBBaseTest {
     pl.setSalesPriceList(isSalesPrice);
     pl.setCostBasedPriceList(isBasedOnCost);
     pl.setPriceIncludesTax(isPriceIncludesTax);
+    pl.setDefault(isDefault);
     OBDal.getInstance().save(pl);
     return pl;
   }
@@ -427,7 +417,8 @@ public class PriceListTest extends OBBaseTest {
    *          The Version's Price List Schema
    * @return The new Price List Version
    */
-  private PriceListVersion addPriceListVersion(PriceList priceList, PriceListSchema priceListSchema) {
+  private PriceListVersion addPriceListVersion(PriceList priceList,
+      PriceListSchema priceListSchema) {
     PriceListVersion plv = OBProvider.getInstance().get(PriceListVersion.class);
     plv.setClient(OBDal.getInstance().get(Client.class, CLIENT_ID));
     plv.setOrganization(OBDal.getInstance().get(Organization.class, ORGANIZATION_ID));
@@ -436,8 +427,8 @@ public class PriceListTest extends OBBaseTest {
     plv.setValidFromDate(new Date());
     plv.setPriceListSchema(priceListSchema);
     if (StringUtils.isNotEmpty(basePriceListVersionId)) {
-      plv.setBasePriceListVersion(OBDal.getInstance().get(PriceListVersion.class,
-          basePriceListVersionId));
+      plv.setBasePriceListVersion(
+          OBDal.getInstance().get(PriceListVersion.class, basePriceListVersionId));
     }
     OBDal.getInstance().save(plv);
     priceList.getPricingPriceListVersionList().add(plv);
@@ -489,9 +480,9 @@ public class PriceListTest extends OBBaseTest {
    *          The Price List Version from the product prices will be generated
    */
   private void generateProductPriceList(PriceListVersion priceListVersion) {
-    CallProcess.getInstance().call(
-        OBDal.getInstance().get(Process.class, M_PRICELIST_CREATE_PROCEDURE_ID),
-        priceListVersion.getId(), null);
+    CallProcess.getInstance()
+        .call(OBDal.getInstance().get(Process.class, M_PRICELIST_CREATE_PROCEDURE_ID),
+            priceListVersion.getId(), null);
 
     OBDal.getInstance().refresh(priceListVersion);
   }
@@ -505,8 +496,9 @@ public class PriceListTest extends OBBaseTest {
   private void validateGeneratedPrices(PriceListVersion priceListVersion) {
 
     int productPriceListCount = priceListVersion.getPricingProductPriceList().size();
-    assertThat(testNumber + ". Number of lines obtained(" + productPriceListCount
-        + ") different than expected (" + expectedProductPricesData.size() + ")",
+    assertThat(
+        testNumber + ". Number of lines obtained(" + productPriceListCount
+            + ") different than expected (" + expectedProductPricesData.size() + ")",
         expectedProductPricesData.size(), comparesEqualTo(productPriceListCount));
 
     for (ProductPrice productPrice : priceListVersion.getPricingProductPriceList()) {
@@ -520,12 +512,14 @@ public class PriceListTest extends OBBaseTest {
         String expectedUnitPrice = prices[0];
         String expectedListPrice = prices[1];
 
-        assertThat(testNumber + ". Wrong Unit Price (" + productPrice.getStandardPrice().toString()
-            + ") for product (" + productName + "). Was expected " + expectedUnitPrice,
+        assertThat(
+            testNumber + ". Wrong Unit Price (" + productPrice.getStandardPrice().toString()
+                + ") for product (" + productName + "). Was expected " + expectedUnitPrice,
             new BigDecimal(expectedUnitPrice), comparesEqualTo(productPrice.getStandardPrice()));
 
-        assertThat(testNumber + ". Wrong List Price (" + productPrice.getListPrice().toString()
-            + ") for product (" + productName + "). Was expected " + expectedListPrice,
+        assertThat(
+            testNumber + ". Wrong List Price (" + productPrice.getListPrice().toString()
+                + ") for product (" + productName + "). Was expected " + expectedListPrice,
             new BigDecimal(expectedListPrice), comparesEqualTo(productPrice.getListPrice()));
       }
     }

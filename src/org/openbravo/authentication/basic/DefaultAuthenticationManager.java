@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Copyright (C) 2001-2019 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -22,7 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
@@ -47,7 +48,7 @@ import org.openbravo.service.web.BaseWebServiceServlet;
  */
 public class DefaultAuthenticationManager extends AuthenticationManager {
 
-  private static final Logger log4j = Logger.getLogger(DefaultAuthenticationManager.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public DefaultAuthenticationManager() {
   }
@@ -77,6 +78,8 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     if (!StringUtils.isEmpty(sUserId) && !resetPassword) {
       return sUserId;
     }
+
+    markRequestAsSelfAuthenticated(request);
 
     VariablesHistory variables = new VariablesHistory(request);
     String user;
@@ -146,7 +149,12 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
 
     vars.setSessionValue("#AD_User_ID", userId);
 
-    checkIfPasswordExpired(userId, variables.getLanguage());
+    try {
+      checkIfPasswordExpired(userId, variables.getLanguage());
+    } catch (AuthenticationExpirationPasswordException e) {
+      updateDBSession(sessionId, false, FAILED_SESSION);
+      throw e;
+    }
 
     // Using the Servlet API instead of vars.setSessionValue to avoid breaking code
     // vars.setSessionValue always transform the key to upper-case
@@ -180,9 +188,6 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     // Storing target string to redirect after a successful login
     variables.setSessionValue("target",
         strDireccionLocal + "/" + (qString != null && !qString.equals("") ? "?" + qString : ""));
-    if (qString != null && !qString.equals("")) {
-      variables.setSessionValue("targetQueryString", qString);
-    }
   }
 
   @Override

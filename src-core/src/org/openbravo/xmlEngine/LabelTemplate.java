@@ -13,11 +13,12 @@ package org.openbravo.xmlEngine;
 
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class LabelTemplate implements XmlComponentTemplate, IDComponent {
 
-  static Logger log4j = Logger.getLogger(LabelTemplate.class);
+  static Logger log4j = LogManager.getLogger();
 
   String strName = null;
   String strReplace = null;
@@ -27,21 +28,24 @@ class LabelTemplate implements XmlComponentTemplate, IDComponent {
   XmlComponentTemplate xmlComponentTemplate = null;
   Vector<ReplaceElement> vecReplace = null;
 
+  @Override
   public int type() {
     return type;
   }
 
   public LabelValue createLabelValue(XmlDocument xmlDocument) {
-    log4j.debug("running createLabelValue() method - hasLabelValue: "
-        + xmlDocument.hasLabelValue.size());
+    log4j.debug(
+        "running createLabelValue() method - hasLabelValue: " + xmlDocument.hasLabelValue.size());
     LabelValue labelValue = xmlDocument.hasLabelValue.get(strName);
     // log4j.debug("running createLabelValue() method - labelValue: " +
     // labelValue.labelTemplate.strName);
-    if (labelValue == null)
+    if (labelValue == null) {
       labelValue = new LabelValue(this, xmlDocument);
+    }
     return labelValue;
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
     log4j.debug("createXmlComponentValue with xmlDocument hasLabelSize: " + xmlDocument.toString());
     return createLabelValue(xmlDocument);

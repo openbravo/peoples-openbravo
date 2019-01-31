@@ -13,19 +13,21 @@ package org.openbravo.xmlEngine;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionGtValue extends FunctionEvaluationValue {
 
-  static Logger log4jFunctionGtValue = Logger.getLogger(FunctionGtValue.class);
+  static Logger log4jFunctionGtValue = LogManager.getLogger();
 
   public FunctionGtValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
-    log4jFunctionGtValue.debug("Arg1: " + arg1Value.printSimple() + " Arg2: "
-        + arg2Value.printSimple());
+    log4jFunctionGtValue
+        .debug("Arg1: " + arg1Value.printSimple() + " Arg2: " + arg2Value.printSimple());
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
@@ -39,6 +41,7 @@ class FunctionGtValue extends FunctionEvaluationValue {
     }
   }
 
+  @Override
   public String printSimple() {
     return print();
   }

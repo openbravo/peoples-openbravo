@@ -70,8 +70,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -81,12 +82,12 @@ public class TestCostingLandedCost extends TestCostingBase {
       Product product2 = TestCostingUtils.createProduct("testCostingLC100LC200B", price2);
 
       // Create purchase order and book it
-      Order purchaseOrder1 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity1, day0);
+      Order purchaseOrder1 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity1,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder2 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity2, day0);
+      Order purchaseOrder2 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity2,
+          day0);
 
       // Create purchase invoice with landed cost, post it and assert it
       Invoice purchaseInvoiceLandedCost1 = TestCostingUtils.createPurchaseInvoiceLandedCost(
@@ -109,42 +110,45 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Post landed cost and assert it
       List<ShipmentInOut> receiptList = new ArrayList<ShipmentInOut>();
       receiptList.add(goodsReceipt);
-      TestCostingUtils.postLandedCost(OBDal.getInstance().get(LandedCost.class,
-          goodsReceipt.getLandedCostCostList().get(0).getLandedCost().getId()));
+      TestCostingUtils.postLandedCost(OBDal.getInstance()
+          .get(LandedCost.class,
+              goodsReceipt.getLandedCostCostList().get(0).getLandedCost().getId()));
 
       // Assert product transactions 1
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price5, price1));
       TestCostingUtils.assertProductTransaction(product1.getId(), productTransactionAssertList1);
 
       // Assert product transactions 2
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price2, price6, price2));
       TestCostingUtils.assertProductTransaction(product2.getId(), productTransactionAssertList2);
 
       // Assert product costing 1
-      List<MaterialTransaction> transactionList1 = TestCostingUtils.getProductTransactions(product1
-          .getId());
+      List<MaterialTransaction> transactionList1 = TestCostingUtils
+          .getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
-          price1, price5, quantity1));
+      productCostingAssertList1.add(
+          new ProductCostingAssert(transactionList1.get(0), price5, price1, price5, quantity1));
       TestCostingUtils.assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
-      List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product2
-          .getId());
+      List<MaterialTransaction> transactionList2 = TestCostingUtils
+          .getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
-          price2, price6, quantity2));
+      productCostingAssertList2.add(
+          new ProductCostingAssert(transactionList2.get(0), price6, price2, price6, quantity2));
       TestCostingUtils.assertProductCosting(product2.getId(), productCostingAssertList2);
 
       // Assert cost adjustment 1
-      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils.getCostAdjustment(product1
-          .getId());
+      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils
+          .getCostAdjustment(product1.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -155,8 +159,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
       // Assert cost adjustment 2
-      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils.getCostAdjustment(product2
-          .getId());
+      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils
+          .getCostAdjustment(product2.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList21 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -199,8 +203,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -210,12 +215,12 @@ public class TestCostingLandedCost extends TestCostingBase {
       Product product2 = TestCostingUtils.createProduct("testCostingLC101LC201B", price2);
 
       // Create purchase order and book it
-      Order purchaseOrder1 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity1, day0);
+      Order purchaseOrder1 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity1,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder2 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity2, day0);
+      Order purchaseOrder2 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity2,
+          day0);
 
       // Create goods receipt, run costing background, post it and assert it
       List<Order> purchaseOrderList = new ArrayList<Order>();
@@ -240,36 +245,38 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions 1
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6, price1));
       TestCostingUtils.assertProductTransaction(product1.getId(), productTransactionAssertList1);
 
       // Assert product transactions 2
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price2, price7, price2));
       TestCostingUtils.assertProductTransaction(product2.getId(), productTransactionAssertList2);
 
       // Assert product costing 1
-      List<MaterialTransaction> transactionList1 = TestCostingUtils.getProductTransactions(product1
-          .getId());
+      List<MaterialTransaction> transactionList1 = TestCostingUtils
+          .getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
-          price1, price6, quantity1));
+      productCostingAssertList1.add(
+          new ProductCostingAssert(transactionList1.get(0), price6, price1, price6, quantity1));
       TestCostingUtils.assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
-      List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product2
-          .getId());
+      List<MaterialTransaction> transactionList2 = TestCostingUtils
+          .getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
-          price2, price7, quantity2));
+      productCostingAssertList2.add(
+          new ProductCostingAssert(transactionList2.get(0), price7, price2, price7, quantity2));
       TestCostingUtils.assertProductCosting(product2.getId(), productCostingAssertList2);
 
       // Assert cost adjustment 1
-      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils.getCostAdjustment(product1
-          .getId());
+      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils
+          .getCostAdjustment(product1.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0),
@@ -288,8 +295,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
       // Assert cost adjustment 2
-      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils.getCostAdjustment(product2
-          .getId());
+      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils
+          .getCostAdjustment(product2.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList21 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0),
@@ -355,8 +362,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -373,8 +381,8 @@ public class TestCostingLandedCost extends TestCostingBase {
           quantity1, day1);
 
       // Create goods receipt, run costing background, post it and assert it
-      ShipmentInOut goodsReceipt2 = TestCostingUtils.createGoodsReceipt(product1, price1,
-          quantity2, day2);
+      ShipmentInOut goodsReceipt2 = TestCostingUtils.createGoodsReceipt(product1, price1, quantity2,
+          day2);
 
       // Create Landed Cost
       List<String> landedCostTypeIdList = new ArrayList<String>();
@@ -396,8 +404,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_FEES_ID, price6, quantity3, day4);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost1.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(0), true);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost1.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(0), true);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(0),
@@ -408,8 +417,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID, price7, quantity3, day4);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost2.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(1), true);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost2.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(1), true);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(1),
@@ -420,8 +430,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID, price8, quantity3, day5);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost3.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(2), true);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost3.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(2), true);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(2),
@@ -430,36 +441,38 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions 1
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price9, price1));
       TestCostingUtils.assertProductTransaction(product1.getId(), productTransactionAssertList1);
 
       // Assert product transactions 2
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price10, price11, price10));
       TestCostingUtils.assertProductTransaction(product2.getId(), productTransactionAssertList2);
 
       // Assert product costing 1
-      List<MaterialTransaction> transactionList1 = TestCostingUtils.getProductTransactions(product1
-          .getId());
+      List<MaterialTransaction> transactionList1 = TestCostingUtils
+          .getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
-          price1, price9, quantity2));
+      productCostingAssertList1.add(
+          new ProductCostingAssert(transactionList1.get(0), price9, price1, price9, quantity2));
       TestCostingUtils.assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
-      List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product2
-          .getId());
+      List<MaterialTransaction> transactionList2 = TestCostingUtils
+          .getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price10,
-          price10, price11, quantity1));
+      productCostingAssertList2.add(
+          new ProductCostingAssert(transactionList2.get(0), price11, price10, price11, quantity1));
       TestCostingUtils.assertProductCosting(product2.getId(), productCostingAssertList2);
 
       // Assert cost adjustment 1
-      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils.getCostAdjustment(product1
-          .getId());
+      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils
+          .getCostAdjustment(product1.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0),
@@ -492,8 +505,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
       // Assert cost adjustment 2
-      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils.getCostAdjustment(product2
-          .getId());
+      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils
+          .getCostAdjustment(product2.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList21 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0),
@@ -552,8 +565,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -580,8 +594,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_FEES_ID, price2, quantity2, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost1.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(0), true);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost1.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(0), true);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(0),
@@ -592,8 +607,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID, price3, quantity2, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost2.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(1), true);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost2.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(1), true);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(1),
@@ -602,16 +618,17 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price4, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
-          price1, price4, quantity1));
+      productCostingAssertList1
+          .add(new ProductCostingAssert(transactionList.get(0), price4, price1, price4, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList1);
 
       // Assert cost adjustment
@@ -650,8 +667,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -680,16 +698,17 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price4, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
-          price1, price4, quantity1));
+      productCostingAssertList1
+          .add(new ProductCostingAssert(transactionList.get(0), price4, price1, price4, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList1);
 
       // Assert cost adjustment
@@ -730,8 +749,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -758,8 +778,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID, price4, quantity2, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost1.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(0), false);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost1.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(0), false);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(0),
@@ -770,8 +791,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_FEES_ID, price5, quantity2, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost2.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(1), false);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost2.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(1), false);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(1),
@@ -780,16 +802,17 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
-          price1, price6, quantity1));
+      productCostingAssertList1
+          .add(new ProductCostingAssert(transactionList.get(0), price6, price1, price6, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList1);
 
       // Assert cost adjustment
@@ -830,8 +853,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -858,8 +882,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID, price4, quantity2, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost1.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(0), false);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost1.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(0), false);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(0),
@@ -870,8 +895,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_FEES_ID, price5, quantity2, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost2.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(1), false);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost2.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(1), false);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(1),
@@ -880,16 +906,17 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
-          price1, price6, quantity1));
+      productCostingAssertList1
+          .add(new ProductCostingAssert(transactionList.get(0), price6, price1, price6, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList1);
 
       // Assert cost adjustment
@@ -933,8 +960,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -961,8 +989,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID, price4, quantity2, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost1.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(0), true);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost1.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(0), true);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(0),
@@ -973,8 +1002,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_FEES_ID, price5, quantity2, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost2.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(1), true);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost2.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(1), true);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(1),
@@ -983,32 +1013,33 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
-          price1, price6, quantity1));
+      productCostingAssertList1
+          .add(new ProductCostingAssert(transactionList.get(0), price6, price1, price6, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList1);
 
       // Assert cost adjustment
       List<CostAdjustment> costAdjustmentList = TestCostingUtils.getCostAdjustment(product.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(0), "LC",
-          amount1, day1, true, false));
+      costAdjustmentAssertLineList1
+          .add(new CostAdjustmentAssert(transactionList.get(0), "LC", amount1, day1, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList2 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(0), "LC",
-          amount2, day1, true, false));
+      costAdjustmentAssertLineList2
+          .add(new CostAdjustmentAssert(transactionList.get(0), "LC", amount2, day1, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList3 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList3.add(new CostAdjustmentAssert(transactionList.get(0), "LC",
-          amount3, day1, true, false));
+      costAdjustmentAssertLineList3
+          .add(new CostAdjustmentAssert(transactionList.get(0), "LC", amount3, day1, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList3);
       TestCostingUtils.assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
@@ -1049,8 +1080,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1089,38 +1121,41 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID, price4, quantity4, day5);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(
-          purchaseInvoiceLandedCost.getInvoiceLineList().get(0), landedCost.getLandedCostCostList()
-              .get(0), true);
+      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(0), true);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(0),
           purchaseInvoiceLandedCost.getInvoiceLineList().get(0));
 
       // Update transaction total cost amount
-      TestCostingUtils.manualCostAdjustment(TestCostingUtils
-          .getProductTransactions(product.getId()).get(1), amount1, true, true, day6);
+      TestCostingUtils.manualCostAdjustment(
+          TestCostingUtils.getProductTransactions(product.getId()).get(1), amount1, true, true,
+          day6);
 
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price5, price1));
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsShipment1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsShipment1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6));
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsShipment2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsShipment2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price3, price7));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
-          price1, price5, quantity1));
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(1), price7, null,
+      productCostingAssertList1
+          .add(new ProductCostingAssert(transactionList.get(0), price5, price1, price5, quantity1));
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(1), price6, null,
           price7, quantity1.add(quantity3.negate())));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList1);
 
@@ -1142,8 +1177,8 @@ public class TestCostingLandedCost extends TestCostingBase {
           quantity3.multiply(price5).add(quantity3.multiply(price3).negate()), day4, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList3 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList3.add(new CostAdjustmentAssert(transactionList.get(1), "MCC",
-          amount1, day6, true));
+      costAdjustmentAssertLineList3
+          .add(new CostAdjustmentAssert(transactionList.get(1), "MCC", amount1, day6, true));
       costAdjustmentAssertLineList3.add(new CostAdjustmentAssert(transactionList.get(2), "PDC",
           quantity3.multiply(price7).add(quantity3.multiply(price5).negate()), day6, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList3);
@@ -1152,44 +1187,48 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Post cost adjustment and assert it
       TestCostingUtils.postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99900", quantity3.multiply(price3).add(
-          quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity3
-          .multiply(price3).add(quantity3.multiply(price1).negate()), null));
-      CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
-          costAdjustmentList.get(0).getId());
-      TestCostingUtils
-          .assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
+      documentPostAssertList1.add(new DocumentPostAssert("99900",
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), BigDecimal.ZERO,
+          null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
+          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), null));
+      CostAdjustment costAdjustment1 = OBDal.getInstance()
+          .get(CostAdjustment.class, costAdjustmentList.get(0).getId());
+      TestCostingUtils.assertDocumentPost(costAdjustment1, product.getId(),
+          documentPostAssertList1);
 
       // Post cost adjustment and assert it
       TestCostingUtils.postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList2.add(new DocumentPostAssert("99900", quantity3.multiply(price5).add(
-          quantity3.multiply(price3).negate()), BigDecimal.ZERO, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity3
-          .multiply(price5).add(quantity3.multiply(price3).negate()), null));
-      documentPostAssertList2.add(new DocumentPostAssert("99900", quantity3.multiply(price5).add(
-          quantity3.multiply(price3).negate()), BigDecimal.ZERO, null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity3
-          .multiply(price5).add(quantity3.multiply(price3).negate()), null));
-      CostAdjustment costAdjustment2 = OBDal.getInstance().get(CostAdjustment.class,
-          costAdjustmentList.get(1).getId());
-      TestCostingUtils
-          .assertDocumentPost(costAdjustment2, product.getId(), documentPostAssertList2);
+      documentPostAssertList2.add(new DocumentPostAssert("99900",
+          quantity3.multiply(price5).add(quantity3.multiply(price3).negate()), BigDecimal.ZERO,
+          null));
+      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
+          quantity3.multiply(price5).add(quantity3.multiply(price3).negate()), null));
+      documentPostAssertList2.add(new DocumentPostAssert("99900",
+          quantity3.multiply(price5).add(quantity3.multiply(price3).negate()), BigDecimal.ZERO,
+          null));
+      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
+          quantity3.multiply(price5).add(quantity3.multiply(price3).negate()), null));
+      CostAdjustment costAdjustment2 = OBDal.getInstance()
+          .get(CostAdjustment.class, costAdjustmentList.get(1).getId());
+      TestCostingUtils.assertDocumentPost(costAdjustment2, product.getId(),
+          documentPostAssertList2);
 
       // Post cost adjustment and assert it
       TestCostingUtils.postDocument(costAdjustmentList.get(2));
       List<DocumentPostAssert> documentPostAssertList3 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList3.add(new DocumentPostAssert("99900", amount1, BigDecimal.ZERO, null));
       documentPostAssertList3.add(new DocumentPostAssert("35000", BigDecimal.ZERO, amount1, null));
-      documentPostAssertList3.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity3
-          .multiply(price5).add(quantity3.multiply(price7).negate()), null));
-      documentPostAssertList3.add(new DocumentPostAssert("35000", quantity3.multiply(price5).add(
-          quantity3.multiply(price7).negate()), BigDecimal.ZERO, null));
-      CostAdjustment costAdjustment3 = OBDal.getInstance().get(CostAdjustment.class,
-          costAdjustmentList.get(2).getId());
-      TestCostingUtils
-          .assertDocumentPost(costAdjustment3, product.getId(), documentPostAssertList3);
+      documentPostAssertList3.add(new DocumentPostAssert("99900", BigDecimal.ZERO,
+          quantity3.multiply(price5).add(quantity3.multiply(price7).negate()), null));
+      documentPostAssertList3.add(new DocumentPostAssert("35000",
+          quantity3.multiply(price5).add(quantity3.multiply(price7).negate()), BigDecimal.ZERO,
+          null));
+      CostAdjustment costAdjustment3 = OBDal.getInstance()
+          .get(CostAdjustment.class, costAdjustmentList.get(2).getId());
+      TestCostingUtils.assertDocumentPost(costAdjustment3, product.getId(),
+          documentPostAssertList3);
 
       OBDal.getInstance().commitAndClose();
 
@@ -1221,8 +1260,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1233,12 +1273,12 @@ public class TestCostingLandedCost extends TestCostingBase {
           price3, costType, year);
 
       // Create goods receipt, run costing background, post it and assert it
-      ShipmentInOut goodsReceipt1 = TestCostingUtils.createGoodsReceipt(product1, price1,
-          quantity1, day0);
+      ShipmentInOut goodsReceipt1 = TestCostingUtils.createGoodsReceipt(product1, price1, quantity1,
+          day0);
 
       // Create goods receipt, run costing background, post it and assert it
-      ShipmentInOut goodsReceipt2 = TestCostingUtils.createGoodsReceipt(product2, price3,
-          quantity2, day0);
+      ShipmentInOut goodsReceipt2 = TestCostingUtils.createGoodsReceipt(product2, price3, quantity2,
+          day0);
 
       // Create Landed Cost
       List<String> landedCostTypeIdList = new ArrayList<String>();
@@ -1253,7 +1293,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions 1
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price4, price1));
       TestCostingUtils.assertProductTransaction(product1.getId(), productTransactionAssertList1);
 
@@ -1261,22 +1302,22 @@ public class TestCostingLandedCost extends TestCostingBase {
       assertTrue(TestCostingUtils.getProductTransactions(product2.getId()).isEmpty());
 
       // Assert product costing 1
-      List<MaterialTransaction> transactionList1 = TestCostingUtils.getProductTransactions(product1
-          .getId());
+      List<MaterialTransaction> transactionList1 = TestCostingUtils
+          .getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
-          price1, price4, quantity1));
+      productCostingAssertList1.add(
+          new ProductCostingAssert(transactionList1.get(0), price4, price1, price4, quantity1));
       TestCostingUtils.assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(null, null, null, price3, null,
-          costType, year));
+      productCostingAssertList2
+          .add(new ProductCostingAssert(null, null, null, price3, null, costType, year));
       TestCostingUtils.assertProductCosting(product2.getId(), productCostingAssertList2);
 
       // Assert cost adjustment 1
-      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils.getCostAdjustment(product1
-          .getId());
+      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils
+          .getCostAdjustment(product1.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -1319,8 +1360,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1347,8 +1389,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID, price4, quantity2, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost1.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(0), true);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost1.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(0), true);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(0),
@@ -1359,8 +1402,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_FEES_ID, price5, quantity2, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost2.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(1), true);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost2.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(1), true);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(1),
@@ -1369,32 +1413,33 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
-          price1, price6, quantity1));
+      productCostingAssertList1
+          .add(new ProductCostingAssert(transactionList.get(0), price6, price1, price6, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList1);
 
       // Assert cost adjustment
       List<CostAdjustment> costAdjustmentList = TestCostingUtils.getCostAdjustment(product.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(0), "LC",
-          amount1, day1, true, false));
+      costAdjustmentAssertLineList1
+          .add(new CostAdjustmentAssert(transactionList.get(0), "LC", amount1, day1, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList2 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList2.add(new CostAdjustmentAssert(transactionList.get(0), "LC",
-          amount2, day1, true, false));
+      costAdjustmentAssertLineList2
+          .add(new CostAdjustmentAssert(transactionList.get(0), "LC", amount2, day1, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList3 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList3.add(new CostAdjustmentAssert(transactionList.get(0), "LC",
-          amount3, day1, true, false));
+      costAdjustmentAssertLineList3
+          .add(new CostAdjustmentAssert(transactionList.get(0), "LC", amount3, day1, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList3);
       TestCostingUtils.assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
@@ -1424,16 +1469,17 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price1, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList2);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList2 = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price1,
-          price1, price1, quantity1));
+      productCostingAssertList2.add(
+          new ProductCostingAssert(transactionList2.get(0), price1, price1, price1, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList2);
 
       // Assert cost adjustment
@@ -1498,8 +1544,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1526,8 +1573,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID, price4, quantity2, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost1.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(0), false);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost1.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(0), false);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(0),
@@ -1538,8 +1586,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_FEES_ID, price5, quantity2, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost2.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(1), false);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost2.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(1), false);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(1),
@@ -1548,16 +1597,17 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
-          price1, price6, quantity1));
+      productCostingAssertList1
+          .add(new ProductCostingAssert(transactionList.get(0), price6, price1, price6, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList1);
 
       // Assert cost adjustment
@@ -1577,8 +1627,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.unpostDocument(landedCost.getLandedCostCostList().get(0));
 
       // Cancel landed cost cost
-      TestCostingUtils
-          .cancelLandedCostCost(landedCost.getLandedCostCostList().get(0).getId(), null);
+      TestCostingUtils.cancelLandedCostCost(landedCost.getLandedCostCostList().get(0).getId(),
+          null);
 
       // Cancel landed cost cost
       TestCostingUtils.cancelLandedCostCost(landedCost.getLandedCostCostList().get(1).getId(),
@@ -1588,8 +1638,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.unpostDocument(landedCost.getLandedCostCostList().get(1));
 
       // Cancel landed cost cost
-      TestCostingUtils
-          .cancelLandedCostCost(landedCost.getLandedCostCostList().get(1).getId(), null);
+      TestCostingUtils.cancelLandedCostCost(landedCost.getLandedCostCostList().get(1).getId(),
+          null);
 
       // Match invoice landed cost
       TestCostingUtils.matchInvoiceLandedCost(
@@ -1597,7 +1647,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           landedCost.getLandedCostCostList().get(0),
           OBDal.getInstance()
               .get(LandedCostCost.class, landedCost.getLandedCostCostList().get(0).getId())
-              .getLandedCostMatchedList().get(0), true);
+              .getLandedCostMatchedList()
+              .get(0),
+          true);
 
       // Match invoice landed cost
       TestCostingUtils.matchInvoiceLandedCost(
@@ -1605,21 +1657,24 @@ public class TestCostingLandedCost extends TestCostingBase {
           landedCost.getLandedCostCostList().get(1),
           OBDal.getInstance()
               .get(LandedCostCost.class, landedCost.getLandedCostCostList().get(1).getId())
-              .getLandedCostMatchedList().get(0), true);
+              .getLandedCostMatchedList()
+              .get(0),
+          true);
 
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price7, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList2);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList2 = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price1,
-          price1, price7, quantity1));
+      productCostingAssertList2.add(
+          new ProductCostingAssert(transactionList2.get(0), price7, price1, price7, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList2);
 
       // Assert cost adjustment
@@ -1631,12 +1686,12 @@ public class TestCostingLandedCost extends TestCostingBase {
           quantity1.multiply(price6).add(quantity1.multiply(price1).negate()), day1, true, false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList21);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList22 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList2.get(0), "LC",
-          amount1, day1, true, false));
+      costAdjustmentAssertLineList22
+          .add(new CostAdjustmentAssert(transactionList2.get(0), "LC", amount1, day1, true, false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList22);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList23 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList23.add(new CostAdjustmentAssert(transactionList2.get(0), "LC",
-          amount2, day1, true, false));
+      costAdjustmentAssertLineList23
+          .add(new CostAdjustmentAssert(transactionList2.get(0), "LC", amount2, day1, true, false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList23);
       TestCostingUtils.assertCostAdjustment(costAdjustmentList2, costAdjustmentAssertList2);
 
@@ -1667,8 +1722,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1693,8 +1749,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID, price2, quantity1, rate, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost1.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(0), true);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost1.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(0), true);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(0),
@@ -1703,16 +1760,17 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price3, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
-          price1, price3, quantity1));
+      productCostingAssertList1
+          .add(new ProductCostingAssert(transactionList.get(0), price3, price1, price3, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList1);
 
       // Assert cost adjustment
@@ -1755,8 +1813,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1780,16 +1839,17 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price3, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
-          price1, price3, quantity1));
+      productCostingAssertList1
+          .add(new ProductCostingAssert(transactionList.get(0), price3, price1, price3, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList1);
 
       // Assert cost adjustment
@@ -1832,8 +1892,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1858,8 +1919,9 @@ public class TestCostingLandedCost extends TestCostingBase {
           TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID, price2, quantity1, rate, day2);
 
       // Match invoice landed cost
-      TestCostingUtils.matchInvoiceLandedCost(purchaseInvoiceLandedCost1.getInvoiceLineList()
-          .get(0), landedCost.getLandedCostCostList().get(0), true);
+      TestCostingUtils.matchInvoiceLandedCost(
+          purchaseInvoiceLandedCost1.getInvoiceLineList().get(0),
+          landedCost.getLandedCostCostList().get(0), true);
 
       // Post landed cost cost and assert it
       TestCostingUtils.postLandedCostLine(landedCost.getLandedCostCostList().get(0),
@@ -1868,16 +1930,17 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price3, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
-          price1, price3, quantity1));
+      productCostingAssertList1
+          .add(new ProductCostingAssert(transactionList.get(0), price3, price1, price3, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList1);
 
       // Assert cost adjustment
@@ -1920,8 +1983,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1945,16 +2009,17 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price3, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
-          price1, price3, quantity1));
+      productCostingAssertList1
+          .add(new ProductCostingAssert(transactionList.get(0), price3, price1, price3, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList1);
 
       // Assert cost adjustment
@@ -1998,8 +2063,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -2037,16 +2103,17 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price5, price2));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price2, price1,
-          price5, quantity1));
+      productCostingAssertList
+          .add(new ProductCostingAssert(transactionList.get(0), price5, price1, price5, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -2065,14 +2132,15 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Post cost adjustment 1 and assert it
       TestCostingUtils.postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity1
-          .multiply(price2).add(quantity1.multiply(price1).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", quantity1.multiply(price2).add(
-          quantity1.multiply(price1).negate()), BigDecimal.ZERO, null));
-      CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
-          costAdjustmentList.get(0).getId());
-      TestCostingUtils
-          .assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO,
+          quantity1.multiply(price2).add(quantity1.multiply(price1).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000",
+          quantity1.multiply(price2).add(quantity1.multiply(price1).negate()), BigDecimal.ZERO,
+          null));
+      CostAdjustment costAdjustment1 = OBDal.getInstance()
+          .get(CostAdjustment.class, costAdjustmentList.get(0).getId());
+      TestCostingUtils.assertDocumentPost(costAdjustment1, product.getId(),
+          documentPostAssertList1);
 
       OBDal.getInstance().commitAndClose();
 
@@ -2107,8 +2175,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -2167,25 +2236,28 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price5, price4));
       productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price5, price4));
       productTransactionAssertList.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price5, price4));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price4, price1,
-          price5, quantity2));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price4, price1,
+      productCostingAssertList
+          .add(new ProductCostingAssert(transactionList.get(0), price5, price1, price5, quantity2));
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price5, price1,
           price5, quantity2.add(quantity3)));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), price4, price1,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2), price5, price1,
           price5, quantity2.add(quantity3).add(quantity4)));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList);
 
@@ -2213,22 +2285,25 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Post cost adjustment 1 and assert it
       TestCostingUtils.postDocument(costAdjustmentList.get(1));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity2
-          .multiply(price4).add(quantity2.multiply(price1).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", quantity2.multiply(price4).add(
-          quantity2.multiply(price1).negate()), BigDecimal.ZERO, null));
-      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity3
-          .multiply(price4).add(quantity3.multiply(price1).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", quantity3.multiply(price4).add(
-          quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
-      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, quantity4
-          .multiply(price4).add(quantity4.multiply(price1).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", quantity4.multiply(price4).add(
-          quantity4.multiply(price1).negate()), BigDecimal.ZERO, null));
-      CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
-          costAdjustmentList.get(1).getId());
-      TestCostingUtils
-          .assertDocumentPost(costAdjustment1, product.getId(), documentPostAssertList1);
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO,
+          quantity2.multiply(price4).add(quantity2.multiply(price1).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000",
+          quantity2.multiply(price4).add(quantity2.multiply(price1).negate()), BigDecimal.ZERO,
+          null));
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO,
+          quantity3.multiply(price4).add(quantity3.multiply(price1).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000",
+          quantity3.multiply(price4).add(quantity3.multiply(price1).negate()), BigDecimal.ZERO,
+          null));
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO,
+          quantity4.multiply(price4).add(quantity4.multiply(price1).negate()), null));
+      documentPostAssertList1.add(new DocumentPostAssert("35000",
+          quantity4.multiply(price4).add(quantity4.multiply(price1).negate()), BigDecimal.ZERO,
+          null));
+      CostAdjustment costAdjustment1 = OBDal.getInstance()
+          .get(CostAdjustment.class, costAdjustmentList.get(1).getId());
+      TestCostingUtils.assertDocumentPost(costAdjustment1, product.getId(),
+          documentPostAssertList1);
 
       // Reactivate landed cost
       TestCostingUtils.cancelLandedCost(landedCost);
@@ -2236,22 +2311,25 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price4));
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price4));
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price4));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList2);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList2 = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price4,
-          price1, price4, quantity2));
+      productCostingAssertList2.add(
+          new ProductCostingAssert(transactionList2.get(0), price4, price1, price4, quantity2));
       productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price4,
           price1, price4, quantity2.add(quantity3)));
       productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(2), price4,
@@ -2320,19 +2398,17 @@ public class TestCostingLandedCost extends TestCostingBase {
     final BigDecimal price2 = new BigDecimal("110.00");
     final BigDecimal price3 = new BigDecimal("1500.00");
     final BigDecimal price4 = new BigDecimal("210.00");
-    final BigDecimal price5 = new BigDecimal("156.9044");
-    final BigDecimal price6 = new BigDecimal("124.4582");
-    final BigDecimal price7 = new BigDecimal("139.5180");
-    final BigDecimal price8 = new BigDecimal("159.8375");
-    final BigDecimal price9 = new BigDecimal("136.9043");
-    final BigDecimal price10 = new BigDecimal("173.4708");
-    final BigDecimal price11 = new BigDecimal("195.1500");
-    final BigDecimal price12 = new BigDecimal("133.1465");
-    final BigDecimal price13 = new BigDecimal("133.1467");
-    final BigDecimal price14 = new BigDecimal("165.4719");
-    final BigDecimal price15 = new BigDecimal("178.1911");
-    final BigDecimal price16 = new BigDecimal("84.9400");
-    final BigDecimal price17 = new BigDecimal("93.4338");
+    final BigDecimal price5 = new BigDecimal("124.4582");
+    final BigDecimal price6 = new BigDecimal("139.5180");
+    final BigDecimal price7 = new BigDecimal("159.8375");
+    final BigDecimal price8 = new BigDecimal("136.9043");
+    final BigDecimal price9 = new BigDecimal("173.4708");
+    final BigDecimal price10 = new BigDecimal("195.1500");
+    final BigDecimal price11 = new BigDecimal("133.1465");
+    final BigDecimal price12 = new BigDecimal("165.4719");
+    final BigDecimal price13 = new BigDecimal("178.1911");
+    final BigDecimal price14 = new BigDecimal("84.9400");
+    final BigDecimal price15 = new BigDecimal("93.4338");
     final BigDecimal quantity1 = new BigDecimal("11");
     final BigDecimal quantity2 = new BigDecimal("7");
     final BigDecimal quantity3 = new BigDecimal("15");
@@ -2364,8 +2440,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -2444,74 +2521,80 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions 1
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt11.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), price1, price6, price1));
+          .get(ShipmentInOut.class, goodsReceipt11.getId())
+          .getMaterialMgmtShipmentInOutLineList()
+          .get(0), price1, price5, price1));
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt12.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), price1, price7, unitPrice));
+          .get(ShipmentInOut.class, goodsReceipt12.getId())
+          .getMaterialMgmtShipmentInOutLineList()
+          .get(0), price1, price6, unitPrice));
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt13.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), price1, price8, unitPrice2));
+          .get(ShipmentInOut.class, goodsReceipt13.getId())
+          .getMaterialMgmtShipmentInOutLineList()
+          .get(0), price1, price7, unitPrice2));
       TestCostingUtils.assertProductTransaction(product1.getId(), productTransactionAssertList1);
 
       // Assert product transactions 2
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt21.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), price2, price9, price2));
+          .get(ShipmentInOut.class, goodsReceipt21.getId())
+          .getMaterialMgmtShipmentInOutLineList()
+          .get(0), price2, price8, price2));
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt22.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), price2, price10, unitPrice3));
+          .get(ShipmentInOut.class, goodsReceipt22.getId())
+          .getMaterialMgmtShipmentInOutLineList()
+          .get(0), price2, price9, unitPrice3));
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt23.getId()).getMaterialMgmtShipmentInOutLineList()
-          .get(0), price2, price11, unitPrice4));
+          .get(ShipmentInOut.class, goodsReceipt23.getId())
+          .getMaterialMgmtShipmentInOutLineList()
+          .get(0), price2, price10, unitPrice4));
       TestCostingUtils.assertProductTransaction(product2.getId(), productTransactionAssertList2);
 
       // Assert product costing 1
-      List<MaterialTransaction> transactionList1 = TestCostingUtils.getProductTransactions(product1
-          .getId());
+      List<MaterialTransaction> transactionList1 = TestCostingUtils
+          .getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(null, null, null, price1, null,
-          costType));
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
-          price1, price6, quantity5));
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), unitPrice,
-          price1, price12, quantity1.add(quantity3)));
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(2), price13,
+      productCostingAssertList1
+          .add(new ProductCostingAssert(null, null, null, price1, null, costType));
+      productCostingAssertList1.add(
+          new ProductCostingAssert(transactionList1.get(0), price5, price1, price5, quantity5));
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price6,
+          price1, price11, quantity1.add(quantity3)));
+      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(2), price7,
           price1, costingAssertFinalCost, quantity1.add(quantity3).add(quantity5)));
       TestCostingUtils.assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
-      List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product2
-          .getId());
+      List<MaterialTransaction> transactionList2 = TestCostingUtils
+          .getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(null, null, null, price2, null,
-          costType));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
-          price2, price9, quantity2));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price5,
-          price2, price14, quantity2.add(quantity4)));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(2), unitPrice4,
-          price2, price15, quantity2.add(quantity4).add(quantity6)));
+      productCostingAssertList2
+          .add(new ProductCostingAssert(null, null, null, price2, null, costType));
+      productCostingAssertList2.add(
+          new ProductCostingAssert(transactionList2.get(0), price8, price2, price8, quantity2));
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price9,
+          price2, price12, quantity2.add(quantity4)));
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(2), price10,
+          price2, price13, quantity2.add(quantity4).add(quantity6)));
       TestCostingUtils.assertProductCosting(product2.getId(), productCostingAssertList2);
 
       // Assert cost adjustment 1
-      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils.getCostAdjustment(product1
-          .getId());
+      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils
+          .getCostAdjustment(product1.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
-          quantity1.multiply(price1).add(quantity1.multiply(price16).negate()), day0, true, false));
+          quantity1.multiply(price1).add(quantity1.multiply(price14).negate()), day0, true, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(0), "LC",
-          quantity2.multiply(price2).add(quantity2.multiply(price17).negate()), day0, true, false));
+          quantity2.multiply(price2).add(quantity2.multiply(price15).negate()), day0, true, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(1), "LC",
-          quantity3.multiply(price1).add(quantity3.multiply(price16).negate()), day0, true, false));
+          quantity3.multiply(price1).add(quantity3.multiply(price14).negate()), day0, true, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(1), "LC",
-          quantity4.multiply(price2).add(quantity4.multiply(price17).negate()), day0, true, false));
+          quantity4.multiply(price2).add(quantity4.multiply(price15).negate()), day0, true, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
-          quantity5.multiply(price1).add(quantity5.multiply(price16).negate()), day0, true, false));
+          quantity5.multiply(price1).add(quantity5.multiply(price14).negate()), day0, true, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(2), "LC",
-          quantity6.multiply(price2).add(quantity6.multiply(price17).negate()), day0, true, false));
+          quantity6.multiply(price2).add(quantity6.multiply(price15).negate()), day0, true, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(1), "LC",
           costAdjustmentAssertLineAmount, day2, false, true, true));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
@@ -2522,18 +2605,23 @@ public class TestCostingLandedCost extends TestCostingBase {
           costAdjustmentAssertLineAmount4, day3, false, true, true));
       costAdjustmentAssertList1.add(costAdjustmentAssertLineList11);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList12 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
-          quantity1.multiply(price1)
-              .add(quantity1.multiply(costAdjustmentAssertLinePrice).negate()), day5, true, false));
+      costAdjustmentAssertLineList12
+          .add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
+              quantity1.multiply(price1)
+                  .add(quantity1.multiply(costAdjustmentAssertLinePrice).negate()),
+              day5, true, false));
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList2.get(0), "LC",
-          quantity2.multiply(price2).add(
-              quantity2.multiply(costAdjustmentAssertLinePrice2).negate()), day5, true, false));
+          quantity2.multiply(price2)
+              .add(quantity2.multiply(costAdjustmentAssertLinePrice2).negate()),
+          day5, true, false));
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
-          quantity5.multiply(price1).add(
-              quantity5.multiply(costAdjustmentAssertLinePrice3).negate()), day5, true, false));
+          quantity5.multiply(price1)
+              .add(quantity5.multiply(costAdjustmentAssertLinePrice3).negate()),
+          day5, true, false));
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList2.get(2), "LC",
-          quantity6.multiply(price2).add(
-              quantity6.multiply(costAdjustmentAssertLinePrice4).negate()), day5, true, false));
+          quantity6.multiply(price2)
+              .add(quantity6.multiply(costAdjustmentAssertLinePrice4).negate()),
+          day5, true, false));
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(1), "LC",
           costAdjustmentAssertLineAmount5, day5, false, true, true));
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
@@ -2546,22 +2634,22 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
       // Assert cost adjustment 2
-      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils.getCostAdjustment(product2
-          .getId());
+      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils
+          .getCostAdjustment(product2.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList21 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
-          quantity1.multiply(price1).add(quantity1.multiply(price16).negate()), day0, true, false));
+          quantity1.multiply(price1).add(quantity1.multiply(price14).negate()), day0, true, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(0), "LC",
-          quantity2.multiply(price2).add(quantity2.multiply(price17).negate()), day0, true, false));
+          quantity2.multiply(price2).add(quantity2.multiply(price15).negate()), day0, true, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(1), "LC",
-          quantity3.multiply(price1).add(quantity3.multiply(price16).negate()), day0, true, false));
+          quantity3.multiply(price1).add(quantity3.multiply(price14).negate()), day0, true, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(1), "LC",
-          quantity4.multiply(price2).add(quantity4.multiply(price17).negate()), day0, true, false));
+          quantity4.multiply(price2).add(quantity4.multiply(price15).negate()), day0, true, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
-          quantity5.multiply(price1).add(quantity5.multiply(price16).negate()), day0, true, false));
+          quantity5.multiply(price1).add(quantity5.multiply(price14).negate()), day0, true, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(2), "LC",
-          quantity6.multiply(price2).add(quantity6.multiply(price17).negate()), day0, true, false));
+          quantity6.multiply(price2).add(quantity6.multiply(price15).negate()), day0, true, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(1), "LC",
           costAdjustmentAssertLineAmount, day2, false, true, true));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
@@ -2572,18 +2660,23 @@ public class TestCostingLandedCost extends TestCostingBase {
           costAdjustmentAssertLineAmount4, day3, false, true, true));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList21);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList22 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
-          quantity1.multiply(price1)
-              .add(quantity1.multiply(costAdjustmentAssertLinePrice).negate()), day5, true, false));
+      costAdjustmentAssertLineList22
+          .add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
+              quantity1.multiply(price1)
+                  .add(quantity1.multiply(costAdjustmentAssertLinePrice).negate()),
+              day5, true, false));
       costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList2.get(0), "LC",
-          quantity2.multiply(price2).add(
-              quantity2.multiply(costAdjustmentAssertLinePrice2).negate()), day5, true, false));
+          quantity2.multiply(price2)
+              .add(quantity2.multiply(costAdjustmentAssertLinePrice2).negate()),
+          day5, true, false));
       costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
-          quantity5.multiply(price1).add(
-              quantity5.multiply(costAdjustmentAssertLinePrice3).negate()), day5, true, false));
+          quantity5.multiply(price1)
+              .add(quantity5.multiply(costAdjustmentAssertLinePrice3).negate()),
+          day5, true, false));
       costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList2.get(2), "LC",
-          quantity6.multiply(price2).add(
-              quantity6.multiply(costAdjustmentAssertLinePrice4).negate()), day5, true, false));
+          quantity6.multiply(price2)
+              .add(quantity6.multiply(costAdjustmentAssertLinePrice4).negate()),
+          day5, true, false));
       costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList1.get(1), "LC",
           costAdjustmentAssertLineAmount5, day5, false, true, true));
       costAdjustmentAssertLineList22.add(new CostAdjustmentAssert(transactionList1.get(2), "LC",
@@ -2594,8 +2687,8 @@ public class TestCostingLandedCost extends TestCostingBase {
           costAdjustmentAssertLineAmount8, day5, false, true, true));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList22);
       List<CostAdjustmentAssert> costAdjustmentAssertLineList23 = new ArrayList<CostAdjustmentAssert>();
-      costAdjustmentAssertLineList23.add(new CostAdjustmentAssert(transactionList2.get(1), "MCC",
-          amount1, day6, true));
+      costAdjustmentAssertLineList23
+          .add(new CostAdjustmentAssert(transactionList2.get(1), "MCC", amount1, day6, true));
       costAdjustmentAssertLineList23.add(new CostAdjustmentAssert(transactionList2.get(2), "MCC",
           costAdjustmentAssertLineAmount9, day6, false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList23);
@@ -2606,12 +2699,12 @@ public class TestCostingLandedCost extends TestCostingBase {
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO, amount1, null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", amount1, BigDecimal.ZERO, null));
-      documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO,
-          costAdjustmentAssertLineAmount9, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", costAdjustmentAssertLineAmount9,
-          BigDecimal.ZERO, null));
-      CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
-          costAdjustmentList2.get(2).getId());
+      documentPostAssertList1.add(
+          new DocumentPostAssert("61000", BigDecimal.ZERO, costAdjustmentAssertLineAmount9, null));
+      documentPostAssertList1.add(
+          new DocumentPostAssert("35000", costAdjustmentAssertLineAmount9, BigDecimal.ZERO, null));
+      CostAdjustment costAdjustment1 = OBDal.getInstance()
+          .get(CostAdjustment.class, costAdjustmentList2.get(2).getId());
       TestCostingUtils.assertDocumentPost(costAdjustment1, product2.getId(),
           documentPostAssertList1);
 
@@ -2644,8 +2737,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -2668,8 +2762,8 @@ public class TestCostingLandedCost extends TestCostingBase {
           receiptList, null, day1);
 
       // Create purchase invoice with landed cost, post it and assert it
-      TestCostingUtils.createPurchaseInvoiceLandedCost(TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID,
-          price4, quantity2, day2);
+      TestCostingUtils.createPurchaseInvoiceLandedCost(
+          TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID, price4, quantity2, day2);
 
       // Create purchase invoice with landed cost, post it and assert it
       TestCostingUtils.createPurchaseInvoiceLandedCost(TestCostingConstants.LANDEDCOSTTYPE_FEES_ID,
@@ -2686,16 +2780,17 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6, price1));
       TestCostingUtils.assertProductTransaction(product.getId(), productTransactionAssertList1);
 
       // Assert product costing
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList.get(0), price1,
-          price1, price6, quantity1));
+      productCostingAssertList1
+          .add(new ProductCostingAssert(transactionList.get(0), price6, price1, price6, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList1);
 
       // Assert cost adjustment
@@ -2745,8 +2840,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -2759,28 +2855,28 @@ public class TestCostingLandedCost extends TestCostingBase {
       Product product3 = TestCostingUtils.createProduct("testCostingLC1111C", price3);
 
       // Create purchase order and book it
-      Order purchaseOrder1 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity1, day0);
+      Order purchaseOrder1 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity1,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder2 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity2, day0);
+      Order purchaseOrder2 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity2,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder3 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity3, day0);
+      Order purchaseOrder3 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity3,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder4 = TestCostingUtils
-          .createPurchaseOrder(product3, price3, quantity4, day0);
+      Order purchaseOrder4 = TestCostingUtils.createPurchaseOrder(product3, price3, quantity4,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder5 = TestCostingUtils
-          .createPurchaseOrder(product3, price3, quantity5, day0);
+      Order purchaseOrder5 = TestCostingUtils.createPurchaseOrder(product3, price3, quantity5,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder6 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity6, day0);
+      Order purchaseOrder6 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity6,
+          day0);
 
       // Create goods receipt, run costing background, post it and assert it
       List<Order> purchaseOrderList1 = new ArrayList<Order>();
@@ -2817,66 +2913,72 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions 1
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6, price1));
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price1, price1));
       TestCostingUtils.assertProductTransaction(product1.getId(), productTransactionAssertList1);
 
       // Assert product transactions 2
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price2, price8, price2));
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price2, price2));
       TestCostingUtils.assertProductTransaction(product2.getId(), productTransactionAssertList2);
 
       // Assert product transactions 3
       List<ProductTransactionAssert> productTransactionAssertList3 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList3.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price3, price3));
       productTransactionAssertList3.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price3, price3));
       TestCostingUtils.assertProductTransaction(product3.getId(), productTransactionAssertList3);
 
       // Assert product costing 1
-      List<MaterialTransaction> transactionList1 = TestCostingUtils.getProductTransactions(product1
-          .getId());
+      List<MaterialTransaction> transactionList1 = TestCostingUtils
+          .getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
-          price1, price6, quantity1));
+      productCostingAssertList1.add(
+          new ProductCostingAssert(transactionList1.get(0), price6, price1, price6, quantity1));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
           price1, price7, quantity1.add(quantity6)));
       TestCostingUtils.assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
-      List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product2
-          .getId());
+      List<MaterialTransaction> transactionList2 = TestCostingUtils
+          .getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
-          price2, price8, quantity2));
+      productCostingAssertList2.add(
+          new ProductCostingAssert(transactionList2.get(0), price8, price2, price8, quantity2));
       productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price2,
           price2, price9, quantity2.add(quantity3)));
       TestCostingUtils.assertProductCosting(product2.getId(), productCostingAssertList2);
 
       // Assert product costing 3
-      List<MaterialTransaction> transactionList3 = TestCostingUtils.getProductTransactions(product3
-          .getId());
+      List<MaterialTransaction> transactionList3 = TestCostingUtils
+          .getProductTransactions(product3.getId());
       List<ProductCostingAssert> productCostingAssertList3 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(0), price3, null,
-          price3, quantity4));
+      productCostingAssertList3
+          .add(new ProductCostingAssert(transactionList3.get(0), price3, null, price3, quantity4));
       productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(1), price3, null,
           price3, quantity4.add(quantity5)));
       TestCostingUtils.assertProductCosting(product3.getId(), productCostingAssertList3);
 
       // Assert cost adjustment 1
-      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils.getCostAdjustment(product1
-          .getId());
+      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils
+          .getCostAdjustment(product1.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -2887,8 +2989,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
       // Assert cost adjustment 2
-      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils.getCostAdjustment(product2
-          .getId());
+      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils
+          .getCostAdjustment(product2.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList12 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -2939,8 +3041,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -2953,28 +3056,28 @@ public class TestCostingLandedCost extends TestCostingBase {
       Product product3 = TestCostingUtils.createProduct("testCostingLC1112C", price3);
 
       // Create purchase order and book it
-      Order purchaseOrder1 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity1, day0);
+      Order purchaseOrder1 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity1,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder2 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity2, day0);
+      Order purchaseOrder2 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity2,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder3 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity3, day0);
+      Order purchaseOrder3 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity3,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder4 = TestCostingUtils
-          .createPurchaseOrder(product3, price3, quantity4, day0);
+      Order purchaseOrder4 = TestCostingUtils.createPurchaseOrder(product3, price3, quantity4,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder5 = TestCostingUtils
-          .createPurchaseOrder(product3, price3, quantity5, day0);
+      Order purchaseOrder5 = TestCostingUtils.createPurchaseOrder(product3, price3, quantity5,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder6 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity6, day0);
+      Order purchaseOrder6 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity6,
+          day0);
 
       // Create goods receipt, run costing background, post it and assert it
       List<Order> purchaseOrderList1 = new ArrayList<Order>();
@@ -3016,66 +3119,72 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions 1
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6, price1));
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price1, price1));
       TestCostingUtils.assertProductTransaction(product1.getId(), productTransactionAssertList1);
 
       // Assert product transactions 2
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price2, price8, price2));
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price2, price2));
       TestCostingUtils.assertProductTransaction(product2.getId(), productTransactionAssertList2);
 
       // Assert product transactions 3
       List<ProductTransactionAssert> productTransactionAssertList3 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList3.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price3, price3));
       productTransactionAssertList3.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price3, price3));
       TestCostingUtils.assertProductTransaction(product3.getId(), productTransactionAssertList3);
 
       // Assert product costing 1
-      List<MaterialTransaction> transactionList1 = TestCostingUtils.getProductTransactions(product1
-          .getId());
+      List<MaterialTransaction> transactionList1 = TestCostingUtils
+          .getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
-          price1, price6, quantity1));
+      productCostingAssertList1.add(
+          new ProductCostingAssert(transactionList1.get(0), price6, price1, price6, quantity1));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
           price1, price7, quantity1.add(quantity6)));
       TestCostingUtils.assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
-      List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product2
-          .getId());
+      List<MaterialTransaction> transactionList2 = TestCostingUtils
+          .getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
-          price2, price8, quantity2));
+      productCostingAssertList2.add(
+          new ProductCostingAssert(transactionList2.get(0), price8, price2, price8, quantity2));
       productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price2,
           price2, price9, quantity2.add(quantity3)));
       TestCostingUtils.assertProductCosting(product2.getId(), productCostingAssertList2);
 
       // Assert product costing 3
-      List<MaterialTransaction> transactionList3 = TestCostingUtils.getProductTransactions(product3
-          .getId());
+      List<MaterialTransaction> transactionList3 = TestCostingUtils
+          .getProductTransactions(product3.getId());
       List<ProductCostingAssert> productCostingAssertList3 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(0), price3, null,
-          price3, quantity4));
+      productCostingAssertList3
+          .add(new ProductCostingAssert(transactionList3.get(0), price3, null, price3, quantity4));
       productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(1), price3, null,
           price3, quantity4.add(quantity5)));
       TestCostingUtils.assertProductCosting(product3.getId(), productCostingAssertList3);
 
       // Assert cost adjustment 1
-      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils.getCostAdjustment(product1
-          .getId());
+      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils
+          .getCostAdjustment(product1.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -3086,8 +3195,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
       // Assert cost adjustment 2
-      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils.getCostAdjustment(product2
-          .getId());
+      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils
+          .getCostAdjustment(product2.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList12 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -3137,8 +3246,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -3151,28 +3261,28 @@ public class TestCostingLandedCost extends TestCostingBase {
       Product product3 = TestCostingUtils.createProduct("testCostingLC1113C", price3);
 
       // Create purchase order and book it
-      Order purchaseOrder1 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity1, day0);
+      Order purchaseOrder1 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity1,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder2 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity2, day0);
+      Order purchaseOrder2 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity2,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder3 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity3, day0);
+      Order purchaseOrder3 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity3,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder4 = TestCostingUtils
-          .createPurchaseOrder(product3, price3, quantity4, day0);
+      Order purchaseOrder4 = TestCostingUtils.createPurchaseOrder(product3, price3, quantity4,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder5 = TestCostingUtils
-          .createPurchaseOrder(product3, price3, quantity5, day0);
+      Order purchaseOrder5 = TestCostingUtils.createPurchaseOrder(product3, price3, quantity5,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder6 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity6, day0);
+      Order purchaseOrder6 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity6,
+          day0);
 
       // Create goods receipt, run costing background, post it and assert it
       List<Order> purchaseOrderList1 = new ArrayList<Order>();
@@ -3214,66 +3324,72 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions 1
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6, price1));
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price1, price1));
       TestCostingUtils.assertProductTransaction(product1.getId(), productTransactionAssertList1);
 
       // Assert product transactions 2
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price2, price8, price2));
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price2, price8, price2));
       TestCostingUtils.assertProductTransaction(product2.getId(), productTransactionAssertList2);
 
       // Assert product transactions 3
       List<ProductTransactionAssert> productTransactionAssertList3 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList3.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price3, price3));
       productTransactionAssertList3.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price3, price3));
       TestCostingUtils.assertProductTransaction(product3.getId(), productTransactionAssertList3);
 
       // Assert product costing 1
-      List<MaterialTransaction> transactionList1 = TestCostingUtils.getProductTransactions(product1
-          .getId());
+      List<MaterialTransaction> transactionList1 = TestCostingUtils
+          .getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
-          price1, price6, quantity1));
+      productCostingAssertList1.add(
+          new ProductCostingAssert(transactionList1.get(0), price6, price1, price6, quantity1));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
           price1, price7, quantity1.add(quantity6)));
       TestCostingUtils.assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
-      List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product2
-          .getId());
+      List<MaterialTransaction> transactionList2 = TestCostingUtils
+          .getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
-          price2, price8, quantity2));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price2,
+      productCostingAssertList2.add(
+          new ProductCostingAssert(transactionList2.get(0), price8, price2, price8, quantity2));
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price8,
           price2, price8, quantity2.add(quantity3)));
       TestCostingUtils.assertProductCosting(product2.getId(), productCostingAssertList2);
 
       // Assert product costing 3
-      List<MaterialTransaction> transactionList3 = TestCostingUtils.getProductTransactions(product3
-          .getId());
+      List<MaterialTransaction> transactionList3 = TestCostingUtils
+          .getProductTransactions(product3.getId());
       List<ProductCostingAssert> productCostingAssertList3 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(0), price3, null,
-          price3, quantity4));
+      productCostingAssertList3
+          .add(new ProductCostingAssert(transactionList3.get(0), price3, null, price3, quantity4));
       productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(1), price3, null,
           price3, quantity4.add(quantity5)));
       TestCostingUtils.assertProductCosting(product3.getId(), productCostingAssertList3);
 
       // Assert cost adjustment 1
-      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils.getCostAdjustment(product1
-          .getId());
+      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils
+          .getCostAdjustment(product1.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -3286,8 +3402,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
       // Assert cost adjustment 2
-      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils.getCostAdjustment(product2
-          .getId());
+      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils
+          .getCostAdjustment(product2.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList12 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -3339,8 +3455,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -3353,28 +3470,28 @@ public class TestCostingLandedCost extends TestCostingBase {
       Product product3 = TestCostingUtils.createProduct("testCostingLC1114C", price3);
 
       // Create purchase order and book it
-      Order purchaseOrder1 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity1, day0);
+      Order purchaseOrder1 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity1,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder2 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity2, day0);
+      Order purchaseOrder2 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity2,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder3 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity3, day0);
+      Order purchaseOrder3 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity3,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder4 = TestCostingUtils
-          .createPurchaseOrder(product3, price3, quantity4, day0);
+      Order purchaseOrder4 = TestCostingUtils.createPurchaseOrder(product3, price3, quantity4,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder5 = TestCostingUtils
-          .createPurchaseOrder(product3, price3, quantity5, day0);
+      Order purchaseOrder5 = TestCostingUtils.createPurchaseOrder(product3, price3, quantity5,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder6 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity6, day0);
+      Order purchaseOrder6 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity6,
+          day0);
 
       // Create goods receipt, run costing background, post it and assert it
       List<Order> purchaseOrderList1 = new ArrayList<Order>();
@@ -3418,66 +3535,72 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions 1
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6, price1));
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price1, price1));
       TestCostingUtils.assertProductTransaction(product1.getId(), productTransactionAssertList1);
 
       // Assert product transactions 2
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price2, price8, price2));
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price2, price8, price2));
       TestCostingUtils.assertProductTransaction(product2.getId(), productTransactionAssertList2);
 
       // Assert product transactions 3
       List<ProductTransactionAssert> productTransactionAssertList3 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList3.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price3, price3));
       productTransactionAssertList3.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price3, price3));
       TestCostingUtils.assertProductTransaction(product3.getId(), productTransactionAssertList3);
 
       // Assert product costing 1
-      List<MaterialTransaction> transactionList1 = TestCostingUtils.getProductTransactions(product1
-          .getId());
+      List<MaterialTransaction> transactionList1 = TestCostingUtils
+          .getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
-          price1, price6, quantity1));
+      productCostingAssertList1.add(
+          new ProductCostingAssert(transactionList1.get(0), price6, price1, price6, quantity1));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
           price1, price7, quantity1.add(quantity6)));
       TestCostingUtils.assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
-      List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product2
-          .getId());
+      List<MaterialTransaction> transactionList2 = TestCostingUtils
+          .getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
-          price2, price8, quantity2));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price2,
+      productCostingAssertList2.add(
+          new ProductCostingAssert(transactionList2.get(0), price8, price2, price8, quantity2));
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price8,
           price2, price8, quantity2.add(quantity3)));
       TestCostingUtils.assertProductCosting(product2.getId(), productCostingAssertList2);
 
       // Assert product costing 3
-      List<MaterialTransaction> transactionList3 = TestCostingUtils.getProductTransactions(product3
-          .getId());
+      List<MaterialTransaction> transactionList3 = TestCostingUtils
+          .getProductTransactions(product3.getId());
       List<ProductCostingAssert> productCostingAssertList3 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(0), price3, null,
-          price3, quantity4));
+      productCostingAssertList3
+          .add(new ProductCostingAssert(transactionList3.get(0), price3, null, price3, quantity4));
       productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(1), price3, null,
           price3, quantity4.add(quantity5)));
       TestCostingUtils.assertProductCosting(product3.getId(), productCostingAssertList3);
 
       // Assert cost adjustment 1
-      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils.getCostAdjustment(product1
-          .getId());
+      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils
+          .getCostAdjustment(product1.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -3490,8 +3613,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
       // Assert cost adjustment 2
-      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils.getCostAdjustment(product2
-          .getId());
+      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils
+          .getCostAdjustment(product2.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList12 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -3545,8 +3668,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -3559,28 +3683,28 @@ public class TestCostingLandedCost extends TestCostingBase {
       Product product3 = TestCostingUtils.createProduct("testCostingLC1115C", price3);
 
       // Create purchase order and book it
-      Order purchaseOrder1 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity1, day0);
+      Order purchaseOrder1 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity1,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder2 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity2, day0);
+      Order purchaseOrder2 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity2,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder3 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity3, day0);
+      Order purchaseOrder3 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity3,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder4 = TestCostingUtils
-          .createPurchaseOrder(product3, price3, quantity4, day0);
+      Order purchaseOrder4 = TestCostingUtils.createPurchaseOrder(product3, price3, quantity4,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder5 = TestCostingUtils
-          .createPurchaseOrder(product3, price3, quantity5, day0);
+      Order purchaseOrder5 = TestCostingUtils.createPurchaseOrder(product3, price3, quantity5,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder6 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity6, day0);
+      Order purchaseOrder6 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity6,
+          day0);
 
       // Create goods receipt, run costing background, post it and assert it
       List<Order> purchaseOrderList1 = new ArrayList<Order>();
@@ -3626,66 +3750,72 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions 1
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6, price1));
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price1, price1));
       TestCostingUtils.assertProductTransaction(product1.getId(), productTransactionAssertList1);
 
       // Assert product transactions 2
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price2, price8, price2));
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price2, price8, price2));
       TestCostingUtils.assertProductTransaction(product2.getId(), productTransactionAssertList2);
 
       // Assert product transactions 3
       List<ProductTransactionAssert> productTransactionAssertList3 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList3.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price3, price9, price3));
       productTransactionAssertList3.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price3, price10, price3));
       TestCostingUtils.assertProductTransaction(product3.getId(), productTransactionAssertList3);
 
       // Assert product costing 1
-      List<MaterialTransaction> transactionList1 = TestCostingUtils.getProductTransactions(product1
-          .getId());
+      List<MaterialTransaction> transactionList1 = TestCostingUtils
+          .getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
-          price1, price6, quantity1));
+      productCostingAssertList1.add(
+          new ProductCostingAssert(transactionList1.get(0), price6, price1, price6, quantity1));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
           price1, price7, quantity1.add(quantity6)));
       TestCostingUtils.assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
-      List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product2
-          .getId());
+      List<MaterialTransaction> transactionList2 = TestCostingUtils
+          .getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
-          price2, price8, quantity2));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price2,
+      productCostingAssertList2.add(
+          new ProductCostingAssert(transactionList2.get(0), price8, price2, price8, quantity2));
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price8,
           price2, price8, quantity2.add(quantity3)));
       TestCostingUtils.assertProductCosting(product2.getId(), productCostingAssertList2);
 
       // Assert product costing 3
-      List<MaterialTransaction> transactionList3 = TestCostingUtils.getProductTransactions(product3
-          .getId());
+      List<MaterialTransaction> transactionList3 = TestCostingUtils
+          .getProductTransactions(product3.getId());
       List<ProductCostingAssert> productCostingAssertList3 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(0), price3,
-          price3, price9, quantity4));
-      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(1), price3,
+      productCostingAssertList3.add(
+          new ProductCostingAssert(transactionList3.get(0), price9, price3, price9, quantity4));
+      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(1), price10,
           price3, price10, quantity4.add(quantity5)));
       TestCostingUtils.assertProductCosting(product3.getId(), productCostingAssertList3);
 
       // Assert cost adjustment 1
-      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils.getCostAdjustment(product1
-          .getId());
+      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils
+          .getCostAdjustment(product1.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -3702,8 +3832,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
       // Assert cost adjustment 2
-      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils.getCostAdjustment(product2
-          .getId());
+      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils
+          .getCostAdjustment(product2.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList12 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -3720,8 +3850,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList2, costAdjustmentAssertList2);
 
       // Assert cost adjustment 3
-      List<CostAdjustment> costAdjustmentList3 = TestCostingUtils.getCostAdjustment(product3
-          .getId());
+      List<CostAdjustment> costAdjustmentList3 = TestCostingUtils
+          .getCostAdjustment(product3.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList3 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList13 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList13.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -3776,8 +3906,9 @@ public class TestCostingLandedCost extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -3790,28 +3921,28 @@ public class TestCostingLandedCost extends TestCostingBase {
       Product product3 = TestCostingUtils.createProduct("testCostingLC1116C", price3);
 
       // Create purchase order and book it
-      Order purchaseOrder1 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity1, day0);
+      Order purchaseOrder1 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity1,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder2 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity2, day0);
+      Order purchaseOrder2 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity2,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder3 = TestCostingUtils
-          .createPurchaseOrder(product2, price2, quantity3, day0);
+      Order purchaseOrder3 = TestCostingUtils.createPurchaseOrder(product2, price2, quantity3,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder4 = TestCostingUtils
-          .createPurchaseOrder(product3, price3, quantity4, day0);
+      Order purchaseOrder4 = TestCostingUtils.createPurchaseOrder(product3, price3, quantity4,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder5 = TestCostingUtils
-          .createPurchaseOrder(product3, price3, quantity5, day0);
+      Order purchaseOrder5 = TestCostingUtils.createPurchaseOrder(product3, price3, quantity5,
+          day0);
 
       // Create purchase order and book it
-      Order purchaseOrder6 = TestCostingUtils
-          .createPurchaseOrder(product1, price1, quantity6, day0);
+      Order purchaseOrder6 = TestCostingUtils.createPurchaseOrder(product1, price1, quantity6,
+          day0);
 
       // Create goods receipt, run costing background, post it and assert it
       List<Order> purchaseOrderList1 = new ArrayList<Order>();
@@ -3855,66 +3986,72 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Assert product transactions 1
       List<ProductTransactionAssert> productTransactionAssertList1 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price1, price6, price1));
       productTransactionAssertList1.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price1, price1));
       TestCostingUtils.assertProductTransaction(product1.getId(), productTransactionAssertList1);
 
       // Assert product transactions 2
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt1.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt1.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price2, price8, price2));
       productTransactionAssertList2.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price2, price8, price2));
       TestCostingUtils.assertProductTransaction(product2.getId(), productTransactionAssertList2);
 
       // Assert product transactions 3
       List<ProductTransactionAssert> productTransactionAssertList3 = new ArrayList<ProductTransactionAssert>();
       productTransactionAssertList3.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt2.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt2.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(1), price3, price9, price3));
       productTransactionAssertList3.add(new ProductTransactionAssert(OBDal.getInstance()
-          .get(ShipmentInOut.class, goodsReceipt3.getId()).getMaterialMgmtShipmentInOutLineList()
+          .get(ShipmentInOut.class, goodsReceipt3.getId())
+          .getMaterialMgmtShipmentInOutLineList()
           .get(0), price3, price10, price3));
       TestCostingUtils.assertProductTransaction(product3.getId(), productTransactionAssertList3);
 
       // Assert product costing 1
-      List<MaterialTransaction> transactionList1 = TestCostingUtils.getProductTransactions(product1
-          .getId());
+      List<MaterialTransaction> transactionList1 = TestCostingUtils
+          .getProductTransactions(product1.getId());
       List<ProductCostingAssert> productCostingAssertList1 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(0), price1,
-          price1, price6, quantity1));
+      productCostingAssertList1.add(
+          new ProductCostingAssert(transactionList1.get(0), price6, price1, price6, quantity1));
       productCostingAssertList1.add(new ProductCostingAssert(transactionList1.get(1), price1,
           price1, price7, quantity1.add(quantity6)));
       TestCostingUtils.assertProductCosting(product1.getId(), productCostingAssertList1);
 
       // Assert product costing 2
-      List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product2
-          .getId());
+      List<MaterialTransaction> transactionList2 = TestCostingUtils
+          .getProductTransactions(product2.getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price2,
-          price2, price8, quantity2));
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price2,
+      productCostingAssertList2.add(
+          new ProductCostingAssert(transactionList2.get(0), price8, price2, price8, quantity2));
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(1), price8,
           price2, price8, quantity2.add(quantity3)));
       TestCostingUtils.assertProductCosting(product2.getId(), productCostingAssertList2);
 
       // Assert product costing 3
-      List<MaterialTransaction> transactionList3 = TestCostingUtils.getProductTransactions(product3
-          .getId());
+      List<MaterialTransaction> transactionList3 = TestCostingUtils
+          .getProductTransactions(product3.getId());
       List<ProductCostingAssert> productCostingAssertList3 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(0), price3,
-          price3, price9, quantity4));
-      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(1), price3,
+      productCostingAssertList3.add(
+          new ProductCostingAssert(transactionList3.get(0), price9, price3, price9, quantity4));
+      productCostingAssertList3.add(new ProductCostingAssert(transactionList3.get(1), price10,
           price3, price10, quantity4.add(quantity5)));
       TestCostingUtils.assertProductCosting(product3.getId(), productCostingAssertList3);
 
       // Assert cost adjustment 1
-      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils.getCostAdjustment(product1
-          .getId());
+      List<CostAdjustment> costAdjustmentList1 = TestCostingUtils
+          .getCostAdjustment(product1.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList1 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList11 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -3931,8 +4068,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
 
       // Assert cost adjustment 2
-      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils.getCostAdjustment(product2
-          .getId());
+      List<CostAdjustment> costAdjustmentList2 = TestCostingUtils
+          .getCostAdjustment(product2.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList2 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList12 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList12.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",
@@ -3949,8 +4086,8 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList2, costAdjustmentAssertList2);
 
       // Assert cost adjustment 3
-      List<CostAdjustment> costAdjustmentList3 = TestCostingUtils.getCostAdjustment(product3
-          .getId());
+      List<CostAdjustment> costAdjustmentList3 = TestCostingUtils
+          .getCostAdjustment(product3.getId());
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList3 = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList13 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList13.add(new CostAdjustmentAssert(transactionList1.get(0), "LC",

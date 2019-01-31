@@ -20,6 +20,8 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
@@ -34,11 +36,9 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MatchStatementActionHandler extends BaseProcessActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(MatchStatementActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String OK_ACTION = "OK";
 
   @Override
@@ -49,12 +49,13 @@ public class MatchStatementActionHandler extends BaseProcessActionHandler {
       JSONObject jsonRequest = new JSONObject(content);
       final String strFinancialAccount = jsonRequest.getString("Fin_Financial_Account_ID");
       final String action = jsonRequest.getString("_buttonValue");
-      if (OK_ACTION.equals(action))
+      if (OK_ACTION.equals(action)) {
         return jsonResponse;
-      final FIN_FinancialAccount finAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          strFinancialAccount);
-      final FIN_Reconciliation lastReconciliation = TransactionsDao.getLastReconciliation(
-          finAccount, "N");
+      }
+      final FIN_FinancialAccount finAccount = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, strFinancialAccount);
+      final FIN_Reconciliation lastReconciliation = TransactionsDao
+          .getLastReconciliation(finAccount, "N");
       if (APRM_MatchingUtility.updateReconciliation(lastReconciliation, finAccount, true)) {
         final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
         final JSONObject msg = new JSONObject();

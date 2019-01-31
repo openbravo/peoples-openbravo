@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,9 +22,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 
-import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -46,8 +46,8 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
   public void distributeAmount(LandedCostCost lcCost, boolean isMatching) {
     // Calculate total amount of all receipt lines assigned to the landed cost.
     LandedCostCost localLcCost = lcCost;
-    localLcCost = (LandedCostCost) OBDal.getInstance().getProxy(LandedCostCost.ENTITY_NAME,
-        localLcCost.getId());
+    localLcCost = (LandedCostCost) OBDal.getInstance()
+        .getProxy(LandedCostCost.ENTITY_NAME, localLcCost.getId());
     LandedCost landedCost = localLcCost.getLandedCost();
     // Get the currency of the Landed Cost Cost
     String strCurId = localLcCost.getCurrency().getId();
@@ -93,8 +93,8 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     receiptCosts = getReceiptCosts(landedCost, true);
     i = 0;
     while (receiptCosts.next()) {
-      ShipmentInOutLine receiptline = OBDal.getInstance().get(ShipmentInOutLine.class,
-          receiptCosts.get()[1]);
+      ShipmentInOutLine receiptline = OBDal.getInstance()
+          .get(ShipmentInOutLine.class, receiptCosts.get()[1]);
       String strTrxCurId = (String) receiptCosts.get()[2];
       BigDecimal trxAmt = (BigDecimal) receiptCosts.get()[3];
 
@@ -113,13 +113,13 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
         }
       }
       pendingAmt = pendingAmt.subtract(receiptAmt);
-      LCReceipt lcrl = (LCReceipt) OBDal.getInstance().getProxy(LCReceipt.ENTITY_NAME,
-          receiptCosts.get()[0]);
+      LCReceipt lcrl = (LCReceipt) OBDal.getInstance()
+          .getProxy(LCReceipt.ENTITY_NAME, receiptCosts.get()[0]);
       LCReceiptLineAmt lcrla = OBProvider.getInstance().get(LCReceiptLineAmt.class);
-      lcrla.setLandedCostCost((LandedCostCost) OBDal.getInstance().getProxy(
-          LandedCostCost.ENTITY_NAME, localLcCost.getId()));
-      localLcCost = (LandedCostCost) OBDal.getInstance().getProxy(LandedCostCost.ENTITY_NAME,
-          localLcCost.getId());
+      lcrla.setLandedCostCost((LandedCostCost) OBDal.getInstance()
+          .getProxy(LandedCostCost.ENTITY_NAME, localLcCost.getId()));
+      localLcCost = (LandedCostCost) OBDal.getInstance()
+          .getProxy(LandedCostCost.ENTITY_NAME, localLcCost.getId());
       lcrla.setLandedCostReceipt(lcrl);
       lcrla.setGoodsShipmentLine(receiptline);
       lcrla.setMatchingAdjustment(isMatching);
@@ -159,7 +159,9 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
       qry.append(" , sum(tc." + TransactionCost.PROPERTY_COST + ")");
     }
 
-    Query qryReceiptCosts = OBDal.getInstance().getSession().createQuery(qry.toString());
+    Query<Object[]> qryReceiptCosts = OBDal.getInstance()
+        .getSession()
+        .createQuery(qry.toString(), Object[].class);
     qryReceiptCosts.setParameter("landedCost", landedCost.getId());
 
     return qryReceiptCosts.scroll();
@@ -169,7 +171,7 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
       Date dateReference, String strOrgId) {
     return FinancialUtils.getConvertedAmount(trxAmt,
         OBDal.getInstance().get(Currency.class, strCurFromId),
-        OBDal.getInstance().get(Currency.class, strCurToId), dateReference, OBDal.getInstance()
-            .get(Organization.class, strOrgId), "C");
+        OBDal.getInstance().get(Currency.class, strCurToId), dateReference,
+        OBDal.getInstance().get(Organization.class, strOrgId), "C");
   }
 }

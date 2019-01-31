@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.test.WeldBaseTest;
@@ -42,8 +44,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Test cases to ensure correct concurrent initialization of ADCS.
@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class ADCSInitialization extends WeldBaseTest {
-  private static final Logger log = LoggerFactory.getLogger(ADCSInitialization.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   ApplicationDictionaryCachedStructures adcs;
@@ -134,16 +134,13 @@ public class ADCSInitialization extends WeldBaseTest {
       setSystemAdministratorContext();
     }
 
-    @SuppressWarnings("unchecked")
     private void eagerADCSInitialization() throws Exception {
       log.info("Starting eager initialization");
 
-      Query queryTabs = OBDal
-          .getInstance()
+      Query<String> queryTabs = OBDal.getInstance()
           .getSession()
-          .createQuery(
-              "select t.id from ADTab t where t.active=true order by t.window.id, t.id "
-                  + (threadNum % 2 == 0 ? "asc" : "desc"));
+          .createQuery("select t.id from ADTab t where t.active=true order by t.window.id, t.id "
+              + (threadNum % 2 == 0 ? "asc" : "desc"), String.class);
 
       List<String> tabs = queryTabs.list();
       long t = System.currentTimeMillis();
@@ -157,11 +154,11 @@ public class ADCSInitialization extends WeldBaseTest {
       }
       log.info("Intialized all tabs in {} ms", System.currentTimeMillis() - t);
 
-      Query queryCombo = OBDal
-          .getInstance()
+      Query<String> queryCombo = OBDal.getInstance()
           .getSession()
           .createQuery(
-              "select f.id from ADField f where f.active=true and f.column.reference.id in ('18','17','19')");
+              "select f.id from ADField f where f.active=true and f.column.reference.id in ('18','17','19')",
+              String.class);
 
       List<String> combos = queryCombo.list();
       long t1 = System.currentTimeMillis();

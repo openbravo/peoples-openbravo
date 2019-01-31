@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,11 +22,12 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class Tree {
-  static Logger log4jTree = Logger.getLogger(Tree.class);
+  static Logger log4jTree = LogManager.getLogger();
 
   public static String getMembers(ConnectionProvider conn, String treeId, String parentNodeId)
       throws IOException, ServletException {
@@ -47,8 +48,8 @@ public class Tree {
     return strText;
   }
 
-  public static String getTreeOrgs(ConnectionProvider conn, String client) throws IOException,
-      ServletException {
+  public static String getTreeOrgs(ConnectionProvider conn, String client)
+      throws IOException, ServletException {
     log4jTree.debug("Tree.getTreeOrg");
     TreeData[] data = TreeData.getTreeOrgs(conn, client);
 
@@ -66,8 +67,14 @@ public class Tree {
     return strText;
   }
 
-  public static String getTreeAccounts(ConnectionProvider conn, String client) throws IOException,
-      ServletException {
+  public static String getTreeTable(ConnectionProvider conn, String client, String tableId)
+      throws IOException, ServletException {
+    log4jTree.debug("Tree.getTree");
+    return TreeData.getTreeTable(conn, client, tableId);
+  }
+
+  public static String getTreeAccounts(ConnectionProvider conn, String client)
+      throws IOException, ServletException {
     log4jTree.debug("Tree.getTreeOrg");
     TreeData[] data = TreeData.getTreeAccounts(conn, client);
 

@@ -58,6 +58,7 @@ public class DataSourceComponent extends BaseTemplateComponent {
     return dataSourceService.getName();
   }
 
+  @Override
   public String getId() {
     String postFix = "";
     // create a new datasource id

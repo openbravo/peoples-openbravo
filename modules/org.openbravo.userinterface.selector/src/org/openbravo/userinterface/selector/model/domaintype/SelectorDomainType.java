@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,11 +21,10 @@ package org.openbravo.userinterface.selector.model.domaintype;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.model.Column;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Table;
@@ -38,14 +37,14 @@ import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
  * @author mtaal
  */
 public class SelectorDomainType extends BaseForeignKeyDomainType {
-  private static final Logger log = Logger.getLogger(SelectorDomainType.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Column column;
   private String tableName;
 
   @Override
   public List<Class<?>> getClasses() {
-    List<Class<?>> listOfClasses = new ArrayList<Class<?>>();
+    List<Class<?>> listOfClasses = new ArrayList<>();
     listOfClasses.add(SelectorDefinition.class);
     listOfClasses.add(DatasourceDefinition.class);
     return listOfClasses;
@@ -53,13 +52,17 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
 
   // Note: implementation should clean-up and close database connections or hibernate sessions. If
   // this is not done then the update.database task may hang when disabling foreign keys.
+  @Override
   public void initialize() {
 
     Session session = ModelProvider.getInstance().getSession();
 
-    final Criteria criteria = session.createCriteria(SelectorDefinition.class);
-    criteria.add(Restrictions.eq("referenceId", getReference().getId()));
-    final List<?> list = criteria.list();
+    StringBuilder hql = new StringBuilder();
+    hql.append("SELECT s FROM " + SelectorDefinition.class.getName());
+    hql.append(" AS s WHERE s.referenceId = :referenceId");
+    Query<SelectorDefinition> query = session.createQuery(hql.toString(), SelectorDefinition.class);
+    query.setParameter("referenceId", getReference().getId());
+    final List<SelectorDefinition> list = query.list();
     if (list.isEmpty()) {
       // a base reference
       if (getReference().getParentReference() == null) {
@@ -71,7 +74,7 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
       log.warn("Reference " + getReference()
           + " has more than one selector definition, only one is really used");
     }
-    final SelectorDefinition selectorDefinition = (SelectorDefinition) list.get(0);
+    final SelectorDefinition selectorDefinition = list.get(0);
     Table table = selectorDefinition.getTable();
     if (table == null && selectorDefinition.getDatasourceDefinition() != null) {
       table = selectorDefinition.getDatasourceDefinition().getTable();
@@ -94,12 +97,14 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
     }
   }
 
-  @SuppressWarnings("unchecked")
   private List<Column> readColumns(Session session, Table table) {
-    final Criteria c = session.createCriteria(Column.class);
-    c.addOrder(Order.asc("position"));
-    c.add(Restrictions.eq("table", table));
-    return c.list();
+    StringBuilder hql = new StringBuilder();
+    hql.append("SELECT c FROM " + Column.class.getName());
+    hql.append(" AS c WHERE c.table = :table");
+    hql.append(" ORDER BY c.position ASC");
+    Query<Column> query = session.createQuery(hql.toString(), Column.class);
+    query.setParameter("table", table);
+    return query.list();
   }
 
   /*
@@ -109,10 +114,11 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
    * org.openbravo.base.model.domaintype.BaseForeignKeyDomainType#getForeignKeyColumn(java.lang.
    * String)
    */
+  @Override
   public Column getForeignKeyColumn(String columnName) {
     while (!column.isKey() && column.getDomainType() instanceof ForeignKeyDomainType) {
-      column = ((ForeignKeyDomainType) column.getDomainType()).getForeignKeyColumn(column
-          .getColumnName());
+      column = ((ForeignKeyDomainType) column.getDomainType())
+          .getForeignKeyColumn(column.getColumnName());
       tableName = column.getTable().getName();
     }
     return column;
@@ -125,6 +131,7 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
    * org.openbravo.base.model.domaintype.BaseForeignKeyDomainType#getReferedTableName(java.lang.
    * String)
    */
+  @Override
   protected String getReferedTableName(String columnName) {
     return tableName;
   }

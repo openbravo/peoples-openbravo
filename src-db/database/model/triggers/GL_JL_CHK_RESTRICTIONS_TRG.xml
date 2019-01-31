@@ -19,7 +19,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2016 Openbravo SLU
+    * All portions are Copyright (C) 2001-2019 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -81,6 +81,9 @@ BEGIN
     WHERE GL_JOURNAL_ID=v_GL_JOURNAL_ID;
     IF (v_Processed='Y') THEN
       RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
+    END IF;
+    IF (:OLD.FIN_PAYMENT_ID IS NOT NULL) THEN
+      RAISE_APPLICATION_ERROR(-20000,'@DeleteGLJournalLine@');
     END IF;
   END IF;
   IF(INSERTING) THEN

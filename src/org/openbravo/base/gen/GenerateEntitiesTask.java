@@ -30,7 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.Task;
 import org.openbravo.base.AntExecutor;
 import org.openbravo.base.exception.OBException;
@@ -50,7 +51,7 @@ import freemarker.template.TemplateException;
  * @author Stefan Huehner
  */
 public class GenerateEntitiesTask extends Task {
-  private static final Logger log = Logger.getLogger(GenerateEntitiesTask.class);
+  private static final Logger log = LogManager.getLogger();
 
   private String basePath;
   private String srcGenPath;
@@ -151,8 +152,8 @@ public class GenerateEntitiesTask extends Task {
 
         outWriter = null;
         try {
-          outWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
-              "UTF-8"));
+          outWriter = new BufferedWriter(
+              new OutputStreamWriter(new FileOutputStream(outFile), "UTF-8"));
           Map<String, Object> data = new HashMap<String, Object>();
           data.put("entity", entity);
           processTemplate(template, data, outWriter);
@@ -176,8 +177,8 @@ public class GenerateEntitiesTask extends Task {
         new File(outFile.getParent()).mkdirs();
         outWriter = null;
         try {
-          outWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
-              "UTF-8"));
+          outWriter = new BufferedWriter(
+              new OutputStreamWriter(new FileOutputStream(outFile), "UTF-8"));
           Map<String, Object> data = new HashMap<String, Object>();
           data.put("entity", entity);
 
@@ -226,8 +227,8 @@ public class GenerateEntitiesTask extends Task {
     // first check if there is a directory
     // already in the src-gen
     // if not then regenerate anyhow
-    final File modelDir = new File(getSrcGenPath(), "org" + File.separator + "openbravo"
-        + File.separator + "model" + File.separator + "ad");
+    final File modelDir = new File(getSrcGenPath(),
+        "org" + File.separator + "openbravo" + File.separator + "model" + File.separator + "ad");
     if (!modelDir.exists()) {
       return true;
     }

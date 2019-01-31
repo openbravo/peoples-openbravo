@@ -285,7 +285,7 @@
 				<textFieldExpression><![CDATA[$P{DATE_FROM}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="7e4fb08b-1d1f-4ea1-8098-71cb9f85e9cb" key="element-93" style="Detail_Header" x="1230" y="84" width="200" height="15" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="element-93" style="Detail_Header" x="1230" y="84" width="200" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="7e4fb08b-1d1f-4ea1-8098-71cb9f85e9cb">
 					<printWhenExpression><![CDATA[$P{SHOWCOSTCENTER}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
@@ -319,8 +319,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ACCOUNT_ID}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField" stretchType="RelativeToBandHeight" x="79" y="0" width="200" height="13" uuid="be3921ce-7e22-4d09-8c22-31dfcdd87347"/>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" x="79" y="0" width="200" height="13" uuid="be3921ce-7e22-4d09-8c22-31dfcdd87347"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -389,7 +389,7 @@
 				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField" stretchType="RelativeToBandHeight" x="641" y="0" width="189" height="13" uuid="9b147e4b-23d1-4eb4-9e35-ee119ae34967">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" x="641" y="0" width="189" height="13" uuid="9b147e4b-23d1-4eb4-9e35-ee119ae34967">
 					<printWhenExpression><![CDATA[$P{SHOWBPARTNER}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
@@ -403,8 +403,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{BPNAME}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField" stretchType="RelativeToBandHeight" x="830" y="0" width="200" height="13" uuid="10b853a4-cb37-4021-b744-b9bf92f7c6ce">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" x="830" y="0" width="200" height="13" uuid="10b853a4-cb37-4021-b744-b9bf92f7c6ce">
 					<printWhenExpression><![CDATA[$P{SHOWPRODUCT}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
@@ -418,8 +418,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PDNAME}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField" stretchType="RelativeToBandHeight" x="1030" y="0" width="200" height="13" uuid="6721adb6-7645-4598-8a4b-4c65196d1e5d">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" x="1030" y="0" width="200" height="13" uuid="6721adb6-7645-4598-8a4b-4c65196d1e5d">
 					<printWhenExpression><![CDATA[$P{SHOWPROJECT}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
@@ -433,8 +433,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PJNAME}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="6721adb6-7645-4598-8a4b-4c65196d1e5d" key="textField" stretchType="RelativeToBandHeight" x="1230" y="0" width="200" height="13">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" x="1230" y="0" width="200" height="13" uuid="6721adb6-7645-4598-8a4b-4c65196d1e5d">
 					<printWhenExpression><![CDATA[$P{SHOWCOSTCENTER}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">

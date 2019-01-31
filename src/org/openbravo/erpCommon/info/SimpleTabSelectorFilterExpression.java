@@ -44,8 +44,8 @@ public class SimpleTabSelectorFilterExpression implements FilterExpression {
     String fieldId = requestMap.get("inpadFieldId");
     String tableId = null;
     if (fieldId != null && !"null".equals(fieldId)) {
-      Property fieldProperty = KernelUtils.getProperty(OBDal.getInstance()
-          .get(Field.class, fieldId));
+      Property fieldProperty = KernelUtils
+          .getProperty(OBDal.getInstance().get(Field.class, fieldId));
       Entity targetEntity = fieldProperty.getTargetEntity();
       if (targetEntity != null) {
         tableId = targetEntity.getTableId();

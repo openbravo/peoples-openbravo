@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
  * @author mtaal
  */
 public class RestartTomcat {
+  // Do not upgrade to log4j2 API. I may cause problems when upgrading via GUI
   private static final Logger log = Logger.getLogger(RestartTomcat.class);
 
   /**
@@ -68,7 +69,8 @@ public class RestartTomcat {
    */
   @SuppressWarnings("deprecation")
   public static void restart() {
-    final String baseDirPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    final String baseDirPath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("source.path");
     try {
       log.debug("Restarting tomcat with basedir " + baseDirPath);

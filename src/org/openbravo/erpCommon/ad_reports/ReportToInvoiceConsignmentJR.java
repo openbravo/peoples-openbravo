@@ -41,8 +41,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
@@ -67,19 +68,22 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportToInvoiceConsignmentJR|currency", strUserCurrencyId);
       printPagePDF(request, response, vars, strDateFrom, strDateTo, strWarehouse, strCurrencyId);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strWarehouse, String strCurrencyId)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportToInvoiceConsignmentJR").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportToInvoiceConsignmentJR")
+        .createXmlDocument();
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportToInvoiceConsignmentJR", false,
         "", "", "", false, "ad_reports", strReplaceWith, false, true);
@@ -137,9 +141,9 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportToInvoiceConsignmentJR"), Utility.getContext(this, vars, "#User_Client",
-              "ReportToInvoiceConsignmentJR"), 0);
+          "", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportToInvoiceConsignmentJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportToInvoiceConsignmentJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportToInvoiceConsignmentJR",
           strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -155,8 +159,9 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
   private void printPagePDF(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strWarehouse,
       String strCurrencyId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: PDF");
+    }
 
     response.setContentType("text/html; charset=UTF-8");
 
@@ -187,9 +192,10 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
       }
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportToInvoiceConsignmentJR.jrxml";
       String strOutput = "pdf";
-      if (strOutput.equals("pdf"))
+      if (strOutput.equals("pdf")) {
         response.setHeader("Content-disposition",
             "inline; filename=ReportToInvoiceConsignmentJR.pdf");
+      }
 
       String strSubTitle = "";
       strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDateFrom + " "
@@ -201,6 +207,7 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportToInvoiceConsignment. This Servlet was made by Jon Alegria";
   } // end of getServletInfo() method

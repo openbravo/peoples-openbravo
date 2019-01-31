@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.costing.CostAdjustmentUtils;
@@ -96,8 +96,8 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
 
           StringBuilder whereClause = getWhereClause(costing, prevCosting, queryNamedParameters,
               orgs, costDimensions);
-          transformedHqlQuery = transformedHqlQuery
-              .replace("@whereClause@", whereClause.toString());
+          transformedHqlQuery = transformedHqlQuery.replace("@whereClause@",
+              whereClause.toString());
 
           StringBuilder cumQty = addCumQty(costing, queryNamedParameters, orgs, costDimensions);
           transformedHqlQuery = transformedHqlQuery.replace("@cumQty@", cumQty.toString());
@@ -144,11 +144,11 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     query.append("   or (");
     query.append("     trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :movementDate");
     query.append("     and ( ");
-    query.append("     trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " < :trxProcessDate");
+    query.append(
+        "     trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxProcessDate");
     query.append("     or (");
-    query.append("       trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " = :trxProcessDate");
+    query.append(
+        "       trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxProcessDate");
     query.append("       and ( ");
     query.append("         trxtype." + PROP_ADLIST_PRIORITY + " < :trxtypeprio");
     query.append("         or (");
@@ -157,8 +157,8 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     query
         .append("             trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
     query.append("             or (");
-    query.append("               trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
-        + " = :trxqty");
+    query.append(
+        "               trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
     query.append("               and trx." + MaterialTransaction.PROPERTY_ID + " <> :trxid");
     query.append(" )))))))) ");
     if (costDimensions.get(CostDimension.Warehouse) != null) {
@@ -171,7 +171,9 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
         + Costing.PROPERTY_ENDINGDATE + " desc, trx."
         + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY);
 
-    Query prevCostingQuery = OBDal.getInstance().getSession().createQuery(query.toString());
+    Query<String> prevCostingQuery = OBDal.getInstance()
+        .getSession()
+        .createQuery(query.toString(), String.class);
     prevCostingQuery.setParameter("productId", transaction.getProduct().getId());
     prevCostingQuery.setParameter("refid", MOVEMENTTYPE_REF_ID);
     prevCostingQuery.setParameter("movementDate", transaction.getMovementDate());
@@ -181,14 +183,13 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     prevCostingQuery.setParameter("trxqty", transaction.getMovementQuantity());
     prevCostingQuery.setParameter("trxid", transaction.getId());
     if (costDimensions.get(CostDimension.Warehouse) != null) {
-      prevCostingQuery.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse)
-          .getId());
+      prevCostingQuery.setParameter("warehouse",
+          costDimensions.get(CostDimension.Warehouse).getId());
     }
     prevCostingQuery.setParameterList("orgs", orgs);
     prevCostingQuery.setParameter("clientId", transaction.getClient().getId());
     prevCostingQuery.setMaxResults(1);
 
-    @SuppressWarnings("unchecked")
     final List<String> preCostingIdList = prevCostingQuery.list();
 
     Costing prevCosting = null;
@@ -241,23 +242,23 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
       whereClause.append("           or (");
       whereClause.append("             trxtype." + PROP_ADLIST_PRIORITY + " = :trxtypeprio");
       whereClause.append("             and ( ");
-      whereClause.append("               trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
-          + " > :trxqty");
+      whereClause.append(
+          "               trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
       whereClause.append("                 or (");
-      whereClause.append("                   trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
-          + " = :trxqty");
-      whereClause.append("                   and trx." + MaterialTransaction.PROPERTY_ID
-          + " <> :trxid");
+      whereClause.append(
+          "                   trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
+      whereClause
+          .append("                   and trx." + MaterialTransaction.PROPERTY_ID + " <> :trxid");
       whereClause.append(" )))))))) ");
 
       whereClause.append(" and ( ");
-      whereClause.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE
-          + " > :prevCostMovementDate");
+      whereClause.append(
+          "   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :prevCostMovementDate");
       // If there are more than one trx on the same movement date and trx process date filter out
       // those types with higher priority and / or less quantity.
       whereClause.append("   or (");
-      whereClause.append("     trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE
-          + " = :prevCostMovementDate");
+      whereClause.append(
+          "     trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :prevCostMovementDate");
       whereClause.append("     and ( ");
       whereClause.append("       trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " > :prevCostTrxProcessDate");
@@ -269,13 +270,13 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
       whereClause.append("           or (");
       whereClause.append("             trxtype." + PROP_ADLIST_PRIORITY + " = :prevtrxtypeprio");
       whereClause.append("             and ( ");
-      whereClause.append("               trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
-          + " < :prevtrxqty");
+      whereClause.append(
+          "               trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :prevtrxqty");
       whereClause.append("               or (");
       whereClause.append("                 trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
           + " = :prevtrxqty");
-      whereClause.append("                 and trx." + MaterialTransaction.PROPERTY_ID
-          + " <> :prevtrxid");
+      whereClause
+          .append("                 and trx." + MaterialTransaction.PROPERTY_ID + " <> :prevtrxid");
       whereClause.append(" ))))))))) ");
       whereClause.append(" or (trx." + MaterialTransaction.PROPERTY_ID + " = :prevtrxid) ");
       whereClause.append(" ) ");
@@ -298,8 +299,8 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     if (prevCosting != null) {
       MaterialTransaction prevCostingTrx = prevCosting.getInventoryTransaction();
       queryNamedParameters.put("prevCostMovementDate", prevCostingTrx.getMovementDate());
-      queryNamedParameters
-          .put("prevCostTrxProcessDate", prevCostingTrx.getTransactionProcessDate());
+      queryNamedParameters.put("prevCostTrxProcessDate",
+          prevCostingTrx.getTransactionProcessDate());
       queryNamedParameters.put("prevtrxtypeprio",
           CostAdjustmentUtils.getTrxTypePrio(prevCostingTrx.getMovementType()));
       queryNamedParameters.put("prevtrxqty", prevCostingTrx.getMovementQuantity());
@@ -353,14 +354,14 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     select.append("     trxCost." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < trx."
         + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     select.append("     or (");
-    select.append("      trxCost." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " = trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+    select.append("      trxCost." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = trx."
+        + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     select.append("      and (");
-    select.append("       trxtypeCost." + PROP_ADLIST_PRIORITY + " < trxtype."
-        + PROP_ADLIST_PRIORITY);
+    select.append(
+        "       trxtypeCost." + PROP_ADLIST_PRIORITY + " < trxtype." + PROP_ADLIST_PRIORITY);
     select.append("       or (");
-    select.append("          trxtypeCost." + PROP_ADLIST_PRIORITY + " = trxtype."
-        + PROP_ADLIST_PRIORITY);
+    select.append(
+        "          trxtypeCost." + PROP_ADLIST_PRIORITY + " = trxtype." + PROP_ADLIST_PRIORITY);
     select.append("        and ( trxCost." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
         + " > trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY);
     select.append("        or (");

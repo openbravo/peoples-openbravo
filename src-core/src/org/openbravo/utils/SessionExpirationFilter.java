@@ -25,9 +25,11 @@ import javax.servlet.http.HttpSession;
 
 public class SessionExpirationFilter implements Filter {
 
+  @Override
   public void init(FilterConfig config) {
   }
 
+  @Override
   public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
       throws IOException, ServletException {
     HttpServletRequest hReq = (HttpServletRequest) req;
@@ -36,16 +38,17 @@ public class SessionExpirationFilter implements Filter {
     if (null != session) {
       Date expirationDate = (Date) session.getAttribute("expirationDate");
 
-      if (expirationDate == null)
+      if (expirationDate == null) {
         expirationDate = new Date(System.currentTimeMillis() + 1000000); // only
-      // for
-      // make
-      // false
-      // "expirationDate.before(new Date())"
-      // in
-      // the
-      // first
-      // execution
+        // for
+        // make
+        // false
+        // "expirationDate.before(new Date())"
+        // in
+        // the
+        // first
+        // execution
+      }
 
       if (expirationDate.before(new Date())) {
         session.invalidate();
@@ -66,6 +69,7 @@ public class SessionExpirationFilter implements Filter {
     chain.doFilter(req, resp);
   }
 
+  @Override
   public void destroy() {
   }
 

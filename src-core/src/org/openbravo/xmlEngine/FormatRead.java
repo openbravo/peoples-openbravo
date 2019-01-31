@@ -15,23 +15,26 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 class FormatRead extends DefaultHandler {
   Hashtable<String, FormatCouple> hasFormats;
 
-  static Logger log4jFormatRead = Logger.getLogger(FormatRead.class);
+  static Logger log4jFormatRead = LogManager.getLogger();
 
   public FormatRead(Hashtable<String, FormatCouple> hasFormats) {
     this.hasFormats = hasFormats;
   }
 
+  @Override
   public void startElement(java.lang.String uri, java.lang.String name, java.lang.String qName,
       Attributes amap) {
-    if (log4jFormatRead.isDebugEnabled())
+    if (log4jFormatRead.isDebugEnabled()) {
       log4jFormatRead.debug("FormatRead: startElement is called:" + name);
+    }
 
     if (name.equals("Number")) {
       String formatName = null;
@@ -41,9 +44,10 @@ class FormatRead extends DefaultHandler {
       String formatInternal = null;
 
       for (int i = 0; i < amap.getLength(); i++) {
-        if (log4jFormatRead.isDebugEnabled())
+        if (log4jFormatRead.isDebugEnabled()) {
           log4jFormatRead.debug("  FormatRead (attribute list): attribute name=" + amap.getQName(i)
               + " value=" + amap.getValue(i));
+        }
         if (amap.getQName(i).equals("name")) {
           formatName = amap.getValue(i);
         } else if (amap.getQName(i).equals("decimal")) {
@@ -63,8 +67,8 @@ class FormatRead extends DefaultHandler {
       dfsEsp.setDecimalSeparator('.');
       dfsEsp.setGroupingSeparator(',');
       FormatCouple fc;
-      fc = new FormatCouple(new DecimalFormat(formatOutput, dfs), new DecimalFormat(formatInternal,
-          dfsEsp));
+      fc = new FormatCouple(new DecimalFormat(formatOutput, dfs),
+          new DecimalFormat(formatInternal, dfsEsp));
       hasFormats.put(formatName, fc);
     } // number
   }
