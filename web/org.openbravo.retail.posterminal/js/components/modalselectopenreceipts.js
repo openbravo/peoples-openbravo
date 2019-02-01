@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2018 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -70,7 +70,7 @@ enyo.kind({
             OB.Dal.findUsingCache('ProductServiceLinked', OB.Model.ProductServiceLinked, {
               'product': params.product.get('id')
             }, function (data) {
-              var i, j, linkedCat;
+              var i, j;
               for (i = 0; i < params.attrs.relatedLines.length; i++) {
                 for (j = 0; j < data.length; j++) {
                   if (params.attrs.relatedLines[i].productCategory === data.at(j).get('productCategory')) {
