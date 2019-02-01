@@ -16,17 +16,17 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2018 Openbravo SLU
+* All portions are Copyright (C) 2012-2019 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 v_percent NUMBER:=0;
 BEGIN
 select case when min(a.suma) = 0 then 0 
-         else round(coalesce(sum(inv.qtyinvoiced), 0)/min(a.suma) * 100, 0) end INTO v_percent
+         else round(coalesce(sum(abs(inv.qtyinvoiced)), 0)/min(a.suma) * 100, 0) end INTO v_percent
 from m_inoutline minline 
 join c_invoiceline inv on minline.m_inoutline_id=inv.m_inoutline_id,
- (select COALESCE(sum(g.movementqty), 0) as suma
+ (select COALESCE(sum(abs(g.movementqty)), 0) as suma
       from m_inoutline g where g.m_inout_id =p_minoutid) a
 where minline.m_inout_id=p_minoutid
 and exists (select 1 from c_invoice i where i.c_invoice_id = inv.c_invoice_id

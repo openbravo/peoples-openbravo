@@ -11,12 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.kernel.event;
+
+import javax.enterprise.context.ApplicationScoped;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.dal.core.TriggerHandler;
@@ -26,6 +28,7 @@ import org.openbravo.dal.core.TriggerHandler;
  * 
  * @author mtaal
  */
+@ApplicationScoped
 public abstract class EntityPersistenceEventObserver {
 
   /**
