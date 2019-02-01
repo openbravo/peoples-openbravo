@@ -826,5 +826,5 @@ OB.UTIL.isCrossStoreEnabled = function () {
 };
 
 OB.UTIL.isCrossStoreReceipt = function (receipt) {
-  return receipt.get('organization') !== OB.MobileApp.model.get('terminal').organization;
+  return OB.MobileApp.model.get('terminal').organization !== (receipt.organization ? receipt.organization : receipt.get('organization'));
 };
