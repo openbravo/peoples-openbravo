@@ -433,6 +433,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         if (createShipment || createInvoice) {
           // do the docnumbers at the end
           OBContext.setAdminMode(false);
+          OBContext.setCrossOrgReferenceAdminMode();
           try {
             for (DocumentNoHandler documentNoHandler : documentNoHandlers.get()) {
               documentNoHandler.setDocumentNoAndSave();
@@ -442,6 +443,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
             // set to null, should not be used anymore after this.
             documentNoHandlers.set(null);
             OBContext.restorePreviousMode();
+            OBContext.restorePreviousCrossOrgReferenceMode();
           }
         }
 
