@@ -510,7 +510,6 @@ public class ShipmentUtils {
       JSONObject jsonOrderLine, OrderLine orderLine, JSONObject jsonorder, long lineNo,
       BigDecimal qty, Locator bin, AttributeSetInstance attributeSetInstance, int i)
       throws JSONException {
-    String orderOrganizationId = jsonorder.getString("organization");
 
     if (jsonOrderLine.has("description")
         && StringUtils.length(jsonOrderLine.getString("description")) > 255) {
@@ -537,12 +536,14 @@ public class ShipmentUtils {
         "attSetInstanceDesc")) {
       line.setAttributeSetValue(
           AttributesUtils.fetchAttributeSetValue(jsonOrderLine.get("attSetInstanceDesc").toString(),
-              jsonOrderLine.getJSONObject("product").get("id").toString(), orderOrganizationId));
+              jsonOrderLine.getJSONObject("product").get("id").toString(),
+              orderLine.getOrganization().getId()));
     } else if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
         "attributeValue")) {
       line.setAttributeSetValue(
           AttributesUtils.fetchAttributeSetValue(jsonOrderLine.get("attributeValue").toString(),
-              jsonOrderLine.getJSONObject("product").get("id").toString(), orderOrganizationId));
+              jsonOrderLine.getJSONObject("product").get("id").toString(),
+              orderLine.getOrganization().getId()));
     } else {
       line.setAttributeSetValue(attributeSetInstance);
     }
