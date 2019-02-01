@@ -110,7 +110,7 @@
       process.exec({
         orderid: order.get('id'),
         originServer: currentOriginServer,
-        crossStore: OB.MobileApp.model.get('terminal').organization !== order.get('orgId') ? order.get('orgId') : null
+        crossStore: OB.UTIL.isCrossStoreReceipt(order) ? order.get('organization') : null
       }, function (data) {
         if (data && data.exception) {
           errorCallback(true, data.exception.message, true);

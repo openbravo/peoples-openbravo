@@ -4075,8 +4075,7 @@
       var me = this,
           fullyPaid = this.isFullyPaid() || this.get('payOnCredit'),
           receiptCompleted = this.get('completeTicket') || this.get('payOnCredit'),
-          prePaid = !fullyPaid && this.get('completeTicket'),
-          isCrossStore = this.get('organization') !== OB.MobileApp.model.get('terminal').organization;
+          prePaid = !fullyPaid && this.get('completeTicket');
       if (fullyPaid || prePaid) {
         _.each(this.get('lines').models, function (line) {
           if (fullyPaid) {
@@ -4087,8 +4086,9 @@
           }
         });
       }
+
       _.each(this.get('lines').models, function (line) {
-        if (isCrossStore) {
+        if (OB.UTIL.isCrossStoreReceipt(this)) {
           line.set('obposQtytodeliver', line.getDeliveredQuantity());
         } else if (!line.has('obposQtytodeliver')) {
           if (receiptCompleted) {
@@ -4125,7 +4125,7 @@
             line.set('obposQtytodeliver', line.getDeliveredQuantity());
           }
         }
-      });
+      }, this);
 
       if (receiptCompleted) {
         var lineToDeliver = _.find(this.get('lines').models, function (line) {
@@ -6637,7 +6637,7 @@
       bpLocId = model.bpLocId;
       bpBillLocId = model.bpBillLocId;
       bpId = model.bp;
-      if (OB.MobileApp.model.get('store').length > 2) {
+      if (OB.UTIL.isCrossStoreEnabled()) {
         crossStore = order.get('organization');
       }
       var bpartnerForProduct = function (bp) {

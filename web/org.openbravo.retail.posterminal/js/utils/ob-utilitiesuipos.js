@@ -816,7 +816,15 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
 OB.UTIL.hideStoreFilter = function (filterOptions) {
   _.each(filterOptions, function (prop) {
     if (prop.name === 'store') {
-      prop.filter = OB.MobileApp.model.attributes.store.length > 2;
+      prop.filter = OB.UTIL.isCrossStoreEnabled();
     }
   }, this);
+};
+
+OB.UTIL.isCrossStoreEnabled = function () {
+  return OB.MobileApp.model.attributes.store.length !== 0;
+};
+
+OB.UTIL.isCrossStoreReceipt = function (receipt) {
+  return receipt.get('organization') !== OB.MobileApp.model.get('terminal').organization;
 };

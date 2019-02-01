@@ -50,7 +50,7 @@
     filter: false,
     type: 'TEXT'
   }, {
-    name: 'orgId',
+    name: 'organization',
     filter: false,
     type: 'TEXT'
   }, {
