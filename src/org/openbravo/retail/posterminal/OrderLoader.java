@@ -771,6 +771,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
           jsonorder.getLong("timezoneOffset"));
 
       orderline.setActive(true);
+      orderline.setOrganization(order.getOrganization());
       orderline.setSalesOrder(order);
       BigDecimal lineNetAmount = BigDecimal.valueOf(jsonOrderLine.getDouble("net"))
           .setScale(pricePrecision, RoundingMode.HALF_UP);
@@ -815,6 +816,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         OrderLineTax orderlinetax = OBProvider.getInstance().get(OrderLineTax.class);
         TaxRate tax = (TaxRate) OBDal.getInstance()
             .getProxy(ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
+        orderlinetax.setOrganization(orderline.getOrganization());
         orderlinetax.setTax(tax);
         orderlinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
             .setScale(pricePrecision, RoundingMode.HALF_UP));
@@ -863,6 +865,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
                 .setScale(pricePrecision, RoundingMode.HALF_UP));
           }
           promotion.setLineNo((long) ((p + 1) * 10));
+          promotion.setOrganization(orderline.getOrganization());
           promotion.setSalesOrderLine(orderline);
           if (jsonPromotion.has("identifier") && !jsonPromotion.isNull("identifier")) {
             String identifier = jsonPromotion.getString("identifier");
@@ -1197,6 +1200,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       OrderTax orderTax = OBProvider.getInstance().get(OrderTax.class);
       TaxRate tax = (TaxRate) OBDal.getInstance()
           .getProxy(ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
+      orderTax.setOrganization(order.getOrganization());
       orderTax.setTax(tax);
       orderTax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
           .setScale(pricePrecision, RoundingMode.HALF_UP));
@@ -1243,6 +1247,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
       paymentSchedule.setId(order.getId());
       paymentSchedule.setNewOBObject(true);
+      paymentSchedule.setOrganization(order.getOrganization());
       paymentSchedule.setCurrency(order.getCurrency());
       paymentSchedule.setOrder(order);
     }
@@ -1754,6 +1759,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         JSONPropertyToEntity.fillBobFromJSON(approvalEntity, approval, jsonApproval,
             jsonorder.getLong("timezoneOffset"));
 
+        approval.setOrganization(order.getOrganization());
         approval.setSalesOrder(order);
 
         Long value = jsonorder.getLong("created");
