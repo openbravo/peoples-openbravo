@@ -972,6 +972,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
         ? order.getCurrency().getPricePrecision().intValue()
         : order.getCurrency().getObposPosprecision().intValue();
     BusinessPartner bp = order.getBusinessPartner();
+    if (jsonorder.has("originalOrganization")) {
+      order.setOrganization(OBDal.getInstance()
+          .getProxy(Organization.class, jsonorder.getString("originalOrganization")));
+    }
+    order.setTrxOrganization(
+        OBDal.getInstance().getProxy(Organization.class, jsonorder.getString("organization")));
     order.setTransactionDocument((DocumentType) OBDal.getInstance()
         .getProxy("DocumentType", jsonorder.getString("documentType")));
     order.setAccountingDate(order.getOrderDate());
