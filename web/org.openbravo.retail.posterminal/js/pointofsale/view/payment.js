@@ -292,6 +292,7 @@ enyo.kind({
         }]
       }, {
         classes: 'span3',
+        style: 'overflow-x: hidden; overflow-y: auto; max-height: 200px;',
         components: [{
           name: 'prepaymentsbuttons',
           style: 'width: 85%; max-width: 125px; float: right; margin: 5px 5px 10px 0px; clear: right; font-weight: normal; padding: 0px',
