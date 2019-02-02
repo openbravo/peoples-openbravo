@@ -169,13 +169,13 @@ enyo.kind({
       me.receiptList.reset();
       me.$[me.getNameOfReceiptsListItemPrinter()].$.tempty.show();
       me.doHideSelector();
-      var i, message, tokens;
+      var i, message, tokens, getProperty;
 
-      function getProperty(property) {
-        return this.filterModel.getProperties().find(function (prop) {
+      getProperty = function (property) {
+        return me.filterModel.getProperties().find(function (prop) {
           return prop.name === property || prop.sortName === property;
         });
-      }
+      };
 
       // Generate a generic message if error is not defined
       if (OB.UTIL.isNullOrUndefined(error) || OB.UTIL.isNullOrUndefined(error.message)) {
