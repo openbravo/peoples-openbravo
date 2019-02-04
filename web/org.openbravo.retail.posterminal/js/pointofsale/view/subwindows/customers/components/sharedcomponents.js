@@ -553,7 +553,7 @@ enyo.kind({
         });
         this.newAttributes = prefAttr.concat(sortedAttr);
       } catch (e) {
-
+        // Don't do anything if exception is thrown
       }
     }
     enyo.forEach(this.newAttributes, function (natt) {
