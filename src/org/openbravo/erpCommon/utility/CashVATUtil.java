@@ -516,11 +516,6 @@ public class CashVATUtil {
           if (tax.isCashVAT() && StringUtils.equals(inv.getId(), invoice.getId())) {
             final BigDecimal taxAmt = itcv.getTaxAmount();
             if (taxAmt.compareTo(BigDecimal.ZERO) != 0) {
-              final DocTax m_tax = new DocTax(tax.getId(), tax.getName(), tax.getRate().toString(),
-                  itcv.getInvoiceTax().getTaxableAmount().toString(),
-                  itcv.getTaxAmount().toString(), tax.isNotTaxdeductable(), tax.isTaxdeductable());
-              final String invoicedocumentType = invoice.getDocumentType().getDocumentCategory();
-              final boolean isReversal = invoice.getDocumentType().isReversal();
               String dateFormatString = OBPropertiesProvider.getInstance()
                   .getOpenbravoProperties()
                   .getProperty("dateFormat.java");
@@ -532,6 +527,12 @@ public class CashVATUtil {
                       fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
               if (taxAmtConverted.compareTo(BigDecimal.ZERO) != 0) {
                 String taxAmountConverted = taxAmtConverted.toString();
+                final DocTax m_tax = new DocTax(tax.getId(), tax.getName(),
+                    tax.getRate().toString(), itcv.getInvoiceTax().getTaxableAmount().toString(),
+                    itcv.getTaxAmount().toString(), tax.isNotTaxdeductable(),
+                    tax.isTaxdeductable());
+                final String invoicedocumentType = invoice.getDocumentType().getDocumentCategory();
+                final boolean isReversal = invoice.getDocumentType().isReversal();
                 // ARI, ARF, ARI_RM
                 if (invoicedocumentType.equals(AcctServer.DOCTYPE_ARInvoice)
                     || invoicedocumentType.equals(AcctServer.DOCTYPE_ARProForma)
