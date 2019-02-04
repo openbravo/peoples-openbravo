@@ -1255,10 +1255,10 @@ enyo.kind({
         this.hide();
       } else if (OB.MobileApp.model.hasPermission('OBPOS_payments.hideCancelAndReplace', true) && !haspayments) {
         this.hide();
-      } else if (OB.UTIL.isCrossStoreReceipt(receipt)){
+      } else if (OB.UTIL.isCrossStoreReceipt(receipt)) {
         this.hide();
-      }else{
-    	this.show();
+      } else {
+        this.show();
       }
     } else {
       this.hide();
