@@ -1377,7 +1377,6 @@
   // from this point, OB.MobileApp.model will be available
   // the initialization is done to a dummy variable to allow the model to be extendable
   var initializeOBModelTerminal = new OB.Model.POSTerminal(); // eslint-disable-line no-unused-vars
-
   OB.POS = {
     modelterminal: OB.MobileApp.model,
     // kept fot backward compatibility. Deprecation id: 27646
