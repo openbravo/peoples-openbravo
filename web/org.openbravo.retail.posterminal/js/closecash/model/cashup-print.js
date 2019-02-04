@@ -18,36 +18,45 @@
         OB.POS.navigate('retail.pointofsale');
         OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
       };
+      this.isRetry = false;
       };
 
   PrintCashUp.prototype.print = function (report, sumary, closed, callback) {
     var me = this;
-    OB.POS.hwserver.cleanDisplay();
-    OB.POS.hwserver.print(this.templatecashup, {
-      cashup: {
-        closed: closed,
-        report: report,
-        summary: sumary
-      }
-    }, function (result) {
-      if (result && result.exception) {
-        // callbacks definition
-        var successfunc = function () {
-            var printCashUp = new OB.OBPOSCashUp.Print.CashUp();
-            printCashUp.print(report, sumary, closed, me.cancelOrDismiss);
-            return true;
-            };
-        var hidefunc = function () {
-            me.cancelOrDismiss();
-            return true;
-            };
-        OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, hidefunc, false, 'OBPOS_MsgPrintAgainCashUp');
-      } else {
-        if (callback) {
-          callback();
-        }
-      }
-    });
+    // callbacks definition
+    var successfunc = function () {
+        var printCashUp = new OB.OBPOSCashUp.Print.CashUp();
+        printCashUp.isRetry = true;
+        printCashUp.print(report, sumary, closed, me.cancelOrDismiss);
+        return true;
+        };
+    var cancelfunc = function () {
+        me.cancelOrDismiss();
+        return true;
+        };
+    var printProcess = function () {
+        OB.POS.hwserver.cleanDisplay();
+        OB.POS.hwserver.print(me.templatecashup, {
+          cashup: {
+            closed: closed,
+            report: report,
+            summary: sumary
+          }
+        }, function (result) {
+          if (result && result.exception) {
+            OB.OBPOS.showSelectPrinterDialog(successfunc, cancelfunc, cancelfunc, false, 'OBPOS_MsgPrintAgainCashUp');
+          } else {
+            if (callback) {
+              callback();
+            }
+          }
+        });
+        };
+    if (OB.MobileApp.model.get('terminal').terminalType.selectprinteralways) {
+      OB.OBPOS.showSelectPrintersWindow(printProcess, cancelfunc, cancelfunc, false, me.isRetry);
+    } else {
+      printProcess();
+    }
   };
 
   // Public object definition

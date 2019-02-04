@@ -1153,7 +1153,7 @@ enyo.kind({
     }
   },
   displayLogic: function () {
-    if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+    if (!OB.MobileApp.model.get('terminal').terminalType.selectprinteralways && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
       return printer.hasReceiptPrinter;
     })) {
       this.show();
@@ -1184,7 +1184,7 @@ enyo.kind({
     }
   },
   displayLogic: function () {
-    if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+    if (!OB.MobileApp.model.get('terminal').terminalType.selectprinteralways && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
       return printer.hasPDFPrinter;
     })) {
       this.show();

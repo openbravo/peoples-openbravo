@@ -510,6 +510,7 @@ enyo.kind({
         this.doTabChange({
           tabPanel: this.tabPanel,
           keyboard: 'toolbarscan',
+          status: '',
           edit: true
         });
       }

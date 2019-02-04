@@ -121,16 +121,16 @@ enyo.kind({
   applyChanges: function (inSender, inEvent) {
     OB.POS.hwserver.setActiveURL(this.printerscontainer.getActiveURL());
     this.args.actionExecuted = true;
-    if (this.args.onSuccess) {
-      this.args.onSuccess();
+    while (this.successCallbackArray.length !== 0) {
+      this.successCallbackArray.pop()();
     }
     return true;
   },
 
   cancelChanges: function (inSender, inEvent) {
     this.args.actionExecuted = true;
-    if (this.args.onCancel) {
-      this.args.onCancel();
+    while (this.cancellCallbackArray.length !== 0) {
+      this.cancellCallbackArray.pop()();
     }
   },
 
@@ -139,6 +139,9 @@ enyo.kind({
     this.printerscontainer = this.$.bodyContent.$.printerslist;
     this.autoDismiss = false;
     this.setHeader(OB.I18N.getLabel('OBPOS_SelectPrintersTitle'));
+    this.successCallbackArray = [];
+    this.cancellCallbackArray = [];
+    this.hideCallbackArray = [];
 
     // list all printers
     var printers = OB.POS.modelterminal.get('hardwareURL');
@@ -169,10 +172,41 @@ enyo.kind({
     // Select the active URL
     this.printerscontainer.selectURL(OB.POS.hwserver.activeurl);
   },
+
   executeOnHide: function () {
-    if (!this.args.actionExecuted && this.args.onHide) {
-      this.args.onHide();
+    while (!this.args.actionExecuted && this.hideCallbackArray.length !== 0) {
+      this.hideCallbackArray.pop()();
     }
+    this.cleanBuffers();
+  },
+
+  executeOnShow: function () {
+    if (this.args.onHide) {
+      this.hideCallbackArray.push(this.args.onHide);
+    }
+    if (this.args.onCancel) {
+      this.cancellCallbackArray.push(this.args.onCancel);
+    }
+    if (this.args.onSuccess) {
+      this.successCallbackArray.push(this.args.onSuccess);
+    }
+    if (OB.MobileApp.model.get('terminal').terminalType.selectprinteralways && !this.args.isRetry) {
+      this.closeOnEscKey = false;
+      this.autoDismiss = false;
+      this.$.bodyButtons.$.selectPrintersCancel.hide();
+      this.$.headerCloseButton.hide();
+    } else {
+      this.closeOnEscKey = true;
+      this.autoDismiss = true;
+      this.$.bodyButtons.$.selectPrintersCancel.show();
+      this.$.headerCloseButton.show();
+    }
+  },
+
+  cleanBuffers: function () {
+    this.hideCallbackArray.length = 0;
+    this.cancellCallbackArray.length = 0;
+    this.successCallbackArray.length = 0;
   }
 });
 
@@ -227,16 +261,16 @@ enyo.kind({
   applyChanges: function (inSender, inEvent) {
     OB.POS.hwserver.setActivePDFURL(this.printerscontainer.getActiveURL());
     this.args.actionExecuted = true;
-    if (this.args.onSuccess) {
-      this.args.onSuccess();
+    while (this.successCallbackArray.length !== 0) {
+      this.successCallbackArray.pop()();
     }
     return true;
   },
 
   cancelChanges: function (inSender, inEvent) {
     this.args.actionExecuted = true;
-    if (this.args.onCancel) {
-      this.args.onCancel();
+    while (this.cancellCallbackArray.length !== 0) {
+      this.cancellCallbackArray.pop()();
     }
   },
 
@@ -245,6 +279,9 @@ enyo.kind({
     this.printerscontainer = this.$.bodyContent.$.printerslist;
     this.autoDismiss = false;
     this.setHeader(OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle'));
+    this.successCallbackArray = [];
+    this.cancellCallbackArray = [];
+    this.hideCallbackArray = [];
 
     // list all printers
     var printers = OB.POS.modelterminal.get('hardwareURL');
@@ -275,9 +312,40 @@ enyo.kind({
     // Select the active URL
     this.printerscontainer.selectURL(OB.POS.hwserver.activepdfurl);
   },
+
   executeOnHide: function () {
-    if (!this.args.actionExecuted && this.args.onHide) {
-      this.args.onHide();
+    while (!this.args.actionExecuted && this.hideCallbackArray.length !== 0) {
+      this.hideCallbackArray.pop()();
     }
+    this.cleanBuffers();
+  },
+
+  executeOnShow: function () {
+    if (this.args.onHide) {
+      this.hideCallbackArray.push(this.args.onHide);
+    }
+    if (this.args.onCancel) {
+      this.cancellCallbackArray.push(this.args.onCancel);
+    }
+    if (this.args.onSuccess) {
+      this.successCallbackArray.push(this.args.onSuccess);
+    }
+    if (OB.MobileApp.model.get('terminal').terminalType.selectprinteralways && !this.args.isRetry) {
+      this.closeOnEscKey = false;
+      this.autoDismiss = false;
+      this.$.bodyButtons.$.SelectPDFPrintersCancel.hide();
+      this.$.headerCloseButton.hide();
+    } else {
+      this.closeOnEscKey = true;
+      this.autoDismiss = true;
+      this.$.bodyButtons.$.SelectPDFPrintersCancel.show();
+      this.$.headerCloseButton.show();
+    }
+  },
+
+  cleanBuffers: function () {
+    this.hideCallbackArray.length = 0;
+    this.cancellCallbackArray.length = 0;
+    this.successCallbackArray.length = 0;
   }
 });

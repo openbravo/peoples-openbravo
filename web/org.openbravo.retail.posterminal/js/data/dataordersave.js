@@ -520,8 +520,10 @@
                   model.get('multiOrders').resetValues();
                   me.context.get('leftColumnViewManager').setOrderMode();
                   OB.UTIL.showLoading(false);
-                  enyo.$.scrim.hide();
-
+                  //Select printers pop up can be showed after multiorders execution 
+                  if (OB.MobileApp.view.openedPopup === null) {
+                    enyo.$.scrim.hide();
+                  }
                   if (me.hasInvLayaways) {
                     OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
                     me.hasInvLayaways = false;
