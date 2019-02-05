@@ -1742,7 +1742,6 @@ enyo.kind({
         paymentStatus, prepaymentLimitAmount, pendingPrepayment, receiptHasPrepaymentAmount = true;
 
     if (myModel.get('leftColumnViewManager').isOrder()) {
-      this.owner.receipt.getPrepaymentAmount();
       paymentStatus = this.owner.receipt.getPaymentStatus();
       prepaymentLimitAmount = this.owner.receipt.get('obposPrepaymentlimitamt');
       receiptHasPrepaymentAmount = this.owner.receipt.get('orderType') !== 1 && this.owner.receipt.get('orderType') !== 3;

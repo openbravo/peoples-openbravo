@@ -1225,7 +1225,11 @@ enyo.kind({
           amountToLayaway = OB.DEC.add(amountToLayaway, order.get('amountToLayaway'));
         }
         prepayment = OB.DEC.add(prepayment, order.get('obposPrepaymentamt'));
-        prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('obposPrepaymentlimitamt'));
+        if (order.get('amountToLayaway') && order.get('amountToLayaway') < order.getGross()) {
+          prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('obposPrepaymentlaylimitamt'));
+        } else {
+          prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('obposPrepaymentlimitamt'));
+        }
         existingPayment = OB.DEC.add(existingPayment, order.get('payment'));
       });
       this.total = total;

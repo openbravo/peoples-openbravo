@@ -416,6 +416,7 @@
         this.set('isModified', attributes.isModified);
         this.set('obposPrepaymentamt', attributes.obposPrepaymentamt || attributes.gross);
         this.set('obposPrepaymentlimitamt', attributes.obposPrepaymentlimitamt || attributes.gross);
+        this.set('obposPrepaymentlaylimitamt', attributes.obposPrepaymentlaylimitamt || OB.DEC.Zero);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -1152,6 +1153,7 @@
       this.set('isModified', false);
       this.set('obposPrepaymentamt', OB.DEC.Zero);
       this.set('obposPrepaymentlimitamt', OB.DEC.Zero);
+      this.set('obposPrepaymentlaylimitamt', OB.DEC.Zero);
     },
 
     clearWith: function (_order) {
