@@ -10,11 +10,11 @@
     "ecmaVersion": 6
   },
   "globals": {
-    "OB": true,
-    "Backbone": false,
-    "_": false,
-    "isc": false,
-    "BigDecimal": false
+    "OB": "writeable",
+    "Backbone": "readable",
+    "_": "readable",
+    "isc": "readable",
+    "BigDecimal": "readable"
   },
   "rules": {
     "comma-dangle": ["error", "never"],
