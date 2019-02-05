@@ -543,7 +543,7 @@
         _.forEach(line.get('promotions') || [], function (discount) {
           var discountAmt = discount.actualAmt || discount.amt || 0;
           discount.basePrice = base;
-          discount.unitDiscount = OB.DEC.div(discountAmt, line.get('qtyToApplyDisc') || line.get('qty'));
+          discount.unitDiscount = OB.DEC.div(discountAmt, discount.obdiscQtyoffer || line.get('qty'));
           totalDiscount = OB.DEC.add(totalDiscount, discountAmt);
           base = OB.DEC.sub(base, discount.unitDiscount);
         }, this);
