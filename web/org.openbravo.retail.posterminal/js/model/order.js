@@ -427,8 +427,26 @@
       }
     },
 
+    preventOrderSave: function (value) {
+      if (value) {
+        if (this.has('preventOrderSave')) {
+          this.set('preventOrderSave', OB.Dec.add(this.get('preventOrderSave'), OB.DEC.One));
+        } else {
+          this.set('preventOrderSave', OB.DEC.One);
+        }
+      } else {
+        if (this.has('preventOrderSave')) {
+          if (OB.DEC.compare(OB.DEC.sub(this.get('preventOrderSave'), OB.DEC.One)) === 1) {
+            this.set('preventOrderSave', OB.DEC.sub(this.get('preventOrderSave'), OB.DEC.One));
+          } else {
+            this.unset('preventOrderSave');
+          }
+        }
+      }
+    },
+
     save: function (callback) {
-      if (!OB.MobileApp.model.get('preventOrderSave') && !this.pendingCalculateReceipt) {
+      if (!OB.MobileApp.model.get('preventOrderSave') && !this.get('preventOrderSave') && !this.pendingCalculateReceipt) {
         var undoCopy = this.get('undo'),
             me = this,
             forceInsert = false;
@@ -1445,15 +1463,12 @@
 
       function postDeleteLine() {
         var cleanReceipt, hasServices = me.get('hasServices'),
-            preventOrderSave = OB.MobileApp.model.get('preventOrderSave'),
             linesToDelete = _.filter(me.get('lines').models, function (line) {
             return line.get('obposIsDeleted');
           });
 
         cleanReceipt = function () {
-          if (!preventOrderSave) {
-            OB.MobileApp.model.unset('preventOrderSave');
-          }
+          me.preventOrderSave(false);
           if (hasServices) {
             var services = _.find(me.get('lines').models, function (line) {
               return line.get('relatedLines');
@@ -1554,9 +1569,7 @@
         if (hasServices) {
           me.unset('hasServices');
         }
-        if (!preventOrderSave) {
-          OB.MobileApp.model.set('preventOrderSave', true);
-        }
+        me.preventOrderSave(true);
         if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
           me.calculateReceipt(function () {
             if (!me.get('deletedLines')) {
@@ -4189,7 +4202,7 @@
       OB.Dal.remove(this, function () {
         var deliveredLine, linesWithDeferred = [];
 
-        OB.MobileApp.model.set('preventOrderSave', true);
+        me.preventOrderSave(true);
         me.set('preventServicesUpdate', true);
 
         if (me.get('paidOnCredit')) {
@@ -4297,7 +4310,7 @@
           me.calculateReceipt(function () {
             me.unset('skipApplyPromotions');
             me.unset('preventServicesUpdate');
-            OB.MobileApp.model.unset('preventOrderSave');
+            me.preventOrderSave(false);
             me.save();
           });
         });
@@ -4382,7 +4395,7 @@
                   OB.Dal.remove(me, function () {
                     var idMap = {};
                     me.set('skipCalculateReceipt', true);
-                    OB.MobileApp.model.set('preventOrderSave', true);
+                    me.preventOrderSave(true);
                     me.set('preventServicesUpdate', true);
                     me.set('isEditable', true);
                     me.set('cancelLayaway', true);
@@ -4462,7 +4475,7 @@
                       me.getPrepaymentAmount(function () {
                         me.set('isEditable', false);
                         me.unset('preventServicesUpdate');
-                        OB.MobileApp.model.unset('preventOrderSave');
+                        me.preventOrderSave(false);
                         me.save();
                         OB.MobileApp.model.orderList.saveCurrent();
                       });
@@ -6393,9 +6406,9 @@
             invoice.set('skipApplyPromotions', true);
             invoice.set('ignoreCheckIfIsActiveOrder', true);
             invoice.set('forceCalculateTaxes', true);
-            OB.MobileApp.model.set('preventOrderSave', true);
+            invoice.preventOrderSave(true);
             invoice.calculateReceipt(function () {
-              OB.MobileApp.model.unset('preventOrderSave');
+              invoice.preventOrderSave(false);
               invoice.adjustPrices();
               finalCallback(invoice);
             });
