@@ -362,7 +362,8 @@ enyo.kind({
   },
   init: function (model) {
     var me = this,
-        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
+        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts'),
+        receiptOrganization = null;
     this.model = model;
     this.inherited(arguments);
     this.receiptList.on('click', function (model) {
@@ -404,8 +405,12 @@ enyo.kind({
         });
         return true;
       }
-
-      if (this.owner.owner.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
+      receiptOrganization = OB.MobileApp.model.orderList.current.has('originalOrganization') ? OB.MobileApp.model.orderList.current.get('originalOrganization') : OB.MobileApp.model.orderList.current.get('organization');
+      if (receiptOrganization !== model.get('organization') && OB.MobileApp.model.orderList.current.get('lines').length > 0) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStoreReturn'), OB.I18N.getLabel('OBPOS_SameStoreReceipt'), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk')
+        }]);
+      } else if (this.owner.owner.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStoreReturn'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [model.get('documentNo'), model.get('store')]), [{
           label: OB.I18N.getLabel('OBMOBC_Continue'),
           isConfirmButton: true,
