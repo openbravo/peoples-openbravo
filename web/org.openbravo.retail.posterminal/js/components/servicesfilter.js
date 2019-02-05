@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _ */
+/*global enyo, _*/
 
 enyo.kind({
   kind: 'OB.UI.SearchProductCharacteristicFilter',

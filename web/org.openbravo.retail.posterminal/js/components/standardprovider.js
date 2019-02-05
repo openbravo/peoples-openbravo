@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, _, Promise, OBPOS_StandardProvider */
+/*global enyo, Promise, OBPOS_StandardProvider */
 
 enyo.kind({
   name: 'OBPOS_StandardProvider',

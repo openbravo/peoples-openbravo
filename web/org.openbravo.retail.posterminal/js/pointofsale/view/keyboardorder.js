@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, _, Audio, Backbone */
+/*global OB, enyo, _, Audio*/
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',

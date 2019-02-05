@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global _,Backbone,asyncTest,ok,expect,module,console,start,equals */
+/*global _,Backbone,asyncTest,ok,expect,module,start,equals*/
 
 module('Offline');
 

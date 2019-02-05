@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, moment, Backbone, enyo, BigDecimal, localStorage */
+/*global OB, _, moment, Backbone, enyo, BigDecimal*/
 
 (function () {
 

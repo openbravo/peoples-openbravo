@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, _, Promise */
+/*global enyo, _*/
 
 enyo.kind({
   name: 'OB.UI.ModalProviderGroup',

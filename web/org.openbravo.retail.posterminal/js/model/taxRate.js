@@ -7,7 +7,6 @@
  ************************************************************************************
  */
 
-/*global _, Backbone */
 (function () {
 
   var taxRate = OB.Data.ExtensibleModel.extend({

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global _,$,Backbone,test,asyncTest,ok,expect,module,console,start */
+/*global _,$,Backbone,test,asyncTest,ok,expect,module,start */
 
 module('Dal');
 

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, _, console */
+/*global enyo, _*/
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',

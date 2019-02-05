@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global Backbone, _ */
-
 (function () {
 
   var OfflinePrinter = OB.Data.ExtensibleModel.extend({

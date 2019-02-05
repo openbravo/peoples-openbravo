@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, console, _ */
+/*global OB, Backbone, _ */
 
 /**
  * OB.Model.Executor provides a mechanism to execute actions synchronously even each of

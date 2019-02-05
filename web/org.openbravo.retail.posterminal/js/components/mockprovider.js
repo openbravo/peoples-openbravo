@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, _, Promise  */
+/*global enyo, Promise*/
 
 enyo.kind({
   name: 'OBPOS_MockProvider',

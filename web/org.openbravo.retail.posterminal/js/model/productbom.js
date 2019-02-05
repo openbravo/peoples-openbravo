@@ -7,7 +7,6 @@
  ************************************************************************************
  */
 
-/*global _, Backbone */
 (function () {
 
   var ProductBOM = OB.Data.ExtensibleModel.extend({

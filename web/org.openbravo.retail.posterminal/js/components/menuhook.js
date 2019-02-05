@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global Backbone, _ */
-
 OB.UTIL.HookManager.registerHook('OBMOBC_PreWindowNavigate', function (args, callbacks) {
   var destWindow = args.window;
   if (destWindow.approvalType) {

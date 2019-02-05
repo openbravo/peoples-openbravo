@@ -7,7 +7,6 @@
  ************************************************************************************
  */
 
-/*global _, Backbone */
 (function () {
 
   var TaxCategoryBOM = OB.Data.ExtensibleModel.extend({

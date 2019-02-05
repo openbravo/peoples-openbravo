@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, confirm */
+/*global enyo*/
 
 enyo.kind({
   name: 'OB.UI.ModalNotEditableLine',

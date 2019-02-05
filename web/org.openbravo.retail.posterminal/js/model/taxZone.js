@@ -7,7 +7,6 @@
  ************************************************************************************
  */
 
-/*global _, Backbone */
 (function () {
 
   var taxZone = OB.Data.ExtensibleModel.extend({

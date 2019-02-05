@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, _ */
+/*global OB, enyo*/
 
 enyo.kind({
   name: 'OB.UI.ModalReceiptPropertiesImpl',

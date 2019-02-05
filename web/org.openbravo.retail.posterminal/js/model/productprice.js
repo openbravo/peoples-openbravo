@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global Backbone */
-
 (function () {
 
   var ProductPrice = OB.Data.ExtensibleModel.extend({

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, _ */
+/*global enyo, _ */
 
 enyo.kind({
   name: 'OB.CashUp.StepPendingOrders',

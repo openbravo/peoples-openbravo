@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, _, Promise */
+/*global enyo, Promise*/
 
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
