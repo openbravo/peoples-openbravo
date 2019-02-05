@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -142,15 +142,15 @@ enyo.kind({
   },
   tap: function () {
     var me = this;
-    this.disableButton(this, {
-      disabled: true
-    });
     OB.info('Time: ' + new Date() + '. Customer Save Button Pressed ( Status: ' + this.disabled + ') ');
     if (me.blocked) {
       OB.error('Time: ' + new Date() + '. Customer Save button has been pressed 2 times and second execution is discarded ');
       return;
     } else {
       me.blocked = true;
+      this.disableButton(this, {
+        disabled: true
+      });
       setTimeout(function () {
         me.blocked = false;
       }, 500);
