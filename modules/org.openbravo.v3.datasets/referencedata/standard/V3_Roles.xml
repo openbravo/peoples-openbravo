@@ -1331,18 +1331,6 @@
     <editableField>true</editableField>
     <inheritedFrom xsi:nil="true"/>
   </ADProcessAccess>
-  <ADProcessAccess id="55B2C5D954B341B1A7DF174AF47F71BC" identifier="Price List Report - Procurement">
-    <id>55B2C5D954B341B1A7DF174AF47F71BC</id>
-    <process id="800067" entity-name="ADProcess" identifier="Price List Report"/>
-    <role id="D7D7D228E4594ACE8D00FD0E08B333DE" entity-name="ADRole" identifier="Procurement"/>
-    <active>true</active>
-    <creationDate transient="true">2017-11-28T13:00:08.376Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2017-11-28T13:00:08.376Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADProcessAccess>
   <ADProcessAccess id="5BC5072FE5E846F4B7D1E2644761652C" identifier="Reconcile - Finance">
     <id>5BC5072FE5E846F4B7D1E2644761652C</id>
     <process id="EB3D56BDD37E4229B67DBAB9F9A9B167" entity-name="ADProcess" identifier="Reconcile"/>
@@ -1643,18 +1631,6 @@
     <editableField>true</editableField>
     <inheritedFrom xsi:nil="true"/>
   </ADProcessAccess>
-  <ADProcessAccess id="FF808181259DADEB01259DDDA4D50236" identifier="Price List Report - Finance">
-    <id>FF808181259DADEB01259DDDA4D50236</id>
-    <process id="800067" entity-name="ADProcess" identifier="Price List Report"/>
-    <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
-    <active>true</active>
-    <creationDate transient="true">2017-11-28T13:00:08.373Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2017-11-28T13:00:08.373Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADProcessAccess>
   <ADProcessAccess id="FF808181259DADEB01259DDDA4D60238" identifier="Shipments Dimensional Report - Finance">
     <id>FF808181259DADEB01259DDDA4D60238</id>
     <process id="800058" entity-name="ADProcess" identifier="Shipments Dimensional Report"/>
@@ -1727,18 +1703,6 @@
     <editableField>false</editableField>
     <inheritedFrom xsi:nil="true"/>
   </ADProcessAccess>
-  <ADProcessAccess id="FF808181259DADEB01259DDDA4E3023F" identifier="Price List Report - Sales">
-    <id>FF808181259DADEB01259DDDA4E3023F</id>
-    <process id="800067" entity-name="ADProcess" identifier="Price List Report"/>
-    <role id="FF8081812250326E012250353BDE0006" entity-name="ADRole" identifier="Sales"/>
-    <active>true</active>
-    <creationDate transient="true">2017-11-28T13:00:08.372Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2017-11-28T13:00:08.372Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADProcessAccess>
   <ADProcessAccess id="FF808181259DADEB01259DDDA4E30240" identifier="Close Year - Finance">
     <id>FF808181259DADEB01259DDDA4E30240</id>
     <process id="800036" entity-name="ADProcess" identifier="Close Year"/>
@@ -1803,18 +1767,6 @@
     <id>FF808181259DADEB01259DDDA4E50248</id>
     <process id="3DAA5E63A30D45A8ABF87701F8BD91EF" entity-name="ADProcess" identifier="Orders Awaiting Delivery Report"/>
     <role id="FF808181259DADEB01259DDDA4C201E7" entity-name="ADRole" identifier="Warehouse"/>
-    <active>true</active>
-    <creationDate transient="true">2017-11-28T13:00:08.371Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2017-11-28T13:00:08.371Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>false</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADProcessAccess>
-  <ADProcessAccess id="FF808181259DADEB01259DDDA4E50249" identifier="Price List Report - Company Executive">
-    <id>FF808181259DADEB01259DDDA4E50249</id>
-    <process id="800067" entity-name="ADProcess" identifier="Price List Report"/>
-    <role id="FF808181259DADEB01259DDDA4C201E6" entity-name="ADRole" identifier="Company Executive"/>
     <active>true</active>
     <creationDate transient="true">2017-11-28T13:00:08.371Z</creationDate>
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
