@@ -1,3 +1,4 @@
+#!/bin/bash
 # *************************************************************************
 # * The contents of this file are subject to the Openbravo  Public  License
 # * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -14,40 +15,40 @@
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
-#!/bin/bash
 
 if ! [[ -x "$(command -v npm)" ]]; then
-    echo -e "\n\033[0;33mERROR:\033[0m npm command not found. Install using"
+    echo -e "\n\033[0;31mERROR:\033[0m npm command not found. Install using"
     echo -e "  sudo apt install npm\n";
     exit 1
 fi
 
+#
+# Installs eslint and prettier if not already installed
+# First argument should be the path to org.openbravo.client.kernel module
+#
 function installNodePackagesIfNeeded {
-    if [[ ! -d ./modules/org.openbravo.client.kernel/node_modules || \
-            -z "$(find ./modules/org.openbravo.client.kernel/node_modules -name eslint)" || \
-            -z "$(find ./modules/org.openbravo.client.kernel/node_modules -name prettier)" ]]; then
+    if [[ ! -d ${1}/node_modules || \
+            -z "$(find ${1}/node_modules -name eslint)" || \
+            -z "$(find ${1}/node_modules -name prettier)" ]]; then
         echo -e "eslint and/or prettier command not found. Running npm install\n"
         originalDir="$(pwd)"
-        cd modules/org.openbravo.client.kernel
+        cd "${1}"
         npm install
-        cd "$originalDir"
+        cd "${originalDir}"
     fi
 }
 
-function installNodePackagesIfNeededFromModules {
-    if [[ ! -d ../org.openbravo.client.kernel/node_modules || \
-            -z "$(find ../org.openbravo.client.kernel/node_modules -name eslint)" || \
-            -z "$(find ../org.openbravo.client.kernel/node_modules -name prettier)" ]]; then
-        echo -e "eslint and/or prettier command not found. Running npm install\n"
-        originalDir="$(pwd)"
-        cd ../org.openbravo.client.kernel
-        npm install
-        cd "$originalDir"
-    fi
-}
+echo "Checking npm and required packages are installed"
 
-if [[ -d ../../modules ]] ; then
-    installNodePackagesIfNeededFromModules
+KERNEL_MODULE_PATH="."
+if [[ -d "../../modules" ]]; then
+    KERNEL_MODULE_PATH="../org.openbravo.client.kernel"
+elif [[ -d "./modules" ]]; then
+    KERNEL_MODULE_PATH="./modules/org.openbravo.client.kernel"
 else
-    installNodePackagesIfNeeded
+    echo -e "\n\033[0;31mError:\033[0m \"$(pwd)\" is not a valid path to run the linter"
+    echo "Scan either from the Openbravo or a module root directory"
+    exit 1
 fi
+
+installNodePackagesIfNeeded ${KERNEL_MODULE_PATH}

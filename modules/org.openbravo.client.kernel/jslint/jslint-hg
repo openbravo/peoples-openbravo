@@ -17,21 +17,38 @@
 # ************************************************************************
 
 #
-# Mercurial pretxncommit hook to check linting in modules
+# Mercurial pretxncommit hook to check linting in js code
 #
-echo "Performing lint check on modified .js resources"
+KERNEL_MODULE_PATH="."
+IS_A_MODULE=false
+if [[ -d "../../modules" ]]; then
+    # Running from module
+    KERNEL_MODULE_PATH="../org.openbravo.client.kernel"
+    IS_A_MODULE=true
+elif [[ -d "./modules" ]]; then
+    # Running from Openbravo root
+    KERNEL_MODULE_PATH="./modules/org.openbravo.client.kernel"
+else
+    echo -e "\n\033[0;31mError:\033[0m \"$(pwd)\" is not a valid path to run the linter"
+    echo "Scan either from the Openbravo or a module root directory"
+    exit 1
+fi
+
+echo "Performing jslint check on modified js resources"
+FILES=()
 for i in $(hg log -r $HG_NODE --template '{files}')
 do
-  if [[ $i == *vendor* ]]
-  then
-    echo "Skipping " $i;
-  else
-    if [ -f "$i" -a -n "$(echo $i | awk '/.js$/')" ]
-    then
-      filefullpath="$(pwd)/${i}"
-      ../org.openbravo.client.kernel/jslint/jslint-module ${filefullpath} || exit 1
-	fi
+  printf "Checking ${i}\n"
+  if [[ -f "${i}" ]]; then
+    if [[ "${IS_A_MODULE}" == true && -n "$(echo $i | awk '/.js$/')" || \
+          "${IS_A_MODULE}" == false && -n "$(echo $i | awk '/.js$/ && ! /^web/')" ]]; then
+        FILES+=("$(pwd)/${i}")
+    fi
   fi
 done
+
+if [[ -n "${FILES[*]}" ]]; then
+    ${KERNEL_MODULE_PATH}/jslint/jslint ${FILES[*]} || exit 1
+fi
 
 exit 0
