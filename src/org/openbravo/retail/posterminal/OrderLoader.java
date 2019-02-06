@@ -976,13 +976,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
     int pricePrecision = order.getCurrency().getObposPosprecision() == null
         ? order.getCurrency().getPricePrecision().intValue()
         : order.getCurrency().getObposPosprecision().intValue();
+    OBPOSApplications posTerminal = OBDal.getInstance()
+        .get(OBPOSApplications.class, jsonorder.getString("posTerminal"));
     BusinessPartner bp = order.getBusinessPartner();
-    if (jsonorder.has("originalOrganization")) {
-      order.setOrganization(OBDal.getInstance()
-          .getProxy(Organization.class, jsonorder.getString("originalOrganization")));
-    }
-    order.setTrxOrganization(
-        OBDal.getInstance().getProxy(Organization.class, jsonorder.getString("organization")));
+    order.setTrxOrganization(posTerminal.getOrganization());
     order.setTransactionDocument((DocumentType) OBDal.getInstance()
         .getProxy("DocumentType", jsonorder.getString("documentType")));
     order.setAccountingDate(order.getOrderDate());
@@ -995,9 +992,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
     Boolean paymenthMethod = false;
     if (!jsonorder.isNull("paymentMethodKind")
         && !jsonorder.getString("paymentMethodKind").equals("null")) {
-      String posTerminalId = jsonorder.getString("posTerminal");
-      OBPOSApplications posTerminal = OBDal.getInstance()
-          .get(OBPOSApplications.class, posTerminalId);
       if (posTerminal != null) {
         String paymentTypeName = jsonorder.getString("paymentMethodKind");
         OBPOSAppPayment paymentType = null;
