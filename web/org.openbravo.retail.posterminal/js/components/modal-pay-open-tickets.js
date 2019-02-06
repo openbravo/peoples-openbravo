@@ -143,7 +143,7 @@ enyo.kind({
     style: 'padding: 10px;',
     kind: 'OB.UI.FilterSelectorTableHeader',
     name: 'filterSelector',
-    filters: OB.Model.VReturnsFilter.getProperties()
+    filterModel: OB.Model.OrderFilter
   }, {
     style: 'padding: 10px;',
     components: [{

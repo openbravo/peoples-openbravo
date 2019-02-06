@@ -72,7 +72,7 @@ enyo.kind({
     classes: 'filterSelectorTableHeader',
     kind: 'OB.UI.FilterSelectorTableHeader',
     name: 'filterSelector',
-    filters: OB.Model.OrderAssociationsFilter.getProperties()
+    filterModel: OB.Model.OrderAssociationsFilter
   }, {
     showing: true,
     classes: 'filterSelectorTableHeader_buttons',
