@@ -135,6 +135,7 @@ export.database.structure: Exports the database structure in the xml's files.
       <syspropertyset>
          <propertyref name="java.security.egd" />
       </syspropertyset>
+      <sysproperty key="javax.xml.parsers.SAXParserFactory" value="com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl" />
     </java>
     <antcall target="update.dbupdate.timestamp" />
   </target>
@@ -155,6 +156,7 @@ export.database.structure: Exports the database structure in the xml's files.
       <syspropertyset>
          <propertyref name="java.security.egd" />
       </syspropertyset>
+      <sysproperty key="javax.xml.parsers.SAXParserFactory" value="com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl" />
     </java>
   </target>
 
