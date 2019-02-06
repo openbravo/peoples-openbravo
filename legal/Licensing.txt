@@ -97,7 +97,7 @@ Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD
 # commons-beanutils-1.8.3.jar
 # commons-betwixt-0.8.jar
 # commons-codec-1.11.jar
-# commons-collections-3.2.1.jar
+# commons-collections-3.2.2.jar
 # commons-dbcp-1.4.jar
 # commons-digester-1.8.1.jar
 # commons-fileupload-1.2.2.jar
