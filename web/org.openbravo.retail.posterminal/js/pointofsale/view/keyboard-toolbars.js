@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -166,7 +166,6 @@ enyo.kind({
 
     if (OB.DEC.compare(amount) > 0) {
       var provider, receiptToPay = this.getReceiptToPay(),
-          me = this,
           paymentStatus = receiptToPay.getPaymentStatus();
 
       if (!paymentStatus.isNegative) {
@@ -298,7 +297,7 @@ enyo.kind({
   },
   initComponents: function () {
     //TODO: modal payments
-    var i, max, payments, paymentsdialog, paymentsbuttons, countbuttons, btncomponent, Btn, inst, cont, exactdefault, cashdefault, allpayments = {},
+    var payments, paymentsdialog, paymentsbuttons, countbuttons, btncomponent, exactdefault, cashdefault, allpayments = {},
         me = this,
         paymentCategories = [],
         providerGroups = {},

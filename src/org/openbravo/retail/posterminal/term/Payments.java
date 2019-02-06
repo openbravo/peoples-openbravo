@@ -47,8 +47,7 @@ public class Payments extends JSONTerminalProperty {
           + "coalesce(c.symbol, pmc.symbol) as symbol, coalesce(c.currencySymbolAtTheRight, pmc.currencySymbolAtTheRight) as currencySymbolAtTheRight, "
           + "coalesce(f.currentBalance, 0) as currentBalance, "
           + "coalesce(p.paymentMethod.currency.obposPosprecision, p.paymentMethod.currency.pricePrecision) as obposPosprecision, "
-          + "img.bindaryData as image, img.mimetype as mimetype, "
-          + "providerGroup, paymentType "
+          + "img.bindaryData as image, img.mimetype as mimetype, " + "providerGroup, paymentType "
           + "from OBPOS_App_Payment as p left join p.financialAccount as f left join f.currency as c "
           + "left outer join p.paymentMethod as pm left outer join pm.image as img left outer join pm.currency as pmc "
           + "left outer join pm.obposPaymentgroup as providerGroup left outer join pm.obposPaymentmethodType as paymentType "
@@ -56,9 +55,9 @@ public class Payments extends JSONTerminalProperty {
           + "and p.$readableSimpleCriteria and p.$activeCriteria and pm.$activeCriteria"
           + "order by p.line, p.commercialName";
 
-      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments, OBContext
-          .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-          .getCurrentOrganization().getId(), null, null, null);
+      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments,
+          OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentOrganization().getId(), null, null, null);
 
       @SuppressWarnings("rawtypes")
       final Query paymentsquery = querybuilder.getDalQuery();
@@ -73,9 +72,9 @@ public class Payments extends JSONTerminalProperty {
         boolean preferenveValue = true;
         try {
           preferenveValue = "Y".equals(Preferences.getPreferenceValue(appPayment.getSearchKey(),
-              true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), null));
+              true, OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null));
         } catch (PropertyException e) {
           // There is no preference for the payment method, load them with all permission
         }
@@ -116,10 +115,8 @@ public class Payments extends JSONTerminalProperty {
           payment.put("currentBalance", objPayment[7]);
           payment.put("obposPosprecision", objPayment[8]);
           if (objPayment[9] != null && objPayment[10] != null) {
-            payment.put(
-                "image",
-                "data:" + objPayment[10] + ";base64,"
-                    + Base64.encodeBase64String((byte[]) objPayment[9]));
+            payment.put("image", "data:" + objPayment[10] + ";base64,"
+                + Base64.encodeBase64String((byte[]) objPayment[9]));
           } else {
             payment.put("image", objPayment[9]);
           }
@@ -132,19 +129,18 @@ public class Payments extends JSONTerminalProperty {
 
           // If the Payment Method is cash, load the rounding properties of the currency
           if (appPayment.getPaymentMethod().isCash()) {
-            Query<OBPOSCurrencyRounding> roundQuery = OBDal
-                .getInstance()
+            Query<OBPOSCurrencyRounding> roundQuery = OBDal.getInstance()
                 .getSession()
                 .createQuery(
                     "FROM OBPOS_CurrencyRounding cr where cr.currency.id = :currency AND cr.active = true AND AD_ISORGINCLUDED(:storeOrg, cr.organization.id, :storeClient) <> -1 "
                         + "order by AD_ISORGINCLUDED(:storeOrg, cr.organization.id, :storeClient)",
                     OBPOSCurrencyRounding.class);
-            roundQuery.setParameter("storeOrg", OBContext.getOBContext().getCurrentOrganization()
-                .getId());
-            roundQuery.setParameter("storeClient", OBContext.getOBContext().getCurrentClient()
-                .getId());
-            roundQuery
-                .setParameter("currency", appPayment.getPaymentMethod().getCurrency().getId());
+            roundQuery.setParameter("storeOrg",
+                OBContext.getOBContext().getCurrentOrganization().getId());
+            roundQuery.setParameter("storeClient",
+                OBContext.getOBContext().getCurrentClient().getId());
+            roundQuery.setParameter("currency",
+                appPayment.getPaymentMethod().getCurrency().getId());
             roundQuery.setMaxResults(1);
             OBPOSCurrencyRounding obposCurrencyRounding = roundQuery.uniqueResult();
             if (obposCurrencyRounding != null) {

@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global enyo, _, $, console */
+/*global enyo, _*/
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',
@@ -534,6 +534,28 @@ enyo.kind({
     this.$.shipLbl.setContent(OB.I18N.getLabel('OBPOS_LblShipAddr'));
     this.$.invLbl.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
     this.attributeContainer = this.$.customerAttributes;
+    //Sort Attributes
+    if (OB.MobileApp.model.get('permissions').OBPOS_CustomerCompSortOrder) {
+      var prefIndex, sortOrder, sortedAttr = [],
+          prefAttr = [];
+      try {
+        sortOrder = JSON.parse(OB.MobileApp.model.get('permissions').OBPOS_CustomerCompSortOrder.replace(/'/g, "\""));
+        _.each(this.newAttributes, function (attr) {
+          prefIndex = sortOrder.indexOf(attr.modelProperty);
+          if (prefIndex >= 0) {
+            prefAttr[prefIndex] = attr;
+          } else {
+            sortedAttr.push(attr);
+          }
+        });
+        prefAttr = _.filter(prefAttr, function (attr) {
+          return !OB.UTIL.isNullOrUndefined(attr);
+        });
+        this.newAttributes = prefAttr.concat(sortedAttr);
+      } catch (e) {
+        // Don't do anything if exception is thrown
+      }
+    }
     enyo.forEach(this.newAttributes, function (natt) {
       this.$.customerOnlyFields.createComponent({
         kind: 'OB.UI.CustomerPropertyLine',

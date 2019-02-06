@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -89,7 +89,6 @@ enyo.kind({
       context: this
     }, function (args) {
       if (!args.cancelOperation) {
-        var i;
         if (me.model.get('leftColumnViewManager').isMultiOrder()) {
           me.model.deleteMultiOrderList();
           me.model.get('multiOrders').resetValues();
@@ -154,8 +153,7 @@ enyo.kind({
     }
   },
   tap: function () {
-    var i, me = this,
-        hasPayments = false,
+    var me = this,
         isMultiOrders = this.model.isValidMultiOrderState();
 
     if (this.disabled) {
@@ -455,8 +453,7 @@ enyo.kind({
   tap: function () {
     var me = this,
         criteria = {},
-        paymentModels = OB.MobileApp.model.get('payments'),
-        showMandatoryServices, checkStock;
+        paymentModels = OB.MobileApp.model.get('payments');
     if (this.disabled === false) {
       var receipt = me.model.get('order');
       if (receipt.get('isQuotation') && receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').quotation_anonymouscustomer) {

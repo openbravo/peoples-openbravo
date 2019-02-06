@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017 Openbravo S.L.U.
+ * Copyright (C) 2017-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -9,7 +9,7 @@
  * Author Yogas Karnik
  *
  */
-/*global OB, moment, enyo */
+/*global OB, enyo */
 
 enyo.kind({
   name: 'OB.UI.ModalQuotationProductAttributesScroller.QuotationLines',
@@ -130,7 +130,6 @@ enyo.kind({
   fieldChanged: function (inSender, inEvent) {
     var me = this,
         lines = me.args.lines,
-        order = me.args.quotationProductAttribute,
         enteredAttribute, inpAttribute, lineIndex, focusIndex;
     lineIndex = 0;
     lines.forEach(function (theLine) {

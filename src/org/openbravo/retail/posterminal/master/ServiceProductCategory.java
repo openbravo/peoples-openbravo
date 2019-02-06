@@ -49,12 +49,10 @@ public class ServiceProductCategory extends ProcessHQLQuery {
     HQLPropertyList regularServiceProductCategoriesHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    hqlQueries
-        .add("select"
-            + regularServiceProductCategoriesHQLProperties.getHqlSelect() //
-            + "from ServiceProductCategory spc " //
-            + "where $filtersCriteria and $naturalOrgCriteria and $incrementalUpdateCriteria and spc.active = true "
-            + "order by spc.productCategory.name, spc.id");
+    hqlQueries.add("select" + regularServiceProductCategoriesHQLProperties.getHqlSelect() //
+        + "from ServiceProductCategory spc " //
+        + "where $filtersCriteria and $naturalOrgCriteria and $incrementalUpdateCriteria and spc.active = true "
+        + "order by spc.productCategory.name, spc.id");
 
     return hqlQueries;
   }

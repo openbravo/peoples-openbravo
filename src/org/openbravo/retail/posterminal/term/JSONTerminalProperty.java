@@ -13,5 +13,6 @@ import org.openbravo.retail.posterminal.JSONProcessSimple;
 
 public abstract class JSONTerminalProperty extends JSONProcessSimple {
 
+  @Override
   public abstract String getProperty();
 }

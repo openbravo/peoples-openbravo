@@ -29,8 +29,8 @@ import org.openbravo.retail.posterminal.TerminalTypePaymentMethod;
 
 public class CurrencyConversionEventHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      OBPOSCurrencyRounding.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(OBPOSCurrencyRounding.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -65,7 +65,8 @@ public class CurrencyConversionEventHandler extends EntityPersistenceEventObserv
       hql.append(" and " + TerminalTypePaymentMethod.PROPERTY_CHANGEPAYMENTTYPE + " is not null");
       hql.append(" and " + TerminalTypePaymentMethod.PROPERTY_CHANGEPAYMENTTYPE + " is not null");
       hql.append(" and ad_isorgincluded(ttpm.organization.id, :organizationId, :clientId) <> -1");
-      Query<String> qry = OBDal.getInstance().getSession()
+      Query<String> qry = OBDal.getInstance()
+          .getSession()
           .createQuery(hql.toString(), String.class);
       qry.setParameter("currencyId", currencyRounding.getCurrency().getId());
       qry.setParameter("organizationId", currencyRounding.getOrganization().getId());
@@ -73,9 +74,9 @@ public class CurrencyConversionEventHandler extends EntityPersistenceEventObserv
       qry.setMaxResults(1);
       String currencyRoundingId = (String) qry.uniqueResult();
       if (currencyRoundingId != null) {
-        throw new OBException(String.format(OBMessageUtils
-            .messageBD("OBPOS_CurrencyRoundingNotAllowed"), currencyRounding.getCurrency()
-            .getISOCode()));
+        throw new OBException(
+            String.format(OBMessageUtils.messageBD("OBPOS_CurrencyRoundingNotAllowed"),
+                currencyRounding.getCurrency().getISOCode()));
       }
     } finally {
       OBContext.restorePreviousMode();

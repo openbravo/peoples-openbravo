@@ -8,9 +8,7 @@
  */
 package org.openbravo.retail.posterminal.master;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +23,9 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.mobile.core.utils.OBMOBCUtils;
-import org.openbravo.model.pricing.pricelist.PriceListVersion;
-import org.openbravo.retail.config.OBRETCOProductList;
-import org.openbravo.retail.posterminal.POSUtils;
+import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class ProductStock extends Product {
+public class ProductStock extends ProcessHQLQuery {
   public static final String productStockPropertyExtension = "OBPOS_ProductStockExtension";;
 
   @Inject
@@ -40,75 +35,39 @@ public class ProductStock extends Product {
 
   @Override
   protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
-    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
-    HQLPropertyList regularProductStockHQLProperties = ModelExtensionUtils
-        .getPropertyExtensions(extensions);
-
-    propertiesList.add(regularProductStockHQLProperties);
-
-    return propertiesList;
+    return Collections.singletonList(ModelExtensionUtils.getPropertyExtensions(extensions));
   }
 
   @Override
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
-    try {
-      OBContext.setAdminMode(true);
-      final Date terminalDate = OBMOBCUtils
-          .calculateServerDate(
-              jsonsent.getJSONObject("parameters").getString("terminalTime"),
-              jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset")
-                  .getLong("value"));
-      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
-          .getString("pos"));
-      final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
-          terminalDate);
+    return Product.createRegularProductValues(jsonsent);
 
-      Map<String, Object> paramValues = new HashMap<String, Object>();
-      paramValues.put("productListId", productList.getId());
-      paramValues.put("orgId", orgId);
-      paramValues.put("priceListVersionId", priceListVersion.getId());
-
-      return paramValues;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
   }
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-
     return prepareQuery(jsonsent);
-
   }
 
   protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
 
-    List<String> products = new ArrayList<String>();
-
     try {
       OBContext.setAdminMode(false);
-      String regularProductHql = getRegularProductHql(false, false, jsonsent, false, false);
+      String regularProductHql = Product.createRegularProductHql(false, false, jsonsent, false,
+          false);
       HQLPropertyList regularProductStockHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions);
-      String hql = "SELECT "
-          + regularProductStockHQLProperties.getHqlSelect() //
+      return Collections.singletonList("SELECT " + regularProductStockHQLProperties.getHqlSelect() //
           + "FROM MaterialMgmtStorageDetail AS storagedetail " //
           + "JOIN storagedetail.storageBin AS locator " //
           + "WHERE EXISTS (" //
-          + "  SELECT 1 " + regularProductHql
-          + " AND pli.product.id = storagedetail.product.id) " //
+          + "  SELECT 1 " + regularProductHql + " AND pli.product.id = storagedetail.product.id) " //
           + "AND EXISTS ( " //
           + "  SELECT 1 " //
           + "  FROM OrganizationWarehouse ow " //
-          + "  WHERE ow.organization.id = :orgId"
-          + "  AND ow.warehouse.id = locator.warehouse.id) " //
+          + "  WHERE ow.organization.id = :orgId" + "  AND ow.warehouse.id = locator.warehouse.id) " //
           + "GROUP BY storagedetail.product.id, storagedetail.product.searchKey, locator.warehouse.id " //
-          + "ORDER BY storagedetail.product.id, storagedetail.product.searchKey, locator.warehouse.id ";
-
-      products.add(hql);
-
-      return products;
+          + "ORDER BY storagedetail.product.id, storagedetail.product.searchKey, locator.warehouse.id ");
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -123,5 +82,4 @@ public class ProductStock extends Product {
   protected boolean mustHaveRemoteFilters() {
     return true;
   }
-
 }

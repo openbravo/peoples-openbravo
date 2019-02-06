@@ -49,10 +49,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_DOCTYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="OBPOS_TERMINALTYPE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -231,9 +227,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="OBPOS_APPPAYTYPE_CURR">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_APPPAYTYPE_DOCTYPE">
-        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPPAYTYPE_GLITEM_DEP">
         <reference local="C_GLITEM_DEPOSITS_ID" foreign="C_GLITEM_ID"/>

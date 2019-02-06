@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -167,7 +167,6 @@ enyo.kind({
   },
   i18nLabel: 'OBPOS_LblReceiptLayaway',
   tap: function () {
-    var receiptAllowed = true;
     if (this.disabled) {
       return true;
     }
@@ -266,7 +265,7 @@ enyo.kind({
   },
   displayLogic: function () {
     var me = this,
-        isPaidReceipt, isLayaway, isReturn, haspayments, receiptLines, receipt;
+        isPaidReceipt, isReturn, receiptLines, receipt;
 
     receipt = this.model.get('order');
 
@@ -325,8 +324,7 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    var receipt = model.get('order'),
-        me = this;
+    var receipt = model.get('order');
 
     receipt.on('change:isLayaway change:isPaid change:orderType change:documentType', function (model) {
       this.updateLabel(model);
@@ -1155,7 +1153,7 @@ enyo.kind({
     }
   },
   displayLogic: function () {
-    if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+    if (!OB.MobileApp.model.get('terminal').terminalType.selectprinteralways && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
       return printer.hasReceiptPrinter;
     })) {
       this.show();
@@ -1186,7 +1184,7 @@ enyo.kind({
     }
   },
   displayLogic: function () {
-    if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+    if (!OB.MobileApp.model.get('terminal').terminalType.selectprinteralways && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
       return printer.hasPDFPrinter;
     })) {
       this.show();

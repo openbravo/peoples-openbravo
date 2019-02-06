@@ -36,17 +36,13 @@ public class ClearErrorActionHandler extends BaseActionHandler {
         OBDal.getInstance().remove(error);
       }
       OBDal.getInstance().flush();
-      result.put(
-          "message",
-          Utility.messageBD(new DalConnectionProvider(false), "Success", RequestContext.get()
-              .getVariablesSecureApp().getLanguage()));
+      result.put("message", Utility.messageBD(new DalConnectionProvider(false), "Success",
+          RequestContext.get().getVariablesSecureApp().getLanguage()));
       return result;
     } catch (final Exception e) {
       try {
-        result.put(
-            "message",
-            Utility.messageBD(new DalConnectionProvider(false), "Error", RequestContext.get()
-                .getVariablesSecureApp().getLanguage()));
+        result.put("message", Utility.messageBD(new DalConnectionProvider(false), "Error",
+            RequestContext.get().getVariablesSecureApp().getLanguage()));
       } catch (JSONException e1) {
         // won't happen
       }

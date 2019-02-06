@@ -82,9 +82,9 @@ public class OBBaseRetailTest extends OBBaseTest {
     OBContext.setOBContext(TEST_RETAIL_VB_USER_ID, TEST_RETAIL_VB_USER_ROLE_ID,
         TEST_RETAIL_CLIENT_ID, TEST_RETAIL_ORG_ID);
     OBContext obContext = OBContext.getOBContext();
-    final VariablesSecureApp vars = new VariablesSecureApp(obContext.getUser().getId(), obContext
-        .getCurrentClient().getId(), obContext.getCurrentOrganization().getId(), obContext
-        .getRole().getId(), obContext.getLanguage().getLanguage()) {
+    final VariablesSecureApp vars = new VariablesSecureApp(obContext.getUser().getId(),
+        obContext.getCurrentClient().getId(), obContext.getCurrentOrganization().getId(),
+        obContext.getRole().getId(), obContext.getLanguage().getLanguage()) {
       // overloaded to prevent error messages in the log as there is no session
       public void setSessionValue(String attribute, String value) {
       }

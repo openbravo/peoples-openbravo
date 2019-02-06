@@ -113,6 +113,34 @@
         <default><![CDATA[-]]></default>
         <onCreateDefault><![CDATA['-']]></onCreateDefault>
       </column>
+      <column name="EM_OBPOS_C_DOCTYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBPOS_C_DOCTYPERET_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBPOS_C_DOCTYPERECON_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBPOS_C_DOCTYPEQUOT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="C_DOCTYPE" name="EM_OBPOS_DOC_AD_ORG">
+        <reference local="EM_OBPOS_C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="EM_OBPOS_DOCQUOT_AD_ORG">
+        <reference local="EM_OBPOS_C_DOCTYPEQUOT_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="EM_OBPOS_DOCRECON_AD_ORG">
+        <reference local="EM_OBPOS_C_DOCTYPERECON_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="EM_OBPOS_DOCRET_AD_ORG">
+        <reference local="EM_OBPOS_C_DOCTYPERET_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_CANCRCPTEMP">
         <reference local="EM_OBPOS_CANC_RPT_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>

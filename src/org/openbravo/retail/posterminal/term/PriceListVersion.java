@@ -21,8 +21,8 @@ public class PriceListVersion extends QueryTerminalProperty {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    final Date terminalDate = OBMOBCUtils.calculateServerDate(jsonsent.getJSONObject("parameters")
-        .getString("terminalTime"),
+    final Date terminalDate = OBMOBCUtils.calculateServerDate(
+        jsonsent.getJSONObject("parameters").getString("terminalTime"),
         jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
 
     org.openbravo.model.pricing.pricelist.PriceListVersion priceListVersion = POSUtils
@@ -30,9 +30,9 @@ public class PriceListVersion extends QueryTerminalProperty {
     if (priceListVersion == null) {
       throw new JSONException("OBPOS_NoPriceListVersion");
     }
-    return Arrays.asList(new String[] { "select plv.id AS id "
-        + "from PricingPriceListVersion AS plv " + "where plv.id ='" + priceListVersion.getId()
-        + "'" });
+    return Arrays
+        .asList(new String[] { "select plv.id AS id " + "from PricingPriceListVersion AS plv "
+            + "where plv.id ='" + priceListVersion.getId() + "'" });
   }
 
   @Override

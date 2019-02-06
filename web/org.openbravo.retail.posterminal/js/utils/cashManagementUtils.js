@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, Backbone , _ */
+/*global OB, Backbone*/
 
 (function () {
 
@@ -21,14 +21,11 @@
     //                      including type = drop or deposit
     //paymentMethod -> An item from OB.MobileApp.model.get('payments') which will be used to drop or deposit the amount.
     var cashUp = null;
-    var paymentMethodCashUp = null;
     var warns = [];
-    var errors = [];
     var cashManagementTransactionToAdd = null;
     var optionsObj = {};
     var printCashManagementModel = null;
 
-    var availableAmountToDrop, startingAmt, salesAmt, returnsAmt, totalDrops, totalDeposits;
     //Manage default values
     if (options && !OB.UTIL.isNullOrUndefined(options.printTicket)) {
       optionsObj.printTicket = options.printTicket;

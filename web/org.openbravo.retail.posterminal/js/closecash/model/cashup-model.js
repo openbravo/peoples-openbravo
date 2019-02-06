@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, _, $ */
+/*global OB, enyo, Backbone, _ */
 
 OB.OBPOSCashUp = OB.OBPOSCashUp || {};
 OB.OBPOSCashUp.Model = OB.OBPOSCashUp.Model || {};
@@ -783,9 +783,11 @@ OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
 
   processAndFinishCashUp: function () {
     if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
-      this.printCashUp.print(this.get('cashUpReport').at(0), this.getCountCashSummary(), false);
+      var me = this;
+      this.printCashUp.print(this.get('cashUpReport').at(0), false, this.getCountCashSummary(), function () {
+        me.set('finished', true);
+      });
     }
-    this.set('finished', true);
   },
   allowPrevious: function () {
     return false;

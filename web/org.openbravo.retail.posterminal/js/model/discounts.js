@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -77,7 +77,7 @@
         }
 
         var auxReceipt = new OB.Model.Order(),
-            auxLine, hasPromotions, oldLines, oldLines2, actualLines, auxReceipt2, isFirstExecution = true;
+            oldLines, oldLines2, isFirstExecution = true;
         OB.UTIL.clone(receipt, auxReceipt);
         auxReceipt.groupLinesByProduct();
         auxReceipt.removeNoDiscountAllowLines();
@@ -140,14 +140,6 @@
             OB.Model.Discounts.finishPromotions(receipt, line);
           }
         });
-
-        if (line) {
-          auxLine = _.filter(auxReceipt.get('lines').models, function (l) {
-            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && l.get('qty') === line.get('qty')) {
-              return l;
-            }
-          });
-        }
 
         // if preventApplyPromotions then the promotions will not be deleted, because they will not be recalculated
         if (!me.preventApplyPromotions) {

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, enyo, confirm, _, localStorage */
+/*global OB, Backbone, enyo, _*/
 
 // Point of sale main window view
 enyo.kind({
@@ -696,7 +696,6 @@ enyo.kind({
         isBPChange = component.model.get('order').get('bp').get('id') !== inEvent.businessPartner.get('id'),
         isShippingChange = component.model.get('order').get('bp').get('shipLocId') !== inEvent.businessPartner.get('shipLocId'),
         isInvoicingChange = component.model.get('order').get('bp').get('locId') !== inEvent.businessPartner.get('locId'),
-        bp = this.model.get('order').get('bp'),
         eventBP = inEvent.businessPartner;
     if (inEvent.businessPartner.get('customerBlocking') && inEvent.businessPartner.get('salesOrderBlocking')) {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerOnHold', [inEvent.businessPartner.get('_identifier')]));
@@ -725,6 +724,12 @@ enyo.kind({
   },
   receiptToInvoice: function () {
     if (this.model.get('leftColumnViewManager').isOrder()) {
+      if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
+        this.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return true;
+      }
       this.model.get('order').setOrderInvoice();
     } else {
       this.model.get('multiOrders').toInvoice(true);
@@ -791,6 +796,12 @@ enyo.kind({
 
   cancelReceiptToInvoice: function (inSender, inEvent) {
     if (this.model.get('leftColumnViewManager').isOrder()) {
+      if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
+        this.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return true;
+      }
       this.model.get('order').resetOrderInvoice();
     } else {
       this.model.get('multiOrders').toInvoice(false);
@@ -966,8 +977,7 @@ enyo.kind({
     this.tabChange(inSender, inEvent);
   },
   deleteLine: function (inSender, inEvent) {
-    var me = this,
-        selectedModels = inEvent.selectedModels,
+    var selectedModels = inEvent.selectedModels,
         receipt = this.model.get('order');
 
     receipt.deleteLinesFromOrder(selectedModels);
@@ -1330,10 +1340,6 @@ enyo.kind({
       originator.removeClass('btn-icon-loading');
       originator.addClass('btn-icon-clearPayment');
     }
-    this.leftToolbarDisabled(inSender, {
-      status: false,
-      disableButtonNew: true
-    });
   },
   removeMultiOrders: function (inSender, inEvent) {
     var me = this,
@@ -1384,7 +1390,6 @@ enyo.kind({
   receiptLineSelected: function (inSender, inEvent) {
     var product, i, enableButton = true,
         selectedLines = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
-        selectedLinesSameQty = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModelsSameQty,
         selectedLinesLength = selectedLines ? this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels.length : 0;
 
     if (selectedLinesLength > 0) {

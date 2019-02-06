@@ -37,15 +37,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_DOCTYPE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="C_DOCTYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_DOCTYPERET_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="C_DOCTYPERET_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_DOCTYPERECON_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="C_DOCTYPERECON_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -143,6 +143,14 @@
       </column>
       <column name="C_CHANNEL_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default><![CDATA[293AB6FFE1B74DD89071AEB8B308403B]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="SELECTPRINTERALWAYS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="AUTOREGISTERHWMURL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="APPLICATION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">

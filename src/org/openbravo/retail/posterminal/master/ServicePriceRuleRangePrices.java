@@ -54,11 +54,11 @@ public class ServicePriceRuleRangePrices extends ProcessHQLQuery {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      final Date terminalDate = OBMOBCUtils
-          .calculateServerDate(
-              jsonsent.getJSONObject("parameters").getString("terminalTime"),
-              jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset")
-                  .getLong("value"));
+      final Date terminalDate = OBMOBCUtils.calculateServerDate(
+          jsonsent.getJSONObject("parameters").getString("terminalTime"),
+          jsonsent.getJSONObject("parameters")
+              .getJSONObject("terminalTimeOffset")
+              .getLong("value"));
       Map<String, Object> paramValues = new HashMap<String, Object>();
       paramValues.put("terminalDate", format.format(terminalDate));
 
@@ -73,14 +73,12 @@ public class ServicePriceRuleRangePrices extends ProcessHQLQuery {
     List<String> hqlQueries = new ArrayList<String>();
     HQLPropertyList regularPriceRuleRangePricesHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-    hqlQueries
-        .add("select"
-            + regularPriceRuleRangePricesHQLProperties.getHqlSelect()
-            + "from PricingPriceList ppl join ppl.pricingPriceListVersionList pplv "
-            + "join ppl.servicePriceRuleRangeList sppr join pplv.pricingProductPriceList ppp "
-            + "where $filtersCriteria and $hqlCriteria and pplv.id = get_pricelist_version(pplv.priceList.id, :terminalDate ) and ppp.product.productType = 'S' "
-            + "and sppr.$naturalOrgCriteria and sppr.$incrementalUpdateCriteria "
-            + "order by ppl.id asc");
+    hqlQueries.add("select" + regularPriceRuleRangePricesHQLProperties.getHqlSelect()
+        + "from PricingPriceList ppl join ppl.pricingPriceListVersionList pplv "
+        + "join ppl.servicePriceRuleRangeList sppr join pplv.pricingProductPriceList ppp "
+        + "where $filtersCriteria and $hqlCriteria and pplv.id = get_pricelist_version(pplv.priceList.id, :terminalDate ) and ppp.product.productType = 'S' "
+        + "and sppr.$naturalOrgCriteria and sppr.$incrementalUpdateCriteria "
+        + "order by ppl.id asc");
 
     return hqlQueries;
   }

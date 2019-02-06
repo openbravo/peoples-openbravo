@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -34,7 +34,6 @@
 
   var PrintReceipt = function (model) {
       var terminal = OB.MobileApp.model.get('terminal');
-
       this.model = model;
       this.receipt = model.get('order');
       this.multiOrders = model.get('multiOrders');
@@ -92,6 +91,7 @@
       extendHWResource(this.templatecanceledreceipt, "printCanceledReceiptTemplate");
       this.templatecanceledlayaway = new OB.DS.HWResource(terminal.printCanceledLayawayTemplate || OB.OBPOSPointOfSale.Print.CanceledLayawayTemplate);
       extendHWResource(this.templatecanceledlayaway, "printCanceledLayawayTemplate");
+      this.isRetry = false;
       };
 
   PrintReceipt.prototype.print = function (order, printargs) {
@@ -124,10 +124,10 @@
           mainReport: args.template,
           subReports: args.template.subreports
         }, function (result) {
-          var myreceipt = receipt;
           if (result && result.exception) {
             // callbacks definition
             var successfunc = function () {
+                me.isRetry = true;
                 me.print(receipt, printargs);
                 if (args.callback) {
                   args.callback();
@@ -135,6 +135,7 @@
                 return true;
                 };
             var hidefunc = function () {
+                me.isRetry = false;
                 if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
                   OB.Dal.save(new OB.Model.OfflinePrinter({
                     data: result.data,
@@ -145,9 +146,13 @@
                   args.callback();
                 }
                 };
-            OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, null, true, 'OBPOS_MsgPDFPrintAgain');
+            var cancelfunc = function () {
+                me.isRetry = false;
+                };
+            OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, cancelfunc, true, 'OBPOS_MsgPDFPrintAgain');
           } else {
             // Success. Try to print the pending receipts.
+            me.isRetry = false;
             OB.Model.OfflinePrinter.printPendingJobs();
             OB.UTIL.HookManager.executeHooks('OBPRINT_PostPrint', {
               receipt: receipt
@@ -159,109 +164,6 @@
             });
           }
         });
-      }
-
-      function printFiles(receipt, args) {
-        var filesArray = [],
-            callbackGetFiles, callbackGetBinaryData, recursivePrintFiles, i = 0;
-
-        if (receipt.get('isPaid') || receipt.isFullyPaid() || (receipt.isLayaway() && receipt.get('payment') > 0)) {
-
-          recursivePrintFiles = function () {
-            if (filesArray.length > 0) {
-              OB.POS.hwserver._printFile({
-                name: filesArray[i].name,
-                printer: filesArray[i].printer,
-                document: filesArray[i].document
-              }, function (result) {
-                if (result && result.exception) {
-                  // callbacks definition
-                  var successfunc = function () {
-                      me.print(receipt, printargs);
-                      if (args.callback) {
-                        args.callback();
-                      }
-                      return true;
-                      };
-                  var hidefunc = function () {
-                      if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
-                        OB.Dal.save(new OB.Model.OfflinePrinter({
-                          data: result.data,
-                          sendfunction: '_sendFile'
-                        }));
-                      }
-                      if (args.callback) {
-                        args.callback();
-                      }
-                      };
-                  OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, null, true, 'OBPOS_MsgPDFPrintAgain');
-                } else {
-                  i++;
-                  if (i < filesArray.length) {
-                    recursivePrintFiles();
-                  } else {
-                    // Success. Try to print the pending receipts.
-                    OB.Model.OfflinePrinter.printPendingJobs();
-                    if (args.callback) {
-                      args.callback();
-                    }
-                  }
-                }
-              });
-            }
-          };
-
-          callbackGetFiles = _.after(receipt.get('lines').length, function () {
-            recursivePrintFiles();
-          });
-
-          _.each(receipt.get('lines').models, function (line) {
-            var criteria = {},
-                productId = line.get('product').id;
-            if (line.get('qty') > 0) {
-              if (OB.MobileApp.model.hasPermission('OBPOS_remote.obposfiles', true)) {
-                criteria.remoteFilters = [{
-                  columns: ['product'],
-                  operator: 'equals',
-                  value: productId,
-                  isId: true
-                }];
-              } else {
-                criteria.product = productId;
-              }
-              OB.Dal.find(OB.Model.OBPOSProdFiles, criteria, function (productFiles) {
-                if (productFiles.length > 0) {
-                  callbackGetBinaryData = _.after(productFiles.length, function () {
-                    callbackGetFiles();
-                  });
-
-                  _.each(productFiles.models, function (productFile) {
-                    var printer = 1;
-                    OB.Dal.get(OB.Model.OBPOSFiles, productFile.get('posfile'), function (posFile) {
-                      if (productFile.get('printer')) {
-                        printer = productFile.get('printer');
-                      }
-                      filesArray.push({
-                        name: posFile.get('name'),
-                        printer: printer,
-                        document: posFile.get('binaryData')
-                      });
-                      callbackGetBinaryData();
-                    }, function () {
-                      OB.error(arguments);
-                    });
-                  });
-                } else {
-                  callbackGetFiles();
-                }
-              }, function () {
-                OB.error(arguments);
-              });
-            } else {
-              callbackGetFiles();
-            }
-          });
-        }
       }
 
       if (args.cancelOperation && args.cancelOperation === true) {
@@ -337,106 +239,134 @@
           }
         }
       }
-      if (args.template.ispdf) {
-        args.template.dateFormat = OB.Format.date;
-        if (receipt.get('canceledorder')) {
-          var clonedreceipt = new OB.Model.Order();
-          OB.UTIL.clone(receipt, clonedreceipt);
-          clonedreceipt.unset("canceledorder", {
-            silent: true
-          });
-          printPDF(clonedreceipt, args);
-        } else {
-          printPDF(receipt, args);
-        }
-        if (((receipt.get('orderType') === 1 || hasNegativeLines) && !OB.MobileApp.model.hasPermission('OBPOS_print.once', true)) || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
-          printPDF(receipt, args);
-        }
-      } else {
-        if (receipt.get('print')) { //Print option of order property
-          OB.POS.hwserver.print(args.template, {
-            order: receipt
-          }, function (result, printedReceipt) {
-            var myreceipt = receipt;
-            if (result && result.exception) {
-              // callbacks definition
-              var successfunc = function () {
-                  me.print(receipt, printargs);
-                  return true;
-                  };
-              var cancelfunc = function () {
-                  if (args.callback) {
-                    args.callback();
-                  }
-                  return true;
-                  };
-              var hidefunc = function () {
-                  if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
-                    OB.Dal.save(new OB.Model.OfflinePrinter({
-                      data: result.data,
-                      sendfunction: '_send'
-                    }));
-                  }
-                  if (args.callback) {
-                    args.callback();
-                  }
-                  };
-              OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, cancelfunc, false, 'OBPOS_MsgPrintAgain');
-            } else {
-              // Success. Try to print the pending receipts.
-              OB.Model.OfflinePrinter.printPendingJobs();
-              OB.UTIL.HookManager.executeHooks('OBPRINT_PostPrint', {
-                receipt: receipt,
-                printedReceipt: printedReceipt
-              }, function () {
-                OB.debug("Executed hooks of OBPRINT_PostPrint");
-                if (args.callback) {
-                  args.callback();
-                }
-              });
-            }
-          });
-        } else {
+      var cancelSelectPrinter = function () {
+          me.isRetry = false;
           if (args.callback) {
             args.callback();
           }
-        } // order property.
-        //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
-        if (receipt.get('print')) { //Print option of order property
-          if ((((receipt.get('orderType') === 1 || hasNegativeLines) && receipt.get('lines').length > 0) && !OB.MobileApp.model.hasPermission('OBPOS_print.once', true)) || _.filter(receipt.get('payments').models, function (iter) {
-            if (iter.get('printtwice')) {
-              return iter;
+          };
+      if (args.template.ispdf) {
+        var printPdfProcess = function () {
+            args.template.dateFormat = OB.Format.date;
+            if (receipt.get('canceledorder')) {
+              var clonedreceipt = new OB.Model.Order();
+              OB.UTIL.clone(receipt, clonedreceipt);
+              clonedreceipt.unset("canceledorder", {
+                silent: true
+              });
+              printPDF(clonedreceipt, args);
+            } else {
+              printPDF(receipt, args);
             }
-          }).length > 0 || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
-            OB.POS.hwserver.print(args.template, {
-              order: receipt
-            }, function (result) {
-              var myreceipt = receipt;
-              if (result && result.exception) {
-                // callbacks definition
-                var successfunc = function () {
-                    me.print(receipt, printargs);
-                    return true;
-                    };
-                var hidefunc = function (dialog) {
-                    if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
-                      OB.Dal.save(new OB.Model.OfflinePrinter({
-                        data: result.data,
-                        sendfunction: '_send'
-                      }));
-                    }
+            if (((receipt.get('orderType') === 1 || hasNegativeLines) && !OB.MobileApp.model.hasPermission('OBPOS_print.once', true)) || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
+              printPDF(receipt, args);
+            }
+            };
+        if (OB.MobileApp.model.get('terminal').terminalType.selectprinteralways) {
+          OB.OBPOS.showSelectPrintersWindow(printPdfProcess, cancelSelectPrinter, cancelSelectPrinter, false, me.isRetry);
+        } else {
+          printPdfProcess();
+        }
+      } else {
+        var printProcess = function () {
+            if (receipt.get('print')) { //Print option of order property
+              OB.POS.hwserver.print(args.template, {
+                order: receipt
+              }, function (result, printedReceipt) {
+                if (result && result.exception) {
+                  // callbacks definition
+                  var successfunc = function () {
+                      me.isRetry = true;
+                      me.print(receipt, printargs);
+                      return true;
+                      };
+                  var cancelfunc = function () {
+                      me.isRetry = false;
+                      if (args.callback) {
+                        args.callback();
+                      }
+                      return true;
+                      };
+                  var hidefunc = function () {
+                      me.isRetry = false;
+                      if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
+                        OB.Dal.save(new OB.Model.OfflinePrinter({
+                          data: result.data,
+                          sendfunction: '_send'
+                        }));
+                      }
+                      if (args.callback) {
+                        args.callback();
+                      }
+                      };
+                  OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, cancelfunc, false, 'OBPOS_MsgPrintAgain');
+                } else {
+                  // Success. Try to print the pending receipts.
+                  me.isRetry = false;
+                  OB.Model.OfflinePrinter.printPendingJobs();
+                  OB.UTIL.HookManager.executeHooks('OBPRINT_PostPrint', {
+                    receipt: receipt,
+                    printedReceipt: printedReceipt
+                  }, function () {
+                    OB.debug("Executed hooks of OBPRINT_PostPrint");
                     if (args.callback) {
                       args.callback();
                     }
-                    };
-                OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, null, false, 'OBPOS_MsgPrintAgain');
-              } else {
-                // Success. Try to print the pending receipts.
-                OB.Model.OfflinePrinter.printPendingJobs();
+                  });
+                }
+              });
+            } else {
+              if (args.callback) {
+                args.callback();
               }
-            });
-          }
-        } // order property.
+            } // order property.
+            //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
+            if (receipt.get('print')) { //Print option of order property
+              if ((((receipt.get('orderType') === 1 || hasNegativeLines) && receipt.get('lines').length > 0) && !OB.MobileApp.model.hasPermission('OBPOS_print.once', true)) || _.filter(receipt.get('payments').models, function (iter) {
+                if (iter.get('printtwice')) {
+                  return iter;
+                }
+              }).length > 0 || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
+                OB.POS.hwserver.print(args.template, {
+                  order: receipt
+                }, function (result) {
+                  if (result && result.exception) {
+                    // callbacks definition
+                    var successfunc = function () {
+                        me.isRetry = true;
+                        me.print(receipt, printargs);
+                        return true;
+                        };
+                    var hidefunc = function (dialog) {
+                        me.isRetry = false;
+                        if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
+                          OB.Dal.save(new OB.Model.OfflinePrinter({
+                            data: result.data,
+                            sendfunction: '_send'
+                          }));
+                        }
+                        if (args.callback) {
+                          args.callback();
+                        }
+                        };
+                    var cancelfunc = function () {
+                        me.isRetry = false;
+                        };
+                    OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, cancelfunc, false, 'OBPOS_MsgPrintAgain');
+                  } else {
+                    // Success. Try to print the pending receipts.
+                    me.isRetry = false;
+                    OB.Model.OfflinePrinter.printPendingJobs();
+                  }
+                });
+              }
+            } // order property.
+            };
+        if (OB.MobileApp.model.get('terminal').terminalType.selectprinteralways) {
+          OB.OBPOS.showSelectPrintersWindow(printProcess, cancelSelectPrinter, cancelSelectPrinter, false, me.isRetry);
+        } else {
+          printProcess();
+        }
       }
       if (receipt.get('doCancelAndReplace') && receipt.get('canceledorder')) {
         var negativeDocNo = receipt.get('negativeDocNo');
@@ -517,7 +447,8 @@
               serverURLSetter: isPdf ? 'setActivePDFURL' : 'setActiveURL',
               onSuccess: successfunc,
               onCancel: cancelfunc,
-              onHide: hidefunc
+              onHide: hidefunc,
+              isRetry: true
             }
           });
           return true;
@@ -533,6 +464,28 @@
     OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel(msg, isPdf ? [OB.POS.hwserver.activepdfidentifier] : [OB.POS.hwserver.activeidentifier]), dialogbuttons, {
       onHideFunction: hidefunc
     });
+  };
+
+  OB.OBPOS.showSelectPrintersWindow = function (successfunc, hidefunc, cancelfunc, isPdf, isRetry) {
+    if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+      return isPdf ? printer.hasPDFPrinter : printer.hasReceiptPrinter;
+    })) {
+      OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+        popup: isPdf ? 'modalSelectPDFPrinters' : 'modalSelectPrinters',
+        args: {
+          title: isPdf ? OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle') : OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
+          hasPrinterProperty: isPdf ? 'hasPDFPrinter' : 'hasReceiptPrinter',
+          serverURLProperty: isPdf ? 'activepdfurl' : 'activeurl',
+          serverURLSetter: isPdf ? 'setActivePDFURL' : 'setActiveURL',
+          onSuccess: successfunc,
+          onCancel: cancelfunc,
+          onHide: hidefunc,
+          isRetry: isRetry
+        }
+      });
+    } else {
+      successfunc();
+    }
   };
 
   // Public object definition

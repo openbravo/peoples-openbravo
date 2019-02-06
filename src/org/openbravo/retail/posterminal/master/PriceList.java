@@ -64,22 +64,20 @@ public class PriceList extends ProcessHQLQuery {
     HQLPropertyList priceListHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
     try {
       multiPrices = "Y".equals(Preferences.getPreferenceValue("OBPOS_EnableMultiPriceList", true,
-          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), null));
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e1) {
       log.error("Error getting Preference: " + e1.getMessage(), e1);
     }
 
     if (multiPrices) {
-      hqlQueries
-          .add("select "
-              + priceListHQLProperties.getHqlSelect()
-              + " from PricingPriceList pl "
-              + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-              + "and pl.id <> (:priceList) "
-              + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria) "
-              + "order by pl.id asc");
+      hqlQueries.add("select " + priceListHQLProperties.getHqlSelect()
+          + " from PricingPriceList pl "
+          + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
+          + "and pl.id <> (:priceList) "
+          + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria) "
+          + "order by pl.id asc");
     }
 
     return hqlQueries;

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2018 Openbravo S.L.U.
+ * Copyright (C) 2017-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -77,7 +77,7 @@ enyo.kind({
     }]
   }],
   create: function () {
-    var orderDate, orderTime, orderType, me = this;
+    var orderDate, orderType, me = this;
     this.inherited(arguments);
 
     orderDate = new Date(OB.I18N.normalizeDate(this.model.get('creationDate')));
@@ -169,13 +169,13 @@ enyo.kind({
       me.receiptList.reset();
       me.$[me.getNameOfReceiptsListItemPrinter()].$.tempty.show();
       me.doHideSelector();
-      var i, message, tokens;
+      var i, message, tokens, getProperty;
 
-      function getProperty(property) {
-        return this.filterModel.getProperties().find(function (prop) {
+      getProperty = function (property) {
+        return me.filterModel.getProperties().find(function (prop) {
           return prop.name === property || prop.sortName === property;
         });
-      }
+      };
 
       // Generate a generic message if error is not defined
       if (OB.UTIL.isNullOrUndefined(error) || OB.UTIL.isNullOrUndefined(error.message)) {
@@ -302,7 +302,6 @@ enyo.kind({
 
   },
   init: function (model) {
-    var me = this;
     this.model = model;
     this.receiptList = new Backbone.Collection();
     this.$[this.getNameOfReceiptsListItemPrinter()].setCollection(this.receiptList);
@@ -428,7 +427,7 @@ enyo.kind({
     style: 'padding: 10px;',
     kind: 'OB.UI.FilterSelectorTableHeader',
     name: 'filterSelector',
-    filters: OB.Model.OrderFilter.getProperties()
+    filterModel: OB.Model.OrderFilter
   }, {
     style: 'padding: 10px;',
     components: [{
@@ -457,7 +456,7 @@ enyo.kind({
     style: 'padding: 10px;',
     kind: 'OB.UI.FilterSelectorTableHeader',
     name: 'filterSelector',
-    filters: OB.Model.VReturnsFilter.getProperties()
+    filterModel: OB.Model.VReturnsFilter
   }, {
     style: 'padding: 10px;',
     components: [{

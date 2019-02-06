@@ -39,10 +39,8 @@ public class ProductStatus extends QueryTerminalProperty {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     HQLPropertyList productStatusHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-    return Arrays
-        .asList(new String[] { "SELECT "
-            + productStatusHQLProperties.getHqlSelect()
-            + " FROM ProductStatus AS ps WHERE ps.$readableSimpleCriteria AND ps.$activeCriteria AND $naturalOrgCriteria" });
+    return Arrays.asList(new String[] { "SELECT " + productStatusHQLProperties.getHqlSelect()
+        + " FROM ProductStatus AS ps WHERE ps.$readableSimpleCriteria AND ps.$activeCriteria AND $naturalOrgCriteria" });
   }
 
   @Override

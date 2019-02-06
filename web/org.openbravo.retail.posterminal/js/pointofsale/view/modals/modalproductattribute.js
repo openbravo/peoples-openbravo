@@ -1,12 +1,12 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017 Openbravo S.L.U.
+ * Copyright (C) 2017-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-/*global OB, moment, enyo */
+/*global OB, enyo */
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalProductAttributes',
@@ -57,8 +57,7 @@ enyo.kind({
     return true;
   },
   saveAttribute: function (inSender, inEvent) {
-    var me = this,
-        inpAttributeValue = this.$.bodyContent.$.valueAttribute.getValue();
+    var inpAttributeValue = this.$.bodyContent.$.valueAttribute.getValue();
     inpAttributeValue = inpAttributeValue.replace(/\s+/, "");
     if ((this.validAttribute(inpAttributeValue) && inpAttributeValue) || this.owner.model.get('order').get('orderType') === 2 || this.owner.model.get('order').get('isLayaway')) {
       this.args.callback(inpAttributeValue);
@@ -83,8 +82,6 @@ enyo.kind({
     return;
   },
   executeOnHide: function () {
-    var me = this;
-    var inpAttributeValue = this.$.bodyContent.$.valueAttribute.getValue();
     this.$.bodyContent.$.valueAttribute.setValue(null);
   },
   executeOnShow: function () {

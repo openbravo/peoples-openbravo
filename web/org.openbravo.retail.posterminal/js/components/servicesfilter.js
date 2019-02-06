@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2018 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _ */
+/*global enyo, _*/
 
 enyo.kind({
   kind: 'OB.UI.SearchProductCharacteristicFilter',
@@ -36,7 +36,7 @@ enyo.kind({
         appendCatComma = false,
         existingServices, lineIdList, trancheValues = [],
         totalAmountSelected = 0,
-        minimumSelected = Infinity,
+        minimumSelected = 999999999999,
         maximumSelected = 0;
 
     if (this.productList && this.productList.length > 0) {
@@ -171,7 +171,7 @@ enyo.kind({
     var me = this,
         prodList, catList, lineIdList, existingServices, trancheValues = [],
         totalAmountSelected = 0,
-        minimumSelected = Infinity,
+        minimumSelected = 999999999999,
         maximumSelected = 0;
     if (this.orderlineList && this.orderlineList.length > 0) {
       prodList = this.orderlineList.map(function (line) {
@@ -259,14 +259,16 @@ enyo.kind({
         ol.set('preserveId', true);
         productList.push({
           orderlineId: ol.get('id'),
-          productName: ol.get('product').get('_identifier')
+          productName: ol.get('product').get('_identifier'),
+          productCategory: ol.get('product').get('productCategory')
         });
       });
     } else if (this.orderline) {
       this.orderline.set('preserveId', true);
       productList.push({
         orderlineId: this.orderline.get('id'),
-        productName: this.orderline.get('product').get('_identifier')
+        productName: this.orderline.get('product').get('_identifier'),
+        productCategory: this.orderline.get('product').get('productCategory')
       });
     }
 
@@ -280,7 +282,7 @@ enyo.kind({
   },
   calculateTranche: function (line, trancheValues) {
     var totalAmountSelected = 0,
-        minimumSelected = Infinity,
+        minimumSelected = 999999999999,
         maximumSelected = 0;
     if (trancheValues && trancheValues.length === 3) {
       totalAmountSelected = trancheValues[0];

@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, _, Backbone */
+/*global OB, Backbone */
 
 (function () {
 
@@ -31,7 +31,7 @@
 
   OB.UTIL.OrderSelectorUtils.checkOrderAndLoad = function (model, orderList, context, originServer, calledFrom) {
     var me = this,
-        continueAfterPaidReceipt, checkListCallback, errorCallback, orderLoaded, loadOrder, loadOrders, loadOrdersProcess, recursiveCallback, recursiveIdx, currentModel, currentOrderList, currentContext, currentOriginServer, currentCalledFrom;
+        continueAfterPaidReceipt, checkListCallback, errorCallback, orderLoaded, loadOrder, loadOrders, loadOrdersProcess, recursiveCallback, recursiveIdx, currentModel, currentOrderList, currentContext, currentOriginServer;
 
     checkListCallback = function () {
       if (me.listOfReceipts && me.listOfReceipts.length > 0) {
@@ -170,7 +170,6 @@
       currentOrderList = orderList;
       currentContext = context;
       currentOriginServer = originServer;
-      currentCalledFrom = calledFrom;
       orderList.checkForDuplicateReceipts(model, function (order) {
         if (OB.MobileApp.model.get('terminal').terminalType.openrelatedreceipts && model.get('businessPartner') !== OB.MobileApp.model.get('terminal').businessPartner) {
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.SearchRelatedReceipts');
@@ -231,7 +230,6 @@
       currentOrderList = orderList;
       currentContext = context;
       currentOriginServer = originServer;
-      currentCalledFrom = calledFrom;
       orderLoaded([model]);
     } else {
       loadOrdersProcess(model, orderList, context, originServer, calledFrom);

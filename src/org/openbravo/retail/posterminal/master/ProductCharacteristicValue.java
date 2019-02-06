@@ -57,14 +57,14 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
     try {
       OBContext.setAdminMode(true);
       String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
-          .getString("pos"));
+      final OBRETCOProductList productList = POSUtils
+          .getProductListByPosterminalId(jsonsent.getString("pos"));
 
-      final Date terminalDate = OBMOBCUtils
-          .calculateServerDate(
-              jsonsent.getJSONObject("parameters").getString("terminalTime"),
-              jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset")
-                  .getLong("value"));
+      final Date terminalDate = OBMOBCUtils.calculateServerDate(
+          jsonsent.getJSONObject("parameters").getString("terminalTime"),
+          jsonsent.getJSONObject("parameters")
+              .getJSONObject("terminalTimeOffset")
+              .getLong("value"));
 
       final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
           terminalDate);
@@ -76,8 +76,8 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
       if (jsonsent.getJSONObject("parameters").has("filterProductList")
           && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
           && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null")) {
-        JSONArray filterProductList = jsonsent.getJSONObject("parameters").getJSONArray(
-            "filterProductList");
+        JSONArray filterProductList = jsonsent.getJSONObject("parameters")
+            .getJSONArray("filterProductList");
         paramValues.put("filterProductList", filterProductList);
       }
 
@@ -100,22 +100,20 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
     HQLPropertyList regularProductsCharacteristicHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    hqlQuery = "select "
-        + regularProductsCharacteristicHQLProperties.getHqlSelect()
-        + "from ProductCharacteristicValue pcv "
-        + "inner join pcv.characteristic characteristic "
+    hqlQuery = "select " + regularProductsCharacteristicHQLProperties.getHqlSelect()
+        + "from ProductCharacteristicValue pcv " + "inner join pcv.characteristic characteristic "
         + "inner join pcv.characteristicValue characteristicValue "
-        + "inner join pcv.product product "
-        + "inner join product.oBRETCOProlProductList opp "
+        + "inner join pcv.product product " + "inner join product.oBRETCOProlProductList opp "
         + "inner join product.pricingProductPriceList ppp "
         + "where opp.obretcoProductlist.id= :productListId "
         + "and ppp.priceListVersion.id= :priceListVersionId "
         + "and characteristic.obposUseonwebpos = true "
         + "and pcv.$filtersCriteria AND pcv.$hqlCriteria "
         + "and pcv.$naturalOrgCriteria and pcv.$readableSimpleClientCriteria "
-        + ((lastUpdated != null) ? "and (opp.$incrementalUpdateCriteria OR ppp.$incrementalUpdateCriteria OR "
-            + "pcv.$incrementalUpdateCriteria OR characteristic.$incrementalUpdateCriteria OR "
-            + "characteristicValue.$incrementalUpdateCriteria) "
+        + ((lastUpdated != null)
+            ? "and (opp.$incrementalUpdateCriteria OR ppp.$incrementalUpdateCriteria OR "
+                + "pcv.$incrementalUpdateCriteria OR characteristic.$incrementalUpdateCriteria OR "
+                + "characteristicValue.$incrementalUpdateCriteria) "
             : "and (opp.$incrementalUpdateCriteria AND ppp.$incrementalUpdateCriteria AND "
                 + "pcv.$incrementalUpdateCriteria AND characteristic.$incrementalUpdateCriteria AND "
                 + "characteristicValue.$incrementalUpdateCriteria) ")

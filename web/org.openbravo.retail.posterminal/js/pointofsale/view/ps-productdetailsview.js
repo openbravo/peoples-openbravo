@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, Backbone, enyo, _ */
+/*global OB, enyo, _ */
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore',
@@ -88,9 +88,7 @@ enyo.kind({
         me = this;
 
     if (product) {
-      var line = null,
-          lines = OB.MobileApp.model.receipt.get('lines'),
-          allLinesQty = 0;
+      var line = null;
       if (me.leftSubWindow && me.leftSubWindow.line) {
         line = me.leftSubWindow.line;
       }

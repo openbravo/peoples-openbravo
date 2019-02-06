@@ -53,12 +53,20 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISAUTOREGISTER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_HARDWAREMNG_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="OBPOS_HARDWAREMNG_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="OBPOS_HARDWAREMNG_AUTOREGISTER" unique="false">
+        <index-column name="ISAUTOREGISTER"/>
+        <whereClause><![CDATA[ISAUTOREGISTER='Y']]></whereClause>
+      </index>
       <check name="OBPOS_HARDWAREMNG_IDPDFPR_CHK"><![CDATA[ISPDFPRINTER IN ('Y', 'N')]]></check>
       <check name="OBPOS_HARDWAREMNG_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBPOS_HARDWAREMNG_ISRECPR_CHK"><![CDATA[ISRECEIPTPRINTER IN ('Y', 'N')]]></check>

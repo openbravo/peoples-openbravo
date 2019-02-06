@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, _, enyo, BigDecimal, localStorage, setTimeout */
+/*global OB, _, enyo, BigDecimal, setTimeout */
 
 (function () {
   // initialize the WebPOS terminal model that extends the core terminal model. after this, OB.MobileApp.model will be available
@@ -177,6 +177,12 @@
                       OB.UTIL.localStorage.setItem('terminalId', data[0].terminal.id);
                       terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
                       terminalModel.set('useEmbededBarcode', terminalModel.get('terminal').terminalType.useembededbarcodescanner);
+                      //Set document types from organization to terminaltype object
+                      terminalModel.get('terminal').terminalType.documentType = OB.MobileApp.model.get('context').organization.obposCDoctype;
+                      terminalModel.get('terminal').terminalType.documentTypeForReturns = OB.MobileApp.model.get('context').organization.obposCDoctyperet;
+                      terminalModel.get('terminal').terminalType.documentTypeForReconciliations = OB.MobileApp.model.get('context').organization.obposCDoctyperecon;
+                      terminalModel.get('terminal').terminalType.documentTypeForQuotations = OB.MobileApp.model.get('context').organization.obposCDoctypequot;
+
                       if (!terminalModel.usermodel) {
                         OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
                       } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error' && !OB.RR.RequestRouter.ignoreManifestLoadError()) {
@@ -629,8 +635,7 @@
         return;
       }
 
-      var i, paymentcashcurrency, paymentcash, paymentlegacy, max, me = this,
-          defaultpaymentcash, defaultpaymentcashcurrency;
+      var i, paymentcashcurrency, paymentcash, paymentlegacy, max, defaultpaymentcash, defaultpaymentcashcurrency;
 
       if (!OB.UTIL.isSupportedBrowser()) {
         OB.MobileApp.model.renderLogin();
@@ -827,7 +832,6 @@
       OB.debug("next process: renderTerminalMain");
       //MASTER DATA REFRESH
       var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc,
-          minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal,
           lastTotalRefresh = OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
           lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
           now = new Date().getTime(),
@@ -847,7 +851,6 @@
       }
       // Transform minIncRefresh and minTotalRefresh to miliseconds
       minIncRefresh = (minIncRefresh > 99999 ? 99999 : minIncRefresh) * 60 * 1000;
-      minTotalRefresh = minTotalRefresh * 60 * 1000;
 
       // Calculate the incremental interval in miliseconds
       intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
@@ -936,8 +939,7 @@
     },
 
     preLogoutActions: function (finalCallback) {
-      var criteria = {},
-          model;
+      var criteria = {};
       var me = this;
 
       function removeOneModel(model, collection, callback) {
@@ -956,7 +958,6 @@
       }
 
       function success(collection) {
-        var i, j, removeCallback;
         if (collection.length > 0) {
           _.each(collection.models, function (model) {
             model.set('ignoreCheckIfIsActiveOrder', true);
@@ -1375,8 +1376,7 @@
 
   // from this point, OB.MobileApp.model will be available
   // the initialization is done to a dummy variable to allow the model to be extendable
-  var initializeOBModelTerminal = new OB.Model.POSTerminal();
-
+  var initializeOBModelTerminal = new OB.Model.POSTerminal(); // eslint-disable-line no-unused-vars
   OB.POS = {
     modelterminal: OB.MobileApp.model,
     // kept fot backward compatibility. Deprecation id: 27646

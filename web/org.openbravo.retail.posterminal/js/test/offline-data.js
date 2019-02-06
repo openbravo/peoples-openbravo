@@ -1,22 +1,16 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global _,$,Backbone,test,ok,expect,module,console */
+/*global _,Backbone,asyncTest,ok,expect,module,start,equals*/
 
 module('Offline');
 
-function errorCallback() {
-  OB.error(arguments);
-}
-
-var clientId = '23C59575B9CF467C9620760EB255B389';
-var orgId = 'E443A31992CB4635AFCAEABE7183CE85';
 var dsProducts = new OB.DS.DataSource(new OB.DS.Request(OB.Model.Product));
 
 asyncTest('Load and cache products - WebSQL', function () {
