@@ -1586,7 +1586,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
       // Associate a GLItem with the overpayment amount to the payment which generates the
       // overpayment
-      if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0) {
+      if (writeoffAmt.compareTo(BigDecimal.ZERO) < 0) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt,
             paymentType.getPaymentMethod().getGlitemWriteoff(),
             payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
