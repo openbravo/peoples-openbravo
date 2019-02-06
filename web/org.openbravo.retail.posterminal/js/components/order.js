@@ -1249,7 +1249,7 @@ enyo.kind({
     }, this);
     this.multiOrders.on('change:selectedPayment', function (model) {
       OB.UTIL.HookManager.executeHooks('OBPOS_PayOpenTicketsPaymentSelected', {
-        order: this.listMultiOrders,
+        order: OB.MobileApp.view.$.containerWindow.getRoot().model.get('multiOrders'),
         paymentSelected: OB.MobileApp.model.paymentnames[model.get('selectedPayment')]
       });
     }, this);
