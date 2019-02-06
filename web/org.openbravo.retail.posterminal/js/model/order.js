@@ -3957,7 +3957,7 @@
         finishSetOrderType();
       }
       if (orderType === OB.DEC.One) {
-        this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
+        this.set('documentType', OB.UTIL.isCrossStoreReceipt(this) ? this.get('documentType') : OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
         if (options.saveOrder !== false) {
           approvalNeeded = false;
           servicesToApprove = '';
