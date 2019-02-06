@@ -4088,7 +4088,7 @@
       }
 
       _.each(this.get('lines').models, function (line) {
-        if (OB.UTIL.isCrossStoreReceipt(this)) {
+        if (OB.UTIL.isCrossStoreReceipt(this) && !line.has('originalOrderLineId')) {
           line.set('obposQtytodeliver', line.getDeliveredQuantity());
         } else if (!line.has('obposQtytodeliver')) {
           if (receiptCompleted) {
