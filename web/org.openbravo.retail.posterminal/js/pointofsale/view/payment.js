@@ -1533,7 +1533,7 @@ enyo.kind({
     }
   },
   setDisabledIfSynchronized: function () {
-    var value = this.lastDisabledStatus || false;
+    var value = this.lastDisabledStatus || this.isLocked || false;
     if (this.isLocked) {
       value = true;
     }
@@ -2102,7 +2102,7 @@ enyo.kind({
     }
   },
   setDisabledIfSynchronized: function () {
-    var value = this.lastDisabledStatus || false;
+    var value = this.lastDisabledStatus || this.isLocked || false;
     if (this.isLocked) {
       value = true;
     }
@@ -2249,7 +2249,7 @@ enyo.kind({
     }
   },
   setDisabledIfSynchronized: function () {
-    var value = this.lastDisabledStatus || false;
+    var value = this.lastDisabledStatus || this.isLocked || false;
     if (this.isLocked) {
       value = true;
     }
