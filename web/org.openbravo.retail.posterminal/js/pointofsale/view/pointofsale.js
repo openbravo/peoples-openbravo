@@ -497,7 +497,7 @@ enyo.kind({
       });
       return false;
     }
-    if (targetOrder.get('isEditable') === false || targetOrder.get('isCrossStoreReturn') === true) {
+    if (targetOrder.get('isEditable') === false || OB.UTIL.isCrossStoreReceipt(targetOrder)) {
       targetOrder.canAddAsServices(this.model, inEvent.product, function (addAsServices) {
         if (addAsServices !== 'ABORT') {
           if (addAsServices === 'OK') {
