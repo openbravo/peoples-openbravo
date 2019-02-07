@@ -2034,7 +2034,12 @@ enyo.kind({
   classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-reversePayment',
   tap: function () {
     var me = this;
-
+    if (OB.MobileApp.model.get('terminal').id !== me.owner.model.get('oBPOSPOSTerminal')) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblReverse'), OB.I18N.getLabel('OBPOS_CrossReversePayment', [me.owner.model.get('oBPOSPOSTerminalSearchKey')]), [{
+        label: OB.I18N.getLabel('OBMOBC_LblOk')
+      }]);
+      return;
+    }
     OB.UTIL.showConfirmation.display(
     OB.I18N.getLabel('OBPOS_LblReverse'), OB.I18N.getLabel('OBPOS_ReverseConfirm'), [{
       label: OB.I18N.getLabel('OBPOS_LblOk'),
