@@ -51,34 +51,14 @@ function formatFiles {
         echo "Checking $# files"
     fi
 
-    for file in "$@"; do
-        runFormatter "${file}"
-    done
-}
-
-# TODO: When this issue is closed, replace with --list-different: https://github.com/prettier/prettier/issues/4612
-function runFormatter {
-    file=$1
-    npm run jsformatter --prefix ${KERNEL_MODULE_PATH} -s -- "${file}" > "${file}.prettier"
-    if ! diff -u "${file}" "${file}.prettier"; then
-        if [[ ${WRITE} == false ]] ; then
-            echo ""
-            echo "*****************************************************************************************************"
-            echo "Lines not properly formatted found."
-            echo "Please, format ${file}"
-            echo "*****************************************************************************************************"
-            echo ""
-            rm -rf "${file}.prettier"
-            #exit 1
-        else
-            cat "${file}.prettier" > "${file}"
-            echo "File formatted: ${file}";
-        fi
+    FLAGS=""
+    if [[ ${WRITE} == true ]]; then
+        FLAGS="--write"
+    else
+        FLAGS="--check"
     fi
 
-    if [[ -n "${file}" ]]; then
-        rm -rf "${file}.prettier"
-    fi
+    echo "$@" | xargs --max-args 250 npm run jsformatter --prefix ${KERNEL_MODULE_PATH} -s -- ${FLAGS} || exit 1
 }
 
 #Parse input arguments

@@ -16,6 +16,9 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source ${SCRIPT_DIR}/../jsutils/dir-functions
+
 if ! [[ -x "$(command -v npm)" ]]; then
     echo -e "\n\033[0;31mERROR:\033[0m npm command not found. Install using"
     echo -e "  sudo apt install npm\n";
@@ -36,19 +39,10 @@ function installNodePackagesIfNeeded {
         npm install
         cd "${originalDir}"
     fi
+    echo "Npm and all required tools are installed. Done!"
 }
 
-echo "Checking npm and required packages are installed"
+echo "Checking npm and required packages are installed..."
 
-KERNEL_MODULE_PATH="."
-if [[ -d "../../modules" ]]; then
-    KERNEL_MODULE_PATH="../org.openbravo.client.kernel"
-elif [[ -d "./modules" ]]; then
-    KERNEL_MODULE_PATH="./modules/org.openbravo.client.kernel"
-else
-    echo -e "\n\033[0;31mError:\033[0m \"$(pwd)\" is not a valid path to run the linter"
-    echo "Scan either from the Openbravo or a module root directory"
-    exit 1
-fi
-
+KERNEL_MODULE_PATH=$(getKernelModulePath)
 installNodePackagesIfNeeded ${KERNEL_MODULE_PATH}

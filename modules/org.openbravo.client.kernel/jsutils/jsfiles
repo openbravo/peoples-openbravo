@@ -19,6 +19,11 @@
 #
 # Find all *.js files that should be processed
 # Each module can define a .jsexclude in their module's root folder that updates the EXCLUDED array
+# Files matching the pattern defined in .jsexclude will not be listed in this script.
+#
+# Note that there are two types of exclude files:
+# * .jsexclude defined in org.openbravo.client.kernel: These patterns will be applied to all modules in the project
+# * .jsexclude defined in any other module. Its patterns will only be applied to files contained in this module.
 #
 
 # Scan .js files starting from the location defined as argument. If none, $(pwd) will be used
