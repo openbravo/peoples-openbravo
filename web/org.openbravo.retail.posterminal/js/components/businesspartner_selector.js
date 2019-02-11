@@ -198,11 +198,11 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalBpSelectorScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  filterModel: OB.Model.BPartnerFilter,
   components: [{
     style: 'padding: 10px;',
     kind: 'OB.UI.FilterSelectorTableHeader',
-    name: 'filterSelector',
-    filterModel: OB.Model.BPartnerFilter
+    name: 'filterSelector'
   }, {
     style: 'padding: 7px;',
     showing: true,
@@ -228,7 +228,21 @@ enyo.kind({
         }]
       }]
     }]
-  }]
+  }],
+  initComponents: function () {
+    var filterProperties = this.filterModel.getFilterPropertiesWithSelectorPreference();
+    _.each(filterProperties, function (prop) {
+      // Set filter options for bpCategory and taxID
+      if (prop.name === 'bpCategory') {
+        prop.filter = OB.MobileApp.model.get('terminal').bp_showcategoryselector;
+      }
+      if (prop.name === 'taxID') {
+        prop.filter = OB.MobileApp.model.get('terminal').bp_showtaxid;
+      }
+    }, this);
+    this.filters = filterProperties;
+    this.inherited(arguments);
+  }
 });
 
 enyo.kind({
@@ -850,7 +864,8 @@ enyo.kind({
   model: OB.Model.BPartnerFilter,
   initComponents: function () {
     this.inherited(arguments);
-    _.each(this.model.getProperties(), function (prop) {
+    var filterProperties = this.model.getFilterPropertiesWithSelectorPreference();
+    _.each(filterProperties, function (prop) {
       // Set filter options for bpCategory and taxID
       if (prop.name === 'bpCategory') {
         prop.filter = OB.MobileApp.model.get('terminal').bp_showcategoryselector;
@@ -859,6 +874,6 @@ enyo.kind({
         prop.filter = OB.MobileApp.model.get('terminal').bp_showtaxid;
       }
     }, this);
-    this.setFilters(this.model.getProperties());
+    this.setFilters(filterProperties);
   }
 });

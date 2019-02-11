@@ -67,7 +67,7 @@
     name: 'bpCategory',
     column: 'bp.c_bp_group_name',
     serverColumn: 'bp.businessPartnerCategory.name',
-    filter: false,
+    filter: true,
     type: 'TEXT',
     caption: 'OBPOS_BPCategory',
     location: false
@@ -75,7 +75,7 @@
     name: 'taxID',
     column: 'bp.taxID',
     serverColumn: 'bp.taxID',
-    filter: false,
+    filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblTaxId',
     location: false
