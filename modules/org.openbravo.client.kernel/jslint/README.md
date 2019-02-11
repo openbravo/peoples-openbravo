@@ -31,6 +31,8 @@ You can also use the jslint script to run the linter for a file or a set of file
  ./modules/org.openbravo.client.kernel/jslint/jslint modules/org.openbravo.client.application/web/org.openbravo.client.application/js/utilities/ob-utilities.js
 ```
 
+Run `jslint -h` to see all options available.
+
 **NOTE:**
  it is possible that you have to set the executable flag on the jslint script in org.openbravo.client.kernel/jslint.
 

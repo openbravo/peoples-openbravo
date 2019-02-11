@@ -38,10 +38,9 @@ echo "Performing jslint check on modified js resources"
 FILES=()
 for i in $(hg log -r $HG_NODE --template '{files}')
 do
-  printf "Checking ${i}\n"
   if [[ -f "${i}" ]]; then
-    if [[ "${IS_A_MODULE}" == true && -n "$(echo $i | awk '/.js$/')" || \
-          "${IS_A_MODULE}" == false && -n "$(echo $i | awk '/.js$/ && ! /^web/')" ]]; then
+    if [[ "${IS_A_MODULE}" == true && -n "$(echo ${i} | awk '/.js$/')" || \
+          "${IS_A_MODULE}" == false && -n "$(echo ${i} | awk '/.js$/ && ! /^web/')" ]]; then
         FILES+=("$(pwd)/${i}")
     fi
   fi

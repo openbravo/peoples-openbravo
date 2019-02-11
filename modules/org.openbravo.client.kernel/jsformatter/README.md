@@ -7,15 +7,7 @@ In order to run these scripts, you need to have npm and nodejs installed.
 Add these lines in your hgrc file:
 ```
 [hooks]
-pre-commit = <path-to-openbravo>/modules/org.openbravo.client.kernel/jsformatter/jscheck-format-hg
-```
-
-### Modules
-Add these lines to your hgrc file in the .hg directory in your module:
-
-```
-[hooks]
-pre-commit = ../org.openbravo.client.kernel/jsformatter/jscheck-format-module-hg
+pre-commit = <path-to-openbravo>/modules/org.openbravo.client.kernel/jsformatter/jsformatter-hg
 ```
 
 ## Running jslint directly
@@ -23,15 +15,24 @@ pre-commit = ../org.openbravo.client.kernel/jsformatter/jscheck-format-module-hg
 ### Core
 To run the formatter to all js files in the project, run the following in Openbravo root folder:
 ```
- ./modules/org.openbravo.client.kernel/jsformatter/jscheck-format
+ ./modules/org.openbravo.client.kernel/jsformatter/jsformatter
 ```
 
 ### Modules
 To run the formatter directly for a module, go to the module directory and do:
 
 ```
- ../org.openbravo.client.kernel/jslint/jsformatter/jscheck-format-module
+ ../org.openbravo.client.kernel/jsformatter/jsformatter
 ```
+
+### Individual files
+You can also use the jsformatter script to check format for a file or a set of files.
+
+```
+ ./modules/org.openbravo.client.kernel/jsformatter/jsformatter modules/org.openbravo.client.application/web/org.openbravo.client.application/js/utilities/ob-utilities.js
+```
+
+Run `jsformatter -h` to see all options available.
 
 **NOTE:**
  it is possible that you have to set the executable flag on the jslint and jscheck scripts in org.openbravo.client.kernel/jslint.

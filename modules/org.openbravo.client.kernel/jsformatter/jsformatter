@@ -15,33 +15,128 @@
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
+#
+#set -e
+
+SCRIPT_NAME=$(basename "$0")
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+VERBOSE=false
+WRITE=false
+
+function usage() {
+  echo -n "Usage: ${SCRIPT_NAME} [-h][-v][-w] [FILE ...]
+
+Utility to pass the Javascript Formatter to the given files, or all files from the current directory if none given.
+With no arguments, scan all files starting from the current directory taking into account .jsexclude files.
+(see jsfiles for further explanation)
+
+ Options:
+  -h                Display this help and exit
+  -v                Verbose mode. Shows additional output
+  -w                Write mode. Show formatting issues and overwrites the files with the fixes
+
+"
+}
 
 #
-# Script used by other scripts to pass the formatter to a single js file given as argument from the project root.
-# Note that received path must be absolute or relative to modules/org.openbravo.client.kernel.
+# Execute the Linter splitting the list of files in chunks of max 250 arguments. This is done because "npm run" argument
+# size limit is much lower than the one in bash commands.
 #
-set -e
+function formatFiles {
+    if [[ ${VERBOSE} == true ]]; then
+        echo "Checking the following files: $@"
+    else
+        echo "Checking $# files"
+    fi
 
-source ./modules/org.openbravo.client.kernel/jsutils/check-dependencies
+    for file in "$@"; do
+        runFormatter "${file}"
+    done
+}
 
-changedfile="$1"
-replaceparam="$2"
-npm run jsformatter -s --prefix ./modules/org.openbravo.client.kernel -- "$changedfile" > "$changedfile.prettier"
-if ! diff -u "$changedfile" "$changedfile.prettier"; then
-  if [ "$replaceparam" != "replace" ] ; then
-    echo ""
-    echo "******************************************************************************************************************************************************"
-    echo "See above Formatter Error --> Please, format $changedfile";
-    echo "******************************************************************************************************************************************************"
-    echo ""
-    rm -rf "$changedfile.prettier"
-    export ERROR="1"
-  else
-    cat "$changedfile.prettier" > "$changedfile"
-    echo "Formatter --> File formatted: $changedfile";
-  fi
+# TODO: When this issue is closed, replace with --list-different: https://github.com/prettier/prettier/issues/4612
+function runFormatter {
+    file=$1
+    npm run jsformatter --prefix ${KERNEL_MODULE_PATH} -s -- ${file} > "${file}.prettier"
+    if ! diff -u "${file}" "${file}.prettier"; then
+        if [[ ${WRITE} == false ]] ; then
+            echo ""
+            echo "*****************************************************************************************************"
+            echo "Lines not properly formatted found."
+            echo "Please, format ${file}"
+            echo "*****************************************************************************************************"
+            echo ""
+            rm -rf "${file}.prettier"
+            exit 1
+        else
+            cat "${file}.prettier" > "${file}"
+            echo "File formatted: ${file}";
+        fi
+    fi
+
+    if [[ -n "${file}" ]]; then
+        rm -rf "${file}.prettier"
+    fi
+}
+
+#
+# Assuming the received argument is a list of files, it will check whether the paths are absolute or relative. In case
+# the path is relative, it will be converted to absolute.
+#
+function convertFiles {
+    for arg in "$@"; do
+        if [[ "${arg:0:1}" = "/" ]]; then
+            echo "${arg} "
+        else
+            echo "$(pwd)/${arg} "
+        fi
+    done
+}
+
+#Parse input arguments
+while getopts ":hvw" arg; do
+    case ${arg} in
+        h )
+            usage
+            exit 0
+        ;;
+        v )
+            VERBOSE=true
+        ;;
+        w )
+            WRITE=true
+        ;;
+        \? )
+            echo "Invalid option: -$OPTARG" >&2
+            usage
+            exit 1
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+
+KERNEL_MODULE_PATH="."
+SCAN_BASE_PATH=""
+if [[ -d "../../modules" ]]; then
+    # Running from module
+    KERNEL_MODULE_PATH="../org.openbravo.client.kernel"
+    SCAN_BASE_PATH="$(pwd)"
+elif [[ -d "./modules" ]]; then
+    # Running from Openbravo root
+    KERNEL_MODULE_PATH="./modules/org.openbravo.client.kernel"
+    SCAN_BASE_PATH="$(pwd)/modules"
+else
+    echo -e "\n\033[0;31mError:\033[0m \"$(pwd)\" is not a valid path to run the linter"
+    echo "Scan either from the Openbravo or a module root directory"
+    exit 1
 fi
 
-if [[ -n "$changedfile" ]]; then
-    rm -rf "$changedfile.prettier"
+source ${SCRIPT_DIR}/../jsutils/check-npm-deps
+
+if [[ $# > 0 ]]; then
+    files=$(convertFiles $@)
+    formatFiles ${files}
+else
+    files=$(${KERNEL_MODULE_PATH}/jsutils/jsfiles ${SCAN_BASE_PATH})
+    formatFiles ${files}
 fi

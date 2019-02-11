@@ -17,22 +17,39 @@
 # ************************************************************************
 
 #
-# Mercurial pre-commit hook for checking js file formatting in modules
+# Mercurial pre-commit hook to check formatting in js code
 #
 set -e
 
-replaceparam=$1
-if [ "$replaceparam" != "replace" ] ; then
- echo "Performing formatting check on all js resources"
+KERNEL_MODULE_PATH="."
+IS_A_MODULE=false
+if [[ -d "../../modules" ]]; then
+    # Running from module
+    KERNEL_MODULE_PATH="../org.openbravo.client.kernel"
+    IS_A_MODULE=true
+elif [[ -d "./modules" ]]; then
+    # Running from Openbravo root
+    KERNEL_MODULE_PATH="./modules/org.openbravo.client.kernel"
 else
- echo "Performing formatting replacement on all js resources"
+    echo -e "\n\033[0;31mError:\033[0m \"$(pwd)\" is not a valid path to run the formatter"
+    echo "Scan either from the Openbravo or a module root directory"
+    exit 1
 fi
 
+echo "Performing formatting check on modified js resources"
+FILES=()
 for changedfile in $(hg st -ma)
 do
-  if [ -f "$changedfile" -a -n "$(echo $changedfile | awk '/.js$/')" ]; then
-    filefullpath="$(pwd)/${changedfile}"
-    source ../org.openbravo.client.kernel/jsformatter/jsformatter-module ${filefullpath} ${replaceparam}
+  if [[ -f "${changedfile}" ]]; then
+    if [[ "${IS_A_MODULE}" == true && -n "$(echo ${changedfile} | awk '/.js$/')" || \
+          "${IS_A_MODULE}" == false && -n "$(echo ${changedfile} | awk '/.js$/ && ! /^web/')" ]]; then
+        FILES+=("$(pwd)/${changedfile}")
+    fi
   fi
 done
-exit $ERROR
+
+if [[ -n "${FILES[*]}" ]]; then
+    ${KERNEL_MODULE_PATH}/jsformatter/jsformatter ${FILES[*]} || exit 1
+fi
+
+exit 0
