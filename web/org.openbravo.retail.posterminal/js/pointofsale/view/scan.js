@@ -97,10 +97,11 @@ enyo.kind({
       components: [{
         name: 'msgwelcome',
         showing: false,
-        style: 'padding: 10px;',
+        style: 'padding: 6px;',
         components: [{
           style: 'float:right;',
-          name: 'msgwelcomeLbl'
+          name: 'msgwelcomeLbl',
+          classes: 'msgwelcomeLbl'
         }]
       }, {
         name: 'msgaction',

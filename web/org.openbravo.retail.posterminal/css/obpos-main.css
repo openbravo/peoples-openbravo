@@ -776,6 +776,19 @@ li.selected > button.btnselect-orderline.btnselect-orderline-edit > div > div.or
     max-height: 100%;
 }
 
+.msgwelcomeLbl{
+  align-items: center;
+  background-image: url(./../img/OpenbravoWelcomeLogo.svg);
+  background-position-x: right;
+  background-repeat: no-repeat;
+  background-size: 95px 23px;
+  display: flex;
+  font-size: 16px;
+  height: 23px;
+  justify-content: flex-end;
+  padding: 2px 102px 0px 0px;
+}
+
 button.payment-changebutton {
   padding: 5px;
   margin: -5px 10px 0px 0px;
