@@ -19,20 +19,13 @@
 #
 # Mercurial pretxncommit hook to check linting in js code
 #
-KERNEL_MODULE_PATH="."
-IS_A_MODULE=false
-if [[ -d "../../modules" ]]; then
-    # Running from module
-    KERNEL_MODULE_PATH="../org.openbravo.client.kernel"
-    IS_A_MODULE=true
-elif [[ -d "./modules" ]]; then
-    # Running from Openbravo root
-    KERNEL_MODULE_PATH="./modules/org.openbravo.client.kernel"
-else
-    echo -e "\n\033[0;31mError:\033[0m \"$(pwd)\" is not a valid path to run the linter"
-    echo "Scan either from the Openbravo or a module root directory"
-    exit 1
-fi
+set -e
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source ${SCRIPT_DIR}/../jsutils/dir-functions
+
+KERNEL_MODULE_PATH=$(getKernelModulePath)
+IS_A_MODULE=$(isCurrentFolderModuleRoot)
 
 echo "Performing jslint check on modified js resources"
 FILES=()

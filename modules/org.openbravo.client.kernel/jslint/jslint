@@ -15,10 +15,13 @@
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
+set -e
 
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 VERBOSE=false
+
+source ${SCRIPT_DIR}/../jsutils/dir-functions
 
 function usage() {
   echo -n "Usage: ${SCRIPT_NAME} [-h][-v] [FILE ...]
@@ -48,20 +51,6 @@ function lintFiles {
     echo "$@" | xargs --max-args 250 npm run jslint --prefix ${KERNEL_MODULE_PATH} -s || exit 1
 }
 
-#
-# Assuming the received argument is a list of files, it will check whether the paths are absolute or relative. In case
-# the path is relative, it will be converted to absolute.
-#
-function convertFiles {
-    for arg in "$@"; do
-        if [[ "${arg:0:1}" = "/" ]]; then
-            echo "${arg} "
-        else
-            echo "$(pwd)/${arg} "
-        fi
-    done
-}
-
 #Parse input arguments
 while getopts ":hv" arg; do
     case ${arg} in
@@ -81,26 +70,13 @@ while getopts ":hv" arg; do
 done
 shift $((OPTIND-1))
 
-KERNEL_MODULE_PATH="."
-SCAN_BASE_PATH=""
-if [[ -d "../../modules" ]]; then
-    # Running from module
-    KERNEL_MODULE_PATH="../org.openbravo.client.kernel"
-    SCAN_BASE_PATH="$(pwd)"
-elif [[ -d "./modules" ]]; then
-    # Running from Openbravo root
-    KERNEL_MODULE_PATH="./modules/org.openbravo.client.kernel"
-    SCAN_BASE_PATH="$(pwd)/modules"
-else
-    echo -e "\n\033[0;31mError:\033[0m \"$(pwd)\" is not a valid path to run the linter"
-    echo "Scan either from the Openbravo or a module root directory"
-    exit 1
-fi
+KERNEL_MODULE_PATH=$(getKernelModulePath)
+SCAN_BASE_PATH=$(getJsFilesScanPath)
 
 source ${SCRIPT_DIR}/../jsutils/check-npm-deps
 
 if [[ $# > 0 ]]; then
-    files=$(convertFiles $@)
+    files=$(convertPathsToAbsolute $@)
     lintFiles ${files}
 else
     files=$(${KERNEL_MODULE_PATH}/jsutils/jsfiles ${SCAN_BASE_PATH})
