@@ -325,6 +325,7 @@ enyo.kind({
               invoice.set('loadedFromServer', true);
               invoice.set('checked', true);
               invoice.set('belongsToMultiOrder', true);
+              invoice.set('isInvoice', true);
               invoice.calculateGrossAndSave(false, function () {
                 try {
                   OB.UTIL.HookManager.executeHooks('OBPOS_PrePrintPaidReceipt', {
