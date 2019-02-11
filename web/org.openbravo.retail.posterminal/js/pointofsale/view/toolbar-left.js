@@ -238,7 +238,7 @@ enyo.kind({
     onChangedTotal: 'renderTotal',
     onRightToolbarDisabled: 'disabledButton'
   },
-  processesToListen: ['calculateReceipt', 'clearWith', 'addProduct'],
+  processesToListen: ['calculateReceipt', 'completeQuotation', 'clearWith', 'addProduct'],
   isEnabled: true,
   disabledButton: function (inSender, inEvent) {
     if (inEvent.exceptionPanel === this.tabPanel) {
@@ -386,16 +386,18 @@ enyo.kind({
         var cbk = function () {
             receipt.prepareToSend(function () {
               receipt.trigger('closed', {
-                callback: function () {
+                callback: function (args) {
                   //In case the processed document is a quotation, we remove its id so it can be reactivated
-                  if (receipt.get('isQuotation')) {
-                    if (!(receipt.get('oldId') && receipt.get('oldId').length > 0)) {
-                      receipt.set('oldId', receipt.get('id'));
+                  if (args && !args.isCancelled) {
+                    if (receipt.get('isQuotation')) {
+                      if (!(receipt.get('oldId') && receipt.get('oldId').length > 0)) {
+                        receipt.set('oldId', receipt.get('id'));
+                      }
+                      receipt.set('isbeingprocessed', 'N');
                     }
-                    receipt.set('isbeingprocessed', 'N');
-                  }
-                  if (OB.MobileApp.model.get('permissions')['OBPOS_print.quotation']) {
-                    receipt.trigger('print');
+                    if (OB.MobileApp.model.get('permissions')['OBPOS_print.quotation']) {
+                      receipt.trigger('print');
+                    }
                   }
                   enyo.$.scrim.hide();
                   receipt.trigger('scan');
