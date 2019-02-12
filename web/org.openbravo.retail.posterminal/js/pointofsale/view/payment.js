@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -374,7 +374,7 @@ enyo.kind({
     this.receipt.on('paymentCancel', function () {
       this.$.layawayaction.setDisabled(false);
       this.$.donebutton.setDisabled(false);
-      this.$.creditsalesaction.putDisabled(false);
+      this.$.creditsalesaction.setDisabled(false);
       if (OB.MobileApp.view.openedPopup === null) {
         enyo.$.scrim.hide();
       }
@@ -1531,8 +1531,8 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   drawerOpened: true,
   isLocked: true,
-  lasDisabledPetition: true,
-  processesToListen: ['showPaymentTab', 'updatePending', 'updatePendingMultiOrders', 'cancelLayaway'],
+  lastDisabledStatus: true,
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'updatePending', 'updatePendingMultiOrders', 'cancelLayaway'],
   disableButton: function () {
     this.isLocked = true;
     this.setDisabledIfSynchronized();
@@ -1542,7 +1542,7 @@ enyo.kind({
     this.setDisabledIfSynchronized();
   },
   setDisabled: function (value) {
-    this.lasDisabledPetition = value;
+    this.lastDisabledStatus = value;
     if (value) {
       this.disableButton();
     } else {
@@ -1550,18 +1550,12 @@ enyo.kind({
     }
   },
   setDisabledIfSynchronized: function () {
-    var value = this.lasDisabledPetition;
-    // check arguments
-    if (value === undefined) {
-      // be sure that the value is always valid
-      OB.UTIL.Debug.execute(function () {
-        throw "The disabled value must be true or false";
-      });
-      value = false;
-    }
-    // force disabled is there are pending synchronizations
+    var value = this.lastDisabledStatus || this.isLocked || false;
     if (this.isLocked) {
       value = true;
+    }
+    if (OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length > 0 && !value) {
+      return true;
     }
     this.disabled = value; // for getDisabled() to return the correct value
     this.setAttribute('disabled', value); // to effectively turn the button enabled or disabled    
@@ -1600,12 +1594,6 @@ enyo.kind({
         payments, isMultiOrder = myModel.get('leftColumnViewManager').isOrder() ? false : true,
         avoidPayment = false,
         orderDesc = '';
-
-    // Avoid closing the order before receipt is being calculated
-    if (this.owner.receipt.calculatingReceipt) {
-      OB.UTIL.showI18NError('OBPOS_ReceiptBeingPrepared');
-      return;
-    }
 
     //*** Avoid double click ***
     if (this.getContent() === OB.I18N.getLabel('OBPOS_LblDone')) {
@@ -2108,37 +2096,50 @@ enyo.kind({
   i18nLabel: 'OBPOS_LblSellOnCredit',
   classes: 'btn-icon-small btnlink-green',
   permission: 'OBPOS_receipt.creditsales',
+  disabled: false,
+  isLocked: true,
+  lastDisabledStatus: true,
   events: {
     onShowPopup: ''
+  },
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'updatePending', 'updatePendingMultiOrders'],
+  disableButton: function () {
+    this.isLocked = true;
+    this.setDisabledIfSynchronized();
+  },
+  enableButton: function () {
+    this.isLocked = false;
+    this.setDisabledIfSynchronized();
+  },
+  setDisabled: function (value) {
+    this.lastDisabledStatus = value;
+    if (value) {
+      this.disableButton();
+    } else {
+      this.enableButton();
+    }
+  },
+  setDisabledIfSynchronized: function () {
+    var value = this.lastDisabledStatus || this.isLocked || false;
+    if (this.isLocked) {
+      value = true;
+    }
+    if (OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length > 0 && !value) {
+      return true;
+    }
+    this.disabled = value;
+    this.setAttribute('disabled', value);
   },
   init: function (model) {
     this.model = model;
   },
-  disabled: false,
-  putDisabled: function (status) {
-    if (status === false) {
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
-    } else {
-      this.setDisabled(true);
-      this.addClass('disabled');
-      this.disabled = true;
-    }
-  },
   initComponents: function () {
     this.inherited(arguments);
-    this.putDisabled(!OB.MobileApp.model.hasPermission(this.permission));
+    this.setDisabled(!OB.MobileApp.model.hasPermission(this.permission));
   },
   tap: function () {
     if (this.disabled) {
       return true;
-    }
-
-    // Avoid closing the order before receipt is being calculated
-    if (this.owner.receipt.calculatingReceipt) {
-      OB.UTIL.showI18NError('OBPOS_ReceiptBeingPrepared');
-      return;
     }
 
     if (!_.isNull(this.model.get('order').get('bp')) && _.isNull(this.model.get('order').get('bp').get('locId'))) {
@@ -2164,7 +2165,7 @@ enyo.kind({
         });
       }
     }
-    this.putDisabled(true);
+    this.setDisabled(true);
     var me = this,
         paymentstatus = this.model.get('order').getPaymentStatus(),
         process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
@@ -2199,7 +2200,7 @@ enyo.kind({
         } else {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
         }
-        me.putDisabled(false);
+        me.setDisabled(false);
       }, function () {
         if (OB.MobileApp.model.hasPermission('OBPOS_AllowSellOnCreditWhileOffline', true)) {
           me.doShowPopup({
@@ -2215,7 +2216,7 @@ enyo.kind({
             label: OB.I18N.getLabel('OBMOBC_LblOk')
           }]);
         }
-        me.putDisabled(false);
+        me.setDisabled(false);
       });
       //    } else if (this.model.get('order').get('orderType') === 1) {
     } else if (paymentstatus.isReturn) {
@@ -2238,10 +2239,10 @@ enyo.kind({
   content: '',
   classes: 'btn-icon-small btnlink-green',
   permission: 'OBPOS_receipt.layawayReceipt',
-  init: function (model) {
-    this.model = model;
-    this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
-  },
+  disabled: false,
+  isLocked: true,
+  lastDisabledStatus: true,
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'updatePending', 'updatePendingMultiOrders'],
   updateVisibility: function (isVisible) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {
       this.hide();
@@ -2253,9 +2254,36 @@ enyo.kind({
     }
     this.show();
   },
+  disableButton: function () {
+    this.isLocked = true;
+    this.setDisabledIfSynchronized();
+  },
+  enableButton: function () {
+    this.isLocked = false;
+    this.setDisabledIfSynchronized();
+  },
   setDisabled: function (value) {
+    this.lastDisabledStatus = value;
+    if (value) {
+      this.disableButton();
+    } else {
+      this.enableButton();
+    }
+  },
+  setDisabledIfSynchronized: function () {
+    var value = this.lastDisabledStatus || this.isLocked || false;
+    if (this.isLocked) {
+      value = true;
+    }
+    if (OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length > 0 && !value) {
+      return true;
+    }
     this.disabled = value;
     this.setAttribute('disabled', value);
+  },
+  init: function (model) {
+    this.model = model;
+    this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
   },
   tap: function () {
     var receipt = this.owner.receipt,
@@ -2263,11 +2291,6 @@ enyo.kind({
         myModel = this.owner.model,
         payments, paymentStatus, prepaymentLayawayLimitAmount, receiptHasPrepaymentAmount, pendingPrepayment, hasPayments, allowApproval;
     var continueExecuting = function (receipt, negativeLines, me, myModel, payments) {
-        // Avoid closing the order before receipt is being calculated
-        if (receipt.calculatingReceipt) {
-          OB.UTIL.showI18NError('OBPOS_ReceiptBeingPrepared');
-          return;
-        }
 
         if (!_.isNull(receipt.get('bp')) && _.isNull(myModel.get('order').get('bp').get('locId'))) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'), [{
