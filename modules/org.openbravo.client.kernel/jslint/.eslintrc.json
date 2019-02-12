@@ -17,10 +17,6 @@
     "BigDecimal": "readable"
   },
   "rules": {
-    "comma-dangle": ["error", "never"],
-    "semi": ["error", "always"],
-    "eol-last": ["error", "always"],
-
     "no-unused-vars": ["warn", {
       "args": "none"
     }],
