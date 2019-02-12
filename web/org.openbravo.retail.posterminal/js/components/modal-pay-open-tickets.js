@@ -331,6 +331,8 @@ enyo.kind({
   },
   doneAction: function () {
     var selectedMultiOrders = [],
+        alreadyPaidOrders = [],
+        alreadyPaidOrdersDocNo = '',
         me = this,
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts'),
         checkedMultiOrders = _.compact(this.parent.parent.parent.$.body.$.receiptsForPayOpenTicketsList.receiptList.map(function (e) {
@@ -339,26 +341,14 @@ enyo.kind({
         }
       })),
         addOrdersToOrderList, i, j, wrongOrder, firstCheck = true,
-        cancellingOrdersToCheck = me.owner.owner.model.get('orderList').models;
+        cancellingOrdersToCheck = me.owner.owner.model.get('orderList').models,
+        showSomeOrderIsPaidPopup;
 
     if (checkedMultiOrders.length === 0) {
       return true;
     }
 
-    addOrdersToOrderList = _.after(checkedMultiOrders.length, function () {
-      var i = 0,
-          receipt, wrongDocNo = null;
-      for (i = 0; i < selectedMultiOrders.length; i++) {
-        receipt = selectedMultiOrders[i];
-        if (receipt.getPayment() >= receipt.getGross()) {
-          wrongDocNo = receipt.get('documentNo');
-          break;
-        }
-      }
-      if (wrongDocNo) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_PaidOrder', [wrongDocNo]));
-        return;
-      }
+    showSomeOrderIsPaidPopup = function () {
       OB.UTIL.StockUtils.checkOrderLinesStock(selectedMultiOrders, function (hasStock) {
         if (hasStock) {
           OB.UTIL.HookManager.executeHooks('OBPOS_PreMultiOrderHook', {
@@ -376,6 +366,25 @@ enyo.kind({
           });
         }
       });
+    };
+
+    addOrdersToOrderList = _.after(checkedMultiOrders.length, function () {
+      if (alreadyPaidOrdersDocNo) {
+        if (checkedMultiOrders.length === alreadyPaidOrders.length) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_PaidOrderAllPaid', [alreadyPaidOrdersDocNo]));
+          return;
+        } else {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_Warning'), OB.I18N.getLabel('OBPOS_PaidOrder', [alreadyPaidOrdersDocNo]), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isConfirmButton: true,
+            action: function () {
+              showSomeOrderIsPaidPopup();
+            }
+          }]);
+        }
+      } else {
+        showSomeOrderIsPaidPopup();
+      }
     });
 
     OB.UTIL.showLoading(true);
@@ -456,17 +465,24 @@ enyo.kind({
         }, function (data) {
           if (data) {
             me.owner.owner.model.get('orderList').newPaidReceipt(data[0], function (order) {
-              order.set('loadedFromServer', true);
-              me.owner.owner.model.get('orderList').addMultiReceipt(order);
-              order.set('checked', iter.get('checked'));
-              OB.DATA.OrderTaxes(order);
-              order.set('belongsToMultiOrder', true);
-              order.getPrepaymentAmount(function () {
-                order.calculateReceipt(function () {
-                  selectedMultiOrders.push(order);
-                  addOrdersToOrderList();
+              if ((order.get('isPaid') || order.get('isLayaway')) && order.getPayment() >= order.getGross()) {
+                OB.Dal.remove(order);
+                alreadyPaidOrders.push(order);
+                alreadyPaidOrdersDocNo = alreadyPaidOrdersDocNo.concat(' ' + order.get('documentNo'));
+                addOrdersToOrderList();
+              } else {
+                order.set('loadedFromServer', true);
+                me.owner.owner.model.get('orderList').addMultiReceipt(order);
+                order.set('checked', iter.get('checked'));
+                OB.DATA.OrderTaxes(order);
+                order.set('belongsToMultiOrder', true);
+                order.getPrepaymentAmount(function () {
+                  order.calculateReceipt(function () {
+                    selectedMultiOrders.push(order);
+                    addOrdersToOrderList();
+                  });
                 });
-              });
+              }
             });
           } else {
             OB.UTIL.showLoading(false);
