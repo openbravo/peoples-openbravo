@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2018 Openbravo S.L.U.
+ * Copyright (C) 2017-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -167,15 +167,15 @@ enyo.kind({
       }
       me.$.renderLoading.hide();
       me.receiptList.reset();
-      me.$[this.getNameOfReceiptsListItemPrinter()].$.tempty.show();
+      me.$[me.getNameOfReceiptsListItemPrinter()].$.tempty.show();
       me.doHideSelector();
-      var i, message, tokens;
+      var i, message, tokens, getProperty;
 
-      function getProperty(property) {
-        return this.filterModel.getProperties().find(function (prop) {
+      getProperty = function (property) {
+        return me.filterModel.getProperties().find(function (prop) {
           return prop.name === property || prop.sortName === property;
         });
-      }
+      };
 
       // Generate a generic message if error is not defined
       if (OB.UTIL.isNullOrUndefined(error) || OB.UTIL.isNullOrUndefined(error.message)) {
