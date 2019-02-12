@@ -5748,7 +5748,7 @@
           _.forEach(groupedPromos, function (promotion) {
             if (!promoManual) {
               var promoAmt = 0,
-                  promotionQtyOffer = promotion.pendingQtyOffer || promotion.qtyOffer,
+                  promotionQtyOffer = promotion.lineQtyOffer || promotion.qtyOffer,
                   promoQtyoffer = promotionQtyOffer;
 
               _.forEach(linesToApply.models, function (line) {
@@ -5785,6 +5785,7 @@
                   clonedPromotion.pendingQtyoffer = line.get('qty') - clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.qtyOffer = clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.qtyOfferReserved = clonedPromotion.obdiscQtyoffer;
+                  clonedPromotion.lineQtyOffer = clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.doNotMerge = true;
                   if (!line.get('promotions')) {
                     line.set('promotions', []);
