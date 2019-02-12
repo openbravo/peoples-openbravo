@@ -435,6 +435,9 @@ public class PaidReceipts extends JSONProcessSimple {
                   objectIn.has("cashup") ? objectIn.get("cashup") : null);
               paidReceiptPayment.put("oBPOSPOSTerminal",
                   objectIn.has("posTerminal") ? objectIn.get("posTerminal") : null);
+              paidReceiptPayment.put("oBPOSPOSTerminalSearchKey",
+                  objectIn.has("posTerminalSearchKey") ? objectIn.get("posTerminalSearchKey")
+                      : null);
               // Call all payments in processes injected.
               executeHooks(paymentsInProcesses, paidReceiptPayment, null,
                   (String) objectIn.get("paymentId"));
@@ -517,6 +520,9 @@ public class PaidReceipts extends JSONProcessSimple {
                   objectIn.has("cashup") ? objectIn.get("cashup") : null);
               paidReceiptPayment.put("oBPOSPOSTerminal",
                   objectIn.has("posTerminal") ? objectIn.get("posTerminal") : null);
+              paidReceiptPayment.put("oBPOSPOSTerminalSearchKey",
+                  objectIn.has("posTerminalSearchKey") ? objectIn.get("posTerminalSearchKey")
+                      : null);
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }

@@ -136,14 +136,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalPayOpenTicketsScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  filterModel: OB.Model.VReturnsFilter,
   events: {
     onSearchAction: ''
   },
   components: [{
     style: 'padding: 10px;',
     kind: 'OB.UI.FilterSelectorTableHeader',
-    name: 'filterSelector',
-    filterModel: OB.Model.OrderFilter
+    name: 'filterSelector'
   }, {
     style: 'padding: 10px;',
     components: [{
@@ -157,6 +157,7 @@ enyo.kind({
     }]
   }],
   initComponents: function () {
+    this.filters = this.filterModel.getFilterPropertiesWithSelectorPreference();
     this.inherited(arguments);
     this.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
   }
@@ -168,7 +169,7 @@ enyo.kind({
   model: OB.Model.VReturnsFilter,
   initComponents: function () {
     this.inherited(arguments);
-    this.setFilters(OB.Model.VReturnsFilter.getProperties());
+    this.setFilters(OB.Model.VReturnsFilter.getFilterPropertiesWithSelectorPreference());
   }
 });
 

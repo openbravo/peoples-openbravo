@@ -35,6 +35,7 @@ public class PaidReceiptsPaymentsProperties extends ModelExtension {
         add(new HQLProperty("finPayment.documentNo", "documentNo"));
         add(new HQLProperty("obposAppCashup.id", "cashup"));
         add(new HQLProperty("oBPOSPOSTerminal.id", "posTerminal"));
+        add(new HQLProperty("oBPOSPOSTerminal.searchKey", "posTerminalSearchKey"));
       }
     };
 

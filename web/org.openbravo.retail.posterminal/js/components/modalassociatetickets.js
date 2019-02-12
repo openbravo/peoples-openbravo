@@ -68,11 +68,11 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalOrderScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  filterModel: OB.Model.OrderAssociationsFilter,
   components: [{
     classes: 'filterSelectorTableHeader',
     kind: 'OB.UI.FilterSelectorTableHeader',
-    name: 'filterSelector',
-    filterModel: OB.Model.OrderAssociationsFilter
+    name: 'filterSelector'
   }, {
     showing: true,
     classes: 'filterSelectorTableHeader_buttons',
@@ -95,7 +95,11 @@ enyo.kind({
         }]
       }]
     }]
-  }]
+  }],
+  initComponents: function () {
+    this.filters = this.filterModel.getFilterPropertiesWithSelectorPreference();
+    this.inherited(arguments);
+  }
 });
 
 /* items of collection */
@@ -661,6 +665,6 @@ enyo.kind({
   name: 'OB.UI.ModalAdvancedFilterOrders',
   initComponents: function () {
     this.inherited(arguments);
-    this.setFilters(OB.Model.OrderAssociationsFilter.getProperties());
+    this.setFilters(OB.Model.OrderAssociationsFilter.getFilterPropertiesWithSelectorPreference());
   }
 });

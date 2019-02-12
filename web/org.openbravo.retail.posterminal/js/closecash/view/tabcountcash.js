@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -19,6 +19,7 @@ enyo.kind({
       classes: 'row-fluid',
       components: [{
         classes: 'span12',
+        name: 'listItem',
         style: 'border-bottom: 1px solid #cccccc;',
         components: [{
           style: 'float:left; display: table; width: 50%',
@@ -73,8 +74,11 @@ enyo.kind({
     this.$.expected.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('expected'))));
   },
   render: function () {
-    var counted;
     this.inherited(arguments);
+    if (this.model.get('firstEmptyPayment')) {
+      this.$.listItem.addClass('cashup-first-empty-payment');
+    }
+    var counted;
     if (OB.MobileApp.model.get('permissions').OBPOS_HideCashUpInfoToCashier) {
       this.$.expected.hide();
       this.$.foreignExpected.hide();
@@ -101,9 +105,6 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ListPaymentMethods',
-  handlers: {
-    onAnyCounted: 'anyCounted'
-  },
   events: {
     onCountAllOK: '',
     onShowPopup: ''
@@ -168,37 +169,6 @@ enyo.kind({
                 listStyle: 'list'
               }]
             }, {
-              components: [{
-                classes: 'row-fluid',
-                components: [{
-                  classes: 'span12',
-                  style: 'border-bottom: 1px solid #cccccc;',
-                  components: [{
-                    style: 'float: left; display:table; width: 50%; ',
-                    components: [{
-                      style: 'display:table-cell; width: 100%;',
-                      content: '&nbsp;',
-                      allowHtml: true
-                    }]
-                  }, {
-                    style: 'float: left; display:table; width: 50%; ',
-                    components: [{
-                      style: 'display:table-cell; width: 50px; padding: 10px 10px 10px 0px;'
-                    }, {
-                      style: 'display:table-cell; width: 15%;',
-                      components: [{
-                        name: 'buttonAllOk',
-                        kind: 'OB.UI.SmallButton',
-                        classes: 'btnlink-green btnlink-cashup-ok btn-icon-small btn-icon-check',
-                        ontap: 'doCountAllOK'
-                      }]
-                    }, {
-                      // This element has been intentionally created empty.
-                    }]
-                  }]
-                }]
-              }]
-            }, {
               classes: 'row-fluid',
               style: 'background-color: #ffffff; height: 40px; width:100%; clear: both;',
               components: [{
@@ -239,9 +209,6 @@ enyo.kind({
   }],
   setCollection: function (col) {
     this.$.paymentsList.setCollection(col);
-  },
-  anyCounted: function () {
-    this.$.buttonAllOk.applyStyle('visibility', 'hidden'); //hiding in this way to keep the space
   },
   displayStep: function (model) {
     // If the cashier is not trusty, hide expected and total amount that should be.
@@ -284,6 +251,18 @@ enyo.kind({
     this.model = model;
     // this function is invoked when going next, invokes callback to continue
     // do not invoke callback to cancel going next.
+    if (OB.MobileApp.model.hasPermission('OBPOS_retail.cashupGroupExpectedPayment', true)) {
+      // Auto confirm empty payment methods
+      _.each(model.get('paymentEmptyList').models, function (payment) {
+        var paymentModel = _.find(model.get('paymentList').models, function (p) {
+          return p.id === payment.id;
+        });
+        if (paymentModel) {
+          paymentModel.set('counted', paymentModel.get('expected'));
+          paymentModel.set('foreignCounted', paymentModel.get('foreignExpected'));
+        }
+      });
+    }
     var totalCashDiff = 0,
         cashDiff = [],
         me = this;

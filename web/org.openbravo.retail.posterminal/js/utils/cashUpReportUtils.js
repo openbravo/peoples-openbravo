@@ -928,4 +928,56 @@
       }
     });
   };
+
+  OB.UTIL.cashupAddPaymentWithMovement = function (paymentWithMovement, values) {
+    _.each(values, function (value) {
+      var searchKey = value.get('searchKey');
+      var item = _.find(paymentWithMovement, function (p) {
+        return p.searchKey === searchKey;
+      });
+      if (!item && value.get('paymentMethodId')) {
+        paymentWithMovement.push({
+          searchKey: searchKey
+        });
+        var paymentMethod = _.find(OB.MobileApp.model.get('payments'), function (p) {
+          return p.payment.id === value.get('paymentMethodId');
+        });
+        if (paymentMethod) {
+          searchKey = paymentMethod.payment.searchKey;
+          item = _.find(paymentWithMovement, function (p) {
+            return p.searchKey === searchKey;
+          });
+        }
+      }
+      if (!item && value.get('amount') !== 0) {
+        paymentWithMovement.push({
+          searchKey: searchKey
+        });
+      }
+    });
+  };
+
+  OB.UTIL.cashupAddPaymentWithSummaryMovement = function (paymentWithMovement, values) {
+    _.each(values, function (value) {
+      var item = _.find(paymentWithMovement, function (p) {
+        return p.searchKey === value.get('searchKey');
+      });
+      if (!item && value.get('value') !== 0) {
+        paymentWithMovement.push({
+          searchKey: value.get('searchKey')
+        });
+      }
+    });
+  };
+
+  OB.UTIL.cashupGetPaymentWithMovement = function (paymentWithMovement, values) {
+    var filtered = _.filter(values, function (value) {
+      var item = _.find(paymentWithMovement, function (p) {
+        return p.searchKey === value.get('searchKey');
+      });
+      return item !== undefined;
+    });
+    return filtered;
+  };
+
 }());

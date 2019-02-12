@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -776,6 +776,19 @@ li.selected > button.btnselect-orderline.btnselect-orderline-edit > div > div.or
     max-height: 100%;
 }
 
+.msgwelcomeLbl{
+  align-items: center;
+  background-image: url(./../img/OpenbravoWelcomeLogo.svg);
+  background-position-x: right;
+  background-repeat: no-repeat;
+  background-size: 95px 23px;
+  display: flex;
+  font-size: 16px;
+  height: 23px;
+  justify-content: flex-end;
+  padding: 2px 102px 0px 0px;
+}
+
 button.payment-changebutton {
   padding: 5px;
   margin: -5px 10px 0px 0px;
@@ -1245,4 +1258,9 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
 }
 
 .modalInvoices__footer--buttoncancel {
+}
+
+.cashup-first-empty-payment {
+  border-bottom: 1px solid #cccccc;
+  border-top: 1px solid #cccccc;
 }

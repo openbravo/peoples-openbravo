@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -101,38 +101,34 @@ public class CategoryTree extends ProcessHQLQuery {
       OBContext.restorePreviousMode();
     }
 
-    Long lastUpdated;
+    final Long lastUpdated = jsonsent != null && jsonsent.has("lastUpdated")
+        && !jsonsent.get("lastUpdated").equals("undefined")
+        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
 
-    if (jsonsent != null) {
-      lastUpdated = jsonsent.has("lastUpdated") && !jsonsent.get("lastUpdated").equals("undefined")
-          && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
-    } else {
-      lastUpdated = null;
-    }
-
-    String fullRefreshCondition = lastUpdated == null ? "and pc.active = true " : "";
-    String addIncrementalUpdateFilter = lastUpdated == null
+    final String addIncrementalUpdateFilter = lastUpdated == null
         ? "(tn.$incrementalUpdateCriteria and pc.$incrementalUpdateCriteria) "
         : "(tn.$incrementalUpdateCriteria or pc.$incrementalUpdateCriteria) ";
 
     if (isRemote) {
       hqlQueries.add("select distinct " + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
           + "from ADTreeNode tn, OBRETCO_Productcategory pc "
-          + "where tn.$incrementalUpdateCriteria and pc.active = true and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
-          + " and tn.node = pc.productCategory.id and tn.tree.table.id = :productCategoryTableId  ");
+          + "where tn.$readableSimpleClientCriteria and tn.$naturalOrgCriteria "
+          + " and tn.node = pc.productCategory.id and tn.tree.table.id = :productCategoryTableId "
+          + " and " + addIncrementalUpdateFilter);
       hqlQueries.add("select" + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
           + "from ADTreeNode tn, ProductCategory pc "
-          + "where tn.$incrementalUpdateCriteria and pc.active = true and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+          + "where tn.$readableSimpleClientCriteria and tn.$naturalOrgCriteria "
           + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId "
-          + " and pc.summaryLevel = 'Y'"
-          + " and not exists (select obpc.id from OBRETCO_Productcategory obpc where tn.node = obpc.productCategory.id)");
+          + " and pc.summaryLevel = 'Y' "
+          + " and not exists (select obpc.id from OBRETCO_Productcategory obpc where tn.node = obpc.productCategory.id) "
+          + " and " + addIncrementalUpdateFilter);
     } else {
       hqlQueries.add("select" + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
-          + "from ADTreeNode tn, ProductCategory pc " + "where " + addIncrementalUpdateFilter
-          + " and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
-          + fullRefreshCondition
-          + " and pc.$naturalOrgCriteria and pc.$readableSimpleClientCriteria "
-          + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId ");
+          + "from ADTreeNode tn, ProductCategory pc "//
+          + "where tn.$readableSimpleClientCriteria and tn.$naturalOrgCriteria "
+          + " and pc.$readableSimpleClientCriteria and pc.$naturalOrgCriteria  "
+          + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId " + " and "
+          + addIncrementalUpdateFilter);
     }
 
     String whereClause = "p.client.id = '" + clientId + "' "
