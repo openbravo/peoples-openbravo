@@ -155,6 +155,18 @@
                   }
                 }
 
+                if (terminalModel.get('store').length !== 0) {
+                  var organization = terminalModel.get('terminal').organization;
+                  terminalModel.get('store').splice(0, 0, {
+                    id: organization,
+                    name: "This Store (" + terminalModel.get('terminal').organization$_identifier + ")"
+                  });
+                  terminalModel.get('store').splice(1, 0, {
+                    id: "all_" + organization,
+                    name: "(All Stores)"
+                  });
+                }
+
                 OB.DS.commonParams = {
                   client: terminalModel.get('terminal').client,
                   organization: terminalModel.get('terminal').organization,

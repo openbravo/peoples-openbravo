@@ -3937,7 +3937,7 @@
         finishSetOrderType();
       }
       if (orderType === OB.DEC.One) {
-        this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
+        this.set('documentType', OB.UTIL.isCrossStoreReceipt(this) ? this.get('documentType') : OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
         if (options.saveOrder !== false) {
           approvalNeeded = false;
           servicesToApprove = '';
@@ -4066,8 +4066,11 @@
           }
         });
       }
+
       _.each(this.get('lines').models, function (line) {
-        if (!line.has('obposQtytodeliver')) {
+        if (OB.UTIL.isCrossStoreReceipt(this) && !line.has('originalOrderLineId')) {
+          line.set('obposQtytodeliver', line.getDeliveredQuantity());
+        } else if (!line.has('obposQtytodeliver')) {
           if (receiptCompleted) {
             if (line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct')) {
               if (line.get('qty') > 0) {
@@ -4102,7 +4105,7 @@
             line.set('obposQtytodeliver', line.getDeliveredQuantity());
           }
         }
-      });
+      }, this);
 
       if (receiptCompleted) {
         var lineToDeliver = _.find(this.get('lines').models, function (line) {
@@ -6540,7 +6543,8 @@
           orderQty = 0,
           NoFoundProduct = true,
           NoFoundCustomer = true,
-          isLoadedPartiallyFromBackend = false;
+          isLoadedPartiallyFromBackend = false,
+          crossStore;
 
       // Each payment that has been reverted stores the id of the reversal payment
       // Web POS, instead of that, need to have the information of the payment reverted on the reversal payment
@@ -6622,6 +6626,9 @@
       bpLocId = model.bpLocId;
       bpBillLocId = model.bpBillLocId;
       bpId = model.bp;
+      if (OB.UTIL.isCrossStoreEnabled()) {
+        crossStore = order.get('organization');
+      }
       var bpartnerForProduct = function (bp) {
           var loadProducts = function () {
               var linepos = 0,
@@ -6956,7 +6963,8 @@
         //Empty
         var loadCustomerParameters = {
           bpartnerId: bpId,
-          bpLocationId: bpLocId
+          bpLocationId: bpLocId,
+          crossStore: crossStore
         };
         if (bpLocId !== bpBillLocId) {
           loadCustomerParameters.bpBillLocationId = bpBillLocId;

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -433,6 +433,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         if (createShipment || createInvoice) {
           // do the docnumbers at the end
           OBContext.setAdminMode(false);
+          OBContext.setCrossOrgReferenceAdminMode();
           try {
             for (DocumentNoHandler documentNoHandler : documentNoHandlers.get()) {
               documentNoHandler.setDocumentNoAndSave();
@@ -442,6 +443,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
             // set to null, should not be used anymore after this.
             documentNoHandlers.set(null);
             OBContext.restorePreviousMode();
+            OBContext.restorePreviousCrossOrgReferenceMode();
           }
         }
 
@@ -771,6 +773,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
           jsonorder.getLong("timezoneOffset"));
 
       orderline.setActive(true);
+      orderline.setOrganization(order.getOrganization());
       orderline.setSalesOrder(order);
       BigDecimal lineNetAmount = BigDecimal.valueOf(jsonOrderLine.getDouble("net"))
           .setScale(pricePrecision, RoundingMode.HALF_UP);
@@ -815,6 +818,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         OrderLineTax orderlinetax = OBProvider.getInstance().get(OrderLineTax.class);
         TaxRate tax = (TaxRate) OBDal.getInstance()
             .getProxy(ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
+        orderlinetax.setOrganization(orderline.getOrganization());
         orderlinetax.setTax(tax);
         orderlinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
             .setScale(pricePrecision, RoundingMode.HALF_UP));
@@ -863,6 +867,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
                 .setScale(pricePrecision, RoundingMode.HALF_UP));
           }
           promotion.setLineNo((long) ((p + 1) * 10));
+          promotion.setOrganization(orderline.getOrganization());
           promotion.setSalesOrderLine(orderline);
           if (jsonPromotion.has("identifier") && !jsonPromotion.isNull("identifier")) {
             String identifier = jsonPromotion.getString("identifier");
@@ -971,7 +976,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
     int pricePrecision = order.getCurrency().getObposPosprecision() == null
         ? order.getCurrency().getPricePrecision().intValue()
         : order.getCurrency().getObposPosprecision().intValue();
+    OBPOSApplications posTerminal = OBDal.getInstance()
+        .get(OBPOSApplications.class, jsonorder.getString("posTerminal"));
     BusinessPartner bp = order.getBusinessPartner();
+    order.setTrxOrganization(posTerminal.getOrganization());
     order.setTransactionDocument((DocumentType) OBDal.getInstance()
         .getProxy("DocumentType", jsonorder.getString("documentType")));
     order.setAccountingDate(order.getOrderDate());
@@ -984,9 +992,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
     Boolean paymenthMethod = false;
     if (!jsonorder.isNull("paymentMethodKind")
         && !jsonorder.getString("paymentMethodKind").equals("null")) {
-      String posTerminalId = jsonorder.getString("posTerminal");
-      OBPOSApplications posTerminal = OBDal.getInstance()
-          .get(OBPOSApplications.class, posTerminalId);
       if (posTerminal != null) {
         String paymentTypeName = jsonorder.getString("paymentMethodKind");
         OBPOSAppPayment paymentType = null;
@@ -1191,6 +1196,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       OrderTax orderTax = OBProvider.getInstance().get(OrderTax.class);
       TaxRate tax = (TaxRate) OBDal.getInstance()
           .getProxy(ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
+      orderTax.setOrganization(order.getOrganization());
       orderTax.setTax(tax);
       orderTax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
           .setScale(pricePrecision, RoundingMode.HALF_UP));
@@ -1237,6 +1243,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
       paymentSchedule.setId(order.getId());
       paymentSchedule.setNewOBObject(true);
+      paymentSchedule.setOrganization(order.getOrganization());
       paymentSchedule.setCurrency(order.getCurrency());
       paymentSchedule.setOrder(order);
     }
@@ -1327,12 +1334,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
         if (paymentType.getPaymentMethod().getOverpaymentLimit() == null || writeoffAmt
             .compareTo(new BigDecimal(paymentType.getPaymentMethod().getOverpaymentLimit())) <= 0) {
-          processPayments(paymentSchedule, order, paymentType, payment, tempWriteoffAmt, jsonorder,
-              account);
+          processPayments(paymentSchedule, order, posTerminal, paymentType, payment,
+              tempWriteoffAmt, jsonorder, account);
           writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
         } else {
-          processPayments(paymentSchedule, order, paymentType, payment, BigDecimal.ZERO, jsonorder,
-              account);
+          processPayments(paymentSchedule, order, posTerminal, paymentType, payment,
+              BigDecimal.ZERO, jsonorder, account);
         }
       }
     }
@@ -1350,13 +1357,16 @@ public class OrderLoader extends POSDataSynchronizationProcess
   }
 
   private void processPayments(FIN_PaymentSchedule paymentSchedule, Order order,
-      OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt, JSONObject jsonorder,
-      FIN_FinancialAccount account) throws Exception {
-    OBContext.setAdminMode(true);
+      OBPOSApplications posTerminal, OBPOSAppPayment paymentType, JSONObject payment,
+      BigDecimal writeoffAmt, JSONObject jsonorder, FIN_FinancialAccount account) throws Exception {
+    final boolean isCrossStore = isCrossStore(order, posTerminal);
+    OBContext.setAdminMode(!isCrossStore);
     try {
+      final Organization paymentOrganization = getPaymentOrganization(posTerminal, isCrossStore);
       int pricePrecision = order.getCurrency().getObposPosprecision() == null
           ? order.getCurrency().getPricePrecision().intValue()
           : order.getCurrency().getObposPosprecision().intValue();
+
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
           .setScale(pricePrecision, RoundingMode.HALF_UP);
       // Round change variables
@@ -1550,7 +1560,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
       }
 
-      DocumentType paymentDocType = getPaymentDocumentType(order.getOrganization());
+      DocumentType paymentDocType = getPaymentDocumentType(paymentOrganization);
       Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
 
       String paymentDocNo;
@@ -1575,10 +1585,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(),
           account == null ? paymentType.getFinancialAccount() : account,
-          (downRounding ? amount : amountRounded).toString(), calculatedDate,
-          order.getOrganization(), null, paymentScheduleDetailList, paymentAmountMap, false, false,
-          order.getCurrency(), mulrate, origAmountRounded, true,
-          payment.has("id") ? payment.getString("id") : null);
+          (downRounding ? amount : amountRounded).toString(), calculatedDate, paymentOrganization,
+          null, paymentScheduleDetailList, paymentAmountMap, false, false, order.getCurrency(),
+          mulrate, origAmountRounded, true, payment.has("id") ? payment.getString("id") : null);
 
       // Associate a GLItem with the overpayment amount to the payment which generates the
       // overpayment
@@ -1659,7 +1668,21 @@ public class OrderLoader extends POSDataSynchronizationProcess
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
 
+  private Organization getPaymentOrganization(final OBPOSApplications posTerminal,
+      final boolean isCrossStore) {
+    return isCrossStore ? posTerminal.getOrganization().getOBPOSCrossStoreOrganization()
+        : posTerminal.getOrganization();
+  }
+
+  // Returns true if order was created in a store different than the store of current terminal
+  private boolean isCrossStore(final Order order, final OBPOSApplications posTerminal) {
+    final Organization crossOrganization = posTerminal.getOrganization()
+        .getOBPOSCrossStoreOrganization();
+
+    return crossOrganization != null && !StringUtils.equals(order.getOrganization().getId(),
+        posTerminal.getOrganization().getId());
   }
 
   private void sortPSDByInvoice(List<FIN_PaymentScheduleDetail> psdList) {
@@ -1732,6 +1755,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         JSONPropertyToEntity.fillBobFromJSON(approvalEntity, approval, jsonApproval,
             jsonorder.getLong("timezoneOffset"));
 
+        approval.setOrganization(order.getOrganization());
         approval.setSalesOrder(order);
 
         Long value = jsonorder.getLong("created");
