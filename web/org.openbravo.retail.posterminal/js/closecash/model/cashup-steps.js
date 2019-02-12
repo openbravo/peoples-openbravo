@@ -93,7 +93,8 @@ enyo.kind({
     return false;
   },
   allowNext: function () {
-    return _.reduce(this.model.get('paymentList').models, function (allCounted, model) {
+    var paymentList = this.model.get(OB.MobileApp.model.hasPermission('OBPOS_retail.cashupGroupExpectedPayment', true) ? 'paymentExpectedList' : 'paymentList');
+    return _.reduce(paymentList.models, function (allCounted, model) {
       return allCounted && model.get('counted') !== null && model.get('counted') !== undefined;
     }, true);
   },

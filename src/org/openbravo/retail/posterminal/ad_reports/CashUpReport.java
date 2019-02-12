@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,8 +44,10 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.retail.posterminal.OBPOSAppCashup;
 import org.openbravo.retail.posterminal.OBPOSAppPayment;
 import org.openbravo.retail.posterminal.OBPOSPaymentMethodCashup;
@@ -402,9 +404,62 @@ public class CashUpReport extends HttpSecureAppServlet {
       }
     }
 
+    try {
+      boolean removeUnusedPayment = "Y"
+          .equals(Preferences.getPreferenceValue("OBPOS_retail.cashupRemoveUnusedPayment", true,
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null));
+      if (removeUnusedPayment) {
+        HashMap<String, String> usedPaymentMethod = new HashMap<String, String>();
+        addUsedPayments(usedPaymentMethod, hashMapList);
+        clearUnusedPayments(usedPaymentMethod, hashMapList);
+      }
+    } catch (PropertyException e1) {
+      log.error(
+          "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(),
+          e1);
+    }
+
     data = FieldProviderFactory.getFieldProviderArray(hashMapList);
     renderJR(vars, response, strReportName, outputType, parameters, data, null);
 
+  }
+
+  private void clearUnusedPayments(HashMap<String, String> usedPaymentMethod,
+      List<HashMap<String, String>> list) {
+    int i = 0;
+    while (i < list.size()) {
+      HashMap<String, String> item = list.get(i);
+      String searchKey = item.get("SEARCHKEY");
+      String value = item.get("VALUE");
+      String prefix = item.get("GROUPFIELD");
+      if (searchKey != null && value != null) {
+        searchKey = searchKey.substring(prefix.length() + 1);
+        if (!usedPaymentMethod.containsKey(searchKey)) {
+          list.remove(item);
+        } else {
+          i++;
+        }
+      } else {
+        i++;
+      }
+    }
+  }
+
+  private void addUsedPayments(HashMap<String, String> usedPaymentMethod,
+      List<HashMap<String, String>> list) {
+    for (int i = 0; i < list.size(); i++) {
+      HashMap<String, String> item = list.get(i);
+      String searchKey = item.get("SEARCHKEY");
+      String value = item.get("VALUE");
+      String prefix = item.get("GROUPFIELD");
+      if (searchKey != null && value != null
+          && new BigDecimal(value).compareTo(BigDecimal.ZERO) != 0) {
+        searchKey = searchKey.substring(prefix.length() + 1);
+        usedPaymentMethod.put(searchKey, "Used");
+      }
+    }
   }
 
   private HashMap<String, String> fillReportRow(String groupField, String searchKey,

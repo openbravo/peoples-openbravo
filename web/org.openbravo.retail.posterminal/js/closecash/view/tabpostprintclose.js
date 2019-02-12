@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -559,6 +559,8 @@ enyo.kind({
     }]
   }],
 
+  paymentWithMovement: [],
+
   create: function () {
     this.inherited(arguments);
     this.$.store.setContent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.MobileApp.model.get('terminal').organization$_identifier);
@@ -594,19 +596,72 @@ enyo.kind({
     }, this);
   },
 
+  filterMovements: function (cashUpReport, isSummary) {
+    var startings, drops, deposits, expectedSummary, countedSummary, differenceSummary, qtyToKeepSummary, qtyToDepoSummary;
+    if (cashUpReport && OB.MobileApp.model.hasPermission('OBPOS_retail.cashupRemoveUnusedPayment', true)) {
+      this.paymentWithMovement = [];
+      if (isSummary) {
+        OB.UTIL.cashupAddPaymentWithSummaryMovement(this.paymentWithMovement, this.summary.expectedSummary);
+        if (OB.MobileApp.view.currentWindow !== 'retail.cashuppartial') {
+          OB.UTIL.cashupAddPaymentWithSummaryMovement(this.paymentWithMovement, this.summary.countedSummary);
+          OB.UTIL.cashupAddPaymentWithSummaryMovement(this.paymentWithMovement, this.summary.differenceSummary);
+          OB.UTIL.cashupAddPaymentWithSummaryMovement(this.paymentWithMovement, this.summary.qtyToKeepSummary);
+          OB.UTIL.cashupAddPaymentWithSummaryMovement(this.paymentWithMovement, this.summary.qtyToDepoSummary);
+          countedSummary = OB.UTIL.cashupGetPaymentWithMovement(this.paymentWithMovement, this.summary.countedSummary);
+          differenceSummary = OB.UTIL.cashupGetPaymentWithMovement(this.paymentWithMovement, this.summary.differenceSummary);
+          qtyToKeepSummary = OB.UTIL.cashupGetPaymentWithMovement(this.paymentWithMovement, this.summary.qtyToKeepSummary);
+          qtyToDepoSummary = OB.UTIL.cashupGetPaymentWithMovement(this.paymentWithMovement, this.summary.qtyToDepoSummary);
+        }
+        expectedSummary = OB.UTIL.cashupGetPaymentWithMovement(this.paymentWithMovement, this.summary.expectedSummary);
+      } else {
+        OB.UTIL.cashupAddPaymentWithMovement(this.paymentWithMovement, cashUpReport.get('startings'));
+        OB.UTIL.cashupAddPaymentWithMovement(this.paymentWithMovement, cashUpReport.get('drops'));
+        OB.UTIL.cashupAddPaymentWithMovement(this.paymentWithMovement, cashUpReport.get('deposits'));
+        startings = OB.UTIL.cashupGetPaymentWithMovement(this.paymentWithMovement, cashUpReport.get('startings'));
+        drops = OB.UTIL.cashupGetPaymentWithMovement(this.paymentWithMovement, cashUpReport.get('drops'));
+        deposits = OB.UTIL.cashupGetPaymentWithMovement(this.paymentWithMovement, cashUpReport.get('deposits'));
+      }
+    } else {
+      if (cashUpReport) {
+        startings = cashUpReport.get('startings');
+        drops = cashUpReport.get('drops');
+        deposits = cashUpReport.get('deposits');
+      }
+      expectedSummary = this.summary.expectedSummary;
+      if (OB.MobileApp.view.currentWindow !== 'retail.cashuppartial') {
+        countedSummary = this.summary.countedSummary;
+        differenceSummary = this.summary.differenceSummary;
+        qtyToKeepSummary = this.summary.qtyToKeepSummary;
+        qtyToDepoSummary = this.summary.qtyToDepoSummary;
+      }
+    }
+    return {
+      startings: startings,
+      drops: drops,
+      deposits: deposits,
+      expectedSummary: expectedSummary,
+      countedSummary: countedSummary,
+      differenceSummary: differenceSummary,
+      qtyToKeepSummary: qtyToKeepSummary,
+      qtyToDepoSummary: qtyToDepoSummary
+    };
+  },
+
   cashUpReportChanged: function (cashUpReport) {
-    this.$.startingsTable.setCollection(cashUpReport.get('startings'));
+    var filtered = this.filterMovements(cashUpReport, false);
+    this.$.startingsTable.setCollection(filtered.startings);
     this.$.startingsTable.setValue('totalstartings', cashUpReport.get('totalStartings'));
 
-    this.$.dropsTable.setCollection(cashUpReport.get('drops'));
+    this.$.dropsTable.setCollection(filtered.drops);
     this.$.dropsTable.setValue('totaldrops', cashUpReport.get('totalDrops'));
 
-    this.$.depositsTable.setCollection(cashUpReport.get('deposits'));
+    this.$.depositsTable.setCollection(filtered.deposits);
     this.$.depositsTable.setValue('totaldeposits', cashUpReport.get('totalDeposits'));
   },
 
   summaryChanged: function () {
-    this.$.expectedTable.setCollection(this.summary.expectedSummary);
+    var filtered = this.filterMovements(this.model.get('cashUpReport').at(0), true);
+    this.$.expectedTable.setCollection(filtered.expectedSummary);
     this.$.expectedTable.setValue('totalexpected', this.summary.totalExpected);
     if (OB.MobileApp.view.currentWindow === 'retail.cashuppartial') {
       this.$.countedTable.hide();
@@ -614,21 +669,22 @@ enyo.kind({
       this.$.qtyToKeepTable.hide();
       this.$.qtyToDepoTable.hide();
     } else {
-      this.$.countedTable.setCollection(this.summary.countedSummary);
+      this.$.countedTable.setCollection(filtered.countedSummary);
       this.$.countedTable.setValue('totalcounted', this.summary.totalCounted);
 
-      this.$.differenceTable.setCollection(this.summary.differenceSummary);
+      this.$.differenceTable.setCollection(filtered.differenceSummary);
       this.$.differenceTable.setValue('totaldifference', this.summary.totalDifference);
 
-      this.$.qtyToKeepTable.setCollection(this.summary.qtyToKeepSummary);
+      this.$.qtyToKeepTable.setCollection(filtered.qtyToKeepSummary);
       this.$.qtyToKeepTable.setValue('totalqtyToKeep', this.summary.totalQtyToKeep);
 
-      this.$.qtyToDepoTable.setCollection(this.summary.qtyToDepoSummary);
+      this.$.qtyToDepoTable.setCollection(filtered.qtyToDepoSummary);
       this.$.qtyToDepoTable.setValue('totalqtyToDepo', this.summary.totalQtyToDepo);
     }
   },
 
   modelChanged: function () {
+    var filtered = this.filterMovements(this.model.get('cashUpReport').at(0), false);
     this.$.sales.setValue('netsales', this.model.get('netSales'));
     this.$.sales.setCollection(this.model.get('salesTaxes'));
     this.$.sales.setValue('totalsales', this.model.get('grossSales'));
@@ -639,13 +695,13 @@ enyo.kind({
 
     this.$.totaltransactions.setValue('totaltransactionsline', this.model.get('totalRetailTransactions'));
 
-    this.$.startingsTable.setCollection(this.model.get('startings'));
+    this.$.startingsTable.setCollection(filtered.startings);
     this.$.startingsTable.setValue('totalstartings', this.model.get('totalStartings'));
 
-    this.$.dropsTable.setCollection(this.model.get('drops'));
+    this.$.dropsTable.setCollection(filtered.drops);
     this.$.dropsTable.setValue('totaldrops', this.model.get('totalDrops'));
 
-    this.$.depositsTable.setCollection(this.model.get('deposits'));
+    this.$.depositsTable.setCollection(filtered.deposits);
     this.$.depositsTable.setValue('totaldeposits', this.model.get('totalDeposits'));
 
     this.model.on('change:time', function () {

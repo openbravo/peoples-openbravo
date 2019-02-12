@@ -150,7 +150,27 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
               // Desactivate all steps 
               me.cashupStepsDefinition[me.stepIndex('OB.CashUp.PaymentMethods')].active = false;
             }
-            me.get('paymentList').reset(tempList.models);
+            if (OB.MobileApp.model.hasPermission('OBPOS_retail.cashupGroupExpectedPayment', true)) {
+              // Split payment methods
+              var expectedList = _.filter(tempList.models, function (pm) {
+                return pm.get('expected') !== 0;
+              }),
+                  emptyList = _.filter(tempList.models, function (pm) {
+                  return pm.get('expected') === 0;
+                });
+
+              me.set('paymentExpectedList', new Backbone.Collection(expectedList));
+              me.set('paymentEmptyList', new Backbone.Collection(emptyList));
+
+              if (emptyList.length > 0) {
+                emptyList[0].set('firstEmptyPayment', true);
+              }
+              var models = expectedList.concat(emptyList);
+
+              me.get('paymentList').reset(models);
+            } else {
+              me.get('paymentList').reset(tempList.models);
+            }
             // Active/Desactive CashPayments and CashToKeep tabs
             var i, cashPayments = false,
                 cashToKeep = false,
@@ -727,7 +747,34 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                   OB.UTIL.showLoading(true);
                   me.set('finished', true);
                   if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
-                    me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary(), true);
+                    var cashUpReport = new OB.Model.CashUp(),
+                        countCashSummary = me.getCountCashSummary();
+                    OB.UTIL.clone(me.get('cashUpReport').at(0), cashUpReport);
+                    if (OB.MobileApp.model.hasPermission('OBPOS_retail.cashupRemoveUnusedPayment', true)) {
+                      var paymentWithMovement = [];
+                      if (OB.MobileApp.view.currentWindow !== 'retail.cashuppartial') {
+                        OB.UTIL.cashupAddPaymentWithSummaryMovement(paymentWithMovement, countCashSummary.countedSummary);
+                        OB.UTIL.cashupAddPaymentWithSummaryMovement(paymentWithMovement, countCashSummary.differenceSummary);
+                        OB.UTIL.cashupAddPaymentWithSummaryMovement(paymentWithMovement, countCashSummary.qtyToKeepSummary);
+                        OB.UTIL.cashupAddPaymentWithSummaryMovement(paymentWithMovement, countCashSummary.qtyToDepoSummary);
+                      }
+                      OB.UTIL.cashupAddPaymentWithSummaryMovement(paymentWithMovement, countCashSummary.expectedSummary);
+                      OB.UTIL.cashupAddPaymentWithMovement(paymentWithMovement, cashUpReport.get('startings'));
+                      OB.UTIL.cashupAddPaymentWithMovement(paymentWithMovement, cashUpReport.get('drops'));
+                      OB.UTIL.cashupAddPaymentWithMovement(paymentWithMovement, cashUpReport.get('deposits'));
+                      countCashSummary.expectedSummary = OB.UTIL.cashupGetPaymentWithMovement(paymentWithMovement, countCashSummary.expectedSummary);
+                      cashUpReport.set('startings', OB.UTIL.cashupGetPaymentWithMovement(paymentWithMovement, cashUpReport.get('startings')));
+                      cashUpReport.set('drops', OB.UTIL.cashupGetPaymentWithMovement(paymentWithMovement, cashUpReport.get('drops')));
+                      cashUpReport.set('deposits', OB.UTIL.cashupGetPaymentWithMovement(paymentWithMovement, cashUpReport.get('deposits')));
+                      if (OB.MobileApp.view.currentWindow !== 'retail.cashuppartial') {
+                        countCashSummary.countedSummary = OB.UTIL.cashupGetPaymentWithMovement(paymentWithMovement, countCashSummary.countedSummary);
+                        countCashSummary.differenceSummary = OB.UTIL.cashupGetPaymentWithMovement(paymentWithMovement, countCashSummary.differenceSummary);
+                        countCashSummary.qtyToKeepSummary = OB.UTIL.cashupGetPaymentWithMovement(paymentWithMovement, countCashSummary.qtyToKeepSummary);
+                        countCashSummary.qtyToDepoSummary = OB.UTIL.cashupGetPaymentWithMovement(paymentWithMovement, countCashSummary.qtyToDepoSummary);
+                      }
+                    }
+
+                    me.printCashUp.print(cashUpReport, countCashSummary, true);
                   }
                   };
               var callbackFinishedWrongly = function () {
