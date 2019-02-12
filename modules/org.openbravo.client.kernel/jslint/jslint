@@ -20,17 +20,19 @@ set -e
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 VERBOSE=false
+FIX=false
 
 source ${SCRIPT_DIR}/../jsutils/dir-functions
 
 function usage() {
-  echo -n "Usage: ${SCRIPT_NAME} [-h][-v] [FILE ...]
+  echo -n "Usage: ${SCRIPT_NAME} [-f][-h][-v] [FILE ...]
 
 Utility to pass the Javascript Linter to the given files, or all files from the current directory if none given.
 With no arguments, scan all files starting from the current directory taking into account .jsexclude files.
 (see jsfiles for further explanation)
 
  Options:
+  -f                Fixes errors/warnings that can automatically be fixed (Adds --fix argument to ESLint)
   -h                Display this help and exit
   -v                Verbose mode. Shows additional output
 
@@ -48,12 +50,20 @@ function lintFiles {
         echo "Checking $# files"
     fi
 
-    echo "$@" | xargs --max-args 250 npm run jslint --prefix ${KERNEL_MODULE_PATH} -s || exit 1
+    FLAGS=""
+    if [[ ${FIX} == true ]]; then
+        FLAGS="--fix"
+    fi
+
+    echo "$@" | xargs --max-args 250 npm run jslint --prefix ${KERNEL_MODULE_PATH} -s -- ${FLAGS} || exit 1
 }
 
 #Parse input arguments
-while getopts ":hv" arg; do
+while getopts ":fhv" arg; do
     case ${arg} in
+        f )
+            FIX=true
+        ;;
         h )
             usage
             exit 0
