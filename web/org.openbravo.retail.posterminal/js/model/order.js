@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -5297,7 +5297,8 @@
           _.forEach(groupedPromos, function (promotion) {
             if (!promoManual) {
               var promoAmt = 0,
-                  promoQtyoffer = promotion.qtyOffer;
+                  promotionQtyOffer = promotion.lineQtyOffer || promotion.qtyOffer,
+                  promoQtyoffer = promotionQtyOffer;
 
               _.forEach(linesToApply.models, function (line) {
 
@@ -5324,15 +5325,16 @@
                 if (promoQtyoffer > 0) {
                   clonedPromotion.obdiscQtyoffer = (qtyToCheck - promoQtyoffer >= 0) ? promoQtyoffer : qtyToCheck;
                   if (!promotion.hidden) {
-                    clonedPromotion.amt = OB.DEC.toNumber(OB.DEC.toBigDecimal(promotion.amt * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)));
+                    clonedPromotion.amt = OB.DEC.toNumber(OB.DEC.toBigDecimal(promotion.amt * (clonedPromotion.obdiscQtyoffer / promotionQtyOffer)));
                     clonedPromotion.fullAmt = OB.DEC.toNumber(OB.DEC.toBigDecimal(clonedPromotion.amt));
-                    clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal((promotion.displayedTotalAmount || 0) * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)));
+                    clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal((promotion.displayedTotalAmount || 0) * (clonedPromotion.obdiscQtyoffer / promotionQtyOffer)));
                   } else {
                     clonedPromotion.amt = 0;
                   }
                   clonedPromotion.pendingQtyoffer = line.get('qty') - clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.qtyOffer = clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.qtyOfferReserved = clonedPromotion.obdiscQtyoffer;
+                  clonedPromotion.lineQtyOffer = clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.doNotMerge = true;
                   if (!line.get('promotions')) {
                     line.set('promotions', []);
