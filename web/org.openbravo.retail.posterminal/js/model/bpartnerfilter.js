@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -69,7 +69,7 @@
     name: 'bpCategory',
     column: 'bp.c_bp_group_name',
     serverColumn: 'bp.businessPartnerCategory.name',
-    filter: false,
+    filter: true,
     type: 'TEXT',
     caption: 'OBPOS_BPCategory',
     location: false
@@ -77,7 +77,7 @@
     name: 'taxID',
     column: 'bp.taxID',
     serverColumn: 'bp.taxID',
-    filter: false,
+    filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblTaxId',
     location: false
