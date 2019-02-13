@@ -159,11 +159,11 @@
                   var organization = terminalModel.get('terminal').organization;
                   terminalModel.get('store').splice(0, 0, {
                     id: organization,
-                    name: "This Store (" + terminalModel.get('terminal').organization$_identifier + ")"
+                    name: OB.I18N.getLabel('OBPOS_LblThisStore') + " (" + terminalModel.get('terminal').organization$_identifier + ")"
                   });
                   terminalModel.get('store').splice(1, 0, {
                     id: "all_" + organization,
-                    name: "(All Stores)"
+                    name: "(" + OB.I18N.getLabel('OBPOS_LblAllStores') + ")"
                   });
                 }
 

@@ -221,7 +221,7 @@ enyo.kind({
         return prop.name === 'store';
       }, this);
       store.preset.id = OB.MobileApp.model.get('terminal').organization;
-      store.preset.name = 'This Store (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')';
+      store.preset.name = OB.I18N.getLabel('OBPOS_LblThisStore') + ' (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')';
     }
     if (OB.MobileApp.model.hasPermission('OBPOS_SelectCurrentTicketsOnPaidOpen', true)) {
       _.each(me.model.get('orderList').models, function (iter) {
@@ -309,7 +309,7 @@ enyo.kind({
     var returnLabel = '';
     this.inherited(arguments);
     if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo) {
-      this.$.store.setContent(OB.UTIL.isCrossStoreReceipt(this.model) ? this.model.get('store') : 'This Store (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')');
+      this.$.store.setContent(OB.UTIL.isCrossStoreReceipt(this.model) ? this.model.get('store') : OB.I18N.getLabel('OBPOS_LblThisStore') + ' (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')');
     } else {
       this.$.store.setContent('');
     }

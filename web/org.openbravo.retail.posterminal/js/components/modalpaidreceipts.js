@@ -243,7 +243,7 @@ enyo.kind({
         return prop.name === 'store';
       }, this);
       store.preset.id = OB.MobileApp.model.get('terminal').organization;
-      store.preset.name = 'This Store (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')';
+      store.preset.name = OB.I18N.getLabel('OBPOS_LblThisStore') + ' (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')';
     }
   },
   init: function (model) {
