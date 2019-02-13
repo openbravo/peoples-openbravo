@@ -421,14 +421,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalReceiptsScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  filterModel: OB.Model.OrderFilter,
   events: {
     onSearchAction: ''
   },
   components: [{
     style: 'padding: 10px;',
     kind: 'OB.UI.FilterSelectorTableHeader',
-    name: 'filterSelector',
-    filters: OB.Model.OrderFilter.getProperties()
+    name: 'filterSelector'
   }, {
     style: 'padding: 10px;',
     components: [{
@@ -442,6 +442,7 @@ enyo.kind({
     }]
   }],
   initComponents: function () {
+    this.filters = this.filterModel.getFilterPropertiesWithSelectorPreference();
     this.inherited(arguments);
     this.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
   }
@@ -450,14 +451,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalVerifiedReturnsScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  filterModel: OB.Model.VReturnsFilter,
   events: {
     onSearchAction: ''
   },
   components: [{
     style: 'padding: 10px;',
     kind: 'OB.UI.FilterSelectorTableHeader',
-    name: 'filterSelector',
-    filters: OB.Model.VReturnsFilter.getProperties()
+    name: 'filterSelector'
   }, {
     style: 'padding: 10px;',
     components: [{
@@ -471,6 +472,7 @@ enyo.kind({
     }]
   }],
   initComponents: function () {
+    this.filters = this.filterModel.getFilterPropertiesWithSelectorPreference();
     this.inherited(arguments);
     this.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
   }
@@ -482,7 +484,7 @@ enyo.kind({
   model: OB.Model.OrderFilter,
   initComponents: function () {
     this.inherited(arguments);
-    this.setFilters(OB.Model.OrderFilter.getProperties());
+    this.setFilters(OB.Model.OrderFilter.getFilterPropertiesWithSelectorPreference());
   }
 });
 
@@ -492,7 +494,7 @@ enyo.kind({
   model: OB.Model.VReturnsFilter,
   initComponents: function () {
     this.inherited(arguments);
-    this.setFilters(OB.Model.VReturnsFilter.getProperties());
+    this.setFilters(OB.Model.VReturnsFilter.getFilterPropertiesWithSelectorPreference());
   }
 });
 

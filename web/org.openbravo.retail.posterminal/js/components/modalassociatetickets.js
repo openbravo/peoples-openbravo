@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2018 Openbravo S.L.U.
+ * Copyright (C) 2016-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -68,11 +68,11 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalOrderScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  filterModel: OB.Model.OrderAssociationsFilter,
   components: [{
     classes: 'filterSelectorTableHeader',
     kind: 'OB.UI.FilterSelectorTableHeader',
-    name: 'filterSelector',
-    filters: OB.Model.OrderAssociationsFilter.getProperties()
+    name: 'filterSelector'
   }, {
     showing: true,
     classes: 'filterSelectorTableHeader_buttons',
@@ -95,7 +95,11 @@ enyo.kind({
         }]
       }]
     }]
-  }]
+  }],
+  initComponents: function () {
+    this.filters = this.filterModel.getFilterPropertiesWithSelectorPreference();
+    this.inherited(arguments);
+  }
 });
 
 /* items of collection */
@@ -670,6 +674,6 @@ enyo.kind({
   name: 'OB.UI.ModalAdvancedFilterOrders',
   initComponents: function () {
     this.inherited(arguments);
-    this.setFilters(OB.Model.OrderAssociationsFilter.getProperties());
+    this.setFilters(OB.Model.OrderAssociationsFilter.getFilterPropertiesWithSelectorPreference());
   }
 });
