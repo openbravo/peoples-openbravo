@@ -12,14 +12,13 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 -->
 
-/*jslint*/
 isc.ClassFactory.defineClass('_attachment${data.windowClientClassName?js_string}', isc.OBAttachmentWindowView).addProperties({
     popup: true, 
     attachmentMethod: '${data.attachmentMethodId?js_string}',
