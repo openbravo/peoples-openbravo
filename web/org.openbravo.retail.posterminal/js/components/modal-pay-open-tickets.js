@@ -259,7 +259,7 @@ enyo.kind({
   tap: function () {
     this.inherited(arguments);
     if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(this.model) && !this.model.get('checked')) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStorePayment'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [this.model.get('documentNo'), this.model.get('store')]), [{
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStorePayment'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [this.model.get('documentNo'), this.model.get('store')]) + ". " + OB.I18N.getLabel('OBPOS_LblCrossStoreDelivery'), [{
         label: OB.I18N.getLabel('OBMOBC_Continue'),
         isConfirmButton: true,
         args: {
