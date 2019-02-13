@@ -130,7 +130,10 @@
       id: '',
       name: ''
     },
-    separatorIndex: 2
+    separatorIndex: 2,
+    remoteEntity: true,
+    applyUIRestrictions: true,
+    disableSorting: true
   }]);
 
 }());
