@@ -1260,6 +1260,11 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
 .modalInvoices__footer--buttoncancel {
 }
 
+/*Modal BP selector*/
+.modal-bp-selector-selectedItem {
+  background-color: #fbf6d1 !important;
+}
+
 .cashup-first-empty-payment {
   border-bottom: 1px solid #cccccc;
   border-top: 1px solid #cccccc;

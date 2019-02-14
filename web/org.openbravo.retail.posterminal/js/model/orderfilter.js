@@ -66,6 +66,10 @@
     preset: {
       id: '',
       name: ''
+    },
+    modalArgs: {
+      clean: false,
+      keepFiltersOnClose: true
     }
   }, {
     name: 'orderDateFrom',
