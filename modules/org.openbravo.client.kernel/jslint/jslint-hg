@@ -24,10 +24,18 @@ set -e
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source ${SCRIPT_DIR}/../jsutils/dir-functions
 
-KERNEL_MODULE_PATH=$(getKernelModulePath)
+
+
+KERNEL_MODULE_PATH=$(getKernelModulePath 2>/dev/null)
+
+if [[ -z "${KERNEL_MODULE_PATH}" ]]; then
+    exit 0
+fi
+
 IS_A_MODULE=$(isCurrentFolderModuleRoot)
 
-echo "Performing jslint check on modified js resources"
+echo "pretxncommit: Performing lint check on modified js resources"
+
 FILES=()
 for i in $(hg log -r $HG_NODE --template '{files}')
 do

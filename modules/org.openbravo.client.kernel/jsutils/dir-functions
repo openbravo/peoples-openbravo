@@ -20,7 +20,7 @@
 # Returns the relative location to client.kernel module
 #
 function getKernelModulePath {
-    KERNEL_MODULE_PATH="."
+    KERNEL_MODULE_PATH=""
     if [[ -d "../../modules" ]]; then
         # Running from module
         KERNEL_MODULE_PATH="../org.openbravo.client.kernel"
@@ -28,9 +28,8 @@ function getKernelModulePath {
         # Running from Openbravo root
         KERNEL_MODULE_PATH="./modules/org.openbravo.client.kernel"
     else
-        echo -e "\n\033[0;31mError:\033[0m \"$(pwd)\" is not a valid path"
-        echo "Run either from the Openbravo or a module root directory"
-        exit 1
+        echo -e "\n\033[0;31mError:\033[0m \"$(pwd)\" is not a valid path" >&2
+        echo "Run either from the Openbravo or a module root directory" >&2
     fi
 
     echo "${KERNEL_MODULE_PATH}"
@@ -48,9 +47,8 @@ function getJsFilesScanPath {
     elif [[ -d "./modules" ]]; then
         SCAN_BASE_PATH="$(pwd)/modules"
     else
-        echo -e "\n\033[0;31mError:\033[0m \"$(pwd)\" is not a valid path"
-        echo "Run either from the Openbravo or a module root directory"
-        exit 1
+        echo -e "\n\033[0;31mError:\033[0m \"$(pwd)\" is not a valid path" >&2
+        echo "Run either from the Openbravo or a module root directory" >&2
     fi
 
     echo "${SCAN_BASE_PATH}"
