@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Copyright (C) 2001-2019 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -16,17 +16,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,8 +30,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-public class XmlEngine extends HttpServlet {
-  private static final long serialVersionUID = 1L;
+public class XmlEngine {
   XMLReader xmlParser;
   XMLReader htmlParser;
   Hashtable<String, XmlTemplate> hasXmlTemplate;
@@ -68,45 +62,6 @@ public class XmlEngine extends HttpServlet {
   }
 
   public XmlEngine() {
-  }
-
-  @Override
-  public void init(ServletConfig config) throws ServletException {
-    if (log4jXmlEngine.isDebugEnabled()) {
-      log4jXmlEngine.debug("XmlEngine v0.846-2");
-    }
-    super.init(config);
-    configXMLEngine = config;
-    strBaseLocation = getInitParameter("BaseLocation");
-    strDriverDefault = getInitParameter("driver");
-    strUrlDefault = getInitParameter("URL");
-    if (log4jXmlEngine.isDebugEnabled()) {
-      log4jXmlEngine.debug("driver: " + strDriverDefault + " URL: " + strUrlDefault);
-    }
-    strFormatFile = getInitParameter("FormatFile");
-    fileBaseLocation = new File(strBaseLocation);
-    fileXmlEngineFormat = new File(fileBaseLocation, strFormatFile);
-    if (log4jXmlEngine.isDebugEnabled()) {
-      log4jXmlEngine.debug("BaseLocation: " + strBaseLocation);
-    }
-    strReplaceWhat = getInitParameter("ReplaceWhat");
-    strReplaceWith = getInitParameter("ReplaceWith");
-    if (log4jXmlEngine.isDebugEnabled()) {
-      log4jXmlEngine.debug(
-          "Replace attribute value: \"" + strReplaceWhat + "\" with: \"" + strReplaceWith + "\".");
-    }
-    strTextDividedByZero = getInitParameter("TextDividedByZero");
-    if (log4jXmlEngine.isDebugEnabled()) {
-      log4jXmlEngine.debug("TextDividedByZero: " + strTextDividedByZero);
-    }
-    try {
-      if (log4jXmlEngine.isDebugEnabled()) {
-        log4jXmlEngine.debug("fileBaseLocation: " + fileBaseLocation.getCanonicalPath());
-      }
-    } catch (IOException e) {
-      log4jXmlEngine.error("Error in BaseLocation: " + strBaseLocation);
-    }
-    initialize();
   }
 
   private void loadParams() {
@@ -464,83 +419,6 @@ public class XmlEngine extends HttpServlet {
     }
   }
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    doGet(request, response);
-  }
-
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    String strReportName = request.getParameter("report");
-    String strReload = request.getParameter("reload");
-    if (strReload != null) {
-      initialize();
-    }
-    Report report = readReportConfiguration(strReportName);
-    // SQL connect();
-    for (DataValue elementDataValue : report.xmlDocument.hasDataValue.values()) {
-      elementDataValue.connect(); // SQL
-      for (Enumeration<Object> e2 = elementDataValue.vecParameterValue.elements(); e2
-          .hasMoreElements();) {
-        ParameterValue parameter = (ParameterValue) e2.nextElement();
-        parameter.strValue = request.getParameter(parameter.parameterTemplate.strName);
-        if (parameter.strValue == null) {
-          if (log4jXmlEngine.isDebugEnabled()) {
-            log4jXmlEngine.debug("getParameter: default assigned");
-          }
-          parameter.strValue = parameter.parameterTemplate.strDefault;
-        }
-        if (log4jXmlEngine.isDebugEnabled()) {
-          log4jXmlEngine.debug("getParameter: " + parameter.parameterTemplate.strName + " valor: "
-              + parameter.strValue);
-        }
-      }
-    }
-
-    // Connection of the subreports
-    for (XmlDocument subXmlDocument : report.xmlDocument.hasSubXmlDocuments.values()) {
-      for (DataValue elementDataValue : subXmlDocument.hasDataValue.values()) {
-        elementDataValue.connect(); // SQL
-      }
-    }
-
-    // Parameter of the report (not for the SQL query's)
-    for (ParameterValue parameter : report.xmlDocument.hasParameterValue.values()) {
-      parameter.strValue = request.getParameter(parameter.parameterTemplate.strName);
-      if (parameter.strValue == null) {
-        log4jXmlEngine
-            .debug("getParameter of: " + parameter.parameterTemplate.strName + " default assigned");
-        parameter.strValue = parameter.parameterTemplate.strDefault;
-      }
-      log4jXmlEngine.debug(
-          "getParameter: " + parameter.parameterTemplate.strName + " value: " + parameter.strValue);
-    }
-
-    // Label of the report (not for the SQL query's)
-    for (LabelValue label : report.xmlDocument.hasLabelValue.values()) {
-      log4jXmlEngine.debug("getting labelValues for report.xmlDocument");
-      label.strValue = request.getParameter(label.labelTemplate.strName);
-      if (label.strValue == null) {
-        log4jXmlEngine.debug("getLabel of: " + label.labelTemplate.strName + " default assigned");
-        label.strValue = label.labelTemplate.strName;
-      }
-      log4jXmlEngine
-          .debug("getLabel: " + label.labelTemplate.strName + " value: " + label.strValue);
-    }
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    String strBlank = request.getParameter("blank");
-    if (strBlank != null) {
-      out.println(report.xmlDocument.print(strBlank));
-    } else {
-      out.println(report.xmlDocument.print());
-    }
-    out.close();
-  }
-
   @SuppressWarnings({ "rawtypes" })
   // It's not possible to cast from xmlTemplate to Report
   void connect() {
@@ -563,11 +441,6 @@ public class XmlEngine extends HttpServlet {
         elementDataValue.closeConnection();
       }
     }
-  }
-
-  @Override
-  public void destroy() {
-    closeConnections();
   }
 
   public static void main(String argv[]) {
