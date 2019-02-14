@@ -334,7 +334,11 @@ enyo.kind({
         }
       }
       this.$.layawayaction.setLocalDisabled(disable);
-      this.$.layawayaction.show();
+      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+        this.$.layawayaction.hide();
+      } else {
+        this.$.layawayaction.show();
+      }
     } else if (this.receipt.get('orderType') === 3 && _.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
       this.$.layawayaction.setLocalDisabled(false);
       this.$.layawayaction.hide();
