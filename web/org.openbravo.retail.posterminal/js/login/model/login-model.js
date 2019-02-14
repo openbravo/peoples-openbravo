@@ -101,10 +101,16 @@
           OB.DS.commonParams.terminalName = terminalModel.get('terminalName');
 
           handleError = function (data) {
-            if (data && data.exception && data.exception.message && OB.I18N.hasLabel(data.exception.message)) {
+            if (data && data.exception && data.exception.message) {
+              var message;
+              if (OB.I18N.hasLabel(data.exception.message)) {
+                message = OB.I18N.hasLabel(data.exception.message);
+              } else {
+                message = data.exception.message;
+              }
               //Common error (not a random caught exception).
               // We might need to logout and login again to fix this.
-              OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + ' ' + OB.I18N.getLabel(data.exception.message), [{
+              OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + ' ' + message, [{
                 label: OB.I18N.getLabel('OBMOBC_LblOk'),
                 isConfirmButton: true,
                 action: function () {
