@@ -17,6 +17,7 @@
     "BigDecimal": "readable"
   },
   "rules": {
+    "eqeqeq": ["warn", "smart"],
     "no-unused-vars": ["warn", {
       "args": "none"
     }],
