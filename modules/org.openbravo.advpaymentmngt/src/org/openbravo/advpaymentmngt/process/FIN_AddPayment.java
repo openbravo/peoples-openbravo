@@ -160,12 +160,9 @@ public class FIN_AddPayment {
           paymentCurrency, finTxnConvertRate, finTxnAmount, paymentId);
       if (doFlush) {
         try {
-          OBContext.setCrossOrgReferenceAdminMode();
           OBDal.getInstance().flush();
         } catch (Exception e) {
           throw new OBException(FIN_Utility.getExceptionMessage(e));
-        } finally {
-          OBContext.restorePreviousCrossOrgReferenceMode();
         }
       }
     }
