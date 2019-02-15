@@ -226,6 +226,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       UpdateCashup.getAndUpdateCashUp(jsoncashup.getString("id"), jsoncashup, cashUpDate);
     }
 
+    OBContext.setCrossOrgReferenceAdminMode();
     try {
 
       initializeVariables(jsonorder);
@@ -433,7 +434,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
         if (createShipment || createInvoice) {
           // do the docnumbers at the end
           OBContext.setAdminMode(false);
-          OBContext.setCrossOrgReferenceAdminMode();
           try {
             for (DocumentNoHandler documentNoHandler : documentNoHandlers.get()) {
               documentNoHandler.setDocumentNoAndSave();
@@ -443,7 +443,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
             // set to null, should not be used anymore after this.
             documentNoHandlers.set(null);
             OBContext.restorePreviousMode();
-            OBContext.restorePreviousCrossOrgReferenceMode();
           }
         }
 
@@ -536,6 +535,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       return successMessage(jsonorder);
     } finally {
       documentNoHandlers.set(null);
+      OBContext.restorePreviousCrossOrgReferenceMode();
     }
   }
 
