@@ -47,6 +47,7 @@ public class DocLine_Payment extends DocLine {
   /**
    * @return the amount
    */
+  @Override
   public String getAmount() {
     return Amount;
   }
@@ -325,6 +326,7 @@ public class DocLine_Payment extends DocLine {
    * @param amount
    *          the amount to set
    */
+  @Override
   public void setAmount(String amount) {
     Amount = amount;
   }
@@ -435,6 +437,7 @@ public class DocLine_Payment extends DocLine {
     return lineAux;
   } // clone
 
+  @Override
   public String getServletInfo() {
     return "Servlet for accounting";
   } // end of getServletInfo() method

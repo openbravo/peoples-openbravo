@@ -33,12 +33,13 @@ public class InventoryStatusValidationHookReservations implements InventoryStatu
   @Override
   public void exec(StorageDetail storageDetail, InventoryStatus newStatus) throws OBException {
     if (!newStatus.isAvailable() && ReservationUtils.existsReservationForStock(storageDetail)) {
-      throw new OBException(String.format(
-          OBMessageUtils.messageBD("InventoryStatusChangeReservation"),
-          storageDetail.getProduct().getIdentifier(),
-          (StringUtils.equals("0", storageDetail.getAttributeSetValue().getId()) ? OBMessageUtils
-              .messageBD("Empty") : storageDetail.getAttributeSetValue().getIdentifier()),
-          storageDetail.getUOM().getIdentifier()));
+      throw new OBException(
+          String.format(OBMessageUtils.messageBD("InventoryStatusChangeReservation"),
+              storageDetail.getProduct().getIdentifier(),
+              (StringUtils.equals("0", storageDetail.getAttributeSetValue().getId())
+                  ? OBMessageUtils.messageBD("Empty")
+                  : storageDetail.getAttributeSetValue().getIdentifier()),
+              storageDetail.getUOM().getIdentifier()));
     }
   }
 }

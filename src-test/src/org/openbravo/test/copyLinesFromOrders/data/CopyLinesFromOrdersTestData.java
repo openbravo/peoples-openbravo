@@ -147,8 +147,8 @@ public abstract class CopyLinesFromOrdersTestData {
     for (int orderReference = 0; orderReference < orderCount; orderReference++) {
       ordersCopied[orderReference] = createOrderHeader(orderReference + 1);
       for (int orderLineReference = 0; orderLineReference < linesCountPerOrder; orderLineReference++) {
-        linesCopied[orderReference][orderLineReference] = createOrderLine(Long
-            .valueOf(orderLineReference));
+        linesCopied[orderReference][orderLineReference] = createOrderLine(
+            Long.valueOf(orderLineReference));
         createExpectedLine(String.valueOf(orderReference + 1), String.valueOf(expectedLine += 10));
       }
     }
@@ -177,11 +177,12 @@ public abstract class CopyLinesFromOrdersTestData {
   }
 
   public void createExpectedLine(String orderReference, String lineNo) {
-    expectedOrderLines.put(lineNo, new String[] { CLFOTestConstants.FINAL_GOOD_C_PRODUCT_NAME,
-        "10", CLFOTestConstants.BAG_UOM_NAME, "2.00", "2.00", "0",
-        CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, "Order_" + orderReference,
-        BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME, "",
-        null, null, CLFOTestConstants.LINE1_DESCRIPTION });
+    expectedOrderLines.put(lineNo,
+        new String[] { CLFOTestConstants.FINAL_GOOD_C_PRODUCT_NAME, "10",
+            CLFOTestConstants.BAG_UOM_NAME, "2.00", "2.00", "0",
+            CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, "Order_" + orderReference,
+            BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME,
+            "", null, null, CLFOTestConstants.LINE1_DESCRIPTION });
   }
 
   public OrderLineData createOrderLine(Long lineNo) {
@@ -235,8 +236,8 @@ public abstract class CopyLinesFromOrdersTestData {
     productAUM.setPurchase(purchase);
     productAUM.setSales(sales);
     productAUM.setUOM(OBDal.getInstance().getProxy(UOM.class, aumId));
-    productAUM.setOrganization(OBDal.getInstance().getProxy(Organization.class,
-        CLFOTestConstants.SPAIN_ORGANIZATION_ID));
+    productAUM.setOrganization(
+        OBDal.getInstance().getProxy(Organization.class, CLFOTestConstants.SPAIN_ORGANIZATION_ID));
     productFGA.getProductAUMList().add(productAUM);
     OBDal.getInstance().save(productAUM);
     OBDal.getInstance().flush();

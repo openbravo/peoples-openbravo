@@ -46,8 +46,9 @@ public class Issue29934Test extends OBBaseTest {
   public void doTest() {
     setTestUserContext();
     VariablesSecureApp app = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-        OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId());
+        OBContext.getOBContext().getCurrentClient().getId(),
+        OBContext.getOBContext().getCurrentOrganization().getId(),
+        OBContext.getOBContext().getRole().getId());
     app.setSessionObject("abc", "val");
     assertTrue("val".equals(app.getSessionObject("abc")));
     assertTrue("val".equals(app.getSessionObject("ABC")));

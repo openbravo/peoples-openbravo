@@ -183,8 +183,8 @@ public class UIDefinitionController extends BaseTemplateComponent {
     if (!reference.getOBCLKERUIDefinitionList().isEmpty()) {
       for (UserInterfaceDefinition uiDefinition : reference.getOBCLKERUIDefinitionList()) {
         if (uiDefinition.isActive()) {
-          final Class<?> clz = OBClassLoader.getInstance().loadClass(
-              uiDefinition.getImplementationClassname());
+          final Class<?> clz = OBClassLoader.getInstance()
+              .loadClass(uiDefinition.getImplementationClassname());
           return (UIDefinition) clz.getDeclaredConstructor().newInstance();
         }
       }

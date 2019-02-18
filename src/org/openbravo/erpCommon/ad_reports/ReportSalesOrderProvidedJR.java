@@ -44,8 +44,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
@@ -65,8 +66,8 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportSalesOrderProvidedJR|currency", strUserCurrencyId);
       printPageDataSheet(response, vars, strdateFrom, strdateTo, strcBpartnerId, strmWarehouseId,
-          strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic,
-          strProduct, strCurrencyId);
+          strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic, strProduct,
+          strCurrencyId);
     } else if (vars.commandIn("FIND")) {
       String strdateFrom = vars.getStringParameter("inpDateFrom");
       String strdateTo = vars.getStringParameter("inpDateTo");
@@ -91,8 +92,8 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo, String strcBpartnerId, String strmWarehouseId,
       String strcProjectId, String strmCategoryId, String strProjectkind, String strcRegionId,
-      String strProjectpublic, String strProduct, String strCurrencyId) throws IOException,
-      ServletException {
+      String strProjectpublic, String strProduct, String strCurrencyId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
@@ -101,8 +102,9 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     if (vars.commandIn("DEFAULT")) {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportSalesOrderProvidedJR").createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportSalesOrderProvidedJR")
+          .createXmlDocument();
 
       ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportSalesOrderProvidedJR",
           false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
@@ -156,9 +158,10 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
           ReportSalesOrderProvidedData.bPartnerDescription(readOnlyCP, strcBpartnerId));
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "M_Warehouse_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-                "ReportSalesOrderProvidedJR"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-                "ReportSalesOrderProvidedJR"), 0);
+            "M_Warehouse_ID", "", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportSalesOrderProvidedJR"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesOrderProvidedJR"), 0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
             "ReportSalesOrderProvidedJR", strmWarehouseId);
         xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
@@ -169,9 +172,10 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "M_Product_Category_ID", "", "", Utility.getContext(readOnlyCP, vars,
-                "#AccessibleOrgTree", "ReportSalesOrderProvidedJR"), Utility.getContext(readOnlyCP,
-                vars, "#User_Client", "ReportSalesOrderProvidedJR"), 0);
+            "M_Product_Category_ID", "", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportSalesOrderProvidedJR"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesOrderProvidedJR"), 0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
             "ReportSalesOrderProvidedJR", strmCategoryId);
         xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
@@ -183,9 +187,10 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST",
-            "C_Projectkind_ID", "Projectkind", "", Utility.getContext(readOnlyCP, vars,
-                "#AccessibleOrgTree", "ReportSalesOrderProvidedJR"), Utility.getContext(readOnlyCP,
-                vars, "#User_Client", "ReportSalesOrderProvidedJR"), 0);
+            "C_Projectkind_ID", "Projectkind", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportSalesOrderProvidedJR"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesOrderProvidedJR"), 0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
             "ReportSalesOrderProvidedJR", strProjectkind);
         xmlDocument.setData("reportC_PROJECTKIND", "liststructure", comboTableData.select(false));
@@ -196,9 +201,10 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "C_Region_ID", "", "C_Region of Country", Utility.getContext(readOnlyCP, vars,
-                "#AccessibleOrgTree", "ReportSalesOrderProvidedJR"), Utility.getContext(readOnlyCP,
-                vars, "#User_Client", "ReportSalesOrderProvidedJR"), 0);
+            "C_Region_ID", "", "C_Region of Country",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportSalesOrderProvidedJR"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesOrderProvidedJR"), 0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
             "ReportSalesOrderProvidedJR", strcRegionId);
         xmlDocument.setData("reportC_REGIONID", "liststructure", comboTableData.select(false));
@@ -209,9 +215,10 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST",
-            "C_Project_Public_ID", "PublicPrivate", "", Utility.getContext(readOnlyCP, vars,
-                "#AccessibleOrgTree", "ReportSalesOrderProvidedJR"), Utility.getContext(readOnlyCP,
-                vars, "#User_Client", "ReportSalesOrderProvidedJR"), 0);
+            "C_Project_Public_ID", "PublicPrivate", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportSalesOrderProvidedJR"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesOrderProvidedJR"), 0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
             "ReportSalesOrderProvidedJR", strProjectpublic);
         xmlDocument.setData("reportC_PROJECTPUBLIC", "liststructure", comboTableData.select(false));
@@ -223,9 +230,10 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-                "ReportSalesOrderProvidedJR"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-                "ReportSalesOrderProvidedJR"), 0);
+            "C_Currency_ID", "", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportSalesOrderProvidedJR"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesOrderProvidedJR"), 0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
             "ReportSalesOrderProvidedJR", strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -243,13 +251,15 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
           strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId,
           strProjectpublic, strProduct);
       if (data == null || data.length == 0) {
-        xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_reports/ReportSalesOrderProvidedPop", discard)
+        xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportSalesOrderProvidedPop",
+                discard)
             .createXmlDocument();
         xmlDocument.setData("structure1", ReportSalesOrderProvidedData.set());
       } else {
-        xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_reports/ReportSalesOrderProvidedPop").createXmlDocument();
+        xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportSalesOrderProvidedPop")
+            .createXmlDocument();
         xmlDocument.setData("structure1", data);
       }
       if (StringUtils.isNotEmpty(strmWarehouseId)) {
@@ -265,17 +275,13 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
             + " " + ReportSalesOrderProvidedData.selectCategoryId(readOnlyCP, strmCategoryId);
       }
       if (StringUtils.isNotEmpty(strProjectkind)) {
-        strTitle += ", "
-            + Utility.messageBD(readOnlyCP, "ProjectType", vars.getLanguage())
-            + " "
+        strTitle += ", " + Utility.messageBD(readOnlyCP, "ProjectType", vars.getLanguage()) + " "
             + ReportSalesOrderProvidedData.selectProjectkind(readOnlyCP, vars.getLanguage(),
                 strProjectkind);
       }
       if (StringUtils.isNotEmpty(strProjectpublic)) {
-        strTitle += ", "
-            + Utility.messageBD(readOnlyCP, "WithInitiativeType", vars.getLanguage())
-            + " "
-            + ReportSalesOrderProvidedData.selectProjectpublic(readOnlyCP, vars.getLanguage(),
+        strTitle += ", " + Utility.messageBD(readOnlyCP, "WithInitiativeType", vars.getLanguage())
+            + " " + ReportSalesOrderProvidedData.selectProjectpublic(readOnlyCP, vars.getLanguage(),
                 strProjectpublic);
       }
       if (StringUtils.isNotEmpty(strdateFrom)) {
@@ -344,6 +350,7 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportSalesOrderProvidedJR. This Servlet was made by Jon Alegría";
   } // end of getServletInfo() method

@@ -39,8 +39,8 @@ import org.openbravo.model.ad.system.SystemInformation;
  */
 public class UsageAuditHandler extends EntityPersistenceEventObserver {
   private static final String SYSTEM_INFO_TABLE_ID = "1005400005";
-  private static final Entity[] entities = { ModelProvider.getInstance().getEntityByTableId(
-      SYSTEM_INFO_TABLE_ID) };
+  private static final Entity[] entities = {
+      ModelProvider.getInstance().getEntityByTableId(SYSTEM_INFO_TABLE_ID) };
   private static final Property usageAuditProperty = entities[0]
       .getProperty(SystemInformation.PROPERTY_ISUSAGEAUDITENABLED);
   private static final Logger log = LogManager.getLogger();

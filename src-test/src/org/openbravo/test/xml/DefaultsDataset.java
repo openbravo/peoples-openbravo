@@ -23,6 +23,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -33,8 +35,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 import org.openbravo.utility.cleanup.log.LogCleanUpConfig;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Test cases to cover default config datasets
@@ -115,9 +115,9 @@ public class DefaultsDataset extends XMLBaseTest {
     String xml = getFileContent(xmlFileName);
     log.debug("xml contents:\n{}", xml);
 
-    return DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "0"),
-        OBDal.getInstance().get(Organization.class, "0"), xml, null);
+    return DataImportService.getInstance()
+        .importDataFromXML(OBDal.getInstance().get(Client.class, "0"),
+            OBDal.getInstance().get(Organization.class, "0"), xml, null);
   }
 
   private LogCleanUpConfig getImportedConfig(String id) {

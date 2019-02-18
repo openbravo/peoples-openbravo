@@ -43,5 +43,6 @@ public abstract class BasePropertyValidator implements PropertyValidator {
   /**
    * @see PropertyValidator#validate(Object)
    */
+  @Override
   public abstract String validate(Object value);
 }

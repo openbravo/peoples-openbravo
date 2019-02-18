@@ -61,6 +61,7 @@ public class ExecutePayments extends HttpSecureAppServlet {
   private static final String SalesInvoiceWindow = "167";
   private AdvPaymentMngtDao dao;
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     dao = new AdvPaymentMngtDao();
@@ -80,9 +81,9 @@ public class ExecutePayments extends HttpSecureAppServlet {
       }
 
       if (executionProcess == null) {
-        OBError message = Utility
-            .translateError(this, vars, vars.getLanguage(), Utility.parseTranslation(this, vars,
-                vars.getLanguage(), "@APRM_No_ExecutionProcess_Defined@"));
+        OBError message = Utility.translateError(this, vars, vars.getLanguage(),
+            Utility.parseTranslation(this, vars, vars.getLanguage(),
+                "@APRM_No_ExecutionProcess_Defined@"));
         vars.setMessage(strTabId, message);
         printPageClosePopUpAndRefreshParent(response, vars);
       }
@@ -103,17 +104,19 @@ public class ExecutePayments extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      PaymentExecutionProcess executionProcess, String strOrganizationId) throws IOException,
-      ServletException {
+      PaymentExecutionProcess executionProcess, String strOrganizationId)
+      throws IOException, ServletException {
     log4j.debug("Output: Execute Payments get parameters");
     dao = new AdvPaymentMngtDao();
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/ExecutePayments").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/ExecutePayments")
+        .createXmlDocument();
 
     FieldProvider[] data = getParameterList(executionProcess);
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       data = set();
+    }
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -122,8 +125,8 @@ public class ExecutePayments extends HttpSecureAppServlet {
     try {
       xmlDocument.setParameter("title", dao.getObject(Process.class, classInfo.id).getIdentifier());
       if (dao.getObject(Process.class, classInfo.id).getHelpComment() != null) {
-        xmlDocument.setParameter("help", dao.getObject(Process.class, classInfo.id)
-            .getHelpComment());
+        xmlDocument.setParameter("help",
+            dao.getObject(Process.class, classInfo.id).getHelpComment());
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -162,9 +165,8 @@ public class ExecutePayments extends HttpSecureAppServlet {
       if (executionProcessInParameters != null && executionProcessInParameters.size() > 0) {
         parameters = new HashMap<String, String>();
         for (PaymentExecutionProcessParameter parameter : executionProcessInParameters) {
-          String strValue = vars
-              .getStringParameter(("TEXT".equals(parameter.getInputType()) ? "text" : "check")
-                  + parameter.getId());
+          String strValue = vars.getStringParameter(
+              ("TEXT".equals(parameter.getInputType()) ? "text" : "check") + parameter.getId());
           parameters.put(parameter.getSearchKey(), strValue);
         }
       }
@@ -193,19 +195,20 @@ public class ExecutePayments extends HttpSecureAppServlet {
       }
     } catch (NoExecutionProcessFoundException e) {
       result.setType("Error");
-      result.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
-          "@NoExecutionProcessFound@"));
+      result.setMessage(
+          Utility.parseTranslation(this, vars, vars.getLanguage(), "@NoExecutionProcessFound@"));
     } finally {
       OBContext.restorePreviousMode();
     }
     if (PaymentInWindow.equals(strWindowId) || PaymentOutWindow.equals(strWindowId)
-        || PaymentProposalOutWindow.equals(strWindowId)
-        || PurchaseInvoiceWindow.equals(strWindowId) || SalesInvoiceWindow.equals(strWindowId)) {
+        || PaymentProposalOutWindow.equals(strWindowId) || PurchaseInvoiceWindow.equals(strWindowId)
+        || SalesInvoiceWindow.equals(strWindowId)) {
       final String strTabId = vars.getGlobalVariable("inpTabId", "ExecutePayments|Tab_ID");
       vars.setMessage(strTabId, result);
       String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       printPageClosePopUp(response, vars, strWindowPath);
     } else if (BatchPaymentExecutionForm.equals(strWindowId)) {
@@ -216,8 +219,9 @@ public class ExecutePayments extends HttpSecureAppServlet {
     vars.removeSessionValue("ExecutePayments|Window_ID");
     vars.removeSessionValue("ExecutePayments|Tab_ID");
     vars.removeSessionValue("ExecutePayments|payments");
-    if (PurchaseInvoiceWindow.equals(strWindowId) || SalesInvoiceWindow.equals(strWindowId))
+    if (PurchaseInvoiceWindow.equals(strWindowId) || SalesInvoiceWindow.equals(strWindowId)) {
       vars.removeSessionValue("ExecutePayments|Org_ID");
+    }
 
   }
 
@@ -230,8 +234,8 @@ public class ExecutePayments extends HttpSecureAppServlet {
       final FIN_Payment payment = dao.getObject(FIN_Payment.class, strPaymentId);
       return dao.getExecutionProcess(payment);
     } else if (PaymentProposalOutWindow.equals(strWindowId)) {
-      final String strPaymentProposalId = vars.getRequiredStringParameter(
-          "inpfinPaymentProposalId", IsIDFilter.instance);
+      final String strPaymentProposalId = vars.getRequiredStringParameter("inpfinPaymentProposalId",
+          IsIDFilter.instance);
       final FIN_PaymentProposal paymentProposal = dao.getObject(FIN_PaymentProposal.class,
           strPaymentProposalId);
       return dao.getExecutionProcess(paymentProposal.getAccount(),
@@ -241,7 +245,8 @@ public class ExecutePayments extends HttpSecureAppServlet {
       String[] paymentList = strSelectedPaymentsIds.split(",");
       final FIN_Payment payment = dao.getObject(FIN_Payment.class, paymentList[0].trim());
       return dao.getExecutionProcess(payment);
-    } else if (PurchaseInvoiceWindow.equals(strWindowId) || SalesInvoiceWindow.equals(strWindowId)) {
+    } else if (PurchaseInvoiceWindow.equals(strWindowId)
+        || SalesInvoiceWindow.equals(strWindowId)) {
       String strSelectedPaymentsIds = vars.getSessionValue("ExecutePayments|payments");
       strSelectedPaymentsIds = strSelectedPaymentsIds.replace("'", "");
       String[] paymentList = strSelectedPaymentsIds.split(",");
@@ -259,14 +264,15 @@ public class ExecutePayments extends HttpSecureAppServlet {
       final FIN_Payment payment = dao.getObject(FIN_Payment.class, strPaymentId);
       return payment.getOrganization().getId();
     } else if (PaymentProposalOutWindow.equals(strWindowId)) {
-      final String strPaymentProposalId = vars.getRequiredStringParameter(
-          "inpfinPaymentProposalId", IsIDFilter.instance);
+      final String strPaymentProposalId = vars.getRequiredStringParameter("inpfinPaymentProposalId",
+          IsIDFilter.instance);
       final FIN_PaymentProposal paymentProposal = dao.getObject(FIN_PaymentProposal.class,
           strPaymentProposalId);
       return paymentProposal.getOrganization().getId();
     } else if (BatchPaymentExecutionForm.equals(strWindowId)) {
       return vars.getRequiredStringParameter("inpOrgId", IsIDFilter.instance);
-    } else if (PurchaseInvoiceWindow.equals(strWindowId) || SalesInvoiceWindow.equals(strWindowId)) {
+    } else if (PurchaseInvoiceWindow.equals(strWindowId)
+        || SalesInvoiceWindow.equals(strWindowId)) {
       return vars.getSessionValue("ExecutePayments|Org_ID");
     }
     return null;
@@ -303,14 +309,16 @@ public class ExecutePayments extends HttpSecureAppServlet {
   }
 
   private String getSource(String strWindowId) {
-    if (PaymentInWindow.equals(strWindowId) || PaymentOutWindow.equals(strWindowId))
+    if (PaymentInWindow.equals(strWindowId) || PaymentOutWindow.equals(strWindowId)) {
       return "PW"; // Payments Window
-    else if (PaymentProposalOutWindow.equals(strWindowId))
+    } else if (PaymentProposalOutWindow.equals(strWindowId)) {
       return "PPW"; // Payment Proposal Window
-    else if (BatchPaymentExecutionForm.equals(strWindowId))
+    } else if (BatchPaymentExecutionForm.equals(strWindowId)) {
       return "MF"; // Execute Payments Manual Form
-    else if (PurchaseInvoiceWindow.equals(strWindowId) || SalesInvoiceWindow.equals(strWindowId))
+    } else if (PurchaseInvoiceWindow.equals(strWindowId)
+        || SalesInvoiceWindow.equals(strWindowId)) {
       return "AIP"; // Invoice Process
+    }
 
     return "OTHER";
   }
@@ -319,11 +327,11 @@ public class ExecutePayments extends HttpSecureAppServlet {
       throws ServletException {
     dao = new AdvPaymentMngtDao();
     String payments = "";
-    if (PaymentInWindow.equals(strWindowId) || PaymentOutWindow.equals(strWindowId))
+    if (PaymentInWindow.equals(strWindowId) || PaymentOutWindow.equals(strWindowId)) {
       payments = vars.getRequiredStringParameter("inpfinPaymentId", IsIDFilter.instance);
-    else if (PaymentProposalOutWindow.equals(strWindowId)) {
-      final String strPaymentProposalId = vars.getRequiredStringParameter(
-          "inpfinPaymentProposalId", IsIDFilter.instance);
+    } else if (PaymentProposalOutWindow.equals(strWindowId)) {
+      final String strPaymentProposalId = vars.getRequiredStringParameter("inpfinPaymentProposalId",
+          IsIDFilter.instance);
       final FIN_PaymentProposal paymentProposal = dao.getObject(FIN_PaymentProposal.class,
           strPaymentProposalId);
       payments = Utility.getInStrList(dao.getPaymentProposalPayments(paymentProposal));
@@ -332,8 +340,9 @@ public class ExecutePayments extends HttpSecureAppServlet {
       payments = vars.getRequestGlobalVariable("inpSelectedRowList", "");
     }
 
-    if (!PurchaseInvoiceWindow.equals(strWindowId) && !SalesInvoiceWindow.equals(strWindowId))
+    if (!PurchaseInvoiceWindow.equals(strWindowId) && !SalesInvoiceWindow.equals(strWindowId)) {
       vars.setSessionValue("ExecutePayments|payments", payments);
+    }
   }
 
   private FieldProvider[] set() throws ServletException {
@@ -350,6 +359,7 @@ public class ExecutePayments extends HttpSecureAppServlet {
     return FieldProviderFactory.getFieldProviderArray(result);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet to Execute Payments";
   }

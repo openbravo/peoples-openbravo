@@ -20,6 +20,8 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -33,12 +35,10 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.common.uom.UOMConversion;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      UOMConversion.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(UOMConversion.ENTITY_NAME) };
 
   protected Logger logger = LogManager.getLogger();
 
@@ -76,7 +76,8 @@ public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
       final UOMConversion uomConversion = (UOMConversion) event.getTargetInstance();
 
       // Check if exists another record using this uomFrom - uomTo
-      if (existsRecord(uomConversion.getClient(), uomConversion.getUOM(), uomConversion.getToUOM())) {
+      if (existsRecord(uomConversion.getClient(), uomConversion.getUOM(),
+          uomConversion.getToUOM())) {
         throw new OBException(String.format(OBMessageUtils.messageBD("CannotInsertUOMConversion"),
             uomConversion.getUOM().getName(), uomConversion.getToUOM().getName()));
       }
@@ -91,9 +92,8 @@ public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
       if (uomConversion.isActive()) {
         if (existsRecord(uomConversion.getClient(), uomConversion.getUOM(),
             uomConversion.getToUOM())) {
-          throw new OBException(String.format(
-              OBMessageUtils.messageBD("CannotInsertUOMConversion"), uomConversion.getUOM()
-                  .getName(), uomConversion.getToUOM().getName()));
+          throw new OBException(String.format(OBMessageUtils.messageBD("CannotInsertUOMConversion"),
+              uomConversion.getUOM().getName(), uomConversion.getToUOM().getName()));
         }
       }
 
@@ -118,7 +118,8 @@ public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
       hql.append("AND t1." + UOMConversion.PROPERTY_CLIENT + " = :client");
     }
 
-    final Query<String> query = OBDal.getInstance().getSession()
+    final Query<String> query = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), String.class);
     query.setParameter("uomFrom", uomFrom);
     query.setParameter("uomTo", uomTo);

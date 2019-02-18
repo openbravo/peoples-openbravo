@@ -86,6 +86,7 @@ public abstract class ProcedureProcess extends DalBaseProcess {
    * @param bundle
    *          the process bundle containing process and context specific information
    */
+  @Override
   public void doExecute(final ProcessBundle bundle) throws Exception {
     init(bundle);
 

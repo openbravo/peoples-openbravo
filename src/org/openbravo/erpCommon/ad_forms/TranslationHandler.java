@@ -92,6 +92,7 @@ class TranslationHandler extends DefaultHandler {
    *          attributes
    * @throws org.xml.sax.SAXException
    */
+  @Override
   public void startElement(String uri, String localName, String qName, Attributes attributes)
       throws org.xml.sax.SAXException {
     if (qName.equals(TranslationManager.XML_TAG)) {
@@ -102,8 +103,9 @@ class TranslationHandler extends DefaultHandler {
 
       m_updateSQL += "_Trl";
       m_updateSQL += " SET ";
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("AD_Language=" + m_AD_Language + ", TableName=" + m_TableName);
+      }
     } else if (qName.equals(TranslationManager.XML_ROW_TAG)) {
       m_curID = attributes.getValue(TranslationManager.XML_ROW_ATTRIBUTE_ID);
       m_Translated = attributes.getValue(TranslationManager.XML_ROW_ATTRIBUTE_TRANSLATED);
@@ -113,8 +115,9 @@ class TranslationHandler extends DefaultHandler {
       m_oriValue = attributes.getValue(TranslationManager.XML_VALUE_ATTRIBUTE_ORIGINAL);
     } else if (qName.equals(TranslationManager.XML_CONTRIB)) {
       m_AD_Language = attributes.getValue(TranslationManager.XML_ATTRIBUTE_LANGUAGE);
-    } else
+    } else {
       log4j.error("startElement - UNKNOWN TAG: " + qName);
+    }
     m_curValue = new StringBuffer();
   } // startElement
 
@@ -129,6 +132,7 @@ class TranslationHandler extends DefaultHandler {
    *          length
    * @throws SAXException
    */
+  @Override
   public void characters(char ch[], int start, int length) throws SAXException {
     m_curValue.append(ch, start, length);
   } // characters
@@ -144,27 +148,32 @@ class TranslationHandler extends DefaultHandler {
    *          qualified name
    * @throws SAXException
    */
+  @Override
   public void endElement(String uri, String localName, String qName) throws SAXException {
     // Log.trace(Log.l6_Database+1, "TranslationHandler.endElement", qName);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("endelement " + qName);
+    }
     if (qName.equals(TranslationManager.XML_TAG)) {
     } else if (qName.equals(TranslationManager.XML_ROW_TAG)) {
       // Set section
-      if (m_sql.length() > 0)
+      if (m_sql.length() > 0) {
         m_sql.append(",");
+      }
       m_sql.append("Updated=now()"); // .append(DB.TO_DATE(m_time,
       // false));
       m_sql.append(",IsTranslated='" + m_Translated + "'");
       // Where section
       m_sql.append(" WHERE ").append(m_TableName).append("_ID='").append(m_curID).append("'");
       m_sql.append(" AND AD_Language='").append(m_AD_Language).append("'");
-      if (m_AD_Client_ID >= 0)
+      if (m_AD_Client_ID >= 0) {
         m_sql.append(" AND AD_Client_ID='").append(m_AD_Client_ID).append("'");
+      }
       // Update section
       m_sql.insert(0, m_updateSQL);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug(m_sql.toString());
+      }
       // Execute
       int no = 0;
       //
@@ -182,13 +191,15 @@ class TranslationHandler extends DefaultHandler {
       }
 
       if (no == 1) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug(m_sql.toString());
+        }
         m_updateCount++;
-      } else if (no == 0)
+      } else if (no == 0) {
         log4j.info("Not Found - " + m_sql.toString());
-      else
+      } else {
         log4j.error("Update Rows=" + no + " (Should be 1) - " + m_sql.toString());
+      }
     } else if (qName.equals(TranslationManager.XML_VALUE_TAG)) {
       String value = "";
       if (m_curValue != null && !m_curValue.toString().equals("")) {
@@ -197,13 +208,15 @@ class TranslationHandler extends DefaultHandler {
         value = TO_STRING(m_oriValue.toString());
       }
       if (!value.equals("")) {
-        if (m_sql.length() > 0)
+        if (m_sql.length() > 0) {
           m_sql.append(",");
+        }
         m_sql.append(m_curColumnName).append("=").append(value);
       }
     } else if (qName.equals(TranslationManager.XML_CONTRIB)) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Contibutors:" + TO_STRING(m_curValue.toString()));
+      }
       try {
         TranslationData.insertContrib(DB, m_curValue.toString(), m_AD_Language);
       } catch (Exception e) {
@@ -240,13 +253,15 @@ class TranslationHandler extends DefaultHandler {
    * @return escaped string for insert statement (NULL if null or empty)
    */
   private String TO_STRING(String txt, int maxLength) {
-    if (txt == null || txt.isEmpty())
+    if (txt == null || txt.isEmpty()) {
       return "NULL";
+    }
 
     // Length
     String text = txt;
-    if (maxLength != 0 && text.length() > maxLength)
+    if (maxLength != 0 && text.length() > maxLength) {
       text = txt.substring(0, maxLength);
+    }
 
     char quote = '\'';
     // copy characters (wee need to look through anyway)
@@ -254,10 +269,11 @@ class TranslationHandler extends DefaultHandler {
     out.append(quote); // '
     for (int i = 0; i < text.length(); i++) {
       char c = text.charAt(i);
-      if (c == quote)
+      if (c == quote) {
         out.append("''");
-      else
+      } else {
         out.append(c);
+      }
     }
     out.append(quote); // '
     //

@@ -27,8 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 public class ReportReconciliationDetail extends ReportReconciliation {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     post(request, response, DETAIL);
 

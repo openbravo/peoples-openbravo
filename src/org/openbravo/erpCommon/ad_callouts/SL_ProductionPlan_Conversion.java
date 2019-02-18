@@ -42,8 +42,8 @@ public class SL_ProductionPlan_Conversion extends SimpleCallout {
 
     // Production Quantity
     if (StringUtils.isNotEmpty(strSecQty)) {
-      BigDecimal convRate = new BigDecimal(SLProductionPlanWRPhaseData.getMultiplier(this,
-          strMaWrphaseId));
+      BigDecimal convRate = new BigDecimal(
+          SLProductionPlanWRPhaseData.getMultiplier(this, strMaWrphaseId));
       BigDecimal secondaryQty = new BigDecimal(strSecQty);
       BigDecimal quantity = secondaryQty.divide(convRate, 0, RoundingMode.HALF_UP);
       info.addResult("inpproductionqty", quantity);

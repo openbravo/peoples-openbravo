@@ -29,7 +29,7 @@ public class ServiceTestData2 extends ServiceTestData {
     setTestDescription("Service with three related products and regular pricelist");
     setBpartnerId(BP_CUSTOMER_A);
     setServiceId(SERVICE_WARRANTY);
-    setProducts(new String[][] {//
+    setProducts(new String[][] { //
         // ProductId, quantity, price, amount
         { PRODUCT_DISTRIBUTION_GOOD_A, "1", "10", "10" },
         { PRODUCT_DISTRIBUTION_GOOD_B, "1", "5", "5" },

@@ -67,6 +67,7 @@ public class DocBank extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID, String Id)
       throws ServletException {
     setObjectFieldProvider(DocBankData.selectRegistro(conn, aD_Client_ID, Id));
@@ -77,13 +78,15 @@ public class DocBank extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DocumentType = AcctServer.DOCTYPE_BankStatement;
     DateDoc = data[0].getField("StatementDate");
     // Amounts
     Amounts[AcctServer.AMTTYPE_Gross] = data[0].getField("StatementDifference");
-    if (Amounts[AcctServer.AMTTYPE_Gross] == null)
+    if (Amounts[AcctServer.AMTTYPE_Gross] == null) {
       Amounts[AcctServer.AMTTYPE_Gross] = ZERO.toString();
+    }
 
     // Set Bank Account Info (Currency)
     setBankAccountInfo(conn);
@@ -95,9 +98,9 @@ public class DocBank extends AcctServer {
       e.printStackTrace();
       return false;
     }
-    if (!strCount.equals("0"))
+    if (!strCount.equals("0")) {
       return false;
-    else {
+    } else {
       // Contained Objects
       p_lines = loadLines(conn);
       log4jDocBank.debug("Record_ID = " + Record_ID + " - Lines=" + p_lines.length);
@@ -165,6 +168,7 @@ public class DocBank extends AcctServer {
    * 
    * @return positive amount, if total is bigger than lines
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
     StringBuffer sb = new StringBuffer(" [");
@@ -197,17 +201,20 @@ public class DocBank extends AcctServer {
    *          accounting schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocBankTemplate newTemplate = (DocBankTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocBankTemplate - " + e);
@@ -228,9 +235,9 @@ public class DocBank extends AcctServer {
     fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_Bank line = (DocLine_Bank) p_lines[i];
-      if (strDateAcct.equals("FirstIteration"))
+      if (strDateAcct.equals("FirstIteration")) {
         strDateAcct = line.m_DateAcct;
-      else if (!strDateAcct.equals(line.m_DateAcct)) {
+      } else if (!strDateAcct.equals(line.m_DateAcct)) {
         strDateAcct = line.m_DateAcct;
         Fact_Acct_Group_ID = SequenceIdData.getUUID();
       }
@@ -263,21 +270,22 @@ public class DocBank extends AcctServer {
        * (TrxAmt.negate().compareTo(new BigDecimal("0"))>0?false:true)),line.m_C_Currency_ID,
        * TrxAmt.negate().toString(), conn);
        */
-      if (line.m_C_Payment_ID.equals("") && !line.m_C_GLItem_ID.equals(""))
+      if (line.m_C_Payment_ID.equals("") && !line.m_C_GLItem_ID.equals("")) {
         fact.createLine(line, line.getGlitemAccount(as, new BigDecimal(getAmount()), conn),
             line.m_C_Currency_ID, TrxAmt.signum() == -1 ? TrxAmt.negate().toString() : "",
             TrxAmt.signum() == -1 ? "" : TrxAmt.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
-      else
+      } else {
         fact.createLine(line, getAccountBankInTransit(line.m_TrxLine_ID, as, conn),
             line.m_C_Currency_ID, TrxAmt.negate().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
+      }
       // Charge DR (Charge)
-      fact.createLine(
-          lineAux,
-          new Account(conn, DocLineBankData.selectChargeAccount(conn, C_BankAccount_ID,
-              as.m_C_AcctSchema_ID)), line.m_C_Currency_ID, docBankChargeAmt.toString(), "",
-          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+      fact.createLine(lineAux,
+          new Account(conn,
+              DocLineBankData.selectChargeAccount(conn, C_BankAccount_ID, as.m_C_AcctSchema_ID)),
+          line.m_C_Currency_ID, docBankChargeAmt.toString(), "", Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, conn);
       // Interest DR CR (Interest)
       /*
        * if (InterestAmt.signum() < 0)
@@ -289,14 +297,15 @@ public class DocBank extends AcctServer {
        * InterestAmt.negate().toString(), conn);
        */
       //
-      if (ConvertChargeAmt.signum() > 0) // >0 loss
+      if (ConvertChargeAmt.signum() > 0) {
         fact.createLine(lineAux, getAccount(AcctServer.ACCTTYPE_ConvertChargeLossAmt, as, conn),
             line.m_C_Currency_ID, line.convertChargeAmt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
-      else
+      } else {
         fact.createLine(lineAux, getAccount(AcctServer.ACCTTYPE_ConvertChargeGainAmt, as, conn),
             line.m_C_Currency_ID, "", ConvertChargeAmt.negate().toString(), Fact_Acct_Group_ID,
             nextSeqNo(SeqNo), DocumentType, conn);
+      }
 
       log4jDocBank.debug("createTaxCorrection - (NIY)");
     }
@@ -325,8 +334,9 @@ public class DocBank extends AcctServer {
     String Account_ID = "";
     if (data != null && data.length != 0) {
       Account_ID = data[0].accountId;
-    } else
+    } else {
       return null;
+    }
     // No account
     if (Account_ID.equals("")) {
       log4j.warn("DocBank - getAccountBankStatementLine - NO account BankStatementLine="
@@ -356,6 +366,7 @@ public class DocBank extends AcctServer {
    * 
    * not used
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     String strCount = "";
     try {
@@ -364,12 +375,14 @@ public class DocBank extends AcctServer {
       e.printStackTrace();
       return false;
     }
-    if (!strCount.equals("0"))
+    if (!strCount.equals("0")) {
       return false;
-    else
+    } else {
       return true;
+    }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

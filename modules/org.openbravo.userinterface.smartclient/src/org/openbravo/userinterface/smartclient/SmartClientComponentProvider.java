@@ -48,6 +48,7 @@ public class SmartClientComponentProvider extends BaseComponentProvider {
    * @return the {@link TypesComponent}.
    * @throws IllegalArgumentException
    */
+  @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
     if (componentId.equals(TypesComponent.SC_TYPES_COMPONENT_ID)) {
       final TypesComponent component = getComponent(TypesComponent.class);
@@ -62,10 +63,11 @@ public class SmartClientComponentProvider extends BaseComponentProvider {
    * @return a set of global resources
    * @see org.openbravo.client.kernel.ComponentProvider#getGlobalComponentResources()
    */
+  @Override
   public List<ComponentResource> getGlobalComponentResources() {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
-    globalResources.add(createStyleSheetResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+    globalResources
+        .add(createStyleSheetResource("web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER + "/smartclient/skin_styles.css", true));
 
     // note ISC_Combined.js is only added for the classic mode
@@ -76,8 +78,8 @@ public class SmartClientComponentProvider extends BaseComponentProvider {
           "web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined.js", true, false));
     }
 
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+    globalResources
+        .add(createStaticResource("web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER + "/smartclient/load_skin.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/js/ob-smartclient-labels.js", true));
@@ -91,6 +93,7 @@ public class SmartClientComponentProvider extends BaseComponentProvider {
   /**
    * @return the package name of the module to which this provider belongs
    */
+  @Override
   public String getModulePackageName() {
     return this.getClass().getPackage().getName();
   }

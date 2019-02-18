@@ -36,8 +36,8 @@ public class LCMatchFromInvoiceInserter extends HqlInserter {
   public String insertHql(Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
     final String strInvoiceLineID = requestParameters.get("@InvoiceLine.id@");
-    Check.isTrue(IsIDFilter.instance.accept(strInvoiceLineID), "Value " + strInvoiceLineID
-        + " is not a valid id.");
+    Check.isTrue(IsIDFilter.instance.accept(strInvoiceLineID),
+        "Value " + strInvoiceLineID + " is not a valid id.");
     String strWhereClause = " (il is null or il.id = :invlineid) ";
     queryNamedParameters.put("invlineid", strInvoiceLineID);
 

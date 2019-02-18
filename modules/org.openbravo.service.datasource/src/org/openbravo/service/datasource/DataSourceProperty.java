@@ -74,13 +74,13 @@ public class DataSourceProperty {
     dsProperty.setBoolean(property.isBoolean());
     dsProperty.setAllowedValues(property.getAllowedValues());
     if (property.getAllowedValues() != null && property.getAllowedValues().size() > 0) {
-      dsProperty.setValueMap(createValueMap(property.getAllowedValues(), property.getDomainType()
-          .getReference().getId()));
+      dsProperty.setValueMap(createValueMap(property.getAllowedValues(),
+          property.getDomainType().getReference().getId()));
     }
     dsProperty.setPrimitive(property.isPrimitive());
     dsProperty.setFieldLength(property.getFieldLength());
-    dsProperty.setUIDefinition(UIDefinitionController.getInstance().getUIDefinition(
-        property.getColumnId()));
+    dsProperty.setUIDefinition(
+        UIDefinitionController.getInstance().getUIDefinition(property.getColumnId()));
     if (dsProperty.isPrimitive()) {
       dsProperty.setPrimitiveObjectType(property.getPrimitiveObjectType());
       dsProperty.setNumericType(property.isNumericType());
@@ -108,13 +108,13 @@ public class DataSourceProperty {
     // not supported by explicit data source fields
     // dsProperty.setAllowedValues(property.getAllowedValues());
 
-    dsProperty.setUIDefinition(UIDefinitionController.getInstance().getUIDefinition(
-        dsField.getReference()));
+    dsProperty.setUIDefinition(
+        UIDefinitionController.getInstance().getUIDefinition(dsField.getReference()));
     final DomainType domainType = getDomainType(dsField.getReference());
     if (domainType instanceof StringEnumerateDomainType) {
       final StringEnumerateDomainType enumDomainType = (StringEnumerateDomainType) domainType;
-      dsProperty.setValueMap(createValueMap(enumDomainType.getEnumerateValues(), dsField
-          .getReference().getId()));
+      dsProperty.setValueMap(
+          createValueMap(enumDomainType.getEnumerateValues(), dsField.getReference().getId()));
     } else if (domainType instanceof PrimitiveDomainType) {
       final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) domainType;
       dsProperty.setBoolean(primitiveDomainType.getPrimitiveType() == Boolean.class);
@@ -128,8 +128,8 @@ public class DataSourceProperty {
       Check.isTrue(dsField.getTable() != null,
           "Reference is a foreign key reference but the table is not set for this data source field "
               + dsField);
-      final Entity targetEntity = ModelProvider.getInstance().getEntity(
-          dsField.getTable().getName());
+      final Entity targetEntity = ModelProvider.getInstance()
+          .getEntity(dsField.getTable().getName());
       dsProperty.setTargetEntity(targetEntity);
     }
     return dsProperty;
@@ -159,7 +159,8 @@ public class DataSourceProperty {
     final List<RefListEntry> translatedValues = new ArrayList<>();
 
     final String readReferenceHql = "select searchKey, name, sequenceNumber from ADList rlist where reference.id=:referenceId and rlist.active=true";
-    final Query<Object[]> readReferenceQry = OBDal.getInstance().getSession()
+    final Query<Object[]> readReferenceQry = OBDal.getInstance()
+        .getSession()
         .createQuery(readReferenceHql, Object[].class);
     readReferenceQry.setParameter("referenceId", referenceId);
     for (Object[] row : readReferenceQry.list()) {

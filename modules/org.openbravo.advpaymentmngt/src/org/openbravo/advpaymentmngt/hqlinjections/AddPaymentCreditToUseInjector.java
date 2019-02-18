@@ -34,8 +34,8 @@ public class AddPaymentCreditToUseInjector extends HqlInserter {
     final String strBusinessPartnerId = requestParameters.get("received_from");
     boolean isSalesTransaction = "true".equals(requestParameters.get("issotrx")) ? true : false;
     if (strBusinessPartnerId != null) {
-      final BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-          strBusinessPartnerId);
+      final BusinessPartner businessPartner = OBDal.getInstance()
+          .get(BusinessPartner.class, strBusinessPartnerId);
       if (businessPartner != null) {
         queryNamedParameters.put("bp", businessPartner.getId());
       } else {

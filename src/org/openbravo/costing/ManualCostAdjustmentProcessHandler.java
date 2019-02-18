@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -36,8 +38,6 @@ import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -55,8 +55,8 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
       final boolean isIncremental = params.getBoolean("IsIncremental");
       final boolean isUnitCost = params.getBoolean("IsUnitCost");
 
-      MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
-          strTransactionId);
+      MaterialTransaction transaction = OBDal.getInstance()
+          .get(MaterialTransaction.class, strTransactionId);
 
       if (transaction.getTransactionCost() == null) {
         JSONObject message = new JSONObject();
@@ -70,8 +70,8 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
           .getOrganizationStructureProvider(transaction.getClient().getId());
 
       // MCC= Manual Cost Correction
-      CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
-          osp.getLegalEntity(transaction.getOrganization()), "MCC");
+      CostAdjustment costAdjustmentHeader = CostAdjustmentUtils
+          .insertCostAdjustmentHeader(osp.getLegalEntity(transaction.getOrganization()), "MCC");
 
       BigDecimal costAdjusted;
       if (isIncremental) {

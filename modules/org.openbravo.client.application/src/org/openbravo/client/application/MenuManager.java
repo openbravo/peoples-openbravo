@@ -28,6 +28,8 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.query.Query;
 import org.openbravo.base.session.SessionFactoryController;
@@ -40,8 +42,6 @@ import org.openbravo.model.ad.ui.Menu;
 import org.openbravo.model.ad.ui.MenuTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.TreeNode;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Configures cached global menu (@see {@link GlobalMenu}) to adapt it to the current session's
@@ -77,8 +77,8 @@ public class MenuManager {
     OBContext.setAdminMode();
     try {
       // take from global menus the one for current role and language
-      menuOptions = globalMenuOptions.getMenuOptions(roleId, OBContext.getOBContext().getLanguage()
-          .getId());
+      menuOptions = globalMenuOptions.getMenuOptions(roleId,
+          OBContext.getOBContext().getLanguage().getId());
 
       // configure global menu with role permissions
       linkWindows();
@@ -120,7 +120,8 @@ public class MenuManager {
         "where fa.role.id=:roleId" + //
         "  and fa.active = true";
 
-    final Query<String> formsQry = OBDal.getInstance().getSession()
+    final Query<String> formsQry = OBDal.getInstance()
+        .getSession()
         .createQuery(formsHql, String.class);
     formsQry.setParameter("roleId", OBContext.getOBContext().getRole().getId());
 
@@ -129,7 +130,8 @@ public class MenuManager {
       if (option != null) {
         // allow access if not running in a webcontainer as then the config file can not be checked
         boolean hasAccess = !SessionFactoryController.isRunningInWebContainer()
-            || ActivationKey.getInstance().hasLicenseAccess("X", formId) == FeatureRestriction.NO_RESTRICTION;
+            || ActivationKey.getInstance()
+                .hasLicenseAccess("X", formId) == FeatureRestriction.NO_RESTRICTION;
         option.setAccessGranted(hasAccess);
       }
     }
@@ -141,7 +143,8 @@ public class MenuManager {
         "where pa.role = :role" + //
         "  and pa.active = true";
 
-    final Query<String> allowedProcessQry = OBDal.getInstance().getSession()
+    final Query<String> allowedProcessQry = OBDal.getInstance()
+        .getSession()
         .createQuery(allowedProcessHql, String.class);
     allowedProcessQry.setParameter("role", OBContext.getOBContext().getRole());
 
@@ -150,7 +153,8 @@ public class MenuManager {
       if (option != null) {
         // allow access if not running in a webcontainer as then the config file can not be checked
         boolean hasAccess = !SessionFactoryController.isRunningInWebContainer()
-            || ActivationKey.getInstance().hasLicenseAccess("P", processId) == FeatureRestriction.NO_RESTRICTION;
+            || ActivationKey.getInstance()
+                .hasLicenseAccess("P", processId) == FeatureRestriction.NO_RESTRICTION;
         option.setAccessGranted(hasAccess);
       }
     }
@@ -161,7 +165,8 @@ public class MenuManager {
         " from OBUIAPP_Process_Access pa " + //
         "where pa.role = :role" + //
         "  and pa.active = true ";
-    final Query<String> processQry = OBDal.getInstance().getSession()
+    final Query<String> processQry = OBDal.getInstance()
+        .getSession()
         .createQuery(processHql, String.class);
     processQry.setParameter("role", OBContext.getOBContext().getRole());
 
@@ -178,7 +183,8 @@ public class MenuManager {
         " from obuiapp_ViewRoleAccess va " + //
         "where va.role = :role" + //
         "  and va.active = true ";
-    final Query<String> processQry = OBDal.getInstance().getSession()
+    final Query<String> processQry = OBDal.getInstance()
+        .getSession()
         .createQuery(processHql, String.class);
     processQry.setParameter("role", OBContext.getOBContext().getRole());
 
@@ -199,7 +205,8 @@ public class MenuManager {
         " and wa.active = true " + //
         " and (ta.active = true or ta.active is null) " + //
         " order by wa.id, t.sequenceNumber DESC ";
-    final Query<Object[]> windowsQry = OBDal.getInstance().getSession()
+    final Query<Object[]> windowsQry = OBDal.getInstance()
+        .getSession()
         .createQuery(windowsHql, Object[].class);
     windowsQry.setParameter("role", OBContext.getOBContext().getRole());
 
@@ -211,7 +218,8 @@ public class MenuManager {
       MenuOption option = getMenuOptionByType(MenuEntryType.Window, windowId);
       if (option != null) {
         boolean hasAccess = !SessionFactoryController.isRunningInWebContainer()
-            || ActivationKey.getInstance().hasLicenseAccess("MW", windowId) == FeatureRestriction.NO_RESTRICTION;
+            || ActivationKey.getInstance()
+                .hasLicenseAccess("MW", windowId) == FeatureRestriction.NO_RESTRICTION;
         option.setAccessGranted(hasAccess);
 
         if (tabId == null) {

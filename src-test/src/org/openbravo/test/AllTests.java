@@ -63,7 +63,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-// security
+    // security
     EntityAccessTest.class, //
     AccessLevelTest.class, //
     AllowedOrganizationsTest.class, //

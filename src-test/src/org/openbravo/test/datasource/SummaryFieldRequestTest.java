@@ -25,11 +25,11 @@ import static org.junit.Assert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Test cases for grid summaries
@@ -83,8 +83,8 @@ public class SummaryFieldRequestTest extends BaseDataSourceTestDal {
     params.put("_startRow", "0");
     params.put("_endRow", "1");
 
-    JSONObject resp = new JSONObject(doRequest("/org.openbravo.service.datasource/Order", params,
-        200, "POST"));
+    JSONObject resp = new JSONObject(
+        doRequest("/org.openbravo.service.datasource/Order", params, 200, "POST"));
 
     assertThat("expecting response, got: " + resp, resp.has("response"), equalTo(true));
 

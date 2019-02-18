@@ -76,6 +76,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
   private Optional<GCSystem> systemGridConfig;
   private Map<String, Optional<GCTab>> tabsGridConfig;
 
+  @Override
   protected Template getComponentTemplate() {
     final String windowType = tab.getWindow().getWindowType();
     if (TEMPLATE_MAP.containsKey(windowType)) {
@@ -181,16 +182,14 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
     if (isApplyTransactionalFilter()) {
       if (!filterName.isEmpty()) {
-        filterName += " "
-            + Utility.messageBD(new DalConnectionProvider(false), "And", OBContext.getOBContext()
-                .getLanguage().getLanguage()) + " ";
+        filterName += " " + Utility.messageBD(new DalConnectionProvider(false), "And",
+            OBContext.getOBContext().getLanguage().getLanguage()) + " ";
       }
-      filterName += Utility.messageBD(new DalConnectionProvider(false),
-          "OBUIAPP_TransactionalFilter", OBContext.getOBContext().getLanguage().getLanguage())
-          .replace(
-              "%n",
-              Utility.getTransactionalDate(new DalConnectionProvider(false), RequestContext.get()
-                  .getVariablesSecureApp(), tab.getWindow().getId()));
+      filterName += Utility
+          .messageBD(new DalConnectionProvider(false), "OBUIAPP_TransactionalFilter",
+              OBContext.getOBContext().getLanguage().getLanguage())
+          .replace("%n", Utility.getTransactionalDate(new DalConnectionProvider(false),
+              RequestContext.get().getVariablesSecureApp(), tab.getWindow().getId()));
     }
 
     if (!filterName.isEmpty()) {
@@ -450,8 +449,9 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
   public String getTableAlias() {
     Table table = tab.getTable();
-    return isHqlBasedTable(table) && !StringUtils.isBlank(table.getEntityAlias()) ? table
-        .getEntityAlias() : "e";
+    return isHqlBasedTable(table) && !StringUtils.isBlank(table.getEntityAlias())
+        ? table.getEntityAlias()
+        : "e";
   }
 
   private boolean isHqlBasedTable(Table table) {

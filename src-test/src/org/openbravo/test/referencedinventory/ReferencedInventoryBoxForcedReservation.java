@@ -53,10 +53,9 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
 
   @Rule
   public ParameterCdiTestRule<ParamsBoxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsBoxReservationTest>(
-      Arrays
-          .asList(new ParamsBoxReservationTest[] { new ParamsBoxReservationTest(
-              " Full Box (10 units of 10 units) of a storage details with a previous reservation of these 10 units.",
-              "10", "10") }));
+      Arrays.asList(new ParamsBoxReservationTest[] { new ParamsBoxReservationTest(
+          " Full Box (10 units of 10 units) of a storage details with a previous reservation of these 10 units.",
+          "10", "10") }));
 
   private @ParameterCdiTest ParamsBoxReservationTest params;
 
@@ -80,7 +79,8 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
     }
   }
 
-  private boolean productDoesNotHaveAttributeAndIsForceAttribute(String attribute, boolean isForceAttribute) {
+  private boolean productDoesNotHaveAttributeAndIsForceAttribute(String attribute,
+      boolean isForceAttribute) {
     return isForceAttribute && attribute == null;
   }
 
@@ -114,10 +114,9 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
 
   private void assertsReservation(final ReferencedInventory refInv, boolean isForceBin,
       boolean isForceAttribute) {
-    final OBCriteria<Reservation> crit = OBDao.getFilteredCriteria(
-        Reservation.class,
-        Restrictions.eq(StorageDetail.PROPERTY_PRODUCT, refInv.getMaterialMgmtStorageDetailList()
-            .get(0).getProduct()));
+    final OBCriteria<Reservation> crit = OBDao.getFilteredCriteria(Reservation.class,
+        Restrictions.eq(StorageDetail.PROPERTY_PRODUCT,
+            refInv.getMaterialMgmtStorageDetailList().get(0).getProduct()));
     if (isForceBin) {
       crit.add(Restrictions.eq(Reservation.PROPERTY_STORAGEBIN + ".id", BINS[0]));
     }
@@ -130,9 +129,9 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
 
     final Reservation reservation = reservations.get(0);
     assertThat("Reservation must be completed", reservation.getRESStatus(), equalTo("CO"));
-    ReferencedInventoryTestUtils
-        .assertsReservationHeader(isForceBin, isForceAttribute, reservation);
-    assertThat("Reservation must have 1 line", reservation.getMaterialMgmtReservationStockList()
-        .size(), equalTo(1));
+    ReferencedInventoryTestUtils.assertsReservationHeader(isForceBin, isForceAttribute,
+        reservation);
+    assertThat("Reservation must have 1 line",
+        reservation.getMaterialMgmtReservationStockList().size(), equalTo(1));
   }
 }

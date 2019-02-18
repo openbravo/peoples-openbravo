@@ -47,7 +47,8 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 public class TableTreeEventHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(TableTree.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(TableTree.ENTITY_NAME) };
   private static final String ADTREE_STRUCTURE = "ADTree";
 
   @Override

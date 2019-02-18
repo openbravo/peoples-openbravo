@@ -79,6 +79,7 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
   private AdvPaymentMngtDao dao;
   private static final RequestFilter filterYesNo = new ValueListFilter("Y", "N", "");
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -87,8 +88,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       String strWindowId = vars.getGlobalVariable("inpwindowId", "AddOrderOrInvoice|Window_ID");
       String strTabId = vars.getGlobalVariable("inpTabId", "AddOrderOrInvoice|Tab_ID");
-      String strPaymentId = vars.getGlobalVariable("inpfinPaymentId", strWindowId + "|"
-          + "FIN_Payment_ID");
+      String strPaymentId = vars.getGlobalVariable("inpfinPaymentId",
+          strWindowId + "|" + "FIN_Payment_ID");
       String strFinancialAccountId = vars.getStringParameter("inpfinFinancialAccountId");
 
       printPage(response, vars, strPaymentId, strWindowId, strTabId, strFinancialAccountId);
@@ -106,8 +107,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       String strSelectedPaymentDetails = vars.getInStringParameter("inpScheduledPaymentDetailId",
           "", null);
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
-      Boolean showAlternativePM = "Y".equals(vars.getStringParameter("inpAlternativePaymentMethod",
-          filterYesNo));
+      Boolean showAlternativePM = "Y"
+          .equals(vars.getStringParameter("inpAlternativePaymentMethod", filterYesNo));
 
       printGrid(response, vars, strBusinessPartnerId, strPaymentId, strOrgId, strExpectedDateFrom,
           strExpectedDateTo, strDocumentType, strSelectedPaymentDetails, isReceipt,
@@ -119,14 +120,14 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         strBusinessPartnerId = vars.getRequestGlobalVariable("inpcBPartnerId", "");
       }
       if (!"".equals(strBusinessPartnerId)) {
-        BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-            strBusinessPartnerId);
+        BusinessPartner businessPartner = OBDal.getInstance()
+            .get(BusinessPartner.class, strBusinessPartnerId);
         if (FIN_Utility.isBlockedBusinessPartner(businessPartner.getId(), isReceipt, 4)) {
           businessPartnerBlocked(response, vars, businessPartner.getIdentifier());
         }
       } else {
-        String strSelectedScheduledPaymentDetailIds = vars.getInStringParameter(
-            "inpScheduledPaymentDetailId", "", null);
+        String strSelectedScheduledPaymentDetailIds = vars
+            .getInStringParameter("inpScheduledPaymentDetailId", "", null);
         if (!"".equals(strSelectedScheduledPaymentDetailIds)) {
           OBContext.setAdminMode(true);
           try {
@@ -158,8 +159,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         strAction = vars.getRequiredStringParameter("inpActionDocument");
       }
       String strPaymentId = vars.getRequiredStringParameter("inpfinPaymentId");
-      String strSelectedScheduledPaymentDetailIds = vars.getInStringParameter(
-          "inpScheduledPaymentDetailId", "", null);
+      String strSelectedScheduledPaymentDetailIds = vars
+          .getInStringParameter("inpScheduledPaymentDetailId", "", null);
       String strAddedGLItems = vars.getStringParameter("inpGLItems");
       JSONArray addedGLITemsArray = null;
       try {
@@ -180,18 +181,18 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strPaymentAmount = vars.getRequiredNumericParameter("inpActualPayment");
       String paymentCurrencyId = vars.getRequiredStringParameter("inpCurrencyId");
-      BigDecimal exchangeRate = new BigDecimal(vars.getRequiredNumericParameter("inpExchangeRate",
-          "1"));
-      BigDecimal convertedAmount = new BigDecimal(vars.getRequiredNumericParameter(
-          "inpActualConverted", strPaymentAmount));
+      BigDecimal exchangeRate = new BigDecimal(
+          vars.getRequiredNumericParameter("inpExchangeRate", "1"));
+      BigDecimal convertedAmount = new BigDecimal(
+          vars.getRequiredNumericParameter("inpActualConverted", strPaymentAmount));
       OBError message = null;
       // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
       // removed when new security implementation is done
       OBContext.setAdminMode();
       try {
 
-        List<FIN_PaymentScheduleDetail> selectedPaymentDetails = FIN_Utility.getOBObjectList(
-            FIN_PaymentScheduleDetail.class, strSelectedScheduledPaymentDetailIds);
+        List<FIN_PaymentScheduleDetail> selectedPaymentDetails = FIN_Utility
+            .getOBObjectList(FIN_PaymentScheduleDetail.class, strSelectedScheduledPaymentDetailIds);
         HashMap<String, BigDecimal> selectedPaymentDetailAmounts = getSelectedPaymentDetailsAndAmount(
             vars, strSelectedScheduledPaymentDetailIds);
 
@@ -286,12 +287,11 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
               if (newPayment) {
                 final String strNewRefundPaymentMessage = Utility.parseTranslation(this, vars,
                     vars.getLanguage(),
-                    "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo())
-                    + ".";
+                    "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo()) + ".";
                 message.setMessage(strNewRefundPaymentMessage + " " + message.getMessage());
                 if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) != 0) {
-                  payment.setDescription(payment.getDescription() + strNewRefundPaymentMessage
-                      + "\n");
+                  payment
+                      .setDescription(payment.getDescription() + strNewRefundPaymentMessage + "\n");
                   OBDal.getInstance().save(payment);
                   OBDal.getInstance().flush();
                 }
@@ -344,8 +344,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
           // update outstanding amount
           List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment.getOutstandingPSDs(psd);
           if (outStandingPSDs.size() == 0) {
-            FIN_PaymentScheduleDetail newOutstanding = (FIN_PaymentScheduleDetail) DalUtil.copy(
-                psd, false);
+            FIN_PaymentScheduleDetail newOutstanding = (FIN_PaymentScheduleDetail) DalUtil.copy(psd,
+                false);
             newOutstanding.setPaymentDetails(null);
             newOutstanding.setWriteoffAmount(BigDecimal.ZERO);
             OBDal.getInstance().save(newOutstanding);
@@ -356,10 +356,12 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
               OBDal.getInstance().remove(outStandingPSDs.get(0));
             } else {
               // update existing PD with difference
-              outStandingPSDs.get(0).setAmount(
-                  outStandingPSDs.get(0).getAmount().add(psd.getAmount()));
-              outStandingPSDs.get(0).setDoubtfulDebtAmount(
-                  outStandingPSDs.get(0).getDoubtfulDebtAmount().add(psd.getDoubtfulDebtAmount()));
+              outStandingPSDs.get(0)
+                  .setAmount(outStandingPSDs.get(0).getAmount().add(psd.getAmount()));
+              outStandingPSDs.get(0)
+                  .setDoubtfulDebtAmount(outStandingPSDs.get(0)
+                      .getDoubtfulDebtAmount()
+                      .add(psd.getDoubtfulDebtAmount()));
               OBDal.getInstance().save(outStandingPSDs.get(0));
             }
             toRemovePDs.add(pd.getId());
@@ -371,8 +373,9 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       FIN_PaymentDetail pd = OBDal.getInstance().get(FIN_PaymentDetail.class, pdID);
       boolean hasPSD = pd.getFINPaymentScheduleDetailList().size() > 0;
       if (hasPSD) {
-        FIN_PaymentScheduleDetail psd = OBDal.getInstance().get(FIN_PaymentScheduleDetail.class,
-            pd.getFINPaymentScheduleDetailList().get(0).getId());
+        FIN_PaymentScheduleDetail psd = OBDal.getInstance()
+            .get(FIN_PaymentScheduleDetail.class,
+                pd.getFINPaymentScheduleDetailList().get(0).getId());
         pd.getFINPaymentScheduleDetailList().remove(psd);
         OBDal.getInstance().save(pd);
         OBDal.getInstance().remove(psd);
@@ -392,8 +395,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     }
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strPaymentId, String strWindowId, String strTabId, String strFinancialAccountId)
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strPaymentId,
+      String strWindowId, String strTabId, String strFinancialAccountId)
       throws IOException, ServletException {
     log4j.debug("Output: Add Payment button pressed on Make / Receipt Payment windows");
 
@@ -413,31 +416,35 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         if (payment.getBusinessPartner() != null) {
           discard[0] = "bpGridColumn";
         }
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/advpaymentmngt/ad_actionbutton/AddOrderOrInvoice", discard)
+        XmlDocument xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/AddOrderOrInvoice",
+                discard)
             .createXmlDocument();
 
         xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
         xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
         xmlDocument.setParameter("theme", vars.getTheme());
 
-        if (payment.isReceipt())
+        if (payment.isReceipt()) {
           xmlDocument.setParameter("title",
               Utility.messageBD(this, "APRM_AddPaymentIn", vars.getLanguage()));
-        else
+        } else {
           xmlDocument.setParameter("title",
               Utility.messageBD(this, "APRM_AddPaymentOut", vars.getLanguage()));
+        }
         xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
         if (payment.getBusinessPartner() != null) {
           xmlDocument.setParameter("businessPartner", payment.getBusinessPartner().getIdentifier());
           xmlDocument.setParameter("businessPartnerId", payment.getBusinessPartner().getId());
           xmlDocument.setParameter(
-              "credit",
-              dao.getCustomerCredit(payment.getBusinessPartner(), payment.isReceipt(),
-                  payment.getOrganization()).toString());
+              "credit", dao
+                  .getCustomerCredit(payment.getBusinessPartner(), payment.isReceipt(),
+                      payment.getOrganization())
+                  .toString());
           xmlDocument.setParameter("customerBalance",
-              payment.getBusinessPartner().getCreditUsed() != null ? payment.getBusinessPartner()
-                  .getCreditUsed().toString() : BigDecimal.ZERO.toString());
+              payment.getBusinessPartner().getCreditUsed() != null
+                  ? payment.getBusinessPartner().getCreditUsed().toString()
+                  : BigDecimal.ZERO.toString());
         } else {
           xmlDocument.setParameter("businessPartner", "");
           xmlDocument.setParameter("businessPartnerId", "");
@@ -453,33 +460,33 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         xmlDocument.setParameter("headerAmount", payment.getAmount().toString());
         xmlDocument.setParameter("isReceipt", (payment.isReceipt() ? "Y" : "N"));
         xmlDocument.setParameter("isSoTrx", (payment.isReceipt()) ? "Y" : "N");
-        if (payment.getBusinessPartner() == null
-            && (payment.getGeneratedCredit() == null || BigDecimal.ZERO.compareTo(payment
-                .getGeneratedCredit()) != 0)) {
+        if (payment.getBusinessPartner() == null && (payment.getGeneratedCredit() == null
+            || BigDecimal.ZERO.compareTo(payment.getGeneratedCredit()) != 0)) {
           payment.setGeneratedCredit(BigDecimal.ZERO);
           OBDal.getInstance().save(payment);
           OBDal.getInstance().flush();
         }
-        xmlDocument.setParameter("generatedCredit", payment.getGeneratedCredit() != null ? payment
-            .getGeneratedCredit().toString() : BigDecimal.ZERO.toString());
+        xmlDocument.setParameter("generatedCredit",
+            payment.getGeneratedCredit() != null ? payment.getGeneratedCredit().toString()
+                : BigDecimal.ZERO.toString());
 
         final Currency financialAccountCurrency = payment.getAccount().getCurrency();
         if (financialAccountCurrency != null) {
           xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
           xmlDocument.setParameter("financialAccountCurrencyName",
               financialAccountCurrency.getISOCode());
-          xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
-              .getStandardPrecision().toString());
+          xmlDocument.setParameter("financialAccountCurrencyPrecision",
+              financialAccountCurrency.getStandardPrecision().toString());
         }
         xmlDocument.setParameter("exchangeRate",
-            payment.getFinancialTransactionConvertRate() == null ? "" : payment
-                .getFinancialTransactionConvertRate().toPlainString());
+            payment.getFinancialTransactionConvertRate() == null ? ""
+                : payment.getFinancialTransactionConvertRate().toPlainString());
         xmlDocument.setParameter("actualConverted",
-            payment.getFinancialTransactionAmount() == null ? "" : payment
-                .getFinancialTransactionAmount().toString());
+            payment.getFinancialTransactionAmount() == null ? ""
+                : payment.getFinancialTransactionAmount().toString());
         xmlDocument.setParameter("expectedConverted",
-            payment.getFinancialTransactionAmount() == null ? "" : payment
-                .getFinancialTransactionAmount().toPlainString());
+            payment.getFinancialTransactionAmount() == null ? ""
+                : payment.getFinancialTransactionAmount().toPlainString());
         xmlDocument.setParameter("currencyId", payment.getCurrency().getId());
         xmlDocument.setParameter("currencyName", payment.getCurrency().getISOCode());
 
@@ -496,8 +503,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
               Utility.getContext(this, vars, "#AccessibleOrgTree", "AddPaymentFromInvoice"),
               Utility.getContext(this, vars, "#User_Client", "AddPaymentFromInvoice"), 0);
           Utility.fillSQLParameters(this, vars, null, comboTableData, "AddOrderOrInvoice", "");
-          xmlDocument
-              .setData("reportActionDocument", "liststructure", comboTableData.select(false));
+          xmlDocument.setData("reportActionDocument", "liststructure",
+              comboTableData.select(false));
           comboTableData = null;
         } catch (Exception ex) {
           throw new ServletException(ex);
@@ -512,26 +519,33 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         }
         final String strCentrally = Utility.getContext(this, vars,
             DimensionDisplayUtility.IsAcctDimCentrally, strWindowId);
-        final String strElement_BP = Utility.getContext(this, vars, DimensionDisplayUtility
-            .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_BPartner, doctype,
-                DimensionDisplayUtility.DIM_Header), strWindowId);
-        final String strElement_PR = Utility.getContext(this, vars, DimensionDisplayUtility
-            .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Product, doctype,
-                DimensionDisplayUtility.DIM_Header), strWindowId);
-        final String strElement_PJ = Utility.getContext(this, vars, DimensionDisplayUtility
-            .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Project, doctype,
-                DimensionDisplayUtility.DIM_Header), strWindowId);
+        final String strElement_BP = Utility.getContext(this, vars,
+            DimensionDisplayUtility.displayAcctDimensions(strCentrally,
+                DimensionDisplayUtility.DIM_BPartner, doctype, DimensionDisplayUtility.DIM_Header),
+            strWindowId);
+        final String strElement_PR = Utility.getContext(this, vars,
+            DimensionDisplayUtility.displayAcctDimensions(strCentrally,
+                DimensionDisplayUtility.DIM_Product, doctype, DimensionDisplayUtility.DIM_Header),
+            strWindowId);
+        final String strElement_PJ = Utility.getContext(this, vars,
+            DimensionDisplayUtility.displayAcctDimensions(strCentrally,
+                DimensionDisplayUtility.DIM_Project, doctype, DimensionDisplayUtility.DIM_Header),
+            strWindowId);
         final String strElement_AY = Utility.getContext(this, vars, "$Element_AY", strWindowId);
-        final String strElement_CC = Utility.getContext(this, vars, DimensionDisplayUtility
-            .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_CostCenter, doctype,
-                DimensionDisplayUtility.DIM_Header), strWindowId);
+        final String strElement_CC = Utility.getContext(this, vars,
+            DimensionDisplayUtility.displayAcctDimensions(strCentrally,
+                DimensionDisplayUtility.DIM_CostCenter, doctype,
+                DimensionDisplayUtility.DIM_Header),
+            strWindowId);
         final String strElement_MC = Utility.getContext(this, vars, "$Element_MC", strWindowId);
-        final String strElement_U1 = Utility.getContext(this, vars, DimensionDisplayUtility
-            .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_User1, doctype,
-                DimensionDisplayUtility.DIM_Header), strWindowId);
-        final String strElement_U2 = Utility.getContext(this, vars, DimensionDisplayUtility
-            .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_User2, doctype,
-                DimensionDisplayUtility.DIM_Header), strWindowId);
+        final String strElement_U1 = Utility.getContext(this, vars,
+            DimensionDisplayUtility.displayAcctDimensions(strCentrally,
+                DimensionDisplayUtility.DIM_User1, doctype, DimensionDisplayUtility.DIM_Header),
+            strWindowId);
+        final String strElement_U2 = Utility.getContext(this, vars,
+            DimensionDisplayUtility.displayAcctDimensions(strCentrally,
+                DimensionDisplayUtility.DIM_User2, doctype, DimensionDisplayUtility.DIM_Header),
+            strWindowId);
         xmlDocument.setParameter("strElement_BP", strElement_BP);
         xmlDocument.setParameter("strElement_PR", strElement_PR);
         xmlDocument.setParameter("strElement_PJ", strElement_PJ);
@@ -553,49 +567,57 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
             glItem.put("finPaymentScheduleDetailId", psdGLItem.getId());
             // Amounts
             if (payment.isReceipt()) {
-              glItem.put("glitemPaidOutAmt", psdGLItem.getAmount().signum() < 0 ? psdGLItem
-                  .getAmount().abs() : BigDecimal.ZERO);
+              glItem.put("glitemPaidOutAmt",
+                  psdGLItem.getAmount().signum() < 0 ? psdGLItem.getAmount().abs()
+                      : BigDecimal.ZERO);
               glItem.put("glitemReceivedInAmt",
                   psdGLItem.getAmount().signum() > 0 ? psdGLItem.getAmount() : BigDecimal.ZERO);
             } else {
-              glItem.put("glitemReceivedInAmt", psdGLItem.getAmount().signum() < 0 ? psdGLItem
-                  .getAmount().abs() : BigDecimal.ZERO);
+              glItem.put("glitemReceivedInAmt",
+                  psdGLItem.getAmount().signum() < 0 ? psdGLItem.getAmount().abs()
+                      : BigDecimal.ZERO);
               glItem.put("glitemPaidOutAmt",
                   psdGLItem.getAmount().signum() > 0 ? psdGLItem.getAmount() : BigDecimal.ZERO);
             }
             // Accounting Dimensions
-            glItem.put("cBpartnerDim", psdGLItem.getBusinessPartner() != null ? psdGLItem
-                .getBusinessPartner().getId() : "");
-            glItem.put("cBpartnerDimDesc", psdGLItem.getBusinessPartner() != null ? psdGLItem
-                .getBusinessPartner().getIdentifier() : "");
-            glItem.put("mProductDim", psdGLItem.getProduct() != null ? psdGLItem.getProduct()
-                .getId() : "");
-            glItem.put("mProductDimDesc", psdGLItem.getProduct() != null ? psdGLItem.getProduct()
-                .getIdentifier() : "");
-            glItem.put("cProjectDim", psdGLItem.getProject() != null ? psdGLItem.getProject()
-                .getId() : "");
-            glItem.put("cProjectDimDesc", psdGLItem.getProject() != null ? psdGLItem.getProject()
-                .getIdentifier() : "");
-            glItem.put("cActivityDim", psdGLItem.getActivity() != null ? psdGLItem.getActivity()
-                .getId() : "");
-            glItem.put("cActivityDimDesc", psdGLItem.getActivity() != null ? psdGLItem
-                .getActivity().getIdentifier() : "");
-            glItem.put("cCostcenterDim", psdGLItem.getCostCenter() != null ? psdGLItem
-                .getCostCenter().getId() : "");
-            glItem.put("cCostcenterDimDesc", psdGLItem.getCostCenter() != null ? psdGLItem
-                .getCostCenter().getIdentifier() : "");
-            glItem.put("cCampaignDim", psdGLItem.getSalesCampaign() != null ? psdGLItem
-                .getSalesCampaign().getId() : "");
-            glItem.put("cCampaignDimDesc", psdGLItem.getSalesCampaign() != null ? psdGLItem
-                .getSalesCampaign().getIdentifier() : "");
-            glItem.put("user1Dim", psdGLItem.getStDimension() != null ? psdGLItem.getStDimension()
-                .getId() : "");
-            glItem.put("user1DimDesc", psdGLItem.getStDimension() != null ? psdGLItem
-                .getStDimension().getIdentifier() : "");
-            glItem.put("user2Dim", psdGLItem.getNdDimension() != null ? psdGLItem.getNdDimension()
-                .getId() : "");
-            glItem.put("user2DimDesc", psdGLItem.getNdDimension() != null ? psdGLItem
-                .getNdDimension().getIdentifier() : "");
+            glItem.put("cBpartnerDim",
+                psdGLItem.getBusinessPartner() != null ? psdGLItem.getBusinessPartner().getId()
+                    : "");
+            glItem.put("cBpartnerDimDesc",
+                psdGLItem.getBusinessPartner() != null
+                    ? psdGLItem.getBusinessPartner().getIdentifier()
+                    : "");
+            glItem.put("mProductDim",
+                psdGLItem.getProduct() != null ? psdGLItem.getProduct().getId() : "");
+            glItem.put("mProductDimDesc",
+                psdGLItem.getProduct() != null ? psdGLItem.getProduct().getIdentifier() : "");
+            glItem.put("cProjectDim",
+                psdGLItem.getProject() != null ? psdGLItem.getProject().getId() : "");
+            glItem.put("cProjectDimDesc",
+                psdGLItem.getProject() != null ? psdGLItem.getProject().getIdentifier() : "");
+            glItem.put("cActivityDim",
+                psdGLItem.getActivity() != null ? psdGLItem.getActivity().getId() : "");
+            glItem.put("cActivityDimDesc",
+                psdGLItem.getActivity() != null ? psdGLItem.getActivity().getIdentifier() : "");
+            glItem.put("cCostcenterDim",
+                psdGLItem.getCostCenter() != null ? psdGLItem.getCostCenter().getId() : "");
+            glItem.put("cCostcenterDimDesc",
+                psdGLItem.getCostCenter() != null ? psdGLItem.getCostCenter().getIdentifier() : "");
+            glItem.put("cCampaignDim",
+                psdGLItem.getSalesCampaign() != null ? psdGLItem.getSalesCampaign().getId() : "");
+            glItem.put("cCampaignDimDesc",
+                psdGLItem.getSalesCampaign() != null ? psdGLItem.getSalesCampaign().getIdentifier()
+                    : "");
+            glItem.put("user1Dim",
+                psdGLItem.getStDimension() != null ? psdGLItem.getStDimension().getId() : "");
+            glItem.put("user1DimDesc",
+                psdGLItem.getStDimension() != null ? psdGLItem.getStDimension().getIdentifier()
+                    : "");
+            glItem.put("user2Dim",
+                psdGLItem.getNdDimension() != null ? psdGLItem.getNdDimension().getId() : "");
+            glItem.put("user2DimDesc",
+                psdGLItem.getNdDimension() != null ? psdGLItem.getNdDimension().getIdentifier()
+                    : "");
             // DisplayLogics
             glItem.put("cBpartnerDimDisplayed", strElement_BP);
             glItem.put("mProductDimDisplayed", strElement_PR);
@@ -610,8 +632,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
             log4j.error(e);
           }
         }
-        xmlDocument.setParameter("glItems", addedGLITemsArray.toString().replace("'", "")
-            .replaceAll("\"", "'"));
+        xmlDocument.setParameter("glItems",
+            addedGLITemsArray.toString().replace("'", "").replaceAll("\"", "'"));
         // If UsedCredit is not equal zero, check Use available credit
         xmlDocument.setParameter("useCredit", payment.getUsedCredit().signum() != 0 ? "Y" : "N");
 
@@ -649,10 +671,9 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
   }
 
   private void printGrid(HttpServletResponse response, VariablesSecureApp vars,
-      String strBusinessPartnerId, String strPaymentId, String strOrgId,
-      String strExpectedDateFrom, String strExpectedDateTo, String strDocumentType,
-      String strSelectedPaymentDetails, boolean isReceipt, boolean showAlternativePM)
-      throws IOException, ServletException {
+      String strBusinessPartnerId, String strPaymentId, String strOrgId, String strExpectedDateFrom,
+      String strExpectedDateTo, String strDocumentType, String strSelectedPaymentDetails,
+      boolean isReceipt, boolean showAlternativePM) throws IOException, ServletException {
 
     log4j.debug("Output: Grid with pending payments");
     dao = new AdvPaymentMngtDao();
@@ -661,8 +682,9 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       discard[0] = "businessPartnerName";
     }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid", discard)
+        .createXmlDocument();
 
     FIN_Payment payment = dao.getObject(FIN_Payment.class, strPaymentId);
 
@@ -673,8 +695,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       // Add payment schedule details related to orders or invoices to storedSchedulePaymentDetails
       OBContext.setAdminMode();
       try {
-        OBCriteria<FIN_PaymentScheduleDetail> obc = OBDal.getInstance().createCriteria(
-            FIN_PaymentScheduleDetail.class);
+        OBCriteria<FIN_PaymentScheduleDetail> obc = OBDal.getInstance()
+            .createCriteria(FIN_PaymentScheduleDetail.class);
         obc.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS,
             payment.getFINPaymentDetailList()));
         obc.add(Restrictions.or(
@@ -687,14 +709,14 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     }
     // Pending Payments from invoice
     final List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails = FIN_AddPayment
-        .getSelectedPaymentDetails(
-            "true".equals(strFirstLoad) ? new ArrayList<FIN_PaymentScheduleDetail>(
-                storedScheduledPaymentDetails) : null, strSelectedPaymentDetails);
+        .getSelectedPaymentDetails("true".equals(strFirstLoad)
+            ? new ArrayList<FIN_PaymentScheduleDetail>(storedScheduledPaymentDetails)
+            : null, strSelectedPaymentDetails);
     // filtered scheduled payments list
     final List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails = dao
         .getFilteredScheduledPaymentDetails(dao.getObject(Organization.class, strOrgId),
-            dao.getObject(BusinessPartner.class, strBusinessPartnerId), payment.getCurrency(),
-            null, null, FIN_Utility.getDate(strExpectedDateFrom),
+            dao.getObject(BusinessPartner.class, strBusinessPartnerId), payment.getCurrency(), null,
+            null, FIN_Utility.getDate(strExpectedDateFrom),
             FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strExpectedDateTo, "1")), null, null,
             strDocumentType, "", showAlternativePM ? null : payment.getPaymentMethod(),
             selectedScheduledPaymentDetails, isReceipt);
@@ -708,8 +730,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         storedScheduledPaymentDetails);
     storedNotSelectedPSDs.removeAll(selectedScheduledPaymentDetails);
     // Add stored but not selected details which maps documenttype
-    filteredScheduledPaymentDetails.addAll(filterDocumenttype(storedNotSelectedPSDs,
-        strDocumentType));
+    filteredScheduledPaymentDetails
+        .addAll(filterDocumenttype(storedNotSelectedPSDs, strDocumentType));
 
     FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
         selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null,
@@ -729,8 +751,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
               psd.getAmount().add(outstandingAmount).toPlainString());
           if ("true".equals(strFirstLoad)) {
             FieldProviderFactory.setField(data[i], "difference", outstandingAmount.toPlainString());
-            FieldProviderFactory
-                .setField(data[i], "paymentAmount", psd.getAmount().toPlainString());
+            FieldProviderFactory.setField(data[i], "paymentAmount",
+                psd.getAmount().toPlainString());
           }
         }
       }
@@ -776,46 +798,43 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       } else {
         Integer listIndex = amountsPerGroupingField.get(data[i].getField(groupingField));
         FieldProvider row = gridLines.get(listIndex);
-        FieldProviderFactory.setField(
-            row,
-            "finScheduledPaymentDetailId",
+        FieldProviderFactory.setField(row, "finScheduledPaymentDetailId",
             row.getField("finScheduledPaymentDetailId") + ","
                 + data[i].getField("finScheduledPaymentDetailId"));
-        FieldProviderFactory.setField(
-            row,
-            "finSelectedPaymentDetailId",
+        FieldProviderFactory.setField(row, "finSelectedPaymentDetailId",
             row.getField("finSelectedPaymentDetailId") + ","
                 + data[i].getField("finScheduledPaymentDetailId"));
-        FieldProviderFactory.setField(
-            row,
-            "outstandingAmount",
-            new BigDecimal(row.getField("outstandingAmount")).add(
-                new BigDecimal(data[i].getField("outstandingAmount"))).toString());
+        FieldProviderFactory.setField(row, "outstandingAmount",
+            new BigDecimal(row.getField("outstandingAmount"))
+                .add(new BigDecimal(data[i].getField("outstandingAmount")))
+                .toString());
         BigDecimal payAmount = BigDecimal.ZERO;
         if (!"".equals(row.getField("paymentAmount"))) {
           payAmount = new BigDecimal(row.getField("paymentAmount"));
         }
-        FieldProviderFactory.setField(
-            row,
-            "paymentAmount",
-            !"".equals(data[i].getField("paymentAmount")) ? payAmount.add(
-                new BigDecimal(data[i].getField("paymentAmount"))).toString() : (payAmount
-                .compareTo(BigDecimal.ZERO) == 0 ? "" : payAmount.toString()));
+        FieldProviderFactory.setField(row, "paymentAmount",
+            !"".equals(data[i].getField("paymentAmount"))
+                ? payAmount.add(new BigDecimal(data[i].getField("paymentAmount"))).toString()
+                : (payAmount.compareTo(BigDecimal.ZERO) == 0 ? "" : payAmount.toString()));
         if ("O".equals(strDocumenType)) {
           String strGroupedInvoicesNr = row.getField("invoiceNr");
-          FieldProviderFactory.setField(row, "invoiceNr", (strGroupedInvoicesNr.isEmpty() ? ""
-              : strGroupedInvoicesNr + ", ") + data[i].getField("invoiceNr"));
+          FieldProviderFactory.setField(row, "invoiceNr",
+              (strGroupedInvoicesNr.isEmpty() ? "" : strGroupedInvoicesNr + ", ")
+                  + data[i].getField("invoiceNr"));
           String invoiceNumber = row.getField("invoiceNr");
-          String invoiceNumberTrunc = (invoiceNumber.length() > 17) ? invoiceNumber
-              .substring(0, 14).concat("...").toString() : invoiceNumber;
+          String invoiceNumberTrunc = (invoiceNumber.length() > 17)
+              ? invoiceNumber.substring(0, 14).concat("...").toString()
+              : invoiceNumber;
           FieldProviderFactory.setField(row, "invoiceNrTrunc", invoiceNumberTrunc);
         } else if ("I".equals(strDocumenType)) {
           String strGroupedOrdersNr = row.getField("orderNr");
-          FieldProviderFactory.setField(row, "orderNr", (strGroupedOrdersNr.isEmpty() ? ""
-              : strGroupedOrdersNr + ", ") + data[i].getField("orderNr"));
+          FieldProviderFactory.setField(row, "orderNr",
+              (strGroupedOrdersNr.isEmpty() ? "" : strGroupedOrdersNr + ", ")
+                  + data[i].getField("orderNr"));
           String orderNumber = row.getField("orderNr");
-          String orderNumberTrunc = (orderNumber.length() > 17) ? orderNumber.substring(0, 14)
-              .concat("...").toString() : orderNumber;
+          String orderNumberTrunc = (orderNumber.length() > 17)
+              ? orderNumber.substring(0, 14).concat("...").toString()
+              : orderNumber;
           FieldProviderFactory.setField(row, "orderNrTrunc", orderNumberTrunc);
         }
       }
@@ -860,8 +879,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       while (psds.hasMoreTokens()) {
         psdSet.add(psds.nextToken());
       }
-      BigDecimal recordAmount = new BigDecimal(vars.getNumericParameter(
-          "inpPaymentAmount" + record, ""));
+      BigDecimal recordAmount = new BigDecimal(
+          vars.getNumericParameter("inpPaymentAmount" + record, ""));
       HashMap<String, BigDecimal> recordsAmounts = calculateAmounts(recordAmount, psdSet);
       selectedPaymentScheduleDetailsAmounts.putAll(recordsAmounts);
     }
@@ -877,7 +896,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
    * @param psdSet
    *          : set of payment schedule details where to allocate the amount
    */
-  private HashMap<String, BigDecimal> calculateAmounts(BigDecimal recordAmount, Set<String> psdSet) {
+  private HashMap<String, BigDecimal> calculateAmounts(BigDecimal recordAmount,
+      Set<String> psdSet) {
     BigDecimal remainingAmount = recordAmount;
     HashMap<String, BigDecimal> recordsAmounts = new HashMap<String, BigDecimal>();
     // PSD needs to be properly ordered to ensure negative amounts are processed first
@@ -890,8 +910,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment
             .getOutstandingPSDs(paymentScheduleDetail);
         if (outStandingPSDs.size() > 0) {
-          outstandingAmount = paymentScheduleDetail.getAmount().add(
-              outStandingPSDs.get(0).getAmount());
+          outstandingAmount = paymentScheduleDetail.getAmount()
+              .add(outStandingPSDs.get(0).getAmount());
         } else {
           outstandingAmount = paymentScheduleDetail.getAmount();
         }
@@ -899,10 +919,11 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         outstandingAmount = paymentScheduleDetail.getAmount();
       }
       // Manage negative amounts
-      if ((remainingAmount.compareTo(BigDecimal.ZERO) > 0 && remainingAmount
-          .compareTo(outstandingAmount) >= 0)
-          || ((remainingAmount.compareTo(BigDecimal.ZERO) == -1 && outstandingAmount
-              .compareTo(BigDecimal.ZERO) == -1) && (remainingAmount.compareTo(outstandingAmount) <= 0))) {
+      if ((remainingAmount.compareTo(BigDecimal.ZERO) > 0
+          && remainingAmount.compareTo(outstandingAmount) >= 0)
+          || ((remainingAmount.compareTo(BigDecimal.ZERO) == -1
+              && outstandingAmount.compareTo(BigDecimal.ZERO) == -1)
+              && (remainingAmount.compareTo(outstandingAmount) <= 0))) {
         recordsAmounts.put(paymentScheduleDetail.getId(), outstandingAmount);
         remainingAmount = remainingAmount.subtract(outstandingAmount);
       } else {
@@ -915,8 +936,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
   }
 
   private List<FIN_PaymentScheduleDetail> getOrderedPaymentScheduleDetails(Set<String> psdSet) {
-    OBCriteria<FIN_PaymentScheduleDetail> orderedPSDs = OBDal.getInstance().createCriteria(
-        FIN_PaymentScheduleDetail.class);
+    OBCriteria<FIN_PaymentScheduleDetail> orderedPSDs = OBDal.getInstance()
+        .createCriteria(FIN_PaymentScheduleDetail.class);
     orderedPSDs.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_ID, psdSet));
     orderedPSDs.addOrderBy(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT, true);
     return orderedPSDs.list();
@@ -927,7 +948,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     List<FIN_PaymentScheduleDetail> listIterator = new ArrayList<FIN_PaymentScheduleDetail>(
         storedNotSelectedPSDs);
     for (FIN_PaymentScheduleDetail paymentScheduleDetail : listIterator) {
-      if (paymentScheduleDetail.getInvoicePaymentSchedule() != null && "O".equals(strDocumentType)) {
+      if (paymentScheduleDetail.getInvoicePaymentSchedule() != null
+          && "O".equals(strDocumentType)) {
         storedNotSelectedPSDs.remove(paymentScheduleDetail);
       } else if (paymentScheduleDetail.getOrderPaymentSchedule() != null
           && "I".equals(strDocumentType)) {
@@ -952,6 +974,7 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the payment proposal";
     // end of getServletInfo() method

@@ -48,18 +48,19 @@ public class DocLine_GLJournal extends DocLine {
         DocLineGLJournalData[] data = null;
         data = DocLineGLJournalData.selectGlitem(conn, m_C_Glitem_ID, as.getC_AcctSchema_ID());
         String Account_ID = "";
-        if (data == null || data.length == 0)
+        if (data == null || data.length == 0) {
           return null;
+        }
         if (data.length > 0) {
           switch (Integer.parseInt(AcctType)) {
-          case 1:
-            // It is similar to ProductInfo.ACCTTYPE_P_Revenue
-            Account_ID = data[0].glitemDebitAcct;
-            break;
-          case 2:
-            // It is similar to ProductInfo.ACCTTYPE_P_Expense
-            Account_ID = data[0].glitemCreditAcct;
-            break;
+            case 1:
+              // It is similar to ProductInfo.ACCTTYPE_P_Revenue
+              Account_ID = data[0].glitemDebitAcct;
+              break;
+            case 2:
+              // It is similar to ProductInfo.ACCTTYPE_P_Expense
+              Account_ID = data[0].glitemCreditAcct;
+              break;
           }
         }
         // No account

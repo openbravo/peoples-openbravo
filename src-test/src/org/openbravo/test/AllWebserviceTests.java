@@ -67,7 +67,7 @@ import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-DataSourceWhereParameter.class, //
+    DataSourceWhereParameter.class, //
     WSReadTest.class, //
     WSUpdateTest.class, //
     PerformanceTest.class, //

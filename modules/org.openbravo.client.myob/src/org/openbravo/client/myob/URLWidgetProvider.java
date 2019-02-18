@@ -56,8 +56,10 @@ public class URLWidgetProvider extends WidgetProvider {
       final JSONObject parameters = new JSONObject();
       jsonObject.put(WidgetProvider.PARAMETERS, parameters);
       try {
-        final WidgetURL widgetURL = (WidgetURL) OBDao.getFilteredCriteria(WidgetURL.class,
-            Restrictions.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass())).uniqueResult();
+        final WidgetURL widgetURL = (WidgetURL) OBDao
+            .getFilteredCriteria(WidgetURL.class,
+                Restrictions.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass()))
+            .uniqueResult();
         if (widgetURL != null) {
           parameters.put(SRC, widgetURL.getURL());
         } else {
@@ -78,20 +80,24 @@ public class URLWidgetProvider extends WidgetProvider {
     }
   }
 
+  @Override
   public JSONObject getWidgetInstanceDefinition(WidgetInstance widgetInstance) {
     final JSONObject jsonObject = new JSONObject();
     try {
       addDefaultWidgetProperties(jsonObject, widgetInstance);
       final JSONObject parameters = jsonObject.getJSONObject(WidgetProvider.PARAMETERS);
-      final WidgetURL widgetURL = (WidgetURL) OBDao.getFilteredCriteria(WidgetURL.class,
-          Restrictions.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass())).uniqueResult();
+      final WidgetURL widgetURL = (WidgetURL) OBDao
+          .getFilteredCriteria(WidgetURL.class,
+              Restrictions.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass()))
+          .uniqueResult();
       if (widgetURL != null) {
         parameters.put(SRC, widgetURL.getURL());
       } else {
         log.error("No url widget defined for widget class " + widgetInstance.getWidgetClass());
       }
     } catch (NonUniqueResultException e) {
-      log.error("More than one active url defined for widget " + widgetInstance.getWidgetClass(), e);
+      log.error("More than one active url defined for widget " + widgetInstance.getWidgetClass(),
+          e);
     } catch (Exception e) {
       throw new OBException(e);
     }

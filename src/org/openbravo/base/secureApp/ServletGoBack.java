@@ -35,11 +35,13 @@ public class ServletGoBack extends HttpBaseServlet {
     }
   }
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     strServletPorDefecto = config.getServletContext().getInitParameter("DefaultServlet");
   }
 
+  @Override
   public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
     if (log4j.isDebugEnabled()) {
       log4j.info("start doPost");
@@ -50,6 +52,7 @@ public class ServletGoBack extends HttpBaseServlet {
     res.sendRedirect(res.encodeRedirectURL(strUrl));
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that receives and redirects go back requests, using history information registered in the httpSession";
   } // end of getServletInfo() method

@@ -72,7 +72,8 @@ public class NavigationBarComponentGenerator implements OBSingleton {
    * 
    * @return a Collection with the generated dynamic navigation bar components
    */
-  protected Collection<NBComponent> getDynamicNavigationBarComponents(Map<String, Object> parameters) {
+  protected Collection<NBComponent> getDynamicNavigationBarComponents(
+      Map<String, Object> parameters) {
     return generateNavigationBarComponents(parameters, true);
   }
 
@@ -126,7 +127,8 @@ public class NavigationBarComponentGenerator implements OBSingleton {
   private String generateComponent(NavBarComponent nbc, Map<String, Object> parameters) {
     try {
       final Class<BaseTemplateComponent> clz = (Class<BaseTemplateComponent>) OBClassLoader
-          .getInstance().loadClass(nbc.getJavaClassName());
+          .getInstance()
+          .loadClass(nbc.getJavaClassName());
       final BaseComponent component = weldUtils.getInstance(clz);
       component.setId(nbc.getId());
       if (component instanceof BaseTemplateComponent && nbc.getTemplate() != null) {
@@ -151,6 +153,7 @@ public class NavigationBarComponentGenerator implements OBSingleton {
       return jscode;
     }
 
+    @Override
     public String toString() {
       return jscode;
     }

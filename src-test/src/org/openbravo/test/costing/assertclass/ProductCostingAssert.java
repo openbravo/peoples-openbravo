@@ -40,11 +40,12 @@ public class ProductCostingAssert {
 
   public ProductCostingAssert(MaterialTransaction transaction, BigDecimal price,
       BigDecimal originalCost, BigDecimal finalCost, BigDecimal quantity) {
-    this(transaction, TestCostingConstants.SPAIN_WAREHOUSE_ID, price, originalCost, finalCost, quantity);
+    this(transaction, TestCostingConstants.SPAIN_WAREHOUSE_ID, price, originalCost, finalCost,
+        quantity);
   }
 
-  public ProductCostingAssert(MaterialTransaction transaction, String warehouseId,
-      BigDecimal price, BigDecimal originalCost, BigDecimal finalCost, BigDecimal quantity) {
+  public ProductCostingAssert(MaterialTransaction transaction, String warehouseId, BigDecimal price,
+      BigDecimal originalCost, BigDecimal finalCost, BigDecimal quantity) {
     this(transaction, warehouseId, price, originalCost, finalCost, quantity, "AVA", 0, false);
   }
 
@@ -55,13 +56,13 @@ public class ProductCostingAssert {
 
   public ProductCostingAssert(MaterialTransaction transaction, BigDecimal price,
       BigDecimal originalCost, BigDecimal finalCost, BigDecimal quantity, String type, int year) {
-    this(transaction, TestCostingConstants.SPAIN_WAREHOUSE_ID, price, originalCost, finalCost, quantity,
-        type, year, true);
+    this(transaction, TestCostingConstants.SPAIN_WAREHOUSE_ID, price, originalCost, finalCost,
+        quantity, type, year, true);
   }
 
-  public ProductCostingAssert(MaterialTransaction transaction, String warehouseId,
-      BigDecimal price, BigDecimal originalCost, BigDecimal finalCost, BigDecimal quantity,
-      String type, int year, boolean manual) {
+  public ProductCostingAssert(MaterialTransaction transaction, String warehouseId, BigDecimal price,
+      BigDecimal originalCost, BigDecimal finalCost, BigDecimal quantity, String type, int year,
+      boolean manual) {
     this.transaction = transaction;
     this.warehouse = OBDal.getInstance().get(Warehouse.class, warehouseId);
     this.price = price;

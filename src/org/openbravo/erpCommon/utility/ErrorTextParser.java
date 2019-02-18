@@ -74,8 +74,9 @@ abstract class ErrorTextParser {
    */
   public void setLanguage(String _data) {
     String localData = _data;
-    if (localData == null)
+    if (localData == null) {
       localData = "";
+    }
     this.language = localData;
   }
 
@@ -96,8 +97,9 @@ abstract class ErrorTextParser {
    */
   public void setMessage(String _data) {
     String localData = _data;
-    if (localData == null)
+    if (localData == null) {
       localData = "";
+    }
     this.message = localData;
   }
 
@@ -159,8 +161,8 @@ abstract class ErrorTextParser {
       String pkColumnName = tableName + "_ID";
       return ErrorTextParserData.selectColumnName(conn, language, tableName, pkColumnName);
     } catch (ServletException e) {
-      log4j.error(
-          "Error while trying to name for table via ad_element for tablename: " + tableName, e);
+      log4j.error("Error while trying to name for table via ad_element for tablename: " + tableName,
+          e);
     }
     return tableName;
   }
@@ -217,8 +219,8 @@ abstract class ErrorTextParser {
         String tableName = getTableName(constraintData[0].tableName);
         Map<String, String> replaceMap = new HashMap<String, String>();
         replaceMap.put("TABLE_NAME", tableName);
-        String res = Utility.parseTranslation(getConnection(), getVars(), replaceMap,
-            getLanguage(), msgTemplate);
+        String res = Utility.parseTranslation(getConnection(), getVars(), replaceMap, getLanguage(),
+            msgTemplate);
 
         myError = new OBError();
         myError.setType("Error");
@@ -251,8 +253,8 @@ abstract class ErrorTextParser {
         Map<String, String> replaceMap = new HashMap<String, String>();
         replaceMap.put("TABLE_NAME", tableName);
         replaceMap.put("COLUMN_NAMES", columnName);
-        String res = Utility.parseTranslation(getConnection(), getVars(), replaceMap,
-            getLanguage(), msgTemplate);
+        String res = Utility.parseTranslation(getConnection(), getVars(), replaceMap, getLanguage(),
+            msgTemplate);
 
         myError = new OBError();
         myError.setType("Error");
@@ -270,8 +272,8 @@ abstract class ErrorTextParser {
       if (msgText != null) {
         String msgTemplate = msgText.getField("msgText");
         Map<String, String> replaceMap = new HashMap<String, String>();
-        String res = Utility.parseTranslation(getConnection(), getVars(), replaceMap,
-            getLanguage(), msgTemplate);
+        String res = Utility.parseTranslation(getConnection(), getVars(), replaceMap, getLanguage(),
+            msgTemplate);
 
         myError = new OBError();
         myError.setType("Error");

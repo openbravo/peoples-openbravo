@@ -44,6 +44,7 @@ public class SelectorComponentProvider extends BaseComponentProvider {
    * @see org.openbravo.client.kernel.ComponentProvider#getComponent(java.lang.String,
    * java.lang.String, java.util.Map)
    */
+  @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
     final SelectorComponent selectorComponent = getComponent(SelectorComponent.class);
     selectorComponent.setId(componentId);
@@ -55,6 +56,7 @@ public class SelectorComponentProvider extends BaseComponentProvider {
    * @return an empty String (no global resources)
    * @see org.openbravo.client.kernel.ComponentProvider#getGlobalComponentResources()
    */
+  @Override
   public List<ComponentResource> getGlobalComponentResources() {
     final ArrayList<ComponentResource> resources = new ArrayList<ComponentResource>();
     resources.add(createStaticResource(
@@ -73,24 +75,30 @@ public class SelectorComponentProvider extends BaseComponentProvider {
     resources.add(createStaticResource(
         "web/org.openbravo.userinterface.selector/js/ob-formitem-fk-combo.js", false, true));
 
-    resources.add(createStaticResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+    resources
+        .add(createStaticResource("web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.userinterface.selector/ob-selector-item-styles.js", false, true));
-    resources.add(createStyleSheetResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_PARAMETER
-            + "/org.openbravo.userinterface.selector/ob-selector-item-styles.css", false, true));
+    resources
+        .add(createStyleSheetResource(
+            "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+                + KernelConstants.SKIN_PARAMETER
+                + "/org.openbravo.userinterface.selector/ob-selector-item-styles.css",
+            false, true));
 
-    resources.add(createStyleSheetResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_CLASSIC
-            + "/org.openbravo.userinterface.selector/ob-selector-widget-styles.css", true, false));
+    resources
+        .add(createStyleSheetResource(
+            "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+                + KernelConstants.SKIN_CLASSIC
+                + "/org.openbravo.userinterface.selector/ob-selector-widget-styles.css",
+            true, false));
 
-    resources.add(createStaticResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_CLASSIC
-            + "/org.openbravo.userinterface.selector/ob-selector-widget-styles.js", true, false));
+    resources
+        .add(createStaticResource(
+            "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+                + KernelConstants.SKIN_CLASSIC
+                + "/org.openbravo.userinterface.selector/ob-selector-widget-styles.js",
+            true, false));
 
     return resources;
   }
@@ -98,6 +106,7 @@ public class SelectorComponentProvider extends BaseComponentProvider {
   /**
    * @return the package name of the module to which this provider belongs
    */
+  @Override
   public String getModulePackageName() {
     return this.getClass().getPackage().getName();
   }

@@ -84,6 +84,7 @@ public abstract class BaseComponent implements Component {
   /**
    * @return the generated javascript which is send back to the client
    */
+  @Override
   public abstract String generate();
 
   public String getContextUrl() {
@@ -120,6 +121,7 @@ public abstract class BaseComponent implements Component {
     return url;
   }
 
+  @Override
   public String getId() {
     return id;
   }
@@ -184,6 +186,7 @@ public abstract class BaseComponent implements Component {
    * 
    * @see org.openbravo.client.kernel.Component#getETag()
    */
+  @Override
   public String getETag() {
     if (adcs.isInDevelopment()) {
       return OBContext.getOBContext().getLanguage().getId() + "_" + getLastModified().getTime();
@@ -207,8 +210,8 @@ public abstract class BaseComponent implements Component {
           moduleVersions += "\n";
         }
         moduleVersionHash = DigestUtils.md5Hex(moduleVersions);
-        log4j.debug("New moduleVersionHash. Original: " + moduleVersions + " hash:"
-            + moduleVersionHash);
+        log4j.debug(
+            "New moduleVersionHash. Original: " + moduleVersions + " hash:" + moduleVersionHash);
 
       } finally {
         OBContext.restorePreviousMode();
@@ -227,10 +230,12 @@ public abstract class BaseComponent implements Component {
    * 
    * @see org.openbravo.client.kernel.Component#getLastModified()
    */
+  @Override
   public Date getLastModified() {
     return new Date();
   }
 
+  @Override
   public Module getModule() {
     if (module != null) {
       return module;
@@ -259,14 +264,17 @@ public abstract class BaseComponent implements Component {
   /**
    * @return returns the javascript content type with UTF-8: application/javascript;charset=UTF-8
    */
+  @Override
   public String getContentType() {
     return KernelConstants.JAVASCRIPT_CONTENTTYPE;
   }
 
+  @Override
   public boolean isJavaScriptComponent() {
     return true;
   }
 
+  @Override
   public boolean isInDevelopment() {
     return adcs.isInDevelopment(getModule().getId());
   }

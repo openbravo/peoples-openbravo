@@ -111,17 +111,17 @@ public class SL_Journal_Period extends SimpleCallout {
       AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strAcctSchemaId);
       String currencyRate = null;
       try {
-        currencyRate = SLJournalPeriodData.getCurrencyRate(this, strCurrencyId, acctSchema
-            .getCurrency().getId(), strDateAcct, strCurrencyRateType, stradClientId, strOrgId,
-            strAcctSchemaId);
+        currencyRate = SLJournalPeriodData.getCurrencyRate(this, strCurrencyId,
+            acctSchema.getCurrency().getId(), strDateAcct, strCurrencyRateType, stradClientId,
+            strOrgId, strAcctSchemaId);
       } catch (Exception e) {
         OBDal.getInstance().rollbackAndClose();
         log4j.warn("No currency conversion exists.");
-        info.showMessage(OBMessageUtils.messageBD(this, "NoCurrencyConversion",
-            info.vars.getLanguage()));
+        info.showMessage(
+            OBMessageUtils.messageBD(this, "NoCurrencyConversion", info.vars.getLanguage()));
       }
-      info.addResult("inpcurrencyrate", StringUtils.isNotEmpty(currencyRate) ? new BigDecimal(
-          currencyRate) : BigDecimal.ONE);
+      info.addResult("inpcurrencyrate",
+          StringUtils.isNotEmpty(currencyRate) ? new BigDecimal(currencyRate) : BigDecimal.ONE);
     }
 
   }

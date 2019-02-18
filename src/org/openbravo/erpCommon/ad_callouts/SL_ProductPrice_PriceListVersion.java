@@ -67,7 +67,8 @@ public class SL_ProductPrice_PriceListVersion extends SimpleCallout {
       hqlString.append(" from " + RoleOrganization.ENTITY_NAME);
       hqlString.append(" where " + RoleOrganization.PROPERTY_ROLE + ".id = :roleId");
       hqlString.append(" and " + RoleOrganization.PROPERTY_ORGANIZATION + ".id = :orgId");
-      Query<String> query = OBDal.getInstance().getSession()
+      Query<String> query = OBDal.getInstance()
+          .getSession()
           .createQuery(hqlString.toString(), String.class);
       query.setParameter("roleId", roleId);
       query.setParameter("orgId", orgId);

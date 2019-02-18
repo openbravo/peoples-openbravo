@@ -43,8 +43,8 @@ public class Multiphase_dates extends SimpleCallout {
       Date datePlanned = OBDateUtils.getDate(info.getStringParameter("inpdatecontract", null));
       Date dateEnd = OBDateUtils.getDate(info.getStringParameter("inpenddate", null));
 
-      Project pr = OBDal.getInstance().get(Project.class,
-          info.getStringParameter("inpcProjectId", null));
+      Project pr = OBDal.getInstance()
+          .get(Project.class, info.getStringParameter("inpcProjectId", null));
       Date dateStartProject = pr.getStartingDate();
       Date dateEndProject = pr.getEndingDate();
       Date datePlannedProject = pr.getContractDate();
@@ -65,13 +65,14 @@ public class Multiphase_dates extends SimpleCallout {
       }
 
       if (tab.equals(PROJECTTASK_TAB)) {
-        ProjectPhase prph = OBDal.getInstance().get(ProjectPhase.class,
-            info.getStringParameter("inpcProjectphaseId", null));
+        ProjectPhase prph = OBDal.getInstance()
+            .get(ProjectPhase.class, info.getStringParameter("inpcProjectphaseId", null));
         Date dateStartPhase = prph.getStartingDate();
         Date dateEndPhase = prph.getEndingDate();
         Date datePlannedPhase = prph.getContractDate();
 
-        if (dateStart != null && dateStartPhase != null && dateStart.compareTo(dateStartPhase) < 0) {
+        if (dateStart != null && dateStartPhase != null
+            && dateStart.compareTo(dateStartPhase) < 0) {
           info.addResult("WARNING", warningMessage);
         } else if (dateStart != null && dateEndPhase != null
             && dateEndPhase.compareTo(dateStart) < 0) {

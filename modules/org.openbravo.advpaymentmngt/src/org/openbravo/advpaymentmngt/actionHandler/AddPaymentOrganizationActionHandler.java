@@ -41,8 +41,10 @@ public class AddPaymentOrganizationActionHandler extends BaseActionHandler {
       final String strOrganization = jsonData.getString("organization");
       if (StringUtils.isNotEmpty(strOrganization)) {
         Organization organization = OBDal.getInstance().get(Organization.class, strOrganization);
-        currency = OBContext.getOBContext().getOrganizationStructureProvider()
-            .getLegalEntity(organization).getCurrency();
+        currency = OBContext.getOBContext()
+            .getOrganizationStructureProvider()
+            .getLegalEntity(organization)
+            .getCurrency();
       }
       result.put("currency", currency.getId());
       result.put("currencyIdIdentifier", currency.getIdentifier());

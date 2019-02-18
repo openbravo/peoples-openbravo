@@ -33,10 +33,12 @@ import org.openbravo.base.weld.WeldUtils;
  */
 public class KernelContextListener implements ServletContextListener {
 
+  @Override
   public void contextInitialized(ServletContextEvent event) {
     WeldUtils.getInstanceFromStaticBeanManager(KernelInitializer.class).initialize();
   }
 
+  @Override
   public void contextDestroyed(ServletContextEvent event) {
   }
 }

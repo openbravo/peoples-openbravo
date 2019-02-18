@@ -31,7 +31,8 @@ class AttributeComponentTemplate implements XmlComponentTemplate, IDComponent {
   static Logger log4jAttributeComponentTemplate = LogManager.getLogger();
 
   public AttributeComponentTemplate(FunctionTemplate functionTemplate, String attributeName,
-      String strReplace, String strBooleanAttribute, XmlComponentTemplate xmlComponentBooleanWithId) {
+      String strReplace, String strBooleanAttribute,
+      XmlComponentTemplate xmlComponentBooleanWithId) {
     this.functionTemplate = functionTemplate;
     this.xmlComponentTemplate = functionTemplate;
     this.attributeName = attributeName;
@@ -41,7 +42,8 @@ class AttributeComponentTemplate implements XmlComponentTemplate, IDComponent {
   }
 
   public AttributeComponentTemplate(XmlComponentTemplate xmlComponent, String attributeName,
-      String strReplace, String strBooleanAttribute, XmlComponentTemplate xmlComponentBooleanWithId) {
+      String strReplace, String strBooleanAttribute,
+      XmlComponentTemplate xmlComponentBooleanWithId) {
     this.xmlComponentTemplate = xmlComponent;
     this.attributeName = attributeName;
     this.strReplace = strReplace;
@@ -49,6 +51,7 @@ class AttributeComponentTemplate implements XmlComponentTemplate, IDComponent {
     this.xmlComponentBooleanWithId = xmlComponentBooleanWithId;
   }
 
+  @Override
   public int type() {
     return ATTRIBUTE;
   }
@@ -88,21 +91,24 @@ class AttributeComponentTemplate implements XmlComponentTemplate, IDComponent {
     for (DataValue dataValue : xmlDocument.hasDataValue.values()) {
       for (Enumeration<Object> e2 = dataValue.vecFieldValue.elements(); e2.hasMoreElements();) {
         FieldValue fieldValue = (FieldValue) e2.nextElement();
-        log4jAttributeComponentTemplate.debug("Comparing: "
-            + ((FieldTemplate) xmlComponentTemplate).name() + " & "
-            + fieldValue.fieldTemplate.name());
+        log4jAttributeComponentTemplate
+            .debug("Comparing: " + ((FieldTemplate) xmlComponentTemplate).name() + " & "
+                + fieldValue.fieldTemplate.name());
         if (fieldValue.fieldTemplate.name().equals(((FieldTemplate) xmlComponentTemplate).name())) {
           return fieldValue;
         }
       }
     }
-    if (log4jAttributeComponentTemplate.isDebugEnabled())
-      log4jAttributeComponentTemplate.debug("New FieldValue: "
-          + ((FieldTemplate) xmlComponentTemplate).name());
-    FieldValue fieldValue = new FieldValue((FieldTemplate) (this.xmlComponentTemplate), xmlDocument);
+    if (log4jAttributeComponentTemplate.isDebugEnabled()) {
+      log4jAttributeComponentTemplate
+          .debug("New FieldValue: " + ((FieldTemplate) xmlComponentTemplate).name());
+    }
+    FieldValue fieldValue = new FieldValue((FieldTemplate) (this.xmlComponentTemplate),
+        xmlDocument);
     return fieldValue;
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
     // log4jAttributeComponentTemplate.debug("Instanceof: " +
     // (xmlComponentTemplate instanceof FieldTemplate) +

@@ -59,8 +59,8 @@ public class PeriodControlUtility {
     }
 
     Map<String, String> parameters = new HashMap<String, String>();
-    final ProcessInstance pinstance = CallProcess.getInstance().call(process,
-        periodControlLog.getId(), parameters);
+    final ProcessInstance pinstance = CallProcess.getInstance()
+        .call(process, periodControlLog.getId(), parameters);
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     try {
       ConnectionProvider conn = new DalConnectionProvider(false);
@@ -83,8 +83,8 @@ public class PeriodControlUtility {
     }
 
     Map<String, String> parameters = new HashMap<String, String>();
-    final ProcessInstance pinstance = CallProcess.getInstance().call(process, periodControlId,
-        parameters);
+    final ProcessInstance pinstance = CallProcess.getInstance()
+        .call(process, periodControlId, parameters);
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     try {
       ConnectionProvider conn = new DalConnectionProvider(false);

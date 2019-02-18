@@ -106,10 +106,10 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
     orderParameters.setOldScheduledDate((Date) event.getPreviousState(scheduledDateProperty));
     orderParameters.setNewWarehouse((Warehouse) event.getCurrentState(warehouseProperty));
     orderParameters.setOldWarehouse((Warehouse) event.getPreviousState(warehouseProperty));
-    orderParameters.setNewBPId(((BusinessPartner) event.getCurrentState(businessPartnerProperty))
-        .getId());
-    orderParameters.setOldBPId(((BusinessPartner) event.getPreviousState(businessPartnerProperty))
-        .getId());
+    orderParameters
+        .setNewBPId(((BusinessPartner) event.getCurrentState(businessPartnerProperty)).getId());
+    orderParameters
+        .setOldBPId(((BusinessPartner) event.getPreviousState(businessPartnerProperty)).getId());
 
     return orderParameters;
   }
@@ -124,7 +124,8 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
   private void updateOrderLinesValues(final OrderParameters orderParameters,
       final List<OrderLine> orderLines) {
     final boolean syncOrderDate = isOrderDateChangedAndPreferenceIsNotActivated(orderParameters);
-    final boolean syncDeliveredDate = isScheduledDateChangedAndPreferenceIsNotActivated(orderParameters);
+    final boolean syncDeliveredDate = isScheduledDateChangedAndPreferenceIsNotActivated(
+        orderParameters);
     final boolean syncWarehouse = isWarehouseChangedAndPreferenceIsNotActivated(orderParameters);
 
     if (syncOrderDate || syncDeliveredDate || syncWarehouse) {
@@ -185,9 +186,10 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
   private String getPreferenceValue(final String preferenceKey) {
     String syncField;
     try {
-      syncField = Preferences.getPreferenceValue(preferenceKey, true, OBContext.getOBContext()
-          .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-          .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+      syncField = Preferences.getPreferenceValue(preferenceKey, true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null);
     } catch (PropertyException e) {
       // if property not found, sync the field
       syncField = Preferences.NO;

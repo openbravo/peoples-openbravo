@@ -44,7 +44,8 @@ public class OBDateUtils {
    * @return String formatted.
    */
   public static String formatDate(Date date) {
-    final String pattern = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    final String pattern = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     final SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
     return dateFormatter.format(date);
@@ -61,7 +62,8 @@ public class OBDateUtils {
    * @return String formatted.
    */
   public static String formatDateTime(Date date) {
-    final String pattern = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    final String pattern = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateTimeFormat.java");
     final SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
     return dateFormatter.format(date);
@@ -93,7 +95,8 @@ public class OBDateUtils {
     if (strDate.equals("")) {
       return null;
     }
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
     return outputFormat.parse(strDate);
@@ -119,7 +122,8 @@ public class OBDateUtils {
       dateTime = strDate + " " + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE)
           + ":" + cal.get(Calendar.SECOND);
     }
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateTimeFormat.java");
     SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
     return outputFormat.parse(dateTime);
@@ -211,7 +215,8 @@ public class OBDateUtils {
    *          Format of the date.
    * @return true if the date is a Sunday or a Saturday.
    */
-  public static boolean isWeekendDay(String strDay, DateFormat dateFormatter) throws ParseException {
+  public static boolean isWeekendDay(String strDay, DateFormat dateFormatter)
+      throws ParseException {
     final Calendar Day = Calendar.getInstance();
     Day.setTime(dateFormatter.parse(strDay));
     final int weekday = Day.get(Calendar.DAY_OF_WEEK);
@@ -262,8 +267,8 @@ public class OBDateUtils {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(date);
 
-    int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET) + calendar
-        .get(Calendar.DST_OFFSET));
+    int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET)
+        + calendar.get(Calendar.DST_OFFSET));
     calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
 
     return calendar.getTime();

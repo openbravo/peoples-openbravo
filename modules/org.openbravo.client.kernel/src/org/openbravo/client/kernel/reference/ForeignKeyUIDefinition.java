@@ -73,12 +73,14 @@ public class ForeignKeyUIDefinition extends UIDefinition {
       }
     } else {
       // these configurations only apply if the fk filter combo is enabled
-      Boolean allowFkFilterByIdentifier = (Boolean) readGridConfigurationSetting("allowFkFilterByIdentifier");
+      Boolean allowFkFilterByIdentifier = (Boolean) readGridConfigurationSetting(
+          "allowFkFilterByIdentifier");
       if (Boolean.FALSE.equals(allowFkFilterByIdentifier)) {
         append = append + ", allowFkFilterByIdentifier: " + allowFkFilterByIdentifier.toString();
       }
 
-      Boolean showFkDropdownUnfiltered = (Boolean) readGridConfigurationSetting("showFkDropdownUnfiltered");
+      Boolean showFkDropdownUnfiltered = (Boolean) readGridConfigurationSetting(
+          "showFkDropdownUnfiltered");
       if (Boolean.TRUE.equals(showFkDropdownUnfiltered)) {
         append = append + ", showFkDropdownUnfiltered: " + showFkDropdownUnfiltered.toString();
       }
@@ -94,7 +96,8 @@ public class ForeignKeyUIDefinition extends UIDefinition {
   }
 
   private Property getKeyProperty(Field field) {
-    return KernelUtils.getInstance().getPropertyFromColumn(field.getColumn())
+    return KernelUtils.getInstance()
+        .getPropertyFromColumn(field.getColumn())
         .getReferencedProperty();
   }
 

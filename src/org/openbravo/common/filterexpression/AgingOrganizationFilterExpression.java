@@ -54,8 +54,8 @@ public class AgingOrganizationFilterExpression implements FilterExpression {
       hqlQuery.append(" and o." + Organization.PROPERTY_ID + " = :contextOrgId");
     }
     hqlQuery.append(" order by o." + Organization.PROPERTY_NAME);
-    final OBQuery<Organization> query = OBDal.getInstance().createQuery(Organization.class,
-        hqlQuery.toString());
+    final OBQuery<Organization> query = OBDal.getInstance()
+        .createQuery(Organization.class, hqlQuery.toString());
     if (StringUtils.isNotEmpty(contextOrgId)) {
       query.setNamedParameter("contextOrgId", contextOrgId);
     }

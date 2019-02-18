@@ -47,10 +47,10 @@ public class APRMSQLFunctionRegister implements SQLFunctionRegister {
   @Override
   public Map<String, SQLFunction> getSQLFunctions() {
     Map<String, SQLFunction> sqlFunctions = new HashMap<>();
-    sqlFunctions.put("ad_message_get2", new StandardSQLFunction("ad_message_get2",
-        StandardBasicTypes.STRING));
-    sqlFunctions.put("hqlagg", new SQLFunctionTemplate(StandardBasicTypes.STRING,
-        getAggregationSQL()));
+    sqlFunctions.put("ad_message_get2",
+        new StandardSQLFunction("ad_message_get2", StandardBasicTypes.STRING));
+    sqlFunctions.put("hqlagg",
+        new SQLFunctionTemplate(StandardBasicTypes.STRING, getAggregationSQL()));
     return sqlFunctions;
   }
 
@@ -70,8 +70,8 @@ public class APRMSQLFunctionRegister implements SQLFunctionRegister {
 
   private boolean existsStrAgg() {
     try {
-      ConnectionProviderImpl connectionProvider = new ConnectionProviderImpl(OBPropertiesProvider
-          .getInstance().getOpenbravoProperties());
+      ConnectionProviderImpl connectionProvider = new ConnectionProviderImpl(
+          OBPropertiesProvider.getInstance().getOpenbravoProperties());
       String sql = "select stragg(1) from dual";
       try (PreparedStatement st = connectionProvider.getPreparedStatement(sql);
           Connection connection = st.getConnection();
@@ -86,8 +86,8 @@ public class APRMSQLFunctionRegister implements SQLFunctionRegister {
   private boolean is11R2orNewer() {
     String dbVersion = null;
     try {
-      dbVersion = SystemInfo.getDatabaseVersion(new ConnectionProviderImpl(OBPropertiesProvider
-          .getInstance().getOpenbravoProperties()));
+      dbVersion = SystemInfo.getDatabaseVersion(
+          new ConnectionProviderImpl(OBPropertiesProvider.getInstance().getOpenbravoProperties()));
     } catch (Exception ignore) {
     }
     if (dbVersion == null) {

@@ -31,8 +31,8 @@ public class SL_AdvPayment_Document extends SimpleCallout {
   protected void execute(CalloutInfo info) throws ServletException {
     VariablesSecureApp vars = info.vars;
     String strWindowNo = info.getWindowId();
-    String strTableNameId = info.getStringParameter("inpkeyColumnId", new RegexFilter(
-        "[a-zA-Z0-9_]*_ID"));
+    String strTableNameId = info.getStringParameter("inpkeyColumnId",
+        new RegexFilter("[a-zA-Z0-9_]*_ID"));
     String strDocType_Id = info.getStringParameter("inpcDoctypeId", IsIDFilter.instance);
     String strTableName = strTableNameId.substring(0, strTableNameId.length() - 3);
     String strDocumentNo = Utility.getDocumentNo(this, vars, strWindowNo, strTableName,

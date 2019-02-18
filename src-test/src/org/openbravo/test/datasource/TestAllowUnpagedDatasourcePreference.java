@@ -98,15 +98,15 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
           HttpServletResponse.SC_OK, POST_METHOD);
 
       switch (preferenceValue) {
-      case Preferences.NO:
-        String errorMsg = OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual");
-        assertThat("Datasource returned error message " + response,
-            getResponseErrorMessage(response), equalTo(errorMsg));
-        break;
-      case Preferences.YES:
-        int responseStatus = new JSONObject(response).getJSONObject("response").getInt("status");
-        assertThat("Response status " + response, responseStatus,
-            equalTo(JsonConstants.RPCREQUEST_STATUS_SUCCESS));
+        case Preferences.NO:
+          String errorMsg = OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual");
+          assertThat("Datasource returned error message " + response,
+              getResponseErrorMessage(response), equalTo(errorMsg));
+          break;
+        case Preferences.YES:
+          int responseStatus = new JSONObject(response).getJSONObject("response").getInt("status");
+          assertThat("Response status " + response, responseStatus,
+              equalTo(JsonConstants.RPCREQUEST_STATUS_SUCCESS));
       }
 
     } finally {

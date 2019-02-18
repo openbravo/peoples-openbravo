@@ -91,10 +91,10 @@ public class SE_Invoice_BPartner extends SimpleCallout {
           strPriceList = SEOrderBPartnerData.defaultPriceList(this, strIsSOTrx,
               info.vars.getClient());
         }
-        info.addResult(
-            "inpmPricelistId",
-            StringUtils.isEmpty(strPriceList) ? Utility.getContext(this, info.vars,
-                "#M_PriceList_ID", info.getWindowId()) : strPriceList);
+        info.addResult("inpmPricelistId",
+            StringUtils.isEmpty(strPriceList)
+                ? Utility.getContext(this, info.vars, "#M_PriceList_ID", info.getWindowId())
+                : strPriceList);
 
         // Payment Rule
         String strPaymentRule = isSales ? data[0].paymentrule : data[0].paymentrulepo;
@@ -151,9 +151,9 @@ public class SE_Invoice_BPartner extends SimpleCallout {
         FieldProvider[] tdv = null;
         try {
           ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR",
-              "AD_User_ID", "", "AD_User C_BPartner User/Contacts", Utility.getReferenceableOrg(
-                  info.vars, strOrgId), Utility.getContext(this, info.vars, "#User_Client",
-                  info.getWindowId()), 0);
+              "AD_User_ID", "", "AD_User C_BPartner User/Contacts",
+              Utility.getReferenceableOrg(info.vars, strOrgId),
+              Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), 0);
           Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
           tdv = comboTableData.select(false);
           comboTableData = null;
@@ -234,8 +234,8 @@ public class SE_Invoice_BPartner extends SimpleCallout {
   private String isAutomaticCombination(VariablesSecureApp vars, String strBPartnerId,
       boolean isSales, String strfinPaymentmethodId, String strOrgId) {
     BusinessPartner bpartner = OBDal.getInstance().get(BusinessPartner.class, strBPartnerId);
-    FIN_PaymentMethod selectedPaymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-        strfinPaymentmethodId);
+    FIN_PaymentMethod selectedPaymentMethod = OBDal.getInstance()
+        .get(FIN_PaymentMethod.class, strfinPaymentmethodId);
     OBContext.setAdminMode(true);
     try {
       FIN_FinancialAccount account = null;
@@ -244,14 +244,16 @@ public class SE_Invoice_BPartner extends SimpleCallout {
       if (bpartner != null && selectedPaymentMethod != null && StringUtils.isNotEmpty(strOrgId)) {
         account = (isSales) ? bpartner.getAccount() : bpartner.getPOFinancialAccount();
         if (account != null) {
-          OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
-              FinAccPaymentMethod.class);
+          OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance()
+              .createCriteria(FinAccPaymentMethod.class);
           obc.setFilterOnReadableOrganization(false);
           obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, account));
-          obc.add(Restrictions
-              .eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, selectedPaymentMethod));
-          obc.add(Restrictions.in(FinAccPaymentMethod.PROPERTY_ORGANIZATION + ".id", OBContext
-              .getOBContext().getOrganizationStructureProvider().getNaturalTree(strOrgId)));
+          obc.add(
+              Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, selectedPaymentMethod));
+          obc.add(Restrictions.in(FinAccPaymentMethod.PROPERTY_ORGANIZATION + ".id",
+              OBContext.getOBContext()
+                  .getOrganizationStructureProvider()
+                  .getNaturalTree(strOrgId)));
 
           // filter is on unique constraint so list() size <=1 always
           if (obc.uniqueResult() == null) {
@@ -259,8 +261,8 @@ public class SE_Invoice_BPartner extends SimpleCallout {
                 vars.getLanguage());
           }
         } else {
-          message = Utility
-              .messageBD(this, "PaymentmethodNotbelongsFinAccount", vars.getLanguage());
+          message = Utility.messageBD(this, "PaymentmethodNotbelongsFinAccount",
+              vars.getLanguage());
         }
       }
       return message;

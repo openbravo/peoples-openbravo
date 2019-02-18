@@ -55,8 +55,8 @@ public class CancelLayawayPaymentsHookCaller {
 
   private void executeHooks(JSONObject jsonorder, Order inverseOrder) throws Exception {
 
-    for (Iterator<CancelLayawayPaymentsHook> procIter = cancelLayawayPaymentsHook.iterator(); procIter
-        .hasNext();) {
+    for (Iterator<CancelLayawayPaymentsHook> procIter = cancelLayawayPaymentsHook
+        .iterator(); procIter.hasNext();) {
       CancelLayawayPaymentsHook proc = procIter.next();
       proc.exec(jsonorder, inverseOrder);
     }

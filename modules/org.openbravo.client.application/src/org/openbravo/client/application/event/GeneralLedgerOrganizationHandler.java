@@ -41,8 +41,8 @@ import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 
 public class GeneralLedgerOrganizationHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      Organization.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(Organization.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -50,23 +50,23 @@ public class GeneralLedgerOrganizationHandler extends EntityPersistenceEventObse
     return entities;
   }
 
-  public void onSave(@Observes
-  EntityUpdateEvent event) {
+  public void onSave(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
 
     final Organization organization = (Organization) event.getTargetInstance();
     if (organization != null) {
-      if ((event.getPreviousState(getProperty(Organization.PROPERTY_GENERALLEDGER)) == null && event
-          .getCurrentState(getProperty(Organization.PROPERTY_GENERALLEDGER)) != null)
-          || (event.getPreviousState(getProperty(Organization.PROPERTY_GENERALLEDGER)) != null && !event
-              .getPreviousState(getProperty(Organization.PROPERTY_GENERALLEDGER)).equals(
-                  event.getCurrentState(getProperty(Organization.PROPERTY_GENERALLEDGER))))) {
+      if ((event.getPreviousState(getProperty(Organization.PROPERTY_GENERALLEDGER)) == null
+          && event.getCurrentState(getProperty(Organization.PROPERTY_GENERALLEDGER)) != null)
+          || (event.getPreviousState(getProperty(Organization.PROPERTY_GENERALLEDGER)) != null
+              && !event.getPreviousState(getProperty(Organization.PROPERTY_GENERALLEDGER))
+                  .equals(
+                      event.getCurrentState(getProperty(Organization.PROPERTY_GENERALLEDGER))))) {
         final AcctSchema generalLedger = organization.getGeneralLedger();
 
-        OBCriteria<OrganizationAcctSchema> orgSchema = OBDal.getInstance().createCriteria(
-            OrganizationAcctSchema.class);
+        OBCriteria<OrganizationAcctSchema> orgSchema = OBDal.getInstance()
+            .createCriteria(OrganizationAcctSchema.class);
         orgSchema.setFilterOnReadableOrganization(false);
         orgSchema.setFilterOnActive(false);
         orgSchema.add(Restrictions.eq(OrganizationAcctSchema.PROPERTY_ORGANIZATION, organization));
@@ -79,8 +79,8 @@ public class GeneralLedgerOrganizationHandler extends EntityPersistenceEventObse
           idlist.add(oas.getId());
         }
         for (String ids : idlist) {
-          OrganizationAcctSchema orgAcctSchema = OBDal.getInstance().get(
-              OrganizationAcctSchema.class, ids);
+          OrganizationAcctSchema orgAcctSchema = OBDal.getInstance()
+              .get(OrganizationAcctSchema.class, ids);
           if (generalLedger != null
               && generalLedger.getId() == orgAcctSchema.getAccountingSchema().getId()) {
             orgAcctSchema.setActive(true);
@@ -96,8 +96,8 @@ public class GeneralLedgerOrganizationHandler extends EntityPersistenceEventObse
         }
 
         if ((generalLedger != null) && !exist) {
-          final OrganizationAcctSchema orgAcctSchema = OBProvider.getInstance().get(
-              OrganizationAcctSchema.class);
+          final OrganizationAcctSchema orgAcctSchema = OBProvider.getInstance()
+              .get(OrganizationAcctSchema.class);
           orgAcctSchema.setOrganization(organization);
           orgAcctSchema.setAccountingSchema(generalLedger);
           OBDal.getInstance().save(orgAcctSchema);

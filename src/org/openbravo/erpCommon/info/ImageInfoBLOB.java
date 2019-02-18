@@ -58,13 +58,15 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
   @Inject
   private ApplicationDictionaryCachedStructures adcs;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
@@ -86,9 +88,8 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         Long[] sizeOld;
         Long[] sizeNew;
         if (!mimeType.contains("image")
-            || (!mimeType.contains("jpeg") && !mimeType.contains("png")
-                && !mimeType.contains("gif") && !mimeType.contains("bmp") && !mimeType
-                  .contains("svg+xml"))) {
+            || (!mimeType.contains("jpeg") && !mimeType.contains("png") && !mimeType.contains("gif")
+                && !mimeType.contains("bmp") && !mimeType.contains("svg+xml"))) {
           imageId = "";
           imageSizeAction = "WRONGFORMAT";
           sizeOld = new Long[] { 0L, 0L };
@@ -103,12 +104,12 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
           } else {
             // Bitmap images need to manage width and height
             String paramWidth = vars.getStringParameter("imageWidthValue");
-            int newWidth = paramWidth == null || paramWidth.isEmpty() ? 0 : Integer
-                .parseInt(paramWidth);
+            int newWidth = paramWidth == null || paramWidth.isEmpty() ? 0
+                : Integer.parseInt(paramWidth);
 
             String paramHeight = vars.getStringParameter("imageHeightValue");
-            int newHeight = paramHeight == null || paramHeight.isEmpty() ? 0 : Integer
-                .parseInt(paramHeight);
+            int newHeight = paramHeight == null || paramHeight.isEmpty() ? 0
+                : Integer.parseInt(paramHeight);
 
             if (imageSizeAction.equals("ALLOWED") || imageSizeAction.equals("ALLOWED_MINIMUM")
                 || imageSizeAction.equals("ALLOWED_MAXIMUM")

@@ -148,15 +148,16 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     dateWhere.append(" and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
     dateWhere.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     dateWhere.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
-    dateWhere.append(" and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " > :startdate");
+    dateWhere.append(
+        " and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :startdate");
     dateWhere.append(" and i." + InventoryCount.PROPERTY_INVENTORYTYPE + " = 'O'");
     if (warehouse != null) {
       dateWhere.append(" and i." + InventoryCount.PROPERTY_WAREHOUSE + " = :warehouse");
     }
     dateWhere.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
 
-    Query<Date> dateQry = OBDal.getInstance().getSession()
+    Query<Date> dateQry = OBDal.getInstance()
+        .getSession()
         .createQuery(dateWhere.toString(), Date.class);
     dateQry.setParameter("client", trx.getClient());
     dateQry.setParameterList("orgs", orgs);
@@ -186,8 +187,8 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     where.append(" and coalesce(iaui." + InvAmtUpdLnInventories.PROPERTY_CAINVENTORYAMTLINE
         + ", '0') <> :iaul");
     where.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    where.append(" and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " > :startdate");
+    where.append(
+        " and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :startdate");
     where.append(" and coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE + ", 'N') <> 'O'");
     if (warehouse != null) {
       where.append(" and l." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
@@ -210,13 +211,18 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
       where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     }
 
-    Query<String> qry = OBDal.getInstance().getSession()
+    Query<String> qry = OBDal.getInstance()
+        .getSession()
         .createQuery(where.toString(), String.class);
     qry.setParameter("client", trx.getClient());
     qry.setParameterList("orgs", orgs);
     qry.setParameter("product", trx.getProduct());
-    qry.setParameter("iaul", trx.getPhysicalInventoryLine().getPhysInventory()
-        .getInventoryAmountUpdateLineInventoriesInitInventoryList().get(0).getCaInventoryamtline());
+    qry.setParameter("iaul",
+        trx.getPhysicalInventoryLine()
+            .getPhysInventory()
+            .getInventoryAmountUpdateLineInventoriesInitInventoryList()
+            .get(0)
+            .getCaInventoryamtline());
     qry.setParameter("startdate", startingDate);
     if (warehouse != null) {
       qry.setParameter("warehouse", warehouse);
@@ -249,16 +255,16 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     where.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
     where.append(" join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
     where.append(" join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
-    where.append(" join i."
-        + InventoryCount.PROPERTY_INVENTORYAMOUNTUPDATELINEINVENTORIESINITINVENTORYLIST
-        + " as iaui");
+    where.append(
+        " join i." + InventoryCount.PROPERTY_INVENTORYAMOUNTUPDATELINEINVENTORIESINITINVENTORYLIST
+            + " as iaui");
     where.append(" where trx." + MaterialTransaction.PROPERTY_CLIENT + " = :client");
     where.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     where.append(" and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
     where.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     where.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
-    where.append(" and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " > :startdate");
+    where.append(
+        " and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :startdate");
     where.append(" and i." + InventoryCount.PROPERTY_INVENTORYTYPE + " = 'O'");
     if (warehouse != null) {
       where.append(" and iaui." + InvAmtUpdLnInventories.PROPERTY_WAREHOUSE + " = :warehouse");
@@ -269,7 +275,8 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
     where.append(" order by min(trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
 
-    Query<String> qry = OBDal.getInstance().getSession()
+    Query<String> qry = OBDal.getInstance()
+        .getSession()
         .createQuery(where.toString(), String.class);
     qry.setParameter("client", trx.getClient());
     qry.setParameterList("orgs", orgs);

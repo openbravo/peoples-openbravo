@@ -42,8 +42,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportParetoProductLegacy extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
@@ -83,15 +84,17 @@ public class ReportParetoProductLegacy extends HttpSecureAppServlet {
           "ReportParetoProductLegacy|currency", strUserCurrencyId);
       printPageDataSheet(request, response, vars, strWarehouse, strAD_Org_ID, strClient,
           strCurrencyId);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strWarehouse, String strAD_Org_ID, String strClient,
       String strCurrencyId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
@@ -107,8 +110,8 @@ public class ReportParetoProductLegacy extends HttpSecureAppServlet {
       return;
     }
 
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportParetoProductLegacy", discard)
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportParetoProductLegacy", discard)
         .createXmlDocument();
     if (vars.commandIn("FIND")) {
       // Checks if there is a conversion rate for each of the transactions
@@ -190,10 +193,10 @@ public class ReportParetoProductLegacy extends HttpSecureAppServlet {
 
       // Load Business Partner Group combo with data
       try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportParetoProductLegacy"), Utility.getContext(this, vars, "#User_Client",
-                "ReportParetoProductLegacy"), 0);
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
+            "", "",
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportParetoProductLegacy"),
+            Utility.getContext(this, vars, "#User_Client", "ReportParetoProductLegacy"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProductLegacy",
             strWarehouse);
         xmlDocument.setData("reportM_Warehouse_ID", "liststructure", comboTableData.select(false));
@@ -217,9 +220,9 @@ public class ReportParetoProductLegacy extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportParetoProductLegacy"), Utility.getContext(this, vars, "#User_Client",
-                "ReportParetoProductLegacy"), 0);
+            "", "",
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportParetoProductLegacy"),
+            Utility.getContext(this, vars, "#User_Client", "ReportParetoProductLegacy"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportParetoProductLegacy",
             strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -228,10 +231,8 @@ public class ReportParetoProductLegacy extends HttpSecureAppServlet {
         throw new ServletException(ex);
       }
 
-      xmlDocument.setParameter(
-          "warehouseArray",
-          Utility.arrayDobleEntrada(
-              "arrWarehouse",
+      xmlDocument.setParameter("warehouseArray",
+          Utility.arrayDobleEntrada("arrWarehouse",
               ReportParetoProductLegacyData.selectWarehouseDouble(this,
                   Utility.getContext(this, vars, "#User_Client", "ReportParetoProductLegacy"))));
 
@@ -254,8 +255,8 @@ public class ReportParetoProductLegacy extends HttpSecureAppServlet {
         vars.getClient(), vars.getOrg(), vars.getUser());
     PInstanceProcessData.insertPInstanceParam(this, pinstance, "2", "ad_org_id", strAD_Org_ID,
         vars.getClient(), vars.getOrg(), vars.getUser());
-    PInstanceProcessData.insertPInstanceParam(this, pinstance, "3", "ad_client_id",
-        strAD_Client_ID, vars.getClient(), vars.getOrg(), vars.getUser());
+    PInstanceProcessData.insertPInstanceParam(this, pinstance, "3", "ad_client_id", strAD_Client_ID,
+        vars.getClient(), vars.getOrg(), vars.getUser());
     ReportParetoProductLegacyData.mUpdateParetoProduct0Legacy(this, pinstance);
 
     PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
@@ -263,6 +264,7 @@ public class ReportParetoProductLegacy extends HttpSecureAppServlet {
     return myMessage;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportParetoProductLegacy info. Insert here any relevant information";
   } // end of getServletInfo() method

@@ -60,12 +60,13 @@ public class HelpWindow {
   private static Logger log4j = LogManager.getLogger();
 
   public static String generateWindow(ConnectionProvider conn, XmlEngine xmlEngine,
-      VariablesSecureApp vars, boolean discardEdit, String strKeyId) throws IOException,
-      ServletException {
+      VariablesSecureApp vars, boolean discardEdit, String strKeyId)
+      throws IOException, ServletException {
     String localStrKeyId = strKeyId;
     OBContext.setAdminMode();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Help Window");
+    }
     Boolean window = true;
     String[] discard = { "", "", "", "", "", "", "" };
     String strType = "";
@@ -87,18 +88,24 @@ public class HelpWindow {
     final String FILTER_ON_CHANGE_FIELD_ID = "C62B99B9A0BE4A59B695BB731B61899C";
     final String FILTER_THRESHOLD_FIELD_ID = "3C47334AF3154A668BEBF2AB21EA046B";
 
-    final String SORTABLE = (String) OBDal.getInstance().get(Field.class, SORTABLE_FIELD_ID)
+    final String SORTABLE = (String) OBDal.getInstance()
+        .get(Field.class, SORTABLE_FIELD_ID)
         .get(Field.PROPERTY_NAME, language);
-    final String FILTERABLE = (String) OBDal.getInstance().get(Field.class, FILTERABLE_FIELD_ID)
+    final String FILTERABLE = (String) OBDal.getInstance()
+        .get(Field.class, FILTERABLE_FIELD_ID)
         .get(Field.PROPERTY_NAME, language);
     final String TEXT_FILTER_BEHAVIOR = (String) OBDal.getInstance()
-        .get(Field.class, TEXT_FILTER_BEHAVIOR_FIELD_ID).get(Field.PROPERTY_NAME, language);
+        .get(Field.class, TEXT_FILTER_BEHAVIOR_FIELD_ID)
+        .get(Field.PROPERTY_NAME, language);
     final String LAZY_FILTERING = (String) OBDal.getInstance()
-        .get(Field.class, LAZY_FILTERING_FIELD_ID).get(Field.PROPERTY_NAME, language);
+        .get(Field.class, LAZY_FILTERING_FIELD_ID)
+        .get(Field.PROPERTY_NAME, language);
     final String FILTER_ON_CHANGE = (String) OBDal.getInstance()
-        .get(Field.class, FILTER_ON_CHANGE_FIELD_ID).get(Field.PROPERTY_NAME, language);
+        .get(Field.class, FILTER_ON_CHANGE_FIELD_ID)
+        .get(Field.PROPERTY_NAME, language);
     final String FILTER_THRESHOLD = (String) OBDal.getInstance()
-        .get(Field.class, FILTER_THRESHOLD_FIELD_ID).get(Field.PROPERTY_NAME, language);
+        .get(Field.class, FILTER_THRESHOLD_FIELD_ID)
+        .get(Field.PROPERTY_NAME, language);
 
     final String YES_NO_DEFAULT_REF = "Yes/No/Default";
     final String TEXT_FILTER_BEHAVIOR_REF = "Text Filter Behavior (Window/Tab/Field)";
@@ -165,16 +172,15 @@ public class HelpWindow {
       strCommand = "WINDOW";
 
       // Grid Configuration at System Level
-      OBCriteria<GCSystem> systemGridConfigCriteria = OBDal.getInstance().createCriteria(
-          GCSystem.class);
+      OBCriteria<GCSystem> systemGridConfigCriteria = OBDal.getInstance()
+          .createCriteria(GCSystem.class);
 
       List<GCSystem> systemGridConfigList = systemGridConfigCriteria.list();
       if (!systemGridConfigList.isEmpty()) {
         GCSystem systemGridConfig = systemGridConfigList.get(0);
         systemGridProperties.put(FILTERABLE, systemGridConfig.isFilterable() ? YES : NO);
         systemGridProperties.put(SORTABLE, systemGridConfig.isSortable() ? YES : NO);
-        systemGridProperties.put(
-            TEXT_FILTER_BEHAVIOR,
+        systemGridProperties.put(TEXT_FILTER_BEHAVIOR,
             Utility.getListValueName(TEXT_FILTER_BEHAVIOR_REF,
                 systemGridConfig.getTextFilterBehavior(), language.getLanguage()));
         systemGridProperties.put(FILTER_THRESHOLD, systemGridConfig.isFilterable() ? YES : NO);
@@ -185,24 +191,20 @@ public class HelpWindow {
       }
 
       // Grid Configuration at Tab Level
-      OBQuery<GCTab> tabGridConfigQuery = OBDal.getInstance().createQuery(GCTab.class,
-          "tab.window.id = '" + localStrKeyId + "'");
+      OBQuery<GCTab> tabGridConfigQuery = OBDal.getInstance()
+          .createQuery(GCTab.class, "tab.window.id = '" + localStrKeyId + "'");
       List<GCTab> tabGridConfigList = tabGridConfigQuery.list();
       for (GCTab gcTab : tabGridConfigList) {
         String tabId = gcTab.getTab().getId();
         String tabName = gcTab.getTab().getName();
         Map<String, String> tabGridProperties = new HashMap<String, String>();
         if (!"D".equals(gcTab.getFilterable())) {
-          tabGridProperties.put(
-              FILTERABLE,
-              Utility.getListValueName(YES_NO_DEFAULT_REF, gcTab.getFilterable(),
-                  language.getLanguage()));
+          tabGridProperties.put(FILTERABLE, Utility.getListValueName(YES_NO_DEFAULT_REF,
+              gcTab.getFilterable(), language.getLanguage()));
         }
         if (!"D".equals(gcTab.getSortable())) {
-          tabGridProperties.put(
-              SORTABLE,
-              Utility.getListValueName(YES_NO_DEFAULT_REF, gcTab.getSortable(),
-                  language.getLanguage()));
+          tabGridProperties.put(SORTABLE, Utility.getListValueName(YES_NO_DEFAULT_REF,
+              gcTab.getSortable(), language.getLanguage()));
         }
         if (!"D".equals(gcTab.getTextFilterBehavior())) {
           tabGridProperties.put(TEXT_FILTER_BEHAVIOR, Utility.getListValueName(
@@ -212,16 +214,12 @@ public class HelpWindow {
           tabGridProperties.put(FILTER_THRESHOLD, gcTab.getThresholdToFilter().toString());
         }
         if (!"D".equals(gcTab.getIsLazyFiltering())) {
-          tabGridProperties.put(
-              LAZY_FILTERING,
-              Utility.getListValueName(YES_NO_DEFAULT_REF, gcTab.getIsLazyFiltering(),
-                  language.getLanguage()));
+          tabGridProperties.put(LAZY_FILTERING, Utility.getListValueName(YES_NO_DEFAULT_REF,
+              gcTab.getIsLazyFiltering(), language.getLanguage()));
         }
         if (!"D".equals(gcTab.getFilterOnChange())) {
-          tabGridProperties.put(
-              FILTER_ON_CHANGE,
-              Utility.getListValueName(YES_NO_DEFAULT_REF, gcTab.getFilterOnChange(),
-                  language.getLanguage()));
+          tabGridProperties.put(FILTER_ON_CHANGE, Utility.getListValueName(YES_NO_DEFAULT_REF,
+              gcTab.getFilterOnChange(), language.getLanguage()));
         }
         if (!tabGridProperties.isEmpty()) {
           tabGridConfigParams.add(new TabGridConfigParameter(tabId, tabName,
@@ -233,16 +231,12 @@ public class HelpWindow {
         for (GCField gcField : fieldGridConfigList) {
           Map<String, String> fieldGridProperties = new HashMap<String, String>();
           if (!"D".equals(gcField.getFilterable())) {
-            fieldGridProperties.put(
-                FILTERABLE,
-                Utility.getListValueName(YES_NO_DEFAULT_REF, gcField.getFilterable(),
-                    language.getLanguage()));
+            fieldGridProperties.put(FILTERABLE, Utility.getListValueName(YES_NO_DEFAULT_REF,
+                gcField.getFilterable(), language.getLanguage()));
           }
           if (!"D".equals(gcField.getSortable())) {
-            fieldGridProperties.put(
-                SORTABLE,
-                Utility.getListValueName(YES_NO_DEFAULT_REF, gcField.getSortable(),
-                    language.getLanguage()));
+            fieldGridProperties.put(SORTABLE, Utility.getListValueName(YES_NO_DEFAULT_REF,
+                gcField.getSortable(), language.getLanguage()));
           }
           if (!"D".equals(gcField.getTextFilterBehavior())) {
             fieldGridProperties.put(TEXT_FILTER_BEHAVIOR, Utility.getListValueName(
@@ -252,10 +246,8 @@ public class HelpWindow {
             fieldGridProperties.put(FILTER_THRESHOLD, gcField.getThresholdToFilter().toString());
           }
           if (!"D".equals(gcTab.getFilterOnChange())) {
-            fieldGridProperties.put(
-                FILTER_ON_CHANGE,
-                Utility.getListValueName(YES_NO_DEFAULT_REF, gcField.getFilterOnChange(),
-                    language.getLanguage()));
+            fieldGridProperties.put(FILTER_ON_CHANGE, Utility.getListValueName(YES_NO_DEFAULT_REF,
+                gcField.getFilterOnChange(), language.getLanguage()));
           }
           if (!fieldGridProperties.isEmpty()) {
             tabGridConfigParams.add(new TabGridConfigParameter(tabId, tabName,
@@ -273,12 +265,13 @@ public class HelpWindow {
       discard[nDiscards++] = "showWikiLink";
     }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_help/DisplayHelp", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_help/DisplayHelp", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + xmlEngine.strReplaceWith
-        + "/\";\n");
+    xmlDocument.setParameter("directory",
+        "var baseDirectory = \"" + xmlEngine.strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("windowId", localStrKeyId);
     xmlDocument.setParameter("windowName", strWindowName);

@@ -30,6 +30,7 @@ public class UIPrice extends UIReference {
     numeric = true;
   }
 
+  @Override
   public String formatGridValue(VariablesSecureApp vars, String value) {
     String rt = value;
     try {

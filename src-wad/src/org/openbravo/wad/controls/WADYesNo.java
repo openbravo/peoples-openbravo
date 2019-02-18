@@ -32,6 +32,7 @@ public class WADYesNo extends WADControl {
     initialize();
   }
 
+  @Override
   public void initialize() {
     generateJSCode();
   }
@@ -41,13 +42,16 @@ public class WADYesNo extends WADControl {
     setCalloutJS();
   }
 
+  @Override
   public String getType() {
     return "Radio_Check";
   }
 
+  @Override
   public String editMode() {
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADYesNo").createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADYesNo")
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -61,17 +65,20 @@ public class WADYesNo extends WADControl {
       xmlDocument.setParameter("disabled", "N");
       xmlDocument.setParameter("callout", getOnChangeCode());
     }
-    if (getData("IsMandatory").equals("Y"))
+    if (getData("IsMandatory").equals("Y")) {
       xmlDocument.setParameter("required", "true");
-    else
+    } else {
       xmlDocument.setParameter("required", "false");
+    }
 
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String newMode() {
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADYesNo").createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADYesNo")
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -84,30 +91,39 @@ public class WADYesNo extends WADControl {
       xmlDocument.setParameter("disabled", "N");
       xmlDocument.setParameter("callout", getOnChangeCode());
     }
-    if (getData("IsMandatory").equals("Y"))
+    if (getData("IsMandatory").equals("Y")) {
       xmlDocument.setParameter("required", "true");
-    else
+    } else {
       xmlDocument.setParameter("required", "false");
+    }
 
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String toXml() {
     StringBuffer text = new StringBuffer();
     if (getData("IsParameter").equals("Y")) {
       if (getData("IsDisplayed").equals("N")) {
-        text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("\" name=\"")
-            .append(getData("ColumnName")).append("\" attribute=\"value\"/>");
+        text.append("<PARAMETER id=\"")
+            .append(getData("ColumnName"))
+            .append("\" name=\"")
+            .append(getData("ColumnName"))
+            .append("\" attribute=\"value\"/>");
       } else {
-        text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("\" name=\"")
-            .append(getData("ColumnName")).append("\" boolean=\"checked\" withId=\"paramCheck\"/>");
+        text.append("<PARAMETER id=\"")
+            .append(getData("ColumnName"))
+            .append("\" name=\"")
+            .append(getData("ColumnName"))
+            .append("\" boolean=\"checked\" withId=\"paramCheck\"/>");
       }
     } else {
       if (getData("IsDisplayed").equals("N")) {
         text.append("<FIELD id=\"").append(getData("ColumnName")).append("\" attribute=\"value\">");
         text.append(getData("ColumnName")).append("</FIELD>");
       } else {
-        text.append("<FIELD id=\"").append(getData("ColumnName"))
+        text.append("<FIELD id=\"")
+            .append(getData("ColumnName"))
             .append("\" boolean=\"checked\" withId=\"paramCheck\">");
         text.append(getData("ColumnName")).append("</FIELD>");
       }

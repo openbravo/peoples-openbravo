@@ -61,8 +61,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportParetoProduct extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
 
@@ -87,8 +88,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       String strClient = vars.getClient();
       String strAD_Org_ID = vars.getRequestGlobalVariable("inpadOrgId",
           "ReportParetoProduct|AD_Org_ID");
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
-          "ReportParetoProduct|currency", strUserCurrencyId);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportParetoProduct|currency",
+          strUserCurrencyId);
       printPageDataSheet(request, response, vars, strWarehouse, strAD_Org_ID, strClient,
           strCurrencyId);
     } else if (vars.commandIn("GENERATE")) {
@@ -102,8 +103,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       myMessage.setType("Success");
       myMessage.setTitle(Utility.messageBD(readOnlyCP, "Success", vars.getLanguage()));
       vars.setMessage("ReportParetoProduct", myMessage);
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
-          "ReportParetoProduct|currency", strUserCurrencyId);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportParetoProduct|currency",
+          strUserCurrencyId);
       printPageDataSheet(request, response, vars, strWarehouse, strAD_Org_ID, strClient,
           strCurrencyId);
     } else if (vars.commandIn("CURRENCY")) {
@@ -144,8 +145,9 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
     }
 
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportParetoProduct", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportParetoProduct", discard)
+        .createXmlDocument();
 
     if (vars.commandIn("FIND")) {
       // Checks if there is a conversion rate for each of the transactions
@@ -209,13 +211,15 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
           String currentOrganization = data[0].orgid;
           for (int i = 0; i < data.length; i++) {
             if (StringUtils.equals(data[i].orgid, currentOrganization)) {
-              total = total.add(new BigDecimal(data[i].percentage)).setScale(2,
-                  RoundingMode.HALF_UP);
+              total = total.add(new BigDecimal(data[i].percentage))
+                  .setScale(2, RoundingMode.HALF_UP);
             } else {
               difference = new BigDecimal("100.00").subtract(total);
               total = new BigDecimal(data[i].percentage).setScale(2, RoundingMode.HALF_UP);
               data[toAdjustPosition].percentage = new BigDecimal(data[toAdjustPosition].percentage)
-                  .add(difference).setScale(2, RoundingMode.HALF_UP).toString();
+                  .add(difference)
+                  .setScale(2, RoundingMode.HALF_UP)
+                  .toString();
               toAdjustPosition = i;
               currentOrganization = data[i].orgid;
             }
@@ -223,7 +227,9 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
           // Update last group
           difference = new BigDecimal("100.00").subtract(total);
           data[toAdjustPosition].percentage = new BigDecimal(data[toAdjustPosition].percentage)
-              .add(difference).setScale(2, RoundingMode.HALF_UP).toString();
+              .add(difference)
+              .setScale(2, RoundingMode.HALF_UP)
+              .toString();
 
           xmlDocument.setData("structure1", data);
         }
@@ -282,9 +288,9 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       // Load Business Partner Group combo with data
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "M_Warehouse_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-                "ReportParetoProduct"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-                "ReportParetoProduct"), 0);
+            "M_Warehouse_ID", "", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportParetoProduct"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportParetoProduct"), 0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportParetoProduct",
             strWarehouse);
         xmlDocument.setData("reportM_Warehouse_ID", "liststructure", comboTableData.select(false));
@@ -295,9 +301,9 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "AD_Org_ID", "", "D4DF252DEC3B44858454EE5292A8B836", Utility.getContext(readOnlyCP,
-                vars, "#User_Org", "ReportParetoProduct"), Utility.getContext(readOnlyCP, vars,
-                "#User_Client", "ReportParetoProduct"), 0);
+            "AD_Org_ID", "", "D4DF252DEC3B44858454EE5292A8B836",
+            Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportParetoProduct"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportParetoProduct"), 0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportParetoProduct",
             strAD_Org_ID);
         xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
@@ -309,9 +315,9 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-                "ReportParetoProduct"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-                "ReportParetoProduct"), 0);
+            "C_Currency_ID", "", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportParetoProduct"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportParetoProduct"), 0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportParetoProduct",
             strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -320,10 +326,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
         throw new ServletException(ex);
       }
 
-      xmlDocument.setParameter(
-          "warehouseArray",
-          Utility.arrayDobleEntrada(
-              "arrWarehouse",
+      xmlDocument.setParameter("warehouseArray",
+          Utility.arrayDobleEntrada("arrWarehouse",
               ReportParetoProductData.selectWarehouseDouble(readOnlyCP,
                   Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportParetoProduct"))));
 
@@ -346,8 +350,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
         vars.getClient(), vars.getOrg(), vars.getUser());
     PInstanceProcessData.insertPInstanceParam(this, pinstance, "2", "ad_org_id", strAD_Org_ID,
         vars.getClient(), vars.getOrg(), vars.getUser());
-    PInstanceProcessData.insertPInstanceParam(this, pinstance, "3", "ad_client_id",
-        strAD_Client_ID, vars.getClient(), vars.getOrg(), vars.getUser());
+    PInstanceProcessData.insertPInstanceParam(this, pinstance, "3", "ad_client_id", strAD_Client_ID,
+        vars.getClient(), vars.getOrg(), vars.getUser());
     ReportParetoProductData.mUpdateParetoProduct0(this, pinstance);
 
     PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
@@ -355,6 +359,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
     return myMessage;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportParetoProduct info. Insert here any relevant information";
   }

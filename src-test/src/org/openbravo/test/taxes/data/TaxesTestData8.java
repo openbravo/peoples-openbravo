@@ -45,8 +45,8 @@ public class TaxesTestData8 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes = new HashMap<String, String[]>();
-    lineTaxes.put(TaxDataConstants.TAX_EXEMPT_10, new String[] { "-3", "0", "-3", "0", "-6", "0",
-        "-6", "0" });
+    lineTaxes.put(TaxDataConstants.TAX_EXEMPT_10,
+        new String[] { "-3", "0", "-3", "0", "-6", "0", "-6", "0" });
     line.setLinetaxes(lineTaxes);
 
     // Amounts for line level are provided
@@ -64,8 +64,8 @@ public class TaxesTestData8 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> taxes = new HashMap<String, String[]>();
-    taxes.put(TaxDataConstants.TAX_EXEMPT_10, new String[] { "-3", "0", "-3", "0", "-6", "0", "-6",
-        "0" });
+    taxes.put(TaxDataConstants.TAX_EXEMPT_10,
+        new String[] { "-3", "0", "-3", "0", "-6", "0", "-6", "0" });
     setDoctaxes(taxes);
 
     // Amounts for document level are provided

@@ -67,25 +67,31 @@ public class UpdateActuals extends DalBaseProcess {
       Budget myBudget = OBDal.getInstance().get(Budget.class, cBudgetId);
       for (BudgetLine budgetLine : myBudget.getFinancialMgmtBudgetLineList()) {
         activity = (budgetLine.getActivity() != null) ? budgetLine.getActivity().getId() : "";
-        accountingSchema = (budgetLine.getAccountingSchema() != null) ? budgetLine
-            .getAccountingSchema().getId() : "";
+        accountingSchema = (budgetLine.getAccountingSchema() != null)
+            ? budgetLine.getAccountingSchema().getId()
+            : "";
         asset = (budgetLine.getAsset() != null) ? budgetLine.getAsset().getId() : "";
-        businessPartner = (budgetLine.getBusinessPartner() != null) ? budgetLine
-            .getBusinessPartner().getId() : "";
-        businessPartnerCategory = (budgetLine.getBusinessPartnerCategory() != null) ? budgetLine
-            .getBusinessPartnerCategory().getId() : "";
+        businessPartner = (budgetLine.getBusinessPartner() != null)
+            ? budgetLine.getBusinessPartner().getId()
+            : "";
+        businessPartnerCategory = (budgetLine.getBusinessPartnerCategory() != null)
+            ? budgetLine.getBusinessPartnerCategory().getId()
+            : "";
         costcenter = (budgetLine.getCostcenter() != null) ? budgetLine.getCostcenter().getId() : "";
         account = (budgetLine.getAccountElement() != null) ? budgetLine.getAccountElement().getId()
             : "";
-        accountSign = (budgetLine.getAccountElement() != null) ? budgetLine.getAccountElement()
-            .getAccountSign() : "";
+        accountSign = (budgetLine.getAccountElement() != null)
+            ? budgetLine.getAccountElement().getAccountSign()
+            : "";
         period = (budgetLine.getPeriod() != null) ? budgetLine.getPeriod().getId() : "";
         product = (budgetLine.getProduct() != null) ? budgetLine.getProduct().getId() : "";
-        productCategory = (budgetLine.getProductCategory() != null) ? budgetLine
-            .getProductCategory().getId() : "";
+        productCategory = (budgetLine.getProductCategory() != null)
+            ? budgetLine.getProductCategory().getId()
+            : "";
         project = (budgetLine.getProject() != null) ? budgetLine.getProject().getId() : "";
-        salesCampaign = (budgetLine.getSalesCampaign() != null) ? budgetLine.getSalesCampaign()
-            .getId() : "";
+        salesCampaign = (budgetLine.getSalesCampaign() != null)
+            ? budgetLine.getSalesCampaign().getId()
+            : "";
         salesRegion = (budgetLine.getSalesRegion() != null) ? budgetLine.getSalesRegion().getId()
             : "";
         user1 = (budgetLine.getStDimension() != null) ? budgetLine.getStDimension().getId() : "";
@@ -93,22 +99,29 @@ public class UpdateActuals extends DalBaseProcess {
 
         // get the natural tree
         TreeUtility treeUtility = new TreeUtility();
-        String activityTree = activity != null ? commaSeparated(treeUtility.getChildTree(activity,
-            "AY")) : activity;
-        String productCategoryTree = productCategory != null ? commaSeparated(treeUtility
-            .getChildTree(productCategory, "PC")) : productCategory;
+        String activityTree = activity != null
+            ? commaSeparated(treeUtility.getChildTree(activity, "AY"))
+            : activity;
+        String productCategoryTree = productCategory != null
+            ? commaSeparated(treeUtility.getChildTree(productCategory, "PC"))
+            : productCategory;
         String assetTree = asset != null ? commaSeparated(treeUtility.getChildTree(asset, "AS"))
             : asset;
-        String costcenterTree = costcenter != null ? commaSeparated(treeUtility.getChildTree(
-            costcenter, "CC")) : costcenter;
-        String accountTree = account != null ? commaSeparated(treeUtility.getChildTree(account,
-            "EV")) : account;
-        String projectTree = project != null ? commaSeparated(treeUtility.getChildTree(project,
-            "PJ")) : project;
-        String campaignTree = salesCampaign != null ? commaSeparated(treeUtility.getChildTree(
-            salesCampaign, "MC")) : salesCampaign;
-        String regionTree = salesRegion != null ? commaSeparated(treeUtility.getChildTree(
-            salesRegion, "SR")) : salesRegion;
+        String costcenterTree = costcenter != null
+            ? commaSeparated(treeUtility.getChildTree(costcenter, "CC"))
+            : costcenter;
+        String accountTree = account != null
+            ? commaSeparated(treeUtility.getChildTree(account, "EV"))
+            : account;
+        String projectTree = project != null
+            ? commaSeparated(treeUtility.getChildTree(project, "PJ"))
+            : project;
+        String campaignTree = salesCampaign != null
+            ? commaSeparated(treeUtility.getChildTree(salesCampaign, "MC"))
+            : salesCampaign;
+        String regionTree = salesRegion != null
+            ? commaSeparated(treeUtility.getChildTree(salesRegion, "SR"))
+            : salesRegion;
         String user1Tree = user1 != null ? commaSeparated(treeUtility.getChildTree(user1, "U1"))
             : user1;
         String user2Tree = user2 != null ? commaSeparated(treeUtility.getChildTree(user2, "U2"))
@@ -116,8 +129,8 @@ public class UpdateActuals extends DalBaseProcess {
 
         final String orgId = myBudget.getOrganization().getId();
 
-        String OrgTreeList = commaSeparated(OBContext.getOBContext()
-            .getOrganizationStructureProvider().getChildTree(orgId, true));
+        String OrgTreeList = commaSeparated(
+            OBContext.getOBContext().getOrganizationStructureProvider().getChildTree(orgId, true));
 
         StringBuilder queryString = new StringBuilder();
         queryString.append("select SUM(e.credit) as credit,");
@@ -125,7 +138,8 @@ public class UpdateActuals extends DalBaseProcess {
         queryString.append(" from FinancialMgmtAccountingFact e where");
         queryString.append(" e.client.id='").append(myBudget.getClient().getId()).append("'");
         queryString.append(" and e.organization.id in (").append(OrgTreeList).append(")");
-        queryString.append(" and e.period.year.id='").append(myBudget.getYear().getId())
+        queryString.append(" and e.period.year.id='")
+            .append(myBudget.getYear().getId())
             .append("'");
 
         if (!"".equals(activity)) {
@@ -153,7 +167,8 @@ public class UpdateActuals extends DalBaseProcess {
           queryString.append(" and e.product.id=:product");
         }
         if (StringUtils.isNotEmpty(productCategory)) {
-          queryString.append(" and e.product.productCategory.id in (").append(productCategoryTree)
+          queryString.append(" and e.product.productCategory.id in (")
+              .append(productCategoryTree)
               .append(")");
         }
         if (!"".equals(project)) {
@@ -171,19 +186,23 @@ public class UpdateActuals extends DalBaseProcess {
         if (!"".equals(user1)) {
           queryString.append(" and e.ndDimension.id in (").append(user2Tree).append(")");
         }
-        Query<Object[]> query = OBDal.getInstance().getSession()
+        Query<Object[]> query = OBDal.getInstance()
+            .getSession()
             .createQuery(queryString.toString(), Object[].class);
         query.setReadOnly(true);
         query.setParameter("accountingSchema", accountingSchema);
-        if (!"".equals(businessPartner))
+        if (!"".equals(businessPartner)) {
           query.setParameter("businessPartner", businessPartner);
+        }
         if (StringUtils.isNotEmpty(businessPartnerCategory)) {
           query.setParameter("businessPartnerCategory", businessPartnerCategory);
         }
-        if (!"".equals(period))
+        if (!"".equals(period)) {
           query.setParameter("period", period);
-        if (!"".equals(product))
+        }
+        if (!"".equals(product)) {
           query.setParameter("product", product);
+        }
 
         log4j.debug("Query String" + query.getQueryString());
 

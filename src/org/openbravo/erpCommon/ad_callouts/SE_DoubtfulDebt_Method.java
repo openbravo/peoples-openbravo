@@ -34,8 +34,8 @@ public class SE_DoubtfulDebt_Method extends SimpleCallout {
     if ("".equals(strDoubtfulDebtMethodId)) {
       return;
     }
-    DoubtfulDebtMethod doubtfulDebtMethod = OBDal.getInstance().get(DoubtfulDebtMethod.class,
-        strDoubtfulDebtMethodId);
+    DoubtfulDebtMethod doubtfulDebtMethod = OBDal.getInstance()
+        .get(DoubtfulDebtMethod.class, strDoubtfulDebtMethodId);
     info.addResult("inppercentage", doubtfulDebtMethod.getPercentage().toString());
     info.addResult("inpdaysoverdue", doubtfulDebtMethod.getDaysOverdue().toString());
   }

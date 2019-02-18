@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -60,13 +62,11 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * This class generates and processes Invoice from Goods Shipment. Only goods shipment lines not
- * linked to a Sales Order, or from Sales Order with Invoice Term "After Delivery",
- * "After Order Delivery" or "Immediate" are considered.
+ * linked to a Sales Order, or from Sales Order with Invoice Term "After Delivery", "After Order
+ * Delivery" or "Immediate" are considered.
  *
  */
 public class InvoiceGeneratorFromGoodsShipment {
@@ -217,8 +217,8 @@ public class InvoiceGeneratorFromGoodsShipment {
   }
 
   private void invoiceShipmentLineWithoutRelatedOrderLine(final ShipmentInOutLine shipmentLine) {
-    final BigDecimal qtyToInvoice = shipmentLine.getMovementQuantity().subtract(
-        getTotalInvoicedForShipmentLine(shipmentLine));
+    final BigDecimal qtyToInvoice = shipmentLine.getMovementQuantity()
+        .subtract(getTotalInvoicedForShipmentLine(shipmentLine));
     invoicePendingQtyForShipmentLine(shipmentLine, qtyToInvoice);
   }
 
@@ -230,8 +230,8 @@ public class InvoiceGeneratorFromGoodsShipment {
         + "and il.invoice." + Invoice.PROPERTY_DOCUMENTSTATUS + "= 'CO' ";
 
     final Session sessionInvoiceLines = OBDal.getInstance().getSession();
-    final Query<BigDecimal> queryInvoiceLines = sessionInvoiceLines.createQuery(
-        invoiceLinesHqlQuery, BigDecimal.class);
+    final Query<BigDecimal> queryInvoiceLines = sessionInvoiceLines
+        .createQuery(invoiceLinesHqlQuery, BigDecimal.class);
     queryInvoiceLines.setParameter("shipmentLineId", iol.getId());
 
     return queryInvoiceLines.uniqueResult();
@@ -247,7 +247,9 @@ public class InvoiceGeneratorFromGoodsShipment {
   private boolean isOrderCandidateToBeInvoiced(final Order order) {
     return !OBDao
         .getFilteredCriteria(InvoiceCandidateV.class,
-            Restrictions.eq(InvoiceCandidateV.PROPERTY_ID, order.getId())).setMaxResults(1).list()
+            Restrictions.eq(InvoiceCandidateV.PROPERTY_ID, order.getId()))
+        .setMaxResults(1)
+        .list()
         .isEmpty();
   }
 
@@ -256,7 +258,8 @@ public class InvoiceGeneratorFromGoodsShipment {
     final String invoiceTerm = order.getInvoiceTerms();
     if (InvoiceTerm.canInvoiceOrderLineIndividually(invoiceTerm)) {
       final BigDecimal qtyToInvoice = orderLine.getOrderedQuantity()
-          .subtract(orderLine.getInvoicedQuantity()).min(shipmentLine.getMovementQuantity());
+          .subtract(orderLine.getInvoicedQuantity())
+          .min(shipmentLine.getMovementQuantity());
       invoicePendingQtyForShipmentLine(shipmentLine, qtyToInvoice);
     } else {
       if (InvoiceTerm.AFTER_ORDER_DELIVERY.getInvoiceTerm().equals(invoiceTerm)) {
@@ -291,8 +294,8 @@ public class InvoiceGeneratorFromGoodsShipment {
         + "where ol." + OrderLine.PROPERTY_SALESORDER + ".id = :orderId ";
 
     final Session sessionOrderLines = OBDal.getInstance().getSession();
-    final Query<ShipmentInOutLine> queryOrderLines = sessionOrderLines.createQuery(
-        orderLinesHqlQuery, ShipmentInOutLine.class);
+    final Query<ShipmentInOutLine> queryOrderLines = sessionOrderLines
+        .createQuery(orderLinesHqlQuery, ShipmentInOutLine.class);
     queryOrderLines.setParameter("orderId", order.getId());
 
     return queryOrderLines.scroll(ScrollMode.FORWARD_ONLY);
@@ -317,12 +320,13 @@ public class InvoiceGeneratorFromGoodsShipment {
       line.put("lineNo", shipmentInOutLine.getLineNo());
       line.put("movementQuantity", invoicedQuantity.toString());
       line.put("operativeQuantity",
-          shipmentInOutLine.getOperativeQuantity() == null ? shipmentInOutLine
-              .getMovementQuantity().toString() : shipmentInOutLine.getOperativeQuantity()
-              .toString());
+          shipmentInOutLine.getOperativeQuantity() == null
+              ? shipmentInOutLine.getMovementQuantity().toString()
+              : shipmentInOutLine.getOperativeQuantity().toString());
       line.put("id", shipmentInOutLine.getId());
-      line.put("operativeUOM", shipmentInOutLine.getOperativeUOM() == null ? shipmentInOutLine
-          .getUOM().getId() : shipmentInOutLine.getOperativeUOM().getId());
+      line.put("operativeUOM",
+          shipmentInOutLine.getOperativeUOM() == null ? shipmentInOutLine.getUOM().getId()
+              : shipmentInOutLine.getOperativeUOM().getId());
       line.put("operativeUOM$_identifier",
           shipmentInOutLine.getOperativeUOM() == null ? shipmentInOutLine.getUOM().getIdentifier()
               : shipmentInOutLine.getOperativeUOM().getIdentifier());
@@ -361,9 +365,11 @@ public class InvoiceGeneratorFromGoodsShipment {
     newInvoice.setTransactionDocument(invoiceDocumentType);
     String documentNo = Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
         new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
-        invoiceEntity.getTableName(), newInvoice.getTransactionDocument() == null ? "" : newInvoice
-            .getTransactionDocument().getId(), newInvoice.getDocumentType() == null ? ""
-            : newInvoice.getDocumentType().getId(), false, true);
+        invoiceEntity.getTableName(),
+        newInvoice.getTransactionDocument() == null ? ""
+            : newInvoice.getTransactionDocument().getId(),
+        newInvoice.getDocumentType() == null ? "" : newInvoice.getDocumentType().getId(), false,
+        true);
     newInvoice.setDocumentNo(documentNo);
     newInvoice.setDocumentAction("CO");
     newInvoice.setDocumentStatus("DR");
@@ -392,8 +398,8 @@ public class InvoiceGeneratorFromGoodsShipment {
     parameters.add(org.getClient().getId());
     parameters.add(org.getId());
     parameters.add("ARI");
-    final String documentTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
-        parameters, null, false);
+    final String documentTypeId = (String) CallStoredProcedure.getInstance()
+        .call("AD_GET_DOCTYPE", parameters, null, false);
     try {
       return OBDal.getInstance().get(DocumentType.class, documentTypeId);
     } catch (Exception e) {

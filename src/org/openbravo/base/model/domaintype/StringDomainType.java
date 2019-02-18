@@ -30,6 +30,7 @@ public class StringDomainType extends BasePrimitiveDomainType {
   /**
    * @return class of the {@link String}
    */
+  @Override
   public Class<?> getPrimitiveType() {
     return String.class;
   }

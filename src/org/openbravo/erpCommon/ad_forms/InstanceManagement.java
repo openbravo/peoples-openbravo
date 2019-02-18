@@ -60,8 +60,9 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
@@ -101,8 +102,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
     } else {
       discard[0] = "discardDeactivate";
     }
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/InstanceManagementDeactivate", discard)
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/InstanceManagementDeactivate", discard)
         .createXmlDocument();
     response.setContentType("text/html; charset=UTF-8");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -137,9 +138,9 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
       if (!deactivable) {
         msg.setType("Error");
-        msg.setMessage(Utility.messageBD(cp, "CannotDeactivateWithCommercialModules",
-            vars.getLanguage())
-            + commercialModules);
+        msg.setMessage(
+            Utility.messageBD(cp, "CannotDeactivateWithCommercialModules", vars.getLanguage())
+                + commercialModules);
       } else {
         // Deactivate instance
         System sys = OBDal.getInstance().get(System.class, "0");
@@ -227,8 +228,9 @@ public class InstanceManagement extends HttpSecureAppServlet {
       discard[1] = "OPSRenew";
     }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/InstanceManagementActivateLocal", discard)
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/InstanceManagementActivateLocal",
+            discard)
         .createXmlDocument();
     response.setContentType("text/html; charset=UTF-8");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -249,59 +251,60 @@ public class InstanceManagement extends HttpSecureAppServlet {
     String discard[] = { "", "", "", "", "", "", "", "" };
 
     switch (activationKey.getSubscriptionStatus()) {
-    case INVALID:
-    case COMMUNITY:
-      discard[0] = "OPSInstance";
-      discard[1] = "OPSActiveTitle";
-      discard[2] = "OPSExpired";
-      discard[3] = "OPSConverted";
-      discard[4] = "OPSNoActiveYet";
-      discard[5] = "OPSActive";
-      discard[6] = "OPSExpiredCancel";
-      break;
-    case ACTIVE:
-      discard[0] = "CEInstance";
-      discard[1] = "OPSExpired";
-      if (!activationKey.hasExpirationDate()) {
-        discard[2] = "OPSExpirationTime";
-      }
-      discard[3] = "OPSConverted";
-      discard[4] = "OPSNoActiveYet";
-      discard[5] = "OPSExpiredCancel";
-      break;
-    case CANCEL:
-      discard[0] = "CEInstance";
-      discard[1] = "OPSActiveTitle";
-      discard[2] = "OPSExpired";
-      discard[3] = "OPSNoActiveYet";
-      discard[4] = "OPSExpiredCancel";
-      break;
-    case EXPIRED:
-      discard[0] = "CEInstance";
-      discard[1] = "OPSActiveTitle";
-      discard[2] = "OPSNoActiveYet";
-      discard[3] = "OPSConverted";
-      discard[4] = "OPSActive";
-      if (activationKey.isTrial()) {
+      case INVALID:
+      case COMMUNITY:
+        discard[0] = "OPSInstance";
+        discard[1] = "OPSActiveTitle";
+        discard[2] = "OPSExpired";
+        discard[3] = "OPSConverted";
+        discard[4] = "OPSNoActiveYet";
+        discard[5] = "OPSActive";
+        discard[6] = "OPSExpiredCancel";
+        break;
+      case ACTIVE:
+        discard[0] = "CEInstance";
+        discard[1] = "OPSExpired";
+        if (!activationKey.hasExpirationDate()) {
+          discard[2] = "OPSExpirationTime";
+        }
+        discard[3] = "OPSConverted";
+        discard[4] = "OPSNoActiveYet";
         discard[5] = "OPSExpiredCancel";
-      }
-      break;
-    case NO_ACTIVE_YET:
-      discard[0] = "CEInstance";
-      discard[1] = "OPSExpired";
-      discard[2] = "OPSActiveTitle";
-      discard[3] = "OPSConverted";
-      discard[4] = "OPSActive";
-      discard[5] = "OPSExpiredCancel";
-      break;
+        break;
+      case CANCEL:
+        discard[0] = "CEInstance";
+        discard[1] = "OPSActiveTitle";
+        discard[2] = "OPSExpired";
+        discard[3] = "OPSNoActiveYet";
+        discard[4] = "OPSExpiredCancel";
+        break;
+      case EXPIRED:
+        discard[0] = "CEInstance";
+        discard[1] = "OPSActiveTitle";
+        discard[2] = "OPSNoActiveYet";
+        discard[3] = "OPSConverted";
+        discard[4] = "OPSActive";
+        if (activationKey.isTrial()) {
+          discard[5] = "OPSExpiredCancel";
+        }
+        break;
+      case NO_ACTIVE_YET:
+        discard[0] = "CEInstance";
+        discard[1] = "OPSExpired";
+        discard[2] = "OPSActiveTitle";
+        discard[3] = "OPSConverted";
+        discard[4] = "OPSActive";
+        discard[5] = "OPSExpiredCancel";
+        break;
     }
 
     if (activationKey.isGolden()) {
       discard[6] = "discardGolden";
     }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/InstanceManagement", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/InstanceManagement", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -339,13 +342,13 @@ public class InstanceManagement extends HttpSecureAppServlet {
     }
 
     String instanceInfo = activationKey.isOPSInstance() ? //
-    getLicenseDescription(activationKey, vars.getLanguage())
+        getLicenseDescription(activationKey, vars.getLanguage())
         : Utility.messageBD(cp, "OPSCommunityInstance", vars.getLanguage()).replace("\\n", "\n");
     xmlDocument.setParameter("instanceInfo", instanceInfo);
 
     if (activationKey.hasExpirationDate()) {
       String daysLeft = activationKey.getPendingDays() != null ? //
-      activationKey.getPendingDays().toString()
+          activationKey.getPendingDays().toString()
           : Utility.messageBD(cp, "OPSUnlimitedUsers", vars.getLanguage()).replace("\\n", "\n");
       xmlDocument.setParameter("OPSdaysLeft", daysLeft);
     }
@@ -353,8 +356,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("moduleActions",
         activationKey.getInstanceActivationExtraActionsHtml(xmlEngine));
 
-    String cacheMsg = Utility.messageBD(cp, "OUTDATED_FILES_CACHED", vars.getLanguage()).replace(
-        "\\n", "\n");
+    String cacheMsg = Utility.messageBD(cp, "OUTDATED_FILES_CACHED", vars.getLanguage())
+        .replace("\\n", "\n");
     cacheMsg = "var cacheMsg = \"" + cacheMsg + "\"";
     xmlDocument.setParameter("cacheMsg", cacheMsg);
 
@@ -364,14 +367,18 @@ public class InstanceManagement extends HttpSecureAppServlet {
   }
 
   private String getLicenseDescription(ActivationKey ak, String lang) {
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
 
     ConnectionProvider conn = new DalConnectionProvider(false);
     StringBuilder sb = new StringBuilder();
     if (ak.getInstanceProperties() != null) {
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
-          .append("</td><td>").append(ak.getProperty("customer")).append("</td></tr>");
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSCustomer", lang))
+          .append("</td><td>")
+          .append(ak.getProperty("customer"))
+          .append("</td></tr>");
 
       sb.append("<tr><td>")
           .append(Utility.messageBD(conn, "OPSLicenseEdition", lang))
@@ -379,7 +386,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
           .append(
               Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(), lang))
           .append("</td></tr>");
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseType", lang))
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSLicenseType", lang))
           .append("</td><td>")
           .append(Utility.getListValueName("OPSLicenseType", ak.getProperty("lincensetype"), lang));
       if (ak.isTrial()) {
@@ -389,8 +397,11 @@ public class InstanceManagement extends HttpSecureAppServlet {
       Date startDate = ak.getStartDate();
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       if (startDate != null) {
-        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang))
-            .append("</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
+        sb.append("<tr><td>")
+            .append(Utility.messageBD(conn, "OPSStartDate", lang))
+            .append("</td><td>")
+            .append(outputFormat.format(startDate))
+            .append("</td></tr>");
       }
 
       Date endDate = ak.getEndDate();
@@ -400,53 +411,67 @@ public class InstanceManagement extends HttpSecureAppServlet {
             .append("</td><td>")
             .append(
                 (ak.getProperty("enddate") == null ? Utility.messageBD(conn, "OPSNoEndDate", lang)
-                    : outputFormat.format(endDate))).append("</td></tr>");
+                    : outputFormat.format(endDate)))
+            .append("</td></tr>");
       }
 
       Long maxUsers = ak.getMaxUsers();
       sb.append("<tr><td>")
           .append(Utility.messageBD(conn, "OPSConcurrentUsers", lang))
           .append("</td><td>")
-          .append(
-              (maxUsers == null || maxUsers == 0L) ? Utility.messageBD(conn, "OPSUnlimitedUsers",
-                  lang) : maxUsers).append("</td></tr>");
+          .append((maxUsers == null || maxUsers == 0L)
+              ? Utility.messageBD(conn, "OPSUnlimitedUsers", lang)
+              : maxUsers)
+          .append("</td></tr>");
       if (ak.getProperty("limituserswarn") != null) {
-        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang))
-            .append("</td><td>").append(ak.getProperty("limituserswarn")).append("</td></tr>");
+        sb.append("<tr><td>")
+            .append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang))
+            .append("</td><td>")
+            .append(ak.getProperty("limituserswarn"))
+            .append("</td></tr>");
       }
 
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCurrentConcurrentUsers", lang))
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSCurrentConcurrentUsers", lang))
           .append("</td><td>");
       sb.append(ak.getActiveSessions(null));
       sb.append("</td></tr>");
 
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstanceNo", lang))
-          .append("</td><td>").append(ak.getProperty("instanceno")).append("\n");
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSInstanceNo", lang))
+          .append("</td><td>")
+          .append(ak.getProperty("instanceno"))
+          .append("\n");
 
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstancePurpose", lang))
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSInstancePurpose", lang))
           .append("</td><td>")
           .append(Utility.getListValueName("InstancePurpose", ak.getProperty("purpose"), lang))
           .append("</td></tr>");
 
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSLimitation", lang))
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSWSLimitation", lang))
           .append("</td><td>");
       sb.append(ak.getWSExplanation(conn, lang));
       sb.append("</td></tr>");
 
       if (!ak.hasUnlimitedWsAccess()) {
-        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSCounterDay", lang))
+        sb.append("<tr><td>")
+            .append(Utility.messageBD(conn, "OPSWSCounterDay", lang))
             .append("</td><td>");
         sb.append(ak.getNumberWSDayCounter());
         sb.append("</td></tr>");
       }
 
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSPOSLimitation", lang))
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSPOSLimitation", lang))
           .append("</td><td>");
       sb.append(ak.getPOSTerminalsExplanation());
       sb.append("</td></tr>");
 
       for (ModuleLicenseRestrictions.AdditionalInfo addInfo : ak.getAdditionalMessageInfo()) {
-        sb.append("<tr><td>").append(Utility.messageBD(conn, addInfo.getKey(), lang))
+        sb.append("<tr><td>")
+            .append(Utility.messageBD(conn, addInfo.getKey(), lang))
             .append("</td><td>");
         sb.append(addInfo.getValue());
         sb.append("</td></tr>");
@@ -487,8 +512,9 @@ public class InstanceManagement extends HttpSecureAppServlet {
     }
 
     final PrintWriter out = response.getWriter();
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/InstanceManagementActivateOnline", discard)
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/InstanceManagementActivateOnline",
+            discard)
         .createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");

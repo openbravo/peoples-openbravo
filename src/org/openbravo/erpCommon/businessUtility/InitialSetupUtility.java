@@ -165,10 +165,9 @@ public class InitialSetupUtility {
           + DimensionDisplayUtility.DIM_Organization + "_" + DimensionDisplayUtility.DIM_Header)));
       newClient.setOrgAcctdimLines("Y".equals(readOnlySessionVariableMap.get("$RO_"
           + DimensionDisplayUtility.DIM_Organization + "_" + DimensionDisplayUtility.DIM_Lines)));
-      newClient
-          .setOrgAcctdimBreakdown("Y".equals(readOnlySessionVariableMap.get("$RO_"
-              + DimensionDisplayUtility.DIM_Organization + "_"
-              + DimensionDisplayUtility.DIM_BreakDown)));
+      newClient.setOrgAcctdimBreakdown("Y"
+          .equals(readOnlySessionVariableMap.get("$RO_" + DimensionDisplayUtility.DIM_Organization
+              + "_" + DimensionDisplayUtility.DIM_BreakDown)));
       newClient.setOrgAcctdimIsenable(newClient.isOrgAcctdimHeader()
           || newClient.isOrgAcctdimLines() || newClient.isOrgAcctdimBreakdown());
 
@@ -185,8 +184,8 @@ public class InitialSetupUtility {
       // Product
       newClient.setProductAcctdimHeader("Y".equals(readOnlySessionVariableMap.get("$RO_"
           + DimensionDisplayUtility.DIM_Product + "_" + DimensionDisplayUtility.DIM_Header)));
-      newClient.setProductAcctdimLines("Y".equals(readOnlySessionVariableMap.get("$RO_"
-          + DimensionDisplayUtility.DIM_Product + "_" + DimensionDisplayUtility.DIM_Lines)));
+      newClient.setProductAcctdimLines("Y".equals(readOnlySessionVariableMap.get(
+          "$RO_" + DimensionDisplayUtility.DIM_Product + "_" + DimensionDisplayUtility.DIM_Lines)));
       newClient.setProductAcctdimBreakdown("Y".equals(readOnlySessionVariableMap.get("$RO_"
           + DimensionDisplayUtility.DIM_Product + "_" + DimensionDisplayUtility.DIM_BreakDown)));
       newClient.setProductAcctdimIsenable(newClient.isProductAcctdimHeader()
@@ -195,8 +194,8 @@ public class InitialSetupUtility {
       // Project
       newClient.setProjectAcctdimHeader("Y".equals(readOnlySessionVariableMap.get("$RO_"
           + DimensionDisplayUtility.DIM_Project + "_" + DimensionDisplayUtility.DIM_Header)));
-      newClient.setProjectAcctdimLines("Y".equals(readOnlySessionVariableMap.get("$RO_"
-          + DimensionDisplayUtility.DIM_Project + "_" + DimensionDisplayUtility.DIM_Lines)));
+      newClient.setProjectAcctdimLines("Y".equals(readOnlySessionVariableMap.get(
+          "$RO_" + DimensionDisplayUtility.DIM_Project + "_" + DimensionDisplayUtility.DIM_Lines)));
       newClient.setProjectAcctdimBreakdown("Y".equals(readOnlySessionVariableMap.get("$RO_"
           + DimensionDisplayUtility.DIM_Project + "_" + DimensionDisplayUtility.DIM_BreakDown)));
       newClient.setProjectAcctdimIsenable(newClient.isProjectAcctdimHeader()
@@ -213,20 +212,20 @@ public class InitialSetupUtility {
           || newClient.isCostcenterAcctdimLines() || newClient.isCostcenterAcctdimBreakdown());
 
       // User 1
-      newClient.setUser1AcctdimHeader("Y".equals(readOnlySessionVariableMap.get("$RO_"
-          + DimensionDisplayUtility.DIM_User1 + "_" + DimensionDisplayUtility.DIM_Header)));
-      newClient.setUser1AcctdimLines("Y".equals(readOnlySessionVariableMap.get("$RO_"
-          + DimensionDisplayUtility.DIM_User1 + "_" + DimensionDisplayUtility.DIM_Lines)));
+      newClient.setUser1AcctdimHeader("Y".equals(readOnlySessionVariableMap.get(
+          "$RO_" + DimensionDisplayUtility.DIM_User1 + "_" + DimensionDisplayUtility.DIM_Header)));
+      newClient.setUser1AcctdimLines("Y".equals(readOnlySessionVariableMap.get(
+          "$RO_" + DimensionDisplayUtility.DIM_User1 + "_" + DimensionDisplayUtility.DIM_Lines)));
       newClient.setUser1AcctdimBreakdown("Y".equals(readOnlySessionVariableMap.get("$RO_"
           + DimensionDisplayUtility.DIM_User1 + "_" + DimensionDisplayUtility.DIM_BreakDown)));
       newClient.setUser1AcctdimIsenable(newClient.isUser1AcctdimHeader()
           || newClient.isUser1AcctdimLines() || newClient.isUser1AcctdimBreakdown());
 
       // User 2
-      newClient.setUser2AcctdimHeader("Y".equals(readOnlySessionVariableMap.get("$RO_"
-          + DimensionDisplayUtility.DIM_User2 + "_" + DimensionDisplayUtility.DIM_Header)));
-      newClient.setUser2AcctdimLines("Y".equals(readOnlySessionVariableMap.get("$RO_"
-          + DimensionDisplayUtility.DIM_User2 + "_" + DimensionDisplayUtility.DIM_Lines)));
+      newClient.setUser2AcctdimHeader("Y".equals(readOnlySessionVariableMap.get(
+          "$RO_" + DimensionDisplayUtility.DIM_User2 + "_" + DimensionDisplayUtility.DIM_Header)));
+      newClient.setUser2AcctdimLines("Y".equals(readOnlySessionVariableMap.get(
+          "$RO_" + DimensionDisplayUtility.DIM_User2 + "_" + DimensionDisplayUtility.DIM_Lines)));
       newClient.setUser2AcctdimBreakdown("Y".equals(readOnlySessionVariableMap.get("$RO_"
           + DimensionDisplayUtility.DIM_User2 + "_" + DimensionDisplayUtility.DIM_BreakDown)));
       newClient.setUser2AcctdimIsenable(newClient.isUser2AcctdimHeader()
@@ -311,17 +310,18 @@ public class InitialSetupUtility {
 
     final OBCriteria<org.openbravo.model.ad.domain.Reference> obcReference = OBDal.getInstance()
         .createCriteria(org.openbravo.model.ad.domain.Reference.class);
-    obcReference.add(Restrictions.eq(org.openbravo.model.ad.domain.Reference.PROPERTY_NAME,
-        "AD_TreeType Type"));
+    obcReference.add(
+        Restrictions.eq(org.openbravo.model.ad.domain.Reference.PROPERTY_NAME, "AD_TreeType Type"));
     List<org.openbravo.model.ad.domain.Reference> listReferences = obcReference.list();
-    if (listReferences.size() != 1)
+    if (listReferences.size() != 1) {
       return null;
+    }
 
     org.openbravo.model.ad.domain.Reference referenceTree = listReferences.get(0);
     final OBCriteria<org.openbravo.model.ad.domain.List> obcRefTreeList = OBDal.getInstance()
         .createCriteria(org.openbravo.model.ad.domain.List.class);
-    obcRefTreeList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE,
-        referenceTree));
+    obcRefTreeList
+        .add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, referenceTree));
     obcRefTreeList.addOrder(Order.asc("name"));
     return obcRefTreeList.list();
   }
@@ -338,8 +338,8 @@ public class InitialSetupUtility {
     // Together with those trees that use the ADTree tree structure, we also include in the list the
     // tree for account elements because it makes use of a custom extension of the ADTree structure.
     // See issue https://issues.openbravo.com/view.php?id=31856
-    DataSource accountTreeDatasource = OBDal.getInstance().get(DataSource.class,
-        "D2F94DC86DEC48D69E4BFCE59DC670CF");
+    DataSource accountTreeDatasource = OBDal.getInstance()
+        .get(DataSource.class, "D2F94DC86DEC48D69E4BFCE59DC670CF");
     obcTableTree.add(Restrictions.or(
         //
         Restrictions.eq(TableTree.PROPERTY_TREESTRUCTURE, "ADTree"),
@@ -362,8 +362,9 @@ public class InitialSetupUtility {
     final OBCriteria<Tree> obcTree = OBDal.getInstance().createCriteria(Tree.class);
     obcTree.add(Restrictions.eq(Tree.PROPERTY_TABLE, menuTable));
     List<Tree> lTrees = obcTree.list();
-    if (lTrees.size() != 1)
+    if (lTrees.size() != 1) {
       return null;
+    }
     return lTrees.get(0);
   }
 
@@ -445,8 +446,9 @@ public class InitialSetupUtility {
     newClientInfo.setPrimaryTreeProject(projectTree);
     newClientInfo.setPrimaryTreeSalesRegion(salesRegionTree);
     newClientInfo.setPrimaryTreeProduct(productTree);
-    if (campaignTree != null)
+    if (campaignTree != null) {
       newClientInfo.setTreeCampaign(campaignTree);
+    }
     newClientInfo.setDiscountCalculatedFromLineAmounts(boDiscountCalculatedFromLineAmounts);
     OBDal.getInstance().save(newClientInfo);
     OBDal.getInstance().flush();
@@ -481,7 +483,8 @@ public class InitialSetupUtility {
     yourCompanyDocumentImage.setOrganization(org);
     yourCompanyDocumentImage.setBindaryData(image);
     yourCompanyDocumentImage.setName(strImageName);
-    org.getOrganizationInformationList().get(0)
+    org.getOrganizationInformationList()
+        .get(0)
         .setYourCompanyDocumentImage(yourCompanyDocumentImage);
     yourCompanyDocumentImage.setOrganization(org);
     OBDal.getInstance().save(yourCompanyDocumentImage);
@@ -530,7 +533,8 @@ public class InitialSetupUtility {
       yourCompanyDocumentImage.setClient(client);
       yourCompanyDocumentImage.setBindaryData(sys.getYourCompanyDocumentImage().getBindaryData());
       yourCompanyDocumentImage.setName(sys.getYourCompanyBigImage().getName());
-      client.getClientInformationList().get(0)
+      client.getClientInformationList()
+          .get(0)
           .setYourCompanyDocumentImage(yourCompanyDocumentImage);
       OBDal.getInstance().save(yourCompanyDocumentImage);
       OBDal.getInstance().flush();
@@ -587,15 +591,18 @@ public class InitialSetupUtility {
       String strUserLevelProvided, boolean isClientAdmin) throws Exception {
     Organization organization = null;
     if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
+      if ((organization = getZeroOrg()) == null) {
         return null;
-    } else
+      }
+    } else {
       organization = orgProvided;
+    }
     String strUserLevel;
-    if (strUserLevelProvided == null || strUserLevelProvided.equals(""))
+    if (strUserLevelProvided == null || strUserLevelProvided.equals("")) {
       strUserLevel = " CO";
-    else
+    } else {
       strUserLevel = strUserLevelProvided;
+    }
 
     final Role newRole = OBProvider.getInstance().get(Role.class);
     newRole.setClient(client);
@@ -638,13 +645,15 @@ public class InitialSetupUtility {
     try {
       Organization organization = null;
       if (orgProvided == null) {
-        if ((organization = getZeroOrg()) == null)
+        if ((organization = getZeroOrg()) == null) {
           return null;
-      } else
+        }
+      } else {
         organization = orgProvided;
+      }
 
-      final RoleOrganization newRoleOrganization = OBProvider.getInstance().get(
-          RoleOrganization.class);
+      final RoleOrganization newRoleOrganization = OBProvider.getInstance()
+          .get(RoleOrganization.class);
       newRoleOrganization.setClient(role.getClient());
       newRoleOrganization.setOrganization(organization);
       newRoleOrganization.setRole(role);
@@ -672,10 +681,12 @@ public class InitialSetupUtility {
       String password, Role role, Language defaultLanguage) throws Exception {
     Organization organization = null;
     if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
+      if ((organization = getZeroOrg()) == null) {
         return null;
-    } else
+      }
+    } else {
       organization = orgProvided;
+    }
 
     final User newUser = OBProvider.getInstance().get(User.class);
     newUser.setClient(client);
@@ -685,8 +696,9 @@ public class InitialSetupUtility {
     newUser.setUsername(name);
     newUser.setPassword(password);
     newUser.setDefaultLanguage(defaultLanguage);
-    if (role != null)
+    if (role != null) {
       newUser.setDefaultRole(role);
+    }
     OBDal.getInstance().save(newUser);
     OBContext.setAdminMode(true);
     try {
@@ -727,10 +739,12 @@ public class InitialSetupUtility {
       Organization organization = null;
 
       if (orgProvided == null) {
-        if ((organization = getZeroOrg()) == null)
+        if ((organization = getZeroOrg()) == null) {
           return null;
-      } else
+        }
+      } else {
         organization = orgProvided;
+      }
 
       final UserRoles newUserRole = OBProvider.getInstance().get(UserRoles.class);
       newUserRole.setClient(client);
@@ -774,10 +788,12 @@ public class InitialSetupUtility {
       throws Exception {
     Organization organization = null;
     if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
+      if ((organization = getZeroOrg()) == null) {
         return null;
-    } else
+      }
+    } else {
       organization = orgProvided;
+    }
 
     final Calendar newCalendar = OBProvider.getInstance().get(Calendar.class);
     newCalendar.setClient(client);
@@ -809,10 +825,12 @@ public class InitialSetupUtility {
       String strYearName) throws Exception {
     Organization organization = null;
     if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
+      if ((organization = getZeroOrg()) == null) {
         return null;
-    } else
+      }
+    } else {
       organization = orgProvided;
+    }
     final Year newYear = OBProvider.getInstance().get(Year.class);
     newYear.setClient(client);
     newYear.setOrganization(organization);
@@ -837,10 +855,12 @@ public class InitialSetupUtility {
       Tree accountTree, Boolean bNaturalAccount) throws Exception {
     Organization organization = null;
     if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
+      if ((organization = getZeroOrg()) == null) {
         return null;
-    } else
+      }
+    } else {
       organization = orgProvided;
+    }
     final Element newElement = OBProvider.getInstance().get(Element.class);
     newElement.setClient(client);
     newElement.setOrganization(organization);
@@ -885,10 +905,12 @@ public class InitialSetupUtility {
     try {
       Organization organization = null;
       if (orgProvided == null) {
-        if ((organization = getZeroOrg()) == null)
+        if ((organization = getZeroOrg()) == null) {
           return null;
-      } else
+        }
+      } else {
         organization = orgProvided;
+      }
 
       final ElementValue newElementValue = OBProvider.getInstance().get(ElementValue.class);
       newElementValue.setClient(element.getClient());
@@ -902,13 +924,16 @@ public class InitialSetupUtility {
       newElementValue.setDocumentControlled(isDocControlled);
       newElementValue.setSummaryLevel(isSummary);
       newElementValue.setElementLevel(elementLevel);
-      if (showValueCond != null && !"".equals(showValueCond))
+      if (showValueCond != null && !"".equals(showValueCond)) {
         newElementValue.setShowValueCondition(showValueCond.substring(0, 1));
-      if (titleNode != null && !"".equals(titleNode))
+      }
+      if (titleNode != null && !"".equals(titleNode)) {
         newElementValue.setTitleNode("Y".equals(titleNode.subSequence(0, 1)));
+      }
       OBDal.getInstance().save(newElementValue);
-      if (doFlush)
+      if (doFlush) {
         OBDal.getInstance().flush();
+      }
       return newElementValue;
     } finally {
       OBContext.restorePreviousMode();
@@ -924,14 +949,16 @@ public class InitialSetupUtility {
    * @return List&lt;TreeNode&gt; with relation of tree node elements of the provided tree
    * @throws Exception
    */
-  public static List<TreeNode> getTreeNode(Tree accountTree, Client client, Organization orgProvided)
-      throws Exception {
+  public static List<TreeNode> getTreeNode(Tree accountTree, Client client,
+      Organization orgProvided) throws Exception {
     Organization organization;
     if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
+      if ((organization = getZeroOrg()) == null) {
         return null;
-    } else
+      }
+    } else {
       organization = orgProvided;
+    }
     List<TreeNode> lTreeNodes;
     OBContext.setAdminMode();
     try {
@@ -1001,12 +1028,14 @@ public class InitialSetupUtility {
             lSequence = mapSequence.get(strElementValue);
             treeNode.setSequenceNumber(lSequence);
             String strParentValue = mapParent.get(strElementValue);
-            if (!strParentValue.equals("0"))
+            if (!strParentValue.equals("0")) {
               treeNode.setReportSet(mapElementValueId.get(strParentValue));
+            }
             OBDal.getInstance().save(treeNode);
           }
-          if (doFlush)
+          if (doFlush) {
             OBDal.getInstance().flush();
+          }
         } catch (Exception ignoredException) {
           log4j.error("updateAccountTree() - Ignored exception while sorting account tree.",
               ignoredException);
@@ -1028,8 +1057,8 @@ public class InitialSetupUtility {
    */
   public static ElementValueOperand insertOperand(ElementValue elementValue, ElementValue operand,
       Long sign, Long sequence) throws Exception {
-    final ElementValueOperand newElementValueOperand = OBProvider.getInstance().get(
-        ElementValueOperand.class);
+    final ElementValueOperand newElementValueOperand = OBProvider.getInstance()
+        .get(ElementValueOperand.class);
     newElementValueOperand.setClient(elementValue.getClient());
     newElementValueOperand.setOrganization(elementValue.getOrganization());
     newElementValueOperand.setSign(sign);
@@ -1052,15 +1081,17 @@ public class InitialSetupUtility {
     OBContext.setAdminMode();
     try {
       final OBCriteria<ElementValue> obcEV = OBDal.getInstance().createCriteria(ElementValue.class);
-      if (obcEV == null)
+      if (obcEV == null) {
         return null;
+      }
       obcEV.setFilterOnReadableClients(false);
       obcEV.setFilterOnReadableOrganization(false);
       obcEV.add(Restrictions.eq(ElementValue.PROPERTY_SEARCHKEY, value));
       obcEV.add(Restrictions.eq(ElementValue.PROPERTY_ACCOUNTINGELEMENT, element));
       List<ElementValue> l = obcEV.list();
-      if (l.size() != 1)
+      if (l.size() != 1) {
         return null;
+      }
       return l.get(0);
     } catch (Exception e) {
       return null;
@@ -1086,10 +1117,12 @@ public class InitialSetupUtility {
       throws Exception {
     Organization organization = null;
     if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
+      if ((organization = getZeroOrg()) == null) {
         return null;
-    } else
+      }
+    } else {
       organization = orgProvided;
+    }
     final AcctSchema newAcctSchema = OBProvider.getInstance().get(AcctSchema.class);
     newAcctSchema.setClient(client);
     newAcctSchema.setOrganization(organization);
@@ -1126,12 +1159,14 @@ public class InitialSetupUtility {
       Element accountingElement) throws Exception {
     Organization trxOrganization = null;
     if (orgProvided == null) {
-      if ((trxOrganization = getZeroOrg()) == null)
+      if ((trxOrganization = getZeroOrg()) == null) {
         return null;
-    } else
+      }
+    } else {
       trxOrganization = orgProvided;
-    final AcctSchemaElement newAcctSchemaElement = OBProvider.getInstance().get(
-        AcctSchemaElement.class);
+    }
+    final AcctSchemaElement newAcctSchemaElement = OBProvider.getInstance()
+        .get(AcctSchemaElement.class);
     newAcctSchemaElement.setAccountingSchema(acctSchema);
     newAcctSchemaElement.setClient(acctSchema.getClient());
     newAcctSchemaElement.setOrganization(acctSchema.getOrganization());
@@ -1145,8 +1180,8 @@ public class InitialSetupUtility {
       newAcctSchemaElement.setTrxOrganization(trxOrganization);
     } else if (listElement.getSearchKey().equals("AC")) {
       newAcctSchemaElement.setAccountElement(defaultAccount);
-      newAcctSchemaElement.setAccountingElement(accountingElement != null ? accountingElement
-          : defaultAccount.getAccountingElement());
+      newAcctSchemaElement.setAccountingElement(
+          accountingElement != null ? accountingElement : defaultAccount.getAccountingElement());
     }
     OBDal.getInstance().save(newAcctSchemaElement);
     OBDal.getInstance().flush();
@@ -1163,8 +1198,8 @@ public class InitialSetupUtility {
    */
   public static AcctSchemaDefault insertAcctSchemaDefault(
       HashMap<String, ElementValue> defaultElementValues, AcctSchema acctSchema) throws Exception {
-    final AcctSchemaDefault newAcctSchemaDefault = OBProvider.getInstance().get(
-        AcctSchemaDefault.class);
+    final AcctSchemaDefault newAcctSchemaDefault = OBProvider.getInstance()
+        .get(AcctSchemaDefault.class);
     newAcctSchemaDefault.setClient(acctSchema.getClient());
     newAcctSchemaDefault.setOrganization(acctSchema.getOrganization());
     newAcctSchemaDefault.setAccountingSchema(acctSchema);
@@ -1173,278 +1208,278 @@ public class InitialSetupUtility {
       Client client = defaultElementValues.get(strDefault).getClient();
       Organization org = defaultElementValues.get(strDefault).getOrganization();
       if (strDefault.equals("W_INVENTORY_ACCT")) {
-        newAcctSchemaDefault.setWarehouseInventory(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setWarehouseInventory(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("W_DIFFERENCES_ACCT")) {
-        newAcctSchemaDefault.setWarehouseDifferences(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setWarehouseDifferences(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("W_REVALUATION_ACCT")) {
-        newAcctSchemaDefault.setInventoryRevaluation(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setInventoryRevaluation(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("W_INVACTUALADJUST_ACCT")) {
-        newAcctSchemaDefault.setInventoryAdjustment(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setInventoryAdjustment(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("P_REVENUE_ACCT")) {
-        newAcctSchemaDefault.setProductRevenue(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setProductRevenue(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("P_DEF_REVENUE_ACCT")) {
-        newAcctSchemaDefault.setProductDeferredRevenue(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setProductDeferredRevenue(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("P_REVENUE_RETURN_ACCT")) {
-        newAcctSchemaDefault.setProductRevenueReturn(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setProductRevenueReturn(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("P_EXPENSE_ACCT")) {
-        newAcctSchemaDefault.setProductExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setProductExpense(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
 
       if (strDefault.equals("P_DEF_EXPENSE_ACCT")) {
-        newAcctSchemaDefault.setProductDeferredExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setProductDeferredExpense(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
 
       if (strDefault.equals("P_ASSET_ACCT")) {
-        newAcctSchemaDefault.setFixedAsset(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setFixedAsset(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("P_COGS_ACCT")) {
-        newAcctSchemaDefault.setProductCOGS(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setProductCOGS(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("P_COGS_RETURN_ACCT")) {
-        newAcctSchemaDefault.setProductCOGSReturn(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setProductCOGSReturn(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("P_PURCHASEPRICEVARIANCE_ACCT")) {
-        newAcctSchemaDefault.setPurchasePriceVariance(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setPurchasePriceVariance(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("P_INVOICEPRICEVARIANCE_ACCT")) {
-        newAcctSchemaDefault.setInvoicePriceVariance(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setInvoicePriceVariance(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("P_TRADEDISCOUNTREC_ACCT")) {
-        newAcctSchemaDefault.setTradeDiscountReceived(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTradeDiscountReceived(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("P_TRADEDISCOUNTGRANT_ACCT")) {
-        newAcctSchemaDefault.setTradeDiscountGranted(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTradeDiscountGranted(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("C_RECEIVABLE_ACCT")) {
-        newAcctSchemaDefault.setCustomerReceivablesNo(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCustomerReceivablesNo(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("C_PREPAYMENT_ACCT")) {
-        newAcctSchemaDefault.setCustomerPrepayment(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCustomerPrepayment(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("V_LIABILITY_ACCT")) {
-        newAcctSchemaDefault.setVendorLiability(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setVendorLiability(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("V_LIABILITY_SERVICES_ACCT")) {
-        newAcctSchemaDefault.setVendorServiceLiability(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setVendorServiceLiability(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("V_PREPAYMENT_ACCT")) {
-        newAcctSchemaDefault.setVendorPrepayment(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setVendorPrepayment(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("PAYDISCOUNT_EXP_ACCT")) {
-        newAcctSchemaDefault.setPaymentDiscountExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setPaymentDiscountExpense(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("PAYDISCOUNT_REV_ACCT")) {
-        newAcctSchemaDefault.setPaymentDiscountRevenue(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setPaymentDiscountRevenue(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("WRITEOFF_ACCT")) {
-        newAcctSchemaDefault.setWriteoff(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setWriteoff(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("WRITEOFF_REV_ACCT")) {
-        newAcctSchemaDefault.setWriteoffRevenue(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setWriteoffRevenue(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("UNREALIZEDGAIN_ACCT")) {
-        newAcctSchemaDefault.setUnrealizedGainsAcct(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setUnrealizedGainsAcct(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("UNREALIZEDLOSS_ACCT")) {
-        newAcctSchemaDefault.setUnrealizedLossesAcct(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setUnrealizedLossesAcct(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("REALIZEDGAIN_ACCT")) {
-        newAcctSchemaDefault.setRealizedGainAcct(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setRealizedGainAcct(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("REALIZEDLOSS_ACCT")) {
-        newAcctSchemaDefault.setRealizedLossAcct(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setRealizedLossAcct(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("WITHHOLDING_ACCT")) {
-        newAcctSchemaDefault.setWithholdingAccount(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setWithholdingAccount(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("E_PREPAYMENT_ACCT")) {
-        newAcctSchemaDefault.setEmployeePrepayments(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setEmployeePrepayments(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("E_EXPENSE_ACCT")) {
-        newAcctSchemaDefault.setEmployeeExpenses(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setEmployeeExpenses(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("PJ_ASSET_ACCT")) {
-        newAcctSchemaDefault.setProjectAsset(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setProjectAsset(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("PJ_WIP_ACCT")) {
-        newAcctSchemaDefault.setWorkInProgress(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setWorkInProgress(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("T_EXPENSE_ACCT")) {
-        newAcctSchemaDefault.setTaxExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTaxExpense(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("T_LIABILITY_ACCT")) {
-        newAcctSchemaDefault.setTaxLiability(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTaxLiability(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("T_RECEIVABLES_ACCT")) {
-        newAcctSchemaDefault.setTaxReceivables(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTaxReceivables(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("T_DUE_ACCT")) {
-        newAcctSchemaDefault.setTaxDue(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTaxDue(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("T_DUE_TRANS_ACCT")) {
-        newAcctSchemaDefault.setDueTransAcct(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setDueTransAcct(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("T_CREDIT_ACCT")) {
-        newAcctSchemaDefault.setTaxCredit(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTaxCredit(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("T_CREDIT_TRANS_ACCT")) {
-        newAcctSchemaDefault.setCreditTransAcct(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCreditTransAcct(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("B_INTRANSIT_ACCT")) {
-        newAcctSchemaDefault.setBankInTransit(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankInTransit(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("B_ASSET_ACCT")) {
-        newAcctSchemaDefault.setBankAsset(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankAsset(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("B_EXPENSE_ACCT")) {
-        newAcctSchemaDefault.setBankExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankExpense(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("B_INTERESTREV_ACCT")) {
-        newAcctSchemaDefault.setBankInterestRevenue(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankInterestRevenue(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("B_INTERESTEXP_ACCT")) {
-        newAcctSchemaDefault.setBankInterestExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankInterestExpense(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("B_UNIDENTIFIED_ACCT")) {
-        newAcctSchemaDefault.setBankUnidentifiedReceipts(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankUnidentifiedReceipts(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("B_SETTLEMENTGAIN_ACCT")) {
-        newAcctSchemaDefault.setBankSettlementGain(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankSettlementGain(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("B_SETTLEMENTLOSS_ACCT")) {
-        newAcctSchemaDefault.setBankSettlementLoss(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankSettlementLoss(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("B_REVALUATIONGAIN_ACCT")) {
-        newAcctSchemaDefault.setBankRevaluationGain(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankRevaluationGain(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("B_REVALUATIONLOSS_ACCT")) {
-        newAcctSchemaDefault.setBankRevaluationLoss(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankRevaluationLoss(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("B_PAYMENTSELECT_ACCT")) {
-        newAcctSchemaDefault.setPaymentSelection(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setPaymentSelection(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("B_UNALLOCATEDCASH_ACCT")) {
-        newAcctSchemaDefault.setUnallocatedCash(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setUnallocatedCash(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("CH_EXPENSE_ACCT")) {
-        newAcctSchemaDefault.setChargeExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setChargeExpense(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("CH_REVENUE_ACCT")) {
-        newAcctSchemaDefault.setChargeRevenue(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setChargeRevenue(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("UNEARNEDREVENUE_ACCT")) {
-        newAcctSchemaDefault.setUnearnedRevenue(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setUnearnedRevenue(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("NOTINVOICEDRECEIVABLES_ACCT")) {
-        newAcctSchemaDefault.setNonInvoicedReceivables(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setNonInvoicedReceivables(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("NOTINVOICEDREVENUE_ACCT")) {
-        newAcctSchemaDefault.setNonInvoicedRevenues(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setNonInvoicedRevenues(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("NOTINVOICEDRECEIPTS_ACCT")) {
-        newAcctSchemaDefault.setNonInvoicedReceipts(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setNonInvoicedReceipts(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("CB_ASSET_ACCT")) {
-        newAcctSchemaDefault.setCashBookAsset(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCashBookAsset(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("CB_CASHTRANSFER_ACCT")) {
-        newAcctSchemaDefault.setCashTransfer(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCashTransfer(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("CB_DIFFERENCES_ACCT")) {
-        newAcctSchemaDefault.setCashBookDifferences(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCashBookDifferences(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("CB_RECEIPT_ACCT")) {
-        newAcctSchemaDefault.setCashBookReceipt(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCashBookReceipt(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("A_DEPRECIATION_ACCT")) {
-        newAcctSchemaDefault.setDepreciation(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setDepreciation(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("A_ACCUMDEPRECIATION_ACCT")) {
-        newAcctSchemaDefault.setAccumulatedDepreciation(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setAccumulatedDepreciation(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("A_DISPOSAL_LOSS")) {
-        newAcctSchemaDefault.setDisposalLoss(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setDisposalLoss(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("A_DISPOSAL_GAIN")) {
-        newAcctSchemaDefault.setDisposalGain(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setDisposalGain(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("CB_EXPENSE_ACCT")) {
-        newAcctSchemaDefault.setCashBookExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCashBookExpense(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
     }
 
@@ -1473,38 +1508,38 @@ public class InitialSetupUtility {
       Client client = defaultElementValues.get(strDefault).getClient();
       Organization org = defaultElementValues.get(strDefault).getOrganization();
       if (strDefault.equals("CURRENCYBALANCING_ACCT")) {
-        newAcctSchemaGL.setCurrencyBalancingAcct(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setCurrencyBalancingAcct(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
         newAcctSchemaGL.setCurrencyBalancingUse(true);
       }
       if (strDefault.equals("INTERCOMPANYDUEFROM_ACCT")) {
-        newAcctSchemaGL.setDueFromIntercompany(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setDueFromIntercompany(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("INTERCOMPANYDUETO_ACCT")) {
-        newAcctSchemaGL.setDueToIntercompany(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setDueToIntercompany(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("INCOMESUMMARY_ACCT")) {
-        newAcctSchemaGL.setIncomeSummary(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setIncomeSummary(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("PPVOFFSET_ACCT")) {
-        newAcctSchemaGL.setPPVOffset(getAcctComb(client, org, defaultElementValues.get(strDefault),
-            acctSchema, true));
+        newAcctSchemaGL.setPPVOffset(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("RETAINEDEARNING_ACCT")) {
-        newAcctSchemaGL.setRetainedEarning(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setRetainedEarning(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("SUSPENSEBALANCING_ACCT")) {
-        newAcctSchemaGL.setSuspenseBalancing(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setSuspenseBalancing(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
         newAcctSchemaGL.setSuspenseBalancingUse(true);
       }
       if (strDefault.equals("SUSPENSEERROR_ACCT")) {
-        newAcctSchemaGL.setSuspenseError(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setSuspenseError(
+            getAcctComb(client, org, defaultElementValues.get(strDefault), acctSchema, true));
       }
     }
 
@@ -1536,16 +1571,16 @@ public class InitialSetupUtility {
     }
     OBContext.setAdminMode(false);
     try {
-      OBCriteria<AccountingCombination> obc = OBDal.getInstance().createCriteria(
-          AccountingCombination.class);
+      OBCriteria<AccountingCombination> obc = OBDal.getInstance()
+          .createCriteria(AccountingCombination.class);
       obc.add(Restrictions.eq(AccountingCombination.PROPERTY_ACCOUNT, elementValue));
       obc.setFilterOnReadableClients(false);
       obc.setFilterOnReadableOrganization(false);
       List<AccountingCombination> combinations = obc.list();
 
       if (combinations.size() == 0) {
-        final AccountingCombination newAcctComb = OBProvider.getInstance().get(
-            AccountingCombination.class);
+        final AccountingCombination newAcctComb = OBProvider.getInstance()
+            .get(AccountingCombination.class);
 
         newAcctComb.setClient(client);
         newAcctComb.setOrganization(organization);
@@ -1576,12 +1611,14 @@ public class InitialSetupUtility {
       Organization orgProvided) {
     Organization organization = null;
     if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
+      if ((organization = getZeroOrg()) == null) {
         return null;
-    } else
+      }
+    } else {
       organization = orgProvided;
-    final OrganizationAcctSchema newOrganizationAcctSchema = OBProvider.getInstance().get(
-        OrganizationAcctSchema.class);
+    }
+    final OrganizationAcctSchema newOrganizationAcctSchema = OBProvider.getInstance()
+        .get(OrganizationAcctSchema.class);
     newOrganizationAcctSchema.setClient(client);
     newOrganizationAcctSchema.setOrganization(organization);
     newOrganizationAcctSchema.setAccountingSchema(acctSchema);
@@ -1686,8 +1723,9 @@ public class InitialSetupUtility {
       Organization orgProvided) throws Exception {
     Organization organization = null;
     if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
+      if ((organization = getZeroOrg()) == null) {
         return null;
+      }
     } else {
       organization = orgProvided;
     }
@@ -1735,7 +1773,8 @@ public class InitialSetupUtility {
         return IOUtils.toString(r);
       }
     } else {
-      String xmlPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      String xmlPath = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("source.path");
       boolean isCore = dataset.getModule().getId().equals("0");
       if (!isCore) {
@@ -1749,8 +1788,8 @@ public class InitialSetupUtility {
   private static List<ADClientModule> getClientModuleList(Client client, Module module) {
     OBContext.setAdminMode();
     try {
-      OBCriteria<ADClientModule> clientModules = OBDal.getInstance().createCriteria(
-          ADClientModule.class);
+      OBCriteria<ADClientModule> clientModules = OBDal.getInstance()
+          .createCriteria(ADClientModule.class);
       clientModules.add(Restrictions.eq(ADClientModule.PROPERTY_CLIENT, client));
       clientModules.add(Restrictions.eq(ADClientModule.PROPERTY_MODULE, module));
       clientModules.setFilterOnReadableOrganization(false);
@@ -1788,8 +1827,8 @@ public class InitialSetupUtility {
    */
   public static DocumentTemplate insertDoctypeTemplate(DocumentType document, String name,
       String templateLocation, String templateFileName, String reportFileName) {
-    final DocumentTemplate newDocumentTemplate = OBProvider.getInstance().get(
-        DocumentTemplate.class);
+    final DocumentTemplate newDocumentTemplate = OBProvider.getInstance()
+        .get(DocumentTemplate.class);
     newDocumentTemplate.setClient(document.getClient());
     newDocumentTemplate.setOrganization(document.getOrganization());
     newDocumentTemplate.setName(name);
@@ -1829,8 +1868,8 @@ public class InitialSetupUtility {
     StringBuilder strWhereClause = new StringBuilder();
     strWhereClause.append(" as module where module.id in (" + strModules + ")");
     strWhereClause.append(" and module.hasChartOfAccounts = 'Y'");
-    final OBQuery<Module> obqModule = OBDal.getInstance().createQuery(Module.class,
-        strWhereClause.toString());
+    final OBQuery<Module> obqModule = OBDal.getInstance()
+        .createQuery(Module.class, strWhereClause.toString());
     return obqModule.list();
   }
 
@@ -1847,8 +1886,8 @@ public class InitialSetupUtility {
     strWhereClause.append(" as module where module.id in (" + strModules + ")");
     strWhereClause.append(" and module.hasReferenceData = 'Y'");
     strWhereClause.append(" and module.hasChartOfAccounts = 'N'");
-    final OBQuery<Module> obqModule = OBDal.getInstance().createQuery(Module.class,
-        strWhereClause.toString());
+    final OBQuery<Module> obqModule = OBDal.getInstance()
+        .createQuery(Module.class, strWhereClause.toString());
     return obqModule.list();
   }
 
@@ -1877,7 +1916,8 @@ public class InitialSetupUtility {
    * @return List&lt;DataSet&gt; with the relation of DataSet objects
    * @throws Exception
    */
-  public static List<DataSet> getDataSets(Module module, List<String> accessLevel) throws Exception {
+  public static List<DataSet> getDataSets(Module module, List<String> accessLevel)
+      throws Exception {
     OBContext.setAdminMode();
     try {
       final OBCriteria<DataSet> obcDataSets = OBDal.getInstance().createCriteria(DataSet.class);
@@ -1908,8 +1948,8 @@ public class InitialSetupUtility {
     try {
       final OBCriteria<org.openbravo.model.ad.domain.List> obcRefList = OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.domain.List.class);
-      obcRefList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, OBDal
-          .getInstance().get(Reference.class, "181")));
+      obcRefList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE,
+          OBDal.getInstance().get(Reference.class, "181")));
       List<org.openbravo.model.ad.domain.List> listRefList = obcRefList.list();
       if (!listRefList.isEmpty()) {
         return listRefList;
@@ -1968,10 +2008,10 @@ public class InitialSetupUtility {
       obc.add(Restrictions.eq(DataSet.PROPERTY_MODULE, module));
       Object[] organizationAccessLevel = { "3", "1" };
       Object[] systemAccessLevel = { "3", "6" };
-      obc.add(Restrictions.or(Restrictions.and(
-          Restrictions.ne(DataSet.PROPERTY_ORGANIZATION, getZeroOrg()),
-          Restrictions.in(DataSet.PROPERTY_DATAACCESSLEVEL, organizationAccessLevel)), Restrictions
-          .and(Restrictions.eq(DataSet.PROPERTY_ORGANIZATION, getZeroOrg()),
+      obc.add(Restrictions.or(
+          Restrictions.and(Restrictions.ne(DataSet.PROPERTY_ORGANIZATION, getZeroOrg()),
+              Restrictions.in(DataSet.PROPERTY_DATAACCESSLEVEL, organizationAccessLevel)),
+          Restrictions.and(Restrictions.eq(DataSet.PROPERTY_ORGANIZATION, getZeroOrg()),
               Restrictions.in(DataSet.PROPERTY_DATAACCESSLEVEL, systemAccessLevel))));
       obc.addOrder(Order.asc("m." + Module.PROPERTY_ID));
       obc.addOrder(Order.asc(DataSet.PROPERTY_SEQUENCENUMBER));
@@ -2087,9 +2127,11 @@ public class InitialSetupUtility {
       obcTreeNodes.setFilterOnReadableOrganization(false);
       obcTreeNodes.add(Restrictions.eq(TreeNode.PROPERTY_REPORTSET, parentOrg.getId()));
       obcTreeNodes.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
-      for (TreeNode treeNode : obcTreeNodes.list())
-        if (treeNode.getSequenceNumber() > lSeqNo)
+      for (TreeNode treeNode : obcTreeNodes.list()) {
+        if (treeNode.getSequenceNumber() > lSeqNo) {
           lSeqNo = treeNode.getSequenceNumber();
+        }
+      }
       orgNode.setSequenceNumber(lSeqNo + 10L);
       OBDal.getInstance().save(orgNode);
       OBDal.getInstance().flush();
@@ -2131,18 +2173,19 @@ public class InitialSetupUtility {
     return getTranslatedElement(language, columnName, null);
   }
 
-  public static String getTranslatedElement(Language language, String columnName, String elementName) {
+  public static String getTranslatedElement(Language language, String columnName,
+      String elementName) {
     OBContext.setAdminMode();
     try {
       OBCriteria<org.openbravo.model.ad.ui.Element> obcElement = OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.ui.Element.class);
       obcElement.setFilterOnReadableClients(false);
       obcElement.setFilterOnReadableOrganization(false);
-      obcElement.add(Restrictions.eq(org.openbravo.model.ad.ui.Element.PROPERTY_DBCOLUMNNAME,
-          columnName));
+      obcElement.add(
+          Restrictions.eq(org.openbravo.model.ad.ui.Element.PROPERTY_DBCOLUMNNAME, columnName));
       if (StringUtils.isNotEmpty(elementName)) {
-        obcElement.add(Restrictions
-            .eq(org.openbravo.model.ad.ui.Element.PROPERTY_NAME, elementName));
+        obcElement
+            .add(Restrictions.eq(org.openbravo.model.ad.ui.Element.PROPERTY_NAME, elementName));
       }
       obcElement.setMaxResults(1);
       org.openbravo.model.ad.ui.Element element = (org.openbravo.model.ad.ui.Element) obcElement
@@ -2175,18 +2218,21 @@ public class InitialSetupUtility {
       throws Exception {
     Organization organization;
     if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
+      if ((organization = getZeroOrg()) == null) {
         return null;
-    } else
+      }
+    } else {
       organization = orgProvided;
+    }
 
     final OBCriteria<Tree> obcTree = OBDal.getInstance().createCriteria(Tree.class);
     obcTree.add(Restrictions.eq(Tree.PROPERTY_TYPEAREA, strTreeTypeMenu));
     obcTree.add(Restrictions.eq(Tree.PROPERTY_CLIENT, client));
     obcTree.add(Restrictions.eq(Tree.PROPERTY_ORGANIZATION, organization));
     List<Tree> lTrees = obcTree.list();
-    if (lTrees.size() != 1)
+    if (lTrees.size() != 1) {
       return null;
+    }
     return lTrees.get(0);
   }
 
@@ -2196,21 +2242,25 @@ public class InitialSetupUtility {
    * @return Tree menu element (defined at system level)
    * @throws Exception
    */
-  public static Tree getTree(Table table, Client client, Organization orgProvided) throws Exception {
+  public static Tree getTree(Table table, Client client, Organization orgProvided)
+      throws Exception {
     Organization organization;
     if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
+      if ((organization = getZeroOrg()) == null) {
         return null;
-    } else
+      }
+    } else {
       organization = orgProvided;
+    }
 
     final OBCriteria<Tree> obcTree = OBDal.getInstance().createCriteria(Tree.class);
     obcTree.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
     obcTree.add(Restrictions.eq(Tree.PROPERTY_CLIENT, client));
     obcTree.add(Restrictions.eq(Tree.PROPERTY_ORGANIZATION, organization));
     List<Tree> lTrees = obcTree.list();
-    if (lTrees.size() != 1)
+    if (lTrees.size() != 1) {
       return null;
+    }
     return lTrees.get(0);
   }
 

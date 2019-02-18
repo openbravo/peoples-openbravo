@@ -31,6 +31,7 @@ import org.apache.commons.codec.binary.Base64;
 
 public class BinaryDomainType extends BasePrimitiveDomainType {
 
+  @Override
   public Class<?> getPrimitiveType() {
     return byte[].class;
   }

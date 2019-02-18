@@ -101,10 +101,11 @@ public final class Account implements Serializable {
     AccountData[] data = null;
     try {
       log4jAccount.debug("C_ValidCombination_ID: " + C_ValidCombination_ID);
-      if (conn1 == null)
+      if (conn1 == null) {
         data = AccountData.select(conn, newC_ValidCombination_ID);
-      else
+      } else {
         data = AccountData.selectConnection(conn1, conn, newC_ValidCombination_ID);
+      }
       if (data.length > 0) {
         AD_Client_ID = data[0].adClientId;
         AD_Org_ID = data[0].adOrgId;
@@ -154,34 +155,35 @@ public final class Account implements Serializable {
       AcctSchemaElement ase = (AcctSchemaElement) list.get(i);
       String segmentType = ase.m_segmentType;
       String defaultValue = ase.m_defaultValue;
-      boolean setValue = ase.m_mandatory.equals("Y") || !ase.m_mandatory.equals("Y")
-          && !optionalNull;
-      if (segmentType.equals("OO"))
+      boolean setValue = ase.m_mandatory.equals("Y")
+          || !ase.m_mandatory.equals("Y") && !optionalNull;
+      if (segmentType.equals("OO")) {
         vc.AD_Org_ID = defaultValue;
-      else if (segmentType.equals("AC"))
+      } else if (segmentType.equals("AC")) {
         vc.Account_ID = defaultValue;
-      else if (segmentType.equals("BP") && setValue)
+      } else if (segmentType.equals("BP") && setValue) {
         vc.C_BPartner_ID = defaultValue;
-      else if (segmentType.equals("PR") && setValue)
+      } else if (segmentType.equals("PR") && setValue) {
         vc.M_Product_ID = defaultValue;
-      else if (segmentType.equals("AY") && setValue)
+      } else if (segmentType.equals("AY") && setValue) {
         vc.C_Activity_ID = defaultValue;
-      else if (segmentType.equals("LF") && setValue)
+      } else if (segmentType.equals("LF") && setValue) {
         vc.C_LocFrom_ID = defaultValue;
-      else if (segmentType.equals("LT") && setValue)
+      } else if (segmentType.equals("LT") && setValue) {
         vc.C_LocTo_ID = defaultValue;
-      else if (segmentType.equals("MC") && setValue)
+      } else if (segmentType.equals("MC") && setValue) {
         vc.C_Campaign_ID = defaultValue;
-      else if (segmentType.equals("OT") && setValue)
+      } else if (segmentType.equals("OT") && setValue) {
         vc.AD_OrgTrx_ID = defaultValue;
-      else if (segmentType.equals("PJ") && setValue)
+      } else if (segmentType.equals("PJ") && setValue) {
         vc.C_Project_ID = defaultValue;
-      else if (segmentType.equals("SR") && setValue)
+      } else if (segmentType.equals("SR") && setValue) {
         vc.C_SalesRegion_ID = defaultValue;
-      else if (segmentType.equals("U1") && setValue)
+      } else if (segmentType.equals("U1") && setValue) {
         vc.User1_ID = defaultValue;
-      else if (segmentType.equals("U2") && setValue)
+      } else if (segmentType.equals("U2") && setValue) {
         vc.User2_ID = defaultValue;
+      }
     }
 
     log4jAccount.debug("Account.getDefault - Client_ID=" + vc.AD_Client_ID + ", Org_ID="

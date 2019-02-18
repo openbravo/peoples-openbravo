@@ -42,8 +42,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 public class TableEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Table.ENTITY_NAME) };
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -53,8 +52,7 @@ public class TableEventHandler extends EntityPersistenceEventObserver {
 
   }
 
-  public void onNew(@Observes
-  EntityNewEvent event) {
+  public void onNew(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }

@@ -168,7 +168,8 @@ class ImageUtils {
   private static void updateMimeType(String id, String mimeType) {
     PreparedStatement ps = null;
     try {
-      ps = OBDal.getInstance().getConnection(true)
+      ps = OBDal.getInstance()
+          .getConnection(true)
           .prepareStatement("UPDATE ad_image SET mimetype=? WHERE ad_image_id=?");
       ps.setString(1, mimeType);
       ps.setString(2, id);

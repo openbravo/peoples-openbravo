@@ -188,8 +188,8 @@ public class SortingFilteringGridConfiguration extends GridConfigurationTest {
         for (FieldLevel fieldLevel : FieldLevel.values()) {
           for (ColumnLevel columnLevel : ColumnLevel.values()) {
             if (!(fieldLevel != FieldLevel.NULL && tabLevel == TabLevel.NULL)) {
-              params.add(new Object[] { new ConfigSetting(sysLevel, tabLevel, fieldLevel,
-                  columnLevel) });
+              params.add(
+                  new Object[] { new ConfigSetting(sysLevel, tabLevel, fieldLevel, columnLevel) });
             }
           }
         }
@@ -204,11 +204,8 @@ public class SortingFilteringGridConfiguration extends GridConfigurationTest {
 
   @Test
   public void gridConfigurationShouldBeApplied() {
-    assertThat(
-        "Grid configuration at field level:",
-        setting.computeResultForField(),
-        allOf(containsString(setting.getExpectedFilter()),
-            containsString(setting.getExpectedSort())));
+    assertThat("Grid configuration at field level:", setting.computeResultForField(), allOf(
+        containsString(setting.getExpectedFilter()), containsString(setting.getExpectedSort())));
   }
 
   private static class ConfigSetting {

@@ -34,10 +34,9 @@ import org.openbravo.dal.service.OBDal;
 public class ReferencedInventoryFullUnboxTest extends ReferencedInventoryUnboxTest {
   @Rule
   public ParameterCdiTestRule<ParamsUnboxTest> parameterValuesRule = new ParameterCdiTestRule<ParamsUnboxTest>(
-      Arrays
-          .asList(new ParamsUnboxTest[] { new ParamsUnboxTest(
-              "Full unbox (10 units of 10 units) of a storage detail without reservations", "10",
-              "10") }));
+      Arrays.asList(new ParamsUnboxTest[] { new ParamsUnboxTest(
+          "Full unbox (10 units of 10 units) of a storage detail without reservations", "10",
+          "10") }));
 
   private @ParameterCdiTest ParamsUnboxTest params;
 

@@ -44,8 +44,9 @@ public class SystemStatusListener implements ServletContextListener {
     ConnectionProvider cp = ConnectionProviderContextListener.getPool(sce.getServletContext());
     try {
       String st = SystemStatusListenerData.getSystemStatus(cp);
-      if (st.equals("RB60") || st.equals("RB50") || st.equals("RB51"))
+      if (st.equals("RB60") || st.equals("RB50") || st.equals("RB51")) {
         SystemStatusListenerData.setSystemStatus(cp, "RB70");
+      }
     } catch (ServletException e) {
       logger.error("Error while updating system status", e);
     } finally {

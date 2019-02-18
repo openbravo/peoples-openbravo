@@ -25,6 +25,7 @@ public class UIImageBLOB extends UIReference {
     super(reference, subreference);
   }
 
+  @Override
   public String formatGridValue(VariablesSecureApp vars, String value) {
     return "../utility/ShowImage?id=" + value;
   }

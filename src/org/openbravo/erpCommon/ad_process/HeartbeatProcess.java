@@ -96,6 +96,7 @@ public class HeartbeatProcess implements Process {
   private Channel channel;
   private HeartbeatLog hbLog;
 
+  @Override
   public void execute(ProcessBundle bundle) throws Exception {
 
     connection = bundle.getConnection();
@@ -130,8 +131,8 @@ public class HeartbeatProcess implements Process {
       } else {
         final String active = SystemInfoData.isHeartbeatActive(connection);
         if (active.equals("") || active.equals("N")) {
-          String action = bundle.getParams().get("action") == null ? "" : ((String) bundle
-              .getParams().get("action"));
+          String action = bundle.getParams().get("action") == null ? ""
+              : ((String) bundle.getParams().get("action"));
           if ("DECLINE".equals(action)) {
             beatType = DECLINING_BEAT;
           } else if ("DEFER".equals(action)) {
@@ -200,8 +201,8 @@ public class HeartbeatProcess implements Process {
    */
   private boolean isHeartbeatActive() {
     String isheartbeatactive = SystemInfo.get(SystemInfo.Item.ISHEARTBEATACTIVE);
-    return (isheartbeatactive != null && !isheartbeatactive.equals("") && !isheartbeatactive
-        .equals("N"));
+    return (isheartbeatactive != null && !isheartbeatactive.equals("")
+        && !isheartbeatactive.equals("N"));
   }
 
   /**
@@ -299,8 +300,8 @@ public class HeartbeatProcess implements Process {
         hbLog.setJavaVersion(systemInfo.getProperty("javaVersion"));
         hbLog.setProxyRequired("Y".equals(systemInfo.getProperty("isproxyrequired")));
         hbLog.setProxyServer(systemInfo.getProperty("proxyServer"));
-        hbLog.setUsageAuditEnabled("true".equals(systemInfo.getProperty(SystemInfo.Item.USAGE_AUDIT
-            .getLabel())));
+        hbLog.setUsageAuditEnabled(
+            "true".equals(systemInfo.getProperty(SystemInfo.Item.USAGE_AUDIT.getLabel())));
         hbLog.setInstancePurpose(systemInfo.getProperty("instancePurpose"));
         if (systemInfo.getProperty("proxyPort") != null
             && !systemInfo.getProperty("proxyPort").isEmpty()) {
@@ -311,19 +312,19 @@ public class HeartbeatProcess implements Process {
           }
         }
         try {
-          hbLog.setNumberOfRegisteredUsers(Long.parseLong(systemInfo
-              .getProperty("numRegisteredUsers")));
+          hbLog.setNumberOfRegisteredUsers(
+              Long.parseLong(systemInfo.getProperty("numRegisteredUsers")));
         } catch (NumberFormatException e) {
           log.warn("Incorrect number of registered users: "
               + systemInfo.getProperty("numRegisteredUsers"));
         }
         hbLog.setInstalledModules(systemInfo.getProperty(SystemInfo.Item.MODULES.getLabel()));
-        hbLog.setActivationKeyIdentifier(systemInfo.getProperty(SystemInfo.Item.OBPS_INSTANCE
-            .getLabel()));
+        hbLog.setActivationKeyIdentifier(
+            systemInfo.getProperty(SystemInfo.Item.OBPS_INSTANCE.getLabel()));
         if (ActivationKey.getInstance().isOPSInstance()) {
           try {
-            hbLog.setInstanceNumber(Long.parseLong(systemInfo
-                .getProperty(SystemInfo.Item.INSTANCE_NUMBER.getLabel())));
+            hbLog.setInstanceNumber(
+                Long.parseLong(systemInfo.getProperty(SystemInfo.Item.INSTANCE_NUMBER.getLabel())));
           } catch (NumberFormatException e) {
             log.warn("Incorrect instance number: "
                 + systemInfo.getProperty(SystemInfo.Item.INSTANCE_NUMBER.getLabel()));
@@ -331,123 +332,123 @@ public class HeartbeatProcess implements Process {
         }
 
         try {
-          hbLog.setFirstLogin(SystemInfo.parseDate(systemInfo
-              .getProperty(SystemInfo.Item.FIRST_LOGIN.getLabel())));
+          hbLog.setFirstLogin(
+              SystemInfo.parseDate(systemInfo.getProperty(SystemInfo.Item.FIRST_LOGIN.getLabel())));
         } catch (ParseException e) {
           log.warn("Incorrect date of first login: "
               + systemInfo.getProperty(SystemInfo.Item.FIRST_LOGIN.getLabel()));
         }
         try {
-          hbLog.setLastLogin(SystemInfo.parseDate(systemInfo.getProperty(SystemInfo.Item.LAST_LOGIN
-              .getLabel())));
+          hbLog.setLastLogin(
+              SystemInfo.parseDate(systemInfo.getProperty(SystemInfo.Item.LAST_LOGIN.getLabel())));
         } catch (ParseException e) {
           log.warn("Incorrect date of last login: "
               + systemInfo.getProperty(SystemInfo.Item.LAST_LOGIN.getLabel()));
         }
         try {
-          hbLog.setTotalLogins(Long.parseLong(systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS
-              .getLabel())));
+          hbLog.setTotalLogins(
+              Long.parseLong(systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect number of total logins: "
               + systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS.getLabel()));
         }
         try {
-          hbLog.setTotalLoginsLastMonth(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.TOTAL_LOGINS_LAST_MOTH.getLabel())));
+          hbLog.setTotalLoginsLastMonth(Long.parseLong(
+              systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS_LAST_MOTH.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect number of total logins of last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS_LAST_MOTH.getLabel()));
         }
         try {
-          hbLog.setConcurrentUsersAverage(new BigDecimal(systemInfo
-              .getProperty(SystemInfo.Item.AVG_CONCURRENT_USERS.getLabel())));
+          hbLog.setConcurrentUsersAverage(new BigDecimal(
+              systemInfo.getProperty(SystemInfo.Item.AVG_CONCURRENT_USERS.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect avg users last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.AVG_CONCURRENT_USERS.getLabel()));
         }
         try {
-          hbLog.setUsagePercentage(new BigDecimal(systemInfo
-              .getProperty(SystemInfo.Item.PERC_TIME_USAGE.getLabel())));
+          hbLog.setUsagePercentage(
+              new BigDecimal(systemInfo.getProperty(SystemInfo.Item.PERC_TIME_USAGE.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect usage percentage last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.PERC_TIME_USAGE.getLabel()));
         }
         try {
-          hbLog.setMaximumConcurrentUsers(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.MAX_CONCURRENT_USERS.getLabel())));
+          hbLog.setMaximumConcurrentUsers(Long
+              .parseLong(systemInfo.getProperty(SystemInfo.Item.MAX_CONCURRENT_USERS.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect maximum number of concurrent users during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.MAX_CONCURRENT_USERS.getLabel()));
         }
 
         try {
-          hbLog.setWSCallsMaximum(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.WS_CALLS_MAX.getLabel())));
+          hbLog.setWSCallsMaximum(
+              Long.parseLong(systemInfo.getProperty(SystemInfo.Item.WS_CALLS_MAX.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect max number of ws calls during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.WS_CALLS_MAX.getLabel()));
         }
         try {
-          hbLog.setWSCallsAverage(new BigDecimal(systemInfo
-              .getProperty(SystemInfo.Item.WS_CALLS_AVG.getLabel())));
+          hbLog.setWSCallsAverage(
+              new BigDecimal(systemInfo.getProperty(SystemInfo.Item.WS_CALLS_AVG.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect avg number of ws calls during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.WS_CALLS_AVG.getLabel()));
         }
 
         try {
-          hbLog.setConnectorCallsMax(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.WSC_CALLS_MAX.getLabel())));
+          hbLog.setConnectorCallsMax(
+              Long.parseLong(systemInfo.getProperty(SystemInfo.Item.WSC_CALLS_MAX.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect max number of wsc calls during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.WSC_CALLS_MAX.getLabel()));
         }
         try {
-          hbLog.setConnectorCallsAverage(new BigDecimal(systemInfo
-              .getProperty(SystemInfo.Item.WSC_CALLS_AVG.getLabel())));
+          hbLog.setConnectorCallsAverage(
+              new BigDecimal(systemInfo.getProperty(SystemInfo.Item.WSC_CALLS_AVG.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect avg number of wsc calls during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.WSC_CALLS_AVG.getLabel()));
         }
 
         try {
-          hbLog.setWSRejectedMaximum(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.WSR_CALLS_MAX.getLabel())));
+          hbLog.setWSRejectedMaximum(
+              Long.parseLong(systemInfo.getProperty(SystemInfo.Item.WSR_CALLS_MAX.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect max number of ws rejected calls during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.WSR_CALLS_MAX.getLabel()));
         }
         try {
-          hbLog.setWSRejectedAverage(new BigDecimal(systemInfo
-              .getProperty(SystemInfo.Item.WSR_CALLS_AVG.getLabel())));
+          hbLog.setWSRejectedAverage(
+              new BigDecimal(systemInfo.getProperty(SystemInfo.Item.WSR_CALLS_AVG.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect avg number of ws rejected calls during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.WSR_CALLS_AVG.getLabel()));
         }
 
         try {
-          hbLog.setNumberOfClients(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.NUMBER_OF_CLIENTS.getLabel())));
+          hbLog.setNumberOfClients(
+              Long.parseLong(systemInfo.getProperty(SystemInfo.Item.NUMBER_OF_CLIENTS.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect number of clients: "
               + systemInfo.getProperty(SystemInfo.Item.NUMBER_OF_CLIENTS.getLabel()));
         }
         try {
-          hbLog.setNumberOfOrganizations(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.NUMBER_OF_ORGS.getLabel())));
+          hbLog.setNumberOfOrganizations(
+              Long.parseLong(systemInfo.getProperty(SystemInfo.Item.NUMBER_OF_ORGS.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect number of orgs: "
               + systemInfo.getProperty(SystemInfo.Item.NUMBER_OF_ORGS.getLabel()));
         }
         try {
-          hbLog.setRejectedLoginsDueConcUsers(Long.parseLong(systemInfo
-              .getProperty(SystemInfo.Item.REJECTED_LOGINS_DUE_CONC_USERS.getLabel())));
+          hbLog.setRejectedLoginsDueConcUsers(Long.parseLong(
+              systemInfo.getProperty(SystemInfo.Item.REJECTED_LOGINS_DUE_CONC_USERS.getLabel())));
         } catch (NumberFormatException e) {
           log.warn("Incorrect number of rejected logins: "
               + SystemInfo.Item.REJECTED_LOGINS_DUE_CONC_USERS.getLabel());
         }
-        hbLog.setEnableCustomQueries("Y".equals(systemInfo
-            .getProperty(SystemInfo.Item.CUSTOM_QUERY_ENABLED.getLabel())));
+        hbLog.setEnableCustomQueries(
+            "Y".equals(systemInfo.getProperty(SystemInfo.Item.CUSTOM_QUERY_ENABLED.getLabel())));
       }
       OBDal.getInstance().save(hbLog);
     } finally {
@@ -514,7 +515,7 @@ public class HeartbeatProcess implements Process {
       logger.logln("No Updates found...");
       return;
     }
-    // info("  ");
+    // info(" ");
     for (Alert update : updates) {
       update.save(connection);
     }
@@ -522,18 +523,22 @@ public class HeartbeatProcess implements Process {
 
   /**
    * Gets a JSON Array with the custom queries and sends back to the heartbeat server the results.
-   * The results of the queries are also stored on the heartbeat local log.</p>
+   * The results of the queries are also stored on the heartbeat local log.
+   * </p>
    * 
    * The result that is sent to the heartbeat server is a JSON Object that contains the beat type,
-   * the beat id and another JSON Object with the results of the queries.</p>
+   * the beat id and another JSON Object with the results of the queries.
+   * </p>
    * 
    * The JSON Object with the results contains one JSON Object for each executed query identified by
    * the Query Id. This JSON Object is formed by 2 JSON Arrays. The first one, identified by
    * "properties" contains a String array with the header of each returned property. The second one
    * identified by "values" contains a JSON Array for each returned row, each row is a JSON Array
-   * with the value of each returned property.</p>
+   * with the value of each returned property.
+   * </p>
    * 
-   * Example of a returned JSON Object string:</p>
+   * Example of a returned JSON Object string:
+   * </p>
    * 
    * <code>
    * {<br>
@@ -549,7 +554,8 @@ public class HeartbeatProcess implements Process {
    * &nbsp;&nbsp;&nbsp;values:[[row1value1,row1value2],[row2value1, row2value2],[row3value1, row3value2]]<br>
    * &nbsp;&nbsp;}<br>
    * &nbsp;}<br>
-   * }<br></code></p>
+   * }<br></code>
+   * </p>
    * 
    * @param jsonArrayCQueries
    *          An array of JSON Objects with all the custom queries to be executed. Each JSON Object
@@ -650,8 +656,8 @@ public class HeartbeatProcess implements Process {
 
   private void logCustomQueryResult(HeartbeatLogCustomQuery hbLogCQ, int row, String strProperty,
       String strValue) {
-    HeartbeatLogCustomQueryRow hbLogCQRow = OBProvider.getInstance().get(
-        HeartbeatLogCustomQueryRow.class);
+    HeartbeatLogCustomQueryRow hbLogCQRow = OBProvider.getInstance()
+        .get(HeartbeatLogCustomQueryRow.class);
     hbLogCQRow.setExecutedCustomQuery(hbLogCQ);
     hbLogCQRow.setPropertyname(strProperty);
     hbLogCQRow.setPropertyvalue(strValue);
@@ -699,8 +705,8 @@ public class HeartbeatProcess implements Process {
   }
 
   public static boolean isShowInstancePurposeRequired() {
-    final SystemInformation systemInformation = OBDal.getInstance().get(SystemInformation.class,
-        "0");
+    final SystemInformation systemInformation = OBDal.getInstance()
+        .get(SystemInformation.class, "0");
     if (systemInformation.getInstancePurpose() == null
         || systemInformation.getInstancePurpose().isEmpty()) {
       if (ActivationKey.isActiveInstance()) {
@@ -724,11 +730,11 @@ public class HeartbeatProcess implements Process {
     OBContext.setAdminMode();
     try {
       HeartbeatLog lastBeat = getLastHBLog();
-      if ((lastBeat != null && lastBeat.getDatabaseIdentifier() != null && lastBeat
-          .getMacIdentifier() != null)
+      if ((lastBeat != null && lastBeat.getDatabaseIdentifier() != null
+          && lastBeat.getMacIdentifier() != null)
           && (!lastBeat.getSystemIdentifier().equals(SystemInfo.getSystemIdentifier())
-              || !lastBeat.getDatabaseIdentifier().equals(SystemInfo.getDBIdentifier()) || !lastBeat
-              .getMacIdentifier().equals(SystemInfo.getMacAddress()))) {
+              || !lastBeat.getDatabaseIdentifier().equals(SystemInfo.getDBIdentifier())
+              || !lastBeat.getMacIdentifier().equals(SystemInfo.getMacAddress()))) {
         return true;
       } else {
         return false;
@@ -791,15 +797,17 @@ public class HeartbeatProcess implements Process {
   public static boolean isHeartbeatEnabled() {
     SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
 
-    final org.openbravo.model.ad.ui.Process HBProcess = OBDal.getInstance().get(
-        org.openbravo.model.ad.ui.Process.class, HB_PROCESS_ID);
+    final org.openbravo.model.ad.ui.Process HBProcess = OBDal.getInstance()
+        .get(org.openbravo.model.ad.ui.Process.class, HB_PROCESS_ID);
 
-    final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
-        ProcessRequest.class);
+    final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance()
+        .createCriteria(ProcessRequest.class);
     prCriteria.add(Restrictions.and(Restrictions.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
-        Restrictions.or(Restrictions.eq(ProcessRequest.PROPERTY_STATUS,
-            org.openbravo.scheduling.Process.SCHEDULED), Restrictions.eq(
-            ProcessRequest.PROPERTY_STATUS, org.openbravo.scheduling.Process.MISFIRED))));
+        Restrictions.or(
+            Restrictions.eq(ProcessRequest.PROPERTY_STATUS,
+                org.openbravo.scheduling.Process.SCHEDULED),
+            Restrictions.eq(ProcessRequest.PROPERTY_STATUS,
+                org.openbravo.scheduling.Process.MISFIRED))));
     final List<ProcessRequest> prRequestList = prCriteria.list();
 
     if (prRequestList.size() == 0) { // Resetting state to disabled

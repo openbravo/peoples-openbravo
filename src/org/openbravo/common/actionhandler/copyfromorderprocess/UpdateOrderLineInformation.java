@@ -98,13 +98,16 @@ class UpdateOrderLineInformation implements CopyFromOrdersProcessImplementationI
     newOrderLine.setScheduledDeliveryDate(processingOrder.getScheduledDeliveryDate());
     newOrderLine.setDescription(orderLine.getDescription());
     // If Warehouse of the Header is null retrieve it from the Context
-    newOrderLine.setWarehouse(processingOrder.getWarehouse() != null ? processingOrder
-        .getWarehouse() : OBContext.getOBContext().getWarehouse());
+    newOrderLine
+        .setWarehouse(processingOrder.getWarehouse() != null ? processingOrder.getWarehouse()
+            : OBContext.getOBContext().getWarehouse());
     newOrderLine.setBusinessPartner(processingOrder.getBusinessPartner());
     // If PartnerAddress of the Header is null retrieve it from the Business Partner
-    newOrderLine.setPartnerAddress(processingOrder.getPartnerAddress() != null ? processingOrder
-        .getPartnerAddress() : OBDal.getInstance().getProxy(Location.class,
-        getMaxBusinessPartnerLocationId(processingOrder.getBusinessPartner())));
+    newOrderLine.setPartnerAddress(
+        processingOrder.getPartnerAddress() != null ? processingOrder.getPartnerAddress()
+            : OBDal.getInstance()
+                .getProxy(Location.class,
+                    getMaxBusinessPartnerLocationId(processingOrder.getBusinessPartner())));
   }
 
   private void udpateInformationFromOrderLine() {
@@ -119,8 +122,8 @@ class UpdateOrderLineInformation implements CopyFromOrdersProcessImplementationI
 
   private Organization getOrganizationForNewLine() {
     Organization organizationForNewLine = processingOrder.getOrganization();
-    Set<String> parentOrgTree = new OrganizationStructureProvider().getChildTree(
-        organizationForNewLine.getId(), true);
+    Set<String> parentOrgTree = new OrganizationStructureProvider()
+        .getChildTree(organizationForNewLine.getId(), true);
     // If the Organization of the line that is being copied belongs to the child tree of the
     // Organization of the document header of the new line, use the organization of the line being
     // copied, else use the organization of the document header of the new line

@@ -27,24 +27,27 @@ class FunctionMedValue extends FunctionValue {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     try {
-      return functionTemplate.printFormatOutput(sum.divide(new BigDecimal(count), 12,
-          RoundingMode.HALF_UP));
+      return functionTemplate
+          .printFormatOutput(sum.divide(new BigDecimal(count), 12, RoundingMode.HALF_UP));
     } catch (ArithmeticException a) {
       return XmlEngine.strTextDividedByZero;
     }
   }
 
+  @Override
   public String printSimple() {
     try {
-      return functionTemplate.printFormatSimple(sum.divide(new BigDecimal(count), 12,
-          RoundingMode.HALF_UP));
+      return functionTemplate
+          .printFormatSimple(sum.divide(new BigDecimal(count), 12, RoundingMode.HALF_UP));
     } catch (ArithmeticException a) {
       return XmlEngine.strTextDividedByZero;
     }
   }
 
+  @Override
   public void acumulate() {
     count++;
     if (fieldValue.print() != "") {
@@ -52,6 +55,7 @@ class FunctionMedValue extends FunctionValue {
     }
   }
 
+  @Override
   public void init() {
     sum = BigDecimal.ZERO;
     count = 0;

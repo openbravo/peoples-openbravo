@@ -83,10 +83,12 @@ public class DocLine_Invoice extends DocLine {
     m_LineNetAmt = (LineNetAmt == "0") ? ZERO.toString() : LineNetAmt;
     BigDecimal b_Qty = new BigDecimal(Qty);
     BigDecimal b_PriceList = new BigDecimal(PriceList);
-    if (!PriceList.equals("") && !Qty.equals(""))
+    if (!PriceList.equals("") && !Qty.equals("")) {
       m_ListAmt = b_PriceList.multiply(b_Qty).toString();
-    if (m_ListAmt.equals(ZERO.toString()))
+    }
+    if (m_ListAmt.equals(ZERO.toString())) {
       m_ListAmt = m_LineNetAmt;
+    }
     BigDecimal b_LineNetAmt = new BigDecimal(LineNetAmt);
     BigDecimal b_ListAmt = new BigDecimal(m_ListAmt);
     m_DiscountAmt = b_ListAmt.subtract(b_LineNetAmt).toString();
@@ -107,11 +109,13 @@ public class DocLine_Invoice extends DocLine {
     // Charge Account
     if (m_M_Product_ID.equals("") && !m_C_Charge_ID.equals("")) {
       BigDecimal amt = new BigDecimal(-1); // Revenue (-)
-      if (p_DocumentType.indexOf("AP") != -1)
+      if (p_DocumentType.indexOf("AP") != -1) {
         amt = new BigDecimal(+1); // Expense (+)
+      }
       Account acct = getChargeAccount(as, amt, conn);
-      if (acct != null)
+      if (acct != null) {
         return acct;
+      }
     }
     // GL Item directly from Invoice Line
     else if (m_M_Product_ID.equals("") && !m_C_Glitem_ID.equals("")) {
@@ -119,18 +123,19 @@ public class DocLine_Invoice extends DocLine {
         DocLineInvoiceData[] data = null;
         data = DocLineInvoiceData.selectGlitem(conn, m_C_Glitem_ID, as.getC_AcctSchema_ID());
         String Account_ID = "";
-        if (data == null || data.length == 0)
+        if (data == null || data.length == 0) {
           return null;
+        }
         if (data.length > 0) {
           switch (Integer.parseInt(AcctType)) {
-          case 1:
-            // It is similar to ProductInfo.ACCTTYPE_P_Revenue
-            Account_ID = data[0].glitemCreditAcct;
-            break;
-          case 2:
-            // It is similar to ProductInfo.ACCTTYPE_P_Expense
-            Account_ID = data[0].glitemDebitAcct;
-            break;
+            case 1:
+              // It is similar to ProductInfo.ACCTTYPE_P_Revenue
+              Account_ID = data[0].glitemCreditAcct;
+              break;
+            case 2:
+              // It is similar to ProductInfo.ACCTTYPE_P_Expense
+              Account_ID = data[0].glitemDebitAcct;
+              break;
           }
         }
         // No account
@@ -149,6 +154,7 @@ public class DocLine_Invoice extends DocLine {
     return p_productInfo.getAccount(AcctType, as, conn);
   } // getAccount
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

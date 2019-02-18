@@ -111,8 +111,8 @@ public class InventoryCountProcess implements Process {
     } catch (GenericJDBCException ge) {
       log4j.error("Exception processing physical inventory", ge);
       msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error",
+          bundle.getContext().getLanguage()));
       msg.setMessage(ge.getSQLException().getMessage());
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
@@ -124,8 +124,8 @@ public class InventoryCountProcess implements Process {
     } catch (QueryTimeoutException qte) {
       log4j.error("Exception processing physical inventory", qte);
       msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error",
+          bundle.getContext().getLanguage()));
       msg.setMessage(qte.getSQLException().getMessage().split("\n")[0]);
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
@@ -136,8 +136,8 @@ public class InventoryCountProcess implements Process {
     } catch (final Exception e) {
       log4j.error("Exception processing physical inventory", e);
       msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error",
+          bundle.getContext().getLanguage()));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
@@ -239,8 +239,8 @@ public class InventoryCountProcess implements Process {
     insert.append(" or e." + InventoryCountLine.PROPERTY_ORDERQUANTITY + " != e."
         + InventoryCountLine.PROPERTY_QUANTITYORDERBOOK + ")");
     insert.append(" and u.id = :user");
-    insert.append(" and asi.id = COALESCE(e." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE
-        + ".id , '0')");
+    insert.append(
+        " and asi.id = COALESCE(e." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE + ".id , '0')");
     // Non Stockable Products should not generate warehouse transactions
     insert.append(" and e." + InventoryCountLine.PROPERTY_PRODUCT + ".id = p.id and p."
         + Product.PROPERTY_STOCKED + " = 'Y' and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
@@ -296,8 +296,8 @@ public class InventoryCountProcess implements Process {
   private void checkMandatoryAttributesWithoutVavlue(InventoryCount inventory) {
     InventoryCountLine inventoryLine = getLineWithMandatoryAttributeWithoutValue(inventory);
     if (inventoryLine != null) {
-      throw new OBException(OBMessageUtils.parseTranslation("@Inline@ " + (inventoryLine).getLineNo()
-          + " @productWithoutAttributeSet@"));
+      throw new OBException(OBMessageUtils.parseTranslation(
+          "@Inline@ " + (inventoryLine).getLineNo() + " @productWithoutAttributeSet@"));
     }
   }
 
@@ -326,8 +326,8 @@ public class InventoryCountProcess implements Process {
     where.append("                           ) ");
     where.append("           ) ");
     where.append("  order by icl.lineNo ");
-    OBQuery<InventoryCountLine> query = OBDal.getInstance().createQuery(InventoryCountLine.class,
-        where.toString());
+    OBQuery<InventoryCountLine> query = OBDal.getInstance()
+        .createQuery(InventoryCountLine.class, where.toString());
     query.setNamedParameter("inventory", inventory.getId());
     query.setMaxResult(1);
     return query.uniqueResult();
@@ -340,8 +340,8 @@ public class InventoryCountProcess implements Process {
       for (InventoryCountLine icl2 : inventoryLineList) {
         errorMessage.append(icl2.getLineNo().toString() + ", ");
       }
-      throw new OBException(OBMessageUtils.parseTranslation("@Thelines@ " + errorMessage.toString()
-          + "@sameInventorylines@"));
+      throw new OBException(OBMessageUtils
+          .parseTranslation("@Thelines@ " + errorMessage.toString() + "@sameInventorylines@"));
     }
   }
 
@@ -353,8 +353,8 @@ public class InventoryCountProcess implements Process {
     where.append("               from MaterialMgmtInventoryCountLine as icl2");
     where.append("               where icl.physInventory = icl2.physInventory");
     where.append("               and icl.product = icl2.product");
-    where
-        .append("                and coalesce(icl.attributeSetValue, '0') = coalesce(icl2.attributeSetValue, '0')");
+    where.append(
+        "                and coalesce(icl.attributeSetValue, '0') = coalesce(icl2.attributeSetValue, '0')");
     where.append("               and coalesce(icl.orderUOM, '0') = coalesce(icl2.orderUOM, '0')");
     where.append("               and coalesce(icl.uOM, '0') = coalesce(icl2.uOM, '0')");
     where.append("               and icl.storageBin = icl2.storageBin");
@@ -364,8 +364,8 @@ public class InventoryCountProcess implements Process {
     where.append(", icl.storageBin");
     where.append(", icl.orderUOM");
     where.append(", icl.lineNo");
-    OBQuery<InventoryCountLine> query = OBDal.getInstance().createQuery(InventoryCountLine.class,
-        where.toString());
+    OBQuery<InventoryCountLine> query = OBDal.getInstance()
+        .createQuery(InventoryCountLine.class, where.toString());
     query.setNamedParameter("inventory", inventory.getId());
     return query.list();
   }
@@ -383,14 +383,15 @@ public class InventoryCountProcess implements Process {
   }
 
   private void checkDifferentLegalInLinesAndHeader(InventoryCount inventory, Organization org) {
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        inventory.getClient().getId());
+    OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(inventory.getClient().getId());
     Organization inventoryLegalOrBusinessUnitOrg = osp.getLegalEntityOrBusinessUnit(org);
-    List<InventoryCountLine> inventoryLineList = getLinesWithDifferentOrganizationThanHeader(inventory, org);
+    List<InventoryCountLine> inventoryLineList = getLinesWithDifferentOrganizationThanHeader(
+        inventory, org);
     if (!inventoryLineList.isEmpty()) {
       for (InventoryCountLine inventoryLine : inventoryLineList) {
-        if (!inventoryLegalOrBusinessUnitOrg.getId().equals(
-            osp.getLegalEntityOrBusinessUnit(inventoryLine.getOrganization()).getId())) {
+        if (!inventoryLegalOrBusinessUnitOrg.getId()
+            .equals(osp.getLegalEntityOrBusinessUnit(inventoryLine.getOrganization()).getId())) {
           throw new OBException(OBMessageUtils.parseTranslation("@LinesAndHeaderDifferentLEorBU@"));
         }
       }
@@ -399,18 +400,18 @@ public class InventoryCountProcess implements Process {
 
   private List<InventoryCountLine> getLinesWithDifferentOrganizationThanHeader(
       InventoryCount inventory, Organization org) {
-    OBQuery<InventoryCountLine> query = OBDal.getInstance().createQuery(
-        InventoryCountLine.class,
-        InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inventory and "
-            + InventoryCountLine.PROPERTY_ORGANIZATION + ".id <> :organization");
+    OBQuery<InventoryCountLine> query = OBDal.getInstance()
+        .createQuery(InventoryCountLine.class,
+            InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inventory and "
+                + InventoryCountLine.PROPERTY_ORGANIZATION + ".id <> :organization");
     query.setNamedParameter("inventory", inventory.getId());
     query.setNamedParameter("organization", org.getId());
     return query.list();
   }
 
   private void checkPeriodsNotAvailable(InventoryCount inventory, Organization org) {
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        inventory.getClient().getId());
+    OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(inventory.getClient().getId());
     Organization inventoryLegalOrBusinessUnitOrg = osp.getLegalEntityOrBusinessUnit(org);
     if (inventoryLegalOrBusinessUnitOrg.getOrganizationType().isLegalEntityWithAccounting()) {
       StringBuilder where = new StringBuilder();
@@ -421,8 +422,8 @@ public class InventoryCountProcess implements Process {
       where.append("   and pc.documentCategory = 'MMI' ");
       where.append("   and pc.organization.id = :org");
       where.append("   and pc.periodStatus = 'O'");
-      OBQuery<PeriodControl> query = OBDal.getInstance().createQuery(PeriodControl.class,
-          where.toString());
+      OBQuery<PeriodControl> query = OBDal.getInstance()
+          .createQuery(PeriodControl.class, where.toString());
       query.setFilterOnReadableClients(false);
       query.setFilterOnReadableOrganization(false);
       query.setNamedParameter("dateStarting", inventory.getMovementDate());
@@ -462,15 +463,16 @@ public class InventoryCountProcess implements Process {
     query.setMaxResults(1);
 
     if (!query.list().isEmpty()) {
-      StorageDetail storageDetail = OBDal.getInstance().get(StorageDetail.class,
-          query.list().get(0).toString());
-      attribute = (!storageDetail.getAttributeSetValue().getIdentifier().isEmpty()) ? " @PCS_ATTRIBUTE@ '"
-          + storageDetail.getAttributeSetValue().getIdentifier() + "', "
+      StorageDetail storageDetail = OBDal.getInstance()
+          .get(StorageDetail.class, query.list().get(0).toString());
+      attribute = (!storageDetail.getAttributeSetValue().getIdentifier().isEmpty())
+          ? " @PCS_ATTRIBUTE@ '" + storageDetail.getAttributeSetValue().getIdentifier() + "', "
           : "";
       throw new OBException(Utility
           .messageBD(new DalConnectionProvider(), "insuffient_stock",
               OBContext.getOBContext().getLanguage().getLanguage())
-          .replaceAll("%1", storageDetail.getProduct().getIdentifier()).replaceAll("%2", attribute)
+          .replaceAll("%1", storageDetail.getProduct().getIdentifier())
+          .replaceAll("%2", attribute)
           .replaceAll("%3", storageDetail.getUOM().getIdentifier())
           .replaceAll("%4", storageDetail.getStorageBin().getIdentifier()));
     }

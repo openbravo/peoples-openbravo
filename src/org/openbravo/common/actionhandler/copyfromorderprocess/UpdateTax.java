@@ -62,8 +62,8 @@ class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
    */
   @Override
   public void exec(final Order processingOrder, final OrderLine orderLine, OrderLine newOrderLine) {
-    TaxRate tax = OBDal.getInstance().getProxy(TaxRate.class,
-        getCurrentTaxId(newOrderLine.getProduct(), processingOrder));
+    TaxRate tax = OBDal.getInstance()
+        .getProxy(TaxRate.class, getCurrentTaxId(newOrderLine.getProduct(), processingOrder));
     newOrderLine.setTax(tax);
   }
 
@@ -78,14 +78,16 @@ class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
    * @throws ServletException
    */
   private String getCurrentTaxId(final Product product, final Order processingOrder) {
-    String bpBillToLocationId = (processingOrder.getInvoiceAddress() != null) ? processingOrder
-        .getInvoiceAddress().getId() : getMaxBusinessPartnerLocationId(processingOrder
-        .getBusinessPartner());
+    String bpBillToLocationId = (processingOrder.getInvoiceAddress() != null)
+        ? processingOrder.getInvoiceAddress().getId()
+        : getMaxBusinessPartnerLocationId(processingOrder.getBusinessPartner());
     String bpLocationId = processingOrder.getPartnerAddress().getId();
-    String orderWarehouseId = processingOrder.getWarehouse() != null ? processingOrder
-        .getWarehouse().getId() : "";
-    String orderProjectId = processingOrder.getProject() != null ? processingOrder.getProject()
-        .getId() : "";
+    String orderWarehouseId = processingOrder.getWarehouse() != null
+        ? processingOrder.getWarehouse().getId()
+        : "";
+    String orderProjectId = processingOrder.getProject() != null
+        ? processingOrder.getProject().getId()
+        : "";
     String strDatePromised = DateFormatUtils.format(processingOrder.getScheduledDeliveryDate(),
         OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("dateFormat.java"));
 

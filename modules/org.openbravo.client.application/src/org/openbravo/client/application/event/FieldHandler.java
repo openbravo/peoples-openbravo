@@ -45,8 +45,7 @@ import org.openbravo.model.ad.ui.Tab;
 public class FieldHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Field.ENTITY_NAME) };
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -54,8 +53,7 @@ public class FieldHandler extends EntityPersistenceEventObserver {
     setIgnoreInWad(event);
   }
 
-  public void onNew(@Observes
-  EntityNewEvent event) {
+  public void onNew(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }

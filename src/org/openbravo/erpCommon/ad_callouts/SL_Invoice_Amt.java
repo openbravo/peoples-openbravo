@@ -76,8 +76,8 @@ public class SL_Invoice_Amt extends SimpleCallout {
     BigDecimal taxRate = BigDecimal.ZERO;
     int taxScale = 0;
     if (dataTax != null && dataTax.length > 0) {
-      taxRate = StringUtils.isEmpty(dataTax[0].rate) ? BigDecimal.ONE : new BigDecimal(
-          dataTax[0].rate);
+      taxRate = StringUtils.isEmpty(dataTax[0].rate) ? BigDecimal.ONE
+          : new BigDecimal(dataTax[0].rate);
       taxScale = Integer.parseInt(dataTax[0].priceprecision);
     }
 
@@ -133,8 +133,8 @@ public class SL_Invoice_Amt extends SimpleCallout {
     // price adjustments (offers) if any
     if (StringUtils.equals(strChanged, "inpqtyinvoiced")) {
       if (log4j.isDebugEnabled()) {
-        log4j.debug("PriceList: " + priceList + " product:" + strProduct + " qty:"
-            + qtyInvoice.toString());
+        log4j.debug(
+            "PriceList: " + priceList + " product:" + strProduct + " qty:" + qtyInvoice.toString());
       }
       if (priceIncludeTaxes) {
         grossUnitPrice = PriceAdjustment.calculatePriceActual(invoice, product, qtyInvoice,
@@ -200,13 +200,13 @@ public class SL_Invoice_Amt extends SimpleCallout {
           .getMaximumFractionDigits();
       int euroEditionScale = Utility.getFormat(info.vars, "euroEdition").getMaximumFractionDigits();
 
-      BigDecimal calculatedLineNetAmt = qtyInvoice.multiply(
-          priceActual.setScale(priceEditionScale, RoundingMode.HALF_UP)).setScale(
-          euroEditionScale, RoundingMode.HALF_UP);
-      if (!lineNetAmt.setScale(priceEditionScale, RoundingMode.HALF_UP).equals(
-          calculatedLineNetAmt)) {
-        StringBuffer strMessage = new StringBuffer(Utility.messageBD(this,
-            "NotCorrectAmountProvided", info.vars.getLanguage()));
+      BigDecimal calculatedLineNetAmt = qtyInvoice
+          .multiply(priceActual.setScale(priceEditionScale, RoundingMode.HALF_UP))
+          .setScale(euroEditionScale, RoundingMode.HALF_UP);
+      if (!lineNetAmt.setScale(priceEditionScale, RoundingMode.HALF_UP)
+          .equals(calculatedLineNetAmt)) {
+        StringBuffer strMessage = new StringBuffer(
+            Utility.messageBD(this, "NotCorrectAmountProvided", info.vars.getLanguage()));
         strMessage.append(": ");
         strMessage.append(lineNetAmt);
         strMessage.append(". ");
@@ -223,9 +223,10 @@ public class SL_Invoice_Amt extends SimpleCallout {
 
     // Check price limit
     if (enforcedLimit) {
-      if (priceLimit.compareTo(BigDecimal.ZERO) != 0 && priceActual.compareTo(priceLimit) < 0)
-        info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this, "UnderLimitPrice",
-            info.vars.getLanguage())));
+      if (priceLimit.compareTo(BigDecimal.ZERO) != 0 && priceActual.compareTo(priceLimit) < 0) {
+        info.showMessage(FormatUtilities
+            .replaceJS(Utility.messageBD(this, "UnderLimitPrice", info.vars.getLanguage())));
+      }
     }
 
     // Calculate Tax Amount

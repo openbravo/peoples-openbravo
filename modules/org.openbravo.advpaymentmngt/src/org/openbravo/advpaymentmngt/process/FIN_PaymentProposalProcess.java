@@ -72,8 +72,8 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
       StringBuilder strMessageResult = new StringBuilder();
       String strMessageType = "Success";
 
-      final FIN_PaymentProposal paymentProposal = dao
-          .getObject(FIN_PaymentProposal.class, recordID);
+      final FIN_PaymentProposal paymentProposal = dao.getObject(FIN_PaymentProposal.class,
+          recordID);
 
       if (strAction.equals("GSP") || strAction.equals("GONEP")) {
         boolean groupByVendor = strAction.equals("GSP");
@@ -107,8 +107,8 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
           parameters.add(vars.getClient());
           parameters.add(orgId.getId());
           parameters.add(isReceipt ? "ARR" : "APP");
-          String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
-              parameters, null);
+          String strDocTypeId = (String) CallStoredProcedure.getInstance()
+              .call("AD_GET_DOCTYPE", parameters, null);
 
           BigDecimal paymentTotal = BigDecimal.ZERO;
           String strBusinessPartner_old = "-1";
@@ -119,12 +119,19 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
           boolean isRefund = false;
 
           for (FIN_PaymentPropDetail paymentProposalDetail : selectedPaymentProposalDetails) {
-            if (paymentProposalDetail.getFINPaymentScheduledetail().getInvoicePaymentSchedule() != null) {
+            if (paymentProposalDetail.getFINPaymentScheduledetail()
+                .getInvoicePaymentSchedule() != null) {
               strBusinessPartner = paymentProposalDetail.getFINPaymentScheduledetail()
-                  .getInvoicePaymentSchedule().getInvoice().getBusinessPartner().getId();
+                  .getInvoicePaymentSchedule()
+                  .getInvoice()
+                  .getBusinessPartner()
+                  .getId();
             } else {
               strBusinessPartner = paymentProposalDetail.getFINPaymentScheduledetail()
-                  .getOrderPaymentSchedule().getOrder().getBusinessPartner().getId();
+                  .getOrderPaymentSchedule()
+                  .getOrder()
+                  .getBusinessPartner()
+                  .getId();
             }
 
             if (groupByVendor && !strBusinessPartner_old.equals(strBusinessPartner)
@@ -132,8 +139,8 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
 
               // String strPaymentDocumentNo = Utility.getDocumentNo(conProvider, vars,
               // "Payment Proposal", "FIN_Payment", strDocTypeId, strDocTypeId, false, true);
-              String strPaymentDocumentNo = FIN_Utility.getDocumentNo(orgId, (isReceipt) ? "ARR"
-                  : "APP", "DocumentNo_FIN_Payment_Proposal");
+              String strPaymentDocumentNo = FIN_Utility.getDocumentNo(orgId,
+                  (isReceipt) ? "ARR" : "APP", "DocumentNo_FIN_Payment_Proposal");
 
               BigDecimal finAccTxnAmount = paymentTotal.multiply(exchangeRate);
               long faPrecision = financialAccountCurrency.getStandardPrecision();
@@ -151,13 +158,16 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
                 String exceptionMessage = payment.getBusinessPartner().getName();
                 exceptionMessage += ": " + message.getMessage();
                 throw new OBException(exceptionMessage);
-              } else if (message.getType().equals("Warning"))
+              } else if (message.getType().equals("Warning")) {
                 strMessageType = message.getType();
+              }
               strMessageResult.append("@Payment@ ").append(payment.getDocumentNo());
-              strMessageResult.append(" (").append(payment.getBusinessPartner().getName())
+              strMessageResult.append(" (")
+                  .append(payment.getBusinessPartner().getName())
                   .append(") ");
-              if (!"".equals(message.getMessage()))
+              if (!"".equals(message.getMessage())) {
                 strMessageResult.append(": ").append(message.getMessage());
+              }
               strMessageResult.append("<br>");
               selectedPaymentDetails = new ArrayList<FIN_PaymentScheduleDetail>();
               selectedPaymentDetailsAmounts = new HashMap<String, BigDecimal>();
@@ -167,24 +177,27 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
 
             paymentTotal = paymentTotal.add(paymentProposalDetail.getAmount());
             selectedPaymentDetails.add(paymentProposalDetail.getFINPaymentScheduledetail());
-            selectedPaymentDetailsAmounts.put(paymentProposalDetail.getFINPaymentScheduledetail()
-                .getId(), paymentProposalDetail.getAmount());
-            if (BigDecimal.ZERO.compareTo(paymentProposalDetail.getWriteoffAmount()) != 0)
+            selectedPaymentDetailsAmounts.put(
+                paymentProposalDetail.getFINPaymentScheduledetail().getId(),
+                paymentProposalDetail.getAmount());
+            if (BigDecimal.ZERO.compareTo(paymentProposalDetail.getWriteoffAmount()) != 0) {
               isWriteOff = true;
+            }
             strBusinessPartner_old = strBusinessPartner;
           }
           // String strPaymentDocumentNo = Utility.getDocumentNo(conProvider, vars,
           // "PaymentProcessProposal", "FIN_Payment", strDocTypeId, strDocTypeId, false, true);
 
-          String strPaymentDocumentNo = FIN_Utility.getDocumentNo(orgId, (isReceipt) ? "ARR"
-              : "APP", "DocumentNo_FIN_Payment_Proposal");
+          String strPaymentDocumentNo = FIN_Utility.getDocumentNo(orgId,
+              (isReceipt) ? "ARR" : "APP", "DocumentNo_FIN_Payment_Proposal");
 
           BigDecimal finAccTxnAmount = paymentTotal.multiply(exchangeRate);
           long faPrecision = financialAccountCurrency.getStandardPrecision();
           finAccTxnAmount = finAccTxnAmount.setScale((int) faPrecision, RoundingMode.HALF_UP);
 
-          BusinessPartner businessPartner = groupByVendor ? dao.getObject(BusinessPartner.class,
-              strBusinessPartner) : null;
+          BusinessPartner businessPartner = groupByVendor
+              ? dao.getObject(BusinessPartner.class, strBusinessPartner)
+              : null;
 
           FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt,
               dao.getObject(DocumentType.class, strDocTypeId), strPaymentDocumentNo,
@@ -200,8 +213,9 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
             OBDal.getInstance().flush();
           }
           if (message.getType().equals("Error")) {
-            String exceptionMessage = payment.getBusinessPartner() != null ? payment
-                .getBusinessPartner().getName() : payment.getDocumentNo();
+            String exceptionMessage = payment.getBusinessPartner() != null
+                ? payment.getBusinessPartner().getName()
+                : payment.getDocumentNo();
             exceptionMessage += ": " + message.getMessage();
             throw new OBException(exceptionMessage);
           } else if (message.getType().equals("Warning")) {
@@ -209,11 +223,13 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
           }
           strMessageResult.append("@Payment@ ").append(payment.getDocumentNo());
           if (payment.getBusinessPartner() != null) {
-            strMessageResult.append(" (").append(payment.getBusinessPartner().getName())
+            strMessageResult.append(" (")
+                .append(payment.getBusinessPartner().getName())
                 .append(")");
           }
-          if (!"".equals(message.getMessage()))
+          if (!"".equals(message.getMessage())) {
             strMessageResult.append(": ").append(message.getMessage());
+          }
           strMessageResult.append("<br>");
 
         } finally {
@@ -264,8 +280,8 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
       final OBError msg = new OBError();
       msg.setType(strMessageType);
       msg.setTitle(Utility.messageBD(conProvider, "Success", language));
-      msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
-          strMessageResult.toString()));
+      msg.setMessage(
+          Utility.parseTranslation(conProvider, vars, language, strMessageResult.toString()));
       bundle.setResult(msg);
     } catch (OBException e) {
       log4j.error("FIN_PaymentProposalProcess: " + e.getMessage());
@@ -273,8 +289,8 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
       msg.setType("Error");
       msg.setMessage(Utility.parseTranslation(bundle.getConnection(), bundle.getContext().toVars(),
           bundle.getContext().getLanguage(), FIN_Utility.getExceptionMessage(e)));
-      msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
+      msg.setTitle(
+          Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext().getLanguage()));
       bundle.setResult(msg);
     } catch (final Exception e) {
       log.error("Error while executing FIN_PaymentProposalProcess", e);

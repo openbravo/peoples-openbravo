@@ -49,33 +49,32 @@ public class QueryListComponentProvider extends BaseComponentProvider {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.querylist/js/ob-querylist-widget.js", false));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.querylist/js/ob-querylist-view.js", false));
+    globalResources.add(
+        createStaticResource("web/org.openbravo.client.querylist/js/ob-querylist-view.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.querylist/js/ob-querylist-canvas-item.js", false));
 
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+    globalResources
+        .add(createStaticResource("web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.querylist/ob-querylist-styles.js", false));
 
-    globalResources.add(createStyleSheetResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+    globalResources
+        .add(createStyleSheetResource("web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.querylist/ob-querylist-styles.css", false));
 
     // RTL files should be added at the end. Don't add more files after them
     if (OBContext.getOBContext().isRTL()) {
-      globalResources.add(createStyleSheetResource(
-          "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+      globalResources.add(
+          createStyleSheetResource("web/org.openbravo.userinterface.smartclient/openbravo/skins/"
               + KernelConstants.SKIN_PARAMETER
               + "/org.openbravo.client.querylist/ob-rtl-styles.css", false));
 
-      globalResources
-          .add(createStaticResource(
-              "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-                  + KernelConstants.SKIN_PARAMETER
-                  + "/org.openbravo.client.querylist/ob-rtl-styles.js", false));
+      globalResources.add(createStaticResource(
+          "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+              + KernelConstants.SKIN_PARAMETER + "/org.openbravo.client.querylist/ob-rtl-styles.js",
+          false));
     }
 
     return globalResources;

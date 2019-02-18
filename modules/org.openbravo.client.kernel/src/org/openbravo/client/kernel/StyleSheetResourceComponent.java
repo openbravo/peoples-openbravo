@@ -89,6 +89,7 @@ public class StyleSheetResourceComponent extends BaseComponent {
    * @return returns this instance
    * @see org.openbravo.client.kernel.BaseComponent#getData()
    */
+  @Override
   public Object getData() {
     return this;
   }
@@ -98,6 +99,7 @@ public class StyleSheetResourceComponent extends BaseComponent {
     return KernelConstants.CSS_CONTENTTYPE;
   }
 
+  @Override
   public boolean isJavaScriptComponent() {
     return false;
   }
@@ -123,8 +125,8 @@ public class StyleSheetResourceComponent extends BaseComponent {
     }
 
     final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
-    final ServletContext context = (ServletContext) getParameters().get(
-        KernelConstants.SERVLET_CONTEXT);
+    final ServletContext context = (ServletContext) getParameters()
+        .get(KernelConstants.SERVLET_CONTEXT);
     final StringBuffer sb = new StringBuffer();
 
     final String appName = getApplicationName();
@@ -174,8 +176,9 @@ public class StyleSheetResourceComponent extends BaseComponent {
                 }
                 String resourceContents = FileUtils.readFileToString(file, "UTF-8");
 
-                final String contextPath = (getContextUrl() + resourcePath.substring(0,
-                    resourcePath.lastIndexOf("/"))).replaceAll("//", "/");
+                final String contextPath = (getContextUrl()
+                    + resourcePath.substring(0, resourcePath.lastIndexOf("/"))).replaceAll("//",
+                        "/");
                 String realPath = "";
                 if (realResourcePath.lastIndexOf("/") != -1) {
                   realPath = realResourcePath.substring(0, realResourcePath.lastIndexOf("/"));
@@ -185,30 +188,31 @@ public class StyleSheetResourceComponent extends BaseComponent {
 
                 // repair urls
                 resourceContents = resourceContents.replace("url(./", "url(" + IMGURLHOLDER + "/");
-                resourceContents = resourceContents.replace("url(images", "url(" + IMGURLHOLDER
-                    + "/images");
-                resourceContents = resourceContents.replace("url(\"images", "url(\"" + IMGURLHOLDER
-                    + "/images");
-                resourceContents = resourceContents.replace("url('images", "url('" + IMGURLHOLDER
-                    + "/images");
-                resourceContents = resourceContents
-                    .replace("url('./", "url('" + IMGURLHOLDER + "/");
-                resourceContents = resourceContents.replace("url(\"./", "url(\"" + IMGURLHOLDER
-                    + "/");
+                resourceContents = resourceContents.replace("url(images",
+                    "url(" + IMGURLHOLDER + "/images");
+                resourceContents = resourceContents.replace("url(\"images",
+                    "url(\"" + IMGURLHOLDER + "/images");
+                resourceContents = resourceContents.replace("url('images",
+                    "url('" + IMGURLHOLDER + "/images");
+                resourceContents = resourceContents.replace("url('./",
+                    "url('" + IMGURLHOLDER + "/");
+                resourceContents = resourceContents.replace("url(\"./",
+                    "url(\"" + IMGURLHOLDER + "/");
 
                 if (!module.isInDevelopment()) {
                   resourceContents = CSSMinimizer.formatString(resourceContents);
                   if (makeCssDataUri) {
                     String resourceContentsLine;
-                    BufferedReader resourceContentsReader = new BufferedReader(new StringReader(
-                        resourceContents));
+                    BufferedReader resourceContentsReader = new BufferedReader(
+                        new StringReader(resourceContents));
                     StringBuffer resourceContentsBuffer = new StringBuffer();
 
                     int indexOfUrl;
                     String imgUrl, imgExt, imgDataUri, newUrlParam;
                     while ((resourceContentsLine = resourceContentsReader.readLine()) != null) {
                       indexOfUrl = 0;
-                      while ((indexOfUrl = resourceContentsLine.indexOf("url(", indexOfUrl)) != -1) {
+                      while ((indexOfUrl = resourceContentsLine.indexOf("url(",
+                          indexOfUrl)) != -1) {
                         imgUrl = resourceContentsLine.substring(indexOfUrl + 4,
                             resourceContentsLine.indexOf(")", indexOfUrl));
                         if (imgUrl.indexOf("\"") == 0 || imgUrl.indexOf("'") == 0) {
@@ -271,6 +275,7 @@ public class StyleSheetResourceComponent extends BaseComponent {
     return appNameKey;
   }
 
+  @Override
   public String getId() {
     return KernelConstants.STYLE_SHEET_COMPONENT_ID;
   }

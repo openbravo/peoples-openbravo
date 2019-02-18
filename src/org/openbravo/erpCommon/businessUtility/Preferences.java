@@ -69,7 +69,8 @@ public class Preferences {
       String role) {
     try {
       OBContext.setAdminMode();
-      List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider()
+      List<String> parentTree = OBContext.getOBContext()
+          .getOrganizationStructureProvider()
           .getParentList(org, true);
 
       List<Preference> allPreferences = getPreferences(null, false, client, org, user, role, null,
@@ -126,8 +127,8 @@ public class Preferences {
    *          VariablesSecureApp to store new property value.
    * @return The preference that has been created or modified
    */
-  public static Preference setPreferenceValue(String property, String value,
-      boolean isListProperty, Client client, Organization org, User user, Role role, Window window,
+  public static Preference setPreferenceValue(String property, String value, boolean isListProperty,
+      Client client, Organization org, User user, Role role, Window window,
       VariablesSecureApp vars) {
     try {
       OBContext.setAdminMode();
@@ -184,8 +185,8 @@ public class Preferences {
    * @throws PropertyException
    *           if the property cannot be resolved in a single value:
    *           <ul>
-   *           <li> {@link PropertyNotFoundException} if the property is not defined. <li>
-   *           {@link PropertyConflictException} in case of conflict
+   *           <li>{@link PropertyNotFoundException} if the property is not defined.
+   *           <li>{@link PropertyConflictException} in case of conflict
    *           </ul>
    */
   public static String getPreferenceValue(String property, boolean isListProperty, Client client,
@@ -197,7 +198,8 @@ public class Preferences {
       String userId = user == null ? null : user.getId();
       String roleId = role == null ? null : role.getId();
       String windowId = window == null ? null : window.getId();
-      return getPreferenceValue(property, isListProperty, clientId, orgId, userId, roleId, windowId);
+      return getPreferenceValue(property, isListProperty, clientId, orgId, userId, roleId,
+          windowId);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -223,7 +225,8 @@ public class Preferences {
       List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
           roleId, windowId, false, true, queryFilters);
       Preference selectedPreference = null;
-      List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider(clientId)
+      List<String> parentTree = OBContext.getOBContext()
+          .getOrganizationStructureProvider(clientId)
           .getParentList(orgId, true);
       boolean conflict = false;
       for (Preference preference : prefs) {
@@ -234,16 +237,16 @@ public class Preferences {
         }
         int higherPriority = getHighestPriority(selectedPreference, preference, parentTree);
         switch (higherPriority) {
-        case 1:
-          // do nothing, selected one has higher priority
-          break;
-        case 2:
-          selectedPreference = preference;
-          conflict = false;
-          break;
-        default:
-          conflict = true;
-          break;
+          case 1:
+            // do nothing, selected one has higher priority
+            break;
+          case 2:
+            selectedPreference = preference;
+            conflict = false;
+            break;
+          default:
+            conflict = true;
+            break;
         }
       }
       if (conflict) {
@@ -295,12 +298,14 @@ public class Preferences {
    *         otherwise
    */
   public static boolean existsPreference(Preference preference) {
-    String property = preference.isPropertyList() ? preference.getProperty() : preference
-        .getAttribute();
-    String clientId = preference.getVisibleAtClient() != null ? preference.getVisibleAtClient()
-        .getId() : null;
-    String orgId = preference.getVisibleAtOrganization() != null ? preference
-        .getVisibleAtOrganization().getId() : null;
+    String property = preference.isPropertyList() ? preference.getProperty()
+        : preference.getAttribute();
+    String clientId = preference.getVisibleAtClient() != null
+        ? preference.getVisibleAtClient().getId()
+        : null;
+    String orgId = preference.getVisibleAtOrganization() != null
+        ? preference.getVisibleAtOrganization().getId()
+        : null;
     String userId = preference.getUserContact() != null ? preference.getUserContact().getId()
         : null;
     String roleId = preference.getVisibleAtRole() != null ? preference.getVisibleAtRole().getId()
@@ -336,8 +341,8 @@ public class Preferences {
     queryFilters.put(QueryFilter.ACTIVE, false);
     queryFilters.put(QueryFilter.CLIENT, true);
     queryFilters.put(QueryFilter.ORGANIZATION, true);
-    return getPreferences(property, isListProperty, clientId, orgId, userId, roleId, windowId,
-        true, true, queryFilters);
+    return getPreferences(property, isListProperty, clientId, orgId, userId, roleId, windowId, true,
+        true, queryFilters);
   }
 
   /**
@@ -428,7 +433,8 @@ public class Preferences {
       if (org == null) {
         hql.append("     and coalesce(p.visibleAtOrganization, '0')='0'");
       } else {
-        List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider(client)
+        List<String> parentTree = OBContext.getOBContext()
+            .getOrganizationStructureProvider(client)
             .getParentList(org, true);
         String parentOrgs = "(" + StringCollectionUtils.commaSeparated(parentTree) + ")";
         hql.append("     and coalesce(p.visibleAtOrganization, '0') in " + parentOrgs);
@@ -484,20 +490,22 @@ public class Preferences {
    * @param parentTree
    *          Parent tree of organizations including the current one, used to assign more priority
    *          to organizations nearer in the tree.
-   * @return <ul>
+   * @return
+   *         <ul>
    *         <li>1 in case pref1 is more visible than pref2
    *         <li>2 in case pref2 is more visible than pref1
    *         <li>0 in case of conflict (both have identical visibility and value)
    *         </ul>
    */
-  private static int getHighestPriority(Preference pref1, Preference pref2, List<String> parentTree) {
+  private static int getHighestPriority(Preference pref1, Preference pref2,
+      List<String> parentTree) {
     // Check priority by client
 
     // undefined client visibility is handled as system
-    String clientId1 = pref1.getVisibleAtClient() == null ? SYSTEM : pref1.getVisibleAtClient()
-        .getId();
-    String clientId2 = pref2.getVisibleAtClient() == null ? SYSTEM : pref2.getVisibleAtClient()
-        .getId();
+    String clientId1 = pref1.getVisibleAtClient() == null ? SYSTEM
+        : pref1.getVisibleAtClient().getId();
+    String clientId2 = pref2.getVisibleAtClient() == null ? SYSTEM
+        : pref2.getVisibleAtClient().getId();
     if (!SYSTEM.equals(clientId1) && SYSTEM.equals(clientId2)) {
       return 1;
     }
@@ -565,8 +573,8 @@ public class Preferences {
     }
 
     if ((pref1.getSearchKey() == null && pref2.getSearchKey() == null)
-        || (pref1.getSearchKey() != null && pref2.getSearchKey() != null && pref1.getSearchKey()
-            .equals(pref2.getSearchKey()))) {
+        || (pref1.getSearchKey() != null && pref2.getSearchKey() != null
+            && pref1.getSearchKey().equals(pref2.getSearchKey()))) {
       // Conflict with same value, it does not matter priority
       return 2;
     }

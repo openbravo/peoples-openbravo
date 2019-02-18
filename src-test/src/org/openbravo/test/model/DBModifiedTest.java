@@ -71,7 +71,8 @@ public class DBModifiedTest extends OBBaseTest {
   }
 
   private boolean isDBModified(boolean saveChecksum) {
-    Object modified = OBDal.getInstance().getSession()
+    Object modified = OBDal.getInstance()
+        .getSession()
         .createNativeQuery("SELECT AD_DB_MODIFIED(:saveChecksum) FROM DUAL", Object.class)
         .setParameter("saveChecksum", saveChecksum ? "Y" : "N") //
         .uniqueResult();
@@ -81,13 +82,15 @@ public class DBModifiedTest extends OBBaseTest {
   }
 
   private void createDBObject() {
-    OBDal.getInstance().getSession()
+    OBDal.getInstance()
+        .getSession()
         .createNativeQuery("CREATE TABLE TEST_OBJ AS SELECT * FROM DUAL") //
         .executeUpdate();
   }
 
   private void dropDBObject() {
-    OBDal.getInstance().getSession() //
+    OBDal.getInstance()
+        .getSession() //
         .createNativeQuery("DROP TABLE TEST_OBJ") //
         .executeUpdate();
 

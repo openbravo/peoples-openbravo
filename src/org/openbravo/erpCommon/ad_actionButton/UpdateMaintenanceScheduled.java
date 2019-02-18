@@ -37,13 +37,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       vars.getRequestGlobalVariable("inppartdate", "UpdateMaintenanceScheduled|inppartdate");
@@ -71,13 +73,15 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
       OBError myMessage = updateValues(request, vars, strKey);
 
       String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       vars.setMessage(strTabId, myMessage);
       printPageClosePopUp(response, vars, strWindowPath);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
@@ -85,19 +89,23 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
       String strPartDateTo, String strMaintType) throws IOException, ServletException {
     String localStrMaintType = strMaintType;
     String localStrPartDateTo = strPartDateTo;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: values ");
+    }
     String[] discard = { "" };
     UpdateMaintenanceScheduledData[] data = null;
-    if (localStrMaintType == null)
+    if (localStrMaintType == null) {
       localStrMaintType = "";
-    if (localStrPartDateTo == null)
+    }
+    if (localStrPartDateTo == null) {
       localStrPartDateTo = "";
+    }
     data = UpdateMaintenanceScheduledData.select(this, vars.getLanguage(), strPartDateFrom,
         localStrPartDateTo, localStrMaintType);
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled", discard)
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled",
+            discard)
         .createXmlDocument();
 
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -117,10 +125,9 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "Maintenance type", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "UpdateMaintenanceScheduled"), Utility.getContext(this, vars, "#User_Client",
-              "UpdateMaintenanceScheduled"), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "Maintenance type",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "UpdateMaintenanceScheduled"),
+          Utility.getContext(this, vars, "#User_Client", "UpdateMaintenanceScheduled"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "UpdateMaintenanceScheduled",
           localStrMaintType);
       xmlDocument.setData("reportMaintType", "liststructure", comboTableData.select(false));
@@ -134,18 +141,21 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: values - out");
+    }
   }
 
   private OBError updateValues(HttpServletRequest request, VariablesSecureApp vars, String strKey) {
     OBError myMessage = null;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Update: values");
+    }
 
     String[] strValueId = request.getParameterValues("strMaintScheduled");
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Update: values after strValueID");
+    }
 
     if (strValueId == null || strValueId.length == 0) {
       return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
@@ -154,20 +164,24 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
     try {
       conn = this.getTransactionConnection();
       for (int i = 0; i < strValueId.length; i++) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("*****strValueId[i]=" + strValueId[i]);
+        }
         String done = vars.getStringParameter("strDone" + strValueId[i]);
-        if (done == null)
+        if (done == null) {
           done = "";
+        }
         String result = vars.getStringParameter("strResult" + strValueId[i]);
-        if (result == null)
+        if (result == null) {
           result = "";
+        }
         String usedtime = vars.getStringParameter("strUsedTime" + strValueId[i]);
         String observation = vars.getStringParameter("strObservation" + strValueId[i]);
         if (done.equals("Y")) {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("Values to update: " + strValueId[i] + ", " + result + ", " + usedtime
                 + ", " + observation);
+          }
           try {
             UpdateMaintenanceScheduledData.update(conn, this, result.equals("Y") ? "Y" : "N",
                 usedtime, observation, vars.getUser(), strKey, strValueId[i]);
@@ -195,6 +209,7 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
     return myMessage;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the Create From Multiple button";
   } // end of getServletInfo() method

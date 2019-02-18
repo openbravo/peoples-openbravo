@@ -73,6 +73,7 @@ public class FieldProviderFactory implements FieldProvider {
    * Note that for a fieldName it must exist in the object a getter called "getFieldName" "F" is
    * upper case though in the passed parameter can be lower case.
    */
+  @Override
   public String getField(String fieldName) {
     try {
       String rt = properties.get(fieldName);

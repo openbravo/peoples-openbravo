@@ -352,9 +352,11 @@ public class OBBaseTest {
   }
 
   private void setMockServletContext() {
-    String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String sourcePath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("source.path");
-    String attachPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String attachPath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("attach.path");
     MockServletContext mockServletContext = new MockServletContext(sourcePath + "/WebContent");
     mockServletContext.addInitParameter("BaseConfigPath", "WEB-INF");
@@ -418,7 +420,8 @@ public class OBBaseTest {
       return true;
     }
     Map<String, SQLFunction> registeredFunctions = SessionFactoryController.getInstance()
-        .getConfiguration().getSqlFunctions();
+        .getConfiguration()
+        .getSqlFunctions();
     if (registeredFunctions == null) {
       return false;
     }
@@ -552,8 +555,9 @@ public class OBBaseTest {
    *          the exception to report.
    */
   protected void reportException(Exception e) {
-    if (e == null)
+    if (e == null) {
       return;
+    }
     e.printStackTrace(System.err);
     if (e instanceof SQLException) {
       reportException(((SQLException) e).getNextException());

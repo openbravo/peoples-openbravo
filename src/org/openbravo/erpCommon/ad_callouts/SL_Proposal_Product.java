@@ -41,8 +41,9 @@ public class SL_Proposal_Product extends SimpleCallout {
     BigDecimal priceStd = info.getBigDecimalParameter("inpmProductId_PSTD");
 
     // Get Product Search Key, Name, Description and Set in Proposal
-    SLProposalProductData[] data = StringUtils.isNotEmpty(strmProductId) ? SLProposalProductData
-        .select(this, strmProductId) : SLProposalProductData.set();
+    SLProposalProductData[] data = StringUtils.isNotEmpty(strmProductId)
+        ? SLProposalProductData.select(this, strmProductId)
+        : SLProposalProductData.set();
     info.addResult("inpprice", priceStd);
     info.addResult("inpproductValue", FormatUtilities.replaceJS(data[0].value));
     info.addResult("inpproductName", FormatUtilities.replaceJS(data[0].name));

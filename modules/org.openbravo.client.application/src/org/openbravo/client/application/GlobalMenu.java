@@ -28,6 +28,8 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.client.application.MenuManager.MenuEntryType;
@@ -43,8 +45,6 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * 
@@ -238,8 +238,8 @@ public class GlobalMenu {
               && menu.getOBUIAPPProcessDefinition().isActive()) {
             foundOption.setType(MenuEntryType.ProcessDefinition);
             foundOption.setObjectId(menu.getOBUIAPPProcessDefinition().getId());
-            if (ApplicationConstants.REPORT_UI_PATTERN.equals(menu.getOBUIAPPProcessDefinition()
-                .getUIPattern())) {
+            if (ApplicationConstants.REPORT_UI_PATTERN
+                .equals(menu.getOBUIAPPProcessDefinition().getUIPattern())) {
               foundOption.setReport(true);
             }
           } else if (menu.getWindow() != null && menu.getWindow().isActive()) {

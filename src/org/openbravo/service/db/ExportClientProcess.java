@@ -56,7 +56,8 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
   public static File getExportDir() {
 
     // determine the location where to place the file
-    final String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    final String sourcePath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("source.path");
     Check.isNotNull(sourcePath, "The source.path property is not defined in the "
         + "Openbravo.properties file or the Openbravo.properties " + "file can not be found.");
@@ -76,6 +77,7 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
    * client) and fileLocation giving the full path location of the file in which the data for the
    * export should go.
    */
+  @Override
   public void execute(ProcessBundle bundle) throws Exception {
     try {
       final String clientId = (String) bundle.getParams().get("adClientId");
@@ -106,8 +108,8 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
 
       final OBError msg = new OBError();
       msg.setType("Success");
-      msg.setMessage("Client " + client.getName() + " has been exported to "
-          + exportFile.getAbsolutePath());
+      msg.setMessage(
+          "Client " + client.getName() + " has been exported to " + exportFile.getAbsolutePath());
       msg.setTitle("Done");
       bundle.setResult(msg);
 

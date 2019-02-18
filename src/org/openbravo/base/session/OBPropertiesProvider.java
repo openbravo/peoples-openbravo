@@ -116,8 +116,8 @@ public class OBPropertiesProvider {
         return;
       }
 
-      ConfigParameters.overrideProperties(obProperties, OBConfigFileProvider.getInstance()
-          .getServletContext().getRealPath("/WEB-INF"));
+      ConfigParameters.overrideProperties(obProperties,
+          OBConfigFileProvider.getInstance().getServletContext().getRealPath("/WEB-INF"));
     } catch (final Exception e) {
       throw new OBException(e);
     }
@@ -170,8 +170,8 @@ public class OBPropertiesProvider {
       return;
     }
     setProperties(propertiesFile.getAbsolutePath());
-    OBConfigFileProvider.getInstance().setFileLocation(
-        propertiesFile.getParentFile().getAbsolutePath());
+    OBConfigFileProvider.getInstance()
+        .setFileLocation(propertiesFile.getParentFile().getAbsolutePath());
   }
 
   private File getFileFromDevelopmentPath(String fileName) {

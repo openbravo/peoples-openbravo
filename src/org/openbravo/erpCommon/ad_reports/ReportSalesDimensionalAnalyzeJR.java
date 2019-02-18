@@ -53,8 +53,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
@@ -106,9 +107,9 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
             "ReportSalesDimensionalAnalyzeJR|comparative", "N");
       }
       printPageDataSheet(response, vars, strComparative, strDateFrom, strDateTo, strPartnerGroup,
-          strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId, strNotShown,
-          strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strOrder, strMayor,
-          strMenor, strPartnerSalesRepId, strCurrencyId);
+          strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId, strNotShown, strShown,
+          strDateFromRef, strDateToRef, strOrg, strsalesrepId, strOrder, strMayor, strMenor,
+          strPartnerSalesRepId, strCurrencyId);
     } else if (vars.commandIn("EDIT_HTML", "EDIT_HTML_COMPARATIVE")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportSalesDimensionalAnalyzeJR|dateFrom");
@@ -131,8 +132,8 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
       // ad_ref_list.value for reference_id = 800087
       String strNotShown = vars.getInStringParameter("inpNotShown", IsPositiveIntFilter.instance);
       String strShown = vars.getInStringParameter("inpShown", IsPositiveIntFilter.instance);
-      String strOrg = vars
-          .getRequestGlobalVariable("inpOrg", "ReportSalesDimensionalAnalyzeJR|org");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg",
+          "ReportSalesDimensionalAnalyzeJR|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "ReportSalesDimensionalAnalyzeJR|salesrep");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
@@ -170,8 +171,8 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
       // ad_ref_list.value for reference_id = 800087
       String strNotShown = vars.getInStringParameter("inpNotShown", IsPositiveIntFilter.instance);
       String strShown = vars.getInStringParameter("inpShown", IsPositiveIntFilter.instance);
-      String strOrg = vars
-          .getRequestGlobalVariable("inpOrg", "ReportSalesDimensionalAnalyzeJR|org");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg",
+          "ReportSalesDimensionalAnalyzeJR|org");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId",
           "ReportSalesDimensionalAnalyzeJR|salesrep");
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
@@ -207,8 +208,8 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
       String strcBpartnerId, String strProductCategory, String strmProductId,
       String strmWarehouseId, String strNotShown, String strShown, String strDateFromRef,
       String strDateToRef, String strOrg, String strsalesrepId, String strOrder, String strMayor,
-      String strMenor, String strPartnerSalesrepId, String strCurrencyId) throws IOException,
-      ServletException {
+      String strMenor, String strPartnerSalesrepId, String strCurrencyId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
@@ -217,8 +218,9 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
       discard[0] = "selEliminarHeader2";
     }
     XmlDocument xmlDocument = null;
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportSalesDimensionalAnalyzeJRFilter", discard)
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportSalesDimensionalAnalyzeJRFilter",
+            discard)
         .createXmlDocument();
 
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
@@ -284,9 +286,11 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("partnerSalesRepId", strPartnerSalesrepId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "M_Warehouse_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
+          "M_Warehouse_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportSalesDimensionalAnalyzeJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
+          0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportSalesDimensionalAnalyzeJR", strmWarehouseId);
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
@@ -297,9 +301,11 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_BP_Group_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
+          "C_BP_Group_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportSalesDimensionalAnalyzeJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
+          0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportSalesDimensionalAnalyzeJR", strPartnerGroup);
       xmlDocument.setData("reportC_BP_GROUPID", "liststructure", comboTableData.select(false));
@@ -310,9 +316,11 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(
-              readOnlyCP, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
+          "M_Product_Category_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportSalesDimensionalAnalyzeJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
+          0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportSalesDimensionalAnalyzeJR", strProductCategory);
       xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
@@ -324,9 +332,11 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLE", "SalesRep_ID",
-          "AD_User SalesRep", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
+          "AD_User SalesRep", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportSalesDimensionalAnalyzeJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
+          0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportSalesDimensionalAnalyzeJR", strsalesrepId);
       xmlDocument.setData("reportSalesRep_ID", "liststructure", comboTableData.select(false));
@@ -336,9 +346,10 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_Org_ID",
-          "", "", Utility.getContext(readOnlyCP, vars, "#User_Org",
-              "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
+          "", "",
+          Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportSalesDimensionalAnalyzeJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
+          0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportSalesDimensionalAnalyzeJR", strOrg);
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
@@ -347,27 +358,25 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    xmlDocument.setData(
-        "reportCBPartnerId_IN",
-        "liststructure",
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         SelectorUtilityData.selectBpartner(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
             Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strcBpartnerId));
-    xmlDocument.setData(
-        "reportMProductId_IN",
-        "liststructure",
+    xmlDocument.setData("reportMProductId_IN", "liststructure",
         SelectorUtilityData.selectMproduct(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
             Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strmProductId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLE", "",
-          "C_BPartner SalesRep", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
+          "C_BPartner SalesRep", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportSalesDimensionalAnalyzeJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
+          0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportSalesDimensionalAnalyzeJR", strPartnerSalesrepId);
-      xmlDocument
-          .setData("reportPartnerSalesRep_ID", "liststructure", comboTableData.select(false));
+      xmlDocument.setData("reportPartnerSalesRep_ID", "liststructure",
+          comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -376,9 +385,11 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
+          "C_Currency_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportSalesDimensionalAnalyzeJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
+          0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportSalesDimensionalAnalyzeJR", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -394,10 +405,9 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
           StringUtils.isEmpty(strShown) ? new ReportSalesDimensionalAnalyzeJRData[0]
               : ReportSalesDimensionalAnalyzeJRData.selectShown(readOnlyCP, strShown));
     } else {
-      xmlDocument.setData("structure1", ReportSalesDimensionalAnalyzeJRData.selectNotShownTrl(
-          readOnlyCP, vars.getLanguage(), strShown));
-      xmlDocument.setData(
-          "structure2",
+      xmlDocument.setData("structure1", ReportSalesDimensionalAnalyzeJRData
+          .selectNotShownTrl(readOnlyCP, vars.getLanguage(), strShown));
+      xmlDocument.setData("structure2",
           StringUtils.isEmpty(strShown) ? new ReportSalesDimensionalAnalyzeJRData[0]
               : ReportSalesDimensionalAnalyzeJRData.selectShownTrl(readOnlyCP, vars.getLanguage(),
                   strShown));
@@ -423,7 +433,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     }
     String strOrderby = "";
     String[] discard = { "", "", "", "", "", "", "", "", "", "", "" };
-    String[] discard1 = { "selEliminarBody1", "discard", "discard", "discard", "discard",
+    String[] discard1 = { "selEliminarBody1", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
@@ -432,7 +442,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
-        "discard", "discard", "discard" };
+        "discard", "discard" };
     if (StringUtils.isEmpty(localStrOrg)) {
       localStrOrg = vars.getOrg();
     }
@@ -449,10 +459,8 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
           + ReportSalesDimensionalAnalyzeJRData.selectBpgroup(readOnlyCP, strPartnerGroup);
     }
     if (StringUtils.isNotEmpty(strProductCategory)) {
-      strTitle = strTitle
-          + ", "
-          + Utility.messageBD(readOnlyCP, "ProductCategory", vars.getLanguage())
-          + " "
+      strTitle = strTitle + ", "
+          + Utility.messageBD(readOnlyCP, "ProductCategory", vars.getLanguage()) + " "
           + ReportSalesDimensionalAnalyzeJRData.selectProductCategory(readOnlyCP,
               strProductCategory);
     }
@@ -639,23 +647,25 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     try {
       limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
       if (limit > 0) {
-        mycount = Integer
-            .parseInt((StringUtils.equals(strComparative, "Y")) ? ReportSalesDimensionalAnalyzeJRData
-                .selectCount(readOnlyCP, levelsconcat.toString(), Tree.getMembers(readOnlyCP,
-                    TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg),
-                    Utility.getContext(readOnlyCP, vars, "#User_Client",
-                        "ReportSalesDimensionalAnalyzeJR"), strPartnerGroup, strcBpartnerId,
-                    strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
-                    strPartnerSalesrepId, strDateFrom, DateTimeData.nDaysAfter(readOnlyCP,
-                        strDateTo, "1"), strDateFromRef, DateTimeData.nDaysAfter(readOnlyCP,
-                        strDateToRef, "1")) : ReportSalesDimensionalAnalyzeJRData
-                .selectNoComparativeCount(readOnlyCP, levelsconcat.toString(), Tree.getMembers(
-                    readOnlyCP, TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg),
-                    Utility.getContext(readOnlyCP, vars, "#User_Client",
-                        "ReportSalesDimensionalAnalyzeJR"), strPartnerGroup, strcBpartnerId,
-                    strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
-                    strPartnerSalesrepId, strDateFrom, DateTimeData.nDaysAfter(readOnlyCP,
-                        strDateTo, "1")));
+        mycount = Integer.parseInt((StringUtils.equals(strComparative, "Y"))
+            ? ReportSalesDimensionalAnalyzeJRData.selectCount(readOnlyCP, levelsconcat.toString(),
+                Tree.getMembers(readOnlyCP, TreeData.getTreeOrg(readOnlyCP, vars.getClient()),
+                    localStrOrg),
+                Utility.getContext(readOnlyCP, vars, "#User_Client",
+                    "ReportSalesDimensionalAnalyzeJR"),
+                strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId,
+                strsalesrepId, strPartnerSalesrepId, strDateFrom,
+                DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDateFromRef,
+                DateTimeData.nDaysAfter(readOnlyCP, strDateToRef, "1"))
+            : ReportSalesDimensionalAnalyzeJRData.selectNoComparativeCount(readOnlyCP,
+                levelsconcat.toString(),
+                Tree.getMembers(readOnlyCP, TreeData.getTreeOrg(readOnlyCP, vars.getClient()),
+                    localStrOrg),
+                Utility.getContext(readOnlyCP, vars, "#User_Client",
+                    "ReportSalesDimensionalAnalyzeJR"),
+                strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId,
+                strsalesrepId, strPartnerSalesrepId, strDateFrom,
+                DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1")));
       }
     } catch (NumberFormatException e) {
     }
@@ -678,13 +688,15 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
           data = ReportSalesDimensionalAnalyzeJRData.select(readOnlyCP, strCurrencyId,
               strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
               strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8], strTextShow[9],
-              strTextShow[10], Tree.getMembers(readOnlyCP,
-                  TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
-                  .getContext(readOnlyCP, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
+              strTextShow[10],
+              Tree.getMembers(readOnlyCP, TreeData.getTreeOrg(readOnlyCP, vars.getClient()),
+                  localStrOrg),
+              Utility.getContext(readOnlyCP, vars, "#User_Client",
+                  "ReportSalesDimensionalAnalyzeJR"),
               strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup,
               strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
-              strPartnerSalesrepId, strDateFromRef, DateTimeData.nDaysAfter(readOnlyCP,
-                  strDateToRef, "1"), strOrderby);
+              strPartnerSalesrepId, strDateFromRef,
+              DateTimeData.nDaysAfter(readOnlyCP, strDateToRef, "1"), strOrderby);
         } catch (ServletException ex) {
           myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
         }
@@ -693,9 +705,11 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
           data = ReportSalesDimensionalAnalyzeJRData.selectNoComparative(readOnlyCP, strCurrencyId,
               strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
               strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8], strTextShow[9],
-              strTextShow[10], Tree.getMembers(readOnlyCP,
-                  TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
-                  .getContext(readOnlyCP, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
+              strTextShow[10],
+              Tree.getMembers(readOnlyCP, TreeData.getTreeOrg(readOnlyCP, vars.getClient()),
+                  localStrOrg),
+              Utility.getContext(readOnlyCP, vars, "#User_Client",
+                  "ReportSalesDimensionalAnalyzeJR"),
               strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup,
               strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
               strPartnerSalesrepId, strOrderby);
@@ -744,6 +758,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportSalesDimensionalAnalyzeJR.";
   } // end of getServletInfo() method

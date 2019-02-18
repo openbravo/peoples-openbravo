@@ -56,8 +56,8 @@ public class SL_InOut_Conversion extends SimpleCallout {
     if (StringUtils.isEmpty(strMultiplyRate)) {
       strMultiplyRate = "1";
       if (StringUtils.isNotEmpty(strMProductUOMID)) {
-        info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this, "NoUOMConversion",
-            info.vars.getLanguage())));
+        info.showMessage(FormatUtilities
+            .replaceJS(Utility.messageBD(this, "NoUOMConversion", info.vars.getLanguage())));
       }
     }
     // Calculate Movement Qty based on UOM Conversion

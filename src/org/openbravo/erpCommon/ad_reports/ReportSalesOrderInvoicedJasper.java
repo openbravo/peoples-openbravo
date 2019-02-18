@@ -44,8 +44,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
@@ -65,8 +66,8 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportSalesOrderInvoicedJasper|currency", strUserCurrencyId);
       printPageDataSheet(response, vars, strdateFrom, strdateTo, strcBpartnerId, strmWarehouseId,
-          strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic,
-          strProduct, strCurrencyId);
+          strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic, strProduct,
+          strCurrencyId);
     } else if (vars.commandIn("FIND")) {
       String strdateFrom = vars.getStringParameter("inpDateFrom");
       String strdateTo = vars.getStringParameter("inpDateTo");
@@ -91,8 +92,8 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo, String strcBpartnerId, String strmWarehouseId,
       String strcProjectId, String strmCategoryId, String strProjectkind, String strcRegionId,
-      String strProjectpublic, String strProduct, String strCurrencyId) throws IOException,
-      ServletException {
+      String strProjectpublic, String strProduct, String strCurrencyId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
@@ -101,8 +102,9 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     if (vars.commandIn("DEFAULT")) {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportSalesOrderInvoicedJasper").createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportSalesOrderInvoicedJasper")
+          .createXmlDocument();
 
       ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(),
           "ReportSalesOrderInvoicedJasper", false, "", "", "", false, "ad_reports", strReplaceWith,
@@ -157,9 +159,11 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
           ReportSalesOrderInvoicedData.bPartnerDescription(readOnlyCP, strcBpartnerId));
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "M_Warehouse_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-                "ReportSalesOrderInvoicedJasper"), Utility.getContext(readOnlyCP, vars,
-                "#User_Client", "ReportSalesOrderInvoicedJasper"), 0);
+            "M_Warehouse_ID", "", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportSalesOrderInvoicedJasper"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"),
+            0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
             "ReportSalesOrderInvoicedJasper", strmWarehouseId);
         xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
@@ -170,9 +174,11 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "M_Product_Category_ID", "", "", Utility.getContext(readOnlyCP, vars,
-                "#AccessibleOrgTree", "ReportSalesOrderInvoicedJasper"), Utility.getContext(
-                readOnlyCP, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"), 0);
+            "M_Product_Category_ID", "", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportSalesOrderInvoicedJasper"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"),
+            0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
             "ReportSalesOrderInvoicedJasper", strmCategoryId);
         xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
@@ -184,9 +190,11 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST",
-            "C_Projectkind_ID", "Projectkind", "", Utility.getContext(readOnlyCP, vars,
-                "#AccessibleOrgTree", "ReportSalesOrderInvoicedJasper"), Utility.getContext(
-                readOnlyCP, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"), 0);
+            "C_Projectkind_ID", "Projectkind", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportSalesOrderInvoicedJasper"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"),
+            0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
             "ReportSalesOrderInvoicedJasper", strProjectkind);
         xmlDocument.setData("reportC_PROJECTKIND", "liststructure", comboTableData.select(false));
@@ -197,9 +205,11 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "C_Region_ID", "", "C_Region of Country", Utility.getContext(readOnlyCP, vars,
-                "#AccessibleOrgTree", "ReportSalesOrderInvoicedJasper"), Utility.getContext(
-                readOnlyCP, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"), 0);
+            "C_Region_ID", "", "C_Region of Country",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportSalesOrderInvoicedJasper"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"),
+            0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
             "ReportSalesOrderInvoicedJasper", strcRegionId);
         xmlDocument.setData("reportC_REGIONID", "liststructure", comboTableData.select(false));
@@ -210,9 +220,11 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST",
-            "C_Project_Public_ID", "PublicPrivate", "", Utility.getContext(readOnlyCP, vars,
-                "#AccessibleOrgTree", "ReportSalesOrderInvoicedJasper"), Utility.getContext(
-                readOnlyCP, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"), 0);
+            "C_Project_Public_ID", "PublicPrivate", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportSalesOrderInvoicedJasper"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"),
+            0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
             "ReportSalesOrderInvoicedJasper", strProjectpublic);
         xmlDocument.setData("reportC_PROJECTPUBLIC", "liststructure", comboTableData.select(false));
@@ -224,9 +236,11 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-                "ReportSalesOrderInvoicedJasper"), Utility.getContext(readOnlyCP, vars,
-                "#User_Client", "ReportSalesOrderInvoicedJasper"), 0);
+            "C_Currency_ID", "", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportSalesOrderInvoicedJasper"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"),
+            0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
             "ReportSalesOrderInvoicedJasper", strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -244,13 +258,15 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
           strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId,
           strProjectpublic, strProduct);
       if (data == null || data.length == 0) {
-        xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_reports/ReportSalesOrderInvoicedPop", discard)
+        xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportSalesOrderInvoicedPop",
+                discard)
             .createXmlDocument();
         xmlDocument.setData("structure1", ReportSalesOrderInvoicedData.set());
       } else {
-        xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_reports/ReportSalesOrderInvoicedPop").createXmlDocument();
+        xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportSalesOrderInvoicedPop")
+            .createXmlDocument();
         xmlDocument.setData("structure1", data);
       }
       if (StringUtils.isNotEmpty(strmWarehouseId)) {
@@ -266,17 +282,13 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
             + " " + ReportSalesOrderInvoicedData.selectCategoryId(readOnlyCP, strmCategoryId);
       }
       if (StringUtils.isNotEmpty(strProjectkind)) {
-        strTitle += ", "
-            + Utility.messageBD(readOnlyCP, "ProjectType", vars.getLanguage())
-            + " "
+        strTitle += ", " + Utility.messageBD(readOnlyCP, "ProjectType", vars.getLanguage()) + " "
             + ReportSalesOrderInvoicedData.selectProjectkind(readOnlyCP, vars.getLanguage(),
                 strProjectkind);
       }
       if (StringUtils.isNotEmpty(strProjectpublic)) {
-        strTitle += ", "
-            + Utility.messageBD(readOnlyCP, "WithInitiativeType", vars.getLanguage())
-            + " "
-            + ReportSalesOrderInvoicedData.selectProjectpublic(readOnlyCP, vars.getLanguage(),
+        strTitle += ", " + Utility.messageBD(readOnlyCP, "WithInitiativeType", vars.getLanguage())
+            + " " + ReportSalesOrderInvoicedData.selectProjectpublic(readOnlyCP, vars.getLanguage(),
                 strProjectpublic);
       }
       if (StringUtils.isNotEmpty(strdateFrom)) {
@@ -345,6 +357,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportSalesOrderInvoicedJasper. This Servlet was made by Jon Alegría";
   } // end of getServletInfo() method

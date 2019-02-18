@@ -21,6 +21,8 @@ package org.openbravo.common.actionhandler;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
@@ -31,8 +33,6 @@ import org.openbravo.materialmgmt.InvoiceGeneratorFromGoodsShipment;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.json.JsonUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Action handler to generate Invoice from Goods Shipment

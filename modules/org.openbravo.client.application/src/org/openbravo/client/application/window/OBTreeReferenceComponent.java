@@ -30,6 +30,8 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -60,8 +62,6 @@ import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.DataSourceProperty.RefListEntry;
 import org.openbravo.service.json.JsonConstants;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * The backing bean for generating the OBTreeReference client-side representation.
@@ -99,9 +99,8 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
 
   public static String getAdditionalProperties(ReferencedTree referencedTree,
       boolean onlyDisplayField) {
-    if (onlyDisplayField
-        && (referencedTree.getDisplayfield() == null || !referencedTree.getDisplayfield()
-            .isActive())) {
+    if (onlyDisplayField && (referencedTree.getDisplayfield() == null
+        || !referencedTree.getDisplayfield().isActive())) {
       return "";
     }
     final StringBuilder extraProperties = new StringBuilder();
@@ -142,8 +141,8 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
       final String entityName = treeField.getRefTree().getTable().getName();
       final Entity entity = ModelProvider.getInstance().getEntity(entityName);
       final Property property = DalUtil.getPropertyFromPath(entity, treeField.getProperty());
-      Check.isNotNull(property, "Property " + treeField.getProperty() + " not found in Entity "
-          + entity);
+      Check.isNotNull(property,
+          "Property " + treeField.getProperty() + " not found in Entity " + entity);
       return property.getDomainType();
     }
     return null;
@@ -153,6 +152,7 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
   @ComponentProvider.Qualifier(DataSourceConstants.DS_COMPONENT_TYPE)
   private ComponentProvider componentProvider;
 
+  @Override
   public Module getModule() {
     return getReferencedTree().getModule();
   }
@@ -167,15 +167,18 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
     if (getReferencedTree().getDisplayfield() != null
         && getReferencedTree().getDisplayfield().isShowingrid()) {
       if (getReferencedTree().getDisplayfield().getProperty() != null) {
-        return getReferencedTree().getDisplayfield().getProperty()
+        return getReferencedTree().getDisplayfield()
+            .getProperty()
             .replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
       }
     }
     // a very common case, return the first selector field which is part of the
     // identifier
     if (getReferencedTree().getDisplayfield() == null
-        || (getReferencedTree().getDisplayfield().getProperty() != null && getReferencedTree()
-            .getDisplayfield().getProperty().equals(JsonConstants.IDENTIFIER))) {
+        || (getReferencedTree().getDisplayfield().getProperty() != null
+            && getReferencedTree().getDisplayfield()
+                .getProperty()
+                .equals(JsonConstants.IDENTIFIER))) {
       final Entity entity = getEntity();
       if (entity != null) {
         for (Property prop : entity.getIdentifierProperties()) {
@@ -194,8 +197,8 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
     if (referencedTree == null) {
       referencedTree = OBDal.getInstance().get(ReferencedTree.class, getId());
       Check.isNotNull(referencedTree, "No tree reference found using id " + getId());
-      Check.isTrue(referencedTree.isActive(), "Tree reference " + referencedTree
-          + " is not active anymore");
+      Check.isTrue(referencedTree.isActive(),
+          "Tree reference " + referencedTree + " is not active anymore");
     }
     return referencedTree;
   }
@@ -242,9 +245,11 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
    * @return true if there is at least one active field shown in grid
    */
   public String getShowSelectorGrid() {
-    if (OBDao.getFilteredCriteria(ReferencedTreeField.class,
-        Restrictions.eq(ReferencedTreeField.PROPERTY_REFTREE, getReferencedTree()),
-        Restrictions.eq(ReferencedTreeField.PROPERTY_SHOWINGRID, true)).count() > 0) {
+    if (OBDao
+        .getFilteredCriteria(ReferencedTreeField.class,
+            Restrictions.eq(ReferencedTreeField.PROPERTY_REFTREE, getReferencedTree()),
+            Restrictions.eq(ReferencedTreeField.PROPERTY_SHOWINGRID, true))
+        .count() > 0) {
       return Boolean.TRUE.toString();
     }
     return Boolean.FALSE.toString();
@@ -261,8 +266,8 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
   public String getDataSourceJavascript() {
     final String dataSourceId;
 
-    Check.isNotNull(getReferencedTree().getTable(), "The table is null for this tree reference: "
-        + referencedTree);
+    Check.isNotNull(getReferencedTree().getTable(),
+        "The table is null for this tree reference: " + referencedTree);
     dataSourceId = getReferencedTree().getTable().getName();
 
     final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
@@ -333,9 +338,8 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
       if (popupGrid && !treeField.isShowingrid()) {
         continue;
       }
-      if (pickList
-          && (!treeField.isShowinpicklist() || treeField.equals(getReferencedTree()
-              .getDisplayfield()))) {
+      if (pickList && (!treeField.isShowinpicklist()
+          || treeField.equals(getReferencedTree().getDisplayfield()))) {
         continue;
       }
       final LocalTreeField LocalTreeField = new LocalTreeField();
@@ -455,10 +459,10 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
           }
         }
         if (column != null && column.getReferenceSearchKey() != null) {
-          Set<String> allowedValues = DataSourceProperty.getAllowedValues(column
-              .getReferenceSearchKey());
-          List<RefListEntry> entries = DataSourceProperty.createValueMap(allowedValues, column
-              .getReferenceSearchKey().getId());
+          Set<String> allowedValues = DataSourceProperty
+              .getAllowedValues(column.getReferenceSearchKey());
+          List<RefListEntry> entries = DataSourceProperty.createValueMap(allowedValues,
+              column.getReferenceSearchKey().getId());
           JSONObject jsonValueMap = new JSONObject();
           for (RefListEntry entry : entries) {
             try {

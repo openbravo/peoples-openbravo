@@ -32,6 +32,8 @@ import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ObjectNotFoundException;
@@ -47,8 +49,6 @@ import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Is responsible for converting Openbravo business objects ({@link BaseOBObject} to a json
@@ -174,7 +174,8 @@ public class DataToJsonConverter {
         }
         return jsonObject;
       }
-      final boolean isDerivedReadable = OBContext.getOBContext().getEntityAccessChecker()
+      final boolean isDerivedReadable = OBContext.getOBContext()
+          .getEntityAccessChecker()
           .isDerivedReadable(bob.getEntity());
 
       for (Property property : bob.getEntity().getProperties()) {
@@ -224,8 +225,8 @@ public class DataToJsonConverter {
           addBaseOBObject(jsonObject, additonalPropertyObject, additionalProperty,
               additonalPropertyObject.getReferencedProperty(), (BaseOBObject) value);
         } else {
-          final Property property = DalUtil
-              .getPropertyFromPath(bob.getEntity(), additionalProperty);
+          final Property property = DalUtil.getPropertyFromPath(bob.getEntity(),
+              additionalProperty);
           // identifier
           if (additionalProperty.endsWith(JsonConstants.IDENTIFIER)) {
             jsonObject.put(replaceDots(additionalProperty), value);
@@ -263,7 +264,8 @@ public class DataToJsonConverter {
   }
 
   private void addBaseOBObject(JSONObject jsonObject, Property referencingProperty,
-      String propertyName, Property referencedProperty, BaseOBObject obObject) throws JSONException {
+      String propertyName, Property referencedProperty, BaseOBObject obObject)
+      throws JSONException {
     String identifier = null;
     // jsonObject.put(propertyName, toJsonObject(obObject, DataResolvingMode.SHORT));
     if (referencedProperty != null) {
@@ -308,8 +310,7 @@ public class DataToJsonConverter {
               identifier = " - " + identifier;
             }
           } else {
-            log.warn("Entity "
-                + obObject.getEntity().getName()
+            log.warn("Entity " + obObject.getEntity().getName()
                 + " does not have a searchKey property, the flag Displayed Value should not be used");
           }
         }
@@ -318,9 +319,11 @@ public class DataToJsonConverter {
             + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, identifier);
       } else if (!displayColumnProperty.isPrimitive()) {
         // Displaying identifier for non primitive properties
-        jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
-            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, ((BaseOBObject) obObject
-            .get(referencingProperty.getDisplayPropertyName())).getIdentifier());
+        jsonObject.put(
+            propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR) + DalUtil.FIELDSEPARATOR
+                + JsonConstants.IDENTIFIER,
+            ((BaseOBObject) obObject.get(referencingProperty.getDisplayPropertyName()))
+                .getIdentifier());
       } else {
         Object referenceObject = obObject.get(referencingProperty.getDisplayPropertyName(),
             OBContext.getOBContext().getLanguage(), (String) obObject.getId());
@@ -413,8 +416,9 @@ public class DataToJsonConverter {
       return;
     }
     for (String selectedProp : selectedPropertiesStr.split(",")) {
-      if (!selectedProp.isEmpty())
+      if (!selectedProp.isEmpty()) {
         selectedProperties.add(selectedProp);
+      }
     }
   }
 

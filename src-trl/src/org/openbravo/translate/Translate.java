@@ -99,10 +99,11 @@ public class Translate extends DefaultHandler {
   public Translate(String _fileTermination) throws ServletException {
     extension = _fileTermination;
     boolean isHtml = extension.toLowerCase().endsWith("html");
-    if (isHtml)
+    if (isHtml) {
       parser = new org.cyberneko.html.parsers.SAXParser();
-    else
+    } else {
       parser = new SAXParser();
+    }
     parser.setEntityResolver(new LocalEntityResolver());
     parser.setContentHandler(this);
   }
@@ -126,16 +127,16 @@ public class Translate extends DefaultHandler {
     init(argv[0]);
     Translate translate;
     switch (argv[1]) {
-    case "clean":
-      log.debug("clean AD_TEXTINTERFACES");
-      translate = new Translate();
-      translate.clean();
-      return;
-    case "remove":
-      log.debug("remove AD_TEXTINTERFACES");
-      translate = new Translate();
-      translate.remove();
-      return;
+      case "clean":
+        log.debug("clean AD_TEXTINTERFACES");
+        translate = new Translate();
+        translate.clean();
+        return;
+      case "remove":
+        log.debug("remove AD_TEXTINTERFACES");
+        translate = new Translate();
+        translate.remove();
+        return;
     }
 
     Path obPath = Paths.get(argv[1]).normalize();
@@ -209,8 +210,10 @@ public class Translate extends DefaultHandler {
       public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         if (matcher.matches(file)) {
           if (!canTranslateModule()) {
-            log.error("  Module is not set as translatable or has not defined language, but has translatable elements");
-            log.error("  No translations will be inserted. Set the module as 'is translation requiered' and select a language");
+            log.error(
+                "  Module is not set as translatable or has not defined language, but has translatable elements");
+            log.error(
+                "  No translations will be inserted. Set the module as 'is translation requiered' and select a language");
             log.error("  then execute translation again.");
             canTranslateModule = false;
             return FileVisitResult.TERMINATE;
@@ -365,8 +368,9 @@ public class Translate extends DefaultHandler {
   public void characters(char[] ch, int start, int length) {
     final String chars = new String(ch, start, length);
     log.debug("characters: " + chars);
-    if (translationText == null)
+    if (translationText == null) {
       translationText = new StringBuilder();
+    }
     translationText.append(chars);
   }
 
@@ -400,13 +404,15 @@ public class Translate extends DefaultHandler {
         if (pos != -1) {
           translate(txt.substring(0, pos), true);
           txt = txt.substring(pos + 1);
-        } else
+        } else {
           break;
+        }
         pos = txt.indexOf("\"");
       }
       return;
     }
-    boolean translatableTxt = !(txt.equals("") || txt.toLowerCase().startsWith("xx") || isNumeric(txt));
+    boolean translatableTxt = !(txt.equals("") || txt.toLowerCase().startsWith("xx")
+        || isNumeric(txt));
     if (!translatableTxt) {
       return;
     }

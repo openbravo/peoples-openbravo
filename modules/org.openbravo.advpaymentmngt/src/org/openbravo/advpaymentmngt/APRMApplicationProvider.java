@@ -35,20 +35,21 @@ public class APRMApplicationProvider extends BaseComponentProvider {
     return null;
   }
 
+  @Override
   public List<ComponentResource> getGlobalComponentResources() {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.advpaymentmngt/js/ob-aprm-utilities.js", true));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.advpaymentmngt/js/ob-aprm-addPayment.js", true));
+    globalResources.add(
+        createStaticResource("web/org.openbravo.advpaymentmngt/js/ob-aprm-utilities.js", true));
+    globalResources.add(
+        createStaticResource("web/org.openbravo.advpaymentmngt/js/ob-aprm-addPayment.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.advpaymentmngt/js/ob-aprm-matchStatement.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.advpaymentmngt/js/ob-aprm-addTransaction.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.advpaymentmngt/js/ob-aprm-findTransaction.js", true));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.advpaymentmngt/js/ob-aprm-fundsTransfer.js", true));
+    globalResources.add(
+        createStaticResource("web/org.openbravo.advpaymentmngt/js/ob-aprm-fundsTransfer.js", true));
     return globalResources;
   }
 }

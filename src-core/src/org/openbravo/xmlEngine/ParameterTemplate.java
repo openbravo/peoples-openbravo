@@ -24,17 +24,20 @@ class ParameterTemplate implements XmlComponentTemplate, IDComponent {
   DecimalFormat formatOutput;
   DecimalFormat formatSimple;
 
+  @Override
   public int type() {
     return PARAMETER;
   }
 
   public ParameterValue createParameterValue(XmlDocument xmlDocument) {
     ParameterValue parameterValue = xmlDocument.hasParameterValue.get(strName);
-    if (parameterValue == null)
+    if (parameterValue == null) {
       parameterValue = new ParameterValue(this, xmlDocument);
+    }
     return parameterValue;
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
     return createParameterValue(xmlDocument);
   }

@@ -48,7 +48,9 @@ public interface ModuleLicenseRestrictions {
    */
   public ActivationMsg getActivationMessage(ActivationKey activationKey, String lang);
 
-  /** Provides the HTML to be injected in Instance Activation window to perform additional actions */
+  /**
+   * Provides the HTML to be injected in Instance Activation window to perform additional actions
+   */
   public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine);
 
   /**

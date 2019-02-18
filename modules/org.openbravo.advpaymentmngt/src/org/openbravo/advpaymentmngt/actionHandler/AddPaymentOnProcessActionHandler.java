@@ -22,6 +22,8 @@ package org.openbravo.advpaymentmngt.actionHandler;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -32,8 +34,6 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class AddPaymentOnProcessActionHandler extends BaseActionHandler {
   private static Logger log = LogManager.getLogger();
@@ -47,15 +47,15 @@ public class AddPaymentOnProcessActionHandler extends BaseActionHandler {
       final JSONObject jsonData = new JSONObject(data);
       boolean isReceipt = "true".equals(jsonData.getString("issotrx"));
       String strFinFinancialAccountId = jsonData.getString("finFinancialAccount");
-      FIN_FinancialAccount finFinancialAccount = OBDal.getInstance().get(
-          FIN_FinancialAccount.class, strFinFinancialAccountId);
+      FIN_FinancialAccount finFinancialAccount = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, strFinFinancialAccountId);
       String strBusinessPartnerId = null;
 
       if (jsonData.get("receivedFrom") != JSONObject.NULL) {
 
         strBusinessPartnerId = jsonData.getString("receivedFrom");
-        BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-            strBusinessPartnerId);
+        BusinessPartner businessPartner = OBDal.getInstance()
+            .get(BusinessPartner.class, strBusinessPartnerId);
         if (FIN_Utility.isBlockedBusinessPartner(businessPartner.getId(), isReceipt, 4)) {
           String strThebusinessPartner = OBMessageUtils.parseTranslation("@ThebusinessPartner@");
           String strBusinessPartnerBlocked = OBMessageUtils
@@ -99,8 +99,8 @@ public class AddPaymentOnProcessActionHandler extends BaseActionHandler {
         for (int i = 0; i < selectedPSDs.length(); i++) {
           JSONObject psdRow = selectedPSDs.getJSONObject(i);
           strBusinessPartnerId = psdRow.getString("businessPartner");
-          BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-              strBusinessPartnerId);
+          BusinessPartner businessPartner = OBDal.getInstance()
+              .get(BusinessPartner.class, strBusinessPartnerId);
           if (FIN_Utility.isBlockedBusinessPartner(businessPartner.getId(), isReceipt, 4)) {
             String strThebusinessPartner = OBMessageUtils.parseTranslation("@ThebusinessPartner@");
             String strBusinessPartnerBlocked = OBMessageUtils

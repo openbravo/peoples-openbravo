@@ -152,8 +152,8 @@ public class GenerateEntitiesTask extends Task {
 
         outWriter = null;
         try {
-          outWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
-              "UTF-8"));
+          outWriter = new BufferedWriter(
+              new OutputStreamWriter(new FileOutputStream(outFile), "UTF-8"));
           Map<String, Object> data = new HashMap<String, Object>();
           data.put("entity", entity);
           processTemplate(template, data, outWriter);
@@ -177,8 +177,8 @@ public class GenerateEntitiesTask extends Task {
         new File(outFile.getParent()).mkdirs();
         outWriter = null;
         try {
-          outWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
-              "UTF-8"));
+          outWriter = new BufferedWriter(
+              new OutputStreamWriter(new FileOutputStream(outFile), "UTF-8"));
           Map<String, Object> data = new HashMap<String, Object>();
           data.put("entity", entity);
 
@@ -227,8 +227,8 @@ public class GenerateEntitiesTask extends Task {
     // first check if there is a directory
     // already in the src-gen
     // if not then regenerate anyhow
-    final File modelDir = new File(getSrcGenPath(), "org" + File.separator + "openbravo"
-        + File.separator + "model" + File.separator + "ad");
+    final File modelDir = new File(getSrcGenPath(),
+        "org" + File.separator + "openbravo" + File.separator + "model" + File.separator + "ad");
     if (!modelDir.exists()) {
       return true;
     }

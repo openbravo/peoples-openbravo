@@ -213,8 +213,8 @@ public class TaxesTestData130 extends TaxesTestData {
         "-147312.00", "-39037.68", "-294624.00", "-78075.36", "-294624.00", "-78075.36" });
     taxes.put(TaxDataConstants.TAX_IEPS_53_16, new String[] { "-37869.01", "-6059.04", "-37869.01",
         "-6059.04", "-75738.03", "-12118.08", "-75738.03", "-12118.08" });
-    taxes.put(TaxDataConstants.TAX_IEPS_53_53, new String[] { "-24750.99", "-13118.02",
-        "-24750.99", "-13118.02", "-49501.98", "-26236.05", "-49501.98", "-26236.05" });
+    taxes.put(TaxDataConstants.TAX_IEPS_53_53, new String[] { "-24750.99", "-13118.02", "-24750.99",
+        "-13118.02", "-49501.98", "-26236.05", "-49501.98", "-26236.05" });
     setDoctaxes(taxes);
 
     // Amounts for document level are provided

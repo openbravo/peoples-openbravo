@@ -98,7 +98,8 @@ public class ManagePrereservationActionHandler extends BaseProcessActionHandler 
 
   private void managePrereservedStockLines(JSONObject jsonRequest, OrderLine pol,
       List<String> idList) throws JSONException {
-    JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+    JSONArray selectedLines = jsonRequest.getJSONObject("_params")
+        .getJSONObject("grid")
         .getJSONArray("_selection");
     // if no lines selected don't do anything.
     if (selectedLines.length() == 0) {
@@ -109,9 +110,10 @@ public class ManagePrereservationActionHandler extends BaseProcessActionHandler 
       JSONObject selectedLine = selectedLines.getJSONObject(i);
       log.debug(selectedLine);
       ReservationStock resStock = null;
-      String strReservationStockId = selectedLine.get(
-          PrereservationManualPickEdit.PROPERTY_RESERVATIONSTOCK).equals(null) ? "" : selectedLine
-          .getString(PrereservationManualPickEdit.PROPERTY_RESERVATIONSTOCK);
+      String strReservationStockId = selectedLine
+          .get(PrereservationManualPickEdit.PROPERTY_RESERVATIONSTOCK)
+          .equals(null) ? ""
+              : selectedLine.getString(PrereservationManualPickEdit.PROPERTY_RESERVATIONSTOCK);
       boolean existsReservationStock = StringUtils.isNotBlank(strReservationStockId);
 
       if (existsReservationStock) {

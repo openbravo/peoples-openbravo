@@ -27,8 +27,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.Invoice;
 
-public class DocLine_FINFinAccTransaction extends
-    DocLineCashVATReady_PaymentTransactionReconciliation {
+public class DocLine_FINFinAccTransaction
+    extends DocLineCashVATReady_PaymentTransactionReconciliation {
   static Logger log4jDocLine_FINFinAccTransaction = LogManager.getLogger();
 
   String Line_ID = "";
@@ -231,6 +231,7 @@ public class DocLine_FINFinAccTransaction extends
     // m_Record_Id2 = Line_ID;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for accounting";
   } // end of getServletInfo() method

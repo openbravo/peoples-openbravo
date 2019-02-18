@@ -40,12 +40,12 @@ public class SE_Payment_FinAccount extends SimpleCallout {
   protected void execute(CalloutInfo info) throws ServletException {
     VariablesSecureApp vars = info.vars;
     String financialAccountId = vars.getStringParameter("inpfinFinancialAccountId");
-    FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-        financialAccountId);
+    FIN_FinancialAccount financialAccount = OBDal.getInstance()
+        .get(FIN_FinancialAccount.class, financialAccountId);
     if (financialAccount != null) {
       info.addResult("inpcCurrencyId", financialAccount.getCurrency().getId().toString());
-      info.addResult("inpfinancialaccountcurrencyid", financialAccount.getCurrency().getId()
-          .toString());
+      info.addResult("inpfinancialaccountcurrencyid",
+          financialAccount.getCurrency().getId().toString());
 
       info.addResult("inpfinaccTxnConvertRate", BigDecimal.ONE);
 
@@ -63,8 +63,8 @@ public class SE_Payment_FinAccount extends SimpleCallout {
 
     String srtPaymentMethodId = info.getStringParameter("inpfinPaymentmethodId",
         IsIDFilter.instance);
-    FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-        srtPaymentMethodId);
+    FIN_PaymentMethod paymentMethod = OBDal.getInstance()
+        .get(FIN_PaymentMethod.class, srtPaymentMethodId);
 
     boolean isMultiCurrencyEnabled = false;
     if (paymentMethod != null && financialAccount != null) {

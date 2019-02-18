@@ -50,8 +50,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportProjectProgress extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Use ReadOnly Connection Provider
@@ -80,8 +81,8 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
           "");
       String strProjectStatus = vars.getInGlobalVariable("inpProjectstatus",
           "ReportProjectProgress|Projectstatus", "", valueFilter);
-      String strBPartner = vars.getGlobalVariable("inpcBPartnerId",
-          "ReportProjectProgress|Partner", "");
+      String strBPartner = vars.getGlobalVariable("inpcBPartnerId", "ReportProjectProgress|Partner",
+          "");
       String strResponsible = vars.getGlobalVariable("inpResponsible",
           "ReportProjectProgress|Responsible", "");
 
@@ -144,8 +145,9 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportProjectProgress").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProjectProgress")
+        .createXmlDocument();
 
     // Use ReadOnly Connection Provider
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
@@ -217,8 +219,8 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
         vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormatEnding", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("endingDateTo", strEndingDateTo);
-    xmlDocument
-        .setParameter("dateTodisplayFormatEnding", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTodisplayFormatEnding",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormatEnding", vars.getSessionValue("#AD_SqlDateFormat"));
 
     xmlDocument.setParameter("paramOlderFirst", strOlderFirst);
@@ -230,9 +232,9 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
     // Project selector
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Project_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportProjectProgress"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportProjectProgress"), 0);
+          "C_Project_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProjectProgress"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProgress"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportProjectProgress",
           strProject);
       xmlDocument.setData("reportC_Project_ID", "liststructure", comboTableData.select(false));
@@ -244,9 +246,9 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
     // Project Status multiple selector
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST",
-          "C_Project_status", "ProjectStatus", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportProjectProgress"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportProjectProgress"), 0);
+          "C_Project_status", "ProjectStatus", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProjectProgress"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProgress"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportProjectProgress",
           strProjectStatus);
       xmlDocument.setData("reportC_PROJECTSTATUS", "liststructure", comboTableData.select(false));
@@ -258,9 +260,9 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
     // Person in Charge drop-down list
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLE",
-          "Responsible_ID", "Responsible employee", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportProjectProgress"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportProjectProgress"), 0);
+          "Responsible_ID", "Responsible employee", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProjectProgress"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProgress"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportProjectProgress",
           strResponsible);
       xmlDocument.setData("reportResponsible", "liststructure", comboTableData.select(false));
@@ -277,14 +279,16 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
       String strRefDate, String strOlderFirst, String strStartDateFrom, String strStartDateTo,
       String strContractDateFrom, String strContractDateTo, String strEndingDateFrom,
       String strEndingDateTo, String strProject, String strProjectStatus, String strBPartner,
-      String strResponsible, String strOutput) throws IOException, ServletException, ParseException {
+      String strResponsible, String strOutput)
+      throws IOException, ServletException, ParseException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataHtml");
     }
 
     String discard[] = { "discard" };
 
-    String strOlderPhasesTasksFirst = StringUtils.isEmpty(strOlderFirst) ? ", PRP.SEQNO DESC, PRT.SEQNO DESC"
+    String strOlderPhasesTasksFirst = StringUtils.isEmpty(strOlderFirst)
+        ? ", PRP.SEQNO DESC, PRT.SEQNO DESC"
         : ", PRP.SEQNO ASC, PRT.SEQNO ASC";
 
     // Use ReadOnly Connection Provider
@@ -357,7 +361,8 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
             if (Utility.isBiggerDate(data[i].contractdate, data[i].startingdate, DateFormatter)) {
               data[i].projectcontractduration = Utility.calculateLaborDays(data[i].startingdate,
                   data[i].contractdate, DateFormatter);
-              Integer ProjectContractDuration = Integer.parseInt(data[i].projectcontractduration) + 1;
+              Integer ProjectContractDuration = Integer.parseInt(data[i].projectcontractduration)
+                  + 1;
               data[i].projectcontractduration = ProjectContractDuration.toString();
             } else if (StringUtils.equals(data[i].startingdate, data[i].contractdate)) {
               data[i].projectcontractduration = "1";
@@ -377,9 +382,9 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
             int decimalPlace = 2;
             BigDecimal daysElapsed = new BigDecimal(strDaysElapsed);
             BigDecimal contractDuration = new BigDecimal(strProjectContractDuration);
-            BigDecimal timeBurned = ((daysElapsed.multiply(new BigDecimal("100"))).divide(
-                contractDuration, 12, RoundingMode.HALF_EVEN)).setScale(decimalPlace,
-                RoundingMode.UP);
+            BigDecimal timeBurned = ((daysElapsed.multiply(new BigDecimal("100")))
+                .divide(contractDuration, 12, RoundingMode.HALF_EVEN)).setScale(decimalPlace,
+                    RoundingMode.UP);
             data[i].timeburned = timeBurned.toPlainString();
           } else {
             data[i].timeburned = "";
@@ -393,11 +398,10 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
             if (Utility.isBiggerDate(data[i].endingdate, data[i].contractdate, DateFormatter)) {
               data[i].daysdelayed = Utility.calculateLaborDays(data[i].contractdate,
                   data[i].endingdate, DateFormatter);
-            } else if (Utility
-                .isBiggerDate(data[i].contractdate, data[i].endingdate, DateFormatter)) {
-              data[i].daysdelayed = "-"
-                  + Utility.calculateLaborDays(data[i].endingdate, data[i].contractdate,
-                      DateFormatter);
+            } else if (Utility.isBiggerDate(data[i].contractdate, data[i].endingdate,
+                DateFormatter)) {
+              data[i].daysdelayed = "-" + Utility.calculateLaborDays(data[i].endingdate,
+                  data[i].contractdate, DateFormatter);
             } else if (StringUtils.equals(data[i].endingdate, data[i].contractdate)) {
               data[i].daysdelayed = "0";
             } else {
@@ -454,9 +458,8 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
                   data[i].phaseendingdate, DateFormatter);
             } else if (Utility.isBiggerDate(data[i].phasecontractdate, data[i].phaseendingdate,
                 DateFormatter)) {
-              data[i].phasedaysdelayed = "-"
-                  + Utility.calculateLaborDays(data[i].phaseendingdate, data[i].phasecontractdate,
-                      DateFormatter);
+              data[i].phasedaysdelayed = "-" + Utility.calculateLaborDays(data[i].phaseendingdate,
+                  data[i].phasecontractdate, DateFormatter);
             } else if (StringUtils.equals(data[i].phaseendingdate, data[i].phasecontractdate)) {
               data[i].phasedaysdelayed = "0";
             } else {
@@ -506,9 +509,8 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
                   data[i].taskendingdate, DateFormatter);
             } else if (Utility.isBiggerDate(data[i].taskcontractdate, data[i].taskendingdate,
                 DateFormatter)) {
-              data[i].taskdaysdelayed = "-"
-                  + Utility.calculateLaborDays(data[i].taskendingdate, data[i].taskcontractdate,
-                      DateFormatter);
+              data[i].taskdaysdelayed = "-" + Utility.calculateLaborDays(data[i].taskendingdate,
+                  data[i].taskcontractdate, DateFormatter);
             } else if (StringUtils.equals(data[i].taskendingdate, data[i].taskcontractdate)) {
               data[i].taskdaysdelayed = "0";
             } else {
@@ -525,7 +527,8 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
 
         // Calculation of completion percentage and cumulative days
         // delays of the project
-        if ((i == data.length - 1) || !StringUtils.equals(data[i].projectid, data[i + 1].projectid)) {
+        if ((i == data.length - 1)
+            || !StringUtils.equals(data[i].projectid, data[i + 1].projectid)) {
           BigDecimal completionPerc = BigDecimal.ZERO;
           Integer totalContractDuration = 0;
           Integer completedContractDuration = 0;
@@ -605,9 +608,9 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
               // Calculate the Completion Percentage as the
               // quotient between CompletedContractDuration and
               // TotalContractDuration
-              completionPerc = (new BigDecimal(completedContractDuration).multiply(new BigDecimal(
-                  "100"))).divide(new BigDecimal(totalContractDuration), 12,
-                  RoundingMode.HALF_EVEN);
+              completionPerc = (new BigDecimal(completedContractDuration)
+                  .multiply(new BigDecimal("100"))).divide(new BigDecimal(totalContractDuration),
+                      12, RoundingMode.HALF_EVEN);
             } else {
               // Calculate the Completion Percentage as the
               // quotient between CompletedItems and TotalItems
@@ -644,6 +647,7 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
 
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportProjectProgress";
   } // end of getServletInfo() method

@@ -116,8 +116,8 @@ public class CostingUtils {
       if (!transaction.isCostCalculated()) {
         // Transaction hasn't been calculated yet.
         if (calculateTrx) {
-          log4j.debug("  *** Cost for transaction will be calculated."
-              + transaction.getIdentifier());
+          log4j.debug(
+              "  *** Cost for transaction will be calculated." + transaction.getIdentifier());
           CostingServer transactionCost = new CostingServer(transaction);
           transactionCost.process();
           return transactionCost.getTransactionCost();
@@ -157,12 +157,12 @@ public class CostingUtils {
     if (bp != null) {
       pricelist = bp.getPurchasePricelist();
     }
-    ProductPrice pp = FinancialUtils.getProductPrice(product, movementDate, false, pricelist,
-        false, false);
+    ProductPrice pp = FinancialUtils.getProductPrice(product, movementDate, false, pricelist, false,
+        false);
     if (stdCost == null && pp == null) {
-      throw new OBException("@NoPriceListOrStandardCostForProduct@ @Organization@: "
-          + org.getName() + ", @Product@: " + product.getSearchKey() + ", @Date@: "
-          + OBDateUtils.formatDate(costDate));
+      throw new OBException(
+          "@NoPriceListOrStandardCostForProduct@ @Organization@: " + org.getName() + ", @Product@: "
+              + product.getSearchKey() + ", @Date@: " + OBDateUtils.formatDate(costDate));
     } else if (stdCost != null && pp == null) {
       BigDecimal standardCost = getStandardCost(product, org, costDate, costDimensions, currency);
       return qty.abs().multiply(standardCost);
@@ -172,8 +172,9 @@ public class CostingUtils {
         // no conversion needed
         return cost;
       }
-      return FinancialUtils.getConvertedAmount(cost, pp.getPriceListVersion().getPriceList()
-          .getCurrency(), currency, movementDate, org, FinancialUtils.PRECISION_STANDARD);
+      return FinancialUtils.getConvertedAmount(cost,
+          pp.getPriceListVersion().getPriceList().getCurrency(), currency, movementDate, org,
+          FinancialUtils.PRECISION_STANDARD);
 
     } else if (stdCost != null && pp != null
         && stdCost.getStartingDate().before(pp.getPriceListVersion().getValidFromDate())) {
@@ -182,8 +183,9 @@ public class CostingUtils {
         // no conversion needed
         return cost;
       }
-      return FinancialUtils.getConvertedAmount(cost, pp.getPriceListVersion().getPriceList()
-          .getCurrency(), currency, movementDate, org, FinancialUtils.PRECISION_STANDARD);
+      return FinancialUtils.getConvertedAmount(cost,
+          pp.getPriceListVersion().getPriceList().getCurrency(), currency, movementDate, org,
+          FinancialUtils.PRECISION_STANDARD);
     } else {
       BigDecimal standardCost = getStandardCost(product, org, costDate, costDimensions, currency);
       return qty.abs().multiply(standardCost);
@@ -228,8 +230,8 @@ public class CostingUtils {
       throw new OBException("@NoStandardCostDefined@ @Organization@:" + org.getName()
           + ", @Product@: " + product.getName() + ", @Date@: " + OBDateUtils.formatDate(date));
     }
-    return FinancialUtils.getConvertedAmount(stdCost.getCost(), stdCost.getCurrency(),
-        convCurrency, date, org, FinancialUtils.PRECISION_COSTING);
+    return FinancialUtils.getConvertedAmount(stdCost.getCost(), stdCost.getCurrency(), convCurrency,
+        date, org, FinancialUtils.PRECISION_COSTING);
   }
 
   /**
@@ -258,7 +260,8 @@ public class CostingUtils {
    */
   public static boolean hasStandardCostDefinition(Product product, Organization org, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions, boolean recheckWithoutDimensions) {
-    return getStandardCostDefinition(product, org, date, costDimensions, recheckWithoutDimensions) != null;
+    return getStandardCostDefinition(product, org, date, costDimensions,
+        recheckWithoutDimensions) != null;
   }
 
   /**
@@ -292,8 +295,8 @@ public class CostingUtils {
       return stdCost;
     } else {
       // If no cost is found, search valid legacy cost
-      return getStandardCostDefinition(product, org, date, costDimensions,
-          recheckWithoutDimensions, "ST");
+      return getStandardCostDefinition(product, org, date, costDimensions, recheckWithoutDimensions,
+          "ST");
     }
   }
 
@@ -322,8 +325,8 @@ public class CostingUtils {
     obcCosting.add(Restrictions.eq(Costing.PROPERTY_COSTTYPE, costtype));
     obcCosting.add(Restrictions.isNotNull(Costing.PROPERTY_COST));
     if (costDimensions.get(CostDimension.Warehouse) != null) {
-      obcCosting.add(Restrictions.eq(Costing.PROPERTY_WAREHOUSE,
-          costDimensions.get(CostDimension.Warehouse)));
+      obcCosting.add(
+          Restrictions.eq(Costing.PROPERTY_WAREHOUSE, costDimensions.get(CostDimension.Warehouse)));
     }
     obcCosting.add(Restrictions.eq(Costing.PROPERTY_ORGANIZATION, org));
     obcCosting.setFilterOnReadableOrganization(false);
@@ -373,7 +376,8 @@ public class CostingUtils {
   public static BigDecimal getCurrentStock(Product product, Organization costorg, Date dateTo,
       HashMap<CostDimension, BaseOBObject> costDimensions, Currency currency, Costing costing) {
     // Get child tree of organizations.
-    Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
+    Set<String> orgs = OBContext.getOBContext()
+        .getOrganizationStructureProvider()
         .getChildTree(costorg.getId(), true);
     CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg, dateTo);
 
@@ -398,26 +402,26 @@ public class CostingUtils {
           + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
       select.append(" and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
       if (costingRule.isBackdatedTransactionsFixed()) {
-        select.append("   and  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-            + " >= :fixbdt");
+        select.append(
+            "   and  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= :fixbdt");
         select.append("  and (");
         select.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :mvtdate");
         select.append("   or (");
         select.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
       }
-      select.append(" and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " > :dateFrom");
-      select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " = :dateFrom");
+      select.append(
+          " and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :dateFrom");
+      select.append(
+          " or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :dateFrom");
       // If the costing Transaction is an M- exclude the M+ Transactions with same movementDate and
       // TrxProcessDate due to how data is going to be ordered in further queries using the priority
       if (costing.getInventoryTransaction().getMovementType().equals("M-")) {
-        select.append(" and (( trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE
-            + " <> 'M+' and trxtype." + CostAdjustmentUtils.propADListPriority
-            + " > :ctrxtypeprio)");
+        select.append(
+            " and (( trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE + " <> 'M+' and trxtype."
+                + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio)");
       } else {
-        select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority
-            + " > :ctrxtypeprio");
+        select
+            .append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio");
       }
       select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :ctrxtypeprio");
       select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :ctrxqty");
@@ -438,7 +442,8 @@ public class CostingUtils {
     } else {
       select.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     }
-    Query<BigDecimal> trxQry = OBDal.getInstance().getSession()
+    Query<BigDecimal> trxQry = OBDal.getInstance()
+        .getSession()
         .createQuery(select.toString(), BigDecimal.class);
     trxQry.setParameter("product", product.getId());
     trxQry.setParameter("dateTo", dateTo);
@@ -494,11 +499,11 @@ public class CostingUtils {
    * dimensions and for the given currency. It only takes transactions that have its cost
    * calculated.
    */
-  public static BigDecimal getCurrentValuedStock(Product product, Organization costorg,
-      Date dateTo, HashMap<CostDimension, BaseOBObject> costDimensions, Currency currency,
-      Costing costing) {
+  public static BigDecimal getCurrentValuedStock(Product product, Organization costorg, Date dateTo,
+      HashMap<CostDimension, BaseOBObject> costDimensions, Currency currency, Costing costing) {
     // Get child tree of organizations.
-    Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
+    Set<String> orgs = OBContext.getOBContext()
+        .getOrganizationStructureProvider()
         .getChildTree(costorg.getId(), true);
     CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg, dateTo);
 
@@ -530,26 +535,26 @@ public class CostingUtils {
           + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
       select.append(" and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
       if (costingRule.isBackdatedTransactionsFixed()) {
-        select.append("   and  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-            + " >= :fixbdt");
+        select.append(
+            "   and  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= :fixbdt");
         select.append("  and (");
         select.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :mvtdate");
         select.append("   or (");
         select.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
       }
-      select.append(" and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " > :dateFrom");
-      select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " = :dateFrom");
+      select.append(
+          " and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :dateFrom");
+      select.append(
+          " or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :dateFrom");
       // If the costing Transaction is an M- exclude the M+ Transactions with same movementDate and
       // TrxProcessDate due to how data is going to be ordered in further queries using the priority
       if (costing.getInventoryTransaction().getMovementType().equals("M-")) {
-        select.append(" and (( trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE
-            + " <> 'M+' and trxtype." + CostAdjustmentUtils.propADListPriority
-            + " > :ctrxtypeprio)");
+        select.append(
+            " and (( trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE + " <> 'M+' and trxtype."
+                + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio)");
       } else {
-        select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority
-            + " > :ctrxtypeprio");
+        select
+            .append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio");
       }
       select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :ctrxtypeprio");
       select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :ctrxqty");
@@ -573,7 +578,8 @@ public class CostingUtils {
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY + ",");
     select.append(" tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE);
 
-    Query<Object[]> trxQry = OBDal.getInstance().getSession()
+    Query<Object[]> trxQry = OBDal.getInstance()
+        .getSession()
         .createQuery(select.toString(), Object[].class);
     trxQry.setParameter("product", product.getId());
     trxQry.setParameter("dateTo", dateTo);
@@ -636,17 +642,17 @@ public class CostingUtils {
   public static BusinessPartner getTrxBusinessPartner(MaterialTransaction transaction,
       TrxType trxType) {
     switch (trxType) {
-    case Receipt:
-    case ReceiptNegative:
-    case ReceiptReturn:
-    case ReceiptVoid:
-    case Shipment:
-    case ShipmentNegative:
-    case ShipmentReturn:
-    case ShipmentVoid:
-      return transaction.getGoodsShipmentLine().getShipmentReceipt().getBusinessPartner();
-    default:
-      return null;
+      case Receipt:
+      case ReceiptNegative:
+      case ReceiptReturn:
+      case ReceiptVoid:
+      case Shipment:
+      case ShipmentNegative:
+      case ShipmentReturn:
+      case ShipmentVoid:
+        return transaction.getGoodsShipmentLine().getShipmentReceipt().getBusinessPartner();
+      default:
+        return null;
     }
   }
 
@@ -686,8 +692,8 @@ public class CostingUtils {
     where.append(" and " + CostingRule.PROPERTY_VALIDATED + " = true");
     where.append(" order by case when " + CostingRule.PROPERTY_STARTINGDATE
         + " is null then 1 else 0 end, " + CostingRule.PROPERTY_STARTINGDATE + " desc");
-    OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
-        where.toString());
+    OBQuery<CostingRule> crQry = OBDal.getInstance()
+        .createQuery(CostingRule.class, where.toString());
     crQry.setFilterOnReadableOrganization(false);
     crQry.setNamedParameter("organization", org.getId());
     crQry.setNamedParameter("startdate", date);
@@ -706,8 +712,8 @@ public class CostingUtils {
    */
   public static Date getMaxTransactionDate(Organization org) {
     // Get child tree of organizations.
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        org.getClient().getId());
+    OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(org.getClient().getId());
     Set<String> orgs = osp.getChildTree(org.getId(), true);
 
     StringBuffer select = new StringBuffer();
@@ -715,7 +721,8 @@ public class CostingUtils {
     select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
     select.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    Query<Date> trxQry = OBDal.getInstance().getSession()
+    Query<Date> trxQry = OBDal.getInstance()
+        .getSession()
         .createQuery(select.toString(), Date.class);
     trxQry.setParameterList("orgs", orgs);
     Date maxDate = trxQry.uniqueResult();
@@ -730,7 +737,8 @@ public class CostingUtils {
    */
   public static Period periodClosed(Organization org, Date dateFrom, Date dateTo, String docType)
       throws ServletException {
-    String strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String strDateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
 
@@ -788,9 +796,11 @@ public class CostingUtils {
    * @param scheduledOrg
    *          the organization that runs the process
    */
-  public static void checkValidOrganization(final String processId, final Organization scheduledOrg) {
+  public static void checkValidOrganization(final String processId,
+      final Organization scheduledOrg) {
     if (StringUtils.equals(processId, CostingBackground.AD_PROCESS_ID)) {
-      final Organization legalEntity = OBContext.getOBContext().getOrganizationStructureProvider()
+      final Organization legalEntity = OBContext.getOBContext()
+          .getOrganizationStructureProvider()
           .getLegalEntity(scheduledOrg);
       if (legalEntity != null && !StringUtils.equals(legalEntity.getId(), scheduledOrg.getId())) {
         throw new OBException(OBMessageUtils.messageBD("CostBackgroundWrongOrganization"));
@@ -806,8 +816,8 @@ public class CostingUtils {
       MaterialTransaction trx, boolean isManufacturingProduct) {
 
     // Get child tree of organizations.
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        trx.getClient().getId());
+    OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(trx.getClient().getId());
     Set<String> orgs = osp.getChildTree(costorg.getId(), true);
     HashMap<CostDimension, BaseOBObject> costDimensions = _costDimensions;
     if (isManufacturingProduct) {
@@ -815,8 +825,8 @@ public class CostingUtils {
       costDimensions = CostingUtils.getEmptyDimensions();
     }
 
-    OBCriteria<MaterialTransaction> criteria = OBDal.getInstance().createCriteria(
-        MaterialTransaction.class);
+    OBCriteria<MaterialTransaction> criteria = OBDal.getInstance()
+        .createCriteria(MaterialTransaction.class);
     criteria.createAlias(MaterialTransaction.PROPERTY_STORAGEBIN, "sb");
     criteria.add(Restrictions.eq(MaterialTransaction.PROPERTY_PRODUCT, product));
     criteria.add(Restrictions.eq(MaterialTransaction.PROPERTY_ISPROCESSED, true));
@@ -841,9 +851,9 @@ public class CostingUtils {
     where.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
     where.append(" join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
     where.append(" join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
-    where.append(" join i."
-        + InventoryCount.PROPERTY_INVENTORYAMOUNTUPDATELINEINVENTORIESINITINVENTORYLIST
-        + " as iaui");
+    where.append(
+        " join i." + InventoryCount.PROPERTY_INVENTORYAMOUNTUPDATELINEINVENTORIESINITINVENTORYLIST
+            + " as iaui");
     where.append(" join iaui." + InvAmtUpdLnInventories.PROPERTY_WAREHOUSE + " as w");
     where.append(" where i." + InventoryCount.PROPERTY_INVENTORYTYPE + " = 'O'");
     where.append(" and iaui." + InvAmtUpdLnInventories.PROPERTY_CAINVENTORYAMTLINE + " = :iaul");
@@ -853,11 +863,16 @@ public class CostingUtils {
     where.append(" order by w." + Warehouse.PROPERTY_NAME + " desc");
     where.append(" , il." + InventoryCountLine.PROPERTY_LINENO + " desc");
 
-    Query<String> qry = OBDal.getInstance().getSession()
+    Query<String> qry = OBDal.getInstance()
+        .getSession()
         .createQuery(where.toString(), String.class);
     OBDal.getInstance().refresh(trx.getPhysicalInventoryLine().getPhysInventory());
-    qry.setParameter("iaul", trx.getPhysicalInventoryLine().getPhysInventory()
-        .getInventoryAmountUpdateLineInventoriesInitInventoryList().get(0).getCaInventoryamtline());
+    qry.setParameter("iaul",
+        trx.getPhysicalInventoryLine()
+            .getPhysInventory()
+            .getInventoryAmountUpdateLineInventoriesInitInventoryList()
+            .get(0)
+            .getCaInventoryamtline());
     if (includeWarehouseDimension) {
       qry.setParameter("warehouse", trx.getStorageBin().getWarehouse());
     }
@@ -886,7 +901,8 @@ public class CostingUtils {
     where.append("               and l." + Locator.PROPERTY_CLIENT + " = c)");
     where.append(" and c = :client");
 
-    Query<Client> qry = OBDal.getInstance().getSession()
+    Query<Client> qry = OBDal.getInstance()
+        .getSession()
         .createQuery(where.toString(), Client.class);
     qry.setParameter("client", client);
     qry.setMaxResults(1);
@@ -906,7 +922,8 @@ public class CostingUtils {
     where.append("               where invs." + InventoryStatus.PROPERTY_OVERISSUE + " = true");
     where.append("               and io." + ShipmentInOut.PROPERTY_ID + " = :shipmentInOutID)");
 
-    Query<Client> qry = OBDal.getInstance().getSession()
+    Query<Client> qry = OBDal.getInstance()
+        .getSession()
         .createQuery(where.toString(), Client.class);
     qry.setParameter("shipmentInOutID", shipmentInOutId);
     qry.setMaxResults(1);

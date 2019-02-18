@@ -29,6 +29,8 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
@@ -42,8 +44,6 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.project.Project;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 @Dependent
 @Qualifier(CreateLinesFromProcessHook.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
@@ -67,8 +67,8 @@ class UpdateTax extends CreateLinesFromProcessHook {
   }
 
   private void updateTaxRate() {
-    TaxRate tax = OBDal.getInstance().getProxy(TaxRate.class,
-        getCurrentTaxId(getInvoiceLine().getProduct()));
+    TaxRate tax = OBDal.getInstance()
+        .getProxy(TaxRate.class, getCurrentTaxId(getInvoiceLine().getProduct()));
     getInvoiceLine().setTax(tax);
   }
 
@@ -100,8 +100,10 @@ class UpdateTax extends CreateLinesFromProcessHook {
       Date scheduledDeliveryDate = copiedFromIOLine.getShipmentReceipt().getMovementDate();
 
       String bpLocationId = getInvoice().getPartnerAddress().getId();
-      String strDatePromised = DateFormatUtils.format(scheduledDeliveryDate, OBPropertiesProvider
-          .getInstance().getOpenbravoProperties().getProperty("dateFormat.java"));
+      String strDatePromised = DateFormatUtils.format(scheduledDeliveryDate,
+          OBPropertiesProvider.getInstance()
+              .getOpenbravoProperties()
+              .getProperty("dateFormat.java"));
 
       try {
         taxID = Tax.get(new DalConnectionProvider(), product.getId(), strDatePromised,
@@ -145,8 +147,9 @@ class UpdateTax extends CreateLinesFromProcessHook {
       BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getPickExecJSONObject());
       taxBaseAmt = originalOrderLine.getTaxableAmount();
       if (originalOrderedQuantity.compareTo(BigDecimal.ZERO) != 0) {
-        taxBaseAmt = taxBaseAmt.multiply(qtyOrdered).divide(originalOrderedQuantity,
-            getInvoice().getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_UP);
+        taxBaseAmt = taxBaseAmt.multiply(qtyOrdered)
+            .divide(originalOrderedQuantity,
+                getInvoice().getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_UP);
       }
     }
     return taxBaseAmt;

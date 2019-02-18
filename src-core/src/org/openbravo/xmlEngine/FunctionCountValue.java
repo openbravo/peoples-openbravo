@@ -23,14 +23,17 @@ class FunctionCountValue extends FunctionValue {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     return Integer.toString(count);
   }
 
+  @Override
   public void acumulate() {
     count++;
   }
 
+  @Override
   public void init() {
     count = 0;
   }

@@ -29,9 +29,9 @@ public class ServiceTestData1 extends ServiceTestData {
     setTestDescription("Service with one related product and regular pricelist");
     setBpartnerId(BP_CUSTOMER_A);
     setServiceId(SERVICE_WARRANTY);
-    setProducts(new String[][] {//
-    // ProductId, quantity, price, amount
-    { PRODUCT_DISTRIBUTION_GOOD_A, "1", "10", "10" } //
+    setProducts(new String[][] { //
+        // ProductId, quantity, price, amount
+        { PRODUCT_DISTRIBUTION_GOOD_A, "1", "10", "10" } //
     });
     setQuantity(BigDecimal.ONE);
     setPrice(new BigDecimal("200.00"));

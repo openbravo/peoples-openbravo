@@ -144,7 +144,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-// dal
+    // dal
     DalComplexQueryRequisitionTest.class, //
     DalComplexQueryTestOrderLine.class, //
     DalPerformanceInventoryLineTest.class, //

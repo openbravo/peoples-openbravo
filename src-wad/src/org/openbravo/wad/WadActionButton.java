@@ -75,8 +75,9 @@ class WadActionButton {
             || fab[i].realname.equalsIgnoreCase("PaymentRule")
             || (fab[i].realname.equalsIgnoreCase("Posted") && fab[i].adProcessId.equals(""))
             || (fab[i].realname.equalsIgnoreCase("CreateFrom") && fab[i].adProcessId.equals(""))
-            || fab[i].realname.equalsIgnoreCase("ChangeProjectStatus"))
+            || fab[i].realname.equalsIgnoreCase("ChangeProjectStatus")) {
           fab[i].xmlid = "";
+        }
         fab[i].realname = FormatUtilities.replace(fab[i].realname);
         fab[i].columnname = Sqlc.TransformaNombreColumna(fab[i].columnname);
         fab[i].setsession = getFieldsSession(fab[i]);
@@ -101,8 +102,9 @@ class WadActionButton {
           if (fab[i].realname.equalsIgnoreCase("ChangeProjectStatus")) {
             fab[i].processParams = "PInstanceProcessData.insertPInstanceParam(this, pinstance, \"0\", \"ChangeProjectStatus\", strchangeprojectstatus, vars.getClient(), vars.getOrg(), vars.getUser());\n";
             vecParams.addElement("changeprojectstatus");
-          } else
+          } else {
             fab[i].processParams = "";
+          }
           fab[i].processParams += getProcessParamsJava(conn, data, fab[i], vecParams, false);
           fab[i].processCode = "ActionButtonData.process" + fab[i].adProcessId
               + "(this, pinstance);\n";
@@ -147,8 +149,9 @@ class WadActionButton {
             || fab[i].realname.equalsIgnoreCase("PaymentRule")
             || (fab[i].realname.equalsIgnoreCase("Posted") && fab[i].adProcessId.equals(""))
             || (fab[i].realname.equalsIgnoreCase("CreateFrom") && fab[i].adProcessId.equals(""))
-            || fab[i].realname.equalsIgnoreCase("ChangeProjectStatus"))
+            || fab[i].realname.equalsIgnoreCase("ChangeProjectStatus")) {
           fab[i].xmlid = "";
+        }
         fab[i].realname = FormatUtilities.replace(fab[i].realname);
         fab[i].columnname = Sqlc.TransformaNombreColumna(fab[i].columnname);
         fab[i].htmltext = getFieldsLoad(fab[i], vecFields, vecTotalFields);
@@ -218,8 +221,9 @@ class WadActionButton {
             || fab[i].realname.equalsIgnoreCase("PaymentRule")
             || (fab[i].realname.equalsIgnoreCase("Posted") && fab[i].adProcessId.equals(""))
             || (fab[i].realname.equalsIgnoreCase("CreateFrom") && fab[i].adProcessId.equals(""))
-            || fab[i].realname.equalsIgnoreCase("ChangeProjectStatus"))
+            || fab[i].realname.equalsIgnoreCase("ChangeProjectStatus")) {
           fab[i].xmlid = "";
+        }
         fab[i].realname = FormatUtilities.replace(fab[i].realname);
         fab[i].columnname = Sqlc.TransformaNombreColumna(fab[i].columnname);
         fab[i].htmltext = getFieldsLoad(fab[i], vecFields, vecTotalFields);
@@ -242,8 +246,9 @@ class WadActionButton {
           if (fab[i].realname.equalsIgnoreCase("ChangeProjectStatus")) {
             fab[i].processParams = "PInstanceProcessData.insertPInstanceParam(this, pinstance, \"0\", \"ChangeProjectStatus\", strchangeprojectstatus, vars.getClient(), vars.getOrg(), vars.getUser());\n";
             vecParams.addElement("changeprojectstatus");
-          } else
+          } else {
             fab[i].processParams = "";
+          }
           fab[i].processParams += getProcessParamsJava(conn, data, fab[i], vecParams, false);
           fab[i].processCode = "ActionButtonData.process" + fab[i].adProcessId
               + "(this, pinstance);\n";
@@ -310,12 +315,14 @@ class WadActionButton {
    */
   private static String getFieldsLoad(ActionButtonRelationData fd, Vector<Object> vecFields,
       Vector<Object> vecTotalFields) {
-    if (fd == null)
+    if (fd == null) {
       return "";
+    }
     String processId = fd.adProcessId;
     final StringBuffer html = new StringBuffer();
     if (fd.columnname.equalsIgnoreCase("DocAction")) {
-      html.append("String strdocstatus = vars.getSessionValue(\"button").append(processId)
+      html.append("String strdocstatus = vars.getSessionValue(\"button")
+          .append(processId)
           .append(".inpdocstatus\");\n");
       vecFields.addElement("strdocstatus");
       vecTotalFields.addElement("DocStatus");
@@ -331,7 +338,8 @@ class WadActionButton {
       vecFields.addElement("stradTableId");
       vecTotalFields.addElement("AD_Table_ID");
     } else if (fd.columnname.equalsIgnoreCase("ChangeProjectStatus")) {
-      html.append("String strprojectstatus = vars.getSessionValue(\"button").append(processId)
+      html.append("String strprojectstatus = vars.getSessionValue(\"button")
+          .append(processId)
           .append(".inpprojectstatus\");\n");
       vecFields.addElement("strprojectstatus");
       vecTotalFields.addElement("ProjectStatus");
@@ -340,15 +348,18 @@ class WadActionButton {
   }
 
   private static String getFieldsSession(ActionButtonRelationData fd) {
-    if (fd == null)
+    if (fd == null) {
       return "";
+    }
     String processId = fd.adProcessId;
     final StringBuffer result = new StringBuffer();
     if (fd.columnname.equalsIgnoreCase("DocAction")) {
-      result.append("vars.setSessionValue(\"button").append(processId)
+      result.append("vars.setSessionValue(\"button")
+          .append(processId)
           .append(".inpdocstatus\", vars.getRequiredStringParameter(\"inpdocstatus\"));\n");
     } else if (fd.columnname.equalsIgnoreCase("ChangeProjectStatus")) {
-      result.append("vars.setSessionValue(\"button").append(processId)
+      result.append("vars.setSessionValue(\"button")
+          .append(processId)
           .append(".inpprojectstatus\", vars.getRequiredStringParameter(\"inpprojectstatus\"));\n");
     }
     return result.toString();
@@ -380,8 +391,9 @@ class WadActionButton {
   private static String getPrintPageJavaCode(ConnectionProvider conn, ActionButtonRelationData fd,
       Vector<Object> vecFields, Vector<Object> vecParams, String isSOTrx, String window,
       String tabName, boolean genericActionButton, String processId) {
-    if (fd == null)
+    if (fd == null) {
       return "";
+    }
 
     final StringBuffer html = new StringBuffer();
     for (int i = 0; i < vecFields.size(); i++) {
@@ -398,8 +410,9 @@ class WadActionButton {
         html.append("    try {\n");
         for (int i = 0; i < data.length; i++) {
           if (data[i].adReferenceId.equals("17") || data[i].adReferenceId.equals("18")
-              || data[i].adReferenceId.equals("19"))
+              || data[i].adReferenceId.equals("19")) {
             hasComboParameter = true;
+          }
         }
         if (hasComboParameter) {
           html.append("    ComboTableData comboTableData = null;\n");
@@ -440,14 +453,17 @@ class WadActionButton {
                 .append(genericActionButton ? "null"
                     : "(FieldProvider) vars.getSessionObject(\"button" + processId
                         + ".originalParams\")")
-                .append(", comboTableData, windowId, ").append(strDefault).append(");\n");
+                .append(", comboTableData, windowId, ")
+                .append(strDefault)
+                .append(");\n");
             html.append("    xmlDocument.setData(\"report");
             // html.append(Sqlc.TransformaNombreColumna(data[i].columnname));
             html.append(data[i].columnname);
             html.append("\", \"liststructure\", comboTableData.select(false));\n");
             html.append("comboTableData = null;\n");
           } else if (data[i].adReferenceId.equals("15")) {
-            html.append("    xmlDocument.setParameter(\"").append(data[i].columnname)
+            html.append("    xmlDocument.setParameter(\"")
+                .append(data[i].columnname)
                 .append("_Format\", vars.getSessionValue(\"#AD_SqlDateFormat\"));\n");
           } else if (data[i].adReferenceId.equals("30") || data[i].adReferenceId.equals("35")
               || data[i].adReferenceId.equals("25") || data[i].adReferenceId.equals("31")
@@ -560,8 +576,9 @@ class WadActionButton {
    */
   private static String getProcessParamsJava(ConnectionProvider conn, ProcessRelationData[] data,
       ActionButtonRelationData fd, Vector<Object> vecParams, boolean isGenericJava) {
-    if (fd == null)
+    if (fd == null) {
       return "";
+    }
     final StringBuffer html = new StringBuffer();
 
     if (data != null) {
@@ -577,12 +594,15 @@ class WadActionButton {
         }
 
         html.append("(\"inp" + Sqlc.TransformaNombreColumna(data[i].columnname) + "\"");
-        if (data[i].adReferenceId.equals("20"))
+        if (data[i].adReferenceId.equals("20")) {
           html.append(", \"N\"");
+        }
         html.append(");\n");
         if (isGenericJava) {
-          html.append("params.put(\"").append(Sqlc.TransformaNombreColumna(data[i].columnname))
-              .append("\", str").append(Sqlc.TransformaNombreColumna(data[i].columnname))
+          html.append("params.put(\"")
+              .append(Sqlc.TransformaNombreColumna(data[i].columnname))
+              .append("\", str")
+              .append(Sqlc.TransformaNombreColumna(data[i].columnname))
               .append(");\n");
         } else {
           html.append("PInstanceProcessData.insertPInstanceParam"
@@ -611,8 +631,9 @@ class WadActionButton {
    */
   private static String getAdditionalCode(ActionButtonRelationData fd, String tabName,
       String keyName) {
-    if (fd == null)
+    if (fd == null) {
       return "";
+    }
     final StringBuffer html = new StringBuffer();
     if (fd.columnname.equalsIgnoreCase("DocAction")) {
       html.append(tabName + "Data.updateDocAction(this, strdocaction, str" + keyName + ");\n");
@@ -642,8 +663,9 @@ class WadActionButton {
     } catch (final ServletException e) {
       return null;
     }
-    if (fab == null)
+    if (fab == null) {
       return null;
+    }
     for (int i = 0; i < fab.length; i++) {
       fab[i].realname = FormatUtilities.replace(fab[i].realname);
       fab[i].columnname = Sqlc.TransformaNombreColumna(fab[i].columnname);
@@ -673,7 +695,8 @@ class WadActionButton {
       FieldsData fd, Vector<Object> vecFields, int max_textbox_length)
       throws ServletException, IOException {
     final XmlDocument xmlDocument = xmlEngine
-        .readXmlTemplate("org/openbravo/wad/Configuration_ActionButton").createXmlDocument();
+        .readXmlTemplate("org/openbravo/wad/Configuration_ActionButton")
+        .createXmlDocument();
     xmlDocument.setParameter("class", (fd.columnname + fd.reference) + ".html");
     final ProcessRelationData[] data = ProcessRelationData.selectParameters(conn, "", fd.reference);
 
@@ -703,8 +726,9 @@ class WadActionButton {
         html.append(auxControl.toXml()).append("\n");
 
         final String labelXML = auxControl.toLabelXML();
-        if (!labelXML.trim().equals(""))
+        if (!labelXML.trim().equals("")) {
           labelsHTML.append(auxControl.toLabelXML()).append("\n");
+        }
       }
     }
 
@@ -746,19 +770,23 @@ class WadActionButton {
       int max_size_edition_1_columns, String strLanguage, boolean isGeneric, String jsDateFormat,
       Vector<Object> vecReloads) throws ServletException, IOException {
     final String[] discard = { "", "isGeneric", "fieldDiscardProcess", "" };
-    if (fd.xmltext.equals(""))
+    if (fd.xmltext.equals("")) {
       discard[0] = "helpDiscard";
-    if (isGeneric)
+    }
+    if (isGeneric) {
       discard[1] = "isNotGeneric";
-    if (fd.isjasper.equals("Y"))
+    }
+    if (fd.isjasper.equals("Y")) {
       discard[2] = "fieldDiscardJasper";
+    }
 
     if (fd.isautosave.equals("N")) {
       discard[3] = "reloadOpener";
     }
 
     final XmlDocument xmlDocument = xmlEngine
-        .readXmlTemplate("org/openbravo/wad/Template_ActionButton", discard).createXmlDocument();
+        .readXmlTemplate("org/openbravo/wad/Template_ActionButton", discard)
+        .createXmlDocument();
     final ProcessRelationData[] efd = ProcessRelationData.selectParameters(conn, strLanguage,
         fd.reference);
     xmlDocument.setParameter("columnname", fd.columnname + fd.reference);
@@ -772,8 +800,9 @@ class WadActionButton {
     if (efd != null) {
 
       vecFields.addElement(fd.columnname);
-      for (int i = 0; i < efd.length; i++)
+      for (int i = 0; i < efd.length; i++) {
         vecFields.addElement(efd[i].columnname);
+      }
 
       final Properties importsCSS = new Properties();
       final Properties importsJS = new Properties();
@@ -791,7 +820,8 @@ class WadActionButton {
           throw new ServletException(ex);
         }
 
-        html.append("<tr><td class=\"TitleCell\">").append(auxControl.toLabel().replace("\n", ""))
+        html.append("<tr><td class=\"TitleCell\">")
+            .append(auxControl.toLabel().replace("\n", ""))
             .append("</td>\n");
         html.append("<td class=\"").append(auxControl.getType()).append("_ContentCell\"");
         if (Integer.valueOf(auxControl.getData("DisplayLength"))
@@ -804,8 +834,9 @@ class WadActionButton {
         html.append(">");
         html.append(auxControl.toString());
         html.append("</td>\n");
-        if (auxControl.getData("CssSize").equals("OneCell"))
+        if (auxControl.getData("CssSize").equals("OneCell")) {
           html.append("<td></td>\n");
+        }
         html.append("<td></td>\n");
         html.append("</tr>\n");
         // Getting JavaScript
@@ -838,17 +869,20 @@ class WadActionButton {
             }
           }
         } // End getting js imports
-        if (!auxControl.getValidation().equals(""))
+        if (!auxControl.getValidation().equals("")) {
           validations.append(auxControl.getValidation()).append("\n");
-        if (!auxControl.getOnLoad().equals(""))
+        }
+        if (!auxControl.getOnLoad().equals("")) {
           onload.append(auxControl.getOnLoad()).append("\n");
+        }
       }
       xmlDocument.setParameter("fields", html.toString());
       final StringBuffer sbImportCSS = new StringBuffer();
       for (final Enumeration<?> e = importsCSS.propertyNames(); e.hasMoreElements();) {
         final String _name = (String) e.nextElement();
         sbImportCSS.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"")
-            .append(importsCSS.getProperty(_name)).append("\"/>\n");
+            .append(importsCSS.getProperty(_name))
+            .append("\"/>\n");
       }
       xmlDocument.setParameter("importCSS", sbImportCSS.toString());
       final StringBuffer sbImportJS = new StringBuffer();
@@ -857,22 +891,26 @@ class WadActionButton {
       boolean calendarLangInserted = false;
       for (final Enumeration<?> e = importsJS.propertyNames(); e.hasMoreElements();) {
         final String _name = (String) e.nextElement();
-        if (_name.startsWith("calendar"))
+        if (_name.startsWith("calendar")) {
           hasCalendar = true;
+        }
         if (!_name.equals("calendarLang") || calendarInserted) {
           sbImportJS.append("<script language=\"JavaScript\" src=\"")
               .append(importsJS.getProperty(_name))
               .append("\" type=\"text/javascript\"></script>\n");
-          if (_name.equals("calendarLang"))
+          if (_name.equals("calendarLang")) {
             calendarLangInserted = true;
+          }
         }
-        if (_name.equals("calendar"))
+        if (_name.equals("calendar")) {
           calendarInserted = true;
+        }
       }
-      if (hasCalendar && !calendarLangInserted)
+      if (hasCalendar && !calendarLangInserted) {
         sbImportJS.append("<script language=\"JavaScript\" src=\"")
             .append(importsJS.getProperty("calendarLang"))
             .append("\" type=\"text/javascript\"></script>\n");
+      }
       xmlDocument.setParameter("importJS", sbImportJS.toString());
       final StringBuffer script = new StringBuffer();
       for (final Enumeration<?> e = javaScriptFunctions.propertyNames(); e.hasMoreElements();) {
@@ -893,7 +931,8 @@ class WadActionButton {
       script.append("  return true;\n");
       script.append("}\n");
 
-      script.append("\nfunction reloadComboReloads").append(fd.reference)
+      script.append("\nfunction reloadComboReloads")
+          .append(fd.reference)
           .append("(changedField) {\n");
       script.append(
           "  submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloadsProcessHelper.html', 'hiddenFrame', null, null, true);\n");

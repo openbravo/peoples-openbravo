@@ -106,12 +106,13 @@ public class CLFOTestDataSO_04 extends CopyLinesFromOrdersTestData {
      * created, BP Address, Organization, Attribute Value, Operative Qty, Operative UOM]>
      */
     HashMap<String, String[]> expectedOrderLines = new HashMap<String, String[]>();
-    expectedOrderLines.put("10", new String[] { CLFOTestConstants.CERVEZA_ALE_PRODUCT_NAME, "10",
-        CLFOTestConstants.UNIT_UOM_NAME, "2.04", "2.04", "0",
-        CLFOTestConstants.ENTREGAS_IVA_21_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
-        BPartnerDataConstants.ALIMENTOS_Y_SUPERMERCADOS_LOCATION,
-        CLFOTestConstants.FB_ESPANA_NORTE_ORGANIZATION_NAME, "", null, null,
-        CLFOTestConstants.LINE1_DESCRIPTION });
+    expectedOrderLines.put("10",
+        new String[] { CLFOTestConstants.CERVEZA_ALE_PRODUCT_NAME, "10",
+            CLFOTestConstants.UNIT_UOM_NAME, "2.04", "2.04", "0",
+            CLFOTestConstants.ENTREGAS_IVA_21_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
+            BPartnerDataConstants.ALIMENTOS_Y_SUPERMERCADOS_LOCATION,
+            CLFOTestConstants.FB_ESPANA_NORTE_ORGANIZATION_NAME, "", null, null,
+            CLFOTestConstants.LINE1_DESCRIPTION });
     setExpectedOrderLines(expectedOrderLines);
   }
 

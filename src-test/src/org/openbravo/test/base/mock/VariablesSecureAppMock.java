@@ -43,8 +43,9 @@ public class VariablesSecureAppMock extends VariablesSecureApp {
    * parameter values through {@code #getStringParameter(String)} method.
    */
   public VariablesSecureAppMock(Map<String, String> mockedParams) {
-    super(OBContext.getOBContext().getUser().getId(), OBContext.getOBContext().getCurrentClient()
-        .getId(), OBContext.getOBContext().getCurrentOrganization().getId());
+    super(OBContext.getOBContext().getUser().getId(),
+        OBContext.getOBContext().getCurrentClient().getId(),
+        OBContext.getOBContext().getCurrentOrganization().getId());
 
     this.mockedParams = mockedParams;
     OBContext ctx = OBContext.getOBContext();

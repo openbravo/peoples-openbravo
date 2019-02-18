@@ -107,8 +107,8 @@ public class ActivationTask extends DalInitializingTask {
         msg += "\n  *" + value.getSearchKey() + " [" + value.getName() + "]";
       }
       if (!foundValue) {
-        throw new BuildException(purpose + " is not one of the valid values for purpose parameter:"
-            + msg);
+        throw new BuildException(
+            purpose + " is not one of the valid values for purpose parameter:" + msg);
       }
     }
 

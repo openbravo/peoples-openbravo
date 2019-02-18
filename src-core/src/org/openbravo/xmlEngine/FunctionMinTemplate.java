@@ -26,11 +26,13 @@ class FunctionMinTemplate extends FunctionTemplate {
     super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
   }
 
+  @Override
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      if (log4jFunctionMinTemplate.isDebugEnabled())
+      if (log4jFunctionMinTemplate.isDebugEnabled()) {
         log4jFunctionMinTemplate.debug("New FunctionMinValue");
+      }
       functionValue = new FunctionMinValue(this, xmlDocument);
     }
     return functionValue;

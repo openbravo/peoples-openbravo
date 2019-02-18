@@ -63,8 +63,8 @@ public class TestLogAppender extends AbstractAppender {
     levelMsgs.add(event.getMessage().toString());
 
     if (logStackTraces && event.getThrown() != null) {
-      levelMsgs.addAll(Arrays.asList(event.getThrownProxy().getExtendedStackTraceAsString()
-          .split("\n")));
+      levelMsgs.addAll(
+          Arrays.asList(event.getThrownProxy().getExtendedStackTraceAsString().split("\n")));
     }
   }
 

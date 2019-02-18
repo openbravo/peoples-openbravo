@@ -25,11 +25,13 @@ class FunctionMedTemplate extends FunctionTemplate {
     super(fieldName, field, formatOutput, formatSimple, dataTemplate);
   }
 
+  @Override
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      if (log4jFunctionMedTemplate.isDebugEnabled())
+      if (log4jFunctionMedTemplate.isDebugEnabled()) {
         log4jFunctionMedTemplate.debug("New FunctionMedValue: " + fieldName);
+      }
       functionValue = new FunctionMedValue(this, xmlDocument);
     }
     return functionValue;

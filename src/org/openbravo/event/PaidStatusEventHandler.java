@@ -33,8 +33,8 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 
 public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      FIN_FinaccTransaction.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(FIN_FinaccTransaction.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
   public static final String STATUS_CLEARED = "RPPC";
   public static final String STATUS_DEPOSIT = "RDNC";
@@ -50,8 +50,8 @@ public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
       return;
     }
 
-    final Entity transactionEntity = ModelProvider.getInstance().getEntity(
-        FIN_FinaccTransaction.ENTITY_NAME);
+    final Entity transactionEntity = ModelProvider.getInstance()
+        .getEntity(FIN_FinaccTransaction.ENTITY_NAME);
     final Property statusProperty = transactionEntity
         .getProperty(FIN_FinaccTransaction.PROPERTY_STATUS);
     final Property processedProperty = transactionEntity

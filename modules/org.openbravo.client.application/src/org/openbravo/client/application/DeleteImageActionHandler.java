@@ -40,6 +40,7 @@ import org.openbravo.service.json.JsonUtils;
 @ApplicationScoped
 public class DeleteImageActionHandler extends BaseActionHandler {
 
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String image) {
 
     try {

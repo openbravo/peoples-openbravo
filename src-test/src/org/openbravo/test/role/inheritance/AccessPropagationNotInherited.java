@@ -68,8 +68,7 @@ public class AccessPropagationNotInherited extends WeldBaseTest {
       RoleInheritanceTestUtils.ACCESS_NAMES);
 
   /** this field will take the values defined by parameterValuesRule field. */
-  private @ParameterCdiTest
-  String parameter;
+  private @ParameterCdiTest String parameter;
 
   /**
    * Test case to check that non inherited accesses are not affected by access propagation.
@@ -84,9 +83,8 @@ public class AccessPropagationNotInherited extends WeldBaseTest {
       role = RoleInheritanceTestUtils.createRole("role", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
       String roleId = role.getId();
-      template = RoleInheritanceTestUtils.createRole("template",
-          RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
-          true);
+      template = RoleInheritanceTestUtils.createRole("template", RoleInheritanceTestUtils.CLIENT_ID,
+          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
       String templateId = template.getId();
 
       // Add inheritance

@@ -42,8 +42,8 @@ public class SL_Invoice_Charge_Tax extends SimpleCallout {
     String strADOrgID = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
     String strCInvoiceID = info.getStringParameter("inpcInvoiceId", IsIDFilter.instance);
     String strIsSOTrx = Utility.getContext(this, info.vars, "isSOTrx", info.getWindowId());
-    String strWarehouse = Utility
-        .getContext(this, info.vars, "#M_Warehouse_ID", info.getWindowId());
+    String strWarehouse = Utility.getContext(this, info.vars, "#M_Warehouse_ID",
+        info.getWindowId());
     String strCChargeID = info.getStringParameter("inpcChargeId", IsIDFilter.instance);
 
     // Tax
@@ -60,8 +60,8 @@ public class SL_Invoice_Charge_Tax extends SimpleCallout {
     }
 
     // Charge Amount
-    String chargeAmt = StringUtils.isEmpty(strCChargeID) ? "0" : SLChargeData.chargeAmt(this,
-        strCChargeID);
+    String chargeAmt = StringUtils.isEmpty(strCChargeID) ? "0"
+        : SLChargeData.chargeAmt(this, strCChargeID);
     info.addResult("inpchargeamt", chargeAmt);
   }
 }

@@ -118,10 +118,10 @@ public class SL_InOutLine_Product extends SimpleCallout {
         // Set AUM based on default
         try {
           OBContext.setAdminMode();
-          ShipmentInOut mInOut = OBDal.getInstance().get(ShipmentInOut.class,
-              info.vars.getStringParameter("inpmInoutId"));
-          String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, mInOut
-              .getDocumentType().getId());
+          ShipmentInOut mInOut = OBDal.getInstance()
+              .get(ShipmentInOut.class, info.vars.getStringParameter("inpmInoutId"));
+          String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID,
+              mInOut.getDocumentType().getId());
           if (isValidUom(finalAUM)) {
             info.addResult("inpcAum", finalAUM);
             info.addResult("inpaumqty", UOMUtil.getConvertedAumQty(strMProductID, qty, finalAUM));
@@ -144,9 +144,9 @@ public class SL_InOutLine_Product extends SimpleCallout {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
-                "SLOrderProduct"), Utility.getContext(this, info.vars, "#User_Client",
-                "SLOrderProduct"), 0);
+            "M_Product_UOM", "",
+            Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SLOrderProduct"),
+            Utility.getContext(this, info.vars, "#User_Client", "SLOrderProduct"), 0);
         Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SLOrderProduct", "");
         tld = comboTableData.select(false);
         comboTableData = null;
@@ -157,8 +157,8 @@ public class SL_InOutLine_Product extends SimpleCallout {
       if (tld != null && tld.length > 0) {
         info.addSelect("inpmProductUomId");
         for (int i = 0; i < tld.length; i++) {
-          info.addSelectResult(tld[i].getField("id"), tld[i].getField("name"), tld[i]
-              .getField("id").equalsIgnoreCase(strPUOM));
+          info.addSelectResult(tld[i].getField("id"), tld[i].getField("name"),
+              tld[i].getField("id").equalsIgnoreCase(strPUOM));
         }
         info.endSelect();
       } else {

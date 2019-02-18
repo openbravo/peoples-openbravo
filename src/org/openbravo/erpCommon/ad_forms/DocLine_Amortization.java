@@ -30,6 +30,7 @@ public class DocLine_Amortization extends DocLine {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

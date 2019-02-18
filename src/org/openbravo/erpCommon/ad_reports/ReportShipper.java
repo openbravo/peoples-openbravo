@@ -42,8 +42,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportShipper extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
@@ -79,8 +80,8 @@ public class ReportShipper extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strFrom, String strTo, String strShipper,
-      String strShipperReport, String strDetail, String strCurrencyId) throws IOException,
-      ServletException {
+      String strShipperReport, String strDetail, String strCurrencyId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
@@ -98,8 +99,9 @@ public class ReportShipper extends HttpSecureAppServlet {
       discard[0] = "selEliminar";
     }
 
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportShipper",
-        discard).createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportShipper", discard)
+        .createXmlDocument();
 
     String strIsSOTrx = "";
     if (StringUtils.equalsIgnoreCase(strShipperReport, "sale")) {
@@ -203,9 +205,9 @@ public class ReportShipper extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramShipper", strShipper);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "M_Shipper_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-                "ReportShipper"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-                "ReportShipper"), 0);
+            "M_Shipper_ID", "", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportShipper"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportShipper"), 0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportShipper",
             strShipper);
         xmlDocument.setData("reportShipper", "liststructure", comboTableData.select(false));
@@ -217,9 +219,9 @@ public class ReportShipper extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-            "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-                "ReportShipper"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-                "ReportShipper"), 0);
+            "C_Currency_ID", "", "",
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportShipper"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportShipper"), 0);
         Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportShipper",
             strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -235,6 +237,7 @@ public class ReportShipper extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportShipper.";
   } // end of getServletInfo() method

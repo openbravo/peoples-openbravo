@@ -192,8 +192,8 @@ public class OBQuery<E extends BaseOBObject> {
       final int index = qryStr.indexOf(FROM_SPACED) + FROM_SPACED.length();
       qryStr = qryStr.substring(index);
     }
-    final Query<String> qry = getSession().createQuery(
-        "select " + usedAlias + "id " + FROM_SPACED + qryStr, String.class);
+    final Query<String> qry = getSession()
+        .createQuery("select " + usedAlias + "id " + FROM_SPACED + qryStr, String.class);
     setParameters(qry);
 
     try (ScrollableResults results = qry.scroll(ScrollMode.FORWARD_ONLY)) {

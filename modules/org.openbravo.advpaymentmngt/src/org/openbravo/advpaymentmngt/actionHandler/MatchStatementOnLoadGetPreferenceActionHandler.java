@@ -20,6 +20,8 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -27,8 +29,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.domain.Preference;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class MatchStatementOnLoadGetPreferenceActionHandler extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -42,8 +42,8 @@ public class MatchStatementOnLoadGetPreferenceActionHandler extends BaseActionHa
       whereClause.append(" as p ");
       whereClause.append(" where p.userContact.id = :userId");
       whereClause.append("   and p.attribute = 'APRM_NoPersistInfoMessageInMatching' ");
-      OBQuery<Preference> query = OBDal.getInstance().createQuery(Preference.class,
-          whereClause.toString());
+      OBQuery<Preference> query = OBDal.getInstance()
+          .createQuery(Preference.class, whereClause.toString());
       query.setNamedParameter("userId", OBContext.getOBContext().getUser().getId());
       for (Preference preference : query.list()) {
         jsonResponse.put("preference", preference.getSearchKey());

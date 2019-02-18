@@ -67,6 +67,7 @@ public class DocMatchInv extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn,
       @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocMatchInvData.selectRegistro(conn, AD_Client_ID, Id));
@@ -77,6 +78,7 @@ public class DocMatchInv extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     C_Currency_ID = NO_CURRENCY;
     DocumentType = AcctServer.DOCTYPE_MatMatchInv;
@@ -101,15 +103,17 @@ public class DocMatchInv extends AcctServer {
     DocMatchInvData[] data = null;
     try {
       log4jDocMatchInv.debug("############### groupLines = " + groupLines);
-      if (groupLines.equals("Y"))
+      if (groupLines.equals("Y")) {
         data = DocMatchInvData.selectInvoiceLineTotal(connectionProvider, strCInvoiceLineId);
-      else
+      } else {
         data = DocMatchInvData.selectInvoiceLine(connectionProvider, strCInvoiceLineId);
+      }
     } catch (ServletException e) {
       log4jDocMatchInv.warn(e);
     }
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       return null;
+    }
     for (int i = 0; i < data.length; i++) {
       DocLine_Invoice docLine = new DocLine_Invoice(DocumentType, Record_ID, strCInvoiceLineId);
       docLine.loadAttributes(data[i], this);
@@ -148,8 +152,9 @@ public class DocMatchInv extends AcctServer {
     } catch (ServletException e) {
       log4jDocMatchInv.warn(e);
     }
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       return null;
+    }
 
     try {
       OBContext.setAdminMode(false);
@@ -173,6 +178,7 @@ public class DocMatchInv extends AcctServer {
    * 
    * @return Zero (always balanced)
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
     return retValue;
@@ -197,17 +203,20 @@ public class DocMatchInv extends AcctServer {
    *          accounting schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocMatchInvTemplate newTemplate = (DocMatchInvTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocMatchInvTemplate - " + e);
@@ -228,8 +237,8 @@ public class DocMatchInv extends AcctServer {
 
     FieldProvider[] data = getObjectFieldProvider();
     ShipmentInOutLine inOutLine = getShipmentLine(Record_ID);
-    Currency costCurrency = FinancialUtils.getLegalEntityCurrency(OBDal.getInstance().get(
-        Organization.class, AD_Org_ID));
+    Currency costCurrency = FinancialUtils
+        .getLegalEntityCurrency(OBDal.getInstance().get(Organization.class, AD_Org_ID));
     BigDecimal bdCost = BigDecimal.ZERO;
     BigDecimal trxCost = null;
     if (inOutLine.getProduct().isBookUsingPurchaseOrderPrice()) {
@@ -258,22 +267,22 @@ public class DocMatchInv extends AcctServer {
         costDimensions.put(CostDimension.Warehouse, inOutLine.getStorageBin().getWarehouse());
       }
       if (transaction == null) {
-        if (!CostingUtils.hasStandardCostDefinition(inOutLine.getProduct(), legalEntity, inOutLine
-            .getShipmentReceipt().getAccountingDate(), costDimensions)) {
+        if (!CostingUtils.hasStandardCostDefinition(inOutLine.getProduct(), legalEntity,
+            inOutLine.getShipmentReceipt().getAccountingDate(), costDimensions)) {
           Map<String, String> parameters = new HashMap<String, String>();
           parameters.put("Product", inOutLine.getProduct().getIdentifier());
-          parameters.put(
-              "Date",
-              (OBDateUtils.formatDate(OBDal.getInstance().get(ReceiptInvoiceMatch.class, Record_ID)
-                  .getTransactionDate())).toString());
+          parameters.put("Date", (OBDateUtils.formatDate(
+              OBDal.getInstance().get(ReceiptInvoiceMatch.class, Record_ID).getTransactionDate()))
+                  .toString());
           setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
           throw new IllegalStateException();
 
         } else {
           Currency currency = legalEntity.getCurrency() != null ? legalEntity.getCurrency()
               : legalEntity.getClient().getCurrency();
-          trxCost = CostingUtils.getStandardCost(inOutLine.getProduct(), legalEntity,
-              inOutLine.getShipmentReceipt().getAccountingDate(), costDimensions, currency)
+          trxCost = CostingUtils
+              .getStandardCost(inOutLine.getProduct(), legalEntity,
+                  inOutLine.getShipmentReceipt().getAccountingDate(), costDimensions, currency)
               .multiply(new BigDecimal(data[0].getField("Qty")));
         }
       } else {
@@ -295,11 +304,11 @@ public class DocMatchInv extends AcctServer {
       // The precision of the divide is set to 10 because the rounding is needed to avoid
       // exceptions.
       // The rounding itself is not needed because it is done some lines later.
-      bdCost = CostingStatus.getInstance().isMigrated() ? trxCost.divide(
-          transaction == null ? new BigDecimal(data[0].getField("Qty")).abs() : transaction
-              .getMovementQuantity().abs(), 10, RoundingMode.HALF_UP) : new BigDecimal(
-          DocMatchInvData.selectProductAverageCost(conn, data[0].getField("M_Product_Id"),
-              data[0].getField("orderAcctDate")));
+      bdCost = CostingStatus.getInstance().isMigrated()
+          ? trxCost.divide(transaction == null ? new BigDecimal(data[0].getField("Qty")).abs()
+              : transaction.getMovementQuantity().abs(), 10, RoundingMode.HALF_UP)
+          : new BigDecimal(DocMatchInvData.selectProductAverageCost(conn,
+              data[0].getField("M_Product_Id"), data[0].getField("orderAcctDate")));
       Long scale = costCurrency.getStandardPrecision();
       BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
       bdCost = bdCost.multiply(bdQty).setScale(scale.intValue(), RoundingMode.HALF_UP);
@@ -316,16 +325,18 @@ public class DocMatchInv extends AcctServer {
     int invoiceCurrencyPrecission = 2;
     try {
       OBContext.setAdminMode();
-      invoiceCurrencyPrecission = OBDal.getInstance().get(Currency.class, strInvoiceCurrency)
-          .getStandardPrecision().intValue();
+      invoiceCurrencyPrecission = OBDal.getInstance()
+          .get(Currency.class, strInvoiceCurrency)
+          .getStandardPrecision()
+          .intValue();
     } catch (Exception ignore) {
     } finally {
       OBContext.restorePreviousMode();
     }
 
-    BigDecimal bdExpenses = new BigDecimal(strExpenses).multiply(
-        new BigDecimal(data[0].getField("QTY"))).divide(
-        new BigDecimal(data[0].getField("QTYINVOICED")));
+    BigDecimal bdExpenses = new BigDecimal(strExpenses)
+        .multiply(new BigDecimal(data[0].getField("QTY")))
+        .divide(new BigDecimal(data[0].getField("QTYINVOICED")));
 
     DocLine docLine = new DocLine(DocumentType, Record_ID, "");
     docLine.m_C_Project_ID = data[0].getField("INOUTPROJECT");
@@ -342,9 +353,9 @@ public class DocMatchInv extends AcctServer {
     BigDecimal totalInOutLines = BigDecimal.ZERO;
     for (int i = 0; i < p_inOutlines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_inOutlines[i];
-      BigDecimal lineAmount = bdCost.multiply(new BigDecimal(line.m_qty)).divide(
-          new BigDecimal(data[0].getField("MOVEMENTQTY")),
-          costCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
+      BigDecimal lineAmount = bdCost.multiply(new BigDecimal(line.m_qty))
+          .divide(new BigDecimal(data[0].getField("MOVEMENTQTY")),
+              costCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
       if (i == p_inOutlines.length - 1) {
         lineAmount = bdCost.subtract(totalInOutLines);
       }
@@ -367,8 +378,8 @@ public class DocMatchInv extends AcctServer {
       BigDecimal lineAmount = BigDecimal.ZERO;
       BigDecimal linenetamt = new BigDecimal(invoiceData[0].linenetamt);
       if (!(linenetamt.compareTo(BigDecimal.ZERO) == 0)) {
-        lineAmount = bdExpenses.multiply(new BigDecimal(line.getAmount())).divide(linenetamt,
-            invoiceCurrencyPrecission, RoundingMode.HALF_UP);
+        lineAmount = bdExpenses.multiply(new BigDecimal(line.getAmount()))
+            .divide(linenetamt, invoiceCurrencyPrecission, RoundingMode.HALF_UP);
         if (i == p_lines.length - 1) {
           lineAmount = bdExpenses.subtract(totalLines);
         }
@@ -379,8 +390,8 @@ public class DocMatchInv extends AcctServer {
       }
     }
     if (cr == null && ZERO.compareTo(bdExpenses) != 0) {
-      log4j.warn("createFact - unable to calculate line with "
-          + " expenses to product expenses account.");
+      log4j.warn(
+          "createFact - unable to calculate line with " + " expenses to product expenses account.");
       return null;
     }
     // Set Locations
@@ -394,12 +405,12 @@ public class DocMatchInv extends AcctServer {
     updateProductInfo(as.getC_AcctSchema_ID(), conn, con); // only API
 
     bdExpenses = convertAmount(bdExpenses, strIsSOTrx.equalsIgnoreCase("Y") ? true : false,
-        DateAcct, TABLEID_Invoice, strRecordId, strInvoiceCurrency, as.m_C_Currency_ID, docLine,
-        as, fact, Fact_Acct_Group_ID, SeqNo, conn, false);
+        DateAcct, TABLEID_Invoice, strRecordId, strInvoiceCurrency, as.m_C_Currency_ID, docLine, as,
+        fact, Fact_Acct_Group_ID, SeqNo, conn, false);
 
     BigDecimal bdExpensesAcctCurrency = new BigDecimal(
-        getConvertedAmt(bdExpenses.toString(), strInvoiceCurrency, as.m_C_Currency_ID, DateAcct,
-            "", vars.getClient(), vars.getOrg(), conn));
+        getConvertedAmt(bdExpenses.toString(), strInvoiceCurrency, as.m_C_Currency_ID, DateAcct, "",
+            vars.getClient(), vars.getOrg(), conn));
     // Calculate Difference amount in schema currency
     bdCost = new BigDecimal(getConvertedAmt(bdCost.toString(), costCurrency.getId(),
         as.m_C_Currency_ID, strReceiptDate, "", vars.getClient(), vars.getOrg(), conn));
@@ -408,17 +419,21 @@ public class DocMatchInv extends AcctServer {
       BigDecimal totalDiffLines = BigDecimal.ZERO;
       for (int i = 0; i < p_inOutlines.length; i++) {
         DocLine_Material line = (DocLine_Material) p_inOutlines[i];
-        BigDecimal lineAmount = bdDifference.multiply(new BigDecimal(line.m_qty)).divide(
-            new BigDecimal(data[0].getField("MOVEMENTQTY")),
-            OBDal.getInstance().get(Currency.class, as.m_C_Currency_ID).getStandardPrecision()
-                .intValue(), RoundingMode.HALF_UP);
+        BigDecimal lineAmount = bdDifference.multiply(new BigDecimal(line.m_qty))
+            .divide(new BigDecimal(data[0].getField("MOVEMENTQTY")),
+                OBDal.getInstance()
+                    .get(Currency.class, as.m_C_Currency_ID)
+                    .getStandardPrecision()
+                    .intValue(),
+                RoundingMode.HALF_UP);
         if (i == p_inOutlines.length - 1) {
           lineAmount = bdDifference.subtract(totalDiffLines);
         }
         diff = fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn),
-            as.m_C_Currency_ID, (lineAmount.compareTo(BigDecimal.ZERO) == 1) ? lineAmount.abs()
-                .toString() : "0", (lineAmount.compareTo(BigDecimal.ZERO) < 1) ? lineAmount.abs()
-                .toString() : "0", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            as.m_C_Currency_ID,
+            (lineAmount.compareTo(BigDecimal.ZERO) == 1) ? lineAmount.abs().toString() : "0",
+            (lineAmount.compareTo(BigDecimal.ZERO) < 1) ? lineAmount.abs().toString() : "0",
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         totalDiffLines = totalDiffLines.add(lineAmount);
         if (diff == null) {
           log4j.warn("createFact - unable to calculate line with "
@@ -466,6 +481,7 @@ public class DocMatchInv extends AcctServer {
    * 
    * not used
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;
   }
@@ -501,12 +517,18 @@ public class DocMatchInv extends AcctServer {
     MaterialTransaction transaction;
     try {
       OBContext.setAdminMode(false);
-      if (OBDal.getInstance().get(ReceiptInvoiceMatch.class, matchInvId).getGoodsShipmentLine()
-          .getMaterialMgmtMaterialTransactionList().size() == 0) {
+      if (OBDal.getInstance()
+          .get(ReceiptInvoiceMatch.class, matchInvId)
+          .getGoodsShipmentLine()
+          .getMaterialMgmtMaterialTransactionList()
+          .size() == 0) {
         return null;
       }
-      transaction = OBDal.getInstance().get(ReceiptInvoiceMatch.class, matchInvId)
-          .getGoodsShipmentLine().getMaterialMgmtMaterialTransactionList().get(0);
+      transaction = OBDal.getInstance()
+          .get(ReceiptInvoiceMatch.class, matchInvId)
+          .getGoodsShipmentLine()
+          .getMaterialMgmtMaterialTransactionList()
+          .get(0);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -517,7 +539,8 @@ public class DocMatchInv extends AcctServer {
     OBContext.setAdminMode(false);
     ShipmentInOutLine shipmentLine;
     try {
-      shipmentLine = OBDal.getInstance().get(ReceiptInvoiceMatch.class, matchInvId)
+      shipmentLine = OBDal.getInstance()
+          .get(ReceiptInvoiceMatch.class, matchInvId)
           .getGoodsShipmentLine();
     } finally {
       OBContext.restorePreviousMode();
@@ -525,6 +548,7 @@ public class DocMatchInv extends AcctServer {
     return shipmentLine;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

@@ -51,7 +51,8 @@ public abstract class ExternalConnectionPool {
       String externalConnectionPoolClassName) throws ReflectiveOperationException {
     if (instance == null) {
       instance = (ExternalConnectionPool) Class.forName(externalConnectionPoolClassName)
-          .getDeclaredConstructor().newInstance();
+          .getDeclaredConstructor()
+          .newInstance();
     }
     return instance;
   }

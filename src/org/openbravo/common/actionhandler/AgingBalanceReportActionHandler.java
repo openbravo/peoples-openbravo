@@ -168,11 +168,12 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
       } else if (PARAM_SHOWVOID.equals(parameter)) {
         String strVoid;
         try {
-          strVoid = Preferences.getPreferenceValue(PREFERENCE_SHOWVOID, true,
-              OBContext.getOBContext().getCurrentClient(),
-              OBContext.getOBContext().getCurrentOrganization(),
-              OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null).equals(
-              "Y") ? params.getString(PARAM_SHOWVOID) : TRUE;
+          strVoid = Preferences
+              .getPreferenceValue(PREFERENCE_SHOWVOID, true,
+                  OBContext.getOBContext().getCurrentClient(),
+                  OBContext.getOBContext().getCurrentOrganization(),
+                  OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null)
+              .equals("Y") ? params.getString(PARAM_SHOWVOID) : TRUE;
         } catch (Exception ex) {
           strVoid = TRUE;
         }
@@ -201,7 +202,8 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
     boolean showDoubtful = TRUE.equals(getParameter(PARAM_DOUBTFUL, content));
     boolean excludeVoid = FALSE.equals(getParameter(PARAM_SHOWVOID, content));
     Currency convCurrency = null;
-    String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormatString = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty(PROPERTY_DATEFORMAT);
     SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatString);
     final Date currentDate = jsDateFormat.parse(getParameter(PARAM_CURRENTDATE, content));
@@ -215,11 +217,13 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
       OBContext.restorePreviousMode();
     }
     // Save in session report limit
-    RequestContext.get().getVariablesSecureApp()
+    RequestContext.get()
+        .getVariablesSecureApp()
         .setSessionObject("reportsLimit", getReportsLimit(content));
     data = dao.getOpenReceivablesAgingScheduleDetails(getReportConnectionProvider(), currentDate,
-        dateFormat, convCurrency, new OrganizationStructureProvider().getChildTree(
-            getParameter(PARAM_ORGANIZATION, content), true),
+        dateFormat, convCurrency,
+        new OrganizationStructureProvider().getChildTree(getParameter(PARAM_ORGANIZATION, content),
+            true),
         getParameter(PARAM_RECORPAY, content), getParameter(PARAM_COLUMN1, content),
         getParameter(PARAM_COLUMN2, content), getParameter(PARAM_COLUMN3, content),
         getParameter(PARAM_COLUMN4, content), getParameter(PARAM_BP, content), showDoubtful,
@@ -269,7 +273,8 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
     boolean excludeVoid = FALSE.equals(getParameter(PARAM_SHOWVOID, content));
 
     // Save in session report limit
-    RequestContext.get().getVariablesSecureApp()
+    RequestContext.get()
+        .getVariablesSecureApp()
         .setSessionObject("reportsLimit", getReportsLimit(content));
     data = dao.getOpenReceivablesAgingSchedule(getReportConnectionProvider(),
         getParameter(PARAM_BP, content), getParameter(PARAM_GL, content), currentDate,
@@ -321,53 +326,53 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
     boolean includeDetails = TRUE.equals(getParameter(PARAM_DETAILS, jsonContent));
     if (includeDetails) {
       switch (expType) {
-      case XLS:
-      case XLSX:
-        if (includeDoubtful) {
-          if (report.isUsePDFAsXLSTemplate()) {
+        case XLS:
+        case XLSX:
+          if (includeDoubtful) {
+            if (report.isUsePDFAsXLSTemplate()) {
+              jRPath = AGING_SCHEDULE_DETAIL_PDF_DOUBTFUL_DEBT;
+            } else {
+              jRPath = AGING_SCHEDULE_DETAIL_XLS_DOUBTFUL_DEBT;
+            }
+          } else {
+            if (report.isUsePDFAsXLSTemplate()) {
+              jRPath = AGING_SCHEDULE_DETAIL_PDF;
+            } else {
+              jRPath = AGING_SCHEDULE_DETAIL_XLS;
+            }
+          }
+          break;
+        case PDF:
+          if (includeDoubtful) {
             jRPath = AGING_SCHEDULE_DETAIL_PDF_DOUBTFUL_DEBT;
           } else {
-            jRPath = AGING_SCHEDULE_DETAIL_XLS_DOUBTFUL_DEBT;
-          }
-        } else {
-          if (report.isUsePDFAsXLSTemplate()) {
             jRPath = AGING_SCHEDULE_DETAIL_PDF;
-          } else {
-            jRPath = AGING_SCHEDULE_DETAIL_XLS;
           }
-        }
-        break;
-      case PDF:
-        if (includeDoubtful) {
-          jRPath = AGING_SCHEDULE_DETAIL_PDF_DOUBTFUL_DEBT;
-        } else {
-          jRPath = AGING_SCHEDULE_DETAIL_PDF;
-        }
-        break;
-      case HTML:
-        jRPath = AGING_SCHEDULE_DETAIL_HTML;
-        break;
-      default:
-        jRPath = BLANK;
+          break;
+        case HTML:
+          jRPath = AGING_SCHEDULE_DETAIL_HTML;
+          break;
+        default:
+          jRPath = BLANK;
       }
     } else {
       switch (expType) {
-      case XLS:
-      case XLSX:
-        jRPath = AGING_SCHEDULE_XLS;
-        break;
-      case PDF:
-        if (includeDoubtful) {
-          jRPath = AGING_SCHEDULE_PDF_DOUBTFUL_DEBT;
-        } else {
-          jRPath = AGING_SCHEDULE_PDF;
-        }
-        break;
-      case HTML:
-        jRPath = AGING_SCHEDULE_HTML;
-        break;
-      default:
-        jRPath = BLANK;
+        case XLS:
+        case XLSX:
+          jRPath = AGING_SCHEDULE_XLS;
+          break;
+        case PDF:
+          if (includeDoubtful) {
+            jRPath = AGING_SCHEDULE_PDF_DOUBTFUL_DEBT;
+          } else {
+            jRPath = AGING_SCHEDULE_PDF;
+          }
+          break;
+        case HTML:
+          jRPath = AGING_SCHEDULE_HTML;
+          break;
+        default:
+          jRPath = BLANK;
       }
     }
     if (StringUtils.isEmpty(jRPath)) {
@@ -393,7 +398,8 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
       String strcBpartnerId = getParameter(PARAM_BP, jsonContent);
       String strVoid = getParameter(PARAM_SHOWVOID, jsonContent);
       String strDoubtful = getParameter(PARAM_DOUBTFUL, jsonContent);
-      String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      String dateFormatString = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty(PROPERTY_DATEFORMAT);
       SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatString);
       final Date currentDate = jsDateFormat.parse(strCurrentDate);
@@ -407,13 +413,13 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         parameters.put("BPartnerID", strcBpartnerId.replace("'", "\\\'"));
         parameters.put("organizationID", strOrg);
         parameters.put("accSchemaID", strAccSchema);
-        parameters.put("Organization", OBDal.getInstance().get(Organization.class, strOrg)
-            .getIdentifier());
+        parameters.put("Organization",
+            OBDal.getInstance().get(Organization.class, strOrg).getIdentifier());
         AcctSchema acctSchema = null;
         OBContext.setAdminMode(true);
         try {
-          acctSchema = OBDal.getInstance().get(AcctSchema.class,
-              getParameter(PARAM_GL, jsonContent));
+          acctSchema = OBDal.getInstance()
+              .get(AcctSchema.class, getParameter(PARAM_GL, jsonContent));
         } finally {
           OBContext.restorePreviousMode();
         }
@@ -461,18 +467,18 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         parameters.put("inpColumn1", strColumn1);
         cal.add(Calendar.DATE, -Integer.parseInt(strColumn1));
         parameters.put("Date1", dateFormat.format(cal.getTime()));
-        parameters
-            .put("col2", String.valueOf((Integer.valueOf(strColumn1) + 1)) + "-" + strColumn2);
+        parameters.put("col2",
+            String.valueOf((Integer.valueOf(strColumn1) + 1)) + "-" + strColumn2);
         parameters.put("inpColumn2", strColumn2);
         cal.add(Calendar.DATE, -((Integer.parseInt(strColumn2) - (Integer.parseInt(strColumn1)))));
         parameters.put("Date2", dateFormat.format(cal.getTime()));
-        parameters
-            .put("col3", String.valueOf((Integer.valueOf(strColumn2) + 1)) + "-" + strColumn3);
+        parameters.put("col3",
+            String.valueOf((Integer.valueOf(strColumn2) + 1)) + "-" + strColumn3);
         parameters.put("inpColumn3", strColumn3);
         cal.add(Calendar.DATE, -((Integer.parseInt(strColumn3) - (Integer.parseInt(strColumn2)))));
         parameters.put("Date3", dateFormat.format(cal.getTime()));
-        parameters
-            .put("col4", String.valueOf((Integer.valueOf(strColumn3) + 1)) + "-" + strColumn4);
+        parameters.put("col4",
+            String.valueOf((Integer.valueOf(strColumn3) + 1)) + "-" + strColumn4);
         parameters.put("inpColumn4", strColumn4);
         cal.add(Calendar.DATE, -((Integer.parseInt(strColumn4) - (Integer.parseInt(strColumn3)))));
         parameters.put("Date4", dateFormat.format(cal.getTime()));
@@ -480,10 +486,10 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         parameters.put("BPartners", strcBpartnerId.replace("'", "\\\'"));
         parameters.put("Organization", strOrg);
         parameters.put("AccSchema", strAccSchema);
-        parameters.put("OrganizationName", OBDal.getInstance().get(Organization.class, strOrg)
-            .getIdentifier());
-        parameters
-            .put("AccSchemaName", (strAccSchema != null) ? acctSchema.getIdentifier() : BLANK);
+        parameters.put("OrganizationName",
+            OBDal.getInstance().get(Organization.class, strOrg).getIdentifier());
+        parameters.put("AccSchemaName",
+            (strAccSchema != null) ? acctSchema.getIdentifier() : BLANK);
         parameters.put("Currency", Utility.stringBaseCurrencyId(conn, vars.getClient()));
         parameters.put("toCurrency", toCurrency.getId());
         parameters.put("showDoubtfulDebt", strDoubtful);

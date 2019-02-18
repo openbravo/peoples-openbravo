@@ -32,33 +32,39 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 public class RptMA_ProcessPlan extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       String strmaProcessPlan = vars.getSessionValue("RptMA_ProcessPlan.inpmaProcessplan_R");
-      if (strmaProcessPlan.equals(""))
+      if (strmaProcessPlan.equals("")) {
         strmaProcessPlan = vars.getSessionValue("RptMA_ProcessPlan.inpmaProcessplanId");
+      }
       printPagePartePDF(response, vars, strmaProcessPlan);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars,
       String strmaProcessPlan) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pdf");
+    }
     // here we pass the familiy-ID with report.setData
     RptMAProcessPlanData[] data = RptMAProcessPlanData.select(this, vars.getLanguage(),
         strmaProcessPlan);
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       data = RptMAProcessPlanData.set();
+    }
 
     String strReportName = "@basedesign@/org/openbravo/erpReports/RptMA_ProcessPlan.jrxml";
     String strOutput = "pdf";
@@ -67,6 +73,7 @@ public class RptMA_ProcessPlan extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the RptMAProcessPlan seeker";
   } // End of getServletInfo() method

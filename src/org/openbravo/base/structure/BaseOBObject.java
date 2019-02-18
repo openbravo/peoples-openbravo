@@ -48,8 +48,8 @@ import org.openbravo.model.ad.system.Language;
  * @author mtaal
  */
 
-public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, DynamicEnabled,
-    OBNotSingleton, Serializable {
+public abstract class BaseOBObject
+    implements BaseOBObjectDef, Identifiable, DynamicEnabled, OBNotSingleton, Serializable {
   public static final String ID = "id";
 
   private static final Logger log = LogManager.getLogger();
@@ -151,7 +151,8 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
     hql.append("select trl from " + trlParentProperty.getEntity() + " as trl ");
     hql.append("where trl." + trlParentProperty.getName() + ".id = :id ");
     hql.append("and trl.language = :language and trl.active = true");
-    Query<BaseOBObject> query = OBDal.getInstance().getSession()
+    Query<BaseOBObject> query = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), BaseOBObject.class);
     query.setParameter("id", id);
     query.setParameter("language", language);
@@ -173,16 +174,20 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
     data[p.getIndexInEntity()] = value;
   }
 
+  @Override
   public Object getId() {
     return get(ID);
   }
 
+  @Override
   public void setId(Object id) {
     set(ID, id);
   }
 
+  @Override
   public abstract String getEntityName();
 
+  @Override
   public String getIdentifier() {
     return IdentifierProvider.getInstance().getIdentifier(this);
   }
@@ -197,6 +202,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
    *          the name of the {@link Property Property} for which the value is requested
    * @throws OBSecurityException
    */
+  @Override
   public Object get(String propName) {
     return get(propName, null);
   }
@@ -259,6 +265,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
    * @throws OBSecurityException
    *           , ValidationException
    */
+  @Override
   public void set(String propName, Object value) {
     final Property p = getEntity().getProperty(propName);
     p.checkIsValidValue(value);
@@ -278,11 +285,9 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
       }
 
       if (isDerivedReadable && !p.allowDerivedRead()) {
-        throw new OBSecurityException(
-            "Entity "
-                + getEntity()
-                + " is not directly readable, only id and identifier properties are readable, property "
-                + p + " is neither of these.");
+        throw new OBSecurityException("Entity " + getEntity()
+            + " is not directly readable, only id and identifier properties are readable, property "
+            + p + " is neither of these.");
       }
     }
   }
@@ -317,6 +322,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
    * 
    * @return the Entity of this object
    */
+  @Override
   public Entity getEntity() {
     if (model == null) {
       model = ModelProvider.getInstance().getEntity(getEntityName());

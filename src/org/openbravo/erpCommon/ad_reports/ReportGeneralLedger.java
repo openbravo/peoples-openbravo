@@ -57,8 +57,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -67,12 +67,12 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       if (StringUtils.isEmpty(strcAcctSchemaId)) {
         strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       }
-      String strDateFrom = vars
-          .getGlobalVariable("inpDateFrom", "ReportGeneralLedger|DateFrom", "");
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportGeneralLedger|DateFrom",
+          "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportGeneralLedger|DateTo", "");
       String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportGeneralLedger|PageNo", "1");
-      String strAmtFrom = vars.getNumericGlobalVariable("inpAmtFrom",
-          "ReportGeneralLedger|AmtFrom", "");
+      String strAmtFrom = vars.getNumericGlobalVariable("inpAmtFrom", "ReportGeneralLedger|AmtFrom",
+          "");
       String strAmtTo = vars.getNumericGlobalVariable("inpAmtTo", "ReportGeneralLedger|AmtTo", "");
       String strcelementvaluefrom = vars.getGlobalVariable("inpcElementValueIdFrom",
           "ReportGeneralLedger|C_ElementValue_IDFROM", "");
@@ -144,11 +144,11 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|mProductId", IsIDFilter.instance);
       String strcProjectId = vars.getRequestInGlobalVariable("inpcProjectId_IN",
           "ReportGeneralLedger|cProjectId", IsIDFilter.instance);
-      String strGroupBy = vars
-          .getRequestGlobalVariable("inpGroupBy", "ReportGeneralLedger|GroupBy");
+      String strGroupBy = vars.getRequestGlobalVariable("inpGroupBy",
+          "ReportGeneralLedger|GroupBy");
       log4j.debug("##################### DoPost - Find - strcBpartnerId= " + strcBpartnerId);
-      log4j.debug("##################### DoPost - XLS - strcelementvaluefrom= "
-          + strcelementvaluefrom);
+      log4j.debug(
+          "##################### DoPost - XLS - strcelementvaluefrom= " + strcelementvaluefrom);
       log4j.debug("##################### DoPost - XLS - strcelementvalueto= " + strcelementvalueto);
       vars.setSessionValue("ReportGeneralLedger.initRecordNumber", "0");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strAmtFrom, strAmtTo,
@@ -160,8 +160,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strInitRecord = vars.getSessionValue("ReportGeneralLedger.initRecordNumber");
       String strRecordRange = Utility.getContext(readOnlyCP, vars, "#RecordRange",
           "ReportGeneralLedger");
-      int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0 : Integer
-          .parseInt(strRecordRange);
+      int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0
+          : Integer.parseInt(strRecordRange);
       if (StringUtils.isEmpty(strInitRecord) || StringUtils.equals(strInitRecord, "0")) {
         vars.setSessionValue("ReportGeneralLedger.initRecordNumber", "0");
       } else {
@@ -176,8 +176,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strInitRecord = vars.getSessionValue("ReportGeneralLedger.initRecordNumber");
       String strRecordRange = Utility.getContext(readOnlyCP, vars, "#RecordRange",
           "ReportGeneralLedger");
-      int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0 : Integer
-          .parseInt(strRecordRange);
+      int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0
+          : Integer.parseInt(strRecordRange);
       int initRecord = StringUtils.isEmpty(strInitRecord) ? 0 : Integer.parseInt(strInitRecord);
       // if (initRecord == 0)
       // initRecord = 1; Removed by DAL 30/4/09
@@ -208,8 +208,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|cProjectId", "", IsIDFilter.instance);
       String strShowOpenBalances = vars.getRequestGlobalVariable("inpShowOpenBalances",
           "ReportGeneralLedger|showOpenBalances");
-      String strGroupBy = vars
-          .getRequestGlobalVariable("inpGroupBy", "ReportGeneralLedger|GroupBy");
+      String strGroupBy = vars.getRequestGlobalVariable("inpGroupBy",
+          "ReportGeneralLedger|GroupBy");
       String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportGeneralLedger|PageNo", "1");
       if (vars.commandIn("PDF")) {
         printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
@@ -274,11 +274,13 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     String toDatePlusOne = DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1");
 
-    String strGroupByText = (StringUtils.equals(strGroupBy, "BPartner") ? Utility.messageBD(
-        readOnlyCP, "BusPartner", vars.getLanguage())
-        : (StringUtils.equals(strGroupBy, "Product") ? Utility.messageBD(readOnlyCP, "Product",
-            vars.getLanguage()) : (StringUtils.equals(strGroupBy, "Project") ? Utility.messageBD(
-            readOnlyCP, "Project", vars.getLanguage()) : "")));
+    String strGroupByText = (StringUtils.equals(strGroupBy, "BPartner")
+        ? Utility.messageBD(readOnlyCP, "BusPartner", vars.getLanguage())
+        : (StringUtils.equals(strGroupBy, "Product")
+            ? Utility.messageBD(readOnlyCP, "Product", vars.getLanguage())
+            : (StringUtils.equals(strGroupBy, "Project")
+                ? Utility.messageBD(readOnlyCP, "Project", vars.getLanguage())
+                : "")));
 
     ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportGeneralLedger", true, "",
         "", "imprimir();return false;", false, "ad_reports", strReplaceWith, false, true);
@@ -287,11 +289,11 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strcProjectIdAux = strcProjectId;
     if (StringUtils.isEmpty(strDateFrom) && StringUtils.isEmpty(strDateTo)) {
       String discard[] = { "sectionAmount", "sectionGroupBy" };
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportGeneralLedger", discard).createXmlDocument();
-      toolbar
-          .prepareRelationBarTemplate(false, false,
-              "submitCommandForm('XLS', false, frmMain, 'ReportGeneralLedgerExcel.xls', 'EXCEL');return false;");
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportGeneralLedger", discard)
+          .createXmlDocument();
+      toolbar.prepareRelationBarTemplate(false, false,
+          "submitCommandForm('XLS', false, frmMain, 'ReportGeneralLedgerExcel.xls', 'EXCEL');return false;");
       data = ReportGeneralLedgerData.set();
     } else {
       String[] discard = { "discard" };
@@ -306,8 +308,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       if (StringUtils.isNotEmpty(strcelementvaluefrom)) {
         if (StringUtils.isEmpty(localStrcelementvalueto)) {
           localStrcelementvalueto = strcelementvaluefrom;
-          localStrcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(
-              readOnlyCP, localStrcelementvalueto);
+          localStrcelementvaluetodes = ReportGeneralLedgerData
+              .selectSubaccountDescription(readOnlyCP, localStrcelementvalueto);
           vars.setSessionValue("inpElementValueIdTo_DES", localStrcelementvaluetodes);
 
         }
@@ -365,16 +367,19 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                 data[0].id, data[0].groupbyid, null, null, null, data[0].dateacctnumber
                     + data[0].factaccttype + data[0].factAcctGroupId + data[0].factAcctId);
             dataSubtotal = ReportGeneralLedgerData.select2sum(readOnlyCP, rowNum, strGroupByText,
-                strGroupBy, strAllaccounts, strcelementvaluefrom, localStrcelementvalueto, Utility
-                    .getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+                strGroupBy, strAllaccounts, strcelementvaluefrom, localStrcelementvalueto,
+                Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
                 Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
-                strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, (StringUtils.equals(
-                    strGroupBy, "BPartner") ? "('" + data[i].groupbyid + "')" : strcBpartnerId),
+                strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily,
+                (StringUtils.equals(strGroupBy, "BPartner") ? "('" + data[i].groupbyid + "')"
+                    : strcBpartnerId),
                 (StringUtils.equals(strGroupBy, "Product") ? "('" + data[i].groupbyid + "')"
-                    : strmProductId), (StringUtils.equals(strGroupBy, "Project") ? "('"
-                    + data[i].groupbyid + "')" : strcProjectId), strAmtFrom, strAmtTo, null, null,
-                null, null, null, data[0].dateacctnumber + data[0].factaccttype
-                    + data[0].factAcctGroupId + data[0].factAcctId, data[0].id);
+                    : strmProductId),
+                (StringUtils.equals(strGroupBy, "Project") ? "('" + data[i].groupbyid + "')"
+                    : strcProjectId),
+                strAmtFrom, strAmtTo, null, null, null, null, null, data[0].dateacctnumber
+                    + data[0].factaccttype + data[0].factAcctGroupId + data[0].factAcctId,
+                data[0].id);
 
             log4j.debug("Select2Total. Time in mils: " + (System.currentTimeMillis() - init));
             // Now dataTotal is covered adding debit and credit amounts
@@ -404,12 +409,16 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
               log4j.debug("SelectTotalNew. Time in mils: " + (System.currentTimeMillis() - init));
             } else {
               Long init = System.currentTimeMillis();
-              subreportElement = ReportGeneralLedgerData.selectTotal2(readOnlyCP, (StringUtils
-                  .equals(strGroupBy, "BPartner") ? "('" + data[i].groupbyid + "')"
-                  : strcBpartnerId), null, (StringUtils.equals(strGroupBy, "Product") ? "('"
-                  + data[i].groupbyid + "')" : strmProductId), null, (StringUtils.equals(
-                  strGroupBy, "Project") ? "('" + data[i].groupbyid + "')" : strcProjectId), null,
-                  strcAcctSchemaId, data[i].id, "", strDateFrom, strOrgFamily);
+              subreportElement = ReportGeneralLedgerData.selectTotal2(readOnlyCP,
+                  (StringUtils.equals(strGroupBy, "BPartner") ? "('" + data[i].groupbyid + "')"
+                      : strcBpartnerId),
+                  null,
+                  (StringUtils.equals(strGroupBy, "Product") ? "('" + data[i].groupbyid + "')"
+                      : strmProductId),
+                  null,
+                  (StringUtils.equals(strGroupBy, "Project") ? "('" + data[i].groupbyid + "')"
+                      : strcProjectId),
+                  null, strcAcctSchemaId, data[i].id, "", strDateFrom, strOrgFamily);
               log4j.debug("SelectTotalNew. Time in mils: " + (System.currentTimeMillis() - init));
             }
           }
@@ -444,9 +453,13 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
             Long init = System.currentTimeMillis();
             subreportElement = ReportGeneralLedgerData.selectTotal2(readOnlyCP,
                 (StringUtils.equals(strGroupBy, "BPartner") ? "('" + data[i].groupbyid + "')"
-                    : strcBpartnerId), null, (StringUtils.equals(strGroupBy, "Product") ? "('"
-                    + data[i].groupbyid + "')" : strmProductId), null, (StringUtils.equals(
-                    strGroupBy, "Project") ? "('" + data[i].groupbyid + "')" : strcProjectId),
+                    : strcBpartnerId),
+                null,
+                (StringUtils.equals(strGroupBy, "Product") ? "('" + data[i].groupbyid + "')"
+                    : strmProductId),
+                null,
+                (StringUtils.equals(strGroupBy, "Project") ? "('" + data[i].groupbyid + "')"
+                    : strcProjectId),
                 null, strcAcctSchemaId, data[i].id, "", toDatePlusOne, strOrgFamily);
             log4j.debug("SelectTotal2. Time in mils: " + (System.currentTimeMillis() - init));
           }
@@ -460,11 +473,11 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
       boolean hasPrevious = !(data == null || data.length == 0 || initRecordNumber <= 1);
       boolean hasNext = !(data == null || data.length == 0 || data.length < intRecordRange);
-      toolbar
-          .prepareRelationBarTemplate(hasPrevious, hasNext,
-              "submitCommandForm('XLS', true, frmMain, 'ReportGeneralLedgerExcel.xls', 'EXCEL');return false;");
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportGeneralLedger", discard).createXmlDocument();
+      toolbar.prepareRelationBarTemplate(hasPrevious, hasNext,
+          "submitCommandForm('XLS', true, frmMain, 'ReportGeneralLedgerExcel.xls', 'EXCEL');return false;");
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportGeneralLedger", discard)
+          .createXmlDocument();
     }
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -479,8 +492,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger.html", classInfo.id, classInfo.type, strReplaceWith,
           tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(),
-          "ReportGeneralLedger.html", strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(), "ReportGeneralLedger.html",
+          strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -526,26 +539,20 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("inpElementValueIdFrom_DES", strcelementvaluefromdes);
     xmlDocument.setParameter("groupbyselected", strGroupBy);
     xmlDocument.setParameter("showOpenBalances", strShowOpenBalances);
-    xmlDocument.setData(
-        "reportCBPartnerId_IN",
-        "liststructure",
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         SelectorUtilityData.selectBpartner(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
             Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strcBpartnerIdAux));
-    xmlDocument.setData(
-        "reportMProductId_IN",
-        "liststructure",
+    xmlDocument.setData("reportMProductId_IN", "liststructure",
         SelectorUtilityData.selectMproduct(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
             Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strmProductIdAux));
-    xmlDocument.setData(
-        "reportCProjectId_IN",
-        "liststructure",
+    xmlDocument.setData("reportCProjectId_IN", "liststructure",
         SelectorUtilityData.selectProject(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
             Utility.getContext(readOnlyCP, vars, "#User_Client", ""), strcProjectIdAux));
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-        .selectC_ACCTSCHEMA_ID(readOnlyCP,
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure",
+        AccountingSchemaMiscData.selectC_ACCTSCHEMA_ID(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
             Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
             strcAcctSchemaId));
@@ -577,8 +584,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strAmtFrom,
       String strAmtTo, String strcelementvaluefrom, String strcelementvalueto, String strOrg,
       String strcBpartnerId, String strmProductId, String strcProjectId, String strGroupBy,
-      String strcAcctSchemaId, String strPageNo, String strShowOpenBalances) throws IOException,
-      ServletException {
+      String strcAcctSchemaId, String strPageNo, String strShowOpenBalances)
+      throws IOException, ServletException {
     String localStrcelementvalueto = strcelementvalueto;
     log4j.debug("Output: PDF");
     response.setContentType("text/html; charset=UTF-8");
@@ -587,11 +594,13 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     String toDatePlusOne = DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1");
 
-    String strGroupByText = (StringUtils.equals(strGroupBy, "BPartner") ? Utility.messageBD(
-        readOnlyCP, "BusPartner", vars.getLanguage())
-        : (StringUtils.equals(strGroupBy, "Product") ? Utility.messageBD(readOnlyCP, "Product",
-            vars.getLanguage()) : (StringUtils.equals(strGroupBy, "Project") ? Utility.messageBD(
-            readOnlyCP, "Project", vars.getLanguage()) : "")));
+    String strGroupByText = (StringUtils.equals(strGroupBy, "BPartner")
+        ? Utility.messageBD(readOnlyCP, "BusPartner", vars.getLanguage())
+        : (StringUtils.equals(strGroupBy, "Product")
+            ? Utility.messageBD(readOnlyCP, "Product", vars.getLanguage())
+            : (StringUtils.equals(strGroupBy, "Project")
+                ? Utility.messageBD(readOnlyCP, "Project", vars.getLanguage())
+                : "")));
     String strAllaccounts = "Y";
 
     if (StringUtils.isEmpty(strDateFrom) || StringUtils.isEmpty(strDateTo)) {
@@ -638,11 +647,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
       parameters.put("ShowGrouping", StringUtils.isNotEmpty(strGroupBy));
       StringBuilder strSubTitle = new StringBuilder();
-      strSubTitle.append(Utility.messageBD(readOnlyCP, "DateFrom", strLanguage) + ": "
-          + strDateFrom + " - " + Utility.messageBD(readOnlyCP, "DateTo", strLanguage) + ": "
-          + strDateTo + " (");
-      strSubTitle.append(ReportGeneralLedgerData.selectCompany(readOnlyCP, vars.getClient())
-          + " - ");
+      strSubTitle.append(Utility.messageBD(readOnlyCP, "DateFrom", strLanguage) + ": " + strDateFrom
+          + " - " + Utility.messageBD(readOnlyCP, "DateTo", strLanguage) + ": " + strDateTo + " (");
+      strSubTitle
+          .append(ReportGeneralLedgerData.selectCompany(readOnlyCP, vars.getClient()) + " - ");
       strSubTitle.append(ReportGeneralLedgerData.selectOrganization(readOnlyCP, strOrg) + ")");
       parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
       parameters.put("Previous", Utility.messageBD(readOnlyCP, "Initial Balance", strLanguage));
@@ -716,11 +724,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strLanguage = vars.getLanguage();
 
       StringBuilder strSubTitle = new StringBuilder();
-      strSubTitle.append(Utility.messageBD(readOnlyCP, "DateFrom", strLanguage) + ": "
-          + strDateFrom + " - " + Utility.messageBD(readOnlyCP, "DateTo", strLanguage) + ": "
-          + strDateTo + " (");
-      strSubTitle.append(ReportGeneralLedgerData.selectCompany(readOnlyCP, vars.getClient())
-          + " - ");
+      strSubTitle.append(Utility.messageBD(readOnlyCP, "DateFrom", strLanguage) + ": " + strDateFrom
+          + " - " + Utility.messageBD(readOnlyCP, "DateTo", strLanguage) + ": " + strDateTo + " (");
+      strSubTitle
+          .append(ReportGeneralLedgerData.selectCompany(readOnlyCP, vars.getClient()) + " - ");
       strSubTitle.append(ReportGeneralLedgerData.selectOrganization(readOnlyCP, strOrg) + ")");
       parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
       String strDateFormat;
@@ -782,11 +789,15 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
               (StringUtils.equals(strGroupBy, "Project") ? " " : null), strcAcctSchemaId, cur.id,
               "", strDateFrom, strOrgFamily);
         } else {
-          subreport = ReportGeneralLedgerData.selectTotal2(conn, (StringUtils.equals(strGroupBy,
-              "BPartner") ? "('" + cur.groupbyid + "')" : strcBpartnerId), null, (StringUtils
-              .equals(strGroupBy, "Product") ? "('" + cur.groupbyid + "')" : strmProductId), null,
-              (StringUtils.equals(strGroupBy, "Project") ? "('" + cur.groupbyid + "')"
-                  : strcProjectId), null, strcAcctSchemaId, cur.id, "", strDateFrom, strOrgFamily);
+          subreport = ReportGeneralLedgerData.selectTotal2(conn,
+              (StringUtils.equals(strGroupBy, "BPartner") ? "('" + cur.groupbyid + "')"
+                  : strcBpartnerId),
+              null,
+              (StringUtils.equals(strGroupBy, "Product") ? "('" + cur.groupbyid + "')"
+                  : strmProductId),
+              null, (StringUtils.equals(strGroupBy, "Project") ? "('" + cur.groupbyid + "')"
+                  : strcProjectId),
+              null, strcAcctSchemaId, cur.id, "", strDateFrom, strOrgFamily);
         }
         totalDebit = BigDecimal.ZERO;
         totalCredit = BigDecimal.ZERO;

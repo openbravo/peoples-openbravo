@@ -48,8 +48,8 @@ public class HQLInserterQualifier {
    * id. For instance, the id of the injection point @injection_point_0@ is 0
    */
   @SuppressWarnings("all")
-  public static class Selector extends AnnotationLiteral<HQLInserterQualifier.Qualifier> implements
-      HQLInserterQualifier.Qualifier {
+  public static class Selector extends AnnotationLiteral<HQLInserterQualifier.Qualifier>
+      implements HQLInserterQualifier.Qualifier {
     private static final long serialVersionUID = 1L;
 
     final String tableId;
@@ -60,10 +60,12 @@ public class HQLInserterQualifier {
       this.injectionId = injectionId;
     }
 
+    @Override
     public String tableId() {
       return tableId;
     }
 
+    @Override
     public String injectionId() {
       return injectionId;
     }

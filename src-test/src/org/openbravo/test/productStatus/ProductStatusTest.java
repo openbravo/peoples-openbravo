@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -22,8 +24,6 @@ import org.openbravo.model.common.plm.ProductStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.test.base.OBBaseTest;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check the PLM-Status development
@@ -137,8 +137,8 @@ public class ProductStatusTest extends OBBaseTest {
       final Order testOrder = createOrder(2);
       setProductStatus(COSTING_PRODUCT_1, RAMP_DOWN);
       final Product costingProduct1 = OBDal.getInstance().get(Product.class, COSTING_PRODUCT_1);
-      final OBCriteria<StorageDetail> storageDetailCriteria = OBDal.getInstance().createCriteria(
-          StorageDetail.class);
+      final OBCriteria<StorageDetail> storageDetailCriteria = OBDal.getInstance()
+          .createCriteria(StorageDetail.class);
       storageDetailCriteria.add(Restrictions.eq(StorageDetail.PROPERTY_PRODUCT, costingProduct1));
       final List<StorageDetail> storageDetailList = storageDetailCriteria.list();
       for (final StorageDetail storageDetail : storageDetailList) {
@@ -150,7 +150,8 @@ public class ProductStatusTest extends OBBaseTest {
     } catch (Exception e) {
       success = e.getMessage().contains(DISCONTINUED_ERROR);
     } finally {
-      assertThat("The product costing Product 1 cannot be sold (not stock)", success, equalTo(true));
+      assertThat("The product costing Product 1 cannot be sold (not stock)", success,
+          equalTo(true));
       OBContext.restorePreviousMode();
     }
   }
@@ -163,13 +164,14 @@ public class ProductStatusTest extends OBBaseTest {
       final Order testOrder = createOrder(3);
       setProductStatus(COSTING_PRODUCT_1, RAMP_DOWN);
       final Product costingProduct1 = OBDal.getInstance().get(Product.class, COSTING_PRODUCT_1);
-      final OBCriteria<StorageDetail> storageDetailCriteria = OBDal.getInstance().createCriteria(
-          StorageDetail.class);
+      final OBCriteria<StorageDetail> storageDetailCriteria = OBDal.getInstance()
+          .createCriteria(StorageDetail.class);
       storageDetailCriteria.add(Restrictions.eq(StorageDetail.PROPERTY_PRODUCT, costingProduct1));
       storageDetailCriteria.setMaxResults(1);
       final StorageDetail storageDetail = (StorageDetail) storageDetailCriteria.uniqueResult();
-      final BigDecimal qtyOnHand = storageDetail.getQuantityOnHand() != null ? new BigDecimal(
-          storageDetail.getQuantityOnHand().toString()) : null;
+      final BigDecimal qtyOnHand = storageDetail.getQuantityOnHand() != null
+          ? new BigDecimal(storageDetail.getQuantityOnHand().toString())
+          : null;
       storageDetail.setQuantityOnHand(new BigDecimal(100));
       OBDal.getInstance().save(storageDetail);
       OBDal.getInstance().flush();

@@ -34,8 +34,8 @@ import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 
 public class InvoiceLineEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      InvoiceLine.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(InvoiceLine.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -55,8 +55,8 @@ public class InvoiceLineEventHandler extends EntityPersistenceEventObserver {
     criteria.add(Restrictions.eq(InvoiceLine.PROPERTY_INVOICE, ObjInvoiceLine.getInvoice()));
 
     if (criteria.count() == 1) {
-      Invoice ObjInvoice = OBDal.getInstance().get(Invoice.class,
-          ObjInvoiceLine.getInvoice().getId());
+      Invoice ObjInvoice = OBDal.getInstance()
+          .get(Invoice.class, ObjInvoiceLine.getInvoice().getId());
 
       if (ObjInvoice != null) {
         ObjInvoice.setSalesOrder(null);

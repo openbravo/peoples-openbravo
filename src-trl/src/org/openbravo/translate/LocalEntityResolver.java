@@ -33,8 +33,9 @@ import org.xml.sax.SAXException;
  */
 public class LocalEntityResolver implements EntityResolver {
 
-  public InputSource resolveEntity(String publicId, String systemId) throws SAXException,
-      IOException {
+  @Override
+  public InputSource resolveEntity(String publicId, String systemId)
+      throws SAXException, IOException {
 
     if (systemId.equals("http://jasperreports.sourceforge.net/dtds/jasperreport.dtd")) {
       // return a special input source using the system classloader.

@@ -62,8 +62,7 @@ public class UserCtxCacheObserver extends EntityPersistenceEventObserver {
   @Override
   protected boolean isValidEvent(EntityPersistenceEvent event) {
     boolean valid = super.isValidEvent(event);
-    return valid
-        || (event.getTargetInstance() instanceof InheritedAccessEnabled && !(event
-            .getTargetInstance() instanceof Preference));
+    return valid || (event.getTargetInstance() instanceof InheritedAccessEnabled
+        && !(event.getTargetInstance() instanceof Preference));
   }
 }

@@ -232,8 +232,8 @@ public class TestUtils {
    */
   static int getNumberOfShipments(final String docNo) {
     try {
-      final OBCriteria<ShipmentInOut> criteria = OBDal.getInstance().createCriteria(
-          ShipmentInOut.class);
+      final OBCriteria<ShipmentInOut> criteria = OBDal.getInstance()
+          .createCriteria(ShipmentInOut.class);
       criteria.add(Restrictions.like(ShipmentInOut.PROPERTY_DOCUMENTNO, docNo + "-%"));
       return criteria.list().size();
     } catch (Exception e) {

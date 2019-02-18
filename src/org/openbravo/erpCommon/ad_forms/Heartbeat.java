@@ -39,24 +39,25 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class Heartbeat extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT", "DEFAULT_MODULE", "UPDATE_MODULE", "UPGRADE_MODULE")) {
       printPageDataSheet(response, vars);
     } else if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE_UPDATE", "CONFIGURE_MODULE_INSTALL",
         "CONFIGURE_MODULE_UPGRADE")) {
-      response.sendRedirect(strDireccion + "/ad_process/TestHeartbeat.html?Command="
-          + vars.getCommand() + "&inpcRecordId="
-          + vars.getStringParameter("inpcRecordId", IsIDFilter.instance) + "&version="
-          + vars.getStringParameter("version"));
+      response
+          .sendRedirect(strDireccion + "/ad_process/TestHeartbeat.html?Command=" + vars.getCommand()
+              + "&inpcRecordId=" + vars.getStringParameter("inpcRecordId", IsIDFilter.instance)
+              + "&version=" + vars.getStringParameter("version"));
     } else if (vars.commandIn("DEFER")) {
       setPostponeDate();
       sendBeat(vars, "DEFER");
@@ -98,8 +99,8 @@ public class Heartbeat extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       jsCommand += "CONFIGURE";
     } else {
-      String moduleAction = vars.getCommand().equals("UPDATE_MODULE") ? "UPDATE" : vars
-          .getCommand().equals("UPGRADE_MODULE") ? "UPGRADE" : "INSTALL";
+      String moduleAction = vars.getCommand().equals("UPDATE_MODULE") ? "UPDATE"
+          : vars.getCommand().equals("UPGRADE_MODULE") ? "UPGRADE" : "INSTALL";
       jsCommand += "CONFIGURE_MODULE_" + moduleAction;
     }
     jsCommand += "';";
@@ -129,8 +130,8 @@ public class Heartbeat extends HttpSecureAppServlet {
   private void setPostponeDate() {
     final Calendar cal = Calendar.getInstance();
     cal.add(Calendar.DATE, 3);
-    org.openbravo.model.ad.system.SystemInformation sysInfo = OBDal.getInstance().get(
-        org.openbravo.model.ad.system.SystemInformation.class, "0");
+    org.openbravo.model.ad.system.SystemInformation sysInfo = OBDal.getInstance()
+        .get(org.openbravo.model.ad.system.SystemInformation.class, "0");
     sysInfo.setPostponeDate(cal.getTime());
     OBDal.getInstance().save(sysInfo);
   }

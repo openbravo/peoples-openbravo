@@ -24,23 +24,25 @@ class FunctionAddValue extends FunctionEvaluationValue {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     if (arg1Value.printSimple().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.printSimple().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      return functionTemplate.printFormatOutput(new BigDecimal(arg1Value.printSimple())
-          .add(new BigDecimal(arg2Value.printSimple())));
+      return functionTemplate.printFormatOutput(
+          new BigDecimal(arg1Value.printSimple()).add(new BigDecimal(arg2Value.printSimple())));
     }
   }
 
+  @Override
   public String printSimple() {
     if (arg1Value.printSimple().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.printSimple().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      return functionTemplate.printFormatSimple(new BigDecimal(arg1Value.printSimple())
-          .add(new BigDecimal(arg2Value.printSimple())));
+      return functionTemplate.printFormatSimple(
+          new BigDecimal(arg1Value.printSimple()).add(new BigDecimal(arg2Value.printSimple())));
     }
   }
 

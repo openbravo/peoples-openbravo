@@ -42,8 +42,8 @@ public class SL_Invoice_Glitem extends SimpleCallout {
     String strADOrgID = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
     String strCInvoiceID = info.getStringParameter("inpcInvoiceId", IsIDFilter.instance);
     String strIsSOTrx = Utility.getContext(this, info.vars, "isSOTrx", info.getWindowId());
-    String strWarehouse = Utility
-        .getContext(this, info.vars, "#M_Warehouse_ID", info.getWindowId());
+    String strWarehouse = Utility.getContext(this, info.vars, "#M_Warehouse_ID",
+        info.getWindowId());
 
     if (StringUtils.equalsIgnoreCase(strChanged, "inpaccountId")) {
       // Tax

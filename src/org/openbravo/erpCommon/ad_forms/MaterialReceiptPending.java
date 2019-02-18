@@ -71,8 +71,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class MaterialReceiptPending extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -83,51 +84,54 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           "MaterialReceiptPending|DocumentNo", "");
       String strC_BPartner_ID = vars.getGlobalVariable("inpcBpartnerId",
           "MaterialReceiptPending|C_BPartner_ID", "");
-      String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId",
-          "MaterialReceiptPending|AD_Org_ID", vars.getOrg());
+      String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId", "MaterialReceiptPending|AD_Org_ID",
+          vars.getOrg());
       vars.setSessionValue("MaterialReceiptPending|isSOTrx", "N");
-      if (strDocumentNo.equals(""))
+      if (strDocumentNo.equals("")) {
         strDocumentNo += "%";
+      }
       printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
           strDocumentNo, "DEFAULT");
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "MaterialReceiptPending|DateFrom");
-      String strDateTo = vars
-          .getRequestGlobalVariable("inpDateTo", "MaterialReceiptPending|DateTo");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
+          "MaterialReceiptPending|DateTo");
       String strDocumentNo = vars.getRequestGlobalVariable("inpDocumentNo",
           "MaterialReceiptPending|DocumentNo");
       String strC_BPartner_ID = vars.getRequestGlobalVariable("inpcBpartnerId",
           "MaterialReceiptPending|C_BPartner_ID");
-      String strAD_Org_ID = vars
-          .getGlobalVariable("inpadOrgId", "MaterialReceiptPending|AD_Org_ID");
+      String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId",
+          "MaterialReceiptPending|AD_Org_ID");
       printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
           strDocumentNo, "FIND");
     } else if (vars.commandIn("GENERATE")) {
       String strcOrderLineId = vars.getRequiredInStringParameter("inpOrder", IsIDFilter.instance);
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "MaterialReceiptPending|DateFrom");
-      String strDateTo = vars
-          .getRequestGlobalVariable("inpDateTo", "MaterialReceiptPending|DateTo");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
+          "MaterialReceiptPending|DateTo");
       String strDocumentNo = vars.getRequestGlobalVariable("inpDocumentNo",
           "MaterialReceiptPending|DocumentNo");
       String strC_BPartner_ID = vars.getRequestGlobalVariable("inpcBpartnerId",
           "MaterialReceiptPending|C_BPartner_ID");
-      String strAD_Org_ID = vars
-          .getGlobalVariable("inpadOrgId", "MaterialReceiptPending|AD_Org_ID");
+      String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId",
+          "MaterialReceiptPending|AD_Org_ID");
       OBError myMessage = processPurchaseOrder(vars, strcOrderLineId);
       vars.setMessage("MaterialReceiptPending", myMessage);
       printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
           strDocumentNo, "GENERATE");
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strAD_Org_ID, String strDateFrom, String strDateTo,
       String strDocumentNo, String commandIn) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     String discard[] = { "sectionDetail" };
@@ -137,12 +141,14 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     MaterialReceiptPendingData[] data = null;
     String strTreeOrg = MaterialReceiptPendingData.treeOrg(this, vars.getClient());
     if (strC_BPartner_ID.equals("") && strAD_Org_ID.equals("")) {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_forms/MaterialReceiptPending", discard).createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_forms/MaterialReceiptPending", discard)
+          .createXmlDocument();
       data = MaterialReceiptPendingData.set();
     } else {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_forms/MaterialReceiptPending").createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_forms/MaterialReceiptPending")
+          .createXmlDocument();
 
       limit = Integer.parseInt(Utility.getPreference(vars, "FormsLimit", ""));
       String pgLimit = null, oraLimit = null;
@@ -183,8 +189,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       }
     }
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "MaterialReceiptPending", false, "",
-        "", "", false, "ad_forms", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "MaterialReceiptPending", false, "", "",
+        "", false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -196,9 +202,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "MaterialReceiptPending.html", classInfo.id, classInfo.type, strReplaceWith,
-          tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "MaterialReceiptPending.html",
+          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "MaterialReceiptPending.html",
           strReplaceWith);
@@ -236,9 +241,9 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
         MaterialReceiptPendingData.bPartnerDescription(this, strC_BPartner_ID));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "AD_Org Security validation", Utility.getContext(this, vars, "#User_Org",
-              "MaterialReceiptPending"), Utility.getContext(this, vars, "#User_Client",
-              "MaterialReceiptPending"), 0);
+          "AD_Org Security validation",
+          Utility.getContext(this, vars, "#User_Org", "MaterialReceiptPending"),
+          Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "MaterialReceiptPending",
           strAD_Org_ID);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
@@ -252,12 +257,14 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("displayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    if (commandIn.equals("GENERATE") && myMessage != null && !myMessage.getType().equals("Success")) {
+    if (commandIn.equals("GENERATE") && myMessage != null
+        && !myMessage.getType().equals("Success")) {
 
       String strcOrderLineId = vars.getRequiredInStringParameter("inpOrder", IsIDFilter.instance);
       StringBuffer html = new StringBuffer();
-      if (strcOrderLineId.startsWith("("))
+      if (strcOrderLineId.startsWith("(")) {
         strcOrderLineId = strcOrderLineId.substring(1, strcOrderLineId.length() - 1);
+      }
       if (!strcOrderLineId.equals("")) {
         strcOrderLineId = Replace.replace(strcOrderLineId, "'", "");
         StringTokenizer st = new StringTokenizer(strcOrderLineId, ",", false);
@@ -268,8 +275,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           for (i = 0; i < data.length; i++) {
             if (data[i].id.equals(strOrderlineId)) {
               String strLocator = vars.getStringParameter("inpmLocatorId" + strOrderlineId);
-              String strDateReceipt = vars.getStringParameter("inpDateReceipt"
-                  + data[0].cBpartnerId);
+              String strDateReceipt = vars
+                  .getStringParameter("inpDateReceipt" + data[0].cBpartnerId);
               html.append("document.getElementsByName(\"" + "inpQtyordered" + strOrderlineId + "\""
                   + ")[0].value = " + "'"
                   + vars.getStringParameter("inpQtyordered" + strOrderlineId) + "';\n");
@@ -280,7 +287,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
                   + MaterialReceiptPendingData.selectLocator(this, strLocator) + "';\n");
               html.append("document.getElementsByName(\"" + "inpDateReceipt" + data[0].cBpartnerId
                   + "\"" + ")[0].value = '" + strDateReceipt + "';\n");
-              html.append("setCheckedValue(document.frmMain.inpOrder, '" + strOrderlineId + "');\n");
+              html.append(
+                  "setCheckedValue(document.frmMain.inpOrder, '" + strOrderlineId + "');\n");
               break;
             }
           }
@@ -315,8 +323,9 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     OBContext.setAdminMode();
     try {
       conn = this.getTransactionConnection();
-      if (localStrcOrderLineId.startsWith("("))
+      if (localStrcOrderLineId.startsWith("(")) {
         localStrcOrderLineId = localStrcOrderLineId.substring(1, localStrcOrderLineId.length() - 1);
+      }
       if (!localStrcOrderLineId.equals("")) {
         localStrcOrderLineId = Replace.replace(localStrcOrderLineId, "'", "");
         StringTokenizer st = new StringTokenizer(localStrcOrderLineId, ",", false);
@@ -337,8 +346,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           Locator locator = OBDal.getInstance().get(Locator.class, strLocator);
           Warehouse locatorWH = locator.getWarehouse();
 
-          Organization orderOrganization = OBDal.getInstance().get(Organization.class,
-              data[0].adOrgId);
+          Organization orderOrganization = OBDal.getInstance()
+              .get(Organization.class, data[0].adOrgId);
 
           boolean warehouseBelongsToOrg = false;
           List<OrgWarehouse> orderOrgWHList = orderOrganization.getOrganizationWarehouseList();
@@ -353,12 +362,10 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
             OrderLine ol = OBDal.getInstance().get(OrderLine.class, strOrderlineId);
             myMessage.setType("Error");
             myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-            myMessage.setMessage(Utility.messageBD(this, "WarehouseNotAccessibleByOrg",
-                vars.getLanguage())
-                + " "
-                + ol.getSalesOrder().getDocumentNo()
-                + " - "
-                + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
+            myMessage.setMessage(
+                Utility.messageBD(this, "WarehouseNotAccessibleByOrg", vars.getLanguage()) + " "
+                    + ol.getSalesOrder().getDocumentNo() + " - "
+                    + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
             return myMessage;
           }
 
@@ -368,18 +375,20 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
               myMessageAux = mInoutPost(conn, vars, strmInoutId);
               strMessageResult += strWindowName + " " + strDocumentno + ": "
                   + myMessageAux.getMessage() + "<br>";
-              if (strMessageType.equals("Success"))
+              if (strMessageType.equals("Success")) {
                 strMessageType = myMessageAux.getType();
-              else if (strMessageType.equals("Warning") && myMessageAux.getType().equals("Error"))
+              } else if (strMessageType.equals("Warning")
+                  && myMessageAux.getType().equals("Error")) {
                 strMessageType = "Error";
+              }
             }
             line = 10;
             strmInoutId = SequenceIdData.getUUID();
             docTargetType = MaterialReceiptPendingData.cDoctypeTarget(this, vars.getClient(),
                 data[0].adOrgId);
             docType = MaterialReceiptPendingData.cDoctypeId(this, docTargetType);
-            strDocumentno = Utility.getDocumentNo(this, vars, "", "M_InOut", docTargetType,
-                docType, false, true);
+            strDocumentno = Utility.getDocumentNo(this, vars, "", "M_InOut", docTargetType, docType,
+                false, true);
             strDateReceipt = vars.getStringParameter("inpDateReceipt" + data[0].cBpartnerId);
 
             if (strDateReceipt.equals("")) {
@@ -395,9 +404,10 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
             boolean orgLegalWithAccounting = osp
                 .getLegalEntityOrBusinessUnit(
                     OBDal.getInstance().get(Organization.class, data[0].adOrgId))
-                .getOrganizationType().isLegalEntityWithAccounting();
-            org.openbravo.model.common.enterprise.DocumentType dt = OBDal.getInstance().get(
-                org.openbravo.model.common.enterprise.DocumentType.class, docTargetType);
+                .getOrganizationType()
+                .isLegalEntityWithAccounting();
+            org.openbravo.model.common.enterprise.DocumentType dt = OBDal.getInstance()
+                .get(org.openbravo.model.common.enterprise.DocumentType.class, docTargetType);
             if (!FIN_Utility.isPeriodOpen(vars.getClient(), dt.getDocumentCategory(),
                 data[0].adOrgId, strDateReceipt) && orgLegalWithAccounting) {
               myMessage.setType("Error");
@@ -433,16 +443,18 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
               strOrderlineId);
           // Recalculate quantityorder only if qtyordered has been updated
           if (dataLine[0].quantityorder != "") {
-            if (new BigDecimal(dataLine[0].qtyordered).compareTo(new BigDecimal(strQtyordered)) == 0) {
+            if (new BigDecimal(dataLine[0].qtyordered)
+                .compareTo(new BigDecimal(strQtyordered)) == 0) {
               qtyorder = dataLine[0].quantityorder;
             } else {
               UOM uom = OBDal.getInstance().get(UOM.class, dataLine[0].cUomId);
-              UOM orderUom = OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId)
+              UOM orderUom = OBDal.getInstance()
+                  .get(ProductUOM.class, dataLine[0].mProductUomId)
                   .getUOM();
               int stdPrecision = orderUom.getStandardPrecision().intValue();
 
-              OBCriteria<UOMConversion> conversion = OBDal.getInstance().createCriteria(
-                  UOMConversion.class);
+              OBCriteria<UOMConversion> conversion = OBDal.getInstance()
+                  .createCriteria(UOMConversion.class);
               conversion.add(Restrictions.eq(UOMConversion.PROPERTY_UOM, uom));
               conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM, orderUom));
               List<UOMConversion> conversionList = conversion.list();
@@ -460,10 +472,12 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
               for (UOMConversion conv : conversionList) {
                 if (!useDivideRateBy) {
                   qtyorder = new BigDecimal(strQtyordered).multiply(conv.getMultipleRateBy())
-                      .setScale(stdPrecision, RoundingMode.HALF_UP).toString();
+                      .setScale(stdPrecision, RoundingMode.HALF_UP)
+                      .toString();
                 } else {
                   qtyorder = new BigDecimal(strQtyordered).multiply(conv.getDivideRateBy())
-                      .setScale(stdPrecision, RoundingMode.HALF_UP).toString();
+                      .setScale(stdPrecision, RoundingMode.HALF_UP)
+                      .toString();
                 }
               }
             }
@@ -474,8 +488,10 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
             String defaultAum = vars.getStringParameter("inpcAUMId" + strOrderlineId);
             dataLine[0].cAum = defaultAum;
             if (!defaultAum.equals(dataLine[0].cUomId)) {
-              strQtyordered = UOMUtil.getConvertedQty(dataLine[0].mProductId,
-                  new BigDecimal(dataLine[0].aumqty), defaultAum).toString();
+              strQtyordered = UOMUtil
+                  .getConvertedQty(dataLine[0].mProductId, new BigDecimal(dataLine[0].aumqty),
+                      defaultAum)
+                  .toString();
             }
           }
           try {
@@ -498,10 +514,11 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
         }
         myMessageAux = mInoutPost(conn, vars, strmInoutId);
         strMessageResult += strWindowName + " " + strDocumentno + ": " + myMessageAux.getMessage();
-        if (strMessageType.equals("Success"))
+        if (strMessageType.equals("Success")) {
           strMessageType = myMessageAux.getType();
-        else if (strMessageType.equals("Warning") && myMessageAux.getType().equals("Error"))
+        } else if (strMessageType.equals("Warning") && myMessageAux.getType().equals("Error")) {
           strMessageType = "Error";
+        }
       }
 
       releaseCommitConnection(conn);
@@ -529,8 +546,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     OBError myMessage = null;
     myMessage = new OBError();
     try {
-      PInstanceProcessData.insertPInstance(this, pinstance, "109", strmInoutId, "N",
-          vars.getUser(), vars.getClient(), vars.getOrg());
+      PInstanceProcessData.insertPInstance(this, pinstance, "109", strmInoutId, "N", vars.getUser(),
+          vars.getClient(), vars.getOrg());
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       releaseRollbackConnection(conn);
@@ -551,6 +568,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     return myMessage;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet MaterialReceiptPending. This Servlet was made by Jon Alegría";
   } // end of getServletInfo() method

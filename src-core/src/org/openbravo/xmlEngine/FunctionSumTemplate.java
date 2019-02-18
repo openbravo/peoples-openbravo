@@ -25,11 +25,13 @@ class FunctionSumTemplate extends FunctionTemplate {
     super(fieldName, field, formatOutput, formatSimple, dataTemplate);
   }
 
+  @Override
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      if (log4jFunctionSumTemplate.isDebugEnabled())
+      if (log4jFunctionSumTemplate.isDebugEnabled()) {
         log4jFunctionSumTemplate.debug("New FunctionSumValue: " + fieldName);
+      }
       functionValue = new FunctionSumValue(this, xmlDocument);
     }
     return functionValue;

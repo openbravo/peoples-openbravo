@@ -55,8 +55,9 @@ class WindowTreeChecks {
   public static String checkChanges(ConnectionProvider conn, VariablesSecureApp vars, String tabId,
       String topNodeId, String nodeId, boolean isChild) throws ServletException {
     String result = "";
-    if (topNodeId.equals(nodeId))
+    if (topNodeId.equals(nodeId)) {
       return Utility.messageBD(conn, "SameElement", vars.getLanguage());
+    }
     try {
       String table = WindowTreeData.selectTableName(conn, tabId);
       String key = WindowTreeData.selectKey(conn, tabId);
@@ -67,24 +68,28 @@ class WindowTreeChecks {
         return "";
       }
 
-      if ("OO".equals(TreeType) && "Y".equals(isReady))
+      if ("OO".equals(TreeType) && "Y".equals(isReady)) {
         return Utility.messageBD(conn, "OrgIsReady", vars.getLanguage());
+      }
       if ("AS".equals(TreeType)
           && "Y".equals(WindowTreeData.selectIsStatic(conn, "A_ASSET", nodeId))) {
         return OBMessageUtils.messageBD("StaticRecord");
       }
       if (isChild && !topNodeId.equals("0")
-          && WindowTreeChecksData.selectIsSummary(conn, table, key, topNodeId).equals("N"))
+          && WindowTreeChecksData.selectIsSummary(conn, table, key, topNodeId).equals("N")) {
         return Utility.messageBD(conn, "NotIsSummary", vars.getLanguage());
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("key:" + key + ", nodeId:" + nodeId + ",topNodeId:" + topNodeId);
+      }
       String treeID;
       WindowTreeData[] data = WindowTreeData.selectTreeID(conn, vars.getUserClient(), TreeType);
 
       if (!(data == null || data.length == 0)) {
         treeID = data[0].id;
-        if (!WindowTreeChecksData.isItsOwnChild(conn, treeID, topNodeId, nodeId).equals("0"))
+        if (!WindowTreeChecksData.isItsOwnChild(conn, treeID, topNodeId, nodeId).equals("0")) {
           return Utility.messageBD(conn, "RecursiveTree", vars.getLanguage());
+        }
       }
       result = WindowTreeChecks.checkSpecificChanges(conn, vars, tabId, topNodeId, nodeId, isChild,
           TreeType, key);
@@ -122,8 +127,8 @@ class WindowTreeChecks {
       throws ServletException {
     String result = "";
     if (TreeType.equals("MM")) { // Menu
-      result = WindowTreeChecksData.isMenuItemInDev(conn, nodeId) ? "" : Utility.messageBD(conn,
-          "CannotReorderNotDevModules", vars.getLanguage());
+      result = WindowTreeChecksData.isMenuItemInDev(conn, nodeId) ? ""
+          : Utility.messageBD(conn, "CannotReorderNotDevModules", vars.getLanguage());
     } else if (TreeType.equals("OO")) { // Organization
       result = "";
     } else if (TreeType.equals("PR")) { // Product
@@ -158,9 +163,10 @@ class WindowTreeChecks {
       result = "";
     } else if (TreeType.equals("CH")) { // Product Characteristic
       result = "";
-    } else
+    } else {
       result = WindowTreeChecksClient.checkChanges(conn, vars, tabId, topNodeId, nodeId, isChild,
           TreeType, key);
+    }
     return result;
   }
 }

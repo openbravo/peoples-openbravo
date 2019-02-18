@@ -71,6 +71,7 @@ public class ProcessGoods extends HttpSecureAppServlet {
   private static final String Goods_Document_Action = "135";
   private static final String Goods_Receipt_Window = "184";
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -81,8 +82,8 @@ public class ProcessGoods extends HttpSecureAppServlet {
       final String strTabId = vars.getGlobalVariable("inpTabId", "ProcessGoods|Tab_ID",
           IsIDFilter.instance);
 
-      final String strM_Inout_ID = vars.getGlobalVariable("inpmInoutId", strWindowId
-          + "|M_Inout_ID", "", IsIDFilter.instance);
+      final String strM_Inout_ID = vars.getGlobalVariable("inpmInoutId",
+          strWindowId + "|M_Inout_ID", "", IsIDFilter.instance);
 
       final String strdocaction = vars.getStringParameter("inpdocaction");
       final String strProcessing = vars.getStringParameter("inpprocessing", "Y");
@@ -96,16 +97,16 @@ public class ProcessGoods extends HttpSecureAppServlet {
       if ((org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(),
           strTabId))
           || !(Utility.isElementInList(
-              Utility.getContext(this, vars, "#User_Client", strWindowId, accesslevel), strClient) && Utility
-              .isElementInList(
+              Utility.getContext(this, vars, "#User_Client", strWindowId, accesslevel), strClient)
+              && Utility.isElementInList(
                   Utility.getContext(this, vars, "#User_Org", strWindowId, accesslevel), strOrg))) {
         OBError myError = Utility.translateError(this, vars, vars.getLanguage(),
             Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
         vars.setMessage(strTabId, myError);
         printPageClosePopUp(response, vars);
       } else {
-        printPageDocAction(response, vars, strM_Inout_ID, strdocaction, strProcessing,
-            strdocstatus, M_Inout_Table_ID, strWindowId);
+        printPageDocAction(response, vars, strM_Inout_ID, strdocaction, strProcessing, strdocstatus,
+            M_Inout_Table_ID, strWindowId);
       }
     } else if (vars.commandIn("SAVE_BUTTONDocAction109")) {
       final String strWindowId = vars.getGlobalVariable("inpwindowId", "ProcessGoods|Window_ID",
@@ -123,8 +124,9 @@ public class ProcessGoods extends HttpSecureAppServlet {
         List<String> receiptLineIdList = getReceiptLinesWithoutStock(receiptId);
         if (!receiptLineIdList.isEmpty()) {
           ShipmentInOut receipt = OBDal.getInstance().get(ShipmentInOut.class, receiptId);
-          printPagePhysicalInventoryGrid(response, vars, strWindowId, strTabId, receipt
-              .getOrganization().getId(), strdocaction, strVoidMinoutAcctDate, strVoidMinoutDate);
+          printPagePhysicalInventoryGrid(response, vars, strWindowId, strTabId,
+              receipt.getOrganization().getId(), strdocaction, strVoidMinoutAcctDate,
+              strVoidMinoutDate);
         } else {
           processReceipt(response, vars, strdocaction, strVoidMinoutDate, strVoidMinoutAcctDate);
         }
@@ -164,13 +166,13 @@ public class ProcessGoods extends HttpSecureAppServlet {
     final String strTabId = vars.getGlobalVariable("inpTabId", "ProcessGoods|Tab_ID",
         IsIDFilter.instance);
     final String strM_Inout_ID = vars.getGlobalVariable("inpKey", strWindowId + "|M_Inout_ID", "");
-    final boolean invoiceIfPossible = StringUtils.equals(
-        vars.getStringParameter("inpInvoiceIfPossible"), "Y");
+    final boolean invoiceIfPossible = StringUtils
+        .equals(vars.getStringParameter("inpInvoiceIfPossible"), "Y");
 
     OBError myMessage = null;
     try {
-      ShipmentInOut goods = (ShipmentInOut) OBDal.getInstance().getProxy(ShipmentInOut.ENTITY_NAME,
-          strM_Inout_ID);
+      ShipmentInOut goods = (ShipmentInOut) OBDal.getInstance()
+          .getProxy(ShipmentInOut.ENTITY_NAME, strM_Inout_ID);
       goods.setDocumentAction(strdocaction);
       OBDal.getInstance().save(goods);
       OBDal.getInstance().flush();
@@ -198,12 +200,12 @@ public class ProcessGoods extends HttpSecureAppServlet {
         }
         parameters = new HashMap<String, String>();
         parameters.put("voidedDocumentDate", OBDateUtils.formatDate(voidDate, "yyyy-MM-dd"));
-        parameters
-            .put("voidedDocumentAcctDate", OBDateUtils.formatDate(voidAcctDate, "yyyy-MM-dd"));
+        parameters.put("voidedDocumentAcctDate",
+            OBDateUtils.formatDate(voidAcctDate, "yyyy-MM-dd"));
       }
 
-      final ProcessInstance pinstance = CallProcess.getInstance().call(process, strM_Inout_ID,
-          parameters);
+      final ProcessInstance pinstance = CallProcess.getInstance()
+          .call(process, strM_Inout_ID, parameters);
       OBDal.getInstance().getSession().refresh(goods);
       goods.setProcessGoodsJava(goods.getDocumentAction());
       OBDal.getInstance().save(goods);
@@ -251,8 +253,8 @@ public class ProcessGoods extends HttpSecureAppServlet {
     final Date invoiceDate = OBDateUtils.getDate(invoiceDateStr);
     final PriceList priceList = OBDal.getInstance().getProxy(PriceList.class, priceListStr);
 
-    final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(goodShipment.getId(),
-        invoiceDate, priceList).createInvoiceConsideringInvoiceTerms(processInvoice);
+    final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(goodShipment.getId(), invoiceDate,
+        priceList).createInvoiceConsideringInvoiceTerms(processInvoice);
     myMessage = getResultMessage(invoice);
     return myMessage;
   }
@@ -277,8 +279,9 @@ public class ProcessGoods extends HttpSecureAppServlet {
     String[] discard = { "newDiscard" };
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/DocAction", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/DocAction", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("key", strM_Inout_ID);
     xmlDocument.setParameter("processing", strProcessing);
     xmlDocument.setParameter("form", "ProcessGoods.html");
@@ -309,8 +312,8 @@ public class ProcessGoods extends HttpSecureAppServlet {
       OBContext.restorePreviousMode();
     }
 
-    ShipmentInOut shipmentInOut = (ShipmentInOut) OBDal.getInstance().getProxy(
-        ShipmentInOut.ENTITY_NAME, strM_Inout_ID);
+    ShipmentInOut shipmentInOut = (ShipmentInOut) OBDal.getInstance()
+        .getProxy(ShipmentInOut.ENTITY_NAME, strM_Inout_ID);
     xmlDocument.setParameter("docstatus", strdocstatus);
     if (strWindowId.equals(Goods_Receipt_Window)) {
       // VOID action: Reverse goods receipt/shipment by default inherits the document date and
@@ -336,12 +339,14 @@ public class ProcessGoods extends HttpSecureAppServlet {
         dact.append("new Array(\"" + dataDocAction[i].getField("id") + "\", \""
             + dataDocAction[i].getField("name") + "\", \""
             + dataDocAction[i].getField("description") + "\")\n");
-        if (i < dataDocAction.length - 1)
+        if (i < dataDocAction.length - 1) {
           dact.append(",\n");
+        }
       }
       dact.append(");");
-    } else
+    } else {
       dact.append("var arrDocAction = null");
+    }
     xmlDocument.setParameter("array", dact.toString());
 
     if (strWindowId.equals(GOODS_SHIPMENT_WINDOW)) {
@@ -365,8 +370,9 @@ public class ProcessGoods extends HttpSecureAppServlet {
     String[] discard = { "" };
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/PhysicalInventory", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/PhysicalInventory", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("css", vars.getTheme());
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -383,8 +389,8 @@ public class ProcessGoods extends HttpSecureAppServlet {
   private void printGrid(HttpServletResponse response, VariablesSecureApp vars,
       List<String> receiptLineIdList) throws IOException, ServletException {
     String[] discard = {};
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/PhysicalInventoryGrid", discard)
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/PhysicalInventoryGrid", discard)
         .createXmlDocument();
     xmlDocument.setData("structure", getFieldsForGrid(receiptLineIdList));
     response.setContentType("text/html; charset=UTF-8");
@@ -398,25 +404,25 @@ public class ProcessGoods extends HttpSecureAppServlet {
     try {
       OBContext.setAdminMode(true);
       for (int i = 0; i < data.length; i++) {
-        ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-            receiptLineIdList.get(i));
+        ShipmentInOutLine receiptLine = OBDal.getInstance()
+            .get(ShipmentInOutLine.class, receiptLineIdList.get(i));
         FieldProviderFactory.setField(data[i], "receiptLineId", receiptLine.getId());
         FieldProviderFactory.setField(data[i], "lineNo", receiptLine.getLineNo().toString());
         FieldProviderFactory.setField(data[i], "product", receiptLine.getProduct().getName());
         FieldProviderFactory.setField(data[i], "attribute",
-            receiptLine.getAttributeSetValue() != null ? receiptLine.getAttributeSetValue()
-                .getDescription() : "");
-        FieldProviderFactory.setField(data[i], "quantity", receiptLine.getMovementQuantity()
-            .toString());
+            receiptLine.getAttributeSetValue() != null
+                ? receiptLine.getAttributeSetValue().getDescription()
+                : "");
+        FieldProviderFactory.setField(data[i], "quantity",
+            receiptLine.getMovementQuantity().toString());
         FieldProviderFactory.setField(data[i], "uom", receiptLine.getUOM().getName());
-        FieldProviderFactory
-            .setField(data[i], "orderQuantity",
-                receiptLine.getOrderQuantity() != null ? receiptLine.getOrderQuantity().toString()
-                    : "");
+        FieldProviderFactory.setField(data[i], "orderQuantity",
+            receiptLine.getOrderQuantity() != null ? receiptLine.getOrderQuantity().toString()
+                : "");
         FieldProviderFactory.setField(data[i], "orderUom",
             receiptLine.getOrderUOM() != null ? receiptLine.getOrderUOM().getUOM().getName() : "");
-        FieldProviderFactory.setField(data[i], "locator", receiptLine.getStorageBin()
-            .getSearchKey());
+        FieldProviderFactory.setField(data[i], "locator",
+            receiptLine.getStorageBin().getSearchKey());
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -439,13 +445,14 @@ public class ProcessGoods extends HttpSecureAppServlet {
         + ShipmentInOutLine.PROPERTY_STORAGEBIN);
     where.append("   and sd." + StorageDetail.PROPERTY_ATTRIBUTESETVALUE + " = iol."
         + ShipmentInOutLine.PROPERTY_ATTRIBUTESETVALUE);
-    where.append("   and sd." + StorageDetail.PROPERTY_UOM + " = iol."
-        + ShipmentInOutLine.PROPERTY_UOM);
+    where.append(
+        "   and sd." + StorageDetail.PROPERTY_UOM + " = iol." + ShipmentInOutLine.PROPERTY_UOM);
     where.append("   and coalesce(sd." + StorageDetail.PROPERTY_ORDERUOM + ", '0') = coalesce(iol."
         + ShipmentInOutLine.PROPERTY_ORDERUOM + ", '0')");
     where.append(" )");
 
-    Query<String> qry = OBDal.getInstance().getSession()
+    Query<String> qry = OBDal.getInstance()
+        .getSession()
         .createQuery(where.toString(), String.class);
     qry.setParameter("receipt", OBDal.getInstance().get(ShipmentInOut.class, receiptId));
     return qry.list();
@@ -468,8 +475,8 @@ public class ProcessGoods extends HttpSecureAppServlet {
     // Add a line for each receipt line without related stock line
     int i = 0;
     for (String receiptLineId : receiptLineIdList) {
-      ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-          receiptLineId);
+      ShipmentInOutLine receiptLine = OBDal.getInstance()
+          .get(ShipmentInOutLine.class, receiptLineId);
       InventoryCountLine invLine = OBProvider.getInstance().get(InventoryCountLine.class);
       invLine.setClient(receiptLine.getClient());
       invLine.setOrganization(receiptLine.getOrganization());

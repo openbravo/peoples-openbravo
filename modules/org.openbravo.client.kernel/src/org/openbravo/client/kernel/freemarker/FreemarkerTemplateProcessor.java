@@ -40,15 +40,15 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
 /**
- * Implements the {@link TemplateProcessor} for the <a
- * href="http://www.freemarker.org">freemarker</a> templating engine.
+ * Implements the {@link TemplateProcessor} for the
+ * <a href="http://www.freemarker.org">freemarker</a> templating engine.
  * 
  * @author mtaal
  */
 @ApplicationScoped
 @TemplateProcessor.Qualifier(FreemarkerTemplateProcessor.QUALIFIER)
-public class FreemarkerTemplateProcessor extends
-    BaseTemplateProcessor<freemarker.template.Template> {
+public class FreemarkerTemplateProcessor
+    extends BaseTemplateProcessor<freemarker.template.Template> {
   public static final String QUALIFIER = "OBCLFRE_Freemarker";
 
   /*
@@ -57,6 +57,7 @@ public class FreemarkerTemplateProcessor extends
    * @see org.openbravo.client.kernel.BaseTemplateProcessor#processTemplate(java.lang.Object,
    * java.util.Map)
    */
+  @Override
   protected String processTemplate(freemarker.template.Template templateImplementation,
       Map<String, Object> data) {
     try {
@@ -77,6 +78,7 @@ public class FreemarkerTemplateProcessor extends
    * org.openbravo.client.kernel.BaseTemplateProcessor#createTemplateImplementation(org.openbravo
    * .client.kernel.Template, java.lang.String)
    */
+  @Override
   protected freemarker.template.Template createTemplateImplementation(Template template,
       String source) {
     try {
@@ -93,6 +95,7 @@ public class FreemarkerTemplateProcessor extends
    * @see
    * org.openbravo.client.kernel.TemplateProcessor#validate(org.openbravo.client.kernel.Template)
    */
+  @Override
   public void validate(Template template) throws ValidationException {
     try {
       final String source = createTemplateSource(template);
@@ -118,6 +121,7 @@ public class FreemarkerTemplateProcessor extends
    * 
    * @see org.openbravo.client.kernel.TemplateProcessor#getTemplateLanguage()
    */
+  @Override
   public String getTemplateLanguage() {
     return QUALIFIER;
   }
@@ -128,6 +132,7 @@ public class FreemarkerTemplateProcessor extends
    */
   private class OBExceptionHandler implements TemplateExceptionHandler {
 
+    @Override
     public void handleTemplateException(TemplateException te, Environment env, java.io.Writer out)
         throws TemplateException {
       final String msg = te.getMessage().toLowerCase();

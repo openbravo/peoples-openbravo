@@ -53,8 +53,8 @@ public class RMCreateInvoice implements org.openbravo.scheduling.Process {
     parameters.put("C_BPartner_ID", null);
     parameters.put("InvoiceToDate", null);
 
-    final ProcessInstance pinstance = CallProcess.getInstance().callProcess(process, strOrderId,
-        parameters);
+    final ProcessInstance pinstance = CallProcess.getInstance()
+        .callProcess(process, strOrderId, parameters);
     msg.setMessage(Utility.parseTranslation(conProvider, vars, language, pinstance.getErrorMsg()));
 
     if (pinstance.getResult() == 0L) {
@@ -91,10 +91,9 @@ public class RMCreateInvoice implements org.openbravo.scheduling.Process {
       Organization organization = null;
       AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
       for (APRMPendingPaymentFromInvoice pendingPayment : pendingPayments) {
-        if (executionProcess != null
-            && organization != null
-            && (executionProcess != pendingPayment.getPaymentExecutionProcess() || organization != pendingPayment
-                .getOrganization())) {
+        if (executionProcess != null && organization != null
+            && (executionProcess != pendingPayment.getPaymentExecutionProcess()
+                || organization != pendingPayment.getOrganization())) {
           if (dao.isAutomaticExecutionProcess(executionProcess)) {
             FIN_ExecutePayment executePayment = new FIN_ExecutePayment();
             executePayment.init("OTHER", executionProcess, payments, null,
@@ -119,20 +118,19 @@ public class RMCreateInvoice implements org.openbravo.scheduling.Process {
   }
 
   private List<APRMPendingPaymentFromInvoice> getPendingPayments() {
-    OBCriteria<APRMPendingPaymentFromInvoice> ppfiCriteria = OBDal.getInstance().createCriteria(
-        APRMPendingPaymentFromInvoice.class);
+    OBCriteria<APRMPendingPaymentFromInvoice> ppfiCriteria = OBDal.getInstance()
+        .createCriteria(APRMPendingPaymentFromInvoice.class);
     ppfiCriteria.add(Restrictions.eq(APRMPendingPaymentFromInvoice.PROPERTY_PROCESSNOW, false));
-    ppfiCriteria.add(Restrictions
-        .in(APRMPendingPaymentFromInvoice.PROPERTY_PAYMENTEXECUTIONPROCESS,
-            getLeaveAsCreditProcesses()));
+    ppfiCriteria.add(Restrictions.in(APRMPendingPaymentFromInvoice.PROPERTY_PAYMENTEXECUTIONPROCESS,
+        getLeaveAsCreditProcesses()));
     ppfiCriteria.addOrderBy(APRMPendingPaymentFromInvoice.PROPERTY_PAYMENTEXECUTIONPROCESS, false);
     ppfiCriteria.addOrderBy(APRMPendingPaymentFromInvoice.PROPERTY_ORGANIZATION, false);
     return ppfiCriteria.list();
   }
 
   private List<PaymentExecutionProcess> getLeaveAsCreditProcesses() {
-    OBCriteria<PaymentExecutionProcess> payExecProcCrit = OBDal.getInstance().createCriteria(
-        PaymentExecutionProcess.class);
+    OBCriteria<PaymentExecutionProcess> payExecProcCrit = OBDal.getInstance()
+        .createCriteria(PaymentExecutionProcess.class);
     payExecProcCrit.add(Restrictions.eq(PaymentExecutionProcess.PROPERTY_JAVACLASSNAME,
         "org.openbravo.advpaymentmngt.executionprocess.LeaveAsCredit"));
 

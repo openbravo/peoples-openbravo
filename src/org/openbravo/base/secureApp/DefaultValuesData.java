@@ -30,10 +30,11 @@ class DefaultValuesData implements FieldProvider {
   public String columnname;
   static Logger log4j = LogManager.getLogger();
 
+  @Override
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("columnname"))
+    if (fieldName.equalsIgnoreCase("columnname")) {
       return columnname;
-    else {
+    } else {
       return null;
     }
   }
@@ -65,8 +66,8 @@ class DefaultValuesData implements FieldProvider {
       result.close();
     } catch (SQLException e) {
       log4j.error("SQL error in query: " + strSql + "Exception:" + e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
+      throw new ServletException(
+          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
     } catch (NoConnectionAvailableException ec) {
       log4j.error("Connection error in query: " + strSql + "Exception:" + ec);
       throw new ServletException("@CODE=NoConnectionAvailable");

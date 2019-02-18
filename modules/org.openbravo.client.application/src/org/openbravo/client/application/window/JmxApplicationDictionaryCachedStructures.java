@@ -26,8 +26,8 @@ import javax.inject.Inject;
 
 /** Exposes {@link ApplicationDictionaryCachedStructures} as a JMX Bean. */
 @ApplicationScoped
-public class JmxApplicationDictionaryCachedStructures implements
-    JmxApplicationDictionaryCachedStructuresMBean {
+public class JmxApplicationDictionaryCachedStructures
+    implements JmxApplicationDictionaryCachedStructuresMBean {
   public static final String MBEAN_NAME = "ApplicationDictionaryCachedStructures";
 
   @Inject

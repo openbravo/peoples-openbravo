@@ -46,10 +46,12 @@ public class MyOpenbravoWidgetComponent extends BaseComponent {
    * 
    * @see org.openbravo.client.kernel.BaseComponent#getId()
    */
+  @Override
   public String getId() {
     return COMPONENT_ID;
   }
 
+  @Override
   public String generate() {
     OBContext.setAdminMode();
     try {
@@ -61,8 +63,9 @@ public class MyOpenbravoWidgetComponent extends BaseComponent {
         throw new OBException("No widgetid defined for request " + getParameters());
       }
 
-      final WidgetClass widgetClass = OBDal.getInstance().get(WidgetClass.class,
-          (widgetId.startsWith(KernelConstants.ID_PREFIX) ? widgetId.substring(1) : widgetId));
+      final WidgetClass widgetClass = OBDal.getInstance()
+          .get(WidgetClass.class,
+              (widgetId.startsWith(KernelConstants.ID_PREFIX) ? widgetId.substring(1) : widgetId));
       if (widgetClass == null) {
         throw new OBException("No widgetclass found using id " + widgetId);
       }
@@ -72,8 +75,9 @@ public class MyOpenbravoWidgetComponent extends BaseComponent {
         widgetProvider.setParameters(getParameters());
         return widgetProvider.generate();
       } catch (Exception e) {
-        String strJavaClass = (widgetClass.getWidgetSuperclass() != null) ? widgetClass
-            .getWidgetSuperclass().getJavaClass() : widgetClass.getJavaClass();
+        String strJavaClass = (widgetClass.getWidgetSuperclass() != null)
+            ? widgetClass.getWidgetSuperclass().getJavaClass()
+            : widgetClass.getJavaClass();
         throw new OBException("Not able to create widgetprovider " + strJavaClass, e);
       }
     } catch (Exception e) {
@@ -83,6 +87,7 @@ public class MyOpenbravoWidgetComponent extends BaseComponent {
     }
   }
 
+  @Override
   public Object getData() {
     return this;
   }

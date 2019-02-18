@@ -57,8 +57,8 @@ public class ReorderCascadingChildDeletionsHandler extends EntityPersistenceEven
   private static final String INVOICE_TABLE_ID = "318";
   private static Entity orderEntity = ModelProvider.getInstance()
       .getEntityByTableId(ORDER_TABLE_ID);
-  private static Entity invoiceEntity = ModelProvider.getInstance().getEntityByTableId(
-      INVOICE_TABLE_ID);
+  private static Entity invoiceEntity = ModelProvider.getInstance()
+      .getEntityByTableId(INVOICE_TABLE_ID);
   private static Entity[] entities = { orderEntity, invoiceEntity };
 
   public void onDelete(@Observes EntityDeleteEvent event) {

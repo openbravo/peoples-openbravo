@@ -125,8 +125,10 @@ public class GrantPortalAccessProcess extends BaseProcessActionHandler {
         }
       } catch (Exception e) {
         log.error("Error sending email", e);
-        return getResponseBuilder().showMsgInProcessView(MessageType.WARNING,
-            OBMessageUtils.getI18NMessage("ErrorInEmail", new String[] { e.getMessage() })).build();
+        return getResponseBuilder()
+            .showMsgInProcessView(MessageType.WARNING,
+                OBMessageUtils.getI18NMessage("ErrorInEmail", new String[] { e.getMessage() }))
+            .build();
       }
 
       return getResponseBuilder().showMsgInProcessView(messageType, messageText).build();
@@ -134,10 +136,11 @@ public class GrantPortalAccessProcess extends BaseProcessActionHandler {
     } catch (Exception e) {
       log.error("Error granting access to portal", e);
       OBDal.getInstance().rollbackAndClose();
-      return getResponseBuilder().showMsgInProcessView(
-          MessageType.ERROR,
-          OBMessageUtils.getI18NMessage("Portal_ErrorGrantingPortalAccess",
-              new String[] { e.getMessage() })).build();
+      return getResponseBuilder()
+          .showMsgInProcessView(MessageType.ERROR,
+              OBMessageUtils.getI18NMessage("Portal_ErrorGrantingPortalAccess",
+                  new String[] { e.getMessage() }))
+          .build();
     } finally {
       OBContext.restorePreviousMode();
     }

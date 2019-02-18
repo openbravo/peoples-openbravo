@@ -57,6 +57,7 @@ public class MultipleDeleteActionHandler extends BaseActionHandler {
   @Inject
   private ApplicationDictionaryCachedStructures cachedStructures;
 
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
 
     try {

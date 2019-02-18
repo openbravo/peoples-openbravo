@@ -28,8 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class is used as a cache for the static resources (js and css) used in the application. It
@@ -84,8 +84,8 @@ public class StaticResourceProvider implements StaticResourceProviderMBean {
 
   private String getGenTargetLocation() {
     if (genTargetLocation == null) {
-      genTargetLocation = RequestContext.getServletContext().getRealPath(
-          StaticResourceComponent.GEN_TARGET_LOCATION);
+      genTargetLocation = RequestContext.getServletContext()
+          .getRealPath(StaticResourceComponent.GEN_TARGET_LOCATION);
     }
     return genTargetLocation;
   }

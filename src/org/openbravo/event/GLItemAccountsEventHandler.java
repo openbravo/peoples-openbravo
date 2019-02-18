@@ -33,8 +33,8 @@ import org.openbravo.model.financialmgmt.gl.GLItemAccounts;
 
 public class GLItemAccountsEventHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      GLItemAccounts.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(GLItemAccounts.ENTITY_NAME) };
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -53,9 +53,11 @@ public class GLItemAccountsEventHandler extends EntityPersistenceEventObserver {
 
     final String gLItemAccountingSchemaId = gLItemAccounts.getAccountingSchema().getId();
     final String gLItemDebitAccountingSchemaId = gLItemAccounts.getGlitemDebitAcct()
-        .getAccountingSchema().getId();
+        .getAccountingSchema()
+        .getId();
     final String gLItemCreditAccountingSchemaId = gLItemAccounts.getGlitemCreditAcct()
-        .getAccountingSchema().getId();
+        .getAccountingSchema()
+        .getId();
 
     if (!StringUtils.equals(gLItemAccountingSchemaId, gLItemDebitAccountingSchemaId)
         || !StringUtils.equals(gLItemAccountingSchemaId, gLItemCreditAccountingSchemaId)) {

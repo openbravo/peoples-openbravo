@@ -29,6 +29,8 @@ import java.util.Map.Entry;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.NativeQuery;
 import org.openbravo.base.exception.OBException;
@@ -40,8 +42,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.UsedByLink;
 import org.openbravo.service.datasource.DefaultDataSourceService;
 import org.openbravo.service.json.JsonConstants;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Datasource used by the Alert Management window
@@ -95,8 +95,7 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
 
   private List<String> getAlertIds(String alertStatus) {
     // Get alert rules visible for context's the role/user.
-    final String sql = "SELECT ad_alertrule_id, filterclause"
-        + "  FROM ad_alertrule arule" //
+    final String sql = "SELECT ad_alertrule_id, filterclause" + "  FROM ad_alertrule arule" //
         + " WHERE EXISTS (SELECT 1" //
         + "                 FROM ad_alertrecipient arecipient"
         + "                WHERE arule.ad_alertrule_id = arecipient.ad_alertrule_id"
@@ -135,7 +134,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
         ids.add(alertRuleId);
       }
     } catch (SQLGrammarException e) {
-      log.error("An error has ocurred when trying to process the alert rules: " + e.getMessage(), e);
+      log.error("An error has ocurred when trying to process the alert rules: " + e.getMessage(),
+          e);
     }
     return alertRulesIdGroupByFilterClauses;
   }
@@ -146,8 +146,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
     for (Entry<String, List<String>> alertRuleList : alertRulesGroupByFilterClause.entrySet()) {
       String filterClause;
       try {
-        filterClause = new UsedByLink().getWhereClause(
-            RequestContext.get().getVariablesSecureApp(), "", alertRuleList.getKey());
+        filterClause = new UsedByLink().getWhereClause(RequestContext.get().getVariablesSecureApp(),
+            "", alertRuleList.getKey());
       } catch (ServletException e) {
         throw new IllegalStateException(e);
       }
@@ -163,8 +163,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
         @SuppressWarnings("unchecked")
         List<String> alertsFound = sqlQuery.list();
         if (log.isDebugEnabled()) {
-          log.debug("Alert rule IDs: " + alertRuleList.getValue() + ") - SQL:'" + sql
-              + "' - Rows: " + alertsFound.size());
+          log.debug("Alert rule IDs: " + alertRuleList.getValue() + ") - SQL:'" + sql + "' - Rows: "
+              + alertsFound.size());
         }
         alertIds.addAll(alertsFound);
       } catch (SQLGrammarException e) {

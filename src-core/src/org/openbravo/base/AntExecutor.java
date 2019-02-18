@@ -122,10 +122,12 @@ public class AntExecutor {
    */
   public void runTask(String _task) throws Exception {
     String task = _task;
-    if (project == null)
+    if (project == null) {
       throw new Exception("NoProjectLoaded");
-    if (task == null)
+    }
+    if (task == null) {
       task = project.getDefaultTarget();
+    }
     try {
       project.executeTarget(task);
     } catch (final BuildException e) {
@@ -142,8 +144,9 @@ public class AntExecutor {
    *           - In case the project is not loaded
    */
   public void runTask(Vector<String> tasks) throws Exception {
-    if (project == null)
+    if (project == null) {
       throw new Exception("NoProjectLoaded");
+    }
     try {
       project.executeTargets(tasks);
     } catch (final BuildException e) {

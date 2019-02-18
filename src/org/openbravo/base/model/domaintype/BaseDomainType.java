@@ -46,25 +46,31 @@ public abstract class BaseDomainType implements DomainType {
    * Note: any subclass should clean-up and close database connections or hibernate sessions. If
    * this is not done then the update.database task may hang when disabling foreign keys.
    */
+  @Override
   public void initialize() {
   }
 
+  @Override
   public void setReference(Reference reference) {
     this.reference = reference;
   }
 
+  @Override
   public Reference getReference() {
     return reference;
   }
 
+  @Override
   public ModelProvider getModelProvider() {
     return modelProvider;
   }
 
+  @Override
   public void setModelProvider(ModelProvider modelProvider) {
     this.modelProvider = modelProvider;
   }
 
+  @Override
   public void checkObjectIsValid(BaseOBObjectDef obObject, Property property)
       throws ValidationException {
     checkIsValidValue(property, obObject.get(property.getName()));

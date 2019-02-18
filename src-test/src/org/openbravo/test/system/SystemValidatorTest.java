@@ -119,7 +119,8 @@ public class SystemValidatorTest extends OBBaseTest {
     }
 
     @SuppressWarnings("rawtypes")
-    Query upd = OBDal.getInstance().getSession()
+    Query upd = OBDal.getInstance()
+        .getSession()
         .createQuery("update ADModule set inDevelopment = false where id in (:mods)");
     upd.setParameterList("mods", updatedModules);
     upd.executeUpdate();

@@ -48,8 +48,8 @@ import org.openbravo.model.common.plm.ProductCharacteristicConf;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 
 public class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      ProductCharacteristic.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(ProductCharacteristic.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -80,8 +80,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       }
       if (prCh.isDefinesPrice()) {
         // Check there is only 1.
-        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance().createCriteria(
-            ProductCharacteristic.class);
+        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
+            .createCriteria(ProductCharacteristic.class);
         criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, prCh.getProduct()));
         criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_DEFINESPRICE, true));
         criteria.add(Restrictions.ne(ProductCharacteristic.PROPERTY_ID, prCh.getId()));
@@ -93,8 +93,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       }
       if (prCh.isDefinesImage()) {
         // Check there is only 1.
-        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance().createCriteria(
-            ProductCharacteristic.class);
+        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
+            .createCriteria(ProductCharacteristic.class);
         criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, prCh.getProduct()));
         criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_DEFINESIMAGE, true));
         criteria.add(Restrictions.ne(ProductCharacteristic.PROPERTY_ID, prCh.getId()));
@@ -104,8 +104,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
           throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesImage"));
         }
       }
-      final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
-          ProductCharacteristic.ENTITY_NAME);
+      final Entity prodCharEntity = ModelProvider.getInstance()
+          .getEntity(ProductCharacteristic.ENTITY_NAME);
 
       if (prCh.isExplodeConfigurationTab()) {
         final Property charConfListProperty = prodCharEntity
@@ -135,8 +135,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       return;
     }
     final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
-    final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
-        ProductCharacteristic.ENTITY_NAME);
+    final Entity prodCharEntity = ModelProvider.getInstance()
+        .getEntity(ProductCharacteristic.ENTITY_NAME);
 
     final Property chProp = prodCharEntity
         .getProperty(ProductCharacteristic.PROPERTY_CHARACTERISTIC);
@@ -145,8 +145,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     if (!event.getPreviousState(chProp).equals(event.getCurrentState(chProp))) {
       final Product prd = (Product) event.getCurrentState(prdProp);
       // Check there is only 1.
-      OBCriteria<ProductCharacteristicValue> criteria = OBDal.getInstance().createCriteria(
-          ProductCharacteristicValue.class);
+      OBCriteria<ProductCharacteristicValue> criteria = OBDal.getInstance()
+          .createCriteria(ProductCharacteristicValue.class);
       criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT, prd));
       criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
           event.getPreviousState(chProp)));
@@ -171,8 +171,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       }
       if (prCh.isDefinesPrice()) {
         // Check there is only 1.
-        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance().createCriteria(
-            ProductCharacteristic.class);
+        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
+            .createCriteria(ProductCharacteristic.class);
         criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, prCh.getProduct()));
         criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_DEFINESPRICE, true));
         criteria.add(Restrictions.ne(ProductCharacteristic.PROPERTY_ID, prCh.getId()));
@@ -184,8 +184,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       }
       if (prCh.isDefinesImage()) {
         // Check there is only 1.
-        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance().createCriteria(
-            ProductCharacteristic.class);
+        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
+            .createCriteria(ProductCharacteristic.class);
         criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, prCh.getProduct()));
         criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_DEFINESIMAGE, true));
         criteria.add(Restrictions.ne(ProductCharacteristic.PROPERTY_ID, prCh.getId()));
@@ -206,10 +206,12 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
         StringBuffer hql = new StringBuffer();
         hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
         hql.append(" from " + ProductCharacteristicConf.ENTITY_NAME + " as pcc");
-        hql.append(" join pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE + " as cv");
-        hql.append(" where pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT
-            + " = :pc");
-        Query<String> query = OBDal.getInstance().getSession()
+        hql.append(
+            " join pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE + " as cv");
+        hql.append(
+            " where pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT + " = :pc");
+        Query<String> query = OBDal.getInstance()
+            .getSession()
             .createQuery(hql.toString(), String.class);
         query.setParameter("pc", prCh);
         final List<String> existingValues = query.list();
@@ -225,11 +227,11 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
             if (existingValues.remove(chValueId)) {
               OBCriteria<ProductCharacteristicConf> prChConfCrit = OBDal.getInstance()
                   .createCriteria(ProductCharacteristicConf.class);
-              prChConfCrit.add(Restrictions.eq(
-                  ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
-              prChConfCrit.add(Restrictions.eq(
-                  ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
-                  OBDal.getInstance().get(CharacteristicValue.class, chValueId)));
+              prChConfCrit.add(Restrictions
+                  .eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
+              prChConfCrit
+                  .add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
+                      OBDal.getInstance().get(CharacteristicValue.class, chValueId)));
               prChConfCrit.setFilterOnActive(false);
               ProductCharacteristicConf prChConf = (ProductCharacteristicConf) prChConfCrit
                   .uniqueResult();
@@ -248,10 +250,9 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
           for (String strChValueId : existingValues) {
             OBCriteria<ProductCharacteristicConf> prChConfCrit = OBDal.getInstance()
                 .createCriteria(ProductCharacteristicConf.class);
-            prChConfCrit.add(Restrictions.eq(
-                ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
-            prChConfCrit.add(Restrictions.eq(
-                ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
+            prChConfCrit.add(
+                Restrictions.eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
+            prChConfCrit.add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
                 OBDal.getInstance().get(CharacteristicValue.class, strChValueId)));
             prChConfCrit.setFilterOnActive(false);
             ProductCharacteristicConf prChConf = (ProductCharacteristicConf) prChConfCrit
@@ -276,8 +277,10 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       hql.append(" , cv." + CharacteristicValue.PROPERTY_ACTIVE);
       hql.append(" from " + CharacteristicSubsetValue.ENTITY_NAME + " as csv");
       hql.append(" join csv." + CharacteristicSubsetValue.PROPERTY_CHARACTERISTICVALUE + " as cv");
-      hql.append(" where csv." + CharacteristicSubsetValue.PROPERTY_CHARACTERISTICSUBSET + " = :cs");
-      Query<Object[]> query = OBDal.getInstance().getSession()
+      hql.append(
+          " where csv." + CharacteristicSubsetValue.PROPERTY_CHARACTERISTICSUBSET + " = :cs");
+      Query<Object[]> query = OBDal.getInstance()
+          .getSession()
           .createQuery(hql.toString(), Object[].class);
       query.setParameter("cs", prCh.getCharacteristicSubset());
       return query.scroll(ScrollMode.FORWARD_ONLY);
@@ -292,7 +295,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       hql.append(" from " + CharacteristicValue.ENTITY_NAME + " as cv");
       hql.append(" where cv." + CharacteristicValue.PROPERTY_CHARACTERISTIC + " = :c");
       hql.append(" and cv." + CharacteristicValue.PROPERTY_SUMMARYLEVEL + " = false");
-      Query<Object[]> query = OBDal.getInstance().getSession()
+      Query<Object[]> query = OBDal.getInstance()
+          .getSession()
           .createQuery(hql.toString(), Object[].class);
       query.setParameter("c", prCh.getCharacteristic());
       return query.scroll(ScrollMode.FORWARD_ONLY);
@@ -301,12 +305,12 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
 
   private ProductCharacteristicConf getCharacteristicConf(ProductCharacteristic prCh,
       String strCharacteristicValueId, String strCode, Boolean strActive) {
-    ProductCharacteristicConf charConf = OBProvider.getInstance().get(
-        ProductCharacteristicConf.class);
+    ProductCharacteristicConf charConf = OBProvider.getInstance()
+        .get(ProductCharacteristicConf.class);
     charConf.setCharacteristicOfProduct(prCh);
     charConf.setOrganization(prCh.getOrganization());
-    charConf.setCharacteristicValue((CharacteristicValue) OBDal.getInstance().getProxy(
-        CharacteristicValue.ENTITY_NAME, strCharacteristicValueId));
+    charConf.setCharacteristicValue((CharacteristicValue) OBDal.getInstance()
+        .getProxy(CharacteristicValue.ENTITY_NAME, strCharacteristicValueId));
     charConf.setCode(strCode);
     charConf.setActive(strActive);
     return charConf;
@@ -315,8 +319,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
   private void deleteProductCharacteristicValue(ProductCharacteristic productCharacteristic) {
     ScrollableResults scroll = null;
     try {
-      OBCriteria<ProductCharacteristicValue> criteria = OBDal.getInstance().createCriteria(
-          ProductCharacteristicValue.class);
+      OBCriteria<ProductCharacteristicValue> criteria = OBDal.getInstance()
+          .createCriteria(ProductCharacteristicValue.class);
       criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
           productCharacteristic.getCharacteristic()));
       criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT,

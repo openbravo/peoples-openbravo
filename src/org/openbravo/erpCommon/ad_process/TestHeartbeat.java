@@ -86,8 +86,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
 
     final Process HBProcess = OBDal.getInstance()
         .get(Process.class, HeartbeatProcess.HB_PROCESS_ID);
-    final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class,
-        SystemInfomation_ID);
+    final SystemInformation sysInfo = OBDal.getInstance()
+        .get(SystemInformation.class, SystemInfomation_ID);
 
     final String clickedButton = vars.getStringParameter("inpLastFieldChanged");
     final String isHBActive = vars.getStringParameter("inptestproxy", activeFilter);
@@ -117,13 +117,14 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         OBDal.getInstance().save(sysInfo);
 
         // Un-scheduling the process
-        final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
-            ProcessRequest.class);
-        prCriteria.add(Restrictions.and(
-            Restrictions.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess), Restrictions.or(
+        final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance()
+            .createCriteria(ProcessRequest.class);
+        prCriteria.add(Restrictions.and(Restrictions.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
+            Restrictions.or(
                 Restrictions.eq(ProcessRequest.PROPERTY_STATUS,
-                    org.openbravo.scheduling.Process.SCHEDULED), Restrictions.eq(
-                    ProcessRequest.PROPERTY_STATUS, org.openbravo.scheduling.Process.MISFIRED))));
+                    org.openbravo.scheduling.Process.SCHEDULED),
+                Restrictions.eq(ProcessRequest.PROPERTY_STATUS,
+                    org.openbravo.scheduling.Process.MISFIRED))));
 
         final List<ProcessRequest> requestList = prCriteria.list();
 
@@ -188,13 +189,14 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         }
 
         // Scheduling the process
-        final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
-            ProcessRequest.class);
-        prCriteria.add(Restrictions.and(
-            Restrictions.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess), Restrictions.or(
+        final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance()
+            .createCriteria(ProcessRequest.class);
+        prCriteria.add(Restrictions.and(Restrictions.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
+            Restrictions.or(
                 Restrictions.eq(ProcessRequest.PROPERTY_STATUS,
-                    org.openbravo.scheduling.Process.UNSCHEDULED), Restrictions.eq(
-                    ProcessRequest.PROPERTY_STATUS, org.openbravo.scheduling.Process.MISFIRED))));
+                    org.openbravo.scheduling.Process.UNSCHEDULED),
+                Restrictions.eq(ProcessRequest.PROPERTY_STATUS,
+                    org.openbravo.scheduling.Process.MISFIRED))));
         final List<ProcessRequest> requestList = prCriteria.list();
 
         ProcessRequest pr = null;
@@ -243,8 +245,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
             "CONFIGURE_MODULE_UPGRADE")) {
           // Continue with the module install
           String recordId = vars.getStringParameter("inpcRecordId", IsIDFilter.instance);
-          String command = vars.getCommand().endsWith("UPDATE") ? "UPDATE" : vars.getCommand()
-              .endsWith("UPGRADE") ? "UPGRADE" : "INSTALL";
+          String command = vars.getCommand().endsWith("UPDATE") ? "UPDATE"
+              : vars.getCommand().endsWith("UPGRADE") ? "UPGRADE" : "INSTALL";
 
           if (command.equals("UPDATE")) {
             recordId = (recordId.equals(ModuleManagement.UPDATE_ALL_RECORD_ID) ? "&inpcUpdate=all"
@@ -256,8 +258,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
             recordId = "&inpcRecordId=" + recordId;
           }
 
-          response.sendRedirect(strDireccion + "/ad_forms/ModuleManagement.html?Command=" + command
-              + recordId);
+          response.sendRedirect(
+              strDireccion + "/ad_forms/ModuleManagement.html?Command=" + command + recordId);
           return;
         } else {
           // Prompt HB configured

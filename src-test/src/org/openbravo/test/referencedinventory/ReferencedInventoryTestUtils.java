@@ -128,8 +128,8 @@ class ReferencedInventoryTestUtils {
   }
 
   static ReferencedInventoryType createReferencedInventoryType() {
-    final ReferencedInventoryType refInvType = OBProvider.getInstance().get(
-        ReferencedInventoryType.class);
+    final ReferencedInventoryType refInvType = OBProvider.getInstance()
+        .get(ReferencedInventoryType.class);
     refInvType.setClient(OBContext.getOBContext().getCurrentClient());
     refInvType.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
     refInvType.setName(UUID.randomUUID().toString());
@@ -145,8 +145,9 @@ class ReferencedInventoryTestUtils {
     refInv.setClient(OBContext.getOBContext().getCurrentClient());
     refInv.setOrganization(OBDal.getInstance().getProxy(Organization.class, orgId));
     refInv.setReferencedInventoryType(refInvType);
-    refInv.setSearchKey(refInvType.getSequence() == null ? StringUtils.left(UUID.randomUUID()
-        .toString(), 30) : "<to be replaced>");
+    refInv.setSearchKey(
+        refInvType.getSequence() == null ? StringUtils.left(UUID.randomUUID().toString(), 30)
+            : "<to be replaced>");
     OBDal.getInstance().save(refInv);
     assertThat("Referenced Inventory is successfully created", refInv, notNullValue());
     assertThat("Referenced Inventory is empty", refInv.getMaterialMgmtStorageDetailList(), empty());
@@ -171,8 +172,8 @@ class ReferencedInventoryTestUtils {
     inOutLine.setProduct(product);
     inOutLine.setMovementQuantity(movementQty);
     if (StringUtils.isNotBlank(attributeSetInstanceId)) {
-      inOutLine.setAttributeSetValue(OBDal.getInstance().getProxy(AttributeSetInstance.class,
-          attributeSetInstanceId));
+      inOutLine.setAttributeSetValue(
+          OBDal.getInstance().getProxy(AttributeSetInstance.class, attributeSetInstanceId));
     }
     callMInoutPost(inOut);
     OBDal.getInstance().flush();
@@ -259,15 +260,15 @@ class ReferencedInventoryTestUtils {
   static StorageDetail getUniqueStorageDetail(final Product product) {
     final List<StorageDetail> storageDetails = getAvailableStorageDetailsOrderByQtyOnHand(product);
     if (storageDetails.size() > 1) {
-      throw new OBException(storageDetails.size()
-          + " storage details were found but just 1 was expected");
+      throw new OBException(
+          storageDetails.size() + " storage details were found but just 1 was expected");
     }
     return storageDetails.get(0);
   }
 
   static String getAnyStorageDetail() {
-    OBCriteria<StorageDetail> storageDetailCriteria = OBDal.getInstance().createCriteria(
-        StorageDetail.class);
+    OBCriteria<StorageDetail> storageDetailCriteria = OBDal.getInstance()
+        .createCriteria(StorageDetail.class);
     storageDetailCriteria.setMaxResults(1);
     return ((StorageDetail) storageDetailCriteria.uniqueResult()).getId();
   }
@@ -332,7 +333,8 @@ class ReferencedInventoryTestUtils {
         equalTo(reservationQty));
     assertThat("Reservation qty is properly set in header", reservation.getQuantity(),
         equalTo(reservationQty));
-    assertThat("No released qty in lines", reservationStock.getReleased(), equalTo(BigDecimal.ZERO));
+    assertThat("No released qty in lines", reservationStock.getReleased(),
+        equalTo(BigDecimal.ZERO));
     assertThat("No released qty  in header", reservation.getReleased(), equalTo(BigDecimal.ZERO));
   }
 

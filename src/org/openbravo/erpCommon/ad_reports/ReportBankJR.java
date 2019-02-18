@@ -40,8 +40,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportBankJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -62,15 +63,17 @@ public class ReportBankJR extends HttpSecureAppServlet {
       String strcbankaccount = vars.getRequestGlobalVariable("inpcBankAccountId",
           "ReportBankJR|C_Bankaccount_ID");
       printPageDataHtml(response, vars, strDateFrom, strDateTo, strcbankaccount, "pdf");
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strcbankaccount) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      String strDateFrom, String strDateTo, String strcbankaccount)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     String strMessage = "";
@@ -120,11 +123,9 @@ public class ReportBankJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTo", strDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("paramMessage", (strMessage.equals("") ? "" : "alert('" + strMessage
-        + "');"));
-    xmlDocument.setData(
-        "reportC_ACCOUNTNUMBER",
-        "liststructure",
+    xmlDocument.setParameter("paramMessage",
+        (strMessage.equals("") ? "" : "alert('" + strMessage + "');"));
+    xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure",
         AccountNumberComboData.select(this, vars.getLanguage(),
             Utility.getContext(this, vars, "#User_Client", "ReportBankJR"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR")));
@@ -136,8 +137,9 @@ public class ReportBankJR extends HttpSecureAppServlet {
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strcbankaccount, String strOutput)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     String strMessage = "";
     // BigDecimal initialBalance= new BigDecimal(0);
@@ -145,8 +147,9 @@ public class ReportBankJR extends HttpSecureAppServlet {
     if (strDateFrom.equals("") && strDateTo.equals("")) {
       String discard[] = { "sectionAmount" };
       XmlDocument xmlDocument = null;
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBankJR",
-          discard).createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBankJR", discard)
+          .createXmlDocument();
       data = ReportBankJRData.set();
       if (vars.commandIn("FIND")) {
         strMessage = Utility.messageBD(this, "BothDatesCannotBeBlank", vars.getLanguage());
@@ -163,11 +166,9 @@ public class ReportBankJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("cBankAccount", strcbankaccount);
       xmlDocument.setParameter("dateFrom", strDateFrom);
       xmlDocument.setParameter("dateTo", strDateTo);
-      xmlDocument.setParameter("paramMessage", (strMessage.equals("") ? "" : "alert('" + strMessage
-          + "');"));
-      xmlDocument.setData(
-          "reportC_ACCOUNTNUMBER",
-          "liststructure",
+      xmlDocument.setParameter("paramMessage",
+          (strMessage.equals("") ? "" : "alert('" + strMessage + "');"));
+      xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure",
           AccountNumberComboData.select(this, vars.getLanguage(),
               Utility.getContext(this, vars, "#User_Client", "ReportBankJR"),
               Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR")));
@@ -190,13 +191,14 @@ public class ReportBankJR extends HttpSecureAppServlet {
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("DATE_FROM", strDateFrom);
-    parameters
-        .put("USER_ORG", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR"));
+    parameters.put("USER_ORG",
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR"));
     parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client", "ReportBankJR"));
     String strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportBankJR.jrxml";
     renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportBankJR.";
   } // end of getServletInfo() method

@@ -37,18 +37,21 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class SL_CreateLines_Conversion_UOM extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       String strOrderlineId = vars.getStringParameter("inpOrderlineId");
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("CHANGED: " + strOrderlineId);
+      }
       String strUOM = vars.getStringParameter("inpcUomId" + strOrderlineId);
       String strQuantityOrder = vars.getNumericParameter("inpquantityorder" + strOrderlineId);
       String strMProductUOMID = vars.getStringParameter("inpmProductUomId" + strOrderlineId);
@@ -58,17 +61,20 @@ public class SL_CreateLines_Conversion_UOM extends HttpSecureAppServlet {
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strOrderlineId, String strUOM, String strQuantityOrder, String strMProductUOMID)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut")
+        .createXmlDocument();
 
     int stdPrecision = Integer.valueOf(SLInvoiceConversionData.stdPrecision(this, strUOM))
         .intValue();
@@ -77,14 +83,17 @@ public class SL_CreateLines_Conversion_UOM extends HttpSecureAppServlet {
     boolean check = false;
 
     strMultiplyRate = SLInvoiceConversionData.multiplyRate(this, strInitUOM, strUOM);
-    if (strInitUOM.equals(strUOM))
+    if (strInitUOM.equals(strUOM)) {
       strMultiplyRate = "1";
-    if (strMultiplyRate.equals(""))
+    }
+    if (strMultiplyRate.equals("")) {
       strMultiplyRate = SLInvoiceConversionData.divideRate(this, strUOM, strInitUOM);
+    }
     if (strMultiplyRate.equals("")) {
       strMultiplyRate = "1";
-      if (!strMProductUOMID.equals(""))
+      if (!strMProductUOMID.equals("")) {
         check = true;
+      }
     }
 
     BigDecimal quantityOrder, movementQty, multiplyRate;
@@ -100,17 +109,18 @@ public class SL_CreateLines_Conversion_UOM extends HttpSecureAppServlet {
       if (!strQuantityOrder.equals("")) {
         quantityOrder = new BigDecimal(strQuantityOrder);
         movementQty = quantityOrder.multiply(multiplyRate);
-        if (movementQty.scale() > stdPrecision)
+        if (movementQty.scale() > stdPrecision) {
           movementQty = movementQty.setScale(stdPrecision, RoundingMode.HALF_UP);
-        resultado.append("new Array(\"inpmovementqty" + strOrderlineId + "\", "
-            + movementQty.toString() + ")");
+        }
+        resultado.append(
+            "new Array(\"inpmovementqty" + strOrderlineId + "\", " + movementQty.toString() + ")");
       }
       if (check) {
-        if (!strQuantityOrder.equals(""))
+        if (!strQuantityOrder.equals("")) {
           resultado.append(",");
-        resultado.append("new Array('MESSAGE', \""
-            + FormatUtilities.replaceJS(Utility.messageBD(this, "NoUOMConversion",
-                vars.getLanguage())) + "\")");
+        }
+        resultado.append("new Array('MESSAGE', \"" + FormatUtilities
+            .replaceJS(Utility.messageBD(this, "NoUOMConversion", vars.getLanguage())) + "\")");
       }
       resultado.append(");");
     }

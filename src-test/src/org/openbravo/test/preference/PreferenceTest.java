@@ -100,8 +100,8 @@ public class PreferenceTest extends OBBaseTest {
   public void test00CreatePreference() {
     setSystemAdministratorContext();
 
-    Preferences.setPreferenceValue("testProperty", "testValue", false, null, null, null, null,
-        null, null);
+    Preferences.setPreferenceValue("testProperty", "testValue", false, null, null, null, null, null,
+        null);
     OBDal.getInstance().flush();
 
     OBCriteria<Preference> qPref = OBDal.getInstance().createCriteria(Preference.class);
@@ -109,8 +109,8 @@ public class PreferenceTest extends OBBaseTest {
 
     List<Preference> prefs = qPref.list();
     assertFalse("No property has been set", prefs.isEmpty());
-    assertEquals("Property does not contain the expected value", "testValue", prefs.get(0)
-        .getSearchKey());
+    assertEquals("Property does not contain the expected value", "testValue",
+        prefs.get(0).getSearchKey());
     OBDal.getInstance().commitAndClose();
   }
 
@@ -128,8 +128,8 @@ public class PreferenceTest extends OBBaseTest {
     List<Preference> prefs = qPref.list();
     assertFalse("No property has been set", prefs.isEmpty());
     assertEquals("There should be only one property, found:" + prefs.size(), 1, prefs.size());
-    assertEquals("Property does not contain the expected value", "newValue", prefs.get(0)
-        .getSearchKey());
+    assertEquals("Property does not contain the expected value", "newValue",
+        prefs.get(0).getSearchKey());
     OBDal.getInstance().commitAndClose();
   }
 
@@ -154,30 +154,33 @@ public class PreferenceTest extends OBBaseTest {
   @Test
   public void test03PropertyGet() throws PropertyException {
     setSystemAdministratorContext();
-    String value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
-        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    String value = Preferences.getPreferenceValue("testProperty", false,
+        OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+        OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "newValue", value);
 
     Role role = OBDal.getInstance().get(Role.class, SALES_ROLE_ID); // Sales
-    value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
-        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-        .getOBContext().getUser(), role, null);
+    value = Preferences.getPreferenceValue("testProperty", false,
+        OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(), role,
+        null);
     assertEquals("Not found expected value.", "salesValue", value);
   }
 
   @Test
   public void test04PLPropertyGet() throws SQLException {
     setSystemAdministratorContext();
-    String value = getPLPreference("testProperty", false, OBContext.getOBContext()
-        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    String value = getPLPreference("testProperty", false,
+        OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+        OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "newValue", value);
 
     Role role = OBDal.getInstance().get(Role.class, SALES_ROLE_ID); // Sales
     value = getPLPreference("testProperty", false, OBContext.getOBContext().getCurrentClient(),
-        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-        role, null);
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(), role,
+        null);
     assertEquals("Not found expected value.", "salesValue", value);
   }
 
@@ -193,24 +196,28 @@ public class PreferenceTest extends OBBaseTest {
         window, null);
     OBDal.getInstance().flush();
 
-    String value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
-        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    String value = Preferences.getPreferenceValue("testProperty", false,
+        OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+        OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "newValue", value);
 
-    value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
-        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-        .getOBContext().getUser(), role, null);
+    value = Preferences.getPreferenceValue("testProperty", false,
+        OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(), role,
+        null);
     assertEquals("Not found expected value.", "salesValue", value);
 
-    value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
-        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), window);
+    value = Preferences.getPreferenceValue("testProperty", false,
+        OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+        OBContext.getOBContext().getRole(), window);
     assertEquals("Not found expected value.", "alertGeneral", value);
 
-    value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
-        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-        .getOBContext().getUser(), role, window);
+    value = Preferences.getPreferenceValue("testProperty", false,
+        OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(), role,
+        window);
     assertEquals("Not found expected value.", "alertSales", value);
     OBDal.getInstance().commitAndClose();
   }
@@ -223,14 +230,15 @@ public class PreferenceTest extends OBBaseTest {
         window, null);
 
     Role role = OBDal.getInstance().get(Role.class, SALES_ROLE_ID); // Sales
-    String value = getPLPreference("testProperty", false, OBContext.getOBContext()
-        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    String value = getPLPreference("testProperty", false,
+        OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+        OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "newValue", value);
 
     value = getPLPreference("testProperty", false, OBContext.getOBContext().getCurrentClient(),
-        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-        role, null);
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(), role,
+        null);
     assertEquals("Not found expected value.", "salesValue", value);
 
     value = getPLPreference("testProperty", false, OBContext.getOBContext().getCurrentClient(),
@@ -239,8 +247,8 @@ public class PreferenceTest extends OBBaseTest {
     assertEquals("Not found expected value.", "alertGeneral", value);
 
     value = getPLPreference("testProperty", false, OBContext.getOBContext().getCurrentClient(),
-        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-        role, window);
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(), role,
+        window);
     assertEquals("Not found expected value.", "alertSales", value);
     OBDal.getInstance().commitAndClose();
   }
@@ -257,8 +265,8 @@ public class PreferenceTest extends OBBaseTest {
 
     Preference p = Preferences.setPreferenceValue("testProperty", "B", false, null, orgB, null,
         null, null, null);
-    Preferences
-        .setPreferenceValue("testProperty", "B2", false, null, orgB2, null, null, null, null);
+    Preferences.setPreferenceValue("testProperty", "B2", false, null, orgB2, null, null, null,
+        null);
     Preferences.setPreferenceValue("testProperty", "B12", false, null, orgB12, null, null, null,
         null);
     OBDal.getInstance().flush();
@@ -266,29 +274,30 @@ public class PreferenceTest extends OBBaseTest {
     assertEquals("Preference not set in the expected visible org", orgB,
         p.getVisibleAtOrganization());
 
-    String value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
-        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    String value = Preferences.getPreferenceValue("testProperty", false,
+        OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+        OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "newValue", value);
 
-    value = Preferences.getPreferenceValue("testProperty", false, client, orgB, OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    value = Preferences.getPreferenceValue("testProperty", false, client, orgB,
+        OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "B", value);
 
-    value = Preferences.getPreferenceValue("testProperty", false, client, orgB1, OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    value = Preferences.getPreferenceValue("testProperty", false, client, orgB1,
+        OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "B", value);
 
-    value = Preferences.getPreferenceValue("testProperty", false, client, orgB2, OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    value = Preferences.getPreferenceValue("testProperty", false, client, orgB2,
+        OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "B2", value);
 
-    value = Preferences.getPreferenceValue("testProperty", false, client, orgB11, OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    value = Preferences.getPreferenceValue("testProperty", false, client, orgB11,
+        OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "B", value);
 
-    value = Preferences.getPreferenceValue("testProperty", false, client, orgB12, OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    value = Preferences.getPreferenceValue("testProperty", false, client, orgB12,
+        OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "B12", value);
     OBDal.getInstance().commitAndClose();
   }
@@ -307,13 +316,13 @@ public class PreferenceTest extends OBBaseTest {
 
     OBDal.getInstance().flush();
 
-    String valueClient = Preferences.getPreferenceValue(propAttribute, false, testClient, OBContext
-        .getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-        .getOBContext().getRole(), null);
+    String valueClient = Preferences.getPreferenceValue(propAttribute, false, testClient,
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+        OBContext.getOBContext().getRole(), null);
     assertThat("preference for client", valueClient, is("test client"));
 
-    String valueSystem = Preferences.getPreferenceValue(propAttribute, false, systemClient, OBDal
-        .getInstance().getProxy(Organization.class, "0"), OBContext.getOBContext().getUser(),
+    String valueSystem = Preferences.getPreferenceValue(propAttribute, false, systemClient,
+        OBDal.getInstance().getProxy(Organization.class, "0"), OBContext.getOBContext().getUser(),
         OBContext.getOBContext().getRole(), null);
 
     assertThat("preference for system", valueSystem, is("system"));
@@ -333,29 +342,30 @@ public class PreferenceTest extends OBBaseTest {
     Organization orgB11 = OBDal.getInstance().get(Organization.class, ORG_B11);
     Organization orgB12 = OBDal.getInstance().get(Organization.class, ORG_B12);
 
-    String value = getPLPreference("testProperty", false, OBContext.getOBContext()
-        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    String value = getPLPreference("testProperty", false,
+        OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+        OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "newValue", value);
 
-    value = getPLPreference("testProperty", false, client, orgB,
+    value = getPLPreference("testProperty", false, client, orgB, OBContext.getOBContext().getUser(),
+        OBContext.getOBContext().getRole(), null);
+    assertEquals("Not found expected value.", "B", value);
+
+    value = getPLPreference("testProperty", false, client, orgB1,
         OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "B", value);
 
-    value = getPLPreference("testProperty", false, client, orgB1, OBContext.getOBContext()
-        .getUser(), OBContext.getOBContext().getRole(), null);
-    assertEquals("Not found expected value.", "B", value);
-
-    value = getPLPreference("testProperty", false, client, orgB2, OBContext.getOBContext()
-        .getUser(), OBContext.getOBContext().getRole(), null);
+    value = getPLPreference("testProperty", false, client, orgB2,
+        OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "B2", value);
 
-    value = getPLPreference("testProperty", false, client, orgB11, OBContext.getOBContext()
-        .getUser(), OBContext.getOBContext().getRole(), null);
+    value = getPLPreference("testProperty", false, client, orgB11,
+        OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "B", value);
 
-    value = getPLPreference("testProperty", false, client, orgB12, OBContext.getOBContext()
-        .getUser(), OBContext.getOBContext().getRole(), null);
+    value = getPLPreference("testProperty", false, client, orgB12,
+        OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "B12", value);
     OBDal.getInstance().commitAndClose();
   }
@@ -364,9 +374,10 @@ public class PreferenceTest extends OBBaseTest {
   public void test10ExceptionNotFound() {
     PropertyException exception = null;
     try {
-      Preferences.getPreferenceValue("testNotExists", false, OBContext.getOBContext()
-          .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-          .getOBContext().getUser(), null, null);
+      Preferences.getPreferenceValue("testNotExists", false,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          null, null);
     } catch (PropertyException e) {
       exception = e;
     }
@@ -404,9 +415,10 @@ public class PreferenceTest extends OBBaseTest {
 
     PropertyException exception = null;
     try {
-      Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
-          .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-          .getOBContext().getUser(), null, null);
+      Preferences.getPreferenceValue("testProperty", false,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          null, null);
     } catch (PropertyException e) {
       exception = e;
     }
@@ -421,8 +433,9 @@ public class PreferenceTest extends OBBaseTest {
     setSystemAdministratorContext();
     SQLException exception = null;
     try {
-      getPLPreference("testProperty", false, OBContext.getOBContext().getCurrentClient(), OBContext
-          .getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(), null, null);
+      getPLPreference("testProperty", false, OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          null, null);
     } catch (SQLException e) {
       exception = e;
     }
@@ -454,9 +467,10 @@ public class PreferenceTest extends OBBaseTest {
     newPref.setSelected(true);
     OBDal.getInstance().flush();
 
-    String value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
-        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    String value = Preferences.getPreferenceValue("testProperty", false,
+        OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+        OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "anotherValue", value);
     OBDal.getInstance().commitAndClose();
   }
@@ -464,9 +478,10 @@ public class PreferenceTest extends OBBaseTest {
   @Test
   public void test15PLSolvedConflict() throws SQLException {
     setSystemAdministratorContext();
-    String value = getPLPreference("testProperty", false, OBContext.getOBContext()
-        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    String value = getPLPreference("testProperty", false,
+        OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+        OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "anotherValue", value);
   }
 
@@ -485,15 +500,15 @@ public class PreferenceTest extends OBBaseTest {
     setSystemAdministratorContext();
 
     // Property configuration list
-    Reference refProperties = OBDal.getInstance().get(Reference.class,
-        "A26BA480E2014707B47257024C3CBFF7");
+    Reference refProperties = OBDal.getInstance()
+        .get(Reference.class, "A26BA480E2014707B47257024C3CBFF7");
     Module mod = OBDal.getInstance().get(Module.class, "0");
     boolean devStatus = mod.isInDevelopment();
     mod.setInDevelopment(true);
     OBDal.getInstance().commitAndClose(); // commit core in dev, to prevent trigger fail
 
-    org.openbravo.model.ad.domain.List listValue = OBProvider.getInstance().get(
-        org.openbravo.model.ad.domain.List.class);
+    org.openbravo.model.ad.domain.List listValue = OBProvider.getInstance()
+        .get(org.openbravo.model.ad.domain.List.class);
     listValue.setCreatedBy(OBContext.getOBContext().getUser());
     listValue.setCreationDate(new Date());
     listValue.setUpdatedBy(OBContext.getOBContext().getUser());
@@ -515,9 +530,10 @@ public class PreferenceTest extends OBBaseTest {
 
     assertTrue("Pref type is not properly set", pref.isPropertyList());
 
-    String value = Preferences.getPreferenceValue("testPropertyList", true, OBContext
-        .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-        OBContext.getOBContext().getUser(), null, null);
+    String value = Preferences.getPreferenceValue("testPropertyList", true,
+        OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(), null,
+        null);
     assertEquals("Not found expected value.", "testPropValue", value);
     OBDal.getInstance().commitAndClose();
   }
@@ -527,8 +543,9 @@ public class PreferenceTest extends OBBaseTest {
     // setSystemAdministratorContext();
     setTestUserContext();
 
-    List<Preference> allPrefs = Preferences.getAllPreferences(OBContext.getOBContext()
-        .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
+    List<Preference> allPrefs = Preferences.getAllPreferences(
+        OBContext.getOBContext().getCurrentClient().getId(),
+        OBContext.getOBContext().getCurrentOrganization().getId(),
         OBContext.getOBContext().getUser().getId(), OBContext.getOBContext().getRole().getId());
     List<String> testPreferenceValues = new ArrayList<>();
     for (Preference pref : allPrefs) {
@@ -537,8 +554,7 @@ public class PreferenceTest extends OBBaseTest {
         testPreferenceValues.add(key + " " + pref.getSearchKey());
       }
     }
-    assertThat(
-        testPreferenceValues,
+    assertThat(testPreferenceValues,
         allOf(hasItem("testProperty2 testValue"), hasItem("testProperty B2"),
             hasItem("testProperty alertGeneral"), hasItem("testPropertyList testPropValue")));
     assertThat(testPreferenceValues, hasSize(4));
@@ -554,10 +570,10 @@ public class PreferenceTest extends OBBaseTest {
       OBDal.getInstance().remove(pref);
     }
 
-    OBCriteria<org.openbravo.model.ad.domain.List> qList = OBDal.getInstance().createCriteria(
-        org.openbravo.model.ad.domain.List.class);
-    qList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY,
-        "testPropertyList"));
+    OBCriteria<org.openbravo.model.ad.domain.List> qList = OBDal.getInstance()
+        .createCriteria(org.openbravo.model.ad.domain.List.class);
+    qList.add(
+        Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY, "testPropertyList"));
     for (org.openbravo.model.ad.domain.List l : qList.list()) {
       OBDal.getInstance().refresh(l);
       OBDal.getInstance().remove(l);

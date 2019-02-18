@@ -43,8 +43,8 @@ public class WebServiceServlet extends BaseWebServiceServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     try {
       final String segment = WebServiceUtil.getInstance().getFirstSegment(request.getPathInfo());
       final WebService ws = getWebService(request);
@@ -59,8 +59,8 @@ public class WebServiceServlet extends BaseWebServiceServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     try {
       final String segment = WebServiceUtil.getInstance().getFirstSegment(request.getPathInfo());
       final WebService ws = getWebService(request);
@@ -91,8 +91,8 @@ public class WebServiceServlet extends BaseWebServiceServlet {
   }
 
   @Override
-  public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPut(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     try {
       final String segment = WebServiceUtil.getInstance().getFirstSegment(request.getPathInfo());
       final WebService ws = getWebService(request);
@@ -110,8 +110,8 @@ public class WebServiceServlet extends BaseWebServiceServlet {
   protected WebService getWebService(HttpServletRequest request) {
     final WebService webService = super.getWebService(request);
     if (webService == null) {
-      throw new OBServiceException("No WebService found using the path info "
-          + request.getPathInfo());
+      throw new OBServiceException(
+          "No WebService found using the path info " + request.getPathInfo());
     }
     return webService;
   }

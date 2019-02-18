@@ -278,7 +278,8 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
    * invoice
    * 
    */
-  private void assignCanceled(Invoice invoice, HashMap<FIN_PaymentDetail, BigDecimal> canceledPSDs) {
+  private void assignCanceled(Invoice invoice,
+      HashMap<FIN_PaymentDetail, BigDecimal> canceledPSDs) {
 
     for (FIN_PaymentSchedule ps : invoice.getFINPaymentScheduleList()) {
       Iterator<FIN_PaymentDetail> ite = canceledPSDs.keySet().iterator();
@@ -300,8 +301,8 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
    * 
    */
   private boolean existsPaymentScheduleDetail(FIN_PaymentDetail pd) {
-    OBCriteria<FIN_PaymentScheduleDetail> obcPSD = OBDal.getInstance().createCriteria(
-        FIN_PaymentScheduleDetail.class);
+    OBCriteria<FIN_PaymentScheduleDetail> obcPSD = OBDal.getInstance()
+        .createCriteria(FIN_PaymentScheduleDetail.class);
     obcPSD.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS, pd));
     obcPSD.setMaxResults(1);
     return obcPSD.uniqueResult() != null;
@@ -345,10 +346,10 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
     List<FIN_PaymentSchedule> lPSsToReturn = createdPSs;
     for (FIN_PaymentSchedule invoicePS : lToModify) {
       // 1) Remove not paid payment schedule detail lines
-      OBCriteria<FIN_PaymentScheduleDetail> obcPSD = OBDal.getInstance().createCriteria(
-          FIN_PaymentScheduleDetail.class);
-      obcPSD.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE,
-          invoicePS));
+      OBCriteria<FIN_PaymentScheduleDetail> obcPSD = OBDal.getInstance()
+          .createCriteria(FIN_PaymentScheduleDetail.class);
+      obcPSD.add(
+          Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE, invoicePS));
       obcPSD.add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
       for (FIN_PaymentScheduleDetail psd : obcPSD.list()) {
         invoicePS.getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(psd);
@@ -366,8 +367,8 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       BigDecimal outstanding = new BigDecimal(modifiedGridRow.getString("outstanding"));
       Date dueDate = getJSDate(modifiedGridRow.getString("dueDate"));
       Date expectedDate = getJSDate(modifiedGridRow.getString("expectedDate"));
-      FIN_PaymentMethod pm = OBDal.getInstance().get(FIN_PaymentMethod.class,
-          modifiedGridRow.getString("paymentMethod"));
+      FIN_PaymentMethod pm = OBDal.getInstance()
+          .get(FIN_PaymentMethod.class, modifiedGridRow.getString("paymentMethod"));
       invoicePS.setOutstandingAmount(outstanding);
       invoicePS.setAmount(invoicePS.getPaidAmount().add(outstanding));
       invoicePS.setDueDate(dueDate);
@@ -423,8 +424,8 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
     List<FIN_PaymentSchedule> lToReturn = new ArrayList<FIN_PaymentSchedule>();
     for (JSONObject jo : lToCreate) {
       BigDecimal outstanding = new BigDecimal(jo.getString("outstanding"));
-      FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-          jo.getString("paymentMethod"));
+      FIN_PaymentMethod paymentMethod = OBDal.getInstance()
+          .get(FIN_PaymentMethod.class, jo.getString("paymentMethod"));
       String dueDate = jo.getString("dueDate");
       String expectedDate = jo.getString("expectedDate");
       FIN_PaymentSchedule invoicePS = dao.getNewPaymentSchedule(invoice.getClient(),
@@ -455,8 +456,8 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
     for (FIN_PaymentSchedule ps : lDBRowsToDeleteOrModify) {
       for (FIN_PaymentScheduleDetail psd : ps
           .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-        FIN_Payment payment = (psd.getPaymentDetails() == null) ? null : psd.getPaymentDetails()
-            .getFinPayment();
+        FIN_Payment payment = (psd.getPaymentDetails() == null) ? null
+            : psd.getPaymentDetails().getFinPayment();
         if (!psd.isCanceled() && payment == null) {
           FIN_PaymentSchedule ops = psd.getOrderPaymentSchedule();
           BigDecimal amount = BigDecimal.ZERO;
@@ -503,8 +504,8 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
    */
   private List<FIN_PaymentSchedule> getDatabaseRows(Invoice invoice) {
     List<FIN_PaymentSchedule> lQuery, lReturn = new ArrayList<FIN_PaymentSchedule>();
-    OBCriteria<FIN_PaymentSchedule> obcPS = OBDal.getInstance().createCriteria(
-        FIN_PaymentSchedule.class);
+    OBCriteria<FIN_PaymentSchedule> obcPS = OBDal.getInstance()
+        .createCriteria(FIN_PaymentSchedule.class);
     obcPS.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_INVOICE, invoice));
     lQuery = obcPS.list();
     for (FIN_PaymentSchedule ps : lQuery) {
@@ -602,7 +603,8 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
    * @throws JSONException
    */
   private boolean wasModified(FIN_PaymentSchedule ps, JSONObject jsonObject) throws JSONException {
-    if (new BigDecimal(jsonObject.getString("outstanding")).compareTo(ps.getOutstandingAmount()) != 0) {
+    if (new BigDecimal(jsonObject.getString("outstanding"))
+        .compareTo(ps.getOutstandingAmount()) != 0) {
       return true;
     }
     if (!jsonObject.getString("paymentMethod").equals(ps.getFinPaymentmethod().getId())) {
@@ -622,11 +624,12 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
    * 
    */
   private static Date getJSDate(String strDate) {
-    if (strDate.equals(""))
+    if (strDate.equals("")) {
       return null;
+    }
     Field field = OBDal.getInstance().get(Field.class, "B6BB67AE51F31BEBE040A8C091666000");
-    Date date = (Date) JsonToDataConverter.convertJsonToPropertyValue(KernelUtils.getInstance()
-        .getPropertyFromColumn(field.getColumn()), strDate);
+    Date date = (Date) JsonToDataConverter.convertJsonToPropertyValue(
+        KernelUtils.getInstance().getPropertyFromColumn(field.getColumn()), strDate);
     return date;
   }
 
@@ -693,7 +696,9 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
    * @throws JSONException
    */
   private String validateGridAmounts(JSONArray gridRows, Invoice invoice) throws JSONException {
-    boolean positive = invoice.getFINPaymentScheduleList().get(0).getAmount()
+    boolean positive = invoice.getFINPaymentScheduleList()
+        .get(0)
+        .getAmount()
         .compareTo(BigDecimal.ZERO) >= 0;
     for (int indGrid = 0; indGrid < gridRows.length(); indGrid++) {
       JSONObject jo = gridRows.getJSONObject(indGrid);

@@ -38,28 +38,30 @@ class FieldLabelsData implements FieldProvider {
   public String elmttrlName;
   public String elmttrlPrintname;
 
+  @Override
   public String getField(String _fieldName) {
-    if (_fieldName.equalsIgnoreCase("AD_COLUMN_ID") || _fieldName.equals("adColumnId"))
+    if (_fieldName.equalsIgnoreCase("AD_COLUMN_ID") || _fieldName.equals("adColumnId")) {
       return adColumnId;
-    else if (_fieldName.equalsIgnoreCase("COL_NAME") || _fieldName.equals("colName"))
+    } else if (_fieldName.equalsIgnoreCase("COL_NAME") || _fieldName.equals("colName")) {
       return colName;
-    else if (_fieldName.equalsIgnoreCase("COL_COLUMNNAME") || _fieldName.equals("colColumnname"))
+    } else if (_fieldName.equalsIgnoreCase("COL_COLUMNNAME")
+        || _fieldName.equals("colColumnname")) {
       return colColumnname;
-    else if (_fieldName.equalsIgnoreCase("ELEMENT_NAME") || _fieldName.equals("elementName"))
+    } else if (_fieldName.equalsIgnoreCase("ELEMENT_NAME") || _fieldName.equals("elementName")) {
       return elementName;
-    else if (_fieldName.equalsIgnoreCase("ELEMENT_PRINTNAME")
-        || _fieldName.equals("elementPrintname"))
+    } else if (_fieldName.equalsIgnoreCase("ELEMENT_PRINTNAME")
+        || _fieldName.equals("elementPrintname")) {
       return elementPrintname;
-    else if (_fieldName.equalsIgnoreCase("FIELD_NAME") || _fieldName.equals("fieldName"))
+    } else if (_fieldName.equalsIgnoreCase("FIELD_NAME") || _fieldName.equals("fieldName")) {
       return _fieldName;
-    else if (_fieldName.equalsIgnoreCase("FIELDTRL_NAME") || _fieldName.equals("fieldtrlName"))
+    } else if (_fieldName.equalsIgnoreCase("FIELDTRL_NAME") || _fieldName.equals("fieldtrlName")) {
       return fieldtrlName;
-    else if (_fieldName.equalsIgnoreCase("ELMTTRL_NAME") || _fieldName.equals("elmttrlName"))
+    } else if (_fieldName.equalsIgnoreCase("ELMTTRL_NAME") || _fieldName.equals("elmttrlName")) {
       return elmttrlName;
-    else if (_fieldName.equalsIgnoreCase("ELMTTRL_PRINTNAME")
-        || _fieldName.equals("elmttrlPrintname"))
+    } else if (_fieldName.equalsIgnoreCase("ELMTTRL_PRINTNAME")
+        || _fieldName.equals("elmttrlPrintname")) {
       return elmttrlPrintname;
-    else {
+    } else {
       log4j.debug("Field does not exist: " + _fieldName);
       return null;
     }
@@ -70,19 +72,14 @@ class FieldLabelsData implements FieldProvider {
     String strSql = "";
     strSql = strSql
 
-        + "    select       "
-        + "    colum.ad_column_id as AD_COLUMN_ID "
-        + "    , colum.name as COL_NAME "
-        + "    , colum.columnname as COL_COLUMNNAME "
+        + "    select       " + "    colum.ad_column_id as AD_COLUMN_ID "
+        + "    , colum.name as COL_NAME " + "    , colum.columnname as COL_COLUMNNAME "
         + "    , (case when w.isSoTrx='N' then elemnt.po_name else elemnt.name end ) as ELEMENT_NAME "
         + "    , (case when w.isSoTrx='N' then elemnt.po_printname else elemnt.printname end ) as ELEMENT_PRINTNAME "
-        + "    , field.name as FIELD_NAME         "
-        + "    , fieldTrl.name as FIELDTRL_NAME     "
+        + "    , field.name as FIELD_NAME         " + "    , fieldTrl.name as FIELDTRL_NAME     "
         + "    , (case when w.isSoTrx='N' then elmtTrl.po_name else elemnt.name end ) as ELMTTRL_NAME "
         + "    , (case when w.isSoTrx='N' then elmtTrl.po_printname else elemnt.printname end ) as ELMTTRL_PRINTNAME "
-        + "    from         "
-        + "    ad_column colum  "
-        + "    , ad_field field   "
+        + "    from         " + "    ad_column colum  " + "    , ad_field field   "
         + "        left outer join ad_field_trl fieldTrl on field.ad_field_id = fieldtrl.ad_field_id and fieldtrl.ad_language = ? "
         + "    , ad_element elemnt         " + "        left outer join AD_ELEMENT_TRL elmtTrl "
         + "        on elemnt.ad_element_id = elmttrl.ad_element_id and elmttrl.ad_language = ? "
@@ -97,9 +94,8 @@ class FieldLabelsData implements FieldProvider {
         + "    select    " + "    colum.ad_column_id as AD_COLUMN_ID "
         + "    , colum.name as COL_NAME " + "    , colum.columnname as COL_COLUMNNAME "
         + "    , elemnt.name as ELEMENT_NAME          "
-        + "    , elemnt.printname as ELEMENT_PRINTNAME  "
-        + "    , elemnt.printname as FIELD_NAME  " + "    , elmttrl.name as FIELDTRL_NAME     "
-        + "    , elmttrl.name as ELMTTRL_NAME        "
+        + "    , elemnt.printname as ELEMENT_PRINTNAME  " + "    , elemnt.printname as FIELD_NAME  "
+        + "    , elmttrl.name as FIELDTRL_NAME     " + "    , elmttrl.name as ELMTTRL_NAME        "
         + "    , elmttrl.printname as ELMTTRL_PRINTNAME " + "    from               "
         + "    ad_column colum      " + "    , ad_module modu " + "    , ad_element elemnt "
         + "        left outer join AD_ELEMENT_TRL elmtTrl "
@@ -149,8 +145,8 @@ class FieldLabelsData implements FieldProvider {
       result.close();
     } catch (SQLException e) {
       log4j.error("SQL error in query: " + strSql + "Exception:", e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
+      throw new ServletException(
+          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
     } catch (Exception ex) {
       log4j.error("Exception in query: " + strSql + "Exception:", ex);
       throw new ServletException("@CODE=@" + ex.getMessage());

@@ -24,6 +24,8 @@ import java.util.List;
 import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -38,8 +40,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.common.enterprise.Organization;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class RoleEventHandler extends EntityPersistenceEventObserver {
   private static final String InitialOrgSetup_CLASSNAME = "org.openbravo.erpCommon.businessUtility.InitialOrgSetup";
@@ -54,8 +54,7 @@ public class RoleEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onNew(@Observes
-  EntityNewEvent event) {
+  public void onNew(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -93,15 +92,15 @@ public class RoleEventHandler extends EntityPersistenceEventObserver {
     // Client or System level: Only * [isOrgAdmin=N]
     if (StringUtils.equals(role.getUserLevel(), " C")
         || StringUtils.equals(role.getUserLevel(), "S")) {
-      roleOrganizationList.add(getRoleOrganization(role,
-          OBDal.getInstance().get(Organization.class, "0"), false));
+      roleOrganizationList
+          .add(getRoleOrganization(role, OBDal.getInstance().get(Organization.class, "0"), false));
       logger.debug("Added organization * to role " + role.getName());
     }
 
     // Client/Organization level: * [isOrgAdmin=N], other Orgs (but *) [isOrgAdmin=Y]
     else if (StringUtils.equals(role.getUserLevel(), " CO")) {
-      roleOrganizationList.add(getRoleOrganization(role,
-          OBDal.getInstance().get(Organization.class, "0"), false));
+      roleOrganizationList
+          .add(getRoleOrganization(role, OBDal.getInstance().get(Organization.class, "0"), false));
       logger.debug("Added organization * to role " + role.getName());
 
       OBCriteria<Organization> criteria = OBDal.getInstance().createCriteria(Organization.class);
@@ -113,8 +112,8 @@ public class RoleEventHandler extends EntityPersistenceEventObserver {
         while (scroll.next()) {
           final Organization organization = (Organization) scroll.get()[0];
           roleOrganizationList.add(getRoleOrganization(role, organization, true));
-          logger.debug("Added organization " + organization.getName() + " to role "
-              + role.getName());
+          logger
+              .debug("Added organization " + organization.getName() + " to role " + role.getName());
         }
       } finally {
         scroll.close();
@@ -131,8 +130,8 @@ public class RoleEventHandler extends EntityPersistenceEventObserver {
         while (scroll.next()) {
           final Organization organization = (Organization) scroll.get()[0];
           roleOrganizationList.add(getRoleOrganization(role, organization, true));
-          logger.debug("Added organization " + organization.getName() + " to role "
-              + role.getName());
+          logger
+              .debug("Added organization " + organization.getName() + " to role " + role.getName());
         }
       } finally {
         scroll.close();
@@ -145,8 +144,8 @@ public class RoleEventHandler extends EntityPersistenceEventObserver {
   // Get org access
   private RoleOrganization getRoleOrganization(Role role, Organization orgProvided,
       boolean isOrgAdmin) throws Exception {
-    final RoleOrganization newRoleOrganization = OBProvider.getInstance().get(
-        RoleOrganization.class);
+    final RoleOrganization newRoleOrganization = OBProvider.getInstance()
+        .get(RoleOrganization.class);
     newRoleOrganization.setClient(role.getClient());
     newRoleOrganization.setOrganization(orgProvided);
     newRoleOrganization.setRole(role);
@@ -164,8 +163,8 @@ public class RoleEventHandler extends EntityPersistenceEventObserver {
       if (StringUtils.equals(clazz, InitialOrgSetup_CLASSNAME)
           || StringUtils.equals(clazz, InitialClientSetup_CLASSNAME)) {
         comeFrom_ICS_IOS = true;
-        logger
-            .debug("Coming from Initial Client/Organization Setup. RoleEventHandler will not insert Org Access records");
+        logger.debug(
+            "Coming from Initial Client/Organization Setup. RoleEventHandler will not insert Org Access records");
         break;
       }
     }

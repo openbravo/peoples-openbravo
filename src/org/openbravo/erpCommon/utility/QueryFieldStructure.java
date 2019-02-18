@@ -41,14 +41,17 @@ class QueryFieldStructure {
   }
 
   public void setData(String name, String value) {
-    if (name == null)
+    if (name == null) {
       return;
-    if (this.data == null)
+    }
+    if (this.data == null) {
       this.data = new HashMap<String, String>();
-    if (value == null || value.equals(""))
+    }
+    if (value == null || value.equals("")) {
       this.data.remove(name);
-    else
+    } else {
       this.data.put(name, value);
+    }
   }
 
   public String getData(String name) {
@@ -75,6 +78,7 @@ class QueryFieldStructure {
     return getData("realName");
   }
 
+  @Override
   public String toString() {
     return toString(false);
   }
@@ -82,8 +86,9 @@ class QueryFieldStructure {
   public String toString(boolean printAlias) {
     StringBuilder text = new StringBuilder();
     text.append(getData("field"));
-    if (printAlias)
+    if (printAlias) {
       text.append(getData("aliasJoin")).append(getData("alias"));
+    }
     return text.toString();
   }
 }

@@ -25,6 +25,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.FilterExpression;
@@ -32,8 +34,6 @@ import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class AddOrderOrInvoiceFilterExpression implements FilterExpression {
   private static final Logger log = LogManager.getLogger();
@@ -49,13 +49,15 @@ public class AddOrderOrInvoiceFilterExpression implements FilterExpression {
       String strColumnName = requestMap.get("filterExpressionColumnName");
       Columns column = Columns.getColumn(strColumnName);
       switch (column) {
-      case PaymentMethod:
-        String paymentMethodId = handler.getFilterExpression(requestMap);
-        if (!"".equals(paymentMethodId) && paymentMethodId != null) {
-          return OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethodId).getIdentifier();
-        } else {
-          return "";
-        }
+        case PaymentMethod:
+          String paymentMethodId = handler.getFilterExpression(requestMap);
+          if (!"".equals(paymentMethodId) && paymentMethodId != null) {
+            return OBDal.getInstance()
+                .get(FIN_PaymentMethod.class, paymentMethodId)
+                .getIdentifier();
+          } else {
+            return "";
+          }
       }
     } catch (Exception e) {
       log.error("Error calculating filter expression", e);

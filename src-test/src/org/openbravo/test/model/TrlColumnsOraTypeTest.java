@@ -26,11 +26,11 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.test.base.OBBaseTest;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Verifies Oracle types and length of TRL tables are equal to their counterpart in the base table.

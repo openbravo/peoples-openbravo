@@ -34,13 +34,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class SL_CreateFromMultiple_Warehouse extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
@@ -55,15 +57,17 @@ public class SL_CreateFromMultiple_Warehouse extends HttpSecureAppServlet {
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
-    } else
+    } else {
       pageError(response);
+    }
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strWarehouse, String strIsSOTrx, String strTabId) throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWarehouse,
+      String strIsSOTrx, String strTabId) throws IOException, ServletException {
     log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut")
+        .createXmlDocument();
 
     StringBuffer resultado = new StringBuffer();
     resultado.append("var frameDefault='frameButton';\n\n");
@@ -77,12 +81,14 @@ public class SL_CreateFromMultiple_Warehouse extends HttpSecureAppServlet {
       resultado.append("new Array(");
       for (int i = 0; i < data.length; i++) {
         resultado.append("new Array(\"" + data[i].id + "\", \"" + data[i].name + "\", \"false\")");
-        if (i < data.length - 1)
+        if (i < data.length - 1) {
           resultado.append(",\n");
+        }
       }
       resultado.append("\n)");
-    } else
+    } else {
       resultado.append("null");
+    }
     resultado.append("\n)");
     resultado.append(");");
 

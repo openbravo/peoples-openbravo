@@ -45,8 +45,9 @@ import net.sf.jasperreports.engine.JasperPrint;
 public class ReportVatRegisterJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -82,14 +83,16 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
         return;
       }
 
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     // String strMessage = "";
@@ -149,8 +152,9 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
   private void printReportJRRegisterLine(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String TaxPayId, String TaxRegId, String strTypeReport)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print html");
+    }
 
     ReportRegisterLineJRData[] data = null;
     data = ReportRegisterLineJRData.select(this, "", "", TaxPayId, TaxRegId);
@@ -191,6 +195,7 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
     // int pag = x.getPages().size();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportVatRegisterJR.";
   } // end of getServletInfo() method
@@ -204,12 +209,13 @@ class TypeReportRegister implements FieldProvider {
   public String id;
   public String name;
 
+  @Override
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("ID"))
+    if (fieldName.equalsIgnoreCase("ID")) {
       return id;
-    else if (fieldName.equalsIgnoreCase("NAME"))
+    } else if (fieldName.equalsIgnoreCase("NAME")) {
       return name;
-    else {
+    } else {
       log4j.debug("Field does not exist: " + fieldName);
       return null;
     }

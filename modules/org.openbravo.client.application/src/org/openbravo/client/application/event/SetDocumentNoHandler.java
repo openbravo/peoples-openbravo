@@ -81,8 +81,8 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
 
     String documentNo = (String) event.getCurrentState(documentNoProperty);
     boolean processed = false;
-    Object oProcessed = (processedProperty == null ? false : event
-        .getCurrentState(processedProperty));
+    Object oProcessed = (processedProperty == null ? false
+        : event.getCurrentState(processedProperty));
     if (oProcessed instanceof String) {
       processed = "Y".equals(oProcessed.toString());
     } else if (oProcessed instanceof Boolean) {
@@ -91,8 +91,8 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
     if (documentNo == null || documentNo.startsWith("<") && !processed) {
       final DocumentType docTypeTarget = (docTypeTargetProperty == null ? null
           : (DocumentType) event.getCurrentState(docTypeTargetProperty));
-      final DocumentType docType = (documentTypeProperty == null ? null : (DocumentType) event
-          .getCurrentState(documentTypeProperty));
+      final DocumentType docType = (documentTypeProperty == null ? null
+          : (DocumentType) event.getCurrentState(documentTypeProperty));
       // use empty strings instead of null
       final String docTypeTargetId = docTypeTarget != null ? docTypeTarget.getId() : "";
       final String docTypeId = docType != null ? docType.getId() : "";
@@ -128,8 +128,8 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
               documentTypePropertyList.add(null);
             }
             if (entity.hasProperty(Order.PROPERTY_TRANSACTIONDOCUMENT)) {
-              documentTypeTargetPropertyList.add(entity
-                  .getProperty(Order.PROPERTY_TRANSACTIONDOCUMENT));
+              documentTypeTargetPropertyList
+                  .add(entity.getProperty(Order.PROPERTY_TRANSACTIONDOCUMENT));
             } else {
               documentTypeTargetPropertyList.add(null);
             }
@@ -143,8 +143,8 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
         }
       }
       entities = entityList.toArray(new Entity[entityList.size()]);
-      documentNoProperties = documentNoPropertyList.toArray(new Property[documentNoPropertyList
-          .size()]);
+      documentNoProperties = documentNoPropertyList
+          .toArray(new Property[documentNoPropertyList.size()]);
       documentTypeProperties = documentTypePropertyList
           .toArray(new Property[documentTypePropertyList.size()]);
       documentTypeTargetProperties = documentTypeTargetPropertyList

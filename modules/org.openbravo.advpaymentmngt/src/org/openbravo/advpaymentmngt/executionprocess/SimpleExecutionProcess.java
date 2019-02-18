@@ -33,8 +33,8 @@ public class SimpleExecutionProcess implements FIN_PaymentExecutionProcess {
     paymentRun.setStatus("PE");
     OBDal.getInstance().save(paymentRun);
     for (PaymentRunPayment paymentRunPayment : paymentRun.getFinancialMgmtPaymentRunPaymentList()) {
-      paymentRunPayment.getPayment().setStatus(
-          paymentRunPayment.getPayment().isReceipt() ? "RPR" : "PPM");
+      paymentRunPayment.getPayment()
+          .setStatus(paymentRunPayment.getPayment().isReceipt() ? "RPR" : "PPM");
       paymentRunPayment.setResult("S");
       OBDal.getInstance().save(paymentRunPayment.getPayment());
       OBDal.getInstance().save(paymentRunPayment);

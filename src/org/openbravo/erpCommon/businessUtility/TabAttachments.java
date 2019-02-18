@@ -33,6 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -52,8 +54,6 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentMethod;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class TabAttachments extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -66,15 +66,15 @@ public class TabAttachments extends HttpSecureAppServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     final VariablesSecureApp vars = new VariablesSecureApp(request);
     post(vars, request, response);
   }
 
-  public void post(VariablesSecureApp vars, HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+  public void post(VariablesSecureApp vars, HttpServletRequest request,
+      HttpServletResponse response) throws IOException, ServletException {
 
     AttachImplementationManager aim = WeldUtils
         .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
@@ -170,16 +170,13 @@ public class TabAttachments extends HttpSecureAppServlet {
         response.setCharacterEncoding("UTF-8");
         String userAgent = request.getHeader("user-agent");
         if (userAgent.contains("MSIE")) {
-          response.setHeader(
-              "Content-Disposition",
-              "attachment; filename=\""
-                  + URLEncoder.encode(attachment.getName().replace("\"", "\\\""), "utf-8") + "\"");
+          response.setHeader("Content-Disposition", "attachment; filename=\""
+              + URLEncoder.encode(attachment.getName().replace("\"", "\\\""), "utf-8") + "\"");
         } else {
-          response.setHeader(
-              "Content-Disposition",
+          response.setHeader("Content-Disposition",
               "attachment; filename=\""
-                  + MimeUtility
-                      .encodeWord(attachment.getName().replace("\"", "\\\""), "utf-8", "Q") + "\"");
+                  + MimeUtility.encodeWord(attachment.getName().replace("\"", "\\\""), "utf-8", "Q")
+                  + "\"");
         }
 
         response.getOutputStream().write(os.toByteArray());
@@ -219,8 +216,9 @@ public class TabAttachments extends HttpSecureAppServlet {
         }
       }
 
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printResponse(HttpServletResponse response, VariablesSecureApp vars, JSONObject obj,
@@ -231,13 +229,13 @@ public class TabAttachments extends HttpSecureAppServlet {
     writer.write("var iscWindow = top.OB || parent.OB;\n");
     if (obj != null) {
       final String buttonId = vars.getStringParameter("buttonId");
-      writer.write("iscWindow.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString()
-          + ");");
+      writer.write(
+          "iscWindow.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString() + ");");
     }
     if (StringUtils.isNotBlank(strMessage)) {
       final String viewId = vars.getStringParameter("viewId");
-      writer.write("iscWindow.Utilities.writeErrorMessage(\"" + viewId + "\",\"" + strMessage
-          + "\");");
+      writer.write(
+          "iscWindow.Utilities.writeErrorMessage(\"" + viewId + "\",\"" + strMessage + "\");");
     }
     writer.write("</SCRIPT></BODY></HTML>");
 

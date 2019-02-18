@@ -70,12 +70,12 @@ public class ClassicSelectorTest extends OBBaseTest {
       pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
     }
 
-    BusinessPartnerMultipleData data[] = BusinessPartnerMultipleData.select(
-        getConnectionProvider(), rownum, client, org, key, name, contact, postCode, province,
-        clients, vendors, ciudad, orderBy, pgLimit, oraLimit1, oraLimit2);
-    String strCount = BusinessPartnerMultipleData.countRows(getConnectionProvider(), rownum,
-        client, org, key, name, contact, postCode, province, clients, vendors, ciudad, pgLimit,
-        oraLimit1, oraLimit2);
+    BusinessPartnerMultipleData data[] = BusinessPartnerMultipleData.select(getConnectionProvider(),
+        rownum, client, org, key, name, contact, postCode, province, clients, vendors, ciudad,
+        orderBy, pgLimit, oraLimit1, oraLimit2);
+    String strCount = BusinessPartnerMultipleData.countRows(getConnectionProvider(), rownum, client,
+        org, key, name, contact, postCode, province, clients, vendors, ciudad, pgLimit, oraLimit1,
+        oraLimit2);
     long count = Long.valueOf(strCount);
 
     // check implicit consistency requirement: both select & selectCount methods must agree on

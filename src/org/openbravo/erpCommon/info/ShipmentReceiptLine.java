@@ -50,13 +50,15 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -65,11 +67,12 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
           "ShipmentReceiptLine.name");
       String windowId = vars.getRequestGlobalVariable("WindowID", "ShipmentReceiptLine.windowId");
       String strSOTrx = vars.getStringParameter("inpisSOTrxTab");
-      if (strSOTrx.equals(""))
+      if (strSOTrx.equals("")) {
         strSOTrx = Utility.getContext(this, vars, "isSOTrx", windowId);
+      }
       vars.setSessionValue("ShipmentReceiptLine.isSOTrx", strSOTrx);
-      String strProduct = vars
-          .getRequestGlobalVariable("inpProduct", "ShipmentReceiptLine.product");
+      String strProduct = vars.getRequestGlobalVariable("inpProduct",
+          "ShipmentReceiptLine.product");
       String strBPartner = vars.getRequestGlobalVariable("inpBPartner",
           "ShipmentReceiptLine.bpartner");
       String strDocumentNo = "";
@@ -88,28 +91,29 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
           }
 
           switch (count) {
-          case 1:
-            vars.setSessionValue("ShipmentReceiptLine.line", token.trim());
-            break;
-          case 2:
-            vars.setSessionValue("ShipmentReceiptLine.movementqty", token.trim());
-            break;
-          case 3:
-            strDocumentNo = token.trim();
-            vars.setSessionValue("ShipmentReceiptLine.documentno", strDocumentNo);
-            break;
-          case 4:
-            strDateFrom = token.trim();
-            strDateTo = token.trim();
-            vars.setSessionValue("ShipmentReceiptLine.datefrom", strDateFrom);
-            vars.setSessionValue("ShipmentReceiptLine.dateto", strDateTo);
-            break;
-          case 5:
-            String ID = ShipmentReceiptLineData.getProductID(this, token);
-            if (!ID.equals(""))
-              strProduct = ID;
-            vars.setSessionValue("ShipmentReceiptLine.product", strProduct);
-            break;
+            case 1:
+              vars.setSessionValue("ShipmentReceiptLine.line", token.trim());
+              break;
+            case 2:
+              vars.setSessionValue("ShipmentReceiptLine.movementqty", token.trim());
+              break;
+            case 3:
+              strDocumentNo = token.trim();
+              vars.setSessionValue("ShipmentReceiptLine.documentno", strDocumentNo);
+              break;
+            case 4:
+              strDateFrom = token.trim();
+              strDateTo = token.trim();
+              vars.setSessionValue("ShipmentReceiptLine.datefrom", strDateFrom);
+              vars.setSessionValue("ShipmentReceiptLine.dateto", strDateTo);
+              break;
+            case 5:
+              String ID = ShipmentReceiptLineData.getProductID(this, token);
+              if (!ID.equals("")) {
+                strProduct = ID;
+              }
+              vars.setSessionValue("ShipmentReceiptLine.product", strProduct);
+              break;
           }
           count++;
         } while (i != -1);
@@ -121,39 +125,42 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
           "ShipmentReceiptLine.documentno");
       String windowId = vars.getRequestGlobalVariable("WindowID", "ShipmentReceiptLine.windowId");
       String strSOTrx = vars.getStringParameter("inpisSOTrxTab");
-      if (strSOTrx.equals(""))
+      if (strSOTrx.equals("")) {
         strSOTrx = Utility.getContext(this, vars, "isSOTrx", windowId);
+      }
       vars.setSessionValue("ShipmentReceiptLine.isSOTrx", strSOTrx);
       strKeyValue = strKeyValue + "%";
       vars.setSessionValue("ShipmentReceiptLine.documentno", strKeyValue);
       ShipmentReceiptLineData[] data = null;
       String strOrg = vars.getStringParameter("inpAD_Org_ID");
-      if (strSOTrx.equals("Y"))
+      if (strSOTrx.equals("Y")) {
         data = ShipmentReceiptLineData.selectKey(this,
             Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
             Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue);
-      else
+      } else {
         data = ShipmentReceiptLineData.selectKeySOTrx(this,
             Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
             Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue);
-      if (data != null && data.length == 1)
+      }
+      if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
-      else
+      } else {
         printPage(response, vars, "", "", strKeyValue, "", "");
+      }
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
       if (vars.getStringParameter("newFilter").equals("1")) {
         removePageSessionVariables(vars);
       }
-      String strBpartnerId = vars.getGlobalVariable("inpBpartnerId",
-          "ShipmentReceiptLine.bpartner", "");
-      String strProduct = vars
-          .getGlobalVariable("inpmProductId", "ShipmentReceiptLine.product", "");
+      String strBpartnerId = vars.getGlobalVariable("inpBpartnerId", "ShipmentReceiptLine.bpartner",
+          "");
+      String strProduct = vars.getGlobalVariable("inpmProductId", "ShipmentReceiptLine.product",
+          "");
       String strDocumentNo = vars.getGlobalVariable("inpdocumentno",
           "ShipmentReceiptLine.documentno", "");
-      String strDateFrom = vars
-          .getGlobalVariable("inpDateFrom", "ShipmentReceiptLine.datefrom", "");
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ShipmentReceiptLine.datefrom",
+          "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ShipmentReceiptLine.dateto", "");
       String strDescription = vars.getGlobalVariable("inpDescription",
           "ShipmentReceiptLine.description", "");
@@ -172,8 +179,9 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
       printGridData(response, vars, strDocumentNo, strBpartnerId, strDateFrom, strDateTo,
           strDescription, strOrder, strProduct, strInvoiced, strSOTrx, strSortCols, strSortDirs,
           strOffset, strPageSize, strNewFilter, strOrg);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void removePageSessionVariables(VariablesSecureApp vars) {
@@ -191,10 +199,12 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
       String strProduct, String strDocumentNo, String strDateFrom, String strDateTo)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Frame 1 of the delivery lines seekern");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/ShipmentReceiptLine").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/ShipmentReceiptLine")
+        .createXmlDocument();
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -228,10 +238,12 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
 
   private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       ShipmentReceiptLineData[] data) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: delivery note lines seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/SearchUniqueKeyResponse").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/SearchUniqueKeyResponse")
+        .createXmlDocument();
 
     xmlDocument.setParameter("script", generateResult(data));
     response.setContentType("text/html; charset=UTF-8");
@@ -240,8 +252,8 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
     out.close();
   }
 
-  private String generateResult(ShipmentReceiptLineData[] data) throws IOException,
-      ServletException {
+  private String generateResult(ShipmentReceiptLineData[] data)
+      throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -255,10 +267,12 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
 
   private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page structure");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure")
+        .createXmlDocument();
 
     SQLReturnObject[] data = getHeaders(vars);
     String type = "Hidden";
@@ -273,8 +287,9 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(xmlDocument.print());
+    }
     out.println(xmlDocument.print());
     out.close();
   }
@@ -296,8 +311,8 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
       dataAux.setData("iskey", (colNames[i].equals("rowkey") ? "true" : "false"));
       dataAux.setData("isvisible",
           (colNames[i].endsWith("_id") || colNames[i].equals("rowkey") ? "false" : "true"));
-      String name = Utility
-          .messageBD(this, "SRLS_" + colNames[i].toUpperCase(), vars.getLanguage());
+      String name = Utility.messageBD(this, "SRLS_" + colNames[i].toUpperCase(),
+          vars.getLanguage());
       dataAux.setData("name", (name.startsWith("SRLS_") ? colNames[i] : name));
       dataAux.setData("type", "string");
       dataAux.setData("width", colWidths[i]);
@@ -314,8 +329,9 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
       String strSOTrx, String strOrderCols, String strOrderDirs, String strOffset,
       String strPageSize, String strNewFilter, String strOrg) throws IOException, ServletException {
     String localStrNewFilter = strNewFilter;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page rows");
+    }
     int page = 0;
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
@@ -352,15 +368,14 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
             strNumRows = ShipmentReceiptLineData.countRows(this, rownum,
                 Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
                 Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
-                strOrder, strBpartnerId, strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), strProduct, strInvoiced, pgLimit,
-                oraLimit1, oraLimit2);
+                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+                strProduct, strInvoiced, pgLimit, oraLimit1, oraLimit2);
           } else {
-            strNumRows = ShipmentReceiptLineData.countRowsSO(this, rownum, Utility.getContext(this,
-                vars, "#User_Client", "ShipmentReceiptLine"), Utility.getSelectorOrgs(this, vars,
-                strOrg), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), strProduct,
-                (strInvoiced.equals("Y") ? "=" : "<>"), pgLimit, oraLimit1, oraLimit2);
+            strNumRows = ShipmentReceiptLineData.countRowsSO(this, rownum,
+                Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
+                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
+                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+                strProduct, (strInvoiced.equals("Y") ? "=" : "<>"), pgLimit, oraLimit1, oraLimit2);
           }
           vars.setSessionValue("ShipmentReceiptLine.numrows", strNumRows);
         } else {
@@ -374,15 +389,14 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
             data = ShipmentReceiptLineData.select(this, "ROWNUM",
                 Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
                 Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
-                strOrder, strBpartnerId, strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), strProduct, strInvoiced, strOrderBy,
-                oraLimit, "");
+                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+                strProduct, strInvoiced, strOrderBy, oraLimit, "");
           } else {
-            data = ShipmentReceiptLineData.selectSOTrx(this, "ROWNUM", Utility.getContext(this,
-                vars, "#User_Client", "ShipmentReceiptLine"), Utility.getSelectorOrgs(this, vars,
-                strOrg), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), strProduct,
-                (strInvoiced.equals("Y") ? "=" : "<>"), strOrderBy, oraLimit, "");
+            data = ShipmentReceiptLineData.selectSOTrx(this, "ROWNUM",
+                Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
+                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
+                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+                strProduct, (strInvoiced.equals("Y") ? "=" : "<>"), strOrderBy, oraLimit, "");
           }
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
@@ -390,16 +404,14 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
             data = ShipmentReceiptLineData.select(this, "1",
                 Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
                 Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
-                strOrder, strBpartnerId, strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), strProduct, strInvoiced, strOrderBy,
-                "", pgLimit);
+                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+                strProduct, strInvoiced, strOrderBy, "", pgLimit);
           } else {
-            data = ShipmentReceiptLineData.selectSOTrx(this, "1", Utility.getContext(this, vars,
-                "#User_Client", "ShipmentReceiptLine"),
+            data = ShipmentReceiptLineData.selectSOTrx(this, "1",
+                Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
                 Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
-                strOrder, strBpartnerId, strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), strProduct,
-                (strInvoiced.equals("Y") ? "=" : "<>"), strOrderBy, "", pgLimit);
+                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+                strProduct, (strInvoiced.equals("Y") ? "=" : "<>"), strOrderBy, "", pgLimit);
           }
         }
       } catch (ServletException e) {
@@ -412,32 +424,38 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
         } else {
           type = myError.getType();
           title = myError.getTitle();
-          if (!myError.getMessage().startsWith("<![CDATA["))
+          if (!myError.getMessage().startsWith("<![CDATA[")) {
             description = "<![CDATA[" + myError.getMessage() + "]]>";
-          else
+          } else {
             description = myError.getMessage();
+          }
         }
       } catch (Exception e) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Error obtaining rows data");
+        }
         type = "Error";
         title = "Error";
-        if (e.getMessage().startsWith("<![CDATA["))
+        if (e.getMessage().startsWith("<![CDATA[")) {
           description = "<![CDATA[" + e.getMessage() + "]]>";
-        else
+        } else {
           description = e.getMessage();
+        }
         e.printStackTrace();
       }
     }
 
     DecimalFormat df = Utility.getFormat(vars, "qtyEdition");
 
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -445,7 +463,8 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+    strRowsData.append("  <rows numRows=\"")
+        .append(strNumRows)
         .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
@@ -464,18 +483,28 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
           if (columnname.equalsIgnoreCase("qty")) {
             strRowsData.append(df.format(new BigDecimal(data[j].getField(columnname))));
           } else if ((data[j].getField(columnname)) != null) {
-            if (headers[k].getField("adReferenceId").equals("32"))
+            if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
-                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
-                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
-                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            }
+            strRowsData.append(data[j].getField(columnname)
+                .replaceAll("<b>", "")
+                .replaceAll("<B>", "")
+                .replaceAll("</b>", "")
+                .replaceAll("</B>", "")
+                .replaceAll("<i>", "")
+                .replaceAll("<I>", "")
+                .replaceAll("</i>", "")
+                .replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;")
+                .replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;")
+                .replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
-            } else
+            } else {
               strRowsData.append("&nbsp;");
+            }
           }
           strRowsData.append("]]></td>\n");
         }
@@ -488,12 +517,14 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strRowsData.toString());
+    }
     out.print(strRowsData.toString());
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the delivery-note lines seeker";
   } // end of getServletInfo() method

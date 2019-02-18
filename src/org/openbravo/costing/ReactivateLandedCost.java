@@ -82,8 +82,8 @@ public class ReactivateLandedCost extends BaseActionHandler {
     return result;
   }
 
-  public static JSONObject doReactivateLandedCost(LandedCost landedCost) throws OBException,
-      JSONException {
+  public static JSONObject doReactivateLandedCost(LandedCost landedCost)
+      throws OBException, JSONException {
     LandedCost localLandedCost = landedCost;
     String strLCostId = localLandedCost.getId();
     JSONObject message = null;
@@ -125,8 +125,8 @@ public class ReactivateLandedCost extends BaseActionHandler {
         }
       }
       lcc = OBDal.getInstance().get(LandedCostCost.class, lcc.getId());
-      LandedCostDistributionAlgorithm lcDistAlg = getDistributionAlgorithm(lcc
-          .getLandedCostDistributionAlgorithm());
+      LandedCostDistributionAlgorithm lcDistAlg = getDistributionAlgorithm(
+          lcc.getLandedCostDistributionAlgorithm());
 
       message = lcDistAlg.cancelDistributeAmount(lcc);
       if (message.has("severity") && !message.get("severity").equals("success")) {
@@ -183,8 +183,8 @@ public class ReactivateLandedCost extends BaseActionHandler {
       if ("Y".equals(lcc.getPosted())) {
         String errorMsg = OBMessageUtils.messageBD("DocumentPosted");
         log.error("Document Posted");
-        throw new OBException(errorMsg + ": " + OBMessageUtils.messageBD("COST_LINE")
-            + lcc.getLineNo());
+        throw new OBException(
+            errorMsg + ": " + OBMessageUtils.messageBD("COST_LINE") + lcc.getLineNo());
       }
     }
   }

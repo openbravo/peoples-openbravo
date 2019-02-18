@@ -181,8 +181,8 @@ public class TableNameTest extends OBBaseTest {
     for (Module module : modules) {
       log.debug("*deleting module:" + module.toString());
 
-      OBCriteria<ModuleDBPrefix> obCritPrefix = OBDal.getInstance().createCriteria(
-          ModuleDBPrefix.class);
+      OBCriteria<ModuleDBPrefix> obCritPrefix = OBDal.getInstance()
+          .createCriteria(ModuleDBPrefix.class);
       obCritPrefix.add(Restrictions.eq(ModuleDBPrefix.PROPERTY_MODULE, module));
       List<ModuleDBPrefix> dbp = obCritPrefix.list();
       log.debug("  -deleting " + dbp.size() + " prefixes");

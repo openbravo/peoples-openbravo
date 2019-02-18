@@ -41,8 +41,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportCashJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -60,15 +61,17 @@ public class ReportCashJR extends HttpSecureAppServlet {
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportCashJR|DateTo");
       String strCashbook = vars.getRequestGlobalVariable("inpcCashbookId", "ReportCashJR|Cashbook");
       printPageHtml(response, vars, strDateFrom, strDateTo, strCashbook, "pdf");
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strCashbook, String strOutput)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     ReportCashJRData[] data = null;
     if (strDateFrom.equals("") && strDateTo.equals("")) {
@@ -92,10 +95,11 @@ public class ReportCashJR extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strCashbook) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      String strDateFrom, String strDateTo, String strCashbook)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
@@ -159,6 +163,7 @@ public class ReportCashJR extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportCashJR.";
   } // end of getServletInfo() method

@@ -28,21 +28,24 @@ class LabelTemplate implements XmlComponentTemplate, IDComponent {
   XmlComponentTemplate xmlComponentTemplate = null;
   Vector<ReplaceElement> vecReplace = null;
 
+  @Override
   public int type() {
     return type;
   }
 
   public LabelValue createLabelValue(XmlDocument xmlDocument) {
-    log4j.debug("running createLabelValue() method - hasLabelValue: "
-        + xmlDocument.hasLabelValue.size());
+    log4j.debug(
+        "running createLabelValue() method - hasLabelValue: " + xmlDocument.hasLabelValue.size());
     LabelValue labelValue = xmlDocument.hasLabelValue.get(strName);
     // log4j.debug("running createLabelValue() method - labelValue: " +
     // labelValue.labelTemplate.strName);
-    if (labelValue == null)
+    if (labelValue == null) {
       labelValue = new LabelValue(this, xmlDocument);
+    }
     return labelValue;
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
     log4j.debug("createXmlComponentValue with xmlDocument hasLabelSize: " + xmlDocument.toString());
     return createLabelValue(xmlDocument);

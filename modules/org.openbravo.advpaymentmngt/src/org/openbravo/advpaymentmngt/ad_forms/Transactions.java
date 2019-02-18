@@ -76,6 +76,7 @@ public class Transactions extends HttpSecureAppServlet {
   // private static final String formClassName =
   // "org.openbravo.advpaymentmngt.ad_forms.Transactions";
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -111,43 +112,48 @@ public class Transactions extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT") || vars.commandIn("EDIT")) {
 
-      String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId", windowId
-          + "|Fin_Financial_Account_ID", "");
-      Boolean hideReconciledTrx = vars.getGlobalVariable("inpHideReconciled",
-          windowId + "|hideReconciledTrx", "Y").equals("Y");
-      if ("".equals(strFinFinancialAccountId))
+      String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId",
+          windowId + "|Fin_Financial_Account_ID", "");
+      Boolean hideReconciledTrx = vars
+          .getGlobalVariable("inpHideReconciled", windowId + "|hideReconciledTrx", "Y")
+          .equals("Y");
+      if ("".equals(strFinFinancialAccountId)) {
         response.sendRedirect(strDireccion + "/" + FormatUtilities.replace(windowNameEnUS) + "/"
             + FormatUtilities.replace(tabNameEnUS) + "_Relation.html?Command=RELATION");
-      else
+      } else {
         printPageDataSheet(response, vars, strFinFinancialAccountId, windowName, tabName, windowId,
             tabId, tableId, hideReconciledTrx);
+      }
     } else if (vars.commandIn("HIDERECONCILED")) {
 
-      String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId", windowId
-          + "|Fin_Financial_Account_ID", "");
+      String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId",
+          windowId + "|Fin_Financial_Account_ID", "");
       Boolean hideReconciledTrx = vars.getStringParameter("inpHideReconciled", "N").equals("Y");
-      if (hideReconciledTrx)
+      if (hideReconciledTrx) {
         vars.setSessionValue(windowId + "|hideReconciledTrx", "Y");
-      else
+      } else {
         vars.setSessionValue(windowId + "|hideReconciledTrx", "N");
-      if ("".equals(strFinFinancialAccountId))
+      }
+      if ("".equals(strFinFinancialAccountId)) {
         response.sendRedirect(strDireccion + "/" + FormatUtilities.replace(windowNameEnUS) + "/"
             + FormatUtilities.replace(tabNameEnUS) + "_Relation.html?Command=RELATION");
-      else
+      } else {
         printPageDataSheet(response, vars, strFinFinancialAccountId, windowName, tabName, windowId,
             tabId, tableId, hideReconciledTrx);
+      }
     } else if (vars.commandIn("NEW")) {
-      String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId", windowId
-          + "|Fin_Financial_Account_ID", "");
-      Boolean hideReconciledTrx = vars.getGlobalVariable("inpHideReconciled",
-          windowId + "|hideReconciledTrx", "Y").equals("Y");
+      String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId",
+          windowId + "|Fin_Financial_Account_ID", "");
+      Boolean hideReconciledTrx = vars
+          .getGlobalVariable("inpHideReconciled", windowId + "|hideReconciledTrx", "Y")
+          .equals("Y");
       printPageDataSheet(response, vars, strFinFinancialAccountId, windowName, tabName, windowId,
           tabId, tableId, hideReconciledTrx);
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
-      String strFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId", windowId
-          + "|Fin_Financial_Account_ID", "");
+      String strFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId",
+          windowId + "|Fin_Financial_Account_ID", "");
 
       Boolean hideReconciledTrx = vars.getSessionValue(windowId + "|hideReconciledTrx").equals("Y");
       String strNewFilter = vars.getStringParameter("newFilter");
@@ -162,8 +168,8 @@ public class Transactions extends HttpSecureAppServlet {
       printPagePosted(response, vars, strKey);
     } else if (vars.commandIn("BUTTONPosted")) {
       String strKey = vars.getStringParameter("inpKey");
-      final FIN_FinaccTransaction transaction = OBDal.getInstance().get(
-          FIN_FinaccTransaction.class, strKey);
+      final FIN_FinaccTransaction transaction = OBDal.getInstance()
+          .get(FIN_FinaccTransaction.class, strKey);
       String strTableId = "4D8C3B3C31D1410DA046140C9F024D17";
       String strOrg = "";
       String strProcessId = "";
@@ -180,8 +186,9 @@ public class Transactions extends HttpSecureAppServlet {
       if ((org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(),
           tabId))
           || !(Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, 1),
-              strClient) && Utility.isElementInList(
-              Utility.getContext(this, vars, "#User_Org", windowId, 1), strOrg))) {
+              strClient)
+              && Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, 1),
+                  strOrg))) {
         OBError myError = Utility.translateError(this, vars, vars.getLanguage(),
             Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
         vars.setMessage(tabId, myError);
@@ -201,34 +208,39 @@ public class Transactions extends HttpSecureAppServlet {
 
     } else if (vars.commandIn("DELETE")) {
       String strKey = vars.getStringParameter("inpKey");
-      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-          strKey);
+      FIN_FinaccTransaction transaction = OBDal.getInstance()
+          .get(FIN_FinaccTransaction.class, strKey);
       try {
         OBError msg = processTransaction(vars, this, "R", transaction);
-        if ("Success".equals(msg.getType()))
+        if ("Success".equals(msg.getType())) {
           deleteTransaction(transaction);
+        }
         vars.setMessage(tabId, msg);
       } catch (Exception e) {
         throw new OBException("Process failed deleting the financial account Transaction", e);
       }
-      String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId", windowId
-          + "|Fin_Financial_Account_ID", "");
-      Boolean hideReconciledTrx = vars.getGlobalVariable("inpHideReconciled",
-          windowId + "|hideReconciledTrx", "Y").equals("Y");
-      if ("".equals(strFinFinancialAccountId))
+      String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId",
+          windowId + "|Fin_Financial_Account_ID", "");
+      Boolean hideReconciledTrx = vars
+          .getGlobalVariable("inpHideReconciled", windowId + "|hideReconciledTrx", "Y")
+          .equals("Y");
+      if ("".equals(strFinFinancialAccountId)) {
         response.sendRedirect(strDireccion + "/" + FormatUtilities.replace(windowNameEnUS) + "/"
             + FormatUtilities.replace(tabNameEnUS) + "_Relation.html?Command=RELATION");
-      else
+      } else {
         printPageDataSheet(response, vars, strFinFinancialAccountId, windowName, tabName, windowId,
             tabId, tableId, hideReconciledTrx);
-    } else
+      }
+    } else {
       pageError(response);
+    }
 
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strFinFinancialAccountId, String windowName, String tabName, String windowId,
-      String tabId, String tableId, Boolean hideReconciledTrx) throws IOException, ServletException {
+      String tabId, String tableId, Boolean hideReconciledTrx)
+      throws IOException, ServletException {
     log4j.debug("Output: dataSheet");
     String strCommand = "EDIT";
     FieldProvider[] data = TransactionsDao.getAccTrxData(strFinFinancialAccountId);
@@ -238,10 +250,10 @@ public class Transactions extends HttpSecureAppServlet {
      * ": Error when getting data"); }
      */
     String[] discard = { "", "" };
-    int notMatchedItems = TransactionsDao.getPendingToMatchCount(new AdvPaymentMngtDao().getObject(
-        FIN_FinancialAccount.class, strFinFinancialAccountId));
-    FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-        strFinFinancialAccountId);
+    int notMatchedItems = TransactionsDao.getPendingToMatchCount(
+        new AdvPaymentMngtDao().getObject(FIN_FinancialAccount.class, strFinFinancialAccountId));
+    FIN_FinancialAccount financialAccount = OBDal.getInstance()
+        .get(FIN_FinancialAccount.class, strFinFinancialAccountId);
 
     // Hide Match Using Imported Bank Statement button in Cash Accounts
     if ("C".equals(financialAccount.getType()) || financialAccount.getMatchingAlgorithm() == null) {
@@ -250,8 +262,9 @@ public class Transactions extends HttpSecureAppServlet {
     } else {
       discard[0] = "Reconcile";
     }
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_forms/Transactions", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_forms/Transactions", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -338,8 +351,9 @@ public class Transactions extends HttpSecureAppServlet {
   private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     log4j.debug("Output: print page structure");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure")
+        .createXmlDocument();
 
     SQLReturnObject[] data = getHeaders(vars);
     String type = "Hidden";
@@ -354,8 +368,9 @@ public class Transactions extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(xmlDocument.print());
+    }
     out.println(xmlDocument.print());
     out.close();
   }
@@ -418,15 +433,16 @@ public class Transactions extends HttpSecureAppServlet {
         orderByColsMap.put("paymentno", "fatrx." + FIN_FinaccTransaction.PROPERTY_FINPAYMENT + "."
             + FIN_Payment.PROPERTY_DOCUMENTNO);
         orderByColsMap.put("description", "fatrx." + FIN_FinaccTransaction.PROPERTY_DESCRIPTION);
-        orderByColsMap.put("receivedamount", "fatrx."
-            + FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT);
+        orderByColsMap.put("receivedamount",
+            "fatrx." + FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT);
         orderByColsMap.put("paidamount", "fatrx." + FIN_FinaccTransaction.PROPERTY_PAYMENTAMOUNT);
-        orderByColsMap.put("cleared", "fatrx." + FIN_FinaccTransaction.PROPERTY_RECONCILIATION
-            + "." + FIN_Reconciliation.PROPERTY_DOCUMENTNO);
+        orderByColsMap.put("cleared", "fatrx." + FIN_FinaccTransaction.PROPERTY_RECONCILIATION + "."
+            + FIN_Reconciliation.PROPERTY_DOCUMENTNO);
         orderByColsMap.put("posted", "fatrx." + FIN_FinaccTransaction.PROPERTY_POSTED);
         orderByColsMap.put("rowkey", "fatrx." + FIN_FinaccTransaction.PROPERTY_ID);
-        for (int i = 0; i < colNames.length; i++)
+        for (int i = 0; i < colNames.length; i++) {
           strOrderBy = strOrderBy.replace(colNames[i], orderByColsMap.get(colNames[i]));
+        }
 
         page = TableSQLData.calcAndGetBackendPage(vars, "Transactions.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
@@ -460,28 +476,33 @@ public class Transactions extends HttpSecureAppServlet {
         } else {
           type = myError.getType();
           title = myError.getTitle();
-          if (!myError.getMessage().startsWith("<![CDATA["))
+          if (!myError.getMessage().startsWith("<![CDATA[")) {
             description = "<![CDATA[" + myError.getMessage() + "]]>";
-          else
+          } else {
             description = myError.getMessage();
+          }
         }
       } catch (Exception e) {
         log4j.error("Error obtaining rows data", e);
         type = "Error";
         title = "Error";
-        if (e.getMessage().startsWith("<![CDATA["))
+        if (e.getMessage().startsWith("<![CDATA[")) {
           description = "<![CDATA[" + e.getMessage() + "]]>";
-        else
+        } else {
           description = e.getMessage();
+        }
       }
     }
 
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -489,7 +510,8 @@ public class Transactions extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+    strRowsData.append("  <rows numRows=\"")
+        .append(strNumRows)
         .append("\" backendPage=\"" + page + "\">\n");
 
     OBContext.setAdminMode();
@@ -503,62 +525,75 @@ public class Transactions extends HttpSecureAppServlet {
             // "description", "receivedamount", "paidamount", "cleared", "posted"
             String columnData = "";
             switch (k) {
-            case 0: // date column
-              columnData = Utility.formatDate(finaccTrx.getTransactionDate(),
-                  vars.getJavaDateFormat());
-              break;
-            case 1: // bpartner
-              if (finaccTrx.getFinPayment() != null)
-                columnData = (finaccTrx.getFinPayment().getBusinessPartner() != null) ? finaccTrx
-                    .getFinPayment().getBusinessPartner().getIdentifier() : "";
-              break;
-            case 2: // paymentno
-              if (finaccTrx.getFinPayment() != null)
-                columnData = finaccTrx.getFinPayment().getDocumentNo();
-              break;
-            case 3: // description
-              if (finaccTrx.getDescription() != null)
-                columnData = finaccTrx.getDescription();
-              break;
-            case 4: // receivedamount
-              if (finaccTrx.getDepositAmount() != null) {
-                columnData = FIN_Utility.multiCurrencyAmountToDisplay(finaccTrx.getDepositAmount(),
-                    finaccTrx.getCurrency(), finaccTrx.getForeignAmount(),
-                    finaccTrx.getForeignCurrency());
-              }
-              break;
-            case 5: // paidamount
-              if (finaccTrx.getPaymentAmount() != null) {
-                columnData = FIN_Utility.multiCurrencyAmountToDisplay(finaccTrx.getPaymentAmount(),
-                    finaccTrx.getCurrency(), finaccTrx.getForeignAmount(),
-                    finaccTrx.getForeignCurrency());
-              }
-              break;
-            case 6: // cleared
-              columnData = Utility.messageBD(myPool, ((finaccTrx.getStatus().equals("RPPC")) ? "Y"
-                  : "N"), vars.getLanguage());
-              break;
-            case 7: // Posted Status
-              columnData = getPostedDescription(vars, finaccTrx.getPosted());
-              break;
-            case 8: // rowkey
-              columnData = finaccTrx.getId().toString();
-              break;
+              case 0: // date column
+                columnData = Utility.formatDate(finaccTrx.getTransactionDate(),
+                    vars.getJavaDateFormat());
+                break;
+              case 1: // bpartner
+                if (finaccTrx.getFinPayment() != null) {
+                  columnData = (finaccTrx.getFinPayment().getBusinessPartner() != null)
+                      ? finaccTrx.getFinPayment().getBusinessPartner().getIdentifier()
+                      : "";
+                }
+                break;
+              case 2: // paymentno
+                if (finaccTrx.getFinPayment() != null) {
+                  columnData = finaccTrx.getFinPayment().getDocumentNo();
+                }
+                break;
+              case 3: // description
+                if (finaccTrx.getDescription() != null) {
+                  columnData = finaccTrx.getDescription();
+                }
+                break;
+              case 4: // receivedamount
+                if (finaccTrx.getDepositAmount() != null) {
+                  columnData = FIN_Utility.multiCurrencyAmountToDisplay(
+                      finaccTrx.getDepositAmount(), finaccTrx.getCurrency(),
+                      finaccTrx.getForeignAmount(), finaccTrx.getForeignCurrency());
+                }
+                break;
+              case 5: // paidamount
+                if (finaccTrx.getPaymentAmount() != null) {
+                  columnData = FIN_Utility.multiCurrencyAmountToDisplay(
+                      finaccTrx.getPaymentAmount(), finaccTrx.getCurrency(),
+                      finaccTrx.getForeignAmount(), finaccTrx.getForeignCurrency());
+                }
+                break;
+              case 6: // cleared
+                columnData = Utility.messageBD(myPool,
+                    ((finaccTrx.getStatus().equals("RPPC")) ? "Y" : "N"), vars.getLanguage());
+                break;
+              case 7: // Posted Status
+                columnData = getPostedDescription(vars, finaccTrx.getPosted());
+                break;
+              case 8: // rowkey
+                columnData = finaccTrx.getId().toString();
+                break;
             }
 
             if (columnData != "") {
-              if (headers[k].getField("adReferenceId").equals("32"))
+              if (headers[k].getField("adReferenceId").equals("32")) {
                 strRowsData.append(strReplaceWith).append("/images/");
-              strRowsData.append(columnData.replaceAll("<b>", "").replaceAll("<B>", "")
-                  .replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "")
-                  .replaceAll("<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                  .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                  .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+              }
+              strRowsData.append(columnData.replaceAll("<b>", "")
+                  .replaceAll("<B>", "")
+                  .replaceAll("</b>", "")
+                  .replaceAll("</B>", "")
+                  .replaceAll("<i>", "")
+                  .replaceAll("<I>", "")
+                  .replaceAll("</i>", "")
+                  .replaceAll("</I>", "")
+                  .replaceAll("<p>", "&nbsp;")
+                  .replaceAll("<P>", "&nbsp;")
+                  .replaceAll("<br>", "&nbsp;")
+                  .replaceAll("<BR>", "&nbsp;"));
             } else {
               if (headers[k].getField("adReferenceId").equals("32")) {
                 strRowsData.append(strReplaceWith).append("/images/blank.gif");
-              } else
+              } else {
                 strRowsData.append("&nbsp;");
+              }
             }
             strRowsData.append("]]></td>\n");
           }
@@ -574,32 +609,35 @@ public class Transactions extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strRowsData.toString());
+    }
     out.print(strRowsData.toString());
     out.close();
 
   }
 
   private String getPostedDescription(VariablesSecureApp vars, String strPosted) {
-    if ("Y".equals(strPosted))
+    if ("Y".equals(strPosted)) {
       return Utility.messageBD(myPool, "Y", vars.getLanguage());
-    if ("N".equals(strPosted))
+    }
+    if ("N".equals(strPosted)) {
       return Utility.messageBD(myPool, "N", vars.getLanguage());
+    }
     final Map<String, Object> parameters = new HashMap<>();
     final StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as l");
-    whereClause.append(" where l." + org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE
-        + ".id = :referenceId");
-    whereClause.append(" and l." + org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY
-        + " = :searchKey");
+    whereClause.append(
+        " where l." + org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE + ".id = :referenceId");
+    whereClause.append(
+        " and l." + org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY + " = :searchKey");
     // Reference ID for Posted list is 234
     parameters.put("referenceId", "234");
     parameters.put("searchKey", strPosted);
     OBContext.setAdminMode();
     try {
-      final OBQuery<org.openbravo.model.ad.domain.List> obQuery = OBDal.getInstance().createQuery(
-          org.openbravo.model.ad.domain.List.class, whereClause.toString());
+      final OBQuery<org.openbravo.model.ad.domain.List> obQuery = OBDal.getInstance()
+          .createQuery(org.openbravo.model.ad.domain.List.class, whereClause.toString());
       obQuery.setNamedParameters(parameters);
       List<org.openbravo.model.ad.domain.List> list = null;
       if (!obQuery.list().isEmpty()) {
@@ -618,8 +656,8 @@ public class Transactions extends HttpSecureAppServlet {
     log4j.debug("Output: print page structure");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    final FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-        strKey);
+    final FIN_FinaccTransaction transaction = OBDal.getInstance()
+        .get(FIN_FinaccTransaction.class, strKey);
     String buttonName = getPostedButtonName(transaction.getPosted());
     out.println(transaction.getPosted() + "#" + buttonName);
     out.close();
@@ -666,6 +704,7 @@ public class Transactions extends HttpSecureAppServlet {
     return myMessage;
   }
 
+  @Override
   public String getServletInfo() {
     return "Transactions Servlet";
   }

@@ -25,6 +25,7 @@ import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Field;
 
 public class MaskedStringUIDefinition extends StringUIDefinition {
+  @Override
   public String getFieldProperties(Field field) {
     if (field.getColumn().getReferenceSearchKey() != null) {
       Reference adReferenceSearch = field.getColumn().getReferenceSearchKey();

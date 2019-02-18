@@ -46,6 +46,7 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
     return "OBFKComboItem";
   }
 
+  @Override
   public String getGridEditorFieldProperties(Field field) {
     return "displayField: '_identifier', valueField: 'id'";
   }
@@ -63,8 +64,8 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
         ReferencedTable referencedTable = referenceSearchKey.getADReferencedTableList().get(0);
         if (referencedTable != null) {
           Property prop = KernelUtils.getInstance().getPropertyFromColumn(column);
-          Property referencedProp = KernelUtils.getInstance().getPropertyFromColumn(
-              referencedTable.getDisplayedColumn());
+          Property referencedProp = KernelUtils.getInstance()
+              .getPropertyFromColumn(referencedTable.getDisplayedColumn());
           if (prop != null && referencedProp != null) {
             if (isTableWithMultipleIdentifierColumns(referencedTable.getTable())
                 && !isPropertyField(field)) {
@@ -78,8 +79,8 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
             // always pass the display property in case of table references. This is used to fetch
             // the record properly in grid filter.
             // refer issue https://issues.openbravo.com/view.php?id=26696
-            criteriaField = criteriaField.concat(", displayProperty: '" + referencedProp.getName()
-                + "'");
+            criteriaField = criteriaField
+                .concat(", displayProperty: '" + referencedProp.getName() + "'");
           }
         }
       }
@@ -115,6 +116,7 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
     }
   }
 
+  @Override
   public String getFieldPropertiesFirstRecord(Field field, boolean getValueFromSession) {
     JSONObject value;
     try {

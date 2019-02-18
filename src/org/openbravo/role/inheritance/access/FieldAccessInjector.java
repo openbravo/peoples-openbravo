@@ -49,7 +49,8 @@ public class FieldAccessInjector extends AccessTypeInjector {
   public Role getRole(InheritedAccessEnabled access) {
     // FieldAccess does not have role property as parent
     FieldAccess fieldAccess = (FieldAccess) access;
-    if (fieldAccess.getTabAccess() == null || fieldAccess.getTabAccess().getWindowAccess() == null) {
+    if (fieldAccess.getTabAccess() == null
+        || fieldAccess.getTabAccess().getWindowAccess() == null) {
       return null;
     }
     return fieldAccess.getTabAccess().getWindowAccess().getRole();
@@ -94,8 +95,8 @@ public class FieldAccessInjector extends AccessTypeInjector {
   @Override
   public void removeReferenceInParentList(InheritedAccessEnabled access) {
     FieldAccess fa = (FieldAccess) access;
-    boolean accessExists = OBDal.getInstance().exists(TabAccess.ENTITY_NAME,
-        fa.getTabAccess().getId());
+    boolean accessExists = OBDal.getInstance()
+        .exists(TabAccess.ENTITY_NAME, fa.getTabAccess().getId());
     if (accessExists) {
       fa.getTabAccess().getADFieldAccessList().remove(fa);
     }

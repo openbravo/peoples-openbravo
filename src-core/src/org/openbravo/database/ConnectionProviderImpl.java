@@ -76,8 +76,9 @@ public class ConnectionProviderImpl implements ConnectionProvider {
       throws PoolNotFoundException {
 
     log4j.debug("Creating ConnectionProviderImpl");
-    if (_context != null && !_context.equals(""))
+    if (_context != null && !_context.equals("")) {
       contextName = _context;
+    }
 
     String poolName = null;
     String dbDriver = null;
@@ -101,8 +102,9 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     maxConnTime = Double.parseDouble(properties.getProperty("maxConnTime", "0.5"));
     dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
     _rdbms = properties.getProperty("bbdd.rdbms");
-    if (_rdbms.equalsIgnoreCase("POSTGRE"))
+    if (_rdbms.equalsIgnoreCase("POSTGRE")) {
       dbServer += "/" + properties.getProperty("bbdd.sid");
+    }
 
     if (log4j.isDebugEnabled()) {
       log4j.debug("poolName: " + poolName);
@@ -151,6 +153,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     create(file, isRelative, _context);
   }
 
+  @Override
   public void destroy() throws Exception {
     destroy(defaultPoolName);
   }
@@ -199,8 +202,9 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   }
 
   public ObjectPool getPool(String poolName) throws PoolNotFoundException {
-    if (poolName == null || poolName.equals(""))
+    if (poolName == null || poolName.equals("")) {
       throw new PoolNotFoundException("Couldn´t get an unnamed pool");
+    }
     ObjectPool connectionPool = null;
     try {
       PoolingDriver driver = (PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
@@ -208,16 +212,18 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     } catch (SQLException ex) {
       log4j.error(ex);
     }
-    if (connectionPool == null)
+    if (connectionPool == null) {
       throw new PoolNotFoundException(poolName + " not found");
-    else
+    } else {
       return connectionPool;
+    }
   }
 
   public ObjectPool getPool() throws PoolNotFoundException {
     return getPool(defaultPoolName);
   }
 
+  @Override
   public Connection getConnection() throws NoConnectionAvailableException {
     return getConnection(defaultPoolName);
   }
@@ -227,8 +233,9 @@ public class ConnectionProviderImpl implements ConnectionProvider {
    * same connection for all getConnection() calls inside a request.
    */
   public Connection getConnection(String poolName) throws NoConnectionAvailableException {
-    if (poolName == null || poolName.equals(""))
+    if (poolName == null || poolName.equals("")) {
       throw new NoConnectionAvailableException("Couldn´t get a connection for an unnamed pool");
+    }
 
     // try to get the connection from the session to use a single connection for the
     // whole request
@@ -244,8 +251,9 @@ public class ConnectionProviderImpl implements ConnectionProvider {
    * Gets a new connection without trying to obtain the sessions's one from available pool
    */
   private Connection getNewConnection(String poolName) throws NoConnectionAvailableException {
-    if (poolName == null || poolName.equals(""))
+    if (poolName == null || poolName.equals("")) {
       throw new NoConnectionAvailableException("Couldn´t get a connection for an unnamed pool");
+    }
     Connection conn;
     if (externalConnectionPool == null && externalPoolClassName != null
         && !"".equals(externalPoolClassName)) {
@@ -270,8 +278,9 @@ public class ConnectionProviderImpl implements ConnectionProvider {
    */
   private Connection getCommonsDbcpPoolConnection(String poolName)
       throws NoConnectionAvailableException {
-    if (poolName == null || poolName.equals(""))
+    if (poolName == null || poolName.equals("")) {
       throw new NoConnectionAvailableException("Couldn´t get a connection for an unnamed pool");
+    }
     Connection conn = null;
     try {
       conn = DriverManager
@@ -285,13 +294,15 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     return conn;
   }
 
+  @Override
   public String getRDBMS() {
     return rdbms;
   }
 
   public boolean releaseConnection(Connection conn) {
-    if (conn == null)
+    if (conn == null) {
       return false;
+    }
     try {
       // Set autocommit, this makes not necessary to explicitly commit, all
       // prepared statements are
@@ -317,8 +328,9 @@ public class ConnectionProviderImpl implements ConnectionProvider {
    * Close for transactional connections
    */
   private boolean closeConnection(Connection conn) {
-    if (conn == null)
+    if (conn == null) {
       return false;
+    }
     try {
       conn.setAutoCommit(true);
       conn.close();
@@ -329,24 +341,30 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     return true;
   }
 
+  @Override
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
     Connection conn = getNewConnection(defaultPoolName);
-    if (conn == null)
+    if (conn == null) {
       throw new NoConnectionAvailableException("Couldn´t get an available connection");
+    }
     conn.setAutoCommit(false);
     return conn;
   }
 
+  @Override
   public void releaseCommitConnection(Connection conn) throws SQLException {
-    if (conn == null)
+    if (conn == null) {
       return;
+    }
     conn.commit();
     closeConnection(conn);
   }
 
+  @Override
   public void releaseRollbackConnection(Connection conn) throws SQLException {
-    if (conn == null)
+    if (conn == null) {
       return;
+    }
     // prevent extra exception if the connection is already closed
     // especially needed here because rollback occurs in case of
     // application exceptions also. If the conn.isClosed and a rollback
@@ -358,24 +376,29 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     closeConnection(conn);
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(String SQLPreparedStatement) throws Exception {
     return getPreparedStatement(defaultPoolName, SQLPreparedStatement);
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(String poolName, String SQLPreparedStatement)
       throws Exception {
-    if (poolName == null || poolName.equals(""))
+    if (poolName == null || poolName.equals("")) {
       throw new PoolNotFoundException("Can't get the pool. No pool name specified");
+    }
     log4j.debug("connection requested");
     Connection conn = getConnection(poolName);
     log4j.debug("connection established");
     return getPreparedStatement(conn, SQLPreparedStatement);
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(Connection conn, String SQLPreparedStatement)
       throws SQLException {
-    if (conn == null || SQLPreparedStatement == null || SQLPreparedStatement.equals(""))
+    if (conn == null || SQLPreparedStatement == null || SQLPreparedStatement.equals("")) {
       return null;
+    }
     PreparedStatement ps = null;
     try {
       log4j.debug("preparedStatement requested");
@@ -390,22 +413,27 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     return (ps);
   }
 
+  @Override
   public CallableStatement getCallableStatement(String SQLCallableStatement) throws Exception {
     return getCallableStatement(defaultPoolName, SQLCallableStatement);
   }
 
+  @Override
   public CallableStatement getCallableStatement(String poolName, String SQLCallableStatement)
       throws Exception {
-    if (poolName == null || poolName.equals(""))
+    if (poolName == null || poolName.equals("")) {
       throw new PoolNotFoundException("Can't get the pool. No pool name specified");
+    }
     Connection conn = getConnection(poolName);
     return getCallableStatement(conn, SQLCallableStatement);
   }
 
+  @Override
   public CallableStatement getCallableStatement(Connection conn, String SQLCallableStatement)
       throws SQLException {
-    if (conn == null || SQLCallableStatement == null || SQLCallableStatement.equals(""))
+    if (conn == null || SQLCallableStatement == null || SQLCallableStatement.equals("")) {
       return null;
+    }
     CallableStatement cs = null;
     try {
       cs = conn.prepareCall(SQLCallableStatement);
@@ -417,20 +445,25 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     return (cs);
   }
 
+  @Override
   public Statement getStatement() throws Exception {
     return getStatement(defaultPoolName);
   }
 
+  @Override
   public Statement getStatement(String poolName) throws Exception {
-    if (poolName == null || poolName.equals(""))
+    if (poolName == null || poolName.equals("")) {
       throw new PoolNotFoundException("Can't get the pool. No pool name specified");
+    }
     Connection conn = getConnection(poolName);
     return getStatement(conn);
   }
 
+  @Override
   public Statement getStatement(Connection conn) throws SQLException {
-    if (conn == null)
+    if (conn == null) {
       return null;
+    }
     try {
       return (conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY));
     } catch (SQLException e) {
@@ -440,9 +473,11 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releasePreparedStatement(PreparedStatement preparedStatement) throws SQLException {
-    if (preparedStatement == null)
+    if (preparedStatement == null) {
       return;
+    }
     Connection conn = null;
     try {
       conn = preparedStatement.getConnection();
@@ -455,9 +490,11 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releaseCallableStatement(CallableStatement callableStatement) throws SQLException {
-    if (callableStatement == null)
+    if (callableStatement == null) {
       return;
+    }
     Connection conn = null;
     try {
       conn = callableStatement.getConnection();
@@ -470,9 +507,11 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releaseStatement(Statement statement) throws SQLException {
-    if (statement == null)
+    if (statement == null) {
       return;
+    }
     Connection conn = null;
     try {
       conn = statement.getConnection();
@@ -485,22 +524,27 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releaseTransactionalStatement(Statement statement) throws SQLException {
-    if (statement == null)
+    if (statement == null) {
       return;
+    }
     statement.close();
   }
 
+  @Override
   public void releaseTransactionalPreparedStatement(PreparedStatement preparedStatement)
       throws SQLException {
-    if (preparedStatement == null)
+    if (preparedStatement == null) {
       return;
+    }
     preparedStatement.close();
   }
 
   /**
    * Returns the actual status of the dynamic pool.
    */
+  @Override
   public String getStatus() {
     StringBuffer strResultado = new StringBuffer();
     strResultado.append("Not implemented yet");

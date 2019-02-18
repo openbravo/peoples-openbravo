@@ -74,20 +74,20 @@ public class ProductTransactionAssert {
         totalPrice, unitPrice, false, false);
   }
 
-  public ProductTransactionAssert(InventoryAmountUpdateLine inventoryLine,
-      BigDecimal originalPrice, BigDecimal finalPrice) {
+  public ProductTransactionAssert(InventoryAmountUpdateLine inventoryLine, BigDecimal originalPrice,
+      BigDecimal finalPrice) {
     this(null, inventoryLine, null, null, null, TestCostingConstants.EURO_ID, originalPrice,
         finalPrice, finalPrice, false, false);
   }
 
-  public ProductTransactionAssert(InventoryAmountUpdateLine inventoryLine,
-      BigDecimal originalPrice, BigDecimal totalPrice, BigDecimal unitPrice) {
+  public ProductTransactionAssert(InventoryAmountUpdateLine inventoryLine, BigDecimal originalPrice,
+      BigDecimal totalPrice, BigDecimal unitPrice) {
     this(null, inventoryLine, null, null, null, TestCostingConstants.EURO_ID, originalPrice,
         totalPrice, unitPrice, false, false);
   }
 
-  public ProductTransactionAssert(InventoryAmountUpdateLine inventoryLine,
-      BigDecimal originalPrice, BigDecimal finalPrice, boolean permanent) {
+  public ProductTransactionAssert(InventoryAmountUpdateLine inventoryLine, BigDecimal originalPrice,
+      BigDecimal finalPrice, boolean permanent) {
     this(null, inventoryLine, null, null, null, TestCostingConstants.EURO_ID, originalPrice,
         finalPrice, finalPrice, false, permanent);
   }
@@ -110,14 +110,14 @@ public class ProductTransactionAssert {
         finalPrice, finalPrice, false, permanent);
   }
 
-  public ProductTransactionAssert(InternalConsumptionLine consumptionLine,
-      BigDecimal originalPrice, BigDecimal finalPrice) {
+  public ProductTransactionAssert(InternalConsumptionLine consumptionLine, BigDecimal originalPrice,
+      BigDecimal finalPrice) {
     this(null, null, null, consumptionLine, null, TestCostingConstants.EURO_ID, originalPrice,
         finalPrice, finalPrice, false, false);
   }
 
-  public ProductTransactionAssert(InternalConsumptionLine consumptionLine,
-      BigDecimal originalPrice, BigDecimal finalPrice, boolean permanent) {
+  public ProductTransactionAssert(InternalConsumptionLine consumptionLine, BigDecimal originalPrice,
+      BigDecimal finalPrice, boolean permanent) {
     this(null, null, null, consumptionLine, null, TestCostingConstants.EURO_ID, originalPrice,
         finalPrice, finalPrice, false, permanent);
   }

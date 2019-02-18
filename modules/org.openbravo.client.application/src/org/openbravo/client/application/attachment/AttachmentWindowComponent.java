@@ -25,6 +25,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -38,8 +40,6 @@ import org.openbravo.model.ad.domain.Validation;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.AttachmentMethod;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * The component which takes care of creating a class for a tab's Attachment popup.
@@ -56,6 +56,7 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
   @Inject
   private OBViewParameterHandler paramHandler;
 
+  @Override
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
   }
@@ -98,6 +99,7 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
    * 
    * @return generated code
    */
+  @Override
   public String generate() {
     final String jsCode = super.generate();
     return jsCode;
@@ -166,8 +168,8 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
         if (validation.getType().equals("HQL_JS")) {
           paramsWithValidation.add(param);
         } else {
-          log.error("Unsupported validation type {} for param {} in tab {}", new Object[] {
-              "HQL_JS", param, tab });
+          log.error("Unsupported validation type {} for param {} in tab {}",
+              new Object[] { "HQL_JS", param, tab });
         }
       }
       allParams.add(param.getDBColumnName());

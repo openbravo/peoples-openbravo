@@ -28,11 +28,11 @@ import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 import junit.framework.TestCase;
 
@@ -139,8 +139,7 @@ public class DatasourceTestUtil {
     newProfile.put("organization", orgId);
     newProfile.put("role", roleId);
     newProfile.put("warehouse", warehouseId);
-    request(
-        openbravoURL,
+    request(openbravoURL,
         "/org.openbravo.client.kernel?command=save&_action=org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler",
         "POST", newProfile.toString(), cookie, 200, "application/json");
   }

@@ -30,9 +30,9 @@ public class AgingGeneralLedgerFilterExpression implements FilterExpression {
   @Override
   public String getExpression(Map<String, String> requestMap) {
     try {
-      String defaultOrg = (String) ParameterUtils
-          .getJSExpressionResult(requestMap, RequestContext.get().getSession(),
-              "OB.getFilterExpression('org.openbravo.common.filterexpression.AgingOrganizationFilterExpression')");
+      String defaultOrg = (String) ParameterUtils.getJSExpressionResult(requestMap,
+          RequestContext.get().getSession(),
+          "OB.getFilterExpression('org.openbravo.common.filterexpression.AgingOrganizationFilterExpression')");
       return OBLedgerUtils.getOrgLedger(defaultOrg);
     } catch (Exception e) {
       return null;

@@ -69,8 +69,8 @@ public class DalStoredProcedureTest extends OBBaseTest {
     final Map<String, String> parameters = new HashMap<String, String>();
     parameters.put("AD_Tab_ID", tabtest.getId());
 
-    final org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
-        org.openbravo.model.ad.ui.Process.class, "114");
+    final org.openbravo.model.ad.ui.Process process = OBDal.getInstance()
+        .get(org.openbravo.model.ad.ui.Process.class, "114");
     assertNotNull("No copy test line process defined with id 114", process);
     assertNotNull("id of attest not set", tabtest.getId());
     final int fieldsNo = tabtest.getADFieldList().size();
@@ -85,8 +85,8 @@ public class DalStoredProcedureTest extends OBBaseTest {
     copyToTab.setModule(tabtest.getModule());
     OBDal.getInstance().save(copyToTab);
     OBDal.getInstance().flush();
-    final ProcessInstance pInstance = CallProcess.getInstance().call(process, copyToTab.getId(),
-        parameters);
+    final ProcessInstance pInstance = CallProcess.getInstance()
+        .call(process, copyToTab.getId(), parameters);
     OBDal.getInstance().getSession().refresh(tabtest);
     OBDal.getInstance().getSession().refresh(copyToTab);
     assertEquals("@Copied@=" + fieldsNo, pInstance.getErrorMsg());

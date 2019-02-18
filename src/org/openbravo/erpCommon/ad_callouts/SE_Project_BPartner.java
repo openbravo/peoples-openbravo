@@ -49,7 +49,8 @@ public class SE_Project_BPartner extends SimpleCallout {
 
     // Business Partner Data
     BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
-    String strPaymentrule = "", strPaymentterm = "", strPricelist = "", strPaymentMethod = "", strUserRep = "";
+    String strPaymentrule = "", strPaymentterm = "", strPricelist = "", strPaymentMethod = "",
+        strUserRep = "";
     if (data != null && data.length > 0) {
       strPaymentrule = isSales ? data[0].paymentrule : data[0].paymentrulepo;
       strPaymentterm = isSales ? data[0].cPaymenttermId : data[0].poPaymenttermId;
@@ -63,9 +64,9 @@ public class SE_Project_BPartner extends SimpleCallout {
     FieldProvider[] tdv = null;
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR",
-          "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To", Utility.getContext(this,
-              info.vars, "#AccessibleOrgTree", info.getWindowId()), Utility.getContext(this,
-              info.vars, "#User_Client", info.getWindowId()), 0);
+          "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To",
+          Utility.getContext(this, info.vars, "#AccessibleOrgTree", info.getWindowId()),
+          Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       tdv = comboTableData.select(false);
       comboTableData = null;
@@ -76,12 +77,10 @@ public class SE_Project_BPartner extends SimpleCallout {
       info.addSelect("inpcBpartnerLocationId");
       // If location is provided it is selected, else the first one is selected
       for (int i = 0; i < tdv.length; i++) {
-        info.addSelectResult(
-            tdv[i].getField("id"),
+        info.addSelectResult(tdv[i].getField("id"),
             FormatUtilities.replaceJS(tdv[i].getField("name")),
-            (StringUtils.isEmpty(strLocation) && i == 0)
-                || (StringUtils.isNotEmpty(strLocation) && StringUtils.equalsIgnoreCase(
-                    tdv[i].getField("id"), strLocation)));
+            (StringUtils.isEmpty(strLocation) && i == 0) || (StringUtils.isNotEmpty(strLocation)
+                && StringUtils.equalsIgnoreCase(tdv[i].getField("id"), strLocation)));
       }
       info.endSelect();
     } else {
@@ -126,12 +125,10 @@ public class SE_Project_BPartner extends SimpleCallout {
       info.addSelect("inpadUserId");
       // If contact is provided it is selected, else the first one is selected
       for (int i = 0; i < tdv.length; i++) {
-        info.addSelectResult(
-            tdv[i].getField("id"),
+        info.addSelectResult(tdv[i].getField("id"),
             FormatUtilities.replaceJS(tdv[i].getField("name")),
-            (StringUtils.isEmpty(strContact) && i == 0)
-                || (StringUtils.isNotEmpty(strContact) && StringUtils.equalsIgnoreCase(
-                    tdv[i].getField("id"), strContact)));
+            (StringUtils.isEmpty(strContact) && i == 0) || (StringUtils.isNotEmpty(strContact)
+                && StringUtils.equalsIgnoreCase(tdv[i].getField("id"), strContact)));
       }
       info.endSelect();
     } else {
@@ -142,9 +139,9 @@ public class SE_Project_BPartner extends SimpleCallout {
     FieldProvider[] tlv = null;
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
-          "C_BPartner Location", "C_BPartner Location - Bill To", Utility.getContext(this,
-              info.vars, "#AccessibleOrgTree", info.getWindowId()), Utility.getContext(this,
-              info.vars, "#User_Client", info.getWindowId()), 0);
+          "C_BPartner Location", "C_BPartner Location - Bill To",
+          Utility.getContext(this, info.vars, "#AccessibleOrgTree", info.getWindowId()),
+          Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       tlv = comboTableData.select(false);
       comboTableData = null;
@@ -155,12 +152,10 @@ public class SE_Project_BPartner extends SimpleCallout {
       info.addSelect("inpbilltoId");
       // If location is provided it is selected, else the first one is selected
       for (int i = 0; i < tlv.length; i++) {
-        info.addSelectResult(
-            tlv[i].getField("id"),
+        info.addSelectResult(tlv[i].getField("id"),
             FormatUtilities.replaceJS(tlv[i].getField("name")),
-            (StringUtils.isEmpty(strLocation) && i == 0)
-                || (StringUtils.isNotEmpty(strLocation) && StringUtils.equalsIgnoreCase(
-                    tdv[i].getField("id"), strLocation)));
+            (StringUtils.isEmpty(strLocation) && i == 0) || (StringUtils.isNotEmpty(strLocation)
+                && StringUtils.equalsIgnoreCase(tdv[i].getField("id"), strLocation)));
       }
       info.endSelect();
     } else {

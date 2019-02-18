@@ -63,19 +63,19 @@ public class ReferencedInventoryUtil {
   public static final AttributeSetInstance cloneAttributeSetInstance(
       final AttributeSetInstance _originalAttributeSetInstance,
       final ReferencedInventory referencedInventory) {
-    final AttributeSetInstance originalAttributeSetInstance = _originalAttributeSetInstance == null ? OBDal
-        .getInstance().get(AttributeSetInstance.class, "0") : _originalAttributeSetInstance;
+    final AttributeSetInstance originalAttributeSetInstance = _originalAttributeSetInstance == null
+        ? OBDal.getInstance().get(AttributeSetInstance.class, "0")
+        : _originalAttributeSetInstance;
 
-    final AttributeSetInstance newAttributeSetInstance = (AttributeSetInstance) DalUtil.copy(
-        originalAttributeSetInstance, false);
+    final AttributeSetInstance newAttributeSetInstance = (AttributeSetInstance) DalUtil
+        .copy(originalAttributeSetInstance, false);
     newAttributeSetInstance.setActive(true);
     newAttributeSetInstance.setClient(referencedInventory.getClient());
     newAttributeSetInstance.setOrganization(originalAttributeSetInstance.getOrganization());
     newAttributeSetInstance.setParentAttributeSetInstance(originalAttributeSetInstance);
     newAttributeSetInstance.setReferencedInventory(referencedInventory);
-    newAttributeSetInstance
-        .setDescription(getAttributeSetInstanceDescriptionForReferencedInventory(
-            newAttributeSetInstance.getDescription(), referencedInventory));
+    newAttributeSetInstance.setDescription(getAttributeSetInstanceDescriptionForReferencedInventory(
+        newAttributeSetInstance.getDescription(), referencedInventory));
     OBDal.getInstance().save(newAttributeSetInstance);
     return newAttributeSetInstance;
   }
@@ -89,14 +89,15 @@ public class ReferencedInventoryUtil {
       final ReferencedInventory referencedInventory) {
     try {
       OBContext.setAdminMode(true);
-      final AttributeSetInstance originalAttributeSetInstance = _originalAttributeSetInstance == null ? OBDal
-          .getInstance().getProxy(AttributeSetInstance.class, "0") : _originalAttributeSetInstance;
+      final AttributeSetInstance originalAttributeSetInstance = _originalAttributeSetInstance == null
+          ? OBDal.getInstance().getProxy(AttributeSetInstance.class, "0")
+          : _originalAttributeSetInstance;
 
       final OBCriteria<AttributeSetInstance> criteria = OBDao.getFilteredCriteria(
-          AttributeSetInstance.class, Restrictions.eq(
-              AttributeSetInstance.PROPERTY_PARENTATTRIBUTESETINSTANCE + ".id",
-              originalAttributeSetInstance.getId()), Restrictions.eq(
-              AttributeSetInstance.PROPERTY_REFERENCEDINVENTORY + ".id",
+          AttributeSetInstance.class,
+          Restrictions.eq(AttributeSetInstance.PROPERTY_PARENTATTRIBUTESETINSTANCE + ".id",
+              originalAttributeSetInstance.getId()),
+          Restrictions.eq(AttributeSetInstance.PROPERTY_REFERENCEDINVENTORY + ".id",
               referencedInventory.getId()));
       criteria.setMaxResults(1);
       return criteria.list().get(0);
@@ -115,9 +116,9 @@ public class ReferencedInventoryUtil {
    */
   public static final String getAttributeSetInstanceDescriptionForReferencedInventory(
       final String originalDesc, final ReferencedInventory referencedInventory) {
-    return StringUtils.left((StringUtils.isBlank(originalDesc) ? "" : originalDesc)
-        + REFERENCEDINVENTORYPREFIX + referencedInventory.getSearchKey()
-        + REFERENCEDINVENTORYSUFFIX, 255);
+    return StringUtils
+        .left((StringUtils.isBlank(originalDesc) ? "" : originalDesc) + REFERENCEDINVENTORYPREFIX
+            + referencedInventory.getSearchKey() + REFERENCEDINVENTORYSUFFIX, 255);
   }
 
   /**
@@ -155,18 +156,20 @@ public class ReferencedInventoryUtil {
    * Returns the sequence associated to the given referenced inventory type id or null if not found
    */
   private static Sequence getSequence(final String referencedInventoryTypeId) {
-    return OBDal.getInstance().get(ReferencedInventoryType.class, referencedInventoryTypeId)
+    return OBDal.getInstance()
+        .get(ReferencedInventoryType.class, referencedInventoryTypeId)
         .getSequence();
   }
 
   /**
    * Throw an exception if the given attribute set instance is linked to a referenced inventory
    */
-  public static void avoidUpdatingIfLinkedToReferencedInventory(final String attributeSetInstanceId) {
+  public static void avoidUpdatingIfLinkedToReferencedInventory(
+      final String attributeSetInstanceId) {
     try {
       OBContext.setAdminMode(true);
-      final AttributeSetInstance attributeSetInstance = OBDal.getInstance().getProxy(
-          AttributeSetInstance.class, attributeSetInstanceId);
+      final AttributeSetInstance attributeSetInstance = OBDal.getInstance()
+          .getProxy(AttributeSetInstance.class, attributeSetInstanceId);
       if (attributeSetInstance.getParentAttributeSetInstance() != null
           || !attributeSetInstance.getAttributeSetInstanceParentAttributeSetInstanceIDList()
               .isEmpty()) {
@@ -240,8 +243,8 @@ public class ReferencedInventoryUtil {
     final Session session = OBDal.getInstance().getSession();
     final Query<Object[]> sdQuery = session.createQuery(olHql, Object[].class);
     sdQuery.setParameter("sdBinId", storageDetail.getStorageBin().getId());
-    sdQuery.setParameter("toBindId", newStorageBin != null ? newStorageBin.getId()
-        : "noStorageBinToIDShouldMatch");
+    sdQuery.setParameter("toBindId",
+        newStorageBin != null ? newStorageBin.getId() : "noStorageBinToIDShouldMatch");
     sdQuery.setParameter("sdAttributeSetId", storageDetail.getAttributeSetValue().getId());
     sdQuery.setParameter("productId", storageDetail.getProduct().getId());
     sdQuery.setParameter("uomId", storageDetail.getUOM().getId());

@@ -44,8 +44,8 @@ import org.openbravo.service.db.DalConnectionProvider;
  *
  */
 public class ProductAumEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance()
-      .getEntity(ProductAUM.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(ProductAUM.ENTITY_NAME) };
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -88,7 +88,7 @@ public class ProductAumEventHandler extends EntityPersistenceEventObserver {
         throw new OBException(OBMessageUtils.messageBD(conn, "DuplicateAUM", language));
       }
     }
-    
+
     if (target.getSales().equals(UOMUtil.UOM_PRIMARY)) {
       OBCriteria<ProductAUM> primarySales = OBDal.getInstance().createCriteria(ProductAUM.class);
       primarySales.add(Restrictions.and(Restrictions.ne(ProductAUM.PROPERTY_ID, target.getId()),
@@ -107,22 +107,21 @@ public class ProductAumEventHandler extends EntityPersistenceEventObserver {
               Restrictions.eq(ProductAUM.PROPERTY_PRODUCT, product))));
       primaryPurchase.setMaxResults(1);
       if (primaryPurchase.uniqueResult() != null) {
-        throw new OBException(OBMessageUtils.messageBD(conn, "DuplicatePrimaryPurchaseAUM",
-            language));
+        throw new OBException(
+            OBMessageUtils.messageBD(conn, "DuplicatePrimaryPurchaseAUM", language));
       }
     }
 
     if (target.getLogistics().equals(UOMUtil.UOM_PRIMARY)) {
       OBCriteria<ProductAUM> primaryLogistics = OBDal.getInstance()
           .createCriteria(ProductAUM.class);
-      primaryLogistics.add(Restrictions.and(
-          Restrictions.ne(ProductAUM.PROPERTY_ID, target.getId()), Restrictions.and(
-              Restrictions.eq(ProductAUM.PROPERTY_LOGISTICS, UOMUtil.UOM_PRIMARY),
+      primaryLogistics.add(Restrictions.and(Restrictions.ne(ProductAUM.PROPERTY_ID, target.getId()),
+          Restrictions.and(Restrictions.eq(ProductAUM.PROPERTY_LOGISTICS, UOMUtil.UOM_PRIMARY),
               Restrictions.eq(ProductAUM.PROPERTY_PRODUCT, product))));
       primaryLogistics.setMaxResults(1);
       if (primaryLogistics.uniqueResult() != null) {
-        throw new OBException(OBMessageUtils.messageBD(conn, "DuplicatePrimaryLogisticsAUM",
-            language));
+        throw new OBException(
+            OBMessageUtils.messageBD(conn, "DuplicatePrimaryLogisticsAUM", language));
       }
     }
   }

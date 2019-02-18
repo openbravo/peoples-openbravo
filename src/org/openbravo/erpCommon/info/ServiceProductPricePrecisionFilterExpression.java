@@ -38,11 +38,12 @@ public class ServiceProductPricePrecisionFilterExpression implements FilterExpre
     try {
       JSONObject context = new JSONObject(requestMap.get("context"));
       strCurrentParam = requestMap.get("currentParam");
-      final OrderLine orderLine = OBDal.getInstance().get(OrderLine.class,
-          context.getString("inpcOrderlineId"));
+      final OrderLine orderLine = OBDal.getInstance()
+          .get(OrderLine.class, context.getString("inpcOrderlineId"));
       return orderLine.getSalesOrder().getCurrency().getPricePrecision().toString();
     } catch (JSONException e) {
-      log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(), e);
+      log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(),
+          e);
       return null;
     }
   }

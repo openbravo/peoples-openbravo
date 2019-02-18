@@ -31,6 +31,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
@@ -54,8 +56,6 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.AttachmentMethod;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Reads the view and generates it.
@@ -92,8 +92,8 @@ public class ViewComponent extends BaseComponent {
       final Window window = adcs.getWindow(correctViewId(viewId));
 
       if (window != null) {
-        FeatureRestriction featureRestriction = ActivationKey.getInstance().hasLicenseAccess("MW",
-            window.getId());
+        FeatureRestriction featureRestriction = ActivationKey.getInstance()
+            .hasLicenseAccess("MW", window.getId());
         if (featureRestriction != FeatureRestriction.NO_RESTRICTION) {
           throw new OBUserException(featureRestriction.toString());
         }
@@ -137,7 +137,8 @@ public class ViewComponent extends BaseComponent {
       try {
         @SuppressWarnings("unchecked")
         final Class<BaseTemplateComponent> clz = (Class<BaseTemplateComponent>) OBClassLoader
-            .getInstance().loadClass(viewImpDef.getJavaClassName());
+            .getInstance()
+            .loadClass(viewImpDef.getJavaClassName());
         component = weldUtils.getInstance(clz);
       } catch (Exception e) {
         throw new OBException(e);
@@ -190,8 +191,8 @@ public class ViewComponent extends BaseComponent {
   }
 
   private OBUIAPPViewImplementation getView(String viewName) {
-    OBCriteria<OBUIAPPViewImplementation> obc = OBDal.getInstance().createCriteria(
-        OBUIAPPViewImplementation.class);
+    OBCriteria<OBUIAPPViewImplementation> obc = OBDal.getInstance()
+        .createCriteria(OBUIAPPViewImplementation.class);
     obc.add(Restrictions.or(Restrictions.eq(OBUIAPPViewImplementation.PROPERTY_NAME, viewName),
         Restrictions.eq(OBUIAPPViewImplementation.PROPERTY_ID, viewName)));
 
@@ -313,7 +314,8 @@ public class ViewComponent extends BaseComponent {
 
       StringBuilder viewVersions = new StringBuilder();
       viewVersions.append(getAuditStatus(window)) //
-          .append(getLastGridConfigurationChange(window)).append("|") //
+          .append(getLastGridConfigurationChange(window))
+          .append("|") //
           .append(getLastSystemPreferenceChange(window));
       return DigestUtils.md5Hex(viewVersions.toString());
     } finally {

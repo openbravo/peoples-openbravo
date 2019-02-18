@@ -61,8 +61,8 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
       final JSONObject jsonData = new JSONObject(data);
       final JSONObject jsonparams = jsonData.getJSONObject("_params");
 
-      final JSONArray selectedPayments = jsonparams.getJSONObject("payments").getJSONArray(
-          "_selection");
+      final JSONArray selectedPayments = jsonparams.getJSONObject("payments")
+          .getJSONArray("_selection");
       final Date statementDate = jsDateFormat.parse(jsonparams.getString("statementDate"));
       final Date dateAcct = jsDateFormat.parse(jsonparams.getString("dateAcct"));
       final String strAccountId = jsonData.getString("Fin_Financial_Account_ID");
@@ -125,8 +125,8 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
       final String paymentId = paymentJS.getString("id");
       log.debug("Creating transaction for FIN_Payment_ID: " + paymentId);
       final FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, paymentId);
-      FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          strAccountId);
+      FIN_FinancialAccount account = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, strAccountId);
 
       if (payment != null) {
         final FIN_FinaccTransaction transaction = TransactionsDao.createFinAccTransaction(payment);

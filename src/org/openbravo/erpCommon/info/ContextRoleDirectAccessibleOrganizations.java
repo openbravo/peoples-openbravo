@@ -62,8 +62,8 @@ public class ContextRoleDirectAccessibleOrganizations implements FilterExpressio
   }
 
   private int getProcessAccessLevel(String processId) {
-    org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
-        org.openbravo.model.ad.ui.Process.class, processId);
+    org.openbravo.model.ad.ui.Process process = OBDal.getInstance()
+        .get(org.openbravo.model.ad.ui.Process.class, processId);
     if (process == null) {
       return -1;
     }
@@ -71,8 +71,8 @@ public class ContextRoleDirectAccessibleOrganizations implements FilterExpressio
   }
 
   private int getProcessDefinitionAccessLevel(String processDefinitionId) {
-    org.openbravo.client.application.Process processDefinition = OBDal.getInstance().get(
-        org.openbravo.client.application.Process.class, processDefinitionId);
+    org.openbravo.client.application.Process processDefinition = OBDal.getInstance()
+        .get(org.openbravo.client.application.Process.class, processDefinitionId);
     if (processDefinition == null) {
       return -1;
     }

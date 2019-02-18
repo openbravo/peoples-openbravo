@@ -48,11 +48,10 @@ public class SE_Order_Organization extends SimpleCallout {
         CashVATUtil.isCashVAT(strinpissotrx, strOrgId, strBPartnerId, strBPartnerLocationId));
 
     try {
-      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE",
-          "M_Warehouse_ID", "197", strinpissotrx.equals("Y") ? "C4053C0CD3DC420A9924F24FC1F860A0"
-              : "", Utility.getReferenceableOrg(info.vars,
-              info.vars.getStringParameter("inpadOrgId")), Utility.getContext(this, info.vars,
-              "#User_Client", info.getWindowId()), 0);
+      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "M_Warehouse_ID",
+          "197", strinpissotrx.equals("Y") ? "C4053C0CD3DC420A9924F24FC1F860A0" : "",
+          Utility.getReferenceableOrg(info.vars, info.vars.getStringParameter("inpadOrgId")),
+          Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       td = comboTableData.select(false);
       comboTableData = null;

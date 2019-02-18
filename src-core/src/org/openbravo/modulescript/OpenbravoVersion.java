@@ -92,6 +92,7 @@ public class OpenbravoVersion implements Comparable<OpenbravoVersion> {
     return minor;
   }
 
+  @Override
   public int compareTo(OpenbravoVersion o) {
     if (major1 == o.major1) {
       if (major2 == o.major2) {

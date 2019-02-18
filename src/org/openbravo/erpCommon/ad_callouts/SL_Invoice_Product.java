@@ -63,8 +63,8 @@ public class SL_Invoice_Product extends SimpleCallout {
     String strADOrgID = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
     String strCInvoiceID = info.getStringParameter("inpcInvoiceId", IsIDFilter.instance);
     String strIsSOTrx = Utility.getContext(this, info.vars, "isSOTrx", info.getWindowId());
-    String strWarehouse = Utility
-        .getContext(this, info.vars, "#M_Warehouse_ID", info.getWindowId());
+    String strWarehouse = Utility.getContext(this, info.vars, "#M_Warehouse_ID",
+        info.getWindowId());
     String strUOMProduct = info.getStringParameter("inpmProductUomId", IsIDFilter.instance);
 
     // Warehouse
@@ -169,12 +169,15 @@ public class SL_Invoice_Product extends SimpleCallout {
             defplantype = product.getRevenuePlanType();
             periodnumber = product.getPeriodNumber().toString();
             if (StringUtils.equals(product.getDefaultPeriod(), CURRENT_MONTH)) {
-              cPeriodId = AccDefUtility.getCurrentPeriod(invoice.getAccountingDate(),
-                  AccDefUtility.getCalendar(invoice.getOrganization())).getId();
+              cPeriodId = AccDefUtility
+                  .getCurrentPeriod(invoice.getAccountingDate(),
+                      AccDefUtility.getCalendar(invoice.getOrganization()))
+                  .getId();
             } else if (StringUtils.equals(product.getDefaultPeriod(), NEXT_MONTH)) {
-              cPeriodId = AccDefUtility.getNextPeriod(
-                  AccDefUtility.getCurrentPeriod(invoice.getAccountingDate(),
-                      AccDefUtility.getCalendar(invoice.getOrganization()))).getId();
+              cPeriodId = AccDefUtility
+                  .getNextPeriod(AccDefUtility.getCurrentPeriod(invoice.getAccountingDate(),
+                      AccDefUtility.getCalendar(invoice.getOrganization())))
+                  .getId();
             }
           }
         } else if (!invoice.isSalesTransaction() && StringUtils.isNotEmpty(strMProductID)) {
@@ -184,12 +187,15 @@ public class SL_Invoice_Product extends SimpleCallout {
             defplantype = product.getExpplantype();
             periodnumber = product.getPeriodnumberExp().toString();
             if (StringUtils.equals(product.getDefaultPeriodExpense(), CURRENT_MONTH)) {
-              cPeriodId = AccDefUtility.getCurrentPeriod(invoice.getAccountingDate(),
-                  AccDefUtility.getCalendar(invoice.getOrganization())).getId();
+              cPeriodId = AccDefUtility
+                  .getCurrentPeriod(invoice.getAccountingDate(),
+                      AccDefUtility.getCalendar(invoice.getOrganization()))
+                  .getId();
             } else if (StringUtils.equals(product.getDefaultPeriodExpense(), NEXT_MONTH)) {
-              cPeriodId = AccDefUtility.getNextPeriod(
-                  AccDefUtility.getCurrentPeriod(invoice.getAccountingDate(),
-                      AccDefUtility.getCalendar(invoice.getOrganization()))).getId();
+              cPeriodId = AccDefUtility
+                  .getNextPeriod(AccDefUtility.getCurrentPeriod(invoice.getAccountingDate(),
+                      AccDefUtility.getCalendar(invoice.getOrganization())))
+                  .getId();
             }
           }
         }
@@ -208,23 +214,22 @@ public class SL_Invoice_Product extends SimpleCallout {
 
     // Set AUM based on default
     if (UOMUtil.isUomManagementEnabled() && StringUtils.isEmpty(strUOMProduct)) {
-      String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, invoice
-          .getTransactionDocument().getId());
+      String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID,
+          invoice.getTransactionDocument().getId());
       if (finalAUM != null) {
         info.addResult("inpcAum", finalAUM);
       }
     }
 
     // Load Product UOM in case Second UOM exists for product
-    if (StringUtils.equals(strHasSecondaryUOM, "1")
-        && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && StringUtils
-            .isNotEmpty(strUOMProduct)))) {
+    if (StringUtils.equals(strHasSecondaryUOM, "1") && (!UOMUtil.isUomManagementEnabled()
+        || (UOMUtil.isUomManagementEnabled() && StringUtils.isNotEmpty(strUOMProduct)))) {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
-                "SLOrderProduct"), Utility.getContext(this, info.vars, "#User_Client",
-                "SLOrderProduct"), 0);
+            "M_Product_UOM", "",
+            Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SLOrderProduct"),
+            Utility.getContext(this, info.vars, "#User_Client", "SLOrderProduct"), 0);
         Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SLOrderProduct", "");
         tld = comboTableData.select(false);
         comboTableData = null;

@@ -45,8 +45,9 @@ import org.openbravo.dal.core.OBContext;
 public class CheckCleanCache extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String cache = vars.getRequiredStringParameter("cache");
     boolean cached = Boolean.valueOf(cache);

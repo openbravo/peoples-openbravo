@@ -8,9 +8,11 @@
 package org.openbravo.services.webservice;
 
 public interface WebService3ImplService extends javax.xml.rpc.Service {
-    public java.lang.String getWebService3Address();
+  public java.lang.String getWebService3Address();
 
-    public org.openbravo.services.webservice.WebService3Impl getWebService3() throws javax.xml.rpc.ServiceException;
+  public org.openbravo.services.webservice.WebService3Impl getWebService3()
+      throws javax.xml.rpc.ServiceException;
 
-    public org.openbravo.services.webservice.WebService3Impl getWebService3(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
+  public org.openbravo.services.webservice.WebService3Impl getWebService3(java.net.URL portAddress)
+      throws javax.xml.rpc.ServiceException;
 }

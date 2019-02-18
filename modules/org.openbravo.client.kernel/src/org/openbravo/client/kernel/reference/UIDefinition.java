@@ -180,20 +180,22 @@ public abstract class UIDefinition {
       columnValue = rq.getRequestParameter(inpColumnName);
     } else {
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("documentno")
-          || (field.getColumn().isUseAutomaticSequence() && field.getColumn().getDBColumnName()
-              .equals("Value"))) {
-        String docTypeTarget = rq.getRequestParameter("inp"
-            + Sqlc.TransformaNombreColumna("C_DocTypeTarget_ID"));
-        if (docTypeTarget == null)
+          || (field.getColumn().isUseAutomaticSequence()
+              && field.getColumn().getDBColumnName().equals("Value"))) {
+        String docTypeTarget = rq
+            .getRequestParameter("inp" + Sqlc.TransformaNombreColumna("C_DocTypeTarget_ID"));
+        if (docTypeTarget == null) {
           docTypeTarget = "";
-        String docType = rq.getRequestParameter("inp"
-            + Sqlc.TransformaNombreColumna("C_DocType_ID"));
-        if (docType == null)
+        }
+        String docType = rq
+            .getRequestParameter("inp" + Sqlc.TransformaNombreColumna("C_DocType_ID"));
+        if (docType == null) {
           docType = "";
-        columnValue = "<"
-            + Utility.getDocumentNo(new DalConnectionProvider(false), rq.getVariablesSecureApp(),
-                field.getTab().getWindow().getId(), field.getColumn().getTable().getDBTableName(),
-                docTypeTarget, docType, false, false) + ">";
+        }
+        columnValue = "<" + Utility.getDocumentNo(new DalConnectionProvider(false),
+            rq.getVariablesSecureApp(), field.getTab().getWindow().getId(),
+            field.getColumn().getTable().getDBTableName(), docTypeTarget, docType, false, false)
+            + ">";
       } else {
         final String windowId = field.getTab().getWindow().getId();
         final String colName = field.getColumn().getDBColumnName();
@@ -231,8 +233,8 @@ public abstract class UIDefinition {
       jsnobject.put("value", createFromClassicString(columnValue));
       jsnobject.put("classicValue", columnValue);
     } catch (JSONException e) {
-      log.error("Couldn't get field property value for column "
-          + field.getColumn().getDBColumnName());
+      log.error(
+          "Couldn't get field property value for column " + field.getColumn().getDBColumnName());
     }
     return jsnobject.toString();
   }
@@ -282,16 +284,18 @@ public abstract class UIDefinition {
       for (String parameter : params) {
         String value = "";
         if (parameter.substring(0, 1).equals("#")) {
-          value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-              .getVariablesSecureApp(), parameter, field.getTab().getWindow().getId());
+          value = Utility.getContext(new DalConnectionProvider(false),
+              RequestContext.get().getVariablesSecureApp(), parameter,
+              field.getTab().getWindow().getId());
         } else {
           String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
           if (RequestContext.get().getParameterMap().containsKey(fieldId)) {
             value = RequestContext.get().getRequestParameter(fieldId);
           }
           if (value == null || value.equals("")) {
-            value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-                .getVariablesSecureApp(), parameter, field.getTab().getWindow().getId());
+            value = Utility.getContext(new DalConnectionProvider(false),
+                RequestContext.get().getVariablesSecureApp(), parameter,
+                field.getTab().getWindow().getId());
           }
         }
         ps.setObject(indP++, value);
@@ -342,8 +346,8 @@ public abstract class UIDefinition {
     try {
       UIDefinition uiDef = this;
       if (!(this instanceof DateUIDefinition)) {
-        Reference datetimeReference = OBDal.getInstance().getProxy(Reference.class,
-            DATETIME_REFERENCE_ID);
+        Reference datetimeReference = OBDal.getInstance()
+            .getProxy(Reference.class, DATETIME_REFERENCE_ID);
         uiDef = UIDefinitionController.getInstance().getUIDefinition(datetimeReference);
       }
       String columnValue = uiDef.convertToClassicString(new Date());
@@ -567,8 +571,8 @@ public abstract class UIDefinition {
    */
   public void establishGridConfigurationSettings(Field field, Optional<GCSystem> systemGC,
       Optional<GCTab> tabGC) {
-    this.gridConfigurationSettings = OBViewUtil
-        .getGridConfigurationSettings(field, systemGC, tabGC);
+    this.gridConfigurationSettings = OBViewUtil.getGridConfigurationSettings(field, systemGC,
+        tabGC);
   }
 
   // note can make sense to also enable hover of values for enums
@@ -607,7 +611,8 @@ public abstract class UIDefinition {
     try {
       String ref = field.getColumn().getReference().getId();
       boolean isListReference = LIST_REFERENCE_ID.equals(ref);
-      if (!isListReference && !field.getColumn().isMandatory() && StringUtils.isEmpty(columnValue)) {
+      if (!isListReference && !field.getColumn().isMandatory()
+          && StringUtils.isEmpty(columnValue)) {
         // non mandatory without value nor default, should only return empty value, prevent
         // everything else
         JSONObject entry = new JSONObject();
@@ -624,7 +629,8 @@ public abstract class UIDefinition {
       // entered empty value. Refer issue https://issues.openbravo.com/view.php?id=27612
       String columnName = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
       if (!isListReference && "AD_ORG_ID".equals(field.getColumn().getDBColumnName().toUpperCase())
-          && "".equals(columnValue) && vars.getStringParameter("CHANGED_COLUMN").equals(columnName)) {
+          && "".equals(columnValue)
+          && vars.getStringParameter("CHANGED_COLUMN").equals(columnName)) {
         JSONObject entry = new JSONObject();
         entry.put(JsonConstants.ID, columnValue);
         entry.put(JsonConstants.IDENTIFIER, columnValue);
@@ -737,7 +743,8 @@ public abstract class UIDefinition {
     }
   }
 
-  private FieldProvider generateTabData(List<Field> fields, Field currentField, String currentValue) {
+  private FieldProvider generateTabData(List<Field> fields, Field currentField,
+      String currentValue) {
     HashMap<String, Object> noinpDataMap = new HashMap<String, Object>();
     for (Field field : fields) {
       if (field.getColumn() == null) {
@@ -757,8 +764,9 @@ public abstract class UIDefinition {
   }
 
   public static String parseSQL(String code, ArrayList<String> colNames) {
-    if (code == null || code.trim().equals(""))
+    if (code == null || code.trim().equals("")) {
       return "";
+    }
     String token;
     String strValue = code;
     StringBuffer strOut = new StringBuffer();
@@ -766,7 +774,8 @@ public abstract class UIDefinition {
     int i = strValue.indexOf("@");
     String strAux, strAux1;
     while (i != -1) {
-      if (strValue.length() > (i + 5) && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
+      if (strValue.length() > (i + 5)
+          && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
         strValue = strValue.substring(i + 5, strValue.length());
       } else {
         // Delete the chain symbol
@@ -774,11 +783,13 @@ public abstract class UIDefinition {
         if (strAux.substring(strAux.length() - 1).equals("'")) {
           strAux = strAux.substring(0, strAux.length() - 1);
           strOut.append(strAux);
-        } else
+        } else {
           strOut.append(strValue.substring(0, i));
+        }
         strAux1 = strAux;
-        if (strAux.substring(strAux.length() - 1).equals("("))
+        if (strAux.substring(strAux.length() - 1).equals("(")) {
           strAux = strAux.substring(0, strAux.length() - 1).toUpperCase().trim();
+        }
         if (strAux.length() > 3
             && strAux.substring(strAux.length() - 3, strAux.length()).equals(" IN")) {
           strAux = " type=\"replace\" optional=\"true\" after=\"" + strAux1 + "\" text=\"'" + i
@@ -789,8 +800,9 @@ public abstract class UIDefinition {
         strValue = strValue.substring(i + 1, strValue.length());
 
         int j = strValue.indexOf("@");
-        if (j < 0)
+        if (j < 0) {
           return "";
+        }
 
         token = strValue.substring(0, j);
 
@@ -799,17 +811,19 @@ public abstract class UIDefinition {
         // modifier = token.substring(0, 1);
         // token = token.substring(1, token.length());
         // }
-        if (strAux.equals(""))
+        if (strAux.equals("")) {
           strOut.append("?");
-        else
+        } else {
           strOut.append("'" + i + "'");
+        }
         // String parameter = "<Parameter name=\"" + token + "\"" + strAux + "/>";
         // String paramElement[] = { parameter, modifier };
         colNames.add(token);// paramElement);
         strValue = strValue.substring(j + 1, strValue.length());
         strAux = strValue.trim();
-        if (strAux.length() > 0 && strAux.substring(0, 1).indexOf("'") > -1)
+        if (strAux.length() > 0 && strAux.substring(0, 1).indexOf("'") > -1) {
           strValue = strAux.substring(1, strValue.length());
+        }
       }
       i = strValue.indexOf("@");
     }

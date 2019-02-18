@@ -28,6 +28,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -58,8 +60,6 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Test class for Automatic Invoice From Goods Shipment test cases
@@ -90,15 +90,15 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
     log.info("Initializing Invoice From Shipment Tests ...");
     OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORG_ID);
     final OBContext obContext = OBContext.getOBContext();
-    final VariablesSecureApp vars = new VariablesSecureApp(obContext.getUser().getId(), obContext
-        .getCurrentClient().getId(), obContext.getCurrentOrganization().getId(), obContext
-        .getRole().getId(), obContext.getLanguage().getLanguage());
+    final VariablesSecureApp vars = new VariablesSecureApp(obContext.getUser().getId(),
+        obContext.getCurrentClient().getId(), obContext.getCurrentOrganization().getId(),
+        obContext.getRole().getId(), obContext.getLanguage().getLanguage());
     RequestContext.get().setVariableSecureApp(vars);
   }
 
   /**
-   * Generating invoice from a Goods Shipment linked to a Sales Order with invoice term
-   * "After Delivery"
+   * Generating invoice from a Goods Shipment linked to a Sales Order with invoice term "After
+   * Delivery"
    * <ol>
    * <li>Create a Sales Order with invoice term "After Delivery".</li>
    * <li>Adds two lines of product. Book the order.</li>
@@ -113,8 +113,8 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
     OBContext.setAdminMode();
     try {
 
-      final Product product = TestUtils
-          .cloneProduct(T_SHIRTS_PRODUCT_ID, "InvoiceFromShipment_001");
+      final Product product = TestUtils.cloneProduct(T_SHIRTS_PRODUCT_ID,
+          "InvoiceFromShipment_001");
       final Order salesOrder = createSalesOrderWithInvoiceTerm(SALES_ORDER,
           "InvoiceFromShipment_001", AFTER_DELIVERY);
       final OrderLine orderLine = getOrderLineByLineNo(salesOrder, 10L);
@@ -143,8 +143,8 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
   }
 
   /**
-   * Generating invoice from a Goods Shipment linked to a Sales Order with invoice term
-   * "After Order Delivery"
+   * Generating invoice from a Goods Shipment linked to a Sales Order with invoice term "After Order
+   * Delivery"
    * <ol>
    * <li>Create a Sales Order with invoice term "After Order Delivery".</li>
    * <li>Adds two lines of product. Book the order.</li>
@@ -361,8 +361,10 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
    * <li>Create a second Sales Order with invoice term “After Order Delivery”.</li>
    * <li>Adds one line of product. Book the order.</li>
    * <li>Create a Goods Shipment.</li>
-   * <li>Adds the line from the first order. Set movement quantity less than the proposed value.</li>
-   * <li>Adds the line from the second order. Set movement quantity less than the proposed value.</li>
+   * <li>Adds the line from the first order. Set movement quantity less than the proposed
+   * value.</li>
+   * <li>Adds the line from the second order. Set movement quantity less than the proposed
+   * value.</li>
    * <li>Complete the document invoicing if possible.</li>
    * <li>Verify an invoice was generated containing just the line from the first order</li>
    * </ol>
@@ -579,8 +581,8 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
   public void invoiceFromShipment_008() {
     OBContext.setAdminMode();
     try {
-      final Product product = TestUtils
-          .cloneProduct(T_SHIRTS_PRODUCT_ID, "InvoiceFromShipment_008");
+      final Product product = TestUtils.cloneProduct(T_SHIRTS_PRODUCT_ID,
+          "InvoiceFromShipment_008");
       final Order salesOrder = createSalesOrderWithInvoiceTerm(SALES_ORDER,
           "InvoiceFromShipment_008", AFTER_DELIVERY);
       final OrderLine orderLine = getOrderLineByLineNo(salesOrder, 10L);
@@ -615,8 +617,8 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
   }
 
   /**
-   * Generating invoice from a Goods Shipment linked to a Sales Order with invoice term
-   * "After Delivery" and specific invoice date and price list
+   * Generating invoice from a Goods Shipment linked to a Sales Order with invoice term "After
+   * Delivery" and specific invoice date and price list
    * <ol>
    * <li>Create a Sales Order with invoice term "After Delivery".</li>
    * <li>Adds two lines of product. Book the order.</li>
@@ -633,8 +635,8 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
     OBContext.setAdminMode();
     try {
 
-      final Product product = TestUtils
-          .cloneProduct(T_SHIRTS_PRODUCT_ID, "InvoiceFromShipment_009");
+      final Product product = TestUtils.cloneProduct(T_SHIRTS_PRODUCT_ID,
+          "InvoiceFromShipment_009");
       final Order salesOrder = createSalesOrderWithInvoiceTerm(SALES_ORDER,
           "InvoiceFromShipment_009", AFTER_DELIVERY);
       final OrderLine orderLine = getOrderLineByLineNo(salesOrder, 10L);
@@ -668,8 +670,8 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
   }
 
   /**
-   * Generating invoice from a Goods Shipment linked to a Sales Order with invoice term
-   * "After Delivery" and specific invoice date, price list and status draft
+   * Generating invoice from a Goods Shipment linked to a Sales Order with invoice term "After
+   * Delivery" and specific invoice date, price list and status draft
    * <ol>
    * <li>Create a Sales Order with invoice term "After Delivery".</li>
    * <li>Adds two lines of product. Book the order.</li>
@@ -686,8 +688,8 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
     OBContext.setAdminMode();
     try {
 
-      final Product product = TestUtils
-          .cloneProduct(T_SHIRTS_PRODUCT_ID, "InvoiceFromShipment_010");
+      final Product product = TestUtils.cloneProduct(T_SHIRTS_PRODUCT_ID,
+          "InvoiceFromShipment_010");
       final Order salesOrder = createSalesOrderWithInvoiceTerm(SALES_ORDER,
           "InvoiceFromShipment_010", AFTER_DELIVERY);
       final OrderLine orderLine = getOrderLineByLineNo(salesOrder, 10L);
@@ -751,7 +753,8 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
     return shipment;
   }
 
-  private void setProductInShipmentLine(final ShipmentInOutLine shipmentLine, final Product product) {
+  private void setProductInShipmentLine(final ShipmentInOutLine shipmentLine,
+      final Product product) {
     shipmentLine.setProduct(product);
   }
 
@@ -784,8 +787,8 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
 
   private ShipmentInOutLine addLineToShipment(final ShipmentInOut shipment) {
     int numberOfLines = shipment.getMaterialMgmtShipmentInOutLineList().size();
-    final ShipmentInOutLine shipmentLine = shipment.getMaterialMgmtShipmentInOutLineList().get(
-        numberOfLines - 1);
+    final ShipmentInOutLine shipmentLine = shipment.getMaterialMgmtShipmentInOutLineList()
+        .get(numberOfLines - 1);
     final ShipmentInOutLine newShipmentLine = TestUtils.cloneReceiptShipmentLine(shipmentLine,
         shipment);
     newShipmentLine.setLineNo(getMaxLineNo(shipment) + 10);
@@ -815,8 +818,8 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
 
   private ShipmentInOutLine getShipmentLineByLineNo(final ShipmentInOut shipment, long lineNo) {
     final String hql = "as sl where sl.shipmentReceipt.id = :shipmentId and sl.lineNo = :lineNo";
-    final OBQuery<ShipmentInOutLine> query = OBDal.getInstance().createQuery(
-        ShipmentInOutLine.class, hql);
+    final OBQuery<ShipmentInOutLine> query = OBDal.getInstance()
+        .createQuery(ShipmentInOutLine.class, hql);
     query.setNamedParameter("shipmentId", shipment.getId());
     query.setNamedParameter("lineNo", lineNo);
     query.setMaxResult(1);
@@ -844,9 +847,11 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
     newInvoice.setInvoiceDate(shipment.getMovementDate());
     final String documentNo = Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
         new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
-        Invoice.TABLE_NAME, newInvoice.getTransactionDocument() == null ? "" : newInvoice
-            .getTransactionDocument().getId(), newInvoice.getDocumentType() == null ? ""
-            : newInvoice.getDocumentType().getId(), false, true);
+        Invoice.TABLE_NAME,
+        newInvoice.getTransactionDocument() == null ? ""
+            : newInvoice.getTransactionDocument().getId(),
+        newInvoice.getDocumentType() == null ? "" : newInvoice.getDocumentType().getId(), false,
+        true);
     newInvoice.setDocumentNo(documentNo);
     OBDal.getInstance().save(newInvoice);
     OBDal.getInstance().flush();
@@ -875,12 +880,13 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       line.put("lineNo", shipmentInOutLine.getLineNo());
       line.put("movementQuantity", invoicedQuantity.toString());
       line.put("operativeQuantity",
-          shipmentInOutLine.getOperativeQuantity() == null ? shipmentInOutLine
-              .getMovementQuantity().toString() : shipmentInOutLine.getOperativeQuantity()
-              .toString());
+          shipmentInOutLine.getOperativeQuantity() == null
+              ? shipmentInOutLine.getMovementQuantity().toString()
+              : shipmentInOutLine.getOperativeQuantity().toString());
       line.put("id", shipmentInOutLine.getId());
-      line.put("operativeUOM", shipmentInOutLine.getOperativeUOM() == null ? shipmentInOutLine
-          .getUOM().getId() : shipmentInOutLine.getOperativeUOM().getId());
+      line.put("operativeUOM",
+          shipmentInOutLine.getOperativeUOM() == null ? shipmentInOutLine.getUOM().getId()
+              : shipmentInOutLine.getOperativeUOM().getId());
       line.put("operativeUOM$_identifier",
           shipmentInOutLine.getOperativeUOM() == null ? shipmentInOutLine.getUOM().getIdentifier()
               : shipmentInOutLine.getOperativeUOM().getIdentifier());

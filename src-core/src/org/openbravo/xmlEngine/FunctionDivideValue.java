@@ -25,6 +25,7 @@ class FunctionDivideValue extends FunctionEvaluationValue {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     log4jFunctionDivideValue.debug("Arg2: " + arg2Value.printSimple());
     log4jFunctionDivideValue.debug("Arg1: " + arg1Value.printSimple());
@@ -35,8 +36,8 @@ class FunctionDivideValue extends FunctionEvaluationValue {
     } else {
       // divide uses exception when divisor=0 so catch and wrap with strTextDividedByZero
       try {
-        BigDecimal division = new BigDecimal(arg1Value.printSimple()).divide(new BigDecimal(
-            arg2Value.printSimple()), 12, RoundingMode.HALF_UP);
+        BigDecimal division = new BigDecimal(arg1Value.printSimple())
+            .divide(new BigDecimal(arg2Value.printSimple()), 12, RoundingMode.HALF_UP);
         return functionTemplate.printFormatOutput(division);
       } catch (ArithmeticException a) {
         return XmlEngine.strTextDividedByZero;
@@ -44,6 +45,7 @@ class FunctionDivideValue extends FunctionEvaluationValue {
     }
   }
 
+  @Override
   public String printSimple() {
     log4jFunctionDivideValue.debug("Arg2: " + arg2Value.printSimple());
     log4jFunctionDivideValue.debug("Arg1: " + arg1Value.printSimple());
@@ -54,8 +56,8 @@ class FunctionDivideValue extends FunctionEvaluationValue {
     } else {
       // divide uses exception when divisor=0 so catch and wrap with strTextDividedByZero
       try {
-        BigDecimal division = new BigDecimal(arg1Value.printSimple()).divide(new BigDecimal(
-            arg2Value.printSimple()), 12, RoundingMode.HALF_UP);
+        BigDecimal division = new BigDecimal(arg1Value.printSimple())
+            .divide(new BigDecimal(arg2Value.printSimple()), 12, RoundingMode.HALF_UP);
         return functionTemplate.printFormatSimple(division);
       } catch (ArithmeticException a) {
         return XmlEngine.strTextDividedByZero;

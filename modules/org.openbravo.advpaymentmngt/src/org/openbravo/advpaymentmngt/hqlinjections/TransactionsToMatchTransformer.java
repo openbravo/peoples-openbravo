@@ -49,7 +49,8 @@ public class TransactionsToMatchTransformer extends HqlQueryTransformer {
     Date date;
     try {
       OBContext.setAdminMode(true);
-      date = OBDal.getInstance().get(FIN_BankStatementLine.class, bankStatementLineId)
+      date = OBDal.getInstance()
+          .get(FIN_BankStatementLine.class, bankStatementLineId)
           .getTransactionDate();
     } catch (Exception e) {
       date = new Date();

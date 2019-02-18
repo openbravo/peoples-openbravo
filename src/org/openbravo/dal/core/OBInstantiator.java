@@ -60,6 +60,7 @@ public class OBInstantiator implements Instantiator {
   }
 
   /** Instantiate a new instance of the entity. */
+  @Override
   public Object instantiate() {
     return OBProvider.getInstance().get(entityName);
   }
@@ -71,6 +72,7 @@ public class OBInstantiator implements Instantiator {
    * @param id
    *          the id to set in the instance
    */
+  @Override
   public Object instantiate(Serializable id) {
     if (mappedClass != null) {
       final Identifiable obObject = (Identifiable) OBProvider.getInstance().get(mappedClass);
@@ -94,6 +96,7 @@ public class OBInstantiator implements Instantiator {
    *          the object to compare with the Entity managed here
    * @return true if the object is an Entity managed by this class
    */
+  @Override
   public boolean isInstance(Object object) {
     if (object instanceof Identifiable) {
       return entityName.equals(((Identifiable) object).getEntityName());

@@ -48,51 +48,61 @@ class XmlThreeValue implements XmlComponentValue {
 
   }
 
+  @Override
   public String print() {
     String strReturn = "";
     log4jXmlThreeValue.debug("print");
-    if (xmlBegin != null)
+    if (xmlBegin != null) {
       strReturn = strReturn.concat(xmlBegin.print());
-    else if (xmlThreeTemplate.printStringBegin() != null)
+    } else if (xmlThreeTemplate.printStringBegin() != null) {
       strReturn = strReturn.concat(xmlThreeTemplate.printStringBegin());
+    }
     if (xmlMiddle != null) {
       String xmlMiddlePrint = xmlMiddle.print();
-      if (xmlMiddlePrint != null)
+      if (xmlMiddlePrint != null) {
         strReturn = strReturn.concat(xmlMiddlePrint);
+      }
     }
-    if (xmlEnd != null)
+    if (xmlEnd != null) {
       strReturn = strReturn.concat(xmlEnd.print());
-    else if (xmlThreeTemplate.printStringEnd() != null)
+    } else if (xmlThreeTemplate.printStringEnd() != null) {
       strReturn = strReturn.concat(xmlThreeTemplate.printStringEnd());
+    }
     log4jXmlThreeValue.debug("print return: " + strReturn);
     return strReturn;
   }
 
+  @Override
   public String printPrevious() {
     String strReturn = "";
     log4jXmlThreeValue.debug("printPrevious");
-    if (xmlBegin != null)
+    if (xmlBegin != null) {
       strReturn = strReturn.concat(xmlBegin.printPrevious());
-    else if (xmlThreeTemplate.printStringBegin() != null)
+    } else if (xmlThreeTemplate.printStringBegin() != null) {
       strReturn = strReturn.concat(xmlThreeTemplate.printStringBegin());
+    }
     if (xmlMiddle != null) {
       String strMiddle = xmlMiddle.printPrevious();
       log4jXmlThreeValue.debug("xmlMiddle: " + strReturn);
-      if (strMiddle != null)
+      if (strMiddle != null) {
         strReturn = strReturn.concat(strMiddle);
+      }
     }
-    if (xmlEnd != null)
+    if (xmlEnd != null) {
       strReturn = strReturn.concat(xmlEnd.printPrevious());
-    else if (xmlThreeTemplate.printStringEnd() != null)
+    } else if (xmlThreeTemplate.printStringEnd() != null) {
       strReturn = strReturn.concat(xmlThreeTemplate.printStringEnd());
+    }
     log4jXmlThreeValue.debug("print previous return: " + strReturn);
     return strReturn;
   }
 
+  @Override
   public String printSimple() {
     return print();
   }
 
+  @Override
   public String printPreviousSimple() {
     return printPrevious();
   }

@@ -54,9 +54,9 @@ public class SL_SequenceProduct_Product extends SimpleCallout {
     FieldProvider[] tld = null;
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
-          "M_Product_UOM", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
-              info.getWindowId()), Utility.getContext(this, info.vars, "#User_Client",
-              info.getWindowId()), 0);
+          "M_Product_UOM", "",
+          Utility.getContext(this, info.vars, "#AccessibleOrgTree", info.getWindowId()),
+          Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       tld = comboTableData.select(false);
       comboTableData = null;

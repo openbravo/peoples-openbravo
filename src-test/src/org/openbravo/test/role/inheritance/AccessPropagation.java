@@ -94,9 +94,8 @@ public class AccessPropagation extends WeldBaseTest {
       role = RoleInheritanceTestUtils.createRole("role", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
       String roleId = role.getId();
-      template = RoleInheritanceTestUtils.createRole("template",
-          RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
-          true);
+      template = RoleInheritanceTestUtils.createRole("template", RoleInheritanceTestUtils.CLIENT_ID,
+          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
       String templateId = template.getId();
 
       // Add inheritance

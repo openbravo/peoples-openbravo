@@ -41,8 +41,10 @@ public class SE_ElementValue_AccountSign extends SimpleCallout {
     final String strElementId = info.getStringParameter("inpcElementId", null);
     Element element = OBDal.getInstance().get(Element.class, strElementId);
     if (element.getFinancialMgmtAcctSchemaElementList().size() == 1) {
-      centrallyMaintained = element.getFinancialMgmtAcctSchemaElementList().get(0)
-          .getAccountingSchema().isCentralMaintenance();
+      centrallyMaintained = element.getFinancialMgmtAcctSchemaElementList()
+          .get(0)
+          .getAccountingSchema()
+          .isCentralMaintenance();
     }
     if (!centrallyMaintained) {
       if (strAccountType.equals(ACCOUNTTYPE_ASSET) || strAccountType.equals(ACCOUNTTYPE_EXPENSE)) {

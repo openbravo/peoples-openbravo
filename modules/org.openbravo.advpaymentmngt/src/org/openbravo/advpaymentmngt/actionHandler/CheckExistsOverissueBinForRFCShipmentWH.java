@@ -21,13 +21,13 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.Locator;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class CheckExistsOverissueBinForRFCShipmentWH extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -41,8 +41,8 @@ public class CheckExistsOverissueBinForRFCShipmentWH extends BaseActionHandler {
       final String warehouseId = jsonData.getString("warehouseId");
       Locator overIssueBin = getOverissueBinForWarehouse(warehouseId);
       result.put("overissueBin", overIssueBin != null ? overIssueBin.getId() : "");
-      result
-          .put("storageBin$_identifier", overIssueBin != null ? overIssueBin.getIdentifier() : "");
+      result.put("storageBin$_identifier",
+          overIssueBin != null ? overIssueBin.getIdentifier() : "");
     } catch (Exception e) {
       log.error("Error parsing JSON Object.", e);
       try {

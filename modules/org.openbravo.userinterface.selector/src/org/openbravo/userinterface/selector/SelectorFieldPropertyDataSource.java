@@ -61,13 +61,14 @@ public class SelectorFieldPropertyDataSource extends ModelDataSourceService {
    * @see org.openbravo.service.datasource.ModelDataSourceService#getBaseEntity(java.util.Map)
    */
   // gets the base entity on the basis of the selector definition
+  @Override
   protected Entity getBaseEntity(Map<String, String> parameters) {
     final String selectorId = parameters.get(SELECTOR_FIELD);
     if (selectorId == null) {
       return super.getBaseEntity(parameters);
     }
-    final org.openbravo.userinterface.selector.Selector selector = OBDal.getInstance().get(
-        org.openbravo.userinterface.selector.Selector.class, selectorId);
+    final org.openbravo.userinterface.selector.Selector selector = OBDal.getInstance()
+        .get(org.openbravo.userinterface.selector.Selector.class, selectorId);
     if (selector == null) {
       // TODO: log this?
       return super.getBaseEntity(parameters);
@@ -85,6 +86,7 @@ public class SelectorFieldPropertyDataSource extends ModelDataSourceService {
     return super.getBaseEntity(parameters);
   }
 
+  @Override
   protected List<Property> getEntityProperties(Entity entity) {
     final List<Property> entityProperties = super.getEntityProperties(entity);
     final List<Property> toRemove = new ArrayList<Property>();

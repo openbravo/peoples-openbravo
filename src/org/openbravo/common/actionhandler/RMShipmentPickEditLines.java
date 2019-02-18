@@ -65,8 +65,8 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
       final String strInOutId = jsonRequest.getString("M_InOut_ID");
       ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
       if (inOut != null) {
-        List<String> idList = OBDao.getIDListFromOBObject(inOut
-            .getMaterialMgmtShipmentInOutLineList());
+        List<String> idList = OBDao
+            .getIDListFromOBObject(inOut.getMaterialMgmtShipmentInOutLineList());
         createInOutLines(jsonRequest, idList);
       }
 
@@ -93,7 +93,8 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
   }
 
   private void createInOutLines(JSONObject jsonRequest, List<String> idList) throws JSONException {
-    JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+    JSONArray selectedLines = jsonRequest.getJSONObject("_params")
+        .getJSONObject("grid")
         .getJSONArray("_selection");
     final String strInOutId = jsonRequest.getString("M_InOut_ID");
     ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
@@ -117,22 +118,22 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
       if (notExistsShipmentLine) {
         newInOutLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
       } else {
-        newInOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-            selectedLine.get("goodsShipmentLine"));
+        newInOutLine = OBDal.getInstance()
+            .get(ShipmentInOutLine.class, selectedLine.get("goodsShipmentLine"));
         idList.remove(selectedLine.get("goodsShipmentLine"));
       }
       newInOutLine.setShipmentReceipt(inOut);
       newInOutLine.setOrganization(inOut.getOrganization());
       newInOutLine.setLineNo((i + 1L) * 10L);
 
-      OrderLine orderLine = OBDal.getInstance().get(OrderLine.class,
-          selectedLine.getString("orderLine"));
+      OrderLine orderLine = OBDal.getInstance()
+          .get(OrderLine.class, selectedLine.getString("orderLine"));
       if (orderLine.getSalesOrder().getOrderReference() != null) {
         rmVendorRefs.add(orderLine.getSalesOrder().getOrderReference());
       }
       newInOutLine.setSalesOrderLine(orderLine);
-      newInOutLine.setStorageBin(OBDal.getInstance().get(Locator.class,
-          selectedLine.getString("storageBin")));
+      newInOutLine.setStorageBin(
+          OBDal.getInstance().get(Locator.class, selectedLine.getString("storageBin")));
       newInOutLine.setProduct(orderLine.getProduct());
       newInOutLine.setAttributeSetValue(orderLine.getAttributeSetValue());
       newInOutLine.setUOM(orderLine.getUOM());
@@ -144,8 +145,7 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
           UOM uom = OBDal.getInstance().get(UOM.class, selectedLine.getString("returnedUOM"));
           newInOutLine.setOperativeUOM(uom);
           newInOutLine.setOperativeQuantity(qtyReceived.negate());
-          if (selectedLine.getString("alternativeUOM")
-              .equals(selectedLine.getString("returnedUOM"))
+          if (selectedLine.getString("alternativeUOM").equals(selectedLine.getString("returnedUOM"))
               && !selectedLine.getString("alternativeUOM").equals(selectedLine.getString("uOM"))) {
             qtyReceived = UOMUtil.getConvertedQty(selectedLine.getString("product"), qtyReceived,
                 selectedLine.getString("alternativeUOM"));

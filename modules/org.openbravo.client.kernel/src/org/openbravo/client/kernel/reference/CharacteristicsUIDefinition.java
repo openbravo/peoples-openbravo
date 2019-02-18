@@ -119,7 +119,8 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
   @Override
   public String getFilterEditorPropertiesProperty(Field field) {
     String append = "";
-    Boolean showFkDropdownUnfiltered = (Boolean) readGridConfigurationSetting("showFkDropdownUnfiltered");
+    Boolean showFkDropdownUnfiltered = (Boolean) readGridConfigurationSetting(
+        "showFkDropdownUnfiltered");
     if (Boolean.TRUE.equals(showFkDropdownUnfiltered)) {
       append = append + ", showFkDropdownUnfiltered: " + showFkDropdownUnfiltered.toString();
     }
@@ -131,9 +132,9 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
 
     try {
       String levelsPreference = Preferences.getPreferenceValue("ShowProductCharacteristicsParents",
-          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), null);
+          true, OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null);
       levels = Integer.parseInt(levelsPreference);
     } catch (PropertyNotFoundException ignore) {
     } catch (Exception e) {
@@ -155,15 +156,15 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
         // Find parent
         OBCriteria<TreeNode> treeNodeCri = OBDal.getInstance().createCriteria(TreeNode.class);
         treeNodeCri.createAlias(TreeNode.PROPERTY_TREE, "tree");
-        treeNodeCri.add(Restrictions.eq("tree." + Tree.PROPERTY_CLIENT, OBContext.getOBContext()
-            .getCurrentClient()));
+        treeNodeCri.add(Restrictions.eq("tree." + Tree.PROPERTY_CLIENT,
+            OBContext.getOBContext().getCurrentClient()));
         treeNodeCri.add(Restrictions.eq("tree." + Tree.PROPERTY_TYPEAREA, "CH"));
         treeNodeCri.add(Restrictions.eq(TreeNode.PROPERTY_NODE, currentCharValue.getId()));
         List<TreeNode> treeNodeList = treeNodeCri.list();
         if (treeNodeList.size() == 1 && !treeNodeList.get(0).getReportSet().equals("0")) {
           // Parent Exists
-          currentCharValue = OBDal.getInstance().get(CharacteristicValue.class,
-              treeNodeList.get(0).getReportSet());
+          currentCharValue = OBDal.getInstance()
+              .get(CharacteristicValue.class, treeNodeList.get(0).getReportSet());
           value = currentCharValue.getIdentifier() + " / " + value;
           existsParent = true;
         }

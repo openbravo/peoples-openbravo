@@ -51,10 +51,10 @@ public class SelectorUIReference extends UIReference {
     // TODO: add support for datasource field
     if (selector.getTable() != null) {
       if (selector.getValuefield() != null && !selector.isCustomQuery()) {
-        final Entity startEntity = ModelProvider.getInstance().getEntity(
-            selector.getTable().getName());
-        final Property referedProperty = DalUtil.getPropertyFromPath(startEntity, selector
-            .getValuefield().getProperty());
+        final Entity startEntity = ModelProvider.getInstance()
+            .getEntity(selector.getTable().getName());
+        final Property referedProperty = DalUtil.getPropertyFromPath(startEntity,
+            selector.getValuefield().getProperty());
         return referedProperty.getEntity().getTableName();
       } else {
         return selector.getTable().getDBTableName();
@@ -66,6 +66,7 @@ public class SelectorUIReference extends UIReference {
     return null;
   }
 
+  @Override
   public void setComboTableDataIdentifier(ComboTableData comboTableData, String tableName,
       FieldProvider field) throws Exception {
     OBContext.setAdminMode();
@@ -77,8 +78,8 @@ public class SelectorUIReference extends UIReference {
         if (selectorTableName != null) {
           String fieldName = field == null ? "" : field.getField("name");
           String parentFieldName = fieldName;
-          String name = ((fieldName != null && !fieldName.equals("")) ? fieldName : comboTableData
-              .getObjectName());
+          String name = ((fieldName != null && !fieldName.equals("")) ? fieldName
+              : comboTableData.getObjectName());
           /*
            * if the column name is available in selector use that for comparison as it is the column
            * that is going to be saved. Solves issues
@@ -98,8 +99,8 @@ public class SelectorUIReference extends UIReference {
 
           int myIndex = comboTableData.index++;
 
-          ComboTableQueryData trd[] = ComboTableQueryData.identifierColumns(
-              comboTableData.getPool(), tableDirName);
+          ComboTableQueryData trd[] = ComboTableQueryData
+              .identifierColumns(comboTableData.getPool(), tableDirName);
           comboTableData.addSelectField("td" + myIndex + "." + name, "ID");
 
           String tables = tableDirName + " td" + myIndex;
@@ -112,22 +113,25 @@ public class SelectorUIReference extends UIReference {
               tables += "AND td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER + ")";
             }
           } else {
-            comboTableData.addWhereField("td" + myIndex + ".AD_Client_ID IN ("
-                + CLIENT_LIST_PARAM_HOLDER + ")", "CLIENT_LIST");
+            comboTableData.addWhereField(
+                "td" + myIndex + ".AD_Client_ID IN (" + CLIENT_LIST_PARAM_HOLDER + ")",
+                "CLIENT_LIST");
             if (!comboTableData.isAllowedCrossOrgReference()) {
-              comboTableData.addWhereField("td" + myIndex + ".AD_Org_ID IN ("
-                  + ORG_LIST_PARAM_HOLDER + ")", "ORG_LIST");
+              comboTableData.addWhereField(
+                  "td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER + ")", "ORG_LIST");
             }
           }
           comboTableData.addFromField(tables, "td" + myIndex);
           if (tableName == null || tableName.equals("")) {
             comboTableData.parseValidation();
-            comboTableData.addWhereField("(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + "."
-                + name + " = (?) )", "ISACTIVE");
+            comboTableData.addWhereField(
+                "(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + "." + name + " = (?) )",
+                "ISACTIVE");
             comboTableData.addWhereParameter("@ACTUAL_VALUE@", "ACTUAL_VALUE", "ISACTIVE");
           }
-          for (int i = 0; i < trd.length; i++)
+          for (int i = 0; i < trd.length; i++) {
             comboTableData.identifier("td" + myIndex, trd[i]);
+          }
           comboTableData.addOrderByField("2");
         }
       } else {

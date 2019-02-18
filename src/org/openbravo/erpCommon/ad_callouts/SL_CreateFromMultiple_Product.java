@@ -37,18 +37,21 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("CHANGED: " + strChanged);
+      }
       String strLocator = vars.getStringParameter("inpmProductId_LOC");
       String strQty = vars.getNumericParameter("inpmProductId_QTY");
       String strUOM = vars.getStringParameter("inpmProductId_UOM");
@@ -67,8 +70,9 @@ public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strLocator,
@@ -76,10 +80,12 @@ public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
       String strMProductID, String strIsSOTrx, String strWharehouse, String strTabId)
       throws IOException, ServletException {
     String localStrPUOM = strPUOM;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut")
+        .createXmlDocument();
 
     StringBuffer resultado = new StringBuffer();
     resultado.append("var frameDefault='frameButton';\n\n");
@@ -103,15 +109,15 @@ public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
     String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
     resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
     resultado.append("new Array(\"inpmProductUomId\", ");
-    if (localStrPUOM.startsWith("\""))
+    if (localStrPUOM.startsWith("\"")) {
       localStrPUOM = localStrPUOM.substring(1, localStrPUOM.length() - 1);
+    }
     if (vars.getLanguage().equals("en_US")) {
       FieldProvider[] tld = null;
       try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "SLCreateFromMultipleProduct"), Utility.getContext(this, vars, "#User_Client",
-                "SLCreateFromMultipleProduct"), 0);
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "", "M_Product_UOM",
+            "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLCreateFromMultipleProduct"),
+            Utility.getContext(this, vars, "#User_Client", "SLCreateFromMultipleProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLCreateFromMultipleProduct",
             "");
         tld = comboTableData.select(false);
@@ -126,20 +132,21 @@ public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
           resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
               + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
               + (tld[i].getField("id").equalsIgnoreCase(localStrPUOM) ? "true" : "false") + "\")");
-          if (i < tld.length - 1)
+          if (i < tld.length - 1) {
             resultado.append(",\n");
+          }
         }
         resultado.append("\n)");
-      } else
+      } else {
         resultado.append("null");
+      }
       resultado.append("\n),");
     } else {
       FieldProvider[] tld = null;
       try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "SLCreateFromMultipleProduct"), Utility.getContext(this, vars, "#User_Client",
-                "SLCreateFromMultipleProduct"), 0);
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "", "M_Product_UOM",
+            "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLCreateFromMultipleProduct"),
+            Utility.getContext(this, vars, "#User_Client", "SLCreateFromMultipleProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "SLCreateFromMultipleProduct",
             "");
         tld = comboTableData.select(false);
@@ -154,12 +161,14 @@ public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
           resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
               + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
               + (tld[i].getField("id").equalsIgnoreCase(localStrPUOM) ? "true" : "false") + "\")");
-          if (i < tld.length - 1)
+          if (i < tld.length - 1) {
             resultado.append(",\n");
+          }
         }
         resultado.append("\n)");
-      } else
+      } else {
         resultado.append("null");
+      }
       resultado.append("\n),");
     }
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),\n");
@@ -167,8 +176,9 @@ public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
 
     resultado.append(");");
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Array: " + resultado.toString());
+    }
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "frameButton");
     response.setContentType("text/html; charset=UTF-8");

@@ -57,15 +57,16 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
       // instead because it always contains the id of the selected order.
       // Issue 20585: https://issues.openbravo.com/view.php?id=20585
       final String strPaymentProposalId = jsonRequest.getString("Fin_Payment_Proposal_ID");
-      FIN_PaymentProposal paymentProposal = OBDal.getInstance().get(FIN_PaymentProposal.class,
-          strPaymentProposalId);
+      FIN_PaymentProposal paymentProposal = OBDal.getInstance()
+          .get(FIN_PaymentProposal.class, strPaymentProposalId);
       final String strPaymentMethodId = jsonRequest.getString("inpfinPaymentmethodId");
-      FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-          strPaymentMethodId);
+      FIN_PaymentMethod paymentMethod = OBDal.getInstance()
+          .get(FIN_PaymentMethod.class, strPaymentMethodId);
 
-      List<String> idList = OBDao.getIDListFromOBObject(paymentProposal
-          .getFINPaymentPropDetailList());
-      HashMap<String, String> map = createPaymentProposalDetails(jsonRequest, paymentMethod, idList);
+      List<String> idList = OBDao
+          .getIDListFromOBObject(paymentProposal.getFINPaymentPropDetailList());
+      HashMap<String, String> map = createPaymentProposalDetails(jsonRequest, paymentMethod,
+          idList);
       jsonRequest = new JSONObject();
 
       JSONObject errorMessage = new JSONObject();
@@ -108,8 +109,8 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
     JSONObject grid = jsonRequest.getJSONObject("_params").getJSONObject("grid");
     JSONArray selectedLines = grid.getJSONArray("_selection");
     final String strPaymentProposalId = jsonRequest.getString("Fin_Payment_Proposal_ID");
-    FIN_PaymentProposal paymentProposal = OBDal.getInstance().get(FIN_PaymentProposal.class,
-        strPaymentProposalId);
+    FIN_PaymentProposal paymentProposal = OBDal.getInstance()
+        .get(FIN_PaymentProposal.class, strPaymentProposalId);
     // if no lines selected don't do anything.
     if (selectedLines.length() == 0) {
       removeNonSelectedLines(idList, paymentProposal);
@@ -124,8 +125,8 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
       BigDecimal paidAmount = new BigDecimal(selectedLine.getString("payment"));
 
       if (paidAmount.compareTo(BigDecimal.ZERO) != 0) {
-        FIN_PaymentMethod linePaymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-            selectedLine.getString("paymentMethod"));
+        FIN_PaymentMethod linePaymentMethod = OBDal.getInstance()
+            .get(FIN_PaymentMethod.class, selectedLine.getString("paymentMethod"));
         if (!paymentMethod.equals(linePaymentMethod)) {
           differentPaymentMethod = "true";
         }
@@ -145,8 +146,8 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
         newPPD.setCreatedBy(paymentProposal.getCreatedBy());
         newPPD.setUpdatedBy(paymentProposal.getUpdatedBy());
         newPPD.setFinPaymentProposal(paymentProposal);
-        newPPD.setFINPaymentScheduledetail(OBDal.getInstance().get(FIN_PaymentScheduleDetail.class,
-            selectedLine.getString("paymentScheduleDetail")));
+        newPPD.setFINPaymentScheduledetail(OBDal.getInstance()
+            .get(FIN_PaymentScheduleDetail.class, selectedLine.getString("paymentScheduleDetail")));
         BigDecimal difference = new BigDecimal(selectedLine.getString("difference"));
         boolean writeOff = selectedLine.getString("writeoff").equals("true");
         newPPD.setAmount(paidAmount);

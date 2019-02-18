@@ -57,8 +57,8 @@ class UpdateProductAndAttributes implements CopyFromOrdersProcessImplementationI
 
     // Update the attributes
     if (isInstanceAttribute(orderLine.getAttributeSetValue())) {
-      AttributeSetInstance newAttributeSetInstance = copyAttributeSetValue(orderLine
-          .getAttributeSetValue());
+      AttributeSetInstance newAttributeSetInstance = copyAttributeSetValue(
+          orderLine.getAttributeSetValue());
       newOrderLine.setAttributeSetValue(newAttributeSetInstance);
     }
   }
@@ -84,7 +84,8 @@ class UpdateProductAndAttributes implements CopyFromOrdersProcessImplementationI
         break;
       }
     }
-    return (attributeSet.isLot() || attributeSet.isSerialNo() || attributeSet.isExpirationDate() || hasInstanceAttribute);
+    return (attributeSet.isLot() || attributeSet.isSerialNo() || attributeSet.isExpirationDate()
+        || hasInstanceAttribute);
   }
 
   private AttributeSetInstance copyAttributeSetValue(final AttributeSetInstance attributeSetValue) {
@@ -94,9 +95,10 @@ class UpdateProductAndAttributes implements CopyFromOrdersProcessImplementationI
     return newAttributeSetInstance;
   }
 
-  private AttributeSetInstance copyAttributeSetInstance(final AttributeSetInstance attributeSetValue) {
-    AttributeSetInstance newAttributeSetInstance = OBProvider.getInstance().get(
-        AttributeSetInstance.class);
+  private AttributeSetInstance copyAttributeSetInstance(
+      final AttributeSetInstance attributeSetValue) {
+    AttributeSetInstance newAttributeSetInstance = OBProvider.getInstance()
+        .get(AttributeSetInstance.class);
     newAttributeSetInstance.setAttributeSet(attributeSetValue.getAttributeSet());
     newAttributeSetInstance.setSerialNo(attributeSetValue.getSerialNo());
     newAttributeSetInstance.setLot(attributeSetValue.getLot());

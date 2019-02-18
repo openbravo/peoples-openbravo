@@ -58,8 +58,9 @@ public class RTLSkin {
 
     if (argv.length != 2) {
       log4j.error("Usage: java RTLSkin pathRTLSkinFolder pathLTRSkinFolder");
-      for (int i = 0; i < argv.length; i++)
+      for (int i = 0; i < argv.length; i++) {
         log4j.error(i + "- " + argv[i]);
+      }
       return;
     }
     srcDirRTLSkin = argv[0];
@@ -189,9 +190,10 @@ public class RTLSkin {
         relativePath = prevRelativePath;
       } else {
         try {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug(list[i] + " Parent: " + fileItem.getParent() + " getName() "
                 + fileItem.getName() + " canonical: " + fileItem.getCanonicalPath());
+          }
           if (folderContentType == "RTL") {
             count++;
             modifySkin(list[i]);
@@ -229,7 +231,8 @@ public class RTLSkin {
     }
     if (filePathNameLowerCase.endsWith("css")) {
       // Actions with css files
-      if (filePathName.indexOf("Openbravo_ERP_") != -1 || filePathName.indexOf("loginStyles") != -1) {
+      if (filePathName.indexOf("Openbravo_ERP_") != -1
+          || filePathName.indexOf("loginStyles") != -1) {
         try {
           addLine(file, "html {direction:rtl;}");
         } catch (Exception e) {
@@ -259,8 +262,9 @@ public class RTLSkin {
     while ((line = in.readLine()) != null) {
       if ((init = line.indexOf("/*~RTL ")) != -1) {
         end = line.indexOf("*/");
-        if (end == -1)
+        if (end == -1) {
           end = line.length();
+        }
         vLines.add(line.substring(init + 7, end) + "\n");
       } else {
         vLines.add(line + "\n");

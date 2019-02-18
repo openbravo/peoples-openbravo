@@ -69,7 +69,8 @@ public class RestartTomcat {
    */
   @SuppressWarnings("deprecation")
   public static void restart() {
-    final String baseDirPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    final String baseDirPath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("source.path");
     try {
       log.debug("Restarting tomcat with basedir " + baseDirPath);

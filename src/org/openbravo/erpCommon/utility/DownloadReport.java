@@ -35,8 +35,9 @@ import org.openbravo.utils.FileUtility;
 public class DownloadReport extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String report = vars.getStringParameter("report");
     downloadReport(vars, response, report);
@@ -45,12 +46,14 @@ public class DownloadReport extends HttpSecureAppServlet {
   private void downloadReport(VariablesSecureApp vars, HttpServletResponse response, String report)
       throws IOException, ServletException {
 
-    if (report.contains("..") || report.contains(File.separator))
+    if (report.contains("..") || report.contains(File.separator)) {
       throw new ServletException("Invalid report name");
+    }
 
     FileUtility f = new FileUtility(globalParameters.strFTPDirectory, report, false, true);
-    if (!f.exists())
+    if (!f.exists()) {
       return;
+    }
     int pos = report.indexOf("-");
     String filename = report.substring(0, pos);
     pos = report.lastIndexOf(".");
@@ -66,7 +69,8 @@ public class DownloadReport extends HttpSecureAppServlet {
     f.dumpFile(response.getOutputStream());
     response.getOutputStream().flush();
     response.getOutputStream().close();
-    if (!f.deleteFile())
+    if (!f.deleteFile()) {
       log4j.error("Download report could not delete the file :" + report);
+    }
   }
 }

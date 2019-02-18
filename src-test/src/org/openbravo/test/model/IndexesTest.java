@@ -27,11 +27,11 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.test.base.OBBaseTest;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to warranty standard database indexes from child to parent columns are present.
@@ -138,8 +138,7 @@ public class IndexesTest extends OBBaseTest {
 
         int otherIndexesCount = rs.getInt(otherIndexes);
         if (otherIndexesCount > 0) {
-          msg += "There are other "
-              + otherIndexesCount
+          msg += "There are other " + otherIndexesCount
               + " indexes or unique constraints including that column. You might recheck columns position for them.";
         }
         errors.add(msg);

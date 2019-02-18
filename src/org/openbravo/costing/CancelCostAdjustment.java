@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
@@ -40,8 +42,6 @@ import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class CancelCostAdjustment extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -99,11 +99,11 @@ public class CancelCostAdjustment extends BaseActionHandler {
     OBDal.getInstance().save(costAdjustmentCancel);
     OBDal.getInstance().flush();
 
-    CostAdjustment cacProxy = (CostAdjustment) OBDal.getInstance().getProxy(
-        CostAdjustment.ENTITY_NAME, costAdjustmentCancel.getId());
+    CostAdjustment cacProxy = (CostAdjustment) OBDal.getInstance()
+        .getProxy(CostAdjustment.ENTITY_NAME, costAdjustmentCancel.getId());
     // Call cost
-    OBCriteria<CostAdjustmentLine> qLines = OBDal.getInstance().createCriteria(
-        CostAdjustmentLine.class);
+    OBCriteria<CostAdjustmentLine> qLines = OBDal.getInstance()
+        .createCriteria(CostAdjustmentLine.class);
     qLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustmentOrig));
     qLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISSOURCE, true));
     ScrollableResults scrollLines = qLines.scroll(ScrollMode.FORWARD_ONLY);
@@ -143,8 +143,8 @@ public class CancelCostAdjustment extends BaseActionHandler {
     message.put("text", OBMessageUtils.parseTranslation(strResult, map));
 
     CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentCancel);
-    CostAdjustment costAdjCancel = OBDal.getInstance().get(CostAdjustment.class,
-        costAdjustmentCancel.getId());
+    CostAdjustment costAdjCancel = OBDal.getInstance()
+        .get(CostAdjustment.class, costAdjustmentCancel.getId());
     costAdjCancel.setDocumentStatus("VO");
     costAdjCancel.setPosted("N");
     OBDal.getInstance().save(costAdjCancel);

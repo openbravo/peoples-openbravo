@@ -33,8 +33,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class PoolStatus extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT", "REFRESH")) {
@@ -44,18 +45,20 @@ public class PoolStatus extends HttpSecureAppServlet {
 
   private void printPageMenuPoolStatus(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/PoolStatus").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/PoolStatus")
+        .createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
 
     xmlDocument.setParameter("status", formatearTextoJavascript(getPoolStatus()));
     xmlDocument.setParameter("body", "");
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "SetPriority", false, "", "", "",
-        false, "utility", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "SetPriority", false, "", "", "", false,
+        "utility", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
@@ -107,6 +110,7 @@ public class PoolStatus extends HttpSecureAppServlet {
 
   }
 
+  @Override
   public String getServletInfo() {
     return "Protected resources Servlet";
   } // end of getServletInfo() method
