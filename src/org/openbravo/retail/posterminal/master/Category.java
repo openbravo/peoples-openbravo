@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -116,31 +116,29 @@ public class Category extends ProcessHQLQuery {
       OBContext.restorePreviousMode();
     }
 
-    Long lastUpdated;
-
-    if (jsonsent != null) {
-      lastUpdated = jsonsent.has("lastUpdated") && !jsonsent.get("lastUpdated").equals("undefined")
-          && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
-    } else {
-      lastUpdated = null;
-    }
-
-    String fullRefreshCondition = lastUpdated == null ? "and pCat.active = true " : "";
+    final Long lastUpdated = jsonsent != null && jsonsent.has("lastUpdated")
+        && !jsonsent.get("lastUpdated").equals("undefined")
+        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
 
     if (isRemote) {
       hqlQueries.add("select" + regularProductsCategoriesHQLProperties.getHqlSelect() //
           + "from OBRETCO_Productcategory aCat left outer join aCat.productCategory as pCat left outer join pCat.image as img"
-          + " where ( aCat.obretcoProductlist.id = :productListId ) "
-          + " and  aCat.$incrementalUpdateCriteria and aCat.active = true and aCat.$naturalOrgCriteria and aCat.$readableSimpleClientCriteria  "
+          + " where aCat.$readableSimpleClientCriteria and aCat.$naturalOrgCriteria "
+          + " and aCat.obretcoProductlist.id = :productListId "//
+          + " and (aCat.$incrementalUpdateCriteria "//
+          + (lastUpdated == null ? "and" : "or") //
+          + " pCat.$incrementalUpdateCriteria) "//
           + " order by pCat.name, pCat.id");
       hqlQueries.add("select" + regularProductsCategoriesHQLProperties.getHqlSelect() //
           + "from ADTreeNode tn, ProductCategory pCat left outer join pCat.image as img "
-          + "where tn.$incrementalUpdateCriteria and pCat.active = true and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+          + "where tn.$readableSimpleClientCriteria and tn.$naturalOrgCriteria "
           + " and tn.node = pCat.id and tn.tree.table.id = :productCategoryTableId "
-          + " and pCat.summaryLevel = 'Y'"
+          + " and pCat.summaryLevel = 'Y' "
           + " and not exists (select pc.id from OBRETCO_Productcategory pc where tn.node = pc.productCategory.id) "
-          + "order by tn.sequenceNumber, tn.id");
-
+          + " and (tn.$incrementalUpdateCriteria "//
+          + (lastUpdated == null ? "and" : "or") //
+          + " pCat.$incrementalUpdateCriteria) "//
+          + " order by tn.sequenceNumber, tn.id");
     } else {
       hqlQueries.add("select" + regularProductsCategoriesHQLProperties.getHqlSelect() //
           + "from ProductCategory as pCat left outer join pCat.image as img  " + " where (exists("
@@ -149,7 +147,7 @@ public class Category extends ProcessHQLQuery {
           + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist.id = :productListId ) "
           + "AND (pplv.id= :priceListVersionId) AND (" + "ppp.priceListVersion.id = pplv.id"
           + ") AND (" + "pli.product.id = ppp.product.id" + ") AND ("
-          + "pli.product.active = true)) " + "OR (pCat.summaryLevel = 'Y' " + fullRefreshCondition
+          + "pli.product.active = true)) " + "OR (pCat.summaryLevel = 'Y' "
           + "AND pCat.$naturalOrgCriteria AND "
           + "pCat.$readableSimpleClientCriteria)) AND pCat.$incrementalUpdateCriteria "
           + "order by pCat.name, pCat.id");
