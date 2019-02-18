@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2018 Openbravo SLU
+* All portions are Copyright (C) 2001-2019 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -45,7 +45,6 @@
   -- Record Info
   v_Client_ID VARCHAR2(32);
   v_Org_ID VARCHAR2(32);
-  v_Warehouse_Org VARCHAR2(32);
   v_Org_Name VARCHAR2(60);
   v_UpdatedBy VARCHAR2(32);
   v_DocAction VARCHAR(60) ;
@@ -306,26 +305,6 @@
       END IF;
     END;
   END IF;
-
-    --Check whether warehouse belongs to the organization.
-    SELECT count(AD_ORG_ID)
-    INTO v_count
-    FROM AD_Org_Warehouse
-    WHERE M_Warehouse_ID=v_M_Warehouse_ID
-    AND AD_Org_ID = v_Org_ID;
-
-    IF v_count = 0 AND v_IsSOTrx = 'Y' THEN
-    RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@') ;
-    END IF;
-
-    SELECT AD_Org_ID
-    INTO v_Warehouse_Org
-    FROM M_Warehouse
-    WHERE M_Warehouse_ID = v_M_Warehouse_ID;
-
-    IF(ad_org_isinnaturaltree(v_Warehouse_Org, v_Org_ID, v_Client_ID) = 'N' AND v_isSoTrx = 'N') THEN
-      RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@');
-    END IF;
 
     SELECT CASE WHEN (m.ISSOTRX='Y') THEN customer_blocking  ELSE vendor_blocking END ,  
     CASE WHEN (m.ISSOTRX='Y') THEN so_order_blocking ELSE po_order_blocking  END, name, DocAction
