@@ -75,14 +75,14 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.printoffline", "printoffline"));
     list.add(new HQLProperty("pos.ismaster", "ismaster"));
     list.add(new HQLProperty("pos.documentnoPadding", "documentnoPadding"));
-    list.add(new HQLProperty(
-        "CASE WHEN pos.masterterminal.id is not null THEN true ELSE false END", "isslave"));
+    list.add(new HQLProperty("CASE WHEN pos.masterterminal.id is not null THEN true ELSE false END",
+        "isslave"));
     list.add(new HQLProperty("'" + OBContext.getOBContext().getLanguage().getLanguage() + "'",
         "language_string"));
     list.add(new HQLProperty("org.obposReturnAnonymousbp", "returns_anonymouscustomer"));
-    list.add(new HQLProperty(
-        "CASE WHEN org.obretcoCustomerseq.id is not null THEN true ELSE false END",
-        "hasCustomerSequence"));
+    list.add(
+        new HQLProperty("CASE WHEN org.obretcoCustomerseq.id is not null THEN true ELSE false END",
+            "hasCustomerSequence"));
     list.add(new HQLProperty("org.obposPrepaymentAlgorithm", "prepaymentAlgorithm"));
     list.add(new HQLProperty("org.obposPrepaymentPerc", "obposPrepaymentPerc"));
     list.add(new HQLProperty("org.obposPrepaymentPercLimit", "obposPrepaymentPercLimit"));
@@ -104,13 +104,13 @@ public class TerminalProperties extends ModelExtension {
         list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCANCRPTTEMPLATE, "printCanceledReceiptTemplate",
         list);
-    addTemplateProperty(Organization.PROPERTY_OBPOSCANCLAYAWAYTMPLT,
-        "printCanceledLayawayTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSCANCLAYAWAYTMPLT, "printCanceledLayawayTemplate",
+        list);
     addTemplateProperty(Organization.PROPERTY_OBPOSWELCOMETEMPLATE, "printWelcomeTemplate", list);
 
     // Legal Organization Tax ID
-    Organization org = OBDal.getInstance().get(Organization.class,
-        OBContext.getOBContext().getCurrentOrganization().getId());
+    Organization org = OBDal.getInstance()
+        .get(Organization.class, OBContext.getOBContext().getCurrentOrganization().getId());
     while (org != null) {
       if (org.getId().equals("0")) {
         break;
@@ -118,7 +118,8 @@ public class TerminalProperties extends ModelExtension {
       if (org.getOrganizationType().isLegalEntity()) {
         list.add(new HQLProperty(
             "(select max(taxID) from OrganizationInformation oi where oi.organization.id = '"
-                + org.getId() + "')", "organizationTaxId"));
+                + org.getId() + "')",
+            "organizationTaxId"));
         break;
       }
       org = OBContext.getOBContext().getOrganizationStructureProvider().getParentOrg(org);
@@ -135,8 +136,8 @@ public class TerminalProperties extends ModelExtension {
       final List<HQLProperty> list) {
     try {
       OBContext.setAdminMode(false);
-      final PrintTemplate value = (PrintTemplate) POSUtils.getPropertyInOrgTree(OBContext
-          .getOBContext().getCurrentOrganization(), propertyName);
+      final PrintTemplate value = (PrintTemplate) POSUtils
+          .getPropertyInOrgTree(OBContext.getOBContext().getCurrentOrganization(), propertyName);
       if (value != null) {
         list.add(new HQLProperty("'" + value.getTemplatePath() + "'", alias));
         list.add(new HQLProperty("'" + value.isPdf() + "'", alias + "IsPdf"));

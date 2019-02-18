@@ -75,16 +75,16 @@ public class Cashup extends JSONProcessSimple {
           + "from OBPOS_App_Cashup c where c.isProcessed=:isprocessed and c.pOSTerminal.id= :terminal "
           + isprocessedbo + " order by c.creationDate desc";
 
-      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlCashup, OBContext.getOBContext()
-          .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
-          null, null, null);
+      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlCashup,
+          OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentOrganization().getId(), null, null, null);
 
       @SuppressWarnings("rawtypes")
       final Query cashupquery = querybuilder.getDalQuery();
       cashupquery.setParameter("isprocessed", isprocessed.equalsIgnoreCase("Y"));
       if (jsonsent.has("isprocessedbo")) {
-        cashupquery.setParameter("isprocessedbo", jsonsent.getString("isprocessedbo")
-            .equalsIgnoreCase("Y"));
+        cashupquery.setParameter("isprocessedbo",
+            jsonsent.getString("isprocessedbo").equalsIgnoreCase("Y"));
       }
       cashupquery.setParameter("terminal", posId);
       cashupquery.setMaxResults(1);
@@ -149,15 +149,15 @@ public class Cashup extends JSONProcessSimple {
     OBPOSAppCashup cashupObj = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
     OBCriteria<OBPOSPaymentMethodCashup> paymentMethodCashupCriteria = OBDal.getInstance()
         .createCriteria(OBPOSPaymentMethodCashup.class);
-    paymentMethodCashupCriteria.add(Restrictions.eq(OBPOSPaymentMethodCashup.PROPERTY_CASHUP,
-        cashupObj));
+    paymentMethodCashupCriteria
+        .add(Restrictions.eq(OBPOSPaymentMethodCashup.PROPERTY_CASHUP, cashupObj));
     List<OBPOSPaymentMethodCashup> paymentMethodList = paymentMethodCashupCriteria.list();
     for (BaseOBObject paymentMethod : paymentMethodList) {
       JSONObject paymentMethodJSON = converter.toJsonObject(paymentMethod, DataResolvingMode.FULL);
-      OBCriteria<OBPOSAppPayment> paymentAppMethodCriteria = OBDal.getInstance().createCriteria(
-          OBPOSAppPayment.class);
-      paymentAppMethodCriteria.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_ID,
-          paymentMethodJSON.get("paymentType")));
+      OBCriteria<OBPOSAppPayment> paymentAppMethodCriteria = OBDal.getInstance()
+          .createCriteria(OBPOSAppPayment.class);
+      paymentAppMethodCriteria
+          .add(Restrictions.eq(OBPOSAppPayment.PROPERTY_ID, paymentMethodJSON.get("paymentType")));
       OBPOSAppPayment paymentAppMethod = (OBPOSAppPayment) paymentAppMethodCriteria.uniqueResult();
       paymentMethodJSON.put("cashup_id", paymentMethodJSON.get("cashUp"));
       paymentMethodJSON.put("searchKey", paymentMethodJSON.get("searchkey"));
@@ -180,8 +180,8 @@ public class Cashup extends JSONProcessSimple {
   private JSONArray getTaxes(String cashupId, DataToJsonConverter converter) throws JSONException {
     JSONArray respArray = new JSONArray();
     OBPOSAppCashup cashupObj = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
-    OBCriteria<OBPOSTaxCashup> taxCashupCriteria = OBDal.getInstance().createCriteria(
-        OBPOSTaxCashup.class);
+    OBCriteria<OBPOSTaxCashup> taxCashupCriteria = OBDal.getInstance()
+        .createCriteria(OBPOSTaxCashup.class);
     taxCashupCriteria.add(Restrictions.eq(OBPOSTaxCashup.PROPERTY_CASHUP, cashupObj));
     List<OBPOSTaxCashup> taxesList = taxCashupCriteria.list();
     for (BaseOBObject tax : taxesList) {
@@ -213,9 +213,9 @@ public class Cashup extends JSONProcessSimple {
       String hqlglItem = "select distinct fmgi from FinancialMgmtGLItem fmgi join "
           + paymentTypes[i] + " as oapt " + "where oapt.id in (select oap.paymentMethod.id "
           + "from OBPOS_App_Payment oap where oap.obposApplications.id = :terminal)";
-      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlglItem, OBContext.getOBContext()
-          .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
-          null, null, null);
+      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlglItem,
+          OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentOrganization().getId(), null, null, null);
 
       @SuppressWarnings("rawtypes")
       final Query glitemquery = querybuilder.getDalQuery();
@@ -230,9 +230,9 @@ public class Cashup extends JSONProcessSimple {
 
     // Get Financial Accounts
     String hqlFinanAcct = "from FIN_Financial_Account ffa where ffa.id in (select oap.financialAccount.id from OBPOS_App_Payment oap where oap.obposApplications.id = :terminal)";
-    SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlFinanAcct, OBContext.getOBContext()
-        .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
-        null, null, null);
+    SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlFinanAcct,
+        OBContext.getOBContext().getCurrentClient().getId(),
+        OBContext.getOBContext().getCurrentOrganization().getId(), null, null, null);
     @SuppressWarnings("rawtypes")
     final Query finacctquery = querybuilder.getDalQuery();
     finacctquery.setParameter("terminal", posId);
@@ -241,14 +241,14 @@ public class Cashup extends JSONProcessSimple {
     if (glItemList.size() > 0) {
       // Get Transactions from that cashupId and for the GL Items of the actual organization
       OBPOSAppCashup cashupObj = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
-      OBCriteria<FIN_FinaccTransaction> cashMgmTransCriteria = OBDal.getInstance().createCriteria(
-          FIN_FinaccTransaction.class);
-      cashMgmTransCriteria.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_OBPOSAPPCASHUP,
-          cashupObj));
-      cashMgmTransCriteria.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_GLITEM,
-          glItemList.toArray()));
-      cashMgmTransCriteria.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_ACCOUNT,
-          finAcctList.toArray()));
+      OBCriteria<FIN_FinaccTransaction> cashMgmTransCriteria = OBDal.getInstance()
+          .createCriteria(FIN_FinaccTransaction.class);
+      cashMgmTransCriteria
+          .add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_OBPOSAPPCASHUP, cashupObj));
+      cashMgmTransCriteria
+          .add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_GLITEM, glItemList.toArray()));
+      cashMgmTransCriteria
+          .add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_ACCOUNT, finAcctList.toArray()));
 
       List<FIN_FinaccTransaction> cashMgmtList = cashMgmTransCriteria.list();
       for (BaseOBObject cashMgmt : cashMgmtList) {
@@ -261,8 +261,8 @@ public class Cashup extends JSONProcessSimple {
         String financialacct = cashMgmtJSON.get("account").toString();
         String hqlPaymentMethod = "select oap.id as id, oap.obretcoCmevents.id as reason from OBPOS_App_Payment oap where oap.financialAccount.id = :financialacct and oap.obposApplications.id = :terminal";
         SimpleQueryBuilder paymentMethodbuilder = new SimpleQueryBuilder(hqlPaymentMethod,
-            OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-                .getCurrentOrganization().getId(), null, null, null);
+            OBContext.getOBContext().getCurrentClient().getId(),
+            OBContext.getOBContext().getCurrentOrganization().getId(), null, null, null);
         @SuppressWarnings("rawtypes")
         final Query paymentfinacctquery = paymentMethodbuilder.getDalQuery();
         paymentfinacctquery.setParameter("terminal", posId);
@@ -276,8 +276,8 @@ public class Cashup extends JSONProcessSimple {
         result.put("description", cashMgmtJSON.get("description"));
         result.put("amount", totalamt.toString());
         result.put("origAmount", totalamt.toString());
-        result.put("type", cashMgmtJSON.get("paymentAmount").toString().equals("0") ? "deposit"
-            : "drop");
+        result.put("type",
+            cashMgmtJSON.get("paymentAmount").toString().equals("0") ? "deposit" : "drop");
         result.put("reasonId", reasonId);
         result.put("paymentMethodId", paymentmethodId);
         result.put("creationDate", cashMgmtJSON.get("creationDate").toString());

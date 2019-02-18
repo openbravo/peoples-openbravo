@@ -30,14 +30,17 @@ import org.openbravo.service.importprocess.ImportEntryProcessor;
 @ApplicationScoped
 public class OrderImportEntryProcessor extends ImportEntryProcessor {
 
+  @Override
   protected ImportEntryProcessRunnable createImportEntryProcessRunnable() {
     return WeldUtils.getInstanceFromStaticBeanManager(OrderLoaderRunnable.class);
   }
 
+  @Override
   protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
     return "Order".equals(importEntryInformation.getTypeofdata());
   }
 
+  @Override
   protected String getProcessSelectionKey(ImportEntry importEntry) {
     return importEntry.getOrganization().getId();
   }
@@ -45,10 +48,12 @@ public class OrderImportEntryProcessor extends ImportEntryProcessor {
   private static class OrderLoaderRunnable extends SerializedByTermImportEntryProcessorRunnable {
     private static final String ORDER_LOADER_AUDIT_TYPE = "OBPOS_OrderLoader";
 
+    @Override
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return OrderLoader.class;
     }
 
+    @Override
     protected void processEntry(ImportEntry importEntry) throws Exception {
       // check that there are no customers import entries for the same organization
       if (thereAreCustomersInImportQueue(importEntry)) {

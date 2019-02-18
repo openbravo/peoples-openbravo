@@ -44,8 +44,8 @@ public class CheckTerminalAuth extends JSONProcessSimple {
       final String terminalKeyIdentifier = jsonsent.getString("terminalKeyIdentifier");
       final String currentCacheSessionId = jsonsent.getString("cacheSessionId");
 
-      final OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
-          OBPOSApplications.class);
+      final OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
+          .createCriteria(OBPOSApplications.class);
       qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalName));
       final List<OBPOSApplications> apps = qApp.list();
       if (apps.size() == 1) {

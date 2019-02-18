@@ -17,6 +17,7 @@ import org.openbravo.model.common.order.Order;
 
 public class PaymentProcessorEmpty implements PaymentProcessor {
 
+  @Override
   public void process(JSONObject payment, Order order, Invoice invoice, BigDecimal writeoff) {
     // Do nothing
   }

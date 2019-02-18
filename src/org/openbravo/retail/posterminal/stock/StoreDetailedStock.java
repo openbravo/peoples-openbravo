@@ -39,13 +39,9 @@ public class StoreDetailedStock extends JSONProcessSimple {
 
       String hqlQuery = "select ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.id, ms.storageBin.searchKey, "
           + "sum(ms.quantityOnHand - ms.reservedQty) as qtyonhand "
-          + "from MaterialMgmtStorageDetail ms "
-          + "where ms.storageBin.warehouse.id in ( "
-          + "SELECT ow.warehouse.id "
-          + "FROM OrganizationWarehouse as ow "
-          + "WHERE "
-          + "ow.organization.id = :orgId ) "
-          + "and ms.product.id = :prodId "
+          + "from MaterialMgmtStorageDetail ms " + "where ms.storageBin.warehouse.id in ( "
+          + "SELECT ow.warehouse.id " + "FROM OrganizationWarehouse as ow " + "WHERE "
+          + "ow.organization.id = :orgId ) " + "and ms.product.id = :prodId "
           + "and ms.storageBin.warehouse.active = true "
           + "group by ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.warehouse.id, ms.storageBin.id, ms.storageBin.searchKey "
           + "order by ms.storageBin.warehouse.name";

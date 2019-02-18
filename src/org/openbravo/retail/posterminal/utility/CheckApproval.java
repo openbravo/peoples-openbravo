@@ -56,8 +56,8 @@ public class CheckApproval extends HttpServlet {
   private Instance<ApprovalPreCheckHook> approvalPreCheckProcesses;
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     OBContext.setAdminMode(false);
     try {
@@ -98,11 +98,11 @@ public class CheckApproval extends HttpServlet {
         }
 
         String naturalTreeOrgList = Utility.getInStrSet(OBContext.getOBContext()
-            .getOrganizationStructureProvider(client).getNaturalTree(organization));
+            .getOrganizationStructureProvider(client)
+            .getNaturalTree(organization));
 
         String hqlQuery = "select p.property from ADPreference as p"
-            + " where property IS NOT NULL "
-            + "   and active = true" //
+            + " where property IS NOT NULL " + "   and active = true" //
             + "   and (case when length(searchKey)<>1 then 'X' else to_char(searchKey) end) = 'Y'"
             + "   and (userContact.id = :user" + "        or exists (from ADUserRoles r"
             + "                  where r.role = p.visibleAtRole"
@@ -111,7 +111,8 @@ public class CheckApproval extends HttpServlet {
             + "   and (p.visibleAtOrganization.id = :org "
             + "   or p.visibleAtOrganization.id in (:orgList) "
             + "   or p.visibleAtOrganization is null) group by p.property";
-        Query<String> preferenceQuery = OBDal.getInstance().getSession()
+        Query<String> preferenceQuery = OBDal.getInstance()
+            .getSession()
             .createQuery(hqlQuery, String.class);
         preferenceQuery.setParameter("user", qUserList.get(0).getId());
         preferenceQuery.setParameter("org", organization);
@@ -154,9 +155,8 @@ public class CheckApproval extends HttpServlet {
       out.print(result.toString());
       out.flush();
     } catch (JSONException e) {
-      log.error(
-          "Error while checking user can approve and executing CheckApproval hooks: "
-              + e.getMessage(), e);
+      log.error("Error while checking user can approve and executing CheckApproval hooks: "
+          + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -164,8 +164,8 @@ public class CheckApproval extends HttpServlet {
 
   private void executeApprovalCheckHook(String username, String password, String terminal,
       JSONArray approvalType, JSONObject attributes) {
-    for (Iterator<ApprovalCheckHook> processIterator = approvalCheckProcesses.iterator(); processIterator
-        .hasNext();) {
+    for (Iterator<ApprovalCheckHook> processIterator = approvalCheckProcesses
+        .iterator(); processIterator.hasNext();) {
       ApprovalCheckHook process = processIterator.next();
       try {
         process.exec(username, password, terminal, approvalType, attributes);
@@ -177,8 +177,8 @@ public class CheckApproval extends HttpServlet {
 
   private void executeApprovalPreCheckHook(String username, String password, String terminal,
       JSONArray approvalType, JSONObject attributes) {
-    for (Iterator<ApprovalPreCheckHook> processIterator = approvalPreCheckProcesses.iterator(); processIterator
-        .hasNext();) {
+    for (Iterator<ApprovalPreCheckHook> processIterator = approvalPreCheckProcesses
+        .iterator(); processIterator.hasNext();) {
       ApprovalPreCheckHook process = processIterator.next();
       try {
         process.exec(username, password, terminal, approvalType, attributes);
@@ -189,8 +189,8 @@ public class CheckApproval extends HttpServlet {
   }
 
   private Organization getTerminalStore(String posTerminal) {
-    OBCriteria<OBPOSApplications> terminalCriteria = OBDal.getInstance().createCriteria(
-        OBPOSApplications.class);
+    OBCriteria<OBPOSApplications> terminalCriteria = OBDal.getInstance()
+        .createCriteria(OBPOSApplications.class);
     terminalCriteria.setFilterOnReadableClients(false);
     terminalCriteria.setFilterOnReadableOrganization(false);
     terminalCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, posTerminal));

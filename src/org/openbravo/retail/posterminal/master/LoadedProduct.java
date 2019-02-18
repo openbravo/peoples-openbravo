@@ -50,8 +50,8 @@ public class LoadedProduct extends ProcessHQLQuery {
       log.error("Error while getting terminalId " + e.getMessage(), e);
     }
 
-    HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
-        extensions, args);
+    HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions, args);
     regularProductsHQLProperties.addAll(ProductProperties.getMainProductHQLProperties(args));
     String hql = "select" + regularProductsHQLProperties.getHqlSelect()
         + "FROM Product product where product.id=:productId";
@@ -63,8 +63,8 @@ public class LoadedProduct extends ProcessHQLQuery {
   @Override
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     Map<String, Object> paramValues = new HashMap<String, Object>();
-    paramValues.put("productId", jsonsent.getJSONObject("parameters").getJSONObject("productId")
-        .getString("value"));
+    paramValues.put("productId",
+        jsonsent.getJSONObject("parameters").getJSONObject("productId").getString("value"));
     paramValues.put("orgId", OBContext.getOBContext().getCurrentOrganization().getId());
     return paramValues;
   }

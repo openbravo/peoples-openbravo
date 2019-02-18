@@ -44,6 +44,7 @@ public class ProductPrice extends ProcessHQLQuery {
   @Qualifier(productPricePropertyExtension)
   private Instance<ModelExtension> extensions;
 
+  @Override
   protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     Map<String, Object> args = new HashMap<String, Object>();
@@ -60,13 +61,13 @@ public class ProductPrice extends ProcessHQLQuery {
       OBContext.setAdminMode(true);
       OBPOSApplications POSTerminal = POSUtils.getTerminalById(jsonsent.getString("pos"));
       String pricelist = POSUtils.getPriceListByTerminal(POSTerminal.getSearchKey()).getId();
-      OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
-          .getString("pos"));
-      Date terminalDate = OBMOBCUtils
-          .calculateServerDate(
-              jsonsent.getJSONObject("parameters").getString("terminalTime"),
-              jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset")
-                  .getLong("value"));
+      OBRETCOProductList productList = POSUtils
+          .getProductListByPosterminalId(jsonsent.getString("pos"));
+      Date terminalDate = OBMOBCUtils.calculateServerDate(
+          jsonsent.getJSONObject("parameters").getString("terminalTime"),
+          jsonsent.getJSONObject("parameters")
+              .getJSONObject("terminalTimeOffset")
+              .getLong("value"));
       Map<String, Object> paramValues = new HashMap<String, Object>();
       paramValues.put("productListId", productList.getId());
       paramValues.put("validFromDate", terminalDate);
@@ -80,8 +81,8 @@ public class ProductPrice extends ProcessHQLQuery {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     boolean multiPrices = false;
-    OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
-        .getString("pos"));
+    OBRETCOProductList productList = POSUtils
+        .getProductListByPosterminalId(jsonsent.getString("pos"));
 
     if (productList == null) {
       throw new JSONException("Product list not found");
@@ -89,9 +90,9 @@ public class ProductPrice extends ProcessHQLQuery {
 
     try {
       multiPrices = "Y".equals(Preferences.getPreferenceValue("OBPOS_EnableMultiPriceList", true,
-          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), null));
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e1) {
       log.error("Error getting Preference: " + e1.getMessage(), e1);
     }

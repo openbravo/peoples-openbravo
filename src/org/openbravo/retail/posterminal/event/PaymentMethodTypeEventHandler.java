@@ -34,8 +34,8 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 
 public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      TerminalTypePaymentMethod.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(TerminalTypePaymentMethod.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -52,8 +52,8 @@ public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserve
         false);
 
     Boolean leaveascredit = (Boolean) event.getTargetInstance().get("leaveascredit");
-    Entity appPaymentTypeEntity = ModelProvider.getInstance().getEntity(
-        TerminalTypePaymentMethod.ENTITY_NAME);
+    Entity appPaymentTypeEntity = ModelProvider.getInstance()
+        .getEntity(TerminalTypePaymentMethod.ENTITY_NAME);
     if (leaveascredit) {
       event.setCurrentState(appPaymentTypeEntity.getProperty("allowdrops"), false);
       event.setCurrentState(appPaymentTypeEntity.getProperty("allowdeposits"), false);
@@ -65,8 +65,8 @@ public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserve
       event.setCurrentState(appPaymentTypeEntity.getProperty("cashDifferences"), null);
       event.setCurrentState(appPaymentTypeEntity.getProperty("glitemDropdep"), null);
     } else {
-      Boolean countPaymentInCashUp = (Boolean) event.getCurrentState(appPaymentTypeEntity
-          .getProperty("countpaymentincashup"));
+      Boolean countPaymentInCashUp = (Boolean) event
+          .getCurrentState(appPaymentTypeEntity.getProperty("countpaymentincashup"));
       if (event.getCurrentState(appPaymentTypeEntity.getProperty("cashDifferences")) == null
           && countPaymentInCashUp) {
         throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
@@ -82,8 +82,8 @@ public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserve
     }
 
     Boolean leaveascredit = (Boolean) event.getTargetInstance().get("leaveascredit");
-    Entity appPaymentTypeEntity = ModelProvider.getInstance().getEntity(
-        TerminalTypePaymentMethod.ENTITY_NAME);
+    Entity appPaymentTypeEntity = ModelProvider.getInstance()
+        .getEntity(TerminalTypePaymentMethod.ENTITY_NAME);
     if (leaveascredit) {
       event.setCurrentState(appPaymentTypeEntity.getProperty("allowdrops"), false);
       event.setCurrentState(appPaymentTypeEntity.getProperty("allowdeposits"), false);
@@ -95,8 +95,8 @@ public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserve
       event.setCurrentState(appPaymentTypeEntity.getProperty("cashDifferences"), null);
       event.setCurrentState(appPaymentTypeEntity.getProperty("glitemDropdep"), null);
     } else {
-      Boolean countPaymentInCashUp = (Boolean) event.getCurrentState(appPaymentTypeEntity
-          .getProperty("countpaymentincashup"));
+      Boolean countPaymentInCashUp = (Boolean) event
+          .getCurrentState(appPaymentTypeEntity.getProperty("countpaymentincashup"));
       if (event.getCurrentState(appPaymentTypeEntity.getProperty("cashDifferences")) == null
           && countPaymentInCashUp) {
         throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
@@ -110,7 +110,8 @@ public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserve
     if (!isValidEvent(event)) {
       return;
     }
-    validateActiveOrRemovePaymentMethod((TerminalTypePaymentMethod) event.getTargetInstance(), true);
+    validateActiveOrRemovePaymentMethod((TerminalTypePaymentMethod) event.getTargetInstance(),
+        true);
   }
 
   private void validateActiveOrRemovePaymentMethod(TerminalTypePaymentMethod paymentMethod,
@@ -119,8 +120,8 @@ public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserve
       String whereclause = " as e join e.cashUp as cashup "
           + "where cashup.isProcessed is false and e.paymentType.active is true "
           + "and e.paymentType.paymentMethod=:paymentMethod ";
-      OBQuery<OBPOSPaymentMethodCashup> queryCashupPayment = OBDal.getInstance().createQuery(
-          OBPOSPaymentMethodCashup.class, whereclause);
+      OBQuery<OBPOSPaymentMethodCashup> queryCashupPayment = OBDal.getInstance()
+          .createQuery(OBPOSPaymentMethodCashup.class, whereclause);
       queryCashupPayment.setMaxResult(1);
       queryCashupPayment.setNamedParameter("paymentMethod", paymentMethod);
       if (queryCashupPayment.count() > 0) {

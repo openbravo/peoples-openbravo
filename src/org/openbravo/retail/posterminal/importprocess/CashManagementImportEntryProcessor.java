@@ -30,14 +30,17 @@ import org.openbravo.service.importprocess.ImportEntryProcessor;
 @ApplicationScoped
 public class CashManagementImportEntryProcessor extends ImportEntryProcessor {
 
+  @Override
   protected ImportEntryProcessRunnable createImportEntryProcessRunnable() {
     return WeldUtils.getInstanceFromStaticBeanManager(CashManagementRunnable.class);
   }
 
+  @Override
   protected boolean canHandleImportEntry(ImportEntry importEntry) {
     return "FIN_Finacc_Transaction".equals(importEntry.getTypeofdata());
   }
 
+  @Override
   protected String getProcessSelectionKey(ImportEntry importEntry) {
     return importEntry.getOrganization().getId();
   }
@@ -45,10 +48,12 @@ public class CashManagementImportEntryProcessor extends ImportEntryProcessor {
   private static class CashManagementRunnable extends SerializedByTermImportEntryProcessorRunnable {
     private static final String CASH_MGMT_AUDIT_TYPE = "OBPOS_CashMgmt";
 
+    @Override
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return ProcessCashMgmt.class;
     }
 
+    @Override
     protected void processEntry(ImportEntry importEntry) throws Exception {
       // check that there are no other import entries for the terminal
       // which have not yet been processed

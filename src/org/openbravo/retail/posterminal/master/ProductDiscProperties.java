@@ -51,9 +51,9 @@ public class ProductDiscProperties extends ModelExtension {
         String discountNameTrl;
         try {
           boolean isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.customer",
-              true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), null));
+              true, OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null));
           if (OBContext.hasTranslationInstalled() && !isRemote) {
             discountNameTrl = "coalesce ((select pt.name from PricingAdjustmentTrl pt where pt.promotionDiscount=p and pt.language='"
                 + OBContext.getOBContext().getLanguage().getLanguage() + "'), p.name) ";
@@ -78,9 +78,9 @@ public class ProductDiscProperties extends ModelExtension {
         add(new HQLProperty("p.obdiscUpc", "uPCEAN"));
         try {
           if ("Y".equals(Preferences.getPreferenceValue("OBPOS_retail.productImages", true,
-              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), null))) {
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null))) {
             // Not include img
           } else {
             add(new HQLProperty("img.bindaryData", "img"));

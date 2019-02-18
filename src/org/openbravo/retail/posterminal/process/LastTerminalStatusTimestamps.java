@@ -33,8 +33,8 @@ public class LastTerminalStatusTimestamps extends JSONProcessSimple {
 
       Entity posterminalEntity = ModelProvider.getInstance().getEntity(OBPOSApplications.class);
 
-      OBPOSApplications posterminal = OBDal.getInstance().get(OBPOSApplications.class,
-          posterminalID);
+      OBPOSApplications posterminal = OBDal.getInstance()
+          .get(OBPOSApplications.class, posterminalID);
 
       JSONPropertyToEntity.fillBobFromJSON(posterminalEntity, posterminal, jsonsent);
 

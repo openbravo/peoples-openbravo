@@ -41,19 +41,20 @@ public class ChooseWarehouseActionHandler extends BaseActionHandler {
       actions.put(refreshAction);
 
       selectedObject = new JSONObject(content);
-      Organization organization = OBDal.getInstance().get(Organization.class,
-          selectedObject.getString("AD_Org_ID"));
-      JSONArray selectArray = selectedObject.getJSONObject("_params").getJSONObject("select_CC")
+      Organization organization = OBDal.getInstance()
+          .get(Organization.class, selectedObject.getString("AD_Org_ID"));
+      JSONArray selectArray = selectedObject.getJSONObject("_params")
+          .getJSONObject("select_CC")
           .getJSONArray("_selection");
 
       for (int i = 0; i < selectArray.length(); i++) {
         selectedTed = selectArray.getJSONObject(i);
         selectedWarehouseList.add(selectedTed.getString("id"));
       }
-      OBCriteria<OBPOS_OrgWarehouseExtra> orgWarehouseCrit = OBDal.getInstance().createCriteria(
-          OBPOS_OrgWarehouseExtra.class);
-      orgWarehouseCrit.add(Restrictions.eq(OBPOS_OrgWarehouseExtra.PROPERTY_ORGANIZATION,
-          organization));
+      OBCriteria<OBPOS_OrgWarehouseExtra> orgWarehouseCrit = OBDal.getInstance()
+          .createCriteria(OBPOS_OrgWarehouseExtra.class);
+      orgWarehouseCrit
+          .add(Restrictions.eq(OBPOS_OrgWarehouseExtra.PROPERTY_ORGANIZATION, organization));
       orgWarehouseCrit.add(Restrictions.eq(OBPOS_OrgWarehouseExtra.PROPERTY_WAREHOUSETYPE,
           POSConstants.CROSS_CHANNEL));
 
@@ -97,8 +98,8 @@ public class ChooseWarehouseActionHandler extends BaseActionHandler {
   }
 
   private void createExtraWarehouseEntry(String warehouseSelected, Organization organization) {
-    OBPOS_OrgWarehouseExtra orgWarehouseExtra = OBProvider.getInstance().get(
-        OBPOS_OrgWarehouseExtra.class);
+    OBPOS_OrgWarehouseExtra orgWarehouseExtra = OBProvider.getInstance()
+        .get(OBPOS_OrgWarehouseExtra.class);
     orgWarehouseExtra.setOrganization(organization);
     orgWarehouseExtra.setWarehouseType(POSConstants.CROSS_CHANNEL);
     orgWarehouseExtra.setWarehouse(OBDal.getInstance().get(Warehouse.class, warehouseSelected));

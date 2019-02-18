@@ -28,14 +28,17 @@ import org.openbravo.service.importprocess.ImportEntryProcessor;
 @ApplicationScoped
 public class CancelLayawayImportEntryProcessor extends ImportEntryProcessor {
 
+  @Override
   protected ImportEntryProcessRunnable createImportEntryProcessRunnable() {
     return WeldUtils.getInstanceFromStaticBeanManager(CancelLayawayRunnable.class);
   }
 
+  @Override
   protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
     return "OBPOS_CancelLayaway".equals(importEntryInformation.getTypeofdata());
   }
 
+  @Override
   protected String getProcessSelectionKey(ImportEntry importEntry) {
     return importEntry.getOrganization().getId();
   }
@@ -43,10 +46,12 @@ public class CancelLayawayImportEntryProcessor extends ImportEntryProcessor {
   private static class CancelLayawayRunnable extends SerializedByTermImportEntryProcessorRunnable {
     private static final String CANCEL_LAYAWAY_AUDIT_TYPE = "OBPOS_CancelLayaway";
 
+    @Override
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return CancelLayawayLoader.class;
     }
 
+    @Override
     protected void processEntry(ImportEntry importEntry) throws Exception {
       // check that there are no customers import entries for the same organization
       if (thereAreCustomersInImportQueue(importEntry)) {

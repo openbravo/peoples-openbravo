@@ -29,7 +29,8 @@ import org.openbravo.model.common.order.OrderLine;
  */
 
 public class OrderLineEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME) };
   protected Logger logger = Logger.getLogger(this.getClass());
 
   @Override

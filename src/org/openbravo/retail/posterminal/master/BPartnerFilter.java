@@ -89,9 +89,10 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
     Boolean location = false;
     String pref = "N";
     try {
-      pref = Preferences.getPreferenceValue("OBPOS_FilterAlwaysBPByAddress", true, OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+      pref = Preferences.getPreferenceValue("OBPOS_FilterAlwaysBPByAddress", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null);
     } catch (PropertyException e1) {
       log.error("Error getting preference OBPOS_FilterAlwaysBPByAddress " + e1.getMessage(), e1);
     }

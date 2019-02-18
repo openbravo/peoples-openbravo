@@ -103,7 +103,8 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   protected static boolean isSynchronizedRequest() {
-    final String param = (String) RequestContext.get().getRequest()
+    final String param = (String) RequestContext.get()
+        .getRequest()
         .getParameter("synchronizedProcessing");
     return param != null && param.toLowerCase().equals("true");
   }
@@ -119,10 +120,12 @@ public class ExternalOrderLoader extends OrderLoader {
     return "External";
   }
 
+  @Override
   public Entity getEntity() {
     return ModelProvider.getInstance().getEntity(Order.ENTITY_NAME);
   }
 
+  @Override
   public void executeCreateImportEntry(Writer w, JSONObject jsonObject) {
     JSONObject message = null;
     try {
@@ -164,16 +167,16 @@ public class ExternalOrderLoader extends OrderLoader {
           // try one more time
           currentResponse = getCurrentResponse(messageId);
           if (currentResponse == null) {
-            throw new OBException("Message is being processed, but processing takes too long "
-                + jsonObject, true);
+            throw new OBException(
+                "Message is being processed, but processing takes too long " + jsonObject, true);
           }
         }
         writeCurrentResponse(currentResponse, w);
         log.debug("Message finished processing, returning its response " + currentResponse);
         return;
       } else if (currentImportState != null) {
-        throw new OBException("Can not handle current state " + currentImportState + " "
-            + jsonObject);
+        throw new OBException(
+            "Can not handle current state " + currentImportState + " " + jsonObject);
       }
 
       // note to prevent dead locking this call needs to be done after the check if the
@@ -239,9 +242,10 @@ public class ExternalOrderLoader extends OrderLoader {
     try {
       OBContext.setAdminMode(false);
       final String value = Preferences.getPreferenceValue(
-          "OBPOS_ExternalOrderLoaderWaitForProcessingTime", true, OBContext.getOBContext()
-              .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-              .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+          "OBPOS_ExternalOrderLoaderWaitForProcessingTime", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null);
       return 1000 * Long.parseLong(value);
     } catch (Exception e) {
       // default wait 10 seconds
@@ -262,8 +266,8 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   @Override
-  public JSONObject exec(JSONObject json, boolean shouldFailWithError) throws JSONException,
-      ServletException {
+  public JSONObject exec(JSONObject json, boolean shouldFailWithError)
+      throws JSONException, ServletException {
     JSONObject jsonIn = json;
     try {
       return super.exec(jsonIn, shouldFailWithError);
@@ -288,8 +292,7 @@ public class ExternalOrderLoader extends OrderLoader {
   protected boolean messageAlreadyReceived(String id) {
     // check if it is not there already or already archived
     {
-      final Query<Number> qry = SessionHandler
-          .getInstance()
+      final Query<Number> qry = SessionHandler.getInstance()
           .getSession()
           .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where id=:id",
               Number.class);
@@ -299,8 +302,7 @@ public class ExternalOrderLoader extends OrderLoader {
       }
     }
     {
-      final Query<Number> qry = SessionHandler
-          .getInstance()
+      final Query<Number> qry = SessionHandler.getInstance()
           .getSession()
           .createQuery("select count(*) from " + ImportEntryArchive.ENTITY_NAME + " where id=:id",
               Number.class);
@@ -317,12 +319,10 @@ public class ExternalOrderLoader extends OrderLoader {
       OBContext.setAdminMode();
       // check if it is not there already or already archived
       {
-        final Query<String> qry = SessionHandler
-            .getInstance()
+        final Query<String> qry = SessionHandler.getInstance()
             .getSession()
-            .createQuery(
-                "select " + ImportEntry.PROPERTY_IMPORTSTATUS + " from " + ImportEntry.ENTITY_NAME
-                    + " where id=:id", String.class);
+            .createQuery("select " + ImportEntry.PROPERTY_IMPORTSTATUS + " from "
+                + ImportEntry.ENTITY_NAME + " where id=:id", String.class);
         qry.setParameter("id", id);
         final List<String> result = qry.list();
         if (!result.isEmpty()) {
@@ -330,12 +330,10 @@ public class ExternalOrderLoader extends OrderLoader {
         }
       }
       {
-        final Query<String> qry = SessionHandler
-            .getInstance()
+        final Query<String> qry = SessionHandler.getInstance()
             .getSession()
-            .createQuery(
-                "select " + ImportEntry.PROPERTY_IMPORTSTATUS + " from "
-                    + ImportEntryArchive.ENTITY_NAME + " where id=:id", String.class);
+            .createQuery("select " + ImportEntry.PROPERTY_IMPORTSTATUS + " from "
+                + ImportEntryArchive.ENTITY_NAME + " where id=:id", String.class);
         qry.setParameter("id", id);
         final List<String> result = qry.list();
         if (!result.isEmpty()) {
@@ -351,12 +349,10 @@ public class ExternalOrderLoader extends OrderLoader {
   protected String getCurrentResponse(String id) {
     // check if it is not there already or already archived
     {
-      final Query<String> qry = SessionHandler
-          .getInstance()
+      final Query<String> qry = SessionHandler.getInstance()
           .getSession()
-          .createQuery(
-              "select " + ImportEntry.PROPERTY_RESPONSEINFO + " from " + ImportEntry.ENTITY_NAME
-                  + " where id=:id", String.class);
+          .createQuery("select " + ImportEntry.PROPERTY_RESPONSEINFO + " from "
+              + ImportEntry.ENTITY_NAME + " where id=:id", String.class);
       qry.setParameter("id", id);
       final List<String> result = qry.list();
       if (!result.isEmpty()) {
@@ -364,12 +360,10 @@ public class ExternalOrderLoader extends OrderLoader {
       }
     }
     {
-      final Query<String> qry = SessionHandler
-          .getInstance()
+      final Query<String> qry = SessionHandler.getInstance()
           .getSession()
-          .createQuery(
-              "select " + ImportEntry.PROPERTY_RESPONSEINFO + " from "
-                  + ImportEntryArchive.ENTITY_NAME + " where id=:id", String.class);
+          .createQuery("select " + ImportEntry.PROPERTY_RESPONSEINFO + " from "
+              + ImportEntryArchive.ENTITY_NAME + " where id=:id", String.class);
       qry.setParameter("id", id);
       final List<String> result = qry.list();
       if (!result.isEmpty()) {
@@ -379,6 +373,7 @@ public class ExternalOrderLoader extends OrderLoader {
     return null;
   }
 
+  @Override
   protected JSONObject createErrorResponse(JSONArray incomingJson, List<String> errorIds,
       List<String> errorMsgs) throws JSONException {
     if (exception.get() != null) {
@@ -389,6 +384,7 @@ public class ExternalOrderLoader extends OrderLoader {
     }
   }
 
+  @Override
   protected JSONObject createSuccessResponse(JSONArray incomingJson) throws JSONException {
 
     try {
@@ -421,6 +417,7 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   // collect all the successfully created orders
+  @Override
   protected JSONObject successMessage(JSONObject jsonOrder) throws Exception {
     if (processedOrders.get() != null) {
       processedOrders.get().put(processedOrders.get().length(), jsonOrder);
@@ -444,7 +441,8 @@ public class ExternalOrderLoader extends OrderLoader {
 
       final OBPOSApplications posTerminal = getPOSTerminal(messageOut);
 
-      if (!OBContext.getOBContext().getWritableOrganizations()
+      if (!OBContext.getOBContext()
+          .getWritableOrganizations()
           .contains(posTerminal.getOrganization().getId())) {
         throw new OBException("Actual user " + OBContext.getOBContext().getUser().getIdentifier()
             + " doesn't have access to the organization "
@@ -529,14 +527,11 @@ public class ExternalOrderLoader extends OrderLoader {
 
     setDocumentType(orderJson, posTerminal);
 
-    orderJson.put(
-        "currency",
-        resolveJsonValue(Currency.ENTITY_NAME, orderJson.getString("currency"), new String[] {
-            "id", "iSOCode" }));
+    orderJson.put("currency", resolveJsonValue(Currency.ENTITY_NAME,
+        orderJson.getString("currency"), new String[] { "id", "iSOCode" }));
 
     if (orderJson.has("salesRepresentative")) {
-      orderJson.put(
-          "salesRepresentative",
+      orderJson.put("salesRepresentative",
           resolveJsonValue(User.ENTITY_NAME, orderJson.getString("salesRepresentative"),
               new String[] { "id", "name", "email", "userName" }));
     }
@@ -545,8 +540,8 @@ public class ExternalOrderLoader extends OrderLoader {
 
     if (!orderJson.has("priceList")) {
       orderJson.put("priceList", posTerminal.getOrganization().getObretcoPricelist().getId());
-      orderJson.put("priceIncludesTax", posTerminal.getOrganization().getObretcoPricelist()
-          .isPriceIncludesTax());
+      orderJson.put("priceIncludesTax",
+          posTerminal.getOrganization().getObretcoPricelist().isPriceIncludesTax());
     }
 
     setDocumentNo(orderJson);
@@ -741,8 +736,9 @@ public class ExternalOrderLoader extends OrderLoader {
     // now use the data to fill the payment field correctly in the json
     if (!orderJson.has("payment") || -1 == orderJson.getInt("payment")) {
       final Currency currency = getCurrency(orderJson.getString("currency"));
-      int pricePrecision = currency.getObposPosprecision() == null ? currency.getPricePrecision()
-          .intValue() : currency.getObposPosprecision().intValue();
+      int pricePrecision = currency.getObposPosprecision() == null
+          ? currency.getPricePrecision().intValue()
+          : currency.getObposPosprecision().intValue();
 
       BigDecimal paid = BigDecimal.ZERO;
       if (orderJson.has("id")) {
@@ -756,16 +752,16 @@ public class ExternalOrderLoader extends OrderLoader {
       for (int i = 0; i < payments.length(); i++) {
         final JSONObject payment = payments.getJSONObject(i);
 
-        BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
-            pricePrecision, RoundingMode.HALF_UP);
+        BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
+            .setScale(pricePrecision, RoundingMode.HALF_UP);
         BigDecimal origAmount = amount;
         BigDecimal mulrate = new BigDecimal(1);
         // FIXME: Coversion should be only in one direction: (USD-->EUR)
         if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
           mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
           if (payment.has("amount")) {
-            origAmount = BigDecimal.valueOf(payment.getDouble("amount")).setScale(pricePrecision,
-                RoundingMode.HALF_UP);
+            origAmount = BigDecimal.valueOf(payment.getDouble("amount"))
+                .setScale(pricePrecision, RoundingMode.HALF_UP);
           } else {
             origAmount = amount.multiply(mulrate).setScale(pricePrecision, RoundingMode.HALF_UP);
           }
@@ -785,8 +781,8 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   protected Currency getCurrency(String isoCode) {
-    final OBQuery<Currency> qry = OBDal.getInstance().createQuery(Currency.class,
-        Currency.PROPERTY_ISOCODE + "=:isoCode or id=:id");
+    final OBQuery<Currency> qry = OBDal.getInstance()
+        .createQuery(Currency.class, Currency.PROPERTY_ISOCODE + "=:isoCode or id=:id");
     qry.setNamedParameter("isoCode", isoCode);
     qry.setNamedParameter("id", isoCode);
     // copy the list to only execute the query once
@@ -819,10 +815,10 @@ public class ExternalOrderLoader extends OrderLoader {
       }
     }
     if (!hasOriginalAmount) {
-      payment.put(
-          "origAmount",
-          new BigDecimal(payment.getString("mulrate")).multiply(
-              new BigDecimal(payment.getDouble("origAmount"))).doubleValue());
+      payment.put("origAmount",
+          new BigDecimal(payment.getString("mulrate"))
+              .multiply(new BigDecimal(payment.getDouble("origAmount")))
+              .doubleValue());
     }
     if (!payment.has("date")) {
       payment.put("date", JsonUtils.createDateTimeFormat().format(new Date()));
@@ -909,10 +905,8 @@ public class ExternalOrderLoader extends OrderLoader {
     copyPropertyValue(promotionJson, "amount", "amt");
     copyPropertyValue(promotionJson, "amount", "fullAmt");
     copyPropertyValue(promotionJson, "amount", "displayedTotalAmount");
-    promotionJson.put(
-        "ruleId",
-        resolveJsonValue(PriceAdjustment.ENTITY_NAME, promotionJson.getString("discountRule"),
-            new String[] { "id", "name", "printName" }));
+    promotionJson.put("ruleId", resolveJsonValue(PriceAdjustment.ENTITY_NAME,
+        promotionJson.getString("discountRule"), new String[] { "id", "name", "printName" }));
     copyPropertyValue(promotionJson, "quantity", "obdiscQtyoffer");
     copyPropertyValue(promotionJson, "quantity", "qtyOffer");
     copyPropertyValue(promotionJson, "quantity", "qtyOfferReserved");
@@ -926,10 +920,8 @@ public class ExternalOrderLoader extends OrderLoader {
     final JSONObject productJson = jsonConverter.toJsonObject(product, DataResolvingMode.FULL);
     lineJson.put("product", productJson);
     if (lineJson.has("uom")) {
-      lineJson.put(
-          "uOM",
-          resolveJsonValue(UOM.ENTITY_NAME, lineJson.getString("uom"), new String[] { "id", "name",
-              "eDICode", "symbol" }));
+      lineJson.put("uOM", resolveJsonValue(UOM.ENTITY_NAME, lineJson.getString("uom"),
+          new String[] { "id", "name", "eDICode", "symbol" }));
     } else {
       lineJson.put("uOM", product.getUOM().getId());
     }
@@ -974,8 +966,8 @@ public class ExternalOrderLoader extends OrderLoader {
       copyPropertyValue(taxValue, "netAmount", "net");
 
       taxes.remove(name);
-      final String taxId = resolveJsonValue(TaxRate.ENTITY_NAME, name, new String[] { "id", "name",
-          "taxSearchKey" });
+      final String taxId = resolveJsonValue(TaxRate.ENTITY_NAME, name,
+          new String[] { "id", "name", "taxSearchKey" });
       if (taxId == null) {
         throw new OBException("Tax " + name + " can not be translated to a tax " + taxes);
       }
@@ -1034,7 +1026,8 @@ public class ExternalOrderLoader extends OrderLoader {
       if (posTerminal != null) {
         Long currentNo = (long) 0;
         // The record will be locked to this process until it ends.
-        Query<OBPOSApplications> terminalQuery = OBDal.getInstance().getSession()
+        Query<OBPOSApplications> terminalQuery = OBDal.getInstance()
+            .getSession()
             .createQuery("from OBPOS_Applications where id=:terminalId", OBPOSApplications.class);
         terminalQuery.setParameter("terminalId", posTerminal.getId());
         terminalQuery.setLockOptions(LockOptions.UPGRADE);
@@ -1051,8 +1044,8 @@ public class ExternalOrderLoader extends OrderLoader {
             lockedTerminal.getOrderdocnoPrefix() + "/" + String.format("%07d", currentNo));
       } else {
         final String documentNo = getDocumentNo(
-            ModelProvider.getInstance().getEntity(Order.ENTITY_NAME), null, OBDal.getInstance()
-                .get(DocumentType.class, orderJson.getString("documentType")));
+            ModelProvider.getInstance().getEntity(Order.ENTITY_NAME), null,
+            OBDal.getInstance().get(DocumentType.class, orderJson.getString("documentType")));
         orderJson.put("documentNo", documentNo);
       }
     }
@@ -1111,8 +1104,8 @@ public class ExternalOrderLoader extends OrderLoader {
       addressId = posTerminal.getOrganization().getObretcoCBpLocation().getId();
     }
     if (addressId == null) {
-      throw new OBException("No address information found for bp " + bpId + " for order json "
-          + orderJson);
+      throw new OBException(
+          "No address information found for bp " + bpId + " for order json " + orderJson);
     }
     bpJson.put("locId", addressId);
     bpJson.put("shipLocId", shipAddressId);
@@ -1125,10 +1118,8 @@ public class ExternalOrderLoader extends OrderLoader {
     final OBPOSApplications posTerminal = getPOSTerminal(orderJson);
 
     if (orderJson.has("warehouse")) {
-      orderJson.put(
-          "warehouse",
-          resolveJsonValue(Warehouse.ENTITY_NAME, orderJson.getString("warehouse"), new String[] {
-              "id", "name", "searchKey" }));
+      orderJson.put("warehouse", resolveJsonValue(Warehouse.ENTITY_NAME,
+          orderJson.getString("warehouse"), new String[] { "id", "name", "searchKey" }));
     } else {
       Warehouse wh = posTerminal.getOrganization().getObretcoMWarehouse();
       if (wh == null && !posTerminal.getOrganization().getOrganizationWarehouseList().isEmpty()) {
@@ -1162,18 +1153,16 @@ public class ExternalOrderLoader extends OrderLoader {
   protected void setDocumentType(JSONObject orderJson, OBPOSApplications posTerminal)
       throws JSONException {
     if (orderJson.has("documentType")) {
-      orderJson.put(
-          "documentType",
-          resolveJsonValue(DocumentType.ENTITY_NAME, orderJson.getString("documentType"),
-              new String[] { "id", "name" }));
+      orderJson.put("documentType", resolveJsonValue(DocumentType.ENTITY_NAME,
+          orderJson.getString("documentType"), new String[] { "id", "name" }));
       return;
     }
     if (orderJson.has("isQuotation") && orderJson.getBoolean("isQuotation")) {
-      orderJson.put("documentType", posTerminal.getObposTerminaltype()
-          .getDocumentTypeForQuotations().getId());
+      orderJson.put("documentType",
+          posTerminal.getObposTerminaltype().getDocumentTypeForQuotations().getId());
     } else if (orderJson.has("isReturn") && orderJson.getBoolean("isReturn")) {
-      orderJson.put("documentType", posTerminal.getObposTerminaltype().getDocumentTypeForReturns()
-          .getId());
+      orderJson.put("documentType",
+          posTerminal.getObposTerminaltype().getDocumentTypeForReturns().getId());
     } else {
       orderJson.put("documentType", posTerminal.getObposTerminaltype().getDocumentType().getId());
     }
@@ -1198,11 +1187,12 @@ public class ExternalOrderLoader extends OrderLoader {
     }
 
     // Context will be set according to the terminal
-    OBContext.setOBContext(
-        OBContext.getOBContext().getUser().getId(),
-        POSLoginHandler.getNearestRoleValidToLoginInWebPosTerminalForCertainUser(
-            OBContext.getOBContext().getUser(), result).getId(), result.getClient().getId(), result
-            .getOrganization().getId());
+    OBContext.setOBContext(OBContext.getOBContext().getUser().getId(),
+        POSLoginHandler
+            .getNearestRoleValidToLoginInWebPosTerminalForCertainUser(
+                OBContext.getOBContext().getUser(), result)
+            .getId(),
+        result.getClient().getId(), result.getOrganization().getId());
     return result;
   }
 
@@ -1220,8 +1210,8 @@ public class ExternalOrderLoader extends OrderLoader {
   protected String resolveJsonValue(String entityName, String searchValue, String... properties) {
     final String id = resolveJsonValueNoException(entityName, searchValue, true, properties);
     if (id == null) {
-      throw new OBException("Value " + searchValue + " does not resolve to an instance of "
-          + entityName);
+      throw new OBException(
+          "Value " + searchValue + " does not resolve to an instance of " + entityName);
     }
     return id;
   }
@@ -1230,8 +1220,8 @@ public class ExternalOrderLoader extends OrderLoader {
       String... properties) {
     final String id = resolveJsonValueNoException(entityName, searchValue, false, properties);
     if (id == null) {
-      throw new OBException("Value " + searchValue + " does not resolve to an instance of "
-          + entityName);
+      throw new OBException(
+          "Value " + searchValue + " does not resolve to an instance of " + entityName);
     }
     return id;
   }
@@ -1343,6 +1333,7 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   public static class DefaultDataResolver extends DataResolver {
+    @Override
     public String resolveJsonValue(String entityName, String searchValue, String... properties) {
       for (String property : properties) {
         String id = resolve(entityName, property, searchValue);
@@ -1362,7 +1353,8 @@ public class ExternalOrderLoader extends OrderLoader {
               + OBDal.getInstance().getReadableOrganizationsInClause();
         }
 
-        final Query<String> qry = OBDal.getInstance().getSession()
+        final Query<String> qry = OBDal.getInstance()
+            .getSession()
             .createQuery(qryStr, String.class);
         qry.setParameter("value", value);
         final List<String> values = qry.list();
@@ -1378,6 +1370,7 @@ public class ExternalOrderLoader extends OrderLoader {
       }
     }
 
+    @Override
     public int getOrder() {
       return 100;
     }
@@ -1392,19 +1385,23 @@ public class ExternalOrderLoader extends OrderLoader {
   @ApplicationScoped
   public static class ExternalOrderImportEntryProcessor extends ImportEntryProcessor {
 
+    @Override
     protected ImportEntryProcessRunnable createImportEntryProcessRunnable() {
       return WeldUtils.getInstanceFromStaticBeanManager(ExternalOrderRunnable.class);
     }
 
+    @Override
     protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
       return ORDERLOADER_QUALIFIER.equals(importEntryInformation.getTypeofdata());
     }
 
+    @Override
     protected String getProcessSelectionKey(ImportEntry importEntry) {
       return importEntry.getOrganization().getId();
     }
 
     private static class ExternalOrderRunnable extends ImportEntryProcessRunnable {
+      @Override
       public void run() {
       }
 

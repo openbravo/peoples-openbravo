@@ -37,8 +37,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class InstanceActivationExtensions extends InstanceManagement {
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("SHOW_DEACTIVATE_TERMINALS")) {
@@ -55,7 +55,8 @@ public class InstanceActivationExtensions extends InstanceManagement {
     OBError msg = new OBError();
     try {
       ActivationKey ak = ActivationKey.getInstance();
-      int deactivatedTerminals = OBDal.getInstance().getSession()
+      int deactivatedTerminals = OBDal.getInstance()
+          .getSession()
           .createQuery("update OBPOS_Applications set active = false where active = true")
           .executeUpdate();
       POSLicenseRestrictions r = WeldUtils
@@ -63,10 +64,11 @@ public class InstanceActivationExtensions extends InstanceManagement {
       r.resetNumberOfTerminals();
       log4j.info("Deactivated " + deactivatedTerminals + " POS Terminals");
       msg.setType("Success");
-      msg.setTitle(Utility.messageBD(this, "OBPOS_AllTermianlsDeactivatedTitle", vars.getLanguage()));
-      msg.setMessage(OBMessageUtils.getI18NMessage("OBPOS_AllTermianlsDeactivatedMsg",
-          new String[] { Integer.toString(deactivatedTerminals),
-              ak.getAllowedPosTerminals().toString() }));
+      msg.setTitle(
+          Utility.messageBD(this, "OBPOS_AllTermianlsDeactivatedTitle", vars.getLanguage()));
+      msg.setMessage(
+          OBMessageUtils.getI18NMessage("OBPOS_AllTermianlsDeactivatedMsg", new String[] {
+              Integer.toString(deactivatedTerminals), ak.getAllowedPosTerminals().toString() }));
 
     } catch (Exception e) {
       log4j.error("Error deactivating POS Terminals", e);
@@ -79,8 +81,9 @@ public class InstanceActivationExtensions extends InstanceManagement {
 
   private void printPageDeactivateTerminals(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/retail/posterminal/security/DeactivateTerminals").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/retail/posterminal/security/DeactivateTerminals")
+        .createXmlDocument();
     response.setContentType("text/html; charset=UTF-8");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");

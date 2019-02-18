@@ -29,7 +29,8 @@ public class ProductStatusProperties extends ModelExtension {
         add(new HQLProperty(
             "COALESCE((SELECT pst.name FROM ProductStatusTrl AS pst WHERE pst.language = '"
                 + OBContext.getOBContext().getLanguage().getLanguage()
-                + "' AND pst.productStatus.id = ps.id), ps.name)", "name"));
+                + "' AND pst.productStatus.id = ps.id), ps.name)",
+            "name"));
         add(new HQLProperty("ps.restrictsalefrompos", "restrictsalefrompos"));
         add(new HQLProperty("ps.restrictsaleoutofstock", "restrictsaleoutofstock"));
       }

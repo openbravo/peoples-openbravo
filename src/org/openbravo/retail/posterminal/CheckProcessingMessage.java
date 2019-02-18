@@ -32,8 +32,8 @@ public class CheckProcessingMessage extends JSONProcessSimple {
     try {
       final String messageId = jsonsent.getString("messageId");
 
-      final ImportEntryArchive importEntry = OBDal.getInstance().get(ImportEntryArchive.class,
-          messageId);
+      final ImportEntryArchive importEntry = OBDal.getInstance()
+          .get(ImportEntryArchive.class, messageId);
       if (importEntry != null) {
         respArray.put("status", importEntry.getImportStatus());
         respArray.put("json", importEntry.getJsonInfo());
