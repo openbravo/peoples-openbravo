@@ -443,7 +443,7 @@
           } else {
             discountedLinePrice = (linePrice - clonedDiscountRule.get('discountAmount')) * (1 - clonedDiscountRule.get('discount') / 100);
           }
-          discountAmt = OB.DEC.toNumber((linePrice - (new BigDecimal(String(discountedLinePrice)))) * qty);
+          discountAmt = OB.DEC.toNumber((linePrice - OB.DEC.toNumber(new BigDecimal(String(discountedLinePrice)))) * qty);
         }
         clonedDiscountRule.set('qtyOffer', qty);
         receipt.addPromotion(l, clonedDiscountRule, {
