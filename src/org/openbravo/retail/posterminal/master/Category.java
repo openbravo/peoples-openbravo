@@ -50,15 +50,15 @@ public class Category extends ProcessHQLQuery {
       OBContext.setAdminMode(true);
       String clientId = OBContext.getOBContext().getCurrentClient().getId();
       String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
-          .getString("pos"));
+      final OBRETCOProductList productList = POSUtils
+          .getProductListByPosterminalId(jsonsent.getString("pos"));
       boolean isRemote = false;
       try {
         OBContext.setAdminMode(false);
         isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                .getOBContext().getRole(), null));
+            OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), null));
       } catch (PropertyException e) {
         log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
       } finally {
@@ -73,7 +73,8 @@ public class Category extends ProcessHQLQuery {
       if (!isRemote) {
         final Date terminalDate = OBMOBCUtils.calculateServerDate(
             jsonsent.getJSONObject("parameters").getString("terminalTime"),
-            jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset")
+            jsonsent.getJSONObject("parameters")
+                .getJSONObject("terminalTimeOffset")
                 .getLong("value"));
 
         final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
@@ -106,9 +107,10 @@ public class Category extends ProcessHQLQuery {
     final String clientId = OBContext.getOBContext().getCurrentClient().getId();
     try {
       OBContext.setAdminMode(false);
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e) {
       log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
     } finally {
@@ -127,39 +129,31 @@ public class Category extends ProcessHQLQuery {
     String fullRefreshCondition = lastUpdated == null ? "and pCat.active = true " : "";
 
     if (isRemote) {
-      hqlQueries
-          .add("select"
-              + regularProductsCategoriesHQLProperties.getHqlSelect() //
-              + "from OBRETCO_Productcategory aCat left outer join aCat.productCategory as pCat left outer join pCat.image as img"
-              + " where ( aCat.obretcoProductlist.id = :productListId ) "
-              + " and  aCat.$incrementalUpdateCriteria and aCat.active = true and aCat.$naturalOrgCriteria and aCat.$readableSimpleClientCriteria  "
-              + " order by pCat.name, pCat.id");
-      hqlQueries
-          .add("select"
-              + regularProductsCategoriesHQLProperties.getHqlSelect() //
-              + "from ADTreeNode tn, ProductCategory pCat left outer join pCat.image as img "
-              + "where tn.$incrementalUpdateCriteria and pCat.active = true and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
-              + " and tn.node = pCat.id and tn.tree.table.id = :productCategoryTableId "
-              + " and pCat.summaryLevel = 'Y'"
-              + " and not exists (select pc.id from OBRETCO_Productcategory pc where tn.node = pc.productCategory.id) "
-              + "order by tn.sequenceNumber, tn.id");
+      hqlQueries.add("select" + regularProductsCategoriesHQLProperties.getHqlSelect() //
+          + "from OBRETCO_Productcategory aCat left outer join aCat.productCategory as pCat left outer join pCat.image as img"
+          + " where ( aCat.obretcoProductlist.id = :productListId ) "
+          + " and  aCat.$incrementalUpdateCriteria and aCat.active = true and aCat.$naturalOrgCriteria and aCat.$readableSimpleClientCriteria  "
+          + " order by pCat.name, pCat.id");
+      hqlQueries.add("select" + regularProductsCategoriesHQLProperties.getHqlSelect() //
+          + "from ADTreeNode tn, ProductCategory pCat left outer join pCat.image as img "
+          + "where tn.$incrementalUpdateCriteria and pCat.active = true and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+          + " and tn.node = pCat.id and tn.tree.table.id = :productCategoryTableId "
+          + " and pCat.summaryLevel = 'Y'"
+          + " and not exists (select pc.id from OBRETCO_Productcategory pc where tn.node = pc.productCategory.id) "
+          + "order by tn.sequenceNumber, tn.id");
 
     } else {
-      hqlQueries
-          .add("select"
-              + regularProductsCategoriesHQLProperties.getHqlSelect() //
-              + "from ProductCategory as pCat left outer join pCat.image as img  "
-              + " where (exists("
-              + "from OBRETCO_Prol_Product pli, "
-              + "PricingProductPrice ppp, "
-              + "PricingPriceListVersion pplv "
-              + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist.id = :productListId ) "
-              + "AND (pplv.id= :priceListVersionId) AND (" + "ppp.priceListVersion.id = pplv.id"
-              + ") AND (" + "pli.product.id = ppp.product.id" + ") AND ("
-              + "pli.product.active = true)) " + "OR (pCat.summaryLevel = 'Y' "
-              + fullRefreshCondition + "AND pCat.$naturalOrgCriteria AND "
-              + "pCat.$readableSimpleClientCriteria)) AND pCat.$incrementalUpdateCriteria "
-              + "order by pCat.name, pCat.id");
+      hqlQueries.add("select" + regularProductsCategoriesHQLProperties.getHqlSelect() //
+          + "from ProductCategory as pCat left outer join pCat.image as img  " + " where (exists("
+          + "from OBRETCO_Prol_Product pli, " + "PricingProductPrice ppp, "
+          + "PricingPriceListVersion pplv "
+          + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist.id = :productListId ) "
+          + "AND (pplv.id= :priceListVersionId) AND (" + "ppp.priceListVersion.id = pplv.id"
+          + ") AND (" + "pli.product.id = ppp.product.id" + ") AND ("
+          + "pli.product.active = true)) " + "OR (pCat.summaryLevel = 'Y' " + fullRefreshCondition
+          + "AND pCat.$naturalOrgCriteria AND "
+          + "pCat.$readableSimpleClientCriteria)) AND pCat.$incrementalUpdateCriteria "
+          + "order by pCat.name, pCat.id");
     }
     String promoNameTrl;
     if (OBContext.hasTranslationInstalled()) {
@@ -168,9 +162,7 @@ public class Category extends ProcessHQLQuery {
       promoNameTrl = "pt.commercialName";
     }
 
-    String whereClause = "p.client.id = '"
-        + clientId
-        + "' "
+    String whereClause = "p.client.id = '" + clientId + "' "
         + "and p.startingDate <= :startingDate "
         + "and (p.endingDate is null or p.endingDate >= :endingDate) "
         // assortment products
@@ -198,8 +190,7 @@ public class Category extends ProcessHQLQuery {
         + "(select bindaryData from ADImage ai where ai = pt.obposImage) as img, "
         + "(case when (count(p.name) > 0 and exists (select 1 from PricingAdjustment p "
         + "where p.discountType = pt and p.active = true and " + whereClause + ")) "
-        + "then true else false end) as active, "
-        + "'N' as realCategory " //
+        + "then true else false end) as active, " + "'N' as realCategory " //
         + "from PromotionType pt inner join pt.pricingAdjustmentList p "
         + "where pt.active = true and pt.obposIsCategory = true "//
         + "and pt.$readableSimpleClientCriteria "//
