@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -236,7 +236,7 @@ enyo.kind({
     onChangedTotal: 'renderTotal',
     onRightToolbarDisabled: 'disabledButton'
   },
-  processesToListen: ['calculateReceipt', 'clearWith', 'addProduct'],
+  processesToListen: ['calculateReceipt', 'completeQuotation', 'clearWith', 'addProduct'],
   isEnabled: true,
   disabledButton: function (inSender, inEvent) {
     if (inEvent.exceptionPanel === this.tabPanel) {
@@ -382,23 +382,29 @@ enyo.kind({
     var receipt = this.model.get('order'),
         me = this;
     if (receipt.get('isQuotation')) {
+      var execution = OB.UTIL.ProcessController.start('completeQuotation');
+      enyo.$.scrim.show();
       if (receipt.get('hasbeenpaid') !== 'Y') {
         receipt.set('isEditable', false);
         var cbk = function () {
             receipt.prepareToSend(function () {
               receipt.trigger('closed', {
-                callback: function () {
+                callback: function (args) {
                   //In case the processed document is a quotation, we remove its id so it can be reactivated
-                  if (receipt.get('isQuotation')) {
-                    if (!(receipt.get('oldId') && receipt.get('oldId').length > 0)) {
-                      receipt.set('oldId', receipt.get('id'));
+                  if (args && !args.isCancelled) {
+                    if (receipt.get('isQuotation')) {
+                      if (!(receipt.get('oldId') && receipt.get('oldId').length > 0)) {
+                        receipt.set('oldId', receipt.get('id'));
+                      }
+                      receipt.set('isbeingprocessed', 'N');
                     }
-                    receipt.set('isbeingprocessed', 'N');
+                    if (OB.MobileApp.model.get('permissions')['OBPOS_print.quotation']) {
+                      receipt.trigger('print');
+                    }
                   }
-                  if (OB.MobileApp.model.get('permissions')['OBPOS_print.quotation']) {
-                    receipt.trigger('print');
-                  }
+                  enyo.$.scrim.hide();
                   receipt.trigger('scan');
+                  OB.UTIL.ProcessController.finish('completeQuotation', execution);
                   OB.MobileApp.model.orderList.synchronizeCurrentOrder();
                 }
               });
@@ -413,7 +419,9 @@ enyo.kind({
         }
       } else {
         receipt.prepareToSend(function () {
+          enyo.$.scrim.hide();
           receipt.trigger('scan');
+          OB.UTIL.ProcessController.finish('completeQuotation', execution);
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         });
       }
