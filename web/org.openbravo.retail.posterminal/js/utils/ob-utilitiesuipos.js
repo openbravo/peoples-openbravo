@@ -812,3 +812,19 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
     });
   }
 };
+
+OB.UTIL.hideStoreFilter = function (filterOptions) {
+  _.each(filterOptions, function (prop) {
+    if (prop.name === 'store') {
+      prop.filter = OB.UTIL.isCrossStoreEnabled();
+    }
+  }, this);
+};
+
+OB.UTIL.isCrossStoreEnabled = function () {
+  return OB.MobileApp.model.attributes.store.length !== 0;
+};
+
+OB.UTIL.isCrossStoreReceipt = function (receipt) {
+  return OB.MobileApp.model.get('terminal').organization !== (receipt.organization ? receipt.organization : receipt.get('organization'));
+};

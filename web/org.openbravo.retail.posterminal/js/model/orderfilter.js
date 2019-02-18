@@ -48,6 +48,10 @@
     filter: false,
     type: 'TEXT'
   }, {
+    name: 'organization',
+    filter: false,
+    type: 'TEXT'
+  }, {
     name: 'documentNo',
     column: 'documentNo',
     filter: true,
@@ -114,6 +118,26 @@
     propertyId: 'id',
     propertyName: 'name',
     operator: '='
+  }, {
+    name: 'store',
+    column: 'store',
+    type: 'TEXT',
+    filter: true,
+    isMandatoryFilter: true,
+    caption: 'OBPOS_Store',
+    isList: true,
+    termProperty: 'store',
+    propertyId: 'id',
+    propertyName: 'name',
+    hqlFilter: 'Store',
+    preset: {
+      id: '',
+      name: ''
+    },
+    separatorIndex: 2,
+    remoteEntity: true,
+    applyUIRestrictions: true,
+    disableSorting: true
   }]);
 
 }());

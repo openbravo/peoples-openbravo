@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -138,6 +138,8 @@ public class ShipmentUtils {
       }
       shipment.setNewOBObject(true);
     }
+    shipment.setOrganization(order.getOrganization());
+    shipment.setTrxOrganization(order.getTrxOrganization());
     shipment.setDocumentType(getShipmentDocumentType(order.getDocumentType().getId()));
 
     if (useOrderDocumentNoForRelatedDocs) {
@@ -508,7 +510,6 @@ public class ShipmentUtils {
       JSONObject jsonOrderLine, OrderLine orderLine, JSONObject jsonorder, long lineNo,
       BigDecimal qty, Locator bin, AttributeSetInstance attributeSetInstance, int i)
       throws JSONException {
-    String orderOrganizationId = jsonorder.getString("organization");
 
     if (jsonOrderLine.has("description")
         && StringUtils.length(jsonOrderLine.getString("description")) > 255) {
@@ -522,6 +523,7 @@ public class ShipmentUtils {
     JSONPropertyToEntity.fillBobFromJSON(
         ModelProvider.getInstance().getEntity(ShipmentInOutLine.class), line, jsonorder,
         jsonorder.getLong("timezoneOffset"));
+    line.setOrganization(orderLine.getOrganization());
     line.setLineNo(lineNo);
     line.setShipmentReceipt(shipment);
     line.setSalesOrderLine(orderLine);
@@ -534,12 +536,14 @@ public class ShipmentUtils {
         "attSetInstanceDesc")) {
       line.setAttributeSetValue(
           AttributesUtils.fetchAttributeSetValue(jsonOrderLine.get("attSetInstanceDesc").toString(),
-              jsonOrderLine.getJSONObject("product").get("id").toString(), orderOrganizationId));
+              jsonOrderLine.getJSONObject("product").get("id").toString(),
+              orderLine.getOrganization().getId()));
     } else if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
         "attributeValue")) {
       line.setAttributeSetValue(
           AttributesUtils.fetchAttributeSetValue(jsonOrderLine.get("attributeValue").toString(),
-              jsonOrderLine.getJSONObject("product").get("id").toString(), orderOrganizationId));
+              jsonOrderLine.getJSONObject("product").get("id").toString(),
+              orderLine.getOrganization().getId()));
     } else {
       line.setAttributeSetValue(attributeSetInstance);
     }

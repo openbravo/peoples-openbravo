@@ -32,7 +32,6 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
@@ -67,6 +66,7 @@ public class CashCloseProcessor {
     long t0 = System.currentTimeMillis();
 
     String cashUpId = jsonCashup.getString("id");
+    slaveCashupIds.add(cashUpId);
     String userId = jsonCashup.getString("userId");
     JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
     OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
@@ -111,7 +111,7 @@ public class CashCloseProcessor {
       }
 
       FIN_Reconciliation reconciliation = createReconciliation(cashCloseObj, posTerminal,
-          paymentType.getFinancialAccount(), currentDate, paymentType);
+          paymentType.getFinancialAccount(), currentDate, paymentType, slaveCashupIds);
       if (diffTransaction != null) {
         diffTransaction.setReconciliation(reconciliation);
       }
@@ -145,7 +145,8 @@ public class CashCloseProcessor {
           OBDal.getInstance().save(depositTransaction);
         }
       }
-      associateTransactions(paymentType, reconciliation, cashUpId, cashMgmtIds, slaveCashupIds);
+
+      associateTransactions(paymentType, reconciliation, slaveCashupIds);
     }
 
     for (FIN_Reconciliation reconciliation : arrayReconciliations) {
@@ -199,19 +200,9 @@ public class CashCloseProcessor {
   }
 
   private void associateTransactions(OBPOSAppPayment paymentType, FIN_Reconciliation reconciliation,
-      String cashUpId, JSONArray cashMgmtIds, List<String> slaveCashupIds) {
-    slaveCashupIds.add(cashUpId);
-    OBQuery<FIN_FinaccTransaction> transactionsQuery = OBDal.getInstance()
-        .createQuery(FIN_FinaccTransaction.class,
-            "where obposAppCashup.id in :slaveCashupIds and account.id=:account");
-    transactionsQuery.setNamedParameter("slaveCashupIds", slaveCashupIds);
-    transactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount().getId());
-    associateTransactionsFromQuery(transactionsQuery, reconciliation);
-  }
-
-  private void associateTransactionsFromQuery(OBQuery<FIN_FinaccTransaction> transactionQuery,
-      FIN_Reconciliation reconciliation) {
-    ScrollableResults transactions = transactionQuery.scroll(ScrollMode.FORWARD_ONLY);
+      List<String> slaveCashupIds) {
+    ScrollableResults transactions = getCashupTransactionsQuery(paymentType, slaveCashupIds)
+        .scroll(ScrollMode.FORWARD_ONLY);
     try {
       while (transactions.next()) {
         FIN_FinaccTransaction transaction = (FIN_FinaccTransaction) transactions.get(0);
@@ -229,9 +220,21 @@ public class CashCloseProcessor {
     }
   }
 
+  private OBCriteria<FIN_FinaccTransaction> getCashupTransactionsQuery(
+      final OBPOSAppPayment paymentType, final List<String> slaveCashupIds) {
+    final OBCriteria<FIN_FinaccTransaction> query = OBDal.getInstance()
+        .createCriteria(FIN_FinaccTransaction.class);
+    query.add(
+        Restrictions.in(FIN_FinaccTransaction.PROPERTY_OBPOSAPPCASHUP + ".id", slaveCashupIds));
+    query.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_ACCOUNT + ".id",
+        paymentType.getFinancialAccount().getId()));
+
+    return query;
+  }
+
   private FIN_Reconciliation createReconciliation(JSONObject cashCloseObj,
       OBPOSApplications posTerminal, FIN_FinancialAccount account, Date currentDate,
-      OBPOSAppPayment paymentType) throws JSONException {
+      OBPOSAppPayment paymentType, List<String> slaveCashupIds) throws JSONException {
 
     BigDecimal startingBalance;
     OBCriteria<FIN_Reconciliation> reconciliationsForAccount = OBDal.getInstance()
@@ -241,7 +244,7 @@ public class CashCloseProcessor {
     reconciliationsForAccount.addOrderBy("creationDate", false);
     reconciliationsForAccount.setMaxResults(1);
     List<FIN_Reconciliation> reconciliations = reconciliationsForAccount.list();
-    if (reconciliations.size() == 0) {
+    if (reconciliations.isEmpty()) {
       startingBalance = account.getInitialBalance();
     } else {
       startingBalance = reconciliations.get(0).getEndingBalance();
@@ -253,8 +256,10 @@ public class CashCloseProcessor {
       reconciliation.setNewOBObject(true);
     }
     reconciliation.setAccount(account);
-    reconciliation.setOrganization(organization);
-    reconciliation.setDocumentType(organization.getObposCDoctyperecon());
+    reconciliation
+        .setOrganization(getReconciliationOrganization(posTerminal, paymentType, slaveCashupIds));
+    reconciliation
+        .setDocumentType(posTerminal.getObposTerminaltype().getDocumentTypeForReconciliations());
     reconciliation.setDocumentNo("99999999temp");
     reconciliation.setEndingDate(currentDate);
     reconciliation.setTransactionDate(currentDate);
@@ -271,6 +276,29 @@ public class CashCloseProcessor {
 
     return reconciliation;
 
+  }
+
+  // If reconciliation includes at least one cross store payment, return cross store organization,
+  // otherwise return terminal organization
+  private Organization getReconciliationOrganization(final OBPOSApplications posTerminal,
+      final OBPOSAppPayment paymentType, final List<String> slaveCashupIds) {
+    final Organization crossOrganization = posTerminal.getOrganization()
+        .getOBPOSCrossStoreOrganization();
+    if (crossOrganization == null) {
+      return posTerminal.getOrganization();
+    }
+
+    final OBCriteria<FIN_FinaccTransaction> query = getCashupTransactionsQuery(paymentType,
+        slaveCashupIds);
+    query.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_ORGANIZATION + ".id",
+        crossOrganization.getId()));
+    query.setMaxResults(1);
+
+    if (query.uniqueResult() != null) {
+      return crossOrganization;
+    }
+
+    return posTerminal.getOrganization();
   }
 
   private String getReconciliationDocumentNo(DocumentType doctype) {

@@ -161,6 +161,18 @@
                   }
                 }
 
+                if (terminalModel.get('store').length !== 0) {
+                  var organization = terminalModel.get('terminal').organization;
+                  terminalModel.get('store').splice(0, 0, {
+                    id: organization,
+                    name: OB.I18N.getLabel('OBPOS_LblThisStore') + " (" + terminalModel.get('terminal').organization$_identifier + ")"
+                  });
+                  terminalModel.get('store').splice(1, 0, {
+                    id: "all_" + organization,
+                    name: "(" + OB.I18N.getLabel('OBPOS_LblAllStores') + ")"
+                  });
+                }
+
                 OB.DS.commonParams = {
                   client: terminalModel.get('terminal').client,
                   organization: terminalModel.get('terminal').organization,
