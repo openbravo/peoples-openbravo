@@ -53,9 +53,9 @@ public class CategoryTree extends ProcessHQLQuery {
       try {
         OBContext.setAdminMode(false);
         isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                .getOBContext().getRole(), null));
+            OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), null));
       } catch (PropertyException e) {
         log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
       } finally {
@@ -89,9 +89,10 @@ public class CategoryTree extends ProcessHQLQuery {
     final String clientId = OBContext.getOBContext().getCurrentClient().getId();
     try {
       OBContext.setAdminMode(true);
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e) {
       log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
     } finally {
@@ -108,38 +109,31 @@ public class CategoryTree extends ProcessHQLQuery {
     }
 
     String fullRefreshCondition = lastUpdated == null ? "and pc.active = true " : "";
-    String addIncrementalUpdateFilter = lastUpdated == null ? "(tn.$incrementalUpdateCriteria and pc.$incrementalUpdateCriteria) " : "(tn.$incrementalUpdateCriteria or pc.$incrementalUpdateCriteria) ";
+    String addIncrementalUpdateFilter = lastUpdated == null
+        ? "(tn.$incrementalUpdateCriteria and pc.$incrementalUpdateCriteria) "
+        : "(tn.$incrementalUpdateCriteria or pc.$incrementalUpdateCriteria) ";
 
     if (isRemote) {
-      hqlQueries
-          .add("select distinct "
-              + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
-              + "from ADTreeNode tn, OBRETCO_Productcategory pc "
-              + "where tn.$incrementalUpdateCriteria and pc.active = true and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
-              + " and tn.node = pc.productCategory.id and tn.tree.table.id = :productCategoryTableId  ");
-      hqlQueries
-          .add("select"
-              + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
-              + "from ADTreeNode tn, ProductCategory pc "
-              + "where tn.$incrementalUpdateCriteria and pc.active = true and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
-              + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId "
-              + " and pc.summaryLevel = 'Y'"
-              + " and not exists (select obpc.id from OBRETCO_Productcategory obpc where tn.node = obpc.productCategory.id)");
+      hqlQueries.add("select distinct " + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
+          + "from ADTreeNode tn, OBRETCO_Productcategory pc "
+          + "where tn.$incrementalUpdateCriteria and pc.active = true and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+          + " and tn.node = pc.productCategory.id and tn.tree.table.id = :productCategoryTableId  ");
+      hqlQueries.add("select" + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
+          + "from ADTreeNode tn, ProductCategory pc "
+          + "where tn.$incrementalUpdateCriteria and pc.active = true and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+          + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId "
+          + " and pc.summaryLevel = 'Y'"
+          + " and not exists (select obpc.id from OBRETCO_Productcategory obpc where tn.node = obpc.productCategory.id)");
     } else {
-      hqlQueries
-          .add("select"
-              + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
-              + "from ADTreeNode tn, ProductCategory pc "
-              + "where " + addIncrementalUpdateFilter
-              + " and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
-              + fullRefreshCondition
-              + " and pc.$naturalOrgCriteria and pc.$readableSimpleClientCriteria "
-              + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId ");
+      hqlQueries.add("select" + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
+          + "from ADTreeNode tn, ProductCategory pc " + "where " + addIncrementalUpdateFilter
+          + " and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+          + fullRefreshCondition
+          + " and pc.$naturalOrgCriteria and pc.$readableSimpleClientCriteria "
+          + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId ");
     }
 
-    String whereClause = "p.client.id = '"
-        + clientId
-        + "' "
+    String whereClause = "p.client.id = '" + clientId + "' "
         + "and p.startingDate <= :startingDate "
         + "and (p.endingDate is null or p.endingDate >= :endingDate) "
         // assortment products
@@ -160,9 +154,7 @@ public class CategoryTree extends ProcessHQLQuery {
     // Discounts marked as category
     hqlQueries.add("select pt.id as id, pt.id as categoryId, '0' as parentId, 999999999 as seqNo, "//
         + "(case when (count(p.name) > 0 and exists (select 1 from PricingAdjustment p "
-        + "where p.discountType = pt and p.active = true and "
-        + whereClause
-        + ")) "
+        + "where p.discountType = pt and p.active = true and " + whereClause + ")) "
         + "then true else false end) as active "
         + "from PromotionType pt inner join pt.pricingAdjustmentList p "
         + "where pt.active = true and pt.obposIsCategory = true "//
