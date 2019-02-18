@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -80,6 +80,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
       fromClause.append(" left join il.invoice i");
     } else {
       fromClause.append(" left join e.procurementReceiptInvoiceMatchList mi");
+      fromClause.append(" left join mi.invoiceLine mil");
     }
 
     return fromClause.toString();
@@ -142,7 +143,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
       groupByClause.append("  OR (e.explode='Y')");
     } else {
       groupByClause.append(
-          " HAVING ((e.movementQuantity-SUM(COALESCE(mi.quantity,0))) <> 0 OR (e.explode='Y'))");
+          " HAVING ((e.movementQuantity-SUM(COALESCE(mil.invoicedQuantity,0))) <> 0 OR (e.explode='Y'))");
     }
     return groupByClause.toString();
   }
@@ -153,7 +154,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
       movementQuantityHql.append(
           " (e.movementQuantity - sum(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN il.invoicedQuantity ELSE 0 END, 0)))");
     } else {
-      movementQuantityHql.append(" (e.movementQuantity - COALESCE(SUM(mi.quantity), 0))");
+      movementQuantityHql.append(" (e.movementQuantity - COALESCE(SUM(mil.invoicedQuantity), 0))");
     }
     return movementQuantityHql.toString();
   }
@@ -179,7 +180,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
 
     } else {
       orderQuantityHql.append(
-          " e.orderQuantity * ((e.movementQuantity - coalesce(mi.quantity,0)) / (case when e.movementQuantity <> 0 then e.movementQuantity else null end))");
+          " e.orderQuantity * ((e.movementQuantity - coalesce(mil.invoicedQuantity,0)) / (case when e.movementQuantity <> 0 then e.movementQuantity else null end))");
     }
     return orderQuantityHql.toString();
   }

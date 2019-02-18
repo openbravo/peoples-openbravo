@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,8 +26,6 @@ import java.util.List;
 import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
@@ -44,11 +42,10 @@ import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
 
-public class ElementValueEventHandler extends EntityPersistenceEventObserver {
+class ElementValueEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(ElementValue.ENTITY_NAME) };
-  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -108,11 +105,11 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     obc.setMaxResults(1);
     List<TreeNode> nodes = obc.list();
     HashMap<String, String> result = getParentAndSeqNo(account);
-    String parent_ID = result.get("ParentID");
+    String parentId = result.get("ParentID");
     String seqNo = result.get("SeqNo");
-    if (nodes.size() > 0) {
+    if (!nodes.isEmpty()) {
       TreeNode node = nodes.get(0);
-      node.setReportSet(!isNumber ? rootNode : parent_ID);
+      node.setReportSet(!isNumber ? rootNode : parentId);
       node.setSequenceNumber(Long.valueOf(seqNo));
       OBDal.getInstance().save(node);
     } else {
@@ -120,7 +117,7 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
       treeElement.setOrganization(account.getOrganization());
       treeElement.setNode(account.getId());
       treeElement.setTree(account.getAccountingElement().getTree());
-      treeElement.setReportSet(!isNumber ? rootNode : parent_ID);
+      treeElement.setReportSet(!isNumber ? rootNode : parentId);
       treeElement.setSequenceNumber(Long.valueOf(seqNo));
       OBDal.getInstance().save(treeElement);
     }
@@ -128,7 +125,7 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
   }
 
   HashMap<String, String> getParentAndSeqNo(ElementValue account) {
-    HashMap<String, String> result = new HashMap<String, String>();
+    HashMap<String, String> result = new HashMap<>();
     // Default values for result
     result.put("ParentID", "0");
     result.put("SeqNo",
@@ -182,18 +179,17 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
       node.setSequenceNumber(node.getSequenceNumber() + 10l);
       OBDal.getInstance().save(node);
     }
-    return;
   }
 
-  long getNextSeqNo(Tree tree, String parent_ID) {
+  long getNextSeqNo(Tree tree, String parentId) {
     OBCriteria<TreeNode> obc = OBDal.getInstance().createCriteria(TreeNode.class);
-    obc.add(Restrictions.eq(TreeNode.PROPERTY_REPORTSET, parent_ID));
+    obc.add(Restrictions.eq(TreeNode.PROPERTY_REPORTSET, parentId));
     obc.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
     obc.addOrder(Order.desc(TreeNode.PROPERTY_SEQUENCENUMBER));
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
     List<TreeNode> nodes = obc.list();
-    if (nodes.size() > 0 && obc.list().get(0).getSequenceNumber() != null) {
+    if (!nodes.isEmpty() && obc.list().get(0).getSequenceNumber() != null) {
       return obc.list().get(0).getSequenceNumber() + 10l;
     } else {
       return 10l;

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2017 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,7 +53,7 @@ import org.openbravo.service.datasource.DataSourceServiceProvider;
  * the corresponding datasource is executed.
  * 
  */
-public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
+class TreeTablesEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = getTreeTables();
 
@@ -85,7 +85,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
         return;
       }
       JSONObject jsonBob = this.fromBobToJSONObject(bob);
-      Map<String, String> parameters = new HashMap<String, String>();
+      Map<String, String> parameters = new HashMap<>();
       parameters.put("jsonBob", jsonBob.toString());
       dataSource.add(parameters, null);
     } finally {
@@ -105,7 +105,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
         return;
       }
       JSONObject jsonBob = this.fromBobToJSONObject(bob);
-      Map<String, String> parameters = new HashMap<String, String>();
+      Map<String, String> parameters = new HashMap<>();
       parameters.put("jsonBob", jsonBob.toString());
       dataSource.remove(parameters);
     } finally {
@@ -167,7 +167,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
     OBCriteria<Table> treeTablesCriteria = OBDal.getInstance().createCriteria(Table.class);
     treeTablesCriteria.add(Restrictions.eq(Table.PROPERTY_ISTREE, true));
     List<Table> treeTableList = treeTablesCriteria.list();
-    ArrayList<Entity> entityArray = new ArrayList<Entity>();
+    ArrayList<Entity> entityArray = new ArrayList<>();
     for (Table treeTable : treeTableList) {
       entityArray.add(ModelProvider.getInstance().getEntityByTableId(treeTable.getId()));
     }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -376,10 +376,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
               lineParameters.setNegativeCorrection(true);
               lineParameters.setRelatedTransactionAdjusted(true);
               insertCostAdjustmentLine(lineParameters);
-              cost = currentValueAmt.add(adjustmentBalance)
-                  .divide(currentStock, costCurPrecission, RoundingMode.HALF_UP);
-              log.debug("Revert Negative stock correction. Amount: {}, new cost {}",
-                  revertedNegativeAdjustment.toPlainString(), cost.toPlainString());
+              if (currentStock.signum() != 0) {
+                cost = currentValueAmt.add(adjustmentBalance)
+                    .divide(currentStock, costCurPrecission, RoundingMode.HALF_UP);
+                log.debug("Revert Negative stock correction. Amount: {}, new cost {}",
+                    revertedNegativeAdjustment.toPlainString(), cost.toPlainString());
+              }
             }
           }
 

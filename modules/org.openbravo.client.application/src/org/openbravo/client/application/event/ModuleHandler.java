@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,7 +37,7 @@ import org.openbravo.model.ad.module.Module;
  * @author alostale
  * 
  */
-public class ModuleHandler extends EntityPersistenceEventObserver {
+class ModuleHandler extends EntityPersistenceEventObserver {
   private static final String MODULE_TABLE_ID = "9D36D488605044F5A0264D7C8B916657";
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntityByTableId(MODULE_TABLE_ID) };

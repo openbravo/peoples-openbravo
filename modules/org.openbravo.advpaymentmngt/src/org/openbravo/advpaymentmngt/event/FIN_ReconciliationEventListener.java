@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2018 Openbravo SLU
+ * All portions are Copyright (C) 2016-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -30,7 +30,7 @@ import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 
-public class FIN_ReconciliationEventListener extends EntityPersistenceEventObserver {
+class FIN_ReconciliationEventListener extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(FIN_Reconciliation.ENTITY_NAME) };
 
@@ -59,7 +59,7 @@ public class FIN_ReconciliationEventListener extends EntityPersistenceEventObser
    */
   private void updateNextReconciliationsBalance(final FIN_Reconciliation rec) {
     BigDecimal balance = rec.getEndingBalance().subtract(rec.getStartingbalance());
-    StringBuffer update = new StringBuffer();
+    StringBuilder update = new StringBuilder();
     update.append(" update " + FIN_Reconciliation.ENTITY_NAME);
     update.append(" set " + FIN_Reconciliation.PROPERTY_STARTINGBALANCE + " = "
         + FIN_Reconciliation.PROPERTY_STARTINGBALANCE + " - :balance");

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,8 @@
 
 package org.openbravo.materialmgmt;
 
+import java.math.BigDecimal;
+import java.sql.CallableStatement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -249,9 +251,12 @@ public class InventoryCountProcess implements Process {
       OBException obException = new OBException(e.getMessage(), e.getCause());
       throw obException;
     }
-
     inventory.setProcessed(true);
     OBDal.getInstance().flush();
+
+    // Update inventory date for inventory count lines whose qtycount is equal to book quantity or
+    // orderquantity is equals to quantity order book
+    updateDateInventory(inventory);
 
     return msg;
   }
@@ -419,6 +424,59 @@ public class InventoryCountProcess implements Process {
       if (query.uniqueResult() == null) {
         throw new OBException(OBMessageUtils.parseTranslation("@PeriodNotAvailable@"));
       }
+    }
+  }
+
+  private void updateDateInventory(InventoryCount inventory) {
+
+    try {
+      for (InventoryCountLine invCountLine : inventory.getMaterialMgmtInventoryCountLineList()) {
+        if (invCountLine.getQuantityCount().compareTo(invCountLine.getBookQuantity()) == 0
+            || (invCountLine.getOrderQuantity() != null
+                && invCountLine.getQuantityOrderBook() != null && invCountLine.getOrderQuantity()
+                    .compareTo(invCountLine.getQuantityOrderBook()) == 0)) {
+          org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
+          CallableStatement updateStockStatement = cp.getConnection()
+              .prepareCall("{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+          // client
+          updateStockStatement.setString(1, invCountLine.getClient().getId());
+          // org
+          updateStockStatement.setString(2, invCountLine.getOrganization().getId());
+          // user
+          updateStockStatement.setString(3, OBContext.getOBContext().getUser().getId());
+          // product
+          updateStockStatement.setString(4, invCountLine.getProduct().getId());
+          // locator
+          updateStockStatement.setString(5, invCountLine.getStorageBin().getId());
+          // attributesetinstance
+          updateStockStatement.setString(6,
+              invCountLine.getAttributeSetValue() != null
+                  ? invCountLine.getAttributeSetValue().getId()
+                  : null);
+          // uom
+          updateStockStatement.setString(7, invCountLine.getUOM().getId());
+          // product uom
+          updateStockStatement.setString(8,
+              invCountLine.getOrderUOM() != null ? invCountLine.getOrderUOM().getId() : null);
+          // p_qty
+          updateStockStatement.setBigDecimal(9, BigDecimal.ZERO);
+          // p_qtyorder
+          updateStockStatement.setBigDecimal(10, BigDecimal.ZERO);
+          // p_dateLastInventory --- **
+          updateStockStatement.setDate(11,
+              new java.sql.Date(inventory.getMovementDate().getTime()));
+          // p_preqty
+          updateStockStatement.setBigDecimal(12, BigDecimal.ZERO);
+          // p_preqtyorder
+          updateStockStatement.setBigDecimal(13, BigDecimal.ZERO);
+
+          updateStockStatement.execute();
+        }
+      }
+      OBDal.getInstance().flush();
+    } catch (Exception e) {
+      log4j.error("Error in updateDateInventory while Inventory Count Process", e);
+      throw new OBException(e.getMessage(), e);
     }
   }
 

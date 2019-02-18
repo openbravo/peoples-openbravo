@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -121,8 +121,6 @@ public class InitialOrgSetup {
    * @param bSalesRegion
    *          If true, the Sales Region accounting dimension will be added to the new accounting
    *          schema
-   * @param strSourcePath
-   *          Path of the instance. Needed to build the path to the reference data (dataset) files
    */
   public OBError createOrganization(String strOrgName, String strOrgUser, String strOrgType,
       String strParentOrg, String strcLocationId, String strPassword, String strModules,

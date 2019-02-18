@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,7 +49,7 @@ import org.openbravo.model.ad.access.Role;
  * @author alostale
  *
  */
-public class RoleAccessUniqueHandler extends EntityPersistenceEventObserver {
+class RoleAccessUniqueHandler extends EntityPersistenceEventObserver {
   private static final String WIDGET_CLASS_ACCESS_TABLE_ID = "D1829E5F3A8441BF85DDBC06D49C1074";
   private static final String PROCESS_DEF_ACCESS_TABLE_ID = "FF80818132D85DB50132D860924E0004";
   private static final String VIEW_ACCESS_TALBLE_ID = "E6F29F8A30BC4603B1D1195051C4F3A6";

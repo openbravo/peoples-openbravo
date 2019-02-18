@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -794,61 +795,28 @@ public class AdvancedQueryBuilder {
 
   private String buildValueClause(Property property, String operator, Object value)
       throws JSONException {
-    Object localValue = value;
-
-    // Related to issue 20643: Because multi-identifiers are a concatenation of
-    // values separated by ' - '
-    // With this fix hyphens are supported in the filter when
-    // property is not part of the identifier. Also hyphen is accepted if
-    // the property is the unique property of the identifier
-    if (property.isIdentifier()) {
-      // TODO: this can be improved the left clause computation
-      // correctly uses a || concatenation, so the value clause
-      // can also be made more advanced.
-      // Also filtering by date and number values can be a problem
-      // maybe use a pragmatic approach there
-      if (property.getEntity().getIdentifierProperties().size() > 1) {
-        // if the value consists of multiple parts then filtering won't work
-        // only search on the first part then, is pragmatic but very workable
-        if (localValue != null && localValue.toString().contains(IdentifierProvider.SEPARATOR)) {
-          final int separatorIndex = localValue.toString().indexOf(IdentifierProvider.SEPARATOR);
-          localValue = localValue.toString().substring(0, separatorIndex);
-        }
-      }
-    }
-
     String alias = getTypedParameterAlias();
     if (ignoreCase(property, operator)) {
       alias = "upper(" + alias + ")";
     }
-    String clause;
+
+    String clause = alias;
     if (isLike(operator)) {
-      clause = alias + " escape '" + ESCAPE_CHAR + "' ";
-    } else {
-      clause = alias;
+      clause += " escape '" + ESCAPE_CHAR + "' ";
     }
 
-    localValue = unEscapeOperator(localValue);
-
-    if (!property.isPrimitive()) {
-      // an in parameter use it...
-      if (localValue.toString().contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
-        final List<String> values = new ArrayList<String>();
-        final String[] separatedValues = localValue.toString()
-            .split(JsonConstants.IN_PARAMETER_SEPARATOR);
-        for (String separatedValue : separatedValues) {
-          values.add(separatedValue);
-        }
-        clause = "(" + clause + ")";
-        localValue = values;
-      }
+    Object localValue = unEscapeOperator(value);
+    if (!property.isPrimitive() && localValue != null
+        && localValue.toString().contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
+      clause = "(" + clause + ")";
+      localValue = Arrays.asList(localValue.toString().split(JsonConstants.IN_PARAMETER_SEPARATOR));
     }
 
     try {
       localValue = getTypeSafeValue(operator, property, localValue);
     } catch (IllegalArgumentException e) {
       throw new OBException(OBMessageUtils.getI18NMessage("OBJSON_InvalidFilterValue",
-          new String[] { value != null ? value.toString() : "" }));
+          new String[] { Objects.toString(value, "") }));
     }
     typedParameters.add(localValue);
     return clause;

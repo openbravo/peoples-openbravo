@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+/*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -12,20 +11,29 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
--->
-<DIVFO xmlns:fo="http://www.w3.org/1999/XSL/Format">
-	<fo:table-row keep-with-next="always">
-		<fo:table-cell>
-			<fo:block text-align="end" end-indent="0.5cm">HOUR:</fo:block>
-		</fo:table-cell>
-		<DIVFO id="sectionHours">
-			<fo:table-cell border-width="0.5pt" border-style="solid">
-				<fo:block id="fieldHour">xx02:00</fo:block>
-			</fo:table-cell>
-		</DIVFO>
-	</fo:table-row>
-</DIVFO>
+ */
+
+package org.openbravo.test.taxes.data;
+
+public class OrderLineRelTestData {
+
+  private final int line;
+  private final int lineRelated;
+
+  public OrderLineRelTestData(final int line, final int lineRelated) {
+    this.line = line;
+    this.lineRelated = lineRelated;
+  }
+
+  public int getLine() {
+    return line;
+  }
+
+  public int getLineRelated() {
+    return lineRelated;
+  }
+}

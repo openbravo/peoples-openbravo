@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,11 +38,10 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.plm.Product;
 
-public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
+class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = getImageEntities();
   private static final String DUMMY_IMAGE_ID = "2FA7212E426F11E5A151FEFF819CDC9F";
-  private Image dummyImage = null;
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -66,7 +65,7 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
           // If the property is mandatory replace the current image with a dummy one to prevent
           // breaking the not null constraint
           // See issue https://issues.openbravo.com/view.php?id=30571
-          event.setCurrentState(imageProperty, getDummyImage());
+          event.setCurrentState(imageProperty, getDummyImage(true));
         }
         if (bob != null) {
           String selectedProduct = event.getId();
@@ -87,18 +86,18 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
    * Returns a dummy image (AD_Image instance) that will be named DUMMY_IMAGE_NAME and will not have
    * binary data
    * 
+   * @param createIfNotExists
+   *          a flag to force the creation of the dummy image in case it does not exist
+   * 
    * @return a dummy image
    */
-  private Image getDummyImage() {
-    // If not chached yet, obtain it, otherwise just return the cached one
-    if (dummyImage == null) {
-      OBCriteria<Image> dummyImageCriteria = OBDal.getInstance().createCriteria(Image.class);
-      dummyImageCriteria.add(Restrictions.eq(Image.PROPERTY_ID, DUMMY_IMAGE_ID));
-      dummyImage = (Image) dummyImageCriteria.uniqueResult();
-      // If it is not already created, do it
-      if (dummyImage == null) {
-        dummyImage = createDummyImage();
-      }
+  private Image getDummyImage(boolean createIfNotExists) {
+    OBCriteria<Image> dummyImageCriteria = OBDal.getInstance().createCriteria(Image.class);
+    dummyImageCriteria.add(Restrictions.idEq(DUMMY_IMAGE_ID));
+    Image dummyImage = (Image) dummyImageCriteria.uniqueResult();
+    // If it is not already created, do it
+    if (dummyImage == null && createIfNotExists) {
+      dummyImage = createDummyImage();
     }
     return dummyImage;
   }
@@ -108,8 +107,12 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
    * 
    * @return the dummy image
    */
-  private Image createDummyImage() {
-    Image dummy = OBProvider.getInstance().get(Image.class);
+  private synchronized Image createDummyImage() {
+    Image dummy = getDummyImage(false);
+    if (dummy != null) {
+      return dummy;
+    }
+    dummy = OBProvider.getInstance().get(Image.class);
     dummy.setId(DUMMY_IMAGE_ID);
     dummy.setName("DummyImageForDeletedRows");
     dummy.setNewOBObject(true);
@@ -148,7 +151,7 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
   }
 
   private static Entity[] getImageEntities() {
-    ArrayList<Entity> entityArray = new ArrayList<Entity>();
+    ArrayList<Entity> entityArray = new ArrayList<>();
 
     // Create the observed entities from ModelProvider
     for (Entity entity : ModelProvider.getInstance().getEntityWithImage().keySet()) {
@@ -168,10 +171,7 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
     obCriteria.setMaxResults(1);
     Product product = (Product) obCriteria.uniqueResult();
 
-    if (product != null) {
-      return true;
-    }
-    return false;
+    return product != null;
   }
 
   private static List<String> getImageProperties(Entity entity) {

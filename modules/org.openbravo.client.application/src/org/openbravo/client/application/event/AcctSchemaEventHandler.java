@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,8 +25,6 @@ import java.util.Set;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -45,11 +43,10 @@ import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaElement;
 import org.openbravo.model.financialmgmt.accounting.coa.Element;
 import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
 
-public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
+class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(AcctSchema.ENTITY_NAME) };
-  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -61,8 +58,7 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
       return;
     }
     boolean eval = false;
-    if ((Boolean) event
-        .getCurrentState(getProperty(AcctSchema.PROPERTY_CENTRALMAINTENANCE)) == true) {
+    if ((Boolean) event.getCurrentState(getProperty(AcctSchema.PROPERTY_CENTRALMAINTENANCE))) {
       if (!event.getPreviousState(getProperty(AcctSchema.PROPERTY_CENTRALMAINTENANCE))
           .equals(event.getCurrentState(getProperty(AcctSchema.PROPERTY_CENTRALMAINTENANCE)))) {
         eval = true;
@@ -97,7 +93,7 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
       if (countSchemas(element) > 1) {
         throw new OBException(OBMessageUtils.messageBD("SharedAccountTree"));
       }
-      updateElementValues(element, acctSchema,
+      updateElementValues(element.getId(),
           (Boolean) event.getCurrentState(getProperty(AcctSchema.PROPERTY_ASSETPOSITIVE)),
           (Boolean) event.getCurrentState(getProperty(AcctSchema.PROPERTY_LIABILITYPOSITIVE)),
           (Boolean) event.getCurrentState(getProperty(AcctSchema.PROPERTY_EQUITYPOSITIVE)),
@@ -106,8 +102,8 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
     }
   }
 
-  private Property getProperty(String PROPERTY) {
-    return entities[0].getProperty(PROPERTY);
+  private Property getProperty(String property) {
+    return entities[0].getProperty(property);
   }
 
   private Element getAccountElement(AcctSchema acctSchema) {
@@ -118,7 +114,7 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
     aee.add(Restrictions.eq(AcctSchemaElement.PROPERTY_TYPE, ELEMENTTYPE_ACCOUNT));
     aee.setMaxResults(1);
     List<AcctSchemaElement> aees = aee.list();
-    if (aees.size() > 0) {
+    if (!aees.isEmpty()) {
       return aees.get(0).getAccountingElement();
     } else {
       return null;
@@ -126,7 +122,7 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
   }
 
   private int countSchemas(Element element) {
-    Set<AcctSchema> schemas = new HashSet<AcctSchema>();
+    Set<AcctSchema> schemas = new HashSet<>();
     OBCriteria<AcctSchemaElement> aee = OBDal.getInstance().createCriteria(AcctSchemaElement.class);
     aee.add(Restrictions.eq(AcctSchemaElement.PROPERTY_ACCOUNTINGELEMENT, element));
     for (AcctSchemaElement acctSchemaElement : aee.list()) {
@@ -136,14 +132,14 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
 
   }
 
-  private void updateElementValues(Element _element, AcctSchema acctSchema, boolean assetPositive,
+  private void updateElementValues(String elementId, boolean assetPositive,
       boolean liabilityPositive, boolean ownersEquityPositive, boolean expensePositive,
       boolean revenuePositive) {
-    StringBuffer where = new StringBuffer();
+    StringBuilder where = new StringBuilder();
     final String ACCOUNTSIGN_CREDIT = "C";
     final String ACCOUNTSIGN_DEBIT = "D";
     final String ACCOUNTTYPE_MEMO = "M";
-    Element element = OBDal.getInstance().get(Element.class, _element.getId());
+    Element element = OBDal.getInstance().get(Element.class, elementId);
     where.append(ElementValue.PROPERTY_ACCOUNTINGELEMENT + ".id = :element");
     OBQuery<ElementValue> elementValueQry = OBDal.getInstance()
         .createQuery(ElementValue.class, where.toString());
@@ -155,8 +151,6 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
 
     ScrollableResults elementvalues = elementValueQry.scroll(ScrollMode.FORWARD_ONLY);
     try {
-      // TODO: Review with Martin to see if flush is permitted in handlers
-      // int i = 0;
       while (elementvalues.next()) {
         ElementValue elementValue = (ElementValue) elementvalues.get(0);
         boolean isCredit = getAccountSign(elementValue.getAccountType(), assetPositive,
@@ -164,12 +158,6 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
         if (!ACCOUNTTYPE_MEMO.equals(elementValue.getAccountType())) {
           elementValue.setAccountSign(isCredit ? ACCOUNTSIGN_CREDIT : ACCOUNTSIGN_DEBIT);
         }
-        // if ((i % 100) == 0) {
-        // OBDal.getInstance().flush();
-        // OBDal.getInstance().getSession().clear();
-        // element = OBDal.getInstance().get(Element.class, element.getId());
-        // }
-        // i++;
       }
     } finally {
       elementvalues.close();

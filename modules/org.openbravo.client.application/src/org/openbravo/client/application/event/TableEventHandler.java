@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,8 +39,13 @@ import org.openbravo.service.db.DalConnectionProvider;
  * 
  * @author Shankar
  */
-public class TableEventHandler extends EntityPersistenceEventObserver {
+class TableEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Table.ENTITY_NAME) };
+
+  @Override
+  protected Entity[] getObservedEntities() {
+    return entities;
+  }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
@@ -59,12 +64,6 @@ public class TableEventHandler extends EntityPersistenceEventObserver {
     Property javaClass = entities[0].getProperty(Table.PROPERTY_JAVACLASSNAME);
     String javaClassName = (String) event.getCurrentState(javaClass);
     checkJavaClassName(javaClassName);
-  }
-
-  @Override
-  protected Entity[] getObservedEntities() {
-    // TODO Auto-generated method stub
-    return entities;
   }
 
   private Boolean checkJavaClassName(String javaClassName) {
