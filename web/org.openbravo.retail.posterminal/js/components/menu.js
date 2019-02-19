@@ -955,7 +955,10 @@ enyo.kind({
     var connectedCallback = function () {
         if (OB.MobileApp.model.hasPermission(me.permission)) {
           me.doShowPopup({
-            popup: 'modalReceiptSelector'
+            popup: 'modalReceiptSelector',
+            args: {
+              keepFiltersOnClose: true
+            }
           });
         }
         };

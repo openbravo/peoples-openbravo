@@ -66,6 +66,10 @@
     preset: {
       id: '',
       name: ''
+    },
+    modalArgs: {
+      clean: false,
+      keepFiltersOnClose: true
     }
   }, {
     name: 'orderDateFrom',
@@ -110,6 +114,10 @@
     propertyId: 'id',
     propertyName: 'name',
     operator: '='
+  }, {
+    name: 'iscancelled',
+    filter: false,
+    type: 'BOOL'
   }]);
 
 }());

@@ -416,6 +416,7 @@
         this.set('isModified', attributes.isModified);
         this.set('obposPrepaymentamt', attributes.obposPrepaymentamt || attributes.gross);
         this.set('obposPrepaymentlimitamt', attributes.obposPrepaymentlimitamt || attributes.gross);
+        this.set('obposPrepaymentlaylimitamt', attributes.obposPrepaymentlaylimitamt || OB.DEC.Zero);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -1152,6 +1153,7 @@
       this.set('isModified', false);
       this.set('obposPrepaymentamt', OB.DEC.Zero);
       this.set('obposPrepaymentlimitamt', OB.DEC.Zero);
+      this.set('obposPrepaymentlaylimitamt', OB.DEC.Zero);
     },
 
     clearWith: function (_order) {
@@ -6143,6 +6145,13 @@
             OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
               model.save(function () {
                 if (orderList) {
+                  var orderListModel = _.find(orderList.models, function (m) {
+                    return m.get('id') === model.get('id');
+                  });
+                  if (orderListModel) {
+                    orderList.saveCurrent();
+                    orderList.load(orderListModel);
+                  }
                   orderList.deleteCurrent();
                   orderList.synchronizeCurrentOrder();
                 }
@@ -6202,18 +6211,10 @@
               removeReceiptFromDatabase(receipt, callback);
             }
           } else if (receipt.has('lines') && receipt.get('lines').length === 0 && receipt.get('isEditable') && !receipt.get('isQuotation')) {
-            if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && orderList) {
-              var model = _.find(orderList.models, function (model) {
-                return model.get('id') === receipt.get('id');
-              });
-              if (model) {
-                orderList.saveCurrent();
-                orderList.load(model);
-              }
-              orderList.deleteCurrent();
-              if (callback && callback instanceof Function) {
-                callback();
-              }
+            if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && (receipt.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
+              receipt.setIsCalculateReceiptLockState(true);
+              receipt.setIsCalculateGrossLockState(true);
+              markOrderAsDeleted(receipt, orderList, callback);
             } else {
               removeReceiptFromDatabase(receipt, callback);
             }
@@ -7097,46 +7098,25 @@
       });
     },
     deleteCurrent: function (forceCreateNew) {
-      var me = this;
       if (!this.current) {
         return;
       }
 
-      function finishDeleteCurrent() {
-        me.remove(me.current);
-        var createNew = forceCreateNew || me.length === 0;
-        if (createNew) {
-          var order = me.newOrder();
+      this.remove(this.current);
+      var createNew = forceCreateNew || this.length === 0;
+      if (createNew) {
+        var order = this.newOrder();
 
-          me.unshift(order);
-          if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-            me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
-          }
+        this.unshift(order);
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          this.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
         }
-        me.current = me.at(0);
-        me.loadCurrent(createNew);
-
-        // Refresh Master Data
-        OB.UTIL.checkRefreshMasterData();
       }
+      this.current = this.at(0);
+      this.loadCurrent(createNew);
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && !this.current.has('deletedLines') && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
-        OB.MobileApp.model.receipt.setIsCalculateGrossLockState(true);
-        OB.MobileApp.model.receipt.set('obposIsDeleted', true);
-        OB.info('deleteCurrent has set order with documentNo ' + OB.MobileApp.model.receipt.get('documentNo') + ' and id ' + OB.MobileApp.model.receipt.get('id') + ' as obposIsDeleted to true');
-        OB.MobileApp.model.receipt.prepareToSend(function () {
-          OB.MobileApp.model.receipt.save(function () {
-            OB.MobileApp.model.receipt.trigger('closed', {
-              callback: function () {
-                OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
-                finishDeleteCurrent();
-              }
-            });
-          });
-        });
-      } else {
-        finishDeleteCurrent();
-      }
+      // Refresh Master Data
+      OB.UTIL.checkRefreshMasterData();
     },
 
     load: function (model) {

@@ -412,6 +412,9 @@ enyo.kind({
     if (this.model.get('customerBlocking') && this.model.get('salesOrderBlocking')) {
       this.$.onHold.setContent(' (' + OB.I18N.getLabel('OBPOS_OnHold') + ')');
     }
+    if (this.model.get('bpartnerId') === this.owner.owner.owner.selectedValue) {
+      this.addClass('modal-bp-selector-selectedItem');
+    }
     this.$.bottomShipIcon.show();
     this.$.bottomBillIcon.show();
     if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
@@ -428,8 +431,8 @@ enyo.kind({
       this.$.bottomBillIcon.hide();
     }
     var bPartner = this.owner.owner.owner.bPartner;
-    if (bPartner && bPartner.get('id') === this.model.get('id')) {
-      this.applyStyle('background-color', '#fbf6d1');
+    if (bPartner && bPartner.get('id') === this.model.get('bpartnerId')) {
+      this.addClass('modal-bp-selector-selectedItem');
     }
     // Context menu
     if (this.$.btnContextMenu.$.menu.itemsCount === 0) {
@@ -814,8 +817,18 @@ enyo.kind({
       if (this.args.presetCustomerId) {
         this.$.body.$.listBpsSelector.loadPresetCustomer(this.args.presetCustomerId);
       }
-    } else if (this.args.makeSearch) {
-      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.searchAction();
+    } else {
+      if (this.keepFiltersOnClose) {
+        this.doSetSelectorAdvancedSearch({
+          isAdvanced: this.advancedFilterShowing
+        });
+      }
+      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.selectedValue = this.args.selectedValue;
+      if (this.args.makeSearch) {
+        this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.searchAction();
+      } else {
+        this.$.body.$.listBpsSelector.bpsList.reset(this.$.body.$.listBpsSelector.bpsList.models);
+      }
     }
     return true;
   },
@@ -843,6 +856,9 @@ enyo.kind({
   },
   executeOnHide: function () {
     var selectorHide = this.selectorHide;
+    if (this.keepFiltersOnClose) {
+      this.advancedFilterShowing = this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.$.advancedFilterInfo.showing;
+    }
     this.inherited(arguments);
     if (!selectorHide && this.args.navigationPath && this.args.navigationPath.length > 0) {
       this.doShowPopup({
