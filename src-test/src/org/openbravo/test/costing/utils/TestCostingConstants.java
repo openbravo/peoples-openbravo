@@ -114,6 +114,9 @@ public class TestCostingConstants {
   public static final String LOCATOR_M01_ID = "96DEDCC179504711A81497DE68900F49";
 
   public static final String ENABLE_AUTOMATIC_PRICE_CORRECTION_TRXS = "enableAutomaticPriceCorrectionTrxs";
+  // Negative Stock Correction Preference
+  public static final String ENABLE_NEGATIVE_STOCK_CORRECTION_PREFERENCE = "enableNegativeStockCorrections";
+
   public static final Organization ALL_ORGANIZATIONS = OBDal.getInstance()
       .get(Organization.class, "0");
 

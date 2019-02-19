@@ -45,6 +45,12 @@ public class ProductTransactionAssert {
   final private boolean permanent;
 
   public ProductTransactionAssert(ShipmentInOutLine shipmentReceiptLine, BigDecimal originalPrice,
+      BigDecimal finalPrice, String costingStatus) {
+    this(shipmentReceiptLine, null, null, null, null, TestCostingConstants.EURO_ID, originalPrice,
+        finalPrice, finalPrice, false, false);
+  }
+
+  public ProductTransactionAssert(ShipmentInOutLine shipmentReceiptLine, BigDecimal originalPrice,
       BigDecimal finalPrice) {
     this(shipmentReceiptLine, null, null, null, null, TestCostingConstants.EURO_ID, originalPrice,
         finalPrice, finalPrice, false, false);
@@ -128,6 +134,12 @@ public class ProductTransactionAssert {
         finalPrice, finalPrice, false, false);
   }
 
+  public ProductTransactionAssert(ProductionLine productionLine, BigDecimal originalPrice,
+      BigDecimal totalCost, BigDecimal finalPrice) {
+    this(null, null, null, null, productionLine, TestCostingConstants.EURO_ID, originalPrice,
+        totalCost, finalPrice, false, false);
+  }
+
   public ProductTransactionAssert(ShipmentInOutLine shipmentReceiptLine,
       InventoryAmountUpdateLine inventoryLine, InternalMovementLine movementLine,
       InternalConsumptionLine consumptionLine, ProductionLine productionLine, String currencyId,
@@ -189,5 +201,4 @@ public class ProductTransactionAssert {
   public boolean isPermanent() {
     return permanent;
   }
-
 }
