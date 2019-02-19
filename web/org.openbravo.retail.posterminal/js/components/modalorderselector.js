@@ -92,20 +92,25 @@ enyo.kind({
     this.$.amount.setContent(OB.I18N.formatCurrency(this.model.get('totalamount')));
     this.$.time.setContent(OB.I18N.formatHour(orderDate));
     this.$.customer.setContent(this.model.get('businessPartnerName'));
-    this.$.orderType.setContent(orderType);
-    switch (this.model.get('orderType')) {
-    case 'QT':
-      this.$.orderType.applyStyle('color', 'rgb(248, 148, 29)');
-      break;
-    case 'LAY':
-      this.$.orderType.applyStyle('color', 'lightblue');
-      break;
-    case 'RET':
-      this.$.orderType.applyStyle('color', 'rgb(248, 148, 29)');
-      break;
-    default:
-      this.$.orderType.applyStyle('color', 'rgb(108, 179, 63)');
-      break;
+    if (me.model.get('iscancelled')) {
+      this.$.orderType.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
+      this.$.orderType.applyStyle('color', 'rgb(83, 83, 197)');
+    } else {
+      this.$.orderType.setContent(orderType);
+      switch (this.model.get('orderType')) {
+      case 'QT':
+        this.$.orderType.applyStyle('color', 'rgb(248, 148, 29)');
+        break;
+      case 'LAY':
+        this.$.orderType.applyStyle('color', 'lightblue');
+        break;
+      case 'RET':
+        this.$.orderType.applyStyle('color', 'rgb(248, 148, 29)');
+        break;
+      default:
+        this.$.orderType.applyStyle('color', 'rgb(108, 179, 63)');
+        break;
+      }
     }
     this.applyStyle('padding', '5px');
 

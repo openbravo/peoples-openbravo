@@ -38,6 +38,7 @@ public class PaidReceiptsFilterProperties extends ModelExtension {
         add(new HQLProperty("ord.grandTotalAmount", "totalamount"));
         add(new HQLProperty("ord.grandTotalAmount", "totalamountFrom"));
         add(new HQLProperty("ord.grandTotalAmount", "totalamountTo"));
+        add(new HQLProperty("ord.iscancelled", "iscancelled"));
         String orderTypeFilter = PaidReceiptsFilter.getOrderTypeFilter((JSONObject) params);
         switch (orderTypeFilter) {
           case "ORD":

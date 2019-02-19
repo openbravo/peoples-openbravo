@@ -110,6 +110,10 @@
     propertyId: 'id',
     propertyName: 'name',
     operator: '='
+  }, {
+    name: 'iscancelled',
+    filter: false,
+    type: 'BOOL'
   }]);
 
 }());
