@@ -5741,6 +5741,13 @@
           OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
             model.save(function () {
               if (orderList) {
+                var orderListModel = _.find(orderList.models, function (m) {
+                  return m.get('id') === model.get('id');
+                });
+                if (orderListModel) {
+                  orderList.saveCurrent();
+                  orderList.load(orderListModel);
+                }
                 orderList.deleteCurrent();
                 orderList.synchronizeCurrentOrder();
               }
@@ -5794,6 +5801,14 @@
               // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
               receipt.setIsCalculateReceiptLockState(false);
               receipt.setIsCalculateGrossLockState(false);
+              markOrderAsDeleted(receipt, orderList, callback);
+            } else {
+              removeReceiptFromDatabase(receipt, callback);
+            }
+          } else if (receipt.has('lines') && receipt.get('lines').length === 0 && receipt.get('isEditable') && !receipt.get('isQuotation')) {
+            if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && (receipt.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
+              receipt.setIsCalculateReceiptLockState(true);
+              receipt.setIsCalculateGrossLockState(true);
               markOrderAsDeleted(receipt, orderList, callback);
             } else {
               removeReceiptFromDatabase(receipt, callback);
@@ -6522,52 +6537,25 @@
       });
     },
     deleteCurrent: function (forceCreateNew) {
-      var i, max, me = this,
-          successCallback = function () {
-          return true;
-          },
-          errorCallback = function () {
-          OB.UTIL.showError('Error removing');
-          };
       if (!this.current) {
         return;
       }
 
-      function finishDeleteCurrent() {
-        me.remove(me.current);
-        var createNew = forceCreateNew || me.length === 0;
-        if (createNew) {
-          var order = me.newOrder();
+      this.remove(this.current);
+      var createNew = forceCreateNew || this.length === 0;
+      if (createNew) {
+        var order = this.newOrder();
 
-          me.unshift(order);
-          if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-            me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
-          }
+        this.unshift(order);
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          this.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
         }
-        me.current = me.at(0);
-        me.loadCurrent(createNew);
-
-        // Refresh Master Data
-        OB.UTIL.checkRefreshMasterData();
       }
+      this.current = this.at(0);
+      this.loadCurrent(createNew);
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && !this.current.has('deletedLines') && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
-        OB.MobileApp.model.receipt.setIsCalculateGrossLockState(true);
-        OB.MobileApp.model.receipt.set('obposIsDeleted', true);
-        OB.info('deleteCurrent has set order with documentNo ' + OB.MobileApp.model.receipt.get('documentNo') + ' and id ' + OB.MobileApp.model.receipt.get('id') + ' as obposIsDeleted to true');
-        OB.MobileApp.model.receipt.prepareToSend(function () {
-          OB.MobileApp.model.receipt.save(function () {
-            OB.MobileApp.model.receipt.trigger('closed', {
-              callback: function () {
-                OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
-                finishDeleteCurrent();
-              }
-            });
-          });
-        });
-      } else {
-        finishDeleteCurrent();
-      }
+      // Refresh Master Data
+      OB.UTIL.checkRefreshMasterData();
     },
 
     load: function (model) {
