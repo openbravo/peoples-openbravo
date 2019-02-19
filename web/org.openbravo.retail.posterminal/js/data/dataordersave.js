@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -131,8 +131,6 @@
           return;
         }
 
-        OB.info('Ticket closed: ', context.receipt.get('json'), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
-
         var orderDate = new Date();
         var normalizedCreationDate = OB.I18N.normalizeDate(context.receipt.get('creationDate'));
         var creationDate;
@@ -227,6 +225,7 @@
 
               // success transaction...
               OB.info("[receipt.closed] Transaction success. ReceiptId: " + frozenReceipt.get('id'));
+              OB.info('Ticket closed: ', frozenReceipt.get('json').replace(/logclientErrors/g, "logErrors"), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
 
               function serverMessageForQuotation(frozenReceipt) {
                 var isLayaway = (frozenReceipt.get('orderType') === 2 || frozenReceipt.get('isLayaway'));
@@ -454,7 +453,6 @@
         recursiveSaveFn = function (receiptIndex) {
           if (receiptIndex < closedReceipts.length) {
             currentReceipt = closedReceipts[receiptIndex];
-            OB.info('Multiorders ticket closed', currentReceipt.get('json'), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
             if (!_.isUndefined(currentReceipt)) {
               me.receipt = currentReceipt;
             }
@@ -493,6 +491,8 @@
                 OB.UTIL.setScanningFocus(true);
                 currentReceipt.set('hasbeenpaid', 'Y');
                 OB.Dal.save(currentReceipt, function () {
+                  OB.info('Multiorders ticket closed', currentReceipt.get('json').replace(/logclientErrors/g, "logErrors"), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
+
                   OB.Dal.get(OB.Model.Order, receiptId, function (savedReceipt) {
                     if (!_.isUndefined(savedReceipt.get('amountToLayaway')) && !_.isNull(savedReceipt.get('amountToLayaway')) && savedReceipt.get('generateInvoice')) {
                       me.hasInvLayaways = true;
