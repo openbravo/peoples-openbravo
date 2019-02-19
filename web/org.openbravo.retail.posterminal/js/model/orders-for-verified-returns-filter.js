@@ -115,6 +115,10 @@
     propertyName: 'name',
     operator: '='
   }, {
+    name: 'iscancelled',
+    filter: false,
+    type: 'BOOL'
+  }, {
     name: 'store',
     column: 'store',
     type: 'TEXT',
