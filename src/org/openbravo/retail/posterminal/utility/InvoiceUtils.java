@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -160,6 +160,7 @@ public class InvoiceUtils {
     invoiceLine.setLineNo((long) lineNo);
     invoiceLine.setDescription(
         jsonInvoiceLine.has("description") ? jsonInvoiceLine.getString("description") : "");
+    invoiceLine.setOrganization(invoice.getOrganization());
 
     BigDecimal movQty = null;
     if (inOutLine != null && inOutLine.getMovementQuantity() != null) {
@@ -226,6 +227,7 @@ public class InvoiceUtils {
       TaxRate tax = (TaxRate) OBDal.getInstance()
           .getProxy(ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
       invoicelinetax.setTax(tax);
+      invoicelinetax.setOrganization(invoiceLine.getOrganization());
 
       final BigDecimal taxNetAmt = BigDecimal.valueOf(jsoninvoiceTax.getDouble("net"));
       final BigDecimal taxAmt = BigDecimal.valueOf(jsoninvoiceTax.getDouble("amount"));
@@ -298,6 +300,7 @@ public class InvoiceUtils {
         promotion.setId(OBMOBCUtils.getUUIDbyString(invoiceLine.getId() + p));
         promotion.setNewOBObject(true);
         promotion.setInvoiceLine(invoiceLine);
+        promotion.setOrganization(invoiceLine.getOrganization());
         invoiceLine.getInvoiceLineOfferList().add(promotion);
       }
     }
@@ -400,6 +403,8 @@ public class InvoiceUtils {
       }
     }
 
+    invoice.setOrganization(order.getOrganization());
+    invoice.setTrxOrganization(order.getTrxOrganization());
     invoice.setDescription(description);
     invoice.setDocumentType(getInvoiceDocumentType(order.getDocumentType().getId()));
     invoice.setTransactionDocument(getInvoiceDocumentType(order.getDocumentType().getId()));
@@ -451,6 +456,7 @@ public class InvoiceUtils {
       TaxRate tax = (TaxRate) OBDal.getInstance()
           .getProxy(ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
       invoiceTax.setTax(tax);
+      invoiceTax.setOrganization(invoice.getOrganization());
       invoiceTax.setTaxableAmount(BigDecimal.valueOf(jsoninvoiceTax.getDouble("net"))
           .setScale(pricePrecision, RoundingMode.HALF_UP));
       invoiceTax.setTaxAmount(BigDecimal.valueOf(jsoninvoiceTax.getDouble("amount"))
@@ -496,6 +502,7 @@ public class InvoiceUtils {
     final FIN_PaymentSchedule paymentSchedule = order.getFINPaymentScheduleList().get(0);
     final FIN_PaymentSchedule paymentScheduleInvoice = OBProvider.getInstance()
         .get(FIN_PaymentSchedule.class);
+    paymentScheduleInvoice.setOrganization(invoice.getOrganization());
     paymentScheduleInvoice.setCurrency(order.getCurrency());
     paymentScheduleInvoice.setInvoice(invoice);
     paymentScheduleInvoice.setFinPaymentmethod(order.getPaymentMethod());
@@ -871,6 +878,7 @@ public class InvoiceUtils {
   private void addPaymentSchedule(Order order, Invoice invoice, BigDecimal amount,
       BigDecimal outstandingAmount, Date dueDate) {
     FIN_PaymentSchedule pymtSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+    pymtSchedule.setOrganization(invoice.getOrganization());
     pymtSchedule.setCurrency(order.getCurrency());
     pymtSchedule.setInvoice(invoice);
     pymtSchedule.setFinPaymentmethod(order.getPaymentMethod());
