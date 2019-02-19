@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -131,8 +131,6 @@
           return;
         }
 
-        OB.info('Ticket closed: ', context.receipt.get('json'), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
-
         var orderDate = new Date();
         var normalizedCreationDate = OB.I18N.normalizeDate(context.receipt.get('creationDate'));
         var creationDate;
@@ -236,6 +234,7 @@
                 var syncSuccessCallback, syncErrorCallback, closeParamCallback, restoreReceiptCallback, serverMessageForQuotation, receiptForPostSyncReceipt;
                 // success transaction...
                 OB.info("[receipt.closed] Transaction success. ReceiptId: " + frozenReceipt.get('id'));
+                OB.info('Ticket closed: ', frozenReceipt.get('json').replace(/logclientErrors/g, "logErrors"), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
 
                 // create a clone of the receipt to be used when executing the final callback
                 receipt.clearWith(frozenReceipt);
@@ -469,6 +468,8 @@
                 OB.UTIL.setScanningFocus(true);
                 currentReceipt.set('hasbeenpaid', 'Y');
                 OB.Dal.saveInTransaction(tx, currentReceipt, function () {
+                  OB.info('Multiorders ticket closed', currentReceipt.get('json').replace(/logclientErrors/g, "logErrors"), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
+
                   OB.Dal.getInTransaction(tx, OB.Model.Order, me.receipt.get('id'), function (savedReceipt) {
                     if (!OB.UTIL.isNullOrUndefined(savedReceipt.get('amountToLayaway')) && savedReceipt.get('generateInvoice')) {
                       me.hasInvLayaways = true;
@@ -610,7 +611,6 @@
                   }
                   currentReceipt.set('orderDate', new Date());
 
-                  OB.info('Multiorders ticket closed', currentReceipt.get('json'), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
                   var creationDate, normalizedCreationDate = OB.I18N.normalizeDate(currentReceipt.get('creationDate'));
                   if (normalizedCreationDate === null) {
                     creationDate = new Date();
