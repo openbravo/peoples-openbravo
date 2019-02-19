@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2019 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -73,7 +73,6 @@
     --
     v_Result NUMBER:=1;
     v_AD_Org_ID VARCHAR2(32);
-    v_Warehouse_Org VARCHAR2(32);
     v_AD_Client_ID VARCHAR2(32);
     v_NextNo VARCHAR2(32);
     v_Qty NUMBER;
@@ -322,26 +321,6 @@
 
       IF(v_bp_isactive = 'N') THEN
         RAISE_APPLICATION_ERROR(-20000, '@InActiveBusinessPartner@');
-      END IF;
-
-      --Check whether warehouse belongs to the organization.
-      SELECT count(AD_ORG_ID)
-      INTO v_count
-      FROM AD_Org_Warehouse
-      WHERE M_Warehouse_ID=v_M_Warehouse_ID
-      AND AD_Org_ID = v_AD_Org_ID;
-
-      IF v_count = 0 AND v_isSoTrx = 'Y' THEN
-        RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@');
-      END IF;
-
-      SELECT AD_Org_ID
-      INTO v_Warehouse_Org
-      FROM M_Warehouse
-      WHERE M_Warehouse_ID = v_M_Warehouse_ID;
-
-      IF(ad_org_isinnaturaltree(v_Warehouse_Org, v_AD_Org_ID, v_AD_Client_ID) = 'N' AND v_isSoTrx = 'N') THEN
-        RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@');
       END IF;
 
       SELECT CASE WHEN (m.ISSOTRX='Y') THEN customer_blocking ELSE vendor_blocking END, CASE WHEN (m.ISSOTRX='Y') 
