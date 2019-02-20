@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -871,6 +872,17 @@ public class POSUtils {
       throw new OBException("Error while reading synchronized preference", e);
     }
     return isSynchronizeModeActive;
+  }
+
+  /**
+   * Returns true if order was created in a store different than the store of current terminal
+   */
+  public static boolean isCrossStore(final Order order, final OBPOSApplications posTerminal) {
+    final Organization crossOrganization = posTerminal.getOrganization()
+        .getOBPOSCrossStoreOrganization();
+
+    return crossOrganization != null && !StringUtils.equals(order.getOrganization().getId(),
+        posTerminal.getOrganization().getId());
   }
 
 }

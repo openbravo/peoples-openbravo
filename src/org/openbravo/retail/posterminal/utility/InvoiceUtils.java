@@ -55,6 +55,7 @@ import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.payment.PaymentTermLine;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.db.CallStoredProcedure;
 
 public class InvoiceUtils {
@@ -84,14 +85,8 @@ public class InvoiceUtils {
         invoicelineReferences.add(OBDal.getInstance().get(OrderLine.class, invoiceLineId));
       }
 
-      // Invoice header
-      createInvoice(invoice, order, jsoninvoice, useOrderDocumentNoForRelatedDocs, docNoHandlers);
-      OBDal.getInstance().save(invoice);
-
-      // Invoice lines
-      createInvoiceLines(invoice, order, jsoninvoice, invoicelines, invoicelineReferences);
-
-      updateAuditInfo(invoice, jsoninvoice);
+      createInvoiceAndLines(jsoninvoice, invoice, order, invoicelines, invoicelineReferences,
+          useOrderDocumentNoForRelatedDocs, docNoHandlers);
     } catch (JSONException e) {
       // won't happen
     }
@@ -122,6 +117,26 @@ public class InvoiceUtils {
               + orderDocType.getName());
     }
     return docType;
+  }
+
+  private void createInvoiceAndLines(final JSONObject jsoninvoice, final Invoice invoice,
+      final Order order, final JSONArray invoicelines,
+      final ArrayList<OrderLine> invoicelineReferences,
+      final boolean useOrderDocumentNoForRelatedDocs, final List<DocumentNoHandler> docNoHandlers)
+      throws JSONException {
+    createInvoice(invoice, order, jsoninvoice, useOrderDocumentNoForRelatedDocs, docNoHandlers);
+    OBDal.getInstance().save(invoice);
+    createInvoiceLines(invoice, order, jsoninvoice, invoicelines, invoicelineReferences);
+    updateAuditInfo(invoice, jsoninvoice);
+
+    if (POSUtils.isCrossStore(order, order.getObposApplications())) {
+      OBContext.setCrossOrgReferenceAdminMode();
+      try {
+        OBDal.getInstance().flush();
+      } finally {
+        OBContext.restorePreviousCrossOrgReferenceMode();
+      }
+    }
   }
 
   private void createInvoiceLine(Invoice invoice, Order order, JSONObject jsoninvoice,

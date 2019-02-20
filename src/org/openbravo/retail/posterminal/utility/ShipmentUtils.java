@@ -96,10 +96,9 @@ public class ShipmentUtils {
 
     final ShipmentInOut shipment = OBProvider.getInstance().get(ShipmentInOut.class);
     try {
-      createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs, docNoHandlers);
-      OBDal.getInstance().save(shipment);
       final JSONArray orderlines = jsonorder.getJSONArray("lines");
-      createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences, locatorList);
+      createShipmentAndLines(jsonorder, shipment, order, orderlines, lineReferences, locatorList,
+          useOrderDocumentNoForRelatedDocs, docNoHandlers);
 
       // Stock manipulation
       org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
@@ -120,6 +119,24 @@ public class ShipmentUtils {
   private void addDocumentNoHandler(BaseOBObject bob, Entity entity, DocumentType docTypeTarget,
       DocumentType docType, List<DocumentNoHandler> documentNoHandlers) {
     documentNoHandlers.add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
+  }
+
+  private void createShipmentAndLines(final JSONObject jsonorder, final ShipmentInOut shipment,
+      final Order order, final JSONArray orderlines, final ArrayList<OrderLine> lineReferences,
+      final List<Locator> locatorList, final boolean useOrderDocumentNoForRelatedDocs,
+      final List<DocumentNoHandler> docNoHandlers) throws JSONException {
+    createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs, docNoHandlers);
+    OBDal.getInstance().save(shipment);
+    createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences, locatorList);
+
+    if (POSUtils.isCrossStore(order, order.getObposApplications())) {
+      OBContext.setCrossOrgReferenceAdminMode();
+      try {
+        OBDal.getInstance().flush();
+      } finally {
+        OBContext.restorePreviousCrossOrgReferenceMode();
+      }
+    }
   }
 
   private void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder,

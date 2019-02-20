@@ -226,7 +226,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
       UpdateCashup.getAndUpdateCashUp(jsoncashup.getString("id"), jsoncashup, cashUpDate);
     }
 
-    OBContext.setCrossOrgReferenceAdminMode();
     try {
 
       initializeVariables(jsonorder);
@@ -331,10 +330,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
           } else {
             order = OBProvider.getInstance().get(Order.class);
           }
-          createOrder(order, jsonorder);
-          OBDal.getInstance().save(order);
           lineReferences = new ArrayList<OrderLine>();
-          createOrderLines(order, jsonorder, orderlines, lineReferences);
+          createOrderAndLines(jsonorder, order, orderlines, lineReferences);
         } else {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setDelivered(deliver);
@@ -535,7 +532,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
       return successMessage(jsonorder);
     } finally {
       documentNoHandlers.set(null);
-      OBContext.restorePreviousCrossOrgReferenceMode();
     }
   }
 
@@ -738,7 +734,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
   }
 
-  void createOrderLines(Order order, JSONObject jsonorder, JSONArray orderlines,
+  private void createOrderLines(Order order, JSONObject jsonorder, JSONArray orderlines,
       ArrayList<OrderLine> lineReferences) throws JSONException {
     Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
     Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
@@ -955,7 +951,23 @@ public class OrderLoader extends POSDataSynchronizationProcess
     }
   }
 
-  void createOrder(Order order, JSONObject jsonorder) throws JSONException {
+  void createOrderAndLines(final JSONObject jsonorder, final Order order,
+      final JSONArray orderlines, final ArrayList<OrderLine> lineReferences) throws JSONException {
+    createOrder(order, jsonorder);
+    OBDal.getInstance().save(order);
+    createOrderLines(order, jsonorder, orderlines, lineReferences);
+
+    if (POSUtils.isCrossStore(order, order.getObposApplications())) {
+      OBContext.setCrossOrgReferenceAdminMode();
+      try {
+        OBDal.getInstance().flush();
+      } finally {
+        OBContext.restorePreviousCrossOrgReferenceMode();
+      }
+    }
+  }
+
+  private void createOrder(Order order, JSONObject jsonorder) throws JSONException {
     Entity orderEntity = ModelProvider.getInstance().getEntity(Order.class);
     if (jsonorder.has("description")
         && StringUtils.length(jsonorder.getString("description")) > 255) {
@@ -1358,7 +1370,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
   private void processPayments(FIN_PaymentSchedule paymentSchedule, Order order,
       OBPOSApplications posTerminal, OBPOSAppPayment paymentType, JSONObject payment,
       BigDecimal writeoffAmt, JSONObject jsonorder, FIN_FinancialAccount account) throws Exception {
-    final boolean isCrossStore = isCrossStore(order, posTerminal);
+    final boolean isCrossStore = POSUtils.isCrossStore(order, posTerminal);
     OBContext.setAdminMode(!isCrossStore);
     try {
       final Organization paymentOrganization = getPaymentOrganization(posTerminal, isCrossStore);
@@ -1673,15 +1685,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
       final boolean isCrossStore) {
     return isCrossStore ? posTerminal.getOrganization().getOBPOSCrossStoreOrganization()
         : posTerminal.getOrganization();
-  }
-
-  // Returns true if order was created in a store different than the store of current terminal
-  private boolean isCrossStore(final Order order, final OBPOSApplications posTerminal) {
-    final Organization crossOrganization = posTerminal.getOrganization()
-        .getOBPOSCrossStoreOrganization();
-
-    return crossOrganization != null && !StringUtils.equals(order.getOrganization().getId(),
-        posTerminal.getOrganization().getId());
   }
 
   private void sortPSDByInvoice(List<FIN_PaymentScheduleDetail> psdList) {
