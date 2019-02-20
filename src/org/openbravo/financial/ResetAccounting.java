@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -436,7 +436,7 @@ public class ResetAccounting {
   private static List<String> getDocbasetypes(String clientId, String tableId, String recordId) {
     String myQuery = "select distinct e.documentCategory from FinancialMgmtAccountingFact e where e.client.id = :clientId and e.table.id = :tableId ";
     if (!"".equals(recordId)) {
-      myQuery = myQuery + "and e.recordID=:recordId";
+      myQuery = myQuery + "and e.table.id =:tableId and e.recordID=:recordId";
     }
     Query query = OBDal.getInstance().getSession().createQuery(myQuery);
     query.setString("clientId", clientId);
