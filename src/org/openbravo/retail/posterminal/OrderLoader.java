@@ -979,7 +979,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
     OBPOSApplications posTerminal = OBDal.getInstance()
         .get(OBPOSApplications.class, jsonorder.getString("posTerminal"));
     BusinessPartner bp = order.getBusinessPartner();
-    order.setTrxOrganization(posTerminal.getOrganization());
     order.setTransactionDocument((DocumentType) OBDal.getInstance()
         .getProxy("DocumentType", jsonorder.getString("documentType")));
     order.setAccountingDate(order.getOrderDate());
