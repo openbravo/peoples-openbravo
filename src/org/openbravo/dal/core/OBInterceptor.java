@@ -281,7 +281,7 @@ public class OBInterceptor extends EmptyInterceptor {
       if ((isNew || currentState[i] != previousState[i])
           && !(currentState[i] instanceof Organization)
           && (currentState[i] instanceof BaseOBObject || currentState[i] instanceof HibernateProxy)
-          && currentState[i] instanceof OrganizationEnabled && !isAudit(propertyNames[i])) {
+          && currentState[i] instanceof OrganizationEnabled) {
         // get the organization from the current state
         final OrganizationEnabled oe = (OrganizationEnabled) currentState[i];
         final Organization o2 = oe.getOrganization();
@@ -300,8 +300,9 @@ public class OBInterceptor extends EmptyInterceptor {
           continue;
         }
 
-        boolean skipCrossOrgCheck = obContext.isInCrossOrgAdministratorMode()
-            && bob.getEntity().getProperty(propertyNames[i]).isAllowedCrossOrgReference();
+        boolean skipCrossOrgCheck = (obContext.isInCrossOrgAdministratorMode()
+            && bob.getEntity().getProperty(propertyNames[i]).isAllowedCrossOrgReference())
+            || isAudit(propertyNames[i]);
 
         if (!skipCrossOrgCheck && !obObject.getEntity().isVirtualEntity()
             && !obContext.getOrganizationStructureProvider(o1.getClient().getId())
