@@ -178,21 +178,20 @@ public class POSUtils {
     return null;
   }
 
-  public static List<String> getOrgListByCrossStoreId(String crossStoreId) {
+  @SuppressWarnings("unchecked")
+  public static List<String> getOrgListByCrossStoreId(final String crossStoreId) {
+    OBContext.setAdminMode(false);
     try {
-      OBContext.setAdminMode(false);
+      final StringBuilder select = new StringBuilder();
+      select.append(" select " + Organization.PROPERTY_ID);
+      select.append(" from " + Organization.ENTITY_NAME);
+      select.append(
+          " where " + Organization.PROPERTY_OBPOSCROSSSTOREORGANIZATION + ".id = :crossStoreId");
 
-      StringBuilder query = new StringBuilder();
-      query.append("select id");
-      query.append(" from ");
-      query.append(Organization.ENTITY_NAME);
-      query.append(" where oBPOSCrossStoreOrganization.id = '");
-      query.append(crossStoreId);
-      query.append("'");
+      final Query<String> query = OBDal.getInstance().getSession().createQuery(select.toString());
+      query.setParameter("crossStoreId", crossStoreId);
 
-      @SuppressWarnings("unchecked")
-      Query<String> crossQuery = OBDal.getInstance().getSession().createQuery(query.toString());
-      return crossQuery.list();
+      return query.list();
     } catch (Exception e) {
       log.error("Error getting store list: " + e.getMessage(), e);
     } finally {
