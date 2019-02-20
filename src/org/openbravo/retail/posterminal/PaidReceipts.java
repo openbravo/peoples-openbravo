@@ -140,6 +140,7 @@ public class PaidReceipts extends JSONProcessSimple {
         }
 
         paidReceipt.put("orderid", orderid);
+        paidReceipt.put("trxOrganization", jsonsent.getString("organization"));
 
         // get the Invoice for the Order
         String hqlPaidReceiptsInvoice = "select inv.id from Invoice as inv where inv.salesOrder.id = :orderId";

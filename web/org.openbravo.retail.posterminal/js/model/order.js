@@ -7354,6 +7354,7 @@
 
       order.set('client', OB.MobileApp.model.get('terminal').client);
       order.set('organization', OB.MobileApp.model.get('terminal').organization);
+      order.set('trxOrganization', OB.MobileApp.model.get('terminal').organization);
       order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       order.set('updatedBy', OB.MobileApp.model.get('orgUserId'));
       order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);

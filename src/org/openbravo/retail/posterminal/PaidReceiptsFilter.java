@@ -119,6 +119,11 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     return getColumnFilterValue(jsonsent, "orderType");
   }
 
+  protected static String getPosTerminalOrganization(JSONObject jsonsent) {
+    OBPOSApplications pOSTerminal = POSUtils.getTerminal(jsonsent.optString("terminalName"));
+    return pOSTerminal.getOrganization().getId();
+  }
+
   protected static String getOganizationFilter(JSONObject jsonsent) throws JSONException {
 
     String documentNo = getColumnFilterValue(jsonsent, "documentNo");
