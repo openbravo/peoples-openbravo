@@ -341,8 +341,8 @@ public class PaidReceipts extends JSONProcessSimple {
                 .getProductListByPosterminalId(posTerminal.getId());
 
             final StringBuilder hql = new StringBuilder();
-            hql.append(OBRETCOProlProduct.PROPERTY_OBRETCOPRODUCTLIST + ".id = :assortmentId ");
-            hql.append(OBRETCOProlProduct.PROPERTY_PRODUCT + ".id = :productId ");
+            hql.append(OBRETCOProlProduct.PROPERTY_OBRETCOPRODUCTLIST + ".id = :assortmentId");
+            hql.append(" and " + OBRETCOProlProduct.PROPERTY_PRODUCT + ".id = :productId");
 
             final OBQuery<OBRETCOProlProduct> query = OBDal.getInstance()
                 .createQuery(OBRETCOProlProduct.class, hql.toString());
