@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -281,7 +281,7 @@ public class OBInterceptor extends EmptyInterceptor {
       if ((isNew || currentState[i] != previousState[i])
           && !(currentState[i] instanceof Organization)
           && (currentState[i] instanceof BaseOBObject || currentState[i] instanceof HibernateProxy)
-          && currentState[i] instanceof OrganizationEnabled) {
+          && currentState[i] instanceof OrganizationEnabled && !isAudit(propertyNames[i])) {
         // get the organization from the current state
         final OrganizationEnabled oe = (OrganizationEnabled) currentState[i];
         final Organization o2 = oe.getOrganization();
@@ -315,6 +315,10 @@ public class OBInterceptor extends EmptyInterceptor {
         }
       }
     }
+  }
+
+  private boolean isAudit(final String propertyName) {
+    return propertyName.equalsIgnoreCase("createdBy") || propertyName.equalsIgnoreCase("updatedBy");
   }
 
   // general event handler does new and update
