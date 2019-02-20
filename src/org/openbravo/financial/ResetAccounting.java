@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -449,7 +449,7 @@ public class ResetAccounting {
         + " and exists (select 1 from FinancialMgmtAccountingFact e where e.documentCategory=d.documentCategory ";
 
     if (!"".equals(recordId)) {
-      myQuery = myQuery + "and e.recordID=:recordId";
+      myQuery = myQuery + "and e.table.id =:tableId and e.recordID=:recordId";
     }
     myQuery = myQuery + ")";
     Query<String> query = OBDal.getInstance().getSession().createQuery(myQuery, String.class);
