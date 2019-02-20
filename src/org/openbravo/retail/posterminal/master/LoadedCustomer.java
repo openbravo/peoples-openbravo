@@ -50,18 +50,18 @@ public class LoadedCustomer extends ProcessHQLQuery {
       Map<String, Object> paramValues = new HashMap<String, Object>();
       paramValues.put("businessPartnerId",
           jsonsent.getJSONObject("parameters").getJSONObject("bpartnerId").get("value"));
-      paramValues.put("bplocId", jsonsent.getJSONObject("parameters").getJSONObject("bpLocationId")
-          .get("value"));
+      paramValues.put("bplocId",
+          jsonsent.getJSONObject("parameters").getJSONObject("bpLocationId").get("value"));
       if (jsonsent.getJSONObject("parameters").has("bpBillLocationId")) {
         paramValues.put("bpbilllocId",
             jsonsent.getJSONObject("parameters").getJSONObject("bpBillLocationId").get("value"));
       }
 
       if (jsonsent.getJSONObject("parameters").has("crossStore")) {
-        String crossStore = jsonsent.getJSONObject("parameters").getJSONObject("crossStore")
+        final String crossStore = jsonsent.getJSONObject("parameters")
+            .getJSONObject("crossStore")
             .getString("value");
-
-        Set<String> crossStoreNaturalTree = OBContext.getOBContext()
+        final Set<String> crossStoreNaturalTree = OBContext.getOBContext()
             .getOrganizationStructureProvider(jsonsent.getString("client"))
             .getNaturalTree(crossStore);
         paramValues.put("crossStoreNaturalTree", crossStoreNaturalTree);
@@ -80,73 +80,82 @@ public class LoadedCustomer extends ProcessHQLQuery {
     HQLPropertyList bpartnerLocHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensionsLoc);
 
-    String crossStore = StringUtils.EMPTY;
+    String crossStore = null;
     if (jsonsent.getJSONObject("parameters").has("crossStore")) {
-      crossStore = jsonsent.getJSONObject("parameters").getJSONObject("crossStore")
+      crossStore = jsonsent.getJSONObject("parameters")
+          .getJSONObject("crossStore")
           .getString("value");
     }
+
     StringBuilder bpartnerHQLQuery = new StringBuilder();
-    bpartnerHQLQuery.append("select ");
+    bpartnerHQLQuery.append(" select");
     bpartnerHQLQuery.append(bpartnerHQLProperties.getHqlSelect());
-    bpartnerHQLQuery.append("from BusinessPartnerLocation AS bpl ");
-    bpartnerHQLQuery.append(" join bpl.businessPartner as bp ");
-    bpartnerHQLQuery.append(" left outer join bp.aDUserList AS ulist ");
-    bpartnerHQLQuery.append(" left outer join bp.priceList AS plist ");
-    bpartnerHQLQuery.append(" left outer join bp.businessPartnerLocationList AS bpsl ");
-    bpartnerHQLQuery.append("where bp.id= :businessPartnerId ");
-    bpartnerHQLQuery.append(" and bpl.id in (select max(bpls.id) as bpLocId ");
-    bpartnerHQLQuery.append("  from BusinessPartnerLocation AS bpls ");
-    bpartnerHQLQuery.append("  where bpls.businessPartner.id=bp.id ");
-    bpartnerHQLQuery.append("   and bpls.invoiceToAddress = true ");
-    bpartnerHQLQuery.append("   and bpls.$readableSimpleClientCriteria ");
+    bpartnerHQLQuery.append(" from BusinessPartnerLocation AS bpl");
+    bpartnerHQLQuery.append(" join bpl.businessPartner as bp");
+    bpartnerHQLQuery.append(" left outer join bp.aDUserList AS ulist");
+    bpartnerHQLQuery.append(" left outer join bp.priceList AS plist");
+    bpartnerHQLQuery.append(" left outer join bp.businessPartnerLocationList AS bpsl");
+    bpartnerHQLQuery.append(" where bp.id = :businessPartnerId");
+    bpartnerHQLQuery.append(" and bpl.id in (");
+    bpartnerHQLQuery.append("   select max(bpls.id) as bpLocId");
+    bpartnerHQLQuery.append("   from BusinessPartnerLocation AS bpls");
+    bpartnerHQLQuery.append("   where bpls.businessPartner.id = bp.id");
+    bpartnerHQLQuery.append("   and bpls.invoiceToAddress = true");
+    bpartnerHQLQuery.append("   and bpls.$readableSimpleClientCriteria");
     if (StringUtils.isEmpty(crossStore)) {
-      bpartnerHQLQuery.append(" and bpls.$naturalOrgCriteria ");
+      bpartnerHQLQuery.append("   and bpls.$naturalOrgCriteria");
     } else {
-      bpartnerHQLQuery.append(" and bpls.organization.id in (:crossStoreNaturalTree) ");
+      bpartnerHQLQuery.append("   and bpls.organization.id in (:crossStoreNaturalTree)");
     }
-    bpartnerHQLQuery.append("  group by bpls.businessPartner.id)");
-    bpartnerHQLQuery.append(" and (ulist.id in (select max(ulist2.id) ");
-    bpartnerHQLQuery.append("  from ADUser as ulist2 ");
-    bpartnerHQLQuery.append("  where ulist2.businessPartner=bp ");
-    bpartnerHQLQuery.append("  group by ulist2.businessPartner))");
-    bpartnerHQLQuery.append(" and (bpsl is null or bpsl.id in ");
-    bpartnerHQLQuery.append("  (select max(bpls.id) as bpLocId ");
-    bpartnerHQLQuery.append("  from BusinessPartnerLocation AS bpls ");
-    bpartnerHQLQuery.append("  where bpls.active=true ");
-    bpartnerHQLQuery.append("  and bpls.shipToAddress = true ");
-    bpartnerHQLQuery.append("  and bpls.businessPartner.id=bp.id ");
-    bpartnerHQLQuery.append("  and bpls.$readableSimpleClientCriteria ");
+    bpartnerHQLQuery.append("   group by bpls.businessPartner.id");
+    bpartnerHQLQuery.append(" )");
+    bpartnerHQLQuery.append(" and (ulist.id in (");
+    bpartnerHQLQuery.append("   select max(ulist2.id)");
+    bpartnerHQLQuery.append("   from ADUser as ulist2");
+    bpartnerHQLQuery.append("   where ulist2.businessPartner = bp");
+    bpartnerHQLQuery.append("   group by ulist2.businessPartner");
+    bpartnerHQLQuery.append(" ))");
+    bpartnerHQLQuery.append(" and (bpsl is null");
+    bpartnerHQLQuery.append(" or bpsl.id in (");
+    bpartnerHQLQuery.append("   select max(bpls.id) as bpLocId");
+    bpartnerHQLQuery.append("   from BusinessPartnerLocation AS bpls");
+    bpartnerHQLQuery.append("   where bpls.active = true");
+    bpartnerHQLQuery.append("   and bpls.shipToAddress = true");
+    bpartnerHQLQuery.append("   and bpls.businessPartner.id = bp.id");
+    bpartnerHQLQuery.append("   and bpls.$readableSimpleClientCriteria");
     if (StringUtils.isEmpty(crossStore)) {
-      bpartnerHQLQuery.append("  and bpls.$naturalOrgCriteria)) ");
+      bpartnerHQLQuery.append("   and bpls.$naturalOrgCriteria");
     } else {
-      bpartnerHQLQuery.append("  and bpls.organization.id in (:crossStoreNaturalTree))) ");
+      bpartnerHQLQuery.append("   and bpls.organization.id in (:crossStoreNaturalTree)");
     }
+    bpartnerHQLQuery.append(" ))");
     bpartnerHQLQuery.append(" order by bp.name");
     customers.add(bpartnerHQLQuery.toString());
 
-    StringBuilder bpartnerLocQuery = new StringBuilder();
-    bpartnerLocQuery.append("select");
-    bpartnerLocQuery.append(bpartnerLocHQLProperties.getHqlSelect());
-    bpartnerLocQuery.append("from BusinessPartnerLocation AS bploc ");
-    bpartnerLocQuery.append(" join bploc.businessPartner AS bp ");
-    bpartnerLocQuery.append(" left join bploc.locationAddress AS bplocAddress ");
-    bpartnerLocQuery.append(" left join bplocAddress.region AS bplocRegion ");
-    bpartnerLocQuery.append("where bploc.id= :bplocId ");
-    bpartnerLocQuery.append("order by bploc.locationAddress.addressLine1");
-    customers.add(bpartnerLocQuery.toString());
+    final StringBuilder bpartnerShipLocHQLQuery = new StringBuilder();
+    bpartnerShipLocHQLQuery.append(" select");
+    bpartnerShipLocHQLQuery.append(bpartnerLocHQLProperties.getHqlSelect());
+    bpartnerShipLocHQLQuery.append(" from BusinessPartnerLocation AS bploc");
+    bpartnerShipLocHQLQuery.append(" join bploc.businessPartner AS bp");
+    bpartnerShipLocHQLQuery.append(" left join bploc.locationAddress AS bplocAddress");
+    bpartnerShipLocHQLQuery.append(" left join bplocAddress.region AS bplocRegion");
+    bpartnerShipLocHQLQuery.append(" where bploc.id = :bplocId");
+    bpartnerShipLocHQLQuery.append(" order by bploc.locationAddress.addressLine1");
+    customers.add(bpartnerShipLocHQLQuery.toString());
 
     if (jsonsent.getJSONObject("parameters").has("bpBillLocationId")) {
-      StringBuilder bpartnerLocationQuery = new StringBuilder();
-      bpartnerLocationQuery.append("select");
-      bpartnerLocationQuery.append(bpartnerLocHQLProperties.getHqlSelect());
-      bpartnerLocationQuery.append("from BusinessPartnerLocation AS bploc ");
-      bpartnerLocationQuery.append(" join bploc.businessPartner AS bp ");
-      bpartnerLocationQuery.append(" left join bploc.locationAddress AS bplocAddress ");
-      bpartnerLocationQuery.append(" left join bplocAddress.region AS bplocRegion ");
-      bpartnerLocationQuery.append("where bploc.id= :bpbilllocId");
-      bpartnerLocationQuery.append("order by bploc.locationAddress.addressLine1");
-      customers.add(bpartnerLocationQuery.toString());
+      final StringBuilder bpartnerBillLocHQLQuery = new StringBuilder();
+      bpartnerBillLocHQLQuery.append(" select");
+      bpartnerBillLocHQLQuery.append(bpartnerLocHQLProperties.getHqlSelect());
+      bpartnerBillLocHQLQuery.append(" from BusinessPartnerLocation AS bploc");
+      bpartnerBillLocHQLQuery.append(" join bploc.businessPartner AS bp");
+      bpartnerBillLocHQLQuery.append(" left join bploc.locationAddress AS bplocAddress");
+      bpartnerBillLocHQLQuery.append(" left join bplocAddress.region AS bplocRegion");
+      bpartnerBillLocHQLQuery.append(" where bploc.id = :bpbilllocId");
+      bpartnerBillLocHQLQuery.append(" order by bploc.locationAddress.addressLine1");
+      customers.add(bpartnerBillLocHQLQuery.toString());
     }
+
     return customers;
   }
 }
