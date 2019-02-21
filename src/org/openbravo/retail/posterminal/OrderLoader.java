@@ -252,11 +252,24 @@ public class OrderLoader extends POSDataSynchronizationProcess
       order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
       if (order != null) {
-        final String loaded = jsonorder.has("loaded") ? jsonorder.getString("loaded") : null,
+        String loaded = jsonorder.has("loaded") ? jsonorder.optString("loaded") : null,
             updated = OBMOBCUtils.convertToUTCDateComingFromServer(order.getUpdated());
         if (loaded == null || loaded.compareTo(updated) != 0) {
           throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
               "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
+        }
+        for (int i = 0; i < orderlines.length(); i++) {
+          JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+          orderLine = OBDal.getInstance().get(OrderLine.class, jsonOrderLine.optString("id"));
+          if (orderLine != null) {
+            loaded = jsonOrderLine.optString("loaded");
+            updated = OBMOBCUtils.convertToUTCDateComingFromServer(orderLine.getUpdated());
+            if (loaded == null || loaded.compareTo(updated) != 0) {
+              throw new OutDatedDataChangeException(
+                  Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedLayaway",
+                      OBContext.getOBContext().getLanguage().getLanguage()));
+            }
+          }
         }
       }
 
@@ -584,7 +597,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
   private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order,
       ShipmentInOut shipment, Invoice invoice) throws Exception {
 
-    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+    List<Object> hookList = sortHooksByPriority(hooks);
+
+    for (Iterator<? extends Object> procIter = hookList.iterator(); procIter.hasNext();) {
       Object proc = procIter.next();
       if (proc instanceof OrderLoaderHook) {
         ((OrderLoaderHook) proc).exec(jsonorder, order, shipment, invoice);

@@ -172,7 +172,7 @@
       currentContext = context;
       currentOriginServer = originServer;
       orderList.checkForDuplicateReceipts(model, function (order) {
-        if (OB.MobileApp.model.get('terminal').terminalType.openrelatedreceipts && model.get('businessPartner') !== OB.MobileApp.model.get('terminal').businessPartner) {
+        if (!OB.MobileApp.model.get('terminal').terminalType.ignoreRelatedreceipts && OB.MobileApp.model.get('terminal').terminalType.openrelatedreceipts && model.get('businessPartner') !== OB.MobileApp.model.get('terminal').businessPartner) {
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.SearchRelatedReceipts');
           process.exec({
             orderId: order.get('id'),

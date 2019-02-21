@@ -333,6 +333,51 @@ enyo.kind({
 });
 
 enyo.kind({
+  kind: 'OB.UI.ListContextMenuItem',
+  name: 'OB.UI.BPReceiptsContextMenuItem',
+  i18NLabel: 'OBPOS_BPReceipts',
+  events: {
+    onShowPopup: ''
+  },
+  selectItem: function (bpartner) {
+    if (OB.MobileApp.model.get('connectedToERP')) {
+      var me = this,
+          dialog = this.owner.owner.dialog;
+      bpartner.set('ignoreSetBP', true, {
+        silent: true
+      });
+      dialog.owner.owner.hide();
+      OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
+        me.doShowPopup({
+          popup: 'modalReceiptSelector',
+          args: {
+            multiselect: true,
+            clean: true,
+            advancedFilters: {
+              orderby: null,
+              filters: [{
+                caption: bp.get('_identifier'),
+                column: 'businessPartner',
+                isId: true,
+                operator: '=',
+                value: bp.get('id')
+              }]
+            }
+          }
+        });
+      });
+    } else {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+    }
+    return true;
+  },
+  create: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel(this.i18NLabel));
+  }
+});
+
+enyo.kind({
   kind: 'OB.UI.ListContextMenu',
   name: 'OB.UI.BusinessPartnerContextMenu',
   initComponents: function () {
@@ -357,6 +402,12 @@ enyo.kind({
       });
     }
 
+    if (this.owner.model.get('bpartnerId') !== OB.MobileApp.model.get('businesspartner') && this.owner.owner.owner.owner.owner.target.indexOf('filterSelectorButton_') < 0) {
+      menuOptions.push({
+        kind: 'OB.UI.BPReceiptsContextMenuItem',
+        permission: 'OBPOS_retail.assignToReceiptAddress'
+      });
+    }
     menuOptions = menuOptions.concat(extraOptions);
     this.$.menu.setItems(menuOptions);
   }
@@ -435,10 +486,10 @@ enyo.kind({
       this.addClass('modal-bp-selector-selectedItem');
     }
     // Context menu
+    this.$.btnContextMenu.dialog = this.owner.owner.owner.owner;
     if (this.$.btnContextMenu.$.menu.itemsCount === 0) {
       this.$.btnContextMenu.hide();
     } else {
-      this.$.btnContextMenu.dialog = this.owner.owner.owner.owner;
       this.$.btnContextMenu.setModel(this.model);
     }
   }
@@ -583,12 +634,16 @@ enyo.kind({
       me.$.renderLoading.hide();
       if (dataBps && dataBps.length > 0) {
         _.each(dataBps.models, function (bp) {
-          var filter = '';
+          var filter = '',
+              filterObj;
           if (hasLocationInFilter() || !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
             filter = ' / ' + bp.get('locName');
           }
           _.each(inEvent.filters, function (flt, index) {
-            if (flt.column !== 'bp.name' && flt.column !== 'loc.name') {
+            filterObj = OB.Model.BPartnerFilter.getProperties().find(function (filter) {
+              return filter.column === flt.column;
+            });
+            if (flt.column !== 'bp.name' && flt.column !== 'loc.name' && !filterObj.hideFilterResult) {
               var column = _.find(OB.Model.BPartnerFilter.getProperties(), function (col) {
                 return col.column === flt.column;
               });
@@ -618,9 +673,10 @@ enyo.kind({
           return col.column === flt.column;
         });
         if (column) {
+          var operator = column.operator ? column.operator : (OB.MobileApp.model.hasPermission('OBPOS_remote.customer_usesContains', true) ? OB.Dal.CONTAINS : OB.Dal.STARTSWITH);
           criteria.remoteFilters.push({
             columns: [column.name],
-            operator: OB.MobileApp.model.hasPermission('OBPOS_remote.customer_usesContains', true) ? OB.Dal.CONTAINS : OB.Dal.STARTSWITH,
+            operator: operator,
             value: flt.value,
             location: column.location
           });
@@ -785,6 +841,7 @@ enyo.kind({
   executeOnShow: function () {
     if (!this.isInitialized()) {
       this.inherited(arguments);
+      this.$.header.setContent(OB.I18N.getLabel(this.args.target.indexOf('filterSelectorButton_') === 0 ? 'OBPOS_LblSelectCustomer' : 'OBPOS_LblAssignCustomer'));
       if (_.isUndefined(this.args.visibilityButtons)) {
         this.args.visibilityButtons = true;
       }
@@ -832,28 +889,6 @@ enyo.kind({
     }
     return true;
   },
-  getScrollableTable: function () {
-    return this.$.body.$.listBpsSelector.$.stBPAssignToReceipt;
-  },
-  getFilterSelectorTableHeader: function () {
-    return this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector;
-  },
-  getAdvancedFilterBtn: function () {
-    return this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.advancedFilterWindowButton;
-  },
-  getAdvancedFilterDialog: function () {
-    return 'modalAdvancedFilterBP';
-  },
-  init: function (model) {
-    this.inherited(arguments);
-    this.model = model;
-    this.waterfall('onSetModel', {
-      model: this.model
-    });
-    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
-    }
-  },
   executeOnHide: function () {
     var selectorHide = this.selectorHide;
     if (this.keepFiltersOnClose) {
@@ -870,6 +905,28 @@ enyo.kind({
           makeSearch: this.args.makeSearch
         }
       });
+    }
+  },
+  getScrollableTable: function () {
+    return this.$.body.$.listBpsSelector.$.stBPAssignToReceipt;
+  },
+  getFilterSelectorTableHeader: function () {
+    return this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector;
+  },
+  getAdvancedFilterBtn: function () {
+    return this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.advancedFilterButton;
+  },
+  getAdvancedFilterDialog: function () {
+    return 'modalAdvancedFilterBP';
+  },
+  init: function (model) {
+    this.inherited(arguments);
+    this.model = model;
+    this.waterfall('onSetModel', {
+      model: this.model
+    });
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
     }
   }
 });

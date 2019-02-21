@@ -107,6 +107,7 @@ enyo.kind({
     onModalSelectPrinters: 'modalSelectPrinters',
     onModalSelectPDFPrinters: 'modalSelectPDFPrinters',
     onChangeFilterSelector: 'changeFilterSelector',
+    onChangeInitFilters: 'changeInitFilters',
     onClearAllFilterSelector: 'clearAllFilterSelector',
     onCheckPresetFilterSelector: 'checkPresetFilterSelector',
     onAdvancedFilterSelector: 'advancedFilterSelector',
@@ -705,7 +706,8 @@ enyo.kind({
       bp: inEvent.businessPartner,
       isBPChange: isBPChange,
       isShippingChange: isShippingChange,
-      isInvoicingChange: isInvoicingChange
+      isInvoicingChange: isInvoicingChange,
+      target: inEvent.target
     }, function () {
       if (inEvent.target === 'order' || inEvent.target === undefined) {
         if (component.model.get('order').get('isEditable') === false && (isBPChange || isInvoicingChange || isShippingChange)) {
@@ -1374,6 +1376,9 @@ enyo.kind({
   },
   changeFilterSelector: function (inSender, inEvent) {
     this.waterfall('onUpdateFilterSelector', inEvent);
+  },
+  changeInitFilters: function (inSender, inEvent) {
+    this.waterfall('onInitFilters', inEvent);
   },
   clearAllFilterSelector: function (inSender, inEvent) {
     this.waterfall('onClearFilterSelector', inEvent);

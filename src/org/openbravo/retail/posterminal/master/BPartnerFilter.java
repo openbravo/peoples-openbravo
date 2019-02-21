@@ -47,7 +47,7 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
     // Get Product Properties
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     HQLPropertyList bpHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
-        getParams(jsonsent));
+        jsonsent);
     propertiesList.add(bpHQLProperties);
 
     return propertiesList;
@@ -64,20 +64,17 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
 
     Map<String, Object> params = getParams(jsonsent);
     Boolean location = (Boolean) params.get("location");
-    HQLPropertyList bpHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions, params);
+    HQLPropertyList bpHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
+        jsonsent);
 
     String hql = "SELECT " + bpHQLProperties.getHqlSelect();
     if (location) {
       hql = hql
           + "FROM BusinessPartnerLocation bpl left outer join bpl.businessPartner AS bp join bp.aDUserList AS ulist "
-          + "WHERE $filtersCriteria AND bp.customer = true AND "
-          + "bp.priceList IS NOT NULL AND bpl.$readableSimpleClientCriteria AND "
-          + "bpl.$naturalOrgCriteria AND bp.active = true AND bpl.active = true ";
+          + getWhereClause(location, jsonsent);
     } else {
       hql = hql + "FROM BusinessPartner bp left outer join bp.aDUserList AS ulist "
-          + "WHERE $filtersCriteria AND bp.customer = true AND "
-          + "bp.priceList IS NOT NULL AND bp.$readableSimpleClientCriteria AND "
-          + "bp.$naturalOrgCriteria AND bp.active = true ";
+          + getWhereClause(location, jsonsent);
     }
     hql = hql + "$orderByCriteria";
 
@@ -85,7 +82,19 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
     return hqlQueries;
   }
 
-  private Map<String, Object> getParams(JSONObject jsonsent) {
+  protected String getWhereClause(boolean isLocation, JSONObject jsonsent) {
+    if (isLocation) {
+      return "WHERE $filtersCriteria AND bp.customer = true AND "
+          + "bp.priceList IS NOT NULL AND bpl.$readableSimpleClientCriteria AND "
+          + "bpl.$naturalOrgCriteria AND bp.active = true AND bpl.active = true ";
+    } else {
+      return "WHERE $filtersCriteria AND bp.customer = true AND "
+          + "bp.priceList IS NOT NULL AND bp.$readableSimpleClientCriteria AND "
+          + "bp.$naturalOrgCriteria AND bp.active = true ";
+    }
+  }
+
+  public static Map<String, Object> getParams(JSONObject jsonsent) {
     Boolean location = false;
     String pref = "N";
     try {
@@ -123,5 +132,26 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
     Map<String, Object> result = new HashMap<String, Object>();
     result.put("location", location);
     return result;
+  }
+
+  public static String getFilter(JSONObject params, String filterName) {
+    try {
+      if (params.has("remoteFilters")) {
+        JSONArray remoteFilters = params.getJSONArray("remoteFilters");
+        for (int i = 0; i < remoteFilters.length(); i++) {
+          JSONObject filter = remoteFilters.getJSONObject(i);
+          JSONArray columns = filter.getJSONArray("columns");
+          for (int j = 0; j < columns.length(); j++) {
+            String column = columns.getString(j);
+            if (filterName.equals(column)) {
+              return filter.getString("value");
+            }
+          }
+        }
+      }
+    } catch (Exception e) {
+      // Ignored
+    }
+    return null;
   }
 }

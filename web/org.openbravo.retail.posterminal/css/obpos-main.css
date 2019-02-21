@@ -769,6 +769,15 @@ li.selected > button.btnselect-orderline.btnselect-orderline-edit > div > div.or
   margin: 0px;
 }
 
+.modal-order-selector-check {
+  margin-top: 8px;
+  float: left; 
+}
+
+.modal-order-selector-line-with-check {
+  width: calc(100% - 47px) !important;
+}
+
 .product_image{
     margin: 0 auto;
     display: block;

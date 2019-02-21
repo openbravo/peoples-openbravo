@@ -92,6 +92,7 @@
         this.set('description', attributes.description);
         this.set('attributeValue', attributes.attributeValue);
         this.set('obposCanbedelivered', attributes.obposCanbedelivered);
+        this.set('loaded', attributes.loaded);
         if (!attributes.grossListPrice && attributes.product && _.isNumber(attributes.priceList)) {
           this.set('grossListPrice', attributes.priceList);
         }
@@ -795,6 +796,17 @@
       this.calculatingReceipt = true;
       var execution = OB.UTIL.ProcessController.start('calculateReceipt');
       this.addToListOfCallbacks(callback);
+      var executeCallback;
+      executeCallback = function (listOfCallbacks, callback) {
+        if (listOfCallbacks.length === 0) {
+          callback();
+          listOfCallbacks = null;
+          return;
+        }
+        var callbackToExe = listOfCallbacks.shift();
+        callbackToExe();
+        executeCallback(listOfCallbacks, callback);
+      };
       var me = this;
       this.on('applyPromotionsFinished', function () {
         me.off('applyPromotionsFinished');
@@ -808,34 +820,22 @@
             me.calculateReceipt();
             return;
           } else {
-            var finishCalculateReceipt = function (callback) {
+            if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
+              var calculateReceiptCallbacks = me.get('calculateReceiptCallbacks').slice(0);
+              me.unset('calculateReceiptCallbacks');
+              executeCallback(calculateReceiptCallbacks, function () {
                 me.calculatingReceipt = false;
                 OB.MobileApp.view.waterfall('calculatedReceipt');
                 me.trigger('calculatedReceipt');
                 OB.UTIL.ProcessController.finish('calculateReceipt', execution);
                 me.trigger('updatePending');
-                if (callback && callback instanceof Function) {
-                  callback();
-                }
-                };
-            if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
-              var calculateReceiptCallbacks = me.get('calculateReceiptCallbacks').slice(0);
-              me.unset('calculateReceiptCallbacks');
-              finishCalculateReceipt(function () {
-                var executeCallback;
-                executeCallback = function (listOfCallbacks) {
-                  if (listOfCallbacks.length === 0) {
-                    listOfCallbacks = null;
-                    return;
-                  }
-                  var callbackToExe = listOfCallbacks.shift();
-                  callbackToExe();
-                  executeCallback(listOfCallbacks);
-                };
-                executeCallback(calculateReceiptCallbacks);
               });
             } else {
-              finishCalculateReceipt();
+              me.calculatingReceipt = false;
+              OB.MobileApp.view.waterfall('calculatedReceipt');
+              me.trigger('calculatedReceipt');
+              OB.UTIL.ProcessController.finish('calculateReceipt', execution);
+              me.trigger('updatePending');
             }
           }
         });
@@ -7027,6 +7027,17 @@
 
     addPaidReceipt: function (model, callback) {
       var me = this;
+
+      function executeFinalCallback() {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PostAddPaidReceipt', {
+          order: model
+        }, function (args) {
+          if (callback instanceof Function) {
+            callback(me.modelorder);
+          }
+        });
+      }
+
       enyo.$.scrim.show();
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         this.doRemoteBPSettings(model.get('bp'));
@@ -7043,20 +7054,14 @@
         // OB.Dal.save is done here because we want to force to save with the original id, only this time.
         OB.Dal.save(model, function () {
           enyo.$.scrim.hide();
-          if (callback instanceof Function) {
-            callback(me.modelorder);
-          }
+          executeFinalCallback();
         }, function () {
           enyo.$.scrim.hide();
           OB.error(arguments);
-          if (callback instanceof Function) {
-            callback(me.modelorder);
-          }
+          executeFinalCallback();
         }, true);
       } else {
-        if (callback instanceof Function) {
-          callback(this.modelorder);
-        }
+        executeFinalCallback();
       }
     },
 
