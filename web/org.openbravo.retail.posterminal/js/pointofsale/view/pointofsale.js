@@ -107,6 +107,7 @@ enyo.kind({
     onModalSelectPrinters: 'modalSelectPrinters',
     onModalSelectPDFPrinters: 'modalSelectPDFPrinters',
     onChangeFilterSelector: 'changeFilterSelector',
+    onChangeInitFilters: 'changeInitFilters',
     onClearAllFilterSelector: 'clearAllFilterSelector',
     onCheckPresetFilterSelector: 'checkPresetFilterSelector',
     onAdvancedFilterSelector: 'advancedFilterSelector',
@@ -1374,6 +1375,9 @@ enyo.kind({
   },
   changeFilterSelector: function (inSender, inEvent) {
     this.waterfall('onUpdateFilterSelector', inEvent);
+  },
+  changeInitFilters: function (inSender, inEvent) {
+    this.waterfall('onInitFilters', inEvent);
   },
   clearAllFilterSelector: function (inSender, inEvent) {
     this.waterfall('onClearFilterSelector', inEvent);

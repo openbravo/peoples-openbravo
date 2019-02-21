@@ -14,6 +14,16 @@ enyo.kind({
   kind: 'OB.UI.ModalSelector',
   topPosition: '70px',
   i18nHeader: 'OBPOS_OpenReceipt',
+  events: {
+    onChangeInitFilters: '',
+    onOpenSelectedActive: '',
+    onHideThisPopup: '',
+    onShowPopup: '' // Do not remove this event will be used for other components or utility functions 
+  },
+  handlers: {
+    onOpenSelected: 'openSelected',
+    onActiveOpenSelectedBtn: 'activeOpenSelectedBtn'
+  },
   body: {
     kind: 'OB.UI.ReceiptsList'
   },
@@ -26,26 +36,77 @@ enyo.kind({
   getAdvancedFilterDialog: function () {
     return 'OB_UI_ModalAdvancedFilterReceipts';
   },
+  openSelected: function (inSender, inEvent) {
+    OB.MobileApp.model.get('terminal').terminalType.ignoreRelatedreceipts = true;
+    var selected = _.filter(this.$.body.$.receiptsList.receiptList.models, function (r) {
+      return r.get('receiptSelected');
+    });
+    _.each(selected, function (receipt) {
+      OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(receipt, this.model.get('orderList'), this, undefined, true);
+    }, this);
+    this.doHideThisPopup();
+  },
+  activeOpenSelectedBtn: function (inSender, inEvent) {
+    var selected = _.find(this.$.body.$.receiptsList.receiptList.models, function (r) {
+      return r.get('receiptSelected');
+    });
+    this.waterfall('onOpenSelectedActive', {
+      active: selected !== undefined
+    });
+  },
   executeOnShow: function () {
-    if (!this.initialized) {
+    if (!this.isInitialized()) {
       this.inherited(arguments);
-      if (!this.keepFiltersOnClose) {
+      OB.MobileApp.model.get('terminal').terminalType.ignoreRelatedreceipts = false;
+      var isMultiselect = this.args.multiselect === true;
+      this.$.body.$.receiptsList.$.openreceiptslistitemprinter.multiselect = isMultiselect;
+      this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.btnOpenSelected.setShowing(isMultiselect);
+      if (this.args.advancedFilters) {
+        var me = this;
+        this.waterfall('onOpenSelectedActive', {
+          active: false
+        });
+        setTimeout(function () {
+          me.doChangeInitFilters({
+            dialog: me.getAdvancedFilterDialog(),
+            advanced: true,
+            filters: me.args.advancedFilters.filters,
+            orderby: me.args.advancedFilters.orderby,
+            callback: function (result) {
+              if (result) {
+                me.$.body.$.receiptsList.searchAction(null, {
+                  filters: result.filters,
+                  orderby: result.orderby,
+                  advanced: true
+                });
+              }
+            }
+          });
+        }, 100);
+      } else {
         this.getFilterSelectorTableHeader().clearFilter();
       }
     }
-  },
-  init: function (model) {
-    this.model = model;
   }
 });
 
 enyo.kind({
   kind: 'OB.UI.ListSelectorLine',
   name: 'OB.UI.ReceiptSelectorRenderLine',
+  events: {
+    onActiveOpenSelectedBtn: ''
+  },
+  handlers: {
+    onChangeCheck: 'changeCheck'
+  },
   components: [{
     name: 'line',
     style: 'width: 100%',
     components: [{
+      classes: 'modal-order-selector-check btn-check-alt',
+      name: 'iconCheck',
+      showing: false
+    }, {
       name: 'lineInfo',
       style: 'float: left; width: 100%; padding: 5px; ',
       components: [{
@@ -78,6 +139,24 @@ enyo.kind({
       }]
     }]
   }],
+  changeCheck: function (inSender, inEvent) {
+    if (inEvent.id === this.model.get('id')) {
+      if (this.model.get('receiptSelected')) {
+        this.$.iconCheck.removeClass('btn-check active');
+        this.$.iconCheck.addClass('btn-check-alt');
+      } else {
+        this.$.iconCheck.removeClass('btn-check-alt');
+        this.$.iconCheck.addClass('btn-check active');
+      }
+      this.model.set('receiptSelected', !this.model.get('receiptSelected'), {
+        silent: true
+      });
+      this.doActiveOpenSelectedBtn();
+    }
+  },
+  canHidePopup: function () {
+    return !this.model.get('multiselect');
+  },
   create: function () {
     var orderDate, orderType, me = this;
     this.inherited(arguments);
@@ -113,6 +192,10 @@ enyo.kind({
       }
     }
     this.applyStyle('padding', '5px');
+    if (this.model.get('multiselect')) {
+      this.$.lineInfo.addClass('modal-order-selector-line-with-check');
+      this.$.iconCheck.setShowing(true);
+    }
 
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderSelectorLine', {
       selectorLine: this
@@ -228,6 +311,12 @@ enyo.kind({
       me.$.renderLoading.hide();
       me.actionPrePrint(data, criteria);
       if (data && data.length > 0) {
+        if (me.$.openreceiptslistitemprinter && me.$.openreceiptslistitemprinter.multiselect) {
+          _.each(data.models, function (m) {
+            m.set('multiselect', true);
+            m.set('receiptSelected', false);
+          });
+        }
         me.receiptList.reset(data.models);
         me.$[me.getNameOfReceiptsListItemPrinter()].$.tbody.show();
       } else {
@@ -419,8 +508,34 @@ enyo.kind({
     this.model = model;
     this.inherited(arguments);
     this.receiptList.on('click', function (model) {
-      OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, 'orderSelector');
+      if (!this.$.openreceiptslistitemprinter.multiselect) {
+        OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, 'orderSelector');
+      } else {
+        me.waterfall('onChangeCheck', {
+          id: model.get('id')
+        });
+      }
     }, this);
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.SmallButton',
+  name: 'OBPOS.UI.ButtonReceiptSelectorOpenSelected',
+  style: 'width: 170px; margin: 0px 9px 8px 0px;',
+  classes: 'btnlink-green btnlink btnlink-small',
+  i18nLabel: 'OBPOS_OpenReceiptBtnOpenSelected',
+  events: {
+    onOpenSelected: ''
+  },
+  handlers: {
+    onOpenSelectedActive: 'openSelectedActive'
+  },
+  openSelectedActive: function (inSender, inEvent) {
+    this.setDisabled(!inEvent.active);
+  },
+  tap: function () {
+    this.doOpenSelected();
   }
 });
 
@@ -443,6 +558,9 @@ enyo.kind({
         style: 'display: table-cell; text-align: center; ',
         components: [{
           kind: 'OBPOS.UI.AdvancedFilterWindowButtonReceipts'
+        }, {
+          kind: 'OBPOS.UI.ButtonReceiptSelectorOpenSelected',
+          name: 'btnOpenSelected'
         }]
       }]
     }]
