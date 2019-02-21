@@ -92,6 +92,7 @@
         this.set('description', attributes.description);
         this.set('attributeValue', attributes.attributeValue);
         this.set('obposCanbedelivered', attributes.obposCanbedelivered);
+        this.set('loaded', attributes.loaded);
         if (!attributes.grossListPrice && attributes.product && _.isNumber(attributes.priceList)) {
           this.set('grossListPrice', attributes.priceList);
         }
