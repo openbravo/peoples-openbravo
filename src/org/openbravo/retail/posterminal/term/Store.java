@@ -41,7 +41,7 @@ public class Store extends QueryTerminalProperty {
 
   @Override
   protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
-    final OBPOSApplications pOSTerminal = POSUtils.getTerminal(jsonsent.optString("terminalName"));
+    final OBPOSApplications pOSTerminal = POSUtils.getTerminalById(jsonsent.getString("pos"));
     final Organization org = pOSTerminal.getOrganization();
     final String crossStoreId = org.getOBPOSCrossStoreOrganization() != null
         ? org.getOBPOSCrossStoreOrganization().getId()

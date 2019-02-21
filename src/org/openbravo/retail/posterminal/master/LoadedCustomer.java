@@ -88,7 +88,7 @@ public class LoadedCustomer extends ProcessHQLQuery {
     }
 
     StringBuilder bpartnerHQLQuery = new StringBuilder();
-    bpartnerHQLQuery.append(" select");
+    bpartnerHQLQuery.append("select ");
     bpartnerHQLQuery.append(bpartnerHQLProperties.getHqlSelect());
     bpartnerHQLQuery.append(" from BusinessPartnerLocation AS bpl");
     bpartnerHQLQuery.append(" join bpl.businessPartner as bp");
@@ -133,7 +133,7 @@ public class LoadedCustomer extends ProcessHQLQuery {
     customers.add(bpartnerHQLQuery.toString());
 
     final StringBuilder bpartnerShipLocHQLQuery = new StringBuilder();
-    bpartnerShipLocHQLQuery.append(" select");
+    bpartnerShipLocHQLQuery.append("select ");
     bpartnerShipLocHQLQuery.append(bpartnerLocHQLProperties.getHqlSelect());
     bpartnerShipLocHQLQuery.append(" from BusinessPartnerLocation AS bploc");
     bpartnerShipLocHQLQuery.append(" join bploc.businessPartner AS bp");
@@ -145,7 +145,7 @@ public class LoadedCustomer extends ProcessHQLQuery {
 
     if (jsonsent.getJSONObject("parameters").has("bpBillLocationId")) {
       final StringBuilder bpartnerBillLocHQLQuery = new StringBuilder();
-      bpartnerBillLocHQLQuery.append(" select");
+      bpartnerBillLocHQLQuery.append("select ");
       bpartnerBillLocHQLQuery.append(bpartnerLocHQLProperties.getHqlSelect());
       bpartnerBillLocHQLQuery.append(" from BusinessPartnerLocation AS bploc");
       bpartnerBillLocHQLQuery.append(" join bploc.businessPartner AS bp");

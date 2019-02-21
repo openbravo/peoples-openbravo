@@ -93,12 +93,12 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     }
 
     final StringBuilder hqlPaidReceipts = new StringBuilder();
-    hqlPaidReceipts.append("select");
+    hqlPaidReceipts.append("select ");
     hqlPaidReceipts.append(receiptsHQLProperties.getHqlSelect());
-    hqlPaidReceipts.append("from Order as ord ");
-    hqlPaidReceipts.append("where $filtersCriteria and $hqlCriteria ");
+    hqlPaidReceipts.append(" from Order as ord");
+    hqlPaidReceipts.append(" where $filtersCriteria and $hqlCriteria");
     hqlPaidReceipts.append(orderTypeHql);
-    hqlPaidReceipts.append(" and ord.client.id =  $clientId");
+    hqlPaidReceipts.append(" and ord.client.id = $clientId");
     hqlPaidReceipts.append(getOganizationFilter(jsonsent));
     hqlPaidReceipts.append(
         " and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
@@ -119,39 +119,27 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     return getColumnFilterValue(jsonsent, "orderType");
   }
 
-  protected static String getPosTerminalOrganization(JSONObject jsonsent) {
-    OBPOSApplications pOSTerminal = POSUtils.getTerminal(jsonsent.optString("terminalName"));
-    return pOSTerminal.getOrganization().getId();
-  }
-
-  protected static String getOganizationFilter(JSONObject jsonsent) throws JSONException {
-
-    String documentNo = getColumnFilterValue(jsonsent, "documentNo");
-    String crossStoreFilter = getColumnFilterValue(jsonsent, "store");
-
-    if (!StringUtils.isEmpty(crossStoreFilter)) {
+  private static String getOganizationFilter(final JSONObject jsonsent) throws JSONException {
+    final String crossStoreFilter = getColumnFilterValue(jsonsent, "store");
+    if (StringUtils.isNotEmpty(crossStoreFilter)) {
       return StringUtils.EMPTY;
     }
 
-    OBPOSApplications pOSTerminal = POSUtils.getTerminal(jsonsent.optString("terminalName"));
-    Organization myOrg = pOSTerminal.getOrganization()
-        .getOrganizationInformationList()
-        .get(0)
-        .getOrganization();
-    String crossStoreOrgId = myOrg.getOBPOSCrossStoreOrganization() != null
-        ? myOrg.getOBPOSCrossStoreOrganization().getId()
+    final String documentNoFilter = getColumnFilterValue(jsonsent, "documentNo");
+    final OBPOSApplications pOSTerminal = POSUtils.getTerminalById(jsonsent.getString("pos"));
+    final Organization org = pOSTerminal.getOrganization();
+    final String crossStoreId = org.getOBPOSCrossStoreOrganization() != null
+        ? org.getOBPOSCrossStoreOrganization().getId()
         : "";
 
     final StringBuilder orgFilter = new StringBuilder();
-
-    if (!StringUtils.isEmpty(documentNo) && !StringUtils.isEmpty(crossStoreOrgId)) {
-
-      String crossStoreOrg = StringCollectionUtils
-          .commaSeparated(POSUtils.getOrgListByCrossStoreId(crossStoreOrgId), true);
+    if (StringUtils.isNotEmpty(documentNoFilter) && StringUtils.isNotEmpty(crossStoreId)) {
+      final String crossStoreList = StringCollectionUtils
+          .commaSeparated(POSUtils.getOrgListByCrossStoreId(crossStoreId), true);
 
       orgFilter.append(" and ord.organization.id in (");
-      orgFilter.append(crossStoreOrg);
-      orgFilter.append(")");
+      orgFilter.append(crossStoreList);
+      orgFilter.append(" )");
     } else {
       orgFilter.append(" and ord.$orgId");
     }
@@ -159,7 +147,7 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     return orgFilter.toString();
   }
 
-  protected static String getColumnFilterValue(JSONObject jsonsent, final String columnFilter) {
+  private static String getColumnFilterValue(JSONObject jsonsent, final String columnFilter) {
     String columnValue = "";
     try {
       if (jsonsent.has("remoteFilters")) {

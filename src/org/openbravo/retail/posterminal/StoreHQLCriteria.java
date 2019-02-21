@@ -25,22 +25,16 @@ public class StoreHQLCriteria extends HQLCriteriaProcess {
   private static final String SUFIX = "[\"all_";
 
   @Override
-  public String getHQLFilter(String params) {
+  public String getHQLFilter(final String params) {
     if (StringUtils.startsWith(params, SUFIX)) {
-
-      String orgId = params.substring(SUFIX.length(), params.length() - 2);
-
-      Organization org = OBDal.getInstance().get(Organization.class, orgId);
-
-      String crossStoreOrg = StringCollectionUtils.commaSeparated(
+      final String orgId = params.substring(SUFIX.length(), params.length() - 2);
+      final Organization org = OBDal.getInstance().get(Organization.class, orgId);
+      final String crossStoreList = StringCollectionUtils.commaSeparated(
           POSUtils.getOrgListByCrossStoreId(org.getOBPOSCrossStoreOrganization().getId()), true);
 
-      final StringBuilder orgFilter = new StringBuilder();
-      orgFilter.append(" ord.organization.id in (");
-      orgFilter.append(crossStoreOrg);
-      orgFilter.append(")");
-      return orgFilter.toString();
+      return " ord.organization.id in (" + crossStoreList + ") ";
     }
+
     return " ord.organization.id = $1 ";
   }
 }
