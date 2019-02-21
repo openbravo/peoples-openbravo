@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2005-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2005-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.U.
  ************************************************************************
@@ -405,6 +405,7 @@ build.war: build a war file in the lib directory.
       </fileset>
       <fileset dir="${base.db}/lib">
         <include name="*" />
+      	<exclude name="wstx-asl-3.0.2.jar" />
       </fileset>
     </copy>
 
