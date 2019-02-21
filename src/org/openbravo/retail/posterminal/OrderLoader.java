@@ -1683,7 +1683,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
   private Organization getPaymentOrganization(final OBPOSApplications posTerminal,
       final boolean isCrossStore) {
-    return isCrossStore ? posTerminal.getOrganization().getOBPOSCrossStoreOrganization()
+    return isCrossStore ? posTerminal.getOrganization().getOBRETCOCrossStoreOrganization()
         : posTerminal.getOrganization();
   }
 

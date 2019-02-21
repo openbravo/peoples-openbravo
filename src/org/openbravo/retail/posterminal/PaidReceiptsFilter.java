@@ -128,8 +128,8 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     final String documentNoFilter = getColumnFilterValue(jsonsent, "documentNo");
     final OBPOSApplications pOSTerminal = POSUtils.getTerminalById(jsonsent.getString("pos"));
     final Organization org = pOSTerminal.getOrganization();
-    final String crossStoreId = org.getOBPOSCrossStoreOrganization() != null
-        ? org.getOBPOSCrossStoreOrganization().getId()
+    final String crossStoreId = org.getOBRETCOCrossStoreOrganization() != null
+        ? org.getOBRETCOCrossStoreOrganization().getId()
         : "";
 
     final StringBuilder orgFilter = new StringBuilder();

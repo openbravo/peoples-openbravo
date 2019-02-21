@@ -30,7 +30,7 @@ public class StoreHQLCriteria extends HQLCriteriaProcess {
       final String orgId = params.substring(SUFIX.length(), params.length() - 2);
       final Organization org = OBDal.getInstance().get(Organization.class, orgId);
       final String crossStoreList = StringCollectionUtils.commaSeparated(
-          POSUtils.getOrgListByCrossStoreId(org.getOBPOSCrossStoreOrganization().getId()), true);
+          POSUtils.getOrgListByCrossStoreId(org.getOBRETCOCrossStoreOrganization().getId()), true);
 
       return " ord.organization.id in (" + crossStoreList + ") ";
     }

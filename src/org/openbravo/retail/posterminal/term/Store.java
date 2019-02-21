@@ -31,8 +31,8 @@ public class Store extends QueryTerminalProperty {
     hql.append(" where $readableSimpleClientCriteria");
     hql.append(" and $activeCriteria");
     hql.append(" and oBRETCORetailOrgType = 'S'");
-    hql.append(" and oBPOSCrossStoreOrganization is not null");
-    hql.append(" and oBPOSCrossStoreOrganization.id = :corssStoreId");
+    hql.append(" and oBRETCOCrossStoreOrganization is not null");
+    hql.append(" and oBRETCOCrossStoreOrganization.id = :corssStoreId");
     hql.append(" and id <> :orgId");
     hql.append(" order by name");
 
@@ -43,8 +43,8 @@ public class Store extends QueryTerminalProperty {
   protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
     final OBPOSApplications pOSTerminal = POSUtils.getTerminalById(jsonsent.getString("pos"));
     final Organization org = pOSTerminal.getOrganization();
-    final String crossStoreId = org.getOBPOSCrossStoreOrganization() != null
-        ? org.getOBPOSCrossStoreOrganization().getId()
+    final String crossStoreId = org.getOBRETCOCrossStoreOrganization() != null
+        ? org.getOBRETCOCrossStoreOrganization().getId()
         : "";
 
     Map<String, Object> paramValues = new HashMap<>();

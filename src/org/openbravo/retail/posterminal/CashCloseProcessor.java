@@ -283,7 +283,7 @@ public class CashCloseProcessor {
   private Organization getReconciliationOrganization(final OBPOSApplications posTerminal,
       final OBPOSAppPayment paymentType, final List<String> slaveCashupIds) {
     final Organization crossOrganization = posTerminal.getOrganization()
-        .getOBPOSCrossStoreOrganization();
+        .getOBRETCOCrossStoreOrganization();
     if (crossOrganization == null) {
       return posTerminal.getOrganization();
     }

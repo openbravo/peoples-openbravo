@@ -186,7 +186,7 @@ public class POSUtils {
       select.append(" select " + Organization.PROPERTY_ID);
       select.append(" from " + Organization.ENTITY_NAME);
       select.append(
-          " where " + Organization.PROPERTY_OBPOSCROSSSTOREORGANIZATION + ".id = :crossStoreId");
+          " where " + Organization.PROPERTY_OBRETCOCROSSSTOREORGANIZATION + ".id = :crossStoreId");
 
       final Query<String> query = OBDal.getInstance().getSession().createQuery(select.toString());
       query.setParameter("crossStoreId", crossStoreId);
@@ -878,7 +878,7 @@ public class POSUtils {
    */
   public static boolean isCrossStore(final Order order, final OBPOSApplications posTerminal) {
     final Organization crossOrganization = posTerminal.getOrganization()
-        .getOBPOSCrossStoreOrganization();
+        .getOBRETCOCrossStoreOrganization();
 
     return crossOrganization != null && !StringUtils.equals(order.getOrganization().getId(),
         posTerminal.getOrganization().getId());
