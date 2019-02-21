@@ -252,11 +252,24 @@ public class OrderLoader extends POSDataSynchronizationProcess
       order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
       if (order != null) {
-        final String loaded = jsonorder.has("loaded") ? jsonorder.getString("loaded") : null,
+        String loaded = jsonorder.has("loaded") ? jsonorder.optString("loaded") : null,
             updated = OBMOBCUtils.convertToUTCDateComingFromServer(order.getUpdated());
         if (loaded == null || loaded.compareTo(updated) != 0) {
           throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
               "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
+        }
+        for (int i = 0; i < orderlines.length(); i++) {
+          JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+          orderLine = OBDal.getInstance().get(OrderLine.class, jsonOrderLine.optString("id"));
+          if (orderLine != null) {
+            loaded = jsonOrderLine.optString("loaded");
+            updated = OBMOBCUtils.convertToUTCDateComingFromServer(orderLine.getUpdated());
+            if (loaded == null || loaded.compareTo(updated) != 0) {
+              throw new OutDatedDataChangeException(
+                  Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedLayaway",
+                      OBContext.getOBContext().getLanguage().getLanguage()));
+            }
+          }
         }
       }
 

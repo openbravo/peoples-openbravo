@@ -104,7 +104,7 @@
             if (data && data.exception && data.exception.message) {
               var message;
               if (OB.I18N.hasLabel(data.exception.message)) {
-                message = OB.I18N.hasLabel(data.exception.message);
+                message = OB.I18N.getLabel(data.exception.message);
               } else {
                 message = data.exception.message;
               }
