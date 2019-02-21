@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, console*/
+/*global OB*/
 
 (function () {
 
@@ -25,7 +25,7 @@
     if (errorObj) {
       // the last 2 arguments may not be implemented by the browser
       errorMessage = errorObj.stack;
-      console.log(line, column);
+      OB.info(line, column);
     } else {
       errorMessage = message + "; line: " + url + ":" + line;
     }
@@ -38,7 +38,7 @@
         OB.error(errorMessage);
       }
     } else {
-      console.error(errorMessage);
+      OB.error(errorMessage);
     }
   };
 
