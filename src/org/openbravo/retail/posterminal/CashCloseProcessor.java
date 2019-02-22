@@ -239,7 +239,8 @@ public class CashCloseProcessor {
     BigDecimal startingBalance;
     OBCriteria<FIN_Reconciliation> reconciliationsForAccount = OBDal.getInstance()
         .createCriteria(FIN_Reconciliation.class);
-    Organization organization = posTerminal.getOrganization();
+    final Organization reconciliationOrganization = getReconciliationOrganization(posTerminal,
+        paymentType, slaveCashupIds);
     reconciliationsForAccount.add(Restrictions.eq("account", account));
     reconciliationsForAccount.addOrderBy("creationDate", false);
     reconciliationsForAccount.setMaxResults(1);
@@ -256,10 +257,8 @@ public class CashCloseProcessor {
       reconciliation.setNewOBObject(true);
     }
     reconciliation.setAccount(account);
-    reconciliation
-        .setOrganization(getReconciliationOrganization(posTerminal, paymentType, slaveCashupIds));
-    reconciliation
-        .setDocumentType(posTerminal.getObposTerminaltype().getDocumentTypeForReconciliations());
+    reconciliation.setOrganization(reconciliationOrganization);
+    reconciliation.setDocumentType(reconciliationOrganization.getObposCDoctyperecon());
     reconciliation.setDocumentNo("99999999temp");
     reconciliation.setEndingDate(currentDate);
     reconciliation.setTransactionDate(currentDate);
