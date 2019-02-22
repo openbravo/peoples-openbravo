@@ -213,7 +213,7 @@ public class PaidReceipts extends JSONProcessSimple {
           OBCriteria<OrderLineTax> qTaxes = OBDal.getInstance().createCriteria(OrderLineTax.class);
           qTaxes.add(Restrictions.eq(OrderLineTax.PROPERTY_SALESORDERLINE + ".id",
               (String) paidReceiptLine.getString("lineId")));
-          if (jsonsent.has("crossStore")) {
+          if (jsonsent.has("crossStore") && jsonsent.get("crossStore") != JSONObject.NULL) {
             qTaxes.setFilterOnReadableOrganization(false);
           }
           qTaxes.addOrder(Order.asc(OrderLineTax.PROPERTY_LINENO));
@@ -238,7 +238,7 @@ public class PaidReceipts extends JSONProcessSimple {
               .createCriteria(OrderLineOffer.class);
           qPromotions.add(Restrictions.eq(OrderLineOffer.PROPERTY_SALESORDERLINE + ".id",
               (String) paidReceiptLine.getString("lineId")));
-          if (jsonsent.has("crossStore")) {
+          if (jsonsent.has("crossStore") && jsonsent.get("crossStore") != JSONObject.NULL) {
             qPromotions.setFilterOnReadableOrganization(false);
           }
           qPromotions.addOrder(Order.asc(OrderLineOffer.PROPERTY_LINENO));
@@ -336,7 +336,7 @@ public class PaidReceipts extends JSONProcessSimple {
 
           // Assortment Status
           boolean productStatus = true;
-          if (jsonsent.has("crossStore")) {
+          if (jsonsent.has("crossStore") && jsonsent.get("crossStore") != JSONObject.NULL) {
             final OBRETCOProductList assortment = POSUtils
                 .getProductListByPosterminalId(posTerminal.getId());
 
