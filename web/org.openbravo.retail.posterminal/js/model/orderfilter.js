@@ -124,7 +124,7 @@
     type: 'BOOL'
   }, {
     name: 'store',
-    column: 'store',
+    column: 'organizationName',
     type: 'TEXT',
     filter: true,
     isMandatoryFilter: true,

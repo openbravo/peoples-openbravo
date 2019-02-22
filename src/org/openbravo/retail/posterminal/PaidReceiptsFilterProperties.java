@@ -40,7 +40,7 @@ public class PaidReceiptsFilterProperties extends ModelExtension {
         add(new HQLProperty("ord.grandTotalAmount", "totalamountTo"));
         add(new HQLProperty("ord.iscancelled", "iscancelled"));
         add(new HQLProperty("ord.organization.id", "organization"));
-        add(new HQLProperty("ord.organization.name", "store"));
+        add(new HQLProperty("ord.organization.name", "organizationName"));
         add(new HQLProperty("ord.obposApplications.organization.id", "trxOrganization"));
         String orderTypeFilter = PaidReceiptsFilter.getOrderTypeFilter((JSONObject) params);
         switch (orderTypeFilter) {
