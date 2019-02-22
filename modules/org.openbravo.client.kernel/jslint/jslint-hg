@@ -24,11 +24,9 @@ set -e
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source ${SCRIPT_DIR}/../jsutils/dir-functions
 
+OPENBRAVO_ROOT_PATH=$(getOpenbravoRootPath 2>/dev/null)
 
-
-KERNEL_MODULE_PATH=$(getKernelModulePath 2>/dev/null)
-
-if [[ -z "${KERNEL_MODULE_PATH}" ]]; then
+if [[ -z "${OPENBRAVO_ROOT_PATH}" ]]; then
     exit 0
 fi
 
@@ -47,8 +45,10 @@ do
   fi
 done
 
+# TODO: Add the --no-warn-ignored flag when this issue is shipped in a ESLint release:
+# https://github.com/eslint/eslint/issues/9977
 if [[ -n "${FILES[*]}" ]]; then
-    ${KERNEL_MODULE_PATH}/jslint/jslint ${FILES[*]} || exit 1
+    ${OPENBRAVO_ROOT_PATH}/modules/org.openbravo.client.kernel/jslint/jslint ${FILES[*]} || exit 1
 fi
 
 exit 0

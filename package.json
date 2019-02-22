@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "description": "This contains some utilities used to format and lint Javascript code",
   "scripts": {
-    "jslint": "eslint -c ../../.eslintrc.json --max-warnings 0",
-    "jsformatter": "prettier --config ../../.prettierrc.json"
+    "jslint": "eslint --max-warnings 0",
+    "jsformatter": "prettier"
   },
   "repository": "http://code.openbravo.com/",
   "author": "Openbravo SLU",
   "license": "OBPL",
-  "dependencies": {
-    "eslint": "~5.13.0",
+  "devDependencies": {
+    "eslint": "~5.14.1",
     "prettier": "~1.16.4"
   }
 }

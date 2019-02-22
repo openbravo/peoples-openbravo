@@ -16,25 +16,25 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 #
-set -e
 
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-VERBOSE=false
 WRITE=false
 
 source ${SCRIPT_DIR}/../jsutils/dir-functions
 
+OPENBRAVO_ROOT_PATH=$(getOpenbravoRootPath)
+SCAN_BASE_PATH=$(getJsFilesScanPath)
+
 function usage() {
-  echo -n "Usage: ${SCRIPT_NAME} [-h][-v][-w] [FILE ...]
+  echo -n "Usage: ${SCRIPT_NAME} [-h][-w] [FILE ...]
 
 Utility to pass the Javascript Formatter to the given files, or all files from the current directory if none given.
-With no arguments, scan all files starting from the current directory taking into account .jsexclude files.
-(see jsfiles for further explanation)
+With no arguments, if executed from Openbravo root directory, formatting will be checked for all Core modules first and then
+it will be executed for each module that has a .prettierignore file in its root.
 
  Options:
   -h                Display this help and exit
-  -v                Verbose mode. Shows additional output
   -w                Write mode. Show formatting issues and overwrites the files with the fixes
 
 "
@@ -45,24 +45,52 @@ With no arguments, scan all files starting from the current directory taking int
 # size limit is much lower than the one in bash commands.
 #
 function formatFiles {
-    if [[ ${VERBOSE} == true ]]; then
-        echo "Checking the following files: $@"
-    else
-        echo "Checking $# files"
-    fi
+    echo "$@" | xargs --max-args 250 npm run jsformatter -s -- ${FLAGS} || exit 1
+}
 
-    FLAGS=""
-    if [[ ${WRITE} == true ]]; then
-        FLAGS="--write"
-    else
-        FLAGS="--check"
-    fi
+function getPrettierIgnorePatterns {
+    PATTERNS=""
+    for mod in ${1} ; do
+        PATTERNS="${PATTERNS} !"${mod}"/**"
+    done
 
-    echo "$@" | xargs --max-args 250 npm run jsformatter --prefix ${KERNEL_MODULE_PATH} -s -- ${FLAGS} || exit 1
+    echo "${PATTERNS}"
+}
+
+function formatAllFiles {
+    if [[ -d ${SCAN_BASE_PATH}/../modules ]]; then
+        echo "Formatter check for Core files"
+        MODS_WITH_IGNORE=$(getModulesPathWithIgnoreFile ".prettierignore")
+        IGNORE_PATTERNS=$(getPrettierIgnorePatterns ${MODS_WITH_IGNORE})
+
+        runFormatterInCore "${IGNORE_PATTERNS}" "${FLAGS}"
+        for mod in ${MODS_WITH_IGNORE} ; do
+            runFormatterInModule ${mod} "${FLAGS}"
+        done
+    elif [[ -d ${SCAN_BASE_PATH}/../../modules ]]; then
+        runFormatterInModule ${SCAN_BASE_PATH}
+    fi
+}
+
+function runFormatterInCore {
+    IG_PATTERNS=$1
+    FORMATTER_FLAGS=$2
+    npm run jsformatter -s -- ${FORMATTER_FLAGS} "modules/**/*.js" ${IG_PATTERNS}
+}
+
+function runFormatterInModule {
+    BASE=$1
+    FORMATTER_FLAGS=$2
+    IGNORE_PATH=""
+    if [[ -f "${BASE}/.prettierignore" ]]; then
+        IGNORE_PATH="--ignore-path ${BASE}/.prettierignore"
+    fi
+    echo "Formatter check for module $(basename ${BASE})"
+    npm run jsformatter -s -- ${FORMATTER_FLAGS} ${IGNORE_PATH} "${BASE}/**/*.js"
 }
 
 #Parse input arguments
-while getopts ":hvw" arg; do
+while getopts ":hw" arg; do
     case ${arg} in
         h )
             usage
@@ -70,9 +98,6 @@ while getopts ":hvw" arg; do
         ;;
         v )
             VERBOSE=true
-        ;;
-        w )
-            WRITE=true
         ;;
         \? )
             echo "Invalid option: -$OPTARG" >&2
@@ -83,15 +108,18 @@ while getopts ":hvw" arg; do
 done
 shift $((OPTIND-1))
 
-KERNEL_MODULE_PATH=$(getKernelModulePath)
-SCAN_BASE_PATH=$(getJsFilesScanPath)
+source ${SCRIPT_DIR}/../jsutils/check-npm-depsj
 
-source ${SCRIPT_DIR}/../jsutils/check-npm-deps
+FLAGS=""
+if [[ ${WRITE} == true ]]; then
+    FLAGS="--write"
+else
+    FLAGS="--check"
+fi
 
 if [[ $# > 0 ]]; then
     files=$(convertPathsToAbsolute $@)
     formatFiles ${files}
 else
-    files=$(${KERNEL_MODULE_PATH}/jsutils/jsfiles ${SCAN_BASE_PATH})
-    formatFiles ${files}
+    formatAllFiles
 fi

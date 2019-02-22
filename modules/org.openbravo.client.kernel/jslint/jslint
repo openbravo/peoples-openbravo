@@ -15,26 +15,25 @@
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
-set -e
-
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-VERBOSE=false
 FIX=false
 
 source ${SCRIPT_DIR}/../jsutils/dir-functions
 
+OPENBRAVO_ROOT_PATH=$(getOpenbravoRootPath)
+SCAN_BASE_PATH=$(getJsFilesScanPath)
+
 function usage() {
-  echo -n "Usage: ${SCRIPT_NAME} [-f][-h][-v] [FILE ...]
+  echo -n "Usage: ${SCRIPT_NAME} [-f][-h] [FILE ...]
 
 Utility to pass the Javascript Linter to the given files, or all files from the current directory if none given.
-With no arguments, scan all files starting from the current directory taking into account .jsexclude files.
-(see jsfiles for further explanation)
+With no arguments, if executed from Openbravo root directory, linting will be checked for all Core modules first and then
+it will be executed for each module that has a .eslintignore file in its root.
 
  Options:
   -f                Fixes errors/warnings that can automatically be fixed (Adds --fix argument to ESLint)
   -h                Display this help and exit
-  -v                Verbose mode. Shows additional output
 
 "
 }
@@ -44,22 +43,54 @@ With no arguments, scan all files starting from the current directory taking int
 # size limit is much lower than the one in bash commands.
 #
 function lintFiles {
-    if [[ ${VERBOSE} == true ]]; then
-        echo "Checking the following files: $@"
-    else
-        echo "Checking $# files"
+    echo "$@" | xargs --max-args 250 npm run jslint -s -- ${FLAGS} || exit 1
+}
+
+function getEslintIgnorePatterns {
+    PATTERNS=""
+    for mod in ${1} ; do
+        PATTERNS="${PATTERNS} --ignore-pattern $(basename ${mod})"
+    done
+
+    echo "${PATTERNS}"
+}
+
+function lintAllFiles {
+    if [[ -d ${SCAN_BASE_PATH}/../modules ]]; then
+        echo "Lint check for Core files"
+        MODS_WITH_IGNORE=$(getModulesPathWithIgnoreFile ".eslintignore")
+        IGNORE_PATTERNS=$(getEslintIgnorePatterns ${MODS_WITH_IGNORE})
+
+        runLinterInCore  ${SCAN_BASE_PATH} "${IGNORE_PATTERNS}" "${FLAGS}"
+        for mod in ${MODS_WITH_IGNORE} ; do
+            runLinterInModule  ${mod} "${FLAGS}"
+        done
+    elif [[ -d ${SCAN_BASE_PATH}/../../modules ]]; then
+        runLinterInModule ${SCAN_BASE_PATH}
+    fi
+}
+
+function runLinterInCore {
+    BASE=$1
+    IG_PATTERNS=$2
+    LINTER_FLAGS=$3
+    npm run jslint -s -- ${LINTER_FLAGS} ${IG_PATTERNS} ${BASE}
+}
+
+function runLinterInModule {
+    BASE=$1
+    LINTER_FLAGS=$2
+    IGNORE_PATH=""
+    if [[ -f "${BASE}/.eslintignore" ]]; then
+        IGNORE_PATH="--ignore-path ${BASE}/.eslintignore"
     fi
 
-    FLAGS=""
-    if [[ ${FIX} == true ]]; then
-        FLAGS="--fix"
-    fi
-
-    echo "$@" | xargs --max-args 250 npm run jslint --prefix ${KERNEL_MODULE_PATH} -s -- ${FLAGS} || exit 1
+    echo "Lint check for module $(basename ${BASE})"
+    npm run jslint -s -- ${LINTER_FLAGS} ${IGNORE_PATH} "${BASE}"
 }
 
 #Parse input arguments
-while getopts ":fhv" arg; do
+while getopts ":fh" arg; do
     case ${arg} in
         f )
             FIX=true
@@ -67,9 +98,6 @@ while getopts ":fhv" arg; do
         h )
             usage
             exit 0
-        ;;
-        v )
-            VERBOSE=true
         ;;
         \? )
             echo "Invalid option: -$OPTARG" >&2
@@ -80,15 +108,16 @@ while getopts ":fhv" arg; do
 done
 shift $((OPTIND-1))
 
-KERNEL_MODULE_PATH=$(getKernelModulePath)
-SCAN_BASE_PATH=$(getJsFilesScanPath)
-
 source ${SCRIPT_DIR}/../jsutils/check-npm-deps
+
+FLAGS=""
+if [[ ${FIX} == true ]]; then
+    FLAGS="--fix"
+fi
 
 if [[ $# > 0 ]]; then
     files=$(convertPathsToAbsolute $@)
     lintFiles ${files}
 else
-    files=$(${KERNEL_MODULE_PATH}/jsutils/jsfiles ${SCAN_BASE_PATH})
-    lintFiles ${files}
+    lintAllFiles
 fi

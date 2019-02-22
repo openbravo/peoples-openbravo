@@ -17,22 +17,22 @@
 # ************************************************************************
 
 #
-# Returns the relative location to client.kernel module
+# Returns the relative location to Openbravo root directory
 #
-function getKernelModulePath {
-    KERNEL_MODULE_PATH=""
+function getOpenbravoRootPath {
+    OPENBRAVO_ROOT_PATH=""
     if [[ -d "../../modules" ]]; then
         # Running from module
-        KERNEL_MODULE_PATH="../org.openbravo.client.kernel"
+        OPENBRAVO_ROOT_PATH="../../"
     elif [[ -d "./modules" ]]; then
         # Running from Openbravo root
-        KERNEL_MODULE_PATH="./modules/org.openbravo.client.kernel"
+        OPENBRAVO_ROOT_PATH="./"
     else
         echo -e "\n\033[0;31mError:\033[0m \"$(pwd)\" is not a valid path" >&2
         echo "Run either from the Openbravo or a module root directory" >&2
     fi
 
-    echo "${KERNEL_MODULE_PATH}"
+    echo "${OPENBRAVO_ROOT_PATH}"
 }
 
 #
@@ -76,4 +76,11 @@ function convertPathsToAbsolute {
             echo "$(pwd)/${arg} "
         fi
     done
+}
+
+#
+# Assuming we're in the Openbravo root, find all module folders which contains the file given in its root level
+#
+function getModulesPathWithIgnoreFile {
+    echo $(find modules -type f -name ${1} -printf "%h\n" | sort -u)
 }

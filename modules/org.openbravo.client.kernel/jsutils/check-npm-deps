@@ -44,5 +44,5 @@ function installNodePackagesIfNeeded {
 
 echo "Checking npm and required packages are installed..."
 
-KERNEL_MODULE_PATH=$(getKernelModulePath)
-installNodePackagesIfNeeded ${KERNEL_MODULE_PATH}
+OPENBRAVO_ROOT_PATH=$(getOpenbravoRootPath)
+installNodePackagesIfNeeded ${OPENBRAVO_ROOT_PATH}
