@@ -115,8 +115,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
   private boolean isNegative = false;
   private boolean isNewReceipt = false;
 
-  private BigDecimal paymentAmt = BigDecimal.ZERO;
-
   @Inject
   private ShipmentUtils su;
 
@@ -177,18 +175,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
     documentNoHandlers.set(new ArrayList<DocumentNoHandler>());
 
-    isNegative = jsonorder.optBoolean("isNegative", false);
-
-    final JSONArray payments = jsonorder.getJSONArray("payments");
-    if (jsonorder.has("paymentWithSign")) {
-      paymentAmt = BigDecimal.valueOf(jsonorder.getDouble("paymentWithSign"));
-    } else {
-      paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("nettingPayment", 0));
-      for (int i = 0; i < payments.length(); i++) {
-        paymentAmt = paymentAmt
-            .add(BigDecimal.valueOf(payments.getJSONObject(i).getDouble("origAmount")));
-      }
-    }
+    isNegative = jsonorder.optBoolean("isNegative", jsonorder.getDouble("gross") < 0);
 
     isNewReceipt = !jsonorder.optBoolean("isLayaway", false)
         && !jsonorder.optBoolean("isPaid", false);
@@ -1234,17 +1221,25 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
     JSONArray payments = jsonorder.getJSONArray("payments");
 
+    final int pricePrecision = order.getCurrency().getObposPosprecision() == null
+        ? order.getCurrency().getPricePrecision().intValue()
+        : order.getCurrency().getObposPosprecision().intValue();
+
     final BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross"));
     if (payments.length() == 0 && gross.compareTo(BigDecimal.ZERO) == 0) {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       return jsonResponse;
     }
 
+    BigDecimal paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("nettingPayment", 0));
+    for (int i = 0; i < payments.length(); i++) {
+      final JSONObject payment = payments.getJSONObject(i);
+      paymentAmt = paymentAmt.add(BigDecimal.valueOf(payment.getDouble("origAmount")))
+          .setScale(pricePrecision, RoundingMode.HALF_UP);
+    }
+
     // Create a unique payment schedule for all payments
     FIN_PaymentSchedule paymentSchedule;
-    int pricePrecision = order.getCurrency().getObposPosprecision() == null
-        ? order.getCurrency().getPricePrecision().intValue()
-        : order.getCurrency().getObposPosprecision().intValue();
 
     if (!order.getFINPaymentScheduleList().isEmpty()) {
       paymentSchedule = order.getFINPaymentScheduleList().get(0);
@@ -1267,8 +1262,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       if (ModelProvider.getInstance()
           .getEntity(FIN_PaymentSchedule.class)
           .hasProperty("origDueDate")) {
-        // This property is checked and set this way to force compatibility with both MP13, MP14
-        // and
+        // This property is checked and set this way to force compatibility with both MP13, MP14 and
         // later releases of Openbravo. This property is mandatory and must be set. Check issue
         paymentSchedule.set("origDueDate", paymentSchedule.getDueDate());
       }
@@ -1329,8 +1323,16 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
         BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
             .setScale(pricePrecision, RoundingMode.HALF_UP);
-        BigDecimal tempWriteoffAmt = payment.has("reversedPaymentId") ? BigDecimal.ZERO
-            : writeoffAmt;
+        BigDecimal tempWriteoffAmt = writeoffAmt;
+        if (payment.has("reversedPaymentId")) {
+          tempWriteoffAmt = BigDecimal.ZERO;
+        } else if (tempWriteoffAmt.compareTo(BigDecimal.ZERO) != 0
+            && paymentType.getPaymentMethod().getOverpaymentLimit() != null
+            && tempWriteoffAmt.abs()
+                .compareTo(BigDecimal.valueOf(paymentType.getPaymentMethod().getOverpaymentLimit())
+                    .abs()) == 1) {
+          tempWriteoffAmt = BigDecimal.ZERO;
+        }
         if (tempWriteoffAmt.compareTo(BigDecimal.ZERO) != 0
             && tempWriteoffAmt.abs().compareTo(amount.abs()) == 1) {
           // In case writeoff is higher than amount, we put 1 as payment and rest as overpayment
@@ -1340,15 +1342,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
         if (useOrderDocumentNoForRelatedDocs) {
           paymentCount++;
         }
-        if (paymentType.getPaymentMethod().getOverpaymentLimit() == null || writeoffAmt
-            .compareTo(new BigDecimal(paymentType.getPaymentMethod().getOverpaymentLimit())) <= 0) {
-          processPayments(paymentSchedule, order, paymentType, payment, tempWriteoffAmt, jsonorder,
-              account);
-          writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
-        } else {
-          processPayments(paymentSchedule, order, paymentType, payment, BigDecimal.ZERO, jsonorder,
-              account);
-        }
+        processPayments(paymentSchedule, order, paymentType, payment, tempWriteoffAmt, jsonorder,
+            account);
+        writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
       }
     }
 
@@ -1372,52 +1368,39 @@ public class OrderLoader extends POSDataSynchronizationProcess
       int pricePrecision = order.getCurrency().getObposPosprecision() == null
           ? order.getCurrency().getPricePrecision().intValue()
           : order.getCurrency().getObposPosprecision().intValue();
-      BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
+      final BigDecimal mulrate = BigDecimal.valueOf(payment.optDouble("mulrate", 1));
+      BigDecimal origAmount = BigDecimal.valueOf(payment.getDouble("origAmount"))
           .setScale(pricePrecision, RoundingMode.HALF_UP);
-      // Round change variables
-      BigDecimal origAmount = amount;
+      BigDecimal amount = payment.has("amount")
+          ? BigDecimal.valueOf(payment.getDouble("amount"))
+              .setScale(pricePrecision, RoundingMode.HALF_UP)
+          : origAmount.multiply(mulrate).setScale(pricePrecision, RoundingMode.HALF_UP);
+
+      final BigDecimal origAmountOverpayment = origAmount;
+      final BigDecimal amountOverpayment = amount;
+      if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0) {
+        // There was an overpayment, we need to take into account the writeoffamt
+        origAmount = origAmount.subtract(writeoffAmt)
+            .setScale(pricePrecision, RoundingMode.HALF_UP);
+        amount = origAmount.multiply(mulrate).setScale(pricePrecision, RoundingMode.HALF_UP);
+      }
+
+      BigDecimal origAmountRounded = origAmount;
       BigDecimal amountRounded = amount;
       BigDecimal roundAmount = BigDecimal.ZERO;
-      BigDecimal origAmountRounded = amount;
-      boolean downRounding = false;
-      if (payment.has("origAmountRounded")) {
-        amountRounded = BigDecimal.valueOf(payment.getDouble("origAmountRounded"))
+      // Round change variables
+      if (payment.has("origAmountRounded") && payment.has("amountRounded")) {
+        origAmountRounded = BigDecimal.valueOf(payment.getDouble("origAmountRounded"))
             .setScale(pricePrecision, RoundingMode.HALF_UP);
-        origAmount = amountRounded;
-        origAmountRounded = amountRounded;
-        roundAmount = BigDecimal.valueOf(payment.getDouble("origAmountRounded"))
-            .subtract(BigDecimal.valueOf(payment.getDouble("origAmount")))
+        amountRounded = BigDecimal.valueOf(payment.getDouble("amountRounded"))
             .setScale(pricePrecision, RoundingMode.HALF_UP);
-        downRounding = roundAmount.compareTo(BigDecimal.ZERO) == 1;
-      }
-      BigDecimal mulrate = new BigDecimal(1);
-      // FIXME: Coversion should be only in one direction: (USD-->EUR)
-      if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
-        mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
-        if (payment.has("amount")) {
-          origAmount = BigDecimal.valueOf(payment.getDouble("amount"))
-              .setScale(pricePrecision, RoundingMode.HALF_UP);
-          origAmountRounded = origAmount;
-          if (payment.has("origAmountRounded")) {
-            origAmountRounded = payment.has("amountRounded")
-                ? BigDecimal.valueOf(payment.getDouble("amountRounded"))
-                    .setScale(pricePrecision, RoundingMode.HALF_UP)
-                : BigDecimal.valueOf(payment.getDouble("amount"))
-                    .setScale(pricePrecision, RoundingMode.HALF_UP);
-          }
-
-        } else {
-          origAmount = amount.multiply(mulrate).setScale(pricePrecision, RoundingMode.HALF_UP);
-        }
+        roundAmount = origAmountRounded.subtract(origAmount)
+            .setScale(pricePrecision, RoundingMode.HALF_UP);
       }
 
       // writeoffAmt.divide(BigDecimal.valueOf(payment.getDouble("rate")));
-      if (amount.signum() == 0) {
+      if (origAmount.signum() == 0) {
         return;
-      }
-      if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0) {
-        // there was an overpayment, we need to take into account the writeoffamt
-        amount = amount.subtract(writeoffAmt).setScale(pricePrecision, RoundingMode.HALF_UP);
       }
 
       final List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = new ArrayList<FIN_PaymentScheduleDetail>();
@@ -1472,8 +1455,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
           }
         }
       } else {
-        BigDecimal remainingAmount = amount;
-        boolean isNegativePayment = amount.compareTo(BigDecimal.ZERO) == -1 ? true : false;
+        BigDecimal remainingAmount = origAmount;
+        boolean isNegativePayment = origAmount.compareTo(BigDecimal.ZERO) == -1 ? true : false;
         // Get the remaining PSD and sort it by the ones that are related to an invoice
         BigDecimal paymentsRemainingAmt = BigDecimal.ZERO;
         final OBCriteria<FIN_PaymentScheduleDetail> remainingPSDCriteria = OBDal.getInstance()
@@ -1589,20 +1572,20 @@ public class OrderLoader extends POSDataSynchronizationProcess
       // insert the payment
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(),
-          account == null ? paymentType.getFinancialAccount() : account,
-          (downRounding ? amount : amountRounded).toString(), calculatedDate,
-          order.getOrganization(), null, paymentScheduleDetailList, paymentAmountMap, false, false,
-          order.getCurrency(), mulrate, origAmountRounded, true,
+          account == null ? paymentType.getFinancialAccount() : account, origAmount.toString(),
+          calculatedDate, order.getOrganization(), null, paymentScheduleDetailList,
+          paymentAmountMap, false, false, order.getCurrency(), mulrate, amount, true,
           payment.has("id") ? payment.getString("id") : null);
 
       // Associate a GLItem with the overpayment amount to the payment which generates the
       // overpayment
-      if (writeoffAmt.compareTo(BigDecimal.ZERO) < 0) {
+      if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt,
             paymentType.getPaymentMethod().getGlitemWriteoff(),
             payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
         // Update Payment In amount after adding GLItem
-        finPayment.setAmount(origAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
+        finPayment.setAmount(origAmountOverpayment);
+        finPayment.setFinancialTransactionAmount(amountOverpayment);
       }
 
       // If there is a rounded amount add a new payment detail against "Rounded Difference" GL Item
@@ -1617,7 +1600,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
             paymentType.getPaymentMethod().getGlitemRound(),
             payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
         // Update Payment In amount after adding GLItem
-        finPayment.setAmount(amountRounded.setScale(pricePrecision, RoundingMode.HALF_UP));
+        finPayment.setAmount(origAmountRounded);
+        finPayment.setFinancialTransactionAmount(amountRounded);
       }
 
       if (payment.has("paymentData") && payment.getString("paymentData").length() > 0
