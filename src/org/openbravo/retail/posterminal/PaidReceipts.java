@@ -335,7 +335,7 @@ public class PaidReceipts extends JSONProcessSimple {
           }
 
           // Assortment Status
-          boolean productStatus = true;
+          boolean productInAssortment = true;
           if (jsonsent.has("crossStore") && jsonsent.get("crossStore") != JSONObject.NULL) {
             final OBRETCOProductList assortment = POSUtils
                 .getProductListByPosterminalId(posTerminal.getId());
@@ -350,9 +350,9 @@ public class PaidReceipts extends JSONProcessSimple {
             query.setNamedParameter("productId", paidReceiptLine.get("id"));
             query.setMaxResult(1);
 
-            productStatus = query.count() > 0;
+            productInAssortment = query.count() > 0;
           }
-          paidReceiptLine.put("productStatus", productStatus);
+          paidReceiptLine.put("productInAssortment", productInAssortment);
 
           listpaidReceiptsLines.put(paidReceiptLine);
         }
