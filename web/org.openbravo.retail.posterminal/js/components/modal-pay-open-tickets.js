@@ -33,7 +33,6 @@ enyo.kind({
   init: function (model) {
     this.inherited(arguments);
     this.model = model;
-    this.crossStoreInfo = false;
     if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
       this.setDefaultFilters([{
         value: 'payOpenTickets',
@@ -131,14 +130,18 @@ enyo.kind({
     totalData = totalData.concat(data.models);
     data.models = totalData;
     data.length = totalData.length;
+    data.crossStoreInfo = false;
 
-    this.owner.owner.crossStoreInfo = false;
     if (data && data.length > 0) {
       _.each(data.models, function (model) {
         if (OB.UTIL.isCrossStoreReceipt(model)) {
-          this.owner.owner.crossStoreInfo = true;
+          data.crossStoreInfo = true;
           return;
         }
+      }, this);
+
+      _.each(data.models, function (model) {
+        model.crossStoreInfo = data.crossStoreInfo;
       }, this);
     }
   }
@@ -258,7 +261,7 @@ enyo.kind({
   },
   tap: function () {
     this.inherited(arguments);
-    if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(this.model) && !this.model.get('checked')) {
+    if (this.model.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(this.model) && !this.model.get('checked')) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStorePayment'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [this.model.get('documentNo'), this.model.get('store')]) + ". " + OB.I18N.getLabel('OBPOS_LblCrossStoreDelivery'), [{
         label: OB.I18N.getLabel('OBMOBC_Continue'),
         isConfirmButton: true,
@@ -308,7 +311,7 @@ enyo.kind({
   create: function () {
     var returnLabel = '';
     this.inherited(arguments);
-    if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo) {
+    if (this.model.crossStoreInfo) {
       this.$.store.setContent(OB.UTIL.isCrossStoreReceipt(this.model) ? this.model.get('store') : OB.I18N.getLabel('OBPOS_LblThisStore') + ' (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')');
     } else {
       this.$.store.setContent('');

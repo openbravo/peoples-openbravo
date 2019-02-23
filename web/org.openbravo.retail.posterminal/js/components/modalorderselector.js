@@ -92,7 +92,6 @@ enyo.kind({
       store.preset.id = OB.MobileApp.model.get('terminal').organization;
       store.preset.name = OB.I18N.getLabel('OBPOS_LblThisStore') + ' (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')';
     }
-    this.crossStoreInfo = false;
   }
 });
 
@@ -179,7 +178,7 @@ enyo.kind({
       return ot.id === me.model.get('orderType');
     }).name;
 
-    if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo) {
+    if (this.model.crossStoreInfo) {
       this.$.store.setContent(OB.UTIL.isCrossStoreReceipt(this.model) ? this.model.get('store') : OB.I18N.getLabel('OBPOS_LblThisStore') + ' (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')');
     } else {
       this.$.store.setContent('');
@@ -422,13 +421,17 @@ enyo.kind({
     this.$[this.getNameOfReceiptsListItemPrinter()].setCollection(this.receiptList);
   },
   actionPrePrint: function (data) {
-    this.owner.owner.crossStoreInfo = false;
+    data.crossStoreInfo = false;
     if (data && data.length > 0) {
       _.each(data.models, function (model) {
         if (OB.UTIL.isCrossStoreReceipt(model)) {
-          this.owner.owner.crossStoreInfo = true;
+          data.crossStoreInfo = true;
           return;
         }
+      }, this);
+
+      _.each(data.models, function (model) {
+        model.crossStoreInfo = data.crossStoreInfo;
       }, this);
     }
   }
@@ -505,7 +508,7 @@ enyo.kind({
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStoreReturn'), OB.I18N.getLabel('OBPOS_SameStoreReceipt'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk')
         }]);
-      } else if (this.owner.owner.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
+      } else if (model.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStoreReturn'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [model.get('documentNo'), model.get('store')]), [{
           label: OB.I18N.getLabel('OBMOBC_Continue'),
           isConfirmButton: true,
@@ -559,7 +562,7 @@ enyo.kind({
     this.inherited(arguments);
     this.receiptList.on('click', function (model) {
       if (!this.$.openreceiptslistitemprinter.multiselect) {
-        if (this.owner.owner.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
+        if (model.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStorePayment'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [model.get('documentNo'), model.get('store')]) + ". " + OB.I18N.getLabel('OBPOS_LblCrossStoreDelivery'), [{
             label: OB.I18N.getLabel('OBMOBC_Continue'),
             isConfirmButton: true,
