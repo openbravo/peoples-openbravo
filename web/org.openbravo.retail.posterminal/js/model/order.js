@@ -6964,8 +6964,7 @@
         //Empty
         var loadCustomerParameters = {
           bpartnerId: bpId,
-          bpLocationId: bpLocId,
-          crossStore: crossStore
+          bpLocationId: bpLocId
         };
         if (bpLocId !== bpBillLocId) {
           loadCustomerParameters.bpBillLocationId = bpBillLocId;
