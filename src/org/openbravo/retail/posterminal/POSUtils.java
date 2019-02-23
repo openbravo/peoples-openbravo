@@ -874,7 +874,7 @@ public class POSUtils {
   }
 
   /**
-   * Returns true if order was created in a store different than the store of current terminal
+   * Returns true if order store is different than terminal store
    */
   public static boolean isCrossStore(final Order order, final OBPOSApplications posTerminal) {
     final Organization crossOrganization = posTerminal.getOrganization()
