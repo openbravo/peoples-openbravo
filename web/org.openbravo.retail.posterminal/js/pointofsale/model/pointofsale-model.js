@@ -410,10 +410,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         var symbol = OB.MobileApp.model.get('terminal').symbol;
         var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
         var amount = receipt.getPaymentStatus().overpayment;
+        OB.UTIL.ProcessController.pause('paymentDone', execution);
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
           action: function () {
+            OB.UTIL.ProcessController.resume('paymentDone', execution);
             me.openDrawer = openDrawer;
             // Need to finish process here??
             callback(true);
@@ -421,6 +423,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel'),
           action: function () {
+            OB.UTIL.ProcessController.resume('paymentDone', execution);
             callbackPaymentCancelled(function () {
               callback(false);
             });
