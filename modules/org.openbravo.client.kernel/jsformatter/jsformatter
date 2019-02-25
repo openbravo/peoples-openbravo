@@ -108,7 +108,7 @@ while getopts ":hw" arg; do
 done
 shift $((OPTIND-1))
 
-source ${SCRIPT_DIR}/../jsutils/check-npm-depsj
+source ${SCRIPT_DIR}/../jsutils/check-npm-deps
 
 FLAGS=""
 if [[ ${WRITE} == true ]]; then
