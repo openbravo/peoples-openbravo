@@ -7011,6 +7011,17 @@
       var me = this,
           synchId = null,
           execution = OB.UTIL.ProcessController.start('addPaidReceipt');
+
+      function executeFinalCallback() {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PostAddPaidReceipt', {
+          order: model
+        }, function (args) {
+          if (callback instanceof Function) {
+            callback(me.modelorder);
+          }
+        });
+      }
+
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         this.doRemoteBPSettings(model.get('bp'));
       } else {
@@ -7026,21 +7037,15 @@
         // OB.Dal.save is done here because we want to force to save with the original id, only this time.
         OB.Dal.save(model, function () {
           OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
-          if (callback instanceof Function) {
-            callback(me.modelorder);
-          }
+          executeFinalCallback();
         }, function () {
           OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
           OB.error(arguments);
-          if (callback instanceof Function) {
-            callback(me.modelorder);
-          }
+          executeFinalCallback();
         }, true);
       } else {
         OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
-        if (callback instanceof Function) {
-          callback(this.modelorder);
-        }
+        executeFinalCallback();
       }
     },
 

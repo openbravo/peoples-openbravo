@@ -634,12 +634,16 @@ enyo.kind({
       me.$.renderLoading.hide();
       if (dataBps && dataBps.length > 0) {
         _.each(dataBps.models, function (bp) {
-          var filter = '';
+          var filter = '',
+              filterObj;
           if (hasLocationInFilter() || !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
             filter = ' / ' + bp.get('locName');
           }
           _.each(inEvent.filters, function (flt, index) {
-            if (flt.column !== 'bp.name' && flt.column !== 'loc.name') {
+            filterObj = OB.Model.BPartnerFilter.getProperties().find(function (filter) {
+              return filter.column === flt.column;
+            });
+            if (flt.column !== 'bp.name' && flt.column !== 'loc.name' && !filterObj.hideFilterResult) {
               var column = _.find(OB.Model.BPartnerFilter.getProperties(), function (col) {
                 return col.column === flt.column;
               });
@@ -669,9 +673,10 @@ enyo.kind({
           return col.column === flt.column;
         });
         if (column) {
+          var operator = column.operator ? column.operator : (OB.MobileApp.model.hasPermission('OBPOS_remote.customer_usesContains', true) ? OB.Dal.CONTAINS : OB.Dal.STARTSWITH);
           criteria.remoteFilters.push({
             columns: [column.name],
-            operator: OB.MobileApp.model.hasPermission('OBPOS_remote.customer_usesContains', true) ? OB.Dal.CONTAINS : OB.Dal.STARTSWITH,
+            operator: operator,
             value: flt.value,
             location: column.location
           });

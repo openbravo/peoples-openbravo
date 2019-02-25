@@ -439,7 +439,6 @@
       }
     }, function () {
       // error
-      //console.error("OB.Model.CashUp fail");
     }, true);
 
   };

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
@@ -21,8 +22,8 @@ public class BPartnerFilterProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
-    @SuppressWarnings("unchecked")
-    final Boolean location = (Boolean) ((Map<String, Object>) params).get("location");
+    Map<String, Object> paramMap = BPartnerFilter.getParams((JSONObject) params);
+    final Boolean location = (Boolean) paramMap.get("location");
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
       {

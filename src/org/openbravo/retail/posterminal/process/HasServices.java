@@ -108,13 +108,11 @@ public class HasServices extends JSONProcessSimple {
         "and s.$naturalOrgCriteria and s.$activeCriteria and s.$readableSimpleClientCriteria ");
     hqlString.append(
         "and assort.$activeCriteria and assort.obretcoProductlist.id = :obretcoProductlistId ");
-    hqlString.append(
-        "and exists (select 1 from PricingProductPrice as ppp where ppp.product.id = :productId and ppp.priceListVersion.id = :priceListVersionId and ppp.$activeCriteria ) ");
     hqlString.append("and ((s.includedProducts = 'Y' and ");
     hqlString.append(
         "not exists (select 1 from ServiceProduct sp where s = sp.product and sp.$activeCriteria and sp.relatedProduct.id = :productId)) ");
     hqlString.append(
-        "or (s.includedProducts = 'N' and exists (select 1 from ServiceProduct sp where s = sp.product and sp.$activeCriteria and sp.relatedProduct.id = :productId)) ");
+        "or (s.includedProducts = 'N' and exists (select 1 from ServiceProduct sp where s = sp.product and sp.$activeCriteria and sp.relatedProduct.id = :productId and exists (select 1 from PricingProductPrice as ppp where ppp.product = sp.product and ppp.priceListVersion.id = :priceListVersionId and ppp.$activeCriteria ) )) ");
     hqlString.append("or s.includedProducts is null) ");
     hqlString.append(
         "and ((s.includedProductCategories = 'Y' and not exists (select 1 from ServiceProductCategory spc where s = spc.product and spc.$activeCriteria and spc.productCategory.id = :productCategoryId )) ");

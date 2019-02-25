@@ -599,7 +599,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
   private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order,
       ShipmentInOut shipment, Invoice invoice) throws Exception {
 
-    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+    List<Object> hookList = sortHooksByPriority(hooks);
+
+    for (Iterator<? extends Object> procIter = hookList.iterator(); procIter.hasNext();) {
       Object proc = procIter.next();
       if (proc instanceof OrderLoaderHook) {
         ((OrderLoaderHook) proc).exec(jsonorder, order, shipment, invoice);

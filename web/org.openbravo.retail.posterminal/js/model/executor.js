@@ -165,7 +165,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
       paraTrl = pTrl[param];
       if (!paraTrl) {
-        window.console.error('Not found param to calculate discounts', param);
+        OB.error('Not found param to calculate discounts', param);
         return;
       }
 
