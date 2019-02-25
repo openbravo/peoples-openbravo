@@ -2279,8 +2279,6 @@ enyo.kind({
     }
     if (OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length > 0 && !value) {
       return true;
-    } else if (OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length === 0) {
-      value = false;
     }
     this.disabled = value;
     this.setAttribute('disabled', value);
@@ -2343,7 +2341,6 @@ enyo.kind({
             receipt.set('generateInvoice', false);
           }
         }
-        me.setDisabled(true);
         receipt.trigger('paymentDone', me.allowOpenDrawer);
         };
 
