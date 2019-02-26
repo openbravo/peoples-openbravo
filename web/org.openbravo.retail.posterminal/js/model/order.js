@@ -4057,7 +4057,8 @@
       var me = this,
           fullyPaid = this.isFullyPaid() || this.get('payOnCredit'),
           receiptCompleted = this.get('completeTicket') || this.get('payOnCredit'),
-          prePaid = !fullyPaid && this.get('completeTicket');
+          prePaid = !fullyPaid && this.get('completeTicket'),
+          isCrossStoreReceipt = OB.UTIL.isCrossStoreReceipt(this);
       if (fullyPaid || prePaid) {
         _.each(this.get('lines').models, function (line) {
           if (fullyPaid) {
@@ -4070,7 +4071,7 @@
       }
 
       _.each(this.get('lines').models, function (line) {
-        if (OB.UTIL.isCrossStoreReceipt(me) && !line.has('originalOrderLineId')) {
+        if (isCrossStoreReceipt && !line.has('originalOrderLineId')) {
           line.set('obposQtytodeliver', line.getDeliveredQuantity());
         } else if (!line.has('obposQtytodeliver')) {
           if (receiptCompleted) {
