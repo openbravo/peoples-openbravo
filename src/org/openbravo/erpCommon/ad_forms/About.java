@@ -29,8 +29,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.modules.ModuleTreeData;
@@ -95,6 +97,11 @@ public class About extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramLicensedTo", licenseInfo);
       xmlDocument.setParameter("ver", version.getMajorVersion() + " " + version.getMP());
       xmlDocument.setParameter("versionNo", version.getVersionNumber());
+      xmlDocument.setParameter("paraHostName", ConfigParameters.getMachineName());
+      xmlDocument.setParameter("paraBackground",
+          OBPropertiesProvider.getInstance()
+              .getOpenbravoProperties()
+              .getProperty("background.policy", "default"));
       xmlDocument.setData("installedModules", getInstalledModules());
 
       if (ActivationKey.isActiveInstance()) {
