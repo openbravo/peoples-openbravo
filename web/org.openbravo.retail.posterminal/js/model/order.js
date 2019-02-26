@@ -6545,8 +6545,7 @@
           orderQty = 0,
           NoFoundProduct = true,
           NoFoundCustomer = true,
-          isLoadedPartiallyFromBackend = false,
-          crossStore;
+          isLoadedPartiallyFromBackend = false;
 
       // Each payment that has been reverted stores the id of the reversal payment
       // Web POS, instead of that, need to have the information of the payment reverted on the reversal payment
@@ -6628,9 +6627,6 @@
       bpLocId = model.bpLocId;
       bpBillLocId = model.bpBillLocId;
       bpId = model.bp;
-      if (OB.UTIL.isCrossStoreEnabled()) {
-        crossStore = order.get('organization');
-      }
       var bpartnerForProduct = function (bp) {
           var loadProducts = function () {
               var linepos = 0,
