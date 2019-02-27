@@ -4102,7 +4102,7 @@
             line.set('obposQtytodeliver', line.getDeliveredQuantity());
           }
         }
-      }, this);
+      });
 
       if (receiptCompleted) {
         var lineToDeliver = _.find(this.get('lines').models, function (line) {
