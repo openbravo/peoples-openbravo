@@ -112,6 +112,9 @@
       <foreign-key foreignTable="OBPOS_APP_CASHUP" name="OBPOS_APPCASH_PARENT">
         <reference local="OBPOS_PARENT_CASHUP_ID" foreign="OBPOS_APP_CASHUP_ID"/>
       </foreign-key>
+      <index name="OBPOS_APP_CASHUP_DATE_IDX" unique="false">
+        <index-column name="functionBasedColumn" functionExpression="TRUNC(CASHUPDATE)"/>
+      </index>
       <index name="OBPOS_APP_CASHUP_PARENT_IDX" unique="false">
         <index-column name="OBPOS_PARENT_CASHUP_ID"/>
         <whereClause><![CDATA[OBPOS_PARENT_CASHUP_ID IS NOT NULL]]></whereClause>
