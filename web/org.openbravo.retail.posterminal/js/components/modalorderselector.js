@@ -86,11 +86,6 @@ enyo.kind({
       } else {
         this.getFilterSelectorTableHeader().clearFilter();
       }
-      var store = _.find(OB.Model.OrderFilter.getProperties(), function (prop) {
-        return prop.name === 'store';
-      }, this);
-      store.preset.id = OB.MobileApp.model.get('terminal').organization;
-      store.preset.name = OB.I18N.getLabel('OBPOS_LblThisStore') + ' (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')';
     }
   }
 });

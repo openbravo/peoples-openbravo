@@ -220,11 +220,6 @@ enyo.kind({
     if (!this.initialized) {
       this.inherited(arguments);
       this.getFilterSelectorTableHeader().clearFilter();
-      var store = _.find(OB.Model.VReturnsFilter.getProperties(), function (prop) {
-        return prop.name === 'store';
-      }, this);
-      store.preset.id = OB.MobileApp.model.get('terminal').organization;
-      store.preset.name = OB.I18N.getLabel('OBPOS_LblThisStore') + ' (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')';
     }
     if (OB.MobileApp.model.hasPermission('OBPOS_SelectCurrentTicketsOnPaidOpen', true)) {
       _.each(me.model.get('orderList').models, function (iter) {

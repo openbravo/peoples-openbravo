@@ -134,10 +134,6 @@
     propertyId: 'id',
     propertyName: 'name',
     hqlFilter: 'Store',
-    preset: {
-      id: '',
-      name: ''
-    },
     separatorIndex: 2,
     remoteEntity: true,
     applyUIRestrictions: true,
