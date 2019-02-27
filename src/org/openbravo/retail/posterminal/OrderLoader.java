@@ -1360,8 +1360,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
         if (useOrderDocumentNoForRelatedDocs) {
           paymentCount++;
         }
-        processPayments(paymentSchedule, order, posTerminal, paymentType, payment, tempWriteoffAmt, jsonorder,
-            account);
+        processPayments(paymentSchedule, order, posTerminal, paymentType, payment, tempWriteoffAmt,
+            jsonorder, account);
         writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
       }
     }
@@ -1593,8 +1593,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(),
           account == null ? paymentType.getFinancialAccount() : account, origAmount.toString(),
-          calculatedDate, paymentOrganization, null, paymentScheduleDetailList,
-          paymentAmountMap, false, false, order.getCurrency(), mulrate, amount, true,
+          calculatedDate, paymentOrganization, null, paymentScheduleDetailList, paymentAmountMap,
+          false, false, order.getCurrency(), mulrate, amount, true,
           payment.has("id") ? payment.getString("id") : null);
 
       // Associate a GLItem with the overpayment amount to the payment which generates the
