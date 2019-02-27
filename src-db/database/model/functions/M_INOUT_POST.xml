@@ -95,7 +95,6 @@
     v_ProductName M_Product.name%TYPE;
     v_reservation_id    VARCHAR2(32);
     v_reservationstock_id    VARCHAR2(32);
-    v_M_Warehouse_ID    VARCHAR2(32);
     v_voidmovementdate M_Inout.MovementDate%TYPE;
     v_voiddate_acct M_Inout.DateAcct%TYPE;
     v_bpartner_blocked VARCHAR2(1):='N';
@@ -166,8 +165,8 @@
   BEGIN --BODY
   	IF(NOT FINISH_PROCESS) THEN
   	  v_PUser:=v_User;
-      SELECT io.AD_Client_ID, io.AD_Org_ID, io.CreatedBy, io.C_DocType_ID, io.DateAcct, dt.isreturn, io.m_warehouse_id, io.issotrx,docaction
-        INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct, v_isreturndoctype, v_M_Warehouse_ID, v_isSoTrx,v_DocAction
+      SELECT io.AD_Client_ID, io.AD_Org_ID, io.CreatedBy, io.C_DocType_ID, io.DateAcct, dt.isreturn, io.issotrx,docaction
+        INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct, v_isreturndoctype, v_isSoTrx,v_DocAction
         FROM M_InOut io JOIN c_doctype dt ON io.c_doctype_id = dt.c_doctype_id
         WHERE io.M_InOut_ID=v_Record_ID;
         IF(v_PUser IS NOT NULL) THEN
