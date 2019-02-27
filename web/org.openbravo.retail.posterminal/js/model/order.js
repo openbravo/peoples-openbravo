@@ -1457,7 +1457,7 @@
     deleteLinesFromOrder: function (selectedModels, callback) {
       var me = this,
           pointofsale = OB.MobileApp.view.$.containerWindow.getRoot(),
-          i;
+          i, execution;
 
       function postDeleteLine() {
         var cleanReceipt, hasServices = me.get('hasServices'),
@@ -1479,9 +1479,7 @@
           me.unset('deleting');
           me.get('lines').trigger('updateRelations');
           me.save();
-          if (OB.MobileApp.view.openedPopup === null) {
-            enyo.$.scrim.hide();
-          }
+          OB.UTIL.ProcessController.finish('deleteLine', execution);
           OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
             order: me,
             selectedLines: selectedModels
@@ -1504,7 +1502,7 @@
             relations: relations,
             undo: function () {
               var i;
-              enyo.$.scrim.show();
+              var execution2 = OB.UTIL.ProcessController.start('undoDeleteLine');
               me.set('preventServicesUpdate', true);
               me.set('skipCalculateReceipt', true);
               me.set('deleting', true);
@@ -1556,9 +1554,7 @@
               me.unset('skipCalculateReceipt');
               me.unset('deleting');
               me.get('lines').trigger('updateRelations');
-              if (OB.MobileApp.view.openedPopup === null) {
-                enyo.$.scrim.hide();
-              }
+              OB.UTIL.ProcessController.finish('undoDeleteLine', execution2);
               me.calculateReceipt();
             }
           });
@@ -1597,7 +1593,7 @@
           if (args && args.cancelOperation && args.cancelOperation === true) {
             return;
           }
-          enyo.$.scrim.show();
+          execution = OB.UTIL.ProcessController.start('deleteLine');
           me.get('lines').forEach(function (line, idx) {
             line.set('undoPosition', idx);
           });
@@ -2126,7 +2122,6 @@
               if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
                 OB.UTIL.RfidController.addEpcLine(line);
               }
-              enyo.$.scrim.show();
               me.set('preventServicesUpdate', true);
               me.set('deleting', true);
               if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id')) {
@@ -2171,9 +2166,6 @@
               me.unset('deleting');
               me.get('lines').trigger('updateRelations');
               me.calculateReceipt();
-              if (OB.MobileApp.view.openedPopup === null) {
-                enyo.$.scrim.hide();
-              }
             }
           });
         }
@@ -2904,7 +2896,7 @@
               if (callback) {
                 callback(success, orderline);
               }
-            });
+            }, execution);
           } else {
             OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
             OB.UTIL.ProcessController.finish('addProduct', execution);
@@ -2936,12 +2928,12 @@
             if (callback) {
               callback(success, orderline);
             }
-          });
+          }, execution);
         }
       }
     },
 
-    addProductToOrder: function (p, qty, options, attrs, callback) {
+    addProductToOrder: function (p, qty, options, attrs, callback, execution) {
       var executeAddProduct, finalCallback, me = this,
           attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
       finalCallback = function (success, orderline) {
@@ -2997,10 +2989,12 @@
         executeAddProduct = function () {
           var isQuotationAndAttributeAllowed = args.receipt.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true);
           if ((!args || !args.options || !args.options.line) && attributeSearchAllowed && p.get('hasAttributes') && qty >= 1 && (!args.receipt.get('isQuotation') || isQuotationAndAttributeAllowed)) {
+            OB.UTIL.ProcessController.pause('addProduct', execution);
             OB.MobileApp.view.waterfall('onShowPopup', {
               popup: 'modalProductAttribute',
               args: {
                 callback: function (attributeValue) {
+                  OB.UTIL.ProcessController.resume('addProduct', execution);
                   if (!OB.UTIL.isNullOrUndefined(attributeValue)) {
                     if (_.isEmpty(attributeValue)) {
                       // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
@@ -5005,11 +4999,13 @@
         this.adjustPayment();
       }
       OB.UTIL.PrepaymentUtils.managePrepaymentChange(this, payment, payments, function () {
+        OB.UTIL.ProcessController.pause('addPayment', execution);
         OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
           paymentToAdd: payment,
           payments: payments,
           receipt: me
         }, function (args) {
+          OB.UTIL.ProcessController.resume('addPayment', execution);
           var executeFinalCallback = function (saveChanges) {
               if (saveChanges && !payment.get('changePayment')) {
                 order.adjustPayment();
@@ -6539,13 +6535,13 @@
     },
 
     newPaidReceipt: function (model, callback) {
-      enyo.$.scrim.show();
       var order = new Order(),
           lines, newline, payments, curPayment, taxes, bpId, bpLocId, bpLoc, bpBillLocId, bpBillLoc, numberOfLines = model.receiptLines.length,
           orderQty = 0,
           NoFoundProduct = true,
           NoFoundCustomer = true,
-          isLoadedPartiallyFromBackend = false;
+          isLoadedPartiallyFromBackend = false,
+          execution = OB.UTIL.ProcessController.start('newPaidReceipt');
 
       // Each payment that has been reverted stores the id of the reversal payment
       // Web POS, instead of that, need to have the information of the payment reverted on the reversal payment
@@ -6736,9 +6732,7 @@
                         order.set('qty', orderQty);
                         order.set('json', JSON.stringify(order.toJSON()));
                         callback(order);
-                        if (OB.MobileApp.view.openedPopup === null) {
-                          enyo.$.scrim.hide();
-                        }
+                        OB.UTIL.ProcessController.finish('newPaidReceipt', execution);
                       }
                     });
                     };
@@ -6879,7 +6873,7 @@
               if (model.receiptLines.length === 0) {
                 order.set('json', JSON.stringify(order.toJSON()));
                 callback(order);
-                enyo.$.scrim.hide();
+                OB.UTIL.ProcessController.finish('newPaidReceipt', execution);
               }
               };
 
@@ -7022,7 +7016,9 @@
     },
 
     addPaidReceipt: function (model, callback) {
-      var me = this;
+      var me = this,
+          synchId = null,
+          execution = OB.UTIL.ProcessController.start('addPaidReceipt');
 
       function executeFinalCallback() {
         OB.UTIL.HookManager.executeHooks('OBPOS_PostAddPaidReceipt', {
@@ -7034,7 +7030,6 @@
         });
       }
 
-      enyo.$.scrim.show();
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         this.doRemoteBPSettings(model.get('bp'));
       } else {
@@ -7049,14 +7044,15 @@
       if (!model.get('isQuotation')) {
         // OB.Dal.save is done here because we want to force to save with the original id, only this time.
         OB.Dal.save(model, function () {
-          enyo.$.scrim.hide();
+          OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
           executeFinalCallback();
         }, function () {
-          enyo.$.scrim.hide();
+          OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
           OB.error(arguments);
           executeFinalCallback();
         }, true);
       } else {
+        OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
         executeFinalCallback();
       }
     },

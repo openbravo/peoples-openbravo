@@ -59,13 +59,13 @@ enyo.kind({
     onChangeCurrentOrder: ''
   },
   tap: function () {
+    var execution = OB.UTIL.ProcessController.start('changeCurrentOrder');
     this.inherited(arguments);
     this.doHideThisPopup();
-    enyo.$.scrim.show();
     this.doChangeCurrentOrder({
       newCurrentOrder: this.model
     });
-    enyo.$.scrim.hide();
+    OB.UTIL.ProcessController.finish('changeCurrentOrder', execution);
   },
   components: [{
     name: 'line',

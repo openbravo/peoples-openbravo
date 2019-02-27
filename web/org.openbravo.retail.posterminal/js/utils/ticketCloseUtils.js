@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2018 Openbravo S.L.U.
+ * Copyright (C) 2017-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -122,7 +122,9 @@
         callback: function (args) {
           if (args.skipCallback) {
             OB.UTIL.ProcessController.finish('completeReceipt', execution);
-            triggerClosedCallback();
+            if (triggerClosedCallback instanceof Function) {
+              triggerClosedCallback();
+            }
             return true;
           }
           receipt.set('isBeingClosed', false);
@@ -218,13 +220,16 @@
             orderList.synchronizeCurrentOrder();
 
           }
-          triggerClosedCallback();
+          OB.UTIL.ProcessController.finish('completeReceipt', execution);
+          if (triggerClosedCallback instanceof Function) {
+            triggerClosedCallback();
+          }
         }
       });
     });
   };
 
-  OB.UTIL.TicketCloseUtils.paymentDone = function (receipt, callbackPaymentAccepted, callbackOverpaymentExists, callbackPaymentAmountDistinctThanReceipt, callbackErrorCancelAndReplace, callbackErrorCancelAndReplaceOffline, callbackErrorOrderCancelled) {
+  OB.UTIL.TicketCloseUtils.paymentDone = function (receipt, callbackPaymentAccepted, callbackOverpaymentExists, callbackPaymentAmountDistinctThanReceipt, callbackErrorCancelAndReplace, callbackErrorCancelAndReplaceOffline, callbackErrorOrderCancelled, callbackPaymentCancelled) {
 
     var isOrderCancelledProcess = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
         triggerPaymentAccepted, triggerPaymentAcceptedImpl;
@@ -234,7 +239,7 @@
         receipt: receipt
       }, function (args) {
         if (args && args.cancellation && args.cancellation === true) {
-          receipt.trigger('paymentCancel');
+          callbackPaymentCancelled();
           return;
         }
         if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {

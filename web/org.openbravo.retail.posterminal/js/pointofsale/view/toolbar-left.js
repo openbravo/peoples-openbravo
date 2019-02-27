@@ -380,7 +380,6 @@ enyo.kind({
         me = this;
     if (receipt.get('isQuotation')) {
       var execution = OB.UTIL.ProcessController.start('completeQuotation');
-      enyo.$.scrim.show();
       if (receipt.get('hasbeenpaid') !== 'Y') {
         receipt.set('isEditable', false);
         var cbk = function () {
@@ -399,7 +398,6 @@ enyo.kind({
                       receipt.trigger('print');
                     }
                   }
-                  enyo.$.scrim.hide();
                   receipt.trigger('scan');
                   OB.UTIL.ProcessController.finish('completeQuotation', execution);
                   OB.MobileApp.model.orderList.synchronizeCurrentOrder();
@@ -416,7 +414,6 @@ enyo.kind({
         }
       } else {
         receipt.prepareToSend(function () {
-          enyo.$.scrim.hide();
           receipt.trigger('scan');
           OB.UTIL.ProcessController.finish('completeQuotation', execution);
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));

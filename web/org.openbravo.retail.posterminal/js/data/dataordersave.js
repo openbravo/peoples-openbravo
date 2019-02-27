@@ -444,7 +444,7 @@
         };
 
     var saveAndSyncMultiOrder = function (me, closedReceipts, tx, syncCallback) {
-        var recursiveSaveFn, currentReceipt;
+        var recursiveSaveFn, currentReceipt, execution = OB.UTIL.ProcessController.start('saveAndSyncMultiOrder');
         recursiveSaveFn = function (receiptIndex) {
           if (receiptIndex < closedReceipts.length) {
             currentReceipt = closedReceipts[receiptIndex];
@@ -521,15 +521,13 @@
                   me.context.get('leftColumnViewManager').setOrderMode();
                   OB.UTIL.showLoading(false);
                   //Select printers pop up can be showed after multiorders execution 
-                  if (OB.MobileApp.view.openedPopup === null) {
-                    enyo.$.scrim.hide();
-                  }
                   if (me.hasInvLayaways) {
                     OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
                     me.hasInvLayaways = false;
                   }
                   OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
                   model.get('multiOrders').trigger('checkOpenDrawer');
+                  OB.UTIL.ProcessController.finish('saveAndSyncMultiOrder', execution);
                 });
               });
             }, function () {
@@ -538,6 +536,7 @@
                 syncSuccess: false
               }, function (args) {
                 restoreMultiOrderOnError(function () {
+                  OB.UTIL.ProcessController.finish('saveAndSyncMultiOrder', execution);
                   if (syncCallback instanceof Function) {
                     syncCallback();
                   }

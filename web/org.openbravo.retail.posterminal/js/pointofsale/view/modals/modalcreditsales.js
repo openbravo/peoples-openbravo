@@ -49,11 +49,6 @@ enyo.kind({
     } else {
       this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditBody', [OB.I18N.formatCurrency(pendingQty * rate) + " " + currSymbol, bpName]));
     }
-  },
-  executeOnHide: function () {
-    if (this.actionCancel) {
-      this.model.get('order').trigger('paymentCancel');
-    }
   }
 });
 
