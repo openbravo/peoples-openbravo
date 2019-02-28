@@ -68,7 +68,7 @@ function formatAllFiles {
             runFormatterInModule ${mod} "${FLAGS}"
         done
     elif [[ -d ${SCAN_BASE_PATH}/../../modules ]]; then
-        runFormatterInModule ${SCAN_BASE_PATH}
+        runFormatterInModule ${SCAN_BASE_PATH} "${FLAGS}"
     fi
 }
 
