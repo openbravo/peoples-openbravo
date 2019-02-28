@@ -3933,7 +3933,7 @@
         finishSetOrderType();
       }
       if (orderType === OB.DEC.One) {
-        this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
+        this.set('documentType', OB.UTIL.isCrossStoreReceipt(this) ? this.get('documentType') : OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
         if (options.saveOrder !== false) {
           approvalNeeded = false;
           servicesToApprove = '';
@@ -4051,7 +4051,8 @@
       var me = this,
           fullyPaid = this.isFullyPaid() || this.get('payOnCredit'),
           receiptCompleted = this.get('completeTicket') || this.get('payOnCredit'),
-          prePaid = !fullyPaid && this.get('completeTicket');
+          prePaid = !fullyPaid && this.get('completeTicket'),
+          isCrossStoreReceipt = OB.UTIL.isCrossStoreReceipt(this);
       if (fullyPaid || prePaid) {
         _.each(this.get('lines').models, function (line) {
           if (fullyPaid) {
@@ -4062,8 +4063,11 @@
           }
         });
       }
+
       _.each(this.get('lines').models, function (line) {
-        if (!line.has('obposQtytodeliver')) {
+        if (isCrossStoreReceipt && !line.has('originalOrderLineId')) {
+          line.set('obposQtytodeliver', line.getDeliveredQuantity());
+        } else if (!line.has('obposQtytodeliver')) {
           if (receiptCompleted) {
             if (line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct')) {
               if (line.get('qty') > 0) {
@@ -7347,6 +7351,7 @@
 
       order.set('client', OB.MobileApp.model.get('terminal').client);
       order.set('organization', OB.MobileApp.model.get('terminal').organization);
+      order.set('trxOrganization', OB.MobileApp.model.get('terminal').organization);
       order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       order.set('updatedBy', OB.MobileApp.model.get('orgUserId'));
       order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);

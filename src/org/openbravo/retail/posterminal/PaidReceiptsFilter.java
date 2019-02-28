@@ -20,18 +20,21 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.mobile.core.servercontroller.MobileServerController;
 import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
 import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
+import org.openbravo.model.common.enterprise.Organization;
 
 public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
   public static final Logger log = LogManager.getLogger();
@@ -90,12 +93,13 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     }
 
     final StringBuilder hqlPaidReceipts = new StringBuilder();
-    hqlPaidReceipts.append("select");
+    hqlPaidReceipts.append("select ");
     hqlPaidReceipts.append(receiptsHQLProperties.getHqlSelect());
-    hqlPaidReceipts.append("from Order as ord ");
-    hqlPaidReceipts.append("where $filtersCriteria and $hqlCriteria ");
+    hqlPaidReceipts.append(" from Order as ord");
+    hqlPaidReceipts.append(" where $filtersCriteria and $hqlCriteria");
     hqlPaidReceipts.append(orderTypeHql);
-    hqlPaidReceipts.append(" and ord.client.id =  $clientId and ord.$orgId");
+    hqlPaidReceipts.append(" and ord.client.id = $clientId");
+    hqlPaidReceipts.append(getOganizationFilter(jsonsent));
     hqlPaidReceipts.append(
         " and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
     hqlPaidReceipts.append(" and ord.documentStatus <> 'CA' ");
@@ -112,7 +116,39 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
   }
 
   protected static String getOrderTypeFilter(JSONObject jsonsent) {
-    String orderType = "";
+    return getColumnFilterValue(jsonsent, "orderType");
+  }
+
+  private static String getOganizationFilter(final JSONObject jsonsent) throws JSONException {
+    final String crossStoreFilter = getColumnFilterValue(jsonsent, "store");
+    if (StringUtils.isNotEmpty(crossStoreFilter)) {
+      return StringUtils.EMPTY;
+    }
+
+    final String documentNoFilter = getColumnFilterValue(jsonsent, "documentNo");
+    final OBPOSApplications pOSTerminal = POSUtils.getTerminalById(jsonsent.getString("pos"));
+    final Organization org = pOSTerminal.getOrganization();
+    final String crossStoreId = org.getOBRETCOCrossStoreOrganization() != null
+        ? org.getOBRETCOCrossStoreOrganization().getId()
+        : "";
+
+    final StringBuilder orgFilter = new StringBuilder();
+    if (StringUtils.isNotEmpty(documentNoFilter) && StringUtils.isNotEmpty(crossStoreId)) {
+      final String crossStoreList = StringCollectionUtils
+          .commaSeparated(POSUtils.getOrgListByCrossStoreId(crossStoreId), true);
+
+      orgFilter.append(" and ord.organization.id in (");
+      orgFilter.append(crossStoreList);
+      orgFilter.append(" )");
+    } else {
+      orgFilter.append(" and ord.$orgId");
+    }
+
+    return orgFilter.toString();
+  }
+
+  private static String getColumnFilterValue(JSONObject jsonsent, final String columnFilter) {
+    String columnValue = "";
     try {
       if (jsonsent.has("remoteFilters")) {
         JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
@@ -121,8 +157,8 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
           JSONArray columns = filter.getJSONArray("columns");
           for (int j = 0; j < columns.length(); j++) {
             String column = columns.getString(j);
-            if ("orderType".equals(column)) {
-              orderType = filter.getString("value");
+            if (columnFilter.equals(column)) {
+              columnValue = filter.getString("value");
               break;
             }
           }
@@ -131,7 +167,7 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     } catch (Exception e) {
       // Ignored
     }
-    return orderType;
+    return columnValue;
   }
 
   @Override

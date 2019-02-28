@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -38,6 +38,7 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -46,6 +47,8 @@ import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
 import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.order.OrderLineOffer;
+import org.openbravo.retail.config.OBRETCOProductList;
+import org.openbravo.retail.config.OBRETCOProlProduct;
 import org.openbravo.service.json.JsonConstants;
 
 public class PaidReceipts extends JSONProcessSimple {
@@ -137,6 +140,7 @@ public class PaidReceipts extends JSONProcessSimple {
         }
 
         paidReceipt.put("orderid", orderid);
+        paidReceipt.put("trxOrganization", jsonsent.getString("organization"));
 
         // get the Invoice for the Order
         String hqlPaidReceiptsInvoice = "select inv.id from Invoice as inv where inv.salesOrder.id = :orderId";
@@ -209,6 +213,9 @@ public class PaidReceipts extends JSONProcessSimple {
           OBCriteria<OrderLineTax> qTaxes = OBDal.getInstance().createCriteria(OrderLineTax.class);
           qTaxes.add(Restrictions.eq(OrderLineTax.PROPERTY_SALESORDERLINE + ".id",
               (String) paidReceiptLine.getString("lineId")));
+          if (jsonsent.has("crossStore") && jsonsent.get("crossStore") != JSONObject.NULL) {
+            qTaxes.setFilterOnReadableOrganization(false);
+          }
           qTaxes.addOrder(Order.asc(OrderLineTax.PROPERTY_LINENO));
           JSONArray taxes = new JSONArray();
           for (OrderLineTax tax : qTaxes.list()) {
@@ -231,6 +238,9 @@ public class PaidReceipts extends JSONProcessSimple {
               .createCriteria(OrderLineOffer.class);
           qPromotions.add(Restrictions.eq(OrderLineOffer.PROPERTY_SALESORDERLINE + ".id",
               (String) paidReceiptLine.getString("lineId")));
+          if (jsonsent.has("crossStore") && jsonsent.get("crossStore") != JSONObject.NULL) {
+            qPromotions.setFilterOnReadableOrganization(false);
+          }
           qPromotions.addOrder(Order.asc(OrderLineOffer.PROPERTY_LINENO));
           JSONArray promotions = new JSONArray();
           boolean hasPromotions = false;
@@ -323,6 +333,26 @@ public class PaidReceipts extends JSONProcessSimple {
             }
             paidReceiptLine.put("relatedLines", relatedLines);
           }
+
+          // Assortment Status
+          boolean productInAssortment = true;
+          if (jsonsent.has("crossStore") && jsonsent.get("crossStore") != JSONObject.NULL) {
+            final OBRETCOProductList assortment = POSUtils
+                .getProductListByPosterminalId(posTerminal.getId());
+
+            final StringBuilder hql = new StringBuilder();
+            hql.append(OBRETCOProlProduct.PROPERTY_OBRETCOPRODUCTLIST + ".id = :assortmentId");
+            hql.append(" and " + OBRETCOProlProduct.PROPERTY_PRODUCT + ".id = :productId");
+
+            final OBQuery<OBRETCOProlProduct> query = OBDal.getInstance()
+                .createQuery(OBRETCOProlProduct.class, hql.toString());
+            query.setNamedParameter("assortmentId", assortment.getId());
+            query.setNamedParameter("productId", paidReceiptLine.get("id"));
+            query.setMaxResult(1);
+
+            productInAssortment = query.count() > 0;
+          }
+          paidReceiptLine.put("productInAssortment", productInAssortment);
 
           listpaidReceiptsLines.put(paidReceiptLine);
         }

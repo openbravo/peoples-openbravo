@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -23,6 +23,7 @@ public class OpenRelatedReceipts extends JSONProcessSimple {
 
   private final String ORDERID_PROPERTY = "orderid";
   private final String ORIGINSERVER_PROPERTY = "originServer";
+  private final String TERMINAL_ORGANIZATION_PROPERTY = "organization";
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws ServletException, JSONException {
@@ -39,6 +40,7 @@ public class OpenRelatedReceipts extends JSONProcessSimple {
     for (int i = 0; i < orderIds.length(); i++) {
       final JSONObject args = new JSONObject();
       args.put(ORDERID_PROPERTY, orderIds.getJSONObject(i).getString("id"));
+      args.put(TERMINAL_ORGANIZATION_PROPERTY, jsonsent.getString(TERMINAL_ORGANIZATION_PROPERTY));
       if (originServer != null) {
         args.put(ORIGINSERVER_PROPERTY, originServer);
       }

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2018 Openbravo S.L.U.
+ * Copyright (C) 2016-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -67,33 +67,66 @@ public class LoadedCustomer extends ProcessHQLQuery {
     HQLPropertyList bpartnerHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
     HQLPropertyList bpartnerLocHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensionsLoc);
-    String hql = "SELECT " + bpartnerHQLProperties.getHqlSelect() //
-        + "FROM BusinessPartnerLocation AS bpl " + "join bpl.businessPartner as bp "
-        + "left outer join bp.aDUserList AS ulist " + "left outer join bp.priceList AS plist "
-        + "left outer join bp.businessPartnerLocationList AS bpsl " //
-        + "Where bp.id= :businessPartnerId "
-        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bp.id and bpls.invoiceToAddress = true "
-        + " and bpls.$readableSimpleClientCriteria AND "
-        + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
-        + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bp  group by ulist2.businessPartner))"
-        + " and (bpsl is null or bpsl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true AND bpls.shipToAddress = true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
-        + " bpls.$naturalOrgCriteria)) " //
-        + " ORDER BY bp.name";
-    customers.add(hql);
-    hql = " select" + bpartnerLocHQLProperties.getHqlSelect()
-        + " from BusinessPartnerLocation AS bploc join bploc.businessPartner AS bp "
-        + " left join bploc.locationAddress AS bplocAddress "
-        + " left join bplocAddress.region AS bplocRegion " + "Where bploc.id= :bplocId"
-        + " ORDER BY bploc.locationAddress.addressLine1";
-    customers.add(hql);
+
+    StringBuilder bpartnerHQLQuery = new StringBuilder();
+    bpartnerHQLQuery.append("select ");
+    bpartnerHQLQuery.append(bpartnerHQLProperties.getHqlSelect());
+    bpartnerHQLQuery.append(" from BusinessPartnerLocation AS bpl");
+    bpartnerHQLQuery.append(" join bpl.businessPartner as bp");
+    bpartnerHQLQuery.append(" left outer join bp.aDUserList AS ulist");
+    bpartnerHQLQuery.append(" left outer join bp.priceList AS plist");
+    bpartnerHQLQuery.append(" left outer join bp.businessPartnerLocationList AS bpsl");
+    bpartnerHQLQuery.append(" where bp.id = :businessPartnerId");
+    bpartnerHQLQuery.append(" and bpl.id in (");
+    bpartnerHQLQuery.append("   select max(bpls.id) as bpLocId");
+    bpartnerHQLQuery.append("   from BusinessPartnerLocation AS bpls");
+    bpartnerHQLQuery.append("   where bpls.businessPartner.id = bp.id");
+    bpartnerHQLQuery.append("   and bpls.invoiceToAddress = true");
+    bpartnerHQLQuery.append("   and bpls.$readableSimpleClientCriteria");
+    bpartnerHQLQuery.append("   group by bpls.businessPartner.id");
+    bpartnerHQLQuery.append(" )");
+    bpartnerHQLQuery.append(" and (ulist.id in (");
+    bpartnerHQLQuery.append("   select max(ulist2.id)");
+    bpartnerHQLQuery.append("   from ADUser as ulist2");
+    bpartnerHQLQuery.append("   where ulist2.businessPartner = bp");
+    bpartnerHQLQuery.append("   group by ulist2.businessPartner");
+    bpartnerHQLQuery.append(" ))");
+    bpartnerHQLQuery.append(" and (bpsl is null");
+    bpartnerHQLQuery.append(" or bpsl.id in (");
+    bpartnerHQLQuery.append("   select max(bpls.id) as bpLocId");
+    bpartnerHQLQuery.append("   from BusinessPartnerLocation AS bpls");
+    bpartnerHQLQuery.append("   where bpls.active = true");
+    bpartnerHQLQuery.append("   and bpls.shipToAddress = true");
+    bpartnerHQLQuery.append("   and bpls.businessPartner.id = bp.id");
+    bpartnerHQLQuery.append("   and bpls.$readableSimpleClientCriteria");
+    bpartnerHQLQuery.append(" ))");
+    bpartnerHQLQuery.append(" order by bp.name");
+    customers.add(bpartnerHQLQuery.toString());
+
+    final StringBuilder bpartnerShipLocHQLQuery = new StringBuilder();
+    bpartnerShipLocHQLQuery.append("select ");
+    bpartnerShipLocHQLQuery.append(bpartnerLocHQLProperties.getHqlSelect());
+    bpartnerShipLocHQLQuery.append(" from BusinessPartnerLocation AS bploc");
+    bpartnerShipLocHQLQuery.append(" join bploc.businessPartner AS bp");
+    bpartnerShipLocHQLQuery.append(" left join bploc.locationAddress AS bplocAddress");
+    bpartnerShipLocHQLQuery.append(" left join bplocAddress.region AS bplocRegion");
+    bpartnerShipLocHQLQuery.append(" where bploc.id = :bplocId");
+    bpartnerShipLocHQLQuery.append(" order by bploc.locationAddress.addressLine1");
+    customers.add(bpartnerShipLocHQLQuery.toString());
+
     if (jsonsent.getJSONObject("parameters").has("bpBillLocationId")) {
-      hql = " select" + bpartnerLocHQLProperties.getHqlSelect()
-          + " from BusinessPartnerLocation AS bploc join bploc.businessPartner AS bp "
-          + " left join bploc.locationAddress AS bplocAddress "
-          + " left join bplocAddress.region AS bplocRegion " + "Where bploc.id= :bpbilllocId"
-          + " ORDER BY bploc.locationAddress.addressLine1";
-      customers.add(hql);
+      final StringBuilder bpartnerBillLocHQLQuery = new StringBuilder();
+      bpartnerBillLocHQLQuery.append("select ");
+      bpartnerBillLocHQLQuery.append(bpartnerLocHQLProperties.getHqlSelect());
+      bpartnerBillLocHQLQuery.append(" from BusinessPartnerLocation AS bploc");
+      bpartnerBillLocHQLQuery.append(" join bploc.businessPartner AS bp");
+      bpartnerBillLocHQLQuery.append(" left join bploc.locationAddress AS bplocAddress");
+      bpartnerBillLocHQLQuery.append(" left join bplocAddress.region AS bplocRegion");
+      bpartnerBillLocHQLQuery.append(" where bploc.id = :bpbilllocId");
+      bpartnerBillLocHQLQuery.append(" order by bploc.locationAddress.addressLine1");
+      customers.add(bpartnerBillLocHQLQuery.toString());
     }
+
     return customers;
   }
 }

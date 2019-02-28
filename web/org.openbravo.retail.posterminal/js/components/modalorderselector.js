@@ -112,6 +112,13 @@ enyo.kind({
       components: [{
         style: 'padding-bottom: 3px',
         components: [{
+          style: 'float: left; padding-left:105px; font-weight: bold; color: blue',
+          name: 'store'
+        }, {
+          style: 'clear: both;'
+        }]
+      }, {
+        components: [{
           style: 'float: left; width: 100px;',
           name: 'date'
         }, {
@@ -165,6 +172,12 @@ enyo.kind({
     orderType = OB.MobileApp.model.get('orderType').find(function (ot) {
       return ot.id === me.model.get('orderType');
     }).name;
+
+    if (this.model.crossStoreInfo) {
+      this.$.store.setContent(OB.UTIL.isCrossStoreReceipt(this.model) ? this.model.get('store') : OB.I18N.getLabel('OBPOS_LblThisStore') + ' (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')');
+    } else {
+      this.$.store.setContent('');
+    }
 
     this.$.date.setContent(OB.I18N.formatDate(orderDate));
     this.$.documentNo.setContent(this.model.get('documentNo'));
@@ -402,8 +415,20 @@ enyo.kind({
     this.receiptList = new Backbone.Collection();
     this.$[this.getNameOfReceiptsListItemPrinter()].setCollection(this.receiptList);
   },
-  actionPrePrint: function () {
+  actionPrePrint: function (data) {
+    data.crossStoreInfo = false;
+    if (data && data.length > 0) {
+      _.each(data.models, function (model) {
+        if (OB.UTIL.isCrossStoreReceipt(model)) {
+          data.crossStoreInfo = true;
+          return;
+        }
+      }, this);
 
+      _.each(data.models, function (model) {
+        model.crossStoreInfo = data.crossStoreInfo;
+      }, this);
+    }
   }
 });
 
@@ -430,14 +455,16 @@ enyo.kind({
   },
   init: function (model) {
     var me = this,
-        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
+        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts'),
+        receiptOrganization = null;
     this.model = model;
     this.inherited(arguments);
     this.receiptList.on('click', function (model) {
       function loadOrder(model) {
         OB.UTIL.showLoading(true);
         process.exec({
-          orderid: model.get('id')
+          orderid: model.get('id'),
+          crossStore: OB.UTIL.isCrossStoreReceipt(model) ? model.get('organization') : null
         }, function (data) {
           if (data && data[0]) {
             if (me.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -471,8 +498,29 @@ enyo.kind({
         });
         return true;
       }
-      OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder, undefined, undefined, true);
-      return true;
+      receiptOrganization = OB.MobileApp.model.orderList.current.has('originalOrganization') ? OB.MobileApp.model.orderList.current.get('originalOrganization') : OB.MobileApp.model.orderList.current.get('organization');
+      if (receiptOrganization !== model.get('organization') && OB.MobileApp.model.orderList.current.get('lines').length > 0) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStoreReturn'), OB.I18N.getLabel('OBPOS_SameStoreReceipt'), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk')
+        }]);
+      } else if (model.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStoreReturn'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [model.get('documentNo'), model.get('store')]), [{
+          label: OB.I18N.getLabel('OBMOBC_Continue'),
+          isConfirmButton: true,
+          action: function () {
+            OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder, undefined, undefined, true);
+            return true;
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          action: function () {
+            OB.POS.navigate('retail.pointofsale');
+          }
+        }]);
+      } else {
+        OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder, undefined, undefined, true);
+        return true;
+      }
     }, this);
 
     this.setDefaultFilters([{
@@ -509,7 +557,19 @@ enyo.kind({
     this.inherited(arguments);
     this.receiptList.on('click', function (model) {
       if (!this.$.openreceiptslistitemprinter.multiselect) {
-        OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, 'orderSelector');
+        if (model.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStorePayment'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [model.get('documentNo'), model.get('store')]) + ". " + OB.I18N.getLabel('OBPOS_LblCrossStoreDelivery'), [{
+            label: OB.I18N.getLabel('OBMOBC_Continue'),
+            isConfirmButton: true,
+            action: function () {
+              OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, 'orderSelector');
+            }
+          }, {
+            label: OB.I18N.getLabel('OBMOBC_LblCancel')
+          }]);
+        } else {
+          OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, 'orderSelector');
+        }
       } else {
         me.waterfall('onChangeCheck', {
           id: model.get('id')
@@ -608,7 +668,8 @@ enyo.kind({
   model: OB.Model.OrderFilter,
   initComponents: function () {
     this.inherited(arguments);
-    this.setFilters(OB.Model.OrderFilter.getFilterPropertiesWithSelectorPreference());
+    OB.UTIL.hideStoreFilter(OB.Model.OrderFilter.getProperties());
+    this.setFilters(OB.Model.OrderFilter.getProperties());
   }
 });
 
@@ -618,7 +679,8 @@ enyo.kind({
   model: OB.Model.VReturnsFilter,
   initComponents: function () {
     this.inherited(arguments);
-    this.setFilters(OB.Model.VReturnsFilter.getFilterPropertiesWithSelectorPreference());
+    OB.UTIL.hideStoreFilter(OB.Model.VReturnsFilter.getProperties());
+    this.setFilters(OB.Model.VReturnsFilter.getProperties());
   }
 });
 

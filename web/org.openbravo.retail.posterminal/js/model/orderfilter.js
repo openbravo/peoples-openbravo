@@ -48,6 +48,10 @@
     filter: false,
     type: 'TEXT'
   }, {
+    name: 'organization',
+    filter: false,
+    type: 'TEXT'
+  }, {
     name: 'documentNo',
     column: 'documentNo',
     filter: true,
@@ -118,6 +122,22 @@
     name: 'iscancelled',
     filter: false,
     type: 'BOOL'
+  }, {
+    name: 'store',
+    column: 'organizationName',
+    type: 'TEXT',
+    filter: true,
+    isMandatoryFilter: true,
+    caption: 'OBPOS_Store',
+    isList: true,
+    termProperty: 'store',
+    propertyId: 'id',
+    propertyName: 'name',
+    hqlFilter: 'Store',
+    separatorIndex: 2,
+    remoteEntity: true,
+    applyUIRestrictions: true,
+    disableSorting: true
   }]);
 
 }());
