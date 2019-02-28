@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,7 +48,6 @@ import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.reference.EnumUIDefinition;
-import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
 import org.openbravo.client.kernel.reference.IDUIDefinition;
 import org.openbravo.client.kernel.reference.NumberUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
@@ -119,7 +118,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
           dsProperty.setId(false);
         }
         dsProperty.setBoolean(uiDefinition instanceof YesNoUIDefinition);
-        dsProperty.setPrimitive(!(uiDefinition instanceof ForeignKeyUIDefinition));
+        dsProperty.setPrimitive(uiDefinition.getDomainType() instanceof PrimitiveDomainType);
         dsProperty.setUIDefinition(uiDefinition);
         if (dsProperty.isPrimitive()) {
           dsProperty.setPrimitiveObjectType(

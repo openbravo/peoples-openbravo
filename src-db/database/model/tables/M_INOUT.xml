@@ -213,10 +213,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="GENERATELINES" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="CALCULATE_FREIGHT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -383,7 +379,6 @@
       </index>
       <check name="M_INOUT_CREATEFROM_CHECK"><![CDATA[CREATEFROM IN ('Y', 'N')]]></check>
       <check name="M_INOUT_CURRENCY_CHECK"><![CDATA[FREIGHTAMT = 0 OR FREIGHTAMT IS NULL OR FREIGHT_CURRENCY_ID IS NOT NULL]]></check>
-      <check name="M_INOUT_GENERATELINES_CHECK"><![CDATA[GENERATELINES IN ('N', 'Y')]]></check>
       <check name="M_INOUT_GENERATETO_CHECK"><![CDATA[GENERATETO IN ('Y', 'N')]]></check>
       <check name="M_INOUT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_INOUT_ISCOMPLETELYINV_CHECK"><![CDATA[ISCOMPLETELYINVOICED IN ('Y', 'N')]]></check>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -60,6 +61,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
@@ -96,6 +98,7 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.enterprise.Organization;
@@ -117,6 +120,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   public static final String UPDATE_ALL_RECORD_ID = "FFF";
   private static final String UPGRADE_INFO_URL = "https://butler.openbravo.com/heartbeat-server/org.openbravo.utility.centralrepository/UpgradeInfo";
+  private static final String SUPPORT_STATUS_REF = "C1A2527F810E43EC8E67DEDCBE504057";
 
   @SuppressWarnings("hiding")
   private static final Logger log4j = LogManager.getLogger();
@@ -650,6 +654,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("description", module.getDescription());
     xmlDocument.setParameter("help", module.getHelp());
     xmlDocument.setParameter("author", module.getAuthor());
+    xmlDocument.setParameter("support",
+        getSupportStatus((String) module.getAdditionalInfo().get("support"), true));
     String url = module.getUrl();
     if (url == null || url.equals("")) {
       xmlDocument.setParameter("urlDisplay", "none");
@@ -1954,13 +1960,22 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
         @SuppressWarnings("unchecked")
         HashMap<String, String> additioanlInfo = mod.getAdditionalInfo();
-        if (additioanlInfo != null && !Integer.toString(MaturityLevel.CS_MATURITY)
-            .equals(additioanlInfo.get("maturity.level"))) {
-          // Display module's maturity in case it is not General availability (500)
-          moduleBox.put("maturityStyle", "true");
-          moduleBox.put("maturityLevel", additioanlInfo.get("maturity.name"));
-        } else {
-          moduleBox.put("maturityStyle", "none");
+        if (additioanlInfo != null) {
+          if (!Integer.toString(MaturityLevel.CS_MATURITY)
+              .equals(additioanlInfo.get("maturity.level"))) {
+            // Display module's maturity in case it is not General availability (500)
+            moduleBox.put("maturityStyle", "true");
+            moduleBox.put("maturityLevel", additioanlInfo.get("maturity.name"));
+          } else {
+            moduleBox.put("maturityStyle", "none");
+          }
+
+          if (!"NI".equals(additioanlInfo.get("support"))) {
+            moduleBox.put("supportStyle", "true");
+            moduleBox.put("support", getSupportStatus(additioanlInfo.get("support"), false));
+          } else {
+            moduleBox.put("supportStyle", "none");
+          }
         }
 
         modulesBox[i] = FieldProviderFactory.getFieldProvider(moduleBox);
@@ -1973,6 +1988,35 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     xmlDocument.setData("structureBox", modulesBox);
     return xmlDocument.print();
+  }
+
+  private String getSupportStatus(String supportCode, boolean detailed) {
+    org.openbravo.model.ad.domain.List refValue = OBDal.getInstance()
+        .get(Reference.class, SUPPORT_STATUS_REF)
+        .getADListList()
+        .stream()
+        .filter(l -> supportCode.equals(l.getSearchKey()))
+        .findAny()
+        .get();
+
+    Optional<String> trlListValue = refValue.getADListTrlList()
+        .stream()
+        .filter(
+            trl -> trl.getLanguage().getId().equals(OBContext.getOBContext().getLanguage().getId()))
+        .map(e -> statusLabel(e, detailed))
+        .findAny();
+
+    return trlListValue.orElseGet(() -> statusLabel(refValue, detailed));
+  }
+
+  private String statusLabel(BaseOBObject valueListOrTrl, boolean detailed) {
+    String label = (String) valueListOrTrl.get(org.openbravo.model.ad.domain.List.PROPERTY_NAME);
+    String description = (String) valueListOrTrl
+        .get(org.openbravo.model.ad.domain.List.PROPERTY_DESCRIPTION);
+    if (detailed && description != null) {
+      label = label + " (" + description + ")";
+    }
+    return label;
   }
 
   /**

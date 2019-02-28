@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -300,18 +300,18 @@ public class OBInterceptor extends EmptyInterceptor {
           continue;
         }
 
-        boolean skipCrossOrgCheck = obContext.isInCrossOrgAdministratorMode()
-            && bob.getEntity().getProperty(propertyNames[i]).isAllowedCrossOrgReference();
+        Property property = bob.getEntity().getProperty(propertyNames[i]);
+        boolean skipCrossOrgCheck = (obContext.isInCrossOrgAdministratorMode()
+            && property.isAllowedCrossOrgReference()) || property.isAuditInfo();
 
         if (!skipCrossOrgCheck && !obObject.getEntity().isVirtualEntity()
             && !obContext.getOrganizationStructureProvider(o1.getClient().getId())
                 .isInNaturalTree(o1, o2)) {
           throw new OBSecurityException("Entity " + bob.getIdentifier() + " (" + bob.getEntityName()
               + ") with organization " + o1.getIdentifier() + " references an entity "
-              + ((BaseOBObject) currentState[i]).getIdentifier() + " through its property "
-              + propertyNames[i] + " but this referenced entity" + " belongs to an organization "
-              + o2.getIdentifier() + " which is not part of the natural tree of "
-              + o1.getIdentifier());
+              + obObject.getIdentifier() + " through its property " + property
+              + " but this referenced entity" + " belongs to an organization " + o2.getIdentifier()
+              + " which is not part of the natural tree of " + o1.getIdentifier());
         }
       }
     }

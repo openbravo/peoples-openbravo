@@ -94,7 +94,6 @@ public class WSAddRecordWithComputedColumns extends BaseWSTest {
         + "    <ndDimension xsi:nil=\"true\" />" //
         + "    <updateLines>false</updateLines>" //
         + "    <logistic>false</logistic>" //
-        + "    <generateLines>false</generateLines>" //
         + "    <calculateFreight>false</calculateFreight>" //
         + "    <deliveryLocation xsi:nil=\"true\" />" //
         + "    <freightCategory xsi:nil=\"true\" />" //
@@ -178,7 +177,6 @@ public class WSAddRecordWithComputedColumns extends BaseWSTest {
         + "    \"ndDimension\": null," //
         + "    \"updateLines\": false," //
         + "    \"logistic\": false," //
-        + "    \"generateLines\": false," //
         + "    \"calculateFreight\": false," //
         + "    \"deliveryLocation\": null," //
         + "    \"freightCategory\": null," //
