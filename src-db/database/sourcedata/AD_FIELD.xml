@@ -4479,7 +4479,7 @@ Document Types determine document sequence and processing rules.]]></HELP>
 <!--48693EB6785B44C1B35ABE201C566DF2-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--48693EB6785B44C1B35ABE201C566DF2-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--48693EB6785B44C1B35ABE201C566DF2-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--48693EB6785B44C1B35ABE201C566DF2-->  <NAME><![CDATA[Supervisor]]></NAME>
+<!--48693EB6785B44C1B35ABE201C566DF2-->  <NAME><![CDATA[User/Contact]]></NAME>
 <!--48693EB6785B44C1B35ABE201C566DF2-->  <DESCRIPTION><![CDATA[An acquaintance to reach for information related to the business partner.]]></DESCRIPTION>
 <!--48693EB6785B44C1B35ABE201C566DF2-->  <HELP><![CDATA[The User identifies a unique user in the system. This could be an internal user or a business partner contact]]></HELP>
 <!--48693EB6785B44C1B35ABE201C566DF2-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
@@ -10924,9 +10924,9 @@ The types flagged in this way, are required to implement a js method that will b
 <!--BBB12937003C4E1E9A56027C1F41030A-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--BBB12937003C4E1E9A56027C1F41030A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--BBB12937003C4E1E9A56027C1F41030A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--BBB12937003C4E1E9A56027C1F41030A-->  <NAME><![CDATA[POS Terminal]]></NAME>
-<!--BBB12937003C4E1E9A56027C1F41030A-->  <DESCRIPTION><![CDATA[Web POS terminal]]></DESCRIPTION>
-<!--BBB12937003C4E1E9A56027C1F41030A-->  <HELP><![CDATA[Web POS terminal]]></HELP>
+<!--BBB12937003C4E1E9A56027C1F41030A-->  <NAME><![CDATA[Touchpoint]]></NAME>
+<!--BBB12937003C4E1E9A56027C1F41030A-->  <DESCRIPTION><![CDATA[A Touchpoint is each source of sales/returns (such as POS terminals, eCommerce applications...).]]></DESCRIPTION>
+<!--BBB12937003C4E1E9A56027C1F41030A-->  <HELP><![CDATA[A Touchpoint is each source of sales/returns (such as POS terminals, eCommerce applications...).]]></HELP>
 <!--BBB12937003C4E1E9A56027C1F41030A-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--BBB12937003C4E1E9A56027C1F41030A-->  <AD_TAB_ID><![CDATA[2F49F09EF86D422C9808696EF7460716]]></AD_TAB_ID>
 <!--BBB12937003C4E1E9A56027C1F41030A-->  <AD_COLUMN_ID><![CDATA[CE6ED2936DFE4C44AA069B1894A84020]]></AD_COLUMN_ID>
@@ -11595,8 +11595,8 @@ The types flagged in this way, are required to implement a js method that will b
 <!--C64A3DF6443A4CDC8A50FF1F38BA8053-->  <NAME><![CDATA[Active]]></NAME>
 <!--C64A3DF6443A4CDC8A50FF1F38BA8053-->  <DESCRIPTION><![CDATA[A flag indicating whether this record is available for use or de-activated.]]></DESCRIPTION>
 <!--C64A3DF6443A4CDC8A50FF1F38BA8053-->  <HELP><![CDATA[There are two methods of making records unavailable in the system: One is to delete the record, the other is to de-activate the record. A de-activated record is not available for selection, but available for reporting. There are two reasons for de-activating and not deleting records: 
-+(1) The system requires the record for auditing purposes.
-+(2) The record is referenced by other records. E.g., you cannot delete a Business Partner, if there are existing invoices for it. By de-activating the Business Partner you prevent it from being used in future transactions.]]></HELP>
+(1) The system requires the record for auditing purposes.
+(2) The record is referenced by other records. E.g., you cannot delete a Business Partner, if there are existing invoices for it. By de-activating the Business Partner you prevent it from being used in future transactions.]]></HELP>
 <!--C64A3DF6443A4CDC8A50FF1F38BA8053-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--C64A3DF6443A4CDC8A50FF1F38BA8053-->  <AD_TAB_ID><![CDATA[8F5E495D81E14283B99996D20EF4A294]]></AD_TAB_ID>
 <!--C64A3DF6443A4CDC8A50FF1F38BA8053-->  <AD_COLUMN_ID><![CDATA[8C1BA4CAE387461E901E78A3EC1AABE5]]></AD_COLUMN_ID>
@@ -12381,7 +12381,7 @@ If checked, different options on how to do this movement can be defined by setti
 <!--D5F4D1EC9C3A49B08DBEA433D7455FE0-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--D5F4D1EC9C3A49B08DBEA433D7455FE0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D5F4D1EC9C3A49B08DBEA433D7455FE0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--D5F4D1EC9C3A49B08DBEA433D7455FE0-->  <NAME><![CDATA[Lastcashupreportdate]]></NAME>
+<!--D5F4D1EC9C3A49B08DBEA433D7455FE0-->  <NAME><![CDATA[Last Cashup Report Date]]></NAME>
 <!--D5F4D1EC9C3A49B08DBEA433D7455FE0-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--D5F4D1EC9C3A49B08DBEA433D7455FE0-->  <AD_TAB_ID><![CDATA[2F49F09EF86D422C9808696EF7460716]]></AD_TAB_ID>
 <!--D5F4D1EC9C3A49B08DBEA433D7455FE0-->  <AD_COLUMN_ID><![CDATA[515C192736FD40D9BB479F18511BDB11]]></AD_COLUMN_ID>
@@ -12524,7 +12524,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--D7AAF36CAD9245E38BB7B01E14CC3316-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D7AAF36CAD9245E38BB7B01E14CC3316-->  <NAME><![CDATA[Type]]></NAME>
 <!--D7AAF36CAD9245E38BB7B01E14CC3316-->  <DESCRIPTION><![CDATA[Type of Cash Management events]]></DESCRIPTION>
-<!--D7AAF36CAD9245E38BB7B01E14CC3316-->  <HELP><![CDATA[Indicates whether it is a deposit or a payment.]]></HELP>
 <!--D7AAF36CAD9245E38BB7B01E14CC3316-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--D7AAF36CAD9245E38BB7B01E14CC3316-->  <AD_TAB_ID><![CDATA[8F5E495D81E14283B99996D20EF4A294]]></AD_TAB_ID>
 <!--D7AAF36CAD9245E38BB7B01E14CC3316-->  <AD_COLUMN_ID><![CDATA[75E7DB6199AD42F280205AFE0E66B846]]></AD_COLUMN_ID>
