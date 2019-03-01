@@ -290,10 +290,10 @@ isc.OBParameterWindowView.addProperties({
           me.buttonOwnerView.toolBar.updateButtonState();
         }
 
-        if(me.buttonOwnerView && me.buttonOwnerView.viewGrid && isc.isA.Function(me.buttonOwnerView.viewGrid.getSelectedRecords) && isc.isA.Function(me.buttonOwnerView.viewGrid.discardEdits)) {
+        if (me.buttonOwnerView && me.buttonOwnerView.viewGrid && isc.isA.Function(me.buttonOwnerView.viewGrid.getSelectedRecords) && isc.isA.Function(me.buttonOwnerView.viewGrid.discardEdits)) {
           selectedRecords = me.buttonOwnerView.viewGrid.getSelectedRecords();
-          for (i=0; i < selectedRecords.length; i++) {
-              me.buttonOwnerView.viewGrid.discardEdits(selectedRecords[i]);
+          for (i = 0; i < selectedRecords.length; i++) {
+            me.buttonOwnerView.viewGrid.discardEdits(selectedRecords[i]);
           }
         }
       };
