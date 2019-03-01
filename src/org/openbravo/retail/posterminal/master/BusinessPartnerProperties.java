@@ -55,6 +55,7 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bp.birthDay", "birthDay"));
         add(new HQLProperty("bp.birthPlace", "birthPlace"));
         add(new HQLProperty("bp.active", "active"));
+        add(new HQLProperty("bp.isCustomerConsent", "isCustomerConsent"));
         String curDbms = OBPropertiesProvider.getInstance()
             .getOpenbravoProperties()
             .getProperty("bbdd.rdbms");

@@ -473,6 +473,10 @@
     name: 'birthPlace',
     column: 'birthPlace',
     type: 'TEXT'
+  }, {
+    name: 'isCustomerConsent',
+    column: 'isCustomerConsent',
+    type: 'TEXT'
   }]);
 
   BusinessPartner.addIndex([{

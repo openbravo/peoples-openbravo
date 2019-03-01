@@ -292,6 +292,12 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblEmail',
     readOnly: true
   }, {
+    kind: 'OB.UI.CustomerConsentCheckProperty',
+    name: 'isCustomerConsent',
+    modelProperty: 'isCustomerConsent',
+    i18nLabel: 'OBPOS_CustomerConsent',
+    readOnly: true
+  }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'birthPlace',
     modelProperty: 'birthPlace',
