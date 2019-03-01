@@ -1770,11 +1770,13 @@ enyo.kind({
           });
         }
         if (!approval) {
+          OB.UTIL.ProcessController.pause('tapDoneButton', execution);
           OB.UTIL.Approval.requestApproval(
           me.model, [{
             approval: 'OBPOS_approval.prepaymentUnderLimit',
             message: 'OBPOS_approval.prepaymentUnderLimit'
           }], function (approved, supervisor, approvalType) {
+            OB.UTIL.ProcessController.resume('tapDoneButton', execution);
             if (approved) {
               if (OB.MobileApp.model.get('context').user.id === supervisor.get('id')) {
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnderpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_UnderpaymentWarningBody'), [{
