@@ -71,11 +71,29 @@ public class CancelLayawayLoader extends OrderLoader {
       // Do not allow to do a CL in the case that the order was not updated
       final JSONObject canceledOrder = json.getJSONObject("canceledorder");
       final Order oldOrder = OBDal.getInstance().get(Order.class, canceledOrder.getString("id"));
-      final String loaded = canceledOrder.has("loaded") ? canceledOrder.getString("loaded") : null,
-          updated = OBMOBCUtils.convertToUTCDateComingFromServer(oldOrder.getUpdated());
-      if (loaded == null || loaded.compareTo(updated) != 0) {
-        throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
-            "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
+      if (oldOrder != null) {
+        String loaded = canceledOrder.optString("loaded"),
+            updated = OBMOBCUtils.convertToUTCDateComingFromServer(oldOrder.getUpdated());
+        if (loaded == null || loaded.compareTo(updated) != 0) {
+          throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
+              "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
+        }
+
+        final JSONArray orderlines = canceledOrder.optJSONArray("lines");
+        for (int i = 0; i < orderlines.length(); i++) {
+          final JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+          final OrderLine orderLine = OBDal.getInstance()
+              .get(OrderLine.class, jsonOrderLine.optString("id"));
+          if (orderLine != null) {
+            loaded = jsonOrderLine.optString("loaded");
+            updated = OBMOBCUtils.convertToUTCDateComingFromServer(orderLine.getUpdated());
+            if (loaded == null || loaded.compareTo(updated) != 0) {
+              throw new OutDatedDataChangeException(
+                  Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedLayaway",
+                      OBContext.getOBContext().getLanguage().getLanguage()));
+            }
+          }
+        }
       }
 
       final ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();

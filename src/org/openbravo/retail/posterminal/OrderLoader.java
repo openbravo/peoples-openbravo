@@ -265,14 +265,26 @@ public class OrderLoader extends POSDataSynchronizationProcess
         final JSONObject canceledOrderJSON = jsonorder.getJSONObject("canceledorder");
         final Order canceledOrder = OBDal.getInstance()
             .get(Order.class, canceledOrderJSON.getString("id"));
-        final String canceledLoaded = canceledOrderJSON.has("loaded")
-            ? canceledOrderJSON.getString("loaded")
-            : null,
-            canceledUpdated = OBMOBCUtils
-                .convertToUTCDateComingFromServer(canceledOrder.getUpdated());
+        String canceledLoaded = canceledOrderJSON.optString("loaded"), canceledUpdated = OBMOBCUtils
+            .convertToUTCDateComingFromServer(canceledOrder.getUpdated());
         if (canceledLoaded == null || canceledLoaded.compareTo(canceledUpdated) != 0) {
           throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
               "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
+        }
+
+        final JSONArray canceledOrderLines = canceledOrderJSON.optJSONArray("lines");
+        for (int i = 0; i < canceledOrderLines.length(); i++) {
+          JSONObject jsonOrderLine = canceledOrderLines.getJSONObject(i);
+          orderLine = OBDal.getInstance().get(OrderLine.class, jsonOrderLine.optString("id"));
+          if (orderLine != null) {
+            canceledLoaded = jsonOrderLine.optString("loaded");
+            canceledUpdated = OBMOBCUtils.convertToUTCDateComingFromServer(orderLine.getUpdated());
+            if (canceledLoaded == null || canceledLoaded.compareTo(canceledUpdated) != 0) {
+              throw new OutDatedDataChangeException(
+                  Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedLayaway",
+                      OBContext.getOBContext().getLanguage().getLanguage()));
+            }
+          }
         }
       }
 
