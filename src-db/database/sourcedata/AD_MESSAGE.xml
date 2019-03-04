@@ -11880,7 +11880,7 @@ Please contact your system administrator.]]></MSGTEXT>
 <!--FFFD138AF56A4BD8A570ED49C7ADC53B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FFFD138AF56A4BD8A570ED49C7ADC53B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FFFD138AF56A4BD8A570ED49C7ADC53B-->  <VALUE><![CDATA[OBPOS_NotAllowUndeliverable]]></VALUE>
-<!--FFFD138AF56A4BD8A570ED49C7ADC53B-->  <MSGTEXT><![CDATA[The following lines cannot be set to 'Cannot be delivered', because they are either already delivered or partially delivered:]]></MSGTEXT>
+<!--FFFD138AF56A4BD8A570ED49C7ADC53B-->  <MSGTEXT><![CDATA[The following lines cannot be set to undeliverable, because they are either already delivered or partially delivered:]]></MSGTEXT>
 <!--FFFD138AF56A4BD8A570ED49C7ADC53B-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--FFFD138AF56A4BD8A570ED49C7ADC53B-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--FFFD138AF56A4BD8A570ED49C7ADC53B-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
