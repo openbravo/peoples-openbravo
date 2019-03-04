@@ -14,7 +14,8 @@ enyo.kind({
   kind: 'OB.UI.ModalReceiptProperties',
   handlers: {
     onCloseCancelSelector: 'closeCancelSelector',
-    onUpdateFilterSelector: 'updateFilterSelector'
+    onUpdateFilterSelector: 'updateFilterSelector',
+    onMoveScrollDown: 'moveScrollDown'
   },
   newAttributes: [{
     kind: 'OB.UI.renderTextProperty',
@@ -122,6 +123,12 @@ enyo.kind({
   closeCancelSelector: function (inSender, inEvent) {
     if (inEvent.target === 'filterSelectorButton_receiptProperties') {
       this.show();
+    }
+  },
+  moveScrollDown: function (inSender, inEvent) {
+    if (inEvent.target === 'filterSelectorButton_receiptProperties') {
+      this.$.bodyContent.$.scroller.setScrollTop(this.$.bodyContent.$.scroller.getScrollTop() + inEvent.lineHeight);
+      return true;
     }
   },
   updateFilterSelector: function (inSender, inEvent) {
