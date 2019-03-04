@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -147,15 +148,16 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
           String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
 
-          if (isUomManagementEnabled && data[i].mProductUomId.isEmpty() && data[i].cAum.isEmpty()
+          if (isUomManagementEnabled && StringUtils.isNotEmpty(strmProductId)
+              && data[i].mProductUomId.isEmpty() && data[i].cAum.isEmpty()
               && data[i].aumqty.isEmpty()) {
-            String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].productId,
+            String defaultAum = UOMUtil.getDefaultAUMForDocument(strmProductId,
                 invToCopy.getTransactionDocument().getId());
             data[i].aumqty = data[i].qtyinvoiced;
             data[i].cAum = defaultAum;
             if (!defaultAum.equals(data[i].cUomId)) {
               data[i].qtyinvoiced = UOMUtil
-                  .getConvertedQty(data[i].productId, new BigDecimal(data[i].aumqty), defaultAum)
+                  .getConvertedQty(strmProductId, new BigDecimal(data[i].aumqty), defaultAum)
                   .toString();
             }
           }
