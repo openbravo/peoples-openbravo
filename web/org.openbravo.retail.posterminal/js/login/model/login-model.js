@@ -211,8 +211,7 @@
               OB.UTIL.Debug.execute(function () {
                 OB.error("Error while retrieving the terminal info ", data);
               });
-
-              handleError(data);
+              me.attemptToLoginOffline();
             }, true, 5000);
           };
 
