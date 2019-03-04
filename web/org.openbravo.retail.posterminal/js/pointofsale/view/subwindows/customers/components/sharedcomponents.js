@@ -588,3 +588,58 @@ enyo.kind({
     this.model = model;
   }
 });
+
+enyo.kind({
+  name: 'OB.UI.CustomerConsentCheckProperty',
+  kind: 'OB.UI.CheckboxButton',
+  style: 'margin: 5px 0px 0px 5px;',
+  handlers: {
+    onLoadValue: 'loadValue',
+    onSaveChange: 'saveChange',
+    onSetValue: 'valueSet',
+    onRetrieveValues: 'retrieveValue'
+  },
+  events: {
+    onSaveProperty: ''
+  },
+  valueSet: function (inSender, inEvent) {
+    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+      if (inEvent.data[this.modelProperty]) {
+        this.check();
+      } else {
+        this.unCheck();
+      }
+    }
+  },
+  retrieveValue: function (inSender, inEvent) {
+    inEvent[this.modelProperty] = this.checked;
+  },
+  loadValue: function (inSender, inEvent) {
+    var me = this;
+    if (inEvent.customer !== undefined) {
+      if (inEvent.customer.get(me.modelProperty) !== undefined) {
+        me.checked = inEvent.customer.get(me.modelProperty);
+      }
+      if (me.checked) {
+        me.addClass('active');
+      } else {
+        me.removeClass('active');
+      }
+    } else {
+      me.checked = false;
+      me.removeClass('active');
+    }
+  },
+  saveChange: function (inSender, inEvent) {
+    var me = this;
+    inEvent.customer.set(me.modelProperty, me.checked);
+  },
+  initComponents: function () {
+    if (this.readOnly) {
+      this.setAttribute('readonly', 'readonly');
+    }
+    if (this.maxlength) {
+      this.setAttribute('maxlength', this.maxlength);
+    }
+  }
+});

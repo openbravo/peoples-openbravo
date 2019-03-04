@@ -36,6 +36,7 @@ public class BPartnerFilterProperties extends ModelExtension {
         add(new HQLProperty("bp.businessPartnerCategory.name", "bpCategory"));
         add(new HQLProperty("ulist.email", "email"));
         add(new HQLProperty("ulist.phone", "phone"));
+        add(new HQLProperty("bp.isCustomerConsent", "isCustomerConsent"));
         if (location) {
           add(new HQLProperty("bpl.id", "id"));
           add(new HQLProperty("bpl.id", "bpLocactionId"));
