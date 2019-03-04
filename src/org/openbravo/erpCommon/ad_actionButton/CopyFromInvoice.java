@@ -149,8 +149,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
 
           if (isUomManagementEnabled && StringUtils.isNotEmpty(strmProductId)
-              && data[i].mProductUomId.isEmpty() && data[i].cAum.isEmpty()
-              && data[i].aumqty.isEmpty()) {
+              && StringUtils.isEmpty(data[i].mProductUomId) && StringUtils.isEmpty(data[i].cAum)
+              && StringUtils.isEmpty(data[i].aumqty)) {
             String defaultAum = UOMUtil.getDefaultAUMForDocument(strmProductId,
                 invToCopy.getTransactionDocument().getId());
             data[i].aumqty = data[i].qtyinvoiced;
