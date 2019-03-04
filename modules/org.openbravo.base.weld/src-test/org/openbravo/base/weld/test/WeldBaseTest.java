@@ -28,7 +28,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
-import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
+//import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.dialect.function.SQLFunction;
@@ -55,7 +55,7 @@ import org.openbravo.test.base.OBBaseTest;
  * @author mtaal
  */
 @RunWith(Arquillian.class)
-@ArquillianSuiteDeployment
+// @ArquillianSuiteDeployment
 public class WeldBaseTest extends OBBaseTest {
   private static final Logger log = LogManager.getLogger();
 
