@@ -130,6 +130,20 @@ enyo.kind({
     totalData = totalData.concat(data.models);
     data.models = totalData;
     data.length = totalData.length;
+    data.crossStoreInfo = false;
+
+    if (data && data.length > 0) {
+      _.each(data.models, function (model) {
+        if (OB.UTIL.isCrossStoreReceipt(model)) {
+          data.crossStoreInfo = true;
+          return;
+        }
+      }, this);
+
+      _.each(data.models, function (model) {
+        model.crossStoreInfo = data.crossStoreInfo;
+      }, this);
+    }
   }
 });
 
@@ -169,7 +183,8 @@ enyo.kind({
   model: OB.Model.VReturnsFilter,
   initComponents: function () {
     this.inherited(arguments);
-    this.setFilters(OB.Model.VReturnsFilter.getFilterPropertiesWithSelectorPreference());
+    OB.UTIL.hideStoreFilter(OB.Model.VReturnsFilter.getProperties());
+    this.setFilters(OB.Model.VReturnsFilter.getProperties());
   }
 });
 
@@ -235,19 +250,48 @@ enyo.kind({
   name: 'OB.UI.ListMultiOrdersLine',
   kind: 'OB.UI.CheckboxButton',
   classes: 'modal-dialog-btn-check',
-  style: 'border-bottom: 1px solid #cccccc;text-align: left; padding-left: 70px; height: 58px;',
+  style: 'border-bottom: 1px solid #cccccc;text-align: left; padding-left: 70px; height: 90px;',
   events: {
     onHideThisPopup: ''
   },
   tap: function () {
     this.inherited(arguments);
-    this.model.set('checked', !this.model.get('checked'));
-    this.model.trigger('verifyDoneButton', this.model);
+    if (this.model.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(this.model) && !this.model.get('checked')) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStorePayment'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [this.model.get('documentNo'), this.model.get('store')]) + ". " + OB.I18N.getLabel('OBPOS_LblCrossStoreDelivery'), [{
+        label: OB.I18N.getLabel('OBMOBC_Continue'),
+        isConfirmButton: true,
+        args: {
+          model: this.model
+        },
+        action: function () {
+          this.args.model.set('checked', !this.args.model.get('checked'));
+          this.args.model.trigger('verifyDoneButton', this.args.model);
+          return true;
+        }
+      }, {
+        label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+        args: {
+          button: this
+        },
+        action: function () {
+          this.args.button.removeClass('active');
+          return true;
+        }
+      }]);
+    } else {
+      this.model.set('checked', !this.model.get('checked'));
+      this.model.trigger('verifyDoneButton', this.model);
+    }
   },
   components: [{
     name: 'line',
-    style: 'line-height: 23px; display: inline',
+    style: 'line-height: 30px; display: inline',
     components: [{
+      style: 'float: left; font-weight: bold; color: blue',
+      name: 'store'
+    }, {
+      style: 'clear: both;'
+    }, {
       style: 'display: inline',
       name: 'topLine'
     }, {
@@ -262,6 +306,11 @@ enyo.kind({
   create: function () {
     var returnLabel = '';
     this.inherited(arguments);
+    if (this.model.crossStoreInfo) {
+      this.$.store.setContent(OB.UTIL.isCrossStoreReceipt(this.model) ? this.model.get('store') : OB.I18N.getLabel('OBPOS_LblThisStore') + ' (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')');
+    } else {
+      this.$.store.setContent('');
+    }
     if (this.model.get('documentTypeId') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns) {
       this.model.set('totalamount', OB.DEC.mul(this.model.get('totalamount'), -1));
       returnLabel = ' (' + OB.I18N.getLabel('OBPOS_ToReturn') + ')';
@@ -461,7 +510,8 @@ enyo.kind({
         });
       } else {
         process.exec({
-          orderid: iter.id
+          orderid: iter.id,
+          crossStore: OB.UTIL.isCrossStoreReceipt(iter) ? iter.get('organization') : null
         }, function (data) {
           if (data) {
             me.owner.owner.model.get('orderList').newPaidReceipt(data[0], function (order) {

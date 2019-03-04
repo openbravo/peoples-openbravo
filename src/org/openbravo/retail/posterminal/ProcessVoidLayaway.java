@@ -26,6 +26,7 @@ import org.openbravo.mobile.core.process.OutDatedDataChangeException;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
@@ -43,12 +44,28 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess
     Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
     if (order != null) {
-      final String loaded = jsonorder.getString("loaded"),
+      String loaded = jsonorder.getString("loaded"),
           updated = OBMOBCUtils.convertToUTCDateComingFromServer(order.getUpdated());
       if (!(loaded.compareTo(updated) >= 0)) {
         throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
             "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
       }
+      final JSONArray orderlines = jsonorder.optJSONArray("lines");
+      for (int i = 0; i < orderlines.length(); i++) {
+        final JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+        final OrderLine orderLine = OBDal.getInstance()
+            .get(OrderLine.class, jsonOrderLine.optString("id"));
+        if (orderLine != null) {
+          loaded = jsonOrderLine.optString("loaded");
+          updated = OBMOBCUtils.convertToUTCDateComingFromServer(orderLine.getUpdated());
+          if (loaded == null || loaded.compareTo(updated) != 0) {
+            throw new OutDatedDataChangeException(
+                Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedLayaway",
+                    OBContext.getOBContext().getLanguage().getLanguage()));
+          }
+        }
+      }
+
       final StringBuffer hql = new StringBuffer();
       hql.append("SELECT DISTINCT so.documentNo ");
       hql.append("FROM OrderlineServiceRelation AS olsr ");
