@@ -149,6 +149,7 @@ public class PaidReceipts extends JSONProcessSimple {
             .createQuery(hqlPaidReceiptsInvoice, String.class);
         PaidReceiptsInvoiceQuery.setParameter("orderId", orderid);
         if (!PaidReceiptsInvoiceQuery.list().isEmpty()) {
+          paidReceipt.put("invoiceCreated", true);
           paidReceipt.put("generateInvoice", true);
         }
 
