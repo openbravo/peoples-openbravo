@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -32,7 +32,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 
-public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
+class PaidStatusEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(FIN_FinaccTransaction.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
@@ -57,13 +57,12 @@ public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
     final Property processedProperty = transactionEntity
         .getProperty(FIN_FinaccTransaction.PROPERTY_PROCESSED);
     String oldStatus = (String) event.getPreviousState(statusProperty);
-    // boolean processedOldStatus = (Boolean) event.getPreviousState(processedProperty);
     boolean processedNewStatus = (Boolean) event.getPreviousState(processedProperty);
     String newStatus = (String) event.getCurrentState(statusProperty);
     final FIN_FinaccTransaction transaction = (FIN_FinaccTransaction) event.getTargetInstance();
     if (processedNewStatus) {
-      if ((oldStatus.equals(STATUS_DEPOSIT) | oldStatus.equals(STATUS_WITHDRAWN))
-          & newStatus.equals(STATUS_CLEARED)) {
+      if ((oldStatus.equals(STATUS_DEPOSIT) || oldStatus.equals(STATUS_WITHDRAWN))
+          && newStatus.equals(STATUS_CLEARED)) {
 
         Boolean invoicePaidold = false;
 
@@ -85,18 +84,17 @@ public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
           }
         }
 
-      } else if ((newStatus.equals(STATUS_DEPOSIT) | newStatus.equals(STATUS_WITHDRAWN))
-          & oldStatus.equals(STATUS_CLEARED)) {
+      } else if ((newStatus.equals(STATUS_DEPOSIT) || newStatus.equals(STATUS_WITHDRAWN))
+          && oldStatus.equals(STATUS_CLEARED)) {
         Boolean invoicePaidold = false;
         if (transaction.getFinPayment() != null) {
           for (FIN_PaymentDetail pd : transaction.getFinPayment().getFINPaymentDetailList()) {
             for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
               invoicePaidold = psd.isInvoicePaid();
-              if (invoicePaidold) {
-                if (oldStatus.equals(FIN_Utility.invoicePaymentStatus(transaction.getFinPayment()))
-                    && (!psd.getPaymentDetails().isPrepayment())) {
-                  FIN_Utility.restorePaidAmounts(psd);
-                }
+              if (invoicePaidold
+                  && oldStatus.equals(FIN_Utility.invoicePaymentStatus(transaction.getFinPayment()))
+                  && (!psd.getPaymentDetails().isPrepayment())) {
+                FIN_Utility.restorePaidAmounts(psd);
               }
             }
           }

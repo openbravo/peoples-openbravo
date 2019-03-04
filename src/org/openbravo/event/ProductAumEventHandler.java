@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -43,7 +43,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  * @author Nono Carballo
  *
  */
-public class ProductAumEventHandler extends EntityPersistenceEventObserver {
+class ProductAumEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(ProductAUM.ENTITY_NAME) };
 

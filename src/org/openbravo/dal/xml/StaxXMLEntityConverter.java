@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -249,16 +249,12 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
         // do the primitive values
         if (p.isPrimitive()) {
 
-          // NOTE: I noticed a difference between running from Eclipse and from the commandline
-          // after some searching, there is a jar file wstx-asl-3.0.2.jar used in
-          // src-db/database/lib
-          // which provides the woodstox XMLStreamReader. From the commandline the xerces
-          // XMLStreamReader
-          // is used. They differ in the handling of the getText method in handling entities. For
+          // NOTE: Depending on the XMLStreamReader implementation received as parameter, the
+          // behavior of the getText method when handling entities can be different. For
           // example the following text: <text>Tom&amp;Jerry</text> now assume that the pointer is
-          // at the content of the text tag, and you do getText, then woodstox will return Tom&Jerry
-          // while xerces will return Tom, this because the &amp; is an entity which is a separate
-          // event.
+          // at the content of the text tag, and you do getText, then woodstox reader will return
+          // Tom&Jerry while xerces reader will return Tom, this is because the &amp; is an entity
+          // which is a separate event.
           // below we use the getElementText which works correctly in both cases apparently
 
           // element value, note that getElementText means that it is not required anymore

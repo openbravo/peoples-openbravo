@@ -34,7 +34,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2019 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -371,9 +371,9 @@ BEGIN --BODY
         SELECT C_DocTypeShipment_ID INTO v_DocType_ID
         FROM C_DOCTYPE
         WHERE C_DocType_ID=Cur_Order.C_DocType_ID;
-        Ad_Sequence_Doctype(v_DocType_ID, Cur_Order.C_Order_ID, 'Y', v_DocumentNo) ;
+        Ad_Sequence_Doctype(v_DocType_ID, Cur_Order.C_Order_ID, 'N', v_DocumentNo) ;
         IF (v_DocumentNo IS NULL) THEN
-          Ad_Sequence_Doc('DocumentNo_M_InOut', Cur_Order.AD_Client_ID, 'Y', v_DocumentNo) ;
+          Ad_Sequence_Doc('DocumentNo_M_InOut', Cur_Order.AD_Client_ID, 'N', v_DocumentNo) ;
         END IF;
 
         IF (Cur_Order.DocSubTypeSO IN ('WR','WP')) THEN
@@ -861,6 +861,14 @@ BEGIN --BODY
           END IF;
 
           IF (v_PostResult IS NULL) THEN
+            Ad_Sequence_Doctype(v_DocType_ID, Cur_Order.C_Order_ID, 'Y', v_DocumentNo) ;
+            IF (v_DocumentNo IS NULL) THEN
+              Ad_Sequence_Doc('DocumentNo_M_InOut', Cur_Order.AD_Client_ID, 'Y', v_DocumentNo) ;
+            END IF;
+            UPDATE M_InOut SET DocumentNo = v_DocumentNo,
+                               Updated = now(),
+                               UpdatedBy = v_User_ID
+            WHERE M_InOut_ID = p_InOut_ID;
             -- Post Shipment
             M_INOUT_POST(NULL, p_InOut_ID) ;
           END IF;

@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,6 +40,7 @@ export.database.structure: Exports the database structure in the xml's files.
     <dirset dir="${base.modules}">
       <include name="*/build/classes/" />
     </dirset>
+    <fileset dir="${base.modules}" includes="org.openbravo.apachejdbcconnectionpool/lib/runtime/*.jar" />
     <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
     <fileset dir="./lib">
       <include name="**/*.jar" />
@@ -75,8 +76,7 @@ export.database.structure: Exports the database structure in the xml's files.
     <antcall target="database.postupdate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
   </target>
-  
-  
+
   <target name="update.database.java">
     <java classname="org.openbravo.ddlutils.task.AlterDatabaseJava" failonerror="true" fork="true" maxmemory="${build.maxmemory}">
       <arg value="${bbdd.driver}"/>
@@ -104,6 +104,7 @@ export.database.structure: Exports the database structure in the xml's files.
       <syspropertyset>
          <propertyref name="java.security.egd" />
       </syspropertyset>
+      <sysproperty key="javax.xml.parsers.SAXParserFactory" value="com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl" />
     </java>
     <antcall target="database.postupdate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
@@ -118,19 +119,46 @@ export.database.structure: Exports the database structure in the xml's files.
   </target>
 
   <target name="export.database.structure">
-      <taskdef name="exportdatabase" classname="org.openbravo.ddlutils.task.ExportDatabase">
-        <classpath refid="runtime-classpath" />
-      </taskdef>
-      <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" output="sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" checkTranslationConsistency="${checkTranslationConsistency}" threads="${max.threads}"/>
-      <antcall target="update.dbupdate.timestamp" />
+    <java classname="org.openbravo.ddlutils.task.ExportDatabase" failonerror="true" fork="true" maxmemory="${build.maxmemory}">
+      <arg value="${bbdd.driver}"/>
+      <arg value="${bbdd.owner.url}"/>
+      <arg value="${bbdd.user}"/>
+      <arg value="${bbdd.password}"/>
+      <arg value="${base.modules}"/>
+      <arg value="${base.config}/Openbravo.properties" />
+      <arg value="${force}"/>
+      <arg value="${validate.model}"/>
+      <arg value="${isMinorVersion}"/>
+      <arg value="${rd}"/>
+      <arg value="${checkTranslationConsistency}"/>
+      <arg value="${max.threads}"/>
+      <classpath refid="runtime-classpath"/>
+      <syspropertyset>
+         <propertyref name="java.security.egd" />
+      </syspropertyset>
+      <sysproperty key="javax.xml.parsers.SAXParserFactory" value="com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl" />
+    </java>
+    <antcall target="update.dbupdate.timestamp" />
   </target>
 
-
   <target name="export.sample.data">
-    <taskdef name="exportsampledata" classname="org.openbravo.ddlutils.task.ExportSampledata">
-      <classpath refid="runtime-classpath" />
-    </taskdef>
-    <exportsampledata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" basedir="${basedir}/../../" client="${client}" module="${module}" rdbms="${bbdd.rdbms}" exportFormat="${exportFormat}" threads="${max.threads}"/>
+    <java classname="org.openbravo.ddlutils.task.ExportSampledata" failonerror="true" fork="true" maxmemory="${build.maxmemory}">
+      <arg value="${bbdd.driver}"/>
+      <arg value="${bbdd.owner.url}"/>
+      <arg value="${bbdd.user}"/>
+      <arg value="${bbdd.password}"/>
+      <arg value="${bbdd.rdbms}"/>
+      <arg value="${basedir}/../../"/>
+      <arg value="${client}"/>
+      <arg value="${module}"/>
+      <arg value="${exportFormat}"/>
+      <arg value="${max.threads}"/>
+      <classpath refid="runtime-classpath"/>
+      <syspropertyset>
+         <propertyref name="java.security.egd" />
+      </syspropertyset>
+      <sysproperty key="javax.xml.parsers.SAXParserFactory" value="com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl" />
+    </java>
   </target>
 
   <target name="import.sample.data">

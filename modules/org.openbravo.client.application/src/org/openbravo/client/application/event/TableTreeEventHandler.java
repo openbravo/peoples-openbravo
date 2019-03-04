@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,7 +45,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  * This event handler is in charge of ensuring that each table define at most one ADTree table
  * 
  */
-public class TableTreeEventHandler extends EntityPersistenceEventObserver {
+class TableTreeEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(TableTree.ENTITY_NAME) };

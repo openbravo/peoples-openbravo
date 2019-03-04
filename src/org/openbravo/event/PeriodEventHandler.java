@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -38,9 +38,9 @@ import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.model.financialmgmt.calendar.Year;
 import org.openbravo.service.db.DalConnectionProvider;
 
-public class PeriodEventHandler extends EntityPersistenceEventObserver {
+class PeriodEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Period.ENTITY_NAME) };
-  protected Logger logger = LogManager.getLogger();
+  private static final Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -66,11 +66,7 @@ public class PeriodEventHandler extends EntityPersistenceEventObserver {
   }
 
   private boolean adjustmentPeriod(Period period) {
-    if ("A".equals(period.getPeriodType())) {
-      return true;
-    } else {
-      return false;
-    }
+    return "A".equals(period.getPeriodType());
   }
 
   private void checkPeriod(Period period) {

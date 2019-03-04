@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,9 +19,13 @@
 
 package org.openbravo.test.security;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
@@ -53,5 +57,25 @@ public class StandardCrossOrganizationReference extends CrossOrganizationReferen
     exception.expect(OBSecurityException.class);
 
     OBDal.getInstance().commitAndClose();
+  }
+
+  @Test
+  public void combinedAdminAndCrossOrgModes() {
+    try {
+      OBContext.setAdminMode(false);
+      assertThat("Admin mode (no cross org)", OBContext.getOBContext().isInAdministratorMode(),
+          is(true));
+      assertThat("No cross org mode (in admin)",
+          OBContext.getOBContext().isInCrossOrgAdministratorMode(), is(false));
+
+      OBContext.setCrossOrgReferenceAdminMode();
+      assertThat("Admin mode (with cross org)", OBContext.getOBContext().isInAdministratorMode(),
+          is(true));
+      assertThat("Cross org mode (in admin)",
+          OBContext.getOBContext().isInCrossOrgAdministratorMode(), is(true));
+    } finally {
+      OBContext.restorePreviousMode();
+      OBContext.restorePreviousCrossOrgReferenceMode();
+    }
   }
 }

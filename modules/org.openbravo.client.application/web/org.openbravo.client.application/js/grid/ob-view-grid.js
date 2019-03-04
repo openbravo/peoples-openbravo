@@ -1709,6 +1709,8 @@ isc.OBViewGrid.addProperties({
     }
     this.resetEmptyMessage();
 
+    this.discardAllEdits();
+
     var record, ret = this.Super('dataArrived', arguments);
     this.updateRowCountDisplay();
 

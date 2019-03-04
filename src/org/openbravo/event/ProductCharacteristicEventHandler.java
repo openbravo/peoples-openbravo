@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,8 +22,6 @@ import java.util.List;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -47,10 +45,9 @@ import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicConf;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 
-public class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
+class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(ProductCharacteristic.ENTITY_NAME) };
-  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -203,7 +200,7 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
         List<ProductCharacteristicConf> prChConfs = (List<ProductCharacteristicConf>) event
             .getCurrentState(charConfListProperty);
 
-        StringBuffer hql = new StringBuffer();
+        StringBuilder hql = new StringBuilder();
         hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
         hql.append(" from " + ProductCharacteristicConf.ENTITY_NAME + " as pcc");
         hql.append(
@@ -270,7 +267,7 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
 
     // If a subset is defined insert only values of it.
     if (prCh.getCharacteristicSubset() != null) {
-      StringBuffer hql = new StringBuffer();
+      StringBuilder hql = new StringBuilder();
       hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
       hql.append(" , coalesce(csv." + CharacteristicSubsetValue.PROPERTY_CODE + ", cv."
           + CharacteristicValue.PROPERTY_CODE + ")");
@@ -288,7 +285,7 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
 
     // Add all not summary values.
     else {
-      StringBuffer hql = new StringBuffer();
+      StringBuilder hql = new StringBuilder();
       hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
       hql.append(" , cv." + CharacteristicValue.PROPERTY_CODE);
       hql.append(" , cv." + CharacteristicValue.PROPERTY_ACTIVE);
@@ -317,15 +314,13 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
   }
 
   private void deleteProductCharacteristicValue(ProductCharacteristic productCharacteristic) {
-    ScrollableResults scroll = null;
-    try {
-      OBCriteria<ProductCharacteristicValue> criteria = OBDal.getInstance()
-          .createCriteria(ProductCharacteristicValue.class);
-      criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
-          productCharacteristic.getCharacteristic()));
-      criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT,
-          productCharacteristic.getProduct()));
-      scroll = criteria.scroll(ScrollMode.FORWARD_ONLY);
+    OBCriteria<ProductCharacteristicValue> criteria = OBDal.getInstance()
+        .createCriteria(ProductCharacteristicValue.class);
+    criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
+        productCharacteristic.getCharacteristic()));
+    criteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT,
+        productCharacteristic.getProduct()));
+    try (ScrollableResults scroll = criteria.scroll(ScrollMode.FORWARD_ONLY)) {
       int i = 0;
       while (scroll.next()) {
         ProductCharacteristicValue productCharacteristicValue = (ProductCharacteristicValue) scroll
@@ -337,8 +332,6 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
           OBDal.getInstance().getSession().clear();
         }
       }
-    } finally {
-      scroll.close();
     }
   }
 }

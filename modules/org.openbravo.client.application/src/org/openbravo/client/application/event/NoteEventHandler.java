@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,7 +47,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  * 
  * @author shankar balachandran
  */
-public class NoteEventHandler extends EntityPersistenceEventObserver {
+class NoteEventHandler extends EntityPersistenceEventObserver {
   private static Logger log = LogManager.getLogger();
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Note.ENTITY_NAME) };
 
@@ -82,7 +82,10 @@ public class NoteEventHandler extends EntityPersistenceEventObserver {
    */
   private void isReadOnly() {
     boolean isReadOnly = false;
-    String disableNotesForReadOnly = "Y", tabId = null, roleId = null, language = null;
+    String disableNotesForReadOnly = "Y";
+    String tabId = null;
+    String roleId = null;
+    String language = null;
     ConnectionProvider connection = null;
     try {
       OBContext.setAdminMode();

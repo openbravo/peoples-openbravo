@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,7 +39,7 @@ import org.openbravo.model.ad.access.RoleInheritance;
  * Listens to delete, update and save events for the {@link RoleInheritance} entity. This handler
  * takes care of recalculating the access of the role affected by the changes on its inheritance.
  */
-public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver {
+class RoleInheritanceEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(RoleInheritance.ENTITY_NAME) };
 
@@ -133,7 +133,7 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
   }
 
   private void checkAncestors(Role role, Role parent) {
-    Set<String> ancestorList = new HashSet<String>();
+    Set<String> ancestorList = new HashSet<>();
     getAncestorList(parent, ancestorList);
     ancestorList.add(parent.getId());
     // check if the role is inheriting from the new parent role
@@ -141,7 +141,7 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
       Utility.throwErrorMessage("RoleExistsInRoleInheritance");
     } else {
       // check any the role descendants is inheriting from the new parent role
-      Set<String> descendantsAncestorList = new HashSet<String>();
+      Set<String> descendantsAncestorList = new HashSet<>();
       getAncestorListWithChildrenAncestors(role, descendantsAncestorList);
       for (String ancestorId : ancestorList) {
         if (descendantsAncestorList.contains(ancestorId)) {

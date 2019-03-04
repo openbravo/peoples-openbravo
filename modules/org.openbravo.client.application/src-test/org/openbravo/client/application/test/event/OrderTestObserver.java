@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017 Openbravo SLU
+ * All portions are Copyright (C) 2017-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,7 +33,7 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 
-public class OrderTestObserver extends EntityPersistenceEventObserver {
+class OrderTestObserver extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Order.ENTITY_NAME) };
   private static int executionCount = 0;
 

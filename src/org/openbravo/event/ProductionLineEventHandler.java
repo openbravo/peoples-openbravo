@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,8 +22,6 @@ import java.math.BigDecimal;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -42,12 +40,12 @@ import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 import org.openbravo.model.materialmgmt.transaction.ProductionPlan;
 import org.openbravo.service.db.DalConnectionProvider;
 
-public class ProductionLineEventHandler extends EntityPersistenceEventObserver {
+class ProductionLineEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(ProductionLine.ENTITY_NAME) };
-  protected Logger logger = LogManager.getLogger();
-  private static String BOM_PRODUCTION = "321";
+  private static final String BOM_PRODUCTION = "321";
+  private static final BigDecimal ZERO = new BigDecimal("0");
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -62,13 +60,12 @@ public class ProductionLineEventHandler extends EntityPersistenceEventObserver {
     try {
       vars = RequestContext.get().getVariablesSecureApp();
     } catch (Exception e) {
-      logger.error("Error:", e);
+      throw new OBException("Error: " + e.getMessage());
     }
     String currentTabId = vars.getStringParameter("tabId");
     if (BOM_PRODUCTION.equals(currentTabId)) {
       final Entity productionLineEntity = ModelProvider.getInstance()
           .getEntity(ProductionLine.ENTITY_NAME);
-      final BigDecimal ZERO = new BigDecimal("0");
       final Property productionPlanProperty = productionLineEntity
           .getProperty(ProductionLine.PROPERTY_PRODUCTIONPLAN);
       final Property movementQtyProperty = productionLineEntity

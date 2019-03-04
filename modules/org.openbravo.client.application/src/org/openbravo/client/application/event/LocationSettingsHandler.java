@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,12 +23,9 @@ import java.text.SimpleDateFormat;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
@@ -41,9 +38,8 @@ import org.openbravo.model.common.geography.Country;
  * 
  * @author openbravo
  */
-public class LocationSettingsHandler extends EntityPersistenceEventObserver {
+class LocationSettingsHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Country.ENTITY_NAME) };
-  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -66,12 +62,6 @@ public class LocationSettingsHandler extends EntityPersistenceEventObserver {
     Country instanceCountry = (Country) event.getTargetInstance();
     checkCorrectValues(instanceCountry.getNumericmask(), instanceCountry.getDatetimeformat(),
         instanceCountry.getDateformat());
-  }
-
-  public void onDelete(@Observes EntityDeleteEvent event) {
-    if (!isValidEvent(event)) {
-      return;
-    }
   }
 
   private void checkCorrectValues(String numericmask, String datetimeformat, String dateformat) {

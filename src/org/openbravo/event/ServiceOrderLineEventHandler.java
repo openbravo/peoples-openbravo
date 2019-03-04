@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-20167 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,8 +22,6 @@ import java.math.BigDecimal;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
@@ -42,10 +40,9 @@ import org.openbravo.materialmgmt.ServicePriceUtils;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
 
-public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver {
+class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME) };
-  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -180,14 +177,11 @@ public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver
   private boolean hasRelatedServices(OrderLine thisLine) {
     OBQuery<OrderlineServiceRelation> rol = relatedServices(thisLine);
     rol.setMaxResult(1);
-    if (rol.uniqueResult() != null) {
-      return true;
-    }
-    return false;
+    return rol.uniqueResult() != null;
   }
 
   private OBQuery<OrderlineServiceRelation> relatedServices(OrderLine thisLine) {
-    StringBuffer where = new StringBuffer();
+    StringBuilder where = new StringBuilder();
     where.append(" as rol");
     where.append(
         " where " + OrderlineServiceRelation.PROPERTY_ORDERLINERELATED + ".id = :orderLineId");
@@ -201,14 +195,11 @@ public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver
   private boolean hasRelatedProducts(OrderLine thisLine) {
     OBQuery<OrderlineServiceRelation> rol = relatedProducts(thisLine);
     rol.setMaxResult(1);
-    if (rol.uniqueResult() != null) {
-      return true;
-    }
-    return false;
+    return rol.uniqueResult() != null;
   }
 
   private OBQuery<OrderlineServiceRelation> relatedProducts(OrderLine thisLine) {
-    StringBuffer where = new StringBuffer();
+    StringBuilder where = new StringBuilder();
     where.append(" as rol");
     where.append(
         " where " + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + ".id = :orderLineId");

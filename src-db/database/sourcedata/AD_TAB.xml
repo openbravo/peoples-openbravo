@@ -9385,7 +9385,6 @@ WARNING: This window is not supported anymore and it is only kept for backward c
 <!--800151-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--800151-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800151-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--800151-->  <AD_PROCESS_ID><![CDATA[800115]]></AD_PROCESS_ID>
 <!--800151-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800151-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800151-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
@@ -9548,7 +9547,6 @@ WARNING: This window is not supported anymore and it is only kept for backward c
 <!--800158-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800158-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--800158-->  <ORDERBYCLAUSE><![CDATA[MA_Measure_Shift.MeasureDate DESC]]></ORDERBYCLAUSE>
-<!--800158-->  <AD_PROCESS_ID><![CDATA[800119]]></AD_PROCESS_ID>
 <!--800158-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800158-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800158-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>

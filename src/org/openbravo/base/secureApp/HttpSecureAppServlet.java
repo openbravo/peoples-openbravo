@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Copyright (C) 2001-2019 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -12,9 +12,7 @@
 package org.openbravo.base.secureApp;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -1342,48 +1340,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       return ReportingUtils.getExcelExportType().getExtension();
     }
     return outputType;
-  }
-
-  /**
-   * Saves the file and request for download. This approach is required to close the loading pop-up
-   * window.
-   */
-  public void renderFO(String strFo, HttpServletRequest request, HttpServletResponse response)
-      throws ServletException {
-    File baseDir = new File(globalParameters.strFTPDirectory);
-    UUID reportId = UUID.randomUUID();
-
-    int slashPos = request.getRequestURI().lastIndexOf("/");
-    int dotPos = request.getRequestURI().lastIndexOf(".");
-
-    String fileName = request.getRequestURI().substring(slashPos + 1, dotPos) + "-" + reportId
-        + ".pdf";
-    File pdffile = new File(baseDir, fileName);
-    OutputStream out = null;
-
-    try {
-      out = new FileOutputStream(pdffile);
-    } catch (Exception e) {
-      log4j.error(e.getMessage(), e);
-      throw new ServletException(e.getMessage());
-    }
-
-    // Generating and saving file
-    super.renderFO(strFo, out);
-
-    try {
-      printPagePopUpDownload(response.getOutputStream(), fileName);
-    } catch (IOException e) {
-      try {
-        FileUtility f = new FileUtility(globalParameters.strFTPDirectory, fileName, false, true);
-        if (f.exists()) {
-          f.deleteFile();
-        }
-      } catch (IOException ioex) {
-        log4j.error(
-            "Error trying to delete temporary report file " + fileName + " : " + ioex.getMessage());
-      }
-    }
   }
 
   /**

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,11 +43,11 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.db.DalConnectionProvider;
 
-public class WindowPersonalizationEventHandler extends EntityPersistenceEventObserver {
+class WindowPersonalizationEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(UIPersonalization.ENTITY_NAME) };
-  protected Logger logger = LogManager.getLogger();
+  private static Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Copyright (C) 2001-2019 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -38,7 +38,6 @@ public class ConfigParameters {
   private final boolean isFullPathBaseDesignPath;
   public final String strDefaultDesignPath;
   public final String strLocalReplaceWith;
-  private final String strFopConfig;
   public final String strBBDD = null;
   public final String strVersion;
   public final String strParentVersion;
@@ -94,7 +93,6 @@ public class ConfigParameters {
     String s = "FormatFile";
     strFileFormat = getResolvedParameter(context, s);
 
-    strFopConfig = getResolvedParameter(context, "FOPConfig");
     strBaseDesignPath = trimTrailing(getResolvedParameter(context, "BaseDesignPath"), "/");
     isFullPathBaseDesignPath = determineIsFullDesignPath();
     strDefaultDesignPath = getResolvedParameter(context, "DefaultDesignPath");
@@ -210,14 +208,6 @@ public class ConfigParameters {
     } catch (Exception e) {
       return false;
     }
-  }
-
-  public boolean haveFopConfig() {
-    return strBaseDesignPath != null && strFopConfig != null;
-  }
-
-  public String getFopConfigPath() {
-    return prefix + "/" + strBaseConfigPath + "/" + strFopConfig;
   }
 
   public String getPoolFilePath() {

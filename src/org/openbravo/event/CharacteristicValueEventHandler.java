@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -45,11 +45,11 @@ import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 
-public class CharacteristicValueEventHandler extends EntityPersistenceEventObserver {
-  protected Logger logger = LogManager.getLogger();
+class CharacteristicValueEventHandler extends EntityPersistenceEventObserver {
+  private static Logger logger = LogManager.getLogger();
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(CharacteristicValue.ENTITY_NAME) };
-  private static ThreadLocal<String> chvalueUpdated = new ThreadLocal<String>();
+  private static ThreadLocal<String> chvalueUpdated = new ThreadLocal<>();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -72,7 +72,7 @@ public class CharacteristicValueEventHandler extends EntityPersistenceEventObser
         .getEntity(CharacteristicValue.ENTITY_NAME);
     final Property codeProperty = prodchValue.getProperty(CharacteristicValue.PROPERTY_CODE);
     if (event.getCurrentState(codeProperty) != event.getPreviousState(codeProperty)) {
-      StringBuffer where = new StringBuffer();
+      StringBuilder where = new StringBuilder();
       where.append("update ProductCharacteristicConf as pcc ");
       where.append("set code = :code, updated = now(), updatedBy = :user ");
       where.append("where exists ( ");
@@ -120,7 +120,7 @@ public class CharacteristicValueEventHandler extends EntityPersistenceEventObser
 
       ProcessBundle pb = new ProcessBundle(VariantChDescUpdateProcess.AD_PROCESS_ID, vars)
           .init(new DalConnectionProvider(false));
-      HashMap<String, Object> parameters = new HashMap<String, Object>();
+      HashMap<String, Object> parameters = new HashMap<>();
       parameters.put("mProductId", "");
       parameters.put("mChValueId", strChValueId);
       pb.setParams(parameters);

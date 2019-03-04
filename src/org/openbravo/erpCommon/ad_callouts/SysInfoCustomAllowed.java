@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,6 @@ package org.openbravo.erpCommon.ad_callouts;
 import javax.servlet.ServletException;
 
 import org.openbravo.base.filter.ValueListFilter;
-import org.openbravo.client.application.event.ModuleHandler;
 import org.openbravo.client.kernel.BaseComponent;
 
 /**
@@ -30,10 +29,10 @@ import org.openbravo.client.kernel.BaseComponent;
  * this value is set to true, it nullifies module cache in other to detect the newly created in
  * development template for the ETag.
  * 
- * This is needed because currently System Info window is opened in 2.50 style, so
- * {@link ModuleHandler}, which performs the same action, is not executed in this case.
+ * This is needed because currently System Info window is opened in 2.50 style, so the
+ * org.openbravo.client.application.event.ModuleHandler observer, which performs the same action, is
+ * not executed in this case.
  * 
- * @see ModuleHandler
  * @see BaseComponent#getETag()
  * 
  * @author alostale

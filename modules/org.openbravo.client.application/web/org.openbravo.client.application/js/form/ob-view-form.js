@@ -1918,7 +1918,7 @@ OB.ViewFormProperties = {
 
   handleFieldErrors: function (errors) {
     var msg, additionalMsg = '',
-        err, errorFld;
+        err, errorFld, errorMsg;
 
     if (this.view.isEditingGrid) {
       msg = OB.I18N.getLabel('OBUIAPP_ErrorInFieldsGrid', [this.view.ID]);
@@ -1931,12 +1931,14 @@ OB.ViewFormProperties = {
       for (err in errors) {
         if (errors.hasOwnProperty(err)) {
           var fld = this.getField(err);
-          if (!fld || !fld.visible) {
-            if (additionalMsg !== '') {
-              additionalMsg = additionalMsg + '<br/>';
-            }
-            additionalMsg = additionalMsg + errors[err];
+          if (additionalMsg !== '') {
+            additionalMsg = additionalMsg + '<br/>';
           }
+          errorMsg = errors[err];
+          if (fld && fld.getTitle()) {
+            errorMsg = errorMsg.replace(err, fld.getTitle());
+          }
+          additionalMsg = additionalMsg + errorMsg;
         }
       }
       if (additionalMsg) {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -20,8 +20,6 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -35,8 +33,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.gl.GLJournal;
 import org.openbravo.model.financialmgmt.gl.GLJournalLine;
 
-public class GLJournalEventHandler extends EntityPersistenceEventObserver {
-  protected Logger logger = LogManager.getLogger();
+class GLJournalEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(GLJournal.ENTITY_NAME) };
 

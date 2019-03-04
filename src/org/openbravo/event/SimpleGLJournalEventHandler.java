@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,8 +20,6 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -31,11 +29,9 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.gl.GLJournal;
 
-public class SimpleGLJournalEventHandler extends EntityPersistenceEventObserver {
+class SimpleGLJournalEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(GLJournal.ENTITY_NAME) };
-
-  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -54,7 +50,7 @@ public class SimpleGLJournalEventHandler extends EntityPersistenceEventObserver 
     if (event.getCurrentState(isMulti) != event.getPreviousState(isMulti)) {
       final GLJournal simpleGLJournal = (GLJournal) event.getTargetInstance();
 
-      if (simpleGLJournal.getFinancialMgmtGLJournalLineList().size() > 0) {
+      if (!simpleGLJournal.getFinancialMgmtGLJournalLineList().isEmpty()) {
         throw new OBException(
             OBMessageUtils.getI18NMessage("MultiGeneralLedgerCheckValidation", null));
       }

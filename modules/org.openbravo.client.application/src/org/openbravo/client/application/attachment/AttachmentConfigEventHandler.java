@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2018 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,7 +42,7 @@ import org.openbravo.model.ad.utility.AttachmentConfig;
  * listens to Insert, Update or Delete events to update the cached "clientConfigs" Map in
  * AttachmentUtils.
  */
-public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
+class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
   private static final Logger logger = LogManager.getLogger();
 
   private static Entity[] entities = {

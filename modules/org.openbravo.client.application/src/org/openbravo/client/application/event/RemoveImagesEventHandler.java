@@ -38,7 +38,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.plm.Product;
 
-public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
+class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = getImageEntities();
   private static final String DUMMY_IMAGE_ID = "2FA7212E426F11E5A151FEFF819CDC9F";
@@ -151,7 +151,7 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
   }
 
   private static Entity[] getImageEntities() {
-    ArrayList<Entity> entityArray = new ArrayList<Entity>();
+    ArrayList<Entity> entityArray = new ArrayList<>();
 
     // Create the observed entities from ModelProvider
     for (Entity entity : ModelProvider.getInstance().getEntityWithImage().keySet()) {
@@ -171,10 +171,7 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
     obCriteria.setMaxResults(1);
     Product product = (Product) obCriteria.uniqueResult();
 
-    if (product != null) {
-      return true;
-    }
-    return false;
+    return product != null;
   }
 
   private static List<String> getImageProperties(Entity entity) {

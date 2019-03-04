@@ -282,10 +282,19 @@ isc.OBParameterWindowView.addProperties({
     if (this.popup && !retryExecution) {
       this.buttonOwnerView.setAsActiveView();
       afterRefreshCallback = function () {
+        var selectedRecords, i;
+
         if (me.buttonOwnerView && isc.isA.Function(me.buttonOwnerView.refreshParentRecord) && isc.isA.Function(me.buttonOwnerView.refreshChildViews)) {
           me.buttonOwnerView.refreshParentRecord();
           me.buttonOwnerView.refreshChildViews();
           me.buttonOwnerView.toolBar.updateButtonState();
+        }
+
+        if (me.buttonOwnerView && me.buttonOwnerView.viewGrid && isc.isA.Function(me.buttonOwnerView.viewGrid.getSelectedRecords) && isc.isA.Function(me.buttonOwnerView.viewGrid.discardEdits)) {
+          selectedRecords = me.buttonOwnerView.viewGrid.getSelectedRecords();
+          for (i = 0; i < selectedRecords.length; i++) {
+            me.buttonOwnerView.viewGrid.discardEdits(selectedRecords[i]);
+          }
         }
       };
       if (refreshParent) {
