@@ -813,21 +813,12 @@ isc.RPCManager.addClassProperties({
 
   _originalEvalResult: isc.RPCManager.evalResult,
   evalResult: function (request, response, results) {
-    if (response.status !== isc.RPCResponse.STATUS_SUCCESS) {
-      if (isc.isA.Function(request.errorCallback)) {
-        // if the response contains an error status, call the errorCallback
-        request.errorCallback(request, response);
-      } else {
-        // try to handle the error in the standard way
-        this.handleError(response, request);
-      }
+    if (response.status !== isc.RPCResponse.STATUS_SUCCESS && isc.isA.Function(request.errorCallback)) {
+      // if the response contains an error status, call the errorCallback
+      request.errorCallback(request, response);
     }
 
-    return this._originalEvalResult(request, response, this.sanitizeResults(results));
-  },
-
-  sanitizeResults: function (results) {
-    return isc.isA.Object(results) ? JSON.stringify(results) : results;
+    return this._originalEvalResult(request, response, results);
   },
 
   // Escape characters that are not properly handled in JavaScript's eval. See issue #36788.

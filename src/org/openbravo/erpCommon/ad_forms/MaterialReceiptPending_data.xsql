@@ -112,7 +112,7 @@
       	DELIVERYRULE, FREIGHTCOSTRULE, FREIGHTAMT, DELIVERYVIARULE, M_SHIPPER_ID, C_CHARGE_ID, CHARGEAMT, 
       	PRIORITYRULE, DATEPRINTED, C_INVOICE_ID, CREATEFROM, GENERATETO, AD_USER_ID, SALESREP_ID, NOPACKAGES, 
       	PICKDATE, SHIPDATE, TRACKINGNO, AD_ORGTRX_ID, C_PROJECT_ID, C_CAMPAIGN_ID, C_ACTIVITY_ID, 
-      	USER1_ID, USER2_ID, UPDATELINES, ISLOGISTIC, GENERATELINES, C_COSTCENTER_ID, A_ASSET_ID, PROCESS_GOODS_JAVA)
+      	USER1_ID, USER2_ID, UPDATELINES, ISLOGISTIC, C_COSTCENTER_ID, A_ASSET_ID, PROCESS_GOODS_JAVA)
       VALUES(?,?,?,?,now(),?,now(),?,
       	?,?,?,?,?,?,?,
       	?,?,?,TO_DATE(?),?,?,TO_DATE(?),
@@ -120,7 +120,7 @@
       	?,?,TO_NUMBER(?),?,?,?,TO_NUMBER(?),
       	?,NULL,NULL,?,?,?,?,NULL,
       	NULL,NULL,NULL,?,?,?,?,
-      	?,?,?,?,?,?,?,?)
+      	?,?,?,?,?,?,?)
       </Sql>
       <Parameter name="mInoutId"/>
       <Parameter name="adClientId"/>
@@ -167,7 +167,6 @@
       <Parameter name="user2Id"/>
       <Parameter name="updatelines"/>
       <Parameter name="islogistic"/>
-      <Parameter name="generatelines"/>
       <Parameter name="cCostcenterId"/>
       <Parameter name="aAssetId"/>
       <Parameter name="docaction"/>

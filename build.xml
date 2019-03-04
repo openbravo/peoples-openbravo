@@ -536,7 +536,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="generate.java.doc">
-    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes" additionalparam="${xdoclint.missing} ${html.version}">
+    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes" additionalparam="${xdoclint.missing} ${html.version}" source="8">
       <sourcepath>
         <pathelement path="${base.src}" />
         <pathelement path="${base.src.test}/src" />

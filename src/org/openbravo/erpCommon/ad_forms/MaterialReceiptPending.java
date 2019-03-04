@@ -428,7 +428,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
                   data[0].cChargeId, data[0].chargeamt, data[0].priorityrule, "N", "N",
                   data[0].adUserId, data[0].salesrepId, data[0].adOrgtrxId, data[0].cProjectId,
                   data[0].cCampaignId, data[0].cActivityId, data[0].user1Id, data[0].user2Id, "N",
-                  "N", "N", data[0].cCostcenterId, data[0].aAssetId);
+                  "N", data[0].cCostcenterId, data[0].aAssetId);
             } catch (ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
               releaseRollbackConnection(conn);
