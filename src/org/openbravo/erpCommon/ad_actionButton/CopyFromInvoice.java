@@ -84,7 +84,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       String strTab = vars.getStringParameter("inpTabId");
       String strPriceListCheck = vars.getStringParameter("inpPriceList");
       String strWindowPath = Utility.getTabURL(strTab, "R", true);
-      if (strWindowPath.equals("")) {
+      if (StringUtils.isEmpty(strWindowPath)) {
         strWindowPath = strDefaultServlet;
       }
 
@@ -155,7 +155,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                 invToCopy.getTransactionDocument().getId());
             data[i].aumqty = data[i].qtyinvoiced;
             data[i].cAum = defaultAum;
-            if (!defaultAum.equals(data[i].cUomId)) {
+            if (!StringUtils.equals(defaultAum, data[i].cUomId)) {
               data[i].qtyinvoiced = UOMUtil
                   .getConvertedQty(strmProductId, new BigDecimal(data[i].aumqty), defaultAum)
                   .toString();
@@ -164,24 +164,24 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
 
           String strCTaxID = Tax.get(this, data[i].productId, dataInvoice[0].dateinvoiced,
               dataInvoice[0].adOrgId, strWharehouse, dataInvoice[0].cBpartnerLocationId,
-              dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId, strIsSOTrx.equals("Y"),
-              data[i].accountId);
+              dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId,
+              StringUtils.equals(strIsSOTrx, "Y"), data[i].accountId);
 
           // force get price list price if mixing tax including price lists.
           boolean forcePriceList = (invoice.getPriceList()
               .isPriceIncludesTax() != invToCopy.getPriceList().isPriceIncludesTax());
-          if ("Y".equals(strPriceListCheck) || forcePriceList) {
+          if (StringUtils.equals(strPriceListCheck, "Y") || forcePriceList) {
 
             CopyFromInvoiceData[] invoicelineprice = CopyFromInvoiceData.selectPriceForProduct(this,
                 strmProductId, strInvPriceList);
             for (int j = 0; invoicelineprice != null && j < invoicelineprice.length; j++) {
-              if (invoicelineprice[j].validfrom == null || invoicelineprice[j].validfrom.equals("")
-                  || !DateTimeData
-                      .compare(this, DateTimeData.today(this), invoicelineprice[j].validfrom)
-                      .equals("-1")) {
+              if (invoicelineprice[j].validfrom == null
+                  || StringUtils.isEmpty(invoicelineprice[j].validfrom)
+                  || !StringUtils.equals(DateTimeData.compare(this, DateTimeData.today(this),
+                      invoicelineprice[j].validfrom), "-1")) {
                 priceList = new BigDecimal(invoicelineprice[j].pricelist);
                 priceLimit = new BigDecimal(invoicelineprice[j].pricelimit);
-                priceStd = (invoicelineprice[j].pricestd.equals("") ? BigDecimal.ZERO
+                priceStd = (StringUtils.isEmpty(invoicelineprice[j].pricestd) ? BigDecimal.ZERO
                     : (new BigDecimal(invoicelineprice[j].pricestd))).setScale(pricePrecision,
                         RoundingMode.HALF_UP);
                 priceListGross = BigDecimal.ZERO;
@@ -229,7 +229,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           }
 
           // Checking, why is not possible to get a tax
-          if ("".equals(strCTaxID) && lineNetAmt.compareTo(BigDecimal.ZERO) != 0) {
+          if (StringUtils.isEmpty(strCTaxID) && lineNetAmt.compareTo(BigDecimal.ZERO) != 0) {
             throwTaxNotFoundException(data[i].accountId, data[i].productId,
                 dataInvoice[0].cBpartnerLocationId);
           }
@@ -290,7 +290,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
-    if (vars.getLanguage().equals("en_US")) {
+    if (StringUtils.equals(vars.getLanguage(), "en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
     } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
@@ -301,7 +301,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       strHelp = data[0].help;
     }
     String[] discard = { "" };
-    if (strHelp.equals("")) {
+    if (StringUtils.isEmpty(strHelp)) {
       discard[0] = new String("helpDiscard");
     }
     XmlDocument xmlDocument = xmlEngine
@@ -325,7 +325,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
 
   private void throwTaxNotFoundException(String accountId, String productId,
       String cBpartnerLocationId) throws OBException {
-    if (!"".equals(accountId)) {
+    if (StringUtils.isNotEmpty(accountId)) {
       GLItem glItem = OBDal.getInstance().get(GLItem.class, accountId);
 
       OBCriteria<TaxRate> obcriteria = OBDal.getInstance().createCriteria(TaxRate.class);
@@ -342,7 +342,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
             glItem.getIdentifier(), glItem.getTaxCategory().getIdentifier(),
             location.getIdentifier()));
       }
-    } else if (!"".equals(productId)) {
+    } else if (StringUtils.isNotEmpty(productId)) {
       Product product = OBDal.getInstance().get(Product.class, productId);
 
       OBCriteria<TaxRate> obcriteria = OBDal.getInstance().createCriteria(TaxRate.class);
