@@ -123,7 +123,7 @@ enyo.kind({
   handlers: {
     onLeftToolbarDisabled: 'disabledButton'
   },
-  processesToListen: ['calculateReceipt', 'addProduct'],
+  processesToListen: ['calculateReceipt', 'addProduct', 'tapTotalButton'],
   disableButton: function () {
     this.isEnabled = false;
     this.setDisabled(true);
@@ -135,12 +135,35 @@ enyo.kind({
     }
   },
   disabledButton: function (inSender, inEvent) {
+    if (this.model.get('order').get('isBeingProcessedQuotation')) {
+      return;
+    }
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
     if (!this.isEnabled) {
       this.removeClass('btn-icon-delete');
     } else {
       this.addClass('btn-icon-delete');
+    }
+  },
+  processStarted: function (process, execution, processesInExec) {
+    if (OB.UTIL.ProcessController.isFirstExecution(this, process)) {
+      if (this.disableButton) {
+        this.disableButton();
+      }
+      if (this.model.get('order').get('isQuotation')) {
+        this.model.get('order').set('isBeingProcessedQuotation', true);
+      }
+    }
+  },
+  processFinished: function (process, execution, processesInExec) {
+    if (processesInExec.models.length === 0) {
+      if (this.enableButton) {
+        this.enableButton();
+      }
+      if (this.model.get('order').get('isQuotation')) {
+        this.model.get('order').set('isBeingProcessedQuotation', false);
+      }
     }
   },
   updateDisabled: function (isDisabled) {
