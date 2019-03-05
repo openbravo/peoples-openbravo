@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -725,6 +725,12 @@ enyo.kind({
   },
   receiptToInvoice: function () {
     if (this.model.get('leftColumnViewManager').isOrder()) {
+      if (this.model.get('order').get('invoiceCreated') === true) {
+        this.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return true;
+      }
       this.model.get('order').setOrderInvoice();
     } else {
       this.model.get('multiOrders').toInvoice(true);
@@ -791,6 +797,12 @@ enyo.kind({
 
   cancelReceiptToInvoice: function (inSender, inEvent) {
     if (this.model.get('leftColumnViewManager').isOrder()) {
+      if (this.model.get('order').get('invoiceCreated') === true) {
+        this.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return true;
+      }
       this.model.get('order').resetOrderInvoice();
     } else {
       this.model.get('multiOrders').toInvoice(false);

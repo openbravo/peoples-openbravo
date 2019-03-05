@@ -4262,6 +4262,7 @@
         me.unset('id');
         me.set('session', OB.MobileApp.model.get('session'));
 
+        me.unset('invoiceCreated');
         me.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
         me.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
 
