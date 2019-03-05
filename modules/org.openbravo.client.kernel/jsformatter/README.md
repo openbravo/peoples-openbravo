@@ -3,7 +3,6 @@
 In order to run these scripts, you need to have npm and nodejs installed.
 
 ## Enabling pre-commit checking:
-### Core
 Add these lines in your hgrc file:
 ```
 [hooks]
