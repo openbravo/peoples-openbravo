@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -954,7 +954,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     final StringBuilder hqlString = new StringBuilder();
     hqlString.append("select rs from MaterialMgmtReservationStock rs ");
     hqlString.append(" join rs.reservation as r");
-    hqlString.append(" join rs.storageBin as sb");
+    hqlString.append(" left join rs.storageBin as sb");
     hqlString.append(" where rs.reservation = :reservation ");
 
     if (reservation.getAttributeSetValue() != null) {
