@@ -1278,3 +1278,29 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
   border-bottom: 1px solid #cccccc;
   border-top: 1px solid #cccccc;
 }
+
+.buttonVoid {
+	display: table-cell;
+	vertical-align: middle;
+	width: 5%;
+}
+
+.cashupDisplayFlex {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+@media only screen and (max-width: 1456px) {
+  .cashupDisplayFlex {
+    flex-direction: column;
+  }
+}
+
+.cashupReceiptInfo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 100%;
+    align-items: center;
+}
