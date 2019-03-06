@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -374,15 +374,17 @@ public class DatabaseValidator implements SystemValidator {
       SystemValidationResult result) {
     final Entity entity = ModelProvider.getInstance().getEntityByTableName(table.getName());
     List<String> fkWhiteList = getFkWhiteList();
+    List<String> fKTblWhiteList = getFkTblWhiteList();
     if (entity == null) {
       // can happen with mismatches
       return;
     }
-    if (entity.getTableName().equalsIgnoreCase("Ad_Module_Install")) {
-      // We shouldn't check the foreign keys of the Ad_Module_Install table, as this one is special,
-      // and doesn't need fks
+
+    if (fKTblWhiteList.contains(entity.getTableName().toLowerCase())) {
+      // ignore fk check for the tables in the tableFKWhiteList
       return;
     }
+
     for (Property property : entity.getProperties()) {
 
       // ignore computed columns
@@ -408,6 +410,7 @@ public class DatabaseValidator implements SystemValidator {
         }
 
         // ignore ad_audit_trail as fk's are omitted on purpose
+
         if (entity.getTableName().equalsIgnoreCase("ad_audit_trail")) {
           continue;
         }
@@ -450,6 +453,19 @@ public class DatabaseValidator implements SystemValidator {
     fkWhiteList.add("c_orderline.replacedorderline_id");
     fkWhiteList.add("obuiapp_data_pool_sel.obuiapp_pool_report_v_id");
     return fkWhiteList;
+  }
+
+  // Get List of Tables for which Foreign Keys to be skipped in the validation while exporting
+  // database.
+  private List<String> getFkTblWhiteList() {
+    List<String> fkTblWhiteList = new ArrayList<String>();
+    fkTblWhiteList.add("ad_module_install");
+    fkTblWhiteList.add("obanaly_fact_discounts");
+    fkTblWhiteList.add("obanaly_fact_order");
+    fkTblWhiteList.add("obanaly_fact_salesordheader");
+    fkTblWhiteList.add("obretan_fact_sessions");
+    fkTblWhiteList.add("obdpl_fact_acct_pl");
+    return fkTblWhiteList;
   }
 
   private void matchColumns(Table adTable, org.apache.ddlutils.model.Table dbTable,
