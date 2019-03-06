@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -31,6 +31,42 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.DocumentNoAndBP',
+  classes: 'cashupDisplayFlex',
+  components: [{
+    name: 'documentNo',
+    style: 'display: table-cell; vertical-align: middle; padding: 2px 0px 2px 5px;'
+  }, {
+    name: 'bp',
+    style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px;'
+  }]
+});
+
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.GrossSessionUser',
+  classes: 'cashupDisplayFlex',
+  components: [{
+    name: 'printGross',
+    style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; font-weight: bold; text-align: right;'
+  }, {
+    name: 'sessionUser',
+    style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; color: #d3d3d3; text-align: right;'
+  }]
+});
+
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.InfoPendingReceipt',
+  classes: 'cashupReceiptInfo',
+  components: [{
+    name: 'documentNoAndBP',
+    kind: 'OB.OBPOSCashUp.UI.DocumentNoAndBP'
+  }, {
+    name: 'grossSessionUser',
+    kind: 'OB.OBPOSCashUp.UI.GrossSessionUser'
+  }]
+});
+
+enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderPendingReceiptLine',
   events: {
     onVoidOrder: '',
@@ -42,26 +78,18 @@ enyo.kind({
       name: 'orderDate',
       style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 10%;'
     }, {
-      name: 'documentNo',
-      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 20%;'
-    }, {
-      name: 'bp',
-      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 40%;'
-    }, {
-      name: 'printGross',
-      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 15%; font-weight: bold; text-align: right;'
-    }, {
-      name: 'sessionUser',
-      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 15%; color: #d3d3d3; text-align: right;'
+      name: 'infoPendingReceipt',
+      kind: 'OB.OBPOSCashUp.UI.InfoPendingReceipt'
     }, {
       style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 15%;',
+      name: 'buttonBringContainer',
       components: [{
         name: 'buttonBring',
         kind: 'OB.OBPOSCashUp.UI.ButtonBring',
         ontap: 'bringOrder'
       }]
     }, {
-      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 15%;',
+      classes: 'buttonVoid',
       components: [{
         name: 'buttonVoid',
         kind: 'OB.OBPOSCashUp.UI.ButtonVoid',
@@ -73,19 +101,19 @@ enyo.kind({
   }],
   create: function () {
     this.inherited(arguments);
+    var me = this;
     this.$.orderDate.setContent(OB.I18N.formatHour(this.model.get('orderDate')));
-    this.$.documentNo.setContent(this.model.get('documentNo'));
-    this.$.bp.setContent(this.model.get('bp').get('_identifier'));
-    this.$.printGross.setContent(this.model.printGross());
+    this.$.infoPendingReceipt.$.documentNoAndBP.$.documentNo.setContent(this.model.get('documentNo'));
+    this.$.infoPendingReceipt.$.documentNoAndBP.$.bp.setContent(this.model.get('bp').get('_identifier'));
+    this.$.infoPendingReceipt.$.grossSessionUser.$.printGross.setContent(this.model.printGross());
     if (this.model.get('session') === OB.MobileApp.model.get('session')) {
-      this.$.buttonBring.hide();
+      this.$.buttonBringContainer.setStyle('display: none');
     } else {
-      var me = this;
       OB.Dal.find(OB.Model.User, {
         'id': this.model.get('updatedBy')
       }, function (user) {
-        if (user.models.length > 0 && !_.isUndefined(me.$.sessionUser)) {
-          me.$.sessionUser.setContent(user.models[0].get('name'));
+        if (user.models.length > 0 && !_.isUndefined(me.$.infoPendingReceipt) && !_.isUndefined(me.$.infoPendingReceipt.$.grossSessionUser) && !_.isUndefined(me.$.infoPendingReceipt.$.grossSessionUser.$.sessionUser)) {
+          me.$.infoPendingReceipt.$.grossSessionUser.$.sessionUser.setContent(user.models[0].get('name'));
         }
       });
     }
