@@ -10,7 +10,7 @@
   "author": "Openbravo SLU",
   "license": "OBPL",
   "devDependencies": {
-    "eslint": "~5.14.1",
+    "eslint": "~5.15.1",
     "prettier": "~1.16.4"
   }
 }
