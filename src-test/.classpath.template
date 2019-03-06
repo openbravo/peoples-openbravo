@@ -16,7 +16,7 @@
 	<classpathentry kind="lib" path="test-lib/arquillian-config-impl-base-1.4.1.Final.jar"/>
 	<classpathentry kind="lib" path="test-lib/arquillian-config-spi-1.4.1.Final.jar"/>
 	<classpathentry kind="lib" path="test-lib/arquillian-container-impl-base-1.4.1.Final.jar"/>
-	<classpathentry kind="lib" path="test-lib/arquillian-container-spi-1.1.4.Final.jar"/>
+	<classpathentry kind="lib" path="test-lib/arquillian-container-spi-1.4.1.Final.jar"/>
 	<classpathentry kind="lib" path="test-lib/arquillian-container-test-api-1.4.1.Final.jar"/>
 	<classpathentry kind="lib" path="test-lib/arquillian-container-test-impl-base-1.4.1.Final.jar"/>
 	<classpathentry kind="lib" path="test-lib/arquillian-container-test-spi-1.4.1.Final.jar"/>
@@ -29,7 +29,7 @@
 	<classpathentry kind="lib" path="test-lib/arquillian-test-api-1.4.1.Final.jar"/>
 	<classpathentry kind="lib" path="test-lib/arquillian-test-impl-base-1.4.1.Final.jar"/>
 	<classpathentry kind="lib" path="test-lib/arquillian-test-spi-1.4.1.Final.jar"/>
-	<classpathentry kind="lib" path="test-lib/arquillian-testenricher-cdi-1.1.4.Final.jar"/>
+	<classpathentry kind="lib" path="test-lib/arquillian-testenricher-cdi-1.4.1.Final.jar"/>
 	<classpathentry kind="lib" path="test-lib/arquillian-weld-ee-embedded-1.1-1.0.0.Final.jar"/>
 	<classpathentry kind="lib" path="test-lib/jboss-ejb3-api-3.1.0.jar"/>
 	<classpathentry kind="lib" path="test-lib/jboss-el-api_3.0_spec-1.0.13.Final.jar"/>
