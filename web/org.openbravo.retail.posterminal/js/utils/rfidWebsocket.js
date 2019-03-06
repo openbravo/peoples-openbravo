@@ -295,7 +295,7 @@ OB.UTIL.RfidController.processRemainingCodes = function (order, callback, errorC
   //Only if useSecurityGate check is enabled
   if (OB.POS.modelterminal.get('terminal').terminalType.useSecurityGate) {
     OB.UTIL.RfidController.waitForAck(function (uuid) {
-      OB.UTIL.RfidController.get('rfidWebsocket').send('send:' + uuid + ':' + JSON.stringify(order));
+      OB.UTIL.RfidController.get('rfidWebsocket').send('send:' + uuid + ':' + JSON.stringify(order.serializeToJSON()));
       OB.debug('sent processRemaingingCodes sent, UUID: ' + uuid);
     }, function () {
       OB.debug('send processRemainingCodes ended succesfully: ' + order.get('id'));
