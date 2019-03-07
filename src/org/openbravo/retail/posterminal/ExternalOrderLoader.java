@@ -86,6 +86,11 @@ public class ExternalOrderLoader extends OrderLoader {
 
   private static final Logger log = LogManager.getLogger();
 
+  public static final String CREATE = "create";
+  public static final String PAY = "pay";
+  public static final String SHIP = "ship";
+  public static final String ALL = "all";
+
   private static ThreadLocal<JSONArray> processedOrders = new ThreadLocal<JSONArray>();
   private static ThreadLocal<Throwable> exception = new ThreadLocal<Throwable>();
   private static ThreadLocal<JSONObject> transformedMessage = new ThreadLocal<JSONObject>();
@@ -553,11 +558,13 @@ public class ExternalOrderLoader extends OrderLoader {
     copyPropertyValue(orderJson, "grossAmount", "gross");
     copyPropertyValue(orderJson, "netAmount", "net");
 
-    if ("create".equals(orderJson.getString("step")) || "ship".equals(orderJson.getString("step"))
-        || "all".equals(orderJson.getString("step"))) {
+    if (CREATE.equals(orderJson.getString("step")) || SHIP.equals(orderJson.getString("step"))
+        || ALL.equals(orderJson.getString("step"))) {
       setBusinessPartnerInformation(orderJson);
       transformTaxes(orderJson.getJSONObject("taxes"));
       transformLines(orderJson);
+    } else {
+      setQuantitiesToDeliver(orderJson);
     }
 
     transformPayments(orderJson);
@@ -577,23 +584,26 @@ public class ExternalOrderLoader extends OrderLoader {
   // separately, this needs to be improved.
   protected void handleOrderSteps(JSONObject orderJson) throws JSONException {
     if (!orderJson.has("step")) {
-      orderJson.put("step", "all");
+      orderJson.put("step", ALL);
     }
     final String step = orderJson.getString("step");
-    if ("create".equals(step)) {
+    if (CREATE.equals(step)) {
       orderJson.put("payment", -1);
       orderJson.put("isLayaway", false);
-    } else if ("pay".equals(step)) {
+    } else if (PAY.equals(step)) {
       orderJson.put("payment", -1);
       orderJson.put("isLayaway", true);
-    } else if ("ship".equals(step)) {
+    } else if (SHIP.equals(step)) {
       orderJson.put("payment", orderJson.getDouble("grossAmount"));
       orderJson.put("generateExternalInvoice", true);
       orderJson.put("generateShipment", true);
       orderJson.put("deliver", true);
       orderJson.put("isLayaway", true);
-    } else if ("all".equals(step)) {
+    } else if (ALL.equals(step)) {
       copyPropertyValue(orderJson, "grossAmount", "payment");
+      orderJson.put("generateExternalInvoice", true);
+      orderJson.put("generateShipment", true);
+      orderJson.put("deliver", true);
       // do nothing
     } else {
       log.warn("Step value " + step + " not recognized, order " + orderJson + " assuming all");
@@ -621,6 +631,8 @@ public class ExternalOrderLoader extends OrderLoader {
 
     copyPropertyValue(lineJson, "quantity", "qty");
 
+    setQuantityToDeliver(lineJson, orderJson.getString("step"));
+
     if (lineJson.has("warehouse")) {
       final String warehouseId = resolveJsonValue(Warehouse.ENTITY_NAME,
           lineJson.getString("warehouse"), new String[] { "id", "name", "searchKey" });
@@ -645,6 +657,25 @@ public class ExternalOrderLoader extends OrderLoader {
     }
     setLineTaxInformation(lineJson);
     transformPriceInformation(lineJson);
+  }
+
+  private void setQuantitiesToDeliver(JSONObject orderJson) throws JSONException {
+    final String step = orderJson.getString("step");
+    for (int i = 0; i < orderJson.getJSONArray("lines").length(); i++) {
+      setQuantityToDeliver(orderJson.getJSONArray("lines").getJSONObject(i), step);
+    }
+  }
+
+  private void setQuantityToDeliver(JSONObject lineJson, String step) throws JSONException {
+    if (CREATE.equals(step) || PAY.equals(step)) {
+      if (lineJson.has("deliveredQuantity")) {
+        copyPropertyValue(lineJson, "deliveredQuantity", "obposQtytodeliver");
+      } else if (!lineJson.has("obposQtytodeliver")) {
+        lineJson.put("obposQtytodeliver", 0);
+      }
+    } else {
+      copyPropertyValue(lineJson, "qty", "obposQtytodeliver");
+    }
   }
 
   protected void handleRelatedLines(JSONObject orderJson) throws JSONException {
