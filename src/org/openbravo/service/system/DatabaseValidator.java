@@ -898,12 +898,12 @@ public class DatabaseValidator implements SystemValidator {
         Class<?> processClass = Class.forName(process.getJavaClassName(), false,
             this.getClass().getClassLoader());
         if (!KillableProcess.class.isAssignableFrom(processClass)) {
-          result.addWarning(SystemValidationResult.SystemValidationType.KILLABLENOTIMPLEMENTED,
-              "The process " + process.getIdentifier()
-                  + " is marked as killable so the javaclass associated must implement the KillableProcess interface");
+          result.addWarning(SystemValidationType.KILLABLENOTIMPLEMENTED, "The process "
+              + process.getIdentifier()
+              + " is marked as killable so the javaclass associated must implement the KillableProcess interface");
         }
       } catch (ClassNotFoundException e) {
-        result.addWarning(SystemValidationResult.SystemValidationType.KILLABLENOTIMPLEMENTED,
+        result.addWarning(SystemValidationType.KILLABLECLASSNOTFOUND,
             "Error trying to obtain the class for process " + process.getIdentifier());
       }
 
