@@ -237,7 +237,7 @@ Under the MIT license (available at http://www.slf4j.org/license.html)
 # arquillian-testenricher-cdi-1.4.1.Final.jar
 # arquillian-test-impl-base-1.4.1.Final.jar
 # arquillian-test-spi-1.4.1.Final.jar
-# arquillian-weld-ee-embedded-1.1-1.0.0.Final.jar
+# arquillian-weld-embedded-2.0.1.Final.jar
 # shrinkwrap-api-1.2.6.jar
 # shrinkwrap-descriptors-api-base-2.0.0.jar
 # shrinkwrap-descriptors-spi-2.0.0.jar
