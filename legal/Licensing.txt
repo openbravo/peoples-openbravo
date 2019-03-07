@@ -196,15 +196,19 @@ In addition, the distribution includes
 All files under the corresponding Sun Binary Code License. This is not free
 software, but provided under license from Sun Microsystems.
 
+# jboss-ejb3-api-3.1.0.jar
+Under the LGPL license (included as LGPL-2.1.txt in this folder)
+
 # jboss-annotations-api_1.3_spec-1.0.0.Final.jar
 # jboss-interceptors-api_1.2_spec-1.0.0.Final.jar
+# jboss-el-api_3.0_spec-1.0.13.Final.jar
 Under the GPL 2.0 license (included as GPL-2.0.txt in this folder)
 
 # slf4j-ext-1.7.25.jar
 Under the MIT license (available at http://www.slf4j.org/license.html)
 
 # cdi-api-2.0.SP1.jar
-# guava-18.0.jar
+# guava-20.0.jar
 # javax.inject-1.jar
 # jboss-logging-3.3.2.Final.jar
 # jboss-classfilewriter-1.2.3.Final.jar
@@ -215,29 +219,30 @@ Under the MIT license (available at http://www.slf4j.org/license.html)
 # weld-servlet-core-3.1.0.Final.jar
 # weld-spi-3.1.Final.jar
 # weld-web-3.1.0.Final.jar
-# arquillian-config-api-1.1.8.Final.jar
-# arquillian-config-impl-base-1.1.8.Final.jar
-# arquillian-container-impl-base-1.1.8.Final.jar
-# arquillian-container-spi-1.1.8.Final.jar
-# arquillian-container-test-api-1.1.8.Final.jar
-# arquillian-container-test-impl-base-1.1.8.Final.jar
-# arquillian-container-test-spi-1.1.8.Final.jar
-# arquillian-core-api-1.1.8.Final.jar
-# arquillian-core-impl-base-1.1.8.Final.jar
-# arquillian-core-spi-1.1.8.Final.jar
-# arquillian-junit-container-1.1.8.Final.jar
-# arquillian-junit-core-1.1.8.Final.jar
-# arquillian-suite-extension-1.1.2.jar
-# arquillian-test-api-1.1.8.Final.jar
-# arquillian-testenricher-cdi-1.0.2.Final.jar
-# arquillian-test-impl-base-1.1.8.Final.jar
-# arquillian-test-spi-1.1.8.Final.jar
-# arquillian-weld-ee-embedded-1.1-1.0.0.CR8.jar
-# shrinkwrap-api-1.2.2.jar
-# shrinkwrap-descriptors-api-base-2.0.0-alpha-7.jar
-# shrinkwrap-descriptors-spi-2.0.0-alpha-7.jar
-# shrinkwrap-impl-base-1.2.2.jar
-# shrinkwrap-spi-1.2.2.jar
+# arquillian-config-api-1.4.1.Final.jar
+# arquillian-config-impl-base-1.4.1.Final.jar
+# arquillian-config-spi-1.4.1.Final.jar
+# arquillian-container-impl-base-1.4.1.Final.jar
+# arquillian-container-spi-1.4.1.Final.jar
+# arquillian-container-test-api-1.4.1.Final.jar
+# arquillian-container-test-impl-base-1.4.1.Final.jar
+# arquillian-container-test-spi-1.4.1.Final.jar
+# arquillian-core-api-1.4.1.Final.jar
+# arquillian-core-impl-base-1.4.1.Final.jar
+# arquillian-core-spi-1.4.1.Final.jar
+# arquillian-junit-container-1.4.1.Final.jar
+# arquillian-junit-core-1.4.1.Final.jar
+# arquillian-suite-extension-1.2.0.jar
+# arquillian-test-api-1.4.1.Final.jar
+# arquillian-testenricher-cdi-1.4.1.Final.jar
+# arquillian-test-impl-base-1.4.1.Final.jar
+# arquillian-test-spi-1.4.1.Final.jar
+# arquillian-weld-ee-embedded-1.1-1.0.0.Final.jar
+# shrinkwrap-api-1.2.6.jar
+# shrinkwrap-descriptors-api-base-2.0.0.jar
+# shrinkwrap-descriptors-spi-2.0.0.jar
+# shrinkwrap-impl-base-1.2.6.jar
+# shrinkwrap-spi-1.2.6.jar
 # validation-api-1.0.0.GA.jar
 # jsmin.0.2.4.jar
 # httpcore-4.4.9.jar
@@ -249,7 +254,7 @@ Under the MIT license (available at http://www.slf4j.org/license.html)
 # jandex-2.0.5.Final.jar
 Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
 
-# reflections-0.9.8.jar
+# reflections-0.9.11.jar
 Under the WTFPL license (included as WTFPL_license.txt in this folder)
 
 # byte-buddy-1.8.12.jar
