@@ -324,6 +324,20 @@
     + " WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID" //
     + "   AND C_BPARTNER_ID = ?" //
     + " )))" //
+    + " AND((BP_SET_SELECTION = 'Y'" //
+    + " AND NOT EXISTS" //
+    + " (SELECT 1" //
+    + " FROM M_OFFER_BP_SET OBPS, C_BP_SET_LINE BPL" //
+    + " WHERE OBPS.C_BP_SET_ID = BPL.C_BP_SET_ID" //
+    + "   AND BPL.C_BPARTNER_ID = ? AND datetime('now') BETWEEN COALESCE(datetime(BPL.STARTDATE), datetime('2000-12-31T00:00:00')) AND COALESCE(datetime(BPL.ENDDATE), datetime('9999-12-31T23:59:59'))" //
+    + " ))" //
+    + " OR(BP_SET_SELECTION = 'N'" //
+    + " AND EXISTS" //
+    + " (SELECT 1" //
+    + " FROM M_OFFER_BP_SET OBPS, C_BP_SET_LINE BPL" //
+    + " WHERE OBPS.C_BP_SET_ID = BPL.C_BP_SET_ID" //
+    + "   AND BPL.C_BPARTNER_ID = ? AND datetime('now') BETWEEN COALESCE(datetime(BPL.STARTDATE), datetime('2000-12-31T00:00:00')) AND COALESCE(datetime(BPL.ENDDATE), datetime('9999-12-31T23:59:59'))" //
+    + " )))" //
     + " AND((BP_GROUP_SELECTION = 'Y'" //
     + " AND NOT EXISTS" //
     + " (SELECT 1" //

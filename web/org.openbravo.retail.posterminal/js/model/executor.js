@@ -131,7 +131,7 @@ OB.Model.Executor = Backbone.Model.extend({
 OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   // parameters that will be used in the SQL to get promotions, in case this SQL is extended,
   // these parameters might be required to be extended too
-  criteriaParams: ['date', 'bpId', 'bpId', 'bpId', 'bpId', 'productId', 'productId', 'categoryId', 'categoryId', 'productId', 'productId', 'priceListId', 'priceListId'],
+  criteriaParams: ['date', 'bpId', 'bpId', 'bpId', 'bpId', 'bpId', 'bpId', 'productId', 'productId', 'categoryId', 'categoryId', 'productId', 'productId', 'priceListId', 'priceListId'],
 
   // defines the property each of the parameters in criteriaParams is translated to, in case of
   // different parameters than standard ones this should be extended

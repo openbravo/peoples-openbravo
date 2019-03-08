@@ -89,6 +89,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
                                                                                             // Customer
                                                                                             // Address
         "model/currencypanel", "model/country", "model/salesrepresentative",
+        "model/discountset",
+        "model/bpartnerset",
         "model/productcharacteristicvalue", "model/characteristicvalue", "model/characteristic",
         "model/brand", "model/returnreasons", "model/executor", "model/terminal-model",
         "model/paymentmethodcashup", "model/taxcashup", "model/returnreasons",
