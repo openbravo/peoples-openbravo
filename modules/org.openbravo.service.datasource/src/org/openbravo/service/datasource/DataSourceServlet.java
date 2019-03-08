@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -636,13 +636,12 @@ public class DataSourceServlet extends BaseKernelServlet {
               : json.get(key);
           if (refListCols.contains(key)) {
             keyValue = refLists.get(key).get(keyValue);
-          } else if (keyValue instanceof Number && keyValue != null) {
+          } else if (keyValue instanceof Number) {
             // if the CSV decimal separator property is defined, used it over the character
             // defined in Format.xml
             keyValue = keyValue.toString()
                 .replace(".",
                     prefDecimalSeparator != null ? prefDecimalSeparator : decimalSeparator);
-
           } else if (dateCols.contains(key) && keyValue != null
               && !keyValue.toString().equals("null")) {
             Date date = JsonUtils.createDateFormat().parse(keyValue.toString());
