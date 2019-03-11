@@ -38,24 +38,25 @@ import org.openbravo.model.pricing.priceadjustment.Product;
 public class ImportProductInDiscount extends ProcessUploadedFile {
   private static final long serialVersionUID = 1L;
 
+  @Override
   protected void clearBeforeImport(String ownerId, JSONObject paramValues) {
     @SuppressWarnings("unchecked")
-    NativeQuery<String> qry = OBDal.getInstance().getSession()
+    NativeQuery<String> qry = OBDal.getInstance()
+        .getSession()
         .createNativeQuery("delete from m_offer_product where m_offer_id = :m_offer_id");
     qry.setParameter("m_offer_id", ownerId);
     qry.executeUpdate();
   }
 
-  protected UploadResult doProcessFile(JSONObject paramValues, File file)
-      throws Exception {
+  @Override
+  protected UploadResult doProcessFile(JSONObject paramValues, File file) throws Exception {
     final UploadResult uploadResult = new UploadResult();
     final String discountId = paramValues.getString("inpOwnerId");
     final PriceAdjustment discount = OBDal.getInstance().get(PriceAdjustment.class, discountId);
     final String errorMsgProductNotFound = OBMessageUtils.getI18NMessage("OBUIAPP_ProductNotFound",
         new String[0]);
-    final String errorMsgProductNotUnique = OBMessageUtils.getI18NMessage(
-        "OBUIAPP_ProductNotUnique",
-        new String[0]);
+    final String errorMsgProductNotUnique = OBMessageUtils
+        .getI18NMessage("OBUIAPP_ProductNotUnique", new String[0]);
 
     try (BufferedReader br = Files.newBufferedReader(Paths.get(file.getAbsolutePath()))) {
       String line;
@@ -79,9 +80,8 @@ public class ImportProductInDiscount extends ProcessUploadedFile {
         } else {
           // check if the line already exists
           final String productId = productIds.get(0);
-          final OBQuery<Product> productDiscountQry = OBDal.getInstance().createQuery(
-              Product.class,
-              "m_offer_id=:m_offer_id and m_product_id=:m_product_id");
+          final OBQuery<Product> productDiscountQry = OBDal.getInstance()
+              .createQuery(Product.class, "m_offer_id=:m_offer_id and m_product_id=:m_product_id");
           productDiscountQry.setNamedParameter("m_offer_id", discountId);
           productDiscountQry.setNamedParameter("m_product_id", productId);
           final List<Product> lines = productDiscountQry.list();
@@ -92,8 +92,8 @@ public class ImportProductInDiscount extends ProcessUploadedFile {
             productDiscount.setClient(discount.getClient());
             productDiscount.setOrganization(discount.getOrganization());
             productDiscount.setPriceAdjustment(discount);
-            productDiscount.setProduct(OBDal.getInstance().get(
-                org.openbravo.model.common.plm.Product.class, productId));
+            productDiscount.setProduct(
+                OBDal.getInstance().get(org.openbravo.model.common.plm.Product.class, productId));
           } else {
             // get the line from the result
             productDiscount = lines.get(0);

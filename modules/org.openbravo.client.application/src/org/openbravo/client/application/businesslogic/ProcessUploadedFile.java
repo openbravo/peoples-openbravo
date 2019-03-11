@@ -45,8 +45,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 
 /**
- * Generic base class to be extended to implement an import by uploading a file. The actual processing happens in a subclass which
- * needs to override two methods.
+ * Generic base class to be extended to implement an import by uploading a file. The actual
+ * processing happens in a subclass which needs to override two methods.
  * 
  * The resulting (error) messages can be returned as a file to download by the user.
  * 
@@ -58,14 +58,15 @@ public abstract class ProcessUploadedFile extends HttpSecureAppServlet {
   private static Logger log = LogManager.getLogger();
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     final VariablesSecureApp vars = new VariablesSecureApp(request);
     post(vars, request, response);
   }
 
-  public void post(VariablesSecureApp vars, HttpServletRequest request, HttpServletResponse response) {
+  public void post(VariablesSecureApp vars, HttpServletRequest request,
+      HttpServletResponse response) {
 
     final String strParamValues = vars.getStringParameter("paramValues");
     JSONObject paramValues = null;
@@ -91,8 +92,8 @@ public abstract class ProcessUploadedFile extends HttpSecureAppServlet {
         printResponse(response, paramValues, null, e.getMessage());
       } catch (Exception e2) {
         log.error("Error sending error message", e2);
-        throw new OBException(OBMessageUtils.messageBD("ErrorUploadingFile") + " "
-            + e2.getMessage(), e2, true);
+        throw new OBException(
+            OBMessageUtils.messageBD("ErrorUploadingFile") + " " + e2.getMessage(), e2, true);
       }
       throw new OBException(OBMessageUtils.messageBD("ErrorUploadingFile"), e, true);
     } finally {
@@ -146,13 +147,13 @@ public abstract class ProcessUploadedFile extends HttpSecureAppServlet {
     writer.write("var iscWindow = top.OB || parent.OB;\n");
     if (obj != null) {
       final String buttonId = paramValues.getString("buttonID");
-      writer.write("iscWindow.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString()
-          + ");");
+      writer.write(
+          "iscWindow.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString() + ");");
     }
     if (StringUtils.isNotBlank(strMessage)) {
       final String viewId = paramValues.getString("viewID");
-      writer.write("iscWindow.Utilities.writeErrorMessage(\"" + viewId + "\",\"" + strMessage
-          + "\");");
+      writer.write(
+          "iscWindow.Utilities.writeErrorMessage(\"" + viewId + "\",\"" + strMessage + "\");");
     }
     writer.write("</SCRIPT></BODY></HTML>");
   }
@@ -166,8 +167,8 @@ public abstract class ProcessUploadedFile extends HttpSecureAppServlet {
     response.setHeader("Content-disposition", "attachment; filename=" + fileName);
     Writer w = response.getWriter();
     try {
-      try (BufferedReader br = Files.newBufferedReader(Paths.get(tmpFolder + File.separator
-          + fileName))) {
+      try (BufferedReader br = Files
+          .newBufferedReader(Paths.get(tmpFolder + File.separator + fileName))) {
         String line;
         while ((line = br.readLine()) != null) {
           if (line.trim().length() == 0) {
@@ -194,18 +195,18 @@ public abstract class ProcessUploadedFile extends HttpSecureAppServlet {
   }
 
   /**
-   * This method is called when the parameter import mode is set to import and replace. In that case the current content should be
-   * removed.
+   * This method is called when the parameter import mode is set to import and replace. In that case
+   * the current content should be removed.
    * 
    * The ownerId is the id of the parent record.
    */
   protected abstract void clearBeforeImport(String ownerId, JSONObject paramValues);
 
   /**
-   * Is called to process the content of the uploaded file. The results should be returned in the uploadResult object.
+   * Is called to process the content of the uploaded file. The results should be returned in the
+   * uploadResult object.
    */
-  protected abstract UploadResult doProcessFile(JSONObject paramValues, File file)
-      throws Exception;
+  protected abstract UploadResult doProcessFile(JSONObject paramValues, File file) throws Exception;
 
   protected static class UploadResult {
     private int lineCount = 0;
@@ -241,15 +242,15 @@ public abstract class ProcessUploadedFile extends HttpSecureAppServlet {
     }
 
     public String getResultMessage() {
-      return OBMessageUtils.getI18NMessage("OBUIAPP_PROCESSEDOVERVIEW", new String[] {
-          lineCount + "", errorCount + "" });
+      return OBMessageUtils.getI18NMessage("OBUIAPP_PROCESSEDOVERVIEW",
+          new String[] { lineCount + "", errorCount + "" });
     }
 
     public String writeToFile(String fileName) throws Exception {
       final String resultFileName = "result_" + fileName;
       final String tmpFolder = System.getProperty("java.io.tmpdir");
-      try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(tmpFolder + File.separator
-          + resultFileName))) {
+      try (BufferedWriter writer = Files
+          .newBufferedWriter(Paths.get(tmpFolder + File.separator + resultFileName))) {
         writer.write(getResultMessage() + "\n" + errorMessages);
       }
       return resultFileName;

@@ -43,16 +43,18 @@ public class ImportBPSet extends ProcessUploadedFile {
   private static final long serialVersionUID = 1L;
   private static final DateFormat dateFormat = JsonUtils.createDateFormat();
 
+  @Override
   protected void clearBeforeImport(String ownerId, JSONObject paramValues) {
     @SuppressWarnings("unchecked")
-    NativeQuery<String> qry = OBDal.getInstance().getSession()
+    NativeQuery<String> qry = OBDal.getInstance()
+        .getSession()
         .createNativeQuery("delete from c_bp_set_line where c_bp_set_id = :c_bp_set_id");
     qry.setParameter("c_bp_set_id", ownerId);
     qry.executeUpdate();
   }
 
-  protected UploadResult doProcessFile(JSONObject paramValues, File file)
-      throws Exception {
+  @Override
+  protected UploadResult doProcessFile(JSONObject paramValues, File file) throws Exception {
     final UploadResult uploadResult = new UploadResult();
     final String bpSetId = paramValues.getString("inpOwnerId");
     final Date startDate = getDate(paramValues.getString("startDate"));
@@ -85,9 +87,9 @@ public class ImportBPSet extends ProcessUploadedFile {
         } else {
           // check if the line already exists
           final String bpId = bpIds.get(0);
-          final OBQuery<BusinessPartnerSetLine> bpSetLineQry = OBDal.getInstance().createQuery(
-              BusinessPartnerSetLine.class,
-              "c_bp_set_id=:c_bp_set_id and c_bpartner_id=:c_bpartner_id");
+          final OBQuery<BusinessPartnerSetLine> bpSetLineQry = OBDal.getInstance()
+              .createQuery(BusinessPartnerSetLine.class,
+                  "c_bp_set_id=:c_bp_set_id and c_bpartner_id=:c_bpartner_id");
           bpSetLineQry.setNamedParameter("c_bp_set_id", bpSetId);
           bpSetLineQry.setNamedParameter("c_bpartner_id", bpId);
           final List<BusinessPartnerSetLine> lines = bpSetLineQry.list();
