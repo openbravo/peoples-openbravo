@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/OpenbravoCore"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry including="**/*.ext|**/*.ftl|**/*.java|**/*.oaw|**/*.properties|**/*.xml|**/*.xpt|**/*.xslt" kind="src" path="src"/>
 	<classpathentry kind="src" path="modules/org.openbravo.apachejdbcconnectionpool/src"/>
 	<classpathentry kind="src" path="modules/org.openbravo.client.widgets/src"/>

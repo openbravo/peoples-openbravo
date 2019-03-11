@@ -789,6 +789,7 @@ BEGIN --BODY
             Next_Line:=false;
             FETCH Cur_OrderLine INTO ol;
             v_lines_per_orderline := 0;
+            v_NextNo := NULL;
             EXIT WHEN Cur_OrderLine%NOTFOUND;
           END LOOP; -- Order Line Loop
         END;--END DECLARE VARIABLES FOR ORDER LINE LOOP

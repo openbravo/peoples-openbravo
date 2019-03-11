@@ -34,8 +34,8 @@ import org.junit.runners.Suite;
     TestCostingLandedCost.class, //
     TestIssue37033.class, //
     TestIssue37279.class, //
-    TestIssue39616.class //
-
+    TestIssue39616.class, //
+    TestIssue39888.class //
 })
 public class TestCosting {
   // No content is required, this is just the definition of a test suite.

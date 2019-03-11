@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,8 +21,6 @@ package org.openbravo.service.datasource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,9 +69,6 @@ import org.openbravo.client.kernel.BaseKernelServlet;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.OBUserException;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.client.kernel.reference.NumberUIDefinition;
-import org.openbravo.client.kernel.reference.UIDefinition;
-import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -333,7 +328,6 @@ public class DataSourceServlet extends BaseKernelServlet {
     List<String> timeCols = new ArrayList<String>();
     List<String> numericCols = new ArrayList<String>();
     List<String> yesNoCols = new ArrayList<String>();
-    Map<String, DecimalFormat> formats = new HashMap<String, DecimalFormat>();
     int clientUTCOffsetMiliseconds;
     TimeZone clientTimeZone;
     String translatedLabelYes;
@@ -487,12 +481,6 @@ public class DataSourceServlet extends BaseKernelServlet {
             } else {
               niceFieldProperties.put(propKey, col.getName());
             }
-            UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(col.getId());
-            if (uiDef instanceof NumberUIDefinition) {
-              formats.put(propKey,
-                  Utility.getFormat(vars, ((NumberUIDefinition) uiDef).getFormat()));
-            }
-
             // We also store the date properties
             if (prop.isDate()) {
               dateCols.add(propKey);
@@ -648,25 +636,12 @@ public class DataSourceServlet extends BaseKernelServlet {
               : json.get(key);
           if (refListCols.contains(key)) {
             keyValue = refLists.get(key).get(keyValue);
-          } else if (keyValue instanceof Number && keyValue != null) {
-            DecimalFormat format = formats.get(key);
-            if (format == null) {
-              // if the CSV decimal separator property is defined, used it over the character
-              // defined in Format.xml
-              keyValue = keyValue.toString()
-                  .replace(".",
-                      prefDecimalSeparator != null ? prefDecimalSeparator : decimalSeparator);
-            } else {
-              keyValue = format.format(new BigDecimal(keyValue.toString()));
-              if (prefDecimalSeparator != null) {
-                keyValue = keyValue.toString()
-                    .replace(
-                        Character.valueOf(format.getDecimalFormatSymbols().getDecimalSeparator())
-                            .toString(),
-                        prefDecimalSeparator);
-              }
-
-            }
+          } else if (keyValue instanceof Number) {
+            // if the CSV decimal separator property is defined, used it over the character
+            // defined in Format.xml
+            keyValue = keyValue.toString()
+                .replace(".",
+                    prefDecimalSeparator != null ? prefDecimalSeparator : decimalSeparator);
           } else if (dateCols.contains(key) && keyValue != null
               && !keyValue.toString().equals("null")) {
             Date date = JsonUtils.createDateFormat().parse(keyValue.toString());
