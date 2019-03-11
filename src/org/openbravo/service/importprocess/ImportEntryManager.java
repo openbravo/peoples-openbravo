@@ -560,8 +560,7 @@ public class ImportEntryManager {
               // don't block eachother with the limited batch size
               // being read
               for (String typeOfData : typesOfData) {
-
-                log.debug("Reading import entries for type of data " + typeOfData);
+                log.debug("Reading import entries for type of data {}", typeOfData);
 
                 final String importEntryQryStr = "from " + ImportEntry.ENTITY_NAME + " where "
                     + ImportEntry.PROPERTY_TYPEOFDATA + "='" + typeOfData + "' and "
@@ -582,9 +581,7 @@ public class ImportEntryManager {
                     entryCount++;
                     final ImportEntry entry = (ImportEntry) entries.get(0);
 
-                    if (log.isDebugEnabled()) {
-                      log.debug("Handle import entry " + entry.getIdentifier());
-                    }
+                    log.trace("Handle import entry {}", () -> entry.getIdentifier());
 
                     try {
                       manager.handleImportEntry(entry);
@@ -623,10 +620,12 @@ public class ImportEntryManager {
                   // in case of test don't wait minimal 2 seconds
                   Thread.sleep(300 + ((1000 * entryCount) / 30));
                 } else {
-                  log.debug(
-                      "Entries have been processed, wait a shorter time, and try again to capture new entries which have been added");
                   // wait minimal 2 seconds or based on entry count
-                  Thread.sleep(Math.max(2000, 300 + ((1000 * entryCount) / 30)));
+                  long t = Math.max(2000, 300 + ((1000 * entryCount) / 30));
+                  log.debug(
+                      "{} entries have been processed. Wait {} ms, and try again to capture new entries which have been added",
+                      entryCount, t);
+                  Thread.sleep(t);
                 }
               } catch (Exception ignored) {
               }
