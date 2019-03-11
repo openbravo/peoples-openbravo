@@ -137,9 +137,7 @@
         var frozenReceipt = new OB.Model.Order(),
             diffReceipt = new OB.Model.Order(),
             execution;
-        if (context.receipt.get('isQuotation')) {
-          execution = OB.UTIL.ProcessController.start('tapTotalButton');
-        }
+        execution = OB.UTIL.ProcessController.start('tapTotalButton');
         if (normalizedCreationDate === null) {
           creationDate = new Date();
           normalizedCreationDate = OB.I18N.normalizeDate(creationDate);
@@ -168,6 +166,7 @@
             }
             args.context.receipt.setIsCalculateReceiptLockState(false);
             args.context.receipt.setIsCalculateGrossLockState(false);
+            OB.UTIL.ProcessController.finish('tapTotalButton', execution);
             return true;
           }
           OB.UTIL.clone(receipt, frozenReceipt);
@@ -253,7 +252,6 @@
                   var currentDocNo = frozenReceipt.get('documentNo');
                   if (frozenReceipt && frozenReceipt.get('isQuotation')) {
                     OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [currentDocNo]));
-                    OB.UTIL.ProcessController.finish('tapTotalButton', execution);
                   } else {
                     if (isLayaway) {
                       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgLayawaySaved', [currentDocNo]));
@@ -261,6 +259,7 @@
                       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [currentDocNo]));
                     }
                   }
+                  OB.UTIL.ProcessController.finish('tapTotalButton', execution);
                   OB.trace('Order successfully removed.');
                 };
 
@@ -300,9 +299,7 @@
                   } else {
                     restoreReceiptCallback();
                   }
-                  if (receiptForPostSyncReceipt.get('isQuotation')) {
-                    OB.UTIL.ProcessController.finish('tapTotalButton', execution);
-                  }
+                  OB.UTIL.ProcessController.finish('tapTotalButton', execution);
                 };
 
                 if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
