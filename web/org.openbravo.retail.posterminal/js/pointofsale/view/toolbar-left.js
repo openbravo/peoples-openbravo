@@ -57,33 +57,38 @@ enyo.kind({
   },
   processesToListen: ['calculateReceipt', 'addProduct'],
   disableButton: function () {
-    if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
-      this.isEnabled = false;
-      this.setDisabled(true);
-    }
+    this.updateDisabled(true);
   },
   enableButton: function () {
-    if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
-      if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('serviceSearchMode')) || !OB.MobileApp.model.get('serviceSearchMode')) {
-        this.isEnabled = true;
-        this.setDisabled(false);
-      }
+    if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('serviceSearchMode')) || !OB.MobileApp.model.get('serviceSearchMode')) {
+      this.updateDisabled(false);
+    } else {
+      this.updateDisabled(true);
     }
   },
   disabledButton: function (inSender, inEvent) {
-    this.isEnabled = inEvent.disableButtonNew || !inEvent.status;
-    this.setDisabled(inEvent.disableButtonNew || inEvent.status);
+    this.updateDisabled(inEvent.disableButtonNew || inEvent.status);
     if (!this.isEnabled) {
       this.removeClass('btn-icon-new');
     } else {
       this.addClass('btn-icon-new');
     }
   },
+  updateDisabled: function (isDisabled) {
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      isDisabled = true;
+    }
+    this.isEnabled = !isDisabled;
+    this.setDisabled(isDisabled);
+  },
   init: function (model) {
     this.model = model;
   },
   tap: function () {
     var me = this;
+    if (this.disabled) {
+      return true;
+    }
     OB.UTIL.HookManager.executeHooks('OBPOS_PreCreateNewReceipt', {
       model: this.model,
       context: this
