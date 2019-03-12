@@ -575,13 +575,15 @@ public class ImportEntryManager {
                 entriesQry.setFetchSize(100);
                 entriesQry.setMaxResults(manager.importBatchSize);
 
+                int typeOfDataEntryCount = 0;
                 final ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY);
                 try {
                   while (entries.next() && isHandlingImportEntries()) {
                     entryCount++;
+                    typeOfDataEntryCount++;
                     final ImportEntry entry = (ImportEntry) entries.get(0);
 
-                    log.trace("Handle import entry {}", () -> entry.getIdentifier());
+                    log.trace("Handle import entry {}", entry::getIdentifier);
 
                     try {
                       manager.handleImportEntry(entry);
@@ -599,8 +601,10 @@ public class ImportEntryManager {
                 } finally {
                   entries.close();
                 }
+                if (typeOfDataEntryCount > 0) {
+                  log.debug("Handled {} entries for {}", typeOfDataEntryCount, typeOfData);
+                }
               }
-
             } catch (Throwable t) {
               ImportProcessUtils.logError(log, t);
             } finally {
