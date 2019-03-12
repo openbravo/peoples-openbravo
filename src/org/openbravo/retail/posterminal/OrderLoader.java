@@ -562,7 +562,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       } else if (jsonOrderLine.has("attributeValue")) {
         attr = jsonOrderLine.get("attributeValue").toString();
       }
-      if (attr.equals("null")) {
+      if (StringUtils.equals(attr, "null")) {
         attr = null;
       }
       orderline.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(attr,
