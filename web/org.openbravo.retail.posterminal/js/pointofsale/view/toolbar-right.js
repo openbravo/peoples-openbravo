@@ -441,7 +441,7 @@ enyo.kind({
   init: function (model) {
     this.model = model;
     this.model.get('order').get('lines').on('selected', function (lineSelected) {
-      if (this.model.get('order').get('lines').length > 0) {
+      if (this.model.get('leftColumnViewManager').isOrder() && this.model.get('order').get('lines').length > 0) {
         this.currentLine = lineSelected;
         this.setDisabled(false);
       } else {

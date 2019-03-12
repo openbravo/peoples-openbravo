@@ -291,6 +291,7 @@ enyo.kind({
       requirements = {
         isModel: undefined,
         isReceipt: undefined,
+        isMultiOrder: undefined,
         receiptId: undefined,
         receiptDocno: undefined,
         isReceiptDocnoLengthGreaterThanThree: undefined,
@@ -321,6 +322,10 @@ enyo.kind({
       var receipt = model.get('order');
       requirements.isReceipt = !OB.UTIL.isNullOrUndefined(receipt);
       if (!requirements.isReceipt) {
+        return false;
+      }
+      requirements.isMultiOrder = model.get('leftColumnViewManager').isMultiOrder();
+      if (requirements.isMultiOrder) {
         return false;
       }
       requirements.receiptId = receipt.get('id');
