@@ -6101,7 +6101,7 @@
 
       function removeReceiptFromDatabase(receipt, callback) {
         var model, orderList = OB.MobileApp.model.orderList;
-        if (orderList) {
+        if (orderList && receipt && receipt.get('createdBy') === OB.MobileApp.model.get('orgUserId')) {
           model = _.find(orderList.models, function (model) {
             return model.get('id') === receipt.get('id');
           });
@@ -6153,7 +6153,7 @@
             model.set('json', JSON.stringify(model.serializeToJSON()));
             OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
               model.save(function () {
-                if (orderList) {
+                if (orderList && model.get('createdBy') === OB.MobileApp.model.get('orgUserId')) {
                   var orderListModel = _.find(orderList.models, function (m) {
                     return m.get('id') === model.get('id');
                   });
