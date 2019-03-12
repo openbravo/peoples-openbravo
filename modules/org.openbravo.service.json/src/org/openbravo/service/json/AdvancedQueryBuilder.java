@@ -128,6 +128,7 @@ public class AdvancedQueryBuilder {
   private static final String OPERATOR_IBETWEEN = "iBetween";
   private static final String OPERATOR_IBETWEENINCLUSIVE = "iBetweenInclusive";
   public static final String OPERATOR_EXISTS = "exists";
+  private static final String ACCESIBLE_ORG_TREE_ARG = "#AccessibleOrgTree";
 
   private JSONObject criteria = null;
 
@@ -1210,7 +1211,7 @@ public class AdvancedQueryBuilder {
   }
 
   private String substituteContextParameters(String currentWhereClause) {
-    // This method will check for any remaining @param@s
+    // This method will check for any remaining @params@
     // If there are still some in the whereclause, they will be resolved by calling the getContext()
     // method
     if (!currentWhereClause.contains("@")) {
@@ -1285,7 +1286,12 @@ public class AdvancedQueryBuilder {
       }
 
       localWhereClause = prefix + getTypedParameterAlias() + suffix;
-      typedParameters.add(paramValue);
+
+      if (ACCESIBLE_ORG_TREE_ARG.equals(param)) {
+        typedParameters.add(OBContext.getOBContext().getReadableOrganizations());
+      } else {
+        typedParameters.add(paramValue);
+      }
     }
     return localWhereClause;
   }
