@@ -1024,6 +1024,10 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
   background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
   background-repeat: no-repeat;
 }
+
+.ob-checkbox-button-margin {
+  margin: 5px 0px 0px 5px;
+}
  
 .ob-button-minus-plus {
   background-color: #e2e2e2;    

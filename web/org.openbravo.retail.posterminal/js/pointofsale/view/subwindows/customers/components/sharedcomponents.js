@@ -592,7 +592,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.CustomerConsentCheckProperty',
   kind: 'OB.UI.CheckboxButton',
-  style: 'margin: 5px 0px 0px 5px;',
+  classes: 'ob-checkbox-button-margin',
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange',
