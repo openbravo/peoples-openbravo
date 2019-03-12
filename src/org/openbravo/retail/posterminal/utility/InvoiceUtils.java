@@ -699,9 +699,10 @@ public class InvoiceUtils {
       invoice.setFinalSettlementDate(finalSettlementDate);
     }
 
+    invoice.setPrepaymentamt(paidAmt);
     invoice.setTotalPaid(paidAmt);
-    invoice.setOutstandingAmount(invoice.getGrandTotalAmount().subtract(paidAmt));
-    invoice.setDueAmount(invoice.getGrandTotalAmount().subtract(paidAmt));
+    invoice.setOutstandingAmount(remainingAmt);
+    invoice.setDueAmount(remainingAmt);
     invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice.getDueDate()));
     invoice.setPaymentComplete(paidAmt.compareTo(invoice.getGrandTotalAmount()) == 0);
     invoice.setLastCalculatedOnDate(new Date());
