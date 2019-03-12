@@ -563,14 +563,15 @@ public class ImportEntryManager {
                 log.debug("Reading import entries for type of data {}", typeOfData);
 
                 final String importEntryQryStr = "from " + ImportEntry.ENTITY_NAME + " where "
-                    + ImportEntry.PROPERTY_TYPEOFDATA + "='" + typeOfData + "' and "
+                    + ImportEntry.PROPERTY_TYPEOFDATA + "= :typeOfData and "
                     + ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
                     + ImportEntry.PROPERTY_CREATIONDATE + ", "
                     + ImportEntry.PROPERTY_CREATEDTIMESTAMP;
 
                 final Query<ImportEntry> entriesQry = OBDal.getInstance()
                     .getSession()
-                    .createQuery(importEntryQryStr, ImportEntry.class);
+                    .createQuery(importEntryQryStr, ImportEntry.class)
+                    .setParameter("typeOfData", typeOfData);
                 entriesQry.setFirstResult(0);
                 entriesQry.setFetchSize(100);
                 entriesQry.setMaxResults(manager.importBatchSize);
