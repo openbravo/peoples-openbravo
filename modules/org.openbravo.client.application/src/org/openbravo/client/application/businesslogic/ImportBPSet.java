@@ -116,7 +116,8 @@ public class ImportBPSet extends ProcessUploadedFile {
     return uploadResult;
   }
 
-  private Date getDate(String value) throws Exception {
+  // note synchronized as the access to parse is not threadsafe
+  private synchronized Date getDate(String value) throws Exception {
     if (value == null || value.equals("null") || value.trim().length() == 0) {
       return null;
     }
