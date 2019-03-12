@@ -469,8 +469,15 @@ public class ImportEntryManager {
   }
 
   private static class ImportEntryManagerThread implements Runnable {
-
     private final ImportEntryManager manager;
+
+    // @formatter:off
+    private static final String IMPORT_ENTRY_QRY =
+          " from C_IMPORT_ENTRY "
+        + "where typeofdata = :typeOfData "
+        + "  and importStatus = 'Initial' "
+        + "order by creationDate, createdtimestamp";
+    // @formatter:on
 
     private boolean isRunning = false;
     private Object monitorObject = new Object();
@@ -552,7 +559,6 @@ public class ImportEntryManager {
 
             int entryCount = 0;
             try {
-
               // start processing, so ignore any notifications happening before
               wasNotifiedInParallel = false;
 
@@ -562,23 +568,16 @@ public class ImportEntryManager {
               for (String typeOfData : typesOfData) {
                 log.debug("Reading import entries for type of data {}", typeOfData);
 
-                final String importEntryQryStr = "from " + ImportEntry.ENTITY_NAME + " where "
-                    + ImportEntry.PROPERTY_TYPEOFDATA + "= :typeOfData and "
-                    + ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
-                    + ImportEntry.PROPERTY_CREATIONDATE + ", "
-                    + ImportEntry.PROPERTY_CREATEDTIMESTAMP;
-
                 final Query<ImportEntry> entriesQry = OBDal.getInstance()
                     .getSession()
-                    .createQuery(importEntryQryStr, ImportEntry.class)
-                    .setParameter("typeOfData", typeOfData);
-                entriesQry.setFirstResult(0);
-                entriesQry.setFetchSize(100);
-                entriesQry.setMaxResults(manager.importBatchSize);
+                    .createQuery(IMPORT_ENTRY_QRY, ImportEntry.class)
+                    .setParameter("typeOfData", typeOfData)
+                    .setFirstResult(0)
+                    .setFetchSize(100)
+                    .setMaxResults(manager.importBatchSize);
 
                 int typeOfDataEntryCount = 0;
-                final ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY);
-                try {
+                try (ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY)) {
                   while (entries.next() && isHandlingImportEntries()) {
                     entryCount++;
                     typeOfDataEntryCount++;
@@ -599,9 +598,8 @@ public class ImportEntryManager {
                       manager.setImportEntryError(entry.getId(), t);
                     }
                   }
-                } finally {
-                  entries.close();
                 }
+
                 if (typeOfDataEntryCount > 0) {
                   log.debug("Handled {} entries for {}", typeOfDataEntryCount, typeOfData);
                 }
