@@ -655,6 +655,9 @@
             return payMthd.get('paymentmethod_id') === payment.payment.id;
           })[0];
           if (OB.UTIL.isNullOrUndefined(pAux) && payment.payment.active === true) {
+            if (OB.MobileApp.model.get('modelsRebuilded').indexOf(OB.Model.PaymentMethodCashUp) !== -1) {
+              startingCash = OB.DEC.Zero;
+            }
             OB.Dal.save(new OB.Model.PaymentMethodCashUp({
               id: OB.UTIL.get_UUID(),
               paymentmethod_id: payment.payment.id,
