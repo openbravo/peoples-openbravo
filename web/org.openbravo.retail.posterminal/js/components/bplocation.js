@@ -356,6 +356,7 @@ enyo.kind({
     var contextMenu = this.owner.owner;
     contextMenu.dialog.menuSelected = true;
     contextMenu.dialog.owner.owner.selectorHide = true;
+    contextMenu.dialog.owner.owner.hide();
     contextMenu.dialog.bubble('onShowPopup', {
       popup: 'customerAddressView',
       args: {
@@ -387,6 +388,7 @@ enyo.kind({
 
     contextMenu.dialog.menuSelected = true;
     contextMenu.dialog.owner.owner.selectorHide = true;
+    contextMenu.dialog.owner.owner.hide();
     contextMenu.dialog.bubble('onShowPopup', {
       popup: 'customerAddrCreateAndEdit',
       args: {
