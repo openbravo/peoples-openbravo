@@ -1326,7 +1326,7 @@ enyo.kind({
         OB.UTIL.showLoading(false);
         return;
       }
-      if (inEvent.callback()) {
+      if (inEvent.callback && inEvent.callback instanceof Function) {
         inEvent.callback();
       }
     });
