@@ -60,8 +60,6 @@ import org.openbravo.service.db.CallStoredProcedure;
 
 public class InvoiceUtils {
 
-  private static final String STATUS_PAYMENT_RECEIVED = "RPR";
-
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
@@ -1006,8 +1004,8 @@ public class InvoiceUtils {
   }
 
   private boolean isPaidStatus(FIN_Payment payment) {
-    return (FIN_Utility.seqnumberpaymentstatus(STATUS_PAYMENT_RECEIVED)) >= (FIN_Utility
-        .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment)));
+    return FIN_Utility.seqnumberpaymentstatus(payment.getStatus()) >= FIN_Utility
+        .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment));
   }
 
   private String getDummyDocumentNo() {
