@@ -350,21 +350,30 @@
           if (data.at(0).get('isprocessed') === 'N') {
             return endCallback();
           }
-          OB.UTIL.initCashUp(function () {
-            var cashUpId = data.at(0).get('id');
-            OB.Dal.find(OB.Model.CashUp, {
-              id: cashUpId
-            }, function (cU) {
-              if (cU.length !== 0) {
-                if (!cU.at(0).get('objToSend')) {
-                  OB.UTIL.composeCashupInfo(data, null, function () {
-                    OB.MobileApp.model.runSyncProcess();
-                  });
-                }
-              }
-            });
-            endCallback();
-          }, null, true, data.at(0));
+          OB.Dal.find(OB.Model.CashUp, {
+            'isprocessed': 'N'
+          }, function (currentCashup) {
+            if (currentCashup.length === 0) {
+              OB.UTIL.initCashUp(function () {
+                var cashUpId = data.at(0).get('id');
+                OB.Dal.find(OB.Model.CashUp, {
+                  id: cashUpId
+                }, function (cU) {
+                  if (cU.length !== 0) {
+                    if (!cU.at(0).get('objToSend')) {
+                      OB.UTIL.composeCashupInfo(data, null, function () {
+                        OB.MobileApp.model.runSyncProcess();
+                      });
+                    }
+                  }
+                });
+                endCallback();
+              }, null, true, data.at(0));
+            } else {
+              return endCallback();
+            }
+          });
+
         },
         // skip the syncing of the cashup if it is the same as the last one
         preSendModel: function (me, dataToSync) {
