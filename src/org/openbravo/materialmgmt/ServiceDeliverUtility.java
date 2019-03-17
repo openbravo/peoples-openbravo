@@ -1,0 +1,146 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2019 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+package org.openbravo.materialmgmt;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.Tuple;
+
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
+import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+
+/**
+ * 
+ * Delivers service type products. Adds shipment lines in selected shipment for service type
+ * products; the quantity delivered is computed considering the quantity rule of the product.
+ *
+ */
+public class ServiceDeliverUtility {
+
+  private static final String UNIQUE_QUANTITY = "UQ";
+  private static final String AS_PER_PRODUCT = "PP";
+
+  public void deliverServices(final ShipmentInOut shipment) {
+    Map<String, BigDecimal> serviceToDeliver = getShipmentServiceOrderlinesAndQtyToDeliver(
+        shipment);
+    serviceToDeliver.entrySet()
+        .stream()
+        .filter(map -> map.getValue().compareTo(BigDecimal.ZERO) != 0)
+        .forEach(s -> addShipmentLine(shipment, s.getKey(), s.getValue()));
+  }
+
+  private Map<String, BigDecimal> getShipmentServiceOrderlinesAndQtyToDeliver(
+      ShipmentInOut shipment) {
+    Map<String, BigDecimal> servicesAndQtyToDeliver = new HashMap<>();
+    Map<String, BigDecimal> orderlineDeliveredQty = new HashMap<>();
+    List<Tuple> serviceRelated = getServiceRelated(shipment);
+    for (Tuple service : serviceRelated) {
+
+      BigDecimal serviceOrderedQuantity = (BigDecimal) service.get("serviceOrderedQuantity");
+      BigDecimal serviceDeliveredQuantity = (BigDecimal) service.get("serviceDeliveredQuantity");
+      BigDecimal movementQuantity = (BigDecimal) service.get("movementQuantity");
+      String serviceOrderLineId = (String) service.get("serviceOrderLineId");
+      String orderlineAndServiceId = (String) service.get("id");
+      if (UNIQUE_QUANTITY.equals(service.get("quantityRule"))
+          && serviceOrderedQuantity.compareTo(serviceDeliveredQuantity) != 0) {
+        servicesAndQtyToDeliver.put(serviceOrderLineId, BigDecimal.ONE);
+        addOrderlineQtyDelivered(orderlineDeliveredQty, (String) service.get("id"), BigDecimal.ONE);
+      }
+      if (AS_PER_PRODUCT.equals(service.get("quantityRule"))) {
+        servicesAndQtyToDeliver.put(serviceOrderLineId,
+            getAsPerProductQuantity(orderlineAndServiceId, orderlineDeliveredQty, movementQuantity,
+                serviceOrderedQuantity.subtract(serviceDeliveredQuantity)));
+      }
+    }
+
+    return servicesAndQtyToDeliver;
+  }
+
+  private BigDecimal getAsPerProductQuantity(String orderlineAndServiceId,
+      Map<String, BigDecimal> orderlineDeliveredQty, BigDecimal movementQuantity,
+      BigDecimal servicePendingQty) {
+    BigDecimal previouslyDelivered = orderlineDeliveredQty.get(orderlineAndServiceId) != null
+        ? orderlineDeliveredQty.get(orderlineAndServiceId)
+        : BigDecimal.ZERO;
+    BigDecimal pendingQty = movementQuantity.subtract(previouslyDelivered);
+    orderlineDeliveredQty.put(orderlineAndServiceId, previouslyDelivered
+        .add(pendingQty.compareTo(servicePendingQty) > 0 ? servicePendingQty : pendingQty));
+    return pendingQty.compareTo(servicePendingQty) > 0 ? servicePendingQty : pendingQty;
+  }
+
+  private void addOrderlineQtyDelivered(Map<String, BigDecimal> orderlineDeliveredQty,
+      String orderlineId, BigDecimal qtyToAdd) {
+    if (orderlineDeliveredQty.get(orderlineId) == null) {
+      orderlineDeliveredQty.put(orderlineId, qtyToAdd);
+    } else {
+      orderlineDeliveredQty.put(orderlineId, orderlineDeliveredQty.get(orderlineId).add(qtyToAdd));
+    }
+  }
+
+  private List<Tuple> getServiceRelated(ShipmentInOut shipment) {
+    StringBuilder hql = new StringBuilder();
+    hql.append(
+        "select ol.id || serv.id as id, iol.movementQuantity as movementQuantity, ol.orderedQuantity as orderedQuantity, ");
+    hql.append(
+        "ol.deliveredQuantity as deliveredQuantity, sol.id as serviceOrderLineId, serv.quantityRule as quantityRule, ");
+    hql.append(
+        "sol.orderedQuantity as serviceOrderedQuantity, sol.deliveredQuantity as serviceDeliveredQuantity ");
+    hql.append("from MaterialMgmtShipmentInOutLine iol ");
+    hql.append("join iol.salesOrderLine ol ");
+    hql.append("join ol.orderlineServiceRelationCOrderlineRelatedIDList srol ");
+    hql.append("join srol.salesOrderLine sol ");
+    hql.append("join sol.product serv ");
+    hql.append("where iol.shipmentReceipt.id = :shipmentId ");
+    final Query<Tuple> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql.toString(), Tuple.class);
+    query.setParameter("shipmentId", shipment.getId());
+    return query.list();
+  }
+
+  private ShipmentInOutLine addShipmentLine(ShipmentInOut shipment, String orderlineId,
+      BigDecimal qtyToDeliver) {
+    ShipmentInOutLine shipmentLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
+    OrderLine orderLine = OBDal.getInstance().get(OrderLine.class, orderlineId);
+    shipmentLine.setOrganization(shipment.getOrganization());
+    shipmentLine.setShipmentReceipt(shipment);
+    shipmentLine.setSalesOrderLine(orderLine);
+    Long lineNo = (shipment.getMaterialMgmtShipmentInOutLineList().size() + 1) * 10L;
+    shipmentLine.setLineNo(lineNo);
+    shipmentLine.setProduct(orderLine.getProduct());
+    shipmentLine.setUOM(orderLine.getUOM());
+    shipmentLine.setMovementQuantity(qtyToDeliver);
+    String description = orderLine.getDescription();
+    if (description != null && description.length() > 255) {
+      description = description.substring(0, 254);
+    }
+    shipmentLine.setDescription(description);
+    if (orderLine.getBOMParent() != null) {
+      OBCriteria<ShipmentInOutLine> obc = OBDal.getInstance()
+          .createCriteria(ShipmentInOutLine.class);
+      obc.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT, shipment));
+      obc.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, orderLine.getBOMParent()));
+      obc.setMaxResults(1);
+      shipmentLine.setBOMParent((ShipmentInOutLine) obc.uniqueResult());
+    }
+    OBDal.getInstance().save(shipmentLine);
+    shipment.getMaterialMgmtShipmentInOutLineList().add(shipmentLine);
+    OBDal.getInstance().save(shipment);
+    return shipmentLine;
+  }
+}
