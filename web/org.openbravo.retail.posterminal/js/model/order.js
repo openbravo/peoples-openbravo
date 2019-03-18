@@ -6187,6 +6187,7 @@
               receipt.prepareToSend(function () {
                 receipt.set('skipApplyPromotions', true);
                 receipt.set('skipCalculateReceipt', true);
+                receipt.set('preventServicesUpdate', true);
                 _.each(receipt.get('lines').models, function (line) {
                   line.set('obposQtyDeleted', line.get('qty'));
                   line.set('obposIsDeleted', true);
@@ -6194,6 +6195,10 @@
                     silent: true
                   });
                 });
+                if (receipt.get('hasServices')) {
+                  receipt.unset('hasServices');
+                }
+                receipt.unset('preventServicesUpdate');
                 receipt.set('skipCalculateReceipt', false);
                 // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
                 // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
