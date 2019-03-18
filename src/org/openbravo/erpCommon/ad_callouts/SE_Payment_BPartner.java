@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -84,10 +84,10 @@ public class SE_Payment_BPartner extends SimpleCallout {
                   paymentMethod.getIdentifier(), financialAccount.getIdentifier()));
         }
       } else {
-        log4j.info("No default info for the selected business partner");
+        log4j.info("No default info for the selected business partner {}", bpartner);
       }
     } else {
-      log4j.info("No default info for the selected business partner");
+      log4j.info("No default info for the selected business partner {}", bpartner);
     }
     if ((!strcBpartnerId.equals(""))
         && (FIN_Utility.isBlockedBusinessPartner(strcBpartnerId, "Y".equals(strisreceipt), 4))) {
