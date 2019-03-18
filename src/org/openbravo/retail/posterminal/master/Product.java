@@ -160,8 +160,10 @@ public class Product extends ProcessHQLQuery {
       } finally {
         OBContext.restorePreviousMode();
       }
-      final OBRETCOProductList productList = POSUtils
-          .getProductListByPosterminalId(jsonsent.getString("pos"));
+      final boolean crossStoreSearch = jsonsent.has("remoteParams")
+          && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
+      final List<String> productListIds = POSUtils
+          .getProductListByCrossStoreId(jsonsent.getString("pos"), crossStoreSearch);
       final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
           terminalDate);
       Calendar now = Calendar.getInstance();
@@ -173,17 +175,11 @@ public class Product extends ProcessHQLQuery {
                 jsonsent.getJSONObject("remoteParams").getString("currentPriceList"), terminalDate)
                 .getId());
       }
-      paramValues.put("productListId", productList.getId());
+      paramValues.put("productListIds", productListIds);
       paramValues.put("priceListVersionId", priceListVersion.getId());
       paramValues.put("endingDate", now.getTime());
       paramValues.put("startingDate", now.getTime());
       paramValues.put("orgId", orgId);
-      boolean isForceRemote = jsonsent.getJSONObject("parameters").has("forceRemote")
-          && jsonsent.getJSONObject("parameters").getBoolean("forceRemote");
-      if (!isRemote && !isForceRemote) {
-        paramValues.put("priceListVersionId", priceListVersion.getId());
-        paramValues.put("productListId", productList.getId());
-      }
 
       return paramValues;
     } finally {
@@ -336,12 +332,12 @@ public class Product extends ProcessHQLQuery {
         + "      from PricingAdjustmentProduct pap where pap.active = true and "
         + "      pap.priceAdjustment = p and pap.product.sale = true "
         + "      and pap.product not in (select ppl.product.id from OBRETCO_Prol_Product ppl "
-        + "      where ppl.obretcoProductlist.id = :productListId and ppl.active = true))) "
+        + "      where ppl.obretcoProductlist.id in :productListIds and ppl.active = true))) "
         + " or (p.includedProducts = 'Y' and not exists (select 1 "
         + "      from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl "
         + "      where pap.active = true and pap.priceAdjustment = p "
         + "      and pap.product.id = ppl.product.id "
-        + "      and ppl.obretcoProductlist.id = :productListId))) "
+        + "      and ppl.obretcoProductlist.id in :productListIds))) "
         // organization
         + "and p.$naturalOrgCriteria and ((p.includedOrganizations='Y' "
         + "  and not exists (select 1 " + "         from PricingAdjustmentOrganization o"
@@ -370,7 +366,7 @@ public class Product extends ProcessHQLQuery {
       genericProductsHqlString += "left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp "
           + " where $filtersCriteria AND ppp.priceListVersion.id = :priceListVersionId AND product.isGeneric = 'Y' AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, "
           + " PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = :priceListVersionId "
-          + " and pli2.obretcoProductlist.id = :productListId)" //
+          + " and pli2.obretcoProductlist.id in :productListIds)" //
           + " order by product.id";
       products.add(genericProductsHqlString);
     }
@@ -418,9 +414,9 @@ public class Product extends ProcessHQLQuery {
     if (isMultipricelist && allowNoPriceInMainPriceList
         && (!isRemote || (jsonsent.has("remoteParams") && StringUtils
             .isNotEmpty(jsonsent.getJSONObject("remoteParams").optString("currentPriceList"))))) {
-      hql += "AND (pli.obretcoProductlist.id = :productListId) ";
+      hql += "AND (pli.obretcoProductlist.id in :productListIds) ";
     } else {
-      hql += "AND (pli.obretcoProductlist.id = :productListId) ";
+      hql += "AND (pli.obretcoProductlist.id in :productListIds) ";
       hql += "AND (ppp.priceListVersion.id= :priceListVersionId) ";
 
     }
@@ -436,13 +432,15 @@ public class Product extends ProcessHQLQuery {
           jsonsent.getJSONObject("parameters").getString("terminalTime"), jsonsent
               .getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
       String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      final OBRETCOProductList productList = POSUtils
-          .getProductListByPosterminalId(jsonsent.getString("pos"));
+      final boolean crossStoreSearch = jsonsent.has("remoteParams")
+          && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
+      final List<String> productListIds = POSUtils
+          .getProductListByCrossStoreId(jsonsent.getString("pos"), crossStoreSearch);
       final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
           terminalDate);
 
-      Map<String, Object> paramValues = new HashMap<String, Object>();
-      paramValues.put("productListId", productList.getId());
+      Map<String, Object> paramValues = new HashMap<>();
+      paramValues.put("productListIds", productListIds);
       paramValues.put("orgId", orgId);
       paramValues.put("priceListVersionId", priceListVersion.getId());
 
