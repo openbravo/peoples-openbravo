@@ -830,3 +830,14 @@ OB.UTIL.isCrossStoreEnabled = function () {
 OB.UTIL.isCrossStoreReceipt = function (receipt) {
   return OB.MobileApp.model.get('terminal').organization !== (receipt.organization ? receipt.organization : receipt.get('organization'));
 };
+
+OB.UTIL.finishProcessesRunningBySearchKey = function (searchkey) {
+  var processController = _.find(OB.UTIL.ProcessController.getProcessesRunning().models, function (process) {
+    return process.get('searchkey') === searchkey;
+  });
+  if (!OB.UTIL.isNullOrUndefined(processController) && processController.get('executions').models.length > 0) {
+    _.each(processController.get('executions').models, function (execution) {
+      OB.UTIL.ProcessController.finish(searchkey, execution);
+    });
+  }
+};

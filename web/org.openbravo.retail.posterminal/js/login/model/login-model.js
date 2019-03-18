@@ -592,14 +592,7 @@
             if (data && data.errorReadingTerminalAuthentication) {
               OB.UTIL.showWarning(data.errorReadingTerminalAuthentication);
             }
-            var tapTotalProcessController = _.find(OB.UTIL.ProcessController.getProcessesRunning().models, function (process) {
-              return process.get('searchkey') === 'tapTotalButton';
-            });
-            if (!OB.UTIL.isNullOrUndefined(tapTotalProcessController) && tapTotalProcessController.get('executions').models.length > 0) {
-              _.each(tapTotalProcessController.get('executions').models, function (execution) {
-                OB.UTIL.ProcessController.finish('tapTotalButton', execution);
-              });
-            }
+            OB.UTIL.finishProcessesRunningBySearchKey('tapTotalButton');
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               isConfirmButton: true,
