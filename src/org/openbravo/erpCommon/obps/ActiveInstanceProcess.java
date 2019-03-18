@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.MaturityLevel;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
+import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SystemInfo;
@@ -124,9 +125,19 @@ public class ActiveInstanceProcess implements Process {
           // community to a professional license
           // See issue https://issues.openbravo.com/view.php?id=21251
           String newLicenseClass = ActivationKey.getInstance().getLicenseClass().getCode();
-          if ("C".equals(previousLicenseClass) && "STD".equals(newLicenseClass)) {
+          if (LicenseClass.COMMUNITY.getCode().equals(previousLicenseClass)
+              && LicenseClass.STD.getCode().equals(newLicenseClass)) {
             sysInfo.setMaturitySearch(Integer.toString(MaturityLevel.CS_MATURITY));
             sysInfo.setMaturityUpdate(Integer.toString(MaturityLevel.CS_MATURITY));
+
+            int modUpdatesReset = OBDal.getInstance()
+                .getSession()
+                .createQuery("update ADModule set availableUpdate = null, upgradeAvailable = null "
+                    + "where availableUpdate is not null or upgradeAvailable is not null")
+                .executeUpdate();
+            log.info(
+                "Module maturity for updats and search set to Confirmed Stable. Reset {} module available updates.",
+                modUpdatesReset);
           }
 
           updateShowProductionFields("Y");

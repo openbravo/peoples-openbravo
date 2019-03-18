@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2019 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -11,6 +11,7 @@
  */
 package org.openbravo.xmlEngine;
 
+import org.apache.logging.log4j.Level;
 /*  Error management for XmlEngine
  To add a new error, in the location where the error is produced include:
  ErrorManagement.error(nn, location [, exception]);
@@ -32,10 +33,12 @@ class ErrorManagement {
   }
 
   public static void error(int i, String locationText, Exception e) {
-    String errorText = "";
+    String errorText;
+    Level logLevel = Level.ERROR;
     switch (i) {
       case 101:
         errorText = "Data not defined for structure";
+        logLevel = Level.DEBUG;
         // The setData has not been made in the structure of a XmlDocument
         // or a sql sentece was not specified in the configuration file
         break;
@@ -67,14 +70,10 @@ class ErrorManagement {
         // error when parsing the .xml file, for example badly nested tags
         // or badly closed
         break;
+      default:
+        errorText = "Error";
     }
-    log4jErrorManagement.error(errorText);
-    log4jErrorManagement.error("in " + locationText);
-    if (log4jErrorManagement.isDebugEnabled() && e != null) {
-      e.getMessage();
-      e.printStackTrace();
-    }
-
+    log4jErrorManagement.log(logLevel, "{} - in {}", errorText, locationText, e);
   }
 
 }

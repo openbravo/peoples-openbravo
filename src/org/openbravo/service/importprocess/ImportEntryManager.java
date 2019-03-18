@@ -469,8 +469,15 @@ public class ImportEntryManager {
   }
 
   private static class ImportEntryManagerThread implements Runnable {
-
     private final ImportEntryManager manager;
+
+    // @formatter:off
+    private static final String IMPORT_ENTRY_QRY =
+          " from C_IMPORT_ENTRY "
+        + "where typeofdata = :typeOfData "
+        + "  and importStatus = 'Initial' "
+        + "order by creationDate, createdtimestamp";
+    // @formatter:on
 
     private boolean isRunning = false;
     private Object monitorObject = new Object();
@@ -552,7 +559,6 @@ public class ImportEntryManager {
 
             int entryCount = 0;
             try {
-
               // start processing, so ignore any notifications happening before
               wasNotifiedInParallel = false;
 
@@ -560,31 +566,24 @@ public class ImportEntryManager {
               // don't block eachother with the limited batch size
               // being read
               for (String typeOfData : typesOfData) {
-
-                log.debug("Reading import entries for type of data " + typeOfData);
-
-                final String importEntryQryStr = "from " + ImportEntry.ENTITY_NAME + " where "
-                    + ImportEntry.PROPERTY_TYPEOFDATA + "='" + typeOfData + "' and "
-                    + ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
-                    + ImportEntry.PROPERTY_CREATIONDATE + ", "
-                    + ImportEntry.PROPERTY_CREATEDTIMESTAMP;
+                log.debug("Reading import entries for type of data {}", typeOfData);
 
                 final Query<ImportEntry> entriesQry = OBDal.getInstance()
                     .getSession()
-                    .createQuery(importEntryQryStr, ImportEntry.class);
-                entriesQry.setFirstResult(0);
-                entriesQry.setFetchSize(100);
-                entriesQry.setMaxResults(manager.importBatchSize);
+                    .createQuery(IMPORT_ENTRY_QRY, ImportEntry.class)
+                    .setParameter("typeOfData", typeOfData)
+                    .setFirstResult(0)
+                    .setFetchSize(100)
+                    .setMaxResults(manager.importBatchSize);
 
-                final ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY);
-                try {
+                int typeOfDataEntryCount = 0;
+                try (ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY)) {
                   while (entries.next() && isHandlingImportEntries()) {
                     entryCount++;
+                    typeOfDataEntryCount++;
                     final ImportEntry entry = (ImportEntry) entries.get(0);
 
-                    if (log.isDebugEnabled()) {
-                      log.debug("Handle import entry " + entry.getIdentifier());
-                    }
+                    log.trace("Handle import entry {}", entry::getIdentifier);
 
                     try {
                       manager.handleImportEntry(entry);
@@ -599,11 +598,12 @@ public class ImportEntryManager {
                       manager.setImportEntryError(entry.getId(), t);
                     }
                   }
-                } finally {
-                  entries.close();
+                }
+
+                if (typeOfDataEntryCount > 0) {
+                  log.debug("Handled {} entries for {}", typeOfDataEntryCount, typeOfData);
                 }
               }
-
             } catch (Throwable t) {
               ImportProcessUtils.logError(log, t);
             } finally {
@@ -623,10 +623,12 @@ public class ImportEntryManager {
                   // in case of test don't wait minimal 2 seconds
                   Thread.sleep(300 + ((1000 * entryCount) / 30));
                 } else {
-                  log.debug(
-                      "Entries have been processed, wait a shorter time, and try again to capture new entries which have been added");
                   // wait minimal 2 seconds or based on entry count
-                  Thread.sleep(Math.max(2000, 300 + ((1000 * entryCount) / 30)));
+                  long t = Math.max(2000, 300 + ((1000 * entryCount) / 30));
+                  log.debug(
+                      "{} entries have been processed. Wait {} ms, and try again to capture new entries which have been added",
+                      entryCount, t);
+                  Thread.sleep(t);
                 }
               } catch (Exception ignored) {
               }

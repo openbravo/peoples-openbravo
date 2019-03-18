@@ -315,8 +315,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/upload/ob-upload-bp-select-button.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/upload/ob-upload-product-button.js", false));
-    globalResources.add(createStyleSheetResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+    globalResources
+        .add(createStyleSheetResource("web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.application/ob-upload-styles.css", false));
 
