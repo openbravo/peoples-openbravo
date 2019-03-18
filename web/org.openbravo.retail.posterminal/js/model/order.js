@@ -3841,6 +3841,8 @@
         }
         if (qty > 0 && negativeLines > 0) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
+          OB.UTIL.finishProcessesRunningBySearchKey('addProduct');
+          OB.MobileApp.model.receipt.addProcess = null;
           return true;
         } else if (qty < 0 && negativeLines !== receiptLines) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
