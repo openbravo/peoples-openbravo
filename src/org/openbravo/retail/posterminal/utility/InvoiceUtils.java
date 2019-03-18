@@ -796,7 +796,10 @@ public class InvoiceUtils {
           if (amount.compareTo(BigDecimal.ZERO) == 0) {
             continue;
           }
-          pendingGrossAmount = pendingGrossAmount.subtract(amount);
+
+          if (pendingGrossAmount.compareTo(BigDecimal.ZERO) != 0) {
+            pendingGrossAmount = pendingGrossAmount.subtract(amount);
+          }
 
           Date dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(), null,
               paymentTermLine);
@@ -829,16 +832,11 @@ public class InvoiceUtils {
             if (remainingAmt.compareTo(gross) != 0) {
               // The PS is paid, so is not taken into account by the payment terms
               // Set the PS as fully paid (the remaining amount is now in the other PS)
-              paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
               final BigDecimal amountToInvoice = paymentScheduleInvoice.getAmount()
                   .subtract(remainingAmt);
-              paymentScheduleInvoice.setPaidAmount(amountToInvoice);
               paymentScheduleInvoice.setAmount(amountToInvoice);
-              for (final FIN_PaymentScheduleDetail invoicePSD : paymentScheduleInvoice
-                  .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-                invoicePSD.setAmount(amountToInvoice);
-                OBDal.getInstance().save(invoicePSD);
-              }
+              paymentScheduleInvoice.setOutstandingAmount(
+                  paymentScheduleInvoice.getOutstandingAmount().subtract(remainingAmt));
             }
             continue;
           }
