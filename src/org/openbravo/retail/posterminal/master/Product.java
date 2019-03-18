@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -19,6 +19,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -98,8 +99,8 @@ public class Product extends ProcessHQLQuery {
     Map<String, Object> args = new HashMap<String, Object>();
     args.put("posPrecision", posPrecision);
     try {
-      if (isRemote && isMultipricelist && jsonsent.has("remoteParams")
-          && jsonsent.getJSONObject("remoteParams").getString("currentPriceList") != null) {
+      if (isRemote && isMultipricelist && jsonsent.has("remoteParams") && StringUtils
+          .isNotEmpty(jsonsent.getJSONObject("remoteParams").optString("currentPriceList"))) {
         args.put("multiPriceList", true);
       } else {
         args.put("multiPriceList", false);
@@ -131,10 +132,8 @@ public class Product extends ProcessHQLQuery {
     try {
       OBContext.setAdminMode(true);
       final Date terminalDate = OBMOBCUtils.calculateServerDate(
-          jsonsent.getJSONObject("parameters").getString("terminalTime"),
-          jsonsent.getJSONObject("parameters")
-              .getJSONObject("terminalTimeOffset")
-              .getLong("value"));
+          jsonsent.getJSONObject("parameters").getString("terminalTime"), jsonsent
+              .getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
 
       String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       boolean isMultipricelist = false;
@@ -166,8 +165,9 @@ public class Product extends ProcessHQLQuery {
       final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
           terminalDate);
       Calendar now = Calendar.getInstance();
-      Map<String, Object> paramValues = new HashMap<String, Object>();
-      if (isRemote && isMultipricelist && jsonsent.has("remoteParams")) {
+      Map<String, Object> paramValues = new HashMap<>();
+      if (isRemote && isMultipricelist && jsonsent.has("remoteParams") && StringUtils
+          .isNotEmpty(jsonsent.getJSONObject("remoteParams").optString("currentPriceList"))) {
         paramValues.put("multipriceListVersionId",
             POSUtils.getPriceListVersionForPriceList(
                 jsonsent.getJSONObject("remoteParams").getString("currentPriceList"), terminalDate)
@@ -274,11 +274,11 @@ public class Product extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
-    Map<String, Object> args = new HashMap<String, Object>();
+    Map<String, Object> args = new HashMap<>();
     args.put("posPrecision", posPrecision);
     try {
-      if (isRemote && isMultipricelist && jsonsent.has("remoteParams")
-          && jsonsent.getJSONObject("remoteParams").getString("currentPriceList") != null) {
+      if (isRemote && isMultipricelist && jsonsent.has("remoteParams") && StringUtils
+          .isNotEmpty(jsonsent.getJSONObject("remoteParams").optString("currentPriceList"))) {
         args.put("multiPriceList", true);
       } else {
         args.put("multiPriceList", false);
@@ -378,19 +378,21 @@ public class Product extends ProcessHQLQuery {
   }
 
   protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
-      JSONObject jsonsent, boolean useGetForProductImages) {
+      JSONObject jsonsent, boolean useGetForProductImages) throws JSONException {
     return Product.createRegularProductHql(isRemote, isMultipricelist, jsonsent,
         useGetForProductImages, false);
   }
 
   protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
-      JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList) {
+      JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList)
+      throws JSONException {
     return Product.createRegularProductHql(isRemote, isMultipricelist, jsonsent,
         useGetForProductImages, allowNoPriceInMainPriceList);
   }
 
   public static String createRegularProductHql(boolean isRemote, boolean isMultipricelist,
-      JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList) {
+      JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList)
+      throws JSONException {
 
     String hql = "FROM OBRETCO_Prol_Product as pli ";
     if (!useGetForProductImages) {
@@ -398,13 +400,15 @@ public class Product extends ProcessHQLQuery {
     }
     hql += "inner join pli.product as product ";
     if (isMultipricelist && allowNoPriceInMainPriceList
-        && (!isRemote || jsonsent.has("remoteParams"))) {
+        && (!isRemote || (jsonsent.has("remoteParams") && StringUtils
+            .isNotEmpty(jsonsent.getJSONObject("remoteParams").optString("currentPriceList"))))) {
       hql += "left outer join product.pricingProductPriceList ppp with (ppp.priceListVersion.id = :priceListVersionId) ";
     } else {
       hql += "inner join product.pricingProductPriceList ppp ";
     }
 
-    if (isRemote && isMultipricelist && jsonsent.has("remoteParams")) {
+    if (isRemote && isMultipricelist && jsonsent.has("remoteParams") && StringUtils
+        .isNotEmpty(jsonsent.getJSONObject("remoteParams").optString("currentPriceList"))) {
       hql += ", PricingProductPrice pp WHERE pp.product=pli.product and pp.priceListVersion.id= :multipriceListVersionId ";
     } else {
       hql += " WHERE 1=1";
@@ -412,7 +416,8 @@ public class Product extends ProcessHQLQuery {
 
     hql += " AND $filtersCriteria AND $hqlCriteria ";
     if (isMultipricelist && allowNoPriceInMainPriceList
-        && (!isRemote || jsonsent.has("remoteParams"))) {
+        && (!isRemote || (jsonsent.has("remoteParams") && StringUtils
+            .isNotEmpty(jsonsent.getJSONObject("remoteParams").optString("currentPriceList"))))) {
       hql += "AND (pli.obretcoProductlist.id = :productListId) ";
     } else {
       hql += "AND (pli.obretcoProductlist.id = :productListId) ";
@@ -428,10 +433,8 @@ public class Product extends ProcessHQLQuery {
     try {
       OBContext.setAdminMode(true);
       final Date terminalDate = OBMOBCUtils.calculateServerDate(
-          jsonsent.getJSONObject("parameters").getString("terminalTime"),
-          jsonsent.getJSONObject("parameters")
-              .getJSONObject("terminalTimeOffset")
-              .getLong("value"));
+          jsonsent.getJSONObject("parameters").getString("terminalTime"), jsonsent
+              .getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
       String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final OBRETCOProductList productList = POSUtils
           .getProductListByPosterminalId(jsonsent.getString("pos"));
