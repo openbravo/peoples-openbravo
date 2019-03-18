@@ -432,7 +432,7 @@
     preventOrderSave: function (value) {
       if (value) {
         if (this.has('preventOrderSave')) {
-          this.set('preventOrderSave', OB.Dec.add(this.get('preventOrderSave'), OB.DEC.One));
+          this.set('preventOrderSave', OB.DEC.add(this.get('preventOrderSave'), OB.DEC.One));
         } else {
           this.set('preventOrderSave', OB.DEC.One);
         }
