@@ -17,7 +17,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.mobile.core.servercontroller.MultiServerJSONProcess;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.json.JsonConstants;
 
@@ -99,19 +98,8 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
   }
 
   @Override
-  protected void createImportEntry(String messageId, JSONObject sentIn, JSONObject processResult,
-      Organization organization) throws JSONException {
-    // We don't want to create any import entry in these transactions.
-  }
-
-  @Override
   protected void createArchiveEntry(String id, JSONObject json) throws JSONException {
     // We don't want to create any import entry in these transactions.
-  }
-
-  @Override
-  protected boolean executeInOneServer(JSONObject json) throws JSONException {
-    return true;
   }
 
   @Override
