@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -162,7 +163,7 @@ public class Product extends ProcessHQLQuery {
       }
       final boolean crossStoreSearch = jsonsent.has("remoteParams")
           && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
-      final List<String> productListIds = POSUtils
+      final Set<String> productListIds = POSUtils
           .getProductListByCrossStoreId(jsonsent.getString("pos"), crossStoreSearch);
       final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
           terminalDate);
@@ -434,7 +435,7 @@ public class Product extends ProcessHQLQuery {
       String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final boolean crossStoreSearch = jsonsent.has("remoteParams")
           && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
-      final List<String> productListIds = POSUtils
+      final Set<String> productListIds = POSUtils
           .getProductListByCrossStoreId(jsonsent.getString("pos"), crossStoreSearch);
       final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
           terminalDate);

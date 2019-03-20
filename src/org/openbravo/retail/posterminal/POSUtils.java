@@ -15,7 +15,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -340,11 +342,11 @@ public class POSUtils {
   }
 
   @SuppressWarnings("unchecked")
-  public static List<String> getProductListByCrossStoreId(final String posterminalId,
+  public static Set<String> getProductListByCrossStoreId(final String posterminalId,
       final boolean crossStoreSearch) {
     OBContext.setAdminMode(false);
     try {
-      List<String> productList = new ArrayList<>();
+      Set<String> productList = new HashSet<>();
 
       final OBPOSApplications posterminal = getTerminalById(posterminalId);
       if (crossStoreSearch && isCrossStoreEnabled(posterminal)) {
@@ -360,7 +362,7 @@ public class POSUtils {
 
         final Query<String> query = OBDal.getInstance().getSession().createQuery(select.toString());
         query.setParameterList("orgIds", getOrgListByCrossStoreId(crossStore.getId()));
-        productList = query.list();
+        productList.addAll(query.list());
       }
 
       productList.add(getProductListByPosterminalId(posterminalId).getId());
