@@ -309,10 +309,28 @@ public class POSUtils {
   }
 
   public static PriceListVersion getPriceListVersionByOrgId(String orgId, Date terminalDate) {
-
     PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
     String priceListId = priceList.getId();
     return POSUtils.getPriceListVersionForPriceList(priceListId, terminalDate);
+  }
+
+  public static Set<String> getPriceListVersionCrossStore(final String posterminalId,
+      final Date terminalDate, final boolean crossStoreSearch) {
+    final Set<String> priceListVersionList = new HashSet<>();
+    final OBPOSApplications posterminal = getTerminalById(posterminalId);
+
+    if (crossStoreSearch && isCrossStoreEnabled(posterminal)) {
+      final Organization crossStore = posterminal.getOrganization()
+          .getOBRETCOCrossStoreOrganization();
+      for (final String orgId : getOrgListByCrossStoreId(crossStore.getId())) {
+        priceListVersionList.add(getPriceListVersionByOrgId(orgId, terminalDate).getId());
+      }
+    } else {
+      priceListVersionList.add(
+          getPriceListVersionByOrgId(posterminal.getOrganization().getId(), terminalDate).getId());
+    }
+
+    return priceListVersionList;
   }
 
   public static OBRETCOProductList getProductListByPosterminalId(String posterminalId) {
@@ -342,13 +360,13 @@ public class POSUtils {
   }
 
   @SuppressWarnings("unchecked")
-  public static Set<String> getProductListByCrossStoreId(final String posterminalId,
+  public static Set<String> getProductListCrossStore(final String posterminalId,
       final boolean crossStoreSearch) {
     OBContext.setAdminMode(false);
     try {
       Set<String> productList = new HashSet<>();
-
       final OBPOSApplications posterminal = getTerminalById(posterminalId);
+
       if (crossStoreSearch && isCrossStoreEnabled(posterminal)) {
         final Organization crossStore = posterminal.getOrganization()
             .getOBRETCOCrossStoreOrganization();
