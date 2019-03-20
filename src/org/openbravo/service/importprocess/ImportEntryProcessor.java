@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2018 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -108,7 +108,7 @@ public abstract class ImportEntryProcessor {
   private static final int MAX_QUEUE_SIZE = 50000;
 
   // not static to create a Logger for each subclass
-  private Logger log;
+  private Logger log = LogManager.getLogger(this.getClass());
 
   // multiple threads access this map, its access is handled through
   // synchronized methods
@@ -116,10 +116,6 @@ public abstract class ImportEntryProcessor {
 
   @Inject
   private ImportEntryManager importEntryManager;
-
-  public ImportEntryProcessor() {
-    log = LogManager.getLogger();
-  }
 
   /**
    * Is called when the application context/tomcat stops, is called from
