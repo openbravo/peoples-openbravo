@@ -1688,8 +1688,9 @@ enyo.kind({
                   me.owner.receipt.trigger('cancelLayaway');
                 } else {
                   OB.UTIL.ProcessController.finish('tapDoneButton', execution);
-                  me.owner.model.get('order').trigger('paymentDone', false);
+                  OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
                   OB.UTIL.setScanningFocus(false);
+                  me.owner.model.get('order').trigger('paymentDone', false);
                 }
                 me.drawerOpened = false;
               } else {
@@ -1708,16 +1709,18 @@ enyo.kind({
                 me.owner.receipt.trigger('cancelLayaway');
               } else {
                 OB.UTIL.ProcessController.finish('tapDoneButton', execution);
-                me.owner.receipt.trigger('paymentDone', me.allowOpenDrawer);
+                OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
                 OB.UTIL.setScanningFocus(false);
+                me.owner.receipt.trigger('paymentDone', me.allowOpenDrawer);
               }
             }
           } else {
             if (me.drawerpreference && me.allowOpenDrawer) {
               if (me.drawerOpened) {
                 OB.UTIL.ProcessController.finish('tapDoneButton', execution);
-                me.owner.model.get('multiOrders').trigger('paymentDone', false);
+                OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
                 OB.UTIL.setScanningFocus(false);
+                me.owner.model.get('multiOrders').trigger('paymentDone', false);
                 me.owner.model.get('multiOrders').set('openDrawer', false);
                 me.drawerOpened = false;
                 me.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
@@ -1732,8 +1735,9 @@ enyo.kind({
               }
             } else {
               OB.UTIL.ProcessController.finish('tapDoneButton', execution);
-              me.owner.model.get('multiOrders').trigger('paymentDone', me.allowOpenDrawer);
+              OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
               OB.UTIL.setScanningFocus(false);
+              me.owner.model.get('multiOrders').trigger('paymentDone', me.allowOpenDrawer);
               me.owner.model.get('multiOrders').set('openDrawer', false);
             }
           }
