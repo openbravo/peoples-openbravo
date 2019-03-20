@@ -370,7 +370,10 @@
                 endCallback();
               }, null, true, data.at(0));
             } else {
-              return endCallback();
+              endCallback();
+              OB.UTIL.HookManager.executeHooks('OBPOS_PostProcessingNoNewCashup', {}, function () {
+                  return;
+              });
             }
           });
 
