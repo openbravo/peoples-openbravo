@@ -135,7 +135,6 @@ public class Product extends ProcessHQLQuery {
           jsonsent.getJSONObject("parameters").getString("terminalTime"), jsonsent
               .getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
 
-      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       boolean isMultipricelist = false;
       try {
         OBContext.setAdminMode(false);
@@ -148,6 +147,7 @@ public class Product extends ProcessHQLQuery {
       } finally {
         OBContext.restorePreviousMode();
       }
+
       boolean isRemote = false;
       try {
         OBContext.setAdminMode(false);
@@ -160,9 +160,11 @@ public class Product extends ProcessHQLQuery {
       } finally {
         OBContext.restorePreviousMode();
       }
+
       final String posId = jsonsent.getString("pos");
       final boolean crossStoreSearch = jsonsent.has("remoteParams")
           && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
+      final Set<String> orgIds = POSUtils.getOrgListCrossStore(posId, crossStoreSearch);
       final Set<String> productListIds = POSUtils.getProductListCrossStore(posId, crossStoreSearch);
       final Set<String> priceListVersionIds = POSUtils.getPriceListVersionCrossStore(posId,
           terminalDate, crossStoreSearch);
@@ -179,7 +181,7 @@ public class Product extends ProcessHQLQuery {
       paramValues.put("priceListVersionIds", priceListVersionIds);
       paramValues.put("endingDate", now.getTime());
       paramValues.put("startingDate", now.getTime());
-      paramValues.put("orgId", orgId);
+      paramValues.put("orgIds", orgIds);
 
       return paramValues;
     } finally {
@@ -342,10 +344,10 @@ public class Product extends ProcessHQLQuery {
         + "and p.$naturalOrgCriteria and ((p.includedOrganizations='Y' "
         + "  and not exists (select 1 " + "         from PricingAdjustmentOrganization o"
         + "        where active = true" + "          and o.priceAdjustment = p"
-        + "          and o.organization.id = :orgId )) " + "   or (p.includedOrganizations='N' "
+        + "          and o.organization.id in :orgIds )) " + "   or (p.includedOrganizations='N' "
         + "  and  exists (select 1 " + "         from PricingAdjustmentOrganization o"
         + "        where active = true" + "          and o.priceAdjustment = p"
-        + "          and o.organization.id = :orgId )) )";
+        + "          and o.organization.id in :orgIds )) )";
     if (isRemote) {
       packAndCombosHqlString += " order by p.name asc, p.id";
     } else {
@@ -431,17 +433,17 @@ public class Product extends ProcessHQLQuery {
       final Date terminalDate = OBMOBCUtils.calculateServerDate(
           jsonsent.getJSONObject("parameters").getString("terminalTime"), jsonsent
               .getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
-      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final String posId = jsonsent.getString("pos");
       final boolean crossStoreSearch = jsonsent.has("remoteParams")
           && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
+      final Set<String> orgIds = POSUtils.getOrgListCrossStore(posId, crossStoreSearch);
       final Set<String> productListIds = POSUtils.getProductListCrossStore(posId, crossStoreSearch);
       final Set<String> priceListVersionIds = POSUtils.getPriceListVersionCrossStore(posId,
           terminalDate, crossStoreSearch);
 
       Map<String, Object> paramValues = new HashMap<>();
       paramValues.put("productListIds", productListIds);
-      paramValues.put("orgId", orgId);
+      paramValues.put("orgIds", orgIds);
       paramValues.put("priceListVersionIds", priceListVersionIds);
 
       return paramValues;

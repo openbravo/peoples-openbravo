@@ -200,6 +200,22 @@ public class POSUtils {
     return null;
   }
 
+  public static Set<String> getOrgListCrossStore(final String posterminalId,
+      final boolean crossStoreSearch) {
+    Set<String> orgList = new HashSet<>();
+    final OBPOSApplications posterminal = getTerminalById(posterminalId);
+
+    if (crossStoreSearch && isCrossStoreEnabled(posterminal)) {
+      final Organization crossStore = posterminal.getOrganization()
+          .getOBRETCOCrossStoreOrganization();
+      orgList.addAll(getOrgListByCrossStoreId(crossStore.getId()));
+    } else {
+      orgList.add(posterminal.getOrganization().getId());
+    }
+
+    return orgList;
+  }
+
   public static List<String> getStoreList(String orgId) {
     return OBContext.getOBContext().getOrganizationStructureProvider().getParentList(orgId, true);
   }
