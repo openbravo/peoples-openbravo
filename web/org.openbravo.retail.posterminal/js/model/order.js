@@ -958,7 +958,11 @@
             }
           });
           processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, this.getNettingPayment());
-          isNegative = processedPaymentsAmount > this.getGross();
+          if (OB.DEC.compare(this.getGross()) === -1) {
+            isNegative = processedPaymentsAmount >= this.getGross();
+          } else {
+            isNegative = processedPaymentsAmount > this.getGross();
+          }
           this.set('isNegative', isNegative, {
             silent: true
           });
@@ -5195,12 +5199,15 @@
           reversalPayment.unset('paymentId');
 
           // Modify other properties for the reverse payment
-          reversalPayment.set('amount', OB.DEC.sub(0, payment.get('amount')));
-          reversalPayment.set('origAmount', OB.DEC.sub(0, payment.get('origAmount')));
-          reversalPayment.set('paid', OB.DEC.sub(0, payment.get('paid')));
+          reversalPayment.set('amount', OB.DEC.sub(OB.DEC.Zero, payment.get('amount')));
+          reversalPayment.set('origAmount', OB.DEC.sub(OB.DEC.Zero, payment.get('origAmount')));
+          reversalPayment.set('paid', OB.DEC.sub(OB.DEC.Zero, payment.get('paid')));
+          if (payment.has('overpayment')) {
+            reversalPayment.set('overpayment', OB.DEC.sub(OB.DEC.Zero, payment.get('overpayment')));
+          }
           reversalPayment.set('reversedPaymentId', payment.get('paymentId'));
           reversalPayment.set('reversedPayment', payment);
-          reversalPayment.set('index', OB.DEC.add(1, payments.indexOf(payment)));
+          reversalPayment.set('index', OB.DEC.add(OB.DEC.One, payments.indexOf(payment)));
           reversalPayment.set('reverseCallback', reverseCallback);
           reversalPayment.set('isReversePayment', true);
           reversalPayment.set('paymentData', payment.get('paymentData') ? payment.get('paymentData') : null);

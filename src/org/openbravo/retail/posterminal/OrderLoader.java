@@ -1263,7 +1263,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
     BigDecimal paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("nettingPayment", 0));
     for (int i = 0; i < payments.length(); i++) {
       final JSONObject payment = payments.getJSONObject(i);
-      paymentAmt = paymentAmt.add(BigDecimal.valueOf(payment.getDouble("origAmount")))
+      paymentAmt = paymentAmt
+          .add(BigDecimal.valueOf(payment.getDouble("origAmount"))
+              .subtract(BigDecimal.valueOf(payment.optDouble("overpayment", 0))))
           .setScale(pricePrecision, RoundingMode.HALF_UP);
     }
 
@@ -1355,7 +1357,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
             .setScale(pricePrecision, RoundingMode.HALF_UP);
         BigDecimal tempWriteoffAmt = writeoffAmt;
         if (payment.has("reversedPaymentId")) {
-          tempWriteoffAmt = BigDecimal.ZERO;
+          tempWriteoffAmt = BigDecimal.valueOf(payment.optDouble("overpayment", 0));
         } else if (tempWriteoffAmt.compareTo(BigDecimal.ZERO) != 0
             && paymentType.getPaymentMethod().getOverpaymentLimit() != null
             && tempWriteoffAmt.abs()
@@ -1374,7 +1376,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
         processPayments(paymentSchedule, order, posTerminal, paymentType, payment, tempWriteoffAmt,
             jsonorder, account);
-        writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
+        if (!payment.has("reversedPaymentId")) {
+          writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
+        }
       }
     }
 
