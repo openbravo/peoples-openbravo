@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -1220,6 +1220,31 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
 .modalInvoices__footer {
   display: flex;
   border-top: 1px solid #cccccc;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.modalInvoices__footer--4 > .modalInvoices__footer--button {
+   width: 126px;
+}
+
+.modalInvoices__footer--5 > .modalInvoices__footer--button {
+   width: 112px;
+}
+
+.modalInvoices__footer--6 > .modalInvoices__footer--button {
+   width: 98px;
+}
+
+.modalInvoices__footer--button {
+   width: 140px;
+   text-overflow: ellipsis;
+   overflow: hidden;
+   white-space: nowrap;
+}
+
+.modalInvoices__footer--buttoncancel {
 }
 
 .buttonVoid {
@@ -1249,26 +1274,4 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
   flex-direction: row;
   justify-content: space-around;
   width: 100%;
-}
-
-.modalInvoices__footer--4 > .modalInvoices__footer--button {
-   width: 126px;
-}
-
-.modalInvoices__footer--5 > .modalInvoices__footer--button {
-   width: 112px;
-}
-
-.modalInvoices__footer--6 > .modalInvoices__footer--button {
-   width: 98px;
-}
-
-.modalInvoices__footer--button {
-   width: 140px;
-   text-overflow: ellipsis;
-   overflow: hidden;
-   white-space: nowrap;
-}
-
-.modalInvoices__footer--buttoncancel {
 }
