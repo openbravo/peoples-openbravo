@@ -203,10 +203,15 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",
           "ReportGeneralLedgerJournal|FactAcctGroupId");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", vars.getOrg());
+      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId",
+          "ReportGeneralLedger|cAcctSchemaId");
+      if (StringUtils.isEmpty(strcAcctSchemaId)) {
+        strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      }
       setHistoryCommand(request, "DIRECT2");
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
-      printPageDataSheet(response, vars, "", "", "", "", strOrg, "", "", strFactAcctGroupId, "", "",
-          "", "", "1", "1", "", "Y", "", "", "", "", "", "", "");
+      printPageDataSheet(response, vars, "", "", "", "", strOrg, "", "", strFactAcctGroupId,
+          strcAcctSchemaId, "", "", "", "1", "1", "", "Y", "", "", "", "", "", "", "");
     } else if (vars.commandIn("FIND")) {
       try {
         OBError msg = checkReportUsage(vars);
