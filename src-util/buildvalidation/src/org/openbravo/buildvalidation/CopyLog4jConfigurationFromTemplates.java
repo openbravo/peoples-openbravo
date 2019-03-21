@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,16 +25,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openbravo.base.ExecutionLimits;
-import org.openbravo.modulescript.OpenbravoVersion;
-
 /**
  * This script will be executed only when migrating from a version which still supports log4j 1.x
  * and copies all new configuration files from the template
  */
 public class CopyLog4jConfigurationFromTemplates extends BuildValidation {
 
-  private static final String CORE_MODULE_ID = "0";
   private static final String CONFIG_DIR = "/config/";
   private static final String TEST_SRC_DIR = "/src-test/src/";
   private static final String LOG4J_CONF_FILE = "log4j2.xml";
@@ -49,8 +45,8 @@ public class CopyLog4jConfigurationFromTemplates extends BuildValidation {
       copyFromTemplateFile(sourcePath + CONFIG_DIR + LOG4J_WEB_CONF_FILE);
       copyFromTemplateFile(sourcePath + TEST_SRC_DIR + LOG4J_TEST_CONF_FILE);
     } catch (Exception e) {
-      System.out
-          .println("Copy log4j config from templates failed: Log4j may not be properly configured. Please check your configuration files manually.");
+      System.out.println(
+          "Copy log4j config from templates failed: Log4j may not be properly configured. Please check your configuration files manually.");
     }
 
     return new ArrayList<>();
@@ -87,11 +83,6 @@ public class CopyLog4jConfigurationFromTemplates extends BuildValidation {
 
     System.out.println(String.format("Config folder not found: %s", configDir.toString()));
     throw new NoSuchFileException(configDir.toString());
-  }
-
-  @Override
-  protected ExecutionLimits getBuildValidationLimits() {
-    return new ExecutionLimits(CORE_MODULE_ID, null, new OpenbravoVersion(3, 0, 34826));
   }
 
 }
