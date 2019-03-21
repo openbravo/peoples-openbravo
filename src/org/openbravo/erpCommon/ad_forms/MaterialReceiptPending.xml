@@ -98,14 +98,14 @@
     <PARAMETER id="paramCalendar" name="paramColSpanCalendar" attribute="colspan" replace="xx"/>
     <PARAMETER id="paramIsUomEnabled" name="paramIsUomEnabled" attribute="value" replace="xx"/>
     
-    <FIELD id="fieldAumQty" attribute="value" format="euroEdition">aumqty</FIELD>
+    <FIELD id="fieldAumQty" attribute="value" format="qtyEdition">aumqty</FIELD>
     <FIELD id="fieldAumQty" attribute="name" replace="xx">id</FIELD>
     <FIELD id="fieldAumQty" attribute="onkeyup" replace="yy">id</FIELD>
     <FIELD id="fieldProductId" attribute="value">mProductId</FIELD>
     <FIELD id="fieldProductId" attribute="name" replace="xx">id</FIELD>
     <FIELD id="fieldUomId" attribute="value">cUomId</FIELD>
     <FIELD id="fieldUomId" attribute="name" replace="xx">id</FIELD>
-    <FIELD id="fieldHiddenQtyordered" attribute="value" format="euroEdition">qtyordered</FIELD>
+    <FIELD id="fieldHiddenQtyordered" attribute="value" format="qtyEdition">qtyordered</FIELD>
     <FIELD id="fieldHiddenQtyordered" attribute="name" replace="xx">id</FIELD>
     
     <SUBREPORT id="reportAUM_ID" name="reportAUM_ID" report="org/openbravo/erpCommon/reference/List">
