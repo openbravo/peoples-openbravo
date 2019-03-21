@@ -215,7 +215,6 @@ Under the MIT license (available at http://www.slf4j.org/license.html)
 # weld-api-3.1.Final.jar
 # weld-core-impl-3.1.0.Final.jar
 # weld-environment-common-3.1.0.Final.jar
-# weld-probe-core-3.1.0.Final.jar
 # weld-servlet-core-3.1.0.Final.jar
 # weld-spi-3.1.Final.jar
 # weld-web-3.1.0.Final.jar
