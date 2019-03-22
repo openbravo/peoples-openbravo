@@ -136,7 +136,7 @@ public class ActiveInstanceProcess implements Process {
                     + "where availableUpdate is not null or upgradeAvailable is not null")
                 .executeUpdate();
             log.info(
-                "Module maturity for updats and search set to Confirmed Stable. Reset {} module available updates.",
+                "Module maturity for update and search set to Confirmed Stable. Reset {} module available updates.",
                 modUpdatesReset);
           }
 
