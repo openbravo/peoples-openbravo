@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -163,16 +163,19 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
       data = getData(parameters, startRow, selectedRecords);
       parameters.put(NEW_END_ROW, Integer.toString(selectedRecords));
     } else {
-      data = getData(parameters, startRow, endRow);
-      while (isLastRecordSelected(data) && pageSizeIncreaseCount < MAX_PAGE_SIZE_INCREASE) {
+      int currentEndRow = endRow;
+      data = getData(parameters, startRow, currentEndRow);
+      while (data.size() > currentEndRow - startRow && isLastRecordSelected(data)
+          && pageSizeIncreaseCount < MAX_PAGE_SIZE_INCREASE) {
         pageSizeIncreaseCount++;
         log.debug(
             "The amount of selected records is higher than the page size, increasing page size x{}",
             pageSizeIncreaseCount + 1);
-        data = getData(parameters, startRow, endRow * (pageSizeIncreaseCount + 1));
+        currentEndRow = endRow * (pageSizeIncreaseCount + 1);
+        data = getData(parameters, startRow, currentEndRow);
       }
       if (pageSizeIncreaseCount >= 1) {
-        parameters.put(NEW_END_ROW, Integer.toString(endRow * (pageSizeIncreaseCount + 1)));
+        parameters.put(NEW_END_ROW, Integer.toString(currentEndRow));
         if (pageSizeIncreaseCount == MAX_PAGE_SIZE_INCREASE) {
           log.warn("The amount of selected records is higher than the maximum page size allowed.");
         }
