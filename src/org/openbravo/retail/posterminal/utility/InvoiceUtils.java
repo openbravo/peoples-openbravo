@@ -48,7 +48,6 @@ import org.openbravo.model.common.invoice.InvoiceLineOffer;
 import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
-import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
@@ -591,7 +590,7 @@ public class InvoiceUtils {
         finalSettlementDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();
       }
       // Do not consider as paid amount if the payment is in a not valid status
-      boolean invoicePaidAmounts = isPaidStatus(psd.getPaymentDetails().getFinPayment());
+      boolean invoicePaidAmounts = POSUtils.isPaidStatus(psd.getPaymentDetails().getFinPayment());
 
       int amtSign = amtToDistribute.signum();
       FIN_PaymentScheduleDetail reversalPSD = null;
@@ -999,11 +998,6 @@ public class InvoiceUtils {
       }
     }
     return calculatedDueDate.getTime();
-  }
-
-  private boolean isPaidStatus(FIN_Payment payment) {
-    return FIN_Utility.seqnumberpaymentstatus(payment.getStatus()) >= FIN_Utility
-        .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment));
   }
 
   private String getDummyDocumentNo() {

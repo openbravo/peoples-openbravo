@@ -25,6 +25,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.KernelUtils;
@@ -45,6 +46,7 @@ import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
@@ -831,6 +833,11 @@ public class POSUtils {
       throw new OBException(errorMsg);
     }
     return result;
+  }
+
+  public static boolean isPaidStatus(FIN_Payment payment) {
+    return FIN_Utility.seqnumberpaymentstatus(payment.getStatus()) >= FIN_Utility
+        .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment));
   }
 
   public static boolean cashupErrorsExistInTerminal(String posId) {

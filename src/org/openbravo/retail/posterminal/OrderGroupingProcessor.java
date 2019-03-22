@@ -420,7 +420,8 @@ public class OrderGroupingProcessor {
     FIN_PaymentSchedule ps = invoice.getFINPaymentScheduleList().get(0);
     for (FIN_PaymentScheduleDetail psd : ps
         .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-      if (psd.getPaymentDetails() != null) {
+      if (psd.getPaymentDetails() != null
+          && POSUtils.isPaidStatus(psd.getPaymentDetails().getFinPayment())) {
         totalPaid = totalPaid.add(psd.getAmount());
       }
     }
