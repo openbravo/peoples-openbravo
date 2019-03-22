@@ -557,13 +557,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
       }
       JSONObject jsonOrderLine = orderlines.getJSONObject(i);
       String attr = null;
-      if (jsonOrderLine.has("attSetInstanceDesc")) {
-        attr = jsonOrderLine.get("attSetInstanceDesc").toString();
-      } else if (jsonOrderLine.has("attributeValue")) {
-        attr = jsonOrderLine.get("attributeValue").toString();
-      }
-      if (StringUtils.equals(attr, "null")) {
-        attr = null;
+      if (jsonOrderLine.has("attSetInstanceDesc")
+          && !StringUtils.equals(jsonOrderLine.getString("attSetInstanceDesc"), "null")) {
+        attr = jsonOrderLine.getString("attSetInstanceDesc");
+      } else if (jsonOrderLine.has("attributeValue")
+          && !StringUtils.equals(jsonOrderLine.getString("attributeValue"), "null")) {
+        attr = jsonOrderLine.getString("attributeValue");
       }
       orderline.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(attr,
           jsonOrderLine.getJSONObject("product").get("id").toString(),
