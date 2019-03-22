@@ -821,10 +821,12 @@
                 OB.MobileApp.view.waterfall('calculatedReceipt');
                 me.trigger('calculatedReceipt');
                 OB.UTIL.ProcessController.finish('calculateReceipt', execution);
-                me.trigger('updatePending');
-                if (callback && callback instanceof Function) {
-                  callback();
-                }
+                me.getPrepaymentAmount(function () {
+                  me.trigger('updatePending');
+                  if (callback && callback instanceof Function) {
+                    callback();
+                  }
+                });
                 };
             if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
               var calculateReceiptCallbacks = me.get('calculateReceiptCallbacks').slice(0);
@@ -974,7 +976,7 @@
       return isNegative;
     },
 
-    getPrepaymentAmount: function (callback) {
+    getPrepaymentAmount: function (callback, ignorePanel) {
       var me = this,
           total = this.getTotal();
 
@@ -987,6 +989,14 @@
           callback();
         }
       }
+
+      if (!ignorePanel && OB.MobileApp.model.get('lastPaneShown') !== 'payment') {
+        if (callback instanceof Function) {
+          callback();
+        }
+        return;
+      }
+
       //Execute the Prepayments Algorithm only if the receipt is a normal ticket or a layaway
       //Otherwise return the total of the receipt so the prepayments logic is not taken into account
       if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && OB.MobileApp.model.get('terminal').prepaymentAlgorithm && me.get('lines').length > 0) {

@@ -489,7 +489,7 @@ enyo.kind({
             me.model.get('order').getPrepaymentAmount(function () {
               me.model.off('showPaymentTab');
               me.showPaymentTab();
-            });
+            }, true);
           });
 
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
