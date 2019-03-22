@@ -169,15 +169,17 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
           && pageSizeIncreaseCount < MAX_PAGE_SIZE_INCREASE) {
         pageSizeIncreaseCount++;
         log.debug(
-            "The amount of selected records is higher than the page size, increasing page size x{}",
-            pageSizeIncreaseCount + 1);
+            "The amount of selected records is higher than the page size, increasing page size x{}. Tab: {}.",
+            pageSizeIncreaseCount + 1, parameters.get(JsonConstants.TAB_PARAMETER));
         currentEndRow = endRow * (pageSizeIncreaseCount + 1);
         data = getData(parameters, startRow, currentEndRow);
       }
       if (pageSizeIncreaseCount >= 1) {
         parameters.put(NEW_END_ROW, Integer.toString(currentEndRow));
         if (pageSizeIncreaseCount == MAX_PAGE_SIZE_INCREASE) {
-          log.warn("The amount of selected records is higher than the maximum page size allowed.");
+          log.warn(
+              "The amount of selected records is higher than the maximum page size allowed. Tab: {}.",
+              parameters.get(JsonConstants.TAB_PARAMETER));
         }
       }
     }
@@ -185,7 +187,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
   }
 
   private boolean isLastRecordSelected(List<Map<String, Object>> data) {
-    if (data.size() == 0) {
+    if (data.isEmpty()) {
       return false;
     }
     Boolean isLastRecordSelected = Boolean.FALSE;
