@@ -816,10 +816,10 @@
                 OB.UTIL.ProcessController.finish('calculateReceipt', execution);
                 me.getPrepaymentAmount(function () {
                   me.trigger('updatePending');
+                  if (callback && callback instanceof Function) {
+                    callback();
+                  }
                 });
-                if (callback && callback instanceof Function) {
-                  callback();
-                }
                 };
             if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
               var calculateReceiptCallbacks = me.get('calculateReceiptCallbacks').slice(0);
