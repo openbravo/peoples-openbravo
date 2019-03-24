@@ -106,6 +106,8 @@ public class ProductProperties extends ModelExtension {
       throw new OBException("terminal id is not present in session ");
     }
 
+    String assortmentId = posDetail.getOrganization().getObretcoProductlist().getId();
+
     ArrayList<HQLProperty> list = null;
     try {
       list = new ArrayList<HQLProperty>() {
@@ -169,6 +171,18 @@ public class ProductProperties extends ModelExtension {
             if (multiPriceList) {
               add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
             }
+            add(new HQLProperty("case when pli.obretcoProductlist.id <> '" + assortmentId
+                + "' then true else false end", "crossStore"));
+            add(new HQLProperty(
+                "case when 1 = (select 1 from PricingPriceListVersion plv "
+                    + "where plv.id = ppp.priceListVersion.id "
+                    + "and exists (select 1 from OBRETCO_Prol_Product prol "
+                    + " inner join prol.product p inner join p.pricingProductPriceList ppl "
+                    + " where prol.product.id = product.id "
+                    + " and prol.obretcoProductlist.id IN :productListIds "
+                    + " and ppl.priceListVersion.id <> plv.id)) then true else false end",
+                "crossStorePrice"));
+
           } catch (PropertyNotFoundException e) {
             if (OBContext.hasTranslationInstalled()) {
               trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
