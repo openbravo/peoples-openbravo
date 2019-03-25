@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -90,23 +90,25 @@ public class ProductProperties extends ModelExtension {
 
     OBPOSApplications posDetail = null;
     Boolean localmultiPriceList = false;
+    Boolean localCrossStoreSearch = false;
     try {
       if (params != null) {
         @SuppressWarnings("unchecked")
         HashMap<String, Object> localParams = (HashMap<String, Object>) params;
-        localmultiPriceList = (Boolean) localParams.get("multiPriceList");
         posDetail = POSUtils.getTerminalById((String) localParams.get("terminalId"));
+        localmultiPriceList = (Boolean) localParams.get("multiPriceList");
+        localCrossStoreSearch = (Boolean) localParams.get("crossStoreSearch");
       }
     } catch (Exception e) {
       log.error("Error getting params: " + e.getMessage(), e);
     }
+
     final boolean multiPriceList = localmultiPriceList;
+    final boolean crossStoreSearch = localCrossStoreSearch;
 
     if (posDetail == null) {
       throw new OBException("terminal id is not present in session ");
     }
-
-    String assortmentId = posDetail.getOrganization().getObretcoProductlist().getId();
 
     ArrayList<HQLProperty> list = null;
     try {
@@ -171,8 +173,11 @@ public class ProductProperties extends ModelExtension {
             if (multiPriceList) {
               add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
             }
-            add(new HQLProperty("case when pli.obretcoProductlist.id <> '" + assortmentId
-                + "' then true else false end", "crossStore"));
+            if (crossStoreSearch) {
+              add(new HQLProperty(
+                  "case when pli.obretcoProductlist.id <> :currentProductListId then true else false end",
+                  "crossStore"));
+            }
             add(new HQLProperty(
                 "case when 1 = (select 1 from PricingPriceListVersion plv "
                     + "where plv.id = ppp.priceListVersion.id "

@@ -115,6 +115,14 @@ public class Product extends ProcessHQLQuery {
       log.error("Error while getting terminalId " + e.getMessage(), e);
     }
 
+    try {
+      boolean crossStoreSearch = jsonsent.has("remoteParams")
+          && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
+      args.put("crossStoreSearch", crossStoreSearch);
+    } catch (JSONException e) {
+      log.error("Error while getting crossStoreSearch " + e.getMessage(), e);
+    }
+
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions, args);
     HQLPropertyList regularProductsDiscHQLProperties = ModelExtensionUtils
@@ -165,6 +173,7 @@ public class Product extends ProcessHQLQuery {
       final boolean crossStoreSearch = jsonsent.has("remoteParams")
           && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
       final Set<String> orgIds = POSUtils.getOrgListCrossStore(posId, crossStoreSearch);
+      final String currentProductListId = POSUtils.getProductListByPosterminalId(posId).getId();
       final Set<String> productListIds = POSUtils.getProductListCrossStore(posId, crossStoreSearch);
       final Set<String> priceListVersionIds = POSUtils.getPriceListVersionCrossStore(posId,
           terminalDate, crossStoreSearch);
@@ -177,6 +186,7 @@ public class Product extends ProcessHQLQuery {
                 jsonsent.getJSONObject("remoteParams").getString("currentPriceList"), terminalDate)
                 .getId());
       }
+      paramValues.put("currentProductListId", currentProductListId);
       paramValues.put("productListIds", productListIds);
       paramValues.put("priceListVersionIds", priceListVersionIds);
       paramValues.put("endingDate", now.getTime());
@@ -289,6 +299,14 @@ public class Product extends ProcessHQLQuery {
       args.put("terminalId", jsonsent.getString("pos"));
     } catch (JSONException e) {
       log.error("Error while getting terminalId " + e.getMessage(), e);
+    }
+
+    try {
+      boolean crossStoreSearch = jsonsent.has("remoteParams")
+          && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
+      args.put("crossStoreSearch", crossStoreSearch);
+    } catch (JSONException e) {
+      log.error("Error while getting crossStoreSearch " + e.getMessage(), e);
     }
 
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils
@@ -437,11 +455,13 @@ public class Product extends ProcessHQLQuery {
       final boolean crossStoreSearch = jsonsent.has("remoteParams")
           && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
       final Set<String> orgIds = POSUtils.getOrgListCrossStore(posId, crossStoreSearch);
+      final String currentProductListId = POSUtils.getProductListByPosterminalId(posId).getId();
       final Set<String> productListIds = POSUtils.getProductListCrossStore(posId, crossStoreSearch);
       final Set<String> priceListVersionIds = POSUtils.getPriceListVersionCrossStore(posId,
           terminalDate, crossStoreSearch);
 
       Map<String, Object> paramValues = new HashMap<>();
+      paramValues.put("currentProductListId", currentProductListId);
       paramValues.put("productListIds", productListIds);
       paramValues.put("orgIds", orgIds);
       paramValues.put("priceListVersionIds", priceListVersionIds);
