@@ -1105,7 +1105,7 @@ enyo.kind({
     var product = this.owner.owner.line.get('product');
     var params = {};
     //show always or just when the product has been set to show stock screen?
-    if (product.get('productType') === 'I' && !product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
+    if ((product.get('productType') === 'I' && !product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) || product.get('crossStore')) {
       params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
       params.product = product;
       params.line = line;
