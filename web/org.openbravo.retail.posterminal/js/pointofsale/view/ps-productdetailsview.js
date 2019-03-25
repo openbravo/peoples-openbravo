@@ -286,7 +286,7 @@ enyo.kind({
   getStoreStock: function (params) {
     var me = this;
     this.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
-    this.bodyComponent.$.stockHere.setDisabled(me.product.get('crossStore'));
+    this.bodyComponent.$.stockHere.setDisabled(OB.UTIL.isCrossStoreProduct(me.product));
     this.bodyComponent.$.productAddToReceipt.setDisabled(true);
     OB.UTIL.StockUtils.getReceiptLineStock(me.product.get('id'), undefined, function (data) {
       if (data && data.exception) {
