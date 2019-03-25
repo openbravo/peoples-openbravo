@@ -1487,29 +1487,13 @@ enyo.kind({
   style: 'width: 85%; max-width: 125px; float: right; margin: 5px 5px 10px 0px; height: 2.5em; display:block; clear: right; font-weight: normal; padding: 0px',
   processdisabled: false,
   localdisabled: false,
+  disabled: false,
+  isLocked: true,
+  lastDisabledStatus: true,
   setLocalDisabled: function (value) {
     this.localdisabled = value;
     this.setDisabled(this.processdisabled || this.localdisabled);
   },
-  initComponents: function () {
-    var me = this;
-    this.inherited(arguments);
-    OB.POS.EventBus.on('UI_Enabled', function (state) {
-      me.processdisabled = !state;
-      me.setDisabled(me.processdisabled || me.localdisabled);
-    });
-    me.processdisabled = !OB.POS.EventBus.isProcessEnabled();
-    me.setDisabled(me.processdisabled || me.localdisabled);
-  }
-});
-
-enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.DoneButton',
-  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
-  drawerOpened: true,
-  isLocked: true,
-  lastDisabledStatus: true,
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'updatePending', 'updatePendingMultiOrders', 'cancelLayaway', 'paymentDone', 'tapDoneButton'],
   disableButton: function () {
     this.isLocked = true;
     this.setDisabledIfSynchronized();
@@ -1537,6 +1521,23 @@ enyo.kind({
     this.disabled = value; // for getDisabled() to return the correct value
     this.setAttribute('disabled', value); // to effectively turn the button enabled or disabled    
   },
+  initComponents: function () {
+    var me = this;
+    this.inherited(arguments);
+    OB.POS.EventBus.on('UI_Enabled', function (state) {
+      me.processdisabled = !state;
+      me.setDisabled(me.processdisabled || me.localdisabled);
+    });
+    me.processdisabled = !OB.POS.EventBus.isProcessEnabled();
+    me.setDisabled(me.processdisabled || me.localdisabled);
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.DoneButton',
+  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
+  drawerOpened: true,
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'cancelLayaway', 'paymentDone', 'tapDoneButton'],
   init: function (model) {
     this.model = model;
     this.setDisabledIfSynchronized();
@@ -1846,6 +1847,7 @@ enyo.kind({
   },
   classes: 'btn-icon-adaptative btnlink-green',
   style: 'width: calc(50% - 5px); margin: 0px 5px 0px 0px; clear: unset',
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders'],
   tap: function () {
     if (this.disabled) {
       return true;
@@ -1869,6 +1871,7 @@ enyo.kind({
   },
   classes: 'btn-icon-adaptative btnlink-green',
   style: 'width: calc(50% - 5px); margin: 0px 0px 0px 5px;',
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders'],
   tap: function () {
     if (this.disabled) {
       return true;
@@ -1891,6 +1894,7 @@ enyo.kind({
     onExactPayment: ''
   },
   classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders'],
   tap: function () {
     if (this.disabled) {
       return true;
@@ -2097,40 +2101,10 @@ enyo.kind({
   i18nLabel: 'OBPOS_LblSellOnCredit',
   classes: 'btn-icon-small btnlink-green',
   permission: 'OBPOS_receipt.creditsales',
-  disabled: false,
-  isLocked: true,
-  lastDisabledStatus: true,
   events: {
     onShowPopup: ''
   },
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'updatePending', 'updatePendingMultiOrders', 'payOnCredit', 'paymentDone'],
-  disableButton: function () {
-    this.isLocked = true;
-    this.setDisabledIfSynchronized();
-  },
-  enableButton: function () {
-    this.isLocked = false;
-    this.setDisabledIfSynchronized();
-  },
-  setDisabled: function (value) {
-    this.lastDisabledStatus = value;
-    if (value) {
-      this.disableButton();
-    } else {
-      this.enableButton();
-    }
-  },
-  setDisabledIfSynchronized: function () {
-    var value = this.lastDisabledStatus || this.isLocked || false;
-    if (this.isLocked) {
-      value = true;
-    }
-    if (OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length > 0 && !value) {
-      return true;
-    }
-    this.disabled = value;
-    this.setAttribute('disabled', value);
-  },
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'payOnCredit', 'paymentDone'],
   init: function (model) {
     this.model = model;
   },
@@ -2247,10 +2221,7 @@ enyo.kind({
   content: '',
   classes: 'btn-icon-small btnlink-green',
   permission: 'OBPOS_receipt.layawayReceipt',
-  disabled: false,
-  isLocked: true,
-  lastDisabledStatus: true,
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'updatePending', 'updatePendingMultiOrders', 'paymentDone'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'paymentDone'],
   updateVisibility: function (isVisible) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {
       this.hide();
@@ -2261,33 +2232,6 @@ enyo.kind({
       return;
     }
     this.show();
-  },
-  disableButton: function () {
-    this.isLocked = true;
-    this.setDisabledIfSynchronized();
-  },
-  enableButton: function () {
-    this.isLocked = false;
-    this.setDisabledIfSynchronized();
-  },
-  setDisabled: function (value) {
-    this.lastDisabledStatus = value;
-    if (value) {
-      this.disableButton();
-    } else {
-      this.enableButton();
-    }
-  },
-  setDisabledIfSynchronized: function () {
-    var value = this.lastDisabledStatus || this.isLocked || false;
-    if (this.isLocked) {
-      value = true;
-    }
-    if (OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length > 0 && !value) {
-      return true;
-    }
-    this.disabled = value;
-    this.setAttribute('disabled', value);
   },
   init: function (model) {
     this.model = model;
