@@ -4239,6 +4239,8 @@
           line.set('replacedorderline', line.get('id'));
           line.set('id', idMap[line.get('id')]);
           line.unset('invoicedQuantity');
+          line.unset('grossUnitPrice');
+          line.unset('lineGrossAmount');
           line.set('obposCanbedelivered', true);
           line.set('obposIspaid', false);
         });
