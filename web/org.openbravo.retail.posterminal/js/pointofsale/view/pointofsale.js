@@ -1279,13 +1279,13 @@ enyo.kind({
   },
   selectMultiOrders: function (inSender, inEvent) {
     var me = this;
+    me.model.get('leftColumnViewManager').setMultiOrderMode();
     me.model.get('multiOrders').get('multiOrdersList').reset();
     _.each(inEvent.value, function (iter) {
       //iter.set('isMultiOrder', true);
       iter.set('belongsToMultiOrder', true);
       me.model.get('multiOrders').get('multiOrdersList').add(iter);
     });
-    this.model.get('leftColumnViewManager').setMultiOrderMode();
     OB.UTIL.HookManager.executeHooks('OBPOS_hookPostMultiOrder', {
       context: me,
       multiOrdersList: me.model.get('multiOrders').get('multiOrdersList')
