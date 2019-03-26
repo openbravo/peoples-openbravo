@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2017 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2019 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -52,6 +52,7 @@
     CUR_PL_Post RECORD;
   -- Parameter Variables
   MustBeStocked CHAR(1) ;
+  forceUseOfWHOfSelectedLocator CHAR(1) ;
   v_IsCreated CHAR(1) ;
   v_Processed VARCHAR2(60) ;
   v_Client_ID VARCHAR2(32);
@@ -102,6 +103,9 @@ BEGIN --BODY
     IF (Cur_Parameter.ParameterName = 'MustBeStocked') THEN
       MustBeStocked:=Cur_Parameter.P_String;
       DBMS_OUTPUT.PUT_LINE('  MustBeStocked=' || MustBeStocked) ;
+    ELSIF (Cur_Parameter.ParameterName = 'ForceUseOfWHOfSelectedLocator') THEN
+      forceUseOfWHOfSelectedLocator := Cur_Parameter.P_String;
+      DBMS_OUTPUT.PUT_LINE('  forceUseOfWHOfSelectedLocator=' || forceUseOfWHOfSelectedLocator) ;
     ELSE
       DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
     END IF;
@@ -254,7 +258,11 @@ BEGIN --BODY
               v_pinstance_msg AD_PInstance.errormsg%TYPE;
             BEGIN
               v_pinstance_id := get_uuid();
-             M_GET_STOCK_PARAM(v_pinstance_id, v_record_id, null, v_Product_old, null, null, v_Warehouse_old, cur_bom.org_id, null, p_user, v_client_id, null, v_UOM_old, null, null, null, 10, '137', null, 'N', v_pinstance_result, v_pinstance_msg, 'Y', null, null);
+              IF (forceUseOfWHOfSelectedLocator = 'Y') THEN
+                M_GET_STOCK_PARAM(v_pinstance_id, v_record_id, null, v_Product_old, null, v_Warehouse_old, null, cur_bom.org_id, null, p_user, v_client_id, null, v_UOM_old, null, null, null, 10, '137', null, 'N', v_pinstance_result, v_pinstance_msg, 'Y', null, null);
+              ELSE
+                M_GET_STOCK_PARAM(v_pinstance_id, v_record_id, null, v_Product_old, null, null, v_Warehouse_old, cur_bom.org_id, null, p_user, v_client_id, null, v_UOM_old, null, null, null, 10, '137', null, 'N', v_pinstance_result, v_pinstance_msg, 'Y', null, null);
+              END IF;
               -- Check result
               IF (v_pinstance_result = 0) THEN
                 -- Error on m_get_stock
