@@ -39,6 +39,18 @@ public class ProductProperties extends ModelExtension {
 
     List<HQLProperty> list = ProductProperties.getMainProductHQLProperties(params);
 
+    Boolean localCrossStore = false;
+    try {
+      if (params != null) {
+        @SuppressWarnings("unchecked")
+        HashMap<String, Object> localParams = (HashMap<String, Object>) params;
+        localCrossStore = (Boolean) localParams.get("crossStore");
+      }
+    } catch (Exception e) {
+      log.error("Error getting params: " + e.getMessage(), e);
+    }
+    final boolean crossStore = localCrossStore;
+
     list.addAll(new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
       {
@@ -58,8 +70,13 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("img.id", "imgId"));
           add(new HQLProperty("img.mimetype", "mimetype"));
         }
-        add(new HQLProperty("pli.bestseller", "bestseller"));
-        add(new HQLProperty("pli.productStatus.id", "productAssortmentStatus"));
+        if (crossStore) {
+          add(new HQLProperty("false", "bestseller"));
+          add(new HQLProperty("false", "productAssortmentStatus"));
+        } else {
+          add(new HQLProperty("pli.bestseller", "bestseller"));
+          add(new HQLProperty("pli.productStatus.id", "productAssortmentStatus"));
+        }
         add(new HQLProperty("product.obposEditablePrice", "obposEditablePrice"));
         add(new HQLProperty("'false'", "ispack"));
         add(new HQLProperty("ppp.listPrice", "listPrice"));
@@ -70,9 +87,15 @@ public class ProductProperties extends ModelExtension {
         if (ProductPrice.hasProperty("algorithm") == true) {
           add(new HQLProperty("ppp.algorithm", "algorithm"));
         }
-        add(new HQLProperty(
-            "case when product.active = 'Y' and pli.active is not null then pli.active else product.active end",
-            "active"));
+        if (crossStore) {
+          add(new HQLProperty(
+              "case when product.active = 'Y' and pli.active is not null then pli.active else product.active end",
+              "active"));
+        } else {
+          add(new HQLProperty(
+              "case when product.active = 'Y' and pli.active is not null then pli.active else product.active end",
+              "active"));
+        }
         add(new HQLProperty(
             "(select case when atri.id is not null then true else false end from Product as prod left join prod.attributeSet as atri where prod.id = product.id)",
             "hasAttributes"));
@@ -90,21 +113,21 @@ public class ProductProperties extends ModelExtension {
 
     OBPOSApplications posDetail = null;
     Boolean localmultiPriceList = false;
-    Boolean localCrossStoreSearch = false;
+    Boolean localCrossStore = false;
     try {
       if (params != null) {
         @SuppressWarnings("unchecked")
         HashMap<String, Object> localParams = (HashMap<String, Object>) params;
         posDetail = POSUtils.getTerminalById((String) localParams.get("terminalId"));
         localmultiPriceList = (Boolean) localParams.get("multiPriceList");
-        localCrossStoreSearch = (Boolean) localParams.get("crossStoreSearch");
+        localCrossStore = (Boolean) localParams.get("crossStore");
       }
     } catch (Exception e) {
       log.error("Error getting params: " + e.getMessage(), e);
     }
 
     final boolean multiPriceList = localmultiPriceList;
-    final boolean crossStoreSearch = localCrossStoreSearch;
+    final boolean crossStore = localCrossStore;
 
     if (posDetail == null) {
       throw new OBException("terminal id is not present in session ");
@@ -173,21 +196,13 @@ public class ProductProperties extends ModelExtension {
             if (multiPriceList) {
               add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
             }
-            if (crossStoreSearch) {
+            if (crossStore) {
               add(new HQLProperty(
                   "case when pli.obretcoProductlist.id <> :currentProductListId then true else false end",
                   "crossStore"));
+            } else {
+              add(new HQLProperty("false", "crossStore"));
             }
-            add(new HQLProperty(
-                "case when 1 = (select 1 from PricingPriceListVersion plv "
-                    + "where plv.id = ppp.priceListVersion.id "
-                    + "and exists (select 1 from OBRETCO_Prol_Product prol "
-                    + " inner join prol.product p inner join p.pricingProductPriceList ppl "
-                    + " where prol.product.id = product.id "
-                    + " and prol.obretcoProductlist.id IN :productListIds "
-                    + " and ppl.priceListVersion.id <> plv.id)) then true else false end",
-                "crossStorePrice"));
-
           } catch (PropertyNotFoundException e) {
             if (OBContext.hasTranslationInstalled()) {
               trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
