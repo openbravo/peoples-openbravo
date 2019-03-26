@@ -4206,6 +4206,9 @@
       OB.UTIL.clone(me, clonedreceipt);
 
       OB.Dal.remove(this, function () {
+        OB.MobileApp.model.orderList.remove(me, {
+          silent: true
+        });
         var deliveredLine, linesWithDeferred = [];
 
         me.preventOrderSave(true);
@@ -4324,6 +4327,9 @@
             me.unset('preventServicesUpdate');
             me.preventOrderSave(false);
             me.save();
+            OB.MobileApp.model.orderList.unshift(me, {
+              silent: true
+            });
           });
         });
         // Set the last line as selected to call the 'onRearrangeEditButtonBar' event and update the isEditable and
@@ -4404,6 +4410,9 @@
                   var clonedReceipt = new OB.Model.Order();
                   OB.UTIL.clone(me, clonedReceipt);
                   OB.Dal.remove(me, function () {
+                    OB.MobileApp.model.orderList.remove(me, {
+                      silent: true
+                    });
                     var idMap = {};
                     me.set('skipCalculateReceipt', true);
                     me.preventOrderSave(true);
@@ -4488,6 +4497,9 @@
                         me.unset('preventServicesUpdate');
                         me.preventOrderSave(false);
                         me.save();
+                        OB.MobileApp.model.orderList.unshift(me, {
+                          silent: true
+                        });
                         OB.MobileApp.model.orderList.saveCurrent();
                         me.trigger('updatePending', true);
                         // Finally change to the payments tab
