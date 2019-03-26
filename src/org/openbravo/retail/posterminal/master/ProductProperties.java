@@ -71,31 +71,50 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("img.mimetype", "mimetype"));
         }
         if (crossStore) {
-          add(new HQLProperty("false", "bestseller"));
-          add(new HQLProperty("false", "productAssortmentStatus"));
+          add(new HQLProperty(
+              "(select case when min (bestseller) = max (bestseller) then min (bestseller) else 'N' end from OBRETCO_Prol_Product pli where pli.product.id = product.id and pli.obretcoProductlist.id in :productListIds)",
+              "bestseller"));
+          add(new HQLProperty(
+              "(select case when min (pli.productStatus.id) = max (pli.productStatus.id) then min (pli.productStatus.id) else null end from OBRETCO_Prol_Product pli where pli.product.id = product.id and pli.obretcoProductlist.id in :productListIds)",
+              "productAssortmentStatus"));
+          add(new HQLProperty(
+              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.listPrice) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :priceListVersionIds)",
+              "listPrice"));
+          add(new HQLProperty(
+              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.standardPrice) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :priceListVersionIds)",
+              "standardPrice"));
+          add(new HQLProperty(
+              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.priceLimit) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :priceListVersionIds)",
+              "priceLimit"));
+          add(new HQLProperty(
+              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.cost) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :priceListVersionIds)",
+              "cost"));
+          Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
+          if (ProductPrice.hasProperty("algorithm") == true) {
+            add(new HQLProperty(
+                "(select case when min(ppp.id) = max (ppp.id) then min(ppp.algorithm) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :priceListVersionIds)",
+                "algorithm"));
+          }
+          add(new HQLProperty(
+              "(select case when min (pli.active) = max (pli.active) and min (pli.active) is not null and product.active = 'Y' then min (pli.active) else product.active end from OBRETCO_Prol_Product pli where product.id = pli.product.id and pli.obretcoProductlist.id in :productListIds)",
+              "active"));
         } else {
           add(new HQLProperty("pli.bestseller", "bestseller"));
           add(new HQLProperty("pli.productStatus.id", "productAssortmentStatus"));
+          add(new HQLProperty("ppp.listPrice", "listPrice"));
+          add(new HQLProperty("ppp.standardPrice", "standardPrice"));
+          add(new HQLProperty("ppp.priceLimit", "priceLimit"));
+          add(new HQLProperty("ppp.cost", "cost"));
+          Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
+          if (ProductPrice.hasProperty("algorithm") == true) {
+            add(new HQLProperty("ppp.algorithm", "algorithm"));
+          }
+          add(new HQLProperty(
+              "case when product.active = 'Y' and pli.active is not null then pli.active else product.active end",
+              "active"));
         }
         add(new HQLProperty("product.obposEditablePrice", "obposEditablePrice"));
         add(new HQLProperty("'false'", "ispack"));
-        add(new HQLProperty("ppp.listPrice", "listPrice"));
-        add(new HQLProperty("ppp.standardPrice", "standardPrice"));
-        add(new HQLProperty("ppp.priceLimit", "priceLimit"));
-        add(new HQLProperty("ppp.cost", "cost"));
-        Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
-        if (ProductPrice.hasProperty("algorithm") == true) {
-          add(new HQLProperty("ppp.algorithm", "algorithm"));
-        }
-        if (crossStore) {
-          add(new HQLProperty(
-              "case when product.active = 'Y' and pli.active is not null then pli.active else product.active end",
-              "active"));
-        } else {
-          add(new HQLProperty(
-              "case when product.active = 'Y' and pli.active is not null then pli.active else product.active end",
-              "active"));
-        }
         add(new HQLProperty(
             "(select case when atri.id is not null then true else false end from Product as prod left join prod.attributeSet as atri where prod.id = product.id)",
             "hasAttributes"));
@@ -196,13 +215,7 @@ public class ProductProperties extends ModelExtension {
             if (multiPriceList) {
               add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
             }
-            if (crossStore) {
-              add(new HQLProperty(
-                  "case when pli.obretcoProductlist.id <> :currentProductListId then true else false end",
-                  "crossStore"));
-            } else {
-              add(new HQLProperty("false", "crossStore"));
-            }
+            add(new HQLProperty(String.valueOf(crossStore), "crossStore"));
           } catch (PropertyNotFoundException e) {
             if (OBContext.hasTranslationInstalled()) {
               trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
