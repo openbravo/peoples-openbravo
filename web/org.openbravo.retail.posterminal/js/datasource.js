@@ -42,6 +42,9 @@ OB.DS.HWServer = function (urllist, url, scaleurl) {
   this.setActiveURL(OB.UTIL.localStorage.getItem('hw_activeurl'));
   //load activepdfurl from OB.UTIL.localStorage
   this.setActivePDFURL(OB.UTIL.localStorage.getItem('hw_activepdfurl'));
+
+  // Bluetooth
+  this.bltprinter = new OB.BluetoothPrinter();
 };
 
 OB.DS.HWServer.PRINTER = 0;
@@ -413,6 +416,32 @@ OB.DS.HWServer.prototype._template = function (templatedata, params) {
   return params ? _.template(templatedata, params) : templatedata;
 };
 
+
+OB.DS.HWServer.prototype.confirm = function (title, message) {
+  return new Promise(function (resolve, reject) {
+    OB.UTIL.showConfirmation.display(title, message, [{
+      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+      action: resolve
+    }], {
+      onHideFunction: reject
+    });
+  });
+};
+
+OB.DS.HWServer.prototype._sendBluetooth = function (data) {
+  var ok = false;
+
+  if (this.bltprinter.bluetooth.device) {
+    return this.bltprinter.print(data);
+  } else {
+    return this.confirm(OB.I18N.getLabel('OBPOS_Bluetooth'), OB.I18N.getLabel('OBPOS_BluetoothPair')).then(function () {
+      return this.bltprinter.request();
+    }.bind(this)).then(function () {
+      return this.bltprinter.print(data);
+    }.bind(this));
+  }
+};
+
 OB.DS.HWServer.prototype._send = function (data, callback, device) {
 
   var sendurl;
@@ -421,6 +450,25 @@ OB.DS.HWServer.prototype._send = function (data, callback, device) {
     sendurl = this.mainurl;
   } else {
     // PRINTER and default is the active URL
+    if (OB.MobileApp.model.get('terminal').scaleurl === 'bluetooth') {
+      this._sendBluetooth(data, callback).then(function () {
+        if (callback) {
+          callback();
+        }
+      })['catch'](function (error) {
+        if (callback) {
+          callback({
+            data: data,
+            exception: {
+              message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
+            }
+          });
+        } else {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
+        }
+      });
+      return;
+    }
     sendurl = this.activeurl;
   }
 

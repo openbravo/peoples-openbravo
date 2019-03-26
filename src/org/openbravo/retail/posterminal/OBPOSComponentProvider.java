@@ -88,6 +88,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
                                                                                             // for
                                                                                             // Customer
                                                                                             // Address
+
+        "bluetooth/bluetooth",
+        "bluetooth/bluetoothprinter",
+        "bluetooth/escpos",
+
         "model/currencypanel", "model/country", "model/salesrepresentative",
         "model/discountset",
         "model/bpartnerset",
