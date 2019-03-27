@@ -204,7 +204,7 @@ public class Product extends ProcessHQLQuery {
                 .getId());
       }
       paramValues.put("currentProductListId", currentProductListId);
-      paramValues.put("productListIds", new HashSet<String>(productListIds));
+      paramValues.put("productListIds", new HashSet<>(productListIds));
       productListIds.remove(currentProductListId);
       paramValues.put("crossStoreProductListIds", productListIds);
       paramValues.put("priceListVersionId", priceListVersion.getId());
@@ -213,7 +213,9 @@ public class Product extends ProcessHQLQuery {
       paramValues.put("endingDate", now.getTime());
       paramValues.put("startingDate", now.getTime());
       paramValues.put("orgId", orgId);
-      paramValues.put("orgIds", orgIds);
+      paramValues.put("orgIds", new HashSet<>(orgIds));
+      orgIds.remove(orgId);
+      paramValues.put("crossStoreOrgIds", orgIds);
 
       return paramValues;
     } finally {
@@ -450,22 +452,22 @@ public class Product extends ProcessHQLQuery {
           hqlQuery.append("left outer join product.image img ");
         }
         hqlQuery.append("where $filtersCriteria");
-        hqlQuery.append(" and product.isGeneric = 'Y'");
-        hqlQuery.append(" and (product.$incrementalUpdateCriteria)");
+        hqlQuery.append("and product.isGeneric = 'Y'");
+        hqlQuery.append("and (product.$incrementalUpdateCriteria)");
+        hqlQuery.append("and exists (select 1 from PricingProductPrice ppp ");
+        hqlQuery.append(" where ppp.product.id = product.id ");
+        hqlQuery.append(" and ppp.priceListVersion.id in :crossStorePriceListVersionIds)");
+        hqlQuery.append("and exists (select 1 from Product product2 ");
+        hqlQuery.append(" where product.id = product2.genericProduct.id ");
         hqlQuery.append(" and exists (select 1 from PricingProductPrice ppp ");
-        hqlQuery.append("  where ppp.product.id = product.id ");
+        hqlQuery.append("  where ppp.product.id = product2.id ");
         hqlQuery.append("  and ppp.priceListVersion.id in :crossStorePriceListVersionIds)");
-        hqlQuery.append(" and exists (select 1 from Product product2 ");
-        hqlQuery.append("   where product.id = product2.genericProduct.id ");
-        hqlQuery.append("   and exists (select 1 from PricingProductPrice ppp ");
-        hqlQuery.append("    where ppp.product.id = product2.id ");
-        hqlQuery.append("    and ppp.priceListVersion.id in :crossStorePriceListVersionIds)");
-        hqlQuery.append("   and exists (select 1 from OBRETCO_Prol_Product pli ");
-        hqlQuery.append("    where pli.product.id = product2.id ");
-        hqlQuery.append("    and pli.obretcoProductlist.id = :crossStoreProductListIds)");
-        hqlQuery.append("   and not exists (select 1 from OBRETCO_Prol_Product pli ");
-        hqlQuery.append("    where pli.product.id = product2.id ");
-        hqlQuery.append("    and pli.obretcoProductlist.id = :currentProductListId)");
+        hqlQuery.append(" and exists (select 1 from OBRETCO_Prol_Product pli ");
+        hqlQuery.append("  where pli.product.id = product2.id ");
+        hqlQuery.append("  and pli.obretcoProductlist.id = :crossStoreProductListIds)");
+        hqlQuery.append(" and not exists (select 1 from OBRETCO_Prol_Product pli ");
+        hqlQuery.append("  where pli.product.id = product2.id ");
+        hqlQuery.append("  and pli.obretcoProductlist.id = :currentProductListId)");
         hqlQuery.append("order by product.id");
 
         products.add(hqlQuery.toString());
@@ -481,14 +483,14 @@ public class Product extends ProcessHQLQuery {
       hql.append("left outer join product.image img ");
     }
     hql.append("where $filtersCriteria and $hqlCriteria ");
-    hql.append(
-        "and exists (select 1 from OBRETCO_Prol_Product pli where pli.product.id = product.id ");
+    hql.append("and exists (select 1 from OBRETCO_Prol_Product pli ");
+    hql.append(" where pli.product.id = product.id ");
     hql.append(" and pli.obretcoProductlist.id in :crossStoreProductListIds)");
-    hql.append(
-        "and exists (select 1 from PricingProductPrice ppp where ppp.product.id = product.id ");
-    hql.append("and ppp.priceListVersion.id in :crossStorePriceListVersionIds)");
-    hql.append(
-        "and not exists (select 1 from OBRETCO_Prol_Product pli where pli.product.id = product.id ");
+    hql.append("and exists (select 1 from PricingProductPrice ppp ");
+    hql.append(" where ppp.product.id = product.id ");
+    hql.append(" and ppp.priceListVersion.id in :crossStorePriceListVersionIds)");
+    hql.append("and not exists (select 1 from OBRETCO_Prol_Product pli ");
+    hql.append(" where pli.product.id = product.id ");
     hql.append(" and pli.obretcoProductlist.id = :currentProductListId)");
     // TODO Check multipricelist
     return hql.toString();
@@ -575,7 +577,9 @@ public class Product extends ProcessHQLQuery {
       crossStorePriceListVersionIds.remove(priceListVersion.getId());
       paramValues.put("crossStorePriceListVersionIds", crossStorePriceListVersionIds);
       paramValues.put("orgId", orgId);
-      paramValues.put("orgIds", orgIds);
+      paramValues.put("orgIds", new HashSet<>(orgIds));
+      orgIds.remove(orgId);
+      paramValues.put("crossStoreOrgIds", orgIds);
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();

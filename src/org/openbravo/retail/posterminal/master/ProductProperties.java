@@ -77,23 +77,13 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty(
               "(select case when min (pli.productStatus.id) = max (pli.productStatus.id) then min (pli.productStatus.id) else null end from OBRETCO_Prol_Product pli where pli.product.id = product.id and pli.obretcoProductlist.id in :crossStoreProductListIds)",
               "productAssortmentStatus"));
-          add(new HQLProperty(
-              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.listPrice) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :crossStorePriceListVersionIds)",
-              "listPrice"));
-          add(new HQLProperty(
-              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.standardPrice) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :crossStorePriceListVersionIds)",
-              "standardPrice"));
-          add(new HQLProperty(
-              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.priceLimit) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :crossStorePriceListVersionIds)",
-              "priceLimit"));
-          add(new HQLProperty(
-              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.cost) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :crossStorePriceListVersionIds)",
-              "cost"));
+          add(new HQLProperty(getCrossStorePricingQuery("ppp.listPrice"), "listPrice"));
+          add(new HQLProperty(getCrossStorePricingQuery("ppp.standardPrice"), "standardPrice"));
+          add(new HQLProperty(getCrossStorePricingQuery("ppp.priceLimit"), "priceLimit"));
+          add(new HQLProperty(getCrossStorePricingQuery("ppp.cost"), "cost"));
           Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
           if (ProductPrice.hasProperty("algorithm") == true) {
-            add(new HQLProperty(
-                "(select case when min(ppp.id) = max (ppp.id) then min(ppp.algorithm) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :crossStorePriceListVersionIds)",
-                "algorithm"));
+            add(new HQLProperty(getCrossStorePricingQuery("ppp.algorithm"), "algorithm"));
           }
           add(new HQLProperty(
               "(select case when min (pli.active) = max (pli.active) and min (pli.active) is not null and product.active = 'Y' then min (pli.active) else product.active end from OBRETCO_Prol_Product pli where product.id = pli.product.id and pli.obretcoProductlist.id in :crossStoreProductListIds)",
@@ -126,6 +116,25 @@ public class ProductProperties extends ModelExtension {
 
     return list;
 
+  }
+
+  protected String getCrossStorePricingQuery(String field) {
+    StringBuilder hql = new StringBuilder("(select case when min(ppp.id) = max(ppp.id)");
+    hql.append(" then min(");
+    hql.append(field);
+    hql.append(") else null end ");
+    hql.append("from PricingProductPrice ppp ");
+    hql.append("where ppp.product.id = product.id");
+    hql.append(" and ppp.priceListVersion.id in :crossStorePriceListVersionIds");
+    hql.append(" and exists (select 1 from Organization o");
+    hql.append("   where o.id in :crossStoreOrgIds ");
+    hql.append("   and o.obretcoPricelist.id = ppp.priceListVersion.priceList.id");
+    hql.append("   and exists (select 1 from OBRETCO_Prol_Product pli");
+    hql.append("     where o.obretcoProductlist.id = pli.obretcoProductlist.id");
+    hql.append("     and pli.obretcoProductlist.id in :crossStoreProductListIds");
+    hql.append("     and pli.product.id = product.id) ))");
+
+    return hql.toString();
   }
 
   public static List<HQLProperty> getMainProductHQLProperties(Object params) {
