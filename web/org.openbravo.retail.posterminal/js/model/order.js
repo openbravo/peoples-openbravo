@@ -3854,10 +3854,6 @@
         }
         if (qty > 0 && negativeLines > 0) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
-          OB.UTIL.finishProcessesRunningBySearchKey('addProduct');
-          if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.receipt.addProcess)) {
-            OB.MobileApp.model.receipt.addProcess = {};
-          }
           return true;
         } else if (qty < 0 && negativeLines !== receiptLines) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
