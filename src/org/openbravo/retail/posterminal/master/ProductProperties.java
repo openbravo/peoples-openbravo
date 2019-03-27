@@ -72,10 +72,10 @@ public class ProductProperties extends ModelExtension {
         }
         if (crossStore) {
           add(new HQLProperty(
-              "(select case when min (bestseller) = max (bestseller) then min (bestseller) else 'N' end from OBRETCO_Prol_Product pli where pli.product.id = product.id and pli.obretcoProductlist.id in :crossStoreProductListIds)",
+              "(select case when min (bestseller) = max (bestseller) then min (bestseller) else 'N' end from OBRETCO_Prol_Product pli where pli.product.id = product.id and pli.obretcoProductlist.id in :crossStoreAssortmentIds)",
               "bestseller"));
           add(new HQLProperty(
-              "(select case when min (pli.productStatus.id) = max (pli.productStatus.id) then min (pli.productStatus.id) else null end from OBRETCO_Prol_Product pli where pli.product.id = product.id and pli.obretcoProductlist.id in :crossStoreProductListIds)",
+              "(select case when min (pli.productStatus.id) = max (pli.productStatus.id) then min (pli.productStatus.id) else null end from OBRETCO_Prol_Product pli where pli.product.id = product.id and pli.obretcoProductlist.id in :crossStoreAssortmentIds)",
               "productAssortmentStatus"));
           add(new HQLProperty(getCrossStorePricingQuery("ppp.listPrice"), "listPrice"));
           add(new HQLProperty(getCrossStorePricingQuery("ppp.standardPrice"), "standardPrice"));
@@ -86,7 +86,7 @@ public class ProductProperties extends ModelExtension {
             add(new HQLProperty(getCrossStorePricingQuery("ppp.algorithm"), "algorithm"));
           }
           add(new HQLProperty(
-              "(select case when min (pli.active) = max (pli.active) and min (pli.active) is not null and product.active = 'Y' then min (pli.active) else product.active end from OBRETCO_Prol_Product pli where product.id = pli.product.id and pli.obretcoProductlist.id in :crossStoreProductListIds)",
+              "(select case when min (pli.active) = max (pli.active) and min (pli.active) is not null and product.active = 'Y' then min (pli.active) else product.active end from OBRETCO_Prol_Product pli where product.id = pli.product.id and pli.obretcoProductlist.id in :crossStoreAssortmentIds)",
               "active"));
         } else {
           add(new HQLProperty("pli.bestseller", "bestseller"));
@@ -131,7 +131,7 @@ public class ProductProperties extends ModelExtension {
     hql.append("   and o.obretcoPricelist.id = ppp.priceListVersion.priceList.id");
     hql.append("   and exists (select 1 from OBRETCO_Prol_Product pli");
     hql.append("     where o.obretcoProductlist.id = pli.obretcoProductlist.id");
-    hql.append("     and pli.obretcoProductlist.id in :crossStoreProductListIds");
+    hql.append("     and pli.obretcoProductlist.id in :crossStoreAssortmentIds");
     hql.append("     and pli.product.id = product.id) ))");
 
     return hql.toString();
