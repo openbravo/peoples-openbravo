@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -34,6 +34,7 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.CustomerAccounts;
 import org.openbravo.model.common.businesspartner.VendorAccounts;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
@@ -43,11 +44,16 @@ public class ReportsUtility {
 
   public static BigDecimal getBeginningBalance(String orgId, String acctSchemaId, String bpartnerId,
       String dateFrom) {
-    return getBeginningBalance(orgId, acctSchemaId, bpartnerId, dateFrom, true);
+    return getBeginningBalance(orgId, acctSchemaId, bpartnerId, dateFrom, true, null);
   }
 
   public static BigDecimal getBeginningBalance(String orgId, String acctSchemaId, String bpartnerId,
       String dateFrom, boolean isCustomer) {
+    return getBeginningBalance(orgId, acctSchemaId, bpartnerId, dateFrom, isCustomer, null);
+  }
+
+  public static BigDecimal getBeginningBalance(String orgId, String acctSchemaId, String bpartnerId,
+      String dateFrom, boolean isCustomer, String currency) {
     if (dateFrom == null || "".equals(dateFrom)) {
       return BigDecimal.ZERO;
     }
@@ -63,6 +69,10 @@ public class ReportsUtility {
     } catch (ParseException pe) {
       // do nothing
     }
+    if (currency != null) {
+      obc.add(Restrictions.eq(AccountingFact.PROPERTY_CURRENCY,
+          OBDal.getInstance().getProxy(Currency.class, currency)));
+    }
     if (isCustomer) {
       List<ElementValue> accL = getValidAccountsList(acctSchemaId, bpartnerId);
       if (!accL.isEmpty()) {
@@ -77,8 +87,10 @@ public class ReportsUtility {
     obc.setFilterOnReadableOrganization(false);
 
     ProjectionList projections = Projections.projectionList();
-    projections.add(Projections.sum(AccountingFact.PROPERTY_DEBIT));
-    projections.add(Projections.sum(AccountingFact.PROPERTY_CREDIT));
+    projections.add(Projections.sum(currency == null ? AccountingFact.PROPERTY_DEBIT
+        : AccountingFact.PROPERTY_FOREIGNCURRENCYDEBIT));
+    projections.add(Projections.sum(currency == null ? AccountingFact.PROPERTY_CREDIT
+        : AccountingFact.PROPERTY_FOREIGNCURRENCYCREDIT));
     obc.setProjection(projections);
 
     @SuppressWarnings("rawtypes")
