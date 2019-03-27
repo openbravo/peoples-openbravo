@@ -595,7 +595,6 @@
             if (data && data.errorReadingTerminalAuthentication) {
               OB.UTIL.showWarning(data.errorReadingTerminalAuthentication);
             }
-            OB.UTIL.finishProcessesRunningBySearchKey('tapTotalButton');
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               isConfirmButton: true,
