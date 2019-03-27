@@ -71,6 +71,7 @@
 		<defaultValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat("", $P{REPORT_LOCALE}, $P{REPORT_TIME_ZONE})]]></defaultValueExpression>
 	</parameter>
 	<parameter name="reportType" class="java.lang.String"/>
+	<parameter name="sumInitialBalance" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT trunc(f.dateacct) as dateacct,
         CASE WHEN f.c_doctype_id IS NOT NULL THEN (SELECT MIN(name)
@@ -510,8 +511,8 @@ ORDER BY f.dateacct, f.created]]>
 					<font fontName="DejaVu Sans" size="8"/>
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{SUM}.compareTo(BigDecimal.ZERO) < 0 ? $V{SUM}.abs() : $V{SUM}]]></textFieldExpression>
-				<patternExpression><![CDATA[$V{SUM}.compareTo(BigDecimal.ZERO) < 0 ? ("("+$P{NUMBERFORMAT}.toPattern()+")") : $P{NUMBERFORMAT}.toPattern()]]></patternExpression>
+				<textFieldExpression><![CDATA["Y".equals($P{sumInitialBalance}) ? (new BigDecimal("Y".equals($F{issotrx}) ? $V{customerInitialBalance}.toString() : $V{vendorInitialBalance}.toString()).add($V{SUM}).compareTo(BigDecimal.ZERO) < 0 ? new BigDecimal("Y".equals($F{issotrx}) ? $V{customerInitialBalance}.toString() : $V{vendorInitialBalance}.toString()).add($V{SUM}).abs() : new BigDecimal("Y".equals($F{issotrx}) ? $V{customerInitialBalance}.toString() : $V{vendorInitialBalance}.toString()).add($V{SUM})) : ($V{SUM}.compareTo(BigDecimal.ZERO) < 0 ? $V{SUM}.abs() : $V{SUM})]]></textFieldExpression>
+				<patternExpression><![CDATA[new BigDecimal("Y".equals($P{sumInitialBalance}) ? new BigDecimal("Y".equals($F{issotrx}) ? $V{customerInitialBalance}.toString() : $V{vendorInitialBalance}.toString()).add($V{SUM}).toString() : $V{SUM}.toString()).compareTo(BigDecimal.ZERO) < 0 ? ("("+$P{NUMBERFORMAT}.toPattern()+")") : $P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 		</band>
 	</detail>
