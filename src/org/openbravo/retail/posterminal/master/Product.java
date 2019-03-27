@@ -364,10 +364,8 @@ public class Product extends ProcessHQLQuery {
     }
     products.add(hql);
     // TODO cross store regular products
-
     HQLPropertyList crossStoreRegularProductsHQLProperties = null;
     HQLPropertyList crossStoreRegularProductsDiscHQLProperties = null;
-
     if (crossStoreSearch) {
       args.put("crossStore", true);
       crossStoreRegularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
@@ -449,6 +447,36 @@ public class Product extends ProcessHQLQuery {
           + " and pli2.obretcoProductlist.id = :currentProductListId)" //
           + " order by product.id";
       products.add(genericProductsHqlString);
+
+      // cross store generic products
+      if (crossStoreSearch) {
+        StringBuilder hqlQuery = new StringBuilder("select");
+        hqlQuery.append(crossStoreRegularProductsHQLProperties.getHqlSelect());
+        hqlQuery.append(" from Product product ");
+        if (!useGetForProductImages) {
+          hqlQuery.append("left outer join product.image img ");
+        }
+        hqlQuery.append("where $filtersCriteria");
+        hqlQuery.append(" and product.isGeneric = 'Y'");
+        hqlQuery.append(" and (product.$incrementalUpdateCriteria)");
+        hqlQuery.append(" and exists (select 1 from PricingProductPrice ppp ");
+        hqlQuery.append("  where ppp.product.id = product.id ");
+        hqlQuery.append("  and ppp.priceListVersion.id in :priceListVersionIds)");
+        hqlQuery.append(" and exists (select 1 from Product product2 ");
+        hqlQuery.append("   where product.id = product2.genericProduct.id ");
+        hqlQuery.append("   and exists (select 1 from PricingProductPrice ppp ");
+        hqlQuery.append("    where ppp.product.id = product2.id ");
+        hqlQuery.append("    and ppp.priceListVersion.id in :priceListVersionIds)");
+        hqlQuery.append("   and exists (select 1 from OBRETCO_Prol_Product pli ");
+        hqlQuery.append("    where pli.product.id = product2.id ");
+        hqlQuery.append("    and pli.obretcoProductlist.id = :productListIds)");
+        hqlQuery.append("   and not exists (select 1 from OBRETCO_Prol_Product pli ");
+        hqlQuery.append("    where pli.product.id = product2.id ");
+        hqlQuery.append("    and pli.obretcoProductlist.id = :currentProductListId)");
+        hqlQuery.append("order by product.id");
+
+        products.add(hqlQuery.toString());
+      }
     }
     return products;
   }
