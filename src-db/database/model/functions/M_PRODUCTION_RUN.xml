@@ -52,7 +52,7 @@
     CUR_PL_Post RECORD;
   -- Parameter Variables
   MustBeStocked CHAR(1) ;
-  forceUseOfWHOfSelectedLocator CHAR(1) ;
+  forceUseOfWHOfSelectedLocator CHAR(1):= 'N' ;
   v_IsCreated CHAR(1) ;
   v_Processed VARCHAR2(60) ;
   v_Client_ID VARCHAR2(32);
