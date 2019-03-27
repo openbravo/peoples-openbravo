@@ -173,7 +173,7 @@ enyo.kind({
           this.$.price.addStyles('font-size: ' + getFontSize(OB.I18N.formatCurrency(this.model.get('standardPrice'))));
         }
       }
-      if (this.model.get('crossStore') && this.model.get('crossStorePrice')) {
+      if (this.model.get('crossStore') && OB.UTIL.isNullOrUndefined(this.model.get('standardPrice'))) {
         this.$.price.setContent('?.??');
       } else {
         this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
@@ -185,7 +185,7 @@ enyo.kind({
           this.$.price.addStyles('font-size: ' + getFontSize(OB.I18N.formatCurrency(this.model.get('standardPrice'))));
         }
       }
-      if (this.model.get('crossStore') && this.model.get('crossStorePrice')) {
+      if (this.model.get('crossStore') && OB.UTIL.isNullOrUndefined(this.model.get('standardPrice'))) {
         this.$.price.setContent('?.??');
       } else {
         this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));

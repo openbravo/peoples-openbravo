@@ -231,10 +231,6 @@
     name: 'crossStore',
     column: 'crossStore',
     type: 'BOOL'
-  }, {
-    name: 'crossStorePrice',
-    column: 'crossStorePrice',
-    type: 'BOOL'
   }]);
 
   Product.addIndex([{
