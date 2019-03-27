@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -133,13 +134,9 @@ public class Product extends ProcessHQLQuery {
       args.put("crossStore", true);
       HQLPropertyList crossStoreRegularProductsHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions, args);
-      HQLPropertyList crossStoreRegularProductsDiscHQLProperties = ModelExtensionUtils
-          .getPropertyExtensions(extensionsDisc, args);
-
       propertiesList.add(regularProductsHQLProperties);
       propertiesList.add(crossStoreRegularProductsHQLProperties);
       propertiesList.add(regularProductsDiscHQLProperties);
-      propertiesList.add(crossStoreRegularProductsDiscHQLProperties);
       propertiesList.add(regularProductsHQLProperties);
       propertiesList.add(crossStoreRegularProductsHQLProperties);
     } else {
@@ -191,15 +188,12 @@ public class Product extends ProcessHQLQuery {
       final boolean crossStoreSearch = jsonsent.has("remoteParams")
           && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
       final Set<String> orgIds = POSUtils.getOrgListCrossStore(posId, crossStoreSearch);
-      orgIds.remove(orgId);
       final String currentProductListId = POSUtils.getProductListByPosterminalId(posId).getId();
       final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
           terminalDate);
       final Set<String> productListIds = POSUtils.getProductListCrossStore(posId, crossStoreSearch);
-      productListIds.remove(currentProductListId);
-      final Set<String> priceListVersionIds = POSUtils.getPriceListVersionCrossStore(posId,
-          terminalDate, crossStoreSearch);
-      priceListVersionIds.remove(priceListVersion.getId());
+      final Set<String> crossStorePriceListVersionIds = POSUtils
+          .getPriceListVersionCrossStore(posId, terminalDate, crossStoreSearch);
       Calendar now = Calendar.getInstance();
       Map<String, Object> paramValues = new HashMap<>();
       if (isRemote && isMultipricelist && jsonsent.has("remoteParams") && StringUtils
@@ -210,9 +204,12 @@ public class Product extends ProcessHQLQuery {
                 .getId());
       }
       paramValues.put("currentProductListId", currentProductListId);
-      paramValues.put("productListIds", productListIds);
+      paramValues.put("productListIds", new HashSet<String>(productListIds));
+      productListIds.remove(currentProductListId);
+      paramValues.put("crossStoreProductListIds", productListIds);
       paramValues.put("priceListVersionId", priceListVersion.getId());
-      paramValues.put("priceListVersionIds", priceListVersionIds);
+      crossStorePriceListVersionIds.remove(priceListVersion.getId());
+      paramValues.put("crossStorePriceListVersionIds", crossStorePriceListVersionIds);
       paramValues.put("endingDate", now.getTime());
       paramValues.put("startingDate", now.getTime());
       paramValues.put("orgId", orgId);
@@ -341,6 +338,11 @@ public class Product extends ProcessHQLQuery {
     HQLPropertyList regularProductsDiscHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensionsDisc, args);
 
+    args.put("crossStore", true);
+    HQLPropertyList crossStoreRegularProductsHQLProperties = crossStoreSearch
+        ? ModelExtensionUtils.getPropertyExtensions(extensions, args)
+        : null;
+
     Long lastUpdated = jsonsent.has("lastUpdated")
         && !jsonsent.get("lastUpdated").equals("undefined")
         && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
@@ -363,16 +365,7 @@ public class Product extends ProcessHQLQuery {
       hql += "order by pli.product.id";
     }
     products.add(hql);
-    // TODO cross store regular products
-    HQLPropertyList crossStoreRegularProductsHQLProperties = null;
-    HQLPropertyList crossStoreRegularProductsDiscHQLProperties = null;
     if (crossStoreSearch) {
-      args.put("crossStore", true);
-      crossStoreRegularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
-          args);
-      crossStoreRegularProductsDiscHQLProperties = ModelExtensionUtils
-          .getPropertyExtensions(extensionsDisc, args);
-
       StringBuilder hqlQuery = new StringBuilder("select");
       hqlQuery.append(crossStoreRegularProductsHQLProperties.getHqlSelect());
       hqlQuery.append(getCrossStoreRegularProductHql(isRemote, isMultipricelist, jsonsent,
@@ -410,20 +403,20 @@ public class Product extends ProcessHQLQuery {
         + "      from PricingAdjustmentProduct pap where pap.active = true and "
         + "      pap.priceAdjustment = p and pap.product.sale = true "
         + "      and pap.product not in (select ppl.product.id from OBRETCO_Prol_Product ppl "
-        + "      where ppl.obretcoProductlist.id = :currentProductListId and ppl.active = true))) "
+        + "      where ppl.obretcoProductlist.id in :productListIds and ppl.active = true))) "
         + " or (p.includedProducts = 'Y' and not exists (select 1 "
         + "      from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl "
         + "      where pap.active = true and pap.priceAdjustment = p "
         + "      and pap.product.id = ppl.product.id "
-        + "      and ppl.obretcoProductlist.id = :currentProductListId))) "
+        + "      and ppl.obretcoProductlist.id in :productListIds))) "
         // organization
         + "and p.$naturalOrgCriteria and ((p.includedOrganizations='Y' "
         + "  and not exists (select 1 " + "         from PricingAdjustmentOrganization o"
         + "        where active = true" + "          and o.priceAdjustment = p"
-        + "          and o.organization.id = :orgId )) " + "   or (p.includedOrganizations='N' "
+        + "          and o.organization.id in :orgIds )) " + "   or (p.includedOrganizations='N' "
         + "  and  exists (select 1 " + "         from PricingAdjustmentOrganization o"
         + "        where active = true" + "          and o.priceAdjustment = p"
-        + "          and o.organization.id = :orgId )) )";
+        + "          and o.organization.id in :orgIds )) )";
     if (isRemote) {
       packAndCombosHqlString += " order by p.name asc, p.id";
     } else {
@@ -461,15 +454,15 @@ public class Product extends ProcessHQLQuery {
         hqlQuery.append(" and (product.$incrementalUpdateCriteria)");
         hqlQuery.append(" and exists (select 1 from PricingProductPrice ppp ");
         hqlQuery.append("  where ppp.product.id = product.id ");
-        hqlQuery.append("  and ppp.priceListVersion.id in :priceListVersionIds)");
+        hqlQuery.append("  and ppp.priceListVersion.id in :crossStorePriceListVersionIds)");
         hqlQuery.append(" and exists (select 1 from Product product2 ");
         hqlQuery.append("   where product.id = product2.genericProduct.id ");
         hqlQuery.append("   and exists (select 1 from PricingProductPrice ppp ");
         hqlQuery.append("    where ppp.product.id = product2.id ");
-        hqlQuery.append("    and ppp.priceListVersion.id in :priceListVersionIds)");
+        hqlQuery.append("    and ppp.priceListVersion.id in :crossStorePriceListVersionIds)");
         hqlQuery.append("   and exists (select 1 from OBRETCO_Prol_Product pli ");
         hqlQuery.append("    where pli.product.id = product2.id ");
-        hqlQuery.append("    and pli.obretcoProductlist.id = :productListIds)");
+        hqlQuery.append("    and pli.obretcoProductlist.id = :crossStoreProductListIds)");
         hqlQuery.append("   and not exists (select 1 from OBRETCO_Prol_Product pli ");
         hqlQuery.append("    where pli.product.id = product2.id ");
         hqlQuery.append("    and pli.obretcoProductlist.id = :currentProductListId)");
@@ -490,10 +483,10 @@ public class Product extends ProcessHQLQuery {
     hql.append("where $filtersCriteria and $hqlCriteria ");
     hql.append(
         "and exists (select 1 from OBRETCO_Prol_Product pli where pli.product.id = product.id ");
-    hql.append(" and pli.obretcoProductlist.id in :productListIds)");
+    hql.append(" and pli.obretcoProductlist.id in :crossStoreProductListIds)");
     hql.append(
         "and exists (select 1 from PricingProductPrice ppp where ppp.product.id = product.id ");
-    hql.append("and ppp.priceListVersion.id in :priceListVersionIds)");
+    hql.append("and ppp.priceListVersion.id in :crossStorePriceListVersionIds)");
     hql.append(
         "and not exists (select 1 from OBRETCO_Prol_Product pli where pli.product.id = product.id ");
     hql.append(" and pli.obretcoProductlist.id = :currentProductListId)");
@@ -570,17 +563,19 @@ public class Product extends ProcessHQLQuery {
       final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
           terminalDate);
       final Set<String> productListIds = POSUtils.getProductListCrossStore(posId, crossStoreSearch);
-      final Set<String> priceListVersionIds = POSUtils.getPriceListVersionCrossStore(posId,
-          terminalDate, crossStoreSearch);
+      final Set<String> crossStorePriceListVersionIds = POSUtils
+          .getPriceListVersionCrossStore(posId, terminalDate, crossStoreSearch);
 
       Map<String, Object> paramValues = new HashMap<>();
       paramValues.put("currentProductListId", currentProductListId);
       paramValues.put("productListIds", productListIds);
+      productListIds.remove(currentProductListId);
+      paramValues.put("crossStoreProductListIds", productListIds);
+      paramValues.put("priceListVersionId", priceListVersion.getId());
+      crossStorePriceListVersionIds.remove(priceListVersion.getId());
+      paramValues.put("crossStorePriceListVersionIds", crossStorePriceListVersionIds);
       paramValues.put("orgId", orgId);
       paramValues.put("orgIds", orgIds);
-      paramValues.put("priceListVersionId", priceListVersion.getId());
-      paramValues.put("priceListVersionIds", priceListVersionIds);
-
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();

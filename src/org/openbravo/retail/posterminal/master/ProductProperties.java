@@ -72,31 +72,31 @@ public class ProductProperties extends ModelExtension {
         }
         if (crossStore) {
           add(new HQLProperty(
-              "(select case when min (bestseller) = max (bestseller) then min (bestseller) else 'N' end from OBRETCO_Prol_Product pli where pli.product.id = product.id and pli.obretcoProductlist.id in :productListIds)",
+              "(select case when min (bestseller) = max (bestseller) then min (bestseller) else 'N' end from OBRETCO_Prol_Product pli where pli.product.id = product.id and pli.obretcoProductlist.id in :crossStoreProductListIds)",
               "bestseller"));
           add(new HQLProperty(
-              "(select case when min (pli.productStatus.id) = max (pli.productStatus.id) then min (pli.productStatus.id) else null end from OBRETCO_Prol_Product pli where pli.product.id = product.id and pli.obretcoProductlist.id in :productListIds)",
+              "(select case when min (pli.productStatus.id) = max (pli.productStatus.id) then min (pli.productStatus.id) else null end from OBRETCO_Prol_Product pli where pli.product.id = product.id and pli.obretcoProductlist.id in :crossStoreProductListIds)",
               "productAssortmentStatus"));
           add(new HQLProperty(
-              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.listPrice) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :priceListVersionIds)",
+              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.listPrice) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :crossStorePriceListVersionIds)",
               "listPrice"));
           add(new HQLProperty(
-              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.standardPrice) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :priceListVersionIds)",
+              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.standardPrice) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :crossStorePriceListVersionIds)",
               "standardPrice"));
           add(new HQLProperty(
-              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.priceLimit) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :priceListVersionIds)",
+              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.priceLimit) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :crossStorePriceListVersionIds)",
               "priceLimit"));
           add(new HQLProperty(
-              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.cost) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :priceListVersionIds)",
+              "(select case when min(ppp.id) = max (ppp.id) then min(ppp.cost) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :crossStorePriceListVersionIds)",
               "cost"));
           Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
           if (ProductPrice.hasProperty("algorithm") == true) {
             add(new HQLProperty(
-                "(select case when min(ppp.id) = max (ppp.id) then min(ppp.algorithm) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :priceListVersionIds)",
+                "(select case when min(ppp.id) = max (ppp.id) then min(ppp.algorithm) else null end from PricingProductPrice ppp where ppp.product.id = product.id and ppp.priceListVersion.id in :crossStorePriceListVersionIds)",
                 "algorithm"));
           }
           add(new HQLProperty(
-              "(select case when min (pli.active) = max (pli.active) and min (pli.active) is not null and product.active = 'Y' then min (pli.active) else product.active end from OBRETCO_Prol_Product pli where product.id = pli.product.id and pli.obretcoProductlist.id in :productListIds)",
+              "(select case when min (pli.active) = max (pli.active) and min (pli.active) is not null and product.active = 'Y' then min (pli.active) else product.active end from OBRETCO_Prol_Product pli where product.id = pli.product.id and pli.obretcoProductlist.id in :crossStoreProductListIds)",
               "active"));
         } else {
           add(new HQLProperty("pli.bestseller", "bestseller"));
