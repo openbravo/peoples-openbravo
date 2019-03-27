@@ -47,6 +47,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
   private static final Logger log = LogManager.getLogger();
   private static final int MAX_PAGE_SIZE_INCREASE = 3;
   private static final String NEW_END_ROW = "_newEndRow";
+  private static final String UNSUPPORTED_OPERATION_MSG = "Only fetch is supported";
 
   /*
    * (non-Javadoc)
@@ -194,9 +195,9 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     Map<String, Object> lastRecord = data.get(data.size() - 1);
     Object obSelected = lastRecord.get("obSelected");
     if (obSelected != null) {
-      if (obSelected.getClass().equals(Boolean.class)) {
+      if (obSelected instanceof Boolean) {
         isLastRecordSelected = (Boolean) obSelected;
-      } else if (obSelected.getClass().equals(String.class)) {
+      } else if (obSelected instanceof String) {
         isLastRecordSelected = ((String) obSelected).equalsIgnoreCase("Y");
       }
     }
@@ -234,7 +235,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
    */
   @Override
   public String remove(Map<String, String> parameters) {
-    throw new UnsupportedOperationException("Only fetch is supported");
+    throw new UnsupportedOperationException(UNSUPPORTED_OPERATION_MSG);
   }
 
   /*
@@ -244,7 +245,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
    */
   @Override
   public String add(Map<String, String> parameters, String content) {
-    throw new UnsupportedOperationException("Only fetch is supported");
+    throw new UnsupportedOperationException(UNSUPPORTED_OPERATION_MSG);
   }
 
   /*
@@ -254,7 +255,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
    */
   @Override
   public String update(Map<String, String> parameters, String content) {
-    throw new UnsupportedOperationException("Only fetch is supported");
+    throw new UnsupportedOperationException(UNSUPPORTED_OPERATION_MSG);
   }
 
   /**
