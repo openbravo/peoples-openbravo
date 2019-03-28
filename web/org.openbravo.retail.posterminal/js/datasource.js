@@ -431,7 +431,7 @@ OB.DS.HWServer.prototype.confirm = function (title, message) {
 OB.DS.HWServer.prototype._sendBluetooth = function (data) {
   var ok = false;
 
-  if (this.bltprinter.bluetooth.device) {
+  if (this.bltprinter.connected()) {
     return this.bltprinter.print(data);
   } else {
     return this.confirm(OB.I18N.getLabel('OBPOS_Bluetooth'), OB.I18N.getLabel('OBPOS_BluetoothPair')).then(function () {
@@ -451,7 +451,7 @@ OB.DS.HWServer.prototype._send = function (data, callback, device) {
   } else {
     // PRINTER and default is the active URL
     if (OB.MobileApp.model.get('terminal').scaleurl === 'bluetooth') {
-      this._sendBluetooth(data, callback).then(function () {
+      this._sendBluetooth(data).then(function () {
         if (callback) {
           callback();
         }

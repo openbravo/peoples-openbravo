@@ -19,6 +19,10 @@
     this.onDisconnected = this.onDisconnected.bind(this);
   };
 
+  OB.Bluetooth.prototype.connected = function () {
+    return this.device !== null;
+  };
+
   OB.Bluetooth.prototype.request = function () {
 
     if (!navigator.bluetooth || !navigator.bluetooth.requestDevice) {

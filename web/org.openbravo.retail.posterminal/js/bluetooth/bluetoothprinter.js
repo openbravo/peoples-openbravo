@@ -50,6 +50,10 @@
     this.bluetooth = new OB.Bluetooth();
   };
 
+  OB.BluetoothPrinter.prototype.connected = function () {
+    return this.bluetooth.connected();
+  };
+
   OB.BluetoothPrinter.prototype.request = function () {
     return this.bluetooth.request();
   };
