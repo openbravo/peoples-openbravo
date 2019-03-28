@@ -903,4 +903,15 @@ public class POSUtils {
         posTerminal.getOrganization().getId());
   }
 
+  public static boolean isCrossStoreSearch(final JSONObject jsonsent) {
+    boolean crossStoreSearch = false;
+    try {
+      crossStoreSearch = jsonsent.has("remoteParams")
+          && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
+    } catch (JSONException e) {
+      log.error("Error while getting crossStoreSearch " + e.getMessage(), e);
+    }
+    return crossStoreSearch;
+  }
+
 }

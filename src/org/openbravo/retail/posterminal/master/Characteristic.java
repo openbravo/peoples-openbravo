@@ -76,7 +76,7 @@ public class Characteristic extends ProcessHQLQuery {
     String assortmentFilter = "";
     final OBRETCOProductList productList = POSUtils
         .getProductListByPosterminalId(jsonsent.getString("pos"));
-    if (!isRemote) {
+    if (!isRemote && !POSUtils.isCrossStoreSearch(jsonsent)) {
       assortmentFilter = "exists (select 1 from  ProductCharacteristicValue pcv, OBRETCO_Prol_Product assort "
           + " where pcv.characteristic.id=ch.id " + " and pcv.product.id= assort.product.id "
           + " and assort.obretcoProductlist.id= '" + productList.getId() + "'" + ") and";

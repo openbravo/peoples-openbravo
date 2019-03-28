@@ -153,7 +153,7 @@ public class Product extends ProcessHQLQuery {
     final boolean executeGenericProductQry = getPreference("OBPOS_ExecuteGenericProductQuery");
     final boolean allowNoPriceInMainPriceList = getPreference(
         "OBPOS_allowProductsNoPriceInMainPricelist");
-    boolean crossStoreSearch = isCrossStoreSearch(jsonsent);
+    boolean crossStoreSearch = POSUtils.isCrossStoreSearch(jsonsent);
 
     Map<String, Object> args = new HashMap<>();
     args.put("posPrecision", posPrecision);
@@ -658,17 +658,6 @@ public class Product extends ProcessHQLQuery {
       log.error("Error while getting currentPriceList " + e.getMessage(), e);
     }
     return multiPriceListSearch;
-  }
-
-  private static boolean isCrossStoreSearch(final JSONObject jsonsent) {
-    boolean crossStoreSearch = false;
-    try {
-      crossStoreSearch = jsonsent.has("remoteParams")
-          && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
-    } catch (JSONException e) {
-      log.error("Error while getting crossStoreSearch " + e.getMessage(), e);
-    }
-    return crossStoreSearch;
   }
 
   @Override
