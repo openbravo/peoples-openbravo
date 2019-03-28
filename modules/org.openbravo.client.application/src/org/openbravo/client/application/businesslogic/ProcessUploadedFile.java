@@ -235,6 +235,9 @@ public abstract class ProcessUploadedFile extends HttpSecureAppServlet {
 
     public void incTotalCount() {
       lineCount++;
+      if (lineCount > 50000) {
+        throw new OBException("Maximum number of lines (50000) in upload reached");
+      }
     }
 
     public void incErrorCount() {
