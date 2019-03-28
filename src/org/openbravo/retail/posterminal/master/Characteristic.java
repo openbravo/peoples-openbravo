@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2019 Openbravo S.L.U.
+ * Copyright (C) 2015-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -29,6 +28,7 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
@@ -44,8 +44,8 @@ public class Characteristic extends ProcessHQLQuery {
   @Override
   protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
     // Get Product Properties
-    List<HQLPropertyList> propertiesList = new ArrayList<>();
-    Map<String, Object> args = new HashMap<>();
+    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    Map<String, Object> args = new HashMap<String, Object>();
     HQLPropertyList characteristicsHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions, args);
     propertiesList.add(characteristicsHQLProperties);
@@ -54,26 +54,8 @@ public class Characteristic extends ProcessHQLQuery {
   }
 
   @Override
-  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
-    OBContext.setAdminMode(true);
-    try {
-      final String posId = jsonsent.getString("pos");
-      final boolean crossStoreSearch = jsonsent.has("remoteParams")
-          && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
-      final Set<String> productListIds = POSUtils.getProductListCrossStore(posId, crossStoreSearch);
-
-      final Map<String, Object> paramValues = new HashMap<>();
-      paramValues.put("productListIds", productListIds);
-
-      return paramValues;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    List<String> hqlQueries = new ArrayList<>();
+    List<String> hqlQueries = new ArrayList<String>();
 
     HQLPropertyList regularProductsChValueHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
@@ -92,10 +74,12 @@ public class Characteristic extends ProcessHQLQuery {
     }
 
     String assortmentFilter = "";
+    final OBRETCOProductList productList = POSUtils
+        .getProductListByPosterminalId(jsonsent.getString("pos"));
     if (!isRemote) {
       assortmentFilter = "exists (select 1 from  ProductCharacteristicValue pcv, OBRETCO_Prol_Product assort "
           + " where pcv.characteristic.id=ch.id " + " and pcv.product.id= assort.product.id "
-          + " and assort.obretcoProductlist.id in :productListIds) and";
+          + " and assort.obretcoProductlist.id= '" + productList.getId() + "'" + ") and";
     }
     hqlQueries.add("select" + regularProductsChValueHQLProperties.getHqlSelect()
         + "from Characteristic ch " + "where  $filtersCriteria AND $hqlCriteria and "
