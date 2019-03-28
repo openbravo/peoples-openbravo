@@ -121,7 +121,7 @@ public class Product extends ProcessHQLQuery {
       paramValues.put("endingDate", now.getTime());
       paramValues.put("startingDate", now.getTime());
       paramValues.put("terminalDate", terminalDate);
-      if (isRemote && isMultipricelist && isMultiPriceListSearch(jsonsent)) {
+      if ((isRemote || POSUtils.isCrossStoreSearch(jsonsent)) && isMultipricelist && isMultiPriceListSearch(jsonsent)) {
         paramValues.put("multipriceListVersionId",
             POSUtils.getPriceListVersionForPriceList(
                 jsonsent.getJSONObject("remoteParams").getString("currentPriceList"), terminalDate)
@@ -157,7 +157,7 @@ public class Product extends ProcessHQLQuery {
 
     Map<String, Object> args = new HashMap<>();
     args.put("posPrecision", posPrecision);
-    args.put("multiPriceList", isRemote && isMultipricelist && isMultiPriceListSearch(jsonsent));
+    args.put("multiPriceList", (isRemote || crossStoreSearch) && isMultipricelist && isMultiPriceListSearch(jsonsent));
     args.put("terminalId", getTerminalId(jsonsent));
 
     args.put("crossStore", false);
@@ -340,7 +340,6 @@ public class Product extends ProcessHQLQuery {
     query.append("   where ppp.product.id = product.id");
     query.append("   and ppp.priceListVersion.id = :priceListVersionId");
     query.append(" ))");
-    // TODO Check multipricelist
     query.append(" and product.$incrementalUpdateCriteria");
 
     if (isRemote) {
@@ -545,6 +544,8 @@ public class Product extends ProcessHQLQuery {
   public static String createRegularProductHql(boolean isRemote, boolean isMultipricelist,
       JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList)
       throws JSONException {
+    
+    boolean crossStoreSearch = POSUtils.isCrossStoreSearch(jsonsent);
 
     String hql = "FROM OBRETCO_Prol_Product as pli ";
     if (!useGetForProductImages) {
@@ -552,13 +553,13 @@ public class Product extends ProcessHQLQuery {
     }
     hql += "inner join pli.product as product ";
     if (isMultipricelist && allowNoPriceInMainPriceList
-        && (!isRemote || isMultiPriceListSearch(jsonsent))) {
+        && ((!isRemote || crossStoreSearch) || isMultiPriceListSearch(jsonsent))) {
       hql += "left outer join product.pricingProductPriceList ppp with (ppp.priceListVersion.id = :priceListVersionId) ";
     } else {
       hql += "inner join product.pricingProductPriceList ppp ";
     }
 
-    if (isRemote && isMultipricelist && isMultiPriceListSearch(jsonsent)) {
+    if ((isRemote || crossStoreSearch) && isMultipricelist && isMultiPriceListSearch(jsonsent)) {
       hql += ", PricingProductPrice pp WHERE pp.product=pli.product and pp.priceListVersion.id= :multipriceListVersionId ";
     } else {
       hql += " WHERE 1=1";
@@ -566,7 +567,7 @@ public class Product extends ProcessHQLQuery {
 
     hql += " AND $filtersCriteria AND $hqlCriteria ";
     if (isMultipricelist && allowNoPriceInMainPriceList
-        && (!isRemote || isMultiPriceListSearch(jsonsent))) {
+        && ((!isRemote || crossStoreSearch) || isMultiPriceListSearch(jsonsent))) {
       hql += "AND (pli.obretcoProductlist.id = :assortmentId) ";
     } else {
       hql += "AND (pli.obretcoProductlist.id = :assortmentId) ";

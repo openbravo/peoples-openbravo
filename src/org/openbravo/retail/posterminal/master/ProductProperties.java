@@ -187,7 +187,7 @@ public class ProductProperties extends ModelExtension {
             add(new HQLProperty("product.quantityRule", "quantityRule"));
             add(new HQLProperty("product.obposPrintservices", "isPrintServices"));
             add(new HQLProperty("product.weight", "weight"));
-            if (multiPriceList) {
+            if (multiPriceList && !crossStore) {
               add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
             }
             add(new HQLProperty(String.valueOf(crossStore), "crossStore"));
