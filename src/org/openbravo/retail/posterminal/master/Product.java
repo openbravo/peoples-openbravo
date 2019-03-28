@@ -70,7 +70,7 @@ public class Product extends ProcessHQLQuery {
     HQLPropertyList regularProductsDiscHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensionsDisc, args);
 
-    if (isCrossStoreSearch(jsonsent)) {
+    if (POSUtils.isCrossStoreSearch(jsonsent)) {
       args.put("crossStore", true);
       HQLPropertyList crossStoreRegularProductsHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions, args);
@@ -96,8 +96,10 @@ public class Product extends ProcessHQLQuery {
     try {
       OBContext.setAdminMode(true);
       final Date terminalDate = OBMOBCUtils.calculateServerDate(
-          jsonsent.getJSONObject("parameters").getString("terminalTime"), jsonsent
-              .getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
+          jsonsent.getJSONObject("parameters").getString("terminalTime"),
+          jsonsent.getJSONObject("parameters")
+              .getJSONObject("terminalTimeOffset")
+              .getLong("value"));
 
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final boolean isMultipricelist = getPreference("OBPOS_EnableMultiPriceList");
@@ -580,8 +582,10 @@ public class Product extends ProcessHQLQuery {
       OBContext.setAdminMode(true);
 
       final Date terminalDate = OBMOBCUtils.calculateServerDate(
-          jsonsent.getJSONObject("parameters").getString("terminalTime"), jsonsent
-              .getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
+          jsonsent.getJSONObject("parameters").getString("terminalTime"),
+          jsonsent.getJSONObject("parameters")
+              .getJSONObject("terminalTimeOffset")
+              .getLong("value"));
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final String posId = getTerminalId(jsonsent);
       final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);

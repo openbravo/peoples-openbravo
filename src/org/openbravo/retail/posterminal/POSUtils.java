@@ -82,8 +82,8 @@ public class POSUtils {
     try {
       OBContext.setAdminMode(false);
 
-      OBQuery<OBPOSApplications> obq = OBDal.getInstance().createQuery(OBPOSApplications.class,
-          "searchKey = :value");
+      OBQuery<OBPOSApplications> obq = OBDal.getInstance()
+          .createQuery(OBPOSApplications.class, "searchKey = :value");
       obq.setNamedParameter("value", searchKey);
 
       List<OBPOSApplications> posApps = obq.list();
@@ -106,8 +106,8 @@ public class POSUtils {
     try {
       OBContext.setAdminMode(false);
 
-      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-          posTerminalId);
+      OBPOSApplications posTerminal = OBDal.getInstance()
+          .get(OBPOSApplications.class, posTerminalId);
 
       return posTerminal;
 
@@ -145,7 +145,8 @@ public class POSUtils {
         throw new OBException("No terminal with searchKey: " + searchKey);
       }
 
-      return OBContext.getOBContext().getOrganizationStructureProvider()
+      return OBContext.getOBContext()
+          .getOrganizationStructureProvider()
           .getParentList(terminal.getOrganization().getId(), true);
 
     } catch (Exception e) {
@@ -166,7 +167,8 @@ public class POSUtils {
         throw new OBException("No terminal with id: " + terminalId);
       }
 
-      return OBContext.getOBContext().getOrganizationStructureProvider()
+      return OBContext.getOBContext()
+          .getOrganizationStructureProvider()
           .getParentList(terminal.getOrganization().getId(), true);
 
     } catch (Exception e) {
@@ -284,7 +286,8 @@ public class POSUtils {
     try {
       OBContext.setAdminMode(true);
       SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-      Query<PriceListVersion> priceListVersionQuery = OBDal.getInstance().getSession()
+      Query<PriceListVersion> priceListVersionQuery = OBDal.getInstance()
+          .getSession()
           .createQuery("from PricingPriceListVersion AS plv " + "where plv.priceList.id ='"
               + priceListId
               + "' and plv.active=true and plv.validFromDate = (select max(pplv.validFromDate) "
@@ -329,8 +332,8 @@ public class POSUtils {
     try {
       OBContext.setAdminMode(false);
       OBPOSApplications posterminal = getTerminalById(posterminalId);
-      TerminalType terminalType = OBDal.getInstance().get(TerminalType.class,
-          posterminal.getObposTerminaltype().getId());
+      TerminalType terminalType = OBDal.getInstance()
+          .get(TerminalType.class, posterminal.getObposTerminaltype().getId());
       if (terminalType.getObretcoProductlist() != null) {
         return terminalType.getObretcoProductlist();
       } else {
@@ -361,7 +364,8 @@ public class POSUtils {
       throw new OBException("Error while loading the terminal " + searchKey);
     }
 
-    String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String curDbms = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("bbdd.rdbms");
     String sqlToExecute;
     String doctypeIds = "";
@@ -452,7 +456,8 @@ public class POSUtils {
       throw new OBException("Error while loading the terminal " + searchKey);
     }
 
-    String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String curDbms = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("bbdd.rdbms");
     String sqlToExecute;
     String doctypeIds = "";
@@ -541,7 +546,8 @@ public class POSUtils {
       throw new OBException("Error while loading the terminal " + searchKey);
     }
 
-    String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String curDbms = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("bbdd.rdbms");
     String sqlToExecute;
     String doctypeIds = "";
@@ -653,8 +659,9 @@ public class POSUtils {
     OBContext.setAdminMode(false);
     try {
       Organization org = pOSTerminal.getOrganization();
-      OBQuery<OrgWarehouse> warehouses = OBDal.getInstance().createQuery(OrgWarehouse.class,
-          " e where e.organization=:org and e.warehouse.active=true order by priority, id");
+      OBQuery<OrgWarehouse> warehouses = OBDal.getInstance()
+          .createQuery(OrgWarehouse.class,
+              " e where e.organization=:org and e.warehouse.active=true order by priority, id");
       warehouses.setNamedParameter("org", org);
       List<OrgWarehouse> warehouseList = warehouses.list();
       if (warehouseList.size() == 0) {
@@ -738,7 +745,8 @@ public class POSUtils {
    * the first not null value
    */
   public static Object getPropertyInOrgTree(Organization org, String propertyName) {
-    for (String orgId : OBContext.getOBContext().getOrganizationStructureProvider()
+    for (String orgId : OBContext.getOBContext()
+        .getOrganizationStructureProvider()
         .getParentList(org.getId(), true)) {
       Organization orgInTree = OBDal.getInstance().get(Organization.class, orgId);
       if (orgInTree.get(propertyName) != null) {
@@ -752,7 +760,8 @@ public class POSUtils {
     try {
       OBContext.setAdminMode(true);
       @SuppressWarnings("rawtypes")
-      Query currencyRateQuery = OBDal.getInstance().getSession()
+      Query currencyRateQuery = OBDal.getInstance()
+          .getSession()
           .createQuery("select obpos_currency_rate(coalesce(c, p.paymentMethod.currency), "
               + "p.obposApplications.organization.currency,"
               + " null, null, p.obposApplications.client.id, "
@@ -783,10 +792,11 @@ public class POSUtils {
    */
   public static void setDefaultPaymentType(JSONObject jsonorder, Order order) {
     try {
-      OBQuery<OBPOSAppPayment> paymentQuery = OBDal.getInstance().createQuery(OBPOSAppPayment.class,
-          "as e where e.obposApplications.organization = :organization and e.financialAccount.currency = :currency order by e.id");
-      Organization organization = OBDal.getInstance().get(Organization.class,
-          jsonorder.getString("organization"));
+      OBQuery<OBPOSAppPayment> paymentQuery = OBDal.getInstance()
+          .createQuery(OBPOSAppPayment.class,
+              "as e where e.obposApplications.organization = :organization and e.financialAccount.currency = :currency order by e.id");
+      Organization organization = OBDal.getInstance()
+          .get(Organization.class, jsonorder.getString("organization"));
       paymentQuery.setNamedParameter("organization", organization);
       paymentQuery.setNamedParameter("currency", order.getOrganization().getCurrency());
       paymentQuery.setMaxResult(1);
@@ -816,7 +826,8 @@ public class POSUtils {
   public static long getNumberOfCharacteristicsToFilterInWebPos() {
     long result = -1;
     try {
-      Query<Long> queryNumberOfChToFilterInWebPos = OBDal.getInstance().getSession()
+      Query<Long> queryNumberOfChToFilterInWebPos = OBDal.getInstance()
+          .getSession()
           .createQuery("select count(ch.id) " //
               + "from Characteristic as ch " //
               + "where ch.obposFilteronwebpos ='Y' and ch.client.id = :client ", Long.class);
