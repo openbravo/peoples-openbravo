@@ -449,8 +449,9 @@ OB.DS.HWServer.prototype._send = function (data, callback, device) {
     // DRAWER and DISPLAY URL is allways the main url defined in POS terminal
     sendurl = this.mainurl;
   } else {
-    // PRINTER and default is the active URL
-    if (OB.MobileApp.model.get('terminal').scaleurl === 'bluetooth') {
+    // PRINTER and default
+    if (OB.MobileApp.model.get('terminal').isbluetoothprinter && this.activeurl === this.mainurl) {
+      // BLUETOOTH: If the active url is the main url and terminal has a bluetooth printer
       this._sendBluetooth(data).then(function () {
         if (callback) {
           callback();
@@ -469,6 +470,8 @@ OB.DS.HWServer.prototype._send = function (data, callback, device) {
       });
       return;
     }
+
+    // Use the active URL
     sendurl = this.activeurl;
   }
 
