@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2017 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -10,8 +10,10 @@ package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -57,12 +59,38 @@ public class CharacteristicValue extends ProcessHQLQuery {
   }
 
   @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+
+    final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    final boolean crossStoreSearch = POSUtils.isCrossStoreSearch(jsonsent);
+    final String posId = jsonsent.getString("pos");
+
+    final OBRETCOProductList productList = POSUtils
+        .getProductListByPosterminalId(jsonsent.getString("pos"));
+    Set<String> productListIds = new HashSet<>();
+    productListIds.add(productList.getId());
+
+    final Map<String, Object> paramValues = new HashMap<>();
+    if (crossStoreSearch) {
+      Set<String> crossStoreNaturalTree = OBContext.getOBContext()
+          .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId())
+          .getNaturalTree(orgId);
+      crossStoreNaturalTree.addAll(POSUtils.getOrgListCrossStore(posId));
+
+      productListIds = POSUtils.getProductListCrossStore(posId);
+
+      paramValues.put("crossStoreNaturalTree", crossStoreNaturalTree);
+    }
+
+    paramValues.put("productListIds", productListIds);
+    return paramValues;
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     List<String> hqlQueries = new ArrayList<String>();
     HQLPropertyList regularProductsChValueHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-    final OBRETCOProductList productList = POSUtils
-        .getProductListByPosterminalId(jsonsent.getString("pos"));
     boolean isRemote = false;
 
     Long lastUpdated = jsonsent.has("lastUpdated")
@@ -80,28 +108,58 @@ public class CharacteristicValue extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
+    StringBuilder query = new StringBuilder();
+    query.append(" select");
+    query.append(regularProductsChValueHQLProperties.getHqlSelect());
+
     if (!isRemote) {
-      hqlQueries.add("select" + regularProductsChValueHQLProperties.getHqlSelect()
-          + "from CharacteristicValue cv, ADTreeNode node "
-          + "where cv.characteristic.tree = node.tree and cv.id = node.node "
-          + "and cv.characteristic.obposUseonwebpos = true and "
-          + "((cv.summaryLevel = false and exists (select 1 from  ProductCharacteristicValue pcv, "
-          + "OBRETCO_Prol_Product assort where pcv.characteristicValue.id = cv.id "
-          + "and pcv.product.id= assort.product.id " + "and assort.obretcoProductlist.id = '"
-          + productList.getId() + "')) or cv.summaryLevel = true) "
-          + "and $filtersCriteria and $hqlCriteria and cv.$naturalOrgCriteria "
-          + "and cv.$readableSimpleClientCriteria "
-          + ((lastUpdated != null)
-              ? "and (cv.$incrementalUpdateCriteria or node.$incrementalUpdateCriteria) "
-              : "and (cv.$incrementalUpdateCriteria and node.$incrementalUpdateCriteria) ")
-          + "and cv.active = 'Y' " + "order by cv.name, cv.id");
+      query.append(" from CharacteristicValue cv,");
+      query.append(" ADTreeNode node");
+      query.append(" where cv.characteristic.tree = node.tree");
+      query.append(" and cv.id = node.node");
+      query.append(" and cv.characteristic.obposUseonwebpos = true");
+      query.append(" and (");
+      query.append("   cv.summaryLevel = false");
+      query.append("   and exists (");
+      query.append("     select 1");
+      query.append("     from  ProductCharacteristicValue pcv,");
+      query.append("     OBRETCO_Prol_Product assort");
+      query.append("     where pcv.characteristicValue.id = cv.id");
+      query.append("     and pcv.product.id= assort.product.id");
+      query.append("     and assort.obretcoProductlist.id in :productListIds");
+      query.append("   )");
+      query.append(" or cv.summaryLevel = true");
+      query.append(" )");
+      query.append(" and $filtersCriteria");
+      query.append(" and $hqlCriteria");
+      if (POSUtils.isCrossStoreSearch(jsonsent)) {
+        query.append(" and cv.organization.id in :crossStoreNaturalTree");
+      } else {
+        query.append(" and cv.$naturalOrgCriteria");
+      }
+      query.append(" and cv.$readableSimpleClientCriteria");
+      if (lastUpdated != null) {
+        query.append(" and (cv.$incrementalUpdateCriteria or node.$incrementalUpdateCriteria)");
+      } else {
+        query.append(" and (cv.$incrementalUpdateCriteria and node.$incrementalUpdateCriteria)");
+      }
     } else {
-      hqlQueries.add("select" + regularProductsChValueHQLProperties.getHqlSelect()
-          + "from CharacteristicValue cv where cv.characteristic.obposUseonwebpos = true "
-          + "and $filtersCriteria and $hqlCriteria and cv.$naturalOrgCriteria "
-          + "and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria) "
-          + "and cv.active = 'Y' " + "order by cv.name, cv.id");
+      query.append(" from CharacteristicValue cv");
+      query.append(" where cv.characteristic.obposUseonwebpos = true");
+      query.append(" and $filtersCriteria");
+      query.append(" and $hqlCriteria");
+      if (POSUtils.isCrossStoreSearch(jsonsent)) {
+        query.append(" and cv.organization.id in :crossStoreNaturalTree");
+      } else {
+        query.append(" and cv.$naturalOrgCriteria");
+      }
+      query.append(" and cv.$readableSimpleClientCriteria");
+      query.append(" and (cv.$incrementalUpdateCriteria)");
     }
+    query.append(" and cv.active = 'Y'");
+    query.append(" order by cv.name, cv.id");
+
+    hqlQueries.add(query.toString());
 
     return hqlQueries;
   }
