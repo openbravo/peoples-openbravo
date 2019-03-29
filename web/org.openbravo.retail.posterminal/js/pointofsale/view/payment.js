@@ -414,7 +414,7 @@ enyo.kind({
         paymentstatus = this.receipt.getPaymentStatus(),
         isLayaway = this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway'),
         isMultiOrder = this.model.get('leftColumnViewManager').isMultiOrder();
-    if (isMultiOrder || paymentstatus.isNegative || !isLayaway || paymentstatus.done) {
+    if (isMultiOrder || paymentstatus.isNegative || !isLayaway || paymentstatus.done || this.receipt.get('lines').length === 0) {
       this.$.layawayaction.setLocalDisabled(false);
       this.$.layawayaction.hide();
     } else {
@@ -2274,6 +2274,11 @@ enyo.kind({
 
         if (!me.showing || me.disabled) {
           return true;
+        }
+
+        if (receipt.get('lines').length === 0) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AvoidLayawayWithoutLines'));
+          return;
         }
 
         if (myModel.get('leftColumnViewManager').isOrder()) {
