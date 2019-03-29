@@ -16,7 +16,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -348,6 +350,38 @@ public class POSUtils {
       }
     } catch (Exception e) {
       log.error("Error getting ProductList by Org ID: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return null;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static Set<String> getProductListCrossStore(final String posterminalId) {
+    OBContext.setAdminMode(false);
+    try {
+      Set<String> productList = new HashSet<>();
+      final OBPOSApplications posterminal = getTerminalById(posterminalId);
+
+      if (isCrossStoreEnabled(posterminal)) {
+        final Organization crossStore = posterminal.getOrganization()
+            .getOBRETCOCrossStoreOrganization();
+
+        final StringBuilder select = new StringBuilder();
+        select.append(" select " + Organization.PROPERTY_OBRETCOPRODUCTLIST + ".id");
+        select.append(" from " + Organization.ENTITY_NAME);
+        select.append(" where " + Organization.PROPERTY_ID + " in :orgIds");
+        select.append(" and " + Organization.PROPERTY_OBRETCOPRODUCTLIST + " is not null");
+        select.append(" group by " + Organization.PROPERTY_OBRETCOPRODUCTLIST + ".id");
+
+        final Query<String> query = OBDal.getInstance().getSession().createQuery(select.toString());
+        query.setParameterList("orgIds", getOrgListByCrossStoreId(crossStore.getId()));
+        productList.addAll(query.list());
+      }
+
+      return productList;
+    } catch (Exception e) {
+      log.error("Error getting ProductList by Cross Store ID: " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
