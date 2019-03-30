@@ -19,6 +19,6 @@ public class CharacteristicHQLCriteria extends HQLCriteriaProcess {
 
   @Override
   public String getHQLFilter(String params) {
-    return "exists (select 1 from ProductCharacteristicValue as chv where chv.product = pli.product and chv.characteristicValue.id in  ($1)) ";
+    return "exists (select 1 from ProductCharacteristicValue as chv where chv.product.id = product.id and chv.characteristicValue.id in  ($1)) ";
   }
 }
