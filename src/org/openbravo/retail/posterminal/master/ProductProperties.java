@@ -71,7 +71,7 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("img.mimetype", "mimetype"));
         }
         if (crossStore) {
-          add(new HQLProperty("'N'", "bestseller"));
+          add(new HQLProperty("false", "bestseller"));
           add(new HQLProperty("product.active", "active"));
         } else {
           add(new HQLProperty("pli.bestseller", "bestseller"));
