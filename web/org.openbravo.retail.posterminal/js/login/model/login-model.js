@@ -972,7 +972,7 @@
       var me = this;
 
       function removeOneModel(model, collection, callback) {
-        if (collection.length === 0) {
+        if (collection.length === 0 || (model.get('isEditable') && model.get('payments') && model.get('payments').length > 0 && (!OB.POS.modelterminal.get('terminal').poss_session && OB.POS.modelterminal.get('terminal').poss_cashupcode && OB.POS.modelterminal.get('terminal').poss_cashupcode.length === 32))) {
           if (callback && callback instanceof Function) {
             me.cleanSessionInfo();
             callback();
