@@ -687,7 +687,7 @@ enyo.kind({
           this.$.totalpending.applyStyle('font-size', '24px');
         }
       }
-      if (!receiptHasPrepaymentAmount) {
+      if (!receiptHasPrepaymentAmount || !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
         this.$.prepaymentsbuttons.hide();
         this.$.exactbutton.show();
       } else {
@@ -861,7 +861,7 @@ enyo.kind({
         }
       }
 
-      if (!receiptHasPrepaymentAmount) {
+      if (!receiptHasPrepaymentAmount || !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
         this.$.prepaymentsbuttons.hide();
         this.$.exactbutton.show();
       } else {
