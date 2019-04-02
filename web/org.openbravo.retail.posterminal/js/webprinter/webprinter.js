@@ -63,7 +63,12 @@
 
   var WEBPrinter = function (info) {
       this.webdevice = new info.WebDevice(info);
+      this.hasDrawer = info.hasDrawer;
       };
+
+  WEBPrinter.prototype.hasDrawer = function () {
+    return this.hasDrawer;
+  };
 
   WEBPrinter.prototype.connected = function () {
     return this.webdevice.connected();

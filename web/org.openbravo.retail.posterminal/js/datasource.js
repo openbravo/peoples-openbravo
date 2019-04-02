@@ -475,15 +475,21 @@ OB.DS.HWServer.prototype._sendHWMPrinter = function (sendurl) {
 
 OB.DS.HWServer.prototype._send = function (data, callback, device) {
   var sendfunction;
-  if (OB.DS.HWServer.DRAWER === device || OB.DS.HWServer.DISPLAY === device) {
-    // DRAWER and DISPLAY URL is allways the main url defined in POS terminal
+  if (OB.DS.HWServer.DISPLAY === device) {
+    // DISPLAY requests always go to HARDWARE MANAGER MAIN URL
     sendfunction = this._sendHWMPrinter(this.mainurl);
-  } else {
-    if (this.webprinter && this.activeurl === this.mainurl) {
-      // WEBPRINTER: If the active url is the main url and terminal has a Web Printer
+  } else if (OB.DS.HWServer.DRAWER === device) {
+    // DRAWER requests go to WebPrinter if supported, otherwise to HARDWARE MANAGER MAIN URL
+    if (this.webprinter && this.webprinter.hasDrawer()) {
       sendfunction = this._sendWebPrinter();
     } else {
-      // HARDWARE MANAGER ACTIVE PRINTER
+      sendfunction = this._sendHWMPrinter(this.mainurl);
+    }
+  } else {
+    // PRINTER requests go to WebPrinter if MAIN, otherwise to HARDWARE MANAGER ACTIVE URL
+    if (this.webprinter && this.activeurl === this.mainurl) {
+      sendfunction = this._sendWebPrinter();
+    } else {
       sendfunction = this._sendHWMPrinter(this.activeurl);
     }
   }
