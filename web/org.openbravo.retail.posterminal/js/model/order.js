@@ -2911,7 +2911,7 @@
               if (callback) {
                 callback(success, orderline);
               }
-            }, execution);
+            });
           } else {
             OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
             OB.UTIL.ProcessController.finish('addProduct', execution);
@@ -2943,12 +2943,12 @@
             if (callback) {
               callback(success, orderline);
             }
-          }, execution);
+          });
         }
       }
     },
 
-    addProductToOrder: function (p, qty, options, attrs, callback, execution) {
+    addProductToOrder: function (p, qty, options, attrs, callback) {
       var executeAddProduct, finalCallback, me = this,
           attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
       finalCallback = function (success, orderline) {
@@ -3004,12 +3004,10 @@
         executeAddProduct = function () {
           var isQuotationAndAttributeAllowed = args.receipt.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true);
           if ((!args || !args.options || !args.options.line) && attributeSearchAllowed && p.get('hasAttributes') && qty >= 1 && (!args.receipt.get('isQuotation') || isQuotationAndAttributeAllowed)) {
-            OB.UTIL.ProcessController.pause('addProduct', execution);
             OB.MobileApp.view.waterfall('onShowPopup', {
               popup: 'modalProductAttribute',
               args: {
                 callback: function (attributeValue) {
-                  OB.UTIL.ProcessController.resume('addProduct', execution);
                   if (!OB.UTIL.isNullOrUndefined(attributeValue)) {
                     if (_.isEmpty(attributeValue)) {
                       // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
@@ -3856,10 +3854,6 @@
         }
         if (qty > 0 && negativeLines > 0) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
-          OB.UTIL.finishProcessesRunningBySearchKey('addProduct');
-          if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.receipt.addProcess)) {
-            OB.MobileApp.model.receipt.addProcess = {};
-          }
           return true;
         } else if (qty < 0 && negativeLines !== receiptLines) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
@@ -4206,6 +4200,9 @@
       OB.UTIL.clone(me, clonedreceipt);
 
       OB.Dal.remove(this, function () {
+        OB.MobileApp.model.orderList.remove(me, {
+          silent: true
+        });
         var deliveredLine, linesWithDeferred = [];
 
         me.preventOrderSave(true);
@@ -4324,6 +4321,9 @@
             me.unset('preventServicesUpdate');
             me.preventOrderSave(false);
             me.save();
+            OB.MobileApp.model.orderList.unshift(me, {
+              silent: true
+            });
           });
         });
         // Set the last line as selected to call the 'onRearrangeEditButtonBar' event and update the isEditable and
@@ -4404,6 +4404,9 @@
                   var clonedReceipt = new OB.Model.Order();
                   OB.UTIL.clone(me, clonedReceipt);
                   OB.Dal.remove(me, function () {
+                    OB.MobileApp.model.orderList.remove(me, {
+                      silent: true
+                    });
                     var idMap = {};
                     me.set('skipCalculateReceipt', true);
                     me.preventOrderSave(true);
@@ -4488,6 +4491,9 @@
                         me.unset('preventServicesUpdate');
                         me.preventOrderSave(false);
                         me.save();
+                        OB.MobileApp.model.orderList.unshift(me, {
+                          silent: true
+                        });
                         OB.MobileApp.model.orderList.saveCurrent();
                         me.trigger('updatePending', true);
                         // Finally change to the payments tab
@@ -5021,13 +5027,11 @@
         this.adjustPayment();
       }
       OB.UTIL.PrepaymentUtils.managePrepaymentChange(this, payment, payments, function () {
-        OB.UTIL.ProcessController.pause('addPayment', execution);
         OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
           paymentToAdd: payment,
           payments: payments,
           receipt: me
         }, function (args) {
-          OB.UTIL.ProcessController.resume('addPayment', execution);
           var executeFinalCallback = function (saveChanges) {
               if (saveChanges && !payment.get('changePayment')) {
                 order.adjustPayment();
