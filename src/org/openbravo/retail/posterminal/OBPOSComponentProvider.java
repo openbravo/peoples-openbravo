@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -84,17 +84,16 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/terminal",
         // "model/user",
         "utils/ob-utilitiesuipos", "model/bpartnerfilter", "model/orderfilter",
-        "model/orders-for-verified-returns-filter", "model/bpcategory", "model/bplocation", // Model
-                                                                                            // for
-                                                                                            // Customer
-                                                                                            // Address
-        "model/currencypanel", "model/country", "model/salesrepresentative",
-        "model/discountset",
-        "model/bpartnerset",
-        "model/productcharacteristicvalue", "model/characteristicvalue", "model/characteristic",
-        "model/brand", "model/returnreasons", "model/executor", "model/terminal-model",
-        "model/paymentmethodcashup", "model/taxcashup", "model/returnreasons",
-        "model/offlineprinter", "model/productbom", "model/taxcategorybom",
+        "model/crossstorefilter", "model/orders-for-verified-returns-filter", "model/bpcategory",
+        "model/bplocation", // Model
+                            // for
+                            // Customer
+                            // Address
+        "model/currencypanel", "model/country", "model/salesrepresentative", "model/discountset",
+        "model/bpartnerset", "model/productcharacteristicvalue", "model/characteristicvalue",
+        "model/characteristic", "model/brand", "model/returnreasons", "model/executor",
+        "model/terminal-model", "model/paymentmethodcashup", "model/taxcashup",
+        "model/returnreasons", "model/offlineprinter", "model/productbom", "model/taxcategorybom",
         "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
         "components/modalcancel", "components/subwindow", "components/leftsubwindow",
         "components/modalreceiptproperties", "components/modalreceiptlineproperties",
@@ -107,15 +106,16 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/keypadcoins", "data/dataordersave", "data/dataordertaxes",
         "data/datacustomersave", "data/datacustomeraddrsave", "data/dataorderdiscount",
         "components/modalreceipts", "components/modalorderselector",
-        "components/modalmultiorderslayaway", "components/modalcategorytree",
-        "components/rendercategory", "components/renderproduct", "components/renderproductch",
-        "components/modalpayment", "components/modalprovidergroup", "components/standardprovider",
-        "components/mockprovider", "components/modalprovidergroupvoid",
-        "components/standardprovidervoid", "components/mockprovidervoid",
-        "components/renderorderline", "components/rendermultiorderline", "components/order",
-        "components/orderdetails", "components/businesspartner",
-        "components/businesspartner_selector", "components/bplocation", // Button for selecting
-                                                                        // customer address
+        "components/modalcrossstoreselector", "components/modalmultiorderslayaway",
+        "components/modalcategorytree", "components/rendercategory", "components/renderproduct",
+        "components/renderproductch", "components/modalpayment", "components/modalprovidergroup",
+        "components/standardprovider", "components/mockprovider",
+        "components/modalprovidergroupvoid", "components/standardprovidervoid",
+        "components/mockprovidervoid", "components/renderorderline",
+        "components/rendermultiorderline", "components/order", "components/orderdetails",
+        "components/businesspartner", "components/businesspartner_selector",
+        "components/bplocation", // Button for selecting
+                                 // customer address
         "components/bplocationship", "components/customershipbill",
         "components/salesrepresentative", "components/listreceiptscounter", "components/menu",
         "components/modalselectterminal", "components/popupdraweropened",

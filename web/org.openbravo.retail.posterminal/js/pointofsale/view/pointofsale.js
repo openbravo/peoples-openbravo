@@ -305,6 +305,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalAdvancedFilterOrders',
       name: 'OBPOS_modalAdvancedFilterOrders'
+    }, {
+      kind: 'OBPOS.UI.CrossStoreSelector',
+      name: 'modalCrossStoreSelector'
     }]
   }, {
     name: 'mainSubWindow',

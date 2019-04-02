@@ -332,6 +332,9 @@ enyo.kind({
         me = this;
     if (OB.UTIL.isCrossStoreProduct(me.product)) {
       this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_SelectStore'));
+      me.doShowPopup({
+        popup: 'modalCrossStoreSelector'
+      });
     } else if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
       this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock_NotCalculated'));
     } else {
