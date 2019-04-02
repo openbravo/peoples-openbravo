@@ -48,7 +48,7 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.client.id", "client"));
     list.add(new HQLProperty("pos.client.name", getIdentifierAlias("client")));
     list.add(new HQLProperty("pos.hardwareurl", "hardwareurl"));
-    list.add(new HQLProperty("pos.isbluetoothprinter", "isbluetoothprinter"));
+    list.add(new HQLProperty("pos.printertype", "printertype"));
     list.add(new HQLProperty("pos.scaleurl", "scaleurl"));
     list.add(new HQLProperty("org.obretcoDbpIrulesid", "defaultbp_invoiceterm"));
     list.add(new HQLProperty("org.obretcoDbpPtermid.id", "defaultbp_paymentterm"));

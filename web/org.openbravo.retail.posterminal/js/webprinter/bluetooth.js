@@ -12,10 +12,10 @@
 (function () {
 
   var Bluetooth = function (info) {
-    this.info = info;
-    this.size = this.info.buffersize || 20;
-    this.device = null;
-  };
+      this.info = info;
+      this.size = this.info.buffersize || 20;
+      this.device = null;
+      };
 
   Bluetooth.prototype.connected = function () {
     return this.device !== null;
@@ -28,9 +28,9 @@
     }
 
     return navigator.bluetooth.requestDevice({
-      filters: [
-        {services: [this.info.service]}
-      ]
+      filters: [{
+        services: [this.info.service]
+      }]
     }).then(function (device) {
       this.device = device;
       this.device.addEventListener('gattserverdisconnected', this.onDisconnected.bind(this));
@@ -47,7 +47,7 @@
     if (this.characteristic) {
       result = OB.ESCPOS.printArray(this.printChunk.bind(this), this.size, data);
     } else {
-      result =  this.device.gatt.connect().then(function (server) {
+      result = this.device.gatt.connect().then(function (server) {
         this.server = server;
         return server.getPrimaryService(this.info.service);
       }.bind(this)).then(function (service) {
@@ -59,7 +59,7 @@
     }
 
     return result['catch'](function (error) {
-      this.onDisconnected();     
+      this.onDisconnected();
       throw error;
     }.bind(this));
   };
@@ -77,6 +77,6 @@
   };
 
   window.OB = window.OB || {};
-  OB.Bluetooth = Bluetooth;  
+  OB.Bluetooth = Bluetooth;
 
 }());

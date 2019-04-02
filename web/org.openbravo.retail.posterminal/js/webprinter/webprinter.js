@@ -41,11 +41,29 @@
     return tmp;
   }
 
+  function getImageData(data) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.src = data.image;
+      img.onload = function () {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        img.style.display = 'none';
+        data.imagedata = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        resolve(data);
+      };
+      img.onerror = function (ev) {
+        reject(ev);
+      };
+    });
+  }
+
   var encoder = new TextEncoder('utf-8');
 
   var WEBPrinter = function (info) {
-    this.webdevice = new info.WebDevice(info);
-  };
+      this.webdevice = new info.WebDevice(info);
+      };
 
   WEBPrinter.prototype.connected = function () {
     return this.webdevice.connected();
@@ -105,8 +123,8 @@
         printerdoc = append(printerdoc, OB.ESCPOS.NEW_LINE);
       } else if (el.nodeName === 'barcode') {
         printerdoc = append(printerdoc, this.processBarcode(el));
-      // } else if (el.nodeName === 'image') {
-      //   printerdoc = append(printerdoc, this.processImage(el));        
+        // } else if (el.nodeName === 'image') {
+        //   printerdoc = append(printerdoc, this.processImage(el));        
       }
     }.bind(this));
     printerdoc = append(printerdoc, OB.ESCPOS.NEW_LINE);
@@ -219,13 +237,13 @@
   };
 
   WEBPrinter.prototype.registerImage = function (imageurl) {
-    Promise.resolve({image: imageurl})
-    .then(getImageData)
-    .then(function (result) {
-        this.images[imageurl] = {
-          imagedata: result.imagedata
-        };
-    }.bind(this));    
+    Promise.resolve({
+      image: imageurl
+    }).then(getImageData).then(function (result) {
+      this.images[imageurl] = {
+        imagedata: result.imagedata
+      };
+    }.bind(this));
   };
 
   WEBPrinter.prototype.processImage = function (el) {
@@ -241,7 +259,7 @@
     }
 
     return line;
-  };  
+  };
 
   window.OB = window.OB || {};
   OB.WEBPrinter = WEBPrinter;

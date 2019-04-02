@@ -44,17 +44,8 @@ OB.DS.HWServer = function (urllist, url, scaleurl) {
   this.setActivePDFURL(OB.UTIL.localStorage.getItem('hw_activepdfurl'));
 
   // WebPrinter
-  this.webprinter = new OB.WEBPrinter({
-      WebDevice: OB.Bluetooth, 
-      service: 'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
-      characteristic: 'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f'
-  });
-  // this.webprinter = new OB.WEBPrinter({
-  //     WebDevice: OB.USB,
-  //     vendorId: 0x04B8, 
-  //     productId: 0x0202
-  // }); // Epson TM-T88V  
-  // this.webprinter = null;
+  var printertypeinfo = OB.PRINTERTYPES[OB.MobileApp.model.get('terminal').printertype];
+  this.webprinter = printertypeinfo ? new OB.WEBPrinter(printertypeinfo) : null;
 };
 
 OB.DS.HWServer.PRINTER = 0;
@@ -438,93 +429,82 @@ OB.DS.HWServer.prototype.confirm = function (title, message) {
   });
 };
 
-OB.DS.HWServer.prototype._sendWebPrinter = function (data) {
-  var ok = false;
-
-  if (this.webprinter.connected()) {
-    return this.webprinter.print(data);
-  } else {
-    return this.confirm(OB.I18N.getLabel('OBPOS_Bluetooth'), OB.I18N.getLabel('OBPOS_BluetoothPair')).then(function () {
-      return this.webprinter.request();
-    }.bind(this)).then(function () {
+OB.DS.HWServer.prototype._sendWebPrinter = function () {
+  return function (data) {
+    if (this.webprinter.connected()) {
       return this.webprinter.print(data);
-    }.bind(this));
-  }
+    } else {
+      return this.confirm(OB.I18N.getLabel('OBPOS_Bluetooth'), OB.I18N.getLabel('OBPOS_BluetoothPair')).then(function () {
+        return this.webprinter.request();
+      }.bind(this)).then(function () {
+        return this.webprinter.print(data);
+      }.bind(this));
+    }
+  }.bind(this);
+};
+
+OB.DS.HWServer.prototype._sendHWMPrinter = function (sendurl) {
+  return function (data) {
+    return new Promise(function (resolve, reject) {
+      if (sendurl) {
+        var ajaxRequest = new enyo.Ajax({
+          url: sendurl + '/printer',
+          cacheBust: false,
+          method: 'POST',
+          handleAs: 'json',
+          timeout: 20000,
+          contentType: 'application/xml;charset=utf-8',
+          data: data,
+          success: resolve,
+          fail: function (inSender, inResponse) {
+            // prevent more than one entry.
+            if (this.failed) {
+              return;
+            }
+            this.failed = true;
+            reject();
+          }
+        });
+        ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
+      } else {
+        resolve();
+      }
+    });
+  }.bind(this);
 };
 
 OB.DS.HWServer.prototype._send = function (data, callback, device) {
-
-  var sendurl;
+  var sendfunction;
   if (OB.DS.HWServer.DRAWER === device || OB.DS.HWServer.DISPLAY === device) {
     // DRAWER and DISPLAY URL is allways the main url defined in POS terminal
-    sendurl = this.mainurl;
+    sendfunction = this._sendHWMPrinter(this.mainurl);
   } else {
-    // PRINTER and default
     if (this.webprinter && this.activeurl === this.mainurl) {
       // WEBPRINTER: If the active url is the main url and terminal has a Web Printer
-      this._sendWebPrinter(data).then(function () {
-        if (callback) {
-          callback();
-        }
-      })['catch'](function (error) {
-        if (callback) {
-          callback({
-            data: data,
-            exception: {
-              message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
-            }
-          });
-        } else {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
-        }
-      });
-      return;
+      sendfunction = this._sendWebPrinter();
+    } else {
+      // HARDWARE MANAGER ACTIVE PRINTER
+      sendfunction = this._sendHWMPrinter(this.activeurl);
     }
-
-    // Use the active URL
-    sendurl = this.activeurl;
   }
-
-  if (sendurl) {
-    var ajaxRequest = new enyo.Ajax({
-      url: sendurl + '/printer',
-      cacheBust: false,
-      method: 'POST',
-      handleAs: 'json',
-      timeout: 20000,
-      contentType: 'application/xml;charset=utf-8',
-      data: data,
-      success: function (inSender, inResponse) {
-        if (callback) {
-          callback(inResponse, data);
-        }
-      },
-      fail: function (inSender, inResponse) {
-        // prevent more than one entry.
-        if (this.failed) {
-          return;
-        }
-        this.failed = true;
-
-        if (callback) {
-          callback({
-            data: data,
-            exception: {
-              message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
-            }
-          });
-        } else {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
-        }
-      }
-    });
-    ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
-  } else {
+  sendfunction(data).then(function () {
     if (callback) {
       callback();
     }
-  }
+  })['catch'](function (error) {
+    if (callback) {
+      callback({
+        data: data,
+        exception: {
+          message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
+        }
+      });
+    } else {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
+    }
+  });
 };
+
 OB.DS.HWServer.prototype._printPDF = function (params, callback) {
   this._sendPDF(JSON.stringify(params), callback);
 };
