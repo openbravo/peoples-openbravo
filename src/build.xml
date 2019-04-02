@@ -412,9 +412,10 @@ build.war: build a war file in the lib directory.
     <copy todir="${base.context}/WEB-INF/lib" encoding="UTF-8">
       <fileset dir="${base.modules}">
         <include name="*/lib/runtime/**" />
-        <exclude if="exclude.cdi" name="org.openbravo.base.weld/lib/runtime/weld*"/>
-        <exclude if="exclude.cdi" name="org.openbravo.base.weld/lib/runtime/*api*"/>
+        <exclude if="exclude.cdi" name="org.openbravo.base.weld/lib/runtime/cdi*"/>
         <exclude if="exclude.cdi" name="org.openbravo.base.weld/lib/runtime/javax*"/>
+        <exclude if="exclude.cdi" name="org.openbravo.base.weld/lib/runtime/jboss*"/>
+        <exclude if="exclude.cdi" name="org.openbravo.base.weld/lib/runtime/weld*"/>
       </fileset>
       <mapper type="regexp" from="(.*\${file.separator}lib\${file.separator}runtime)(.*)" to="\2" />
     </copy>
