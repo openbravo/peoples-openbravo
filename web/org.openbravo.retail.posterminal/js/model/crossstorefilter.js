@@ -30,6 +30,12 @@
     name: 'stock',
     filter: false,
     type: 'NUMERIC'
+  }, {
+    name: 'name',
+    column: 'name',
+    filter: true,
+    type: 'TEXT',
+    caption: 'OBPOS_LblName'
   }]);
 
 }());
