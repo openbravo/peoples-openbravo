@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -49,10 +51,15 @@ public class Category extends ProcessHQLQuery {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      String clientId = OBContext.getOBContext().getCurrentClient().getId();
-      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      final OBRETCOProductList productList = POSUtils
-          .getProductListByPosterminalId(jsonsent.getString("pos"));
+      final String clientId = OBContext.getOBContext().getCurrentClient().getId();
+      final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      final String posId = jsonsent.getString("pos");
+      final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(posId);
+      Set<String> productListIds = new HashSet<>();
+      productListIds.add(productList.getId());
+      final List<String> allCrossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
+      final List<String> crossStoreOrgIds = new ArrayList<>(allCrossStoreOrgIds);
+      crossStoreOrgIds.remove(orgId);
       boolean isRemote = false;
       try {
         OBContext.setAdminMode(false);
@@ -67,20 +74,27 @@ public class Category extends ProcessHQLQuery {
       }
 
       Map<String, Object> paramValues = new HashMap<String, Object>();
-      paramValues.put("productListId", productList.getId());
+
       if (isRemote) {
         paramValues.put("productCategoryTableId", CategoryTree.productCategoryTableId);
       }
-      if (!isRemote) {
-        final Date terminalDate = OBMOBCUtils.calculateServerDate(
-            jsonsent.getJSONObject("parameters").getString("terminalTime"),
-            jsonsent.getJSONObject("parameters")
-                .getJSONObject("terminalTimeOffset")
-                .getLong("value"));
+      final Date terminalDate = OBMOBCUtils.calculateServerDate(
+          jsonsent.getJSONObject("parameters").getString("terminalTime"),
+          jsonsent.getJSONObject("parameters")
+              .getJSONObject("terminalTimeOffset")
+              .getLong("value"));
 
-        final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
-            terminalDate);
-        paramValues.put("priceListVersionId", priceListVersion.getId());
+      final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
+          terminalDate);
+
+      if (POSUtils.isCrossStoreSearch(jsonsent)) {
+        Set<String> crossStoreNaturalTree = OBContext.getOBContext()
+            .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId())
+            .getNaturalTree(orgId);
+        crossStoreNaturalTree.addAll(crossStoreOrgIds);
+        productListIds = POSUtils.getProductListCrossStore(posId);
+
+        paramValues.put("crossStoreNaturalTree", crossStoreNaturalTree);
       }
       if (OBContext.hasTranslationInstalled()) {
         paramValues.put("languageId", OBContext.getOBContext().getLanguage().getId());
@@ -90,6 +104,12 @@ public class Category extends ProcessHQLQuery {
       paramValues.put("startingDate", now.getTime());
       paramValues.put("clientId", clientId);
       paramValues.put("orgId", orgId);
+      paramValues.put("allCrossStoreOrgIds", allCrossStoreOrgIds);
+      paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
+      paramValues.put("priceListVersionId", priceListVersion.getId());
+      paramValues.put("terminalDate", terminalDate);
+      paramValues.put("productListId", productList.getId());
+      paramValues.put("productListIds", productListIds);
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
@@ -105,7 +125,6 @@ public class Category extends ProcessHQLQuery {
         .getPropertyExtensions(extensions);
 
     boolean isRemote = false;
-    final String clientId = OBContext.getOBContext().getCurrentClient().getId();
     try {
       OBContext.setAdminMode(false);
       isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
@@ -153,6 +172,58 @@ public class Category extends ProcessHQLQuery {
           + "AND pCat.$naturalOrgCriteria AND "
           + "pCat.$readableSimpleClientCriteria)) AND pCat.$incrementalUpdateCriteria "
           + "order by pCat.name, pCat.id");
+
+      if (POSUtils.isCrossStoreSearch(jsonsent)) {
+        StringBuilder query = new StringBuilder();
+        query.append(" select");
+        query.append(regularProductsCategoriesHQLProperties.getHqlSelect());
+        query.append(" from ProductCategory as pCat");
+        query.append(" left outer join pCat.image as img");
+        query.append(" where (exists (");
+        // Product exists in the assortment and price list of a cross store
+        query.append("     select 1");
+        query.append("     from Organization o");
+        query.append("     where o.id in :crossStoreOrgIds");
+        query.append("     and exists (");
+        query.append("       select 1");
+        query.append("       from OBRETCO_Prol_Product pli");
+        query.append("       where pli.product.productCategory.id = pCat.id");
+        query.append("       and pli.obretcoProductlist.id = o.obretcoProductlist.id");
+        query.append("     )");
+        query.append("     and exists (");
+        query.append("       select 1");
+        query.append("       from PricingProductPrice ppp");
+        query.append("       join ppp.priceListVersion plv");
+        query.append("       where ppp.product.productCategory.id = pCat.id");
+        query.append("       and plv.priceList.id = o.obretcoPricelist.id");
+        query.append("       and plv.validFromDate <= :terminalDate");
+        query.append("       )");
+        query.append("     )");
+        // Product doesn't exist in the assortment and price list of current store
+        query.append("     and (not exists (");
+        query.append("       select 1");
+        query.append("       from OBRETCO_Prol_Product pli");
+        query.append("       where pli.product.productCategory.id = pCat.id");
+        query.append("       and pli.obretcoProductlist.id = :productListId");
+        query.append("       )");
+        query.append("     or not exists (");
+        query.append("       select 1");
+        query.append("       from PricingProductPrice ppp");
+        query.append("       where ppp.product.productCategory.id = pCat.id");
+        query.append("       and ppp.priceListVersion.id = :priceListVersionId");
+        query.append("       )");
+        query.append("      )");
+        query.append("   or (");
+        query.append("     pCat.summaryLevel = 'Y'");
+        query.append("     and pCat.organization.id in :crossStoreNaturalTree");
+        query.append("     and pCat.$readableSimpleClientCriteria");
+        query.append("     )");
+        query.append("   )");
+        query.append(" and pCat.$incrementalUpdateCriteria");
+        query.append(" order by pCat.name, pCat.id");
+
+        hqlQueries.add(query.toString());
+      }
     }
     String promoNameTrl;
     if (OBContext.hasTranslationInstalled()) {
@@ -161,42 +232,84 @@ public class Category extends ProcessHQLQuery {
       promoNameTrl = "pt.commercialName";
     }
 
-    String whereClause = "p.client.id = '" + clientId + "' "
-        + "and p.startingDate <= :startingDate "
-        + "and (p.endingDate is null or p.endingDate >= :endingDate) "
-        // assortment products
-        + "and ((p.includedProducts = 'N' and not exists (select 1 "
-        + "      from PricingAdjustmentProduct pap where pap.active = true and "
-        + "      pap.priceAdjustment = p and pap.product.sale = true "
-        + "      and pap.product not in (select ppl.product.id from OBRETCO_Prol_Product ppl "
-        + "      where ppl.obretcoProductlist.id = :productListId and ppl.active = true))) "
-        + " or (p.includedProducts = 'Y' and not exists (select 1 "
-        + "      from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl "
-        + "      where pap.active = true and pap.priceAdjustment = p "
-        + "      and pap.product.id = ppl.product.id "
-        + "      and ppl.obretcoProductlist.id = :productListId))) "
-        // organization
-        + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
-        + "         from PricingAdjustmentOrganization o" + "        where active = true"
-        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId )) "
-        + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
-        + "         from PricingAdjustmentOrganization o" + "        where active = true"
-        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId ))) ";
-
     // Discounts marked as category
     hqlQueries.add("select pt.id as id, " + promoNameTrl + " as searchKey, " + promoNameTrl
         + " as name, " + promoNameTrl + " as _identifier, "
         + "(select bindaryData from ADImage ai where ai = pt.obposImage) as img, "
         + "(case when (count(p.name) > 0 and exists (select 1 from PricingAdjustment p "
-        + "where p.discountType = pt and p.active = true and " + whereClause + ")) "
+        + "where p.discountType = pt and p.active = true and " + getDiscountWhereClause() + ")) "
         + "then true else false end) as active, " + "'N' as realCategory " //
         + "from PromotionType pt inner join pt.pricingAdjustmentList p "
         + "where pt.active = true and pt.obposIsCategory = true "//
         + "and pt.$readableSimpleClientCriteria "//
         + "and (p.$incrementalUpdateCriteria) " //
-        + "and " + whereClause//
+        + "and " + getDiscountWhereClause()//
         + "group by pt.id, pt.commercialName, pt.obposImage");
     return hqlQueries;
+  }
+
+  private String getDiscountWhereClause() {
+    StringBuilder whereClause = new StringBuilder();
+    whereClause.append(" p.client.id = :clientId");
+    whereClause.append(" and p.startingDate <= :startingDate");
+    whereClause.append(" and (p.endingDate is null or p.endingDate >= :endingDate)");
+    // assortment products
+    whereClause.append(" and (");
+    whereClause.append("   (");
+    whereClause.append("    p.includedProducts = 'N'");
+    whereClause.append("    and not exists (");
+    whereClause.append("      select 1");
+    whereClause.append("      from PricingAdjustmentProduct pap");
+    whereClause.append("      where pap.active = true");
+    whereClause.append("      and pap.priceAdjustment = p");
+    whereClause.append("      and pap.product.sale = true");
+    whereClause.append("      and pap.product");
+    whereClause.append("      not in (");
+    whereClause.append("        select ppl.product.id");
+    whereClause.append("        from OBRETCO_Prol_Product ppl");
+    whereClause.append("        where ppl.obretcoProductlist.id in :productListIds");
+    whereClause.append("        and ppl.active = true");
+    whereClause.append("      )");
+    whereClause.append("    )");
+    whereClause.append("   )");
+    whereClause.append("   or (");
+    whereClause.append("       p.includedProducts = 'Y'");
+    whereClause.append("       and not exists (");
+    whereClause.append("         select 1");
+    whereClause.append("         from PricingAdjustmentProduct pap,");
+    whereClause.append("         OBRETCO_Prol_Product ppl");
+    whereClause.append("         where pap.active = true");
+    whereClause.append("         and pap.priceAdjustment = p");
+    whereClause.append("         and pap.product.id = ppl.product.id");
+    whereClause.append("         and ppl.obretcoProductlist.id in :productListIds");
+    whereClause.append("       )");
+    whereClause.append("   )");
+    whereClause.append(" )");
+    // organization
+    whereClause.append(" and (");
+    whereClause.append("   (");
+    whereClause.append("    p.includedOrganizations='Y'");
+    whereClause.append("    and not exists (");
+    whereClause.append("      select 1");
+    whereClause.append("      from PricingAdjustmentOrganization o");
+    whereClause.append("      where active = true");
+    whereClause.append("      and o.priceAdjustment = p");
+    whereClause.append("      and o.organization.id in :allCrossStoreOrgIds");
+    whereClause.append("    )");
+    whereClause.append("   )");
+    whereClause.append("   or (");
+    whereClause.append("       p.includedOrganizations='N'");
+    whereClause.append("       and  exists (");
+    whereClause.append("         select 1");
+    whereClause.append("         from PricingAdjustmentOrganization o");
+    whereClause.append("         where active = true");
+    whereClause.append("         and o.priceAdjustment = p");
+    whereClause.append("      and o.organization.id in :allCrossStoreOrgIds");
+    whereClause.append("       )");
+    whereClause.append("      )");
+    whereClause.append(" )");
+
+    return whereClause.toString();
   }
 
   @Override
