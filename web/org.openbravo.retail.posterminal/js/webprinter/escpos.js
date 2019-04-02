@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -40,6 +40,10 @@
     BAR_CODE02: new Uint8Array([0x1D, 0x6B, 0x02]),
     BAR_CODE128: new Uint8Array([0x1D, 0x6B, 0x49]),
     BAR_CODE128TYPE: new Uint8Array([0x7B, 0x42]),
+
+    IMAGE_HEADER: new Uint8Array([0x1D, 0x76, 0x30, 0x03]),
+
+    PARTIAL_CUT_1: new Uint8Array([0x1B, 0x69]),
 
     transCode128: function (txt) {
 
@@ -234,6 +238,61 @@
       } else {
         return new Uint8Array();
       }
-    }
+    },
+    
+    printArray: function (printChunk, size, data) {
+      var i, result;
+
+      result = Promise.resolve();
+      for (i = 0; i < data.length; i += size) {
+        result = result.then(printChunk(data.slice(i, i + size)));
+      }
+      return result;
+    },
+
+    transImage: function(imagedata) {
+
+      function isBlack(x, y) {
+        if (x < 0 || x >= imagedata.width || y < 0 || y >= imagedata.height) {
+          return false;
+        }
+        var index = y * imagedata.width * 4 + x * 4;
+        var luminosity = 0;
+        luminosity += 0.30 * imagedata.data[index];     // RED luminosity
+        luminosity += 0.59 * imagedata.data[index + 1]; // GREEN luminosity
+        luminosity += 0.11 * imagedata.data[index + 2]; // BLUE luminosity
+        luminosity = 1 - luminosity / 255;
+        luminosity *= imagedata.data[index + 3] / 255;  // ALPHA factor
+
+        return luminosity >= 0.5;
+      }; 
+
+      var result = [];
+      var i, j, p, d;
+
+      var width = (imagedata.width + 7) / 8;
+      var height = imagedata.height;
+
+      result.push(width & 255);
+      result.push(width >> 8);
+      result.push(height & 255);
+      result.push(height >> 8);
+
+      // Raw data
+      for (i = 0; i < imagedata.height; i++) {
+        for (j = 0; j < imagedata.width; j = j + 8) {
+          p = 0x00;
+          for (d = 0; d < 8; d++) {
+            p = p << 1;
+            if (isBlack(j + d, i)) {
+              p = p | 0x01;
+            }
+          }
+          result.push(p);
+        }
+      }
+
+      return new Uint8Array(result);   
+    }    
   };
 }());
