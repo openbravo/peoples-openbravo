@@ -64,6 +64,7 @@
   var WEBPrinter = function (info) {
       this.webdevice = new info.WebDevice(info);
       this.hasDrawer = info.hasDrawer;
+      this.ESCPOS = info.ESCPOS || OB.ESCPOS;
       };
 
   WEBPrinter.prototype.hasDrawer = function () {
@@ -125,17 +126,17 @@
     Array.from(dom.children).forEach(function (el) {
       if (el.nodeName === 'line') {
         printerdoc = append(printerdoc, this.processLine(el));
-        printerdoc = append(printerdoc, OB.ESCPOS.NEW_LINE);
+        printerdoc = append(printerdoc, this.ESCPOS.NEW_LINE);
       } else if (el.nodeName === 'barcode') {
         printerdoc = append(printerdoc, this.processBarcode(el));
         // } else if (el.nodeName === 'image') {
         //   printerdoc = append(printerdoc, this.processImage(el));        
       }
     }.bind(this));
-    printerdoc = append(printerdoc, OB.ESCPOS.NEW_LINE);
-    printerdoc = append(printerdoc, OB.ESCPOS.NEW_LINE);
-    printerdoc = append(printerdoc, OB.ESCPOS.NEW_LINE);
-    printerdoc = append(printerdoc, OB.ESCPOS.PARTIAL_CUT_1);
+    printerdoc = append(printerdoc, this.ESCPOS.NEW_LINE);
+    printerdoc = append(printerdoc, this.ESCPOS.NEW_LINE);
+    printerdoc = append(printerdoc, this.ESCPOS.NEW_LINE);
+    printerdoc = append(printerdoc, this.ESCPOS.PARTIAL_CUT_1);
     return printerdoc;
   };
 
@@ -144,13 +145,13 @@
     var fontsize = dom.getAttribute('size');
 
     if (fontsize === '1') {
-      line = append(line, OB.ESCPOS.CHAR_SIZE_1);
+      line = append(line, this.ESCPOS.CHAR_SIZE_1);
     } else if (fontsize === '2') {
-      line = append(line, OB.ESCPOS.CHAR_SIZE_2);
+      line = append(line, this.ESCPOS.CHAR_SIZE_2);
     } else if (fontsize === '3') {
-      line = append(line, OB.ESCPOS.CHAR_SIZE_3);
+      line = append(line, this.ESCPOS.CHAR_SIZE_3);
     } else {
-      line = append(line, OB.ESCPOS.CHAR_SIZE_0);
+      line = append(line, this.ESCPOS.CHAR_SIZE_0);
     }
 
     Array.from(dom.children).forEach(function (el) {
@@ -170,17 +171,17 @@
         }
 
         if (bold === 'true') {
-          line = append(line, OB.ESCPOS.BOLD_SET);
+          line = append(line, this.ESCPOS.BOLD_SET);
         }
         if (uderline === 'true') {
-          line = append(line, OB.ESCPOS.UNDERLINE_SET);
+          line = append(line, this.ESCPOS.UNDERLINE_SET);
         }
         line = append(line, encoder.encode(txt));
         if (bold === 'true') {
-          line = append(line, OB.ESCPOS.BOLD_RESET);
+          line = append(line, this.ESCPOS.BOLD_RESET);
         }
         if (uderline === 'true') {
-          line = append(line, OB.ESCPOS.UNDERLINE_RESET);
+          line = append(line, this.ESCPOS.UNDERLINE_RESET);
         }
       }
     }.bind(this));
@@ -194,21 +195,21 @@
     var type = el.getAttribute('type');
     var barcode = el.textContent;
 
-    line = append(line, OB.ESCPOS.CENTER_JUSTIFICATION);
+    line = append(line, this.ESCPOS.CENTER_JUSTIFICATION);
 
-    line = append(line, OB.ESCPOS.NEW_LINE);
-    line = append(line, OB.ESCPOS.BAR_HEIGHT);
+    line = append(line, this.ESCPOS.NEW_LINE);
+    line = append(line, this.ESCPOS.BAR_HEIGHT);
     if (position === 'none') {
-      line = append(line, OB.ESCPOS.BAR_POSITIONNONE);
+      line = append(line, this.ESCPOS.BAR_POSITIONNONE);
     } else {
-      line = append(line, OB.ESCPOS.BAR_POSITIONDOWN);
+      line = append(line, this.ESCPOS.BAR_POSITIONDOWN);
     }
 
     if (type === 'EAN13') {
-      line = append(line, OB.ESCPOS.BAR_WIDTH3);
+      line = append(line, this.ESCPOS.BAR_WIDTH3);
 
-      line = append(line, OB.ESCPOS.BAR_HRIFONT1);
-      line = append(line, OB.ESCPOS.BAR_CODE02);
+      line = append(line, this.ESCPOS.BAR_HRIFONT1);
+      line = append(line, this.ESCPOS.BAR_CODE02);
 
       barcode = padStart(barcode, 13, '0');
       barcode = barcode.substring(0, 12);
@@ -216,18 +217,18 @@
       line = append(line, new Uint8Array([0x00]));
     } else if (type === 'CODE128') {
       if (barcode.length > 14) {
-        line = append(line, OB.ESCPOS.BAR_WIDTH1);
+        line = append(line, this.ESCPOS.BAR_WIDTH1);
       } else if (barcode.length > 8) {
-        line = append(line, OB.ESCPOS.BAR_WIDTH2);
+        line = append(line, this.ESCPOS.BAR_WIDTH2);
       } else {
-        line = append(line, OB.ESCPOS.BAR_WIDTH3);
+        line = append(line, this.ESCPOS.BAR_WIDTH3);
       }
-      line = append(line, OB.ESCPOS.BAR_HRIFONT1);
-      line = append(line, OB.ESCPOS.BAR_CODE128);
+      line = append(line, this.ESCPOS.BAR_HRIFONT1);
+      line = append(line, this.ESCPOS.BAR_CODE128);
 
-      var barcode128 = OB.ESCPOS.transCode128(barcode);
+      var barcode128 = this.ESCPOS.transCode128(barcode);
       line = append(line, new Uint8Array([barcode128.length + 2]));
-      line = append(line, OB.ESCPOS.BAR_CODE128TYPE);
+      line = append(line, this.ESCPOS.BAR_CODE128TYPE);
       line = append(line, barcode128);
       line = append(line, new Uint8Array([0x00]));
     } else { // Unknown barcode type
@@ -236,8 +237,8 @@
       line = append(line, encoder.encode(barcode));
     }
 
-    line = append(line, OB.ESCPOS.NEW_LINE);
-    line = append(line, OB.ESCPOS.LEFT_JUSTIFICATION);
+    line = append(line, this.ESCPOS.NEW_LINE);
+    line = append(line, this.ESCPOS.LEFT_JUSTIFICATION);
     return line;
   };
 
@@ -257,9 +258,9 @@
 
     if (data) {
       if (!data.rawdata) {
-        data.rawdata = OB.ESCPOS.transImage(data.imagedata);
+        data.rawdata = this.ESCPOS.transImage(data.imagedata);
       }
-      line = append(line, OB.ESCPOS.IMAGE_HEADER);
+      line = append(line, this.ESCPOS.IMAGE_HEADER);
       line = append(line, data.rawdata);
     }
 
