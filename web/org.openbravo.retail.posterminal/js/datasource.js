@@ -43,8 +43,18 @@ OB.DS.HWServer = function (urllist, url, scaleurl) {
   //load activepdfurl from OB.UTIL.localStorage
   this.setActivePDFURL(OB.UTIL.localStorage.getItem('hw_activepdfurl'));
 
-  // Bluetooth
-  this.bltprinter = new OB.BluetoothPrinter();
+  // WebPrinter
+  this.webprinter = new OB.WEBPrinter({
+      WebDevice: OB.Bluetooth, 
+      service: 'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
+      characteristic: 'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f'
+  });
+  // this.webprinter = new OB.WEBPrinter({
+  //     WebDevice: OB.USB,
+  //     vendorId: 0x04B8, 
+  //     productId: 0x0202
+  // }); // Epson TM-T88V  
+  // this.webprinter = null;
 };
 
 OB.DS.HWServer.PRINTER = 0;
@@ -428,16 +438,16 @@ OB.DS.HWServer.prototype.confirm = function (title, message) {
   });
 };
 
-OB.DS.HWServer.prototype._sendBluetooth = function (data) {
+OB.DS.HWServer.prototype._sendWebPrinter = function (data) {
   var ok = false;
 
-  if (this.bltprinter.connected()) {
-    return this.bltprinter.print(data);
+  if (this.webprinter.connected()) {
+    return this.webprinter.print(data);
   } else {
     return this.confirm(OB.I18N.getLabel('OBPOS_Bluetooth'), OB.I18N.getLabel('OBPOS_BluetoothPair')).then(function () {
-      return this.bltprinter.request();
+      return this.webprinter.request();
     }.bind(this)).then(function () {
-      return this.bltprinter.print(data);
+      return this.webprinter.print(data);
     }.bind(this));
   }
 };
@@ -450,9 +460,9 @@ OB.DS.HWServer.prototype._send = function (data, callback, device) {
     sendurl = this.mainurl;
   } else {
     // PRINTER and default
-    if (OB.MobileApp.model.get('terminal').isbluetoothprinter && this.activeurl === this.mainurl) {
-      // BLUETOOTH: If the active url is the main url and terminal has a bluetooth printer
-      this._sendBluetooth(data).then(function () {
+    if (this.webprinter && this.activeurl === this.mainurl) {
+      // WEBPRINTER: If the active url is the main url and terminal has a Web Printer
+      this._sendWebPrinter(data).then(function () {
         if (callback) {
           callback();
         }
