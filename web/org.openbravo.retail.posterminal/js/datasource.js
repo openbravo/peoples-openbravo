@@ -434,7 +434,7 @@ OB.DS.HWServer.prototype._sendWebPrinter = function () {
     if (this.webprinter.connected()) {
       return this.webprinter.print(data);
     } else {
-      return this.confirm(OB.I18N.getLabel('OBPOS_Bluetooth'), OB.I18N.getLabel('OBPOS_BluetoothPair')).then(function () {
+      return this.confirm(OB.I18N.getLabel('OBPOS_WebPrinter'), OB.I18N.getLabel('OBPOS_WebPrinterPair')).then(function () {
         return this.webprinter.request();
       }.bind(this)).then(function () {
         return this.webprinter.print(data);
