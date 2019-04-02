@@ -240,16 +240,6 @@
       }
     },
 
-    printArray: function (printChunk, size, data) {
-      var i, result;
-
-      result = Promise.resolve();
-      for (i = 0; i < data.length; i += size) {
-        result = result.then(printChunk(data.slice(i, i + size)));
-      }
-      return result;
-    },
-
     transImage: function (imagedata) {
 
       function isBlack(x, y) {

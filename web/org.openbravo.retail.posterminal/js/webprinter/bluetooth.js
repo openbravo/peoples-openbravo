@@ -45,7 +45,7 @@
     }
 
     if (this.characteristic) {
-      result = OB.ESCPOS.printArray(this.printChunk.bind(this), this.size, data);
+      result = OB.ARRAYS.printArray(this.printChunk.bind(this), this.size, data);
     } else {
       result = this.device.gatt.connect().then(function (server) {
         this.server = server;
@@ -54,7 +54,7 @@
         return service.getCharacteristic(this.info.characteristic);
       }.bind(this)).then(function (characteristic) {
         this.characteristic = characteristic;
-        return OB.ESCPOS.printArray(this.printChunk.bind(this), this.size, data);
+        return OB.ARRAYS.printArray(this.printChunk.bind(this), this.size, data);
       }.bind(this));
     }
 

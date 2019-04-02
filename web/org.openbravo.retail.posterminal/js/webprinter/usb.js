@@ -61,7 +61,7 @@
       console.log('claiming');
       return this.device.claimInterface(0);
     }.bind(this)).then(function () {
-      return OB.ESCPOS.printArray(this.printChunk.bind(this), 64, data);
+      return OB.ARRAYS.printArray(this.printChunk.bind(this), 64, data);
     }.bind(this)).then(function () {
       return this.device.close();
     }.bind(this))['catch'](function (error) {
