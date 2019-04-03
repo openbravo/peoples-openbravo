@@ -1642,11 +1642,27 @@ enyo.kind({
 
           var errorMsgLbl, totalPaid = 0,
               totalToPaid = OB.DEC.abs(isMultiOrder ? me.owner.model.get('multiOrders').getTotal() : me.owner.receipt.getTotal()),
-              isReturnOrder = isMultiOrder ? false : me.owner.receipt.isNegative();
+              isReturnOrder = isMultiOrder ? false : me.owner.receipt.isNegative(),
+              paymentsMultiOrders, paymentsOrder;
 
-          if (_.filter(payments.models, function (payment) {
+
+          if (isMultiOrder) {
+            var receipts = me.owner.model.get('multiOrders').get('multiOrdersList').models;
+            receipts.forEach(function (receipt) {
+              paymentsMultiOrders = _.filter(receipt.get('payments').models, function (payment) {
+                return (OB.UTIL.isNullOrUndefined(payment.get('isReturnOrder')) ? isReturnOrder : payment.get('isReturnOrder')) !== isReturnOrder;
+              });
+              if (paymentsMultiOrders.length > 0) {
+                return;
+              }
+            });
+          }
+
+          paymentsOrder = _.filter(payments.models, function (payment) {
             return (OB.UTIL.isNullOrUndefined(payment.get('isReturnOrder')) ? isReturnOrder : payment.get('isReturnOrder')) !== isReturnOrder;
-          }).length > 0) {
+          });
+
+          if (paymentsOrder.length > 0 || (isMultiOrder && paymentsMultiOrders.length > 0)) {
             me.avoidCompleteReceipt = true;
             if (isReturnOrder) {
               errorMsgLbl = 'OBPOS_PaymentOnReturnReceipt';
