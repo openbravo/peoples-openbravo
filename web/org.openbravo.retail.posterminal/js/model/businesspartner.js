@@ -485,6 +485,10 @@
     name: 'comments',
     column: 'comments',
     type: 'TEXT'
+  }, {
+    name: 'oBPOSAvailableCredit',
+    column: 'oBPOSAvailableCredit',
+    type: 'NUMERIC'
   }]);
 
   BusinessPartner.addIndex([{

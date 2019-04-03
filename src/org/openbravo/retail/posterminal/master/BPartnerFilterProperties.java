@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -39,7 +39,8 @@ public class BPartnerFilterProperties extends ModelExtension {
         add(new HQLProperty("bp.isCustomerConsent", "isCustomerConsent"));
         add(new HQLProperty("bp.language.language", "language"));
         add(new HQLProperty("bp.language.name", "language_name"));
-        add(new HQLProperty("ulist.comments", "comments"));       
+        add(new HQLProperty("ulist.comments", "comments"));
+        add(new HQLProperty("bp._computedColumns.oBPOSAvailableCredit", "oBPOSAvailableCredit"));
         if (location) {
           add(new HQLProperty("bpl.id", "id"));
           add(new HQLProperty("bpl.id", "bpLocactionId"));

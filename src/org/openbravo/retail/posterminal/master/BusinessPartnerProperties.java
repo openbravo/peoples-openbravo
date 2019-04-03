@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2018 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -59,8 +59,8 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bp.language.language", "language"));
         add(new HQLProperty("bp.language.name", "language_name"));
         add(new HQLProperty("ulist.comments", "comments"));
-        String curDbms = OBPropertiesProvider.getInstance()
-            .getOpenbravoProperties()
+        add(new HQLProperty("bp._computedColumns.oBPOSAvailableCredit", "oBPOSAvailableCredit"));
+        String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
             .getProperty("bbdd.rdbms");
         if (curDbms.equals("POSTGRE")) {
           add(new HQLProperty("now()", "loaded"));

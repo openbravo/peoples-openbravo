@@ -317,6 +317,15 @@ enyo.kind({
     }
   }, {
     kind: 'OB.UI.CustomerTextProperty',
+    name: 'oBPOSAvailableCredit',
+    modelProperty: 'oBPOSAvailableCredit',
+    i18nLabel: 'OBPOS_LblAvailableCredit',
+    readOnly: true,
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowAvailableCredit', true);
+    }
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
     name: 'birthPlace',
     modelProperty: 'birthPlace',
     i18nLabel: 'OBPOS_LblBirthplace',
