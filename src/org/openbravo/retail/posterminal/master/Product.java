@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -109,6 +110,10 @@ public class Product extends ProcessHQLQuery {
       final String posId = getTerminalId(jsonsent);
       final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
       crossStoreOrgIds.remove(orgId);
+      Set<String> crossStoreNaturalTree = OBContext.getOBContext()
+          .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId())
+          .getNaturalTree(orgId);
+      crossStoreNaturalTree.addAll(POSUtils.getOrgListCrossStore(posId));
       final String assortmentId = POSUtils.getProductListByPosterminalId(posId).getId();
       final String priceListVersionId = POSUtils.getPriceListVersionByOrgId(orgId, terminalDate)
           .getId();
@@ -118,6 +123,7 @@ public class Product extends ProcessHQLQuery {
       paramValues.put("priceListVersionId", priceListVersionId);
       paramValues.put("orgId", orgId);
       paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
+      paramValues.put("crossStoreNaturalTree", crossStoreNaturalTree);
       paramValues.put("endingDate", now.getTime());
       paramValues.put("startingDate", now.getTime());
       paramValues.put("terminalDate", terminalDate);
@@ -413,7 +419,7 @@ public class Product extends ProcessHQLQuery {
     query.append("     )");
     query.append("   )");
     query.append(" )))");
-    query.append(" and p.$naturalOrgCriteria");
+    query.append(" and p.organization.id in :crossStoreNaturalTree");
     // Pack is included in a cross store
     query.append(" and ((p.includedOrganizations='N'");
     query.append(" and exists (");
@@ -521,7 +527,7 @@ public class Product extends ProcessHQLQuery {
     query.append("     select 1");
     query.append("     from PricingProductPrice ppp");
     query.append("     where ppp.product.id = product2.id");
-    query.append("     and plv.priceListVersion.id = :priceListVersionId");
+    query.append("     and ppp.priceListVersion.id = :priceListVersionId");
     query.append("   )");
     query.append(" ))");
     query.append(" order by product.id");
