@@ -326,6 +326,44 @@ enyo.kind({
       }
     }
   }, {
+    kind: 'OB.UI.CustomerTextProperty',
+    name: 'comments',
+    modelProperty: 'comments',
+    i18nLabel: 'OBPOS_LblComments',
+    maxlength: 40
+  }, {
+    kind: 'OB.UI.CustomerComboProperty',
+    name: 'customerLanguage',
+    modelProperty: 'language',
+    modelPropertyText: 'language_name',
+    collectionName: 'languageList',
+    defaultValue: function () {
+      return OB.MobileApp.model.get('terminal').language_string;
+    },
+    //Default value for new lines
+    retrievedPropertyForValue: 'language',
+    //property of the retrieved model to get the value of the combo item
+    retrievedPropertyForText: 'name',
+    //property of the retrieved model to get the text of the combo item
+    //function to retrieve the data
+    fetchDataFunction: function (args) {
+      var me = this,
+          data = new Backbone.Collection();
+      //This function must be called when the data is readyargs = "language";
+      _.each(OB.MobileApp.model.get('language'), function (lg) {
+        var languageToAdd = new Backbone.Model({
+          _identifier: lg.language,
+          language: lg.language,
+          name: lg.name,
+          id: lg.id
+        });
+        data.push(languageToAdd);
+      }, args);
+      me.dataReadyFunction(data, args);
+
+    },
+    i18nLabel: 'OBPOS_LblLanguage'
+  }, {
     kind: 'OB.UI.CustomerComboProperty',
     name: 'customerPriceList',
     modelProperty: 'priceList',

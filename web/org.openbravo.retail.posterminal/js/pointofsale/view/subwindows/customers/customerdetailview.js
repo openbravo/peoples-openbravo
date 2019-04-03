@@ -299,6 +299,18 @@ enyo.kind({
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
+    name: 'language',
+    modelProperty: 'language_name',
+    readOnly: true,
+    i18nLabel: 'OBPOS_LblLanguage'
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
+    name: 'comments',
+    modelProperty: 'comments',
+    i18nLabel: 'OBPOS_LblComments',
+    readOnly: true
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
     name: 'birthPlace',
     modelProperty: 'birthPlace',
     i18nLabel: 'OBPOS_LblBirthplace',

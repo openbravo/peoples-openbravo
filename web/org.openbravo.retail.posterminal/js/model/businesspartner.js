@@ -477,6 +477,14 @@
     name: 'isCustomerConsent',
     column: 'isCustomerConsent',
     type: 'TEXT'
+  }, {
+    name: 'language',
+    column: 'language',
+    type: 'TEXT'
+  }, {
+    name: 'comments',
+    column: 'comments',
+    type: 'TEXT'
   }]);
 
   BusinessPartner.addIndex([{
@@ -492,6 +500,6 @@
       sort: 'desc'
     }]
   }]);
-
+  window.OB.Collection.languageList = Backbone.Collection;
   OB.Data.Registry.registerModel(BusinessPartner);
 }());
