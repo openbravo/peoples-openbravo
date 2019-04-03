@@ -296,10 +296,11 @@
 
   window.OB = window.OB || {};
   OB.ESCPOS = {
-    Base: Base,
     // Basic ESCPOS codes with limited functionality. No images, No cut paper, No drawer.
-    Standard: Standard,
+    Base: Base,
     // Full featured. Standard EPSON ESCPOS codes.
+    Standard: Standard,
+    // Singleton for Standard EPSON ESCPOS codes
     standardinst: new Standard()
   };
 }());

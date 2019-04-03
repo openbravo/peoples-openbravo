@@ -479,14 +479,14 @@ OB.DS.HWServer.prototype._send = function (data, callback, device) {
     // DISPLAY requests always go to HARDWARE MANAGER MAIN URL
     sendfunction = this._sendHWMPrinter(this.mainurl);
   } else if (OB.DS.HWServer.DRAWER === device) {
-    // DRAWER requests go to WebPrinter if supported, otherwise to HARDWARE MANAGER MAIN URL
-    if (this.webprinter && this.webprinter.hasDrawer()) {
+    // DRAWER requests go to WebPrinter if exists, otherwise to HARDWARE MANAGER MAIN URL
+    if (this.webprinter) {
       sendfunction = this._sendWebPrinter();
     } else {
       sendfunction = this._sendHWMPrinter(this.mainurl);
     }
   } else {
-    // PRINTER requests go to WebPrinter if MAIN, otherwise to HARDWARE MANAGER ACTIVE URL
+    // PRINTER requests go to WebPrinter if exists and MAIN, otherwise to HARDWARE MANAGER ACTIVE URL
     if (this.webprinter && this.activeurl === this.mainurl) {
       sendfunction = this._sendWebPrinter();
     } else {
