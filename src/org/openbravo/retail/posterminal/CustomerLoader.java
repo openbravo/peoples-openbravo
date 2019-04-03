@@ -37,6 +37,7 @@ import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchron
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.geography.Country;
@@ -227,8 +228,9 @@ public class CustomerLoader extends POSDataSynchronizationProcess
 
       customer.setBirthDay(
           OBMOBCUtils.calculateServerDate((String) jsonCustomer.get("birthDay"), timezoneOffset));
-    }
 
+    }
+    setBpLanguage(customer, jsonCustomer.get("language"));
     OBDal.getInstance().save(customer);
     return customer;
   }
@@ -413,5 +415,16 @@ public class CustomerLoader extends POSDataSynchronizationProcess
       CustomerAddrCreationHook proc = procIter.next();
       proc.exec(jsonCustomer, customer, location);
     }
+  }
+
+  private void setBpLanguage(BusinessPartner customer, final Object adLanguage) {
+    OBCriteria<Language> obCriteria = OBDal.getInstance().createCriteria(Language.class);
+    obCriteria.add(Restrictions.eq(Language.PROPERTY_LANGUAGE, adLanguage));
+
+    obCriteria.setFilterOnReadableClients(false);
+    obCriteria.setFilterOnReadableOrganization(false);
+    obCriteria.setMaxResults(1);
+    Language language = (Language) obCriteria.uniqueResult();
+    customer.setLanguage(language);
   }
 }
