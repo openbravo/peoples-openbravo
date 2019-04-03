@@ -330,7 +330,10 @@ enyo.kind({
     name: 'comments',
     modelProperty: 'comments',
     i18nLabel: 'OBPOS_LblComments',
-    maxlength: 40
+    maxlength: 40,
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowComments', true);
+    }
   }, {
     kind: 'OB.UI.CustomerComboProperty',
     name: 'customerLanguage',
@@ -362,7 +365,10 @@ enyo.kind({
       me.dataReadyFunction(data, args);
 
     },
-    i18nLabel: 'OBPOS_LblLanguage'
+    i18nLabel: 'OBPOS_LblLanguage',
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowLanguage', true);
+    }
   }, {
     kind: 'OB.UI.CustomerComboProperty',
     name: 'customerPriceList',

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -302,13 +302,19 @@ enyo.kind({
     name: 'language',
     modelProperty: 'language_name',
     readOnly: true,
-    i18nLabel: 'OBPOS_LblLanguage'
+    i18nLabel: 'OBPOS_LblLanguage',
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowLanguage', true);
+    }
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'comments',
     modelProperty: 'comments',
     i18nLabel: 'OBPOS_LblComments',
-    readOnly: true
+    readOnly: true,
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowComments', true);
+    }
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'birthPlace',
