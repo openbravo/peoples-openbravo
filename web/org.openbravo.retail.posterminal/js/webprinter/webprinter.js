@@ -47,6 +47,8 @@
       img.src = data.image;
       img.onload = function () {
         var canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
         var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
         img.style.display = 'none';
@@ -63,13 +65,9 @@
 
   var WEBPrinter = function (info) {
       this.webdevice = new info.WebDevice(info);
-      this.hasDrawer = info.hasDrawer;
-      this.ESCPOS = info.ESCPOS || OB.ESCPOS;
+      this.escpos = info.ESCPOS ? new info.ESCPOS() : OB.ESCPOS.standardinst;
+      this.images = [];
       };
-
-  WEBPrinter.prototype.hasDrawer = function () {
-    return this.hasDrawer;
-  };
 
   WEBPrinter.prototype.connected = function () {
     return this.webdevice.connected();
@@ -88,21 +86,20 @@
       return Promise.reject("Error while parsing XML template.");
     }
 
-    try {
-      return this.processDOM(dom);
-    } catch (ex) {
-      return Promise.reject(ex);
-    }
+    return this.processDOM(dom);
   };
 
   WEBPrinter.prototype.processDOM = function (dom) {
     var output;
-
-    Array.from(dom.children).forEach(function (el) {
-      if (el.nodeName === 'output') {
-        output = this.processOutput(el);
-      }
-    }.bind(this));
+    try {
+      Array.from(dom.children).forEach(function (el) {
+        if (el.nodeName === 'output') {
+          output = this.processOutput(el);
+        }
+      }.bind(this));
+    } catch (ex) {
+      return Promise.reject(ex);
+    }
 
     if (output && output.length) {
       return this.webdevice.print(output);
@@ -126,17 +123,18 @@
     Array.from(dom.children).forEach(function (el) {
       if (el.nodeName === 'line') {
         printerdoc = append(printerdoc, this.processLine(el));
-        printerdoc = append(printerdoc, this.ESCPOS.NEW_LINE);
+        printerdoc = append(printerdoc, this.escpos.NEW_LINE);
       } else if (el.nodeName === 'barcode') {
         printerdoc = append(printerdoc, this.processBarcode(el));
-        // } else if (el.nodeName === 'image') {
-        //   printerdoc = append(printerdoc, this.processImage(el));        
+      } else if (el.nodeName === 'image') {
+        printerdoc = append(printerdoc, this.processImage(el));
       }
     }.bind(this));
-    printerdoc = append(printerdoc, this.ESCPOS.NEW_LINE);
-    printerdoc = append(printerdoc, this.ESCPOS.NEW_LINE);
-    printerdoc = append(printerdoc, this.ESCPOS.NEW_LINE);
-    printerdoc = append(printerdoc, this.ESCPOS.PARTIAL_CUT_1);
+    printerdoc = append(printerdoc, this.escpos.NEW_LINE);
+    printerdoc = append(printerdoc, this.escpos.NEW_LINE);
+    printerdoc = append(printerdoc, this.escpos.NEW_LINE);
+    printerdoc = append(printerdoc, this.escpos.NEW_LINE);
+    printerdoc = append(printerdoc, this.escpos.PARTIAL_CUT_1);
     return printerdoc;
   };
 
@@ -145,13 +143,13 @@
     var fontsize = dom.getAttribute('size');
 
     if (fontsize === '1') {
-      line = append(line, this.ESCPOS.CHAR_SIZE_1);
+      line = append(line, this.escpos.CHAR_SIZE_1);
     } else if (fontsize === '2') {
-      line = append(line, this.ESCPOS.CHAR_SIZE_2);
+      line = append(line, this.escpos.CHAR_SIZE_2);
     } else if (fontsize === '3') {
-      line = append(line, this.ESCPOS.CHAR_SIZE_3);
+      line = append(line, this.escpos.CHAR_SIZE_3);
     } else {
-      line = append(line, this.ESCPOS.CHAR_SIZE_0);
+      line = append(line, this.escpos.CHAR_SIZE_0);
     }
 
     Array.from(dom.children).forEach(function (el) {
@@ -171,17 +169,17 @@
         }
 
         if (bold === 'true') {
-          line = append(line, this.ESCPOS.BOLD_SET);
+          line = append(line, this.escpos.BOLD_SET);
         }
         if (uderline === 'true') {
-          line = append(line, this.ESCPOS.UNDERLINE_SET);
+          line = append(line, this.escpos.UNDERLINE_SET);
         }
         line = append(line, encoder.encode(txt));
         if (bold === 'true') {
-          line = append(line, this.ESCPOS.BOLD_RESET);
+          line = append(line, this.escpos.BOLD_RESET);
         }
         if (uderline === 'true') {
-          line = append(line, this.ESCPOS.UNDERLINE_RESET);
+          line = append(line, this.escpos.UNDERLINE_RESET);
         }
       }
     }.bind(this));
@@ -195,21 +193,21 @@
     var type = el.getAttribute('type');
     var barcode = el.textContent;
 
-    line = append(line, this.ESCPOS.CENTER_JUSTIFICATION);
+    line = append(line, this.escpos.CENTER_JUSTIFICATION);
 
-    line = append(line, this.ESCPOS.NEW_LINE);
-    line = append(line, this.ESCPOS.BAR_HEIGHT);
+    line = append(line, this.escpos.NEW_LINE);
+    line = append(line, this.escpos.BAR_HEIGHT);
     if (position === 'none') {
-      line = append(line, this.ESCPOS.BAR_POSITIONNONE);
+      line = append(line, this.escpos.BAR_POSITIONNONE);
     } else {
-      line = append(line, this.ESCPOS.BAR_POSITIONDOWN);
+      line = append(line, this.escpos.BAR_POSITIONDOWN);
     }
 
     if (type === 'EAN13') {
-      line = append(line, this.ESCPOS.BAR_WIDTH3);
+      line = append(line, this.escpos.BAR_WIDTH3);
 
-      line = append(line, this.ESCPOS.BAR_HRIFONT1);
-      line = append(line, this.ESCPOS.BAR_CODE02);
+      line = append(line, this.escpos.BAR_HRIFONT1);
+      line = append(line, this.escpos.BAR_CODE02);
 
       barcode = padStart(barcode, 13, '0');
       barcode = barcode.substring(0, 12);
@@ -217,18 +215,18 @@
       line = append(line, new Uint8Array([0x00]));
     } else if (type === 'CODE128') {
       if (barcode.length > 14) {
-        line = append(line, this.ESCPOS.BAR_WIDTH1);
+        line = append(line, this.escpos.BAR_WIDTH1);
       } else if (barcode.length > 8) {
-        line = append(line, this.ESCPOS.BAR_WIDTH2);
+        line = append(line, this.escpos.BAR_WIDTH2);
       } else {
-        line = append(line, this.ESCPOS.BAR_WIDTH3);
+        line = append(line, this.escpos.BAR_WIDTH3);
       }
-      line = append(line, this.ESCPOS.BAR_HRIFONT1);
-      line = append(line, this.ESCPOS.BAR_CODE128);
+      line = append(line, this.escpos.BAR_HRIFONT1);
+      line = append(line, this.escpos.BAR_CODE128);
 
-      var barcode128 = this.ESCPOS.transCode128(barcode);
+      var barcode128 = this.escpos.transCode128(barcode);
       line = append(line, new Uint8Array([barcode128.length + 2]));
-      line = append(line, this.ESCPOS.BAR_CODE128TYPE);
+      line = append(line, this.escpos.BAR_CODE128TYPE);
       line = append(line, barcode128);
       line = append(line, new Uint8Array([0x00]));
     } else { // Unknown barcode type
@@ -237,8 +235,8 @@
       line = append(line, encoder.encode(barcode));
     }
 
-    line = append(line, this.ESCPOS.NEW_LINE);
-    line = append(line, this.ESCPOS.LEFT_JUSTIFICATION);
+    line = append(line, this.escpos.NEW_LINE);
+    line = append(line, this.escpos.LEFT_JUSTIFICATION);
     return line;
   };
 
@@ -258,9 +256,9 @@
 
     if (data) {
       if (!data.rawdata) {
-        data.rawdata = this.ESCPOS.transImage(data.imagedata);
+        data.rawdata = this.escpos.transImage(data.imagedata);
       }
-      line = append(line, this.ESCPOS.IMAGE_HEADER);
+      line = append(line, this.escpos.IMAGE_HEADER);
       line = append(line, data.rawdata);
     }
 
