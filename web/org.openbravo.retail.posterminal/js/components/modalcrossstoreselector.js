@@ -12,16 +12,21 @@
 enyo.kind({
   name: 'OBPOS.UI.CrossStoreSelector',
   kind: 'OB.UI.ModalSelector',
+  classes: 'obpos-modal-order-selector',
   topPosition: '70px',
   i18nHeader: 'OBPOS_SelectStore',
-  style: 'width: 725px',
   body: {
-    kind: 'OBPOS.UI.ListCrossStoreProducts'
+    kind: 'OBPOS.UI.CrossStoreList'
   },
+  productId: null,
   executeOnShow: function () {
     if (!this.initialized) {
       this.inherited(arguments);
       this.getFilterSelectorTableHeader().clearFilter();
+      this.productId = this.args.productId;
+      this.$.body.$.crossStoreList.searchAction(null, {
+        filters: []
+      });
     }
   },
   executeOnHide: function () {
@@ -29,7 +34,7 @@ enyo.kind({
     OB.MobileApp.view.scanningFocus(true);
   },
   getFilterSelectorTableHeader: function () {
-    return this.$.body.$.listCrossStoreProducts.$.csProductsSelector.$.theader.$.modalCrossStoreProductScrollableHeader.$.filterSelector;
+    return this.$.body.$.crossStoreList.$.csStoreSelector.$.theader.$.modalCrossStoreProductScrollableHeader.$.filterSelector;
   }
 });
 
@@ -38,6 +43,7 @@ enyo.kind({
   name: 'OBPOS.UI.ModalCrossStoreProductScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
   components: [{
+    classes: 'obpos-filter-selector',
     kind: 'OB.UI.FilterSelectorTableHeader',
     name: 'filterSelector',
     filters: OB.Model.CrossStoreFilter.getProperties()
@@ -46,15 +52,11 @@ enyo.kind({
 
 /* Scrollable table (body of modal) */
 enyo.kind({
-  name: 'OBPOS.UI.ListCrossStoreProducts',
+  name: 'OBPOS.UI.CrossStoreList',
   classes: 'row-fluid',
   handlers: {
     onClearFilterSelector: 'clearAction',
     onSearchAction: 'searchAction',
-    onSelectAll: 'selectAll',
-    onPrepareSelected: 'prepareSelected',
-    onChangeLine: 'changeLine',
-    onChangeAllLines: 'changeAllLines'
   },
   events: {
     onHideSelector: '',
@@ -63,18 +65,19 @@ enyo.kind({
   components: [{
     classes: 'span12',
     components: [{
-      classes: 'row-fluid',
+      classes: 'row-fluid obpos-list-orders',
       components: [{
         classes: 'span12',
         components: [{
-          name: 'csProductsSelector',
+          name: 'csStoreSelector',
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '420px',
           renderHeader: 'OBPOS.UI.ModalCrossStoreProductScrollableHeader',
-          renderLine: 'OB.UI.RenderEmpty',
+          renderLine: 'OBPOS.UI.CrossStoreLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }, {
           name: 'renderLoading',
+          classes: 'obpos-list-orders obpos-list-orders-renderloading',
           showing: false,
           initComponents: function () {
             this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
@@ -89,7 +92,55 @@ enyo.kind({
     return true;
   },
 
-  searchAction: function (inSender, inEvent) {},
+  searchAction: function (inSender, inEvent) {
+    var me = this,
+        remoteFilters = [],
+        params = {},
+        currentDate = new Date();
+    params.remoteModel = true;
+    params.terminalTime = currentDate;
+    params.terminalTimeOffset = {
+      value: currentDate.getTimezoneOffset(),
+      type: 'long'
+    }
+
+    _.each(inEvent.filters, function (flt) {
+
+      var column = _.find(OB.Model.CrossStoreFilter.getProperties(), function (col) {
+        return col.column === flt.column;
+      });
+      if (flt.value && column) {
+        remoteFilters.push({
+          columns: [column.name],
+          value: flt.value,
+          operator: flt.operator || OB.Dal.STARTSWITH
+        });
+      }
+    });
+
+    function successCallBack(data) {
+      if (data && !data.exception) {
+        me.$.csStoreSelector.collection.reset(data);
+        me.$.renderLoading.hide();
+      } else {
+        OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
+        me.$.csStoreSelector.collection.reset();
+        me.$.renderLoading.hide();
+        me.$.csStoreSelector.$.tempty.show();
+      }
+    }
+
+    var process = new OB.DS.Process(OB.Model.CrossStoreFilter.prototype.source);
+
+    process.exec({
+      _limit: OB.Model.CrossStoreFilter.prototype.dataLimit,
+      remoteFilters: remoteFilters,
+      product: this.owner.owner.productId,
+      parameters: params,
+    }, successCallBack, function (error) {
+      console.log(error);
+    });
+  },
 
   productsList: null,
 
@@ -97,6 +148,44 @@ enyo.kind({
     var me = this,
         terminal = OB.POS.modelterminal.get('terminal');
     this.productsList = new Backbone.Collection();
-    this.$.csProductsSelector.setCollection(this.productsList);
+    this.$.csStoreSelector.setCollection(this.productsList);
+  }
+});
+
+/* items of collection */
+enyo.kind({
+  name: 'OBPOS.UI.CrossStoreLine',
+  kind: 'OB.UI.listItemButton',
+  classes: 'obpos-listitembutton',
+  components: [{
+    name: 'store',
+    classes: 'obpos-checkbox-on',
+    name: 'iconStore',
+    tap: function () {
+      this.bubble('onShowPopup', {
+        popup: 'OBPOS_StoreInformation',
+        args: {
+          context: this,
+          organization: this.owner.model.get('id')
+        }
+      });
+    }
+  }, {
+    classes: 'obpos-row-store-name',
+    name: 'storeName'
+  }, {
+    classes: 'obpos-row-store-price',
+    name: 'price'
+  }, {
+    classes: 'obpos-row-store-stock',
+    name: 'stock'
+  }, {
+    classes: '.changedialog-properties-end'
+  }],
+  create: function () {
+    this.inherited(arguments);
+    this.$.storeName.setContent(this.model.get('name'));
+    this.$.price.setContent(this.model.get('price'));
+    this.$.stock.setContent(this.model.get('stock') + ' Ud');
   }
 });
