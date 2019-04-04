@@ -45,6 +45,10 @@ enyo.kind({
     editCustomerHeader.$.editbp.navigationPath = this.args.navigationPath;
     editCustomerHeader.$.editbp.target = this.args.target;
     editCustomerHeader.$.editbp.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerButton', true));
+    
+    editCustomerHeader.$.lastactivity.setCustomer(this.args.businessPartner);
+    editCustomerHeader.$.lastactivity.navigationPath = this.args.navigationPath;
+    editCustomerHeader.$.lastactivity.target = this.args.target;
 
     // Hide components depending on its displayLogic function
     _.each(this.$.body.$.editcustomers_impl.$.customerAttributes.$, function (attribute) {
@@ -214,6 +218,49 @@ enyo.kind({
   }
 });
 
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.OBPOSPointOfSale.UI.customers.lastactivity',
+  style: 'margin: 0px 0px 8px 5px;',
+  classes: 'btnlink-yellow btnlink btnlink-small',
+  events: {
+    onShowPopup: '',
+    onPressedButton: ''
+  },
+  setCustomer: function (customer) {
+    this.customer = customer;
+  },
+  tap: function () {
+    if (this.disabled === false) {
+      var me = this;
+      this.doPressedButton();
+      this.doShowPopup({
+        popup: 'modalReceiptSelector',
+        args: {
+          multiselect: true,
+          clean: true,
+          advancedFilters: {
+            orderby: null,
+            filters: [{
+              caption: this.customer.get('_identifier'),
+              column: 'businessPartner',
+              isId: true,
+              operator: '=',
+              value: this.customer.get('id')
+            }]
+          }
+        }
+      })
+    }
+  },
+  init: function (model) {
+    this.model = model;
+  },
+  initComponents: function () {
+    this.setContent(OB.I18N.getLabel('OBPOS_Cus360LblLastActivity'));
+  }
+});
+
 /*header of window body*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
@@ -233,6 +280,11 @@ enyo.kind({
       style: 'display: table-cell;',
       components: [{
         kind: 'OB.OBPOSPointOfSale.UI.customers.managebpaddress'
+      }]
+    }, {
+      style: 'display: table-cell;',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.customers.lastactivity'
       }]
     }]
   }]
