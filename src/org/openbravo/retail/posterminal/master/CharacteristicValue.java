@@ -82,9 +82,9 @@ public class CharacteristicValue extends ProcessHQLQuery {
     }
     if (!isRemote) {
       hqlQueries.add("select" + regularProductsChValueHQLProperties.getHqlSelect()
-          + "from CharacteristicValue cv, ADTreeNode node "
-          + "where cv.characteristic.tree = node.tree and cv.id = node.node "
-          + "and cv.characteristic.obposUseonwebpos = true and "
+          + "from CharacteristicValue cv inner join cv.characteristic ch, ADTreeNode node "
+          + "where ch.tree = node.tree and cv.id = node.node "
+          + "and ch.obposUseonwebpos = true and "
           + "((cv.summaryLevel = false and exists (select 1 from  ProductCharacteristicValue pcv, "
           + "OBRETCO_Prol_Product assort where pcv.characteristicValue.id = cv.id "
           + "and pcv.product.id= assort.product.id " + "and assort.obretcoProductlist.id = '"
@@ -97,7 +97,8 @@ public class CharacteristicValue extends ProcessHQLQuery {
           + "and cv.active = 'Y' " + "order by cv.name, cv.id");
     } else {
       hqlQueries.add("select" + regularProductsChValueHQLProperties.getHqlSelect()
-          + "from CharacteristicValue cv where cv.characteristic.obposUseonwebpos = true "
+          + "from CharacteristicValue cv inner join cv.characteristic ch "
+          + "where ch.obposUseonwebpos = true "
           + "and $filtersCriteria and $hqlCriteria and cv.$naturalOrgCriteria "
           + "and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria) "
           + "and cv.active = 'Y' " + "order by cv.name, cv.id");
