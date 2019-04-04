@@ -12,7 +12,7 @@
 enyo.kind({
   name: 'OBPOS.UI.CrossStoreSelector',
   kind: 'OB.UI.ModalSelector',
-  classes: 'obpos-modal-order-selector',
+  classes: 'obpos-modal-store-selector',
   topPosition: '70px',
   i18nHeader: 'OBPOS_SelectStore',
   body: {
@@ -65,7 +65,7 @@ enyo.kind({
   components: [{
     classes: 'span12',
     components: [{
-      classes: 'row-fluid obpos-list-orders',
+      classes: 'row-fluid obpos-list-store',
       components: [{
         classes: 'span12',
         components: [{
@@ -159,7 +159,7 @@ enyo.kind({
   classes: 'obpos-listitembutton',
   components: [{
     name: 'store',
-    classes: 'obpos-checkbox-on',
+    classes: 'obpos-store-information',
     name: 'iconStore',
     tap: function () {
       this.bubble('onShowPopup', {
