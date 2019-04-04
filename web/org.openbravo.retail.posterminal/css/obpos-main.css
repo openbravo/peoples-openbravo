@@ -1308,3 +1308,56 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
     height: 100%;
     align-items: center;
 }
+
+.obpos-filter-selector {
+  padding: 10px;
+}
+
+.obpos-checkbox-on {
+  width: 37px;
+  height: 30px;
+  float: left; 
+  display: inline-block;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
+  background-repeat: no-repeat;
+}
+
+.obpos-modal-order-selector {
+  width: 550px !important;
+}
+
+.obpos-list-orders {
+  border-bottom: 1px solid #cccccc;
+}
+
+.obpos-list-orders-renderloading {
+  padding: 20px; 
+  text-align: center; 
+  font-weight: bold; 
+  font-size: 30px; 
+  color: #cccccc;
+}
+
+.obpos-list-orders {
+  border-bottom: 1px solid #cccccc;
+}
+
+.obpos-row-store-name {
+  float: left;
+  display: inline-block;
+  padding-top: 5px;
+  padding-left: 30px;
+}
+
+.obpos-row-store-price {
+  float: right;
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+.obpos-row-store-stock {
+  float: right;
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 30px;
+}
