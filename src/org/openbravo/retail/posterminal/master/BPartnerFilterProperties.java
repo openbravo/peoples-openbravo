@@ -40,7 +40,7 @@ public class BPartnerFilterProperties extends ModelExtension {
         add(new HQLProperty("bp.language.language", "language"));
         add(new HQLProperty("bp.language.name", "language_name"));
         add(new HQLProperty("ulist.comments", "comments"));
-        add(new HQLProperty("bp._computedColumns.oBPOSAvailableCredit", "oBPOSAvailableCredit"));
+        add(new HQLProperty("bp.creditLimit - bp.creditUsed", "availableCredit"));
         if (location) {
           add(new HQLProperty("bpl.id", "id"));
           add(new HQLProperty("bpl.id", "bpLocactionId"));

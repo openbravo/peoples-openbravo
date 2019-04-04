@@ -59,7 +59,7 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bp.language.language", "language"));
         add(new HQLProperty("bp.language.name", "language_name"));
         add(new HQLProperty("ulist.comments", "comments"));
-        add(new HQLProperty("bp._computedColumns.oBPOSAvailableCredit", "oBPOSAvailableCredit"));
+        add(new HQLProperty("bp.creditLimit - bp.creditUsed", "availableCredit"));
         String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
             .getProperty("bbdd.rdbms");
         if (curDbms.equals("POSTGRE")) {

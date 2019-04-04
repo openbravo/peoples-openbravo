@@ -317,8 +317,8 @@ enyo.kind({
     }
   }, {
     kind: 'OB.UI.CustomerTextProperty',
-    name: 'oBPOSAvailableCredit',
-    modelProperty: 'oBPOSAvailableCredit',
+    name: 'availableCredit',
+    modelProperty: 'availableCredit',
     i18nLabel: 'OBPOS_LblAvailableCredit',
     readOnly: true,
     displayLogic: function () {

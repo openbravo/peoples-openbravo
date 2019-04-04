@@ -173,6 +173,7 @@
         this.set('organization', OB.MobileApp.model.get('terminal').defaultbp_bporg);
         this.set('creditLimit', OB.DEC.Zero);
         this.set('creditUsed', OB.DEC.Zero);
+        this.set('availableCredit', OB.DEC.Zero);
         this.set('customerBlocking', false);
         this.set('salesOrderBlocking', false);
       } else {
@@ -486,8 +487,8 @@
     column: 'comments',
     type: 'TEXT'
   }, {
-    name: 'oBPOSAvailableCredit',
-    column: 'oBPOSAvailableCredit',
+    name: 'availableCredit',
+    column: 'availableCredit',
     type: 'NUMERIC'
   }]);
 
