@@ -185,7 +185,7 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.storeName.setContent(this.model.get('name'));
-    this.$.price.setContent(this.model.get('price'));
+    this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('price')));
     this.$.stock.setContent(this.model.get('stock') + ' Ud');
   }
 });
