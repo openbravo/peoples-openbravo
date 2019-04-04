@@ -308,6 +308,9 @@ enyo.kind({
     }, {
       kind: 'OBPOS.UI.CrossStoreSelector',
       name: 'modalCrossStoreSelector'
+    }, {
+      kind: 'OBPOS.UI.StoreInformation',
+      name: 'storeInformation'
     }]
   }, {
     name: 'mainSubWindow',

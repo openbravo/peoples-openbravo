@@ -163,7 +163,7 @@ enyo.kind({
     name: 'iconStore',
     tap: function () {
       this.bubble('onShowPopup', {
-        popup: 'OBPOS_StoreInformation',
+        popup: 'storeInformation',
         args: {
           context: this,
           organization: this.owner.model.get('id')
