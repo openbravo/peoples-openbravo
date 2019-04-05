@@ -47,10 +47,15 @@
       img.src = data.image;
       img.onload = function () {
         var canvas = document.createElement('canvas');
-        canvas.width = img.width;
+        var width = data.width || 256;
+        canvas.width = width;
         canvas.height = img.height;
         var ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
+        if (canvas.width > img.width) {
+          ctx.drawImage(img, (canvas.width - img.width) / 2, 0, img.width, img.height);
+        } else {
+          ctx.drawImage(img, 0, 0, canvas.width, img.height);
+        }
         img.style.display = 'none';
         data.imagedata = ctx.getImageData(0, 0, canvas.width, canvas.height);
         resolve(data);
@@ -63,9 +68,9 @@
 
   var encoder = new TextEncoder('utf-8');
 
-  var WEBPrinter = function (info) {
-      this.webdevice = new info.WebDevice(info);
-      this.escpos = info.ESCPOS ? new info.ESCPOS() : OB.ESCPOS.standardinst;
+  var WEBPrinter = function (printertype) {
+      this.webdevice = new printertype.WebDevice(printertype);
+      this.escpos = null;
       this.images = [];
       };
 
@@ -74,7 +79,9 @@
   };
 
   WEBPrinter.prototype.request = function () {
-    return this.webdevice.request();
+    return this.webdevice.request().then(function (deviceinfo) {
+      this.escpos = deviceinfo.ESCPOS ? new deviceinfo.ESCPOS() : OB.ESCPOS.standardinst;
+    }.bind(this));
   };
 
   WEBPrinter.prototype.print = function (doc) {
@@ -242,7 +249,8 @@
 
   WEBPrinter.prototype.registerImage = function (imageurl) {
     Promise.resolve({
-      image: imageurl
+      image: imageurl,
+      width: this.escpos.IMAGE_WIDTH
     }).then(getImageData).then(function (result) {
       this.images[imageurl] = {
         imagedata: result.imagedata

@@ -11,8 +11,8 @@
 
 (function () {
 
-  var USB = function (info) {
-      this.info = info;
+  var USB = function (printertype) {
+      this.printertype = printertype;
       this.device = null;
       this.onDisconnected = this.onDisconnected.bind(this);
       if (!navigator.usb && navigator.usb.addEventListener) {
@@ -34,18 +34,22 @@
       return Promise.reject('USB not supported.');
     }
 
+    var filters = [];
+    this.printertype.devices.forEach(function (item) {
+      filters.push({
+        vendorId: item.vendorId,
+        productId: item.productId
+      });
+    });
+
     return navigator.usb.requestDevice({
-      filters: [{
-        vendorId: this.info.vendorId,
-        productId: this.info.productId
-      }]
+      filters: filters
     }).then(function (device) {
       this.device = device;
-      console.log(device.productName);
-      console.log(device.manufacturerName);
-      return;
+      return this.printertype.devices.find(function (d) {
+        return d.vendorId === device.vendorId && d.productId === device.productId;
+      });
     }.bind(this));
-
   };
 
   USB.prototype.print = function (data) {
