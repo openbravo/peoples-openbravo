@@ -56,7 +56,7 @@ enyo.kind({
   classes: 'row-fluid',
   handlers: {
     onClearFilterSelector: 'clearAction',
-    onSearchAction: 'searchAction',
+    onSearchAction: 'searchAction'
   },
   events: {
     onHideSelector: '',
@@ -102,7 +102,7 @@ enyo.kind({
     params.terminalTimeOffset = {
       value: currentDate.getTimezoneOffset(),
       type: 'long'
-    }
+    };
 
     _.each(inEvent.filters, function (flt) {
 
@@ -130,16 +130,18 @@ enyo.kind({
       }
     }
 
+    function errorCallback(tx, error) {
+      OB.UTIL.showError(error);
+    }
+
     var process = new OB.DS.Process(OB.Model.CrossStoreFilter.prototype.source);
 
     process.exec({
       _limit: OB.Model.CrossStoreFilter.prototype.dataLimit,
       remoteFilters: remoteFilters,
       product: this.owner.owner.productId,
-      parameters: params,
-    }, successCallBack, function (error) {
-      console.log(error);
-    });
+      parameters: params
+    }, successCallBack, errorCallback);
   },
 
   productsList: null,
@@ -158,7 +160,6 @@ enyo.kind({
   kind: 'OB.UI.listItemButton',
   classes: 'obpos-listitembutton',
   components: [{
-    name: 'store',
     classes: 'obpos-store-information',
     name: 'iconStore',
     tap: function () {
