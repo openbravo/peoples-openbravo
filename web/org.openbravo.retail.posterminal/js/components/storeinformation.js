@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/*global enyo, _ */
+
 enyo.kind({
   name: 'OBPOS.UI.StoreInformation',
   kind: 'OB.UI.Modal',
@@ -20,8 +22,9 @@ enyo.kind({
   },
   storeId: null,
   executeOnShow: function () {
-    this.$.header.setContent(this.args.storeName);
-    this.storeId = this.args.storeId;
+    this.$.header.setContent(this.args.orgName);
+    this.storeId = this.args.orgId;
+    this.$.body.$.storeInformationLine.loadInfo(this.storeId);
   },
   initComponents: function () {
     var me = this;
@@ -35,10 +38,10 @@ enyo.kind({
     classes: 'obpos-store-line span12',
     components: [{
       classes: 'obpos-icon-address',
-      name: 'iconAddress',
+      name: 'iconAddress'
     }, {
       classes: 'obpos-row-store-info',
-      name: 'addressValue',
+      name: 'addressValue'
     }]
   }, {
     classes: 'obpos-clear-both'
@@ -48,38 +51,38 @@ enyo.kind({
       classes: 'span6',
       components: [{
         classes: 'obpos-icon-phone',
-        name: 'iconPhone',
+        name: 'iconPhone'
       }, {
         classes: 'obpos-row-store-info',
-        name: 'phoneNumber',
+        name: 'phoneNumber'
       }]
     }, {
       classes: 'span6',
       components: [{
         classes: 'obpos-icon-fax',
-        name: 'iconFax',
+        name: 'iconFax'
       }, {
         classes: 'obpos-row-store-info',
-        name: 'faxNumber',
+        name: 'faxNumber'
       }]
     }]
   }, {
     classes: 'obpos-store-line span12',
     components: [{
       classes: 'obpos-icon-phone',
-      name: 'iconEmail',
+      name: 'iconEmail'
     }, {
       classes: 'obpos-row-store-info',
-      name: 'email',
+      name: 'email'
     }]
   }, {
     classes: 'obpos-store-line span12',
     components: [{
       classes: 'obpos-icon-cif',
-      name: 'iconCIF',
+      name: 'iconCIF'
     }, {
       classes: 'obpos-row-store-info',
-      name: 'cif',
+      name: 'cif'
     }]
   }, {
     classes: 'obpos-store-line span12',
@@ -87,16 +90,16 @@ enyo.kind({
       classes: 'span2',
       components: [{
         classes: 'obpos-icon-schedule',
-        name: 'iconSchedule',
+        name: 'iconSchedule'
       }]
     }, {
       classes: 'span2',
       name: 'weekDays',
       components: [{
-        classes: 'obpos-store-line-header',
+        classes: 'obpos-store-line-header'
       }, {
         classes: 'obpos-clear-both obpos-row-store-info',
-        name: 'exampleDay',
+        name: 'exampleDay'
       }]
     }, {
       classes: 'span3',
@@ -108,7 +111,7 @@ enyo.kind({
         }
       }, {
         classes: 'obpos-clear-both obpos-row-store-info',
-        name: 'exampleHour',
+        name: 'exampleHour'
       }]
     }, {
       classes: 'span3',
@@ -120,7 +123,7 @@ enyo.kind({
         }
       }, {
         classes: 'obpos-clear-both obpos-row-store-info',
-        name: 'exampleCenter',
+        name: 'exampleCenter'
       }]
     }]
   }, {
@@ -135,9 +138,9 @@ enyo.kind({
         }
       }, {
         classes: 'obpos-clear-both obpos-center-text',
-        name: 'exampleHolidays',
+        name: 'exampleHolidays'
       }, {
-        classes: 'obpos-clear-both obpos-store-line-header',
+        classes: 'obpos-clear-both obpos-store-line-header'
       }, {
         classes: 'obpos-store-line-header obpos-center-text',
         initComponents: function () {
@@ -145,7 +148,7 @@ enyo.kind({
         }
       }, {
         classes: 'obpos-clear-both obpos-center-text',
-        name: 'exampleSpecialOpenHour',
+        name: 'exampleSpecialOpenHour'
       }]
     }, {
       classes: 'span6',
@@ -157,11 +160,11 @@ enyo.kind({
         }
       }, {
         classes: 'obpos-clear-both obpos-center-text',
-        name: 'exampleCloseHolidays',
+        name: 'exampleCloseHolidays'
       }]
     }]
   }, {
-    classes: 'span12',
+    classes: 'span12 obpos-center-text',
     components: [{
       classes: 'obpos-clear-both obpos-btnlink btnlink btnlink-small btnlink-gray',
       name: 'btnClose',
@@ -171,16 +174,12 @@ enyo.kind({
         if (this.disabled) {
           return true;
         }
+        this.owner.owner.owner.hide();
       }
     }]
   }],
   initComponents: function () {
     this.inherited(arguments);
-    this.$.addressValue.setContent('C.C. Galaria - Calle J, 3 -CP: 3191 Cordovilla (Navarra)');
-    this.$.phoneNumber.setContent('948 123456');
-    this.$.faxNumber.setContent('948 123457');
-    this.$.email.setContent('myshop@email.com');
-    this.$.cif.setContent('A123456');
 
     this.$.exampleDay.setContent('lunes');
     this.$.exampleHour.setContent('10:00 - 22:00');
@@ -189,4 +188,29 @@ enyo.kind({
     this.$.exampleCloseHolidays.setContent('18/11/18');
     this.$.exampleSpecialOpenHour.setContent('24/12/18 10:00 - 20:00');
   },
+  clearInfo: function () {
+    this.$.addressValue.setContent('');
+    this.$.phoneNumber.setContent('');
+    this.$.faxNumber.setContent('');
+    this.$.email.setContent('');
+    this.$.cif.setContent('');
+  },
+  loadInfo: function (storeId) {
+    var me = this;
+    var process = new OB.DS.Process('org.openbravo.retail.posterminal.master.CrossStoreInfo');
+
+    this.clearInfo();
+
+    process.exec({
+      org: storeId
+    }, enyo.bind(me, function (data) {
+      if (data && !data.exception && data.length > 0) {
+        this.$.addressValue.setContent(data[0].address);
+        this.$.phoneNumber.setContent(data[0].phone);
+        this.$.faxNumber.setContent(data[0].alternativePhone);
+        this.$.email.setContent(data[0].email);
+        this.$.cif.setContent(data[0].taxID);
+      }
+    }));
+  }
 });

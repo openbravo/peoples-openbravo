@@ -167,7 +167,8 @@ enyo.kind({
         popup: 'storeInformation',
         args: {
           context: this,
-          organization: this.owner.model.get('id')
+          orgId: this.owner.model.get('id'),
+          orgName: this.owner.model.get('name')
         }
       });
     }
