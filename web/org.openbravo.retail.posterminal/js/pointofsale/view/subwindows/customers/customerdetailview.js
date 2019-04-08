@@ -32,23 +32,23 @@ enyo.kind({
     this.$.body.$.editcustomers_impl.setCustomer(this.args.businessPartner);
     var editCustomerHeader = this.$.body.$.editcustomers_impl.$.bodyheader.$.editCustomerHeader;
 
-    editCustomerHeader.$.assigncustomertoticket.customer = this.args.businessPartner;
-    editCustomerHeader.$.assigncustomertoticket.navigationPath = this.args.navigationPath;
-    editCustomerHeader.$.assigncustomertoticket.target = this.args.target;
+    editCustomerHeader.$.buttonContainer.$.assigncustomertoticket.customer = this.args.businessPartner;
+    editCustomerHeader.$.buttonContainer.$.assigncustomertoticket.navigationPath = this.args.navigationPath;
+    editCustomerHeader.$.buttonContainer.$.assigncustomertoticket.target = this.args.target;
 
-    editCustomerHeader.$.managebpaddress.customer = this.args.businessPartner;
-    editCustomerHeader.$.managebpaddress.navigationPath = this.args.navigationPath;
-    editCustomerHeader.$.managebpaddress.target = this.args.target;
-    editCustomerHeader.$.managebpaddress.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerLocationButton', true));
+    editCustomerHeader.$.buttonContainer.$.managebpaddress.customer = this.args.businessPartner;
+    editCustomerHeader.$.buttonContainer.$.managebpaddress.navigationPath = this.args.navigationPath;
+    editCustomerHeader.$.buttonContainer.$.managebpaddress.target = this.args.target;
+    editCustomerHeader.$.buttonContainer.$.managebpaddress.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerLocationButton', true));
 
-    editCustomerHeader.$.editbp.setCustomer(this.args.businessPartner);
-    editCustomerHeader.$.editbp.navigationPath = this.args.navigationPath;
-    editCustomerHeader.$.editbp.target = this.args.target;
-    editCustomerHeader.$.editbp.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerButton', true));
-    
-    editCustomerHeader.$.lastactivity.setCustomer(this.args.businessPartner);
-    editCustomerHeader.$.lastactivity.navigationPath = this.args.navigationPath;
-    editCustomerHeader.$.lastactivity.target = this.args.target;
+    editCustomerHeader.$.buttonContainer.$.editbp.setCustomer(this.args.businessPartner);
+    editCustomerHeader.$.buttonContainer.$.editbp.navigationPath = this.args.navigationPath;
+    editCustomerHeader.$.buttonContainer.$.editbp.target = this.args.target;
+    editCustomerHeader.$.buttonContainer.$.editbp.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerButton', true));
+
+    editCustomerHeader.$.buttonContainer.$.lastactivity.setCustomer(this.args.businessPartner);
+    editCustomerHeader.$.buttonContainer.$.lastactivity.navigationPath = this.args.navigationPath;
+    editCustomerHeader.$.buttonContainer.$.lastactivity.target = this.args.target;
 
     // Hide components depending on its displayLogic function
     _.each(this.$.body.$.editcustomers_impl.$.customerAttributes.$, function (attribute) {
@@ -264,30 +264,38 @@ enyo.kind({
 /*header of window body*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
+  customerHeaderButtons: [{
+    style: 'display: table-cell;',
+    components: [{
+      kind: 'OB.OBPOSPointOfSale.UI.customers.editbp'
+    }]
+  }, {
+    style: 'display: table-cell;',
+    components: [{
+      kind: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket'
+    }]
+  }, {
+    style: 'display: table-cell;',
+    components: [{
+      kind: 'OB.OBPOSPointOfSale.UI.customers.managebpaddress'
+    }]
+  }, {
+    style: 'display: table-cell;',
+    components: [{
+      kind: 'OB.OBPOSPointOfSale.UI.customers.lastactivity'
+    }]
+  }],
   components: [{
     style: 'display: table; margin: 0 auto;',
-    components: [{
-      style: 'display: table-cell;',
-      components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.customers.editbp'
-      }]
-    }, {
-      style: 'display: table-cell;',
-      components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket'
-      }]
-    }, {
-      style: 'display: table-cell;',
-      components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.customers.managebpaddress'
-      }]
-    }, {
-      style: 'display: table-cell;',
-      components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.customers.lastactivity'
-      }]
-    }]
-  }]
+    name: 'buttonContainer'
+  }],
+  initComponents: function () {
+    this.inherited(arguments);
+    var container = this.$.buttonContainer;
+    this.customerHeaderButtons.forEach(function (button) {
+      container.createComponent(button);
+    });
+  }
 });
 
 enyo.kind({
