@@ -239,7 +239,9 @@ enyo.kind({
           multiselect: true,
           clean: true,
           target: this.target,
+          businessPartner: this.customer,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(this.navigationPath, 'customerView'),
+          customHeaderContent: (this.customer.get('_identifier') + "'s " + OB.I18N.getLabel('OBPOS_Cus360LblLastActivity')),
           advancedFilters: {
             orderby: null,
             filters: [{

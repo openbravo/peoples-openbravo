@@ -87,6 +87,11 @@ enyo.kind({
         this.getFilterSelectorTableHeader().clearFilter();
       }
     }
+    if (this.args.customHeaderContent) {
+      this.$.header.setContent(this.args.customHeaderContent);
+    } else {
+      this.$.header.setContent(OB.I18N.getLabel('OBPOS_OpenReceipt'));
+    }
   },
   executeOnHide: function () {
     if (!this.pressedBtn && this.args.navigationPath && this.args.navigationPath.length > 0) {
