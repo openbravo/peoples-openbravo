@@ -60,10 +60,10 @@ public class CrossStoreInfo extends ProcessHQLQuery {
       final StringBuilder hql = new StringBuilder();
       hql.append(" select" + regularProductStockHQLProperties.getHqlSelect());
       hql.append(" from OrganizationInformation oi");
-      hql.append(" join oi.locationAddress l");
-      hql.append(" join l.region r");
-      hql.append(" join l.country c");
-      hql.append(" join oi.userContact u");
+      hql.append(" left join oi.locationAddress l");
+      hql.append(" left join l.region r");
+      hql.append(" left join l.country c");
+      hql.append(" left join oi.userContact u");
       hql.append(" where oi.organization.id = :orgId");
 
       return Collections.singletonList(hql.toString());
