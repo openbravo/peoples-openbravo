@@ -31,7 +31,7 @@ public class CrossStoreInfoProperties extends ModelExtension {
     address.append(" , COALESCE(l.postalCode, '')");
     address.append(" , ' '");
     address.append(" , COALESCE(l.cityName, '')");
-    address.append(" , CASE WHEN r.name IS NOT NULL THEN CONCAT(' (',r.name,')' END");
+    address.append(" , CASE WHEN r.name IS NOT NULL THEN CONCAT(' (',r.name,')') END");
     address.append(" , ' '");
     address.append(" , COALESCE(c.name, '')");
     address.append(")");
