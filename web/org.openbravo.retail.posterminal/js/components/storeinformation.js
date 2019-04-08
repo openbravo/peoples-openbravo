@@ -69,7 +69,7 @@ enyo.kind({
   }, {
     classes: 'obpos-store-line span12',
     components: [{
-      classes: 'obpos-icon-phone',
+      classes: 'obpos-icon-email',
       name: 'iconEmail'
     }, {
       classes: 'obpos-row-store-info',
@@ -78,8 +78,11 @@ enyo.kind({
   }, {
     classes: 'obpos-store-line span12',
     components: [{
-      classes: 'obpos-icon-cif',
-      name: 'iconCIF'
+      classes: 'obpos-icon-cif obpos-row-store-info',
+      name: 'iconCIF',
+      initComponents: function () {
+        this.setContent('CIF');
+      }
     }, {
       classes: 'obpos-row-store-info',
       name: 'cif'
