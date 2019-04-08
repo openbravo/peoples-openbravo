@@ -37,6 +37,7 @@ public class HardwareUrlProperties extends ModelExtension {
         add(new HQLProperty("p.obposHardwaremng.hardwareURL", "hardwareURL"));
         add(new HQLProperty("p.obposHardwaremng.hasReceiptPrinter", "hasReceiptPrinter"));
         add(new HQLProperty("p.obposHardwaremng.hasPDFPrinter", "hasPDFPrinter"));
+        add(new HQLProperty("p.obposHardwaremng.barcode", "barcode"));
       }
     };
 

@@ -712,11 +712,33 @@ enyo.kind({
         if (args.cancellation) {
           return;
         }
+
+        if (me.selectPrinter(args.code)) {
+          return;
+        }
+
         args.attrs = args.attrs || {};
         args.attrs.isScanning = true;
         me.searchProduct(args.code, args.callback, args.attrs);
+
       });
     }
+  },
+
+  selectPrinter: function (code) {
+    var hardwareUrls = OB.MobileApp.model.get('hardwareURL');
+    var foundPrinter = hardwareUrls.find(function (hwurl) {
+      return hwurl.barcode === code;
+    });
+
+    if (foundPrinter) {
+      OB.POS.hwserver.setActiveURL(foundPrinter.hardwareURL);
+      OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_PrinterFound', [foundPrinter._identifier]));
+
+      return true;
+    }
+
+    return false;
   },
 
   searchProduct: function (code, callback, attrs) {
