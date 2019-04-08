@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Promise */
+/*global OB, Promise, Uint8Array */
 
 (function () {
 
@@ -22,6 +22,12 @@
         result = result.then(printChunk(data.slice(i, i + size)));
       }
       return result;
+    },
+    append: function (a1, a2) {
+      var tmp = new Uint8Array(a1.length + a2.length);
+      tmp.set(a1, 0);
+      tmp.set(a2, a1.byteLength);
+      return tmp;
     }
   };
 }());

@@ -30,6 +30,8 @@
       this.LEFT_JUSTIFICATION = new Uint8Array([0x1B, 0x61, 0x00]);
       this.RIGHT_JUSTIFICATION = new Uint8Array([0x1B, 0x61, 0x02]);
 
+      this.DRAWER_OPEN = new Uint8Array();
+
       this.BAR_HEIGHT = new Uint8Array([0x1D, 0x68, 0x40]);
       this.BAR_WIDTH3 = new Uint8Array([0x1D, 0x77, 0x03]);
       this.BAR_WIDTH2 = new Uint8Array([0x1D, 0x77, 0x02]);
@@ -40,10 +42,6 @@
       this.BAR_CODE02 = new Uint8Array([0x1D, 0x6B, 0x02]);
       this.BAR_CODE128 = new Uint8Array([0x1D, 0x6B, 0x49]);
       this.BAR_CODE128TYPE = new Uint8Array([0x7B, 0x42]);
-
-      this.IMAGE_HEADER = new Uint8Array();
-      this.IMAGE_WIDTH = 0;
-
       this.transCode128 = function (txt) {
 
         function transCode128Char(c) {
@@ -239,6 +237,10 @@
         }
       };
 
+      this.transQR = function (code, quality, size) {
+        return new Uint8Array();
+      };
+
       this.transImage = function (imagedata) {
         return new Uint8Array();
       };
@@ -247,11 +249,11 @@
   var Standard = function () {
       Base.call(this);
 
+      this.DRAWER_OPEN = new Uint8Array([0x1B, 0x70, 0x00, 0x32, -0x06]);
+
       this.PARTIAL_CUT_1 = new Uint8Array([0x1B, 0x69]);
 
       this.IMAGE_HEADER = new Uint8Array([0x1D, 0x76, 0x30, 0x03]);
-      this.IMAGE_WIDTH = 256;
-
       this.transImage = function (imagedata) {
 
         function isBlack(x, y) {
@@ -268,6 +270,7 @@
           return luminosity >= 0.5;
         }
 
+        var line = new Uint8Array();
         var result = [];
         var i, j, p, d;
 
@@ -293,7 +296,50 @@
           }
         }
 
-        return new Uint8Array(result);
+        line = OB.ARRAYS.append(line, this.CENTER_JUSTIFICATION);
+        line = OB.ARRAYS.append(line, this.IMAGE_HEADER);
+        line = OB.ARRAYS.append(line, new Uint8Array(result));
+        line = OB.ARRAYS.append(line, this.LEFT_JUSTIFICATION);
+        return line;
+      };
+
+      this.QR_INIT = new Uint8Array([0x1D, 0x28, 0x6B]);
+      this.QR_CODE = new Uint8Array([0x31, 0x50, 0x30]);
+      this.QR_QUALITY = new Uint8Array([0x1D, 0x28, 0x6B, 0x03, 0x00, 0x31, 0x45]);
+      this.QR_QUALITY_MAP = {
+        L: new Uint8Array([0x30]),
+        M: new Uint8Array([0x31]),
+        H: new Uint8Array([0x32]),
+        Q: new Uint8Array([0x33])
+      };
+      this.QR_SIZE = new Uint8Array([0x1D, 0x28, 0x6B, 0x03, 0x00, 0x31, 0x43]);
+      this.QR_SIZE_MAP = {
+        S: new Uint8Array([0x04]),
+        M: new Uint8Array([0x08]),
+        L: new Uint8Array([0x0C]),
+        XL: new Uint8Array([0x10])
+      };
+      this.QR_PRINT = new Uint8Array([0x1D, 0x28, 0x6B, 0x03, 0x00, 0x31, 0x51, 0x30]);
+
+      this.transQR = function (code, quality, size) {
+        var line = new Uint8Array();
+        var codeLENGTH = new Uint8Array([(code.length + 3) & 255, (code.length + 3) >> 8]);
+
+        line = OB.ARRAYS.append(line, this.CENTER_JUSTIFICATION);
+        line = OB.ARRAYS.append(line, this.QR_INIT);
+        line = OB.ARRAYS.append(line, codeLENGTH);
+        line = OB.ARRAYS.append(line, this.QR_CODE);
+        line = OB.ARRAYS.append(line, code);
+
+        line = OB.ARRAYS.append(line, this.QR_QUALITY);
+        line = OB.ARRAYS.append(line, this.QR_QUALITY_MAP[quality]);
+
+        line = OB.ARRAYS.append(line, this.QR_SIZE);
+        line = OB.ARRAYS.append(line, this.QR_SIZE_MAP[size]);
+
+        line = OB.ARRAYS.append(line, this.QR_PRINT);
+        line = OB.ARRAYS.append(line, this.LEFT_JUSTIFICATION);
+        return new Uint8Array(line);
       };
       };
 
