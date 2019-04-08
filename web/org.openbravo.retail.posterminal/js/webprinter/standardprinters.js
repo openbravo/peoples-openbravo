@@ -32,7 +32,10 @@
         vendorId: 0x04B8,
         productId: 0x0202,
         ESCPOS: OB.ESCPOS.Standard
-      }]
+      }],
+      register: function (printerusb) {
+        this.devices.push(printerusb);
+      }
     }
   };
 
