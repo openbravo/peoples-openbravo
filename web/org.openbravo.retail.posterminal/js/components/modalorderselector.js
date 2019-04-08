@@ -87,6 +87,19 @@ enyo.kind({
         this.getFilterSelectorTableHeader().clearFilter();
       }
     }
+  },
+  executeOnHide: function () {
+    if (!this.pressedBtn && this.args.navigationPath && this.args.navigationPath.length > 0) {
+      this.doShowPopup({
+        popup: this.args.navigationPath[this.args.navigationPath.length - 1],
+        args: {
+          businessPartner: this.args.businessPartner,
+          target: this.args.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath),
+          makeSearch: this.args.makeSearch
+        }
+      });
+    }
   }
 });
 

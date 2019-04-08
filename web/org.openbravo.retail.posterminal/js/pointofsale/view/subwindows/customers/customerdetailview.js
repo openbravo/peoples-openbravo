@@ -232,13 +232,14 @@ enyo.kind({
   },
   tap: function () {
     if (this.disabled === false) {
-      var me = this;
       this.doPressedButton();
       this.doShowPopup({
         popup: 'modalReceiptSelector',
         args: {
           multiselect: true,
           clean: true,
+          target: this.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(this.navigationPath, 'customerView'),
           advancedFilters: {
             orderby: null,
             filters: [{
@@ -257,6 +258,7 @@ enyo.kind({
     this.model = model;
   },
   initComponents: function () {
+    this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_Cus360LblLastActivity'));
   }
 });
