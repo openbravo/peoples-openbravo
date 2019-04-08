@@ -26,9 +26,10 @@ public class CrossStoreInfoProperties extends ModelExtension {
     final StringBuilder address = new StringBuilder();
     address.append(" COALESCE(l.addressLine1, '')");
     address.append(
-        " || CASE WHEN l.addressLine2 IS NOT NULL THEN ' - ' || l.addressLine2 ELSE '' END");
-    address.append(" || ' ' || COALESCE(l.postalCode, '') || ' ' || COALESCE(l.cityName, '')");
-    address.append(" || CASE WHEN r.name IS NOT NULL THEN ' (' || r.name || ')' ELSE '' END");
+        " || CASE WHEN l.addressLine2 IS NOT NULL THEN (' - ' || l.addressLine2) ELSE '' END");
+    address.append(" || ' ' || COALESCE(l.postalCode, '')");
+    address.append(" || ' ' || COALESCE(l.cityName, '')");
+    address.append(" || CASE WHEN r.name IS NOT NULL THEN (' (' || r.name || ')') ELSE '' END");
     address.append(" || ' ' || COALESCE(c.name, '')");
     list.add(new HQLProperty(address.toString(), "address"));
     list.add(new HQLProperty("u.phone", "phone"));
