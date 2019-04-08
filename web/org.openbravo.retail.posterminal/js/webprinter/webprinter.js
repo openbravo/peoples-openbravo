@@ -59,7 +59,12 @@
   var WEBPrinter = function (printertype) {
       this.webdevice = new printertype.WebDevice(printertype);
       this.escpos = null;
+      this.images = {};
       };
+
+  WEBPrinter.prototype.registerImage = function (name, url) {
+    this.images[name] = url;
+  };
 
   WEBPrinter.prototype.connected = function () {
     return this.webdevice.connected();
@@ -172,6 +177,7 @@
   WEBPrinter.prototype.processLine = function (dom) {
     var line = new Uint8Array();
     var fontsize = dom.getAttribute('size');
+    var i, el;
 
     if (fontsize === '1') {
       line = OB.ARRAYS.append(line, this.escpos.CHAR_SIZE_1);
@@ -183,7 +189,8 @@
       line = OB.ARRAYS.append(line, this.escpos.CHAR_SIZE_0);
     }
 
-    Array.from(dom.children).forEach(function (el) {
+    for (i = 0; i < dom.children.length; i++) {
+      el = dom.children[i];
       if (el.nodeName === 'text') {
         var txt = el.textContent;
         var len = parseInt(el.getAttribute('length'), 10) || txt.length;
@@ -212,8 +219,20 @@
         if (uderline === 'true') {
           line = OB.ARRAYS.append(line, this.escpos.UNDERLINE_RESET);
         }
+      } else if (el.nodeName === 'barcode') {
+        // Barcodes should be a ticket tag level
+        // but in case an barcode tag is wrongly included in a line tag lets print it
+        return this.processBarcode(el);
+      } else if (el.nodeName === 'qr') {
+        // QR codes should be a ticket tag level
+        // but in case an qr tag is wrongly included in a line tag lets print it
+        return this.processQR(el);
+      } else if (el.nodeName === 'image') {
+        // Images should be a ticket tag level
+        // but in case an image tag is wrongly included in a line tag lets print it
+        return this.processImage(el);
       }
-    }.bind(this));
+    }
 
     return Promise.resolve(line);
   };
@@ -249,8 +268,11 @@
   };
 
   WEBPrinter.prototype.processImage = function (el) {
+    var image = el.textContent;
+    var imageurl = this.images[image] || image;
+
     return getImageData({
-      image: el.textContent
+      image: imageurl
     }).then(function (result) {
       return this.escpos.transImage(result.imagedata);
     }.bind(this));

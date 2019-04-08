@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Promise, console */
+/*global OB, Promise */
 
 (function () {
 
@@ -59,10 +59,8 @@
     }
 
     return this.device.open().then(function () {
-      console.log('Configuring');
       return this.device.selectConfiguration(1);
     }.bind(this)).then(function () {
-      console.log('claiming');
       return this.device.claimInterface(0);
     }.bind(this)).then(function () {
       return OB.ARRAYS.printArray(this.printChunk.bind(this), 64, data);
@@ -76,7 +74,6 @@
 
   USB.prototype.printChunk = function (chunk) {
     return function () {
-      console.log('transfering');
       return this.device.transferOut(1, chunk.buffer);
     }.bind(this);
   };
