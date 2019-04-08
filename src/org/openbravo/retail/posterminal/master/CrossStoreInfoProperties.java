@@ -25,13 +25,18 @@ public class CrossStoreInfoProperties extends ModelExtension {
 
     final StringBuilder address = new StringBuilder();
     address.append(" CONCAT(");
-    address.append(" COALESCE(l.addressLine1, '')");
-    address.append(
-        " , CASE WHEN l.addressLine2 IS NOT NULL THEN CONCAT(' - ', l.addressLine2) ELSE '' END");
-    address.append(" , ' ', COALESCE(l.postalCode, '')");
-    address.append(" , ' ', COALESCE(l.cityName, '')");
-    address.append(" , CASE WHEN r.name IS NOT NULL THEN CONCAT(' (', r.name, ')') ELSE '' END");
-    address.append(" , ' ', COALESCE(c.name, '')");
+    address.append("   COALESCE(l.addressLine1, '')");
+    address.append("   , CASE WHEN l.addressLine2 IS NOT NULL THEN ' - ' ELSE '' END");
+    address.append("   , CASE WHEN l.addressLine2 IS NOT NULL THEN l.addressLine2 ELSE '' END");
+    address.append("   , ' '");
+    address.append("   , COALESCE(l.postalCode, '')");
+    address.append("   , ' '");
+    address.append("   , COALESCE(l.cityName, '')");
+    address.append("   , CASE WHEN r.name IS NOT NULL THEN ' (' ELSE '' END");
+    address.append("   , CASE WHEN r.name IS NOT NULL THEN r.name ELSE '' END");
+    address.append("   , CASE WHEN r.name IS NOT NULL THEN ')' ELSE '' END");
+    address.append("   , ' '");
+    address.append("   , COALESCE(c.name, '')");
     address.append(" )");
     list.add(new HQLProperty(address.toString(), "address"));
     list.add(new HQLProperty("u.phone", "phone"));
