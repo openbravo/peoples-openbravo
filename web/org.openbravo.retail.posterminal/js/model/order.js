@@ -2946,12 +2946,14 @@
             if (callback) {
               callback(success, orderline);
             }
+          }, function () {
+            OB.UTIL.ProcessController.finish('addProduct', execution);
           });
         }
       }
     },
 
-    addProductToOrder: function (p, qty, options, attrs, callback, execution) {
+    addProductToOrder: function (p, qty, options, attrs, callback, cancelCallback) {
       var executeAddProduct, finalCallback, me = this,
           attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
       finalCallback = function (success, orderline) {
@@ -3046,8 +3048,8 @@
               }
             }
             executeAddProduct();
-            if (!OB.UTIL.isNullOrUndefined(args.attrs) && args.attrs.cancelOperation) {
-              OB.UTIL.ProcessController.finish('addProduct', execution);
+            if (!OB.UTIL.isNullOrUndefined(args.attrs) && args.attrs.cancelOperation && cancelCallback) {
+              cancelCallback();
             }
           });
         } else {
