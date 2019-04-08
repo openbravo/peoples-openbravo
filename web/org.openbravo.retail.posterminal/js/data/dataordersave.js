@@ -288,6 +288,7 @@
 
                 restoreReceiptCallback = function () {
                   restoreReceiptOnError(eventParams, receipt);
+                  OB.UTIL.ProcessController.finish('tapTotalButton', execution);
                 };
 
                 syncErrorCallback = function () {
@@ -379,6 +380,7 @@
                 }, tx);
               }, function () {
                 // the transaction failed
+                OB.UTIL.ProcessController.finish('tapTotalButton', execution);
                 OB.UTIL.showError("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
                 // rollback other changes
                 receipt.set('hasbeenpaid', 'N');
