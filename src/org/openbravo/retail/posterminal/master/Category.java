@@ -87,15 +87,12 @@ public class Category extends ProcessHQLQuery {
       final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
           terminalDate);
 
-      if (POSUtils.isCrossStoreSearch(jsonsent)) {
-        Set<String> crossStoreNaturalTree = OBContext.getOBContext()
-            .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId())
-            .getNaturalTree(orgId);
-        crossStoreNaturalTree.addAll(crossStoreOrgIds);
-        productListIds = POSUtils.getProductListCrossStore(posId);
+      Set<String> crossStoreNaturalTree = OBContext.getOBContext()
+          .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId())
+          .getNaturalTree(orgId);
+      crossStoreNaturalTree.addAll(crossStoreOrgIds);
+      productListIds = POSUtils.getProductListCrossStore(posId);
 
-        paramValues.put("crossStoreNaturalTree", crossStoreNaturalTree);
-      }
       if (OBContext.hasTranslationInstalled()) {
         paramValues.put("languageId", OBContext.getOBContext().getLanguage().getId());
       }
@@ -106,6 +103,7 @@ public class Category extends ProcessHQLQuery {
       paramValues.put("orgId", orgId);
       paramValues.put("allCrossStoreOrgIds", allCrossStoreOrgIds);
       paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
+      paramValues.put("crossStoreNaturalTree", crossStoreNaturalTree);
       paramValues.put("priceListVersionId", priceListVersion.getId());
       paramValues.put("terminalDate", terminalDate);
       paramValues.put("productListId", productList.getId());
@@ -161,69 +159,41 @@ public class Category extends ProcessHQLQuery {
           + " pCat.$incrementalUpdateCriteria) "//
           + " order by tn.sequenceNumber, tn.id");
     } else {
-      hqlQueries.add("select" + regularProductsCategoriesHQLProperties.getHqlSelect() //
-          + "from ProductCategory as pCat left outer join pCat.image as img  " + " where (exists("
-          + "from OBRETCO_Prol_Product pli, " + "PricingProductPrice ppp, "
-          + "PricingPriceListVersion pplv "
-          + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist.id = :productListId ) "
-          + "AND (pplv.id= :priceListVersionId) AND (" + "ppp.priceListVersion.id = pplv.id"
-          + ") AND (" + "pli.product.id = ppp.product.id" + ") AND ("
-          + "pli.product.active = true)) " + "OR (pCat.summaryLevel = 'Y' "
-          + "AND pCat.$naturalOrgCriteria AND "
-          + "pCat.$readableSimpleClientCriteria)) AND pCat.$incrementalUpdateCriteria "
-          + "order by pCat.name, pCat.id");
+      StringBuilder query = new StringBuilder();
+      query.append(" select");
+      query.append(regularProductsCategoriesHQLProperties.getHqlSelect());
+      query.append(" from ProductCategory as pCat");
+      query.append(" left outer join pCat.image as img");
+      query.append(" where (exists (");
+      // Product exists in the assortment and price list of alls cross store
+      query.append("     select 1");
+      query.append("     from Organization o");
+      query.append("     where o.id in :allCrossStoreOrgIds");
+      query.append("     and exists (");
+      query.append("       select 1");
+      query.append("       from OBRETCO_Prol_Product pli");
+      query.append("       where pli.product.productCategory.id = pCat.id");
+      query.append("       and pli.obretcoProductlist.id = o.obretcoProductlist.id");
+      query.append("     )");
+      query.append("     and exists (");
+      query.append("       select 1");
+      query.append("       from PricingProductPrice ppp");
+      query.append("       join ppp.priceListVersion plv");
+      query.append("       where ppp.product.productCategory.id = pCat.id");
+      query.append("       and plv.priceList.id = o.obretcoPricelist.id");
+      query.append("       and plv.validFromDate <= :terminalDate");
+      query.append("       )");
+      query.append("     )");
+      query.append("   or (");
+      query.append("     pCat.summaryLevel = 'Y'");
+      query.append("     and pCat.organization.id in :crossStoreNaturalTree");
+      query.append("     and pCat.$readableSimpleClientCriteria");
+      query.append("     )");
+      query.append("   )");
+      query.append(" and pCat.$incrementalUpdateCriteria");
+      query.append(" order by pCat.name, pCat.id");
 
-      if (POSUtils.isCrossStoreSearch(jsonsent)) {
-        StringBuilder query = new StringBuilder();
-        query.append(" select");
-        query.append(regularProductsCategoriesHQLProperties.getHqlSelect());
-        query.append(" from ProductCategory as pCat");
-        query.append(" left outer join pCat.image as img");
-        query.append(" where (exists (");
-        // Product exists in the assortment and price list of a cross store
-        query.append("     select 1");
-        query.append("     from Organization o");
-        query.append("     where o.id in :crossStoreOrgIds");
-        query.append("     and exists (");
-        query.append("       select 1");
-        query.append("       from OBRETCO_Prol_Product pli");
-        query.append("       where pli.product.productCategory.id = pCat.id");
-        query.append("       and pli.obretcoProductlist.id = o.obretcoProductlist.id");
-        query.append("     )");
-        query.append("     and exists (");
-        query.append("       select 1");
-        query.append("       from PricingProductPrice ppp");
-        query.append("       join ppp.priceListVersion plv");
-        query.append("       where ppp.product.productCategory.id = pCat.id");
-        query.append("       and plv.priceList.id = o.obretcoPricelist.id");
-        query.append("       and plv.validFromDate <= :terminalDate");
-        query.append("       )");
-        query.append("     )");
-        // Product doesn't exist in the assortment and price list of current store
-        query.append("     and (not exists (");
-        query.append("       select 1");
-        query.append("       from OBRETCO_Prol_Product pli");
-        query.append("       where pli.product.productCategory.id = pCat.id");
-        query.append("       and pli.obretcoProductlist.id = :productListId");
-        query.append("       )");
-        query.append("     or not exists (");
-        query.append("       select 1");
-        query.append("       from PricingProductPrice ppp");
-        query.append("       where ppp.product.productCategory.id = pCat.id");
-        query.append("       and ppp.priceListVersion.id = :priceListVersionId");
-        query.append("       )");
-        query.append("      )");
-        query.append("   or (");
-        query.append("     pCat.summaryLevel = 'Y'");
-        query.append("     and pCat.organization.id in :crossStoreNaturalTree");
-        query.append("     and pCat.$readableSimpleClientCriteria");
-        query.append("     )");
-        query.append("   )");
-        query.append(" and pCat.$incrementalUpdateCriteria");
-        query.append(" order by pCat.name, pCat.id");
-
-        hqlQueries.add(query.toString());
-      }
+      hqlQueries.add(query.toString());
     }
     String promoNameTrl;
     if (OBContext.hasTranslationInstalled()) {

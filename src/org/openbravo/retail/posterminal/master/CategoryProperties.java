@@ -39,6 +39,31 @@ public class CategoryProperties extends ModelExtension {
     list.add(new HQLProperty("pCat.active", "active"));
     list.add(new HQLProperty("'Y'", "realCategory"));
     list.add(new HQLProperty("pCat.summaryLevel", "summaryLevel"));
+
+    StringBuilder crossStore = new StringBuilder();
+    crossStore.append(" case when '1' = (");
+    crossStore.append("     select 1");
+    crossStore.append("     from Organization o");
+    crossStore.append("     where o.id = :orgId");
+    crossStore.append("     and exists (");
+    crossStore.append("       select 1");
+    crossStore.append("       from OBRETCO_Prol_Product pli");
+    crossStore.append("       where pli.product.productCategory.id = pCat.id");
+    crossStore.append("       and pli.obretcoProductlist.id = o.obretcoProductlist.id");
+    crossStore.append("     )");
+    crossStore.append("     and exists (");
+    crossStore.append("       select 1");
+    crossStore.append("       from PricingProductPrice ppp");
+    crossStore.append("       join ppp.priceListVersion plv");
+    crossStore.append("       where ppp.product.productCategory.id = pCat.id");
+    crossStore.append("       and plv.priceList.id = o.obretcoPricelist.id");
+    crossStore.append("       and plv.validFromDate <= :terminalDate");
+    crossStore.append("       )");
+    crossStore.append("     )");
+    crossStore.append(" then false else true end");
+
+    list.add(new HQLProperty(crossStore.toString(), "crossStore"));
+
     return list;
   }
 
