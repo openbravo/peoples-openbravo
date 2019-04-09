@@ -9,7 +9,8 @@
 
 package org.openbravo.retail.posterminal.master;
 
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class CrossStoreInfo extends ProcessHQLQuery {
@@ -41,9 +43,16 @@ public class CrossStoreInfo extends ProcessHQLQuery {
     OBContext.setAdminMode(true);
     try {
       final String orgId = jsonsent.getString("org");
+      final Date terminalDate = OBMOBCUtils.calculateServerDate(
+          jsonsent.getJSONObject("parameters").getString("terminalTime"),
+          jsonsent.getJSONObject("parameters")
+              .getJSONObject("terminalTimeOffset")
+              .getLong("value"));
 
       final Map<String, Object> paramValues = new HashMap<>();
       paramValues.put("orgId", orgId);
+      paramValues.put("terminalDate", terminalDate);
+
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
@@ -57,16 +66,34 @@ public class CrossStoreInfo extends ProcessHQLQuery {
       final HQLPropertyList regularProductStockHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions);
 
-      final StringBuilder hql = new StringBuilder();
-      hql.append(" select" + regularProductStockHQLProperties.getHqlSelect());
-      hql.append(" from OrganizationInformation oi");
-      hql.append(" left join oi.locationAddress l");
-      hql.append(" left join l.region r");
-      hql.append(" left join l.country c");
-      hql.append(" left join oi.userContact u");
-      hql.append(" where oi.organization.id = :orgId");
+      final StringBuilder hql1 = new StringBuilder();
+      hql1.append(" select" + regularProductStockHQLProperties.getHqlSelect());
+      hql1.append(" from OrganizationInformation oi");
+      hql1.append(" left join oi.locationAddress l");
+      hql1.append(" left join l.region r");
+      hql1.append(" left join l.country c");
+      hql1.append(" left join oi.userContact u");
+      hql1.append(" where oi.organization.id = :orgId");
 
-      return Collections.singletonList(hql.toString());
+      final StringBuilder hql2 = new StringBuilder();
+      hql2.append(" select" + regularProductStockHQLProperties.getHqlSelect());
+      hql2.append(" from OBRETCO_Org_Schedule os");
+      hql2.append(" join os.obretcoSchedule s");
+      hql2.append(" join s.oBRETCOScheduleLineList sl");
+      hql2.append(" where os.organization.id = :orgId");
+      hql2.append(" and os.validFromDate = (");
+      hql2.append("   select max(os2.validFromDate)");
+      hql2.append("   from OBRETCO_Org_Schedule os2");
+      hql2.append("   where os2.organization.id = os.organization.id");
+      hql2.append("   where os2.scheduletype = os.scheduletype");
+      hql2.append("   and os2.validFromDate <= :terminalDate");
+      hql2.append("   and os2.active = true");
+      hql2.append(" )");
+      hql2.append(" and os.active = true");
+      hql2.append(" and s.active = true");
+      hql2.append(" order by os.scheduletype, sl.weekday, sl.startingTime");
+
+      return Arrays.asList(hql1.toString(), hql2.toString());
     } finally {
       OBContext.restorePreviousMode();
     }

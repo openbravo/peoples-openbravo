@@ -56,6 +56,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
       paramValues.put("productId", productId);
       paramValues.put("terminalDate", terminalDate);
+
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
