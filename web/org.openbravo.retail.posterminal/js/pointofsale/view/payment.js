@@ -414,7 +414,7 @@ enyo.kind({
         paymentstatus = this.receipt.getPaymentStatus(),
         isLayaway = this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway'),
         isMultiOrder = this.model.get('leftColumnViewManager').isMultiOrder();
-    if (isMultiOrder || paymentstatus.isNegative || !isLayaway || paymentstatus.done) {
+    if (isMultiOrder || paymentstatus.isNegative || !isLayaway || paymentstatus.done || this.receipt.get('lines').length === 0) {
       this.$.layawayaction.setLocalDisabled(false);
       this.$.layawayaction.hide();
     } else {
@@ -1642,11 +1642,27 @@ enyo.kind({
 
           var errorMsgLbl, totalPaid = 0,
               totalToPaid = OB.DEC.abs(isMultiOrder ? me.owner.model.get('multiOrders').getTotal() : me.owner.receipt.getTotal()),
-              isReturnOrder = isMultiOrder ? false : me.owner.receipt.isNegative();
+              isReturnOrder = isMultiOrder ? false : me.owner.receipt.isNegative(),
+              paymentsMultiOrders, paymentsOrder;
 
-          if (_.filter(payments.models, function (payment) {
+
+          if (isMultiOrder) {
+            var receipts = me.owner.model.get('multiOrders').get('multiOrdersList').models;
+            receipts.forEach(function (receipt) {
+              paymentsMultiOrders = _.filter(receipt.get('payments').models, function (payment) {
+                return (OB.UTIL.isNullOrUndefined(payment.get('isReturnOrder')) ? isReturnOrder : payment.get('isReturnOrder')) !== isReturnOrder;
+              });
+              if (paymentsMultiOrders.length > 0) {
+                return;
+              }
+            });
+          }
+
+          paymentsOrder = _.filter(payments.models, function (payment) {
             return (OB.UTIL.isNullOrUndefined(payment.get('isReturnOrder')) ? isReturnOrder : payment.get('isReturnOrder')) !== isReturnOrder;
-          }).length > 0) {
+          });
+
+          if (paymentsOrder.length > 0 || (isMultiOrder && paymentsMultiOrders.length > 0)) {
             me.avoidCompleteReceipt = true;
             if (isReturnOrder) {
               errorMsgLbl = 'OBPOS_PaymentOnReturnReceipt';
@@ -2258,6 +2274,11 @@ enyo.kind({
 
         if (!me.showing || me.disabled) {
           return true;
+        }
+
+        if (receipt.get('lines').length === 0) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AvoidLayawayWithoutLines'));
+          return;
         }
 
         if (myModel.get('leftColumnViewManager').isOrder()) {

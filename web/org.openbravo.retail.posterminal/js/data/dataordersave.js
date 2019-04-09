@@ -135,7 +135,9 @@
         var normalizedCreationDate = OB.I18N.normalizeDate(context.receipt.get('creationDate'));
         var creationDate;
         var frozenReceipt = new OB.Model.Order(),
-            diffReceipt = new OB.Model.Order();
+            diffReceipt = new OB.Model.Order(),
+            execution;
+        execution = OB.UTIL.ProcessController.start('tapTotalButton');
         if (normalizedCreationDate === null) {
           creationDate = new Date();
           normalizedCreationDate = OB.I18N.normalizeDate(creationDate);
@@ -164,6 +166,7 @@
             }
             args.context.receipt.setIsCalculateReceiptLockState(false);
             args.context.receipt.setIsCalculateGrossLockState(false);
+            OB.UTIL.ProcessController.finish('tapTotalButton', execution);
             return true;
           }
           OB.UTIL.clone(receipt, frozenReceipt);
@@ -256,6 +259,7 @@
                       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgReceiptSaved', [currentDocNo]));
                     }
                   }
+                  OB.UTIL.ProcessController.finish('tapTotalButton', execution);
                   OB.trace('Order successfully removed.');
                 };
 
@@ -295,6 +299,7 @@
                   } else {
                     restoreReceiptCallback();
                   }
+                  OB.UTIL.ProcessController.finish('tapTotalButton', execution);
                 };
 
                 if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
