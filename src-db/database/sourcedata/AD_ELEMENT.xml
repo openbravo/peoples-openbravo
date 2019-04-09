@@ -10521,10 +10521,10 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1891-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1891-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1891-->  <COLUMNNAME><![CDATA[Birthday]]></COLUMNNAME>
-<!--1891-->  <NAME><![CDATA[Birthday]]></NAME>
-<!--1891-->  <PRINTNAME><![CDATA[Birthday]]></PRINTNAME>
+<!--1891-->  <NAME><![CDATA[Birthdate]]></NAME>
+<!--1891-->  <PRINTNAME><![CDATA[Birthdate]]></PRINTNAME>
 <!--1891-->  <DESCRIPTION><![CDATA[An anniversary of birth for a business partner.]]></DESCRIPTION>
-<!--1891-->  <HELP><![CDATA[Birthday or Anniversary day]]></HELP>
+<!--1891-->  <HELP><![CDATA[Birthdate or Anniversary day]]></HELP>
 <!--1891-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1891-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1891--></AD_ELEMENT>
