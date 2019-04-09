@@ -92,6 +92,7 @@ enyo.kind({
     } else {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_OpenReceipt'));
     }
+    this.$.body.$.receiptsList.$.openreceiptslistitemprinter.hideBusinessPartnerColumn = this.args.hideBusinessPartnerColumn;
   },
   executeOnHide: function () {
     if (!this.pressedBtn && this.args.navigationPath && this.args.navigationPath.length > 0) {
@@ -202,6 +203,12 @@ enyo.kind({
     this.$.amount.setContent(OB.I18N.formatCurrency(this.model.get('totalamount')));
     this.$.time.setContent(OB.I18N.formatHour(orderDate));
     this.$.customer.setContent(this.model.get('businessPartnerName'));
+    if (this.owner.owner.owner.hideBusinessPartnerColumn === true) {
+      this.$.customer.addClass('hide');
+    } else {
+      this.$.customer.removeClass('hide');
+    }
+    
     if (me.model.get('iscancelled')) {
       this.$.orderType.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
       this.$.orderType.applyStyle('color', 'rgb(83, 83, 197)');

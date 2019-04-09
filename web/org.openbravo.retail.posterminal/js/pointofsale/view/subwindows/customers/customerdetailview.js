@@ -242,6 +242,7 @@ enyo.kind({
           businessPartner: this.customer,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(this.navigationPath, 'customerView'),
           customHeaderContent: (this.customer.get('_identifier') + "'s " + OB.I18N.getLabel('OBPOS_Cus360LblLastActivity')),
+          hideBusinessPartnerColumn: true,
           advancedFilters: {
             orderby: null,
             filters: [{
