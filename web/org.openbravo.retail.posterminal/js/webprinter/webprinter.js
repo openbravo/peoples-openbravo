@@ -56,15 +56,11 @@
 
   var encoder = new TextEncoder('utf-8');
 
-  var WEBPrinter = function (printertype) {
+  var WEBPrinter = function (printertype, images) {
       this.webdevice = new printertype.WebDevice(printertype);
+      this.images = images || {};
       this.escpos = null;
-      this.images = {};
       };
-
-  WEBPrinter.prototype.registerImage = function (name, url) {
-    this.images[name] = url;
-  };
 
   WEBPrinter.prototype.connected = function () {
     return this.webdevice.connected();
