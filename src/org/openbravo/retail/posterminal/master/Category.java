@@ -33,8 +33,6 @@ import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
-import org.openbravo.model.pricing.pricelist.PriceListVersion;
-import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
@@ -54,12 +52,17 @@ public class Category extends ProcessHQLQuery {
       final String clientId = OBContext.getOBContext().getCurrentClient().getId();
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final String posId = jsonsent.getString("pos");
-      final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(posId);
+
       Set<String> productListIds = new HashSet<>();
-      productListIds.add(productList.getId());
+      productListIds = POSUtils.getProductListCrossStore(posId);
       final List<String> allCrossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
       final List<String> crossStoreOrgIds = new ArrayList<>(allCrossStoreOrgIds);
       crossStoreOrgIds.remove(orgId);
+      Set<String> crossStoreNaturalTree = OBContext.getOBContext()
+          .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId())
+          .getNaturalTree(orgId);
+      crossStoreNaturalTree.addAll(crossStoreOrgIds);
+
       boolean isRemote = false;
       try {
         OBContext.setAdminMode(false);
@@ -84,15 +87,6 @@ public class Category extends ProcessHQLQuery {
               .getJSONObject("terminalTimeOffset")
               .getLong("value"));
 
-      final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
-          terminalDate);
-
-      Set<String> crossStoreNaturalTree = OBContext.getOBContext()
-          .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId())
-          .getNaturalTree(orgId);
-      crossStoreNaturalTree.addAll(crossStoreOrgIds);
-      productListIds = POSUtils.getProductListCrossStore(posId);
-
       if (OBContext.hasTranslationInstalled()) {
         paramValues.put("languageId", OBContext.getOBContext().getLanguage().getId());
       }
@@ -102,11 +96,8 @@ public class Category extends ProcessHQLQuery {
       paramValues.put("clientId", clientId);
       paramValues.put("orgId", orgId);
       paramValues.put("allCrossStoreOrgIds", allCrossStoreOrgIds);
-      paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
       paramValues.put("crossStoreNaturalTree", crossStoreNaturalTree);
-      paramValues.put("priceListVersionId", priceListVersion.getId());
       paramValues.put("terminalDate", terminalDate);
-      paramValues.put("productListId", productList.getId());
       paramValues.put("productListIds", productListIds);
       return paramValues;
     } finally {
@@ -140,17 +131,29 @@ public class Category extends ProcessHQLQuery {
         && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
 
     if (isRemote) {
-      hqlQueries.add("select" + regularProductsCategoriesHQLProperties.getHqlSelect() //
-          + "from OBRETCO_Productcategory aCat left outer join aCat.productCategory as pCat left outer join pCat.image as img"
-          + " where aCat.$readableSimpleClientCriteria and aCat.$naturalOrgCriteria "
-          + " and aCat.obretcoProductlist.id = :productListId "//
-          + " and (aCat.$incrementalUpdateCriteria "//
-          + (lastUpdated == null ? "and" : "or") //
-          + " pCat.$incrementalUpdateCriteria) "//
-          + " order by pCat.name, pCat.id");
+      StringBuilder query = new StringBuilder();
+      query.append(" select");
+      query.append(regularProductsCategoriesHQLProperties.getHqlSelect());
+      query.append(" from ProductCategory as pCat");
+      query.append(" left outer join pCat.image as img");
+      query.append(" where exists (");
+      query.append("   select 1");
+      query.append("   from OBRETCO_Productcategory aCat");
+      query.append("   where aCat.productCategory = pCat");
+      query.append("   and aCat.$readableSimpleClientCriteria");
+      query.append("   and aCat.organization.id in :crossStoreNaturalTree");
+      query.append("   and aCat.obretcoProductlist.id in :productListIds");
+      query.append("   and (aCat.$incrementalUpdateCriteria ");
+      query.append(lastUpdated == null ? "and" : "or");
+      query.append("   pCat.$incrementalUpdateCriteria)");
+      query.append("   )");
+      query.append(" order by pCat.name, pCat.id");
+
+      hqlQueries.add(query.toString());
+
       hqlQueries.add("select" + regularProductsCategoriesHQLProperties.getHqlSelect() //
           + "from ADTreeNode tn, ProductCategory pCat left outer join pCat.image as img "
-          + "where tn.$readableSimpleClientCriteria and tn.$naturalOrgCriteria "
+          + "where tn.$readableSimpleClientCriteria and tn.organization.id in :crossStoreNaturalTree "
           + " and tn.node = pCat.id and tn.tree.table.id = :productCategoryTableId "
           + " and pCat.summaryLevel = 'Y' "
           + " and not exists (select pc.id from OBRETCO_Productcategory pc where tn.node = pc.productCategory.id) "
