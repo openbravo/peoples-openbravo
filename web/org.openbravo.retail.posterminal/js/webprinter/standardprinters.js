@@ -27,12 +27,7 @@
     },
     GENERICUSB: {
       WebDevice: OB.USB,
-      devices: [{
-        name: 'EPSON TM T88V',
-        vendorId: 0x04B8,
-        productId: 0x0202,
-        ESCPOS: OB.ESCPOS.Standard
-      }],
+      devices: [],
       register: function (printerusb) {
         this.devices.push(printerusb);
       }
