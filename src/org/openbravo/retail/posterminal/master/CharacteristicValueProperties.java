@@ -35,7 +35,7 @@ public class CharacteristicValueProperties extends ModelExtension {
         {
           add(new HQLProperty("cv.id", "id"));
           add(new HQLProperty("cv.name", "name"));
-          add(new HQLProperty("cv.characteristic.id", "characteristic_id"));
+          add(new HQLProperty("ch.id", "characteristic_id"));
           boolean isRemote = false;
           isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
               OBContext.getOBContext().getCurrentClient(),
@@ -49,7 +49,7 @@ public class CharacteristicValueProperties extends ModelExtension {
           add(new HQLProperty("cv.summaryLevel", "summaryLevel"));
           add(new HQLProperty("cv.name", "_identifier"));
           add(new HQLProperty("cv.active", "active"));
-          add(new HQLProperty("cv.characteristic.name", "characteristicName"));
+          add(new HQLProperty("ch.name", "characteristicName"));
         }
       };
     } catch (org.openbravo.erpCommon.utility.PropertyException e) {

@@ -2641,8 +2641,11 @@
         }
         if (me.isCalculateReceiptLocked === true || !line) {
           OB.error('Save ignored before execute OBPOS_PostAddProductToOrder hook, system has detected that a line is being added when calculate receipt is closed. Ignore line creation');
-          if (attrs && attrs.obposEpccode) {
-            OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+          if (attrs) {
+            if (attrs.obposEpccode) {
+              OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+            }
+            attrs.cancelOperation = true;
           }
           return null;
         }
@@ -2943,12 +2946,14 @@
             if (callback) {
               callback(success, orderline);
             }
+          }, function () {
+            OB.UTIL.ProcessController.finish('addProduct', execution);
           });
         }
       }
     },
 
-    addProductToOrder: function (p, qty, options, attrs, callback) {
+    addProductToOrder: function (p, qty, options, attrs, callback, cancelCallback) {
       var executeAddProduct, finalCallback, me = this,
           attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
       finalCallback = function (success, orderline) {
@@ -3043,6 +3048,9 @@
               }
             }
             executeAddProduct();
+            if (!OB.UTIL.isNullOrUndefined(args.attrs) && args.attrs.cancelOperation && cancelCallback) {
+              cancelCallback();
+            }
           });
         } else {
           executeAddProduct();
@@ -3854,6 +3862,9 @@
         }
         if (qty > 0 && negativeLines > 0) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
+          if (!OB.UTIL.isNullOrUndefined(OB.MobileApp.model.receipt.addProcess)) {
+            OB.MobileApp.model.receipt.addProcess = {};
+          }
           return true;
         } else if (qty < 0 && negativeLines !== receiptLines) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
@@ -6171,6 +6182,12 @@
           model.get('lines').at(i).set('grossUnitPrice', 0);
           model.get('lines').at(i).set('lineGrossAmount', 0);
         }
+        model.get('approvals').forEach(function (approval) {
+          if (typeof (approval.approvalType) === 'object') {
+            approval.approvalMessage = OB.I18N.getLabel(approval.approvalType.message, approval.approvalType.params);
+            approval.approvalType = approval.approvalType.approval;
+          }
+        });
         model.set('hasbeenpaid', 'Y');
         OB.Dal.transaction(function (tx) {
           OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {

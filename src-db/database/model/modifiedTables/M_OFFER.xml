@@ -10,5 +10,9 @@
       <index name="EM_OBPOS_M_OFFER_ORG" unique="false">
         <index-column name="AD_ORG_ID"/>
       </index>
+      <index name="EM_OBPOS_M_OFFER_ORGACTIVE" unique="false">
+        <index-column name="AD_ORG_ID"/>
+        <index-column name="ISACTIVE"/>
+      </index>
     </table>
   </database>
