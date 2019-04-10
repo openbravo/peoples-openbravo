@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -39,7 +39,7 @@ public class DiscountFilterProduct extends Discount {
         .getPropertyExtensions(extensions);
     String hql = "select" + regularDiscFilProductPropertyExtensionHQLProperties.getHqlSelect();
     hql += " from PricingAdjustmentProduct ap, OBRETCO_Prol_Product ppl ";
-    hql += " where ap.product.id = ppl.product.id and ppl.active = true ";
+    hql += " where ap.product.id = ppl.product.id ";
     hql += " and ppl.obretcoProductlist.id ='" + productList.getId() + "' ";
     hql += " and ((ap.$incrementalUpdateCriteria) " + jsonsent.get("operator")
         + " (ap.priceAdjustment.$incrementalUpdateCriteria) " + jsonsent.get("operator")

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE M_OFFER_PRODUCT">
+    <table name="M_OFFER_PRODUCT" primaryKey="M_OFFER_PRODUCT_KEY">
+      <index name="EM_OBPOS_M_OFFERPROD_PRODUCT" unique="false">
+        <index-column name="M_PRODUCT_ID"/>
+      </index>
+    </table>
+  </database>

@@ -391,6 +391,9 @@
                     taxamtdc = taxamtdc.add(baseTaxdcAmt.multiply(rate));
                   }
                 } else { //if the baseTax of this tax have not been processed yet, we skip this tax till baseTax is processed.
+                  if (taxList.length === 1) {
+                    throw OB.I18N.getLabel('OBPOS_TaxCalculationError_Message');
+                  }
                   return;
                 }
               } else {
@@ -491,6 +494,9 @@
                 if (!_.isUndefined(baseTax)) { //if the baseTax of this tax have been processed, we skip this tax till baseTax is processed.
                   auxNet = OB.DEC.add(baseTax.net, baseTax.amount);
                 } else { //if the baseTax of this tax have not been processed yet, we skip this tax till baseTax is processed.
+                  if (taxList.length === 1) {
+                    throw OB.I18N.getLabel('OBPOS_TaxCalculationError_Message');
+                  }
                   return;
                 }
               }
@@ -946,6 +952,9 @@
                   var discBaseAmount = new BigDecimal(String(discountedNet)).add(new BigDecimal(String(baseTax.amount)));
                   discountedGross = discountedGross.add(discBaseAmount.multiply(new BigDecimal(String(rate))));
                 } else { //if the baseTax of this tax have not been processed yet, we skip this tax till baseTax is processed.
+                  if (taxList.length === 1) {
+                    throw OB.I18N.getLabel('OBPOS_TaxCalculationError_Message');
+                  }
                   return;
                 }
               } else {

@@ -414,7 +414,7 @@ enyo.kind({
         paymentstatus = this.receipt.getPaymentStatus(),
         isLayaway = this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway'),
         isMultiOrder = this.model.get('leftColumnViewManager').isMultiOrder();
-    if (isMultiOrder || paymentstatus.isNegative || !isLayaway || paymentstatus.done) {
+    if (isMultiOrder || paymentstatus.isNegative || !isLayaway || paymentstatus.done || this.receipt.get('lines').length === 0) {
       this.$.layawayaction.setLocalDisabled(false);
       this.$.layawayaction.hide();
     } else {
@@ -1487,29 +1487,13 @@ enyo.kind({
   style: 'width: 85%; max-width: 125px; float: right; margin: 5px 5px 10px 0px; height: 2.5em; display:block; clear: right; font-weight: normal; padding: 0px',
   processdisabled: false,
   localdisabled: false,
+  disabled: false,
+  isLocked: true,
+  lastDisabledStatus: true,
   setLocalDisabled: function (value) {
     this.localdisabled = value;
     this.setDisabled(this.processdisabled || this.localdisabled);
   },
-  initComponents: function () {
-    var me = this;
-    this.inherited(arguments);
-    OB.POS.EventBus.on('UI_Enabled', function (state) {
-      me.processdisabled = !state;
-      me.setDisabled(me.processdisabled || me.localdisabled);
-    });
-    me.processdisabled = !OB.POS.EventBus.isProcessEnabled();
-    me.setDisabled(me.processdisabled || me.localdisabled);
-  }
-});
-
-enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.DoneButton',
-  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
-  drawerOpened: true,
-  isLocked: true,
-  lastDisabledStatus: true,
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'updatePending', 'updatePendingMultiOrders', 'cancelLayaway', 'paymentDone', 'tapDoneButton'],
   disableButton: function () {
     this.isLocked = true;
     this.setDisabledIfSynchronized();
@@ -1537,6 +1521,23 @@ enyo.kind({
     this.disabled = value; // for getDisabled() to return the correct value
     this.setAttribute('disabled', value); // to effectively turn the button enabled or disabled    
   },
+  initComponents: function () {
+    var me = this;
+    this.inherited(arguments);
+    OB.POS.EventBus.on('UI_Enabled', function (state) {
+      me.processdisabled = !state;
+      me.setDisabled(me.processdisabled || me.localdisabled);
+    });
+    me.processdisabled = !OB.POS.EventBus.isProcessEnabled();
+    me.setDisabled(me.processdisabled || me.localdisabled);
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.DoneButton',
+  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
+  drawerOpened: true,
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'cancelLayaway', 'paymentDone', 'tapDoneButton'],
   init: function (model) {
     this.model = model;
     this.setDisabledIfSynchronized();
@@ -1641,11 +1642,27 @@ enyo.kind({
 
           var errorMsgLbl, totalPaid = 0,
               totalToPaid = OB.DEC.abs(isMultiOrder ? me.owner.model.get('multiOrders').getTotal() : me.owner.receipt.getTotal()),
-              isReturnOrder = isMultiOrder ? false : me.owner.receipt.isNegative();
+              isReturnOrder = isMultiOrder ? false : me.owner.receipt.isNegative(),
+              paymentsMultiOrders, paymentsOrder;
 
-          if (_.filter(payments.models, function (payment) {
+
+          if (isMultiOrder) {
+            var receipts = me.owner.model.get('multiOrders').get('multiOrdersList').models;
+            receipts.forEach(function (receipt) {
+              paymentsMultiOrders = _.filter(receipt.get('payments').models, function (payment) {
+                return (OB.UTIL.isNullOrUndefined(payment.get('isReturnOrder')) ? isReturnOrder : payment.get('isReturnOrder')) !== isReturnOrder;
+              });
+              if (paymentsMultiOrders.length > 0) {
+                return;
+              }
+            });
+          }
+
+          paymentsOrder = _.filter(payments.models, function (payment) {
             return (OB.UTIL.isNullOrUndefined(payment.get('isReturnOrder')) ? isReturnOrder : payment.get('isReturnOrder')) !== isReturnOrder;
-          }).length > 0) {
+          });
+
+          if (paymentsOrder.length > 0 || (isMultiOrder && paymentsMultiOrders.length > 0)) {
             me.avoidCompleteReceipt = true;
             if (isReturnOrder) {
               errorMsgLbl = 'OBPOS_PaymentOnReturnReceipt';
@@ -1688,8 +1705,9 @@ enyo.kind({
                   me.owner.receipt.trigger('cancelLayaway');
                 } else {
                   OB.UTIL.ProcessController.finish('tapDoneButton', execution);
-                  me.owner.model.get('order').trigger('paymentDone', false);
+                  OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
                   OB.UTIL.setScanningFocus(false);
+                  me.owner.model.get('order').trigger('paymentDone', false);
                 }
                 me.drawerOpened = false;
               } else {
@@ -1708,16 +1726,18 @@ enyo.kind({
                 me.owner.receipt.trigger('cancelLayaway');
               } else {
                 OB.UTIL.ProcessController.finish('tapDoneButton', execution);
-                me.owner.receipt.trigger('paymentDone', me.allowOpenDrawer);
+                OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
                 OB.UTIL.setScanningFocus(false);
+                me.owner.receipt.trigger('paymentDone', me.allowOpenDrawer);
               }
             }
           } else {
             if (me.drawerpreference && me.allowOpenDrawer) {
               if (me.drawerOpened) {
                 OB.UTIL.ProcessController.finish('tapDoneButton', execution);
-                me.owner.model.get('multiOrders').trigger('paymentDone', false);
+                OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
                 OB.UTIL.setScanningFocus(false);
+                me.owner.model.get('multiOrders').trigger('paymentDone', false);
                 me.owner.model.get('multiOrders').set('openDrawer', false);
                 me.drawerOpened = false;
                 me.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
@@ -1732,8 +1752,9 @@ enyo.kind({
               }
             } else {
               OB.UTIL.ProcessController.finish('tapDoneButton', execution);
-              me.owner.model.get('multiOrders').trigger('paymentDone', me.allowOpenDrawer);
+              OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
               OB.UTIL.setScanningFocus(false);
+              me.owner.model.get('multiOrders').trigger('paymentDone', me.allowOpenDrawer);
               me.owner.model.get('multiOrders').set('openDrawer', false);
             }
           }
@@ -1754,7 +1775,7 @@ enyo.kind({
       pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt), OB.DEC.add(paymentStatus.totalAmt, this.owner.model.get('multiOrders').get('existingPayment')));
     }
     receiptHasPrepaymentAmount = receiptHasPrepaymentAmount && prepaymentLimitAmount !== 0;
-    if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && receiptHasPrepaymentAmount && pendingPrepayment > 0) {
+    if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && receiptHasPrepaymentAmount && paymentStatus.totalAmt > 0 && pendingPrepayment > 0) {
       if (OB.MobileApp.model.hasPermission('OBPOS_AllowPrepaymentUnderLimit', true)) {
         var approval;
         if (myModel.get('leftColumnViewManager').isOrder()) {
@@ -1770,13 +1791,11 @@ enyo.kind({
           });
         }
         if (!approval) {
-          OB.UTIL.ProcessController.pause('tapDoneButton', execution);
           OB.UTIL.Approval.requestApproval(
           me.model, [{
             approval: 'OBPOS_approval.prepaymentUnderLimit',
             message: 'OBPOS_approval.prepaymentUnderLimit'
           }], function (approved, supervisor, approvalType) {
-            OB.UTIL.ProcessController.resume('tapDoneButton', execution);
             if (approved) {
               if (OB.MobileApp.model.get('context').user.id === supervisor.get('id')) {
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnderpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_UnderpaymentWarningBody'), [{
@@ -1842,6 +1861,7 @@ enyo.kind({
   },
   classes: 'btn-icon-adaptative btnlink-green',
   style: 'width: calc(50% - 5px); margin: 0px 5px 0px 0px; clear: unset',
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders'],
   tap: function () {
     if (this.disabled) {
       return true;
@@ -1865,6 +1885,7 @@ enyo.kind({
   },
   classes: 'btn-icon-adaptative btnlink-green',
   style: 'width: calc(50% - 5px); margin: 0px 0px 0px 5px;',
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders'],
   tap: function () {
     if (this.disabled) {
       return true;
@@ -1887,6 +1908,7 @@ enyo.kind({
     onExactPayment: ''
   },
   classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders'],
   tap: function () {
     if (this.disabled) {
       return true;
@@ -2093,40 +2115,10 @@ enyo.kind({
   i18nLabel: 'OBPOS_LblSellOnCredit',
   classes: 'btn-icon-small btnlink-green',
   permission: 'OBPOS_receipt.creditsales',
-  disabled: false,
-  isLocked: true,
-  lastDisabledStatus: true,
   events: {
     onShowPopup: ''
   },
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'updatePending', 'updatePendingMultiOrders', 'payOnCredit', 'paymentDone'],
-  disableButton: function () {
-    this.isLocked = true;
-    this.setDisabledIfSynchronized();
-  },
-  enableButton: function () {
-    this.isLocked = false;
-    this.setDisabledIfSynchronized();
-  },
-  setDisabled: function (value) {
-    this.lastDisabledStatus = value;
-    if (value) {
-      this.disableButton();
-    } else {
-      this.enableButton();
-    }
-  },
-  setDisabledIfSynchronized: function () {
-    var value = this.lastDisabledStatus || this.isLocked || false;
-    if (this.isLocked) {
-      value = true;
-    }
-    if (OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length > 0 && !value) {
-      return true;
-    }
-    this.disabled = value;
-    this.setAttribute('disabled', value);
-  },
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'payOnCredit', 'paymentDone'],
   init: function (model) {
     this.model = model;
   },
@@ -2243,10 +2235,7 @@ enyo.kind({
   content: '',
   classes: 'btn-icon-small btnlink-green',
   permission: 'OBPOS_receipt.layawayReceipt',
-  disabled: false,
-  isLocked: true,
-  lastDisabledStatus: true,
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'updatePending', 'updatePendingMultiOrders', 'paymentDone'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'paymentDone'],
   updateVisibility: function (isVisible) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {
       this.hide();
@@ -2257,33 +2246,6 @@ enyo.kind({
       return;
     }
     this.show();
-  },
-  disableButton: function () {
-    this.isLocked = true;
-    this.setDisabledIfSynchronized();
-  },
-  enableButton: function () {
-    this.isLocked = false;
-    this.setDisabledIfSynchronized();
-  },
-  setDisabled: function (value) {
-    this.lastDisabledStatus = value;
-    if (value) {
-      this.disableButton();
-    } else {
-      this.enableButton();
-    }
-  },
-  setDisabledIfSynchronized: function () {
-    var value = this.lastDisabledStatus || this.isLocked || false;
-    if (this.isLocked) {
-      value = true;
-    }
-    if (OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length > 0 && !value) {
-      return true;
-    }
-    this.disabled = value;
-    this.setAttribute('disabled', value);
   },
   init: function (model) {
     this.model = model;
@@ -2312,6 +2274,11 @@ enyo.kind({
 
         if (!me.showing || me.disabled) {
           return true;
+        }
+
+        if (receipt.get('lines').length === 0) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AvoidLayawayWithoutLines'));
+          return;
         }
 
         if (myModel.get('leftColumnViewManager').isOrder()) {
@@ -2352,7 +2319,7 @@ enyo.kind({
     hasPayments = paymentStatus.payments.length > 0;
     allowApproval = OB.MobileApp.model.hasPermission('OBPOS_AllowPrepaymentUnderLimitLayaway', true);
     pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentLayawayLimitAmount, paymentStatus.pendingAmt), paymentStatus.totalAmt);
-    if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && receiptHasPrepaymentAmount && pendingPrepayment > 0 && hasPayments && allowApproval) {
+    if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && receiptHasPrepaymentAmount && paymentStatus.totalAmt > 0 && pendingPrepayment > 0 && hasPayments && allowApproval) {
       OB.UTIL.Approval.requestApproval(this.model, [{
         approval: 'OBPOS_approval.prepaymentUnderLimitLayaway',
         message: 'OBPOS_approval.prepaymentUnderLimit'

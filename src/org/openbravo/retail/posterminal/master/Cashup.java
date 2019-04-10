@@ -11,9 +11,13 @@ package org.openbravo.retail.posterminal.master;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +35,7 @@ import org.openbravo.mobile.core.process.SimpleQueryBuilder;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.retail.posterminal.ExtendsCashManagementPaymentTypeHook;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.retail.posterminal.OBPOSAppCashup;
 import org.openbravo.retail.posterminal.OBPOSAppPayment;
@@ -43,6 +48,33 @@ import org.openbravo.service.json.JsonConstants;
 
 public class Cashup extends JSONProcessSimple {
   private static final Logger log = LogManager.getLogger();
+
+  @Inject
+  @Any
+  private Instance<ExtendsCashManagementPaymentTypeHook> paymentTypeHookInstance;
+
+  private static String[] paymentTypes = { "fmgi.oBPOSAppPaymentTypeCGlitemDropdepIDList",
+      "fmgi.oBPOSAppPaymentTypeCGlitemWriteoffIDList",
+      "fmgi.oBPOSAppPaymentTypeCashDifferencesList",
+      "fmgi.oBPOSAppPaymentTypeGLItemForDepositsList",
+      "fmgi.oBPOSAppPaymentTypeGLItemForDropsList" };
+
+  private List<String> allPaymentTypes = new ArrayList<String>();
+
+  private List<String> executePaymentTypeHook(Instance<? extends Object> hooks) throws Exception {
+    List<String> allPaymentTypeFromHooks = new ArrayList<String>();
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      String[] returnedByhook = (((ExtendsCashManagementPaymentTypeHook) proc).exec());
+      for (String paymentType : returnedByhook) {
+        if (paymentType.length() > 0) {
+          allPaymentTypeFromHooks.add(paymentType);
+        }
+      }
+
+    }
+    return allPaymentTypeFromHooks;
+  }
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -202,16 +234,22 @@ public class Cashup extends JSONProcessSimple {
       throws JSONException {
     JSONArray respArray = new JSONArray();
 
+    try {
+      for (String paymentType : paymentTypes) {
+        this.allPaymentTypes.add(paymentType);
+      }
+      this.allPaymentTypes.addAll(executePaymentTypeHook(paymentTypeHookInstance));
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
     // Get GL Items associated to the payment methods of this terminal
-    String[] paymentTypes = { "fmgi.oBPOSAppPaymentTypeCGlitemDropdepIDList",
-        "fmgi.oBPOSAppPaymentTypeCGlitemWriteoffIDList",
-        "fmgi.oBPOSAppPaymentTypeCashDifferencesList",
-        "fmgi.oBPOSAppPaymentTypeGLItemForDepositsList",
-        "fmgi.oBPOSAppPaymentTypeGLItemForDropsList" };
+    String[] paymentTypesCashup = this.allPaymentTypes.toArray(new String[0]);
     List<GLItem> glItemList = new ArrayList<GLItem>();
-    for (int i = 0; i < paymentTypes.length; i++) {
+    for (int i = 0; i < paymentTypesCashup.length; i++) {
       String hqlglItem = "select distinct fmgi from FinancialMgmtGLItem fmgi join "
-          + paymentTypes[i] + " as oapt " + "where oapt.id in (select oap.paymentMethod.id "
+          + paymentTypesCashup[i] + " as oapt " + "where oapt.id in (select oap.paymentMethod.id "
           + "from OBPOS_App_Payment oap where oap.obposApplications.id = :terminal)";
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlglItem,
           OBContext.getOBContext().getCurrentClient().getId(),

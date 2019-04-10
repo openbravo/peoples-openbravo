@@ -424,6 +424,7 @@ public class PaidReceipts extends JSONProcessSimple {
             JSONObject objectType = (JSONObject) listPaymentsType.get(j);
             if (objectIn.get("account").equals(objectType.get("account"))) {
               JSONObject paidReceiptPayment = new JSONObject();
+              setOverpayment(objectIn, paidReceiptPayment);
               // FIXME: Multicurrency problem, amount always in terminal currency
               BigDecimal objPaymentTrx = BigDecimal.ZERO;
               if (objectIn.getDouble("amount") == objectIn.getDouble("paymentAmount")) {
@@ -510,6 +511,7 @@ public class PaidReceipts extends JSONProcessSimple {
               paymentsType.put("openDrawer", "N");
 
               JSONObject paidReceiptPayment = new JSONObject();
+              setOverpayment(objectIn, paidReceiptPayment);
               // FIXME: Multicurrency problem, amount always in terminal currency
               BigDecimal objPaymentTrx = BigDecimal.ZERO;
               if (objectIn.getDouble("amount") == objectIn.getDouble("paymentAmount")) {
@@ -626,6 +628,37 @@ public class PaidReceipts extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
     return result;
+  }
+
+  private void setOverpayment(JSONObject objectIn, JSONObject paidReceiptPayment)
+      throws JSONException {
+    if (objectIn.getDouble("amount") != objectIn.getDouble("paymentAmount")
+        && objectIn.getDouble("paymentAmount") != 0) {
+      // Search for the overpayment amount and add to the amount
+      final StringBuffer overpaymentHQL = new StringBuffer();
+      overpaymentHQL.append("SELECT SUM(pd.amount) ");
+      overpaymentHQL.append("FROM FIN_Payment_Detail AS pd ");
+      overpaymentHQL.append("JOIN pd.finPayment AS p ");
+      overpaymentHQL.append("JOIN p.oBPOSPOSTerminal AS t ");
+      overpaymentHQL.append("WHERE p.id = :finPaymentId ");
+      overpaymentHQL.append("AND pd.gLItem IS NOT NULL ");
+      overpaymentHQL.append("AND pd.gLItem.id = (SELECT DISTINCT(ppt.glitemWriteoff.id) ");
+      overpaymentHQL.append("FROM OBPOS_App_Payment AS pp ");
+      overpaymentHQL.append("JOIN pp.paymentMethod AS ppt ");
+      overpaymentHQL.append("WHERE pp.obposApplications.id = t.id ");
+      overpaymentHQL.append("AND ppt.paymentMethod.id = p.paymentMethod.id)");
+      final Query<BigDecimal> overpaymentQuery = OBDal.getInstance()
+          .getSession()
+          .createQuery(overpaymentHQL.toString(), BigDecimal.class);
+      overpaymentQuery.setParameter("finPaymentId", objectIn.getString("paymentId"));
+      overpaymentQuery.setMaxResults(1);
+      final BigDecimal overpaymentAmt = overpaymentQuery.uniqueResult();
+      if (overpaymentAmt != null) {
+        objectIn.put("amount",
+            BigDecimal.valueOf(objectIn.getDouble("amount")).add(overpaymentAmt));
+        paidReceiptPayment.put("overpayment", overpaymentAmt);
+      }
+    }
   }
 
   protected void executeHooks(Instance<? extends Object> hooks, JSONObject paymentIn,

@@ -557,13 +557,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
       }
       JSONObject jsonOrderLine = orderlines.getJSONObject(i);
       String attr = null;
-      if (jsonOrderLine.has("attSetInstanceDesc")) {
-        attr = jsonOrderLine.get("attSetInstanceDesc").toString();
-      } else if (jsonOrderLine.has("attributeValue")) {
-        attr = jsonOrderLine.get("attributeValue").toString();
-      }
-      if (StringUtils.equals(attr, "null")) {
-        attr = null;
+      if (jsonOrderLine.has("attSetInstanceDesc")
+          && !StringUtils.equals(jsonOrderLine.getString("attSetInstanceDesc"), "null")) {
+        attr = jsonOrderLine.getString("attSetInstanceDesc");
+      } else if (jsonOrderLine.has("attributeValue")
+          && !StringUtils.equals(jsonOrderLine.getString("attributeValue"), "null")) {
+        attr = jsonOrderLine.getString("attributeValue");
       }
       orderline.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(attr,
           jsonOrderLine.getJSONObject("product").get("id").toString(),
@@ -1263,7 +1262,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
     BigDecimal paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("nettingPayment", 0));
     for (int i = 0; i < payments.length(); i++) {
       final JSONObject payment = payments.getJSONObject(i);
-      paymentAmt = paymentAmt.add(BigDecimal.valueOf(payment.getDouble("origAmount")))
+      paymentAmt = paymentAmt
+          .add(BigDecimal.valueOf(payment.getDouble("origAmount"))
+              .subtract(BigDecimal.valueOf(payment.optDouble("overpayment", 0))))
           .setScale(pricePrecision, RoundingMode.HALF_UP);
     }
 
@@ -1355,7 +1356,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
             .setScale(pricePrecision, RoundingMode.HALF_UP);
         BigDecimal tempWriteoffAmt = writeoffAmt;
         if (payment.has("reversedPaymentId")) {
-          tempWriteoffAmt = BigDecimal.ZERO;
+          tempWriteoffAmt = BigDecimal.valueOf(payment.optDouble("overpayment", 0));
         } else if (tempWriteoffAmt.compareTo(BigDecimal.ZERO) != 0
             && paymentType.getPaymentMethod().getOverpaymentLimit() != null
             && tempWriteoffAmt.abs()
@@ -1374,7 +1375,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
         processPayments(paymentSchedule, order, posTerminal, paymentType, payment, tempWriteoffAmt,
             jsonorder, account);
-        writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
+        if (!payment.has("reversedPaymentId")) {
+          writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
+        }
       }
     }
 

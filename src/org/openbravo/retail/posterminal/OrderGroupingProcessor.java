@@ -29,6 +29,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
@@ -398,9 +399,8 @@ public class OrderGroupingProcessor {
       return;
     }
     Invoice invoice = OBDal.getInstance().get(Invoice.class, oriInvoice.getId());
-
     OBDal.getInstance().save(invoice);
-    BigDecimal grossamount = invoice.getGrandTotalAmount();
+
     InvoiceTax taxCandidate = null;
     BigDecimal summedLineGross = invoice.getSummedLineAmount();
     for (InvoiceTax tax : invoice.getInvoiceTaxList()) {
@@ -420,42 +420,24 @@ public class OrderGroupingProcessor {
     FIN_PaymentSchedule ps = invoice.getFINPaymentScheduleList().get(0);
     for (FIN_PaymentScheduleDetail psd : ps
         .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-      totalPaid = totalPaid.add(psd.getAmount());
+      if (psd.getPaymentDetails() != null
+          && POSUtils.isPaidStatus(psd.getPaymentDetails().getFinPayment())) {
+        totalPaid = totalPaid.add(psd.getAmount());
+      }
     }
 
-    // if the total paid is distinct that grossamount, we should create a new sched detail with the
-    // difference
-    if (grossamount.compareTo(totalPaid) != 0 && grossamount.compareTo(BigDecimal.ZERO) != 0) {
-      FIN_PaymentScheduleDetail newDetail = OBProvider.getInstance()
-          .get(FIN_PaymentScheduleDetail.class);
-      newDetail.setAmount(grossamount.subtract(totalPaid));
-      newDetail.setInvoicePaymentSchedule(invoice.getFINPaymentScheduleList().get(0));
-      invoice.getFINPaymentScheduleList()
-          .get(0)
-          .getFINPaymentScheduleDetailInvoicePaymentScheduleList()
-          .add(newDetail);
-      invoice.getFINPaymentScheduleList()
-          .get(0)
-          .setOutstandingAmount(grossamount.subtract(totalPaid));
-    }
-    OBDal.getInstance().save(ps);
+    final BigDecimal grossamount = invoice.getGrandTotalAmount(),
+        remainingAmt = grossamount.subtract(totalPaid);
 
-    if (grossamount.compareTo(BigDecimal.ZERO) == 0) {
+    // update invoice payment schedule amount
+    if (grossamount.compareTo(BigDecimal.ZERO) != 0) {
+      ps.setAmount(grossamount);
+      ps.setPaidAmount(totalPaid);
+      ps.setOutstandingAmount(remainingAmt);
+      OBDal.getInstance().save(ps);
+    } else {
       totalPaid = BigDecimal.ZERO;
-    }
 
-    invoice.setGrandTotalAmount(grossamount);
-    invoice.setPaymentComplete(grossamount.compareTo(totalPaid) == 0);
-    invoice.setTotalPaid(totalPaid);
-    invoice.setPercentageOverdue(0L);
-    invoice.setFinalSettlementDate(grossamount.compareTo(totalPaid) == 0 ? currentDate : null);
-    invoice.setDaysSalesOutstanding(0L);
-    invoice.setOutstandingAmount(grossamount.subtract(totalPaid));
-
-    ps.setAmount(grossamount);
-    ps.setPaidAmount(totalPaid);
-
-    if (grossamount.compareTo(BigDecimal.ZERO) == 0) {
       for (FIN_PaymentScheduleDetail detail : ps
           .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
         detail.setInvoicePaymentSchedule(null);
@@ -465,6 +447,21 @@ public class OrderGroupingProcessor {
       invoice.getFINPaymentScheduleList().clear();
       OBDal.getInstance().remove(ps);
     }
+
+    if (remainingAmt.signum() != 0) {
+      invoice.setOutstandingAmount(remainingAmt);
+      invoice.setDueAmount(remainingAmt);
+      invoice.setDaysTillDue(FIN_Utility.getDaysToDue(ps.getDueDate()));
+    }
+
+    invoice.setGrandTotalAmount(grossamount);
+    invoice.setPaymentComplete(grossamount.compareTo(totalPaid) == 0);
+    invoice.setTotalPaid(totalPaid);
+    invoice.setPercentageOverdue(0L);
+    invoice.setFinalSettlementDate(grossamount.compareTo(totalPaid) == 0 ? currentDate : null);
+    invoice.setDaysSalesOutstanding(0L);
+    invoice.setOutstandingAmount(remainingAmt);
+    OBDal.getInstance().save(invoice);
   }
 
   private OrderLine[] splitOrderLineByShipmentLine(OrderLine ol) {
@@ -596,7 +593,6 @@ public class OrderGroupingProcessor {
         paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList()
             .add(paymentScheduleDetail);
         paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
-        paymentScheduleDetail.setInvoicePaid(Boolean.TRUE);
 
         paymentScheduleInvoice
             .setAmount(paymentScheduleInvoice.getAmount().add(paymentScheduleDetail.getAmount()));

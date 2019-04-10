@@ -114,10 +114,11 @@ public class CharacteristicValue extends ProcessHQLQuery {
 
     if (!isRemote) {
       query.append(" from CharacteristicValue cv,");
+      query.append(" inner join cv.characteristic ch,");
       query.append(" ADTreeNode node");
-      query.append(" where cv.characteristic.tree = node.tree");
+      query.append(" where ch.tree = node.tree");
       query.append(" and cv.id = node.node");
-      query.append(" and cv.characteristic.obposUseonwebpos = true");
+      query.append(" and ch.obposUseonwebpos = true");
       query.append(" and (");
       query.append("   cv.summaryLevel = false");
       query.append("   and exists (");

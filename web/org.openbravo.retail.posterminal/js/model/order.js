@@ -433,7 +433,7 @@
     preventOrderSave: function (value) {
       if (value) {
         if (this.has('preventOrderSave')) {
-          this.set('preventOrderSave', OB.Dec.add(this.get('preventOrderSave'), OB.DEC.One));
+          this.set('preventOrderSave', OB.DEC.add(this.get('preventOrderSave'), OB.DEC.One));
         } else {
           this.set('preventOrderSave', OB.DEC.One);
         }
@@ -796,17 +796,6 @@
       this.calculatingReceipt = true;
       var execution = OB.UTIL.ProcessController.start('calculateReceipt');
       this.addToListOfCallbacks(callback);
-      var executeCallback;
-      executeCallback = function (listOfCallbacks, callback) {
-        if (listOfCallbacks.length === 0) {
-          callback();
-          listOfCallbacks = null;
-          return;
-        }
-        var callbackToExe = listOfCallbacks.shift();
-        callbackToExe();
-        executeCallback(listOfCallbacks, callback);
-      };
       var me = this;
       this.on('applyPromotionsFinished', function () {
         me.off('applyPromotionsFinished');
@@ -820,22 +809,36 @@
             me.calculateReceipt();
             return;
           } else {
-            if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
-              var calculateReceiptCallbacks = me.get('calculateReceiptCallbacks').slice(0);
-              me.unset('calculateReceiptCallbacks');
-              executeCallback(calculateReceiptCallbacks, function () {
+            var finishCalculateReceipt = function (callback) {
                 me.calculatingReceipt = false;
                 OB.MobileApp.view.waterfall('calculatedReceipt');
                 me.trigger('calculatedReceipt');
                 OB.UTIL.ProcessController.finish('calculateReceipt', execution);
-                me.trigger('updatePending');
+                me.getPrepaymentAmount(function () {
+                  me.trigger('updatePending');
+                  if (callback && callback instanceof Function) {
+                    callback();
+                  }
+                });
+                };
+            if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
+              var calculateReceiptCallbacks = me.get('calculateReceiptCallbacks').slice(0);
+              me.unset('calculateReceiptCallbacks');
+              finishCalculateReceipt(function () {
+                var executeCallback;
+                executeCallback = function (listOfCallbacks) {
+                  if (listOfCallbacks.length === 0) {
+                    listOfCallbacks = null;
+                    return;
+                  }
+                  var callbackToExe = listOfCallbacks.shift();
+                  callbackToExe();
+                  executeCallback(listOfCallbacks);
+                };
+                executeCallback(calculateReceiptCallbacks);
               });
             } else {
-              me.calculatingReceipt = false;
-              OB.MobileApp.view.waterfall('calculatedReceipt');
-              me.trigger('calculatedReceipt');
-              OB.UTIL.ProcessController.finish('calculateReceipt', execution);
-              me.trigger('updatePending');
+              finishCalculateReceipt();
             }
           }
         });
@@ -955,7 +958,11 @@
             }
           });
           processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, this.getNettingPayment());
-          isNegative = processedPaymentsAmount > this.getGross();
+          if (OB.DEC.compare(this.getGross()) === -1) {
+            isNegative = processedPaymentsAmount >= this.getGross();
+          } else {
+            isNegative = processedPaymentsAmount > this.getGross();
+          }
           this.set('isNegative', isNegative, {
             silent: true
           });
@@ -966,7 +973,7 @@
       return isNegative;
     },
 
-    getPrepaymentAmount: function (callback) {
+    getPrepaymentAmount: function (callback, ignorePanel) {
       var me = this,
           total = this.getTotal();
 
@@ -979,6 +986,14 @@
           callback();
         }
       }
+
+      if (!ignorePanel && OB.MobileApp.model.get('lastPaneShown') !== 'payment') {
+        if (callback instanceof Function) {
+          callback();
+        }
+        return;
+      }
+
       //Execute the Prepayments Algorithm only if the receipt is a normal ticket or a layaway
       //Otherwise return the total of the receipt so the prepayments logic is not taken into account
       if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && OB.MobileApp.model.get('terminal').prepaymentAlgorithm && me.get('lines').length > 0) {
@@ -2626,8 +2641,11 @@
         }
         if (me.isCalculateReceiptLocked === true || !line) {
           OB.error('Save ignored before execute OBPOS_PostAddProductToOrder hook, system has detected that a line is being added when calculate receipt is closed. Ignore line creation');
-          if (attrs && attrs.obposEpccode) {
-            OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+          if (attrs) {
+            if (attrs.obposEpccode) {
+              OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+            }
+            attrs.cancelOperation = true;
           }
           return null;
         }
@@ -2896,7 +2914,7 @@
               if (callback) {
                 callback(success, orderline);
               }
-            }, execution);
+            });
           } else {
             OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
             OB.UTIL.ProcessController.finish('addProduct', execution);
@@ -2928,12 +2946,14 @@
             if (callback) {
               callback(success, orderline);
             }
-          }, execution);
+          }, function () {
+            OB.UTIL.ProcessController.finish('addProduct', execution);
+          });
         }
       }
     },
 
-    addProductToOrder: function (p, qty, options, attrs, callback, execution) {
+    addProductToOrder: function (p, qty, options, attrs, callback, cancelCallback) {
       var executeAddProduct, finalCallback, me = this,
           attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
       finalCallback = function (success, orderline) {
@@ -2989,12 +3009,10 @@
         executeAddProduct = function () {
           var isQuotationAndAttributeAllowed = args.receipt.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true);
           if ((!args || !args.options || !args.options.line) && attributeSearchAllowed && p.get('hasAttributes') && qty >= 1 && (!args.receipt.get('isQuotation') || isQuotationAndAttributeAllowed)) {
-            OB.UTIL.ProcessController.pause('addProduct', execution);
             OB.MobileApp.view.waterfall('onShowPopup', {
               popup: 'modalProductAttribute',
               args: {
                 callback: function (attributeValue) {
-                  OB.UTIL.ProcessController.resume('addProduct', execution);
                   if (!OB.UTIL.isNullOrUndefined(attributeValue)) {
                     if (_.isEmpty(attributeValue)) {
                       // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
@@ -3030,6 +3048,9 @@
               }
             }
             executeAddProduct();
+            if (!OB.UTIL.isNullOrUndefined(args.attrs) && args.attrs.cancelOperation && cancelCallback) {
+              cancelCallback();
+            }
           });
         } else {
           executeAddProduct();
@@ -3841,6 +3862,9 @@
         }
         if (qty > 0 && negativeLines > 0) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
+          if (!OB.UTIL.isNullOrUndefined(OB.MobileApp.model.receipt.addProcess)) {
+            OB.MobileApp.model.receipt.addProcess = {};
+          }
           return true;
         } else if (qty < 0 && negativeLines !== receiptLines) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
@@ -4187,6 +4211,9 @@
       OB.UTIL.clone(me, clonedreceipt);
 
       OB.Dal.remove(this, function () {
+        OB.MobileApp.model.orderList.remove(me, {
+          silent: true
+        });
         var deliveredLine, linesWithDeferred = [];
 
         me.preventOrderSave(true);
@@ -4222,6 +4249,8 @@
           line.set('replacedorderline', line.get('id'));
           line.set('id', idMap[line.get('id')]);
           line.unset('invoicedQuantity');
+          line.unset('grossUnitPrice');
+          line.unset('lineGrossAmount');
           line.set('obposCanbedelivered', true);
           line.set('obposIspaid', false);
         });
@@ -4303,6 +4332,9 @@
             me.unset('preventServicesUpdate');
             me.preventOrderSave(false);
             me.save();
+            OB.MobileApp.model.orderList.unshift(me, {
+              silent: true
+            });
           });
         });
         // Set the last line as selected to call the 'onRearrangeEditButtonBar' event and update the isEditable and
@@ -4383,6 +4415,9 @@
                   var clonedReceipt = new OB.Model.Order();
                   OB.UTIL.clone(me, clonedReceipt);
                   OB.Dal.remove(me, function () {
+                    OB.MobileApp.model.orderList.remove(me, {
+                      silent: true
+                    });
                     var idMap = {};
                     me.set('skipCalculateReceipt', true);
                     me.preventOrderSave(true);
@@ -4467,6 +4502,9 @@
                         me.unset('preventServicesUpdate');
                         me.preventOrderSave(false);
                         me.save();
+                        OB.MobileApp.model.orderList.unshift(me, {
+                          silent: true
+                        });
                         OB.MobileApp.model.orderList.saveCurrent();
                         me.trigger('updatePending', true);
                         // Finally change to the payments tab
@@ -5000,13 +5038,11 @@
         this.adjustPayment();
       }
       OB.UTIL.PrepaymentUtils.managePrepaymentChange(this, payment, payments, function () {
-        OB.UTIL.ProcessController.pause('addPayment', execution);
         OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
           paymentToAdd: payment,
           payments: payments,
           receipt: me
         }, function (args) {
-          OB.UTIL.ProcessController.resume('addPayment', execution);
           var executeFinalCallback = function (saveChanges) {
               if (saveChanges && !payment.get('changePayment')) {
                 order.adjustPayment();
@@ -5182,12 +5218,15 @@
           reversalPayment.unset('paymentId');
 
           // Modify other properties for the reverse payment
-          reversalPayment.set('amount', OB.DEC.sub(0, payment.get('amount')));
-          reversalPayment.set('origAmount', OB.DEC.sub(0, payment.get('origAmount')));
-          reversalPayment.set('paid', OB.DEC.sub(0, payment.get('paid')));
+          reversalPayment.set('amount', OB.DEC.sub(OB.DEC.Zero, payment.get('amount')));
+          reversalPayment.set('origAmount', OB.DEC.sub(OB.DEC.Zero, payment.get('origAmount')));
+          reversalPayment.set('paid', OB.DEC.sub(OB.DEC.Zero, payment.get('paid')));
+          if (payment.has('overpayment')) {
+            reversalPayment.set('overpayment', OB.DEC.sub(OB.DEC.Zero, payment.get('overpayment')));
+          }
           reversalPayment.set('reversedPaymentId', payment.get('paymentId'));
           reversalPayment.set('reversedPayment', payment);
-          reversalPayment.set('index', OB.DEC.add(1, payments.indexOf(payment)));
+          reversalPayment.set('index', OB.DEC.add(OB.DEC.One, payments.indexOf(payment)));
           reversalPayment.set('reverseCallback', reverseCallback);
           reversalPayment.set('isReversePayment', true);
           reversalPayment.set('paymentData', payment.get('paymentData') ? payment.get('paymentData') : null);
@@ -6101,7 +6140,7 @@
 
       function removeReceiptFromDatabase(receipt, callback) {
         var model, orderList = OB.MobileApp.model.orderList;
-        if (orderList) {
+        if (orderList && receipt && receipt.get('session') === OB.MobileApp.model.get('session')) {
           model = _.find(orderList.models, function (model) {
             return model.get('id') === receipt.get('id');
           });
@@ -6143,6 +6182,12 @@
           model.get('lines').at(i).set('grossUnitPrice', 0);
           model.get('lines').at(i).set('lineGrossAmount', 0);
         }
+        model.get('approvals').forEach(function (approval) {
+          if (typeof (approval.approvalType) === 'object') {
+            approval.approvalMessage = OB.I18N.getLabel(approval.approvalType.message, approval.approvalType.params);
+            approval.approvalType = approval.approvalType.approval;
+          }
+        });
         model.set('hasbeenpaid', 'Y');
         OB.Dal.transaction(function (tx) {
           OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
@@ -6153,7 +6198,7 @@
             model.set('json', JSON.stringify(model.serializeToJSON()));
             OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
               model.save(function () {
-                if (orderList) {
+                if (orderList && model.get('session') === OB.MobileApp.model.get('session')) {
                   var orderListModel = _.find(orderList.models, function (m) {
                     return m.get('id') === model.get('id');
                   });
@@ -6187,6 +6232,7 @@
               receipt.prepareToSend(function () {
                 receipt.set('skipApplyPromotions', true);
                 receipt.set('skipCalculateReceipt', true);
+                receipt.set('preventServicesUpdate', true);
                 _.each(receipt.get('lines').models, function (line) {
                   line.set('obposQtyDeleted', line.get('qty'));
                   line.set('obposIsDeleted', true);
@@ -6194,6 +6240,10 @@
                     silent: true
                   });
                 });
+                if (receipt.get('hasServices')) {
+                  receipt.unset('hasServices');
+                }
+                receipt.unset('preventServicesUpdate');
                 receipt.set('skipCalculateReceipt', false);
                 // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
                 // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the

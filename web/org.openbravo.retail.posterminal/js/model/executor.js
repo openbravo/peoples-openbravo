@@ -223,7 +223,9 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     OB.Dal.findUsingCache('discountsCache', OB.Model.Discount, criteria, function (d) {
       OB.UTIL.HookManager.executeHooks('OBPOS_PreApplyAutomaticDiscount', {
         context: me,
-        discountList: d
+        discountList: d,
+        receipt: receipt,
+        line: line
       }, function (args) {
         if (args.cancelation !== true) {
           // Set real _idx value for new list of promotions to apply and save the original _idx

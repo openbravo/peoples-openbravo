@@ -48,7 +48,6 @@ import org.openbravo.model.common.invoice.InvoiceLineOffer;
 import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
-import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
@@ -59,8 +58,6 @@ import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.db.CallStoredProcedure;
 
 public class InvoiceUtils {
-
-  private static final String STATUS_PAYMENT_RECEIVED = "RPR";
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
@@ -593,7 +590,7 @@ public class InvoiceUtils {
         finalSettlementDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();
       }
       // Do not consider as paid amount if the payment is in a not valid status
-      boolean invoicePaidAmounts = isPaidStatus(psd.getPaymentDetails().getFinPayment());
+      boolean invoicePaidAmounts = POSUtils.isPaidStatus(psd.getPaymentDetails().getFinPayment());
 
       int amtSign = amtToDistribute.signum();
       FIN_PaymentScheduleDetail reversalPSD = null;
@@ -699,9 +696,10 @@ public class InvoiceUtils {
       invoice.setFinalSettlementDate(finalSettlementDate);
     }
 
+    invoice.setPrepaymentamt(paidAmt);
     invoice.setTotalPaid(paidAmt);
-    invoice.setOutstandingAmount(invoice.getGrandTotalAmount().subtract(paidAmt));
-    invoice.setDueAmount(invoice.getGrandTotalAmount().subtract(paidAmt));
+    invoice.setOutstandingAmount(remainingAmt);
+    invoice.setDueAmount(remainingAmt);
     invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice.getDueDate()));
     invoice.setPaymentComplete(paidAmt.compareTo(invoice.getGrandTotalAmount()) == 0);
     invoice.setLastCalculatedOnDate(new Date());
@@ -797,7 +795,10 @@ public class InvoiceUtils {
           if (amount.compareTo(BigDecimal.ZERO) == 0) {
             continue;
           }
-          pendingGrossAmount = pendingGrossAmount.subtract(amount);
+
+          if (pendingGrossAmount.compareTo(BigDecimal.ZERO) != 0) {
+            pendingGrossAmount = pendingGrossAmount.subtract(amount);
+          }
 
           Date dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(), null,
               paymentTermLine);
@@ -830,16 +831,11 @@ public class InvoiceUtils {
             if (remainingAmt.compareTo(gross) != 0) {
               // The PS is paid, so is not taken into account by the payment terms
               // Set the PS as fully paid (the remaining amount is now in the other PS)
-              paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
               final BigDecimal amountToInvoice = paymentScheduleInvoice.getAmount()
                   .subtract(remainingAmt);
-              paymentScheduleInvoice.setPaidAmount(amountToInvoice);
               paymentScheduleInvoice.setAmount(amountToInvoice);
-              for (final FIN_PaymentScheduleDetail invoicePSD : paymentScheduleInvoice
-                  .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-                invoicePSD.setAmount(amountToInvoice);
-                OBDal.getInstance().save(invoicePSD);
-              }
+              paymentScheduleInvoice.setOutstandingAmount(
+                  paymentScheduleInvoice.getOutstandingAmount().subtract(remainingAmt));
             }
             continue;
           }
@@ -1002,11 +998,6 @@ public class InvoiceUtils {
       }
     }
     return calculatedDueDate.getTime();
-  }
-
-  private boolean isPaidStatus(FIN_Payment payment) {
-    return (FIN_Utility.seqnumberpaymentstatus(STATUS_PAYMENT_RECEIVED)) >= (FIN_Utility
-        .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment)));
   }
 
   private String getDummyDocumentNo() {

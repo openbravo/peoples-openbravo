@@ -36,7 +36,7 @@
         from c_order o, obpos_applications ap, ad_org org, c_doctype dt, c_bpartner bp
         where o.em_obpos_applications_id = ap.obpos_applications_id
         and ap.ad_org_id = org.ad_org_id
-        and org.em_obpos_c_doctype_id = dt.c_doctype_id
+        and o.c_doctype_id = dt.c_doctype_id
         and o.c_bpartner_id = bp.c_bpartner_id
         and o.em_obpos_app_cashup_id = ?
         and o.c_doctype_id in (org.em_obpos_c_doctype_id, org.em_obpos_c_doctyperet_id)
@@ -110,7 +110,7 @@
         from  c_order o, obpos_applications ap, ad_org org, c_doctype dt, c_bpartner bp
         where o.em_obpos_applications_id = ap.obpos_applications_id
         and ap.ad_org_id = org.ad_org_id
-        and org.em_obpos_c_doctype_id = dt.c_doctype_id
+        and o.c_doctype_id = dt.c_doctype_id
         and o.c_bpartner_id = bp.c_bpartner_id
         and o.em_obpos_app_cashup_id = ?
         and o.c_doctype_id in (org.em_obpos_c_doctype_id, org.em_obpos_c_doctyperet_id)
@@ -209,7 +209,7 @@
         and o.m_pricelist_id = i.m_pricelist_id
         and o.em_obpos_applications_id = ap.obpos_applications_id
         and ap.ad_org_id = org.ad_org_id
-        and org.em_obpos_c_doctype_id = dt.c_doctype_id
+        and o.c_doctype_id = dt.c_doctype_id
         and o.em_obpos_app_cashup_id = ?
         and ol.qtydelivered = ol.qtyordered
         and (ol.qtyordered <> 0 and ol.em_obpos_isdeleted = 'N')

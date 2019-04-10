@@ -130,7 +130,6 @@
     propertyId: 'id',
     propertyName: 'name',
     hqlFilter: 'Store',
-    separatorIndex: 2,
     remoteEntity: true,
     applyUIRestrictions: true,
     disableSorting: true
