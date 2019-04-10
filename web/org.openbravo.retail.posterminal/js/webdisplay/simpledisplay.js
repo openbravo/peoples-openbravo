@@ -14,14 +14,16 @@
   function SimpleDisplay() {
     this.lines = [];
     this.content = document.createElement('div');
+    this.content.setAttribute('class', 'display-screen');
 
     this.createLine();
     this.createLine();
   }
 
   SimpleDisplay.prototype.createLine = function () {
-    var line = document.createTextNode('');
+    var line = document.createTextNode(' ');
     var div = document.createElement('div');
+    div.setAttribute('class', 'display-text');
     div.appendChild(line);
     this.content.appendChild(div);
     this.lines.push(line);
