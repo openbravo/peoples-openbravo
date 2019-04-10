@@ -41,11 +41,6 @@ public class CrossStoreInfoProperties extends ModelExtension {
     list.add(new HQLProperty("u.email", "email"));
     list.add(new HQLProperty("oi.taxID", "taxID"));
 
-    list.add(new HQLProperty("os.scheduletype", "scheduletype"));
-    list.add(new HQLProperty("os.weekday", "weekday"));
-    list.add(new HQLProperty("os.startingTime", "startingTime"));
-    list.add(new HQLProperty("os.endingTime", "endingTime"));
-
     return list;
 
   }

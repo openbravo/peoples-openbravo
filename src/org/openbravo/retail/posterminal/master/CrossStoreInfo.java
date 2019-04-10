@@ -32,11 +32,17 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class CrossStoreInfo extends ProcessHQLQuery {
 
   public static final String crossStoreInfoPropertyExtension = "OBPOS_CrossStoreInfoExtension";
+  public static final String crossStoreScheduleInfoPropertyExtension = "OBPOS_CrossStoreScheduleInfoExtension";
 
   @Inject
   @Any
   @Qualifier(crossStoreInfoPropertyExtension)
   private Instance<ModelExtension> extensions;
+
+  @Inject
+  @Any
+  @Qualifier(crossStoreScheduleInfoPropertyExtension)
+  private Instance<ModelExtension> extensionsSchedule;
 
   @Override
   protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
@@ -63,11 +69,13 @@ public class CrossStoreInfo extends ProcessHQLQuery {
   protected List<String> getQuery(final JSONObject jsonsent) throws JSONException {
     OBContext.setAdminMode(true);
     try {
-      final HQLPropertyList regularProductStockHQLProperties = ModelExtensionUtils
+      final HQLPropertyList crossStoreInfoHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions);
+      final HQLPropertyList crossStoreScheduleInfoHQLProperties = ModelExtensionUtils
+          .getPropertyExtensions(extensionsSchedule);
 
       final StringBuilder hql1 = new StringBuilder();
-      hql1.append(" select" + regularProductStockHQLProperties.getHqlSelect());
+      hql1.append(" select" + crossStoreInfoHQLProperties.getHqlSelect());
       hql1.append(" from OrganizationInformation oi");
       hql1.append(" left join oi.locationAddress l");
       hql1.append(" left join l.region r");
@@ -76,7 +84,7 @@ public class CrossStoreInfo extends ProcessHQLQuery {
       hql1.append(" where oi.organization.id = :orgId");
 
       final StringBuilder hql2 = new StringBuilder();
-      hql2.append(" select" + regularProductStockHQLProperties.getHqlSelect());
+      hql2.append(" select" + crossStoreScheduleInfoHQLProperties.getHqlSelect());
       hql2.append(" from OBRETCO_Org_Schedule os");
       hql2.append(" join os.obretcoSchedule s");
       hql2.append(" join s.oBRETCOScheduleLineList sl");
@@ -85,7 +93,7 @@ public class CrossStoreInfo extends ProcessHQLQuery {
       hql2.append("   select max(os2.validFromDate)");
       hql2.append("   from OBRETCO_Org_Schedule os2");
       hql2.append("   where os2.organization.id = os.organization.id");
-      hql2.append("   where os2.scheduletype = os.scheduletype");
+      hql2.append("   and os2.scheduletype = os.scheduletype");
       hql2.append("   and os2.validFromDate <= :terminalDate");
       hql2.append("   and os2.active = true");
       hql2.append(" )");
