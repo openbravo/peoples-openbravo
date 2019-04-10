@@ -58,6 +58,7 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bp.isCustomerConsent", "isCustomerConsent"));
         add(new HQLProperty("bp.language.language", "language"));
         add(new HQLProperty("bp.language.name", "language_name"));
+        add(new HQLProperty("bp.oBPOSGreetings", "greetings"));
         add(new HQLProperty("ulist.comments", "comments"));
         add(new HQLProperty("bp.creditLimit - bp.creditUsed", "availableCredit"));
         String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
