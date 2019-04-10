@@ -1350,6 +1350,12 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
   padding-left: 30px;
 }
 
+.obpos-row-store-space {
+  float: left;
+  padding-top: 5px;
+  width: 15%;
+}
+
 .obpos-row-store-price {
   float: right;
   padding-top: 5px;
@@ -1390,6 +1396,35 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
 
 .obpos-store-line-header2 {
   padding-top: 30px;
+}
+
+.obpos-store-information-header {
+  padding: 10px; 
+  border-bottom: 1px solid #cccccc;
+}
+
+.obpos-store-information-header-icon {
+  display: table-cell; 
+  vertical-align: middle;
+}
+
+.obpos-store-information-openhour {
+  display: table-cell; 
+  vertical-align: middle; 
+  width: 63%; 
+  text-align: right;
+}
+
+.obpos-store-information-empty {
+  display: table-cell; 
+  vertical-align: middle; 
+  width: 5%;
+}
+
+.obpos-store-information-callcenter {
+  display: table-cell; 
+  vertical-align: middle; 
+  width: 30%;
 }
 
 .obpos-icon-address {

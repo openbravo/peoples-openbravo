@@ -7,12 +7,12 @@
  ************************************************************************************
  */
 
-/*global enyo, _ */
+/*global enyo, Backbone, _ */
 
 enyo.kind({
   name: 'OBPOS.UI.StoreInformation',
   kind: 'OB.UI.Modal',
-  topPosition: '44px',
+  topPosition: '40px',
   body: {
     kind: 'OBPOS.UI.StoreInformationLine'
   },
@@ -88,46 +88,14 @@ enyo.kind({
       name: 'cif'
     }]
   }, {
-    classes: 'obpos-store-line span12',
+    classes: 'span12',
     components: [{
-      classes: 'span2',
-      components: [{
-        classes: 'obpos-icon-schedule',
-        name: 'iconSchedule'
-      }]
-    }, {
-      classes: 'span2',
-      name: 'weekDays',
-      components: [{
-        classes: 'obpos-store-line-header'
-      }, {
-        classes: 'obpos-clear-both obpos-row-store-info',
-        name: 'exampleDay'
-      }]
-    }, {
-      classes: 'span3',
-      name: 'openHour',
-      components: [{
-        classes: 'obpos-store-line-header',
-        initComponents: function () {
-          this.setContent(OB.I18N.getLabel('OBPOS_LblOpenHour'));
-        }
-      }, {
-        classes: 'obpos-clear-both obpos-row-store-info',
-        name: 'exampleHour'
-      }]
-    }, {
-      classes: 'span3',
-      name: 'callCenter',
-      components: [{
-        classes: 'obpos-store-line-header',
-        initComponents: function () {
-          this.setContent(OB.I18N.getLabel('OBPOS_LblCallCenter'));
-        }
-      }, {
-        classes: 'obpos-clear-both obpos-row-store-info',
-        name: 'exampleCenter'
-      }]
+      name: 'storeCallCenterSchedule',
+      kind: 'OB.UI.ScrollableTable',
+      scrollAreaMaxHeight: '180px',
+      renderHeader: 'OBPOS.UI.StoreInformationScheduleScrollableHeader',
+      renderLine: 'OBPOS.UI.StoreInformationScheduleLine',
+      renderEmpty: 'OB.UI.RenderEmpty'
     }]
   }, {
     classes: 'obpos-store-line span12 obpos-store-line-header2',
@@ -181,17 +149,22 @@ enyo.kind({
       }
     }]
   }],
+
+  storeCallCenterList: null,
+
   initComponents: function () {
     this.inherited(arguments);
 
-    this.$.exampleDay.setContent('lunes');
-    this.$.exampleHour.setContent('10:00 - 22:00');
-    this.$.exampleCenter.setContent('10:00 - 22:00');
+    this.storeCallCenterList = new Backbone.Collection();
+    this.$.storeCallCenterSchedule.setCollection(this.storeCallCenterList);
+
     this.$.exampleHolidays.setContent('07/07/18 10:00 - 22:00');
     this.$.exampleCloseHolidays.setContent('18/11/18');
     this.$.exampleSpecialOpenHour.setContent('24/12/18 10:00 - 20:00');
   },
   clearInfo: function () {
+    this.$.storeCallCenterSchedule.collection.reset();
+
     this.$.addressValue.setContent('');
     this.$.phoneNumber.setContent('');
     this.$.faxNumber.setContent('');
@@ -199,13 +172,23 @@ enyo.kind({
     this.$.cif.setContent('');
   },
   loadInfo: function (storeId) {
-    var me = this;
-    var process = new OB.DS.Process('org.openbravo.retail.posterminal.master.CrossStoreInfo');
+    var me = this,
+        params = {},
+        currentDate = new Date(),
+        process = new OB.DS.Process('org.openbravo.retail.posterminal.master.CrossStoreInfo'),
+        i;
+
+    params.terminalTime = currentDate;
+    params.terminalTimeOffset = {
+      value: currentDate.getTimezoneOffset(),
+      type: 'long'
+    };
 
     this.clearInfo();
 
     process.exec({
-      org: storeId
+      org: storeId,
+      parameters: params
     }, enyo.bind(me, function (data) {
       if (data && !data.exception && data.length > 0) {
         this.$.addressValue.setContent(data[0].address);
@@ -213,7 +196,110 @@ enyo.kind({
         this.$.faxNumber.setContent(data[0].alternativePhone);
         this.$.email.setContent(data[0].email);
         this.$.cif.setContent(data[0].taxID);
+
+        var orgSchedule = [],
+            callCenter = [];
+
+        for (i = 1; i < data.length; i++) {
+          if (data[i].scheduletype && data[i].scheduletype === 'Store Schedule') {
+            orgSchedule.push(data[i]);
+          } else {
+            callCenter.push(data[i]);
+          }
+        }
+
+        this.showScheduleInfo(orgSchedule, callCenter);
       }
     }));
+  },
+  showScheduleInfo: function (orgSchedule, callCenter) {
+    var scheduleIndex = 0,
+        callCenterIndex = 0,
+        weekday, scheduleCallCenterLine = {},
+        scheduleCallCenter = [];
+
+    while (scheduleIndex < orgSchedule.length || callCenterIndex < callCenter.length) {
+      scheduleCallCenterLine = {};
+      weekday = scheduleIndex < orgSchedule.length ? orgSchedule[scheduleIndex].weekday : '7';
+      if (callCenterIndex < callCenter.length && weekday > callCenter[callCenterIndex].weekday) {
+        weekday = callCenter[callCenterIndex].weekday;
+      }
+
+      scheduleCallCenterLine.weekday = this.getWeekDay(weekday);
+
+      if (scheduleIndex < orgSchedule.length && weekday === orgSchedule[scheduleIndex].weekday) {
+        scheduleCallCenterLine.schedule = this.getTime(orgSchedule[scheduleIndex]);
+        scheduleIndex++;
+      }
+
+      if (callCenterIndex < callCenter.length && weekday === callCenter[callCenterIndex].weekday) {
+        scheduleCallCenterLine.callCenter = this.getTime(callCenter[callCenterIndex]);
+        callCenterIndex++;
+      }
+      scheduleCallCenter.push(scheduleCallCenterLine);
+    }
+    this.$.storeCallCenterSchedule.collection.reset(scheduleCallCenter);
+  },
+  getWeekDay: function (weekday) {
+    if (weekday === '7') {
+      weekday = '0';
+    }
+    return OB.I18N.getWeekday(weekday);
+  },
+  getTime: function (schedule) {
+    var startTime = OB.Utilities.Date.JSToOB(new Date(schedule.startingTime), '%H:%M');
+    var endTime = OB.Utilities.Date.JSToOB(new Date(schedule.endingTime), '%H:%M');
+    return startTime + ' - ' + endTime;
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.ScrollableTableHeader',
+  name: 'OBPOS.UI.StoreInformationScheduleScrollableHeader',
+  classes: 'obpos-store-information-header',
+  components: [{
+    components: [{
+      classes: 'obpos-store-information-header-icon',
+      components: [{
+        classes: 'obpos-icon-schedule',
+        name: 'iconSchedule'
+      }]
+    }, {
+      classes: 'obpos-store-information-openhour',
+      name: 'openHour'
+    }, {
+      classes: 'obpos-store-information-empty'
+    }, {
+      classes: 'obpos-store-information-callcenter',
+      name: 'callCenter'
+    }]
+  }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.openHour.setContent(OB.I18N.getLabel('OBPOS_LblOpenHour'));
+    this.$.callCenter.setContent(OB.I18N.getLabel('OBPOS_LblCallCenter'));
+  }
+});
+
+enyo.kind({
+  name: 'OBPOS.UI.StoreInformationScheduleLine',
+  kind: 'OB.UI.listItemButton',
+  components: [{
+    classes: 'obpos-row-store-space'
+  }, {
+    classes: 'obpos-row-store-info span3',
+    name: 'weekday'
+  }, {
+    classes: 'obpos-row-store-info span4 obpos-center-text',
+    name: 'openHour'
+  }, {
+    classes: 'obpos-row-store-info',
+    name: 'callCenter'
+  }],
+  create: function () {
+    this.inherited(arguments);
+    this.$.weekday.setContent(this.model.get('weekday'));
+    this.$.openHour.setContent(this.model.get('schedule'));
+    this.$.callCenter.setContent(this.model.get('callCenter'));
   }
 });
