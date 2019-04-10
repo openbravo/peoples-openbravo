@@ -45,7 +45,7 @@ OB.DS.HWServer = function (urllist, url, scaleurl) {
 
   // WebPrinter
   var printertypeinfo = OB.PRINTERTYPES[OB.MobileApp.model.get('terminal').printertype];
-  this.webprinter = printertypeinfo ? new OB.WEBPrinter(printertypeinfo, OB.PRINTERIMAGES.images) : null;
+  this.webprinter = printertypeinfo ? new OB.WEBPrinter(printertypeinfo, OB.PRINTERIMAGES.getImagesMap()) : null;
   this.storeDataKey = OB.MobileApp.model.get('terminal').searchKey;
   this.storeData(null, OB.DS.HWServer.PRINTER);
   this.storeData(null, OB.DS.HWServer.DISPLAY);
