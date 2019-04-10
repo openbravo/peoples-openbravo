@@ -42,6 +42,5 @@ public class CrossStoreInfoProperties extends ModelExtension {
     list.add(new HQLProperty("oi.taxID", "taxID"));
 
     return list;
-
   }
 }

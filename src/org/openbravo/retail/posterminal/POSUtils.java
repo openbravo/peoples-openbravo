@@ -370,12 +370,13 @@ public class POSUtils {
         final StringBuilder select = new StringBuilder();
         select.append(" select " + Organization.PROPERTY_OBRETCOPRODUCTLIST + ".id");
         select.append(" from " + Organization.ENTITY_NAME);
-        select.append(" where " + Organization.PROPERTY_ID + " in :orgIds");
+        select.append(" where " + Organization.PROPERTY_OBRETCOCROSSSTOREORGANIZATION
+            + ".id = :crossStoreId");
         select.append(" and " + Organization.PROPERTY_OBRETCOPRODUCTLIST + " is not null");
         select.append(" group by " + Organization.PROPERTY_OBRETCOPRODUCTLIST + ".id");
 
         final Query<String> query = OBDal.getInstance().getSession().createQuery(select.toString());
-        query.setParameterList("orgIds", getOrgListByCrossStoreId(crossStore.getId()));
+        query.setParameter("crossStoreId", crossStore.getId());
         productList.addAll(query.list());
       }
 
@@ -385,7 +386,7 @@ public class POSUtils {
     } finally {
       OBContext.restorePreviousMode();
     }
-    return null;
+    return Collections.emptySet();
   }
 
   public static int getLastDocumentNumberForPOS(String searchKey, List<String> documentTypeIds) {
