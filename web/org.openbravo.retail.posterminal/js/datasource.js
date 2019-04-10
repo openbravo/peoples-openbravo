@@ -46,6 +46,7 @@ OB.DS.HWServer = function (urllist, url, scaleurl) {
   // WebPrinter
   var printertypeinfo = OB.PRINTERTYPES[OB.MobileApp.model.get('terminal').printertype];
   this.webprinter = printertypeinfo ? new OB.WEBPrinter(printertypeinfo, OB.PRINTERIMAGES.images) : null;
+  this.storeDataKey = OB.MobileApp.model.get('terminal').searchKey;
   this.storeData(null, OB.DS.HWServer.PRINTER);
   this.storeData(null, OB.DS.HWServer.DISPLAY);
   this.storeData(null, OB.DS.HWServer.DRAWER);
@@ -477,12 +478,11 @@ OB.DS.HWServer.prototype._sendHWMPrinter = function (sendurl) {
 };
 
 OB.DS.HWServer.prototype.storeData = function (data, device) {
-  var terminal = OB.MobileApp.model.get('terminal').searchKey;
   var terminaldata = {
     time: new Date().getTime(),
     data: data
   };
-  localStorage.setItem('WEBPOSHW.' + terminal + '.' + device, JSON.stringify(terminaldata));
+  localStorage.setItem('WEBPOSHW.' + this.storeDataKey + '.' + device, JSON.stringify(terminaldata));
 };
 
 OB.DS.HWServer.prototype._send = function (data, callback, device) {
