@@ -361,7 +361,7 @@
     type: 'TEXT'
   }, {
     name: 'greetings',
-    column: 'greetings',
+    column: 'em_obpos_greetings',
     type: 'TEXT'
   }, {
     name: '_identifier',
@@ -510,5 +510,6 @@
     }]
   }]);
   window.OB.Collection.languageList = Backbone.Collection;
+  window.OB.Collection.greetingsList = Backbone.Collection;
   OB.Data.Registry.registerModel(BusinessPartner);
 }());
