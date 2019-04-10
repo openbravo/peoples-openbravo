@@ -11,7 +11,6 @@ package org.openbravo.retail.posterminal.master;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
@@ -60,22 +59,21 @@ public class Cashup extends JSONProcessSimple {
       "fmgi.oBPOSAppPaymentTypeGLItemForDepositsList",
       "fmgi.oBPOSAppPaymentTypeGLItemForDropsList" };
 
-  private List<String> allPaymentTypes = Arrays.asList(paymentTypes);
+  private List<String> allPaymentTypes = new ArrayList<String>();
 
-  private ArrayList<String> executePaymentTypeHook(Instance<? extends Object> hooks)
-      throws Exception {
-    ArrayList<String> allPaymentTypeList = new ArrayList<String>();
+  private List<String> executePaymentTypeHook(Instance<? extends Object> hooks) throws Exception {
+    List<String> allPaymentTypeFromHooks = new ArrayList<String>();
     for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
       Object proc = procIter.next();
       String[] returnedByhook = (((ExtendsCashManagementPaymentTypeHook) proc).exec());
       for (String paymentType : returnedByhook) {
         if (paymentType.length() > 0) {
-          allPaymentTypeList.add(paymentType);
+          allPaymentTypeFromHooks.add(paymentType);
         }
       }
 
     }
-    return allPaymentTypeList;
+    return allPaymentTypeFromHooks;
   }
 
   @Override
@@ -237,7 +235,10 @@ public class Cashup extends JSONProcessSimple {
     JSONArray respArray = new JSONArray();
 
     try {
-      executePaymentTypeHook(paymentTypeHookInstance);
+      for (String paymentType : paymentTypes) {
+        this.allPaymentTypes.add(paymentType);
+      }
+      this.allPaymentTypes.addAll(executePaymentTypeHook(paymentTypeHookInstance));
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
