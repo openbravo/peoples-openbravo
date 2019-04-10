@@ -11,6 +11,27 @@
 
 (function () {
 
+  function printValue(webdisplay, value) {
+    var obj = JSON.parse(value);
+    if (obj && obj.data) {
+      webdisplay.print(obj.data);
+    }
+  }
+
+  function startDisplayListener(terminal, display) {
+    var webdisplay = new OB.WEBDisplay(display);
+    var displaykey = 'WEBPOSHW.' + terminal + '.1';
+
+    window.addEventListener('storage', function (e) {
+      if (e.key === displaykey) { // Display request
+        printValue(webdisplay, e.newValue);
+      }
+    });
+
+    // Print the current value
+    printValue(webdisplay, localStorage.getItem(displaykey));
+  }
+
   function SimpleDisplay() {
     this.lines = [];
     this.content = document.createElement('div');
@@ -38,6 +59,9 @@
   };
 
   window.OB = window.OB || {};
-  OB.SimpleDisplay = SimpleDisplay;
+  OB.Display = {
+    SimpleDisplay: SimpleDisplay,
+    startDisplayListener: startDisplayListener
+  };
 
 }());

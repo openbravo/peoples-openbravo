@@ -7,32 +7,16 @@
  ************************************************************************************
  */
 
-/*global localStorage, URLSearchParams */
+/*global OB, URLSearchParams */
 
 (function () {
 
-  function printValue(webdisplay, value) {
-    var obj = JSON.parse(value);
-    if (obj && obj.data) {
-      webdisplay.print(obj.data);
-    }
-  }
-
-  var display = new OB.SimpleDisplay();
+  var display = new OB.Display.SimpleDisplay();
   document.body.appendChild(display.getElement());
-
-  var webdisplay = new OB.WEBDisplay(display);
 
   var urlParams = new URLSearchParams(window.location.search);
   var terminal = urlParams.get('terminal');
-  var displaykey = 'WEBPOSHW.' + terminal + '.1';
 
-  printValue(webdisplay, localStorage.getItem(displaykey));
-
-  window.addEventListener('storage', function (e) {
-    if (e.key === displaykey) { // Display request
-      printValue(webdisplay, e.newValue);
-    }
-  });
+  OB.Display.startDisplayListener(terminal, display);
 
 }());
