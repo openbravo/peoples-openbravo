@@ -38,6 +38,10 @@
       this.display = display;
       };
 
+  WEBDisplay.prototype.clear = function () {
+    this.display.clear();
+  };
+
   WEBDisplay.prototype.print = function (doc) {
     var parser = new DOMParser();
     var dom = parser.parseFromString(doc, "application/xml");

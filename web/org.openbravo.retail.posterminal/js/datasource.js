@@ -482,7 +482,7 @@ OB.DS.HWServer.prototype.storeData = function (data, device) {
     time: new Date().getTime(),
     data: data
   };
-  localStorage.setItem('WEBPOSHW.' + this.storeDataKey + '.' + device, JSON.stringify(terminaldata));
+  localStorage.setItem('WEBPOSHW.' + this.storeDataKey + '.' + (device || OB.DS.HWServer.PRINTER), JSON.stringify(terminaldata));
 };
 
 OB.DS.HWServer.prototype._send = function (data, callback, device) {

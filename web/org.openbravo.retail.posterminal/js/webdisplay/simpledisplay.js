@@ -15,6 +15,8 @@
     var obj = JSON.parse(value);
     if (obj && obj.data) {
       webdisplay.print(obj.data);
+    } else {
+      webdisplay.clear();
     }
   }
 
@@ -23,7 +25,7 @@
     var displaykey = 'WEBPOSHW.' + terminal + '.1';
 
     window.addEventListener('storage', function (e) {
-      if (e.key === displaykey) { // Display request
+      if (e.key === displaykey || e.key === null) { // Display request
         printValue(webdisplay, e.newValue);
       }
     });
@@ -54,8 +56,14 @@
     return this.content;
   };
 
+  SimpleDisplay.prototype.clear = function () {
+    this.lines.forEach(function (l) {
+      l.data = ' ';
+    });
+  };
+
   SimpleDisplay.prototype.printLine = function (i, text) {
-    this.lines[i].data = text;
+    this.lines[i].data = text || ' ';
   };
 
   window.OB = window.OB || {};
