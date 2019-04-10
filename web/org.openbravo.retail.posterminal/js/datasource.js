@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, Promise */
+/*global OB, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, localStorage, Promise */
 
 // HWServer: TODO: this should be implemented in HW Manager module
 OB.DS.HWResource = function (res) {
@@ -46,6 +46,9 @@ OB.DS.HWServer = function (urllist, url, scaleurl) {
   // WebPrinter
   var printertypeinfo = OB.PRINTERTYPES[OB.MobileApp.model.get('terminal').printertype];
   this.webprinter = printertypeinfo ? new OB.WEBPrinter(printertypeinfo, OB.PRINTERIMAGES.images) : null;
+  this.storeData(null, OB.DS.HWServer.PRINTER);
+  this.storeData(null, OB.DS.HWServer.DISPLAY);
+  this.storeData(null, OB.DS.HWServer.DRAWER);
 };
 
 OB.DS.HWServer.PRINTER = 0;
@@ -473,8 +476,20 @@ OB.DS.HWServer.prototype._sendHWMPrinter = function (sendurl) {
   }.bind(this);
 };
 
+OB.DS.HWServer.prototype.storeData = function (data, device) {
+  var terminal = OB.MobileApp.model.get('terminal').searchKey;
+  var terminaldata = {
+    time: new Date().getTime(),
+    data: data
+  };
+  localStorage.setItem('WEBPOSHW.' + terminal + '.' + device, JSON.stringify(terminaldata));
+};
+
 OB.DS.HWServer.prototype._send = function (data, callback, device) {
   var sendfunction;
+
+  this.storeData(data, device);
+
   if (OB.DS.HWServer.DISPLAY === device) {
     // DISPLAY requests always go to HARDWARE MANAGER MAIN URL
     sendfunction = this._sendHWMPrinter(this.mainurl);
