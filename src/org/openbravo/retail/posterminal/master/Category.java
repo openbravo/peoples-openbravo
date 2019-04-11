@@ -97,7 +97,7 @@ public class Category extends ProcessHQLQuery {
     final StringBuilder query = new StringBuilder();
     query.append(" select");
     query.append(regularProductsCategoriesHQLProperties.getHqlSelect());
-    query.append(" from ProductCategory aCat");
+    query.append(" from OBRETCO_Productcategory aCat");
     query.append(" join aCat.productCategory as pCat");
     query.append(" left join pCat.image as img");
     query.append(" where aCat.$readableSimpleClientCriteria");
