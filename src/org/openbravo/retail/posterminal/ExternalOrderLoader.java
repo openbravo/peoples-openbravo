@@ -1378,16 +1378,23 @@ public class ExternalOrderLoader extends OrderLoader {
 
     protected String resolve(String entityName, String property, String value) {
       try {
-        String qryStr = "select id from " + entityName + " where " + property + "=:value";
-        qryStr += " and client.id " + OBDal.getInstance().getReadableClientsInClause();
+        // @formatter:off
+        String qryStr =
+            "select id"
+          + "  from " + entityName
+          + " where " + property + " = :value"
+          + "   and client.id in :clients";
+        // @formatter:on
+
         if (addOrgFilter) {
           qryStr += " and organization.id in (:orgs)";
         }
 
         final Query<String> qry = OBDal.getInstance()
             .getSession()
-            .createQuery(qryStr, String.class);
-        qry.setParameter("value", value);
+            .createQuery(qryStr, String.class)
+            .setParameter("value", value)
+            .setParameterList("clients", OBContext.getOBContext().getReadableClients());
         if (addOrgFilter) {
           OrganizationStructureProvider osp = OBContext.getOBContext()
               .getOrganizationStructureProvider();
