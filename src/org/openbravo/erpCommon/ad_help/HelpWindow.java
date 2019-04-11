@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -192,7 +192,8 @@ public class HelpWindow {
 
       // Grid Configuration at Tab Level
       OBQuery<GCTab> tabGridConfigQuery = OBDal.getInstance()
-          .createQuery(GCTab.class, "tab.window.id = '" + localStrKeyId + "'");
+          .createQuery(GCTab.class, "tab.window.id = :windowId");
+      tabGridConfigQuery.setNamedParameter("windowId", localStrKeyId);
       List<GCTab> tabGridConfigList = tabGridConfigQuery.list();
       for (GCTab gcTab : tabGridConfigList) {
         String tabId = gcTab.getTab().getId();
