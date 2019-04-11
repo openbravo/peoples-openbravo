@@ -97,7 +97,7 @@ public class OBQuery<E extends BaseOBObject> {
    * @see OBQuery#uniqueResultObject() uniqueResultObject for a version returning an Object
    */
   public E uniqueResult() {
-    return (E) createQuery().uniqueResult();
+    return createQuery().uniqueResult();
   }
 
   /**
@@ -328,7 +328,7 @@ public class OBQuery<E extends BaseOBObject> {
       // strip the as
       final String strippedWhereClause = whereClause.toLowerCase().trim().substring(2).trim();
       // get the next space
-      final int index = strippedWhereClause.trim().indexOf(" ");
+      final int index = strippedWhereClause.trim().indexOf(' ');
       if (index == -1) {
         alias = strippedWhereClause;
       } else {
