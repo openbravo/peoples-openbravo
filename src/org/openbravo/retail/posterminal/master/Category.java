@@ -122,7 +122,7 @@ public class Category extends ProcessHQLQuery {
     query.append(" and pCat.$readableSimpleClientCriteria");
     query.append(" and pCat.$naturalOrgCriteria");
     query.append(" and pCat.$incrementalUpdateCriteria");
-    query.append(" order by tn.sequenceNumber, tn.id");
+    query.append(" order by pCat.name, pCat.id");
     return query.toString();
   }
 
