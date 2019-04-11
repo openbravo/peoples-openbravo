@@ -750,6 +750,7 @@ enyo.kind({
       var uPCEAN = {
         columns: ['uPCEAN'],
         operator: 'equals',
+        fieldType: 'forceString',
         value: code
       };
       var remoteCriteria = [uPCEAN];
