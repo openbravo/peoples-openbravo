@@ -113,7 +113,7 @@ public class CharacteristicValue extends ProcessHQLQuery {
     query.append(regularProductsChValueHQLProperties.getHqlSelect());
 
     if (!isRemote) {
-      query.append(" from CharacteristicValue cv,");
+      query.append(" from CharacteristicValue cv");
       query.append(" inner join cv.characteristic ch,");
       query.append(" ADTreeNode node");
       query.append(" where ch.tree = node.tree");
