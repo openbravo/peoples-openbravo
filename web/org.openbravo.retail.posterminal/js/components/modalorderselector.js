@@ -11,8 +11,8 @@
 
 enyo.kind({
   name: 'OBPOS.UI.ReceiptSelector',
-  kind: 'OB.UI.ModalSelector',
-  topPosition: '70px',
+  kind: 'OB.UI.OBMOBC.ModalSelector',
+  classes: 'modalSelector_receiptSelector u-popup-top-separation-medium',
   i18nHeader: 'OBPOS_OpenReceipt',
   events: {
     onChangeInitFilters: '',
@@ -225,7 +225,7 @@ enyo.kind({
     defaultFilters: null,
     nameOfReceiptsListItemPrinter: null
   },
-  classes: 'row-fluid',
+  classes: 'genericBodyModalContainer row-fluid',
   handlers: {
     onClearFilterSelector: 'clearAction',
     onSearchAction: 'searchAction'
@@ -239,20 +239,16 @@ enyo.kind({
   },
   receiptList: null,
   components: [{
-    classes: 'span12',
+    classes: 'u-bottomseparator-slim',
     components: [{
-      style: 'border-bottom: 1px solid #cccccc;',
-      classes: 'row-fluid',
-      components: [{
-        name: 'containerOfReceiptsListItemPrinter'
-      }, {
-        name: 'renderLoading',
-        style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
-        showing: false,
-        initComponents: function () {
-          this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-        }
-      }]
+      name: 'containerOfReceiptsListItemPrinter'
+    }, {
+      name: 'renderLoading',
+      classes: 'listItemInformation',
+      showing: false,
+      initComponents: function () {
+        this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+      }
     }]
   }],
   clearAction: function () {
@@ -295,14 +291,15 @@ enyo.kind({
             if (tokens[i] === 'OBMOBC_FilteringNotAllowed' || tokens[i] === 'OBMOBC_SortingNotAllowed') {
               message.push({
                 content: OB.I18N.getLabel(tokens[i]),
-                style: 'text-align: left; padding-left: 8px;'
+                classes: 'u-textalign-default',
+                tag: 'li'
               });
             } else {
               var property = getProperty(tokens[i]);
               if (property) {
                 message.push({
                   content: OB.I18N.getLabel(property.caption),
-                  style: 'text-align: left; padding-left: 8px;',
+                  classes: 'u-textalign-default',
                   tag: 'li'
                 });
               }
