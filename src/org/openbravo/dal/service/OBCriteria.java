@@ -69,7 +69,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   private boolean filterOnReadableClients = true;
   private boolean filterOnReadableOrganization = true;
   private boolean filterOnActive = true;
-  private List<OrderBy> orderBys = new ArrayList<OrderBy>();
+  private List<OrderBy> orderBys = new ArrayList<>();
   private boolean initialized = false;
   private boolean modified = false;
 
@@ -210,11 +210,11 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
     for (final OrderBy ob : orderBys) {
       final int j = 0;
       String orderOn = ob.getOrderOn();
-      if (orderOn.indexOf(".") != -1) {
-        final String orderJoin = orderOn.substring(0, orderOn.lastIndexOf("."));
+      if (orderOn.indexOf('.') != -1) {
+        final String orderJoin = orderOn.substring(0, orderOn.lastIndexOf('.'));
         final String alias = "order_ob_" + j;
         createAlias(orderJoin, alias);
-        orderOn = alias + "." + orderOn.substring(orderOn.lastIndexOf(".") + 1);
+        orderOn = alias + "." + orderOn.substring(orderOn.lastIndexOf('.') + 1);
       }
 
       if (ob.isAscending()) {
