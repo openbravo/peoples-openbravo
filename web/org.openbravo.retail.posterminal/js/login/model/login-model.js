@@ -376,18 +376,30 @@
         OB.MobileApp.model.addSyncCheckpointModel(OB.Model.CashUp);
 
         var terminal = this.get('terminal');
+
         OB.UTIL.initCashUp(function () {
-          OB.UTIL.calculateCurrentCash(function () {
-            OB.UTIL.HookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
-              var nextWindow = OB.MobileApp.model.get('nextWindow');
-              if (nextWindow) {
-                OB.POS.navigate(nextWindow);
-                OB.MobileApp.model.unset('nextWindow');
-              } else {
-                OB.POS.navigate(OB.MobileApp.model.get('defaultWindow'));
-              }
+          function finishAndNavigate() {
+            OB.UTIL.calculateCurrentCash(function () {
+              OB.UTIL.HookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
+                var nextWindow = OB.MobileApp.model.get('nextWindow');
+                if (nextWindow) {
+                  OB.POS.navigate(nextWindow);
+                  OB.MobileApp.model.unset('nextWindow');
+                } else {
+                  OB.POS.navigate(OB.MobileApp.model.get('defaultWindow'));
+                }
+              });
+            }, null);
+          }
+          if (!OB.MobileApp.model.get('terminal').ismaster && !OB.MobileApp.model.get('terminal').isslave) {
+            finishAndNavigate();
+          } else {
+            OB.Dal.find(OB.Model.CashUp, {
+              'isprocessed': 'N'
+            }, function (cashUps) {
+              OB.UTIL.composeCashupInfo(cashUps, null, finishAndNavigate);
             });
-          }, null);
+          }
         }, function () {
           //There was an error when retrieving the cashup from the backend.
           // This means that there is a cashup saved as an error, and we don't have
