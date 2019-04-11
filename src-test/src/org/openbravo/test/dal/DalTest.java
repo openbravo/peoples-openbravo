@@ -652,7 +652,7 @@ public class DalTest extends OBBaseTest {
   public void testOBQueryWithoutAlias() {
     setTestUserContext();
     String isoCode = getISOCodeFromCurrencyId(EURO_ID, false);
-    assertEquals(isoCode, EURO);
+    assertEquals(EURO, isoCode);
   }
 
   /**
@@ -663,7 +663,7 @@ public class DalTest extends OBBaseTest {
   public void testOBQueryWithAlias() {
     setTestUserContext();
     String isoCode = getISOCodeFromCurrencyId(EURO_ID, true);
-    assertEquals(isoCode, EURO);
+    assertEquals(EURO, isoCode);
   }
 
   /**
