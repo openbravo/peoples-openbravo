@@ -198,8 +198,8 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
     whereClause.append(" and ol.salesOrder.documentStatus='CO' ");
 
     // Add the readable organization and client clauses
-    whereClause.append(" and ol.organization in :orgs");
-    whereClause.append(" and ol.client in :clients");
+    whereClause.append(" and ol.organization.id in :orgs");
+    whereClause.append(" and ol.client.id in :clients");
 
     // append active
     whereClause.append(" and ol.active=true");
