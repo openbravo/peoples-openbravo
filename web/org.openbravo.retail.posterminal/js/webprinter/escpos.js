@@ -419,12 +419,52 @@
       };
       };
 
+  var StandardImageAlt = function () {
+      Standard.call(this);
+      this.transImage = function (imagedata) {
+
+        var line = new Uint8Array();
+        var result = [];
+        var i, j, p, d;
+
+        var width = (imagedata.width + 7) / 8;
+        var height = imagedata.height;
+
+        result.push(width & 255);
+        result.push(width >> 8);
+        result.push(height & 255);
+        result.push(height >> 8);
+
+        // Raw data
+        for (i = 0; i < imagedata.height; i++) {
+          for (j = 0; j < imagedata.width; j = j + 8) {
+            p = 0x00;
+            for (d = 0; d < 8; d++) {
+              p = p << 1;
+              if (this.isBlack(imagedata, j + d, i)) {
+                p = p | 0x01;
+              }
+            }
+            result.push(p);
+          }
+        }
+
+        line = OB.ARRAYS.append(line, this.CENTER_JUSTIFICATION);
+        line = OB.ARRAYS.append(line, this.IMAGE_HEADER);
+        line = OB.ARRAYS.append(line, new Uint8Array(result));
+        line = OB.ARRAYS.append(line, this.LEFT_JUSTIFICATION);
+        return line;
+      };
+      };
+
   window.OB = window.OB || {};
   OB.ESCPOS = {
     // Basic ESCPOS codes with limited functionality. No images, No cut paper, No drawer.
     Base: Base,
     // Full featured. Standard EPSON ESCPOS codes.
     Standard: Standard,
+    // Full featured. Standard EPSON ESCPOS codes with alternative image method.
+    StandardImageAlt: StandardImageAlt,
     // Singleton for Standard EPSON ESCPOS codes
     standardinst: new Standard(),
     CODE128Encoder: CODE128Encoder

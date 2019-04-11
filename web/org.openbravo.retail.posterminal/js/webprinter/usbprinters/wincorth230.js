@@ -12,7 +12,7 @@
 (function () {
 
   var ESCPOSWincor = function () {
-      OB.ESCPOS.Standard.call(this);
+      OB.ESCPOS.StandardImageAlt.call(this);
 
       this.PARTIAL_CUT_1 = new Uint8Array([0x1D, 0x56, 0x41, 0x30]);
       };
