@@ -92,7 +92,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "webprinter/bluetooth", "webprinter/usb", "webprinter/webprinter", "webprinter/escpos",
         "webprinter/standardprinters", "webprinter/typedarrays",
 
-        "webprinter/usbprinters/epsontmt88v",
+        "webprinter/usbprinters/epsontmt20", "webprinter/usbprinters/epsontmt20ii",
+        "webprinter/usbprinters/epsontmt88v", "webprinter/usbprinters/ncr7197",
+        "webprinter/usbprinters/startsp100", "webprinter/usbprinters/wincorth230",
 
         "model/currencypanel", "model/country", "model/salesrepresentative", "model/discountset",
         "model/bpartnerset", "model/productcharacteristicvalue", "model/characteristicvalue",
