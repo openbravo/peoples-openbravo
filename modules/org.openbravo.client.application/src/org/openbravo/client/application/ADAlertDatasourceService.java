@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2018 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -95,20 +95,29 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
 
   private List<String> getAlertIds(String alertStatus) {
     // Get alert rules visible for context's the role/user.
-    final String sql = "SELECT ad_alertrule_id, filterclause" + "  FROM ad_alertrule arule" //
-        + " WHERE EXISTS (SELECT 1" //
+    // @formatter:off
+    final String sql =
+          "SELECT ad_alertrule_id, filterclause"
+        + "  FROM ad_alertrule arule"
+        + " WHERE EXISTS (SELECT 1"
         + "                 FROM ad_alertrecipient arecipient"
         + "                WHERE arule.ad_alertrule_id = arecipient.ad_alertrule_id"
         + "                  AND (ad_user_id = :userId"
         + "                       OR (ad_user_id is null AND ad_role_id = :roleId)))"
-        + "  AND ad_client_id " + OBDal.getInstance().getReadableClientsInClause()
-        + "  AND ad_org_id " + OBDal.getInstance().getReadableOrganizationsInClause()
+        + "  AND ad_client_id in :clients"
+        + "  AND ad_org_id in :orgs"
         + "  AND isactive='Y'";
+    // @formatter:on
 
     @SuppressWarnings("rawtypes")
-    final NativeQuery alertRules = OBDal.getInstance().getSession().createNativeQuery(sql);
-    alertRules.setParameter("userId", OBContext.getOBContext().getUser().getId());
-    alertRules.setParameter("roleId", OBContext.getOBContext().getRole().getId());
+    final NativeQuery alertRules = OBDal.getInstance()
+        .getSession()
+        .createNativeQuery(sql)
+        .setParameter("userId", OBContext.getOBContext().getUser().getId())
+        .setParameter("roleId", OBContext.getOBContext().getRole().getId())
+        .setParameterList("clients", OBContext.getOBContext().getReadableClients())
+        .setParameterList("orgs", OBContext.getOBContext().getReadableOrganizations());
+
     return getAlertIdsFromAlertRules(getAlertRulesGroupedByFilterClause(alertRules), alertStatus);
   }
 
@@ -151,14 +160,28 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
       } catch (ServletException e) {
         throw new IllegalStateException(e);
       }
-      final String sql = "SELECT ad_alert_id FROM ad_alert WHERE isactive='Y'"
-          + " AND ad_client_id " + OBDal.getInstance().getReadableClientsInClause()
-          + " AND ad_org_id " + OBDal.getInstance().getReadableOrganizationsInClause()
-          + " AND ad_alertrule_id IN (" + commaSeparated(alertRuleList.getValue()) + ")"
-          + filterClause + " AND coalesce(to_char(status), 'NEW') = :status";
+
+      // @formatter:off
+      final String sql =
+           "SELECT ad_alert_id "
+          + " FROM ad_alert "
+          + "WHERE isactive='Y'"
+          + "  AND ad_client_id in :clients"
+          + "  AND ad_org_id in :orgs"
+          + "  AND ad_alertrule_id in :rules "
+          + "  AND coalesce(to_char(status), 'NEW') = :status "
+          + filterClause;
+      // @formatter:on
+
       @SuppressWarnings("rawtypes")
-      final NativeQuery sqlQuery = OBDal.getInstance().getSession().createNativeQuery(sql);
-      sqlQuery.setParameter("status", alertStatus);
+      final NativeQuery sqlQuery = OBDal.getInstance()
+          .getSession()
+          .createNativeQuery(sql)
+          .setParameter("status", alertStatus)
+          .setParameterList("clients", OBContext.getOBContext().getReadableClients())
+          .setParameterList("orgs", OBContext.getOBContext().getReadableOrganizations())
+          .setParameterList("rules", alertRuleList.getValue());
+
       try {
         @SuppressWarnings("unchecked")
         List<String> alertsFound = sqlQuery.list();
