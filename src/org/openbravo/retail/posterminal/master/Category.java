@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal.master;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
@@ -47,6 +49,11 @@ public class Category extends ProcessHQLQuery {
       OBContext.setAdminMode(true);
 
       final Calendar now = Calendar.getInstance();
+      final Date terminalDate = OBMOBCUtils.calculateServerDate(
+          jsonsent.getJSONObject("parameters").getString("terminalTime"),
+          jsonsent.getJSONObject("parameters")
+              .getJSONObject("terminalTimeOffset")
+              .getLong("value"));
       final String clientId = OBContext.getOBContext().getCurrentClient().getId();
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final String posId = jsonsent.getString("pos");
@@ -68,6 +75,7 @@ public class Category extends ProcessHQLQuery {
       paramValues.put("assortmentIds",
           POSUtils.isCrossStoreSearch(jsonsent) ? crossStoreAssortmentIds
               : Collections.singleton(assortmentId));
+      paramValues.put("terminalDate", terminalDate);
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
