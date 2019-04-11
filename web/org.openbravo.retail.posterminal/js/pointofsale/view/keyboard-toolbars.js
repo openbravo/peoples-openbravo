@@ -459,6 +459,7 @@ enyo.kind({
                   return;
                 }
               }
+              amount = OB.DEC.mul(amount, OB.DEC.One, payment.obposPosprecision);
               me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options, null);
             }
           });
