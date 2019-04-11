@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  *   Martin Taal <martin.taal@openbravo.com>,
@@ -679,9 +679,11 @@ public class DalTest extends OBBaseTest {
       OBDal.getInstance().flush();
       // ...and now delete it using an OBQuery instance
       String hql = "id = :id";
-      OBQuery<User> query = OBDal.getInstance().createQuery(User.class, hql);
-      query.setNamedParameter("id", user.getId());
-      deletions = query.deleteQuery().executeUpdate();
+      deletions = OBDal.getInstance()
+          .createQuery(User.class, hql)
+          .setNamedParameter("id", user.getId())
+          .deleteQuery()
+          .executeUpdate();
     } finally {
       OBDal.getInstance().rollbackAndClose();
     }
@@ -699,10 +701,11 @@ public class DalTest extends OBBaseTest {
         hql.append(" where " + Currency.PROPERTY_ID);
       }
       hql.append(" = :currencyId");
-      OBQuery<Currency> query = OBDal.getInstance().createQuery(Currency.class, hql.toString());
-      query.setNamedParameter("currencyId", currencyId);
-      query.setSelectClause(Currency.PROPERTY_ISOCODE);
-      isoCode = (String) query.uniqueResultObject();
+      isoCode = (String) OBDal.getInstance()
+          .createQuery(Currency.class, hql.toString())
+          .setNamedParameter("currencyId", currencyId)
+          .setSelectClause(Currency.PROPERTY_ISOCODE)
+          .uniqueResultObject();
     } catch (Exception ignored) {
     }
     return isoCode;
@@ -765,8 +768,8 @@ public class DalTest extends OBBaseTest {
   public void canUseOBContextParamNotPresentInSession() {
     OBDal.getInstance().getSession().clear();
     OBQuery<BusinessPartner> q = OBDal.getInstance()
-        .createQuery(BusinessPartner.class, "as bp where bp.client = :client");
-    q.setNamedParameter("client", OBContext.getOBContext().getCurrentClient());
+        .createQuery(BusinessPartner.class, "as bp where bp.client = :client")
+        .setNamedParameter("client", OBContext.getOBContext().getCurrentClient());
     assertThat("Can use OBContext object as OBQuery parameter value", q.list(), notNullValue());
   }
 
