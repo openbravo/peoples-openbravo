@@ -89,6 +89,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append("   and plv2.validFromDate <= :terminalDate");
       hql.append("   and plv2.active = true");
       hql.append(" )");
+      hql.append(" and ow.obretcoIsCrossStore = true");
       hql.append(" and o.active = true");
       hql.append(" and ow.active = true");
       hql.append(" and w.active = true");
