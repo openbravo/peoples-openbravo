@@ -286,21 +286,21 @@
       this.QR_PRINT = new Uint8Array([0x1D, 0x28, 0x6B, 0x03, 0x00, 0x31, 0x51, 0x30]);
       this.encoderQR = new TextEncoder('utf-8');
 
-      this.transImage = function (imagedata) {
-
-        function isBlack(x, y) {
-          if (x < 0 || x >= imagedata.width || y < 0 || y >= imagedata.height) {
-            return false;
-          }
-          var index = y * imagedata.width * 4 + x * 4;
-          var luminosity = 0;
-          luminosity += 0.30 * imagedata.data[index]; // RED luminosity
-          luminosity += 0.59 * imagedata.data[index + 1]; // GREEN luminosity
-          luminosity += 0.11 * imagedata.data[index + 2]; // BLUE luminosity
-          luminosity = 1 - luminosity / 255;
-          luminosity *= imagedata.data[index + 3] / 255; // ALPHA factor
-          return luminosity >= 0.5;
+      this.isBlack = function (imagedata, x, y) {
+        if (x < 0 || x >= imagedata.width || y < 0 || y >= imagedata.height) {
+          return false;
         }
+        var index = y * imagedata.width * 4 + x * 4;
+        var luminosity = 0;
+        luminosity += 0.30 * imagedata.data[index]; // RED luminosity
+        luminosity += 0.59 * imagedata.data[index + 1]; // GREEN luminosity
+        luminosity += 0.11 * imagedata.data[index + 2]; // BLUE luminosity
+        luminosity = 1 - luminosity / 255;
+        luminosity *= imagedata.data[index + 3] / 255; // ALPHA factor
+        return luminosity >= 0.5;
+      };
+
+      this.transImage = function (imagedata) {
 
         var line = new Uint8Array();
         var result = [];
@@ -320,7 +320,7 @@
             p = 0x00;
             for (d = 0; d < 8; d++) {
               p = p << 1;
-              if (isBlack(j + d, i)) {
+              if (this.isBlack(imagedata, j + d, i)) {
                 p = p | 0x01;
               }
             }
