@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Promise, Uint8Array, TextEncoder, DOMParser  */
+/*global OB, Promise, Uint8Array, DOMParser  */
 
 (function () {
 
@@ -53,8 +53,6 @@
       };
     });
   }
-
-  var encoder = new TextEncoder('utf-8');
 
   var WEBPrinter = function (printertype, images) {
       this.webdevice = new printertype.WebDevice(printertype);
@@ -208,7 +206,7 @@
         if (uderline === 'true') {
           line = OB.ARRAYS.append(line, this.escpos.UNDERLINE_SET);
         }
-        line = OB.ARRAYS.append(line, encoder.encode(txt));
+        line = OB.ARRAYS.append(line, this.escpos.encoderText.encode(txt));
         if (bold === 'true') {
           line = OB.ARRAYS.append(line, this.escpos.BOLD_RESET);
         }
@@ -245,11 +243,11 @@
       return Promise.resolve(this.escpos.transCODE128(code, position));
     } else { // Unknown barcode type
       var line = new Uint8Array();
-      line = OB.ARRAYS.append(line, this.CENTER_JUSTIFICATION);
-      line = OB.ARRAYS.append(line, this.NEW_LINE);
-      line = OB.ARRAYS.append(line, encoder.encode(type));
-      line = OB.ARRAYS.append(line, encoder.encode(': '));
-      line = OB.ARRAYS.append(line, encoder.encode(code));
+      line = OB.ARRAYS.append(line, this.escpos.CENTER_JUSTIFICATION);
+      line = OB.ARRAYS.append(line, this.escpos.NEW_LINE);
+      line = OB.ARRAYS.append(line, this.escpos.encoderText.encode(type));
+      line = OB.ARRAYS.append(line, this.escpos.encoderText.encode(': '));
+      line = OB.ARRAYS.append(line, this.escpos.encoderText.encode(code));
       line = OB.ARRAYS.append(line, this.escpos.NEW_LINE);
       line = OB.ARRAYS.append(line, this.escpos.LEFT_JUSTIFICATION);
       return Promise.resolve(line);

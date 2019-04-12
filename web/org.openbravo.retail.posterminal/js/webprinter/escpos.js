@@ -209,6 +209,7 @@
 
 
   var Base = function () {
+      this.encoderText = new TextEncoder('utf-8');
       this.NEW_LINE = new Uint8Array([0x0D, 0x0A]);
       this.PARTIAL_CUT_1 = new Uint8Array();
 
