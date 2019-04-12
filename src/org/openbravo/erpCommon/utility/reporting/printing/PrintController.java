@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2018 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2019 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -343,7 +343,8 @@ public class PrintController extends HttpSecureAppServlet {
 
         } else if (vars.commandIn("DEL")) {
           final String documentToDelete = vars.getStringParameter("idToDelete");
-          final Vector<Object> vector = (Vector<Object>) request.getSession().getAttribute("files");
+          final Vector<AttachContent> vector = (Vector<AttachContent>) request.getSession()
+              .getAttribute("files");
           request.getSession().setAttribute("files", vector);
 
           seekAndDestroy(vector, documentToDelete);
@@ -414,7 +415,7 @@ public class PrintController extends HttpSecureAppServlet {
               }
               final String senderAddress = vars.getStringParameter("fromEmail");
               sendDocumentEmail(report, vars,
-                  (Vector<Object>) request.getSession().getAttribute("files"), documentData,
+                  (Vector<AttachContent>) request.getSession().getAttribute("files"), documentData,
                   senderAddress, checks, documentType);
               nrOfEmailsSend++;
             }
@@ -660,14 +661,9 @@ public class PrintController extends HttpSecureAppServlet {
     }
   }
 
-  /**
-   * 
-   * @param vector
-   * @param documentToDelete
-   */
-  private void seekAndDestroy(Vector<Object> vector, String documentToDelete) {
+  private void seekAndDestroy(Vector<AttachContent> vector, String documentToDelete) {
     for (int i = 0; i < vector.size(); i++) {
-      final AttachContent content = (AttachContent) vector.get(i);
+      final AttachContent content = vector.get(i);
       if (content.id.equals(documentToDelete)) {
         vector.remove(i);
         break;
@@ -697,7 +693,7 @@ public class PrintController extends HttpSecureAppServlet {
     return null;
   }
 
-  void sendDocumentEmail(Report report, VariablesSecureApp vars, Vector<Object> object,
+  void sendDocumentEmail(Report report, VariablesSecureApp vars, Vector<AttachContent> vector,
       PocData documentData, String senderAddress, HashMap<String, Boolean> checks,
       DocumentType documentType) throws IOException, ServletException {
     final String attachmentFileLocation = report.getTargetLocation();
@@ -795,10 +791,9 @@ public class PrintController extends HttpSecureAppServlet {
     List<File> attachments = new ArrayList<>();
     attachments.add(new File(attachmentFileLocation));
 
-    if (object != null) {
-      final Vector<Object> vector = object;
+    if (vector != null) {
       for (int i = 0; i < vector.size(); i++) {
-        final AttachContent objContent = (AttachContent) vector.get(i);
+        final AttachContent objContent = vector.get(i);
         final File file = prepareFile(objContent, ourReference);
         attachments.add(file);
       }
@@ -920,7 +915,7 @@ public class PrintController extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
     PocData[] pocData = getContactDetails(documentType, strDocumentId);
     @SuppressWarnings("unchecked")
-    Vector<java.lang.Object> vector = (Vector<java.lang.Object>) request.getSession()
+    Vector<AttachContent> vector = (Vector<AttachContent>) request.getSession()
         .getAttribute("files");
 
     final String[] hiddenTags = getHiddenTags(pocData, vector, vars, checks);
@@ -939,7 +934,7 @@ public class PrintController extends HttpSecureAppServlet {
 
     boolean isTheFirstEntry = false;
     if (vector == null) {
-      vector = new Vector<java.lang.Object>(0);
+      vector = new Vector<>(0);
       isTheFirstEntry = true;
     }
 
@@ -1043,7 +1038,7 @@ public class PrintController extends HttpSecureAppServlet {
     final boolean onlyOneAttachedDoc = onlyOneAttachedDocs(reports);
     final Map<String, PocData> customerMap = new HashMap<String, PocData>();
     final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
-    final Vector<Object> cloneVector = new Vector<Object>();
+    final Vector<AttachContent> cloneVector = new Vector<>();
     boolean allTheDocsCompleted = true;
     for (final PocData documentData : pocData) {
       // Map used to count the different users
@@ -1327,8 +1322,8 @@ public class PrintController extends HttpSecureAppServlet {
   /**
    * @author gmauleon
    */
-  private String[] getHiddenTags(PocData[] pocData, Vector<Object> vector, VariablesSecureApp vars,
-      HashMap<String, Boolean> checks) {
+  private String[] getHiddenTags(PocData[] pocData, Vector<AttachContent> vector,
+      VariablesSecureApp vars, HashMap<String, Boolean> checks) {
     String[] discard;
     final Map<String, PocData> customerMap = new HashMap<String, PocData>();
     final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
