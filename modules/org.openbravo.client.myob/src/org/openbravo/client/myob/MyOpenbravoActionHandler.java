@@ -317,7 +317,7 @@ public class MyOpenbravoActionHandler extends BaseActionHandler implements Porta
         } else {
           // Remove all instances of the widget instance that is to be removed
           OBQuery<WidgetInstance> widgetInstanceQuery = OBDal.getInstance()
-              .createQuery(WidgetInstance.class, "copiedFrom = :parent");
+              .createQuery(WidgetInstance.class, "copiedFrom.id = :parent");
           widgetInstanceQuery.setNamedParameter("parent", widgetInstance.getId());
           widgetInstanceQuery.setFilterOnActive(false);
           for (WidgetInstance copiedWidgetInstance : widgetInstanceQuery.list()) {
