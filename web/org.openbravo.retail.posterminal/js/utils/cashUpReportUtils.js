@@ -901,10 +901,6 @@
       averageDownloadBandwidth: cashUp.at(0).get('averageDownloadBandwidth')
     });
 
-    if (OB.MobileApp.model.get('POSS_ForceCashup')) {
-      objToSend.set('previousBusinessDate', OB.I18N.formatDateISO(OB.I18N.parseServerDate(OB.UTIL.localStorage.getItem('previousbusinessdate'))));
-    }
-
     //process the payment method cash ups
     OB.Dal.findInTransaction(tx, OB.Model.PaymentMethodCashUp, {
       'cashup_id': cashUp.at(0).get('id'),
