@@ -39,8 +39,9 @@
     getImagesMap: function () {
       var images = [];
       this.imageFunctions.forEach(function (f) {
-        var imagedata = f();
-        images[imagedata.name] = imagedata.url;
+        f().forEach(function (imagedata) {
+          images[imagedata.name] = imagedata.url;
+        });
       });
       return images;
     },
@@ -53,10 +54,10 @@
   // ../../utility/ShowImageLogo?logo=yourcompanymenu
   // yourcompanylogin, youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
   OB.PRINTERIMAGES.register(function () {
-    return {
+    return [{
       name: 'ticket-image.png',
       url: '../../utility/ShowImageLogo?logo=yourcompanybig&orgId=' + OB.MobileApp.model.get('terminal').organization
-    };
+    }];
   });
 
 }());
