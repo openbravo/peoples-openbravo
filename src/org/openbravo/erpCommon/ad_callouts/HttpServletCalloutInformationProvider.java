@@ -47,7 +47,7 @@ import jdk.nashorn.api.scripting.JSObject;
  *
  */
 public class HttpServletCalloutInformationProvider implements CalloutInformationProvider {
-  private final static Logger log = LogManager.getLogger();
+  private static final Logger log = LogManager.getLogger();
 
   private List<JSObject> responseElements;
   private String rawResponse;
@@ -116,7 +116,7 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
     JSObject subelements = (JSObject) getCurrentElementValue(element);
 
     JSONObject jsonobject = new JSONObject();
-    ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
+    ArrayList<JSONObject> comboEntries = new ArrayList<>();
     // If column is not mandatory, we add an initial blank element
     if (!col.isMandatory()) {
       JSONObject entry = new JSONObject();
