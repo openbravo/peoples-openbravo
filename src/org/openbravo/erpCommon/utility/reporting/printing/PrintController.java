@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
 import java.util.regex.Matcher;
 
 import javax.servlet.ServletConfig;
@@ -343,11 +342,11 @@ public class PrintController extends HttpSecureAppServlet {
 
         } else if (vars.commandIn("DEL")) {
           final String documentToDelete = vars.getStringParameter("idToDelete");
-          final Vector<AttachContent> vector = (Vector<AttachContent>) request.getSession()
+          final List<AttachContent> attachments = (List<AttachContent>) request.getSession()
               .getAttribute("files");
-          request.getSession().setAttribute("files", vector);
+          request.getSession().setAttribute("files", attachments);
 
-          seekAndDestroy(vector, documentToDelete);
+          seekAndDestroy(attachments, documentToDelete);
           createEmailOptionsPage(request, response, vars, documentType,
               getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
 
@@ -415,7 +414,7 @@ public class PrintController extends HttpSecureAppServlet {
               }
               final String senderAddress = vars.getStringParameter("fromEmail");
               sendDocumentEmail(report, vars,
-                  (Vector<AttachContent>) request.getSession().getAttribute("files"), documentData,
+                  (List<AttachContent>) request.getSession().getAttribute("files"), documentData,
                   senderAddress, checks, documentType);
               nrOfEmailsSend++;
             }
@@ -661,11 +660,11 @@ public class PrintController extends HttpSecureAppServlet {
     }
   }
 
-  private void seekAndDestroy(Vector<AttachContent> vector, String documentToDelete) {
-    for (int i = 0; i < vector.size(); i++) {
-      final AttachContent content = vector.get(i);
+  private void seekAndDestroy(List<AttachContent> attachments, String documentToDelete) {
+    for (int i = 0; i < attachments.size(); i++) {
+      final AttachContent content = attachments.get(i);
       if (content.id.equals(documentToDelete)) {
-        vector.remove(i);
+        attachments.remove(i);
         break;
       }
     }
@@ -693,9 +692,10 @@ public class PrintController extends HttpSecureAppServlet {
     return null;
   }
 
-  void sendDocumentEmail(Report report, VariablesSecureApp vars, Vector<AttachContent> vector,
-      PocData documentData, String senderAddress, HashMap<String, Boolean> checks,
-      DocumentType documentType) throws IOException, ServletException {
+  void sendDocumentEmail(Report report, VariablesSecureApp vars,
+      List<AttachContent> attachedContent, PocData documentData, String senderAddress,
+      HashMap<String, Boolean> checks, DocumentType documentType)
+      throws IOException, ServletException {
     final String attachmentFileLocation = report.getTargetLocation();
     String emailSubject = null, emailBody = null;
     final String ourReference = report.getOurReference();
@@ -791,9 +791,8 @@ public class PrintController extends HttpSecureAppServlet {
     List<File> attachments = new ArrayList<>();
     attachments.add(new File(attachmentFileLocation));
 
-    if (vector != null) {
-      for (int i = 0; i < vector.size(); i++) {
-        final AttachContent objContent = vector.get(i);
+    if (attachedContent != null) {
+      for (AttachContent objContent : attachedContent) {
         final File file = prepareFile(objContent, ourReference);
         attachments.add(file);
       }
@@ -821,7 +820,7 @@ public class PrintController extends HttpSecureAppServlet {
     try {
       EmailManager.sendEmail(mailConfig, email);
     } catch (Exception exception) {
-      log4j.error(exception);
+      log4j.error("error sending mail", exception);
       final String exceptionClass = exception.getClass().toString().replace("class ", "");
       String exceptionString = "Problems while sending the email" + exception;
       exceptionString = exceptionString.replace(exceptionClass, "");
@@ -915,10 +914,10 @@ public class PrintController extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
     PocData[] pocData = getContactDetails(documentType, strDocumentId);
     @SuppressWarnings("unchecked")
-    Vector<AttachContent> vector = (Vector<AttachContent>) request.getSession()
+    List<AttachContent> attachments = (List<AttachContent>) request.getSession()
         .getAttribute("files");
 
-    final String[] hiddenTags = getHiddenTags(pocData, vector, vars, checks);
+    final String[] hiddenTags = getHiddenTags(pocData, attachments, vars, checks);
     if (hiddenTags != null) {
       xmlDocument = xmlEngine
           .readXmlTemplate("org/openbravo/erpCommon/utility/reporting/printing/EmailOptions",
@@ -933,8 +932,8 @@ public class PrintController extends HttpSecureAppServlet {
     xmlDocument.setParameter("strDocumentId", strDocumentId);
 
     boolean isTheFirstEntry = false;
-    if (vector == null) {
-      vector = new Vector<>(0);
+    if (attachments == null) {
+      attachments = new ArrayList<>(0);
       isTheFirstEntry = true;
     }
 
@@ -947,11 +946,11 @@ public class PrintController extends HttpSecureAppServlet {
       content.setFileItem(file1);
       content.setId(Utility.formatDate(new Date(), "yyyyMMdd-HHmmss") + '.' + file1.getName());
       content.visible = "hidden";
-      if (vars.getStringParameter("inpArchive") == "Y") {
+      if ("Y".equals(vars.getStringParameter("inpArchive"))) {
         content.setSelected("true");
       }
-      vector.addElement(content);
-      request.getSession().setAttribute("files", vector);
+      attachments.add(content);
+      request.getSession().setAttribute("files", attachments);
 
     }
 
@@ -1038,7 +1037,7 @@ public class PrintController extends HttpSecureAppServlet {
     final boolean onlyOneAttachedDoc = onlyOneAttachedDocs(reports);
     final Map<String, PocData> customerMap = new HashMap<String, PocData>();
     final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
-    final Vector<AttachContent> cloneVector = new Vector<>();
+    final List<AttachContent> clonedAttachemnts = new ArrayList<>();
     boolean allTheDocsCompleted = true;
     for (final PocData documentData : pocData) {
       // Map used to count the different users
@@ -1129,7 +1128,7 @@ public class PrintController extends HttpSecureAppServlet {
       if (onlyOneAttachedDoc) {
         attachedContent.setDocName(report.getFilename());
         attachedContent.setVisible("checkbox");
-        cloneVector.add(attachedContent);
+        clonedAttachemnts.add(attachedContent);
       }
 
     }
@@ -1159,14 +1158,13 @@ public class PrintController extends HttpSecureAppServlet {
         attachedContent.setVisible("checkbox");
 
       }
-      cloneVector.add(attachedContent);
+      clonedAttachemnts.add(attachedContent);
     }
 
-    final AttachContent[] data = new AttachContent[vector.size()];
-    final AttachContent[] data2 = new AttachContent[cloneVector.size()];
-    if (cloneVector.size() >= 1) { // Has more than 1 element
-      vector.copyInto(data);
-      cloneVector.copyInto(data2);
+    if (!clonedAttachemnts.isEmpty()) {
+      final AttachContent[] data = attachments.toArray(new AttachContent[attachments.size()]);
+      final AttachContent[] data2 = clonedAttachemnts
+          .toArray(new AttachContent[clonedAttachemnts.size()]);
       xmlDocument.setData("structure2", data2);
       xmlDocument.setData("structure1", data);
     }
@@ -1322,7 +1320,7 @@ public class PrintController extends HttpSecureAppServlet {
   /**
    * @author gmauleon
    */
-  private String[] getHiddenTags(PocData[] pocData, Vector<AttachContent> vector,
+  private String[] getHiddenTags(PocData[] pocData, List<AttachContent> attachedContent,
       VariablesSecureApp vars, HashMap<String, Boolean> checks) {
     String[] discard;
     final Map<String, PocData> customerMap = new HashMap<String, PocData>();
@@ -1370,7 +1368,7 @@ public class PrintController extends HttpSecureAppServlet {
       discardAux[discard.length] = "discardSelect";
       return discardAux;
     }
-    if (vector == null && vars.getMultiFile("inpFile") == null) {
+    if (attachedContent == null && vars.getMultiFile("inpFile") == null) {
       final String[] discardAux = new String[discard.length + 1];
       for (int i = 0; i < discard.length; i++) {
         discardAux[i] = discard[i];
