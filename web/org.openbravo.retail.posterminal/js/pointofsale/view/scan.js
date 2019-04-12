@@ -88,12 +88,14 @@ enyo.kind({
   published: {
     receipt: null
   },
+  additionalComponents: [],
   components: [{
     style: 'position:relative; background-color: #7da7d9; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px',
     components: [{
       kind: 'OB.UI.Clock',
       classes: 'pos-clock'
     }, {
+      name: 'mainPanel',
       components: [{
         name: 'msgwelcome',
         showing: false,
@@ -177,7 +179,11 @@ enyo.kind({
     }
   },
   initComponents: function () {
+    var self = this;
     this.inherited(arguments);
+    this.additionalComponents.forEach(function (component) {
+      self.$.mainPanel.createComponent(component);
+    });
     this.$.msgwelcomeLbl.setContent(OB.I18N.getLabel('OBPOS_WelcomeMessage'));
   }
 });
