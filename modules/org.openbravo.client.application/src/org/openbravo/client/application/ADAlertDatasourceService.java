@@ -151,7 +151,7 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
 
   private List<String> getAlertIdsFromAlertRules(
       Map<String, List<String>> alertRulesGroupByFilterClause, String alertStatus) {
-    List<String> alertIds = new ArrayList<String>();
+    List<String> alertIds = new ArrayList<>();
     for (Entry<String, List<String>> alertRuleList : alertRulesGroupByFilterClause.entrySet()) {
       String filterClause;
       try {
@@ -206,9 +206,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
     List<String> alertList = getAlertIds(alertStatus);
     int chunkSize = 1000;
     String whereClause = "";
-    ArrayList<String> alertListToRemove;
 
-    if (alertList.size() == 0) {
+    if (alertList.isEmpty()) {
       return "1 = 2";
     }
 
@@ -218,9 +217,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
 
     // There are more than 1000 alerts to include in the where clause, Oracle doesn't
     // support it, so let's split them in chunks with <=1000 elements each
-    alertListToRemove = new ArrayList<String>();
     while (alertList.size() > chunkSize) {
-      alertListToRemove = new ArrayList<String>(alertList.subList(0, chunkSize - 1));
+      ArrayList<String> alertListToRemove = new ArrayList<>(alertList.subList(0, chunkSize - 1));
       if (StringUtils.isEmpty(whereClause)) {
         whereClause = "(e.id in (" + commaSeparated(alertListToRemove) + ")";
       } else {

@@ -131,15 +131,13 @@ public class AlertActionHandler extends BaseActionHandler implements PortalAcces
         .setParameterList("clients", OBContext.getOBContext().getReadableClients())
         .setParameterList("orgs", OBContext.getOBContext().getReadableClients());
 
-    long total = qry.stream()
+    return qry.stream()
         .collect(groupingBy(rule -> Objects.toString(rule.getFilterClause(), ""))) // null can't be
                                                                                    // key
         .values()
         .stream()
         .mapToLong(rulesByFilterClause -> countActiveAlertsForRules(rulesByFilterClause, vars))
         .sum();
-
-    return total;
   }
 
   private long countActiveAlertsForRules(List<AlertRule> rules, VariablesSecureApp vars) {
