@@ -55,7 +55,7 @@ enyo.kind({
   name: 'OBPOS.UI.CrossStoreList',
   classes: 'row-fluid',
   handlers: {
-    onClearFilterSelector: 'clearAction',
+    onClearFilterSelector: 'searchAction',
     onSearchAction: 'searchAction'
   },
   events: {
@@ -86,12 +86,6 @@ enyo.kind({
       }]
     }]
   }],
-
-  clearAction: function () {
-    this.productsList.reset();
-    return true;
-  },
-
   searchAction: function (inSender, inEvent) {
     var me = this,
         remoteFilters = [],
