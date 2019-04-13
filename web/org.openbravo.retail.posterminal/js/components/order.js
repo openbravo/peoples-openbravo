@@ -645,6 +645,9 @@ enyo.kind({
     }
   },
   setTaxes: function () {
+    if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal'))) {
+      return;
+    }
     if (OB.MobileApp.model.get('terminal').terminalType.showtaxbreakdown) {
       var taxList = new Backbone.Collection();
       var taxes = this.order.get('taxes');
