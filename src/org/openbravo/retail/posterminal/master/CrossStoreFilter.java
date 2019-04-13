@@ -9,6 +9,7 @@
 
 package org.openbravo.retail.posterminal.master;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +39,16 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
   @Any
   @Qualifier(crossStorePropertyExtension)
   private Instance<ModelExtension> extensions;
+
+  @Override
+  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
+    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    HQLPropertyList crossStoreFilterHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions, jsonsent);
+    propertiesList.add(crossStoreFilterHQLProperties);
+
+    return propertiesList;
+  }
 
   @Override
   protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
@@ -81,6 +92,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" join pl.pricingPriceListVersionList plv");
       hql.append(" join plv.pricingProductPriceList pp");
       hql.append(" where o.id in :crossStoreOrgIds");
+      hql.append(" and $filtersCriteria");
       hql.append(" and sd.product.id = :productId");
       hql.append(" and plv.validFromDate = (");
       hql.append("   select max(plv2.validFromDate)");
