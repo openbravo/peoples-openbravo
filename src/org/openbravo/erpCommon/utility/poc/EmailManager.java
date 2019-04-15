@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2018 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2019 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
@@ -63,7 +63,7 @@ public class EmailManager {
   public static void sendEmail(EmailServerConfiguration conf, EmailInfo email) throws Exception {
 
     String decryptedPassword = FormatUtilities.encryptDecrypt(conf.getSmtpServerPassword(), false);
-    Long timeoutMillis = TimeUnit.SECONDS.toMillis(conf.getSmtpConnectionTimeout());
+    Long timeoutMillis = getSmtpConnectionTimeout(conf);
 
     sendEmail(conf.getSmtpServer(), conf.isSMTPAuthentification(), conf.getSmtpServerAccount(),
         decryptedPassword, conf.getSmtpConnectionSecurity(), conf.getSmtpPort().intValue(),
@@ -84,12 +84,16 @@ public class EmailManager {
 
     EmailServerConfiguration configuration = EmailUtils.getEmailConfiguration(OBContext
         .getOBContext().getCurrentOrganization());
-    Long timeoutMillis = (configuration != null) ? TimeUnit.SECONDS.toMillis(configuration
-        .getSmtpConnectionTimeout()) : DEFAULT_SMTP_TIMEOUT;
+    Long timeoutMillis = getSmtpConnectionTimeout(configuration);
 
     sendEmail(host, auth, username, password, connSecurity, port, senderAddress, recipientTO,
         recipientCC, recipientBCC, replyTo, subject, content, contentType, attachments, sentDate,
         headerExtras, timeoutMillis.intValue());
+  }
+
+  private static Long getSmtpConnectionTimeout(EmailServerConfiguration configuration) {
+    return (configuration != null && configuration.getSmtpConnectionTimeout() != null) ? TimeUnit.SECONDS
+        .toMillis(configuration.getSmtpConnectionTimeout()) : DEFAULT_SMTP_TIMEOUT;
   }
 
   private static void sendEmail(String host, boolean auth, String username, String password,
