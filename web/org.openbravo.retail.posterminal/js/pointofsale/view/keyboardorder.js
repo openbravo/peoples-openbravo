@@ -250,29 +250,9 @@ enyo.kind({
         };
 
     var changePrice = function (keyboardComponent, keyboard, price) {
-        var cancelChange = false;
 
-        var setPrice = function () {
-            if (keyboardComponent.selectedModels.length > 1) {
-              keyboard.receipt.set('undo', null);
-              keyboard.receipt.set('multipleUndo', true);
-              _.each(keyboardComponent.selectedModels, function (model) {
-                if (model.get('replacedorderline') && model.get('qty') < 0) {
-                  cancelChange = true;
-                }
-              });
-              if (cancelChange) {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
-                return;
-              }
-              _.each(keyboardComponent.selectedModels, function (model) {
-                keyboard.receipt.setPrice(model, price);
-              });
-              keyboard.receipt.set('multipleUndo', null);
-            } else {
-              keyboard.receipt.setPrice(keyboard.line, price);
-            }
-            keyboard.receipt.calculateReceipt();
+        var setPrices = function () {
+            keyboard.receipt.setPrices(keyboardComponent.selectedModels, price);
             keyboard.receipt.trigger('scan');
             };
 
@@ -280,14 +260,14 @@ enyo.kind({
           me.doShowPopup({
             popup: 'modalPriceModification',
             args: {
-              callback: setPrice,
+              callback: setPrices,
               selectedModels: me.selectedModels,
               receipt: keyboard.receipt,
               line: keyboard.line
             }
           });
         } else {
-          setPrice();
+          setPrices();
         }
         };
 
