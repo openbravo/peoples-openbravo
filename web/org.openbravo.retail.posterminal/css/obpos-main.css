@@ -1433,3 +1433,15 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 .genericBodyModalContainer-container1-containerOfReceiptsListItemPrinter {}
 
 .genericBodyModalContainer-container1-renderLoading {}
+
+.openreceiptslistitemprinter {
+  max-height: 350px;
+  overflow: hidden auto !important;
+}
+
+/*
+# OB.UI.ReceiptSelectorRenderLine
+*/
+.obUiReceiptSelectorRenderLine {
+ width: 100%;
+}
