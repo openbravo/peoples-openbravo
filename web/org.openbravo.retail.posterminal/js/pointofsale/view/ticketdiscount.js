@@ -148,16 +148,16 @@ enyo.kind({
       promos.sort();
       me.discounts.reset(promos.models);
       if (OB.MobileApp.model.hasPermission('OBPOS_AutoSelectDiscounts', true)) {
-          var selectedModels = OB.MobileApp.view.$.containerWindow.getRoot().$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
-               i;
-           for (i = 0; i < selectedModels.length; i++) {
-             selectedModels[i].trigger('check');
-           }
-       } else {
-           me.ticketLineChecked({}, {
-             checkedLines: me.checkedLines
-           });
+        var selectedModels = OB.MobileApp.view.$.containerWindow.getRoot().$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
+            i;
+        for (i = 0; i < selectedModels.length; i++) {
+          selectedModels[i].trigger('check');
         }
+      } else {
+        me.ticketLineChecked({}, {
+          checkedLines: me.checkedLines
+        });
+      }
       //set the keyboard for selected discount
       if (promos.length > 0) {
         var model = promos.at(0);
@@ -196,16 +196,16 @@ enyo.kind({
       });
       tr.render();
       if (OB.MobileApp.model.hasPermission('OBPOS_AutoSelectDiscounts', true)) {
-          var selectedModels = OB.MobileApp.view.$.containerWindow.getRoot().$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
-               i;
-           for (i = 0; i < selectedModels.length; i++) {
-             selectedModels[i].trigger('check');
-           }
-       } else {
-           me.ticketLineChecked({}, {
-             checkedLines: me.checkedLines
-           });
+        var selectedModels = OB.MobileApp.view.$.containerWindow.getRoot().$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
+            i;
+        for (i = 0; i < selectedModels.length; i++) {
+          selectedModels[i].trigger('check');
         }
+      } else {
+        me.ticketLineChecked({}, {
+          checkedLines: me.checkedLines
+        });
+      }
     });
     this.inherited(arguments);
   },
