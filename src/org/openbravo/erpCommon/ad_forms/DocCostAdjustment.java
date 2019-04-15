@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,15 +21,23 @@ package org.openbravo.erpCommon.ad_forms;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
 
+import javax.persistence.Tuple;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.hibernate.query.Query;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 
@@ -509,6 +517,63 @@ public class DocCostAdjustment extends AcctServer {
     }
     return acct;
 
+  }
+
+  /**
+   * Set the period for the Cost Adjustment considering if all the periods matching accounting dates
+   * in Cost Adjustment Lines are opened
+   */
+  @Override
+  public void setC_Period_ID() {
+    if (C_Period_ID != null) {
+      return;
+    }
+    if (areAllPeriodsOpened(Record_ID)) {
+      super.setC_Period_ID();
+    } else {
+      C_Period_ID = "";
+    }
+  }
+
+  private boolean areAllPeriodsOpened(final String record_ID) {
+    try (final ScrollableResults lines = getCostAdjustmentLineScroll(record_ID)) {
+      int i = 0;
+      while (lines.next()) {
+        final Tuple row = (Tuple) lines.get()[0];
+        final String clientId = (String) row.get("clientId");
+        final String orgId = (String) row.get("orgId");
+        final String documentType = (String) row.get("documentCategory");
+        final Date dateAccounting = (Date) row.get("accountingDate");
+        if (!FIN_Utility.isPeriodOpen(clientId, documentType, orgId,
+            OBDateUtils.formatDate(dateAccounting))) {
+          return false;
+        }
+        if (++i % 100 == 0) {
+          OBDal.getInstance().getSession().clear();
+        }
+      }
+    }
+    return true;
+  }
+
+  private ScrollableResults getCostAdjustmentLineScroll(final String record_ID) {
+    // @formatter:off
+    final String hql = "select cal.accountingDate as accountingDate, cadt.documentCategory as documentCategory, cl.id as clientId, org.id as orgId "
+        + " from CostAdjustmentLine cal join cal.costAdjustment ca " 
+        + " join ca.documentType cadt "
+        + " join ca.client cl " 
+        + " join ca.organization org " 
+        + " where ca.id = :costAdjustmentLineId "
+        + " order by cal.accountingDate asc";
+ // @formatter:on
+
+    final Query<Tuple> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Tuple.class)
+        .setParameter("costAdjustmentLineId", record_ID);
+
+    query.setMaxResults(1000);
+    return query.scroll(ScrollMode.FORWARD_ONLY);
   }
 
   @Override
