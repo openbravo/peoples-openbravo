@@ -190,18 +190,18 @@ enyo.kind({
     } else {
       this.$.orderType.setContent(orderType);
       switch (this.model.get('orderType')) {
-      case 'QT':
-        this.$.orderType.applyStyle('color', 'rgb(248, 148, 29)');
-        break;
-      case 'LAY':
-        this.$.orderType.applyStyle('color', 'lightblue');
-        break;
-      case 'RET':
-        this.$.orderType.applyStyle('color', 'rgb(248, 148, 29)');
-        break;
-      default:
-        this.$.orderType.applyStyle('color', 'rgb(108, 179, 63)');
-        break;
+        case 'QT':
+          this.$.orderType.applyStyle('color', 'rgb(248, 148, 29)');
+          break;
+        case 'LAY':
+          this.$.orderType.applyStyle('color', 'lightblue');
+          break;
+        case 'RET':
+          this.$.orderType.applyStyle('color', 'rgb(248, 148, 29)');
+          break;
+        default:
+          this.$.orderType.applyStyle('color', 'rgb(108, 179, 63)');
+          break;
       }
     }
     this.applyStyle('padding', '5px');
@@ -239,12 +239,13 @@ enyo.kind({
   },
   receiptList: null,
   components: [{
-    classes: 'u-bottomseparator-slim',
+    classes: 'genericBodyModalContainer-container1',
     components: [{
-      name: 'containerOfReceiptsListItemPrinter'
+      name: 'containerOfReceiptsListItemPrinter',
+      classes: 'genericBodyModalContainer-container1-containerOfReceiptsListItemPrinter'
     }, {
       name: 'renderLoading',
-      classes: 'listItemInformation',
+      classes: 'listItemInformation genericBodyModalContainer-container1-renderLoading',
       showing: false,
       initComponents: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
@@ -452,8 +453,8 @@ enyo.kind({
   },
   init: function (model) {
     var me = this,
-        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts'),
-        receiptOrganization = null;
+      process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts'),
+      receiptOrganization = null;
     this.model = model;
     this.inherited(arguments);
     this.receiptList.on('click', function (model) {
