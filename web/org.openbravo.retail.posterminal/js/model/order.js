@@ -3324,7 +3324,7 @@
         disc.chunks = undefined;
       }
 
-
+      disc.obdiscLineFinalgross = rule.get('obdiscLineFinalgross');
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
       disc.preserve = discount.preserve === true;
 
@@ -6355,6 +6355,7 @@
         }
       }
 
+      OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
       OB.MobileApp.view.scanningFocus(false);
       if (this.get('isEditable') === true) {
         OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
