@@ -94,6 +94,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" where o.id in :crossStoreOrgIds");
       hql.append(" and $filtersCriteria");
       hql.append(" and sd.product.id = :productId");
+      hql.append(" and pp.product.id = :productId");
       hql.append(" and plv.validFromDate = (");
       hql.append("   select max(plv2.validFromDate)");
       hql.append("   from PricingPriceListVersion plv2");
