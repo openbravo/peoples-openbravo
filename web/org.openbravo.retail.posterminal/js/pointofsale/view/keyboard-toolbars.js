@@ -413,7 +413,7 @@ enyo.kind({
                     return;
                   }
                   var decimalAmount = OB.DEC.toBigDecimal(amount);
-                  if (decimalAmount.scale() > OB.DEC.getScale()) {
+                  if (decimalAmount.scale() > OB.DEC.getScale() || decimalAmount.scale() > payment.obposPosprecision) {
                     OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [txt]));
                     return;
                   }
@@ -454,12 +454,11 @@ enyo.kind({
                   return;
                 }
                 var decimalAmount = OB.DEC.toBigDecimal(amount);
-                if (decimalAmount.scale() > OB.DEC.getScale()) {
+                if (decimalAmount.scale() > OB.DEC.getScale() || decimalAmount.scale() > payment.obposPosprecision) {
                   OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [txt]));
                   return;
                 }
               }
-              amount = OB.DEC.mul(amount, OB.DEC.One, payment.obposPosprecision);
               me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options, null);
             }
           });
