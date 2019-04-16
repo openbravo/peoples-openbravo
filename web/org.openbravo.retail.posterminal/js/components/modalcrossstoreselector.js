@@ -98,20 +98,6 @@ enyo.kind({
       type: 'long'
     };
 
-    _.each(inEvent.filters, function (flt) {
-
-      var column = _.find(OB.Model.CrossStoreFilter.getProperties(), function (col) {
-        return col.column === flt.column;
-      });
-      if (flt.value && column) {
-        remoteFilters.push({
-          columns: [column.name],
-          value: flt.value,
-          operator: flt.operator || OB.Dal.STARTSWITH
-        });
-      }
-    });
-
     function successCallBack(data) {
       if (data && !data.exception) {
         me.$.csStoreSelector.collection.reset(data);
@@ -128,14 +114,30 @@ enyo.kind({
       OB.UTIL.showError(error);
     }
 
-    var process = new OB.DS.Process(OB.Model.CrossStoreFilter.prototype.source);
+    if (OB.UTIL.isCrossStoreEnabled() && this.owner.owner.productId) {
+      _.each(inEvent.filters, function (flt) {
 
-    process.exec({
-      _limit: OB.Model.CrossStoreFilter.prototype.dataLimit,
-      remoteFilters: remoteFilters,
-      product: this.owner.owner.productId,
-      parameters: params
-    }, successCallBack, errorCallback);
+        var column = _.find(OB.Model.CrossStoreFilter.getProperties(), function (col) {
+          return col.column === flt.column;
+        });
+        if (flt.value && column) {
+          remoteFilters.push({
+            columns: [column.name],
+            value: flt.value,
+            operator: flt.operator || OB.Dal.STARTSWITH
+          });
+        }
+      });
+
+      var process = new OB.DS.Process(OB.Model.CrossStoreFilter.prototype.source);
+
+      process.exec({
+        _limit: OB.Model.CrossStoreFilter.prototype.dataLimit,
+        remoteFilters: remoteFilters,
+        product: this.owner.owner.productId,
+        parameters: params
+      }, successCallBack, errorCallback);
+    }
   },
 
   productsList: null,
