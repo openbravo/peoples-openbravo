@@ -61,7 +61,7 @@ function formatAllFiles {
     if [[ -d ${SCAN_BASE_PATH}/../modules ]]; then
         echo "Formatter check for Core files"
         MODS_WITH_IGNORE=$(getModulesPathWithIgnoreFile ".prettierignore")
-        IGNORE_PATTERNS=$(getPrettierIgnorePatterns ${MODS_WITH_IGNORE})
+        IGNORE_PATTERNS=$(getPrettierIgnorePatterns "${MODS_WITH_IGNORE}")
 
         runFormatterInCore "${IGNORE_PATTERNS}" "${FLAGS}"
         for mod in ${MODS_WITH_IGNORE} ; do
