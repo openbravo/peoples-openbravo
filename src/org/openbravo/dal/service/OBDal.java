@@ -690,7 +690,9 @@ public class OBDal implements OBNotSingleton {
    * 
    * @return an in-clause which can be directly used inside of a HQL clause
    * @see OBContext#getReadableOrganizations()
+   * @deprecated Use bind statement parameter instead of this method
    */
+  @Deprecated
   public String getReadableOrganizationsInClause() {
     return createInClause(OBContext.getOBContext().getReadableOrganizations());
   }
@@ -702,7 +704,9 @@ public class OBDal implements OBNotSingleton {
    * 
    * @return an in-clause which can be directly used inside of a HQL clause
    * @see OBContext#getReadableClients()
+   * @deprecated Use bind statement parameter instead of this method
    */
+  @Deprecated
   public String getReadableClientsInClause() {
     return createInClause(OBContext.getOBContext().getReadableClients());
   }

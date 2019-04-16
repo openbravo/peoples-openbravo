@@ -1295,7 +1295,9 @@ isc.OBViewGrid.addProperties({
     if (summary) {
       config.params = config.params || {};
       config.params._summary = summary;
+      this.fetchingSummaryRow = true;
       config.params = this.getFetchRequestParams(config.params);
+      delete this.fetchingSummaryRow;
     }
     return config;
   },
@@ -3869,6 +3871,9 @@ isc.OBViewGrid.addProperties({
   // requests
   // https://issues.openbravo.com/view.php?id=16611
   storeUpdatedEditorValue: function (suppressChange, editCol) {
+    if (this.fetchingSummaryRow) {
+      return;
+    }
     this._storingUpdatedEditorValue = true;
     this._preventDateParsing = true;
     this.Super('storeUpdatedEditorValue', arguments);

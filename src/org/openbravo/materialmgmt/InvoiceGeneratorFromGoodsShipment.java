@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -79,6 +79,7 @@ public class InvoiceGeneratorFromGoodsShipment {
   private Date invoiceDate;
   private String priceListId;
   private final Set<String> ordersWithAfterOrderDeliveryAlreadyInvoiced = new HashSet<>();
+  private boolean allowInvoicePOSOrder = false;
 
   private enum InvoiceTerm {
     IMMEDIATE("I"), AFTER_DELIVERY("D"), CUSTOMERSCHEDULE("S"), AFTER_ORDER_DELIVERY("O");
@@ -107,6 +108,10 @@ public class InvoiceGeneratorFromGoodsShipment {
     private String getInvoiceTerm() {
       return invoiceTermId;
     }
+  }
+
+  public void setAllowInvoicePOSOrder(boolean allowInvoicePOSOrder) {
+    this.allowInvoicePOSOrder = allowInvoicePOSOrder;
   }
 
   /**
@@ -253,7 +258,7 @@ public class InvoiceGeneratorFromGoodsShipment {
   }
 
   private boolean isOrderCandidateToBeInvoiced(final Order order) {
-    if (POS_ORDER.equals(order.getDocumentType().getSOSubType())) {
+    if (this.allowInvoicePOSOrder && POS_ORDER.equals(order.getDocumentType().getSOSubType())) {
       return InvoiceTerm.shouldInvoicePOSOrderLine(order.getInvoiceTerms());
     }
     return !OBDao

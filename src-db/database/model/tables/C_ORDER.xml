@@ -507,6 +507,14 @@
         <index-column name="QUOTATION_ID"/>
         <whereClause><![CDATA[QUOTATION_ID IS NOT NULL]]></whereClause>
       </index>
+      <index name="C_ORDER_REPLACEDORDER" unique="false">
+        <index-column name="REPLACEDORDER_ID"/>
+        <whereClause><![CDATA[REPLACEDORDER_ID IS NOT NULL]]></whereClause>
+      </index>
+      <index name="C_ORDER_REPLACEMENTORDER" unique="false">
+        <index-column name="REPLACEMENTORDER_ID"/>
+        <whereClause><![CDATA[REPLACEMENTORDER_ID IS NOT NULL]]></whereClause>
+      </index>
       <index name="C_ORDER_SALESREP" unique="false">
         <index-column name="SALESREP_ID"/>
         <whereClause><![CDATA[SALESREP_ID IS NOT NULL]]></whereClause>

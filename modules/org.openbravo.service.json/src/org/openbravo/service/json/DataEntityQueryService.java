@@ -19,6 +19,7 @@
 package org.openbravo.service.json;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -153,11 +154,13 @@ public class DataEntityQueryService {
     obq.setFilterOnActive(isFilterOnActive());
 
     log.debug("Setting params:\n{}",
-        () -> queryBuilder.getNamedParameters()
-            .entrySet()
-            .stream()
-            .map(e -> "  -" + e.getKey() + ": " + e.getValue())
-            .collect(Collectors.joining("\n")));
+        () -> queryBuilder.getNamedParameters().entrySet().stream().map(e -> {
+          Object v = e.getValue();
+          if (v instanceof Object[]) {
+            v = Arrays.asList((Object[]) v);
+          }
+          return "  -" + e.getKey() + ": " + v;
+        }).collect(Collectors.joining("\n")));
 
     obq.setNamedParameters(queryBuilder.getNamedParameters());
 

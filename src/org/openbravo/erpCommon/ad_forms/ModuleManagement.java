@@ -1991,13 +1991,19 @@ public class ModuleManagement extends HttpSecureAppServlet {
   }
 
   private String getSupportStatus(String supportCode, boolean detailed) {
-    org.openbravo.model.ad.domain.List refValue = OBDal.getInstance()
+    Optional<org.openbravo.model.ad.domain.List> optRefValue = OBDal.getInstance()
         .get(Reference.class, SUPPORT_STATUS_REF)
         .getADListList()
         .stream()
         .filter(l -> supportCode.equals(l.getSearchKey()))
-        .findAny()
-        .get();
+        .findAny();
+
+    if (!optRefValue.isPresent()) {
+      // Unknown support status code, can't get its corresponding label
+      return supportCode;
+    }
+
+    org.openbravo.model.ad.domain.List refValue = optRefValue.get();
 
     Optional<String> trlListValue = refValue.getADListTrlList()
         .stream()

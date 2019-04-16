@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -269,6 +269,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     return responseData;
   }
 
+  @SuppressWarnings("deprecation")
   private OBQuery<BaseOBObject> getNodeChildrenQuery(Map<String, String> parameters,
       String parentId, String hqlWhereClause, String hqlWhereClauseRootNodes, Tab tab, Tree tree,
       Entity entity) throws JSONException {

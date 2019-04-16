@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -73,9 +73,12 @@ OB.APRM.validateModifyPaymentPlanAmounts = function (item, validator, value, rec
     totalOutstanding = totalOutstanding.add(new BigDecimal(String(row.outstanding)));
     totalReceived = totalReceived.add(new BigDecimal(String(row.received)));
   }
-  row.expected = Number(new BigDecimal(String(row.outstanding)).add(new BigDecimal(String(row.received))));
-  if (totalOutstanding.abs().compareTo(invoiceOutstanding.abs()) !== 0) {
+  if (totalOutstanding.abs().compareTo(totalExpected.subtract(totalReceived).abs()) !== 0) {
     return false;
+  }
+  for (indRow = 0; indRow < allRows.length; indRow++) {
+    row = allRows[indRow];
+    row.expected = Number(new BigDecimal(String(row.outstanding)).add(new BigDecimal(String(row.received))));
   }
   if (new BigDecimal(String(record.awaitingExecutionAmount)).abs().compareTo(new BigDecimal(String(record.outstanding)).abs()) > 0) {
     if (!OB.APRM.validateMPPUserWarnedAwaiting) {
@@ -153,14 +156,18 @@ OB.APRM.validatePaymentProposalPickAndEdit = function (item, validator, value, r
 
 OB.APRM.addNew = function (grid) {
   var selectedRecord = grid.view.parentWindow.views[0].getParentRecord(),
-      allRows = grid.data.allRows || grid.data.localData;
+      allRows = grid.data.allRows || grid.data.localData,
+      totalExpected = new BigDecimal("0"),
+      totalReceived = new BigDecimal("0");
   var returnObject = isc.addProperties({}, allRows[0]);
-  var indRow, row, totalOutstanding = new BigDecimal("0");
+  var indRow, row, totalOutstandingInOthers = new BigDecimal("0");
   for (indRow = 0; indRow < allRows.length; indRow++) {
     row = allRows[indRow];
-    totalOutstanding = totalOutstanding.add(new BigDecimal(String(row.outstanding)));
+    totalOutstandingInOthers = totalOutstandingInOthers.add(new BigDecimal(String(row.outstanding)));
+    totalExpected = totalExpected.add(new BigDecimal(String(row.expected)));
+    totalReceived = totalReceived.add(new BigDecimal(String(row.received)));
   }
-  returnObject.outstanding = Number(new BigDecimal(String(grid.view.parentWindow.activeView.getContextInfo(false, true, true, false).inpoutstandingamt)).subtract(totalOutstanding));
+  returnObject.outstanding = Number(totalExpected.subtract(totalReceived).subtract(totalOutstandingInOthers));
   returnObject.received = 0;
   returnObject.expected = 0;
   returnObject.awaitingExecutionAmount = 0;
