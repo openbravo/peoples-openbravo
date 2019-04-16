@@ -85,13 +85,13 @@ public class CrossStoreInfo extends ProcessHQLQuery {
 
       final StringBuilder hql2 = new StringBuilder();
       hql2.append(" select" + crossStoreScheduleInfoHQLProperties.getHqlSelect());
-      hql2.append(" from OBRETCO_Org_Schedule os");
+      hql2.append(" from OBRETCO_Org_RegularSchedule os");
       hql2.append(" join os.obretcoSchedule s");
       hql2.append(" join s.oBRETCOScheduleLineList sl");
       hql2.append(" where os.organization.id = :orgId");
       hql2.append(" and os.validFromDate = (");
       hql2.append("   select max(os2.validFromDate)");
-      hql2.append("   from OBRETCO_Org_Schedule os2");
+      hql2.append("   from OBRETCO_Org_RegularSchedule os2");
       hql2.append("   where os2.organization.id = os.organization.id");
       hql2.append("   and os2.scheduletype = os.scheduletype");
       hql2.append("   and os2.validFromDate <= :terminalDate");
