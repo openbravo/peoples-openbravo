@@ -312,7 +312,7 @@
 
   OB.UTIL.getChangeLabelFromPayments = function (payments) {
     return payments.filter(function (payment) {
-      return payment.get('amount') < 0;
+      return payment.get('paymentData') && payment.get('paymentData').label;
     }).map(function (payment) {
       return payment.get('paymentData').label;
     }).join(' + ');
