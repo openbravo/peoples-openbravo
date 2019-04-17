@@ -340,13 +340,16 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     if (localDate == null) {
       localDate = new Date();
     }
-    String clientId = invLine.getClient().getId();
+    Client client = (Client) OBDal.getInstance()
+        .getProxy(Client.ENTITY_NAME, invLine.getClient().getId());
     String orgId = invLine.getOrganization().getId();
+    Warehouse warehouse = (Warehouse) OBDal.getInstance()
+        .getProxy(Warehouse.ENTITY_NAME, warehouseId);
     InvAmtUpdLnInventories inv = OBProvider.getInstance().get(InvAmtUpdLnInventories.class);
-    inv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
+    inv.setClient(client);
     inv.setOrganization(
         (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
-    inv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
+    inv.setWarehouse(warehouse);
 
     inv.setCaInventoryamtline(invLine);
     List<InvAmtUpdLnInventories> invList = invLine.getInventoryAmountUpdateLineInventoriesList();
@@ -354,22 +357,21 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     invLine.setInventoryAmountUpdateLineInventoriesList(invList);
 
     InventoryCount closeInv = OBProvider.getInstance().get(InventoryCount.class);
-    closeInv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
+    closeInv.setClient(client);
     closeInv.setName(OBMessageUtils.messageBD("InvAmtUpdCloseInventory"));
-    closeInv
-        .setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
-    closeInv.setOrganization(closeInv.getWarehouse().getOrganization());
+
+    closeInv.setWarehouse(warehouse);
+    closeInv.setOrganization(warehouse.getOrganization());
 
     closeInv.setMovementDate(localDate);
     closeInv.setInventoryType("C");
     inv.setCloseInventory(closeInv);
 
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
-    initInv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
+    initInv.setClient(client);
     initInv.setName(OBMessageUtils.messageBD("InvAmtUpdInitInventory"));
-    initInv
-        .setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
-    initInv.setOrganization(initInv.getWarehouse().getOrganization());
+    initInv.setWarehouse(warehouse);
+    initInv.setOrganization(warehouse.getOrganization());
     initInv.setMovementDate(localDate);
     initInv.setInventoryType("O");
     inv.setInitInventory(initInv);
