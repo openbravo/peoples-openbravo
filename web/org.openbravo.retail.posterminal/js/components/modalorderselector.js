@@ -101,47 +101,51 @@ enyo.kind({
   },
   components: [{
     name: 'line',
-    classes: 'obUiReceiptSelectorRenderLine-line',
+    classes: 'obUiReceiptSelectorRenderLine',
     components: [{
-      classes: 'modal-order-selector-check btn-check-alt',
+      classes: 'btn-check-alt obUiReceiptSelectorRenderLine-iconCheck',
       name: 'iconCheck',
       showing: false
     }, {
       name: 'lineInfo',
-      style: 'float: left; width: 100%; padding: 5px; ',
+      classes: 'obUiReceiptSelectorRenderLine-lineInfo lineInfo',
       components: [{
-        style: 'padding-bottom: 3px',
+        classes: 'lineInfo-storeContainer storeContainer',
         components: [{
-          style: 'float: left; padding-left:105px; font-weight: bold; color: blue',
-          name: 'store'
+          name: 'store',
+          classes: 'storeContainer-store store'
         }, {
-          style: 'clear: both;'
+          classes: 'u-clearBoth'
         }]
       }, {
+        name: 'lineInfoContainerFirstRow',
+        classes: 'lineInfoContainer lineInfo-lineInfoContainerFirstRow',
         components: [{
-          style: 'float: left; width: 100px;',
+          classes: 'lineInfoContainer-Item1 lineInfoContainerFirstRow-date',
           name: 'date'
         }, {
-          style: 'float: left; padding-left:5px;',
+          classes: 'lineInfoContainer-Item2 lineInfoContainerFirstRow-documentNo',
           name: 'documentNo'
         }, {
-          style: 'float: right; padding-right:5px; width: 100px; text-align: right; font-weight: bold;',
+          classes: 'lineInfoContainer-Item3 lineInfoContainerFirstRow-amount',
           name: 'amount'
         }, {
-          style: 'clear: both;'
+          classes: 'u-clearBoth'
         }]
       }, {
+        name: 'lineInfoContainerSecondRow',
+        classes: 'lineInfoContainer lineInfo-lineInfoContainerSecondRow',
         components: [{
-          style: 'float: left; width: 100px;',
+          classes: 'lineInfoContainer-Item1 lineInfoContainerSecondRow-time',
           name: 'time'
         }, {
-          style: 'float: left; padding-left:5px;',
+          classes: 'lineInfoContainer-Item2 lineInfoContainerSecondRow-customer',
           name: 'customer'
         }, {
-          style: 'float: right; padding-right:5px; width: 100px; text-align: right; font-weight: bold;',
+          classes: 'lineInfoContainer-Item3 lineInfoContainerSecondRow-ordertType',
           name: 'orderType'
         }, {
-          style: 'clear: both;'
+          classes: 'u-clearBoth'
         }]
       }]
     }]
@@ -538,7 +542,7 @@ enyo.kind({
     this.$.containerOfReceiptsListItemPrinter.createComponent({
       name: 'openreceiptslistitemprinter',
       kind: 'OB.UI.ScrollableTable',
-      scrollAreaClasses: 'openreceiptslistitemprinter',
+      scrollAreaClasses: 'scrollArea scrollArea_vertical openreceiptslistitemprinter',
       renderHeader: null,
       renderLine: 'OB.UI.ReceiptSelectorRenderLine',
       renderEmpty: 'OB.UI.RenderEmpty'
