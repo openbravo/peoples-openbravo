@@ -198,21 +198,24 @@ enyo.kind({
         this.$.cif.setContent(data[0].taxID);
 
         var orgSchedule = [],
-            callCenter = [];
+            callCenter = [],
+            specialdate = [];
 
         for (i = 1; i < data.length; i++) {
           if (data[i].scheduletype && data[i].scheduletype === 'Store Schedule') {
             orgSchedule.push(data[i]);
-          } else {
+          } else if (data[i].scheduletype && data[i].scheduletype === 'Call Center Schedule') {
             callCenter.push(data[i]);
+          } else if (data[i].specialdate) {
+            specialdate.push(data[i]);
           }
         }
 
-        this.showScheduleInfo(orgSchedule, callCenter);
+        this.showScheduleInfo(orgSchedule, callCenter, specialdate);
       }
     }));
   },
-  showScheduleInfo: function (orgSchedule, callCenter) {
+  showScheduleInfo: function (orgSchedule, callCenter, specialdate) {
     var scheduleIndex = 0,
         callCenterIndex = 0,
         weekday, scheduleCallCenterLine = {},
