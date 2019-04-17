@@ -347,6 +347,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     inv.setOrganization(
         (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
     inv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
+
     inv.setCaInventoryamtline(invLine);
     List<InvAmtUpdLnInventories> invList = invLine.getInventoryAmountUpdateLineInventoriesList();
     invList.add(inv);
@@ -354,22 +355,21 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
 
     InventoryCount closeInv = OBProvider.getInstance().get(InventoryCount.class);
     closeInv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
-    closeInv.setOrganization(
-        (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
     closeInv.setName(OBMessageUtils.messageBD("InvAmtUpdCloseInventory"));
     closeInv
         .setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
+    closeInv.setOrganization(closeInv.getWarehouse().getOrganization());
+
     closeInv.setMovementDate(localDate);
     closeInv.setInventoryType("C");
     inv.setCloseInventory(closeInv);
 
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
     initInv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
-    initInv.setOrganization(
-        (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
     initInv.setName(OBMessageUtils.messageBD("InvAmtUpdInitInventory"));
     initInv
         .setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
+    initInv.setOrganization(initInv.getWarehouse().getOrganization());
     initInv.setMovementDate(localDate);
     initInv.setInventoryType("O");
     inv.setInitInventory(initInv);
