@@ -26,6 +26,7 @@ import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
 import org.openbravo.client.application.test.ADCSInitialization;
+import org.openbravo.client.application.test.ADCSTest;
 import org.openbravo.client.application.test.ApplicationTest;
 import org.openbravo.client.application.test.DisplayLogicAtServerLevelTest;
 import org.openbravo.client.application.test.DynamicExpressionParserTest;
@@ -186,6 +187,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     IndexesTest.class, //
     TrlColumnsOraTypeTest.class, //
     ADCSInitialization.class, //
+    ADCSTest.class, //
     DBModifiedTest.class,
 
     // modularity
