@@ -32,7 +32,8 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class CrossStoreInfo extends ProcessHQLQuery {
 
   public static final String crossStoreInfoPropertyExtension = "OBPOS_CrossStoreInfoExtension";
-  public static final String crossStoreScheduleInfoPropertyExtension = "OBPOS_CrossStoreScheduleInfoExtension";
+  public static final String crossStoreRegularScheduleInfoPropertyExtension = "OBPOS_CrossStoreRegularScheduleInfoExtension";
+  public static final String crossStoreSpecialScheduleInfoPropertyExtension = "OBPOS_CrossStoreSpecialScheduleInfoExtension";
 
   @Inject
   @Any
@@ -41,8 +42,13 @@ public class CrossStoreInfo extends ProcessHQLQuery {
 
   @Inject
   @Any
-  @Qualifier(crossStoreScheduleInfoPropertyExtension)
-  private Instance<ModelExtension> extensionsSchedule;
+  @Qualifier(crossStoreRegularScheduleInfoPropertyExtension)
+  private Instance<ModelExtension> extensionsRegularSchedule;
+
+  @Inject
+  @Any
+  @Qualifier(crossStoreSpecialScheduleInfoPropertyExtension)
+  private Instance<ModelExtension> extensionsSpecialSchedule;
 
   @Override
   protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
@@ -71,8 +77,10 @@ public class CrossStoreInfo extends ProcessHQLQuery {
     try {
       final HQLPropertyList crossStoreInfoHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions);
-      final HQLPropertyList crossStoreScheduleInfoHQLProperties = ModelExtensionUtils
-          .getPropertyExtensions(extensionsSchedule);
+      final HQLPropertyList crossStoreRegularScheduleInfoHQLProperties = ModelExtensionUtils
+          .getPropertyExtensions(extensionsRegularSchedule);
+      final HQLPropertyList crossStoreSpecialScheduleInfoHQLProperties = ModelExtensionUtils
+          .getPropertyExtensions(extensionsSpecialSchedule);
 
       final StringBuilder hql1 = new StringBuilder();
       hql1.append(" select" + crossStoreInfoHQLProperties.getHqlSelect());
@@ -84,7 +92,7 @@ public class CrossStoreInfo extends ProcessHQLQuery {
       hql1.append(" where oi.organization.id = :orgId");
 
       final StringBuilder hql2 = new StringBuilder();
-      hql2.append(" select" + crossStoreScheduleInfoHQLProperties.getHqlSelect());
+      hql2.append(" select" + crossStoreRegularScheduleInfoHQLProperties.getHqlSelect());
       hql2.append(" from OBRETCO_Org_RegularSchedule ors");
       hql2.append(" join ors.obretcoSchedule s");
       hql2.append(" join s.oBRETCOScheduleLineList sl");
@@ -99,13 +107,13 @@ public class CrossStoreInfo extends ProcessHQLQuery {
       hql2.append(" order by ors.scheduletype, sl.weekday, sl.startingTime");
 
       final StringBuilder hql3 = new StringBuilder();
-      hql3.append(" select" + crossStoreScheduleInfoHQLProperties.getHqlSelect());
+      hql3.append(" select" + crossStoreSpecialScheduleInfoHQLProperties.getHqlSelect());
       hql3.append(" from OBRETCO_Org_SpecialSchedule oss");
       hql3.append(" where oss.organization.id = :orgId");
       hql3.append(" and oss.specialdate >= :terminalDate");
-      hql3.append(" oss.specialdate, oss.startingTime");
+      hql3.append(" order by oss.specialdate, oss.startingTime");
 
-      return Arrays.asList(hql1.toString(), hql3.toString());
+      return Arrays.asList(hql1.toString(), hql2.toString(), hql3.toString());
     } finally {
       OBContext.restorePreviousMode();
     }
