@@ -333,7 +333,7 @@ enyo.kind({
     if (OB.UTIL.isCrossStoreProduct(me.product)) {
       this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_SelectStore'));
       me.doShowPopup({
-        popup: 'modalCrossStoreSelector',
+        popup: 'OBPOS_modalCrossStoreSelector',
         args: {
           productId: me.product.get('id')
         }

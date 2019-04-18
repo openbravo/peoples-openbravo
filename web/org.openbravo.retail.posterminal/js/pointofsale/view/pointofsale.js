@@ -307,10 +307,10 @@ enyo.kind({
       name: 'OBPOS_modalAdvancedFilterOrders'
     }, {
       kind: 'OBPOS.UI.CrossStoreSelector',
-      name: 'modalCrossStoreSelector'
+      name: 'OBPOS_modalCrossStoreSelector'
     }, {
       kind: 'OBPOS.UI.StoreInformation',
-      name: 'storeInformation'
+      name: 'OBPOS_storeInformation'
     }]
   }, {
     name: 'mainSubWindow',
