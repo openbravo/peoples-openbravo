@@ -675,15 +675,21 @@ public class DataSourceServlet extends BaseKernelServlet {
             keyValue = (Boolean) keyValue ? getTranslatedLabelYes() : getTranslatedLabelNo();
           }
 
+          String outputValue;
           if (keyValue != null && !keyValue.toString().equals("null")) {
-            keyValue = Replace.replace(keyValue.toString(), "\"", "\"\"");
+            outputValue = keyValue.toString().replace("\"", "\"\"");
+            if (outputValue.startsWith("=")) {
+              // escape formulas
+              outputValue = "'" + outputValue;
+            }
           } else {
-            keyValue = "";
+            outputValue = "";
           }
+
           if (!numericCols.contains(key)) {
-            keyValue = "\"" + keyValue + "\"";
+            outputValue = "\"" + outputValue + "\"";
           }
-          writer.append(keyValue.toString());
+          writer.append(outputValue);
         }
       } catch (Exception e) {
         throw new OBException("Error while exporting CSV information", e);
