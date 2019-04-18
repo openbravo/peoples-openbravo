@@ -51,7 +51,7 @@ import jdk.nashorn.api.scripting.JSObject;
 // warning when compiling with JDK11+, as we still support JDK8+ we cannot suppress just removal
 // warning because when compiling with lower versions an unnecessary suppress warnings warning would
 // appear.
-@SuppressWarnings("all")
+@SuppressWarnings({ "all", "removal" })
 public class HttpServletCalloutInformationProvider implements CalloutInformationProvider {
   private static final Logger log = LogManager.getLogger();
 
