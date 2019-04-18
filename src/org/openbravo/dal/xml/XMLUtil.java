@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,16 +21,26 @@ package org.openbravo.dal.xml;
 
 import java.io.StringWriter;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
 import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.xml.sax.SAXException;
 
 /**
  * Utility class for XML processing.
@@ -59,8 +69,45 @@ public class XMLUtil implements OBSingleton {
 
   /** @return a new Dom4j Document */
   public Document createDomDocument() {
-    final Document document = DocumentHelper.createDocument();
-    return document;
+    return DocumentHelper.createDocument();
+  }
+
+  /** @return a new secure {@link DocumentBuilder} */
+  public DocumentBuilder newDocumentBuilder() throws ParserConfigurationException {
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+    factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+    factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+    factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+    factory.setXIncludeAware(false);
+    factory.setExpandEntityReferences(false);
+    return factory.newDocumentBuilder();
+  }
+
+  /** @return a new secure {@link TransformerHandler} */
+  public TransformerHandler newSAXTransformerHandler() throws TransformerConfigurationException {
+    final SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+    tf.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
+    tf.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+
+    return tf.newTransformerHandler();
+  }
+
+  /** @return a new secure {@link SAXReader} */
+  public SAXReader newSAXReader() throws SAXException {
+    final SAXReader reader = new SAXReader();
+    reader.setFeature("http://xml.org/sax/features/external-general-entities", false);
+    reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+    reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+    return reader;
+  }
+
+  /** @return a new secure {@link TransformerFactory} */
+  public TransformerFactory newTransformerFactory() {
+    TransformerFactory factory = TransformerFactory.newInstance();
+    factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
+    factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+    return factory;
   }
 
   /**

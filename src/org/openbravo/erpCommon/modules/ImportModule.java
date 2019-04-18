@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,7 +44,6 @@ import java.util.zip.ZipInputStream;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -67,6 +66,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.ddlutils.task.DatabaseUtils;
 import org.openbravo.erpCommon.ad_forms.MaturityLevel;
@@ -1186,8 +1186,8 @@ public class ImportModule implements Serializable {
       return;
     }
     log4j.info("Adding .claspath entries");
-    final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-    final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+    final DocumentBuilder docBuilder = XMLUtil.getInstance().newDocumentBuilder();
     final Document doc = docBuilder.parse(obDir + "/.classpath");
     for (final DynaBean module : dModulesToInstall) {
       final String dir = "modules/" + (String) module.get("JAVAPACKAGE") + "/src";
@@ -1199,7 +1199,9 @@ public class ImportModule implements Serializable {
     }
 
     // Save the modified xml file to .classpath file
-    final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+    TransformerFactory tFactory = XMLUtil.getInstance().newTransformerFactory();
+
+    final Transformer transformer = tFactory.newTransformer();
     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
     final FileOutputStream fout = new FileOutputStream(obDir + "/.classpath");
     final StreamResult result = new StreamResult(fout);
