@@ -41,7 +41,7 @@ enyo.kind({
   tap: function () {
     var me = this,
         leftSubWindow = me.parent.leftSubWindow;
-    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) || OB.UTIL.isCrossStoreProduct(leftSubWindow.product)) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) && !OB.UTIL.isCrossStoreProduct(leftSubWindow.product)) {
       var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.OtherStoresDetailedStock');
       leftSubWindow.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
       serverCallStoreDetailedStock.exec({
@@ -86,7 +86,6 @@ enyo.kind({
   tap: function () {
     var product = this.leftSubWindow.product,
         me = this;
-
     if (product) {
       var line = null;
       if (me.leftSubWindow && me.leftSubWindow.line) {
@@ -189,13 +188,41 @@ enyo.kind({
     return true;
   },
   openOtherStoresStockModal: function () {
-    if (this.leftSubWindow.otherStoresStockModel) {
+    if (OB.UTIL.isCrossStoreProduct(this.leftSubWindow.product)) {
+      var me = this;
+      var selectedStoreCallBack = function (data) {
+          var warehouse = {};
+          warehouse.warehousename = data.name;
+          warehouse.warehouseqty = data.stock;
+          me.$.stockHere.removeClass('error');
+          me.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.stock);
+          me.$.stockHere.setDisabled(false);
+          me.$.stockOthers.removeClass('error');
+          me.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock') + data.qty);
+          me.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(data.price) + '</b>');
+          me.$.productAddToReceipt.setLabel();
+          me.$.productAddToReceipt.setDisabled(false);
+          me.leftSubWindow.changeWarehouseInfo(null, warehouse);
+          me.leftSubWindow.product.set('listPrice', data.price);
+          me.leftSubWindow.product.set('standardPrice', data.price);
+          };
+
       this.doShowPopup({
-        popup: 'modalStockInOtherStores',
+        popup: 'OBPOS_modalCrossStoreSelector',
         args: {
-          stockInfo: this.leftSubWindow.otherStoresStockModel
+          productId: this.leftSubWindow.product.get('id'),
+          callback: selectedStoreCallBack
         }
       });
+    } else {
+      if (this.leftSubWindow.otherStoresStockModel) {
+        this.doShowPopup({
+          popup: 'modalStockInOtherStores',
+          args: {
+            stockInfo: this.leftSubWindow.otherStoresStockModel
+          }
+        });
+      }
     }
     return true;
   },
@@ -332,12 +359,7 @@ enyo.kind({
         me = this;
     if (OB.UTIL.isCrossStoreProduct(me.product)) {
       this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_SelectStore'));
-      me.doShowPopup({
-        popup: 'OBPOS_modalCrossStoreSelector',
-        args: {
-          productId: me.product.get('id')
-        }
-      });
+      this.bodyComponent.$.stockOthers.doOpenOtherStoresStockModal();
     } else if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
       this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock_NotCalculated'));
     } else {
@@ -389,7 +411,7 @@ enyo.kind({
     } else {
       this.bodyComponent.$.productImage.setImg(params.product.get('img'));
     }
-    this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_loadingFromWarehouse', [this.warehouse.warehousename]));
+    this.bodyComponent.$.warehouseToGet.setContent(OB.UTIL.isCrossStoreProduct(this.product) ? OB.I18N.getLabel('OBPOS_loadingFromCrossStoreWarehouses') : OB.I18N.getLabel('OBPOS_loadingFromWarehouse', [this.warehouse.warehousename]));
     this.bodyComponent.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(params.product.get('standardPrice')) + '</b>');
     this.bodyComponent.$.descriptionArea.setContent(params.product.get('description'));
     this.bodyComponent.$.productAddToReceipt.setLabel();

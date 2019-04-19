@@ -24,6 +24,7 @@ enyo.kind({
       this.inherited(arguments);
       this.getFilterSelectorTableHeader().clearFilter();
       this.productId = this.args.productId;
+      this.$.body.$.crossStoreList.callback = this.args.callback;
       this.$.body.$.crossStoreList.searchAction(null, {
         filters: []
       });
@@ -62,6 +63,8 @@ enyo.kind({
     onHideSelector: '',
     onShowSelector: ''
   },
+  callback: null,
+  qty: 0,
   components: [{
     classes: 'span12',
     components: [{
@@ -99,9 +102,13 @@ enyo.kind({
     };
 
     function successCallBack(data) {
+      me.qty = 0;
       if (data && !data.exception) {
         me.$.csStoreSelector.collection.reset(data);
         me.$.renderLoading.hide();
+        _.each(data, function (value) {
+          me.qty += value.stock;
+        });
       } else {
         OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
         me.$.csStoreSelector.collection.reset();
@@ -155,6 +162,14 @@ enyo.kind({
   name: 'OBPOS.UI.CrossStoreLine',
   kind: 'OB.UI.listItemButton',
   classes: 'obpos-listitembutton',
+  tap: function () {
+    if (this.owner.owner.owner.owner.callback) {
+      var data = this.model.attributes;
+      data.qty = this.owner.owner.owner.owner.qty - this.model.get('stock');
+      this.owner.owner.owner.owner.callback(data);
+      this.owner.owner.owner.owner.owner.owner.hide();
+    }
+  },
   components: [{
     classes: 'obpos-store-information',
     name: 'iconStore',
