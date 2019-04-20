@@ -43,7 +43,9 @@ public class Warehouses extends QueryTerminalProperty {
     try {
       OBContext.setAdminMode(true);
       Map<String, Object> paramValues = new HashMap<String, Object>();
-      paramValues.put("orgId", OBContext.getOBContext().getCurrentOrganization().getId());
+
+      paramValues.put("orgId", jsonsent.has("organization") ? jsonsent.get("organization")
+          : OBContext.getOBContext().getCurrentOrganization().getId());
 
       return paramValues;
     } finally {

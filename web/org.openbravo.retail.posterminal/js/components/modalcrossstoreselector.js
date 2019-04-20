@@ -165,6 +165,9 @@ enyo.kind({
   tap: function () {
     if (this.owner.owner.owner.owner.callback) {
       var data = this.model.attributes;
+      //FIXME Set the correct warehouseId and warehouseName
+      data.warehouseid = 'BD5989DAEC9C454B9EAA2561A904A637';
+      data.warehousename = 'Orhi Store - Warehouse';
       data.qty = this.owner.owner.owner.owner.qty - this.model.get('stock');
       this.owner.owner.owner.owner.callback(data);
       this.owner.owner.owner.owner.owner.owner.hide();

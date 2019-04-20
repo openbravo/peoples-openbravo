@@ -191,14 +191,15 @@ enyo.kind({
     if (OB.UTIL.isCrossStoreProduct(this.leftSubWindow.product)) {
       var me = this;
       var selectedStoreCallBack = function (data) {
-          var warehouse = {};
-          warehouse.warehousename = data.name;
-          warehouse.warehouseqty = data.stock;
+          var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.term.Warehouses'),
+              warehouse = {
+              warehouseid: data.warehouseid,
+              warehousename: data.warehousename,
+              warehouseqty: data.stock
+              };
           me.$.stockHere.removeClass('error');
           me.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.stock);
           me.$.stockHere.setDisabled(false);
-          me.$.stockOthers.removeClass('error');
-          me.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock') + data.qty);
           me.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(data.price) + '</b>');
           me.$.productAddToReceipt.setLabel();
           me.$.productAddToReceipt.setDisabled(false);
@@ -206,7 +207,6 @@ enyo.kind({
           me.leftSubWindow.product.set('listPrice', data.price);
           me.leftSubWindow.product.set('standardPrice', data.price);
           };
-
       this.doShowPopup({
         popup: 'OBPOS_modalCrossStoreSelector',
         args: {

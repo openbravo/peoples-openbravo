@@ -82,12 +82,7 @@ public class ShipmentUtils {
   public ShipmentInOut createNewShipment(Order order, JSONObject jsonorder,
       ArrayList<OrderLine> lineReferences, boolean useOrderDocumentNoForRelatedDocs,
       List<DocumentNoHandler> docNoHandlers) {
-    final OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
-    locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
-    locators.add(Restrictions.eqOrIsNull(Locator.PROPERTY_ISVIRTUAL, false));
-    locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
-    locators.setMaxResults(2);
-    List<Locator> locatorList = locators.list();
+    List<Locator> locatorList = getLocatorList(order.getWarehouse());
 
     if (locatorList.isEmpty()) {
       throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
@@ -114,6 +109,16 @@ public class ShipmentUtils {
       throw new OBException("Error when creating the shipment: " + e);
     }
     return shipment;
+  }
+
+  private List<Locator> getLocatorList(Warehouse warehouse) {
+    final OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
+    locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, warehouse));
+    locators.add(Restrictions.eqOrIsNull(Locator.PROPERTY_ISVIRTUAL, false));
+    locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
+    locators.setFilterOnReadableOrganization(false);
+    locators.setMaxResults(2);
+    return locators.list();
   }
 
   private void addDocumentNoHandler(BaseOBObject bob, Entity entity, DocumentType docTypeTarget,
@@ -195,15 +200,22 @@ public class ShipmentUtils {
     Locator foundSingleBin = null;
     Entity shplineentity = ModelProvider.getInstance().getEntity(ShipmentInOutLine.class);
 
-    if (locatorList.size() == 1) {
-      foundSingleBin = locatorList.get(0);
-    }
     for (int i = 0; i < orderlines.length(); i++) {
 
       OrderLine orderLine = lineReferences.get(i);
 
       if (!orderLine.isObposIspaid()) {
         continue;
+      }
+
+      final Warehouse warehouse = (orderLine.getWarehouse() != null ? orderLine.getWarehouse()
+          : order.getWarehouse());
+
+      List<Locator> lineLocatorList = warehouse.getId().equals(order.getWarehouse().getId())
+          ? locatorList
+          : getLocatorList(warehouse);
+      if (lineLocatorList.size() == 1) {
+        foundSingleBin = lineLocatorList.get(0);
       }
 
       final List<ShipmentInOutLine> createdShipmentLines = new ArrayList<>();
@@ -217,8 +229,6 @@ public class ShipmentUtils {
       if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
         boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
-        final Warehouse warehouse = (orderLine.getWarehouse() != null ? orderLine.getWarehouse()
-            : order.getWarehouse());
         if (!warehouse.equals(shipment.getWarehouse())) {
           shipment.setWarehouse(warehouse);
         }
@@ -298,6 +308,7 @@ public class ShipmentUtils {
 
             OBCriteria<StockProposed> stockProposed = OBDal.getInstance()
                 .createCriteria(StockProposed.class);
+            stockProposed.setFilterOnReadableOrganization(false);
             stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, id));
             stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
 
@@ -368,7 +379,7 @@ public class ShipmentUtils {
             if (jsonorderline.has("overissueStoreBin")) {
               loc = OBDal.getInstance().get(Locator.class, jsonorderline.get("overissueStoreBin"));
             } else {
-              loc = locatorList.get(0);
+              loc = lineLocatorList.get(0);
             }
 
             try {
@@ -573,7 +584,7 @@ public class ShipmentUtils {
       String productId, String uomId, String warehouseId, String attributesetinstanceId,
       BigDecimal quantity, String warehouseRuleId, String reservationId) {
     String processId = SequenceIdData.getUUID();
-    OBContext.setAdminMode(false);
+    OBContext.setCrossOrgReferenceAdminMode();
     try {
       if (log.isDebugEnabled()) {
         log.debug("Parameters : '" + processId + "', '" + recordID + "', " + quantity + ", '"
@@ -596,7 +607,7 @@ public class ShipmentUtils {
       throw new OBException("Error in OrderLoader when getting stock for product " + productId
           + " order line " + recordID, ex);
     } finally {
-      OBContext.restorePreviousMode();
+      OBContext.restorePreviousCrossOrgReferenceMode();
     }
   }
 
