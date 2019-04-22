@@ -1415,7 +1415,18 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
   text-align: right;
 }
 
-.obpos-store-information-empty {
+.obpos-store-information-specialOpenHour {
+  float: left;
+  padding-left: 10px;
+}
+
+.obpos-store-information-empty2 {
+  display: table-cell; 
+  vertical-align: middle; 
+  width: 2%;
+}
+
+.obpos-store-information-empty5 {
   display: table-cell; 
   vertical-align: middle; 
   width: 5%;
