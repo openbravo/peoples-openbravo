@@ -199,7 +199,6 @@ enyo.kind({
               };
           me.$.stockHere.removeClass('error');
           me.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.stock);
-          me.$.stockHere.setDisabled(false);
           me.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(data.price) + '</b>');
           me.$.productAddToReceipt.setLabel();
           me.$.productAddToReceipt.setDisabled(false);
