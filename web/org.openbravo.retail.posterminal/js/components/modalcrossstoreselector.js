@@ -163,7 +163,7 @@ enyo.kind({
   kind: 'OB.UI.listItemButton',
   classes: 'obpos-listitembutton',
   tap: function () {
-    if (this.owner.owner.owner.owner.callback) {
+    if (this.owner.owner.owner.owner.callback && !(event.cancel)) {
       var data = this.model.attributes;
       //FIXME Set the correct warehouseId and warehouseName
       data.warehouseid = 'BD5989DAEC9C454B9EAA2561A904A637';
@@ -177,6 +177,7 @@ enyo.kind({
     classes: 'obpos-store-information',
     name: 'iconStore',
     tap: function () {
+      event.cancel = true;
       this.bubble('onShowPopup', {
         popup: 'OBPOS_storeInformation',
         args: {
