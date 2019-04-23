@@ -114,7 +114,9 @@ public class ProductProperties extends ModelExtension {
         HashMap<String, Object> localParams = (HashMap<String, Object>) params;
         posDetail = POSUtils.getTerminalById((String) localParams.get("terminalId"));
         localmultiPriceList = (Boolean) localParams.get("multiPriceList");
-        localCrossStore = (Boolean) localParams.get("crossStore");
+        localCrossStore = localParams.containsKey("crossStore")
+            ? (Boolean) localParams.get("crossStore")
+            : false;
       }
     } catch (Exception e) {
       log.error("Error getting params: " + e.getMessage(), e);
