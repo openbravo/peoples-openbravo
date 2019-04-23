@@ -84,7 +84,7 @@ public class OrderGroupingProcessor {
 
     long t0 = System.currentTimeMillis();
     long t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
-    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     final String strUserId = OBContext.getOBContext().getUser().getId();
     final String strCurrentDate = dateFormatter.format(currentDate);
     final String strLang = RequestContext.get().getVariablesSecureApp().getLanguage();
@@ -146,8 +146,8 @@ public class OrderGroupingProcessor {
               : "and org.em_obpos_c_doctype_id = dt.c_doctype_id";
 
       // insert invoice headers
-      OrderGroupingProcessorData.insertHeaderGrouping(conn, strUserId, strExecutionId,
-          strInvDescription, strCurrentDate, cashUpId, strSeparateInvoiceForReturnsHeaderParameter1,
+      OrderGroupingProcessorData.insertHeaderGrouping(conn, strCurrentDate, strUserId,
+          strExecutionId, strInvDescription, cashUpId, strSeparateInvoiceForReturnsHeaderParameter1,
           strSeparateInvoiceForReturnsHeaderParameter2);
       t1 = System.currentTimeMillis();
       // insert invoice lines
@@ -165,8 +165,8 @@ public class OrderGroupingProcessor {
       OrderGroupingProcessorData.insertInvoiceTaxGrouping(conn, strExecutionId);
     } else {
       // insert invoice headers
-      OrderGroupingProcessorData.insertHeaderNoGrouping(conn, strUserId, strExecutionId,
-          strInvDescription, strLang, strCurrentDate, cashUpId);
+      OrderGroupingProcessorData.insertHeaderNoGrouping(conn, strCurrentDate, strUserId,
+          strExecutionId, strInvDescription, strLang, cashUpId);
       t1 = System.currentTimeMillis();
       // insert invoice lines
       OrderGroupingProcessorData.insertLinesNoGrouping(conn, cashUpId, strExecutionId);
