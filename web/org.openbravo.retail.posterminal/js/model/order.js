@@ -3276,19 +3276,35 @@
       this.get('orderManualPromotions').push(promotionToApply);
     },
 
-    calculateDiscountedLinePrice: function (line) {
-      var i;
-      var allDiscountedAmt = 0;
-      for (i = 0; i < line.get('promotions').length; i++) {
-        if (!line.get('promotions')[i].hidden) {
-          allDiscountedAmt += line.get('promotions')[i].amt;
+    getCurrentDiscountedLinePrice: function (line, ignoreExecutedAtTheEndPromo) {
+      var i, currentDiscountedLinePrice = 0,
+          allDiscountedAmt = 0;
+      if (line.get('promotions')) {
+        for (i = 0; i < line.get('promotions').length; i++) {
+          if (!line.get('promotions')[i].hidden) {
+            if (ignoreExecutedAtTheEndPromo && line.get('promotions')[i].executedAtTheEndPromo) {
+              continue;
+            } else {
+              allDiscountedAmt += line.get('promotions')[i].amt;
+            }
+          }
         }
       }
+
+      currentDiscountedLinePrice = OB.DEC.toNumber(new BigDecimal(String(line.get('price'))).subtract(new BigDecimal(String(allDiscountedAmt)).divide(new BigDecimal(String(line.get('qty'))), 20, OB.DEC.getRoundingMode())));
+
+      return currentDiscountedLinePrice;
+    },
+
+    calculateDiscountedLinePrice: function (line) {
+      var finalDiscountedLinePrice;
+
+      finalDiscountedLinePrice = this.getCurrentDiscountedLinePrice(line, false);
 
       if (line.get('qty') === 0) {
         line.unset('discountedLinePrice');
       } else {
-        line.set('discountedLinePrice', OB.DEC.toNumber(new BigDecimal(String(line.get('price'))).subtract(new BigDecimal(String(allDiscountedAmt)).divide(new BigDecimal(String(line.get('qty'))), 20, OB.DEC.getRoundingMode()))));
+        line.set('discountedLinePrice', finalDiscountedLinePrice);
       }
     },
 
@@ -3371,6 +3387,7 @@
 
       disc.obdiscApplyafter = (!OB.UTIL.isNullOrUndefined(rule.get('obdiscApplyafter'))) ? rule.get('obdiscApplyafter') : false;
       disc.obdiscAllowinnegativelines = (!OB.UTIL.isNullOrUndefined(rule.get('obdiscAllowinnegativelines'))) ? rule.get('obdiscAllowinnegativelines') : false;
+      disc.executedAtTheEndPromo = discount.executedAtTheEndPromo || false;
 
       var unitsConsumed = 0;
       var unitsConsumedByNoCascadeRules = 0;

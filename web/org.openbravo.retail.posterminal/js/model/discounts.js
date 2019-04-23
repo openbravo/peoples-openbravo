@@ -433,7 +433,7 @@
           return;
         }
 
-        linePrice = l.get('discountedLinePrice') || l.get('price');
+        linePrice = receipt.getCurrentDiscountedLinePrice(l, true) || l.get('price');
         if (linePrice < clonedDiscountRule.get('fixedPrice')) {
           return;
         }
