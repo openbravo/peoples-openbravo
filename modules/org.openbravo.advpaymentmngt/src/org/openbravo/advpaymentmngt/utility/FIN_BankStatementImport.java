@@ -427,15 +427,9 @@ public abstract class FIN_BankStatementImport {
       }
 
       else {
-        final Object[] resultObject = (Object[]) businessPartnersScroll.get(0);
+        final String id = businessPartnersScroll.getString(0);
         if (!businessPartnersScroll.next()) {
-          String strParnterId = "";
-          if (resultObject.getClass().isArray()) {
-            final Object[] values = resultObject;
-            strParnterId = (String) values[0];
-          }
-          BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strParnterId);
-          return bp;
+          return OBDal.getInstance().get(BusinessPartner.class, id);
         }
 
         else {
@@ -456,14 +450,8 @@ public abstract class FIN_BankStatementImport {
     try {
       businessPartners.beforeFirst();
       businessPartners.next();
-      Object[] resultObject = (Object[]) businessPartners.get(0);
-
-      String targetBusinessPartnerName = "";
-      if (resultObject.getClass().isArray()) {
-        final Object[] values = resultObject;
-        targetBusinessPartnerId = (String) values[0];
-        targetBusinessPartnerName = (String) values[1];
-      }
+      targetBusinessPartnerId = businessPartners.getString(0);
+      String targetBusinessPartnerName = businessPartners.getString(1);
 
       int distance = StringUtils.getLevenshteinDistance(partnername, targetBusinessPartnerName);
       String parsedPartnername = partnername.toLowerCase();
@@ -480,17 +468,11 @@ public abstract class FIN_BankStatementImport {
       }
 
       businessPartners.beforeFirst();
-      int i = 0;
       while (businessPartners.next()) {
-        i++;
         String bpId = "";
         String bpName = "";
-        resultObject = (Object[]) businessPartners.get(0);
-        if (resultObject.getClass().isArray()) {
-          final Object[] values = resultObject;
-          bpId = (String) values[0];
-          bpName = (String) values[1];
-        }
+        bpId = businessPartners.getString(0);
+        bpName = businessPartners.getString(1);
         // Calculates distance between two strings meaning number of changes required for a string
         // to
         // convert in another string
@@ -500,14 +482,10 @@ public abstract class FIN_BankStatementImport {
           distance = bpDistance;
           targetBusinessPartnerId = bpId;
         }
-        if (i % 100 == 0) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
-        }
       }
       return targetBusinessPartnerId;
     } catch (Exception e) {
-      log4j.error(e.getStackTrace());
+      log4j.error("Exception during closest", e);
       return targetBusinessPartnerId;
     }
   }
