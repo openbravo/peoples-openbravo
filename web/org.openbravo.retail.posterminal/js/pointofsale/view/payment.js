@@ -442,6 +442,9 @@ enyo.kind({
 
   updateCreditSalesAction: function () {
 
+    if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal'))) {
+      return;
+    }
     // The terminal allows to pay on credit
     var visible = OB.MobileApp.model.get('terminal').allowpayoncredit;
     // And is a layaway or a new order (no loaded order)
@@ -557,6 +560,9 @@ enyo.kind({
     : this.receipt;
   },
   applyPaymentChange: function (paymentchange) {
+    if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal'))) {
+      return;
+    }
     // Set change calculation results
     this.activeModel().set('changePayments', paymentchange.payments);
     OB.MobileApp.model.set('changeReceipt', paymentchange.label);
