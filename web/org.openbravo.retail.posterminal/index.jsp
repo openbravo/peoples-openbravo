@@ -73,7 +73,7 @@ if (useServiceWorkers) {
   <script src="../../org.openbravo.mobile.core/OBMOBC_Main/Lib?_id=Enyo"></script>
   <script src="../../org.openbravo.mobile.core/OBMOBC_Main/Lib?_id=Deps"></script>
   <script src="../../org.openbravo.mobile.core/OBMOBC_Main/StaticResources?_appName=WebPOS"></script>
-  <script src="../../org.openbravo.mobile.core/OBMOBC_Main/SkinResources"></script>
+  <script src="../../org.openbravo.mobile.core/OBMOBC_Main/CSSResources?_appName=WebPOS"></script>
   <script>
     (function () {
       // manage manifest
