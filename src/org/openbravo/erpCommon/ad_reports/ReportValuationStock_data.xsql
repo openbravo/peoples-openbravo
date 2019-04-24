@@ -506,10 +506,12 @@
        SELECT MAX(dateto)
        FROM m_valued_stock_agg agg
        WHERE ad_client_id = ?
+       AND dateto < to_date(?)
        AND ad_org_id IN ('1')
       ]]>
     </Sql>
     <Parameter name="adClient"/>
+    <Parameter name="dateFilter"/>
     <Parameter name="organization" type="replace" optional="true" after="AND ad_org_id IN (" text="'1'"/>
   </SqlMethod>
   
