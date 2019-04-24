@@ -23,10 +23,10 @@ public class CrossStoreFilterProperties extends ModelExtension {
   public List<HQLProperty> getHQLProperties(Object params) {
     final List<HQLProperty> list = new ArrayList<>();
 
-    list.add(new HQLProperty("o.id", "id"));
-    list.add(new HQLProperty("o.name", "name"));
-    list.add(new HQLProperty("min(w.id)", "warehouseid"));
-    list.add(new HQLProperty("min(w.name)", "warehousename"));
+    list.add(new HQLProperty("o.id", "orgId"));
+    list.add(new HQLProperty("o.name", "orgName"));
+    list.add(new HQLProperty("min(w.id)", "warehouseId"));
+    list.add(new HQLProperty("min(w.name)", "warehouseName"));
     list.add(new HQLProperty("pp.standardPrice", "price"));
     list.add(new HQLProperty("sum(sd.quantityOnHand - sd.reservedQty)", "stock"));
 
