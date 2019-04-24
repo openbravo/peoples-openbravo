@@ -48,7 +48,6 @@ if (useServiceWorkers) {
   <%@include file="../org.openbravo.mobile.core/assets/include/mobile.jsp" %>
 
   <link rel="shortcut icon" type="image/x-icon" href="../../web/images/favicon.ico" />
-  <link rel="stylesheet" type="text/css" href="../../org.openbravo.mobile.core/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS"/>
 
   <script>
     window.ServiceWorkerUtil={};
