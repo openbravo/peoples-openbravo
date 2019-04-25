@@ -793,18 +793,18 @@ public class ModelProvider implements OBSingleton {
   private void createPropertyInParentEntity(Entity e) {
     try {
       List<Property> props = new ArrayList<Property>(e.getProperties());
+
       for (final Property p : props) {
-        if (!p.isParent() && (p.isOneToMany() || p.isId()
-            || p.getColumnName().equalsIgnoreCase("createdby")
-            || p.getColumnName().equalsIgnoreCase("updatedby") || p.getReferencedProperty() == null
-            || entitiesByClassName.get("org.openbravo.model.ad.system.Client")
-                .equals(p.getReferencedProperty().getEntity())
-            || entitiesByClassName.get("org.openbravo.model.common.enterprise.Organization")
-                .equals(p.getReferencedProperty().getEntity())
-            || entitiesByClassName.get("org.openbravo.model.ad.module.Module")
-                .equals(p.getReferencedProperty().getEntity())
-            || entitiesByClassName.get("org.openbravo.model.ad.system.Language")
-                .equals(p.getReferencedProperty().getEntity()))) {
+        if (!p.isParent()
+            && (p.isOneToMany() || p.isId() || p.isAuditInfo() || p.getReferencedProperty() == null
+                || entitiesByClassName.get("org.openbravo.model.ad.system.Client")
+                    .equals(p.getReferencedProperty().getEntity())
+                || entitiesByClassName.get("org.openbravo.model.common.enterprise.Organization")
+                    .equals(p.getReferencedProperty().getEntity())
+                || entitiesByClassName.get("org.openbravo.model.ad.module.Module")
+                    .equals(p.getReferencedProperty().getEntity())
+                || entitiesByClassName.get("org.openbravo.model.ad.system.Language")
+                    .equals(p.getReferencedProperty().getEntity()))) {
           continue;
         }
 
