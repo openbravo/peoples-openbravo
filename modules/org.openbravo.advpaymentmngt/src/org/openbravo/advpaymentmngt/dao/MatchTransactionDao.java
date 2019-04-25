@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -35,17 +33,12 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.hibernate.sql.JoinType;
-import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
-import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
@@ -53,7 +46,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
-import org.openbravo.service.db.CallStoredProcedure;
 
 public class MatchTransactionDao {
 
@@ -114,110 +106,6 @@ public class MatchTransactionDao {
     return (lines.isEmpty());
   }
 
-  public static FIN_Reconciliation addNewReconciliation(ConnectionProvider conProvider,
-      VariablesSecureApp vars, String strFinancialAccount) throws ServletException {
-    FIN_FinancialAccount financialAccount = MatchTransactionDao
-        .getObject(FIN_FinancialAccount.class, strFinancialAccount);
-    // FIXME: added to access table to be
-    // removed when new security implementation is done
-    OBContext.setAdminMode();
-
-    final FIN_Reconciliation newData = OBProvider.getInstance().get(FIN_Reconciliation.class);
-    try {
-      final List<Object> parameters = new ArrayList<Object>();
-      parameters.add(financialAccount.getClient().getId());
-      parameters.add(financialAccount.getOrganization().getId());
-      parameters.add("REC");
-      String strDocType = (String) CallStoredProcedure.getInstance()
-          .call("AD_GET_DOCTYPE", parameters, null);
-      if (strDocType == null || strDocType.equals("")) {
-        // FIXME : Well-formed error message
-        throw new ServletException("No Document Type defined for the Reconciliation");
-      }
-      String strDocumentNo = Utility.getDocumentNo(conProvider, vars, "Finnancial Transaction",
-          "FIN_Reconciliation", strDocType, strDocType, false, true);
-      if (strDocumentNo == null || strDocumentNo.equals("")) {
-        // FIXME : Well-formed error message
-        throw new ServletException(
-            "No Reconciliation Document Number obtained for the defined Document Type");
-      }
-      String strDocStatus = "DR";
-      newData.setActive(true);
-      newData.setOrganization(financialAccount.getOrganization());
-      newData.setClient(financialAccount.getClient());
-      newData.setAccount(financialAccount);
-      newData.setDocumentNo(strDocumentNo);
-      newData.setDocumentType(MatchTransactionDao.getObject(DocumentType.class, strDocType));
-      newData.setDocumentStatus(strDocStatus);
-      Date endingDate = MatchTransactionDao.getBankStatementLineMaxDate(financialAccount);
-      newData.setTransactionDate(endingDate != null ? endingDate : new Date());
-      newData.setEndingDate(endingDate != null ? endingDate : new Date());
-      BigDecimal startingBalance = MatchTransactionDao
-          .getReconciliationLastAmount(financialAccount);
-      OBDal.getInstance().save(newData);
-      OBDal.getInstance().flush();
-      newData.setEndingBalance(getEndingBalance(newData));
-      newData.setStartingbalance(startingBalance != null ? startingBalance : BigDecimal.ZERO);
-
-      OBDal.getInstance().save(newData);
-      OBDal.getInstance().flush();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
-    return newData;
-  }
-
-  public static List<FIN_BankStatementLine> getMatchingBankStatementLines(
-      String strFinancialAccountId, String strReconciliationId, String strPaymentTypeFilter,
-      String strShowCleared) {
-    FIN_Reconciliation reconciliation = OBDal.getInstance()
-        .get(FIN_Reconciliation.class, strReconciliationId);
-    boolean isLastReconciliation = islastreconciliation(reconciliation);
-    final StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as bsl ");
-    whereClause.append(" left outer join bsl.financialAccountTransaction as fat");
-    whereClause.append(" where bsl.").append(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT);
-    whereClause.append(".").append(FIN_BankStatement.PROPERTY_ACCOUNT).append(".id = '");
-    whereClause.append(strFinancialAccountId).append("'");
-    whereClause.append(" and bsl.bankStatement.processed = 'Y'");
-    if (strPaymentTypeFilter.equalsIgnoreCase("D")) {
-      whereClause.append("   and (bsl.").append(FIN_BankStatementLine.PROPERTY_DRAMOUNT);
-      whereClause.append(" is null ");
-      whereClause.append("   or bsl.").append(FIN_BankStatementLine.PROPERTY_DRAMOUNT);
-      whereClause.append(" = 0) ");
-    } else if (strPaymentTypeFilter.equalsIgnoreCase("P")) {
-      whereClause.append("   and (bsl.").append(FIN_BankStatementLine.PROPERTY_CRAMOUNT);
-      whereClause.append(" is null ");
-      whereClause.append("   or bsl.").append(FIN_BankStatementLine.PROPERTY_CRAMOUNT);
-      whereClause.append(" = 0) ");
-    }
-    if (!isLastReconciliation) {
-      whereClause.append(" and  bsl.")
-          .append(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE)
-          .append(" <= :endingdate");
-    }
-    whereClause.append("   and (fat is null");
-    whereClause.append("   or (fat.").append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION);
-    whereClause.append(".id = '").append(strReconciliationId).append("'");
-    if (!strShowCleared.equalsIgnoreCase("Y")) {
-      whereClause.append("   and fat.").append(FIN_FinaccTransaction.PROPERTY_STATUS);
-      whereClause.append(" <> 'RPPC' ");
-    }
-    whereClause.append("))");
-
-    whereClause.append(" order by bsl.").append(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE);
-    whereClause.append(", bsl.").append(FIN_BankStatementLine.PROPERTY_LINENO);
-    whereClause.append(", bsl.").append(FIN_BankStatementLine.PROPERTY_BPARTNERNAME);
-    final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance()
-        .createQuery(FIN_BankStatementLine.class, whereClause.toString());
-    if (!isLastReconciliation) {
-      obData.setNamedParameter("endingdate",
-          OBDal.getInstance().get(FIN_Reconciliation.class, strReconciliationId).getEndingDate());
-    }
-    return obData.list();
-  }
-
   public static boolean islastreconciliation(FIN_Reconciliation reconciliation) {
     if (MatchTransactionDao.getReconciliationListAfterDate(reconciliation).size() > 0) {
       return false;
@@ -240,22 +128,6 @@ public class MatchTransactionDao {
     final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance()
         .createQuery(FIN_BankStatementLine.class, whereClause.toString());
 
-    return obData.list();
-  }
-
-  public static List<FIN_BankStatementLine> getMatchedBankStatementLines(
-      FIN_BankStatement bankStatement) {
-    final StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as bsl ");
-    whereClause.append(" where bsl.").append(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT);
-    whereClause.append(".").append(".id = '");
-    whereClause.append(bankStatement.getId()).append("'");
-    whereClause.append("   and bsl.")
-        .append(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION);
-    whereClause.append(" is not null");
-    whereClause.append(" and bsl.bankStatement.processed = 'Y'");
-    final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance()
-        .createQuery(FIN_BankStatementLine.class, whereClause.toString());
     return obData.list();
   }
 

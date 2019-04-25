@@ -43,9 +43,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
-import org.openbravo.erpCommon.utility.OBObjectFieldProvider;
 import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -53,43 +51,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 
 public class TransactionsDao {
-
-  public static List<Tab> getWindowData(String className) {
-
-    final Map<String, Object> parameters = new HashMap<>(1);
-    final StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as td");
-    whereClause.append(" left outer join td.window as win");
-    whereClause.append(" left outer join td.masterDetailForm as mdf");
-    whereClause.append(" where UPPER(mdf.javaClassName) = UPPER(:className)");
-    parameters.put("className", className);
-
-    final OBQuery<Tab> obQuery = OBDal.getInstance().createQuery(Tab.class, whereClause.toString());
-    obQuery.setNamedParameters(parameters);
-    return obQuery.list();
-  }
-
-  public static OBObjectFieldProvider[] getAccTrxData(String finFinancialAccountId) {
-    final Map<String, Object> parameters = new HashMap<>(1);
-    final StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as ft");
-    whereClause.append(" left outer join ft.account as acc");
-    whereClause.append(" left outer join ft.reconciliation as rec");
-    whereClause.append(" where acc.id = rec.account.id");
-    whereClause.append(" and acc.id = :financialAccountId");
-    parameters.put("financialAccountId", finFinancialAccountId);
-    OBContext.setAdminMode();
-    try {
-      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance()
-          .createQuery(FIN_FinaccTransaction.class, whereClause.toString());
-      obQuery.setNamedParameters(parameters);
-      OBObjectFieldProvider[] objectFieldProvider = OBObjectFieldProvider
-          .createOBObjectFieldProvider(obQuery.list());
-      return objectFieldProvider;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
 
   public static FIN_FinaccTransaction createFinAccTransaction(FIN_Payment payment) {
     final FIN_FinaccTransaction newTransaction = OBProvider.getInstance()
@@ -217,29 +178,6 @@ public class TransactionsDao {
       obc.addOrderBy(FIN_Reconciliation.PROPERTY_CREATIONDATE, false);
       obc.setMaxResults(1);
       return (FIN_Reconciliation) obc.uniqueResult();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  public static int getPendingToMatchCount(FIN_FinancialAccount financialAccount) {
-    final StringBuilder whereClause = new StringBuilder();
-
-    OBContext.setAdminMode();
-    try {
-      whereClause.append(" as fatrx ");
-      whereClause.append(" where fatrx.");
-      whereClause.append(FIN_FinaccTransaction.PROPERTY_ACCOUNT);
-      whereClause.append(".id='");
-      whereClause.append(financialAccount.getId());
-      whereClause.append("'");
-      whereClause.append(" and fatrx.")
-          .append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION)
-          .append(" is null ");
-      final OBQuery<FIN_FinaccTransaction> obqFATrx = OBDal.getInstance()
-          .createQuery(FIN_FinaccTransaction.class, whereClause.toString());
-      return obqFATrx.count();
-
     } finally {
       OBContext.restorePreviousMode();
     }
