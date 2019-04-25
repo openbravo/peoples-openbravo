@@ -49,6 +49,7 @@ public class TestConstants {
 
   public static class Windows {
     public static final String SALES_ORDER = "143";
+    public static final String DISCOUNTS_AND_PROMOTIONS = "800028";
   }
 
   private TestConstants() {

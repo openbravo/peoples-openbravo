@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import org.dom4j.io.SAXReader;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
+import org.openbravo.dal.xml.XMLUtil;
 
 /**
  * This class implements a central location where the Openbravo.properties are read and made
@@ -81,7 +82,7 @@ public class OBPropertiesProvider {
       final File file = getFileFromDevelopmentPath("Format.xml");
       if (file != null) {
         try {
-          SAXReader reader = new SAXReader();
+          SAXReader reader = XMLUtil.getInstance().newSAXReader();
           formatXML = reader.read(new FileReader(file));
         } catch (Exception e) {
           throw new IllegalStateException(e);
@@ -93,7 +94,7 @@ public class OBPropertiesProvider {
 
   public void setFormatXML(InputStream is) {
     try {
-      SAXReader reader = new SAXReader();
+      SAXReader reader = XMLUtil.getInstance().newSAXReader();
       formatXML = reader.read(is);
     } catch (Exception e) {
       throw new IllegalStateException(e);

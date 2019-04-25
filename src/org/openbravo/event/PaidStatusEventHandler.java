@@ -20,8 +20,6 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -35,7 +33,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 class PaidStatusEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(FIN_FinaccTransaction.ENTITY_NAME) };
-  protected Logger logger = LogManager.getLogger();
+
   public static final String STATUS_CLEARED = "RPPC";
   public static final String STATUS_DEPOSIT = "RDNC";
   public static final String STATUS_WITHDRAWN = "PWNC";

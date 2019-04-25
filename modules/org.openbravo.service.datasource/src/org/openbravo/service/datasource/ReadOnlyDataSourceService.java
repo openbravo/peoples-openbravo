@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
   private static final Logger log = LogManager.getLogger();
   private static final int MAX_PAGE_SIZE_INCREASE = 3;
   private static final String NEW_END_ROW = "_newEndRow";
+  private static final String UNSUPPORTED_OPERATION_MSG = "Only fetch is supported";
 
   /*
    * (non-Javadoc)
@@ -163,18 +164,23 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
       data = getData(parameters, startRow, selectedRecords);
       parameters.put(NEW_END_ROW, Integer.toString(selectedRecords));
     } else {
-      data = getData(parameters, startRow, endRow);
-      while (isLastRecordSelected(data) && pageSizeIncreaseCount < MAX_PAGE_SIZE_INCREASE) {
+      int currentEndRow = endRow;
+      data = getData(parameters, startRow, currentEndRow);
+      while (data.size() > currentEndRow - startRow && isLastRecordSelected(data)
+          && pageSizeIncreaseCount < MAX_PAGE_SIZE_INCREASE) {
         pageSizeIncreaseCount++;
         log.debug(
-            "The amount of selected records is higher than the page size, increasing page size x{}",
-            pageSizeIncreaseCount + 1);
-        data = getData(parameters, startRow, endRow * (pageSizeIncreaseCount + 1));
+            "The amount of selected records is higher than the page size, increasing page size x{}. Tab: {}.",
+            pageSizeIncreaseCount + 1, parameters.get(JsonConstants.TAB_PARAMETER));
+        currentEndRow = endRow * (pageSizeIncreaseCount + 1);
+        data = getData(parameters, startRow, currentEndRow);
       }
       if (pageSizeIncreaseCount >= 1) {
-        parameters.put(NEW_END_ROW, Integer.toString(endRow * (pageSizeIncreaseCount + 1)));
+        parameters.put(NEW_END_ROW, Integer.toString(currentEndRow));
         if (pageSizeIncreaseCount == MAX_PAGE_SIZE_INCREASE) {
-          log.warn("The amount of selected records is higher than the maximum page size allowed.");
+          log.warn(
+              "The amount of selected records is higher than the maximum page size allowed. Tab: {}.",
+              parameters.get(JsonConstants.TAB_PARAMETER));
         }
       }
     }
@@ -182,16 +188,16 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
   }
 
   private boolean isLastRecordSelected(List<Map<String, Object>> data) {
-    if (data.size() == 0) {
+    if (data.isEmpty()) {
       return false;
     }
     Boolean isLastRecordSelected = Boolean.FALSE;
     Map<String, Object> lastRecord = data.get(data.size() - 1);
     Object obSelected = lastRecord.get("obSelected");
     if (obSelected != null) {
-      if (obSelected.getClass().equals(Boolean.class)) {
+      if (obSelected instanceof Boolean) {
         isLastRecordSelected = (Boolean) obSelected;
-      } else if (obSelected.getClass().equals(String.class)) {
+      } else if (obSelected instanceof String) {
         isLastRecordSelected = ((String) obSelected).equalsIgnoreCase("Y");
       }
     }
@@ -229,7 +235,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
    */
   @Override
   public String remove(Map<String, String> parameters) {
-    throw new UnsupportedOperationException("Only fetch is supported");
+    throw new UnsupportedOperationException(UNSUPPORTED_OPERATION_MSG);
   }
 
   /*
@@ -239,7 +245,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
    */
   @Override
   public String add(Map<String, String> parameters, String content) {
-    throw new UnsupportedOperationException("Only fetch is supported");
+    throw new UnsupportedOperationException(UNSUPPORTED_OPERATION_MSG);
   }
 
   /*
@@ -249,7 +255,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
    */
   @Override
   public String update(Map<String, String> parameters, String content) {
-    throw new UnsupportedOperationException("Only fetch is supported");
+    throw new UnsupportedOperationException(UNSUPPORTED_OPERATION_MSG);
   }
 
   /**

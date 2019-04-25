@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -236,7 +236,8 @@ public class WebServiceUtil implements OBSingleton {
       // the entity name in the url. For example:
       // https://livebuilds.openbravo.com/erp_main_pgsql/ws/dal/ADUser/100
       String regExp = "^(.*)[dal]+[\\/][A-Za-z0-9]+[\\/][A-Za-z0-9]+";
-      final TransformerFactory factory = TransformerFactory.newInstance();
+      final TransformerFactory factory = XMLUtil.getInstance().newTransformerFactory();
+
       final Transformer transformer = factory.newTransformer(new StreamSource(template));
       final DocumentSource source = new DocumentSource(DocumentHelper.parseText(xml));
       final StringWriter sw = new StringWriter();

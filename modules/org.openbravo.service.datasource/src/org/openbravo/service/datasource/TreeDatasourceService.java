@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2017 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -75,6 +76,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   private static final String AD_ORG_TABLE_ID = "155";
   private static final String ROOT_ORGANIZATION_ID = "0";
   private static final String SUMMARY_LEVEL_PROPERTY = "summaryLevel";
+  private static final String ACCESSIBLE_ORG_TREE = "#AccessibleOrgTree";
 
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;
@@ -770,13 +772,21 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       if (replacements.get(key).equals("'null'")) {
         // Strip the "@" from the key
         String keyWithoutAt = key.substring(1, key.length() - 1);
-        hqlCopy = hqlCopy.replaceAll(key,
-            "'" + (String) RequestContext.get().getSessionAttribute(keyWithoutAt) + "'");
+        hqlCopy = hqlCopy.replaceAll(key, getEscapedSessionAttribute(keyWithoutAt));
       } else {
         hqlCopy = hqlCopy.replaceAll(key, replacements.get(key));
       }
     }
     return hqlCopy;
+  }
+
+  private String getEscapedSessionAttribute(String keyWithoutAt) {
+    String value = (String) RequestContext.get().getSessionAttribute(keyWithoutAt);
+    if (ACCESSIBLE_ORG_TREE.equals(keyWithoutAt)) {
+      return value;
+    }
+
+    return "'" + StringEscapeUtils.escapeSql(value) + "'";
   }
 
   /**

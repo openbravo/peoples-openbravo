@@ -50,7 +50,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
   public XmlEngine xmlEngine = null;
   private static String strContext = null;
   private static String prefix = null;
-  protected Logger log4j = LogManager.getLogger();
+  protected Logger log4j = LogManager.getLogger(this.getClass());
 
   protected ConfigParameters globalParameters;
 

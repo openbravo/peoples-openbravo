@@ -10,7 +10,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -24,12 +24,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -41,6 +41,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_process.buildStructure.Build;
 import org.openbravo.erpCommon.ad_process.buildStructure.BuildTranslation;
@@ -289,25 +290,37 @@ public class TranslationManager {
       String AD_Language) {
     final File out = new File(directory, CONTRIBUTORS_FILENAME + "_" + AD_Language + ".xml");
     try {
-      final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      final DocumentBuilder builder = factory.newDocumentBuilder();
-      final Document document = builder.newDocument();
+      final Document document = newDocument();
       final Element root = document.createElement(XML_CONTRIB);
       root.setAttribute(XML_ATTRIBUTE_LANGUAGE, AD_Language);
       document.appendChild(root);
       root.appendChild(
           document.createTextNode(TranslationData.selectContributors(conn, AD_Language)));
       final DOMSource source = new DOMSource(document);
-      final TransformerFactory tFactory = TransformerFactory.newInstance();
-      final Transformer transformer = tFactory.newTransformer();
+
       // Output
       out.createNewFile();
       final StreamResult result = new StreamResult(out);
       // Transform
-      transformer.transform(source, result);
+      newTransformer().transform(source, result);
     } catch (final Exception e) {
       log4j.error("exportTrl", e);
     }
+  }
+
+  private static Document newDocument() throws ParserConfigurationException {
+    return XMLUtil.getInstance().newDocumentBuilder().newDocument();
+  }
+
+  private static Transformer newTransformer() throws TransformerConfigurationException {
+    TransformerFactory tFactory = XMLUtil.getInstance().newTransformerFactory();
+    tFactory.setAttribute("indent-number", 2);
+
+    Transformer transformer = tFactory.newTransformer();
+    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+    return transformer;
   }
 
   private static void exportReferenceData(ConnectionProvider conn, String rootDirectory,
@@ -514,8 +527,6 @@ public class TranslationManager {
       int rows = 0;
       boolean hasRows = false;
 
-      DocumentBuilderFactory factory = null;
-      DocumentBuilder builder = null;
       Document document = null;
       Element root = null;
       File out = null;
@@ -523,9 +534,8 @@ public class TranslationManager {
       // Create xml file
 
       String directory = "";
-      factory = DocumentBuilderFactory.newInstance();
-      builder = factory.newDocumentBuilder();
-      document = builder.newDocument();
+
+      document = newDocument();
       // Root
       root = document.createElement(XML_TAG);
       root.setAttribute(XML_ATTRIBUTE_LANGUAGE, AD_Language);
@@ -553,9 +563,7 @@ public class TranslationManager {
           // or it is not rd
           hasRows = true;
 
-          factory = DocumentBuilderFactory.newInstance();
-          builder = factory.newDocumentBuilder();
-          document = builder.newDocument();
+          document = newDocument();
           // Root
           root = document.createElement(XML_TAG);
           root.setAttribute(XML_ATTRIBUTE_LANGUAGE, AD_Language);
@@ -612,16 +620,11 @@ public class TranslationManager {
       log4j.info("exportTrl - Records=" + rows + ", DTD=" + document.getDoctype());
 
       final DOMSource source = new DOMSource(document);
-      final TransformerFactory tFactory = TransformerFactory.newInstance();
-      tFactory.setAttribute("indent-number", 2);
-      final Transformer transformer = tFactory.newTransformer();
-      transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       // Output
       out.createNewFile();
       // Transform
       final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(out), "UTF-8");
-      transformer.transform(source, new StreamResult(osw));
+      newTransformer().transform(source, new StreamResult(osw));
       osw.close();
     } catch (final Exception e) {
       log4j.error("Error exporting translation for table " + table + "\n" + sql, e);

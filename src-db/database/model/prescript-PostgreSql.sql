@@ -735,7 +735,9 @@ CREATE OR REPLACE FUNCTION trunc
 date,
 varchar
 )
-RETURNS DATE AS '
+RETURNS DATE 
+SET SEARCH_PATH FROM CURRENT
+AS '
 DECLARE 
   p_transformation VARCHAR;
 BEGIN
@@ -768,7 +770,9 @@ CREATE OR REPLACE FUNCTION trunc
 timestamp with time zone,
 varchar
 )
-RETURNS DATE AS '
+RETURNS DATE 
+SET SEARCH_PATH FROM CURRENT
+AS '
 DECLARE 
   p_transformation VARCHAR;
 BEGIN
@@ -800,7 +804,9 @@ CREATE OR REPLACE FUNCTION trunc
 (
 timestamp
 )
-RETURNS DATE AS '
+RETURNS DATE 
+SET SEARCH_PATH FROM CURRENT
+AS '
 BEGIN
 RETURN to_timestamp(to_char($1, dateFormat()), dateFormat());
 END;
@@ -811,7 +817,9 @@ CREATE OR REPLACE FUNCTION trunc
 (
 timestamp with time zone
 )
-RETURNS DATE AS '
+RETURNS DATE 
+SET SEARCH_PATH FROM CURRENT
+AS '
 BEGIN
 RETURN to_timestamp(to_char($1, dateFormat()), dateFormat());
 END;

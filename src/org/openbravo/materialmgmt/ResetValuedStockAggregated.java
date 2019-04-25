@@ -220,7 +220,7 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
 
     OBQuery<CostingRule> query = OBDal.getInstance()
         .createQuery(CostingRule.class, where.toString());
-    query.setNamedParameter("org", legalEntity);
+    query.setNamedParameter("org", legalEntity.getId());
     query.setNamedParameter("startingDate", startingDate);
     query.setNamedParameter("endingDate", endingDate);
 
@@ -238,9 +238,9 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
 
     OBQuery<CostingRule> query = OBDal.getInstance()
         .createQuery(CostingRule.class, where.toString());
-    query.setNamedParameter("org", legalEntity);
+    query.setNamedParameter("org", legalEntity.getId());
     query.setNamedParameter("endingDate", period.getEndingDate());
-    query.setNamedParameter("startingDate", period.getEndingDate());
+    query.setNamedParameter("startingDate", period.getStartingDate());
 
     return !query.list().isEmpty();
   }
@@ -261,7 +261,7 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
 
     StringBuffer where = new StringBuffer();
     where.append(" as p");
-    where.append(" where p.organization in (:org)");
+    where.append(" where p.organization.id in (:org)");
     where.append(" and p.periodType = 'S'");
     where.append(" and p.endingDate <= :endDate");
     where.append(" and p.endingDate <= :firstNotClosedPeriodStartingDate");
@@ -269,7 +269,7 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
     where.append(" order by p.endingDate asc");
 
     OBQuery<Period> query = OBDal.getInstance().createQuery(Period.class, where.toString());
-    query.setNamedParameter("org", legalEntity);
+    query.setNamedParameter("org", legalEntity.getId());
     query.setNamedParameter("endDate", endDate);
     query.setNamedParameter("firstNotClosedPeriodStartingDate", firstNotClosedPeriodStartingDate);
     query.setNamedParameter("lastAggregatedPeriodDateTo", lastAggregatedPeriodDateTo);
@@ -336,12 +336,12 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
     select.append("                 from FinancialMgmtPeriodControl pc");
     select.append("                 where pc.period = p)");
     select.append("       )");
-    select.append(" and p.organization in (:org)");
+    select.append(" and p.organization.id in (:org)");
 
     Query<Date> trxQry = OBDal.getInstance()
         .getSession()
         .createQuery(select.toString(), Date.class);
-    trxQry.setParameter("org", legalEntity);
+    trxQry.setParameter("org", legalEntity.getId());
     trxQry.setMaxResults(1);
 
     try {

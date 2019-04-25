@@ -1,10 +1,20 @@
 /*
- ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
- * Licensed under the Openbravo Commercial License version 1.0
- * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
- * or in the legal folder of this module distribution.
- ************************************************************************************
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2019 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ *************************************************************************
  */
 package org.openbravo.materialmgmt;
 
@@ -35,7 +45,7 @@ public class ServiceDeliverUtility {
   private static final String UNIQUE_QUANTITY = "UQ";
   private static final String AS_PER_PRODUCT = "PP";
 
-  public void deliverServices(final ShipmentInOut shipment) {
+  public static void deliverServices(final ShipmentInOut shipment) {
     Map<String, BigDecimal> serviceToDeliver = getShipmentServiceOrderlinesAndQtyToDeliver(
         shipment);
     serviceToDeliver.entrySet()
@@ -44,7 +54,7 @@ public class ServiceDeliverUtility {
         .forEach(s -> addShipmentLine(shipment, s.getKey(), s.getValue()));
   }
 
-  private Map<String, BigDecimal> getShipmentServiceOrderlinesAndQtyToDeliver(
+  private static Map<String, BigDecimal> getShipmentServiceOrderlinesAndQtyToDeliver(
       ShipmentInOut shipment) {
     Map<String, BigDecimal> servicesAndQtyToDeliver = new HashMap<>();
     Map<String, BigDecimal> orderlineDeliveredQty = new HashMap<>();
@@ -62,16 +72,21 @@ public class ServiceDeliverUtility {
         addOrderlineQtyDelivered(orderlineDeliveredQty, (String) service.get("id"), BigDecimal.ONE);
       }
       if (AS_PER_PRODUCT.equals(service.get("quantityRule"))) {
-        servicesAndQtyToDeliver.put(serviceOrderLineId,
-            getAsPerProductQuantity(orderlineAndServiceId, orderlineDeliveredQty, movementQuantity,
-                serviceOrderedQuantity.subtract(serviceDeliveredQuantity)));
+        BigDecimal partialQuantity = servicesAndQtyToDeliver.get(serviceOrderLineId) == null
+            ? BigDecimal.ZERO
+            : servicesAndQtyToDeliver.get(serviceOrderLineId);
+        servicesAndQtyToDeliver
+            .put(serviceOrderLineId,
+                getAsPerProductQuantity(orderlineAndServiceId, orderlineDeliveredQty,
+                    movementQuantity, serviceOrderedQuantity.subtract(serviceDeliveredQuantity))
+                        .add(partialQuantity));
       }
     }
 
     return servicesAndQtyToDeliver;
   }
 
-  private BigDecimal getAsPerProductQuantity(String orderlineAndServiceId,
+  private static BigDecimal getAsPerProductQuantity(String orderlineAndServiceId,
       Map<String, BigDecimal> orderlineDeliveredQty, BigDecimal movementQuantity,
       BigDecimal servicePendingQty) {
     BigDecimal previouslyDelivered = orderlineDeliveredQty.get(orderlineAndServiceId) != null
@@ -81,9 +96,10 @@ public class ServiceDeliverUtility {
     orderlineDeliveredQty.put(orderlineAndServiceId, previouslyDelivered
         .add(pendingQty.compareTo(servicePendingQty) > 0 ? servicePendingQty : pendingQty));
     return pendingQty.compareTo(servicePendingQty) > 0 ? servicePendingQty : pendingQty;
+
   }
 
-  private void addOrderlineQtyDelivered(Map<String, BigDecimal> orderlineDeliveredQty,
+  private static void addOrderlineQtyDelivered(Map<String, BigDecimal> orderlineDeliveredQty,
       String orderlineId, BigDecimal qtyToAdd) {
     if (orderlineDeliveredQty.get(orderlineId) == null) {
       orderlineDeliveredQty.put(orderlineId, qtyToAdd);
@@ -92,7 +108,7 @@ public class ServiceDeliverUtility {
     }
   }
 
-  private List<Tuple> getServiceRelated(ShipmentInOut shipment) {
+  private static List<Tuple> getServiceRelated(ShipmentInOut shipment) {
     StringBuilder hql = new StringBuilder();
     hql.append(
         "select ol.id || serv.id as id, iol.movementQuantity as movementQuantity, ol.orderedQuantity as orderedQuantity, ");
@@ -113,7 +129,7 @@ public class ServiceDeliverUtility {
     return query.list();
   }
 
-  private ShipmentInOutLine addShipmentLine(ShipmentInOut shipment, String orderlineId,
+  private static ShipmentInOutLine addShipmentLine(ShipmentInOut shipment, String orderlineId,
       BigDecimal qtyToDeliver) {
     ShipmentInOutLine shipmentLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
     OrderLine orderLine = OBDal.getInstance().get(OrderLine.class, orderlineId);
