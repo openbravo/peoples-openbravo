@@ -800,7 +800,7 @@ public class ModelProvider implements OBSingleton {
 
   private void createPropertyInParentEntity(Entity e) {
     try {
-      List<Property> props = new ArrayList<Property>(e.getProperties());
+      List<Property> props = new ArrayList<>(e.getProperties());
       for (final Property p : props) {
         if (!p.isParent() && (p.isOneToMany() || p.isId() || p.isAuditInfo()
             || p.getReferencedProperty() == null || ENTITIES_WITHOUT_ALL_CHILD_PROPERTIES
@@ -816,14 +816,14 @@ public class ModelProvider implements OBSingleton {
         if (p.getReferencedProperty() == null) {
           // Log message in case referenced property is null, this will cause a NPE, which is not
           // solved but at least relevant info is shown to fix it in AD
-          log.error("Referenced property is null for " + e.getName() + "." + p.getName());
+          log.error("Referenced property is null for {}.{}", e.getName(), p.getName());
         }
 
         final Entity parent = p.getReferencedProperty().getEntity();
         createChildProperty(parent, p);
       }
     } catch (Exception ex) {
-      ex.printStackTrace();
+      log.error("Could not create parent entity properties for entity {}", e, ex);
     }
   }
 
