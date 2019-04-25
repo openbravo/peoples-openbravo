@@ -48,9 +48,7 @@
         data.imagedata = ctx.getImageData(0, 0, canvas.width, canvas.height);
         resolve(data);
       };
-      img.onerror = function (ev) {
-        reject(ev);
-      };
+      img.onerror = reject;
     });
   }
 
