@@ -821,13 +821,6 @@ public class AdvPaymentMngtDao {
     }
   }
 
-  @Deprecated
-  public List<FIN_PaymentMethod> getFilteredPaymentMethods(String strFinancialAccountId,
-      String strOrgId, boolean excludePaymentMethodWithoutAccount) {
-    return getFilteredPaymentMethods(strFinancialAccountId, strOrgId,
-        excludePaymentMethodWithoutAccount, PaymentDirection.EITHER);
-  }
-
   public List<FIN_PaymentMethod> getFilteredPaymentMethods(String strFinancialAccountId,
       String strOrgId, boolean excludePaymentMethodWithoutAccount,
       PaymentDirection paymentDirection) {
@@ -932,13 +925,6 @@ public class AdvPaymentMngtDao {
     if (compoundExp != null) {
       obc.add(compoundExp);
     }
-  }
-
-  @Deprecated
-  public List<FIN_FinancialAccount> getFilteredFinancialAccounts(String strPaymentMethodId,
-      String strOrgId, String strCurrencyId) {
-    return getFilteredFinancialAccounts(strPaymentMethodId, strOrgId, strCurrencyId,
-        PaymentDirection.EITHER);
   }
 
   public List<FIN_FinancialAccount> getFilteredFinancialAccounts(String strPaymentMethodId,
@@ -1290,16 +1276,6 @@ public class AdvPaymentMngtDao {
     return ppfiCriteria.list();
   }
 
-  @Deprecated
-  public BigDecimal getCustomerCredit(BusinessPartner bp, boolean isReceipt) {
-    BigDecimal creditAmount = BigDecimal.ZERO;
-    for (FIN_Payment payment : getCustomerPaymentsWithCredit(bp, isReceipt)) {
-      creditAmount = creditAmount.add(payment.getGeneratedCredit())
-          .subtract(payment.getUsedCredit());
-    }
-    return creditAmount;
-  }
-
   public BigDecimal getCustomerCredit(BusinessPartner bp, boolean isReceipt, Organization Org) {
     return getCustomerCredit(bp, isReceipt, Org, null);
   }
@@ -1313,21 +1289,6 @@ public class AdvPaymentMngtDao {
           .subtract(payment.getUsedCredit());
     }
     return creditAmount;
-  }
-
-  @Deprecated
-  public List<FIN_Payment> getCustomerPaymentsWithCredit(BusinessPartner bp, boolean isReceipt) {
-    OBCriteria<FIN_Payment> obcPayment = OBDal.getInstance().createCriteria(FIN_Payment.class);
-    obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_BUSINESSPARTNER, bp));
-    obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_RECEIPT, isReceipt));
-    obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_GENERATEDCREDIT, BigDecimal.ZERO));
-    obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_STATUS, "RPAP"));
-    obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_STATUS, "RPVOID"));
-    obcPayment.add(Restrictions.neProperty(FIN_Payment.PROPERTY_GENERATEDCREDIT,
-        FIN_Payment.PROPERTY_USEDCREDIT));
-    obcPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
-    obcPayment.addOrderBy(FIN_Payment.PROPERTY_DOCUMENTNO, true);
-    return obcPayment.list();
   }
 
   /**

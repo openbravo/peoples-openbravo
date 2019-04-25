@@ -56,20 +56,6 @@ public class MatchTransactionDao {
     return OBDal.getInstance().get(t, strId);
   }
 
-  @Deprecated
-  public static FIN_Reconciliation getReconciliationPending() {
-    OBCriteria<FIN_Reconciliation> obCriteria = OBDal.getInstance()
-        .createCriteria(FIN_Reconciliation.class);
-    obCriteria.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_PROCESSED, false));
-    List<FIN_Reconciliation> lines = obCriteria.list();
-
-    if (lines.isEmpty()) {
-      return null;
-    } else {
-      return lines.get(0);
-    }
-  }
-
   public static BigDecimal getClearedLinesAmount(String strReconciliationId) {
     OBCriteria<FIN_FinaccTransaction> obCriteria = OBDal.getInstance()
         .createCriteria(FIN_FinaccTransaction.class);
@@ -366,54 +352,6 @@ public class MatchTransactionDao {
       OBContext.restorePreviousMode();
     }
     return lastAmount;
-  }
-
-  /**
-   * Calculates the ending balance of automatic reconciliations. The sum of all the bank statement
-   * lines of the reconciliation financial account that belong to the given reconciliation plus the
-   * ones that does not have a transaction associated yet.
-   * 
-   * @param reconciliation
-   *          Reconciliation.
-   * @return Ending balance of an automatic reconciliation.
-   */
-  @Deprecated
-  public static BigDecimal getReconciliationEndingBalance(FIN_Reconciliation reconciliation) {
-    BigDecimal total = BigDecimal.ZERO;
-    OBContext.setAdminMode(true);
-    try {
-      OBCriteria<FIN_BankStatementLine> obcBsl = OBDal.getInstance()
-          .createCriteria(FIN_BankStatementLine.class);
-      obcBsl.createAlias(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, "bs");
-      obcBsl.createAlias(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION, "tr",
-          JoinType.LEFT_OUTER_JOIN);
-      obcBsl.add(Restrictions.or(
-          Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION),
-          Restrictions.eq("tr." + FIN_FinaccTransaction.PROPERTY_RECONCILIATION, reconciliation)));
-
-      obcBsl.add(
-          Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_ACCOUNT, reconciliation.getAccount()));
-      obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_PROCESSED, true));
-      ProjectionList projections = Projections.projectionList();
-      projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_CRAMOUNT));
-      projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_DRAMOUNT));
-      obcBsl.setProjection(projections);
-
-      @SuppressWarnings("rawtypes")
-      List o = obcBsl.list();
-      if (o != null && o.size() > 0) {
-        Object[] resultSet = (Object[]) o.get(0);
-        BigDecimal credit = (resultSet[0] != null) ? (BigDecimal) resultSet[0] : BigDecimal.ZERO;
-        BigDecimal debit = (resultSet[1] != null) ? (BigDecimal) resultSet[1] : BigDecimal.ZERO;
-        total = credit.subtract(debit);
-      }
-      o.clear();
-
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
-    return total;
   }
 
   /**

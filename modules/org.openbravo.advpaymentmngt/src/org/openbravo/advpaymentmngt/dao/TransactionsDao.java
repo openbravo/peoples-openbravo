@@ -121,29 +121,6 @@ public class TransactionsDao {
     return 0l;
   }
 
-  @Deprecated
-  public static void process(FIN_FinaccTransaction finFinancialAccountTransaction) {
-    final FIN_FinancialAccount financialAccount = OBDal.getInstance()
-        .get(FIN_FinancialAccount.class, finFinancialAccountTransaction.getAccount().getId());
-    financialAccount.setCurrentBalance(financialAccount.getCurrentBalance()
-        .add(finFinancialAccountTransaction.getDepositAmount()
-            .subtract(finFinancialAccountTransaction.getPaymentAmount())));
-    finFinancialAccountTransaction.setProcessed(true);
-    FIN_Payment payment = finFinancialAccountTransaction.getFinPayment();
-    if (payment != null) {
-      payment.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
-      finFinancialAccountTransaction.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
-      OBDal.getInstance().save(payment);
-    } else {
-      finFinancialAccountTransaction.setStatus(finFinancialAccountTransaction.getDepositAmount()
-          .compareTo(finFinancialAccountTransaction.getPaymentAmount()) > 0 ? "RDNC" : "PWNC");
-    }
-    OBDal.getInstance().save(financialAccount);
-    OBDal.getInstance().save(finFinancialAccountTransaction);
-    OBDal.getInstance().flush();
-    return;
-  }
-
   public static void post(VariablesSecureApp vars, ConnectionProvider connectionProvider,
       FIN_FinaccTransaction finFinancialAccountTransaction) {
     final String AD_TABLE_ID = "4D8C3B3C31D1410DA046140C9F024D17";
