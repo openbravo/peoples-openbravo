@@ -23,12 +23,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -92,6 +95,11 @@ public class ModelProvider implements OBSingleton {
   private Session initsession;
 
   private static final String TABLEBASEDTABLE = "Table";
+
+  private static final Set<String> ENTITIES_WITHOUT_ALL_CHILD_PROPERTIES = new HashSet<>(
+      Arrays.asList("org.openbravo.model.ad.system.Client",
+          "org.openbravo.model.common.enterprise.Organization",
+          "org.openbravo.model.ad.module.Module", "org.openbravo.model.ad.system.Language"));
 
   /**
    * Returns the singleton instance providing the ModelProvider functionality.
@@ -793,18 +801,10 @@ public class ModelProvider implements OBSingleton {
   private void createPropertyInParentEntity(Entity e) {
     try {
       List<Property> props = new ArrayList<Property>(e.getProperties());
-
       for (final Property p : props) {
-        if (!p.isParent()
-            && (p.isOneToMany() || p.isId() || p.isAuditInfo() || p.getReferencedProperty() == null
-                || entitiesByClassName.get("org.openbravo.model.ad.system.Client")
-                    .equals(p.getReferencedProperty().getEntity())
-                || entitiesByClassName.get("org.openbravo.model.common.enterprise.Organization")
-                    .equals(p.getReferencedProperty().getEntity())
-                || entitiesByClassName.get("org.openbravo.model.ad.module.Module")
-                    .equals(p.getReferencedProperty().getEntity())
-                || entitiesByClassName.get("org.openbravo.model.ad.system.Language")
-                    .equals(p.getReferencedProperty().getEntity()))) {
+        if (!p.isParent() && (p.isOneToMany() || p.isId() || p.isAuditInfo()
+            || p.getReferencedProperty() == null || ENTITIES_WITHOUT_ALL_CHILD_PROPERTIES
+                .contains(p.getReferencedProperty().getEntity().getClassName()))) {
           continue;
         }
 
