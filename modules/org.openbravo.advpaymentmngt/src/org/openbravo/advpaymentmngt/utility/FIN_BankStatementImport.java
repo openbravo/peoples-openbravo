@@ -413,9 +413,9 @@ public abstract class FIN_BankStatementImport {
       int tokenIndex = 0;
       for (String token : list) {
         String tokenParamName = String.format("token_%d", tokenIndex);
-        tokenPrams.put(tokenParamName, token);
-        whereClause.append(" lower(b." + BusinessPartner.PROPERTY_NAME + ") like lower('%:"
-            + tokenParamName + "%') or ");
+        tokenPrams.put(tokenParamName, "%" + token + "%");
+        whereClause.append(" lower(b." + BusinessPartner.PROPERTY_NAME + ") like lower(:"
+            + tokenParamName + " ) or ");
         tokenIndex++;
       }
       whereClause.delete(whereClause.length() - 3, whereClause.length()).append(")");
