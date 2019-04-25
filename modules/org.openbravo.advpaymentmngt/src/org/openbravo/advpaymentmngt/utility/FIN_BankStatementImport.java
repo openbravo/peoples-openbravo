@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -409,9 +409,14 @@ public abstract class FIN_BankStatementImport {
       whereClause.append("select b.id as id, b.name as name from ");
       whereClause.append(" BusinessPartner b ");
       whereClause.append(" where (");
+      HashMap<String, String> tokenPrams = new HashMap<>();
+      int tokenIndex = 0;
       for (String token : list) {
-        whereClause.append(
-            " lower(b." + BusinessPartner.PROPERTY_NAME + ") like lower('%" + token + "%') or ");
+        String tokenParamName = String.format("token_%d", tokenIndex);
+        tokenPrams.put(tokenParamName, token);
+        whereClause.append(" lower(b." + BusinessPartner.PROPERTY_NAME + ") like lower('%:"
+            + tokenParamName + "%') or ");
+        tokenIndex++;
       }
       whereClause.delete(whereClause.length() - 3, whereClause.length()).append(")");
       whereClause.append(" and b." + BusinessPartner.PROPERTY_ORGANIZATION + ".id in (");
@@ -420,6 +425,7 @@ public abstract class FIN_BankStatementImport {
       final Query<Object[]> bl = OBDal.getInstance()
           .getSession()
           .createQuery(whereClause.toString(), Object[].class);
+      bl.setProperties(tokenPrams);
       businessPartnersScroll = bl.scroll(ScrollMode.SCROLL_SENSITIVE);
 
       if (!businessPartnersScroll.next()) {
