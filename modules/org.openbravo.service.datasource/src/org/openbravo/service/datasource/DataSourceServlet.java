@@ -113,6 +113,7 @@ public class DataSourceServlet extends BaseKernelServlet {
   private static String servletPathPart = "org.openbravo.service.datasource";
   private static Pattern csrfTokenPattern = Pattern
       .compile("\"csrfToken\":\"(?<token>[A-Z0-9]+)\"");
+  private static final String[] CSV_FORMULA_PREFIXES = new String[] { "=", "+", "-", "@" };
 
   public static String getServletPathPart() {
     return servletPathPart;
@@ -678,9 +679,9 @@ public class DataSourceServlet extends BaseKernelServlet {
           String outputValue;
           if (keyValue != null && !keyValue.toString().equals("null")) {
             outputValue = keyValue.toString().replace("\"", "\"\"");
-            if (outputValue.startsWith("=")) {
+            if (StringUtils.startsWithAny(outputValue, CSV_FORMULA_PREFIXES)) {
               // escape formulas
-              outputValue = "'" + outputValue;
+              outputValue = "\t" + outputValue;
             }
           } else {
             outputValue = "";
