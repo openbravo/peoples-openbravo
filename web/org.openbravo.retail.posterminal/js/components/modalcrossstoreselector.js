@@ -64,7 +64,6 @@ enyo.kind({
     onShowSelector: ''
   },
   callback: null,
-  qty: 0,
   components: [{
     classes: 'span12',
     components: [{
@@ -102,13 +101,9 @@ enyo.kind({
     };
 
     function successCallBack(data) {
-      me.qty = 0;
       if (data && !data.exception) {
         me.$.csStoreSelector.collection.reset(data);
         me.$.renderLoading.hide();
-        _.each(data, function (value) {
-          me.qty += value.stock;
-        });
       } else {
         OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
         me.$.csStoreSelector.collection.reset();
@@ -164,10 +159,12 @@ enyo.kind({
   classes: 'obpos-listitembutton',
   tap: function () {
     if (this.owner.owner.owner.owner.callback && !(event && event.cancel)) {
-      var data = this.model.attributes;
-      data.warehouseid = this.model.get('warehouseId');
-      data.warehousename = this.model.get('warehouseName');
-      data.qty = this.owner.owner.owner.owner.qty - this.model.get('stock');
+      var data = {
+        warehouseid: this.model.get('warehouseId'),
+        warehousename: this.model.get('warehouseName'),
+        stock: this.model.get('stock'),
+        price: this.model.get('price')
+      };
       this.owner.owner.owner.owner.callback(data);
       this.owner.owner.owner.owner.owner.owner.hide();
     }
