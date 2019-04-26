@@ -578,7 +578,7 @@ enyo.kind({
     if (inEvent.ignoreStockTab) {
       this.showOrder(inSender, inEvent);
     } else {
-      if (!targetOrder.get('lines').isProductPresent(inEvent.product) && ((inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) || OB.UTIL.isCrossStoreProduct(inEvent.product))) {
+      if ((!targetOrder.get('lines').isProductPresent(inEvent.product) && ((inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.MobileApp.model.get('connectedToERP')))) || (OB.UTIL.isCrossStoreProduct(inEvent.product))) {
         inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
         if (enyo.Panels.isScreenNarrow()) {
