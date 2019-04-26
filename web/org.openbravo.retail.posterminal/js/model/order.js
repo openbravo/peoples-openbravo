@@ -3097,8 +3097,10 @@
               }
             }
             executeAddProduct();
-            if (!OB.UTIL.isNullOrUndefined(args.attrs) && args.attrs.cancelOperation && cancelCallback) {
-              cancelCallback();
+            if (!OB.UTIL.isNullOrUndefined(args.attrs) && args.attrs.cancelOperation) {
+              if (cancelCallback instanceof Function) {
+                cancelCallback();
+              }
             }
           });
         } else {
