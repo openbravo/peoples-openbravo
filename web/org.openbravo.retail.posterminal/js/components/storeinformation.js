@@ -167,6 +167,8 @@ enyo.kind({
         var orgSchedule = [],
             callCenter = [],
             specialdate = [],
+            specialHourIndex = 0,
+            specialHolidayIndex = 0,
             dateFormat = OB.Format.date;
 
         for (i = 1; i < data.length; i++) {
@@ -175,12 +177,26 @@ enyo.kind({
           } else if (data[i].scheduletype && data[i].scheduletype === 'Call Center Schedule') {
             callCenter.push(data[i]);
           } else if (data[i].specialdate) {
+            var date = {};
             if (data[i].startingTime) {
-              data[i].specialdate = OB.Utilities.Date.JSToOB(new Date(data[i].specialdate), dateFormat) + ' ' + this.getTime(data[i]);
+              if (specialdate[specialHourIndex]) {
+                specialdate[specialHourIndex].specialdate = OB.Utilities.Date.JSToOB(new Date(data[i].specialdate), dateFormat) + ' ' + this.getTime(data[i]);
+              } else {
+                date.specialdate = OB.Utilities.Date.JSToOB(new Date(data[i].specialdate), dateFormat) + ' ' + this.getTime(data[i]);
+                date.closingHoliday = null;
+                specialdate.push(date);
+              }
+              specialHourIndex++;
             } else {
-              data[i].specialdate = OB.Utilities.Date.JSToOB(new Date(data[i].specialdate), dateFormat);
+              if (specialdate[specialHolidayIndex]) {
+                specialdate[specialHolidayIndex].closingHoliday = OB.Utilities.Date.JSToOB(new Date(data[i].specialdate), dateFormat);
+              } else {
+                date.specialdate = null;
+                date.closingHoliday = OB.Utilities.Date.JSToOB(new Date(data[i].specialdate), dateFormat);
+                specialdate.push(date);
+              }
+              specialHolidayIndex++;
             }
-            specialdate.push(data[i]);
           }
         }
 
@@ -192,7 +208,8 @@ enyo.kind({
     var scheduleIndex = 0,
         callCenterIndex = 0,
         weekday, scheduleCallCenterLine = {},
-        scheduleCallCenter = [];
+        scheduleCallCenter = [],
+        specialDateData = [];
     while (scheduleIndex < orgSchedule.length || callCenterIndex < callCenter.length) {
       scheduleCallCenterLine = {};
       weekday = scheduleIndex < orgSchedule.length ? orgSchedule[scheduleIndex].weekday : '7';
@@ -318,10 +335,7 @@ enyo.kind({
   }],
   create: function () {
     this.inherited(arguments);
-    if (!this.model.get('startingTime')) {
-      this.$.closeHour.setContent(this.model.get('specialdate'));
-    } else {
-      this.$.openHour.setContent(this.model.get('specialdate'));
-    }
+    this.$.openHour.setContent(this.model.get('specialdate'));
+    this.$.closeHour.setContent(this.model.get('closingHoliday'));
   }
 });
