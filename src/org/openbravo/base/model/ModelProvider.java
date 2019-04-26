@@ -802,9 +802,10 @@ public class ModelProvider implements OBSingleton {
     try {
       List<Property> props = new ArrayList<>(e.getProperties());
       for (final Property p : props) {
-        if (!p.isParent() && (p.isOneToMany() || p.isId() || p.isAuditInfo()
-            || p.getReferencedProperty() == null || ENTITIES_WITHOUT_ALL_CHILD_PROPERTIES
-                .contains(p.getReferencedProperty().getEntity().getClassName()))) {
+        if (!p.isParent()
+            && (!p.isChildPropertyInParent() || p.isOneToMany() || p.isId() || p.isAuditInfo()
+                || p.getReferencedProperty() == null || ENTITIES_WITHOUT_ALL_CHILD_PROPERTIES
+                    .contains(p.getReferencedProperty().getEntity().getClassName()))) {
           continue;
         }
 
@@ -843,25 +844,12 @@ public class ModelProvider implements OBSingleton {
     newProp.setChild(childProperty.isParent());
     parentEntity.addProperty(newProp);
 
-    // If the Entity is ADImage, add its entity to entitiesWithImage
     if (parentEntity.getName().equals("ADImage")) {
-      if (entitiesWithImage.containsKey(childProperty.getEntity())) {
-        entitiesWithImage.get(childProperty.getEntity()).add(childProperty.getName());
-      } else {
-        List<String> propertyList = new ArrayList<String>();
-        propertyList.add(childProperty.getName());
-        entitiesWithImage.put(childProperty.getEntity(), propertyList);
-      }
-    }
-    // If the Entity is ADFile, add its entity to entitiesWithFile
-    if (parentEntity.getName().equals("OBPRF_FILE")) {
-      if (entitiesWithFile.containsKey(childProperty.getEntity())) {
-        entitiesWithFile.get(childProperty.getEntity()).add(childProperty.getName());
-      } else {
-        List<String> propertyList = new ArrayList<String>();
-        propertyList.add(childProperty.getName());
-        entitiesWithFile.put(childProperty.getEntity(), propertyList);
-      }
+      entitiesWithImage.computeIfAbsent(childProperty.getEntity(), k -> new ArrayList<>())
+          .add(childProperty.getName());
+    } else if (parentEntity.getName().equals("OBPRF_FILE")) {
+      entitiesWithFile.computeIfAbsent(childProperty.getEntity(), k -> new ArrayList<>())
+          .add(childProperty.getName());
     }
   }
 

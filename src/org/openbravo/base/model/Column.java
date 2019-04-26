@@ -72,6 +72,7 @@ public class Column extends ModelObject {
   private Integer seqno;
   private boolean usedSequence;
   private boolean isAllowedCrossOrgReference;
+  private boolean childPropertyInParent;
 
   private Module module;
 
@@ -500,6 +501,14 @@ public class Column extends ModelObject {
   /** @see Property#isAllowedCrossOrgReference() */
   public void setAllowedCrossOrgReference(boolean allowedCrossOrgReference) {
     this.isAllowedCrossOrgReference = allowedCrossOrgReference;
+  }
+
+  public boolean isChildPropertyInParent() {
+    return childPropertyInParent;
+  }
+
+  public void setChildPropertyInParent(boolean isChildPropertyInParent) {
+    this.childPropertyInParent = isChildPropertyInParent;
   }
 
 }

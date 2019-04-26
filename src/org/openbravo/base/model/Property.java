@@ -126,6 +126,7 @@ public class Property {
   private boolean usedSequence;
   private boolean isProxy;
   private boolean allowedCrossOrgReference;
+  private boolean isChildPropertyInParent;
 
   /**
    * Initializes this Property using the information from the Column.
@@ -203,6 +204,7 @@ public class Property {
 
     setModule(fromColumn.getModule());
     setAllowedCrossOrgReference(fromColumn.isAllowedCrossOrgReference());
+    setChildPropertyInParent(fromColumn.isChildPropertyInParent());
     isProxy = false;
   }
 
@@ -1348,5 +1350,13 @@ public class Property {
   /** @see Property#isAllowedCrossOrgReference() */
   public void setAllowedCrossOrgReference(boolean allowedCrossOrgReference) {
     this.allowedCrossOrgReference = allowedCrossOrgReference;
+  }
+
+  public boolean isChildPropertyInParent() {
+    return isChildPropertyInParent;
+  }
+
+  public void setChildPropertyInParent(boolean isChildPropertyInParent) {
+    this.isChildPropertyInParent = isChildPropertyInParent;
   }
 }
