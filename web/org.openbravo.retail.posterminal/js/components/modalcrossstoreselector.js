@@ -165,9 +165,8 @@ enyo.kind({
   tap: function () {
     if (this.owner.owner.owner.owner.callback && !(event && event.cancel)) {
       var data = this.model.attributes;
-      //FIXME Set the correct warehouseId and warehouseName
-      data.warehouseid = 'BD5989DAEC9C454B9EAA2561A904A637';
-      data.warehousename = 'Orhi Store - Warehouse';
+      data.warehouseid = this.model.get('warehouseId');
+      data.warehousename = this.model.get('warehouseName');
       data.qty = this.owner.owner.owner.owner.qty - this.model.get('stock');
       this.owner.owner.owner.owner.callback(data);
       this.owner.owner.owner.owner.owner.owner.hide();
@@ -184,8 +183,8 @@ enyo.kind({
         popup: 'OBPOS_storeInformation',
         args: {
           context: this,
-          orgId: this.owner.model.get('id'),
-          orgName: this.owner.model.get('name')
+          orgId: this.owner.model.get('orgId'),
+          orgName: this.owner.model.get('orgName')
         }
       });
     }
@@ -203,7 +202,7 @@ enyo.kind({
   }],
   create: function () {
     this.inherited(arguments);
-    this.$.storeName.setContent(this.model.get('name'));
+    this.$.storeName.setContent(this.model.get('orgName'));
     this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('price')));
     this.$.stock.setContent(this.model.get('stock') + ' Ud');
   }
