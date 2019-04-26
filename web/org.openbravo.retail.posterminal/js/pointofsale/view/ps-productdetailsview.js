@@ -191,12 +191,11 @@ enyo.kind({
     if (OB.UTIL.isCrossStoreProduct(this.leftSubWindow.product)) {
       var me = this;
       var selectedStoreCallBack = function (data) {
-          var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.term.Warehouses'),
-              warehouse = {
-              warehouseid: data.warehouseid,
-              warehousename: data.warehousename,
-              warehouseqty: data.stock
-              };
+          var warehouse = data.warehouse ? data.warehouse : {
+            warehouseid: data.warehouseid,
+            warehousename: data.warehousename,
+            warehouseqty: data.stock
+          };
           me.$.stockHere.removeClass('error');
           me.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.stock);
           me.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(data.price) + '</b>');
@@ -206,13 +205,23 @@ enyo.kind({
           me.leftSubWindow.product.set('listPrice', data.price);
           me.leftSubWindow.product.set('standardPrice', data.price);
           };
-      this.doShowPopup({
-        popup: 'OBPOS_modalCrossStoreSelector',
-        args: {
-          productId: this.leftSubWindow.product.get('id'),
-          callback: selectedStoreCallBack
-        }
-      });
+
+      if (this.leftSubWindow.line && event.target.outerText !== 'Select store') {
+        var data = {
+          stock: this.leftSubWindow.line.get('warehouse').warehouseqty,
+          price: this.leftSubWindow.line.get('price'),
+          warehouse: this.leftSubWindow.line.get('warehouse')
+        };
+        selectedStoreCallBack(data);
+      } else {
+        this.doShowPopup({
+          popup: 'OBPOS_modalCrossStoreSelector',
+          args: {
+            productId: this.leftSubWindow.product.get('id'),
+            callback: selectedStoreCallBack
+          }
+        });
+      }
     } else {
       if (this.leftSubWindow.otherStoresStockModel) {
         this.doShowPopup({
