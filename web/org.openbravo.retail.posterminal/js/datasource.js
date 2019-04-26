@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, localStorage, Promise */
+/*global OB, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, Promise */
 
 // HWServer: TODO: this should be implemented in HW Manager module
 OB.DS.HWResource = function (res) {
@@ -482,7 +482,7 @@ OB.DS.HWServer.prototype.storeData = function (data, device) {
     time: new Date().getTime(),
     data: data
   };
-  localStorage.setItem('WEBPOSHW.' + this.storeDataKey + '.' + (device || OB.DS.HWServer.PRINTER), JSON.stringify(terminaldata));
+  OB.UTIL.localStorage.setItem('WEBPOSHW.' + this.storeDataKey + '.' + (device || OB.DS.HWServer.PRINTER), JSON.stringify(terminaldata));
 };
 
 OB.DS.HWServer.prototype._send = function (data, callback, device) {
