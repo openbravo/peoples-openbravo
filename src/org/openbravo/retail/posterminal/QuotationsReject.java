@@ -30,15 +30,19 @@ public class QuotationsReject extends POSDataSynchronizationProcess
       String rejectReasonId = jsonRecord.getString("rejectReasonId");
       Order order = OBDal.getInstance().get(Order.class, orderid);
       RejectReason reason = OBDal.getInstance().get(RejectReason.class, rejectReasonId);
-      if (order != null && reason != null) {
-        order.setDocumentStatus("CJ");
-        order.setRejectReason(reason);
-        OBDal.getInstance().save(order);
-      }
       JSONArray respArray = new JSONArray();
-      respArray.put(order);
+      if (order != null) {
+        if ("CA".equals(order.getDocumentStatus())) {
+          result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+        } else if (reason != null) {
+          order.setDocumentStatus("CJ");
+          order.setRejectReason(reason);
+          OBDal.getInstance().save(order);
+          respArray.put(order);
+          result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+        }
+      }
       result.put(JsonConstants.RESPONSE_DATA, respArray);
-      result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     } finally {
       OBContext.restorePreviousMode();
     }
