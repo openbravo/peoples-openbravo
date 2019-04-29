@@ -42,7 +42,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
 
   @Override
   protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
-    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    List<HQLPropertyList> propertiesList = new ArrayList<>();
     HQLPropertyList crossStoreFilterHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions, jsonsent);
     propertiesList.add(crossStoreFilterHQLProperties);

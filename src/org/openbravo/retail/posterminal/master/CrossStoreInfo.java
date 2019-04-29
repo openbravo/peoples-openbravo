@@ -75,48 +75,63 @@ public class CrossStoreInfo extends ProcessHQLQuery {
   protected List<String> getQuery(final JSONObject jsonsent) throws JSONException {
     OBContext.setAdminMode(true);
     try {
-      final HQLPropertyList crossStoreInfoHQLProperties = ModelExtensionUtils
-          .getPropertyExtensions(extensions);
-      final HQLPropertyList crossStoreRegularScheduleInfoHQLProperties = ModelExtensionUtils
-          .getPropertyExtensions(extensionsRegularSchedule);
-      final HQLPropertyList crossStoreSpecialScheduleInfoHQLProperties = ModelExtensionUtils
-          .getPropertyExtensions(extensionsSpecialSchedule);
+      final String hql1 = getCrossStoreInfoQuery();
+      final String hql2 = getCrossStoreRegularScheduleQuery();
+      final String hql3 = getCrossStoreSpecialScheduleQuery();
 
-      final StringBuilder hql1 = new StringBuilder();
-      hql1.append(" select" + crossStoreInfoHQLProperties.getHqlSelect());
-      hql1.append(" from OrganizationInformation oi");
-      hql1.append(" left join oi.locationAddress l");
-      hql1.append(" left join l.region r");
-      hql1.append(" left join l.country c");
-      hql1.append(" left join oi.userContact u");
-      hql1.append(" where oi.organization.id = :orgId");
-
-      final StringBuilder hql2 = new StringBuilder();
-      hql2.append(" select" + crossStoreRegularScheduleInfoHQLProperties.getHqlSelect());
-      hql2.append(" from OBRETCO_Org_RegularSchedule ors");
-      hql2.append(" join ors.obretcoSchedule s");
-      hql2.append(" join s.oBRETCOScheduleLineList sl");
-      hql2.append(" where ors.organization.id = :orgId");
-      hql2.append(" and ors.validFromDate = (");
-      hql2.append("   select max(ors2.validFromDate)");
-      hql2.append("   from OBRETCO_Org_RegularSchedule ors2");
-      hql2.append("   where ors2.organization.id = ors.organization.id");
-      hql2.append("   and ors2.scheduletype = ors.scheduletype");
-      hql2.append("   and ors2.validFromDate <= :terminalDate");
-      hql2.append(" )");
-      hql2.append(" order by ors.scheduletype, sl.weekday, sl.startingTime");
-
-      final StringBuilder hql3 = new StringBuilder();
-      hql3.append(" select" + crossStoreSpecialScheduleInfoHQLProperties.getHqlSelect());
-      hql3.append(" from OBRETCO_Org_SpecialSchedule oss");
-      hql3.append(" where oss.organization.id = :orgId");
-      hql3.append(" and oss.specialdate >= :terminalDate");
-      hql3.append(" order by oss.specialdate, oss.startingTime");
-
-      return Arrays.asList(hql1.toString(), hql2.toString(), hql3.toString());
+      return Arrays.asList(hql1, hql2, hql3);
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private String getCrossStoreInfoQuery() {
+    final HQLPropertyList crossStoreInfoHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
+
+    final StringBuilder hql = new StringBuilder();
+    hql.append(" select" + crossStoreInfoHQLProperties.getHqlSelect());
+    hql.append(" from OrganizationInformation oi");
+    hql.append(" left join oi.locationAddress l");
+    hql.append(" left join l.region r");
+    hql.append(" left join l.country c");
+    hql.append(" left join oi.userContact u");
+    hql.append(" where oi.organization.id = :orgId");
+    return hql.toString();
+  }
+
+  private String getCrossStoreRegularScheduleQuery() {
+    final HQLPropertyList crossStoreRegularScheduleHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensionsRegularSchedule);
+
+    final StringBuilder hql = new StringBuilder();
+    hql.append(" select" + crossStoreRegularScheduleHQLProperties.getHqlSelect());
+    hql.append(" from OBRETCO_Org_RegularSchedule ors");
+    hql.append(" join ors.obretcoSchedule s");
+    hql.append(" join s.oBRETCOScheduleLineList sl");
+    hql.append(" where ors.organization.id = :orgId");
+    hql.append(" and ors.validFromDate = (");
+    hql.append("   select max(ors2.validFromDate)");
+    hql.append("   from OBRETCO_Org_RegularSchedule ors2");
+    hql.append("   where ors2.organization.id = ors.organization.id");
+    hql.append("   and ors2.scheduletype = ors.scheduletype");
+    hql.append("   and ors2.validFromDate <= :terminalDate");
+    hql.append(" )");
+    hql.append(" order by ors.scheduletype, sl.weekday, sl.startingTime");
+    return hql.toString();
+  }
+
+  private String getCrossStoreSpecialScheduleQuery() {
+    final HQLPropertyList crossStoreSpecialScheduleHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensionsSpecialSchedule);
+
+    final StringBuilder hql = new StringBuilder();
+    hql.append(" select" + crossStoreSpecialScheduleHQLProperties.getHqlSelect());
+    hql.append(" from OBRETCO_Org_SpecialSchedule oss");
+    hql.append(" where oss.organization.id = :orgId");
+    hql.append(" and oss.specialdate >= :terminalDate");
+    hql.append(" order by oss.specialdate, oss.startingTime");
+    return hql.toString();
   }
 
 }

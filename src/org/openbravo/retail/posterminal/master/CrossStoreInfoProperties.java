@@ -40,6 +40,8 @@ public class CrossStoreInfoProperties extends ModelExtension {
     list.add(new HQLProperty("u.alternativePhone", "alternativePhone"));
     list.add(new HQLProperty("u.email", "email"));
     list.add(new HQLProperty("oi.taxID", "taxID"));
+
     return list;
   }
+
 }

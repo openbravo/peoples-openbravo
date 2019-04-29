@@ -16,19 +16,19 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 
-@Qualifier(CrossStoreInfo.crossStoreSpecialScheduleInfoPropertyExtension)
-public class CrossStoreSpecialScheduleInfoProperties extends ModelExtension {
+@Qualifier(CrossStoreInfo.crossStoreRegularScheduleInfoPropertyExtension)
+public class CrossStoreRegularScheduleProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
     final List<HQLProperty> list = new ArrayList<>();
 
-    list.add(new HQLProperty("oss.specialdate", "specialdate"));
-    list.add(new HQLProperty("oss.open", "open"));
-    list.add(new HQLProperty("oss.startingTime", "startingTime"));
-    list.add(new HQLProperty("oss.endingTime", "endingTime"));
+    list.add(new HQLProperty("ors.scheduletype", "scheduletype"));
+    list.add(new HQLProperty("sl.weekday", "weekday"));
+    list.add(new HQLProperty("sl.startingTime", "startingTime"));
+    list.add(new HQLProperty("sl.endingTime", "endingTime"));
 
     return list;
-
   }
+
 }
