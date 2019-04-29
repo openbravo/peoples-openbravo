@@ -87,6 +87,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" join o.organizationWarehouseList ow");
       hql.append(" join ow.warehouse w");
       hql.append(" join w.locatorList l");
+      hql.append(" join l.inventoryStatus is");
       hql.append(" join l.materialMgmtStorageDetailList sd");
       hql.append(" join o.obretcoPricelist pl");
       hql.append(" join pl.pricingPriceListVersionList plv");
@@ -95,6 +96,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" and $filtersCriteria");
       hql.append(" and sd.product.id = :productId");
       hql.append(" and pp.product.id = :productId");
+      hql.append(" and is.available = true"); // FIXME: Use available for cross store
       hql.append(" and plv.validFromDate = (");
       hql.append("   select max(plv2.validFromDate)");
       hql.append("   from PricingPriceListVersion plv2");
@@ -102,7 +104,6 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append("   and plv2.validFromDate <= :terminalDate");
       hql.append("   and plv2.active = true");
       hql.append(" )");
-      hql.append(" and ow.obretcoIsCrossStore = true");
       hql.append(" and o.active = true");
       hql.append(" and ow.active = true");
       hql.append(" and w.active = true");
