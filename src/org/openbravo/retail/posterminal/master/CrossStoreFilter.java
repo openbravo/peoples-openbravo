@@ -86,8 +86,10 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" from Organization o");
       hql.append(" join o.organizationWarehouseList ow");
       hql.append(" join ow.warehouse w");
-      hql.append(" join w.locatorList l");
-      hql.append(" join l.inventoryStatus is");
+      hql.append(" join o.organizationWarehouseList owh");
+      hql.append(" join owh.warehouse wh");
+      hql.append(" join wh.locatorList l");
+      hql.append(" join l.inventoryStatus ls");
       hql.append(" join l.materialMgmtStorageDetailList sd");
       hql.append(" join o.obretcoPricelist pl");
       hql.append(" join pl.pricingPriceListVersionList plv");
@@ -96,7 +98,13 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" and $filtersCriteria");
       hql.append(" and sd.product.id = :productId");
       hql.append(" and pp.product.id = :productId");
-      hql.append(" and is.available = true"); // FIXME: Use available for cross store
+      hql.append(" and ls.available = true"); // FIXME: Use available for cross store
+      hql.append(" and ow.priority = (");
+      hql.append("   select min(ow2.priority)");
+      hql.append("   from OrganizationWarehouse ow2");
+      hql.append("   where ow2.organization.id = o.id");
+      hql.append("   and ow2.active = true");
+      hql.append(" )");
       hql.append(" and plv.validFromDate = (");
       hql.append("   select max(plv2.validFromDate)");
       hql.append("   from PricingPriceListVersion plv2");
@@ -107,12 +115,14 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" and o.active = true");
       hql.append(" and ow.active = true");
       hql.append(" and w.active = true");
+      hql.append(" and owh.active = true");
+      hql.append(" and wh.active = true");
       hql.append(" and l.active = true");
       hql.append(" and sd.active = true");
       hql.append(" and pl.active = true");
       hql.append(" and plv.active = true");
       hql.append(" and pp.active = true");
-      hql.append(" group by o.id, o.name, pp.standardPrice");
+      hql.append(" group by o.id, o.name, w.id, w.name, pp.standardPrice");
       hql.append(" having sum(sd.quantityOnHand - sd.reservedQty) <> 0");
 
       return Collections.singletonList(hql.toString());
