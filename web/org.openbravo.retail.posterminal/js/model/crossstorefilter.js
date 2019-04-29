@@ -31,8 +31,8 @@
     filter: false,
     type: 'NUMERIC'
   }, {
-    name: 'name',
-    column: 'name',
+    name: 'orgName',
+    column: 'orgName',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblName'
