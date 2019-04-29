@@ -188,7 +188,7 @@ enyo.kind({
     return true;
   },
   openOtherStoresStockModal: function () {
-    if (OB.UTIL.isCrossStoreProduct(this.leftSubWindow.product)) {
+    if (OB.UTIL.isCrossStoreEnabled()) {
       var me = this;
       var selectedStoreCallBack = function (data) {
           var warehouse = data.warehouse ? data.warehouse : {
@@ -383,7 +383,7 @@ enyo.kind({
           data.product = me.product;
           me.otherStoresStockModel = new OB.OBPOSPointOfSale.UsedModels.OtherStoresWarehousesStock(data);
           me.bodyComponent.$.stockOthers.removeClass('error');
-          me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock') + data.qty);
+          me.bodyComponent.$.stockOthers.setContent(OB.UTIL.isCrossStoreEnabled() ? OB.I18N.getLabel('OBPOS_SelectStore') : OB.I18N.getLabel('OBPOS_otherStoresStock') + data.qty);
         }
       });
     }
