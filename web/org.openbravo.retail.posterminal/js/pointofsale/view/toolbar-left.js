@@ -738,6 +738,10 @@ enyo.kind({
       kind: 'OB.UI.MenuForceIncrementalRefresh'
     });
 
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuTestPrinter'
+    });
+
     //remove duplicates
     this.menuEntries = _.uniq(this.menuEntries, false, function (p) {
       return p.kind + p.name;
