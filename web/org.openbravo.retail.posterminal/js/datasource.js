@@ -421,24 +421,12 @@ OB.DS.HWServer.prototype._template = function (templatedata, params) {
   return params ? _.template(templatedata, params) : templatedata;
 };
 
-
-OB.DS.HWServer.prototype.confirm = function (title, message) {
-  return new Promise(function (resolve, reject) {
-    OB.UTIL.showConfirmation.display(title, message, [{
-      label: OB.I18N.getLabel('OBMOBC_LblOk'),
-      action: resolve
-    }], {
-      onHideFunction: reject
-    });
-  });
-};
-
 OB.DS.HWServer.prototype._sendWebPrinter = function () {
   return function (data) {
     if (this.webprinter.connected()) {
       return this.webprinter.print(data);
     } else {
-      return this.confirm(OB.I18N.getLabel('OBPOS_WebPrinter'), OB.I18N.getLabel('OBPOS_WebPrinterPair')).then(function () {
+      return OB.UTIL.confirm(OB.I18N.getLabel('OBPOS_WebPrinter'), OB.I18N.getLabel('OBPOS_WebPrinterPair')).then(function () {
         return this.webprinter.request();
       }.bind(this)).then(function () {
         return this.webprinter.print(data);
@@ -482,7 +470,7 @@ OB.DS.HWServer.prototype.storeData = function (data, device) {
     time: new Date().getTime(),
     data: data
   };
-  OB.UTIL.localStorage.setItem('WEBPOSHW.' + this.storeDataKey + '.' + (device || OB.DS.HWServer.PRINTER), JSON.stringify(terminaldata));
+  OB.UTIL.localStorage.setItem('HWM.' + this.storeDataKey + '.' + (device || OB.DS.HWServer.PRINTER), JSON.stringify(terminaldata));
 };
 
 OB.DS.HWServer.prototype._send = function (data, callback, device) {
