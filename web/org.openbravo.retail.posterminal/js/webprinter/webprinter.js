@@ -267,6 +267,10 @@
       image: imageurl
     }).then(function (result) {
       return this.escpos.transImage(result.imagedata);
+    }.bind(this))['catch'](function (error) {
+      // Log the error and continue printing the receipt
+      OB.warn('Cannot load receipt image \'' + image + '\' -> \'' + imageurl + '\'');
+      return new Uint8Array();
     }.bind(this));
   };
 
