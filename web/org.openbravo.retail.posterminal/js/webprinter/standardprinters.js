@@ -59,7 +59,7 @@
       url: '../../utility/ShowImageLogo?logo=yourcompanybig&orgId=' + OB.MobileApp.model.get('terminal').organization
     }, {
       name: 'ticket-image.png',
-      url: './img/GetOpenbravoLogo.png'
+      url: './img/openbravo-logo.png'
     }];
   });
 
