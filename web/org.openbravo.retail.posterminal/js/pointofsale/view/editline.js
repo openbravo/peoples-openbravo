@@ -287,6 +287,7 @@ enyo.kind({
         order.unset('preventServicesUpdate');
         order.get('lines').trigger('updateRelations');
         order.set('multipleUndo', null);
+        me.owner.owner.rearrangeEditButtonBar();
       });
     },
     init: function (model) {
@@ -529,7 +530,7 @@ enyo.kind({
     }
     if (this.selectedModels && this.selectedModels.length > 0 && (this.selectedModels[0] instanceof OB.Model.OrderLine)) {
       var selectedServices = _.filter(this.selectedModels, function (line) {
-        return line.get('product').get('productType') === 'S';
+        return line.get('product').get('productType') === 'S' || line.get('qty') < 0;
       });
       this.hideDeliveryButton = !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments || this.receipt.get('isFullyDelivered') || selectedServices.length ? true : false;
       this.hideDeliveryLabel = !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments || this.receipt.get('isFullyDelivered') || selectedServices.length === this.selectedModels.length ? true : false;
