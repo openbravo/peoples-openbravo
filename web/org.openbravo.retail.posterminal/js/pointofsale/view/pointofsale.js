@@ -578,7 +578,7 @@ enyo.kind({
     if (inEvent.ignoreStockTab) {
       this.showOrder(inSender, inEvent);
     } else {
-      if ((!targetOrder.get('lines').isProductPresent(inEvent.product) && ((inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.MobileApp.model.get('connectedToERP')))) || (OB.UTIL.isCrossStoreProduct(inEvent.product))) {
+      if (!targetOrder.get('lines').isProductPresent(inEvent.product) && ((inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) || OB.UTIL.isCrossStoreProduct(inEvent.product))) {
         inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
         if (enyo.Panels.isScreenNarrow()) {
@@ -586,6 +586,17 @@ enyo.kind({
         }
         return true;
       } else {
+        if (OB.UTIL.isCrossStoreProduct(inEvent.product) && OB.UTIL.isNullOrUndefined(inEvent.product.get('listPrice')) && !inEvent.product.get('ispack') && targetOrder.get('lines').isProductPresent(inEvent.product)) {
+          var product = null;
+          _.find(targetOrder.get('lines').models, function (line) {
+            if (line.get('product').get('id') === inEvent.product.get('id')) {
+              product = line.get('product');
+              return;
+            }
+          }, this);
+          inEvent.product.set('listPrice', product.get('listPrice'));
+          inEvent.product.set('standardPrice', product.get('standardPrice'));
+        }
         this.showOrder(inSender, inEvent);
       }
     }
