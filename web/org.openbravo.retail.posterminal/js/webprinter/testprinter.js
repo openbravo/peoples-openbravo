@@ -29,8 +29,8 @@ enyo.kind({
   '  <qr position="center">ABCDE12345</qr>' + //
   '</ticket>' + //
   '</output>',
-  checkReceipt: function () {
-    OB.UTIL.confirm(OB.I18N.getLabel('OBPOS_TestPrinter'), OB.I18N.getLabel('OBPOS_TestPrinterVerify'));
+  checkReceipt: function (ev) {
+    OB.UTIL.confirm(OB.I18N.getLabel('OBPOS_TestPrinter'), OB.I18N.getLabel(ev && ev.exception ? 'OBPOS_TestPrinterError' : 'OBPOS_TestPrinterOK'));
   },
   tap: function () {
     OB.POS.hwserver.print(this.template, {}, this.checkReceipt.bind(this), OB.DS.HWServer.PRINTER);
