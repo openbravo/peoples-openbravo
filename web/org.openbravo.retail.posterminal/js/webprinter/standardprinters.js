@@ -55,8 +55,11 @@
   // yourcompanylogin, youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
   OB.PRINTERIMAGES.register(function () {
     return [{
-      name: 'ticket-image.png',
+      name: 'yourcompanybig',
       url: '../../utility/ShowImageLogo?logo=yourcompanybig&orgId=' + OB.MobileApp.model.get('terminal').organization
+    }, {
+      name: 'ticket-image.png',
+      url: './img/GetOpenbravoLogo.png'
     }];
   });
 
