@@ -193,6 +193,7 @@
   }, {
     name: 'isLinkedToProduct',
     column: 'isLinkedToProduct',
+    saveToReceipt: true,
     type: 'BOOL'
   }, {
     name: 'modifyTax',
@@ -209,6 +210,7 @@
   }, {
     name: 'quantityRule',
     column: 'quantityRule',
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'isPrintServices',
