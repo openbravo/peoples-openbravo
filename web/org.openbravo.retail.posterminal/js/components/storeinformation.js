@@ -78,7 +78,7 @@ enyo.kind({
   }, {
     classes: 'obpos-store-line span12',
     components: [{
-      classes: 'obpos-icon-cif obpos-row-store-info',
+      classes: 'obpos-icon-cif',
       name: 'iconCIF',
       initComponents: function () {
         this.setContent('CIF');
@@ -272,7 +272,7 @@ enyo.kind({
       classes: 'obpos-store-information-openhour',
       name: 'openHour'
     }, {
-      classes: 'obpos-store-information-empty5'
+      classes: 'obpos-store-information-empty9'
     }, {
       classes: 'obpos-store-information-callcenter',
       name: 'callCenter'
@@ -319,7 +319,7 @@ enyo.kind({
       classes: 'span5 obpos-store-information-specialOpenHour',
       name: 'specialOpenHour'
     }, {
-      classes: 'obpos-store-information-empty2'
+      classes: 'obpos-store-information-empty1'
     }, {
       classes: 'obpos-store-information-callcenter',
       name: 'specialCloseHour'

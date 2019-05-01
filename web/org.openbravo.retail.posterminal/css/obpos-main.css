@@ -1399,7 +1399,7 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
 }
 
 .obpos-store-information-header {
-  padding: 10px; 
+  padding: 10px 10px 10px 0px; 
   border-bottom: 1px solid #cccccc;
 }
 
@@ -1417,19 +1417,19 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
 
 .obpos-store-information-specialOpenHour {
   float: left;
-  padding-left: 10px;
+  padding-left: 20px;
 }
 
-.obpos-store-information-empty2 {
+.obpos-store-information-empty1 {
   display: table-cell; 
   vertical-align: middle; 
-  width: 2%;
+  width: 1%;
 }
 
-.obpos-store-information-empty5 {
+.obpos-store-information-empty9 {
   display: table-cell; 
   vertical-align: middle; 
-  width: 5%;
+  width: 9%;
 }
 
 .obpos-store-information-callcenter {
@@ -1489,6 +1489,8 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
   font-weight: bold;
   font-family: 'Arial';  
   color: #6cb33f;
+  float: left;
+  padding-top: 5px;
 }
 
 .obpos-icon-schedule {
