@@ -98,7 +98,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" and $filtersCriteria");
       hql.append(" and sd.product.id = :productId");
       hql.append(" and pp.product.id = :productId");
-      hql.append(" and ls.available = true"); // FIXME: Use available for cross store
+      hql.append(" and ls.oBRETCOAVAILABLECROSSS = true");
       hql.append(" and ow.id = (");
       hql.append("   select min(ow2.id)");
       hql.append("   from OrganizationWarehouse ow2");
