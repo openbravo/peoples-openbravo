@@ -3097,8 +3097,10 @@
               }
             }
             executeAddProduct();
-            if (!OB.UTIL.isNullOrUndefined(args.attrs) && args.attrs.cancelOperation && cancelCallback) {
-              cancelCallback();
+            if (!OB.UTIL.isNullOrUndefined(args.attrs) && args.attrs.cancelOperation) {
+              if (cancelCallback instanceof Function) {
+                cancelCallback();
+              }
             }
           });
         } else {
@@ -5411,9 +5413,17 @@
       delete jsonorder.undo;
       delete jsonorder.json;
 
+      var productProps = _.filter(OB.Model.Product.getProperties(), function (prop) {
+        return !prop.saveToReceipt;
+      });
+
       _.forEach(jsonorder.lines, function (item) {
-        delete item.product.img;
-        delete item.product._filter;
+        delete item.sortedTaxCollection;
+        if (OB.UTIL.isNullOrUndefined(item.product.saveToReceipt)) {
+          _.forEach(productProps, function (prop) {
+            delete item.product[prop.name];
+          });
+        }
       });
 
       return jsonorder;

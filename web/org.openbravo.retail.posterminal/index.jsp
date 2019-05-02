@@ -77,6 +77,10 @@ if (useServiceWorkers) {
     (function () {
       // manage manifest
       window.addEventListener('load', function (e) {
+        if(!window.applicationCache) {
+          //No application cache object, probably non-secure context, we cannot add the event anyway
+          return;
+        }
         // manage manifest
         window.applicationCache.addEventListener('updateready', function (e) {
           OB.MobileApp.model.unset('loadManifeststatus');

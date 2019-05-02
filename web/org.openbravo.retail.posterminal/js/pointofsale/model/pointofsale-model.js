@@ -670,11 +670,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     // Listening events that cause a discount recalculation
     receipt.get('lines').on('add change:qty change:price', function (line) {
-      if (!receipt.get('isEditable')) {
-        return;
-      }
-      //When we do not want to launch promotions process (Not apply or remove discounts)
-      if (receipt.get('cloningReceipt') || receipt.get('skipApplyPromotions') || line.get('skipApplyPromotions')) {
+      // Do not calculate the receipt if the ticket is not editable or is being cloned
+      if (!receipt.get('isEditable') || receipt.get('cloningReceipt')) {
         return;
       }
       // Calculate the receipt

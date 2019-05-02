@@ -108,7 +108,7 @@ enyo.kind({
         paymentstatus = this.model.get('multiOrders').getPaymentStatus();
         hasChange = OB.DEC.compare(this.model.get('multiOrders').getChange()) > 0;
       }
-      if (!_.isNull(change) && change) {
+      if (!_.isNull(change) && change && !(_.isUndefined(inEvent.value.payment) && !_.isUndefined(OB.MobileApp.model.receipt.get('changePayments')))) {
         this.calculateChange(payment, change);
       } else if (!_.isNull(pending) && pending) {
         this.calculateChangeReset();

@@ -287,6 +287,7 @@ enyo.kind({
         order.unset('preventServicesUpdate');
         order.get('lines').trigger('updateRelations');
         order.set('multipleUndo', null);
+        me.owner.owner.rearrangeEditButtonBar();
       });
     },
     init: function (model) {
@@ -529,13 +530,13 @@ enyo.kind({
     }
     if (this.selectedModels && this.selectedModels.length > 0 && (this.selectedModels[0] instanceof OB.Model.OrderLine)) {
       var selectedServices = _.filter(this.selectedModels, function (line) {
-        return line.get('product').get('productType') === 'S';
+        return line.get('product').get('productType') === 'S' || line.get('qty') < 0;
       });
-      this.hideDeliveryButton = !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments || selectedServices.length ? true : false;
-      this.hideDeliveryLabel = !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments || selectedServices.length === this.selectedModels.length ? true : false;
+      this.hideDeliveryButton = !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments || this.receipt.get('isFullyDelivered') || selectedServices.length ? true : false;
+      this.hideDeliveryLabel = !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments || this.receipt.get('isFullyDelivered') || selectedServices.length === this.selectedModels.length ? true : false;
       if (this.selectedModels.length > 1) {
         var selectedLinesToDeliver = _.filter(this.selectedModels, function (line) {
-          return line.get('obposCanbedelivered');
+          return line.get('obposCanbedelivered') && line.get('deliveredQuantity') < line.get('qty');
         });
         this.hideDeliveryButton = this.hideDeliveryButton ? true : selectedLinesToDeliver.length && selectedLinesToDeliver.length < this.selectedModels.length;
         if (this.hideDeliveryButton) {
@@ -549,7 +550,7 @@ enyo.kind({
           }
         }
       } else if (this.selectedModels.length === 1) {
-        if (this.hideDeliveryButton) {
+        if (this.hideDeliveryButton || this.selectedModels[0].get('deliveredQuantity') < this.selectedModels[0].get('qty')) {
           this.$.actionButtonsContainer.$.canDeliver.hide();
         } else {
           this.$.actionButtonsContainer.$.canDeliver.show();
@@ -902,6 +903,8 @@ enyo.kind({
         me.line = null;
         me.selectedModels = null;
         me.render();
+      } else {
+        me.rearrangeEditButtonBar();
       }
     }
     this.receipt.on('clear', function () {

@@ -42,6 +42,14 @@ OB.DS.HWServer = function (urllist, url, scaleurl) {
   this.setActiveURL(OB.UTIL.localStorage.getItem('hw_activeurl'));
   //load activepdfurl from OB.UTIL.localStorage
   this.setActivePDFURL(OB.UTIL.localStorage.getItem('hw_activepdfurl'));
+
+  // WebPrinter
+  var printertypeinfo = OB.PRINTERTYPES[OB.MobileApp.model.get('terminal').printertype];
+  this.webprinter = printertypeinfo ? new OB.WEBPrinter(printertypeinfo, OB.PRINTERIMAGES.getImagesMap()) : null;
+  this.storeDataKey = OB.MobileApp.model.get('terminal').searchKey;
+  this.storeData(null, OB.DS.HWServer.PRINTER);
+  this.storeData(null, OB.DS.HWServer.DISPLAY);
+  this.storeData(null, OB.DS.HWServer.DRAWER);
 };
 
 OB.DS.HWServer.PRINTER = 0;
@@ -413,57 +421,99 @@ OB.DS.HWServer.prototype._template = function (templatedata, params) {
   return params ? _.template(templatedata, params) : templatedata;
 };
 
-OB.DS.HWServer.prototype._send = function (data, callback, device) {
+OB.DS.HWServer.prototype._sendWebPrinter = function () {
+  return function (data) {
+    if (this.webprinter.connected()) {
+      return this.webprinter.print(data);
+    } else {
+      return OB.UTIL.confirm(OB.I18N.getLabel('OBPOS_WebPrinter'), OB.I18N.getLabel('OBPOS_WebPrinterPair')).then(function () {
+        return this.webprinter.request();
+      }.bind(this)).then(function () {
+        return this.webprinter.print(data);
+      }.bind(this));
+    }
+  }.bind(this);
+};
 
-  var sendurl;
-  if (OB.DS.HWServer.DRAWER === device || OB.DS.HWServer.DISPLAY === device) {
-    // DRAWER and DISPLAY URL is allways the main url defined in POS terminal
-    sendurl = this.mainurl;
-  } else {
-    // PRINTER and default is the active URL
-    sendurl = this.activeurl;
-  }
-
-  if (sendurl) {
-    var ajaxRequest = new enyo.Ajax({
-      url: sendurl + '/printer',
-      cacheBust: false,
-      method: 'POST',
-      handleAs: 'json',
-      timeout: 20000,
-      contentType: 'application/xml;charset=utf-8',
-      data: data,
-      success: function (inSender, inResponse) {
-        if (callback) {
-          callback(inResponse, data);
-        }
-      },
-      fail: function (inSender, inResponse) {
-        // prevent more than one entry.
-        if (this.failed) {
-          return;
-        }
-        this.failed = true;
-
-        if (callback) {
-          callback({
-            data: data,
-            exception: {
-              message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
+OB.DS.HWServer.prototype._sendHWMPrinter = function (sendurl) {
+  return function (data) {
+    return new Promise(function (resolve, reject) {
+      if (sendurl) {
+        var ajaxRequest = new enyo.Ajax({
+          url: sendurl + '/printer',
+          cacheBust: false,
+          method: 'POST',
+          handleAs: 'json',
+          timeout: 20000,
+          contentType: 'application/xml;charset=utf-8',
+          data: data,
+          success: resolve,
+          fail: function (inSender, inResponse) {
+            // prevent more than one entry.
+            if (this.failed) {
+              return;
             }
-          });
-        } else {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
-        }
+            this.failed = true;
+            reject();
+          }
+        });
+        ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
+      } else {
+        resolve();
       }
     });
-    ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
+  }.bind(this);
+};
+
+OB.DS.HWServer.prototype.storeData = function (data, device) {
+  var terminaldata = {
+    time: new Date().getTime(),
+    data: data
+  };
+  OB.UTIL.localStorage.setItem('HWM.' + this.storeDataKey + '.' + (device || OB.DS.HWServer.PRINTER), JSON.stringify(terminaldata));
+};
+
+OB.DS.HWServer.prototype._send = function (data, callback, device) {
+  var sendfunction;
+
+  this.storeData(data, device);
+
+  if (OB.DS.HWServer.DISPLAY === device) {
+    // DISPLAY requests always go to HARDWARE MANAGER MAIN URL
+    sendfunction = this._sendHWMPrinter(this.mainurl);
+  } else if (OB.DS.HWServer.DRAWER === device) {
+    // DRAWER requests go to WebPrinter if exists, otherwise to HARDWARE MANAGER MAIN URL
+    if (this.webprinter) {
+      sendfunction = this._sendWebPrinter();
+    } else {
+      sendfunction = this._sendHWMPrinter(this.mainurl);
+    }
   } else {
+    // PRINTER requests go to WebPrinter if exists and MAIN, otherwise to HARDWARE MANAGER ACTIVE URL
+    if (this.webprinter && this.activeurl === this.mainurl) {
+      sendfunction = this._sendWebPrinter();
+    } else {
+      sendfunction = this._sendHWMPrinter(this.activeurl);
+    }
+  }
+  sendfunction(data).then(function () {
     if (callback) {
       callback();
     }
-  }
+  })['catch'](function (error) {
+    if (callback) {
+      callback({
+        data: data,
+        exception: {
+          message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
+        }
+      });
+    } else {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
+    }
+  });
 };
+
 OB.DS.HWServer.prototype._printPDF = function (params, callback) {
   this._sendPDF(JSON.stringify(params), callback);
 };

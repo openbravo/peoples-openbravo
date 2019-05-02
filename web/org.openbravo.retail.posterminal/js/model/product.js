@@ -27,16 +27,19 @@
     name: 'id',
     column: 'm_product_id',
     primaryKey: true,
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'searchkey',
     column: 'searchkey',
     filter: true,
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'uPCEAN',
     column: 'upc',
     filter: true,
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'uOM',
@@ -53,10 +56,12 @@
   }, {
     name: 'productCategory',
     column: 'm_product_category_id',
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'taxCategory',
     column: 'c_taxcategory_id',
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'img',
@@ -138,6 +143,7 @@
     name: '_identifier',
     column: '_identifier',
     filter: true,
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'currentStandardPrice',
@@ -146,6 +152,7 @@
   }, {
     name: 'productType',
     column: 'productType',
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'includeProductCategories',
@@ -186,6 +193,7 @@
   }, {
     name: 'isLinkedToProduct',
     column: 'isLinkedToProduct',
+    saveToReceipt: true,
     type: 'BOOL'
   }, {
     name: 'modifyTax',
@@ -202,6 +210,7 @@
   }, {
     name: 'quantityRule',
     column: 'quantityRule',
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'isPrintServices',
@@ -210,10 +219,12 @@
   }, {
     name: 'obposEditablePrice',
     column: 'obposEditablePrice',
+    saveToReceipt: true,
     type: 'BOOL'
   }, {
     name: 'hasAttributes',
     column: 'hasAttributes',
+    saveToReceipt: true,
     type: 'BOOL'
   }, {
     name: 'isSerialNo',
