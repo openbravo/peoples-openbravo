@@ -98,19 +98,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" and $filtersCriteria");
       hql.append(" and sd.product.id = :productId");
       hql.append(" and pp.product.id = :productId");
-      hql.append(" and ls.oBRETCOAVAILABLECROSSS = true");
-      hql.append(" and ow.id = (");
-      hql.append("   select min(ow2.id)");
-      hql.append("   from OrganizationWarehouse ow2");
-      hql.append("   where ow2.organization.id = o.id");
-      hql.append("   and ow2.active = true");
-      hql.append("   and ow2.priority = (");
-      hql.append("     select min(ow3.priority)");
-      hql.append("     from OrganizationWarehouse ow3");
-      hql.append("     where ow3.organization.id = o.id");
-      hql.append("     and ow3.active = true");
-      hql.append("   )");
-      hql.append(" )");
+      // hql.append(" and ls.oBRETCOAVAILABLECROSSSTORE = true");
       hql.append(" and plv.id = (");
       hql.append("   select min(plv2.id)");
       hql.append("   from PricingPriceListVersion plv2");
@@ -136,6 +124,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" and pp.active = true");
       hql.append(" group by o.id, o.name, w.id, w.name, pp.standardPrice");
       hql.append(" having sum(sd.quantityOnHand - sd.reservedQty) <> 0");
+      hql.append(" and w.id = min(wh.id)");
 
       return Collections.singletonList(hql.toString());
     } finally {
