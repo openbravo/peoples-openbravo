@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -523,10 +523,7 @@ public class DalWebService implements WebService {
     // }
 
     try {
-      final SAXReader reader = new SAXReader();
-      reader.setFeature("http://xml.org/sax/features/external-general-entities", false);
-      reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-      reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+      final SAXReader reader = XMLUtil.getInstance().newSAXReader();
       final Document document = reader.read(request.getInputStream());
 
       // now parse the xml and let it be translated to a set of

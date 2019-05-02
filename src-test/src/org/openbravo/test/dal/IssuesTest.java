@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,6 +75,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.dal.xml.XMLEntityConverter;
+import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.data.UtilSql;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
@@ -563,7 +564,7 @@ public class IssuesTest extends OBBaseTest {
     // for a webservice referenced entities should not be created at all!
     xec.getEntityResolver().setOptionCreateReferencedIfNotFound(false);
 
-    final SAXReader reader = new SAXReader();
+    final SAXReader reader = XMLUtil.getInstance().newSAXReader();
     final Document document = reader.read(this.getClass().getResourceAsStream("test_13281.xml"));
     final List<BaseOBObject> result = xec.process(document);
     assertEquals(1, result.size());
