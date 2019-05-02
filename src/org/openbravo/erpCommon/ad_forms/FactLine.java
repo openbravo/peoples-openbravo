@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -19,21 +19,18 @@ package org.openbravo.erpCommon.ad_forms;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.query.NativeQuery;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 
@@ -1132,32 +1129,23 @@ public class FactLine {
     String strSql = AcctServerData.selectDescription(connectionProvider, strAD_Table_ID,
         strC_AcctSchema_ID);
     try {
-      if (!strSql.equals("")/* && strLine!=null && !strLine.equals("") */) {
-        strSql = strSql.replaceAll("@RecordId@", "'" + strRecord_ID + "'");
-        if (localStrLine == null || localStrLine.equals("")) {
-          localStrLine = "NULL";
-        } else {
-          localStrLine = "'" + localStrLine + "'";
+      if (!StringUtils.isBlank(strSql)) {
+        strSql = strSql.replaceAll("@RecordId@", ":recordId").replaceAll("@Line@", ":lineId");
+
+        @SuppressWarnings("rawtypes")
+        NativeQuery query = OBDal.getInstance().getSession().createSQLQuery(strSql);
+        if (strSql.contains(":recordId")) {
+          query.setParameter("recordId", strRecord_ID);
         }
-        strSql = strSql.replaceAll("@Line@", localStrLine);
-        Statement st = connectionProvider.getStatement();
-        ResultSet result;
-        try {
-          if (st.execute(strSql)) {
-            result = st.getResultSet();
-            while (result.next()) {
-              description.append(result.getString(1));
-            }
-            result.close();
-          }
-        } catch (SQLException e) {
-          log4jFactLine.error("SQL error in query: " + strSql + "Exception:" + e);
-          throw new ServletException(Integer.toString(e.getErrorCode()));
-        } finally {
-          try {
-            connectionProvider.releaseStatement(st);
-          } catch (Exception ignored) {
-          }
+        String lineValue = StringUtils.isBlank(localStrLine) ? "NULL" : localStrLine;
+        if (strSql.contains(":lineId")) {
+          query.setParameter("lineId", lineValue);
+        }
+        final String result = (String) query.uniqueResult();
+        if (lineValue.equalsIgnoreCase("NULL") && result != null && strSql.contains(":lineId")) {
+          description.append(lineValue);
+        } else {
+          description.append(StringUtils.defaultIfBlank(result, StringUtils.EMPTY));
         }
       }
       if (description.length() == 0) {
@@ -1180,11 +1168,6 @@ public class FactLine {
       if (description.length() > 255) {
         description = new StringBuffer(description.substring(0, 254));
       }
-    } catch (NoConnectionAvailableException ex) {
-      throw new ServletException("@CODE=NoConnectionAvailable");
-    } catch (SQLException ex2) {
-      throw new ServletException(
-          "@CODE=" + Integer.toString(ex2.getErrorCode()) + "@" + ex2.getMessage());
     } catch (Exception ex3) {
       throw new ServletException("@CODE=@" + ex3.getMessage());
     }
