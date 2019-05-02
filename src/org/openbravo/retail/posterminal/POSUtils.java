@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -252,12 +252,14 @@ public class POSUtils {
       SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
       Query<PriceListVersion> priceListVersionQuery = OBDal.getInstance()
           .getSession()
-          .createQuery("from PricingPriceListVersion AS plv " + "where plv.priceList.id ='"
-              + priceListId
-              + "' and plv.active=true and plv.validFromDate = (select max(pplv.validFromDate) "
-              + "from PricingPriceListVersion as pplv where pplv.active=true and pplv.priceList.id = '"
-              + priceListId + "' and to_char(pplv.validFromDate,'yyyy-mm-dd') <= '"
-              + format.format(terminalDate) + "' )", PriceListVersion.class);
+          .createQuery("from PricingPriceListVersion AS plv "
+              + "where plv.priceList.id = :priceList and plv.active=true "
+              + "and plv.validFromDate = (select max(pplv.validFromDate) "
+              + "from PricingPriceListVersion as pplv where pplv.active=true "
+              + "and pplv.priceList.id = :priceList and to_char(pplv.validFromDate,'yyyy-mm-dd') <= :terminalDate )",
+              PriceListVersion.class);
+      priceListVersionQuery.setParameter("priceList", priceListId);
+      priceListVersionQuery.setParameter("terminalDate", format.format(terminalDate));
       for (PriceListVersion plv : priceListVersionQuery.list()) {
         return plv;
       }
