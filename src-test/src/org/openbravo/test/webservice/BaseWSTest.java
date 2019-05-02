@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -160,7 +160,7 @@ public class BaseWSTest extends OBBaseTest {
       String retContent;
 
       if (validateXML) {
-        final SAXReader sr = new SAXReader();
+        final SAXReader sr = XMLUtil.getInstance().newSAXReader();
         final InputStream is = hc.getInputStream();
         final Document doc = sr.read(is);
         retContent = XMLUtil.getInstance().toString(doc);
@@ -251,7 +251,7 @@ public class BaseWSTest extends OBBaseTest {
     try {
       final HttpURLConnection hc = createConnection(wsPart, "GET");
       hc.connect();
-      final SAXReader sr = new SAXReader();
+      final SAXReader sr = XMLUtil.getInstance().newSAXReader();
       final InputStream is = hc.getInputStream();
       final StringBuilder sb = new StringBuilder();
       BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
