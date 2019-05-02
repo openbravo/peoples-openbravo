@@ -646,18 +646,19 @@ enyo.kind({
   },
   setTaxes: function () {
     if (OB.MobileApp.model.get('terminal').terminalType.showtaxbreakdown) {
-      var taxList = new Backbone.Collection();
-      var taxes = this.order.get('taxes');
-      var empty = true,
-          prop;
+      var prop, taxList = new Backbone.Collection(),
+          taxes = this.order.get('taxes');
 
-      for (prop in taxes) {
-        if (taxes.hasOwnProperty(prop) && (taxes[prop].net !== 0 || taxes[prop].amount !== 0)) {
-          taxList.add(new OB.Model.TaxLine(taxes[prop]));
-          empty = false;
+      if (_.filter(this.order.get('lines').models, function (line) {
+        return !line.get('obposIsDeleted');
+      }).length > 0) {
+        for (prop in taxes) {
+          if (taxes.hasOwnProperty(prop)) {
+            taxList.add(new OB.Model.TaxLine(taxes[prop]));
+          }
         }
       }
-      if (empty) {
+      if (taxList.length === 0) {
         this.$.taxBreakdown.hide();
       } else {
         this.$.taxBreakdown.show();
