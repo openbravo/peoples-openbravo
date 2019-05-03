@@ -196,47 +196,6 @@ enyo.kind({
   style: 'padding: 9px 15px;',
   windowHeader: 'OB.OBPOSPointOfSale.UI.customers.NewCustomer_bodyheader',
   newAttributes: [{
-    kind: 'OB.UI.CustomerComboProperty',
-    name: 'customerGreetings',
-    modelProperty: 'greetings',
-    modelPropertyText: 'greetings',
-    collectionName: 'greetingsList',
-    //Default value for new lines
-    defaultValue: function () {
-      return '';
-    },
-    retrievedPropertyForValue: 'searchKey',
-    //property of the retrieved model to get the value of the combo item
-    retrievedPropertyForText: 'name',
-    //property of the retrieved model to get the text of the combo item
-    //function to retrieve the data
-    fetchDataFunction: function (args) {
-      var me = this,
-          criteria;
-      criteria = {
-  	    _constructor: 'AdvancedCriteria',
-   	    criteria: [{
-   	      fieldName: 'reference.id',
-   	      operator: 'equals',
-          value: '5BC87599202B485EB1FC6CA91FBF8722',
-          _orderByClause: '_identifier asc'
-        }],
-      };
-      OB.Data.Registry.registerModel('ADList');
-      OB.Dal.find(OB.Model.ADList, criteria, function (data, args) {
-        //This function must be called when the data is ready
-        me.dataReadyFunction(data, args);
-      }, function (error) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingGreetings'));
-        //This function must be called when the data is ready
-        me.dataReadyFunction(null, args);
-      }, args);
-    },
-    i18nLabel: 'OBPOS_LblGreetings',
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowGreetings', true);
-    }
-  }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'firstName',
     modelProperty: 'firstName',
