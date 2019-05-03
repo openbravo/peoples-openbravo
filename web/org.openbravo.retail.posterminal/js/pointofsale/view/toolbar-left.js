@@ -199,6 +199,9 @@ enyo.kind({
       return false;
     }
 
+    // Set current organization to receipt
+    this.model.get('order').set('organization', OB.MobileApp.model.get('terminal').organization);
+
     // deletion without warning is allowed if the ticket has been processed
     if (this.hasClass('paidticket')) {
       this.doDeleteOrder();
