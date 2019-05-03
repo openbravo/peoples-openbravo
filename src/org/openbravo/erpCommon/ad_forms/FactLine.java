@@ -1124,29 +1124,24 @@ public class FactLine {
   public StringBuffer getDescription(ConnectionProvider connectionProvider, String strC_Bpartner_ID,
       String strC_AcctSchema_ID, String strAD_Table_ID, String strRecord_ID, String strLine)
       throws ServletException {
-    String localStrLine = strLine;
     StringBuffer description = new StringBuffer();
     String strSql = AcctServerData.selectDescription(connectionProvider, strAD_Table_ID,
         strC_AcctSchema_ID);
     try {
       if (!StringUtils.isBlank(strSql)) {
-        strSql = strSql.replaceAll("@RecordId@", ":recordId").replaceAll("@Line@", ":lineId");
+        strSql = strSql.replaceAll("@RecordId@", ":paramRecordId")
+            .replaceAll("@Line@", ":paramLineId");
 
         @SuppressWarnings("rawtypes")
         NativeQuery query = OBDal.getInstance().getSession().createSQLQuery(strSql);
-        if (strSql.contains(":recordId")) {
-          query.setParameter("recordId", strRecord_ID);
+        if (strSql.contains(":paramRecordId")) {
+          query.setParameter("paramRecordId", strRecord_ID);
         }
-        String lineValue = StringUtils.isBlank(localStrLine) ? "NULL" : localStrLine;
-        if (strSql.contains(":lineId")) {
-          query.setParameter("lineId", lineValue);
+        if (strSql.contains(":paramLineId")) {
+          query.setParameter("paramLineId", StringUtils.isBlank(strLine) ? "NULL" : strLine);
         }
         final String result = (String) query.uniqueResult();
-        if (lineValue.equalsIgnoreCase("NULL") && result != null && strSql.contains(":lineId")) {
-          description.append(lineValue);
-        } else {
-          description.append(StringUtils.defaultIfBlank(result, StringUtils.EMPTY));
-        }
+        description.append(StringUtils.defaultIfBlank(result, StringUtils.EMPTY));
       }
       if (description.length() == 0) {
         description.append((m_docVO.DocumentNo == null) ? "" : m_docVO.DocumentNo);
