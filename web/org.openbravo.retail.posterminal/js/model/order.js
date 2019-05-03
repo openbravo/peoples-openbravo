@@ -5101,6 +5101,7 @@
 
       payments = this.get('payments');
       precision = this.getPrecision(payment);
+      payment.set('amount', OB.DEC.number(payment.get('amount')));
       if (this.get('prepaymentChangeMode')) {
         this.unset('prepaymentChangeMode');
         this.adjustPayment();
@@ -7724,6 +7725,7 @@
 
       payments = this.get('payments');
       precision = this.getPrecision(payment);
+      payment.set('amount', OB.DEC.number(payment.get('amount')));
       order = this;
       if (this.get('prepaymentChangeMode')) {
         this.unset('prepaymentChangeMode');
