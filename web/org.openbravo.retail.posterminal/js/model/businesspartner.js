@@ -360,10 +360,6 @@
     filter: true,
     type: 'TEXT'
   }, {
-    name: 'greetings',
-    column: 'greetings',
-    type: 'TEXT'
-  }, {
     name: '_identifier',
     column: '_identifier',
     filter: true,
