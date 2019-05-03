@@ -1,10 +1,6 @@
 <?xml version="1.0"?>
   <database name="MODIFIED TABLE C_BPARTNER">
     <table name="C_BPARTNER" primaryKey="C_BPARTNER_KEY">
-      <column name="EM_OBPOS_GREETINGS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <index name="EM_OBPOS_C_BPARTNERPRICELISTID" unique="false">
         <index-column name="M_PRICELIST_ID"/>
       </index>
