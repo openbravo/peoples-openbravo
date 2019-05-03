@@ -716,7 +716,9 @@ public class ImportEntryManager {
   private static class ImportStatistics {
     private String typeOfData;
     private long cnt;
+    private long cntPartial;
     private long totalTime;
+    private long totalTimePartial;
 
     public void setTypeOfData(String typeOfData) {
       this.typeOfData = typeOfData;
@@ -728,11 +730,16 @@ public class ImportEntryManager {
 
     public synchronized void addTiming(long timeForEntry) {
       cnt++;
+      cntPartial++;
       totalTime += timeForEntry;
+      totalTimePartial += timeForEntry;
     }
 
     public synchronized void log() {
-      log.info("Timings for " + typeOfData + " cnt: " + cnt + " avg millis: " + (totalTime / cnt));
+      log.info("Timings for {}. Partial [cnt: {}, avg: {} ms] - Total [cnt: {}, avg: {} ms]",
+          typeOfData, cntPartial, totalTimePartial / cntPartial, cnt, totalTime / cnt);
+      cntPartial = 0;
+      totalTimePartial = 0;
     }
   }
 
