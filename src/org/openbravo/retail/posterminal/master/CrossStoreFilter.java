@@ -98,7 +98,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" and $filtersCriteria");
       hql.append(" and sd.product.id = :productId");
       hql.append(" and pp.product.id = :productId");
-      hql.append(" and ls.oBRETCOAVAILABLECROSSSTORE = true");
+      hql.append(" and ls.oBRETCOAvailableCrossStore = true");
       hql.append(" and plv.id = (");
       hql.append("   select min(plv2.id)");
       hql.append("   from PricingPriceListVersion plv2");
