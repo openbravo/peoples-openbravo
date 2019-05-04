@@ -36,6 +36,15 @@
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblName'
+  }, {
+    name: 'stock',
+    column: 'stock',
+    caption: 'OBPOS_LblStock',
+    text: 'OBPOS_LblStoresStock',
+    filter: true,
+    type: 'BOOL',
+    isSelect: true,
+    disableSorting: true
   }]);
 
 }());

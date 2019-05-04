@@ -177,6 +177,9 @@ enyo.kind({
       kind: 'OB.UI.ModalAdvancedFilterVerifiedReturns',
       name: 'modalAdvancedFilterVerifiedReturns'
     }, {
+      kind: 'OB.UI.ModalAdvancedFilterSelectStore',
+      name: 'modalAdvancedFilterSelectStore'
+    }, {
       kind: 'OB.UI.ModalMultiOrdersPayOpenTickets',
       name: 'modalMultiOrders'
     }, {

@@ -48,7 +48,29 @@ enyo.kind({
     kind: 'OB.UI.FilterSelectorTableHeader',
     name: 'filterSelector',
     filters: OB.Model.CrossStoreFilter.getProperties()
+  }, {
+    style: 'padding: 10px;',
+    components: [{
+      style: 'display: table; width: 100%;',
+      components: [{
+        style: 'display: table-cell; text-align: center; ',
+        components: [{
+          kind: 'OB.UI.ButtonAdvancedFilter',
+          dialog: 'modalAdvancedFilterSelectStore'
+        }]
+      }]
+    }]
   }]
+});
+
+enyo.kind({
+  kind: 'OB.UI.ModalAdvancedFilters',
+  name: 'OB.UI.ModalAdvancedFilterSelectStore',
+  model: OB.Model.CrossStoreFilter,
+  initComponents: function () {
+    this.inherited(arguments);
+    this.setFilters(OB.Model.CrossStoreFilter.getProperties());
+  }
 });
 
 /* Scrollable table (body of modal) */

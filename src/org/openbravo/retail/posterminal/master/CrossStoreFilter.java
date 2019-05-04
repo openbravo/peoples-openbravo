@@ -20,6 +20,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
@@ -32,6 +33,8 @@ import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQueryValidated;
 
 public class CrossStoreFilter extends ProcessHQLQueryValidated {
+
+  private static final String STOCK_FILTER_KEY = "stock";
 
   public static final String crossStorePropertyExtension = "OBPOS_CrossStoreExtension";
 
@@ -62,6 +65,24 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
           jsonsent.getJSONObject("parameters")
               .getJSONObject("terminalTimeOffset")
               .getLong("value"));
+
+      boolean stockFilter = true;
+      if (jsonsent.has("remoteFilters")) {
+        JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
+        for (int i = 0; i < remoteFilters.length(); i++) {
+          JSONObject filter = remoteFilters.getJSONObject(i);
+          JSONArray columns = filter.getJSONArray("columns");
+          for (int j = 0; j < columns.length(); j++) {
+            String column = columns.getString(j);
+            if (column.equals(STOCK_FILTER_KEY)) {
+              stockFilter = Boolean.parseBoolean(filter.getString("value"));
+              filter.put("value", "");
+            }
+          }
+        }
+      }
+
+      jsonsent.put(STOCK_FILTER_KEY, stockFilter);
 
       final Map<String, Object> paramValues = new HashMap<>();
       paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
@@ -123,8 +144,10 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" and plv.active = true");
       hql.append(" and pp.active = true");
       hql.append(" group by o.id, o.name, w.id, w.name, pp.standardPrice");
-      hql.append(" having sum(sd.quantityOnHand - sd.reservedQty) <> 0");
-      hql.append(" and w.id = min(wh.id)");
+      if (Boolean.parseBoolean(jsonsent.getString(STOCK_FILTER_KEY))) {
+        hql.append(" having sum(sd.quantityOnHand - sd.reservedQty) <> 0");
+        hql.append(" and w.id = min(wh.id)");
+      }
 
       return Collections.singletonList(hql.toString());
     } finally {
