@@ -1510,11 +1510,7 @@ enyo.kind({
   },
   setDisabled: function (value) {
     this.lastDisabledStatus = value;
-    if (value) {
-      this.disableButton();
-    } else {
-      this.enableButton();
-    }
+    this.setDisabledIfSynchronized();
   },
   setDisabledIfSynchronized: function () {
     var value = this.lastDisabledStatus || this.isLocked || false;
