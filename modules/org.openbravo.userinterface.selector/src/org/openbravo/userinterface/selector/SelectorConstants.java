@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,7 @@ public class SelectorConstants {
   public static final String PARAM_ID_FILTERS = "idFilters";
   public static final String PARAM_FILTER_EXPRESSION = "filterExpression";
   private static final String PARAM_TABLE_ID = "inpTableId";
+  private static final String PARAM_PICK_AND_EXECUTE_TABLE_ID = "inpPickAndExecuteTableId";
 
   // Reference definition IDs
   public static final String SELECTOR_REFERENCE_ID = "95E2A8B50A254B2AAE6774B8C2F28120";
@@ -69,8 +70,10 @@ public class SelectorConstants {
         && parameters.containsKey(PARAM_TABLE_ID)
         && parameters.containsKey(PARAM_TARGET_PROPERTY_NAME);
     if (isSelector) {
-      Entity entity = ModelProvider.getInstance()
-          .getEntityByTableId(parameters.get(PARAM_TABLE_ID));
+      String tableId = parameters.containsKey(PARAM_PICK_AND_EXECUTE_TABLE_ID)
+          ? parameters.get(PARAM_PICK_AND_EXECUTE_TABLE_ID)
+          : parameters.get(PARAM_TABLE_ID);
+      Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
       if (entity != null) {
         Property property = entity.getProperty(parameters.get(PARAM_TARGET_PROPERTY_NAME), false);
         return property != null && !property.isAllowedCrossOrgReference();
