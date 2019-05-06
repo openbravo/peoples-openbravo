@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -287,8 +287,9 @@ public class ServicePriceUtils {
       strQuery.append(" join ol.salesOrder as o");
       strQuery.append(" join o.priceList as pl");
       strQuery.append(" where e.salesOrderLine.id = :orderLineId");
-      Query<Object[]> query = OBDal.getInstance().getSession().createQuery(strQuery.toString(),
-          Object[].class);
+      Query<Object[]> query = OBDal.getInstance()
+          .getSession()
+          .createQuery(strQuery.toString(), Object[].class);
       query.setParameter("orderLineId", orderLine.getId());
       query.setMaxResults(1);
       HashMap<String, BigDecimal> result = new HashMap<String, BigDecimal>();
@@ -330,8 +331,9 @@ public class ServicePriceUtils {
       where.append(" order by pl." + PriceList.PROPERTY_DEFAULT + " desc, plv."
           + PriceListVersion.PROPERTY_VALIDFROMDATE + " desc");
 
-      Query<BigDecimal> ppQry = OBDal.getInstance().getSession().createQuery(where.toString(),
-          BigDecimal.class);
+      Query<BigDecimal> ppQry = OBDal.getInstance()
+          .getSession()
+          .createQuery(where.toString(), BigDecimal.class);
       ppQry.setParameter("productId", product.getId());
       ppQry.setParameter("date", date);
       ppQry.setParameter("pricelistId", priceList.getId());
@@ -402,7 +404,8 @@ public class ServicePriceUtils {
           + " case when rpc is not null then 1 else 0 end desc, sprv."
           + ServicePriceRuleVersion.PROPERTY_VALIDFROMDATE + " desc, sprv."
           + ServicePriceRuleVersion.PROPERTY_CREATIONDATE + " desc");
-      Query<ServicePriceRule> sprvQry = OBDal.getInstance().getSession()
+      Query<ServicePriceRule> sprvQry = OBDal.getInstance()
+          .getSession()
           .createQuery(where.toString(), ServicePriceRule.class);
       sprvQry.setParameter("serviceProductId", serviceProduct.getId());
       sprvQry.setParameter("orderDate", orderDate);
