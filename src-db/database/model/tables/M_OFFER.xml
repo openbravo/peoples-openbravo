@@ -127,31 +127,31 @@
       </column>
       <column name="MONDAY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="TUESDAY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="WEDNESDAY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="THURSDAY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="FRIDAY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="SATURDAY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="SUNDAY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="ALLWEEKDAYS" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
