@@ -15,7 +15,7 @@
       this.printertype = printertype;
       this.device = null;
       this.onDisconnected = this.onDisconnected.bind(this);
-      if (!navigator.usb && navigator.usb.addEventListener) {
+      if (navigator.usb && navigator.usb.addEventListener) {
         navigator.usb.addEventListener('disconnect', function (event) {
           if (event.device === this.device) {
             this.onDisconnected();
