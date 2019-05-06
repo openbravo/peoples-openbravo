@@ -36,6 +36,12 @@ enyo.kind({
   },
   getFilterSelectorTableHeader: function () {
     return this.$.body.$.crossStoreList.$.csStoreSelector.$.theader.$.modalCrossStoreProductScrollableHeader.$.filterSelector;
+  },
+  getAdvancedFilterBtn: function () {
+    return this.$.body.$.crossStoreList.$.csStoreSelector.$.theader.$.modalCrossStoreProductScrollableHeader.$.buttonAdvancedFilter;
+  },
+  getAdvancedFilterDialog: function () {
+    return 'modalAdvancedFilterSelectStore';
   }
 });
 
