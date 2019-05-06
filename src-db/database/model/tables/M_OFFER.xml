@@ -155,7 +155,7 @@
       </column>
       <column name="ALLWEEKDAYS" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
       <column name="STARTINGTIME" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
         <default/>
