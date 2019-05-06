@@ -32,7 +32,7 @@ public class QuotationsReject extends POSDataSynchronizationProcess
       RejectReason reason = OBDal.getInstance().get(RejectReason.class, rejectReasonId);
       JSONArray respArray = new JSONArray();
       if (order != null) {
-        if ("CA".equals(order.getDocumentStatus())) {
+        if ("CA".equals(order.getDocumentStatus()) || "CJ".equals(order.getDocumentStatus())) {
           result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
         } else if (reason != null) {
           order.setDocumentStatus("CJ");
