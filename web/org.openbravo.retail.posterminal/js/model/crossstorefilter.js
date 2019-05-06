@@ -44,6 +44,8 @@
     filter: true,
     type: 'BOOL',
     isSelect: true,
+    remoteEntity: true,
+    applyUIRestrictions: true,
     disableSorting: true
   }]);
 
