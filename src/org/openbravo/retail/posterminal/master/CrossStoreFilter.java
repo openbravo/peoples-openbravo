@@ -34,8 +34,6 @@ import org.openbravo.retail.posterminal.ProcessHQLQueryValidated;
 
 public class CrossStoreFilter extends ProcessHQLQueryValidated {
 
-  private static final String STOCK_FILTER_KEY = "stock";
-
   public static final String crossStorePropertyExtension = "OBPOS_CrossStoreExtension";
 
   @Inject
@@ -66,23 +64,23 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
               .getJSONObject("terminalTimeOffset")
               .getLong("value"));
 
-      boolean stockFilter = true;
+      boolean filterByStock = true;
       if (jsonsent.has("remoteFilters")) {
-        JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
+        final JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
         for (int i = 0; i < remoteFilters.length(); i++) {
-          JSONObject filter = remoteFilters.getJSONObject(i);
-          JSONArray columns = filter.getJSONArray("columns");
+          final JSONObject filter = remoteFilters.getJSONObject(i);
+          final JSONArray columns = filter.getJSONArray("columns");
           for (int j = 0; j < columns.length(); j++) {
-            String column = columns.getString(j);
-            if (column.equals(STOCK_FILTER_KEY)) {
-              stockFilter = Boolean.parseBoolean(filter.getString("value"));
+            final String column = columns.getString(j);
+            if (column.equals("stock")) {
+              filterByStock = filter.getBoolean("value");
               filter.put("value", "");
+              break;
             }
           }
         }
       }
-
-      jsonsent.put(STOCK_FILTER_KEY, stockFilter);
+      jsonsent.put("filterByStock", filterByStock);
 
       final Map<String, Object> paramValues = new HashMap<>();
       paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
@@ -101,7 +99,6 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     try {
       final HQLPropertyList regularProductStockHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions);
-
       final StringBuilder hql = new StringBuilder();
       hql.append(" select" + regularProductStockHQLProperties.getHqlSelect());
       hql.append(" from Organization o");
@@ -114,10 +111,10 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" join owh.warehouse wh");
       hql.append(" join wh.locatorList l");
       hql.append(" join l.inventoryStatus ls");
-      hql.append(" join l.materialMgmtStorageDetailList sd");
+      hql.append(" left join l.materialMgmtStorageDetailList sd");
+      hql.append(" with sd.product.id = :productId");
       hql.append(" where o.id in :crossStoreOrgIds");
       hql.append(" and $filtersCriteria");
-      hql.append(" and sd.product.id = :productId");
       hql.append(" and pp.product.id = :productId");
       hql.append(" and ls.oBRETCOAvailableCrossStore = true");
       hql.append(" and plv.id = (");
@@ -139,14 +136,13 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" and owh.active = true");
       hql.append(" and wh.active = true");
       hql.append(" and l.active = true");
-      hql.append(" and sd.active = true");
       hql.append(" and pl.active = true");
       hql.append(" and plv.active = true");
       hql.append(" and pp.active = true");
       hql.append(" group by o.id, o.name, w.id, w.name, pp.standardPrice");
       hql.append(" having w.id = min(wh.id)");
-      if (Boolean.parseBoolean(jsonsent.getString(STOCK_FILTER_KEY))) {
-        hql.append(" and sum(sd.quantityOnHand - sd.reservedQty) <> 0");
+      if (jsonsent.getBoolean("filterByStock")) {
+        hql.append(" and coalesce(sum(sd.quantityOnHand - sd.reservedQty), 0) > 0");
       }
 
       return Collections.singletonList(hql.toString());
