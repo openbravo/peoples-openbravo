@@ -1242,6 +1242,7 @@ isc.OBGrid.addProperties({
       _textMatchStyle: 'substring',
       _UTCOffsetMiliseconds: OB.Utilities.Date.getUTCOffsetInMiliseconds()
     }, lcriteria, this.getFetchRequestParams(null, isExporting));
+
     sortCriteria = this.getSort();
     if (sortCriteria && sortCriteria.length > 0) {
       d._sortBy = sortCriteria[0].property;
@@ -1249,6 +1250,13 @@ isc.OBGrid.addProperties({
         d._sortBy = '-' + d._sortBy;
       }
     }
+
+    if (d.criteria) {
+      // Encode the grid criteria as it is done for the standard grid requests
+      // Note that OB.Utilities.postThroughHiddenForm has its own logic for encoding dates
+      d.criteria = isc.JSON.encode(d.criteria);
+    }
+
     OB.Utilities.postThroughHiddenForm(dsURL, d);
   },
 
