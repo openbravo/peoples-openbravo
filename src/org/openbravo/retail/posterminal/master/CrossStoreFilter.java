@@ -107,14 +107,14 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" from Organization o");
       hql.append(" join o.organizationWarehouseList ow");
       hql.append(" join ow.warehouse w");
+      hql.append(" join o.obretcoPricelist pl");
+      hql.append(" join pl.pricingPriceListVersionList plv");
+      hql.append(" join plv.pricingProductPriceList pp");
       hql.append(" join o.organizationWarehouseList owh");
       hql.append(" join owh.warehouse wh");
       hql.append(" join wh.locatorList l");
       hql.append(" join l.inventoryStatus ls");
       hql.append(" join l.materialMgmtStorageDetailList sd");
-      hql.append(" join o.obretcoPricelist pl");
-      hql.append(" join pl.pricingPriceListVersionList plv");
-      hql.append(" join plv.pricingProductPriceList pp");
       hql.append(" where o.id in :crossStoreOrgIds");
       hql.append(" and $filtersCriteria");
       hql.append(" and sd.product.id = :productId");
@@ -144,9 +144,9 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" and plv.active = true");
       hql.append(" and pp.active = true");
       hql.append(" group by o.id, o.name, w.id, w.name, pp.standardPrice");
+      hql.append(" having w.id = min(wh.id)");
       if (Boolean.parseBoolean(jsonsent.getString(STOCK_FILTER_KEY))) {
-        hql.append(" having sum(sd.quantityOnHand - sd.reservedQty) <> 0");
-        hql.append(" and w.id = min(wh.id)");
+        hql.append(" and sum(sd.quantityOnHand - sd.reservedQty) <> 0");
       }
 
       return Collections.singletonList(hql.toString());
