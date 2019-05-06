@@ -925,7 +925,9 @@ isc.OBPickAndExecuteGrid.addProperties({
       return;
     }
     contextInfo = isc.addProperties({}, this.view.parentWindow.activeView.getContextInfo(false, true, true, true));
-    isc.addProperties(contextInfo, this.viewProperties.standardProperties);
+    if (this.viewProperties.standardProperties && this.viewProperties.standardProperties.inpTableId) {
+      contextInfo.inpPickAndExecuteTableId = this.viewProperties.standardProperties.inpTableId;
+    }
     record = isc.addProperties({}, this.getRecord(rowNum), this.getEditValues(rowNum));
     fields = this.viewProperties.fields;
     len = fields.length;
