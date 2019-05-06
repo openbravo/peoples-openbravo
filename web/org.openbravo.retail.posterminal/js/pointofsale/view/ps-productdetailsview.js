@@ -92,6 +92,7 @@ enyo.kind({
         line = me.leftSubWindow.line;
       }
       var attrs = (me.leftSubWindow.inEvent && me.leftSubWindow.inEvent.attrs) ? me.leftSubWindow.inEvent.attrs : {};
+      attrs.organization = me.leftSubWindow.organization;
       attrs.warehouse = {
         id: me.leftSubWindow.warehouse.warehouseid ? this.leftSubWindow.warehouse.warehouseid : this.leftSubWindow.warehouse.id,
         warehousename: me.leftSubWindow.warehouse.warehousename,
@@ -195,12 +196,18 @@ enyo.kind({
             warehouseid: data.warehouseid,
             warehousename: data.warehousename,
             warehouseqty: data.stock
-          };
+          },
+              organization = data.organization ? data.organization : {
+              id: data.orgId,
+              name: data.orgName
+              };
+
           me.$.stockHere.removeClass('error');
           me.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.stock);
           me.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(data.price) + '</b>');
           me.$.productAddToReceipt.setLabel();
           me.$.productAddToReceipt.setDisabled(false);
+          me.leftSubWindow.organization = organization;
           me.leftSubWindow.changeWarehouseInfo(null, warehouse);
           me.leftSubWindow.product.set('listPrice', data.price);
           me.leftSubWindow.product.set('standardPrice', data.price);

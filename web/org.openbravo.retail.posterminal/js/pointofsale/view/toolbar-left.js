@@ -493,7 +493,9 @@ enyo.kind({
         criteria = {},
         paymentModels = OB.MobileApp.model.get('payments');
     if (this.disabled === false) {
-      var receipt = me.model.get('order');
+      var receipt = me.model.get('order'),
+          receiptLines = receipt.get('lines').models,
+          i;
       if (receipt.get('isQuotation') && receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').quotation_anonymouscustomer) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_quotationsOrdersWithAnonimousCust'));
         return;
@@ -509,6 +511,16 @@ enyo.kind({
           return;
         }
       }
+
+      for (i = 1; i < receipt.get('lines').models.length; i++) {
+        if (receiptLines[0].get('organization').id !== receiptLines[i].get('organization').id) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ReceiptLinesSameStore'));
+          return;
+        }
+      }
+
+      receipt.set('organization', receiptLines[0].get('organization').id);
+
       if (receipt.get('orderType') === 3) {
         this.showPaymentTab();
         return;

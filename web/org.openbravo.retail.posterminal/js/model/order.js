@@ -3402,7 +3402,20 @@
 
     //Attrs is an object of attributes that will be set in order line
     createLine: function (p, units, options, attrs) {
-      var me = this;
+      var me = this,
+          orgId, orgName;
+      if (OB.UTIL.isNullOrUndefined(attrs) || OB.UTIL.isNullOrUndefined(attrs.organization)) {
+        orgId = me.get('organization');
+        _.each(OB.MobileApp.model.get('store'), function (s) {
+          if (s.id === orgId) {
+            orgName = s.name;
+            return;
+          }
+        });
+      } else {
+        orgId = attrs.organization.id;
+        orgName = attrs.organization.name;
+      }
 
       function createLineAux(p, units, options, attrs, me) {
         if (me.validateAllowSalesWithReturn(units, ((options && options.allowLayawayWithReturn) || false))) {
@@ -3417,6 +3430,10 @@
           price: OB.DEC.number(p.get('standardPrice')),
           priceList: OB.DEC.number(p.get('listPrice')),
           priceIncludesTax: me.get('priceIncludesTax'),
+          organization: {
+            id: orgId,
+            name: orgName
+          },
           warehouse: {
             id: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehouseid : attrs.originalLine.get('warehouse').id,
             warehousename: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehousename : attrs.originalLine.get('warehouse').warehousename

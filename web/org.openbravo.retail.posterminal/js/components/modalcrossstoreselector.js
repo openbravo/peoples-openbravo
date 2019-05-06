@@ -191,7 +191,9 @@ enyo.kind({
         warehouseid: this.model.get('warehouseId'),
         warehousename: this.model.get('warehouseName'),
         stock: this.model.get('stock'),
-        price: this.model.get('price')
+        price: this.model.get('price'),
+        orgId: this.model.get('orgId'),
+        orgName: this.model.get('orgName')
       };
       this.owner.owner.owner.owner.callback(data);
       this.owner.owner.owner.owner.owner.owner.hide();
