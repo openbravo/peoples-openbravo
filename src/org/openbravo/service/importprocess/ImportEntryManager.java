@@ -153,6 +153,8 @@ public class ImportEntryManager {
   // default to number of processors plus some additionals for the main threads
   private int numberOfThreads = Runtime.getRuntime().availableProcessors() + 3;
 
+  // used to determine the time to wait after each cycle before querying for new entries to be
+  // processed
   private int processingCapacityPerSecond;
 
   // defines the batch size of reading and processing import entries by the
@@ -179,9 +181,7 @@ public class ImportEntryManager {
         numberOfThreads, 4);
     maxTaskQueueSize = ImportProcessUtils.getCheckIntProperty(log, "import.max.task.queue.size",
         maxTaskQueueSize, 50);
-
     managerWaitTime = ImportProcessUtils.getCheckIntProperty(log, "import.wait.time", 600, 1);
-
     processingCapacityPerSecond = ImportProcessUtils.getCheckIntProperty(log,
         "import.processing.capacity.per.second", numberOfThreads * 30, 10);
 
