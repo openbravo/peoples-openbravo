@@ -170,6 +170,10 @@ public class PaidReceipts extends JSONProcessSimple {
             .createQuery(hqlPaidReceiptsLines);
         paidReceiptsLinesQuery.setParameter("salesOrderId", orderid);
 
+        JSONObject orderOrganization = new JSONObject();
+        orderOrganization.append("id", paidReceipt.get("organization"));
+        orderOrganization.append("name", paidReceipt.get("organization$_identifier"));
+
         JSONArray paidReceiptsLines = hqlPropertiesLines.getJSONArray(paidReceiptsLinesQuery);
 
         for (int receiptLine = 0; receiptLine < paidReceiptsLines.length(); receiptLine++) {
@@ -177,6 +181,7 @@ public class PaidReceipts extends JSONProcessSimple {
           if (orderIds.indexOf((String) paidReceiptLine.get("orderId")) == -1) {
             orderIds.add((String) paidReceiptLine.get("orderId"));
           }
+          paidReceiptLine.append("organization", orderOrganization);
           paidReceiptLine.put("priceIncludesTax", paidReceipt.getBoolean("priceIncludesTax"));
 
           // get shipmentLines for returns

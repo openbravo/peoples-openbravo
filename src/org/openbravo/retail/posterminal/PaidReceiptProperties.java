@@ -51,6 +51,9 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.priceList.id", "priceList"));
         add(new HQLProperty("salesRepresentative.id", "salesRepresentative"));
         add(new HQLProperty("ord.organization.id", "organization"));
+        add(new HQLProperty(
+            "case when ord.organization.id = pos.organization.id then concat ('This Store (', ord.organization.name, ')') else ord.organization.name end",
+            "organization$_identifier"));
         add(new HQLProperty("ord.client.id", "client"));
         add(new HQLProperty(
             "(case when ord.documentType.sOSubType = 'OB' then true else false end)",
