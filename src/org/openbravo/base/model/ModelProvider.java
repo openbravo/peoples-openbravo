@@ -802,15 +802,14 @@ public class ModelProvider implements OBSingleton {
     try {
       List<Property> props = new ArrayList<>(e.getProperties());
       for (final Property p : props) {
-        if (!p.isParent()
-            && (!p.isChildPropertyInParent() || p.isOneToMany() || p.isId() || p.isAuditInfo()
-                || p.getReferencedProperty() == null || ENTITIES_WITHOUT_ALL_CHILD_PROPERTIES
-                    .contains(p.getReferencedProperty().getEntity().getClassName()))) {
-          continue;
-        }
+        boolean shouldGenerateChildPropertyInParent = p.isParent()
+            || (p.isChildPropertyInParent() && !p.isOneToMany() && !p.isId() && !p.isAuditInfo()
+                && p.getReferencedProperty() != null
+                && !ENTITIES_WITHOUT_ALL_CHILD_PROPERTIES
+                    .contains(p.getReferencedProperty().getEntity().getClassName())
+                && p.getSqlLogic() == null);
 
-        // don't create a parent reference for these
-        if (p.getSqlLogic() != null) {
+        if (!shouldGenerateChildPropertyInParent) {
           continue;
         }
 
