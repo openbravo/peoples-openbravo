@@ -162,7 +162,13 @@ enyo.kind({
 
   receiptChanged: function () {
 
+    if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal'))) {
+      return;
+    }
     this.receipt.on('clear', function () {
+      if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal'))) {
+        return;
+      }
       this.waterfall('onChangeTotal', {
         newTotal: this.receipt.getTotal()
       });

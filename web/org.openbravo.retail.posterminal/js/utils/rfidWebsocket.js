@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2016 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -104,7 +104,7 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(websocke
     ean = data.gtin.substring(1, data.gtin.length);
     OB.UTIL.RfidController.get('barcodeActionHandler').findProductByBarcode(ean, function (product) {
       product.set('groupProduct', false);
-
+      OB.info('[RFID] AddProduct (' + product.get('searchkey') + ' - ' + product.get('_identifier') + ') with UPC/EAN: ' + data.gtin);
       OB.MobileApp.view.waterfall('onAddProduct', {
         product: product,
         qty: 1,

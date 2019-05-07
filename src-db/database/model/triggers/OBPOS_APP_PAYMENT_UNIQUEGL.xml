@@ -2,11 +2,6 @@
   <database name="TRIGGER OBPOS_APP_PAYMENT_UNIQUEGL">
     <trigger name="OBPOS_APP_PAYMENT_UNIQUEGL" table="OBPOS_APP_PAYMENT_TYPE" fires="before" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
-
-
-
-
-
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
     * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -27,6 +22,12 @@
 BEGIN
 
     IF AD_isTriggerEnabled()='N' THEN RETURN;
+    END IF;
+    
+    IF (UPDATING) THEN
+      IF (:NEW.value <> :OLD.value) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OBPOS_NotModifiableSearchKey@');
+      END IF;
     END IF;
 
     IF (INSERTING OR UPDATING) THEN

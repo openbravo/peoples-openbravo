@@ -158,15 +158,19 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
       // organization tree of the Terminal
       OBQuery<OBPOSApplications> appQry = OBDal.getInstance()
           .createQuery(OBPOSApplications.class,
-              "where searchKey = :terminalSearchKey  and ((ad_isorgincluded("
+              " as e where e.searchKey = :terminalSearchKey and ((ad_isorgincluded("
                   + "(select organization from ADUser where id= :userId)"
-                  + ", organization, client.id) <> -1) or " + "(ad_isorgincluded(organization, "
+                  + ", e.organization, e.client.id) <> -1) or "
+                  + "(ad_isorgincluded(e.organization, "
                   + "(select organization from ADUser where id= :userId)"
-                  + ", client.id) <> -1)) ");
+                  + ", e.client.id) <> -1)) "
+                  + "and exists (select 1 from ADRoleOrganization ro where ro.role.id = :roleId "
+                  + "and ro.organization = e.organization) ");
       appQry.setFilterOnReadableClients(false);
       appQry.setFilterOnReadableOrganization(false);
       appQry.setNamedParameter("terminalSearchKey", terminalSearchKey);
       appQry.setNamedParameter("userId", userId);
+      appQry.setNamedParameter("roleId", newRoleId);
       List<OBPOSApplications> appList = appQry.list();
       if (appList.isEmpty()) {
         try {

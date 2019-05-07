@@ -1360,7 +1360,49 @@
       }
     },
 
-    setPrice: function (line, price, options) {
+    setPrices: function (selectedModels, price, options, callback) {
+      var me = this,
+          cancelChange = false,
+          finalCallback = function () {
+          if (callback && callback instanceof Function) {
+            callback();
+          }
+          };
+      if (selectedModels.length > 1) {
+        var setNextPrice;
+        this.set('undo', null);
+        this.set('multipleUndo', true);
+        _.each(selectedModels, function (model) {
+          if (model.get('replacedorderline') && model.get('qty') < 0) {
+            cancelChange = true;
+          }
+        });
+        if (cancelChange) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
+          return;
+        }
+        setNextPrice = function (idx) {
+          if (idx === selectedModels.length) {
+            me.preventOrderSave(false);
+            me.unset('skipCalculateReceipt');
+            me.set('multipleUndo', null);
+            me.calculateReceipt();
+            finalCallback();
+            return;
+          }
+          me.setPrice(selectedModels[idx], price, options, function () {
+            setNextPrice(idx + 1);
+          });
+        };
+        this.set('skipCalculateReceipt', true);
+        this.preventOrderSave(true);
+        setNextPrice(0);
+      } else {
+        this.setPrice(selectedModels[0], price, options, finalCallback);
+      }
+    },
+
+    setPrice: function (line, price, options, callback) {
       OB.UTIL.HookManager.executeHooks('OBPOS_PreSetPrice', {
         context: this,
         line: line,
@@ -1384,9 +1426,9 @@
         } else if (OB.DEC.isNumber(args.price)) {
           var oldprice = args.line.get('price');
           if (OB.DEC.compare(args.price) >= 0) {
-            // sets the new price and listPrice
-            args.line.set('price', args.price);
+            // sets the new listPrice and price
             args.line.set('priceList', args.line.get('product').get('listPrice'));
+            args.line.set('price', args.price);
             // sets the undo action
             if (options.setUndo) {
               if (me.get('multipleUndo')) {
@@ -1408,11 +1450,15 @@
                   lines: lines,
                   undo: function () {
                     var i;
+                    me.set('skipCalculateReceipt', true);
+                    me.preventOrderSave(true);
                     for (i = 0; i < me.get('undo').lines.length; i++) {
                       me.get('undo').lines[i].set('price', me.get('undo').oldprices[i]);
                     }
-                    me.calculateReceipt();
+                    me.preventOrderSave(false);
+                    me.unset('skipCalculateReceipt');
                     me.set('undo', null);
+                    me.calculateReceipt();
                   }
                 });
               } else {
@@ -1421,13 +1467,16 @@
                   oldprice: oldprice,
                   line: args.line,
                   undo: function () {
-                    args.line.set('price', oldprice);
-                    me.calculateReceipt();
                     me.set('undo', null);
+                    args.line.set('price', oldprice);
                   }
                 });
               }
             }
+            me.save();
+          }
+          if (callback && callback instanceof Function) {
+            callback();
           }
         }
       });
@@ -3048,8 +3097,10 @@
               }
             }
             executeAddProduct();
-            if (!OB.UTIL.isNullOrUndefined(args.attrs) && args.attrs.cancelOperation && cancelCallback) {
-              cancelCallback();
+            if (!OB.UTIL.isNullOrUndefined(args.attrs) && args.attrs.cancelOperation) {
+              if (cancelCallback instanceof Function) {
+                cancelCallback();
+              }
             }
           });
         } else {
@@ -3227,19 +3278,35 @@
       this.get('orderManualPromotions').push(promotionToApply);
     },
 
-    calculateDiscountedLinePrice: function (line) {
-      var i;
-      var allDiscountedAmt = 0;
-      for (i = 0; i < line.get('promotions').length; i++) {
-        if (!line.get('promotions')[i].hidden) {
-          allDiscountedAmt += line.get('promotions')[i].amt;
+    getCurrentDiscountedLinePrice: function (line, ignoreExecutedAtTheEndPromo) {
+      var i, currentDiscountedLinePrice = 0,
+          allDiscountedAmt = 0;
+      if (line.get('promotions')) {
+        for (i = 0; i < line.get('promotions').length; i++) {
+          if (!line.get('promotions')[i].hidden) {
+            if (ignoreExecutedAtTheEndPromo && line.get('promotions')[i].executedAtTheEndPromo) {
+              continue;
+            } else {
+              allDiscountedAmt += line.get('promotions')[i].amt;
+            }
+          }
         }
       }
+
+      currentDiscountedLinePrice = OB.DEC.toNumber(new BigDecimal(String(line.get('price'))).subtract(new BigDecimal(String(allDiscountedAmt)).divide(new BigDecimal(String(line.get('qty'))), 20, OB.DEC.getRoundingMode())));
+
+      return currentDiscountedLinePrice;
+    },
+
+    calculateDiscountedLinePrice: function (line) {
+      var finalDiscountedLinePrice;
+
+      finalDiscountedLinePrice = this.getCurrentDiscountedLinePrice(line, false);
 
       if (line.get('qty') === 0) {
         line.unset('discountedLinePrice');
       } else {
-        line.set('discountedLinePrice', OB.DEC.toNumber(new BigDecimal(String(line.get('price'))).subtract(new BigDecimal(String(allDiscountedAmt)).divide(new BigDecimal(String(line.get('qty'))), 20, OB.DEC.getRoundingMode()))));
+        line.set('discountedLinePrice', finalDiscountedLinePrice);
       }
     },
 
@@ -3275,7 +3342,7 @@
         disc.chunks = undefined;
       }
 
-
+      disc.obdiscLineFinalgross = rule.get('obdiscLineFinalgross');
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
       disc.preserve = discount.preserve === true;
 
@@ -3322,6 +3389,7 @@
 
       disc.obdiscApplyafter = (!OB.UTIL.isNullOrUndefined(rule.get('obdiscApplyafter'))) ? rule.get('obdiscApplyafter') : false;
       disc.obdiscAllowinnegativelines = (!OB.UTIL.isNullOrUndefined(rule.get('obdiscAllowinnegativelines'))) ? rule.get('obdiscAllowinnegativelines') : false;
+      disc.executedAtTheEndPromo = discount.executedAtTheEndPromo || false;
 
       var unitsConsumed = 0;
       var unitsConsumedByNoCascadeRules = 0;
@@ -5033,6 +5101,7 @@
 
       payments = this.get('payments');
       precision = this.getPrecision(payment);
+      payment.set('amount', OB.DEC.number(payment.get('amount')));
       if (this.get('prepaymentChangeMode')) {
         this.unset('prepaymentChangeMode');
         this.adjustPayment();
@@ -5345,9 +5414,17 @@
       delete jsonorder.undo;
       delete jsonorder.json;
 
+      var productProps = _.filter(OB.Model.Product.getProperties(), function (prop) {
+        return !prop.saveToReceipt;
+      });
+
       _.forEach(jsonorder.lines, function (item) {
-        delete item.product.img;
-        delete item.product._filter;
+        delete item.sortedTaxCollection;
+        if (OB.UTIL.isNullOrUndefined(item.product.saveToReceipt)) {
+          _.forEach(productProps, function (prop) {
+            delete item.product[prop.name];
+          });
+        }
       });
 
       return jsonorder;
@@ -6306,6 +6383,7 @@
         }
       }
 
+      OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
       OB.MobileApp.view.scanningFocus(false);
       if (this.get('isEditable') === true) {
         OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
@@ -7647,6 +7725,7 @@
 
       payments = this.get('payments');
       precision = this.getPrecision(payment);
+      payment.set('amount', OB.DEC.number(payment.get('amount')));
       order = this;
       if (this.get('prepaymentChangeMode')) {
         this.unset('prepaymentChangeMode');

@@ -56,30 +56,42 @@ enyo.kind({
     onLeftToolbarDisabled: 'disabledButton'
   },
   processesToListen: ['calculateReceipt', 'addProduct'],
+  disabled: false,
+  isLocked: false,
+  lastDisabledStatus: false,
   disableButton: function () {
-    this.updateDisabled(true);
+    this.isLocked = true;
+    this.setDisabledIfSynchronized();
   },
   enableButton: function () {
-    if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('serviceSearchMode')) || !OB.MobileApp.model.get('serviceSearchMode')) {
-      this.updateDisabled(false);
-    } else {
-      this.updateDisabled(true);
+    this.isLocked = false;
+    this.setDisabledIfSynchronized();
+  },
+  setDisabled: function (value) {
+    this.lastDisabledStatus = value;
+    this.setDisabledIfSynchronized();
+  },
+  setDisabledIfSynchronized: function () {
+    var value = this.lastDisabledStatus || this.isLocked || false;
+    if (this.isLocked) {
+      value = true;
     }
+    if (OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length > 0 && !value) {
+      return true;
+    }
+    this.disabled = value;
+    this.setAttribute('disabled', value);
   },
   disabledButton: function (inSender, inEvent) {
     this.updateDisabled(inEvent.disableButtonNew || inEvent.status);
-    if (!this.isEnabled) {
+  },
+  updateDisabled: function (isDisabled) {
+    this.setDisabled(isDisabled);
+    if (isDisabled) {
       this.removeClass('btn-icon-new');
     } else {
       this.addClass('btn-icon-new');
     }
-  },
-  updateDisabled: function (isDisabled) {
-    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-      isDisabled = true;
-    }
-    this.isEnabled = !isDisabled;
-    this.setDisabled(isDisabled);
   },
   init: function (model) {
     this.model = model;
@@ -128,53 +140,39 @@ enyo.kind({
   handlers: {
     onLeftToolbarDisabled: 'disabledButton'
   },
-  processesToListen: ['calculateReceipt', 'addProduct', 'tapTotalButton'],
+  processesToListen: ['calculateReceipt', 'addProduct', 'tapTotalButton', 'completeQuotation'],
+  disabled: false,
+  isLocked: false,
+  lastDisabledStatus: false,
   disableButton: function () {
-    this.isEnabled = false;
-    this.setDisabled(true);
+    this.isLocked = true;
+    this.setDisabledIfSynchronized();
   },
   enableButton: function () {
-    if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('serviceSearchMode')) || !OB.MobileApp.model.get('serviceSearchMode')) {
-      this.isEnabled = true;
-      this.setDisabled(false);
+    this.isLocked = false;
+    this.setDisabledIfSynchronized();
+  },
+  setDisabled: function (value) {
+    this.lastDisabledStatus = value;
+    this.setDisabledIfSynchronized();
+  },
+  setDisabledIfSynchronized: function () {
+    var value = this.lastDisabledStatus || this.isLocked || false;
+    if (this.isLocked) {
+      value = true;
     }
+    if (OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length > 0 && !value) {
+      return true;
+    }
+    this.disabled = value;
+    this.setAttribute('disabled', value);
   },
   disabledButton: function (inSender, inEvent) {
-    if (this.model.get('order').get('isBeingProcessedQuotation')) {
-      return;
-    }
-    this.isEnabled = !inEvent.status;
-    this.setDisabled(inEvent.status);
-    if (!this.isEnabled) {
-      this.removeClass('btn-icon-delete');
-    } else {
-      this.addClass('btn-icon-delete');
-    }
-  },
-  processStarted: function (process, execution, processesInExec) {
-    if (OB.UTIL.ProcessController.isFirstExecution(this, process)) {
-      if (this.disableButton) {
-        this.disableButton();
-      }
-      if (this.model.get('order').get('isQuotation')) {
-        this.model.get('order').set('isBeingProcessedQuotation', true);
-      }
-    }
-  },
-  processFinished: function (process, execution, processesInExec) {
-    if (processesInExec.models.length === 0) {
-      if (this.enableButton) {
-        this.enableButton();
-      }
-      if (this.model.get('order').get('isQuotation')) {
-        this.model.get('order').set('isBeingProcessedQuotation', false);
-      }
-    }
+    this.updateDisabled(inEvent.status);
   },
   updateDisabled: function (isDisabled) {
-    this.isEnabled = !isDisabled;
     this.setDisabled(isDisabled);
-    if (!this.isEnabled) {
+    if (isDisabled) {
       this.removeClass('btn-icon-delete');
     } else {
       this.addClass('btn-icon-delete');
@@ -195,7 +193,7 @@ enyo.kind({
 
     // validate payments
     if (this.model.get('order').checkOrderPayment()) {
-      this.updateDisabled(false);
+      this.setDisabled(false);
       return false;
     }
 
@@ -736,6 +734,10 @@ enyo.kind({
 
     this.menuEntries.push({
       kind: 'OB.UI.MenuForceIncrementalRefresh'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuTestPrinter'
     });
 
     //remove duplicates

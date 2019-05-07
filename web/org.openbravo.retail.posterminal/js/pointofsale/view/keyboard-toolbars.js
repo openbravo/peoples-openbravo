@@ -69,6 +69,12 @@ enyo.kind({
     this.model = model;
   },
   actionPay: function (inSender, inEvent) {
+    var decimalAmount = OB.DEC.toBigDecimal(inEvent.amount),
+        selectedPayment = OB.MobileApp.model.paymentnames[inEvent.key];
+    if (decimalAmount.scale() > selectedPayment.obposPosprecision) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [inEvent.amount]));
+      return;
+    }
     this.bubble('onClearPaymentSelect');
     this.pay(inEvent.amount, inEvent.key, inEvent.name, inEvent.paymentMethod, inEvent.rate, inEvent.mulrate, inEvent.isocode, inEvent.options);
   },
@@ -412,8 +418,9 @@ enyo.kind({
                     OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
                     return;
                   }
-                  var decimalAmount = OB.DEC.toBigDecimal(amount);
-                  if (decimalAmount.scale() > OB.DEC.getScale()) {
+                  var decimalAmount = OB.DEC.toBigDecimal(amount),
+                      selectedPayment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.receipt.get('selectedPayment')] || payment;
+                  if (decimalAmount.scale() > selectedPayment.obposPosprecision) {
                     OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [txt]));
                     return;
                   }
@@ -454,7 +461,7 @@ enyo.kind({
                   return;
                 }
                 var decimalAmount = OB.DEC.toBigDecimal(amount);
-                if (decimalAmount.scale() > OB.DEC.getScale()) {
+                if (decimalAmount.scale() > payment.obposPosprecision) {
                   OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [txt]));
                   return;
                 }

@@ -201,6 +201,10 @@ enyo.kind({
       this.$.bodyButtons.$.selectPrintersCancel.show();
       this.$.headerCloseButton.show();
     }
+
+    if (OB.POS.hwserver.activeurl) {
+      this.printerscontainer.selectURL(OB.POS.hwserver.activeurl);
+    }
   },
 
   cleanBuffers: function () {

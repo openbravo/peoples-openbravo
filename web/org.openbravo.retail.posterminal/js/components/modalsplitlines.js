@@ -436,7 +436,7 @@ enyo.kind({
         return promo.manual;
       });
       _.forEach(promotionManual, function (promo, index) {
-        if (promo.discountType === 'D1D193305A6443B09B299259493B272A' || promo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
+        if (promo.discountType === 'D1D193305A6443B09B299259493B272A' || promo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578' || promo.discountType === 'F3B0FB45297844549D9E6B5F03B23A82') {
           var adjustedPromotion = this.getAdjustedPromotion(promo, this.orderline.get('qty'));
           var splittedAmount = _.reduce(this.splittedLines, function (sum, line) {
             var linePromo = _.find(line.get('promotions'), function (lp) {

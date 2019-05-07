@@ -300,11 +300,12 @@ public class CashUpReport extends HttpSecureAppServlet {
        * SALES AREA
        ***************************************************************/
       final String hqlCashup = "SELECT netsales, grosssales, netreturns, grossreturns, totalretailtransactions " //
-          + " FROM OBPOS_App_Cashup " //
-          + " WHERE id = '" + cashupId + "' "; //
+          + " FROM OBPOS_App_Cashup WHERE id = :cashupId ";
       final Query<Object[]> cashupQuery = OBDal.getReadOnlyInstance()
           .getSession()
           .createQuery(hqlCashup, Object[].class);
+      cashupQuery.setParameter("cashupId", cashupId);
+
       final Object[] arrayOfCashupResults = cashupQuery.list().get(0);
       final BigDecimal totalNetSalesAmount = (BigDecimal) arrayOfCashupResults[0];
       final BigDecimal totalGrossSalesAmount = (BigDecimal) arrayOfCashupResults[1];
@@ -313,24 +314,20 @@ public class CashUpReport extends HttpSecureAppServlet {
       final BigDecimal totalRetailTransactions = (BigDecimal) arrayOfCashupResults[4];
 
       // SALES TAXES
-      final String hqlTaxes = String.format("SELECT name, STR(ABS(amount)) " //
-          + " FROM OBPOS_Taxcashup " //
-          + " WHERE obpos_app_cashup_id='%s' AND ordertype='0' " //
-          + " ORDER BY name ", cashupId);
       final Query<Object[]> salesTaxesQuery = OBDal.getReadOnlyInstance()
           .getSession()
-          .createQuery(hqlTaxes, Object[].class);
+          .createQuery("SELECT name, STR(ABS(amount)) FROM OBPOS_Taxcashup "
+              + " WHERE obpos_app_cashup_id = :cashupId AND ordertype='0' ORDER BY name ", Object[].class);
+      salesTaxesQuery.setParameter("cashupId", cashupId);
       final JRDataSource salesTaxesDataSource = new ListOfArrayDataSource(salesTaxesQuery.list(),
           new String[] { "LABEL", "VALUE" });
 
       // RETURNS TAXES
-      final String hqlReturnTaxes = String.format("SELECT name, STR(ABS(amount)) " //
-          + " FROM OBPOS_Taxcashup " //
-          + " WHERE obpos_app_cashup_id='%s' AND ordertype='1'  " //
-          + " ORDER BY name ", cashupId);
       final Query<Object[]> returnsTaxesQuery = OBDal.getReadOnlyInstance()
           .getSession()
-          .createQuery(hqlReturnTaxes, Object[].class);
+          .createQuery("SELECT name, STR(ABS(amount)) FROM OBPOS_Taxcashup "
+              + " WHERE obpos_app_cashup_id = :cashupId AND ordertype='1' ORDER BY name ", Object[].class);
+      returnsTaxesQuery.setParameter("cashupId", cashupId);
       final JRDataSource returnTaxesDatasource = new ListOfArrayDataSource(returnsTaxesQuery.list(),
           new String[] { "LABEL", "VALUE" });
 

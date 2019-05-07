@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -46,6 +46,7 @@ import org.openbravo.mobile.core.MobileServerOrganization;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
 import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.FormAccess;
+import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Client;
@@ -301,6 +302,25 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
             return result;
           }
         }
+
+        OBQuery<OBPOSApplications> appQry = OBDal.getInstance()
+            .createQuery(OBPOSApplications.class,
+                " as e where e.id = :terminalId and ((ad_isorgincluded("
+                    + "(select organization from ADUser where id= :userId)"
+                    + ", e.organization, e.client.id) <> -1) or "
+                    + "(ad_isorgincluded(e.organization, "
+                    + "(select organization from ADUser where id= :userId)"
+                    + ", e.client.id) <> -1)) ");
+        appQry.setFilterOnReadableClients(false);
+        appQry.setFilterOnReadableOrganization(false);
+        appQry.setNamedParameter("terminalId", terminal.getId());
+        appQry.setNamedParameter("userId", userId);
+        List<OBPOSApplications> appList = appQry.list();
+        if (appList.isEmpty()) {
+          result.put("exception", "OBPOS_USER_NO_ACCESS_TO_TERMINAL_TITLE");
+          return result;
+        }
+
         OBCriteria<User> userQ = OBDal.getInstance().createCriteria(User.class);
         userQ.add(Restrictions.eq(OBPOSApplications.PROPERTY_ID, userId));
         userQ.setFilterOnReadableOrganization(false);
@@ -308,6 +328,25 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         List<User> userList = userQ.list();
         if (userList.size() == 1) {
           User user = ((User) userList.get(0));
+
+          boolean haveOrgAccess = false;
+          for (UserRoles userRole : user.getADUserRolesList()) {
+            if (!userRole.isActive() || !userRole.getRole().isActive()) {
+              continue;
+            }
+            for (RoleOrganization roleOrg : userRole.getRole().getADRoleOrganizationList()) {
+              if (roleOrg.isActive()
+                  && roleOrg.getOrganization().equals(terminal.getOrganization())) {
+                haveOrgAccess = true;
+                break;
+              }
+            }
+          }
+          if (!haveOrgAccess) {
+            result.put("exception", "OBPOS_USER_NO_ACCESS_TO_TERMINAL_TITLE");
+            return result;
+          }
+
           for (UserRoles userRole : user.getADUserRolesList()) {
             if (this.hasADFormAccess(userRole)) {
               success = true;

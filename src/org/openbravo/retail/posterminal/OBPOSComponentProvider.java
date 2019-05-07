@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -88,13 +88,19 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
                                                                                             // for
                                                                                             // Customer
                                                                                             // Address
-        "model/currencypanel", "model/country", "model/salesrepresentative",
-        "model/discountset",
-        "model/bpartnerset",
-        "model/productcharacteristicvalue", "model/characteristicvalue", "model/characteristic",
-        "model/brand", "model/returnreasons", "model/executor", "model/terminal-model",
-        "model/paymentmethodcashup", "model/taxcashup", "model/returnreasons",
-        "model/offlineprinter", "model/productbom", "model/taxcategorybom",
+
+        "webprinter/bluetooth", "webprinter/usb", "webprinter/webprinter", "webprinter/escpos",
+        "webprinter/standardprinters", "webprinter/typedarrays", "webprinter/testprinter",
+
+        "webprinter/usbprinters/epsontmt20", "webprinter/usbprinters/epsontmt20ii",
+        "webprinter/usbprinters/epsontmt88v", "webprinter/usbprinters/ncr7197",
+        "webprinter/usbprinters/startsp100", "webprinter/usbprinters/wincorth230",
+
+        "model/currencypanel", "model/country", "model/salesrepresentative", "model/discountset",
+        "model/bpartnerset", "model/productcharacteristicvalue", "model/characteristicvalue",
+        "model/characteristic", "model/brand", "model/returnreasons", "model/executor",
+        "model/terminal-model", "model/paymentmethodcashup", "model/taxcashup",
+        "model/returnreasons", "model/offlineprinter", "model/productbom", "model/taxcategorybom",
         "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
         "components/modalcancel", "components/subwindow", "components/leftsubwindow",
         "components/modalreceiptproperties", "components/modalreceiptlineproperties",
