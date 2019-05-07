@@ -52,6 +52,10 @@ public class TestConstants {
     public static final String DISCOUNTS_AND_PROMOTIONS = "800028";
   }
 
+  public static class Entities {
+    public static final String COUNTRY = "Country";
+  }
+
   private TestConstants() {
   }
 }
