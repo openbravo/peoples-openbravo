@@ -142,6 +142,36 @@ public class Product extends ProcessHQLQuery {
     }
   }
 
+  public static Map<String, Object> createRegularProductValues(JSONObject jsonsent)
+      throws JSONException {
+    try {
+      OBContext.setAdminMode(true);
+
+      final Date terminalDate = OBMOBCUtils.calculateServerDate(
+          jsonsent.getJSONObject("parameters").getString("terminalTime"),
+          jsonsent.getJSONObject("parameters")
+              .getJSONObject("terminalTimeOffset")
+              .getLong("value"));
+      final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      final String posId = getTerminalId(jsonsent);
+      final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
+      crossStoreOrgIds.remove(orgId);
+      final String assortmentId = POSUtils.getProductListByPosterminalId(posId).getId();
+      final String priceListVersionId = POSUtils.getPriceListVersionByOrgId(orgId, terminalDate)
+          .getId();
+
+      final Map<String, Object> paramValues = new HashMap<>();
+      paramValues.put("assortmentId", assortmentId);
+      paramValues.put("priceListVersionId", priceListVersionId);
+      paramValues.put("orgId", orgId);
+      paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
+      paramValues.put("terminalDate", terminalDate);
+      return paramValues;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     return prepareQuery(jsonsent);
@@ -190,7 +220,7 @@ public class Product extends ProcessHQLQuery {
     products.add(regularProductHqlString);
     if (isCrossStoreSearch) {
       final String crossStoreRegularProductHqlString = getCrossStoreRegularProductHqlString(
-          isRemote, useGetForProductImages, isMultipricelist,
+          jsonsent, useGetForProductImages, isMultipricelist, allowNoPriceInMainPriceList,
           crossStoreRegularProductsHQLProperties);
       products.add(crossStoreRegularProductHqlString);
     }
@@ -200,7 +230,7 @@ public class Product extends ProcessHQLQuery {
         useGetForProductImages, regularProductsDiscHQLProperties);
     products.add(packAndCombosHqlString);
     if (isCrossStoreSearch) {
-      final String crossStorePackAndCombosHqlString = getCrossStorePackAndCombosHqlString(isRemote,
+      final String crossStorePackAndCombosHqlString = getCrossStorePackAndCombosHqlString(
           useGetForProductImages, crossStoreRegularProductsDiscHQLProperties);
       products.add(crossStorePackAndCombosHqlString);
     }
@@ -243,6 +273,68 @@ public class Product extends ProcessHQLQuery {
     return hql;
   }
 
+  protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
+      JSONObject jsonsent, boolean useGetForProductImages) {
+    return createRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages,
+        false);
+  }
+
+  protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
+      JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList) {
+    return createRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages,
+        allowNoPriceInMainPriceList);
+  }
+
+  public static String createRegularProductHql(boolean isRemote, boolean isMultipricelist,
+      JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList) {
+
+    String hql = "FROM OBRETCO_Prol_Product as pli ";
+    if (!useGetForProductImages) {
+      hql += "left outer join pli.product.image img ";
+    }
+    hql += "inner join pli.product as product ";
+
+    if (isMultipricelist && allowNoPriceInMainPriceList
+        && (!isRemote || isMultiPriceListSearch(jsonsent))) {
+      hql += "left outer join product.pricingProductPriceList ppp with (ppp.priceListVersion.id = :priceListVersionId) ";
+    } else {
+      hql += "inner join product.pricingProductPriceList ppp ";
+    }
+
+    if (isRemote && isMultipricelist && isMultiPriceListSearch(jsonsent)) {
+      hql += ", PricingProductPrice pp WHERE pp.product=pli.product and pp.priceListVersion.id= :multipriceListVersionId ";
+    } else {
+      hql += " WHERE 1=1";
+    }
+
+    hql += " AND $filtersCriteria AND $hqlCriteria ";
+
+    if (isMultipricelist && allowNoPriceInMainPriceList
+        && (!isRemote || isMultiPriceListSearch(jsonsent))) {
+      hql += "AND (pli.obretcoProductlist.id = :assortmentId) ";
+    } else {
+      hql += "AND (pli.obretcoProductlist.id = :assortmentId) ";
+      hql += "AND (ppp.priceListVersion.id = :priceListVersionId) ";
+    }
+
+    return hql;
+  }
+
+  private String getGenericProductsHqlString(final boolean useGetForProductImages,
+      HQLPropertyList regularProductsHQLProperties) {
+    String genericProductsHqlString = "select " //
+        + regularProductsHQLProperties.getHqlSelect() + " from Product product ";
+    if (!useGetForProductImages) {
+      genericProductsHqlString += "left outer join product.image img ";
+    }
+    genericProductsHqlString += "left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp "
+        + " where $filtersCriteria AND ppp.priceListVersion.id = :priceListVersionId AND product.isGeneric = 'Y' AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, "
+        + " PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = :priceListVersionId "
+        + " and pli2.obretcoProductlist.id = :assortmentId)" //
+        + " order by product.id";
+    return genericProductsHqlString;
+  }
+
   private String getPackAndCombosHqlString(final boolean isRemote,
       final boolean useGetForProductImages,
       final HQLPropertyList regularProductsDiscHQLProperties) {
@@ -283,25 +375,13 @@ public class Product extends ProcessHQLQuery {
     return packAndCombosHqlString;
   }
 
-  private String getGenericProductsHqlString(final boolean useGetForProductImages,
-      HQLPropertyList regularProductsHQLProperties) {
-    String genericProductsHqlString = "select " //
-        + regularProductsHQLProperties.getHqlSelect() + " from Product product ";
-    if (!useGetForProductImages) {
-      genericProductsHqlString += "left outer join product.image img ";
-    }
-    genericProductsHqlString += "left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp "
-        + " where $filtersCriteria AND ppp.priceListVersion.id = :priceListVersionId AND product.isGeneric = 'Y' AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, "
-        + " PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = :priceListVersionId "
-        + " and pli2.obretcoProductlist.id = :assortmentId)" //
-        + " order by product.id";
-    return genericProductsHqlString;
-  }
-
-  private String getCrossStoreRegularProductHqlString(final boolean isRemote,
+  private String getCrossStoreRegularProductHqlString(final JSONObject jsonsent,
       final boolean useGetForProductImages, final boolean isMultipricelist,
+      final boolean allowNoPriceInMainPriceList,
       final HQLPropertyList crossStoreRegularProductsHQLProperties) {
-    // FIXME: isMultipricelist
+    final boolean showOnlyProductsWithPrice = !isMultipricelist || !allowNoPriceInMainPriceList
+        || !isMultiPriceListSearch(jsonsent);
+
     final StringBuilder query = new StringBuilder();
     query.append(" select");
     query.append(crossStoreRegularProductsHQLProperties.getHqlSelect());
@@ -322,14 +402,16 @@ public class Product extends ProcessHQLQuery {
     query.append("     where pli.product.id = product.id");
     query.append("     and pli.obretcoProductlist.id = o.obretcoProductlist.id");
     query.append("   )");
-    query.append("   and exists (");
-    query.append("     select 1");
-    query.append("     from PricingProductPrice ppp");
-    query.append("     join ppp.priceListVersion plv");
-    query.append("     where ppp.product.id = product.id");
-    query.append("     and plv.priceList.id = o.obretcoPricelist.id");
-    query.append("     and plv.validFromDate <= :terminalDate");
-    query.append("   )");
+    if (showOnlyProductsWithPrice) {
+      query.append("   and exists (");
+      query.append("     select 1");
+      query.append("     from PricingProductPrice ppp");
+      query.append("     join ppp.priceListVersion plv");
+      query.append("     where ppp.product.id = product.id");
+      query.append("     and plv.priceList.id = o.obretcoPricelist.id");
+      query.append("     and plv.validFromDate <= :terminalDate");
+      query.append("   )");
+    }
     query.append(" )");
     // Product doesn't exist in the assortment and price list of current store
     query.append(" and (not exists (");
@@ -338,24 +420,22 @@ public class Product extends ProcessHQLQuery {
     query.append("   where pli.product.id = product.id");
     query.append("   and pli.obretcoProductlist.id = :assortmentId");
     query.append(" )");
-    query.append(" or not exists (");
-    query.append("   select 1");
-    query.append("   from PricingProductPrice ppp");
-    query.append("   where ppp.product.id = product.id");
-    query.append("   and ppp.priceListVersion.id = :priceListVersionId");
-    query.append(" ))");
-    query.append(" and product.$incrementalUpdateCriteria");
-
-    if (isRemote) {
-      query.append(" order by product.name asc, product.id");
-    } else {
-      query.append(" order by product.id");
+    if (showOnlyProductsWithPrice) {
+      query.append(" or not exists (");
+      query.append("   select 1");
+      query.append("   from PricingProductPrice ppp");
+      query.append("   where ppp.product.id = product.id");
+      query.append("   and ppp.priceListVersion.id = :priceListVersionId");
+      query.append(" )");
     }
+    query.append(" )");
+    query.append(" and product.$incrementalUpdateCriteria");
+    query.append(" order by product.name asc, product.id");
+
     return query.toString();
   }
 
-  private String getCrossStorePackAndCombosHqlString(final boolean isRemote,
-      final boolean useGetForProductImages,
+  private String getCrossStorePackAndCombosHqlString(final boolean useGetForProductImages,
       final HQLPropertyList crossStoreRegularProductsDiscHQLProperties) {
     final StringBuilder query = new StringBuilder();
     query.append(" select");
@@ -444,89 +524,9 @@ public class Product extends ProcessHQLQuery {
     query.append("     and pao.active = true");
     query.append("   )");
     query.append(" )))");
-    if (isRemote) {
-      query.append(" order by p.name asc, p.id");
-    } else {
-      query.append(" order by p.id");
-    }
+    query.append(" order by p.name asc, p.id");
+
     return query.toString();
-  }
-
-  protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
-      JSONObject jsonsent, boolean useGetForProductImages) throws JSONException {
-    return Product.createRegularProductHql(isRemote, isMultipricelist, jsonsent,
-        useGetForProductImages, false);
-  }
-
-  protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
-      JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList) {
-    return Product.createRegularProductHql(isRemote, isMultipricelist, jsonsent,
-        useGetForProductImages, allowNoPriceInMainPriceList);
-  }
-
-  public static String createRegularProductHql(boolean isRemote, boolean isMultipricelist,
-      JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList) {
-
-    String hql = "FROM OBRETCO_Prol_Product as pli ";
-    if (!useGetForProductImages) {
-      hql += "left outer join pli.product.image img ";
-    }
-    hql += "inner join pli.product as product ";
-
-    if (isMultipricelist && allowNoPriceInMainPriceList
-        && (!isRemote || isMultiPriceListSearch(jsonsent))) {
-      hql += "left outer join product.pricingProductPriceList ppp with (ppp.priceListVersion.id = :priceListVersionId) ";
-    } else {
-      hql += "inner join product.pricingProductPriceList ppp ";
-    }
-
-    if (isRemote && isMultipricelist && isMultiPriceListSearch(jsonsent)) {
-      hql += ", PricingProductPrice pp WHERE pp.product=pli.product and pp.priceListVersion.id= :multipriceListVersionId ";
-    } else {
-      hql += " WHERE 1=1";
-    }
-
-    hql += " AND $filtersCriteria AND $hqlCriteria ";
-
-    if (isMultipricelist && allowNoPriceInMainPriceList
-        && (!isRemote || isMultiPriceListSearch(jsonsent))) {
-      hql += "AND (pli.obretcoProductlist.id = :assortmentId) ";
-    } else {
-      hql += "AND (pli.obretcoProductlist.id = :assortmentId) ";
-      hql += "AND (ppp.priceListVersion.id = :priceListVersionId) ";
-    }
-
-    return hql;
-  }
-
-  public static Map<String, Object> createRegularProductValues(JSONObject jsonsent)
-      throws JSONException {
-    try {
-      OBContext.setAdminMode(true);
-
-      final Date terminalDate = OBMOBCUtils.calculateServerDate(
-          jsonsent.getJSONObject("parameters").getString("terminalTime"),
-          jsonsent.getJSONObject("parameters")
-              .getJSONObject("terminalTimeOffset")
-              .getLong("value"));
-      final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      final String posId = getTerminalId(jsonsent);
-      final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
-      crossStoreOrgIds.remove(orgId);
-      final String assortmentId = POSUtils.getProductListByPosterminalId(posId).getId();
-      final String priceListVersionId = POSUtils.getPriceListVersionByOrgId(orgId, terminalDate)
-          .getId();
-
-      final Map<String, Object> paramValues = new HashMap<>();
-      paramValues.put("assortmentId", assortmentId);
-      paramValues.put("priceListVersionId", priceListVersionId);
-      paramValues.put("orgId", orgId);
-      paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
-      paramValues.put("terminalDate", terminalDate);
-      return paramValues;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
   }
 
   private String getPosPrecision() {
