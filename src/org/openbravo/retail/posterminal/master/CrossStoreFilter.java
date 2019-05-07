@@ -131,7 +131,9 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
         hql.append(" join plv.pricingProductPriceList pp");
       }
       if (showProductsWithCurrentPrice) {
-        hql.append(" , PricingProductPrice bppp");
+        hql.append(" , PricingPriceList bppl");
+        hql.append(" join bppl.pricingPriceListVersionList bpplv");
+        hql.append(" join bpplv.pricingProductPriceList bppp");
       }
       hql.append(" where o.id in :crossStoreOrgIds");
       hql.append(" and $filtersCriteria");
@@ -154,7 +156,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       }
       if (showProductsWithCurrentPrice) {
         hql.append(" and bppp.product.id = :productId");
-        hql.append(" and bppp.priceListVersion.id = :multipriceListVersionId");
+        hql.append(" and bpplv.id = :multipriceListVersionId");
       }
       hql.append(" and o.active = true");
       hql.append(" and ow.active = true");
@@ -166,9 +168,11 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" and plv.active = true");
       hql.append(" group by o.id, o.name, w.id, w.name");
       if (showOnlyProductsWithPrice) {
+        hql.append(" , pl.id");
         hql.append(" , pp.standardPrice");
       }
       if (showProductsWithCurrentPrice) {
+        hql.append(" , bppl.id");
         hql.append(" , bppp.standardPrice");
       }
       hql.append(" having w.id = min(wh.id)");
