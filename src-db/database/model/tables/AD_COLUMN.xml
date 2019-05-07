@@ -288,7 +288,6 @@
       <check name="AD_COLUMN_ISSELECTIONCOLUM_CHK"><![CDATA[ISSELECTIONCOLUMN IN ('Y', 'N')]]></check>
       <check name="AD_COLUMN_ISTRANSLATED_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
       <check name="AD_COLUMN_ISUPDATEABLE_CHK"><![CDATA[ISUPDATEABLE IN ('Y', 'N')]]></check>
-      <check name="AD_COLUMN_LINKPARENT_PROP_CHK"><![CDATA[ISPARENT = 'N' OR ISPARENT = 'Y' AND IS_CHILD_PROPERTY_IN_PARENT = 'Y']]></check>
       <check name="AD_COLUMN_USEDSEQ_CHK"><![CDATA[ISUSEDSEQUENCE IN ('Y', 'N')]]></check>
     </table>
   </database>

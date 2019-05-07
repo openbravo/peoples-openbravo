@@ -747,6 +747,7 @@ public class ModelProvider implements OBSingleton {
     newProp.setTargetEntity(idProperty.getTargetEntity());
     newProp.setReferencedProperty(idProperty.getTargetEntity().getIdProperties().get(0));
     newProp.setOneToOne(true);
+    newProp.setChildPropertyInParent(idProperty.isChildPropertyInParent());
 
     // the name is the name of the class of the target without
     // the package part and with the first character lowercased
@@ -802,12 +803,12 @@ public class ModelProvider implements OBSingleton {
     try {
       List<Property> props = new ArrayList<>(e.getProperties());
       for (final Property p : props) {
-        boolean shouldGenerateChildPropertyInParent = p.isParent()
-            || (p.isChildPropertyInParent() && !p.isOneToMany() && !p.isId() && !p.isAuditInfo()
-                && p.getReferencedProperty() != null
-                && !ENTITIES_WITHOUT_ALL_CHILD_PROPERTIES
-                    .contains(p.getReferencedProperty().getEntity().getClassName())
-                && p.getSqlLogic() == null);
+        boolean shouldGenerateChildPropertyInParent = p.isChildPropertyInParent()
+            && !p.isOneToMany() && !p.isId() && !p.isAuditInfo()
+            && p.getReferencedProperty() != null
+            && (!ENTITIES_WITHOUT_ALL_CHILD_PROPERTIES
+                .contains(p.getReferencedProperty().getEntity().getClassName()) || p.isParent())
+            && p.getSqlLogic() == null;
 
         if (!shouldGenerateChildPropertyInParent) {
           continue;
