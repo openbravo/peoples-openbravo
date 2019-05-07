@@ -379,8 +379,10 @@ public class Product extends ProcessHQLQuery {
       final boolean useGetForProductImages, final boolean isMultipricelist,
       final boolean allowNoPriceInMainPriceList,
       final HQLPropertyList crossStoreRegularProductsHQLProperties) {
-    final boolean showOnlyProductsWithPrice = !isMultipricelist || !allowNoPriceInMainPriceList
-        || !isMultiPriceListSearch(jsonsent);
+    final boolean showProductsWithCurrentPrice = isMultipricelist
+        && isMultiPriceListSearch(jsonsent);
+    final boolean showOnlyProductsWithPrice = !showProductsWithCurrentPrice
+        || !allowNoPriceInMainPriceList;
 
     final StringBuilder query = new StringBuilder();
     query.append(" select");
@@ -402,6 +404,14 @@ public class Product extends ProcessHQLQuery {
     query.append("     where pli.product.id = product.id");
     query.append("     and pli.obretcoProductlist.id = o.obretcoProductlist.id");
     query.append("   )");
+    if (showProductsWithCurrentPrice) {
+      query.append("   and exists (");
+      query.append("     select 1");
+      query.append("     from PricingProductPrice ppp");
+      query.append("     where ppp.product.id = product.id");
+      query.append("     and ppp.priceListVersion.id = :multipriceListVersionId");
+      query.append("   )");
+    }
     if (showOnlyProductsWithPrice) {
       query.append("   and exists (");
       query.append("     select 1");
@@ -420,6 +430,14 @@ public class Product extends ProcessHQLQuery {
     query.append("   where pli.product.id = product.id");
     query.append("   and pli.obretcoProductlist.id = :assortmentId");
     query.append(" )");
+    if (showProductsWithCurrentPrice) {
+      query.append(" or not exists (");
+      query.append("   select 1");
+      query.append("   from PricingProductPrice ppp");
+      query.append("   where ppp.product.id = product.id");
+      query.append("   and ppp.priceListVersion.id = :multipriceListVersionId");
+      query.append(" )");
+    }
     if (showOnlyProductsWithPrice) {
       query.append(" or not exists (");
       query.append("   select 1");
@@ -548,7 +566,7 @@ public class Product extends ProcessHQLQuery {
 
   private boolean getPreference(final String preference) {
     OBContext.setAdminMode(false);
-    boolean value = false;
+    boolean value;
     try {
       value = StringUtils.equals(Preferences.getPreferenceValue(preference, true,
           OBContext.getOBContext().getCurrentClient(),

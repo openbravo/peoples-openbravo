@@ -80,8 +80,8 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("ppp.standardPrice", "standardPrice"));
           add(new HQLProperty("ppp.priceLimit", "priceLimit"));
           add(new HQLProperty("ppp.cost", "cost"));
-          Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
-          if (ProductPrice.hasProperty("algorithm") == true) {
+          Entity productPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
+          if (productPrice.hasProperty("algorithm")) {
             add(new HQLProperty("ppp.algorithm", "algorithm"));
           }
           add(new HQLProperty(
