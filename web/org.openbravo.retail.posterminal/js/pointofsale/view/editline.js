@@ -269,6 +269,14 @@ enyo.kind({
       }
 
       order.checkReturnableProducts(selectedModels, this.model, function () {
+        var terminalOrganization = {
+          id: OB.MobileApp.model.get('store')[0].id,
+          name: OB.MobileApp.model.get('store')[0].name
+        },
+            terminalWarehouse = {
+            id: OB.MobileApp.model.get('warehouses')[0].warehouseid,
+            warehousename: OB.MobileApp.model.get('warehouses')[0].warehousename
+            };
         //The value of qty need to be negate because we want to change it
         if (order.validateAllowSalesWithReturn(-1, false, selectedModels)) {
           me.owner.owner.rearrangeEditButtonBar();
@@ -283,6 +291,8 @@ enyo.kind({
               line: line
             });
           }
+          line.set('organization', terminalOrganization);
+          line.set('warehouse', terminalWarehouse);
         });
         order.unset('preventServicesUpdate');
         order.get('lines').trigger('updateRelations');
