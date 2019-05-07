@@ -15,28 +15,39 @@
   OB.UTIL.AttributeUtils = OB.UTIL.AttributeUtils || {};
 
   OB.UTIL.AttributeUtils.generateDescriptionBasedOnJson = function (jsonStringAttValues) {
-    var jsonAttValues = JSON.parse(jsonStringAttValues);
-    var objToReturn = {
-      keyValue: [],
-      description: ''
-    };
-    var attSetInstanceDescription = '';
-    _.each(
-    _.keys(jsonAttValues), function (key) {
-      var currentValue = jsonAttValues[key];
-      var attValueContent = '';
-      if (jsonAttValues && currentValue && currentValue.value && _.isString(currentValue.value) && currentValue.value.length > 0) {
-        attValueContent += currentValue.label ? currentValue.label : currentValue.name;
-        attValueContent += ': ';
-        attValueContent += currentValue.value;
-        objToReturn.keyValue.push(attValueContent);
-        attSetInstanceDescription += currentValue.value + "_";
+    var key, attributesList = [],
+        jsonAttValues = JSON.parse(jsonStringAttValues),
+        attSetInstanceDescription = '',
+        standardAttributes = ['lot', 'serialno', 'guaranteedate'],
+        objToReturn = {
+        keyValue: []
+        };
+
+    for (key in jsonAttValues) {
+      if (jsonAttValues.hasOwnProperty(key) && standardAttributes.indexOf(key) === -1) {
+        attributesList.push(jsonAttValues[key]);
       }
-    }, this);
-    if (attSetInstanceDescription && attSetInstanceDescription.length > 1) {
-      attSetInstanceDescription = attSetInstanceDescription.substring(0, attSetInstanceDescription.length - 1);
     }
-    objToReturn.description = attSetInstanceDescription;
+    attributesList.sort(function (a, b) {
+      return a.name.localeCompare(b.name);
+    });
+
+    _.each(standardAttributes, function (attribute) {
+      if (jsonAttValues.hasOwnProperty(attribute) && jsonAttValues[attribute].label) {
+        attributesList.push(jsonAttValues[attribute]);
+      }
+    });
+
+    _.each(attributesList, function (attribute) {
+      if (attribute && attribute.value && _.isString(attribute.value) && attribute.value.length > 0) {
+        objToReturn.keyValue.push((attribute.label ? attribute.label : attribute.name) + ': ' + attribute.value);
+        attSetInstanceDescription += '_' + attribute.value;
+      }
+    });
+
+    if (objToReturn.keyValue.length > 0) {
+      objToReturn.description = attSetInstanceDescription.substring(1);
+    }
     return objToReturn;
   };
 }());

@@ -79,7 +79,7 @@ enyo.kind({
       this.$.listItem.addClass('cashup-first-empty-payment');
     }
     var counted;
-    if (OB.MobileApp.model.get('permissions').OBPOS_HideCashUpInfoToCashier) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_HideCountInformation', true)) {
       this.$.expected.hide();
       this.$.foreignExpected.hide();
     }
@@ -90,6 +90,9 @@ enyo.kind({
       if (this.model.get('rate') && this.model.get('rate') !== 1) {
         this.$.foreignCounted.setContent('(' + OB.I18N.formatCurrency(this.model.get('foreignCounted')) + ' ' + this.model.get('isocode') + ')');
       }
+      this.$.buttonOk.hide();
+    }
+    if (OB.MobileApp.model.hasPermission('OBPOS_HideCountInformation', true)) {
       this.$.buttonOk.hide();
     }
     this.$.buttonEdit.setDisabled(this.model.get('paymentMethod').iscash && this.model.get('paymentMethod').countcash);
@@ -212,7 +215,7 @@ enyo.kind({
   },
   displayStep: function (model) {
     // If the cashier is not trusty, hide expected and total amount that should be.
-    if (OB.MobileApp.model.get('permissions').OBPOS_HideCashUpInfoToCashier) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_HideCountInformation', true)) {
       this.$.total.hide();
       this.$.totalLbl.hide();
       this.$.difference.hide();
