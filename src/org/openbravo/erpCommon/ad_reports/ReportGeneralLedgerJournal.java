@@ -475,7 +475,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
-      out.print(strcAcctSchemaId);
+      out.print(StringEscapeUtils.escapeHtml(strcAcctSchemaId));
       out.close();
     } else {
       pageError(response);

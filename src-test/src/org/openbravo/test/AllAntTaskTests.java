@@ -67,6 +67,7 @@ import org.openbravo.test.dal.OBContextTest;
 import org.openbravo.test.dal.ReadByNameTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.dal.ViewTest;
+import org.openbravo.test.datasource.GridExport;
 import org.openbravo.test.db.model.functions.ADOrgTreeTest;
 import org.openbravo.test.db.model.functions.Ad_isorgincludedTest;
 import org.openbravo.test.db.model.functions.SqlCallableStatement;
@@ -309,6 +310,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // others
     DocumentNumberGeneration.class, //
+    GridExport.class, //
     ViewGeneration.class,
 
     // Cancel and Replace Tests

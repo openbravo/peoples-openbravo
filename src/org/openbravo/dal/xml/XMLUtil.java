@@ -87,8 +87,8 @@ public class XMLUtil implements OBSingleton {
   /** @return a new secure {@link TransformerHandler} */
   public TransformerHandler newSAXTransformerHandler() throws TransformerConfigurationException {
     final SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
-    tf.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
-    tf.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+    tf.setAttribute("http://javax.xml.XMLConstants/property/accessExternalDTD", "");
+    tf.setAttribute("http://javax.xml.XMLConstants/property/accessExternalStylesheet", "");
 
     return tf.newTransformerHandler();
   }
@@ -105,8 +105,8 @@ public class XMLUtil implements OBSingleton {
   /** @return a new secure {@link TransformerFactory} */
   public TransformerFactory newTransformerFactory() {
     TransformerFactory factory = TransformerFactory.newInstance();
-    factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
-    factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+    factory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalDTD", "");
+    factory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalStylesheet", "");
     return factory;
   }
 
