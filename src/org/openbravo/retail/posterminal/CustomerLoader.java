@@ -39,6 +39,7 @@ import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.businesspartner.Greeting;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -230,7 +231,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess
           OBMOBCUtils.calculateServerDate((String) jsonCustomer.get("birthDay"), timezoneOffset));
 
     }
-    setBpLanguage(customer, jsonCustomer.get("language"));
+    setBpLanguage(customer, jsonCustomer);
+    setGreetings(customer, jsonCustomer);
     OBDal.getInstance().save(customer);
     return customer;
   }
@@ -417,14 +419,29 @@ public class CustomerLoader extends POSDataSynchronizationProcess
     }
   }
 
-  private void setBpLanguage(BusinessPartner customer, final Object adLanguage) {
-    OBCriteria<Language> obCriteria = OBDal.getInstance().createCriteria(Language.class);
-    obCriteria.add(Restrictions.eq(Language.PROPERTY_LANGUAGE, adLanguage));
+  private void setBpLanguage(BusinessPartner customer, final JSONObject jsonCustomer)
+      throws JSONException {
+    if (jsonCustomer.has("language")) {
+      Object adLanguage = jsonCustomer.get("language");
+      OBCriteria<Language> obCriteria = OBDal.getInstance().createCriteria(Language.class);
+      obCriteria.add(Restrictions.eq(Language.PROPERTY_LANGUAGE, adLanguage));
 
-    obCriteria.setFilterOnReadableClients(false);
-    obCriteria.setFilterOnReadableOrganization(false);
-    obCriteria.setMaxResults(1);
-    Language language = (Language) obCriteria.uniqueResult();
-    customer.setLanguage(language);
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
+      obCriteria.setMaxResults(1);
+      Language language = (Language) obCriteria.uniqueResult();
+      customer.setLanguage(language);
+    }
   }
+
+  private void setGreetings(BusinessPartner customer, final JSONObject jsonCustomer)
+      throws JSONException {
+    String greeting;
+    if (jsonCustomer.has("greetingId")) {
+      greeting = jsonCustomer.getString("greetingId");
+      Greeting gr = OBDal.getInstance().get(Greeting.class, greeting);
+      customer.setGreeting(gr);
+    }
+  }
+
 }

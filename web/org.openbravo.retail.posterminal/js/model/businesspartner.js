@@ -360,6 +360,14 @@
     filter: true,
     type: 'TEXT'
   }, {
+    name: 'greetingId',
+    column: 'greetingId',
+    type: 'TEXT'
+  }, {
+    name: 'greetingName',
+    column: 'greetingName',
+    type: 'TEXT'
+  }, {
     name: '_identifier',
     column: '_identifier',
     filter: true,
@@ -506,5 +514,6 @@
     }]
   }]);
   window.OB.Collection.languageList = Backbone.Collection;
+  window.OB.Collection.greetingsList = Backbone.Collection;
   OB.Data.Registry.registerModel(BusinessPartner);
 }());

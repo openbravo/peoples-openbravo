@@ -23,8 +23,8 @@ public class Language extends QueryTerminalProperty {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    return Arrays.asList(new String[] {
-        "from ADLanguage where active='Y' order by name" });
+    return Arrays
+        .asList(new String[] { "from ADLanguage where 1=1 and $activeCriteria order by name" });
   }
 
   @Override

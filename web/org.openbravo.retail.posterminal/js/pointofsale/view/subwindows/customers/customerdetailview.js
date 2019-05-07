@@ -313,6 +313,15 @@ enyo.kind({
   windowHeader: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
   newAttributes: [{
     kind: 'OB.UI.CustomerTextProperty',
+    name: 'greeting',
+    modelProperty: 'greetingName',
+    i18nLabel: 'OBPOS_LblGreetings',
+    readOnly: true,
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowGreetings', true);
+    }
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
     name: 'customerName',
     modelProperty: 'firstName',
     i18nLabel: 'OBPOS_LblName',

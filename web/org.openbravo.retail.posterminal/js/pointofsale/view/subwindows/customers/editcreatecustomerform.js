@@ -196,6 +196,37 @@ enyo.kind({
   style: 'padding: 9px 15px;',
   windowHeader: 'OB.OBPOSPointOfSale.UI.customers.NewCustomer_bodyheader',
   newAttributes: [{
+    kind: 'OB.UI.CustomerComboProperty',
+    name: 'greeting',
+    modelProperty: 'greetingId',
+    modelPropertyText: 'greetingName',
+    collectionName: 'greetingsList',
+    //Default value for new lines
+    defaultValue: function () {
+      return undefined;
+    },
+    retrievedPropertyForValue: 'id',
+    retrievedPropertyForText: 'name',
+    //function to retrieve the data
+    fetchDataFunction: function (args) {
+      var me = this,
+          data = new Backbone.Collection();
+      _.each(OB.MobileApp.model.get('greetings'), function (greeting) {
+        var greetingToAdd = new Backbone.Model({
+          _identifier: greeting.name,
+          name: greeting.name,
+          id: greeting.id
+        });
+        data.push(greetingToAdd);
+      }, args);
+      me.dataReadyFunction(data, args);
+
+    },
+    i18nLabel: 'OBPOS_LblGreetings',
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowGreetings', true);
+    }
+  }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'firstName',
     modelProperty: 'firstName',
