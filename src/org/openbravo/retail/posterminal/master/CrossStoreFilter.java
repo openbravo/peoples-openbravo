@@ -87,7 +87,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       if (showProductsWithCurrentPrice) {
         paramValues.put("multipriceListVersionId",
             POSUtils.getPriceListVersionForPriceList(
-                jsonsent.getJSONObject("remoteParams").getString("currentPriceList"), terminalDate)
+                jsonsent.getJSONObject("parameters").getString("currentPriceList"), terminalDate)
                 .getId());
       }
 
@@ -170,8 +170,10 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" and owh.active = true");
       hql.append(" and wh.active = true");
       hql.append(" and l.active = true");
-      hql.append(" and pl.active = true");
-      hql.append(" and plv.active = true");
+      if (showOnlyProductsWithPrice) {
+        hql.append(" and pl.active = true");
+        hql.append(" and plv.active = true");
+      }
       hql.append(" group by o.id, o.name, w.id, w.name");
       if (showOnlyProductsWithPrice) {
         hql.append(" , pl.id");
@@ -211,8 +213,8 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
   private static boolean isMultiPriceListSearch(final JSONObject jsonsent) {
     boolean multiPriceListSearch = false;
     try {
-      multiPriceListSearch = jsonsent.has("remoteParams") && StringUtils
-          .isNotEmpty(jsonsent.getJSONObject("remoteParams").optString("currentPriceList"));
+      multiPriceListSearch = jsonsent.has("parameters") && StringUtils
+          .isNotEmpty(jsonsent.getJSONObject("parameters").optString("currentPriceList"));
     } catch (JSONException e) {
       log.error("Error while getting currentPriceList " + e.getMessage(), e);
     }
