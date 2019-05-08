@@ -214,7 +214,7 @@ enyo.kind({
           me.leftSubWindow.product.set('productPrices', data.productPrices);
           };
 
-      if (this.leftSubWindow.line && event && event.target.outerText !== 'Select store') {
+      if (this.leftSubWindow.line && event && event.target.getAttribute('id') !== 'terminal_containerWindow_pointOfSale_multiColumn_leftPanel_productdetailsview_leftSubWindowBody_body_stockOthers') {
         var data = {
           stock: this.leftSubWindow.line.get('warehouse').warehouseqty,
           price: this.leftSubWindow.line.get('price'),
