@@ -118,6 +118,7 @@ import org.openbravo.test.system.ErrorTextParserTest;
 import org.openbravo.test.system.ImportEntryBuilderTest;
 import org.openbravo.test.system.ImportEntrySizeTest;
 import org.openbravo.test.system.Issue29934Test;
+import org.openbravo.test.system.JsonSerialization;
 import org.openbravo.test.system.OldCallouts;
 import org.openbravo.test.system.Sessions;
 import org.openbravo.test.system.SystemServiceTest;
@@ -222,6 +223,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     Sessions.class, //
     OBContextTest.class, //
     OldCallouts.class, //
+    JsonSerialization.class, //
 
     // xml
     ClientExportImportTest.class, //
