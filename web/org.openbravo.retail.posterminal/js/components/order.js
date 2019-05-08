@@ -1114,17 +1114,17 @@ enyo.kind({
     }, this);
     this.order.on('calculatedReceipt updateServicePrices', function () {
       var me = this,
-          setPriceCallback, handleError, i;
+          setPriceCallback, changePriceCallback, handleError, i;
 
       if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable') || (this.order.get('isQuotation') && this.order.get('hasbeenpaid') === 'Y')) {
         return;
       }
 
-      setPriceCallback = function (line, newprice, dummyChange) {
+      setPriceCallback = function (line, newprice, priceChanged) {
         OB.UTIL.HookManager.executeHooks('OBPOS_ServicePriceRules_PreSetPriceToLine', {
           newprice: newprice,
           line: line,
-          priceChanged: !dummyChange
+          priceChanged: priceChanged
         }, function (args) {
           if (args.newprice !== line.get('price')) {
             me.order.setPrice(args.line, args.newprice, {
@@ -1132,6 +1132,10 @@ enyo.kind({
             });
           }
         });
+      };
+
+      changePriceCallback = function (line, newprice) {
+        setPriceCallback(line, newprice, true);
       };
 
       handleError = function (line, message) {
@@ -1152,9 +1156,9 @@ enyo.kind({
       for (i = 0; i < this.order.get('lines').length; i++) {
         var line = this.order.get('lines').at(i);
         if (line.get('product').get('productType') === 'S' && line.get('product').get('isPriceRuleBased')) {
-          OB.UTIL.getCalculatedPriceForService(line, line.get('product'), line.get('relatedLines'), line.get('qty'), setPriceCallback, handleError);
+          OB.UTIL.getCalculatedPriceForService(line, line.get('product'), line.get('relatedLines'), line.get('qty'), changePriceCallback, handleError);
         } else if (line.get('product').get('productType') === 'S') {
-          setPriceCallback(line, line.get('price'), true);
+          setPriceCallback(line, line.get('price'), false);
         }
       }
     }, this);
