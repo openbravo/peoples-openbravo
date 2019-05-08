@@ -11,17 +11,17 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.scheduling;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 
 /**
  * @author awolski
@@ -51,14 +51,18 @@ public class ProcessContext {
   private boolean roleSecurity;
 
   /**
-   * 
+   * Creates an empty ProcessContext.
    */
   public ProcessContext() {
 
   }
 
   /**
+   * Creates a ProcessContext using the information of VariablesSecureApp object.
+   * 
    * @param vars
+   *          a VariablesSecureApp object with the session information used to initialize the
+   *          ProcessContext properties.
    */
   public ProcessContext(VariablesSecureApp vars) {
     this.user = vars.getUser();
@@ -77,9 +81,27 @@ public class ProcessContext {
     this.jsDateFormat = vars.getJsDateFormat();
     this.sqlDateFormat = vars.getSqlDateFormat();
     this.accessLevel = vars.getAccessLevel();
-
     this.roleSecurity = true;
+  }
 
+  private ProcessContext(JSONObject json) throws JSONException {
+    this.user = json.getString("user");
+    this.role = json.getString("role");
+    this.language = json.getString("language");
+    this.theme = json.getString("theme");
+    this.client = json.getString("client");
+    this.organization = json.getString("organization");
+    this.warehouse = json.getString("warehouse");
+    this.command = json.getString("command");
+    this.userClient = json.getString("userClient");
+    this.userOrganization = json.getString("userOrganization");
+    this.dbSessionID = json.getString("dbSessionID");
+    this.javaDateFormat = json.getString("javaDateFormat");
+    this.javaDateTimeFormat = json.getString("javaDateTimeFormat");
+    this.jsDateFormat = json.getString("jsDateFormat");
+    this.sqlDateFormat = json.getString("sqlDateFormat");
+    this.accessLevel = json.getString("accessLevel");
+    this.roleSecurity = json.getBoolean("roleSecurity");
   }
 
   /**
@@ -227,25 +249,57 @@ public class ProcessContext {
   }
 
   /**
-   * @return a JSON string representation of this obContext
+   * @return a JSON string representation of this ProcessContext
    */
   @Override
   public String toString() {
-    XStream xstream = new XStream(new JettisonMappedXmlDriver());
-    return xstream.toXML(this);
+    return toJSON().toString();
+  }
+
+  private JSONObject toJSON() {
+    JSONObject jsonObject = new JSONObject();
+    try {
+      JSONObject properties = new JSONObject();
+      properties.put("user", user);
+      properties.put("role", role);
+      properties.put("language", language);
+      properties.put("theme", theme);
+      properties.put("client", client);
+      properties.put("organization", organization);
+      properties.put("warehouse", warehouse);
+      properties.put("command", command);
+      properties.put("userClient", userClient);
+      properties.put("userOrganization", userOrganization);
+      properties.put("dbSessionID", dbSessionID);
+      properties.put("javaDateFormat", javaDateFormat);
+      properties.put("javaDateTimeFormat", javaDateTimeFormat);
+      properties.put("jsDateFormat", jsDateFormat);
+      properties.put("sqlDateFormat", sqlDateFormat);
+      properties.put("accessLevel", accessLevel);
+      properties.put("roleSecurity", roleSecurity);
+      jsonObject.put(ProcessContext.class.getName(), properties);
+    } catch (JSONException ignore) {
+    }
+    return jsonObject;
   }
 
   /**
-   * @param arg0
-   *          the xml to create the process context from
-   * @return a new instance created from the string argument (an xml definition)
+   * @param processContext
+   *          a String with the JSON representation of a ProcessContext
+   * @return a new instance created from the provided JSON representation of a ProcessContext. This
+   *         method returns null if the provided String is null, empty or if it is an invalid JSON
+   *         definition of a ProcessContext.
    */
-  public synchronized static ProcessContext newInstance(String arg0) {
-    if (arg0 == null || arg0.trim().equals("")) {
+  public static synchronized ProcessContext newInstance(String processContext) {
+    if (StringUtils.isBlank(processContext)) {
       return null;
     }
-    XStream xstream = new XStream(new JettisonMappedXmlDriver());
-    return (ProcessContext) xstream.fromXML(arg0);
+    try {
+      JSONObject json = new JSONObject(processContext);
+      return new ProcessContext(json.getJSONObject(ProcessContext.class.getName()));
+    } catch (JSONException e) {
+      return null;
+    }
   }
 
 }
