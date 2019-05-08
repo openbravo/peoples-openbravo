@@ -25,6 +25,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -39,6 +40,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -171,8 +173,14 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceiptsLinesQuery.setParameter("salesOrderId", orderid);
 
         JSONObject orderOrganization = new JSONObject();
-        orderOrganization.append("id", paidReceipt.get("organization"));
-        orderOrganization.append("name", paidReceipt.get("organization$_identifier"));
+        orderOrganization.put("id", paidReceipt.get("organization"));
+        String organizationIdentifier = paidReceipt.get("organization$_identifier").toString();
+        if (StringUtils.equals(orderOrganization.getString("id"),
+            posTerminal.getOrganization().getId())) {
+          organizationIdentifier = OBMessageUtils.getI18NMessage("OBPOS_LblThisStore",
+              new String[] { paidReceipt.get("organization$_identifier").toString() });
+        }
+        orderOrganization.put("name", organizationIdentifier);
 
         JSONArray paidReceiptsLines = hqlPropertiesLines.getJSONArray(paidReceiptsLinesQuery);
 
@@ -181,7 +189,7 @@ public class PaidReceipts extends JSONProcessSimple {
           if (orderIds.indexOf((String) paidReceiptLine.get("orderId")) == -1) {
             orderIds.add((String) paidReceiptLine.get("orderId"));
           }
-          paidReceiptLine.append("organization", orderOrganization);
+          paidReceiptLine.put("organization", orderOrganization);
           paidReceiptLine.put("priceIncludesTax", paidReceipt.getBoolean("priceIncludesTax"));
 
           // get shipmentLines for returns
