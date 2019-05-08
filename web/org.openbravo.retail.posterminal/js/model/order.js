@@ -2807,21 +2807,25 @@
           criteria.params.push(productId);
           criteria.params.push(productCategory);
           criteria.params.push(productCategory);
-          OB.Dal.findUsingCache('productServiceCache', OB.Model.Product, criteria, function (data) {
-            if (data) {
-              data.hasservices = data.length > 0;
-              data.hasmandatoryservices = _.find(data.models, function (model) {
-                return model.get('proposalType') === 'MP';
-              });
-              callback(data);
-            } else {
+          OB.UTIL.HookManager.executeHooks('OBPOS_LoadRelatedServices_ExtendCriteria', {
+            criteria: criteria
+          }, function (args) {
+            OB.Dal.findUsingCache('productServiceCache', OB.Model.Product, args.criteria, function (data) {
+              if (data) {
+                data.hasservices = data.length > 0;
+                data.hasmandatoryservices = _.find(data.models, function (model) {
+                  return model.get('proposalType') === 'MP';
+                });
+                callback(data);
+              } else {
+                callback(null);
+              }
+            }, function (trx, error) {
+              OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
               callback(null);
-            }
-          }, function (trx, error) {
-            OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
-            callback(null);
-          }, {
-            modelsAffectedByCache: ['Product']
+            }, {
+              modelsAffectedByCache: ['Product']
+            });
           });
         }
       } else {
