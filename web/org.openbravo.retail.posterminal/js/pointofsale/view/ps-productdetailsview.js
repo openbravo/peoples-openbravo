@@ -203,7 +203,7 @@ enyo.kind({
               };
 
           me.$.stockHere.removeClass('error');
-          me.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.stock);
+          me.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock_NotCalculated'));
           me.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(data.price) + '</b>');
           me.$.productAddToReceipt.setLabel();
           me.$.productAddToReceipt.setDisabled(false);
@@ -335,7 +335,8 @@ enyo.kind({
         params.checkStockCallback();
       }
     } else {
-      this.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
+      me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
+      me.bodyComponent.$.stockHere.setDisabled(false);
       this.bodyComponent.$.productAddToReceipt.setDisabled(true);
       OB.UTIL.StockUtils.getReceiptLineStock(me.product.get('id'), undefined, function (data) {
         if (data && data.exception) {
