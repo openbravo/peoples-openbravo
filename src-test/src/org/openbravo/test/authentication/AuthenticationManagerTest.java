@@ -32,7 +32,7 @@ import org.openbravo.test.base.OBBaseTest;
 public class AuthenticationManagerTest extends OBBaseTest {
 
   private static final String USER_NAME = "Openbravo";
-  private static final String PASSWORD = "Openbravo";
+  private static final String PASSWORD = "openbravo";
 
   /**
    * Test the authentication intended for non standard REST web services (such as SOAP).
