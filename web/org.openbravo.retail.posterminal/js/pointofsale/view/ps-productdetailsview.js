@@ -429,7 +429,7 @@ enyo.kind({
       this.bodyComponent.$.productImage.setImg(params.product.get('img'));
     }
     this.bodyComponent.$.warehouseToGet.setContent(OB.UTIL.isCrossStoreProduct(this.product) ? OB.I18N.getLabel('OBPOS_loadingFromCrossStoreWarehouses') : OB.I18N.getLabel('OBPOS_loadingFromWarehouse', [this.warehouse.warehousename]));
-    this.bodyComponent.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(params.product.get('standardPrice')) + '</b>');
+    this.bodyComponent.$.productPrice.setContent(params.product.has('standardPrice') ? OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(params.product.get('standardPrice')) + '</b>' : OB.I18N.getLabel('OBPOS_priceInfo'));
     this.bodyComponent.$.descriptionArea.setContent(params.product.get('description'));
     this.bodyComponent.$.productAddToReceipt.setLabel();
     this.getOtherStock();
