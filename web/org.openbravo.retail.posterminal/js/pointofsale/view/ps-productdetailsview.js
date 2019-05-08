@@ -337,7 +337,7 @@ enyo.kind({
     } else {
       me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
       me.bodyComponent.$.stockHere.setDisabled(false);
-      this.bodyComponent.$.productAddToReceipt.setDisabled(true);
+      me.bodyComponent.$.productAddToReceipt.setDisabled(true);
       OB.UTIL.StockUtils.getReceiptLineStock(me.product.get('id'), undefined, function (data) {
         if (data && data.exception) {
           me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
