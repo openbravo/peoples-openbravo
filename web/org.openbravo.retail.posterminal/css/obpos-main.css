@@ -1356,10 +1356,18 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
   width: 15%;
 }
 
-.obpos-row-store-price {
+.obpos-row-store-standard-price {
   float: right;
   padding-top: 5px;
   padding-left: 5px;
+  font-weight: bold;
+}
+
+.obpos-row-store-current-price {
+  float: right;
+  padding: 5px 15px 0px 5px;
+  font-weight: bold;
+  color: grey;
 }
 
 .obpos-row-store-stock {
