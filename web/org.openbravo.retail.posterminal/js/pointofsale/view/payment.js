@@ -1721,7 +1721,9 @@ enyo.kind({
                 }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
                 me.drawerOpened = true;
                 me.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
-                enyo.$.scrim.hide();
+                if (OB.MobileApp.view.openedPopup === null) {
+                  enyo.$.scrim.hide();
+                }
               }
             } else {
               if (me.owner.receipt.get('orderType') === 3) {
@@ -1748,7 +1750,9 @@ enyo.kind({
                 }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
                 me.drawerOpened = true;
                 me.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
-                enyo.$.scrim.hide();
+                if (OB.MobileApp.view.openedPopup === null) {
+                  enyo.$.scrim.hide();
+                }
               }
             } else {
               me.owner.model.get('multiOrders').trigger('paymentDone', me.allowOpenDrawer);
