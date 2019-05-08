@@ -595,7 +595,7 @@ enyo.kind({
     var changepayment = this.activeModel().get('changePayments').find(function (itemchange) {
       return itemchange.searchKey === payment.searchKey;
     });
-    return changepayment ? changepayment.origAmount : 0;
+    return changepayment ? OB.DEC.toBigDecimal(changepayment.origAmount).multiply(OB.DEC.toBigDecimal(payment.mulrate)) : 0;
   },
   updatePending: function (ignorePanel) {
     var execution = OB.UTIL.ProcessController.start('updatePending');
