@@ -691,13 +691,15 @@ public class OrderLoader extends POSDataSynchronizationProcess
   private void associateOrderToQuotation(JSONObject jsonorder, Order order) throws JSONException {
     String quotationId = jsonorder.getString("oldId");
     Order quotation = OBDal.getInstance().get(Order.class, quotationId);
-    order.setQuotation(quotation);
-    List<OrderLine> orderLines = order.getOrderLineList();
-    List<OrderLine> quotationLines = quotation.getOrderLineList();
-    for (int i = 0; (i < orderLines.size() && i < quotationLines.size()); i++) {
-      orderLines.get(i).setQuotationLine(quotationLines.get(i));
+    if (quotation != null && !"CJ".equals(quotation.getDocumentStatus())) {
+      order.setQuotation(quotation);
+      List<OrderLine> orderLines = order.getOrderLineList();
+      List<OrderLine> quotationLines = quotation.getOrderLineList();
+      for (int i = 0; (i < orderLines.size() && i < quotationLines.size()); i++) {
+        orderLines.get(i).setQuotationLine(quotationLines.get(i));
+      }
+      quotation.setDocumentStatus("CA");
     }
-    quotation.setDocumentStatus("CA");
 
   }
 
