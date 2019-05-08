@@ -145,6 +145,18 @@ enyo.kind({
         }]
       });
     }
+    if (OB.UTIL.isCrossStoreProduct(this.model.get('product'))) {
+      this.createComponent({
+        classes: 'obpos-display-block',
+        components: [{
+          name: 'storeLine',
+          content: '-- ' + OB.I18N.getLabel('OBPOS_LblStore') + ': ' + this.model.get('organization').name,
+          classes: 'orderline-store'
+        }, {
+          classes: 'obpos-clear-both'
+        }]
+      });
+    }
     if (this.model.get('obposSerialNumber')) {
       this.createComponent({
         style: 'display: block;',

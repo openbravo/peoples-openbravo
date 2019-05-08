@@ -183,6 +183,19 @@ enyo.kind({
     }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+    position: 55,
+    name: 'storeLine',
+    I18NLabel: 'OBPOS_LblStore',
+    render: function (line) {
+      if (line && line.get('organization')) {
+        this.$.propertyValue.setContent(line.get('organization').name);
+        this.show();
+      } else {
+        this.hide();
+      }
+    }
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
     position: 60,
     name: 'warehouseLine',
     I18NLabel: 'OBPOS_LineWarehouse',

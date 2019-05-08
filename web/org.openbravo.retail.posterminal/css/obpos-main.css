@@ -584,6 +584,14 @@ button.btnbp:disabled {
   clear: both;
 }
 
+.orderline-store {
+  width: calc(100% - 210px);  /* The same than calc(100% - 2 * 105px); */
+  color:black;
+  padding-left: 0%;
+  padding-top: 4px;
+  clear: both;
+}
+
 .orderline-canbedelivered {
   color: #f8941d;
   float: left;
@@ -1385,6 +1393,10 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
 
 .obpos-clear-both {
   clear: both;
+}
+
+.obpos-display-block {
+  display: block !important; 
 }
 
 .obpos-btnlink {
