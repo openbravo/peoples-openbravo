@@ -138,6 +138,12 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       hql.append(" where o.id in :crossStoreOrgIds");
       hql.append(" and $filtersCriteria");
       hql.append(" and ls.oBRETCOAvailableCrossStore = true");
+      hql.append(" and exists (");
+      hql.append("   select 1");
+      hql.append("   from OBRETCO_Prol_Product pli");
+      hql.append("   where pli.product.id = :productId");
+      hql.append("   and pli.obretcoProductlist.id = o.obretcoProductlist.id");
+      hql.append(" )");
       if (showOnlyProductsWithPrice) {
         hql.append(" and pp.product.id = :productId");
         hql.append(" and plv.id = (");
