@@ -2878,43 +2878,28 @@
       OB.debug('_addProduct');
       var me = this;
       if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && this.get('priceList') !== OB.MobileApp.model.get('terminal').priceList) {
-        var criteria = {};
-        if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          criteria = {
-            m_pricelist_id: this.get('priceList'),
-            m_product_id: p.id
-          };
-        } else {
-          var remoteCriteria = [];
-          var productId = {
-            columns: ['m_product_id'],
-            operator: 'equals',
-            value: p.id,
-            isId: true
-          },
-              pricelistId = {
-              columns: ['m_pricelist_id'],
-              operator: 'equals',
-              value: this.get('priceList'),
-              isId: true
-              };
-          remoteCriteria.push(productId);
-          remoteCriteria.push(pricelistId);
-          criteria.remoteFilters = remoteCriteria;
-        }
-        OB.Dal.findUsingCache('productPrice', OB.Model.ProductPrice, criteria, function (productPrices) {
-          if (productPrices.length > 0) {
-            p = p.clone();
-            if (OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) || p.get('updatePriceFromPricelist')) {
-              p.set('standardPrice', productPrices.at(0).get('pricestd'));
-              p.set('listPrice', productPrices.at(0).get('pricelist'));
-            }
-            me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
-              OB.UTIL.ProcessController.finish('addProduct', execution);
-              if (callback) {
-                callback(success, orderline);
+        if (OB.UTIL.isCrossStoreProduct(p)) {
+          if (p.has('productPrices')) {
+            _.each(p.get('productPrices'), function (price) {
+              if (price.id === OB.MobileApp.model.receipt.get('bp').get('priceList')) {
+                p = p.clone();
+                if (OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) || p.get('updatePriceFromPricelist')) {
+                  p.set('standardPrice', p.price);
+                  p.set('listPrice', p.price);
+                }
+                me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
+                  OB.UTIL.ProcessController.finish('addProduct', execution);
+                  if (callback) {
+                    callback(success, orderline);
+                  }
+                });
               }
             });
+            OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+            OB.UTIL.ProcessController.finish('addProduct', execution);
+            if (callback) {
+              callback(false, null);
+            }
           } else {
             OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
             OB.UTIL.ProcessController.finish('addProduct', execution);
@@ -2922,15 +2907,61 @@
               callback(false, null);
             }
           }
-        }, function () {
-          OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
-          OB.UTIL.ProcessController.finish('addProduct', execution);
-          if (callback) {
-            callback(false, null);
+        } else {
+          var criteria = {};
+          if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+            criteria = {
+              m_pricelist_id: this.get('priceList'),
+              m_product_id: p.id
+            };
+          } else {
+            var remoteCriteria = [];
+            var productId = {
+              columns: ['m_product_id'],
+              operator: 'equals',
+              value: p.id,
+              isId: true
+            },
+                pricelistId = {
+                columns: ['m_pricelist_id'],
+                operator: 'equals',
+                value: this.get('priceList'),
+                isId: true
+                };
+            remoteCriteria.push(productId);
+            remoteCriteria.push(pricelistId);
+            criteria.remoteFilters = remoteCriteria;
           }
-        }, {
-          modelsAffectedByCache: ['ProductPrice']
-        });
+          OB.Dal.findUsingCache('productPrice', OB.Model.ProductPrice, criteria, function (productPrices) {
+            if (productPrices.length > 0) {
+              p = p.clone();
+              if (OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) || p.get('updatePriceFromPricelist')) {
+                p.set('standardPrice', productPrices.at(0).get('pricestd'));
+                p.set('listPrice', productPrices.at(0).get('pricelist'));
+              }
+              me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
+                OB.UTIL.ProcessController.finish('addProduct', execution);
+                if (callback) {
+                  callback(success, orderline);
+                }
+              });
+            } else {
+              OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+              OB.UTIL.ProcessController.finish('addProduct', execution);
+              if (callback) {
+                callback(false, null);
+              }
+            }
+          }, function () {
+            OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+            OB.UTIL.ProcessController.finish('addProduct', execution);
+            if (callback) {
+              callback(false, null);
+            }
+          }, {
+            modelsAffectedByCache: ['ProductPrice']
+          });
+        }
       } else {
         // With the preference OBPOS_allowProductsNoPriceInMainPricelist
         // it is possible to add product without price in the terminal's main list
@@ -3904,6 +3935,26 @@
       var addProductsOfLines = null;
 
       addProductsOfLines = function (receipt, lines, index, callback, promotionLines) {
+        var success = function (product) {
+            var attrs;
+            if (!OB.UTIL.isNullOrUndefined(lines[index].get('splitline'))) {
+              attrs = {
+                splitline: lines[index].get('splitline'),
+                originalLine: lines[index]
+              };
+            }
+            me.addProduct(product, lines[index].get('qty'), undefined, attrs, function (isInPriceList) {
+              if (isInPriceList) {
+                me.get('lines').at(index).set('promotions', promotionLines[index]);
+                me.get('lines').at(index).calculateGross();
+                addProductsOfLines(receipt, lines, index + 1, callback, promotionLines);
+              } else {
+                promotionLines.splice(index, 1);
+                lines.splice(index, 1);
+                addProductsOfLines(receipt, lines, index, callback, promotionLines);
+              }
+            });
+            };
         if (index === lines.length) {
           me.set('skipCalculateReceipt', false);
           if (callback) {
@@ -3911,31 +3962,16 @@
           }
           return;
         }
-        OB.Dal.get(OB.Model.Product, lines[index].get('product').id, function (product) {
-          var attrs;
-          if (!OB.UTIL.isNullOrUndefined(lines[index].get('splitline'))) {
-            attrs = {
-              splitline: lines[index].get('splitline'),
-              originalLine: lines[index]
-            };
-          }
-          me.addProduct(product, lines[index].get('qty'), undefined, attrs, function (isInPriceList) {
-            if (isInPriceList) {
-              me.get('lines').at(index).set('promotions', promotionLines[index]);
-              me.get('lines').at(index).calculateGross();
-              addProductsOfLines(receipt, lines, index + 1, callback, promotionLines);
-            } else {
-              promotionLines.splice(index, 1);
-              lines.splice(index, 1);
-              addProductsOfLines(receipt, lines, index, callback, promotionLines);
-            }
+        if (OB.UTIL.isCrossStoreProduct(lines[index].get('product'))) {
+          success(lines[index].get('product'));
+        } else {
+          OB.Dal.get(OB.Model.Product, lines[index].get('product').id, success, null, function () {
+            // Product doesn't exists, execute the same code as it was not included in pricelist
+            promotionLines.splice(index, 1);
+            lines.splice(index, 1);
+            addProductsOfLines(receipt, lines, index, callback, promotionLines);
           });
-        }, null, function () {
-          // Product doesn't exists, execute the same code as it was not included in pricelist
-          promotionLines.splice(index, 1);
-          lines.splice(index, 1);
-          addProductsOfLines(receipt, lines, index, callback, promotionLines);
-        });
+        }
       };
       _.each(this.get('lines').models, function (line) {
         orderlines.push(line);

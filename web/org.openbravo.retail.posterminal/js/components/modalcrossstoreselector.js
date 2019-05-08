@@ -121,6 +121,9 @@ enyo.kind({
         remoteFilters = [],
         params = {},
         currentDate = new Date();
+    if (OB.MobileApp.model.hasPermission('OBPOS_EnableMultiPriceList', false)) {
+      params.currentPriceList = OB.MobileApp.model.receipt.get('bp').get('priceList');
+    }
     params.remoteModel = true;
     params.terminalTime = currentDate;
     params.terminalTimeOffset = {
@@ -191,7 +194,8 @@ enyo.kind({
         warehouseid: this.model.get('warehouseId'),
         warehousename: this.model.get('warehouseName'),
         stock: this.model.get('stock'),
-        price: this.model.has('currentPrice') ? this.model.get('currentPrice') : this.model.get('standardPrice')
+        price: this.model.has('currentPrice') ? this.model.get('currentPrice') : this.model.get('standardPrice'),
+        productPrices: this.model.has('productPrices') ? this.model.get('productPrices') : null
       };
       this.owner.owner.owner.owner.callback(data);
       this.owner.owner.owner.owner.owner.owner.hide();
@@ -217,8 +221,11 @@ enyo.kind({
     classes: 'obpos-row-store-name',
     name: 'storeName'
   }, {
-    classes: 'obpos-row-store-price',
-    name: 'price'
+    classes: 'obpos-row-store-standard-price',
+    name: 'standarPrice'
+  }, {
+    classes: 'obpos-row-store-current-price',
+    name: 'currentPrice'
   }, {
     classes: 'obpos-row-store-stock',
     name: 'stock'
@@ -228,7 +235,8 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.storeName.setContent(this.model.get('orgName'));
-    this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('price')));
+    this.$.standarPrice.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
+    this.$.currentPrice.setContent(OB.I18N.formatCurrency(this.model.get('currentPrice')));
     this.$.stock.setContent(this.model.get('stock') + ' Ud');
   }
 });

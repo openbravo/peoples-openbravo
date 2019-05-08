@@ -211,6 +211,7 @@ enyo.kind({
           me.leftSubWindow.changeWarehouseInfo(null, warehouse);
           me.leftSubWindow.product.set('listPrice', data.price);
           me.leftSubWindow.product.set('standardPrice', data.price);
+          me.leftSubWindow.product.set('productPrices', data.productPrices);
           };
 
       if (this.leftSubWindow.line && event && event.target.outerText !== 'Select store') {
