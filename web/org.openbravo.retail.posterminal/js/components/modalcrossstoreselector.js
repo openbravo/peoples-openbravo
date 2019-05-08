@@ -173,8 +173,6 @@ enyo.kind({
   productsList: null,
 
   init: function (model) {
-    var me = this,
-        terminal = OB.POS.modelterminal.get('terminal');
     this.productsList = new Backbone.Collection();
     this.$.csStoreSelector.setCollection(this.productsList);
   }
@@ -188,12 +186,12 @@ enyo.kind({
   tap: function () {
     if (this.owner.owner.owner.owner.callback && !(event && event.cancel)) {
       var data = {
+        orgId: this.model.get('orgId'),
+        orgName: this.model.get('orgName'),
         warehouseid: this.model.get('warehouseId'),
         warehousename: this.model.get('warehouseName'),
         stock: this.model.get('stock'),
-        price: this.model.get('price'),
-        orgId: this.model.get('orgId'),
-        orgName: this.model.get('orgName')
+        price: this.model.has('currentPrice') ? this.model.get('currentPrice') : this.model.get('standardPrice')
       };
       this.owner.owner.owner.owner.callback(data);
       this.owner.owner.owner.owner.owner.owner.hide();
