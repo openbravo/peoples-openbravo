@@ -9,6 +9,7 @@
 
 package org.openbravo.retail.posterminal.master;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,6 +46,16 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
   @Any
   @Qualifier(crossStorePropertyExtension)
   private Instance<ModelExtension> extensions;
+
+  @Override
+  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
+    List<HQLPropertyList> propertiesList = new ArrayList<>();
+    HQLPropertyList crossStoreFilterHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions, getPropertiesArgs(jsonsent));
+    propertiesList.add(crossStoreFilterHQLProperties);
+
+    return propertiesList;
+  }
 
   @Override
   protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
@@ -101,16 +112,11 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
   protected List<String> getQueryValidated(final JSONObject jsonsent) throws JSONException {
     OBContext.setAdminMode(true);
     try {
-      final boolean isMultipricelist = getPreference("OBPOS_EnableMultiPriceList");
-      final boolean allowNoPriceInMainPriceList = getPreference(
-          "OBPOS_allowProductsNoPriceInMainPricelist");
-      final boolean isMultiPriceListSearch = isMultiPriceListSearch(jsonsent);
-      final boolean showProductsWithCurrentPrice = isMultipricelist && isMultiPriceListSearch;
-      final boolean showOnlyProductsWithPrice = !showProductsWithCurrentPrice
-          || !allowNoPriceInMainPriceList;
-      final Map<String, Boolean> args = new HashMap<>();
-      args.put("showProductsWithCurrentPrice", showProductsWithCurrentPrice);
-      args.put("showOnlyProductsWithPrice", showOnlyProductsWithPrice);
+
+      final Map<String, Boolean> args = getPropertiesArgs(jsonsent);
+      final boolean showProductsWithCurrentPrice = args.get("showProductsWithCurrentPrice");
+      final boolean showOnlyProductsWithPrice = args.get("showOnlyProductsWithPrice");
+
       final HQLPropertyList regularProductStockHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions, args);
 
@@ -219,6 +225,20 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       log.error("Error while getting currentPriceList " + e.getMessage(), e);
     }
     return multiPriceListSearch;
+  }
+
+  private Map<String, Boolean> getPropertiesArgs(final JSONObject jsonsent) {
+    final boolean isMultipricelist = getPreference("OBPOS_EnableMultiPriceList");
+    final boolean allowNoPriceInMainPriceList = getPreference(
+        "OBPOS_allowProductsNoPriceInMainPricelist");
+    final boolean isMultiPriceListSearch = isMultiPriceListSearch(jsonsent);
+    final boolean showProductsWithCurrentPrice = isMultipricelist && isMultiPriceListSearch;
+    final boolean showOnlyProductsWithPrice = !showProductsWithCurrentPrice
+        || !allowNoPriceInMainPriceList;
+    final Map<String, Boolean> args = new HashMap<>();
+    args.put("showProductsWithCurrentPrice", showProductsWithCurrentPrice);
+    args.put("showOnlyProductsWithPrice", showOnlyProductsWithPrice);
+    return args;
   }
 
   @Override
