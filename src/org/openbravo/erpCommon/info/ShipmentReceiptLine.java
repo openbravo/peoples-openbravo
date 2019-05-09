@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -486,24 +487,12 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/");
             }
-            strRowsData.append(data[j].getField(columnname)
-                .replaceAll("<b>", "")
-                .replaceAll("<B>", "")
-                .replaceAll("</b>", "")
-                .replaceAll("</B>", "")
-                .replaceAll("<i>", "")
-                .replaceAll("<I>", "")
-                .replaceAll("</i>", "")
-                .replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;")
-                .replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;")
-                .replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(StringEscapeUtils.escapeHtml(data[j].getField(columnname)));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
             } else {
-              strRowsData.append("&nbsp;");
+              strRowsData.append(StringEscapeUtils.escapeHtml("&nbsp;"));
             }
           }
           strRowsData.append("]]></td>\n");
