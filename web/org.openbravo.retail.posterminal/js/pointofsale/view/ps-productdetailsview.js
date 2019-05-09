@@ -322,13 +322,14 @@ enyo.kind({
       if (args && args.cancelOperation) {
         return;
       }
+      inEvent.warehouseqty = inEvent.warehouseqty ? inEvent.warehouseqty : '0';
       me.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [inEvent.warehousename, inEvent.warehouseqty]));
       me.warehouse = inEvent;
     });
   },
   loadDefaultWarehouseData: function (defaultWarehouse) {
     if (defaultWarehouse) {
-      this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [defaultWarehouse.get('warehousename'), defaultWarehouse.get('warehouseqty')]));
+      this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [defaultWarehouse.get('warehousename'), defaultWarehouse.get('warehouseqty') ? defaultWarehouse.get('warehouseqty') : '0']));
     } else {
       this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [OB.MobileApp.model.get('warehouses')[0].warehousename, '0']));
     }
