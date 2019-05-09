@@ -145,7 +145,7 @@ enyo.kind({
         }]
       });
     }
-    if (OB.UTIL.isCrossStoreProduct(this.model.get('product'))) {
+    if (this.model.get('organization').id !== OB.MobileApp.model.get('terminal').organization) {
       this.createComponent({
         classes: 'obpos-display-block',
         components: [{
