@@ -233,7 +233,7 @@ public class ProcessBundle {
    */
   public Map<String, Object> getParams() {
     if (params == null) {
-      params = new HashMap<String, Object>();
+      params = new HashMap<>();
     }
     return params;
   }
