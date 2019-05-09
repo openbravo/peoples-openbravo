@@ -26,6 +26,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -146,7 +147,6 @@ public class GenerateEntitiesTask extends Task {
 
       File outFile;
       String classfileName;
-      Writer outWriter = null;
 
       if (!entity.isVirtualEntity()) {
         classfileName = entity.getClassName().replaceAll("\\.", "/") + ".java";
@@ -154,23 +154,14 @@ public class GenerateEntitiesTask extends Task {
         outFile = new File(srcGenPath, classfileName);
         new File(outFile.getParent()).mkdirs();
 
-        outWriter = null;
-        try {
-          outWriter = new BufferedWriter(
-              new OutputStreamWriter(new FileOutputStream(outFile), "UTF-8"));
-          Map<String, Object> data = new HashMap<String, Object>();
+        try (Writer outWriter = new BufferedWriter(
+            new OutputStreamWriter(new FileOutputStream(outFile), StandardCharsets.UTF_8))) {
+          Map<String, Object> data = new HashMap<>();
           data.put("entity", entity);
           data.put("util", this);
           processTemplate(template, data, outWriter);
         } catch (IOException e) {
           log.error("Error generating file: " + classfileName, e);
-        } finally {
-          if (outWriter != null) {
-            try {
-              outWriter.close();
-            } catch (IOException ignore) {
-            }
-          }
         }
       }
 
@@ -180,11 +171,9 @@ public class GenerateEntitiesTask extends Task {
         log.debug("Generating file: " + classfileName);
         outFile = new File(srcGenPath, classfileName);
         new File(outFile.getParent()).mkdirs();
-        outWriter = null;
-        try {
-          outWriter = new BufferedWriter(
-              new OutputStreamWriter(new FileOutputStream(outFile), "UTF-8"));
-          Map<String, Object> data = new HashMap<String, Object>();
+        try (Writer outWriter = new BufferedWriter(
+            new OutputStreamWriter(new FileOutputStream(outFile), StandardCharsets.UTF_8))) {
+          Map<String, Object> data = new HashMap<>();
           data.put("entity", entity);
 
           List<Property> properties = entity.getComputedColumnProperties();
@@ -194,7 +183,6 @@ public class GenerateEntitiesTask extends Task {
             data.put("implementsClientEnabled", "implements ClientEnabled ");
           } else {
             data.put("implementsClientEnabled", "");
-
           }
           if (entity.hasProperty("organization")) {
             properties.add(entity.getProperty("organization"));
@@ -215,13 +203,6 @@ public class GenerateEntitiesTask extends Task {
           processTemplate(templateComputed, data, outWriter);
         } catch (IOException e) {
           log.error("Error generating file: " + classfileName, e);
-        } finally {
-          if (outWriter != null) {
-            try {
-              outWriter.close();
-            } catch (IOException ignore) {
-            }
-          }
         }
       }
     }
@@ -321,17 +302,14 @@ public class GenerateEntitiesTask extends Task {
       Map<String, Object> data, Writer output) {
     try {
       templateImplementation.process(data, output);
-    } catch (IOException e) {
-      throw new IllegalStateException(e);
-    } catch (TemplateException e) {
+    } catch (IOException | TemplateException e) {
       throw new IllegalStateException(e);
     }
   }
 
   private freemarker.template.Template createTemplateImplementation(File file) {
-    try {
-      return new freemarker.template.Template("template", new FileReader(file),
-          getNewConfiguration());
+    try (FileReader reader = new FileReader(file)) {
+      return new freemarker.template.Template("template", reader, getNewConfiguration());
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }
