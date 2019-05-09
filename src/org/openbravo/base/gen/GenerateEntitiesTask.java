@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,6 +56,7 @@ public class GenerateEntitiesTask extends Task {
   private String basePath;
   private String srcGenPath;
   private String propertiesFile;
+  boolean generateAllChildProperties;
 
   public static void main(String[] args) {
     final String srcPath = args[0];
@@ -121,6 +122,9 @@ public class GenerateEntitiesTask extends Task {
       return;
     }
 
+    generateAllChildProperties = OBPropertiesProvider.getInstance()
+        .getBooleanProperty("hb.generate.all.parent.child.properties");
+
     // read and parse template
     String ftlFilename = "org/openbravo/base/gen/entity.ftl";
     File ftlFile = new File(getBasePath(), ftlFilename);
@@ -156,6 +160,7 @@ public class GenerateEntitiesTask extends Task {
               new OutputStreamWriter(new FileOutputStream(outFile), "UTF-8"));
           Map<String, Object> data = new HashMap<String, Object>();
           data.put("entity", entity);
+          data.put("util", this);
           processTemplate(template, data, outWriter);
         } catch (IOException e) {
           log.error("Error generating file: " + classfileName, e);
@@ -221,6 +226,28 @@ public class GenerateEntitiesTask extends Task {
       }
     }
     log.info("Generated " + entities.size() + " entities");
+  }
+
+  public boolean isDeprecated(Property p) {
+    if (!generateAllChildProperties) {
+      return false;
+    }
+
+    Property refPropery = p.getReferencedProperty();
+    if (refPropery == null) {
+      return false;
+    }
+
+    boolean generatedInAnyCase = ModelProvider.getInstance()
+        .shouldGenerateChildPropertyInParent(refPropery, false);
+
+    boolean generatedDueToPreference = ModelProvider.getInstance()
+        .shouldGenerateChildPropertyInParent(refPropery, true);
+    return !generatedInAnyCase && generatedDueToPreference;
+  }
+
+  public String getDeprecationMessage(Property p) {
+    return "Child property in parent entity generated for backward compatibility, it will be removed in future releases.";
   }
 
   private boolean hasChanged() {

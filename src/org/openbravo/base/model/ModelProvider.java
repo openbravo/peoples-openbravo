@@ -221,7 +221,7 @@ public class ModelProvider implements OBSingleton {
         }
       }
 
-      log.debug("Setting referencetypes for columns");
+      log.debug("Setting referencetypes for columns ");
       for (final Table t : tablesByTableName.values()) {
         t.setReferenceTypes(ModelProvider.instance);
       }
@@ -804,14 +804,7 @@ public class ModelProvider implements OBSingleton {
     try {
       List<Property> props = new ArrayList<>(e.getProperties());
       for (final Property p : props) {
-        boolean shouldGenerateChildPropertyInParent = (p.isChildPropertyInParent()
-            || generateAllChildProperties) && !p.isOneToMany() && !p.isId() && !p.isAuditInfo()
-            && p.getReferencedProperty() != null
-            && (!ENTITIES_WITHOUT_ALL_CHILD_PROPERTIES
-                .contains(p.getReferencedProperty().getEntity().getClassName()) || p.isParent())
-            && p.getSqlLogic() == null;
-
-        if (!shouldGenerateChildPropertyInParent) {
+        if (!shouldGenerateChildPropertyInParent(p, generateAllChildProperties)) {
           continue;
         }
 
@@ -827,6 +820,19 @@ public class ModelProvider implements OBSingleton {
     } catch (Exception ex) {
       log.error("Could not create parent entity properties for entity {}", e, ex);
     }
+  }
+
+  /**
+   * Determines whether for a given property, it is a child that should have a property on its
+   * parent entity.
+   */
+  public boolean shouldGenerateChildPropertyInParent(Property p,
+      boolean generateAllChildProperties) {
+    return (p.isChildPropertyInParent() || generateAllChildProperties) && !p.isOneToMany()
+        && !p.isId() && !p.isAuditInfo() && p.getReferencedProperty() != null
+        && (!ENTITIES_WITHOUT_ALL_CHILD_PROPERTIES
+            .contains(p.getReferencedProperty().getEntity().getClassName()) || p.isParent())
+        && p.getSqlLogic() == null;
   }
 
   private void createChildProperty(Entity parentEntity, Property childProperty) {
