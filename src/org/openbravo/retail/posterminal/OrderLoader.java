@@ -1451,6 +1451,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
             .createQuery(FIN_PaymentScheduleDetail.class, reversedPSDHQL.toString());
         reversedPSDQuery.setNamedParameter("paymentId", payment.getString("reversedPaymentId"));
         reversedPSDQuery.setNamedParameter("paymentSchId", paymentSchedule.getId());
+        reversedPSDQuery.setFilterOnReadableOrganization(false);
         final List<FIN_PaymentScheduleDetail> reversedPSDList = reversedPSDQuery.list();
         for (final FIN_PaymentScheduleDetail reversedPSD : reversedPSDList) {
           // Create the new paymentScheduleDetail for the reversal payment
