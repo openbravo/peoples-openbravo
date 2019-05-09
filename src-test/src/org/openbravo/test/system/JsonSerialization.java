@@ -39,7 +39,7 @@ public class JsonSerialization extends OBBaseTest {
 
   private static final String PROCESS_CONTEXT = "{\"org.openbravo.scheduling.ProcessContext\":"
       + "{\"user\":\"4028E6C72959682B01295A0735CB0120\",\"role\":\"\",\"language\":\"en_US\","
-      + "\"theme\":\"ltr/org.openbravo.userinterface.skin.250to300Comp/250to300Comp\","
+      + "\"theme\":\"ltr\\/org.openbravo.userinterface.skin.250to300Comp\\/250to300Comp\","
       + "\"client\":\"4028E6C72959682B01295A070852010D\",\"organization\":\"357947E87C284935AD1D783CF6F099A1\","
       + "\"warehouse\":\"\",\"command\":\"DEFAULT\",\"userClient\":\"\","
       + "\"userOrganization\":\"\",\"dbSessionID\":\"\",\"javaDateFormat\":\"\",\"jsDateFormat\":\"\","
