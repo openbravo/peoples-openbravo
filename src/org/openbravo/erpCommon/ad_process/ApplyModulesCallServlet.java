@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,9 +39,6 @@ import org.openbravo.erpCommon.ad_process.buildStructure.BuildMainStepTranslatio
 import org.openbravo.erpCommon.ad_process.buildStructure.BuildTranslation;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 
 public class ApplyModulesCallServlet extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
@@ -236,11 +233,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       ApplyModulesResponse resp = fillResponse(vars, state, "Processing", true);
       response.setContentType("text/plain; charset=UTF-8");
       final PrintWriter out = response.getWriter();
-      String strResult;
-      XStream xs = new XStream(new JettisonMappedXmlDriver());
-      xs.alias("Response", ApplyModulesResponse.class);
-      strResult = xs.toXML(resp);
-      out.print(strResult);
+      out.print(resp.toJSON());
       out.close();
     } catch (Exception e) {
       // We need to use printStackTrace here because if not, the log will not be shown
@@ -275,11 +268,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     response.setContentType("text/plain; charset=UTF-8");
     try {
       final PrintWriter out = response.getWriter();
-      String strResult;
-      XStream xs = new XStream(new JettisonMappedXmlDriver());
-      xs.alias("Response", ApplyModulesResponse.class);
-      strResult = xs.toXML(resp);
-      out.print(strResult);
+      out.print(resp.toJSON());
       out.close();
     } catch (Exception e) {
       // We need to use printStackTrace here because if not, the log will not be shown
@@ -383,12 +372,9 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         error.setMessage(message);
       }
 
-      XStream xs = new XStream(new JettisonMappedXmlDriver());
-      xs.alias("OBError", OBError.class);
-      String strResult = xs.toXML(error);
       response.setContentType("text/html; charset=UTF-8");
       final PrintWriter out = response.getWriter();
-      out.print(strResult);
+      out.print(error.toJSON().toString());
       out.close();
 
       PreparedStatement psErr = getPreparedStatement(

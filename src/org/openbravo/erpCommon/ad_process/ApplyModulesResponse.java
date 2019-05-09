@@ -10,11 +10,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************/
 package org.openbravo.erpCommon.ad_process;
+
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 public class ApplyModulesResponse {
   private int state;
@@ -70,5 +73,22 @@ public class ApplyModulesResponse {
 
   public void setProcessFinished(String processFinished) {
     this.processFinished = processFinished;
+  }
+
+  public String toJSON() {
+    JSONObject jsonObject = new JSONObject();
+    try {
+      JSONObject properties = new JSONObject();
+      properties.put("state", state);
+      properties.put("statusofstate", statusofstate);
+      properties.put("warnings", warnings);
+      properties.put("errors", errors);
+      properties.put("lastmessage", lastmessage);
+      properties.put("processFinished", processFinished);
+
+      jsonObject.put("Response", properties);
+    } catch (JSONException ex) {
+    }
+    return jsonObject.toString();
   }
 }
