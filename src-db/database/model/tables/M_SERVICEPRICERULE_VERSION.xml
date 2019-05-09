@@ -71,6 +71,12 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY_SERVICE" name="M_SERVPRRULVERSION_SERVPRODCAT">
         <reference local="M_RELATEDPRODUCTCATEGORY_ID" foreign="M_PRODUCT_CATEGORY_SERVICE_ID"/>
       </foreign-key>
+      <index name="M_SERVICEP_PR_VERSION_RELCAT" unique="false">
+        <index-column name="M_RELATEDPRODUCTCATEGORY_ID"/>
+      </index>
+      <index name="M_SERVICEP_PR_VERSION_RELPROD" unique="false">
+        <index-column name="M_RELATEDPRODUCT_ID"/>
+      </index>
       <index name="M_SERVICEPRICERULEVERSION_PROD" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
