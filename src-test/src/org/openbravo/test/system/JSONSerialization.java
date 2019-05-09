@@ -35,6 +35,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.scheduling.ParameterSerializationException;
 import org.openbravo.scheduling.ProcessBundle;
@@ -59,6 +60,8 @@ public class JSONSerialization extends OBBaseTest {
   private static final String PB_PARAMS_WRONG = "[]";
   private static final String M_CH_VALUE_ID = "9E16B9CCFC7B4836B72840F0AF68C151";
   private static final String AD_PROCESS_ID = "58591E3E0F7648E4A09058E037CE49FC";
+
+  private static final String OB_ERROR = "{\"OBError\":{\"title\":\"Title\",\"message\":\"Message\",\"type\":\"Error\"}}";
 
   /** ProcessContext is correctly serialized */
   @Test
@@ -168,6 +171,16 @@ public class JSONSerialization extends OBBaseTest {
     } finally {
       removeProcessRequest(processRequestId);
     }
+  }
+
+  /** OBError is serialized as expected */
+  @Test
+  public void serializeOBError() {
+    OBError error = new OBError();
+    error.setType("Error");
+    error.setTitle("Title");
+    error.setMessage("Message");
+    assertThat(error.toJSON().toString(), equalTo(OB_ERROR));
   }
 
   private VariablesSecureApp getVars() {
