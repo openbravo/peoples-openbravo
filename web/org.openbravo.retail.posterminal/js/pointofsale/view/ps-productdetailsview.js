@@ -233,6 +233,7 @@ enyo.kind({
           popup: 'OBPOS_modalCrossStoreSelector',
           args: {
             productId: this.leftSubWindow.product.get('id'),
+            productUOM: this.leftSubWindow.product.get('uOMsymbol'),
             callback: selectedStoreCallBack
           }
         });

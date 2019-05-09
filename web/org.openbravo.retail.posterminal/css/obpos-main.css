@@ -1383,6 +1383,7 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
   padding-top: 5px;
   padding-left: 5px;
   padding-right: 30px;
+  font-weight: bold;
 }
 
 .obpos-row-store-info {

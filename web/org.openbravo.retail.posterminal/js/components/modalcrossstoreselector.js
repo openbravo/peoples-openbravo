@@ -19,11 +19,13 @@ enyo.kind({
     kind: 'OBPOS.UI.CrossStoreList'
   },
   productId: null,
+  productUOM: null,
   executeOnShow: function () {
     if (!this.initialized) {
       this.inherited(arguments);
       this.getFilterSelectorTableHeader().clearFilter();
       this.productId = this.args.productId;
+      this.productUOM = this.args.productUOM;
       this.$.body.$.crossStoreList.callback = this.args.callback;
       this.$.body.$.crossStoreList.searchAction(null, {
         filters: []
@@ -237,6 +239,6 @@ enyo.kind({
     this.$.storeName.setContent(this.model.get('orgName'));
     this.$.standarPrice.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
     this.$.currentPrice.setContent(OB.I18N.formatCurrency(this.model.get('currentPrice')));
-    this.$.stock.setContent(this.model.get('stock') + ' Ud');
+    this.$.stock.setContent(this.model.get('stock') + ' ' + this.owner.owner.owner.owner.owner.owner.productUOM);
   }
 });
