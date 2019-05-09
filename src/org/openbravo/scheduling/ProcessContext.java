@@ -85,23 +85,31 @@ public class ProcessContext {
   }
 
   private ProcessContext(JSONObject json) throws JSONException {
-    this.user = json.getString("user");
-    this.role = json.getString("role");
-    this.language = json.getString("language");
-    this.theme = json.getString("theme");
-    this.client = json.getString("client");
-    this.organization = json.getString("organization");
-    this.warehouse = json.getString("warehouse");
-    this.command = json.getString("command");
-    this.userClient = json.getString("userClient");
-    this.userOrganization = json.getString("userOrganization");
-    this.dbSessionID = json.getString("dbSessionID");
-    this.javaDateFormat = json.getString("javaDateFormat");
-    this.javaDateTimeFormat = json.getString("javaDateTimeFormat");
-    this.jsDateFormat = json.getString("jsDateFormat");
-    this.sqlDateFormat = json.getString("sqlDateFormat");
-    this.accessLevel = json.getString("accessLevel");
-    this.roleSecurity = json.getBoolean("roleSecurity");
+    this.user = getStringProperty(json, "user");
+    this.role = getStringProperty(json, "role");
+    this.language = getStringProperty(json, "language");
+    this.theme = getStringProperty(json, "theme");
+    this.client = getStringProperty(json, "client");
+    this.organization = getStringProperty(json, "organization");
+    this.warehouse = getStringProperty(json, "warehouse");
+    this.command = getStringProperty(json, "command");
+    this.userClient = getStringProperty(json, "userClient");
+    this.userOrganization = getStringProperty(json, "userOrganization");
+    this.dbSessionID = getStringProperty(json, "dbSessionID");
+    this.javaDateFormat = getStringProperty(json, "javaDateFormat");
+    this.javaDateTimeFormat = getStringProperty(json, "javaDateTimeFormat");
+    this.jsDateFormat = getStringProperty(json, "jsDateFormat");
+    this.sqlDateFormat = getStringProperty(json, "sqlDateFormat");
+    this.accessLevel = getStringProperty(json, "accessLevel");
+    this.roleSecurity = getBooleanProperty(json, "roleSecurity");
+  }
+
+  private String getStringProperty(JSONObject json, String property) throws JSONException {
+    return json.has(property) ? json.getString(property) : null;
+  }
+
+  private boolean getBooleanProperty(JSONObject json, String property) throws JSONException {
+    return json.has(property) ? json.getBoolean(property) : null;
   }
 
   /**
