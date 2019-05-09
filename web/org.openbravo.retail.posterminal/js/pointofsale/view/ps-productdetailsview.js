@@ -114,6 +114,13 @@ enyo.kind({
               value: attrs.warehouse
             });
           }
+          if (attrs.organization.id !== line.get('organization').id) {
+            me.doSetLineProperty({
+              line: line,
+              property: 'organization',
+              value: attrs.organization
+            });
+          }
           me.doCloseLeftSubWindow();
         } else {
           me.doAddProduct({
