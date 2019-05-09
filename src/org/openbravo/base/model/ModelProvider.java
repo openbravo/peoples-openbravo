@@ -312,9 +312,14 @@ public class ModelProvider implements OBSingleton {
         }
         // dumpPropertyNames(e);
       }
+
+      boolean generateAllChildProperties = OBPropertiesProvider.getInstance()
+          .getBooleanProperty("hb.generate.all.parent.child.properties");
+      log.warn(
+          "Generating all children properties in parent entities. These properties are deprecated and will be removed in a future release.");
       for (final Entity e : model) {
         if (!e.isDataSourceBased() && !e.isHQLBased()) {
-          createPropertyInParentEntity(e);
+          createPropertyInParentEntity(e, generateAllChildProperties);
         }
       }
 
@@ -795,12 +800,12 @@ public class ModelProvider implements OBSingleton {
     e.addProperty(compId);
   }
 
-  private void createPropertyInParentEntity(Entity e) {
+  private void createPropertyInParentEntity(Entity e, boolean generateAllChildProperties) {
     try {
       List<Property> props = new ArrayList<>(e.getProperties());
       for (final Property p : props) {
-        boolean shouldGenerateChildPropertyInParent = p.isChildPropertyInParent()
-            && !p.isOneToMany() && !p.isId() && !p.isAuditInfo()
+        boolean shouldGenerateChildPropertyInParent = (p.isChildPropertyInParent()
+            || generateAllChildProperties) && !p.isOneToMany() && !p.isId() && !p.isAuditInfo()
             && p.getReferencedProperty() != null
             && (!ENTITIES_WITHOUT_ALL_CHILD_PROPERTIES
                 .contains(p.getReferencedProperty().getEntity().getClassName()) || p.isParent())
