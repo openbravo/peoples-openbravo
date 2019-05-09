@@ -1114,7 +1114,7 @@ enyo.kind({
     }, this);
     this.order.on('calculatedReceipt updateServicePrices', function () {
       var me = this,
-          setPriceCallback, changePriceCallback, handleError, i;
+          setPriceCallback, changePriceCallback, handleError, serviceLines, i;
 
       if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable') || (this.order.get('isQuotation') && this.order.get('hasbeenpaid') === 'Y')) {
         return;
@@ -1153,11 +1153,15 @@ enyo.kind({
         }
       };
 
-      for (i = 0; i < this.order.get('lines').length; i++) {
-        var line = this.order.get('lines').at(i);
-        if (line.get('product').get('productType') === 'S' && line.get('product').get('isPriceRuleBased')) {
+      serviceLines = this.order.get('lines').filter(function (l) {
+        return l.get('product').get('productType') === 'S';
+      });
+
+      for (i = 0; i < serviceLines.length; i++) {
+        var line = serviceLines[i];
+        if (line.get('product').get('isPriceRuleBased')) {
           OB.UTIL.getCalculatedPriceForService(line, line.get('product'), line.get('relatedLines'), line.get('qty'), changePriceCallback, handleError);
-        } else if (line.get('product').get('productType') === 'S') {
+        } else {
           setPriceCallback(line, line.get('price'), false);
         }
       }
