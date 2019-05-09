@@ -35,44 +35,32 @@ public class OBError implements Serializable {
   public OBError() {
   }
 
-  public void setType(String _data) {
-    String localData = _data;
-    if (localData == null) {
-      localData = "";
-    }
-    this.type = localData;
+  public void setType(String type) {
+    this.type = type != null ? type : "";
   }
 
   public String getType() {
     return ((this.type == null) ? "Hidden" : this.type);
   }
 
-  public void setTitle(String _data) {
-    String localData = _data;
-    if (localData == null) {
-      localData = "";
-    }
-    this.title = localData;
+  public void setTitle(String title) {
+    this.title = title != null ? title : "";
   }
 
   public String getTitle() {
     return ((this.title == null) ? "" : this.title);
   }
 
-  public void setMessage(String _data) {
-    String localData = _data;
-    if (localData == null) {
-      localData = "";
-    }
-    this.message = localData;
+  public void setMessage(String message) {
+    this.message = message != null ? message : "";
   }
 
   public String getMessage() {
     return ((this.message == null) ? "" : this.message);
   }
 
-  public void setConnectionAvailable(boolean _data) {
-    this.connectionAvailable = _data;
+  public void setConnectionAvailable(boolean connectionAvailable) {
+    this.connectionAvailable = connectionAvailable;
   }
 
   public boolean isEmpty() {
@@ -91,7 +79,7 @@ public class OBError implements Serializable {
   }
 
   public Map<String, String> toMap() {
-    Map<String, String> o = new HashMap<String, String>();
+    Map<String, String> o = new HashMap<>();
     o.put("title", title);
     o.put("message", message);
     o.put("type", type);
