@@ -613,7 +613,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
       relatedQuantity = 0,
       relatedLinesMap = {},
       execution, finishExecution = _.once(function () {
-      OB.UTIL.ProcessController.finish('addProduct', execution);
+      OB.UTIL.ProcessController.finish('servicePriceCalculation', execution);
     });
 
   function genericError(errorCode) {
@@ -893,7 +893,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
         }
         finishExecution();
       });
-    execution = OB.UTIL.ProcessController.start('addProduct');
+    execution = OB.UTIL.ProcessController.start('servicePriceCalculation');
     relatedLines.forEach(function (rl) {
       var amountToCheck;
       getPriceRuleVersion(product, rl, amountAfterDiscounts, function (servicePriceRuleVersion) {

@@ -55,7 +55,7 @@ enyo.kind({
   handlers: {
     onLeftToolbarDisabled: 'disabledButton'
   },
-  processesToListen: ['calculateReceipt', 'addProduct'],
+  processesToListen: ['calculateReceipt', 'addProduct', 'servicePriceCalculation'],
   disableButton: function () {
     this.updateDisabled(true);
   },
@@ -128,7 +128,7 @@ enyo.kind({
   handlers: {
     onLeftToolbarDisabled: 'disabledButton'
   },
-  processesToListen: ['calculateReceipt', 'addProduct', 'tapTotalButton'],
+  processesToListen: ['calculateReceipt', 'addProduct', 'tapTotalButton', 'servicePriceCalculation'],
   disableButton: function () {
     this.isEnabled = false;
     this.setDisabled(true);
@@ -266,7 +266,7 @@ enyo.kind({
     onChangedTotal: 'renderTotal',
     onRightToolbarDisabled: 'disabledButton'
   },
-  processesToListen: ['calculateReceipt', 'completeQuotation', 'clearWith', 'addProduct'],
+  processesToListen: ['calculateReceipt', 'completeQuotation', 'clearWith', 'addProduct', 'servicePriceCalculation'],
   isEnabled: true,
   disabledButton: function (inSender, inEvent) {
     if (inEvent.exceptionPanel === this.tabPanel) {
