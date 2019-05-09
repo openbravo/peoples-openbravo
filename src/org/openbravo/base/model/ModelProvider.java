@@ -315,8 +315,10 @@ public class ModelProvider implements OBSingleton {
 
       boolean generateAllChildProperties = OBPropertiesProvider.getInstance()
           .getBooleanProperty("hb.generate.all.parent.child.properties");
-      log.warn(
-          "Generating all children properties in parent entities. These properties are deprecated and will be removed in a future release.");
+      if (generateAllChildProperties) {
+        log.warn(
+            "Generating all children properties in parent entities. These properties are deprecated and will be removed in a future release.");
+      }
       for (final Entity e : model) {
         if (!e.isDataSourceBased() && !e.isHQLBased()) {
           createPropertyInParentEntity(e, generateAllChildProperties);
