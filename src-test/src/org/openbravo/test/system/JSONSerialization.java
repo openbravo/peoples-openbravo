@@ -45,7 +45,7 @@ import org.openbravo.test.base.OBBaseTest;
 /**
  * Test cases used to ensure the correct JSON serialization of different objects.
  */
-public class JsonSerialization extends OBBaseTest {
+public class JSONSerialization extends OBBaseTest {
 
   private static final String PROCESS_CONTEXT = "{\"org.openbravo.scheduling.ProcessContext\":"
       + "{\"user\":\"4028E6C72959682B01295A0735CB0120\",\"role\":\"\",\"language\":\"en_US\","
