@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -297,7 +297,7 @@ public class OBScheduler {
           final ProcessBundle bundle = ProcessBundle.request(requestId, vars, getConnection());
           schedule(requestId, bundle);
 
-        } catch (final ServletException e) {
+        } catch (final ServletException | ParameterSerializationException e) {
           log.error("Error scheduling process: " + e.getMessage(), e);
         }
       }
