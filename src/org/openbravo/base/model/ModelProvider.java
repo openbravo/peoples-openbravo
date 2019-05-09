@@ -313,10 +313,6 @@ public class ModelProvider implements OBSingleton {
         // dumpPropertyNames(e);
       }
       for (final Entity e : model) {
-        // add virtual property in the parent table based on
-        // isParent columns
-
-        // Support datasource based tables
         if (!e.isDataSourceBased() && !e.isHQLBased()) {
           createPropertyInParentEntity(e);
         }
