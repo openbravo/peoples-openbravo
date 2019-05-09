@@ -44,6 +44,9 @@ public class PaidReceiptRelatedLinesProperties extends ModelExtension {
             "deferred"));
         add(new HQLProperty("rpl.obposCanbedelivered", "obposCanbedelivered"));
         add(new HQLProperty("rpl.obposIspaid", "obposIspaid"));
+
+        add(new HQLProperty("rpl.product.id", "productId"));
+        add(new HQLProperty("rpl.product.productCategory.id", "productCategory"));
       }
     };
 

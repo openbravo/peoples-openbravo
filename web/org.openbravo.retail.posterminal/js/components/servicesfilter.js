@@ -382,6 +382,7 @@ enyo.kind({
         productList.push({
           orderlineId: ol.get('id'),
           productName: ol.get('product').get('_identifier'),
+          productId: ol.get('product').get('id'),
           productCategory: ol.get('product').get('productCategory')
         });
       });
@@ -390,6 +391,7 @@ enyo.kind({
       productList.push({
         orderlineId: this.orderline.get('id'),
         productName: this.orderline.get('product').get('_identifier'),
+        productId: this.orderline.get('product').get('id'),
         productCategory: this.orderline.get('product').get('productCategory')
       });
     }

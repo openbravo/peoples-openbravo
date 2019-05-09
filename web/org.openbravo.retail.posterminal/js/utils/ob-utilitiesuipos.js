@@ -644,7 +644,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
           columns: [],
           operator: 'filter',
           value: 'ServicePriceRuleVersion_DateFilter',
-          params: [relatedLine.orderlineId, relatedLineMap.deferred, relatedLineMap.product, relatedLineMap.productCategory]
+          params: [relatedLineMap.product, relatedLineMap.productCategory]
         });
       } else {
         criteria.remoteFilters.push({
@@ -802,6 +802,8 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
         relatedQuantity += rl.qty;
         lineMap.qty = rl.qty;
         lineMap.deferred = true;
+        lineMap.product = rl.productId;
+        lineMap.productCategory = rl.productCategory;
       }
       if (OB.MobileApp.model.receipt.get('priceIncludesTax')) {
         if (l) {

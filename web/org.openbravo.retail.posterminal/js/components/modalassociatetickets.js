@@ -359,6 +359,8 @@ enyo.kind({
         newRelatedLine.deliveredQuantity = line.get('deliveredQuantity');
         newRelatedLine.promotions = line.get('promotions');
         newRelatedLine.bpName = line.get('bpName');
+        newRelatedLine.productId = line.get('productId');
+        newRelatedLine.productCategory = line.get('productCategory');
         relatedLines.push(newRelatedLine);
         associatedOrderLineIds.push(line.get('orderlineId'));
       }
