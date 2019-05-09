@@ -41,6 +41,7 @@ import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
+import org.openbravo.test.authentication.AuthenticationManagerTest;
 import org.openbravo.test.cancelandreplace.CancelAndReplaceTest;
 import org.openbravo.test.centralbroker.CentralBrokerTest;
 import org.openbravo.test.copyLinesFromOrders.CopyLinesFromOrdersTest;
@@ -150,6 +151,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+
+    // authentication
+    AuthenticationManagerTest.class, //
 
     // dal
     DalComplexQueryRequisitionTest.class, //

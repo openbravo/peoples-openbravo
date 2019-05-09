@@ -56,6 +56,10 @@ public class TestConstants {
     public static final String COUNTRY = "Country";
   }
 
+  public static class Users {
+    public static final String OPENBRAVO = "100";
+  }
+
   private TestConstants() {
   }
 }

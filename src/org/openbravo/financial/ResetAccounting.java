@@ -646,9 +646,10 @@ public class ResetAccounting {
 
   private static boolean hasProcessingColumn(String strTableId) {
     int count = 0;
-    String hql = " select count(*) from ADColumn where table.id = '" + strTableId + "' "
+    String hql = " select count(*) from ADColumn where table.id = :tableId "
         + " and lower(dBColumnName) = 'processing'";
     Query<Long> query = OBDal.getInstance().getSession().createQuery(hql, Long.class);
+    query.setParameter("tableId", strTableId);
     count = query.list().get(0).intValue();
     return (count == 1);
   }
