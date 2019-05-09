@@ -750,7 +750,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
 
   function calculatePercentageAmount(product, amount, percentage, partialPrice, callback) {
     var newprice, oldprice = (partialPrice ? 0 : product.get('listPrice'));
-    newprice = OB.DEC.add(oldprice, (amount * percentage / 100));
+    newprice = OB.DEC.add(oldprice, OB.DEC.mul(amount, OB.DEC.div(percentage, 100)));
     callback(newprice);
   }
 
@@ -778,7 +778,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
       var oldprice = (partialPrice ? 0 : product.get('listPrice')),
           newprice;
       if (price && price.length > 0) {
-        newprice = OB.Utilities.Number.roundJSNumber(oldprice + price.at(0).get('listPrice'), 2);
+        newprice = OB.Utilities.Number.roundJSNumber(OB.DEC.add(oldprice, price.at(0).get('listPrice')), 2);
         callback(newprice);
       } else {
         errorCallback('OBPOS_ErrorPriceRuleRangePriceNotFound');
@@ -806,73 +806,73 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
       if (OB.MobileApp.model.receipt.get('priceIncludesTax')) {
         if (l) {
           partialAmtBeforeDiscounts = Math.abs(l.get('gross'));
-          partialAmtAfterDiscounts = Math.abs(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
-            return memo + promo.amt;
-          }, 0));
-          amountBeforeDiscounts += partialAmtBeforeDiscounts;
-          amountAfterDiscounts += partialAmtAfterDiscounts;
+          partialAmtAfterDiscounts = Math.abs(OB.DEC.sub(l.get('gross'), _.reduce(l.get('promotions'), function (memo, promo) {
+            return OB.DEC.add(memo, promo.amt);
+          }, 0)));
+          amountBeforeDiscounts = OB.DEC.add(amountBeforeDiscounts, partialAmtBeforeDiscounts);
+          amountAfterDiscounts = OB.DEC.add(amountAfterDiscounts, partialAmtAfterDiscounts);
           lineMap.linePriceBeforeDiscounts = partialAmtBeforeDiscounts;
           lineMap.linePrice = partialAmtAfterDiscounts;
           if (product.get('quantityRule') === 'PP') {
             partialAmtBeforeDiscounts = Math.abs(OB.DEC.div(l.get('gross'), l.get('qty')));
-            partialAmtAfterDiscounts = Math.abs(OB.DEC.div(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
-              return memo + promo.amt;
-            }, 0), l.get('qty')));
-            rangeAmountBeforeDiscounts += partialAmtBeforeDiscounts;
-            rangeAmountAfterDiscounts += partialAmtAfterDiscounts;
+            partialAmtAfterDiscounts = Math.abs(OB.DEC.div(OB.DEC.sub(l.get('gross'), _.reduce(l.get('promotions'), function (memo, promo) {
+              return OB.DEC.add(memo, promo.amt);
+            }, 0)), l.get('qty')));
+            rangeAmountBeforeDiscounts = OB.DEC.add(rangeAmountBeforeDiscounts, partialAmtBeforeDiscounts);
+            rangeAmountAfterDiscounts = OB.DEC.add(rangeAmountAfterDiscounts, partialAmtAfterDiscounts);
           }
         } else {
           partialAmtBeforeDiscounts = Math.abs(rl.gross);
-          partialAmtAfterDiscounts = Math.abs(rl.gross - _.reduce(rl.promotions, function (memo, promo) {
-            return memo + promo.amt;
-          }, 0));
-          amountBeforeDiscounts += partialAmtBeforeDiscounts;
-          amountAfterDiscounts += partialAmtAfterDiscounts;
+          partialAmtAfterDiscounts = Math.abs(OB.DEC.sub(rl.gross, _.reduce(rl.promotions, function (memo, promo) {
+            return OB.DEC.add(memo, promo.amt);
+          }, 0)));
+          amountBeforeDiscounts = OB.DEC.add(amountBeforeDiscounts, partialAmtBeforeDiscounts);
+          amountAfterDiscounts = OB.DEC.add(amountAfterDiscounts, partialAmtAfterDiscounts);
           lineMap.linePriceBeforeDiscounts = partialAmtBeforeDiscounts;
           lineMap.linePrice = partialAmtAfterDiscounts;
           if (product.get('quantityRule') === 'PP') {
             partialAmtBeforeDiscounts = Math.abs(OB.DEC.div(rl.gross, rl.qty));
-            partialAmtAfterDiscounts = Math.abs(OB.DEC.div(rl.gross - _.reduce(rl.promotions, function (memo, promo) {
-              return memo + promo.amt;
-            }, 0), rl.qty));
-            rangeAmountBeforeDiscounts += partialAmtBeforeDiscounts;
-            rangeAmountAfterDiscounts += partialAmtAfterDiscounts;
+            partialAmtAfterDiscounts = Math.abs(OB.DEC.div(OB.DEC.sub(rl.gross, _.reduce(rl.promotions, function (memo, promo) {
+              return OB.DEC.add(memo, promo.amt);
+            }, 0)), rl.qty));
+            rangeAmountBeforeDiscounts = OB.DEC.add(rangeAmountBeforeDiscounts, partialAmtBeforeDiscounts);
+            rangeAmountAfterDiscounts = OB.DEC.add(rangeAmountAfterDiscounts, partialAmtAfterDiscounts);
           }
         }
       } else {
         if (l) {
           partialAmtBeforeDiscounts = Math.abs(l.get('net'));
-          partialAmtAfterDiscounts = Math.abs(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
+          partialAmtAfterDiscounts = Math.abs(OB.DEC.sub(l.get('net'), _.reduce(l.get('promotions'), function (memo, promo) {
             return memo + promo.amt;
-          }, 0));
-          amountBeforeDiscounts += partialAmtBeforeDiscounts;
-          amountAfterDiscounts += partialAmtAfterDiscounts;
+          }, 0)));
+          amountBeforeDiscounts = OB.DEC.add(amountBeforeDiscounts, partialAmtBeforeDiscounts);
+          amountAfterDiscounts = OB.DEC.add(amountAfterDiscounts, partialAmtAfterDiscounts);
           lineMap.linePriceBeforeDiscounts = partialAmtBeforeDiscounts;
           lineMap.linePrice = partialAmtAfterDiscounts;
           if (product.get('quantityRule') === 'PP') {
             partialAmtBeforeDiscounts = Math.abs(OB.DEC.div(l.get('net'), l.get('qty')));
-            partialAmtAfterDiscounts = Math.abs(OB.DEC.div(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
-              return memo + promo.amt;
-            }, 0), l.get('qty')));
-            rangeAmountBeforeDiscounts += partialAmtBeforeDiscounts;
-            rangeAmountAfterDiscounts += partialAmtAfterDiscounts;
+            partialAmtAfterDiscounts = Math.abs(OB.DEC.div(OB.DEC.sub(l.get('net'), _.reduce(l.get('promotions'), function (memo, promo) {
+              return OB.DEC.add(memo, promo.amt);
+            }, 0)), l.get('qty')));
+            rangeAmountBeforeDiscounts = OB.DEC.add(rangeAmountBeforeDiscounts, partialAmtBeforeDiscounts);
+            rangeAmountAfterDiscounts = OB.DEC.add(rangeAmountAfterDiscounts, partialAmtAfterDiscounts);
           }
         } else {
           partialAmtBeforeDiscounts = Math.abs(rl.net);
-          partialAmtAfterDiscounts = Math.abs(OB.DEC.div(rl.net - _.reduce(rl.promotions, function (memo, promo) {
-            return memo + promo.amt;
-          }, 0), rl.qty));
-          amountBeforeDiscounts += partialAmtBeforeDiscounts;
-          amountAfterDiscounts += partialAmtAfterDiscounts;
+          partialAmtAfterDiscounts = Math.abs(OB.DEC.div(OB.DEC.sub(rl.net, _.reduce(rl.promotions, function (memo, promo) {
+            return OB.DEC.add(memo, promo.amt);
+          }, 0)), rl.qty));
+          amountBeforeDiscounts = OB.DEC.add(amountBeforeDiscounts, partialAmtBeforeDiscounts);
+          amountAfterDiscounts = OB.DEC.add(amountAfterDiscounts, partialAmtAfterDiscounts);
           lineMap.linePriceBeforeDiscounts = partialAmtBeforeDiscounts;
           lineMap.linePrice = partialAmtAfterDiscounts;
           if (product.get('quantityRule') === 'PP') {
             partialAmtBeforeDiscounts = Math.abs(OB.DEC.div(rl.net, rl.qty));
-            partialAmtAfterDiscounts = Math.abs(OB.DEC.div(rl.net - _.reduce(rl.promotions, function (memo, promo) {
-              return memo + promo.amt;
-            }, 0), rl.qty));
-            rangeAmountBeforeDiscounts += partialAmtBeforeDiscounts;
-            rangeAmountAfterDiscounts += partialAmtAfterDiscounts;
+            partialAmtAfterDiscounts = Math.abs(OB.DEC.div(OB.DEC.sub(rl.net, _.reduce(rl.promotions, function (memo, promo) {
+              return OB.DEC.add(memo, promo.amt);
+            }, 0)), rl.qty));
+            rangeAmountBeforeDiscounts = OB.DEC.add(rangeAmountBeforeDiscounts, partialAmtBeforeDiscounts);
+            rangeAmountAfterDiscounts = OB.DEC.add(rangeAmountAfterDiscounts, partialAmtAfterDiscounts);
           }
         }
       }
@@ -887,9 +887,9 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
     var aggregatedNewPrice = 0,
         finalCallback = _.after(relatedLines.length, function () {
         if (product.get('quantityRule') === 'PP') {
-          callback(line, OB.Utilities.Number.roundJSNumber(aggregatedNewPrice / relatedQuantity + product.get('listPrice'), 2));
+          callback(line, OB.Utilities.Number.roundJSNumber(OB.DEC.div(aggregatedNewPrice, OB.DEC.add(relatedQuantity, product.get('listPrice'))), 2));
         } else {
-          callback(line, OB.Utilities.Number.roundJSNumber(aggregatedNewPrice + product.get('listPrice'), 2));
+          callback(line, OB.Utilities.Number.roundJSNumber(OB.DEC.add(aggregatedNewPrice, product.get('listPrice')), 2));
         }
         finishExecution();
       });
@@ -909,7 +909,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
               amountToCheck = relatedLinesMap[rl.orderlineId].linePriceBeforeDiscounts;
             }
             calculatePercentageAmount(product, amountToCheck, spr.get('percentage'), true, function (newprice) {
-              aggregatedNewPrice += newprice;
+              aggregatedNewPrice = OB.DEC.add(aggregatedNewPrice, newprice);
               finalCallback();
             });
           } else { //ruletype = 'R'
@@ -921,12 +921,12 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
                   amountToCheck = relatedLinesMap[rl.orderlineId].linePriceBeforeDiscounts;
                 }
                 calculatePercentageAmount(product, amountToCheck, range.get('percentage'), true, function (newprice) {
-                  aggregatedNewPrice += newprice;
+                  aggregatedNewPrice = OB.DEC.add(aggregatedNewPrice, newprice);
                   finalCallback();
                 });
               } else {
                 calculateRangePriceAmount(product, range, true, function (newprice) {
-                  aggregatedNewPrice += newprice * relatedLinesMap[rl.orderlineId].qty;
+                  aggregatedNewPrice = OB.DEC.add(aggregatedNewPrice, OB.DEC.mul(newprice, relatedLinesMap[rl.orderlineId].qty));
                   finalCallback();
                 }, genericError);
               }
