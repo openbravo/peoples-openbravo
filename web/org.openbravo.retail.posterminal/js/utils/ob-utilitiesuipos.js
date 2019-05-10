@@ -889,7 +889,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
     var aggregatedNewPrice = 0,
         finalCallback = _.after(relatedLines.length, function () {
         if (product.get('quantityRule') === 'PP') {
-          callback(line, OB.Utilities.Number.roundJSNumber(OB.DEC.div(aggregatedNewPrice, OB.DEC.add(relatedQuantity, product.get('listPrice'))), 2));
+          callback(line, OB.Utilities.Number.roundJSNumber(OB.DEC.add(OB.DEC.div(aggregatedNewPrice, relatedQuantity), product.get('listPrice')), 2));
         } else {
           callback(line, OB.Utilities.Number.roundJSNumber(OB.DEC.add(aggregatedNewPrice, product.get('listPrice')), 2));
         }
