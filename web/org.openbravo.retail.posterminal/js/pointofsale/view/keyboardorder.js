@@ -22,7 +22,8 @@ enyo.kind({
     onSetDiscountQty: '',
     onDiscountsMode: '',
     onSetMultiSelectionItems: '',
-    onDeleteLine: ''
+    onDeleteLine: '',
+    onActionChangeState: ''
   },
   discountsMode: false,
   handlers: {
@@ -34,6 +35,10 @@ enyo.kind({
       return;
     }
     this.selectedModels = inEvent.models;
+    this.doActionChangeState({
+      name: 'selectedReceiptLines', 
+      value: inEvent.models 
+    });
     this.selectedEditPrice = OB.MobileApp.model.hasPermission('OBPOS_order.changePrice', false);
     if (this.selectedEditPrice) {
       var i;
@@ -99,10 +104,18 @@ enyo.kind({
     this.$.toolbarcontainer.$.toolbarPayment.setReceipt(this.receipt);
 
     this.line = null;
+    this.doActionChangeState({
+      name: 'selectedReceiptLine', 
+      value: null 
+    });    
 
     this.receipt.get('lines').on('selected', function (line) {
       this.line = line;
       this.clearEditBox();
+      this.doActionChangeState({
+        name: 'selectedReceiptLine', 
+        value: line 
+      });         
     }, this);
   },
   validateQuantity: function (keyboard, value, callback) {
@@ -249,28 +262,6 @@ enyo.kind({
 
         };
 
-    var changePrice = function (keyboardComponent, keyboard, price) {
-
-        var setPrices = function () {
-            keyboard.receipt.setPrices(keyboardComponent.selectedModels, price);
-            keyboard.receipt.trigger('scan');
-            };
-
-        if (OB.MobileApp.model.get('priceModificationReasons').length > 0) {
-          me.doShowPopup({
-            popup: 'modalPriceModification',
-            args: {
-              callback: setPrices,
-              selectedModels: me.selectedModels,
-              receipt: keyboard.receipt,
-              line: keyboard.line
-            }
-          });
-        } else {
-          setPrices();
-        }
-        };
-
     var changeQuantity = function (keyboardComponent, keyboard, value) {
         keyboard.receipt.set('undo', null);
         var selection = [];
@@ -323,43 +314,10 @@ enyo.kind({
     this.addCommand('line:price', {
       permission: 'OBPOS_order.changePrice',
       action: function (keyboard, txt) {
-        var price = OB.I18N.parseNumber(txt);
-
-        if (!me.validateReceipt(keyboard, false)) {
-          return true;
-        }
-        if (!keyboard.line) {
-          return true;
-        }
-        if (!me.validatePrice(keyboard, price, changePrice)) {
-          return true;
-        }
-        if (keyboard.line.get('product').get('isEditablePrice') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableLine'
-          });
-          return true;
-        }
-        if (keyboard.line) {
-          OB.UTIL.Approval.requestApproval(
-          me.model, 'OBPOS_approval.setPrice', function (approved, supervisor, approvalType) {
-            if (approved) {
-              var approvals = keyboard.receipt.get('approvals') || [],
-                  approval = {
-                  approvalType: {
-                    approval: 'OBPOS_approval.setPrice',
-                    message: 'OBPOS_approval.setPriceMessage',
-                    params: [keyboard.line.get('product').get('_identifier'), OB.I18N.formatCurrency(keyboard.line.getGross()), OB.I18N.formatCurrency(price)]
-                  },
-                  userContact: supervisor.get('id'),
-                  created: (new Date()).getTime()
-                  };
-              approvals.push(approval);
-              keyboard.receipt.set('approvals', approvals);
-              changePrice(me, keyboard, price);
-            }
-          });
-        }
+        OB.MobileApp.actionsRegistry.execute({
+          window: 'retail.pointofsale',
+          name: 'changePrice'
+        }, this, {});
       }
     });
 
