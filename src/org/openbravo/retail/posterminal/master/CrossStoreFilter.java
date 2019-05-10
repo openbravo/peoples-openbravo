@@ -10,7 +10,6 @@
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +20,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -40,19 +37,32 @@ import org.openbravo.retail.posterminal.ProcessHQLQueryValidated;
 public class CrossStoreFilter extends ProcessHQLQueryValidated {
 
   public static final String crossStorePropertyExtension = "OBPOS_CrossStoreExtension";
-  private static final Logger log = LogManager.getLogger();
+  public static final String crossStoreMultiPricePropertyExtension = "OBPOS_CrossStoreMultiPriceExtension";
 
   @Inject
   @Any
   @Qualifier(crossStorePropertyExtension)
   private Instance<ModelExtension> extensions;
 
+  @Inject
+  @Any
+  @Qualifier(crossStoreMultiPricePropertyExtension)
+  private Instance<ModelExtension> multiPriceExtensions;
+
   @Override
   protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
-    List<HQLPropertyList> propertiesList = new ArrayList<>();
-    HQLPropertyList crossStoreFilterHQLProperties = ModelExtensionUtils
-        .getPropertyExtensions(extensions, getPropertiesArgs(jsonsent));
+    final List<HQLPropertyList> propertiesList = new ArrayList<>();
+    final Map<String, Boolean> args = getPropertiesArgs();
+    final boolean isMultiPriceListEnabled = args.get("isMultiPriceListEnabled");
+
+    final HQLPropertyList crossStoreFilterHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions, args);
     propertiesList.add(crossStoreFilterHQLProperties);
+    if (isMultiPriceListEnabled) {
+      final HQLPropertyList crossStoreMultiPriceHQLProperties = ModelExtensionUtils
+          .getPropertyExtensions(multiPriceExtensions, args);
+      propertiesList.add(crossStoreMultiPriceHQLProperties);
+    }
 
     return propertiesList;
   }
@@ -61,9 +71,6 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
   protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
     OBContext.setAdminMode(true);
     try {
-      final boolean isMultipricelist = getPreference("OBPOS_EnableMultiPriceList");
-      final boolean isMultiPriceListSearch = isMultiPriceListSearch(jsonsent);
-      final boolean showProductsWithCurrentPrice = isMultipricelist && isMultiPriceListSearch;
       final String posId = jsonsent.getString("pos");
       final String productId = jsonsent.getString("product");
       final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
@@ -95,12 +102,6 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
       paramValues.put("productId", productId);
       paramValues.put("terminalDate", terminalDate);
-      if (showProductsWithCurrentPrice) {
-        paramValues.put("multipriceListVersionId",
-            POSUtils.getPriceListVersionForPriceList(
-                jsonsent.getJSONObject("parameters").getString("currentPriceList"), terminalDate)
-                .getId());
-      }
 
       return paramValues;
     } finally {
@@ -112,92 +113,119 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
   protected List<String> getQueryValidated(final JSONObject jsonsent) throws JSONException {
     OBContext.setAdminMode(true);
     try {
+      final List<String> hqlList = new ArrayList<>();
+      final Map<String, Boolean> args = getPropertiesArgs();
+      final boolean isMultiPriceListEnabled = args.get("isMultiPriceListEnabled");
+      final boolean filterByStock = jsonsent.getBoolean("filterByStock");
 
-      final Map<String, Boolean> args = getPropertiesArgs(jsonsent);
-      final boolean showProductsWithCurrentPrice = args.get("showProductsWithCurrentPrice");
-      final boolean showOnlyProductsWithPrice = args.get("showOnlyProductsWithPrice");
-
-      final HQLPropertyList regularProductStockHQLProperties = ModelExtensionUtils
+      final HQLPropertyList crossStoreHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions, args);
-
-      final StringBuilder hql = new StringBuilder();
-      hql.append(" select" + regularProductStockHQLProperties.getHqlSelect());
-      hql.append(" from Organization o");
-      hql.append(" join o.organizationWarehouseList ow");
-      hql.append(" join ow.warehouse w");
-      hql.append(" join o.organizationWarehouseList owh");
-      hql.append(" join owh.warehouse wh");
-      hql.append(" join wh.locatorList l");
-      hql.append(" join l.inventoryStatus ls");
-      hql.append(" left join l.materialMgmtStorageDetailList sd");
-      hql.append(" with sd.product.id = :productId");
-      if (showOnlyProductsWithPrice) {
-        hql.append(" join o.obretcoPricelist pl");
-        hql.append(" join pl.pricingPriceListVersionList plv");
-        hql.append(" join plv.pricingProductPriceList pp");
-      }
-      if (showProductsWithCurrentPrice) {
-        hql.append(" , PricingPriceList bppl");
-        hql.append(" join bppl.pricingPriceListVersionList bpplv");
-        hql.append(" join bpplv.pricingProductPriceList bppp");
-      }
-      hql.append(" where o.id in :crossStoreOrgIds");
-      hql.append(" and $filtersCriteria");
-      hql.append(" and ls.oBRETCOAvailableCrossStore = true");
-      hql.append(" and exists (");
-      hql.append("   select 1");
-      hql.append("   from OBRETCO_Prol_Product pli");
-      hql.append("   where pli.product.id = :productId");
-      hql.append("   and pli.obretcoProductlist.id = o.obretcoProductlist.id");
-      hql.append(" )");
-      if (showOnlyProductsWithPrice) {
-        hql.append(" and pp.product.id = :productId");
-        hql.append(" and plv.id = (");
-        hql.append("   select min(plv2.id)");
-        hql.append("   from PricingPriceListVersion plv2");
-        hql.append("   where plv2.priceList.id = pl.id");
-        hql.append("   and plv2.active = true");
-        hql.append("   and plv2.validFromDate = (");
-        hql.append("     select max(plv3.validFromDate)");
-        hql.append("     from PricingPriceListVersion plv3");
-        hql.append("     where plv3.priceList.id = pl.id");
-        hql.append("     and plv3.active = true");
-        hql.append("     and plv3.validFromDate <= :terminalDate");
-        hql.append("   )");
-        hql.append(" )");
-      }
-      if (showProductsWithCurrentPrice) {
-        hql.append(" and bppp.product.id = :productId");
-        hql.append(" and bpplv.id = :multipriceListVersionId");
-      }
-      hql.append(" and o.active = true");
-      hql.append(" and ow.active = true");
-      hql.append(" and w.active = true");
-      hql.append(" and owh.active = true");
-      hql.append(" and wh.active = true");
-      hql.append(" and l.active = true");
-      if (showOnlyProductsWithPrice) {
-        hql.append(" and pl.active = true");
-        hql.append(" and plv.active = true");
-      }
-      hql.append(" group by o.id, o.name, w.id, w.name");
-      if (showOnlyProductsWithPrice) {
-        hql.append(" , pl.id");
-        hql.append(" , pp.standardPrice");
-      }
-      if (showProductsWithCurrentPrice) {
-        hql.append(" , bppl.id");
-        hql.append(" , bppp.standardPrice");
-      }
-      hql.append(" having w.id = min(wh.id)");
-      if (jsonsent.getBoolean("filterByStock")) {
-        hql.append(" and coalesce(sum(sd.quantityOnHand - sd.reservedQty), 0) > 0");
+      hqlList.add(getCrossStoreStockAndPrice(crossStoreHQLProperties, filterByStock,
+          isMultiPriceListEnabled));
+      if (isMultiPriceListEnabled) {
+        final HQLPropertyList crossStoreMultiPriceHQLProperties = ModelExtensionUtils
+            .getPropertyExtensions(multiPriceExtensions, args);
+        hqlList.add(getCrossStoreMultiPrice(crossStoreMultiPriceHQLProperties));
       }
 
-      return Collections.singletonList(hql.toString());
+      return hqlList;
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private String getCrossStoreStockAndPrice(final HQLPropertyList crossStoreHQLProperties,
+      final boolean filterByStock, final boolean isMultiPriceListEnabled) {
+    final StringBuilder hql = new StringBuilder();
+    hql.append(" select" + crossStoreHQLProperties.getHqlSelect());
+    hql.append(" from Organization o");
+    hql.append(" join o.organizationWarehouseList ow");
+    hql.append(" join ow.warehouse w");
+    hql.append(" join o.organizationWarehouseList owh");
+    hql.append(" join owh.warehouse wh");
+    hql.append(" join wh.locatorList l");
+    hql.append(" join l.inventoryStatus ls");
+    hql.append(" left join l.materialMgmtStorageDetailList sd");
+    hql.append(" with sd.product.id = :productId");
+    if (!isMultiPriceListEnabled) {
+      hql.append(" join o.obretcoPricelist pl");
+      hql.append(" join pl.pricingPriceListVersionList plv");
+      hql.append(" join plv.pricingProductPriceList pp");
+    }
+    hql.append(" where o.id in :crossStoreOrgIds");
+    hql.append(" and $filtersCriteria");
+    hql.append(" and ls.oBRETCOAvailableCrossStore = true");
+    hql.append(" and exists (");
+    hql.append("   select 1");
+    hql.append("   from OBRETCO_Prol_Product pli");
+    hql.append("   where pli.product.id = :productId");
+    hql.append("   and pli.obretcoProductlist.id = o.obretcoProductlist.id");
+    hql.append(" )");
+    if (!isMultiPriceListEnabled) {
+      hql.append(" and pp.product.id = :productId");
+      hql.append(" and plv.id = (");
+      hql.append("   select min(plv2.id)");
+      hql.append("   from PricingPriceListVersion plv2");
+      hql.append("   where plv2.priceList.id = pl.id");
+      hql.append("   and plv2.active = true");
+      hql.append("   and plv2.validFromDate = (");
+      hql.append("     select max(plv3.validFromDate)");
+      hql.append("     from PricingPriceListVersion plv3");
+      hql.append("     where plv3.priceList.id = pl.id");
+      hql.append("     and plv3.active = true");
+      hql.append("     and plv3.validFromDate <= :terminalDate");
+      hql.append("   )");
+      hql.append(" )");
+    }
+    hql.append(" and o.active = true");
+    hql.append(" and owh.active = true");
+    hql.append(" and wh.active = true");
+    hql.append(" and l.active = true");
+    hql.append(" group by o.id, o.name, w.id, w.name");
+    if (!isMultiPriceListEnabled) {
+      hql.append(" , pl.id, pp.standardPrice");
+    }
+    hql.append(" having w.id = min(wh.id)");
+    if (filterByStock) {
+      hql.append(" and coalesce(sum(sd.quantityOnHand - sd.reservedQty), 0) > 0");
+    }
+    return hql.toString();
+  }
+
+  private String getCrossStoreMultiPrice(final HQLPropertyList crossStoreMultiPriceHQLProperties) {
+    final StringBuilder hql = new StringBuilder();
+    hql.append(" select" + crossStoreMultiPriceHQLProperties.getHqlSelect());
+    hql.append(" from PricingPriceList bppl");
+    hql.append(" join bppl.pricingPriceListVersionList bpplv");
+    hql.append(" join bpplv.pricingProductPriceList bppp");
+    hql.append(" where bppp.product.id = :productId");
+    hql.append(" and bpplv.id = (");
+    hql.append("   select min(bpplv2.id)");
+    hql.append("   from PricingPriceListVersion bpplv2");
+    hql.append("   where bpplv2.priceList.id = bppl.id");
+    hql.append("   and bpplv2.active = true");
+    hql.append("   and bpplv2.validFromDate = (");
+    hql.append("     select max(bpplv3.validFromDate)");
+    hql.append("     from PricingPriceListVersion bpplv3");
+    hql.append("     where bpplv3.priceList.id = bppl.id");
+    hql.append("     and bpplv3.active = true");
+    hql.append("     and bpplv3.validFromDate <= :terminalDate");
+    hql.append("   )");
+    hql.append(" )");
+    hql.append(" and exists (");
+    hql.append("   select 1");
+    hql.append("   from BusinessPartner bp");
+    hql.append("   where bp.priceList.id = bppl.id");
+    hql.append("   and bp.customer = true");
+    hql.append(" )");
+    return hql.toString();
+  }
+
+  private Map<String, Boolean> getPropertiesArgs() {
+    final boolean isMultiPriceListEnabled = getPreference("OBPOS_EnableMultiPriceList");
+    final Map<String, Boolean> args = new HashMap<>();
+    args.put("isMultiPriceListEnabled", isMultiPriceListEnabled);
+    return args;
   }
 
   private boolean getPreference(final String preference) {
@@ -214,31 +242,6 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       OBContext.restorePreviousMode();
     }
     return value;
-  }
-
-  private static boolean isMultiPriceListSearch(final JSONObject jsonsent) {
-    boolean multiPriceListSearch = false;
-    try {
-      multiPriceListSearch = jsonsent.has("parameters") && StringUtils
-          .isNotEmpty(jsonsent.getJSONObject("parameters").optString("currentPriceList"));
-    } catch (JSONException e) {
-      log.error("Error while getting currentPriceList " + e.getMessage(), e);
-    }
-    return multiPriceListSearch;
-  }
-
-  private Map<String, Boolean> getPropertiesArgs(final JSONObject jsonsent) {
-    final boolean isMultipricelist = getPreference("OBPOS_EnableMultiPriceList");
-    final boolean allowNoPriceInMainPriceList = getPreference(
-        "OBPOS_allowProductsNoPriceInMainPricelist");
-    final boolean isMultiPriceListSearch = isMultiPriceListSearch(jsonsent);
-    final boolean showProductsWithCurrentPrice = isMultipricelist && isMultiPriceListSearch;
-    final boolean showOnlyProductsWithPrice = !showProductsWithCurrentPrice
-        || !allowNoPriceInMainPriceList;
-    final Map<String, Boolean> args = new HashMap<>();
-    args.put("showProductsWithCurrentPrice", showProductsWithCurrentPrice);
-    args.put("showOnlyProductsWithPrice", showOnlyProductsWithPrice);
-    return args;
   }
 
   @Override
