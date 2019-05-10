@@ -940,7 +940,7 @@ button.payment-changebutton {
 }
 
 .btnlink-headerButton {
-  width: 170px !important;
+  width: 180px !important;
   margin: 0px 8px 6px 0px !important;
 }
 
@@ -952,9 +952,9 @@ button.payment-changebutton {
   padding: 7px;
 }
 
-.filterSelectorTableHeader_Firstbutton {
+.filterSelectorTableHeader_Firstbutton{
   display: table;
-  width: 100%
+  margin: 0 auto;
 }
 
 .selectorHeader_btnSelectAll {
