@@ -36,8 +36,8 @@ enyo.kind({
     }
     this.selectedModels = inEvent.models;
     this.doActionChangeState({
-      name: 'selectedReceiptLines', 
-      value: inEvent.models 
+      name: 'selectedReceiptLines',
+      value: inEvent.models
     });
     this.selectedEditPrice = OB.MobileApp.model.hasPermission('OBPOS_order.changePrice', false);
     if (this.selectedEditPrice) {
@@ -105,17 +105,17 @@ enyo.kind({
 
     this.line = null;
     this.doActionChangeState({
-      name: 'selectedReceiptLine', 
-      value: null 
-    });    
+      name: 'selectedReceiptLine',
+      value: null
+    });
 
     this.receipt.get('lines').on('selected', function (line) {
       this.line = line;
       this.clearEditBox();
       this.doActionChangeState({
-        name: 'selectedReceiptLine', 
-        value: line 
-      });         
+        name: 'selectedReceiptLine',
+        value: line
+      });
     }, this);
   },
   validateQuantity: function (keyboard, value, callback) {
