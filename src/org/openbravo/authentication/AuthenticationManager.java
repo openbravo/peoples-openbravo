@@ -88,8 +88,8 @@ public abstract class AuthenticationManager {
    * @return true if this is a stateless request
    */
   public static boolean isStatelessRequest(HttpServletRequest request) {
-    return request != null && ("true".equals(request.getParameter(STATELESS_REQUEST_PARAMETER))
-        || "true".equals(request.getAttribute(STATELESS_REQUEST_PARAMETER)));
+    return request == null || "true".equals(request.getParameter(STATELESS_REQUEST_PARAMETER))
+        || "true".equals(request.getAttribute(STATELESS_REQUEST_PARAMETER));
   }
 
   /**
