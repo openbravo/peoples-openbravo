@@ -211,14 +211,18 @@ enyo.kind({
 
           me.$.stockHere.removeClass('error');
           me.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock_NotCalculated'));
-          me.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(data.price) + '</b>');
+          me.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(data.currentPrice.price) + '</b>');
           me.$.productAddToReceipt.setLabel();
           me.$.productAddToReceipt.setDisabled(false);
           me.leftSubWindow.organization = organization;
           me.leftSubWindow.changeWarehouseInfo(null, warehouse);
-          me.leftSubWindow.product.set('listPrice', data.price);
-          me.leftSubWindow.product.set('standardPrice', data.price);
-          me.leftSubWindow.product.set('productPrices', data.productPrices);
+          me.leftSubWindow.product.set('listPrice', data.currentPrice.price);
+          me.leftSubWindow.product.set('standardPrice', data.currentPrice.price);
+          if (data.productPrices) {
+            me.leftSubWindow.product.set('productPrices', data.productPrices);
+          } else {
+            me.leftSubWindow.product.set('currentStandardPrice', data.currentPrice.priceListId);
+          }
           };
 
       if (this.leftSubWindow.line && event && event.target.getAttribute('id') !== 'terminal_containerWindow_pointOfSale_multiColumn_leftPanel_productdetailsview_leftSubWindowBody_body_stockOthers') {

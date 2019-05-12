@@ -133,12 +133,39 @@ enyo.kind({
       type: 'long'
     };
 
-    function successCallBack(data) {
-      if (data && !data.exception) {
+    function successCallBack(result) {
+      var data = [],
+          productPrices = [],
+          currentPrice;
+      if (result && !result.exception) {
+        _.each(result, function (r) {
+          if (r.orgId) {
+            data.push(r);
+          }
+
+          if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && r.multiPriceListId) {
+            productPrices.push({
+              price: r.multiPrice,
+              priceListId: r.multiPriceListId,
+              priceIncludesTax: r.multiPriceIncludesTax
+            });
+            if (r.multiPriceListId === OB.MobileApp.model.receipt.get('bp').get('priceList')) {
+              currentPrice = productPrices[productPrices.length - 1];
+            }
+          }
+        });
+
+        if (productPrices.length > 0) {
+          _.each(data, function (d) {
+            d.productPrices = productPrices;
+            d.currentPrice = currentPrice;
+          });
+        }
+
         me.$.csStoreSelector.collection.reset(data);
         me.$.renderLoading.hide();
       } else {
-        OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
+        OB.UTIL.showError(OB.I18N.getLabel(result.exception.message));
         me.$.csStoreSelector.collection.reset();
         me.$.renderLoading.hide();
         me.$.csStoreSelector.$.tempty.show();
@@ -196,7 +223,11 @@ enyo.kind({
         warehouseid: this.model.get('warehouseId'),
         warehousename: this.model.get('warehouseName'),
         stock: this.model.get('stock'),
-        price: this.model.has('currentPrice') ? this.model.get('currentPrice') : this.model.get('standardPrice'),
+        currentPrice: this.model.has('currentPrice') ? this.model.get('currentPrice') : {
+          price: this.model.get('standardPrice'),
+          priceListId: this.model.get('standardPriceListId'),
+          priceIncludesTax: this.model.get('priceIncludesTax')
+        },
         productPrices: this.model.has('productPrices') ? this.model.get('productPrices') : null
       };
       this.owner.owner.owner.owner.callback(data);
@@ -237,8 +268,8 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.storeName.setContent(this.model.get('orgName'));
-    this.$.standarPrice.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
-    this.$.currentPrice.setContent(OB.I18N.formatCurrency(this.model.get('currentPrice')));
+    this.$.standarPrice.setContent(this.model.has('standardPrice') ? OB.I18N.formatCurrency(this.model.get('standardPrice')) : '');
+    this.$.currentPrice.setContent(this.model.has('currentPrice') ? OB.I18N.formatCurrency(this.model.get('currentPrice').price) : '');
     this.$.stock.setContent(this.model.get('stock') + ' ' + this.owner.owner.owner.owner.owner.owner.productUOM);
   }
 });

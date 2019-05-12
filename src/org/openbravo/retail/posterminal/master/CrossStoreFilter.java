@@ -183,7 +183,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     hql.append(" and l.active = true");
     hql.append(" group by o.id, o.name, w.id, w.name");
     if (!isMultiPriceListEnabled) {
-      hql.append(" , pl.id, pp.standardPrice");
+      hql.append(" , pl.id, pp.standardPrice, pl.priceIncludesTax");
     }
     hql.append(" having w.id = min(wh.id)");
     if (filterByStock) {

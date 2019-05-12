@@ -2877,67 +2877,18 @@
       var execution = OB.UTIL.ProcessController.start('addProduct');
       OB.debug('_addProduct');
       var me = this;
-      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && this.get('priceList') !== OB.MobileApp.model.get('terminal').priceList) {
-        if (OB.UTIL.isCrossStoreProduct(p)) {
-          if (p.has('productPrices')) {
-            _.each(p.get('productPrices'), function (price) {
-              if (price.id === OB.MobileApp.model.receipt.get('bp').get('priceList')) {
-                p = p.clone();
-                if (OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) || p.get('updatePriceFromPricelist')) {
-                  p.set('standardPrice', p.price);
-                  p.set('listPrice', p.price);
-                }
-                me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
-                  OB.UTIL.ProcessController.finish('addProduct', execution);
-                  if (callback) {
-                    callback(success, orderline);
-                  }
-                });
-              }
-            });
-            OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
-            OB.UTIL.ProcessController.finish('addProduct', execution);
-            if (callback) {
-              callback(false, null);
-            }
-          } else {
-            OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
-            OB.UTIL.ProcessController.finish('addProduct', execution);
-            if (callback) {
-              callback(false, null);
-            }
-          }
-        } else {
-          var criteria = {};
-          if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-            criteria = {
-              m_pricelist_id: this.get('priceList'),
-              m_product_id: p.id
-            };
-          } else {
-            var remoteCriteria = [];
-            var productId = {
-              columns: ['m_product_id'],
-              operator: 'equals',
-              value: p.id,
-              isId: true
-            },
-                pricelistId = {
-                columns: ['m_pricelist_id'],
-                operator: 'equals',
-                value: this.get('priceList'),
-                isId: true
-                };
-            remoteCriteria.push(productId);
-            remoteCriteria.push(pricelistId);
-            criteria.remoteFilters = remoteCriteria;
-          }
-          OB.Dal.findUsingCache('productPrice', OB.Model.ProductPrice, criteria, function (productPrices) {
-            if (productPrices.length > 0) {
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && OB.UTIL.isCrossStoreProduct(p)) {
+        p.set('standardPrice', null);
+        p.set('listPrice', null);
+        p.set('currentPrice', null);
+        if (p.has('productPrices')) {
+          _.each(p.get('productPrices'), function (productPrice) {
+            if (productPrice.priceListId === OB.MobileApp.model.receipt.get('bp').get('priceList')) {
               p = p.clone();
               if (OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) || p.get('updatePriceFromPricelist')) {
-                p.set('standardPrice', productPrices.at(0).get('pricestd'));
-                p.set('listPrice', productPrices.at(0).get('pricelist'));
+                p.set('standardPrice', productPrice.price);
+                p.set('listPrice', productPrice.price);
+                p.set('currentPrice', productPrice);
               }
               me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
                 OB.UTIL.ProcessController.finish('addProduct', execution);
@@ -2945,23 +2896,77 @@
                   callback(success, orderline);
                 }
               });
-            } else {
-              OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
-              OB.UTIL.ProcessController.finish('addProduct', execution);
-              if (callback) {
-                callback(false, null);
-              }
+              return;
             }
-          }, function () {
+          });
+          if (OB.UTIL.isNullOrUndefined(p.get('standardPrice'))) {
             OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
             OB.UTIL.ProcessController.finish('addProduct', execution);
             if (callback) {
               callback(false, null);
             }
-          }, {
-            modelsAffectedByCache: ['ProductPrice']
-          });
+          }
+        } else {
+          OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+          OB.UTIL.ProcessController.finish('addProduct', execution);
+          if (callback) {
+            callback(false, null);
+          }
         }
+      } else if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && this.get('priceList') !== OB.MobileApp.model.get('terminal').priceList && !OB.UTIL.isCrossStoreProduct(p)) {
+        var criteria = {};
+        if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+          criteria = {
+            m_pricelist_id: this.get('priceList'),
+            m_product_id: p.id
+          };
+        } else {
+          var remoteCriteria = [];
+          var productId = {
+            columns: ['m_product_id'],
+            operator: 'equals',
+            value: p.id,
+            isId: true
+          },
+              pricelistId = {
+              columns: ['m_pricelist_id'],
+              operator: 'equals',
+              value: this.get('priceList'),
+              isId: true
+              };
+          remoteCriteria.push(productId);
+          remoteCriteria.push(pricelistId);
+          criteria.remoteFilters = remoteCriteria;
+        }
+        OB.Dal.findUsingCache('productPrice', OB.Model.ProductPrice, criteria, function (productPrices) {
+          if (productPrices.length > 0) {
+            p = p.clone();
+            if (OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) || p.get('updatePriceFromPricelist')) {
+              p.set('standardPrice', productPrices.at(0).get('pricestd'));
+              p.set('listPrice', productPrices.at(0).get('pricelist'));
+            }
+            me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
+              OB.UTIL.ProcessController.finish('addProduct', execution);
+              if (callback) {
+                callback(success, orderline);
+              }
+            });
+          } else {
+            OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+            OB.UTIL.ProcessController.finish('addProduct', execution);
+            if (callback) {
+              callback(false, null);
+            }
+          }
+        }, function () {
+          OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+          OB.UTIL.ProcessController.finish('addProduct', execution);
+          if (callback) {
+            callback(false, null);
+          }
+        }, {
+          modelsAffectedByCache: ['ProductPrice']
+        });
       } else {
         // With the preference OBPOS_allowProductsNoPriceInMainPricelist
         // it is possible to add product without price in the terminal's main list
@@ -3460,7 +3465,7 @@
           qty: OB.DEC.number(units),
           price: OB.DEC.number(p.get('standardPrice')),
           priceList: OB.DEC.number(p.get('listPrice')),
-          priceIncludesTax: me.get('priceIncludesTax'),
+          priceIncludesTax: p.get('currentPrice') ? p.get('currentPrice').priceIncludesTax : me.get('priceIncludesTax'),
           organization: {
             id: orgId,
             name: orgName
@@ -3943,6 +3948,9 @@
                 originalLine: lines[index]
               };
             }
+            attrs = attrs || {};
+            attrs.organization = lines[index].get('organization');
+            attrs.warehouse = lines[index].get('warehouse');
             me.addProduct(product, lines[index].get('qty'), undefined, attrs, function (isInPriceList) {
               if (isInPriceList) {
                 me.get('lines').at(index).set('promotions', promotionLines[index]);
