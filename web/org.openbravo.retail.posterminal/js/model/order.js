@@ -2791,7 +2791,7 @@
         }
       } // End addProductToOrder
 
-      function finalCallback(p) {
+      function saveRemoteProduct(p) {
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
           OB.Dal.saveOrUpdate(p, function () {
             var productcriteria = {
@@ -2842,7 +2842,7 @@
             OB.UTIL.showLoading(true);
           }
           if (approved) {
-            finalCallback(p);
+            saveRemoteProduct(p);
           } else {
             if (callback) {
               callback(true);
@@ -2850,7 +2850,7 @@
           }
         });
       } else {
-        finalCallback(p);
+        saveRemoteProduct(p);
       }
     },
 
