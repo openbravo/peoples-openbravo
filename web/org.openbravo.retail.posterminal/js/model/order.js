@@ -2666,7 +2666,6 @@
               execPostAddProductToOrderHook();
             }
           });
-          execPostAddProductToOrderHook();
         } else {
           if (p.get('groupProduct')) {
             if (options && options.line) {
