@@ -106,7 +106,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
             warnings.add(rs.getString(1));
           }
         }
-        resp.setWarnings(warnings.toArray(new String[0]));
+        resp.setWarnings(warnings);
 
         ps2 = getPreparedStatement(
             "SELECT MESSAGE, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND SYSTEM_STATUS LIKE ?");
@@ -124,7 +124,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
             errors.add(rs2.getString(1));
           }
         }
-        resp.setErrors(errors.toArray(new String[0]));
+        resp.setErrors(errors);
         vars.setSessionValue("ApplyModules|Last_Line_Number_Log",
             Integer.valueOf(newlinenumber).toString());
       }
@@ -182,7 +182,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         errors.add(rs2.getString(1));
         resp.setState(Integer.parseInt(rs2.getString(2).replace("RB", "")));
       }
-      resp.setErrors(errors.toArray(new String[0]));
+      resp.setErrors(errors);
 
       ps3 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG ORDER BY CREATED ");
       ps3.executeQuery();

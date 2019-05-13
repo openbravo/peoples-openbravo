@@ -16,62 +16,38 @@
  ************************************************************************/
 package org.openbravo.erpCommon.ad_process;
 
-import java.util.Arrays;
+import java.util.List;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-public class ApplyModulesResponse {
+class ApplyModulesResponse {
   private int state;
   private String statusofstate;
-  private String[] warnings;
-  private String[] errors;
+  private List<String> warnings;
+  private List<String> errors;
   private String lastmessage;
   private String processFinished;
 
-  public int getState() {
-    return state;
-  }
-
   public void setState(int state) {
     this.state = state;
-  }
-
-  public String getStatusofstate() {
-    return statusofstate;
   }
 
   public void setStatusofstate(String statusofstate) {
     this.statusofstate = statusofstate;
   }
 
-  public String[] getWarnings() {
-    return warnings;
-  }
-
-  public void setWarnings(String[] warnings) {
+  public void setWarnings(List<String> warnings) {
     this.warnings = warnings;
   }
 
-  public String[] getErrors() {
-    return errors;
-  }
-
-  public void setErrors(String[] errors) {
+  public void setErrors(List<String> errors) {
     this.errors = errors;
-  }
-
-  public String getLastmessage() {
-    return lastmessage;
   }
 
   public void setLastmessage(String lastmessage) {
     this.lastmessage = lastmessage;
-  }
-
-  public String getProcessFinished() {
-    return processFinished;
   }
 
   public void setProcessFinished(String processFinished) {
@@ -84,11 +60,11 @@ public class ApplyModulesResponse {
       JSONObject properties = new JSONObject();
       properties.put("state", state);
       properties.put("statusofstate", statusofstate);
-      if (warnings.length > 0) {
-        properties.put("warnings", new JSONArray(Arrays.asList(warnings)));
+      if (!warnings.isEmpty()) {
+        properties.put("warnings", new JSONArray(warnings));
       }
-      if (errors.length > 0) {
-        properties.put("errors", new JSONArray(Arrays.asList(errors)));
+      if (errors.isEmpty()) {
+        properties.put("errors", new JSONArray(errors));
       }
       properties.put("lastmessage", lastmessage);
       properties.put("processFinished", processFinished);
