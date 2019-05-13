@@ -95,7 +95,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         ps.setString(1, "%" + state);
         ps.executeQuery();
         ResultSet rs = ps.getResultSet();
-        ArrayList<String> warnings = new ArrayList<String>();
+        ArrayList<String> warnings = new ArrayList<>();
         while (rs.next()) {
           warning = true; // there is at least an warning in this state
           int linenumber = rs.getInt(2);
@@ -113,7 +113,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         ps2.setString(1, "%" + state);
         ps2.executeQuery();
         ResultSet rs2 = ps2.getResultSet();
-        ArrayList<String> errors = new ArrayList<String>();
+        ArrayList<String> errors = new ArrayList<>();
         while (rs2.next()) {
           error = true; // there is at least an error in this state
           int linenumber = rs2.getInt(2);
@@ -125,8 +125,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
           }
         }
         resp.setErrors(errors);
-        vars.setSessionValue("ApplyModules|Last_Line_Number_Log",
-            Integer.valueOf(newlinenumber).toString());
+        vars.setSessionValue("ApplyModules|Last_Line_Number_Log", Integer.toString(newlinenumber));
       }
       ps3 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG ORDER BY CREATED DESC");
       ps3.executeQuery();
@@ -169,14 +168,13 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     resp.setState(Integer.parseInt(fState.replace("RB", "")));
     PreparedStatement ps2 = null;
     PreparedStatement ps3 = null;
-    boolean warning = false;
     boolean error = false;
     try {
       ps2 = getPreparedStatement(
           "SELECT MESSAGE, SYSTEM_STATUS, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND MESSAGE NOT LIKE 'Task%' AND MESSAGE NOT LIKE 'Target%' ORDER BY CREATED DESC");
       ps2.executeQuery();
       ResultSet rs2 = ps2.getResultSet();
-      ArrayList<String> errors = new ArrayList<String>();
+      ArrayList<String> errors = new ArrayList<>();
       while (rs2.next()) {
         error = true; // there is at least an error in this state
         errors.add(rs2.getString(1));
@@ -195,8 +193,6 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
 
       if (error) {
         resp.setStatusofstate("Error");
-      } else if (warning) {
-        resp.setStatusofstate("Warning");
       } else {
         resp.setStatusofstate(defaultState);
       }
