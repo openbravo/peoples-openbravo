@@ -262,39 +262,6 @@ enyo.kind({
 
         };
 
-    var changeQuantity = function (keyboardComponent, keyboard, value) {
-        keyboard.receipt.set('undo', null);
-        var selection = [];
-        var toadd;
-        if (keyboardComponent.selectedModels && keyboardComponent.selectedModels.length > 1) {
-          keyboard.receipt.set('multipleUndo', true);
-        }
-        _.each(keyboardComponent.selectedModels, function (model) {
-          selection.push(model);
-          keyboard.line = model;
-          if (keyboard.receipt.get('orderType') === 1) {
-            toadd = value - (-keyboard.line.get('qty'));
-          } else {
-            toadd = value - keyboard.line.get('qty');
-          }
-          if (toadd !== 0) {
-            if (value === 0) { // If final quantity will be 0 then request approval
-              keyboard.doDeleteLine({
-                selectedReceiptLines: keyboard.selectedModels
-              });
-            } else {
-              actionAddProduct(keyboard, toadd);
-            }
-          } else {
-            keyboard.clearInput();
-          }
-        });
-        keyboard.receipt.set('multipleUndo', null);
-        keyboardComponent.doSetMultiSelectionItems({
-          selection: selection
-        });
-        };
-
     this.addCommand('line:qty', {
       action: function (keyboard, txt) {
         var value = OB.I18N.parseNumber(txt);
