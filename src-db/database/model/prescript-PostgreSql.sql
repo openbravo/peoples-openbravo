@@ -938,14 +938,14 @@ create or replace function last_day(date) returns date
 SET SEARCH_PATH FROM CURRENT
 as 'select
 cast(date_trunc(''month'', $1) + ''1 month''::interval as date) - 1'
-language sql
+language sql IMMUTABLE
 /-- END
 
 create or replace function last_day(timestamptz) returns date 
 SET SEARCH_PATH FROM CURRENT
 as 'select
 cast(date_trunc(''month'', cast($1 AS date)) + ''1 month''::interval as date) - 1'
-language sql
+language sql IMMUTABLE
 /-- END
 
 
