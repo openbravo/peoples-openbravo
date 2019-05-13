@@ -20,21 +20,19 @@
       i18nContent: 'OBPOS_CreateQuotation'
     },
     command: function (view) {
-      return function (inSource, inEvent) {
-        if (OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations) {
-          if (OB.MobileApp.model.hasPermission(this.permission)) {
-            if (view.model.get('leftColumnViewManager').isMultiOrder()) {
-              if (view.model.get('multiorders')) {
-                view.model.get('multiorders').resetValues();
-              }
-              view.model.get('leftColumnViewManager').setOrderMode();
+      if (OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations) {
+        if (OB.MobileApp.model.hasPermission(this.permission)) {
+          if (view.model.get('leftColumnViewManager').isMultiOrder()) {
+            if (view.model.get('multiorders')) {
+              view.model.get('multiorders').resetValues();
             }
-            view.createQuotation();
+            view.model.get('leftColumnViewManager').setOrderMode();
           }
-        } else {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationNoDocType'));
+          view.createQuotation();
         }
-      }.bind(this);
+      } else {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationNoDocType'));
+      }
     }
   }));
 

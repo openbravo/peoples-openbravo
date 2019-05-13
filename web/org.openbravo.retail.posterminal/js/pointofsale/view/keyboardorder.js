@@ -317,7 +317,7 @@ enyo.kind({
         OB.MobileApp.actionsRegistry.execute({
           window: 'retail.pointofsale',
           name: 'changePrice'
-        }, this, {});
+        });
       }
     });
 

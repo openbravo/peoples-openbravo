@@ -20,20 +20,18 @@
       i18nContent: 'OBPOS_LblReturn'
     },
     command: function (view) {
-      return function (inSource, inEvent) {
-        view.model.get('order').setDocumentNo(true, false);
-        view.showDivText(inSource, {
-          permission: this.permission,
-          orderType: 1
-        });
-        if (OB.MobileApp.model.get('lastPaneShown') === 'payment') {
-          view.model.get('order').trigger('scan');
-        }
-        view.waterfall('onRearrangedEditButtonBar', {
-          permission: this.permission,
-          orderType: 1
-        });
-      }.bind(this);
+      view.model.get('order').setDocumentNo(true, false);
+      view.showDivText(this, {
+        permission: this.permission,
+        orderType: 1
+      });
+      if (OB.MobileApp.model.get('lastPaneShown') === 'payment') {
+        view.model.get('order').trigger('scan');
+      }
+      view.waterfall('onRearrangedEditButtonBar', {
+        permission: this.permission,
+        orderType: 1
+      });
     }
   }));
 

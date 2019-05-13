@@ -20,27 +20,25 @@
       i18nContent: 'OBPOS_OpenReceipt'
     },
     command: function (view) {
-      return function (inSource, inEvent) {
-        var connectedCallback = function () {
-            if (OB.MobileApp.model.hasPermission(this.permission)) {
-              view.doShowPopup({
-                popup: 'modalReceiptSelector',
-                args: {
-                  keepFiltersOnClose: true
-                }
-              });
-            }
-            }.bind(this);
-        var notConnectedCallback = function () {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-            return;
-            }.bind(this);
-        if (!OB.MobileApp.model.get('connectedToERP')) {
-          OB.UTIL.checkOffLineConnectivity(500, connectedCallback, notConnectedCallback);
-        } else {
-          connectedCallback();
-        }
-      }.bind(this);
+      var connectedCallback = function () {
+          if (OB.MobileApp.model.hasPermission(this.permission)) {
+            view.doShowPopup({
+              popup: 'modalReceiptSelector',
+              args: {
+                keepFiltersOnClose: true
+              }
+            });
+          }
+          }.bind(this);
+      var notConnectedCallback = function () {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+          return;
+          }.bind(this);
+      if (!OB.MobileApp.model.get('connectedToERP')) {
+        OB.UTIL.checkOffLineConnectivity(500, connectedCallback, notConnectedCallback);
+      } else {
+        connectedCallback();
+      }
     }
   }));
 

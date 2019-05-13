@@ -20,46 +20,44 @@
       i18nContent: 'OBPOS_LblLayawayReceipt'
     },
     command: function (view) {
-      return function (inSource, inEvent) {
-        var negativeLines, deliveredLines;
-        if (OB.UTIL.isNullOrUndefined(view.model.get('order').get('bp'))) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_layawaysOrderWithNotBP'));
+      var negativeLines, deliveredLines;
+      if (OB.UTIL.isNullOrUndefined(view.model.get('order').get('bp'))) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_layawaysOrderWithNotBP'));
+        return true;
+      }
+      if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) {
+        negativeLines = _.find(view.model.get('order').get('lines').models, function (line) {
+          return line.get('qty') < 0;
+        });
+        if (negativeLines) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
           return true;
         }
-        if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) {
-          negativeLines = _.find(view.model.get('order').get('lines').models, function (line) {
-            return line.get('qty') < 0;
-          });
-          if (negativeLines) {
-            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
-            return true;
-          }
+      }
+      if (view.model.get('order').get('doCancelAndReplace')) {
+        deliveredLines = _.find(view.model.get('order').get('lines').models, function (line) {
+          return line.get('deliveredQuantity') && OB.DEC.compare(line.get('deliveredQuantity')) === 1;
+        });
+        if (deliveredLines) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_LayawaysOrdersWithDeliveries'));
+          return true;
         }
-        if (view.model.get('order').get('doCancelAndReplace')) {
-          deliveredLines = _.find(view.model.get('order').get('lines').models, function (line) {
-            return line.get('deliveredQuantity') && OB.DEC.compare(line.get('deliveredQuantity')) === 1;
-          });
-          if (deliveredLines) {
-            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_LayawaysOrdersWithDeliveries'));
-            return true;
-          }
+      }
+      OB.UTIL.HookManager.executeHooks('OBPOS_LayawayReceipt', {
+        context: this
+      }, function (args) {
+        if (args && args.cancelOperation && args.cancelOperation === true) {
+          return;
         }
-        OB.UTIL.HookManager.executeHooks('OBPOS_LayawayReceipt', {
-          context: inSource
-        }, function (args) {
-          if (args && args.cancelOperation && args.cancelOperation === true) {
-            return;
-          }
-          view.showDivText(inSource, {
-            permission: this.permission,
-            orderType: 2
-          });
-          view.waterfall('onRearrangedEditButtonBar', {
-            permission: this.permission,
-            orderType: 2
-          });
-        }.bind(this));
-      }.bind(this);
+        view.showDivText(this, {
+          permission: this.permission,
+          orderType: 2
+        });
+        view.waterfall('onRearrangedEditButtonBar', {
+          permission: this.permission,
+          orderType: 2
+        });
+      }.bind(this));
     }
   }));
 
