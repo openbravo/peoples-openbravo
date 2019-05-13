@@ -16,6 +16,9 @@
  ************************************************************************/
 package org.openbravo.erpCommon.ad_process;
 
+import java.util.Arrays;
+
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -75,14 +78,18 @@ public class ApplyModulesResponse {
     this.processFinished = processFinished;
   }
 
-  public String toJSON() {
+  String toJSON() {
     JSONObject jsonObject = new JSONObject();
     try {
       JSONObject properties = new JSONObject();
       properties.put("state", state);
       properties.put("statusofstate", statusofstate);
-      properties.put("warnings", warnings);
-      properties.put("errors", errors);
+      if (warnings.length > 0) {
+        properties.put("warnings", new JSONArray(Arrays.asList(warnings)));
+      }
+      if (errors.length > 0) {
+        properties.put("errors", new JSONArray(Arrays.asList(errors)));
+      }
       properties.put("lastmessage", lastmessage);
       properties.put("processFinished", processFinished);
 
