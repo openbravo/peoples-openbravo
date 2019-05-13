@@ -3506,6 +3506,9 @@
           }
           return null;
         }
+        if (me.get('priceIncludesTax') !== newline.get('priceIncludesTax') && OB.UTIL.isCrossStoreProduct(newline.get('product'))) {
+          me.set('priceIncludesTax', newline.get('priceIncludesTax'));
+        }
         // add the created line
         me.get('lines').add(newline, options);
         newline.trigger('created', newline);

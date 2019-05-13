@@ -121,6 +121,22 @@ enyo.kind({
               value: attrs.organization
             });
           }
+          if (OB.UTIL.isCrossStoreEnabled()) {
+            if (me.leftSubWindow.organization && me.leftSubWindow.organization.id !== OB.MobileApp.model.get('terminal').organization) {
+              product.set('crossStore', true);
+            } else {
+              product.set('crossStore', false);
+            }
+            line.set({
+              priceIncludesTax: product.get('currentPrice').priceIncludesTax,
+              priceList: product.get('currentPrice').price,
+              price: product.get('currentPrice').price
+            }, {
+              silent: true
+            });
+            OB.MobileApp.model.receipt.set('priceIncludesTax', line.get('priceIncludesTax'));
+            OB.MobileApp.model.receipt.calculateReceipt();
+          }
           me.doCloseLeftSubWindow();
         } else {
           me.doAddProduct({
@@ -208,7 +224,6 @@ enyo.kind({
               id: data.orgId,
               name: data.orgName
               };
-
           me.$.stockHere.removeClass('error');
           me.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock_NotCalculated'));
           me.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(data.currentPrice.price) + '</b>');
@@ -221,7 +236,7 @@ enyo.kind({
           if (data.productPrices) {
             me.leftSubWindow.product.set('productPrices', data.productPrices);
           } else {
-            me.leftSubWindow.product.set('currentStandardPrice', data.currentPrice.priceListId);
+            me.leftSubWindow.product.set('currentPrice', data.currentPrice);
           }
           };
 
@@ -231,6 +246,15 @@ enyo.kind({
           price: this.leftSubWindow.line.get('price'),
           warehouse: this.leftSubWindow.line.get('warehouse')
         };
+        if (OB.UTIL.isCrossStoreProduct(this.leftSubWindow.line.get('product'))) {
+          data.currentPrice = this.leftSubWindow.line.get('product').get('currentPrice');
+        } else {
+          data.currentPrice = {
+            priceListId: OB.MobileApp.model.get('terminal').priceList,
+            priceIncludesTax: this.leftSubWindow.line.get('priceIncludesTax'),
+            price: this.leftSubWindow.line.get('product').get('standardPrice')
+          };
+        }
         selectedStoreCallBack(data);
       } else {
         this.doShowPopup({
@@ -341,7 +365,7 @@ enyo.kind({
   },
   getStoreStock: function (params) {
     var me = this;
-    if (OB.UTIL.isCrossStoreProduct(me.product)) {
+    if (OB.UTIL.isCrossStoreEnabled()) {
       me.bodyComponent.$.stockHere.setDisabled(true);
       me.bodyComponent.$.productAddToReceipt.setDisabled(true);
       me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock_NotCalculated'));
@@ -387,7 +411,7 @@ enyo.kind({
   getOtherStock: function () {
     var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.OtherStoresDetailedStock'),
         me = this;
-    if (OB.UTIL.isCrossStoreProduct(me.product)) {
+    if (OB.UTIL.isCrossStoreEnabled()) {
       this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_SelectStore'));
       this.bodyComponent.$.stockOthers.doOpenOtherStoresStockModal();
     } else if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
