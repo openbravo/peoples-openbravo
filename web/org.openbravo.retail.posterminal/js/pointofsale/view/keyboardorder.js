@@ -253,7 +253,7 @@ enyo.kind({
         if (keyboard.model.get('leftColumnViewManager') && !keyboard.model.get('leftColumnViewManager').isMultiOrder()) {
           if (keyboard.line) {
             keyboard.doDeleteLine({
-              selectedModels: keyboard.selectedModels
+              selectedReceiptLines: keyboard.selectedModels
             });
           }
         } else {
@@ -280,7 +280,7 @@ enyo.kind({
           if (toadd !== 0) {
             if (value === 0) { // If final quantity will be 0 then request approval
               keyboard.doDeleteLine({
-                selectedModels: keyboard.selectedModels
+                selectedReceiptLines: keyboard.selectedModels
               });
             } else {
               actionAddProduct(keyboard, toadd);
@@ -428,7 +428,7 @@ enyo.kind({
         }
         if (value === 0) { // If final quantity will be 0 then request approval
           keyboard.doDeleteLine({
-            selectedModels: keyboard.selectedModels
+            selectedReceiptLines: keyboard.selectedModels
           });
         } else {
           var actionAddProducts;

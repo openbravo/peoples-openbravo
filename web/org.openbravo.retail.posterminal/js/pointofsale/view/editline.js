@@ -223,7 +223,7 @@ enyo.kind({
     permission: 'OBPOS_ActionButtonDelete',
     tap: function () {
       this.owner.owner.doDeleteLine({
-        selectedModels: this.owner.owner.selectedModels
+        selectedReceiptLines: this.owner.owner.selectedModels
       });
     },
     init: function (model) {

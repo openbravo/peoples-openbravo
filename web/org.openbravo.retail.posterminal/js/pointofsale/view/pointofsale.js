@@ -992,7 +992,7 @@ enyo.kind({
     this.tabChange(inSender, inEvent);
   },
   deleteLine: function (inSender, inEvent) {
-    var selectedModels = inEvent.selectedModels,
+    var selectedModels = inEvent.selectedReceiptLines,
         receipt = this.model.get('order');
 
     receipt.deleteLinesFromOrder(selectedModels);
