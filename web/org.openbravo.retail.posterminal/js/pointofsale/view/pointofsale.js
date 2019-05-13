@@ -1000,8 +1000,7 @@ enyo.kind({
     });
   },
   returnLine: function (inSender, inEvent) {
-    var me = this,
-        productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(inEvent.line.get('product'));
+    var me = this;
     if (this.model.get('order').get('isEditable') === false) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
@@ -1012,10 +1011,26 @@ enyo.kind({
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines'));
       return;
     }
-    if (OB.DEC.compare(inEvent.line.get('qty')) === -1 && productStatus && productStatus.restrictsaleoutofstock && OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
-      var qtyAdded = -inEvent.line.get('qty') - inEvent.line.get('qty');
-      this.model.get('order').getStoreStock(inEvent.line.get('product'), qtyAdded, inEvent, null, function (hasStock) {
-        if (hasStock) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
+      var productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(inEvent.line.get('product')),
+          checkStock = productStatus.restrictsaleoutofstock && OB.DEC.compare(inEvent.line.get('qty')) === -1;
+
+      OB.UTIL.HookManager.executeHooks('OBPOS_CheckStockReturnLine', {
+        order: this.model.get('order'),
+        line: inEvent.line,
+        checkStock: checkStock
+      }, function (args) {
+        if (args.cancelOperation) {
+          return;
+        }
+        if (args.checkStock) {
+          var qtyAdded = -inEvent.line.get('qty') - inEvent.line.get('qty');
+          me.model.get('order').getStoreStock(inEvent.line.get('product'), qtyAdded, inEvent, null, function (hasStock) {
+            if (hasStock) {
+              me.model.get('order').returnLine(inEvent.line);
+            }
+          });
+        } else {
           me.model.get('order').returnLine(inEvent.line);
         }
       });

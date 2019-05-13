@@ -220,7 +220,9 @@ enyo.kind({
         });
         relatedLine.orderDocumentNo = me.args.receipt.get('documentNo');
         relatedLine.bpName = me.args.receipt.get('bp').get('name');
-        relatedLine.qty = line.get('qty');
+        if (!OB.UTIL.isNullOrUndefined(line)) {
+          relatedLine.qty = line.get('qty');
+        }
       }
 
       me.$.bodyContent.$.attributes.createComponent({

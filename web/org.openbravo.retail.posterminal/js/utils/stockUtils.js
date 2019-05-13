@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -21,7 +21,9 @@
     }, function (data) {
       successCallback(data);
     }, function (data) {
-      errorCallback(data);
+      if (errorCallback && errorCallback instanceof Function) {
+        errorCallback(data);
+      }
     });
   };
 
@@ -34,43 +36,60 @@
         return;
       }
       var line = order.get('lines').at(idxOrderLine),
-          productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(line.get('product'));
+          productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(line.get('product')),
+          checkStock = productStatus.restrictsaleoutofstock && OB.DEC.compare(line.get('qty')) === 1;
 
-      if (OB.DEC.compare(line.get('qty')) === 1 && productStatus && productStatus.restrictsaleoutofstock) {
-        var qtyInOtherOrders = OB.DEC.Zero,
-            options = {
-            line: line
-            };
-        // Get the quantity if the other editable orders for this line
-        _.each(orders, function (currentOrder) {
-          if (order.id !== currentOrder.id && currentOrder.get('isEditable')) {
-            _.each(currentOrder.get('lines').models, function (l) {
-              if ((l.get('product').get('id') === line.get('product').get('id') && l.get('warehouse').id === line.get('warehouse').id)) {
-                qtyInOtherOrders += l.get('qty');
+      OB.UTIL.HookManager.executeHooks('OBPOS_CheckStockPrePayment', {
+        order: order,
+        orders: orders,
+        line: line,
+        checkStock: checkStock
+      }, function (args) {
+        if (args.cancelOperation) {
+          if (callback && callback instanceof Function) {
+            callback(false);
+          }
+          return;
+        }
+        if (args.checkStock) {
+          var qtyInOtherOrders = OB.DEC.Zero,
+              options = {
+              line: line
+              },
+              i, j;
+          // Get the quantity if the other editable orders for this line
+          for (i = orders.indexOf(order); i < orders.length; i++) {
+            var currentOrder = orders[i];
+            if (order.id !== currentOrder.id && currentOrder.get('isEditable')) {
+              for (j = 0; j < currentOrder.get('lines').length; j++) {
+                var currentOrderLine = currentOrder.get('lines').models[j];
+                if ((currentOrderLine.get('product').get('id') === line.get('product').get('id') && currentOrderLine.get('warehouse').id === line.get('warehouse').id)) {
+                  qtyInOtherOrders += currentOrderLine.get('qty');
+                }
+              }
+            }
+          }
+          if (!_.find(checkedLines, function (checkedLine) {
+            return checkedLine.productId === line.get('product').get('id') && checkedLine.warehouseId === line.get('warehouse').id;
+          })) {
+            checkedLines.push({
+              productId: line.get('product').get('id'),
+              warehouseId: line.get('warehouse').id
+            });
+            order.getStoreStock(line.get('product'), qtyInOtherOrders, options, null, function (hasStock) {
+              if (hasStock) {
+                checkOrderLineStock(idxOrderLine + 1, order, orderCallback);
+              } else {
+                callback(false);
               }
             });
+          } else {
+            checkOrderLineStock(idxOrderLine + 1, order, orderCallback);
           }
-        });
-        if (!_.find(checkedLines, function (checkedLine) {
-          return checkedLine.productId === line.get('product').get('id') && checkedLine.warehouseId === line.get('warehouse').id;
-        })) {
-          checkedLines.push({
-            productId: line.get('product').get('id'),
-            warehouseId: line.get('warehouse').id
-          });
-          order.getStoreStock(line.get('product'), qtyInOtherOrders, options, null, function (hasStock) {
-            if (hasStock) {
-              checkOrderLineStock(idxOrderLine + 1, order, orderCallback);
-            } else {
-              callback(false);
-            }
-          });
         } else {
           checkOrderLineStock(idxOrderLine + 1, order, orderCallback);
         }
-      } else {
-        checkOrderLineStock(idxOrderLine + 1, order, orderCallback);
-      }
+      });
     };
     checkOrderStock = function (idxOrder) {
       if (idxOrder === orders.length) {

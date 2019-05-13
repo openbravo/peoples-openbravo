@@ -31,7 +31,7 @@ enyo.kind({
       }
       setTimeout(function () {
         receiptLineDescription.focus();
-        document.getElementById(receiptLineDescriptionControl).style.cssText = 'border: 1px solid #F0F0F0; float: left; width: 60%;';
+        document.getElementById(receiptLineDescriptionControl).style.cssText = 'border: 1px solid #F0F0F0; float: left;';
         document.getElementById(receiptLineDescriptionNewAttribute).style.cssText = 'width: 100%';
       }, 200);
     }

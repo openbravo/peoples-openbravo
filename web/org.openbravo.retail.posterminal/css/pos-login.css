@@ -10,7 +10,7 @@
 /* Styles for login window in web POS */
 
 .ob-body-standard {
-  background-color: darkgray; 
+  background-color: darkgray;
   background: url('./../../org.openbravo.mobile.core/assets/img/BACKGROUND.svg') top left;
   background-size: 640px 384px;
 }
