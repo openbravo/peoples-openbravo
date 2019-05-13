@@ -226,9 +226,6 @@ enyo.kind({
         window: 'retail.pointofsale',
         name: 'deleteLine'
       });
-    },
-    init: function (model) {
-      this.model = model;
     }
   }, {
     kind: 'OB.UI.SmallButton',
@@ -237,18 +234,10 @@ enyo.kind({
     classes: 'btnlink-orange',
     permission: 'OBPOS_ActionButtonDescription',
     tap: function () {
-      if (this.owner.owner.receipt.get('isQuotation') && this.owner.owner.receipt.get('hasbeenpaid') === 'Y') {
-        this.owner.owner.doShowPopup({
-          popup: 'modalNotEditableOrder'
-        });
-        return;
-      }
-      this.owner.owner.doEditLine({
-        line: this.owner.owner.line
+      OB.MobileApp.actionsRegistry.execute({
+        window: 'retail.pointofsale',
+        name: 'editLine'
       });
-    },
-    init: function (model) {
-      this.model = model;
     }
   }, {
     kind: 'OB.UI.SmallButton',

@@ -998,7 +998,14 @@ enyo.kind({
     receipt.deleteLinesFromOrder(selectedModels);
   },
   editLine: function (inSender, inEvent) {
-    if (this.model.get('order').get('isEditable') === false) {
+    var receipt = this.model.get('order');
+    if (receipt.get('isQuotation') && receipt.get('hasbeenpaid') === 'Y') {
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
+      return true;
+    }
+    if (receipt.get('isEditable') === false) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
       });
