@@ -167,6 +167,9 @@
             args.context.receipt.setIsCalculateReceiptLockState(false);
             args.context.receipt.setIsCalculateGrossLockState(false);
             OB.UTIL.ProcessController.finish('tapTotalButton', execution);
+            if (OB.MobileApp.model.showSynchronizedDialog) {
+              OB.MobileApp.model.hideSynchronizingDialog();
+            }
             return true;
           }
           OB.UTIL.clone(receipt, frozenReceipt);
