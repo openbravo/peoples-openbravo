@@ -23,7 +23,7 @@ enyo.kind({
     onDiscountsMode: '',
     onSetMultiSelectionItems: '',
     onDeleteLine: '',
-    onActionChangeState: ''
+    onWriteState: ''
   },
   discountsMode: false,
   handlers: {
@@ -35,7 +35,7 @@ enyo.kind({
       return;
     }
     this.selectedModels = inEvent.models;
-    this.doActionChangeState({
+    this.doWriteState({
       name: 'selectedReceiptLines',
       value: inEvent.models
     });
@@ -104,7 +104,7 @@ enyo.kind({
     this.$.toolbarcontainer.$.toolbarPayment.setReceipt(this.receipt);
 
     this.line = null;
-    this.doActionChangeState({
+    this.doWriteState({
       name: 'selectedReceiptLine',
       value: null
     });
@@ -112,7 +112,7 @@ enyo.kind({
     this.receipt.get('lines').on('selected', function (line) {
       this.line = line;
       this.clearEditBox();
-      this.doActionChangeState({
+      this.doWriteState({
         name: 'selectedReceiptLine',
         value: line
       });

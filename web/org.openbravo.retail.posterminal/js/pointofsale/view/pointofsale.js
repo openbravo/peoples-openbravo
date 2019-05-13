@@ -1589,6 +1589,15 @@ enyo.kind({
       document.body.className += ' indev-background';
       this.waterfall('onInDevHeaderShow');
     }
+
+    // Create test components if defined
+    if (OB.UI.TestComponent) {
+      Object.keys(OB.UI.TestComponent).forEach(function (item) {
+        this.createComponent({
+          kind: OB.UI.TestComponent[item]
+        });
+      }, this);
+    }
   }
 });
 

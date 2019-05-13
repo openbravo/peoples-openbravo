@@ -21,13 +21,13 @@
     },
     command: function (view) {
       return function (inSender, inEvent) {
-        var editboxvalue = view.state.getState('editbox');
+        var editboxvalue = view.state.readState({name: 'editbox'});
 
         if (!editboxvalue) {
           return;
         }
-        var selectedReceiptLine = view.state.getState('selectedReceiptLine');
-        var selectedReceiptLines = view.state.getState('selectedReceiptLines');
+        var selectedReceiptLine = view.state.readState({name: 'selectedReceiptLine'});
+        var selectedReceiptLines = view.state.readState({name: 'selectedReceiptLines'});
         var price = OB.I18N.parseNumber(editboxvalue);
         var receipt = view.model.get('order');
         var i;
