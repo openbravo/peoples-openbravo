@@ -224,9 +224,9 @@ enyo.kind({
         warehousename: this.model.get('warehouseName'),
         stock: this.model.get('stock'),
         currentPrice: this.model.has('currentPrice') ? this.model.get('currentPrice') : {
-          price: this.model.get('standardPrice'),
           priceListId: this.model.get('standardPriceListId'),
-          priceIncludesTax: this.model.get('priceIncludesTax')
+          priceIncludesTax: this.model.get('standardPriceIncludesTax'),
+          price: this.model.get('standardPrice')
         },
         productPrices: this.model.has('productPrices') ? this.model.get('productPrices') : null
       };
