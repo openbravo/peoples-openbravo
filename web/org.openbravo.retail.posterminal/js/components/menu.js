@@ -544,30 +544,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.MenuPrint',
-  kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_print.receipt',
-  events: {
-    onPrintReceipt: '',
-    onShowPopup: ''
-  },
-  i18nLabel: 'OBPOS_LblPrintReceipt',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      if (this.receipt.get('isPaid') && !this.receipt.get('isQuotation')) {
-        this.doShowPopup({
-          popup: 'modalInvoices'
-        });
-      } else {
-        this.doPrintReceipt();
-      }
-    }
+  kind: 'OB.UI.ActionMenuAction',
+  action: {
+    window: 'retail.pointofsale',
+    name: 'printReceipt'
   },
   init: function (model) {
-    this.receipt = model.get('order');
     this.adjustVisibilityBasedOnPermissions();
   }
 });
