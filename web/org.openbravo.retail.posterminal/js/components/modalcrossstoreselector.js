@@ -269,7 +269,7 @@ enyo.kind({
     this.inherited(arguments);
     this.$.storeName.setContent(this.model.get('orgName'));
     this.$.standarPrice.setContent(this.model.has('standardPrice') ? OB.I18N.formatCurrency(this.model.get('standardPrice')) : '');
-    this.$.currentPrice.setContent(this.model.has('currentPrice') ? OB.I18N.formatCurrency(this.model.get('currentPrice').price) : '');
+    this.$.currentPrice.setContent(this.model.has('currentPrice') && this.model.get('standardPriceListId') !== this.model.get('currentPrice').priceListId ? OB.I18N.formatCurrency(this.model.get('currentPrice').price) : '');
     this.$.stock.setContent(this.model.get('stock') + ' ' + this.owner.owner.owner.owner.owner.owner.productUOM);
   }
 });

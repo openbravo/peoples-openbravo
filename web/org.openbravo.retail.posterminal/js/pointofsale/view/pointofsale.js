@@ -599,6 +599,8 @@ enyo.kind({
           }, this);
           inEvent.product.set('listPrice', product.get('listPrice'));
           inEvent.product.set('standardPrice', product.get('standardPrice'));
+          inEvent.product.set('currentPrice', product.get('currentPrice'));
+          inEvent.product.set('productPrices', product.get('productPrices'));
         }
         this.showOrder(inSender, inEvent);
       }
