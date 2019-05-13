@@ -247,41 +247,10 @@ enyo.kind({
     classes: 'btnlink-orange',
     showing: false,
     tap: function () {
-      var me = this,
-          order = this.owner.owner.receipt,
-          selectedModels = this.owner.owner.selectedModels;
-
-      if (order.get('replacedorder') && _.find(selectedModels, function (l) {
-        l.get('remainingQuantity');
-      })) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines'));
-        return;
-      }
-
-      order.checkReturnableProducts(selectedModels, this.model, function () {
-        //The value of qty need to be negate because we want to change it
-        if (order.validateAllowSalesWithReturn(-1, false, selectedModels)) {
-          me.owner.owner.rearrangeEditButtonBar();
-          return;
-        }
-        order.set('undo', null);
-        order.set('multipleUndo', true);
-        order.set('preventServicesUpdate', true);
-        _.each(selectedModels, function (line) {
-          if (!line.get('relatedLines')) {
-            me.owner.owner.doReturnLine({
-              line: line
-            });
-          }
-        });
-        order.unset('preventServicesUpdate');
-        order.get('lines').trigger('updateRelations');
-        order.set('multipleUndo', null);
-        me.owner.owner.rearrangeEditButtonBar();
+      OB.MobileApp.actionsRegistry.execute({
+        window: 'retail.pointofsale',
+        name: 'returnLine'
       });
-    },
-    init: function (model) {
-      this.model = model;
     }
   }, {
     kind: 'OB.UI.SmallButton',
