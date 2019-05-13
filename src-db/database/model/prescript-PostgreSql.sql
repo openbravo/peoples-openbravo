@@ -1070,7 +1070,7 @@ CREATE OR REPLACE VIEW user_constraints AS
             WHEN 'P'::text THEN upper(pg_constraint.conname::text)
             WHEN 'U'::text THEN upper(pg_constraint.conname::text)
             ELSE ''::text
-        END AS index_name, dba_getstandard_search_text(pg_constraint.consrc) AS search_condition, 'ENABLED'::text AS STATUS
+        END AS index_name, dba_getstandard_search_text(pg_get_constraintdef(pg_constraint.oid)) AS search_condition, 'ENABLED'::text AS STATUS
    FROM pg_constraint
    JOIN pg_class ON pg_class.oid = pg_constraint.conrelid
    LEFT JOIN pg_class fk_table ON fk_table.oid = pg_constraint.confrelid
@@ -1171,7 +1171,7 @@ CREATE OR REPLACE VIEW user_tab_columns AS
             ELSE 0
         END AS data_scale,
         CASE pg_attribute.atthasdef
-            WHEN true THEN ( SELECT pg_attrdef.adsrc
+            WHEN true THEN ( SELECT pg_get_expr(adbin, adrelid)
                FROM pg_attrdef
               WHERE pg_attrdef.adrelid = pg_class.oid AND pg_attrdef.adnum = pg_attribute.attnum)
             ELSE NULL::text
@@ -1435,7 +1435,7 @@ begin
               END),'.')|| (not pg_attribute.attnotnull)::TEXT||
               COALESCE(
               (CASE pg_attribute.atthasdef
-                  WHEN true THEN ( SELECT pg_attrdef.adsrc FROM pg_attrdef WHERE pg_attrdef.adrelid = pg_class.oid AND pg_attrdef.adnum = pg_attribute.attnum)
+                  WHEN true THEN ( SELECT pg_get_expr(adbin, adrelid) FROM pg_attrdef WHERE pg_attrdef.adrelid = pg_class.oid AND pg_attrdef.adnum = pg_attribute.attnum)
                   ELSE NULL::text
               END),'.')) as cl
               FROM pg_class, pg_namespace, pg_attribute, pg_type
