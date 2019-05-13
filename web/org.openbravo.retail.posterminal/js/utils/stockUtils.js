@@ -42,7 +42,6 @@
       OB.UTIL.HookManager.executeHooks('OBPOS_CheckStockPrePayment', {
         order: order,
         orders: orders,
-        product: line.get('product'),
         line: line,
         checkStock: checkStock
       }, function (args) {

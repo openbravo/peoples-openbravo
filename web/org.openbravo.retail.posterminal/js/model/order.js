@@ -1703,7 +1703,6 @@
 
           OB.UTIL.HookManager.executeHooks('OBPOS_CheckStockDeleteLine', {
             order: me,
-            product: line.get('product'),
             line: line,
             checkStock: checkStock
           }, function (args) {
@@ -1982,7 +1981,6 @@
 
         OB.UTIL.HookManager.executeHooks('OBPOS_CheckStockDeleteLine', {
           order: me,
-          product: line.get('product'),
           line: line,
           checkStock: checkStock
         }, function (args) {
