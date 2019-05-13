@@ -28,6 +28,24 @@
 /*      JGA      */
 /*****************/
 
+/*
+# Component: PopupDrawerOpened
+# Inherits: [OB.UI.PopupDrawerOpened]
+*/
+.popupDrawerOpened {}
+
+.popupDrawerOpened-table-generic {
+  position: relative;
+}
+
+.popupDrawerOpened-table_noTop {
+  top: 0px;
+}
+
+.popupDrawerOpened-table_standardTop {
+  top: 35px;
+}
+
 
 
 
