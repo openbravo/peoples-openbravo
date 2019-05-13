@@ -88,7 +88,7 @@ public abstract class AuthenticationManager {
    * @return true if this is a stateless request
    */
   public static boolean isStatelessRequest(HttpServletRequest request) {
-    return "true".equals(request.getParameter(STATELESS_REQUEST_PARAMETER))
+    return request == null || "true".equals(request.getParameter(STATELESS_REQUEST_PARAMETER))
         || "true".equals(request.getAttribute(STATELESS_REQUEST_PARAMETER));
   }
 
@@ -263,7 +263,7 @@ public abstract class AuthenticationManager {
     // If the current license has unlimited number of WS calls no limit will be checked, so there is
     // no need to create a new register in the AD_Session table
     if (activationKey.hasUnlimitedWsAccess()) {
-      if (request != null && !AuthenticationManager.isStatelessRequest(request)) {
+      if (!AuthenticationManager.isStatelessRequest(request)) {
         // force creation of the http session in stateful WS requests
         request.getSession(true);
       }
