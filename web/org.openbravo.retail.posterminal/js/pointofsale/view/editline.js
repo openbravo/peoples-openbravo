@@ -222,8 +222,9 @@ enyo.kind({
     classes: 'btnlink-orange',
     permission: 'OBPOS_ActionButtonDelete',
     tap: function () {
-      this.owner.owner.doDeleteLine({
-        selectedReceiptLines: this.owner.owner.selectedModels
+      OB.MobileApp.actionsRegistry.execute({
+        window: 'retail.pointofsale',
+        name: 'deleteLine'
       });
     },
     init: function (model) {
