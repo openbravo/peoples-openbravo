@@ -44,10 +44,6 @@ enyo.kind({
         }
       }
     }
-    //    buttonContainer.$.editbp.setCustomer(this.args.businessPartner);
-    
-    
-    
     // Hide components depending on its displayLogic function
     _.each(this.$.body.$.editcustomers_impl.$.customerAttributes.$, function (attribute) {
       if (attribute.name !== 'strategy') {
@@ -231,7 +227,7 @@ enyo.kind({
       var parent = this.parent;
       this.doPressedButton();
       this.doShowPopup({
-        popup: 'modalReceiptSelector',
+        popup: 'modalReceiptSelectorCustomerView',
         args: {
           multiselect: true,
           clean: true,
@@ -239,17 +235,7 @@ enyo.kind({
           businessPartner: parent.customer,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(parent.navigationPath, 'customerView'),
           customHeaderContent: (parent.customer.get('_identifier') + "'s " + OB.I18N.getLabel('OBPOS_Cus360LblLastActivity')),
-          hideBusinessPartnerColumn: true,
-          advancedFilters: {
-            orderby: null,
-            filters: [{
-              caption: parent.customer.get('_identifier'),
-              column: 'businessPartner',
-              isId: true,
-              operator: '=',
-              value: parent.customer.get('id')
-            }]
-          }
+          hideBusinessPartnerColumn: true
         }
       })
     }
@@ -452,4 +438,34 @@ enyo.kind({
       return OB.MobileApp.model.hasPermission('EnableMultiPriceList', true);
     }
   }]
+});
+enyo.kind({
+  name: 'OBPOS.UI.ReceiptSelectorCustomerView',
+  kind: 'OBPOS.UI.ReceiptSelector',
+  executeOnShow: function () {
+
+    if (!this.initialized || (this.args && _.keys(this.args).length > 0)) {
+      this.selectorHide = false;
+      this.initialized = true;
+      this.initializedArgs = this.args;
+      var column = _.find(OB.Model.OrderFilter.getProperties(), function (prop) {
+        return prop.name === 'businessPartner';
+      }, this);
+      var bp = this.args.businessPartner;
+      if (!OB.UTIL.isNullOrUndefined(bp)) {
+        column.preset.id = bp.get('id');
+        column.preset.name = bp.get('_identifier');
+      } else {
+        column.preset.id = '';
+        column.preset.name = '';
+      }
+      this.initSelector();
+      var filterSelector = this.getFilterSelectorTableHeader();
+      filterSelector.fixedColumn = column;
+      filterSelector.searchAction();
+
+    }
+
+  }
+
 });
