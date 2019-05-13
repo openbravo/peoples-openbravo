@@ -79,7 +79,7 @@ $BODY$
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2019 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -89,7 +89,13 @@ $BODY$
   DECLARE  v_p3 NUMERIC;
   DECLARE  v_i NUMERIC;
 begin
-  v_text := replace($1, ' = ANY',' in');
+  v_text := $1;
+  if v_text like 'CHECK (%' then
+    v_text := substring(v_text, 8);
+    v_text := substring(v_text, 1, length(v_text) - 1);
+  end if;
+
+  v_text := replace(v_text, ' = ANY',' in');
   v_text := replace(v_text, 'ARRAY[', '');
   v_text := replace(v_text, ']' , '');
   v_text := replace(v_text, '::bpchar', '');
@@ -1070,7 +1076,7 @@ CREATE OR REPLACE VIEW user_constraints AS
             WHEN 'P'::text THEN upper(pg_constraint.conname::text)
             WHEN 'U'::text THEN upper(pg_constraint.conname::text)
             ELSE ''::text
-        END AS index_name, dba_getstandard_search_text(pg_get_constraintdef(pg_constraint.oid)) AS search_condition, 'ENABLED'::text AS STATUS
+        END AS index_name, (case pg_constraint.contype when 'c' then dba_getstandard_search_text(pg_get_constraintdef(pg_constraint.oid)) else null end) AS search_condition, 'ENABLED'::text AS STATUS
    FROM pg_constraint
    JOIN pg_class ON pg_class.oid = pg_constraint.conrelid
    LEFT JOIN pg_class fk_table ON fk_table.oid = pg_constraint.confrelid
