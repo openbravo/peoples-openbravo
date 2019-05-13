@@ -47,6 +47,13 @@
 }
 
 
+/*
+# Component: ModalSelectTerminal
+# Inherits: [OB.UI.ModalSelectTerminal]
+*/
+.modalSelectTerminal {}
+
+
 
 
 /*****************/

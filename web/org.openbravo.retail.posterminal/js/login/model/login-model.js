@@ -1278,6 +1278,7 @@
           this.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
             kind: 'OB.UI.ModalSelectTerminal',
             name: 'modalSelectTerminal',
+            classes: 'modalSelectTerminal',
             callback: callback,
             context: this
           });
@@ -1313,6 +1314,7 @@
                 me.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
                   kind: 'OB.UI.ModalSelectTerminal',
                   name: 'modalSelectTerminal',
+                  classes: 'modalSelectTerminal',
                   callback: callback,
                   context: me
                 });
@@ -1325,6 +1327,7 @@
                 me.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
                   kind: 'OB.UI.ModalSelectTerminal',
                   name: 'modalSelectTerminal',
+                  classes: 'modalSelectTerminal',
                   callback: callback,
                   context: me
                 });
