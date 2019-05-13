@@ -358,7 +358,6 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenStockButton',
     name: 'checkStockButton',
-    permission: 'OBPOS_ActionButtonCheckStock',
     showing: false
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
@@ -1067,24 +1066,14 @@ enyo.kind({
   events: {
     onShowLeftSubWindow: ''
   },
-  content: '',
   classes: 'btnlink-orange',
+  i18nContent: 'OBPOS_checkStock',
+  permission: 'OBPOS_ActionButtonCheckStock',
   tap: function () {
-    var line = this.owner.owner.line;
-    var product = this.owner.owner.line.get('product');
-    var params = {};
-    //show always or just when the product has been set to show stock screen?
-    if (product.get('productType') === 'I' && !product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
-      params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
-      params.product = product;
-      params.line = line;
-      params.warehouse = this.owner.owner.line.get('warehouse');
-      this.doShowLeftSubWindow(params);
-    }
-  },
-  initComponents: function () {
-    this.inherited(arguments);
-    this.setContent(OB.I18N.getLabel('OBPOS_checkStock'));
+    OB.MobileApp.actionsRegistry.execute({
+      window: 'retail.pointofsale',
+      name: 'showStockLine'
+    });
   }
 });
 

@@ -298,16 +298,10 @@ enyo.kind({
     this.addCommand('line:qty', {
       action: function (keyboard, txt) {
         var value = OB.I18N.parseNumber(txt);
-
-        if (!keyboard.line) {
-          return true;
-        }
-        if (value || value === 0) {
-          if (!me.validateQuantity(keyboard, value, changeQuantity)) {
-            return true;
-          }
-          changeQuantity(me, keyboard, value);
-        }
+        OB.MobileApp.actionsRegistry.execute({
+          window: 'retail.pointofsale',
+          name: 'changeQuantity'
+        });
       }
     });
 
