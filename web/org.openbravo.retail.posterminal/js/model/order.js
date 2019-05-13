@@ -5492,6 +5492,23 @@
       delete jsonorder.undo;
       delete jsonorder.json;
 
+      _.forEach(jsonorder.lines, function (item) {
+        delete item.product.img;
+        delete item.product._filter;
+      });
+
+      return jsonorder;
+    },
+
+    serializeToSaveJSON: function () {
+      // this.toJSON() generates a collection instance for members like "lines"
+      // We need a plain array object
+      var jsonorder = JSON.parse(JSON.stringify(this.toJSON()));
+
+      // remove not needed members
+      delete jsonorder.undo;
+      delete jsonorder.json;
+
       var productProps = _.filter(OB.Model.Product.getProperties(), function (prop) {
         return !prop.saveToReceipt;
       });
@@ -6350,7 +6367,7 @@
             model: model,
             tx: tx
           }, function (args) {
-            model.set('json', JSON.stringify(model.serializeToJSON()));
+            model.set('json', JSON.stringify(model.serializeToSaveJSON()));
             OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
               model.save(function () {
                 if (orderList && model.get('session') === OB.MobileApp.model.get('session')) {

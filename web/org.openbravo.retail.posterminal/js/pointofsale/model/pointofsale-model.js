@@ -736,7 +736,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 model: me,
                 tx: tx
               }, function (args) {
-                auxReceipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+                auxReceipt.set('json', JSON.stringify(receipt.serializeToSaveJSON()));
                 process.exec({
                   messageId: OB.UTIL.get_UUID(),
                   data: [{
@@ -827,7 +827,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
                       receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
                       receipt.set('created', (new Date()).getTime());
-                      receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+                      receipt.set('json', JSON.stringify(receipt.serializeToSaveJSON()));
 
                       OB.UTIL.clone(receipt, cloneOrderForNew);
                       OB.UTIL.clone(receipt, cloneOrderForPrinting);
