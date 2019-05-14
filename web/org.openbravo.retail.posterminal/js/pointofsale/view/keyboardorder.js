@@ -219,16 +219,9 @@ enyo.kind({
       stateless: true,
       permission: 'OBPOS_order.discount',
       action: function (keyboard, txt) {
-        if (!me.validateReceipt(keyboard, true)) {
-          return true;
-        }
-        me.doDiscountsMode({
-          tabPanel: 'edit',
-          keyboard: 'toolbardiscounts',
-          edit: false,
-          options: {
-            discounts: true
-          }
+        OB.MobileApp.actionsRegistry.execute({
+          window: 'retail.pointofsale',
+          name: 'discount'
         });
       }
     });

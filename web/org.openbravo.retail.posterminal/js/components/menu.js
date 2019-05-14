@@ -578,25 +578,11 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.MenuDiscounts',
-  kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_retail.advDiscounts',
-  events: {
-    onDiscountsMode: ''
-  },
-  //TODO
+  kind: 'OB.UI.ActionMenuAction',
   i18nLabel: 'OBPOS_LblReceiptDiscounts',
-  tap: function () {
-    if (!this.disabled) {
-      this.inherited(arguments); // Manual dropdown menu closure
-      this.doDiscountsMode({
-        tabPanel: 'edit',
-        keyboard: 'toolbardiscounts',
-        edit: false,
-        options: {
-          discounts: true
-        }
-      });
-    }
+  action: {
+    window: 'retail.pointofsale',
+    name: 'discount'
   },
   updateVisibility: function () {
     var me = this;

@@ -43,6 +43,7 @@
         if (!selectedReceiptLine) {
           return;
         }
+
         if (!isFinite(value)) {
           return;
         }
