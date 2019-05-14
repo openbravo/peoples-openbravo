@@ -434,7 +434,8 @@ public class CashCloseProcessor {
     }
     transaction.setProcessed(true);
     transaction.setStatus("RDNC");
-    transaction.setDescription("GL Item: " + glItem.getName());
+    transaction.setDescription(
+        String.format("GL Item: %s, Terminal: %s", glItem.getName(), terminal.getSearchKey()));
     transaction.setObposAppCashup(cashUp);
     transaction.setDateAcct(OBMOBCUtils.stripTime(currentDate));
     transaction.setTransactionDate(OBMOBCUtils.stripTime(currentDate));
