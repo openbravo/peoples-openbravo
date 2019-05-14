@@ -260,14 +260,14 @@ public class Product extends ProcessHQLQuery {
     hql += getRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages,
         allowNoPriceInMainPriceList);
     if (lastUpdated != null) {
-      hql += "AND ((pli.product.$incrementalUpdateCriteria) OR (pli.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria) OR (product.uOM.$incrementalUpdateCriteria))";
+      hql += "AND ((product.$incrementalUpdateCriteria) OR (pli.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria) OR (product.uOM.$incrementalUpdateCriteria))";
     } else {
-      hql += "AND ((pli.product.$incrementalUpdateCriteria) AND (pli.$incrementalUpdateCriteria)) ";
+      hql += "AND ((product.$incrementalUpdateCriteria) AND (pli.$incrementalUpdateCriteria)) ";
     }
     if (isRemote) {
-      hql += "order by pli.product.name asc, pli.product.id";
+      hql += "order by product.name asc, product.id";
     } else {
-      hql += "order by pli.product.id";
+      hql += "order by product.id";
     }
 
     return hql;

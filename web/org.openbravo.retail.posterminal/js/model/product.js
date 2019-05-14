@@ -27,16 +27,19 @@
     name: 'id',
     column: 'm_product_id',
     primaryKey: true,
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'searchkey',
     column: 'searchkey',
     filter: true,
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'uPCEAN',
     column: 'upc',
     filter: true,
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'uOM',
@@ -138,6 +141,7 @@
     name: '_identifier',
     column: '_identifier',
     filter: true,
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'currentStandardPrice',
@@ -146,6 +150,7 @@
   }, {
     name: 'productType',
     column: 'productType',
+    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'includeProductCategories',
@@ -214,6 +219,7 @@
   }, {
     name: 'hasAttributes',
     column: 'hasAttributes',
+    saveToReceipt: true,
     type: 'BOOL'
   }, {
     name: 'isSerialNo',

@@ -670,11 +670,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     // Listening events that cause a discount recalculation
     receipt.get('lines').on('add change:qty change:price', function (line) {
-      if (!receipt.get('isEditable')) {
-        return;
-      }
-      //When we do not want to launch promotions process (Not apply or remove discounts)
-      if (receipt.get('cloningReceipt') || receipt.get('skipApplyPromotions') || line.get('skipApplyPromotions')) {
+      // Do not calculate the receipt if the ticket is not editable or is being cloned
+      if (!receipt.get('isEditable') || receipt.get('cloningReceipt')) {
         return;
       }
       // Calculate the receipt
@@ -739,7 +736,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 model: me,
                 tx: tx
               }, function (args) {
-                auxReceipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+                auxReceipt.set('json', JSON.stringify(receipt.serializeToSaveJSON()));
                 process.exec({
                   messageId: OB.UTIL.get_UUID(),
                   data: [{
@@ -830,7 +827,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
                       receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
                       receipt.set('created', (new Date()).getTime());
-                      receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+                      receipt.set('json', JSON.stringify(receipt.serializeToSaveJSON()));
 
                       OB.UTIL.clone(receipt, cloneOrderForNew);
                       OB.UTIL.clone(receipt, cloneOrderForPrinting);

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -48,6 +48,7 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.client.id", "client"));
     list.add(new HQLProperty("pos.client.name", getIdentifierAlias("client")));
     list.add(new HQLProperty("pos.hardwareurl", "hardwareurl"));
+    list.add(new HQLProperty("pos.printertype", "printertype"));
     list.add(new HQLProperty("pos.scaleurl", "scaleurl"));
     list.add(new HQLProperty("org.obretcoDbpIrulesid", "defaultbp_invoiceterm"));
     list.add(new HQLProperty("org.obretcoDbpPtermid.id", "defaultbp_paymentterm"));

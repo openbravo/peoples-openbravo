@@ -147,15 +147,19 @@ enyo.kind({
     var printers = OB.POS.modelterminal.get('hardwareURL');
 
     // Add Main URL
-    this.printerscontainer.createComponent({
-      kind: 'SelectPrintersLine',
-      name: 'printerMain',
-      printerscontainer: this.printerscontainer,
-      printer: {
-        _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
-        hardwareURL: OB.POS.hwserver.mainurl
-      }
-    }).render();
+    if (!_.find(printers, function (printer) {
+      return printer.hasReceiptPrinter && printer.hardwareURL === OB.POS.hwserver.mainurl;
+    })) {
+      this.printerscontainer.createComponent({
+        kind: 'SelectPrintersLine',
+        name: 'printerMain',
+        printerscontainer: this.printerscontainer,
+        printer: {
+          _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
+          hardwareURL: OB.POS.hwserver.mainurl
+        }
+      }).render();
+    }
 
     // Add the rest of URLs
     _.each(printers, function (printer) {
@@ -200,6 +204,10 @@ enyo.kind({
       this.autoDismiss = true;
       this.$.bodyButtons.$.selectPrintersCancel.show();
       this.$.headerCloseButton.show();
+    }
+
+    if (OB.POS.hwserver.activeurl) {
+      this.printerscontainer.selectURL(OB.POS.hwserver.activeurl);
     }
   },
 
@@ -287,15 +295,19 @@ enyo.kind({
     var printers = OB.POS.modelterminal.get('hardwareURL');
 
     // Add Main URL
-    this.printerscontainer.createComponent({
-      kind: 'SelectPrintersLine',
-      name: 'PDFprinterMain',
-      printerscontainer: this.printerscontainer,
-      printer: {
-        _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
-        hardwareURL: OB.POS.hwserver.mainurl
-      }
-    }).render();
+    if (!_.find(printers, function (printer) {
+      return printer.hasPDFPrinter && printer.hardwareURL === OB.POS.hwserver.mainurl;
+    })) {
+      this.printerscontainer.createComponent({
+        kind: 'SelectPrintersLine',
+        name: 'PDFprinterMain',
+        printerscontainer: this.printerscontainer,
+        printer: {
+          _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
+          hardwareURL: OB.POS.hwserver.mainurl
+        }
+      }).render();
+    }
 
     // Add the rest of URLs
     _.each(printers, function (printer) {

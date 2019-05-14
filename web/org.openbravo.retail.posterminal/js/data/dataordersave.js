@@ -167,6 +167,9 @@
             args.context.receipt.setIsCalculateReceiptLockState(false);
             args.context.receipt.setIsCalculateGrossLockState(false);
             OB.UTIL.ProcessController.finish('tapTotalButton', execution);
+            if (OB.MobileApp.model.showSynchronizedDialog) {
+              OB.MobileApp.model.hideSynchronizingDialog();
+            }
             return true;
           }
           OB.UTIL.clone(receipt, frozenReceipt);
@@ -288,6 +291,7 @@
 
                 restoreReceiptCallback = function () {
                   restoreReceiptOnError(eventParams, receipt);
+                  OB.UTIL.ProcessController.finish('tapTotalButton', execution);
                 };
 
                 syncErrorCallback = function () {
@@ -340,7 +344,7 @@
                   model: model,
                   tx: tx
                 }, function (args) {
-                  frozenReceipt.set('json', JSON.stringify(frozenReceipt.serializeToJSON()));
+                  frozenReceipt.set('json', JSON.stringify(frozenReceipt.serializeToSaveJSON()));
                   frozenReceipt.set('hasbeenpaid', 'Y');
                   // Important: at this point, the frozenReceipt is considered final. Nothing must alter it
                   // when all the properties of the frozenReceipt have been set, keep a copy
@@ -379,6 +383,7 @@
                 }, tx);
               }, function () {
                 // the transaction failed
+                OB.UTIL.ProcessController.finish('tapTotalButton', execution);
                 OB.UTIL.showError("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
                 // rollback other changes
                 receipt.set('hasbeenpaid', 'N');
@@ -469,7 +474,7 @@
                 tx: tx,
                 isMultiOrder: true
               }, function (args) {
-                currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
+                currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToSaveJSON()));
                 OB.UTIL.setScanningFocus(true);
                 currentReceipt.set('hasbeenpaid', 'Y');
                 OB.Dal.saveInTransaction(tx, currentReceipt, function () {

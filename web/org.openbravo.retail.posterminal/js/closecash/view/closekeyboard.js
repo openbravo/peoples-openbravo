@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -24,13 +24,6 @@ enyo.kind({
     this.disableCommandKey(this, {
       disabled: true,
       commands: ['%']
-    });
-    this.addCommand('-', {
-      stateless: true,
-      action: function (keyboard, txt) {
-        var t = keyboard.$.editbox.getContent();
-        keyboard.$.editbox.setContent(t + '-');
-      }
     });
     this.addToolbar({
       name: 'toolbarempty',
@@ -166,6 +159,13 @@ enyo.kind({
     }, this);
   },
   initComponents: function () {
+    this.addCommand('-', {
+      stateless: true,
+      action: function (keyboard, txt) {
+        var t = keyboard.$.editbox.getContent();
+        keyboard.$.editbox.setContent(t + '-');
+      }
+    });
     this.inherited(arguments);
     this.keyMatcher = new RegExp('^([0-9]|\\' + OB.Format.defaultDecimalSymbol + ')$', 'g');
   }

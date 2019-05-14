@@ -498,8 +498,8 @@ enyo.kind({
         });
         return true;
       }
-      receiptOrganization = OB.MobileApp.model.orderList.current.has('originalOrganization') ? OB.MobileApp.model.orderList.current.get('originalOrganization') : OB.MobileApp.model.orderList.current.get('organization');
-      if (receiptOrganization !== model.get('organization') && OB.MobileApp.model.orderList.current.get('lines').length > 0) {
+      receiptOrganization = OB.MobileApp.model.orderList.current.has('originalOrganization') ? 'originalOrganization' : 'organization';
+      if (OB.MobileApp.model.orderList.current.get(receiptOrganization) !== model.get('organization') && OB.MobileApp.model.orderList.current.get('lines').length > 0) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStoreReturn'), OB.I18N.getLabel('OBPOS_SameStoreReceipt'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk')
         }]);
@@ -518,6 +518,9 @@ enyo.kind({
           }
         }]);
       } else {
+        if (OB.MobileApp.model.orderList.current.get(receiptOrganization) !== model.get('organization') && OB.MobileApp.model.orderList.current.get('lines').length === 0) {
+          OB.MobileApp.model.orderList.current.deleteOrder();
+        }
         OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder, undefined, undefined, true);
         return true;
       }

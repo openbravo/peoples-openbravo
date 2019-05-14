@@ -710,7 +710,7 @@ enyo.kind({
   },
 
   displayStep: function (model) {
-    if (OB.MobileApp.model.get('permissions').OBPOS_HideCashUpInfoToCashier) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_HideCashUpInfoToCashier', true)) {
       this.$.differenceTable.hide();
       this.$.expectedTable.hide();
       this.$.depositsTable.hide();
