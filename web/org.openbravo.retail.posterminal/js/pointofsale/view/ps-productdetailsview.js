@@ -366,9 +366,9 @@ enyo.kind({
   getStoreStock: function (params) {
     var me = this;
     if (OB.UTIL.isCrossStoreEnabled()) {
-      me.bodyComponent.$.stockHere.setDisabled(true);
-      me.bodyComponent.$.productAddToReceipt.setDisabled(true);
       me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock_NotCalculated'));
+      me.bodyComponent.$.stockHere.setDisabled(OB.UTIL.isCrossStoreProduct(me.product));
+      me.bodyComponent.$.productAddToReceipt.setDisabled(true);
       if (params.checkStockCallback) {
         params.checkStockCallback();
       }
