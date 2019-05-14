@@ -21,7 +21,6 @@ package org.openbravo.test.system;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -107,15 +106,15 @@ public class JSONSerialization extends OBBaseTest {
     assertThat(processContext.toString(), equalTo(PROCESS_CONTEXT));
   }
 
-  /** ProcessBundle parameters are correctly serialized */
+  /**
+   * ProcessBundle parameters are correctly serialized
+   * 
+   * @throws ServletException
+   */
   @Test
-  public void serializeProcessBundleParameters() {
-    ProcessBundle pb = null;
-    try {
-      pb = new ProcessBundle(AD_PROCESS_ID, getVars()).init(new DalConnectionProvider(false));
-    } catch (ServletException ex) {
-      fail(ex.getMessage());
-    }
+  public void serializeProcessBundleParameters() throws ServletException {
+    ProcessBundle pb = new ProcessBundle(AD_PROCESS_ID, getVars())
+        .init(new DalConnectionProvider(false));
 
     HashMap<String, Object> parameters = new HashMap<>();
     parameters.put("mProductId", "");
@@ -125,9 +124,13 @@ public class JSONSerialization extends OBBaseTest {
     assertThat(pb.getParamsDeflated(), equalTo(PB_PARAMS));
   }
 
-  /** ProcessBundle parameters are correctly deserialized */
+  /**
+   * ProcessBundle parameters are correctly deserialized
+   * 
+   * @throws ServletException
+   */
   @Test
-  public void deserializeProcessBundleParameters() {
+  public void deserializeProcessBundleParameters() throws ServletException {
     String processRequestId = null;
     try {
       processRequestId = createProcessRequest(PB_PARAMS);
@@ -135,39 +138,40 @@ public class JSONSerialization extends OBBaseTest {
           new DalConnectionProvider(false));
       assertThat(pb.getParams().get("mProductId"), equalTo(""));
       assertThat(pb.getParams().get("mChValueId"), equalTo(M_CH_VALUE_ID));
-    } catch (Exception ex) {
-      fail(ex.getMessage());
     } finally {
       removeProcessRequest(processRequestId);
     }
   }
 
-  /** Expected exception is thrown when ProcessBundle parameters serialization fails */
+  /**
+   * Expected exception is thrown when ProcessBundle parameters serialization fails
+   * 
+   * @throws ServletException
+   */
   @Test(expected = ParameterSerializationException.class)
-  public void exceptionIsThrownWhenSerializationFails() {
-    try {
-      ProcessBundle pb = new ProcessBundle(AD_PROCESS_ID, getVars())
-          .init(new DalConnectionProvider(false));
+  public void exceptionIsThrownWhenSerializationFails() throws ServletException {
+    ProcessBundle pb = new ProcessBundle(AD_PROCESS_ID, getVars())
+        .init(new DalConnectionProvider(false));
 
-      HashMap<String, Object> parameters = new HashMap<>();
-      parameters.put("unsupportedParam", new JSONObject());
-      pb.setParams(parameters);
+    HashMap<String, Object> parameters = new HashMap<>();
+    parameters.put("unsupportedParam", new JSONObject());
+    pb.setParams(parameters);
 
-      pb.getParamsDeflated(); // should throw ParameterSerializationException
-    } catch (ServletException ex) {
-      fail(ex.getMessage());
-    }
+    pb.getParamsDeflated(); // should throw ParameterSerializationException
+
   }
 
-  /** Expected exception is thrown when ProcessBundle parameters deserialization fails */
+  /**
+   * Expected exception is thrown when ProcessBundle parameters deserialization fails
+   * 
+   * @throws ServletException
+   */
   @Test(expected = ParameterSerializationException.class)
-  public void exceptionIsThrownWhenDeserializationFails() {
+  public void exceptionIsThrownWhenDeserializationFails() throws ServletException {
     String processRequestId = null;
     try {
       processRequestId = createProcessRequest(PB_PARAMS_WRONG);
       ProcessBundle.request(processRequestId, getVars(), new DalConnectionProvider(false));
-    } catch (ServletException ex) {
-      fail(ex.getMessage());
     } finally {
       removeProcessRequest(processRequestId);
     }
