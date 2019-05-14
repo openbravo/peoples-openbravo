@@ -306,7 +306,7 @@ public class OBScheduler {
       final ProcessBundle bundle = ProcessBundle.request(requestId, vars, getConnection());
       schedule(requestId, bundle);
     } catch (final ServletException | ParameterSerializationException e) {
-      log.error("Error scheduling process: " + e.getMessage(), e);
+      log.error("Error scheduling process request: " + requestId, e);
     }
   }
 
