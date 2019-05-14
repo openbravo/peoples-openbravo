@@ -298,7 +298,7 @@ public class ProcessContext {
    *         method returns null if the provided String is null, empty or if it is an invalid JSON
    *         definition of a ProcessContext.
    */
-  public static synchronized ProcessContext newInstance(String processContext) {
+  public static ProcessContext newInstance(String processContext) {
     if (StringUtils.isBlank(processContext)) {
       return null;
     }
