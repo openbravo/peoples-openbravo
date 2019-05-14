@@ -116,12 +116,15 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       final List<String> hqlList = new ArrayList<>();
       final Map<String, Boolean> args = getPropertiesArgs();
       final boolean isMultiPriceListEnabled = args.get("isMultiPriceListEnabled");
+      final boolean allowNoPriceInMainPriceList = args.get("allowNoPriceInMainPriceList");
+      final boolean showProductsWithoutPrice = isMultiPriceListEnabled
+          && allowNoPriceInMainPriceList;
       final boolean filterByStock = jsonsent.getBoolean("filterByStock");
 
       final HQLPropertyList crossStoreHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions, args);
       hqlList.add(getCrossStoreStockAndPrice(crossStoreHQLProperties, filterByStock,
-          isMultiPriceListEnabled));
+          showProductsWithoutPrice));
       if (isMultiPriceListEnabled) {
         final HQLPropertyList crossStoreMultiPriceHQLProperties = ModelExtensionUtils
             .getPropertyExtensions(multiPriceExtensions, args);
@@ -135,7 +138,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
   }
 
   private String getCrossStoreStockAndPrice(final HQLPropertyList crossStoreHQLProperties,
-      final boolean filterByStock, final boolean isMultiPriceListEnabled) {
+      final boolean filterByStock, final boolean showProductsWithoutPrice) {
     final StringBuilder hql = new StringBuilder();
     hql.append(" select" + crossStoreHQLProperties.getHqlSelect());
     hql.append(" from Organization o");
@@ -147,11 +150,28 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     hql.append(" join l.inventoryStatus ls");
     hql.append(" left join l.materialMgmtStorageDetailList sd");
     hql.append(" with sd.product.id = :productId");
-    if (!isMultiPriceListEnabled) {
-      hql.append(" join o.obretcoPricelist pl");
+    hql.append(" join o.obretcoPricelist pl");
+    if (showProductsWithoutPrice) {
+      hql.append(" left join pl.pricingPriceListVersionList plv");
+      hql.append(" left join plv.pricingProductPriceList pp");
+    } else {
       hql.append(" join pl.pricingPriceListVersionList plv");
       hql.append(" join plv.pricingProductPriceList pp");
     }
+    hql.append(" with pp.product.id = :productId");
+    hql.append(" and plv.id = (");
+    hql.append("   select min(plv2.id)");
+    hql.append("   from PricingPriceListVersion plv2");
+    hql.append("   where plv2.priceList.id = pl.id");
+    hql.append("   and plv2.active = true");
+    hql.append("   and plv2.validFromDate = (");
+    hql.append("     select max(plv3.validFromDate)");
+    hql.append("     from PricingPriceListVersion plv3");
+    hql.append("     where plv3.priceList.id = pl.id");
+    hql.append("     and plv3.active = true");
+    hql.append("     and plv3.validFromDate <= :terminalDate");
+    hql.append("   )");
+    hql.append(" )");
     hql.append(" where o.id in :crossStoreOrgIds");
     hql.append(" and $filtersCriteria");
     hql.append(" and ls.oBRETCOAvailableCrossStore = true");
@@ -161,30 +181,12 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     hql.append("   where pli.product.id = :productId");
     hql.append("   and pli.obretcoProductlist.id = o.obretcoProductlist.id");
     hql.append(" )");
-    if (!isMultiPriceListEnabled) {
-      hql.append(" and pp.product.id = :productId");
-      hql.append(" and plv.id = (");
-      hql.append("   select min(plv2.id)");
-      hql.append("   from PricingPriceListVersion plv2");
-      hql.append("   where plv2.priceList.id = pl.id");
-      hql.append("   and plv2.active = true");
-      hql.append("   and plv2.validFromDate = (");
-      hql.append("     select max(plv3.validFromDate)");
-      hql.append("     from PricingPriceListVersion plv3");
-      hql.append("     where plv3.priceList.id = pl.id");
-      hql.append("     and plv3.active = true");
-      hql.append("     and plv3.validFromDate <= :terminalDate");
-      hql.append("   )");
-      hql.append(" )");
-    }
     hql.append(" and o.active = true");
     hql.append(" and owh.active = true");
     hql.append(" and wh.active = true");
     hql.append(" and l.active = true");
     hql.append(" group by o.id, o.name, w.id, w.name");
-    if (!isMultiPriceListEnabled) {
-      hql.append(" , pl.id, pp.standardPrice, pl.priceIncludesTax");
-    }
+    hql.append(" , pl.id, pl.priceIncludesTax, pp.standardPrice");
     hql.append(" having w.id = min(wh.id)");
     if (filterByStock) {
       hql.append(" and coalesce(sum(sd.quantityOnHand - sd.reservedQty), 0) > 0");
@@ -222,9 +224,10 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
   }
 
   private Map<String, Boolean> getPropertiesArgs() {
-    final boolean isMultiPriceListEnabled = getPreference("OBPOS_EnableMultiPriceList");
     final Map<String, Boolean> args = new HashMap<>();
-    args.put("isMultiPriceListEnabled", isMultiPriceListEnabled);
+    args.put("isMultiPriceListEnabled", getPreference("OBPOS_EnableMultiPriceList"));
+    args.put("allowNoPriceInMainPriceList",
+        getPreference("OBPOS_allowProductsNoPriceInMainPricelist"));
     return args;
   }
 
