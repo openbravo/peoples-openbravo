@@ -23,12 +23,12 @@ import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -154,7 +154,7 @@ public class JSONSerialization extends OBBaseTest {
         .init(new DalConnectionProvider(false));
 
     HashMap<String, Object> parameters = new HashMap<>();
-    parameters.put("unsupportedParam", new JSONObject());
+    parameters.put("unsupportedParam", Collections.emptyList());
     pb.setParams(parameters);
 
     pb.getParamsDeflated(); // should throw ParameterSerializationException
