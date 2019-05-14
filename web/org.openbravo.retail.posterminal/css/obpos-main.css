@@ -173,3 +173,127 @@
 /*****************/
 /*      JAR      */
 /*****************/
+
+/*
+# Component: OB.UI.ModalInvoicesHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obUiModalInvoicesHeader {}
+
+/*
+# Component: OB.UI.ListInvoicesLine
+# Inherits: [OB.UI.CheckboxButton]
+*/
+.obUiListInvoicesLine {
+  height: 38px;
+  background-position: 10px center;
+  cursor: pointer;
+  vertical-align: middle;
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
+  text-align: left;
+  padding-left: 70px;
+  height: 58px;
+}
+
+.obUiListInvoicesLine-line {
+  line-height: 23px;
+  display: inline;
+}
+
+.obUiListInvoicesLine-line-topLine {
+  display: inline;
+}
+
+.obUiListInvoicesLine-line-bottonLine {
+  color: #888888;
+}
+
+.obUiListInvoicesLine-line-element1 {
+  clear: both;
+}
+
+/*
+# Component: OB.UI.ListInvoices
+*/
+.obUiListInvoices {}
+
+.obUiListInvoices-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obUiListInvoices-container1-container1 {}
+
+.obUiListInvoices-container1-container1-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obUiListInvoices-container1-container1-container1-invoiceslistitemprinter {
+  /* Inherits: [OB.UI.ScrollableTable] */
+  max-height: 300px;
+}
+
+.obUiListInvoices-container1-footer {
+  /* Inherits: [OB.UI.ModalInvoicesFooter] */
+}
+
+/*
+# Component: OB.UI.ModalInvoicesFooter
+*/
+.obUiModalInvoicesFooter {}
+
+.obUiModalInvoicesFooter-printReceipt {
+  /* Inherits: [OB.UI.SmallButton] */
+  width: 140px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.obUiModalInvoicesFooter-printInvoices {
+  /* Inherits: [OB.UI.SmallButton] */
+  width: 140px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.obUiModalInvoicesFooter-buttonsContainer {
+  display: flex;
+  border-top: 1px solid #cccccc;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.obUiModalInvoicesFooter-buttonsContainer-button_comfortable {
+  width: 126px;
+}
+
+.obUiModalInvoicesFooter-buttonsContainer-button_cozy {
+  width: 112px;
+}
+
+.obUiModalInvoicesFooter-buttonsContainer-button_compact {
+  width: 98px;
+}
+
+.obUiModalInvoicesFooter-cancelButton {
+  /* Inherits: [OB.UI.SmallButton] */
+  width: 140px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+
+}
+/*
+# Component: OB.UI.ModalInvoices
+# Inherits: [OB.UI.Modal]
+*/
+.obUiModalInvoices {
+  top: 125px;
+}
