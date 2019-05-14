@@ -21,6 +21,7 @@ package org.openbravo.scheduling;
 import java.util.List;
 import java.util.Map;
 import java.util.Spliterators;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -54,7 +55,7 @@ class ParameterSerializer {
   private void checkParameters(Map<String, Object> parameters) {
     List<Class<?>> invalidTypes = parameters.values()
         .stream()
-        .filter(((Predicate<Object>) ProcessBundleParameter::isSupportedType).negate())
+        .filter(((Predicate<Object>) this::isSupportedType).negate())
         .map(Object::getClass)
         .distinct()
         .collect(Collectors.toList());
@@ -65,6 +66,10 @@ class ParameterSerializer {
       throw new ParameterSerializationException(
           "Could not serialize paramters with types " + invalidTypes);
     }
+  }
+
+  private boolean isSupportedType(Object value) {
+    return value instanceof String;
   }
 
   Map<String, Object> deserialize(String parameters) {
@@ -79,10 +84,28 @@ class ParameterSerializer {
     @SuppressWarnings("unchecked")
     Map<String, Object> pbParams = (Map<String, Object>) StreamSupport
         .stream(Spliterators.spliteratorUnknownSize(json.keys(), 0), false)
-        .map(key -> new ProcessBundleParameter((String) key, json))
-        .collect(
-            Collectors.toMap(ProcessBundleParameter::getName, ProcessBundleParameter::deserialize));
+        .collect(Collectors.toMap(Function.identity(), k -> deserialize(json, (String) k)));
 
     return pbParams;
+  }
+
+  Object deserialize(JSONObject json, String key) {
+    Object value = null;
+    try {
+      value = json.get(key);
+    } catch (JSONException ex) {
+      // It should not happen as the key will always exists
+    }
+
+    if (!isSupportedType(value)) {
+      Class<?> clazz = value != null ? value.getClass() : null;
+      log.error(
+          "Could not deserialize parameter because it has unsupported type {}. Parameter: name = {}, value = {}",
+          clazz, key, value);
+      throw new ParameterSerializationException(
+          "Could not deserialize parameter with type " + clazz);
+    }
+
+    return value.toString();
   }
 }
