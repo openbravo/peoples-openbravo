@@ -227,7 +227,7 @@ public class ProcessBundle {
 
   /**
    * Returns the parameters for this process. This is guaranteed not to be null. For the moment only
-   * parameters of type String are supported.
+   * parameters of type String or JSONObject are supported.
    * 
    * @return the process parameter map
    */

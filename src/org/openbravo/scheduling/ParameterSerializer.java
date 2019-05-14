@@ -69,7 +69,7 @@ class ParameterSerializer {
   }
 
   private boolean isSupportedType(Object value) {
-    return value instanceof String;
+    return value instanceof String || value instanceof JSONObject;
   }
 
   Map<String, Object> deserialize(String parameters) {
@@ -105,7 +105,6 @@ class ParameterSerializer {
       throw new ParameterSerializationException(
           "Could not deserialize parameter with type " + clazz);
     }
-
-    return value.toString();
+    return value;
   }
 }
