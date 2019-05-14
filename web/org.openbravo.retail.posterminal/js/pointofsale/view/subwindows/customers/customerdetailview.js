@@ -229,7 +229,7 @@ enyo.kind({
       this.doShowPopup({
         popup: 'modalReceiptSelectorCustomerView',
         args: {
-          multiselect: true,
+          multiselect: false,
           clean: true,
           target: parent.target,
           businessPartner: parent.customer,
@@ -465,6 +465,14 @@ enyo.kind({
       }, this);
       filterSelector.fixedColumn = id;
       filterSelector.searchAction();
+    }
+    var isMultiselect = this.args.multiselect === true;
+    this.$.body.$.receiptsList.$.openreceiptslistitemprinter.multiselect = isMultiselect;
+    this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.btnOpenSelected.setShowing(isMultiselect);
+    if (this.args.customHeaderContent) {
+      this.$.header.setContent(this.args.customHeaderContent);
+    } else {
+      this.$.header.setContent(OB.I18N.getLabel('OBPOS_OpenReceipt'));
     }
     this.$.body.$.receiptsList.$.openreceiptslistitemprinter.hideBusinessPartnerColumn = this.args.hideBusinessPartnerColumn;
   }
