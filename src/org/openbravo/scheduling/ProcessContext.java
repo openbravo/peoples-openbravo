@@ -112,7 +112,7 @@ public class ProcessContext {
   }
 
   private boolean getBooleanProperty(JSONObject json, String property) throws JSONException {
-    return json.has(property) ? json.getBoolean(property) : null;
+    return json.has(property) ? json.getBoolean(property) : false;
   }
 
   /**
