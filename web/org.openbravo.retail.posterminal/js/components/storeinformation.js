@@ -240,20 +240,9 @@ enyo.kind({
     return OB.I18N.getWeekday(weekday);
   },
   getTime: function (schedule) {
-    var startTime = this.getFormattedTime(new Date(schedule.startingTime));
-    var endTime = this.getFormattedTime(new Date(schedule.endingTime));
+    var startTime = OB.I18N.formatHour(new Date(schedule.startingTime));
+    var endTime = OB.I18N.formatHour(new Date(schedule.endingTime));
     return startTime + ' - ' + endTime;
-  },
-  getFormattedTime: function (date) {
-    var hours = date.getHours().toString();
-    var minutes = date.getMinutes().toString();
-    while (hours.length < 2) {
-      hours = '0' + hours;
-    }
-    while (minutes.length < 2) {
-      minutes = '0' + minutes;
-    }
-    return hours + ':' + minutes;
   }
 });
 
