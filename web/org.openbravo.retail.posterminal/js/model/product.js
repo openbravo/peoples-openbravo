@@ -56,12 +56,10 @@
   }, {
     name: 'productCategory',
     column: 'm_product_category_id',
-    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'taxCategory',
     column: 'c_taxcategory_id',
-    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'img',
@@ -193,7 +191,6 @@
   }, {
     name: 'isLinkedToProduct',
     column: 'isLinkedToProduct',
-    saveToReceipt: true,
     type: 'BOOL'
   }, {
     name: 'modifyTax',
@@ -210,7 +207,6 @@
   }, {
     name: 'quantityRule',
     column: 'quantityRule',
-    saveToReceipt: true,
     type: 'TEXT'
   }, {
     name: 'isPrintServices',
@@ -219,7 +215,6 @@
   }, {
     name: 'obposEditablePrice',
     column: 'obposEditablePrice',
-    saveToReceipt: true,
     type: 'BOOL'
   }, {
     name: 'hasAttributes',

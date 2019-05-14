@@ -1034,7 +1034,6 @@ enyo.kind({
 
       OB.UTIL.HookManager.executeHooks('OBPOS_CheckStockReturnLine', {
         order: this.model.get('order'),
-        product: inEvent.line.get('product'),
         line: inEvent.line,
         checkStock: checkStock
       }, function (args) {
