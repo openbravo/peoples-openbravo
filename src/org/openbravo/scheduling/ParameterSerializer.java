@@ -31,12 +31,9 @@ import org.codehaus.jettison.json.JSONObject;
  */
 class ParameterSerializer {
 
-  private static ParameterSerializer instance;
+  private static ParameterSerializer instance = new ParameterSerializer();
 
   static ParameterSerializer getInstance() {
-    if (instance == null) {
-      instance = new ParameterSerializer();
-    }
     return instance;
   }
 
