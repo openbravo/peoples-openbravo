@@ -54,6 +54,27 @@
 .modalSelectTerminal {}
 
 
+/*
+# Model: Order
+*/
+.confirmationPopup-body_generic {
+  text-align: left;
+  padding-right: 10px;
+}
+
+.confirmationPopup-body_cannotCancelLayWithDeferred {
+  padding-left: 10px;
+}
+
+.confirmationPopup-body_relatedOrders {
+  padding-left: 30px;
+}
+
+.confirmationPopup-body_character {
+  padding-left: 60px;
+}
+
+
 
 
 /*****************/
