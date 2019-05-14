@@ -443,7 +443,6 @@ enyo.kind({
   name: 'OBPOS.UI.ReceiptSelectorCustomerView',
   kind: 'OBPOS.UI.ReceiptSelector',
   executeOnShow: function () {
-
     if (!this.initialized || (this.args && _.keys(this.args).length > 0)) {
       this.selectorHide = false;
       this.initialized = true;
@@ -461,11 +460,13 @@ enyo.kind({
       }
       this.initSelector();
       var filterSelector = this.getFilterSelectorTableHeader();
-      filterSelector.fixedColumn = column;
+      var id = _.find(OB.Model.OrderFilter.getProperties(), function (prop) {
+        return prop.name === 'id';
+      }, this);
+      filterSelector.fixedColumn = id;
       filterSelector.searchAction();
-
     }
-
+    this.$.body.$.receiptsList.$.openreceiptslistitemprinter.hideBusinessPartnerColumn = this.args.hideBusinessPartnerColumn;
   }
 
 });
