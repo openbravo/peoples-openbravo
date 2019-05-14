@@ -2447,7 +2447,7 @@
       });
 
       if (allLinesQty > 0) {
-        if (p.get('showstock') && stockScreen && attrs && attrs.warehouse && !OB.UTIL.isNullOrUndefined(attrs.warehouse.warehouseqty)) {
+        if (stockScreen && attrs && attrs.warehouse && !OB.UTIL.isNullOrUndefined(attrs.warehouse.warehouseqty)) {
           checkAddProduct(attrs.warehouse, allLinesQty);
         } else {
           OB.UTIL.StockUtils.getReceiptLineStock(p.get('id'), line, function (data) {

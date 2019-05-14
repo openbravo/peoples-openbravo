@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2018 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -28,13 +28,15 @@ import org.openbravo.retail.posterminal.JSONProcessSimple;
 public class StoreDetailedStock extends JSONProcessSimple {
   @Override
   public JSONObject exec(JSONObject jsonData) throws JSONException, ServletException {
-    String orgId, prodId;
+    String prodId;
     OBContext.setAdminMode(true);
     JSONArray responseArray = new JSONArray();
     BigDecimal totalQtyCounter = BigDecimal.ZERO;
     try {
 
-      orgId = jsonData.getString("organization");
+      final String orgId = jsonData.has("crossOrganization")
+          ? jsonData.getString("crossOrganization")
+          : jsonData.getString("organization");
       prodId = jsonData.getString("product");
 
       String hqlQuery = "select ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.id, ms.storageBin.searchKey, "

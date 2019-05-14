@@ -15,7 +15,7 @@
   OB.UTIL.StockUtils.getReceiptLineStock = function (productId, line, successCallback, errorCallback) {
     var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.StoreDetailedStock');
     serverCallStoreDetailedStock.exec({
-      organization: OB.MobileApp.model.get('terminal').organization,
+      crossOrganization: line ? line.get('organization').id : null,
       product: productId ? productId : line.get('product').get('id'),
       line: line
     }, function (data) {
