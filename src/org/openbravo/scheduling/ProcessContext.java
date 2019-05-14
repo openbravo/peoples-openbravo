@@ -19,6 +19,8 @@
 package org.openbravo.scheduling;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -29,6 +31,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
  */
 public class ProcessContext {
 
+  private static final Logger log = LogManager.getLogger();
   public static final String KEY = "org.openbravo.base.secureApp.ObContext";
 
   private String user;
@@ -305,7 +308,8 @@ public class ProcessContext {
     try {
       JSONObject json = new JSONObject(processContext);
       return new ProcessContext(json.getJSONObject(ProcessContext.class.getName()));
-    } catch (JSONException e) {
+    } catch (JSONException ex) {
+      log.error("Error creating ProcessContext from String representation: {}", processContext, ex);
       return null;
     }
   }
