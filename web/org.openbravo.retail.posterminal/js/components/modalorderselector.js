@@ -11,7 +11,7 @@
 
 enyo.kind({
   name: 'OBPOS.UI.ReceiptSelector',
-  kind: 'OB.UI.OBMOBC.ModalSelector',
+  kind: 'OB.UI.ModalSelector',
   classes: 'modalSelector_receiptSelector u-popup-top-separation-medium',
   i18nHeader: 'OBPOS_OpenReceipt',
   events: {
