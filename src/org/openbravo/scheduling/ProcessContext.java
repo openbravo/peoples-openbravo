@@ -68,43 +68,43 @@ public class ProcessContext {
    *          ProcessContext properties.
    */
   public ProcessContext(VariablesSecureApp vars) {
-    this.user = vars.getUser();
-    this.role = vars.getRole();
-    this.language = vars.getLanguage();
-    this.theme = vars.getTheme();
-    this.client = vars.getClient();
-    this.organization = vars.getOrg();
-    this.warehouse = vars.getWarehouse();
-    this.command = vars.getCommand();
-    this.userClient = vars.getUserClient();
-    this.userOrganization = vars.getUserOrg();
-    this.dbSessionID = vars.getDBSession();
-    this.javaDateFormat = vars.getJavaDateFormat();
-    this.javaDateTimeFormat = vars.getJavaDataTimeFormat();
-    this.jsDateFormat = vars.getJsDateFormat();
-    this.sqlDateFormat = vars.getSqlDateFormat();
-    this.accessLevel = vars.getAccessLevel();
-    this.roleSecurity = true;
+    user = vars.getUser();
+    role = vars.getRole();
+    language = vars.getLanguage();
+    theme = vars.getTheme();
+    client = vars.getClient();
+    organization = vars.getOrg();
+    warehouse = vars.getWarehouse();
+    command = vars.getCommand();
+    userClient = vars.getUserClient();
+    userOrganization = vars.getUserOrg();
+    dbSessionID = vars.getDBSession();
+    javaDateFormat = vars.getJavaDateFormat();
+    javaDateTimeFormat = vars.getJavaDataTimeFormat();
+    jsDateFormat = vars.getJsDateFormat();
+    sqlDateFormat = vars.getSqlDateFormat();
+    accessLevel = vars.getAccessLevel();
+    roleSecurity = true;
   }
 
   private ProcessContext(JSONObject json) throws JSONException {
-    this.user = getStringProperty(json, "user");
-    this.role = getStringProperty(json, "role");
-    this.language = getStringProperty(json, "language");
-    this.theme = getStringProperty(json, "theme");
-    this.client = getStringProperty(json, "client");
-    this.organization = getStringProperty(json, "organization");
-    this.warehouse = getStringProperty(json, "warehouse");
-    this.command = getStringProperty(json, "command");
-    this.userClient = getStringProperty(json, "userClient");
-    this.userOrganization = getStringProperty(json, "userOrganization");
-    this.dbSessionID = getStringProperty(json, "dbSessionID");
-    this.javaDateFormat = getStringProperty(json, "javaDateFormat");
-    this.javaDateTimeFormat = getStringProperty(json, "javaDateTimeFormat");
-    this.jsDateFormat = getStringProperty(json, "jsDateFormat");
-    this.sqlDateFormat = getStringProperty(json, "sqlDateFormat");
-    this.accessLevel = getStringProperty(json, "accessLevel");
-    this.roleSecurity = getBooleanProperty(json, "roleSecurity");
+    user = getStringProperty(json, "user");
+    role = getStringProperty(json, "role");
+    language = getStringProperty(json, "language");
+    theme = getStringProperty(json, "theme");
+    client = getStringProperty(json, "client");
+    organization = getStringProperty(json, "organization");
+    warehouse = getStringProperty(json, "warehouse");
+    command = getStringProperty(json, "command");
+    userClient = getStringProperty(json, "userClient");
+    userOrganization = getStringProperty(json, "userOrganization");
+    dbSessionID = getStringProperty(json, "dbSessionID");
+    javaDateFormat = getStringProperty(json, "javaDateFormat");
+    javaDateTimeFormat = getStringProperty(json, "javaDateTimeFormat");
+    jsDateFormat = getStringProperty(json, "jsDateFormat");
+    sqlDateFormat = getStringProperty(json, "sqlDateFormat");
+    accessLevel = getStringProperty(json, "accessLevel");
+    roleSecurity = getBooleanProperty(json, "roleSecurity");
   }
 
   private String getStringProperty(JSONObject json, String property) throws JSONException {
