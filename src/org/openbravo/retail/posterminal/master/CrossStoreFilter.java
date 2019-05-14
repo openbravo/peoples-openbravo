@@ -52,15 +52,14 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
   @Override
   protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
     final List<HQLPropertyList> propertiesList = new ArrayList<>();
-    final Map<String, Boolean> args = getPropertiesArgs();
-    final boolean isMultiPriceListEnabled = args.get("isMultiPriceListEnabled");
+    final boolean isMultiPriceListEnabled = getPreference("OBPOS_EnableMultiPriceList");
 
     final HQLPropertyList crossStoreFilterHQLProperties = ModelExtensionUtils
-        .getPropertyExtensions(extensions, args);
+        .getPropertyExtensions(extensions);
     propertiesList.add(crossStoreFilterHQLProperties);
     if (isMultiPriceListEnabled) {
       final HQLPropertyList crossStoreMultiPriceHQLProperties = ModelExtensionUtils
-          .getPropertyExtensions(multiPriceExtensions, args);
+          .getPropertyExtensions(multiPriceExtensions);
       propertiesList.add(crossStoreMultiPriceHQLProperties);
     }
 
@@ -114,20 +113,20 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     OBContext.setAdminMode(true);
     try {
       final List<String> hqlList = new ArrayList<>();
-      final Map<String, Boolean> args = getPropertiesArgs();
-      final boolean isMultiPriceListEnabled = args.get("isMultiPriceListEnabled");
-      final boolean allowNoPriceInMainPriceList = args.get("allowNoPriceInMainPriceList");
+      final boolean isMultiPriceListEnabled = getPreference("OBPOS_EnableMultiPriceList");
+      final boolean allowNoPriceInMainPriceList = getPreference(
+          "OBPOS_allowProductsNoPriceInMainPricelist");
       final boolean showProductsWithoutPrice = isMultiPriceListEnabled
           && allowNoPriceInMainPriceList;
       final boolean filterByStock = jsonsent.getBoolean("filterByStock");
 
       final HQLPropertyList crossStoreHQLProperties = ModelExtensionUtils
-          .getPropertyExtensions(extensions, args);
+          .getPropertyExtensions(extensions);
       hqlList.add(getCrossStoreStockAndPrice(crossStoreHQLProperties, filterByStock,
           showProductsWithoutPrice));
       if (isMultiPriceListEnabled) {
         final HQLPropertyList crossStoreMultiPriceHQLProperties = ModelExtensionUtils
-            .getPropertyExtensions(multiPriceExtensions, args);
+            .getPropertyExtensions(multiPriceExtensions);
         hqlList.add(getCrossStoreMultiPrice(crossStoreMultiPriceHQLProperties));
       }
 
@@ -221,14 +220,6 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     hql.append("   and bp.customer = true");
     hql.append(" )");
     return hql.toString();
-  }
-
-  private Map<String, Boolean> getPropertiesArgs() {
-    final Map<String, Boolean> args = new HashMap<>();
-    args.put("isMultiPriceListEnabled", getPreference("OBPOS_EnableMultiPriceList"));
-    args.put("allowNoPriceInMainPriceList",
-        getPreference("OBPOS_allowProductsNoPriceInMainPricelist"));
-    return args;
   }
 
   private boolean getPreference(final String preference) {

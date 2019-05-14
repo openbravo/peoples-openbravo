@@ -11,7 +11,6 @@ package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.model.HQLProperty;
@@ -23,19 +22,15 @@ public class CrossStoreFilterProperties extends ModelExtension {
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
     final List<HQLProperty> list = new ArrayList<>();
-    @SuppressWarnings("unchecked")
-    final Map<String, Boolean> args = (Map<String, Boolean>) params;
 
     list.add(new HQLProperty("o.id", "orgId"));
     list.add(new HQLProperty("o.name", "orgName"));
     list.add(new HQLProperty("w.id", "warehouseId"));
     list.add(new HQLProperty("w.name", "warehouseName"));
     list.add(new HQLProperty("coalesce(sum(sd.quantityOnHand - sd.reservedQty), 0)", "stock"));
-    if (!args.get("isMultiPriceListEnabled")) {
-      list.add(new HQLProperty("pl.id", "standardPriceListId"));
-      list.add(new HQLProperty("pl.priceIncludesTax", "standardPriceIncludesTax"));
-      list.add(new HQLProperty("pp.standardPrice", "standardPrice"));
-    }
+    list.add(new HQLProperty("pl.id", "standardPriceListId"));
+    list.add(new HQLProperty("pl.priceIncludesTax", "standardPriceIncludesTax"));
+    list.add(new HQLProperty("pp.standardPrice", "standardPrice"));
 
     return list;
 
