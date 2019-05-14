@@ -15,6 +15,10 @@
       OB.Actions.AbstractAction.call(this, args);
       this.calculateToAdd = args.calculateToAdd;
       this.command = function (view) {
+
+        var cancelQtyChange = false;
+        var cancelQtyChangeReturn = false;
+
         var editboxvalue = view.state.readState({
           name: 'editbox'
         });
@@ -57,6 +61,30 @@
             popup: 'modalNotEditableLine'
           });
           return;
+        }
+
+        // Check if is trying to remove delivered units or to modify negative lines in a cancel and replace ticket.
+        // In that case stop the flow and show an error popup.
+        if (receipt.get('replacedorder')) {
+          selectedReceiptLines.forEach(function (line) {
+            var oldqty = line.get('qty');
+            var newqty = oldqty + this.calculateToAdd(receipt, oldqty, value);
+
+            if (oldqty > 0 && newqty < line.get('remainingQuantity')) {
+              cancelQtyChange = true;
+            } else if (oldqty < 0 && line.get('remainingQuantity')) {
+              cancelQtyChangeReturn = true;
+            }
+          });
+
+          if (cancelQtyChange) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEdit'));
+            return;
+          }
+          if (cancelQtyChangeReturn) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
+            return;
+          }
         }
 
         var valueBigDecimal = OB.DEC.toBigDecimal(value);
