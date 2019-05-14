@@ -1,490 +1,1310 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-
-
-
-/*****************/
-/*      GAL      */
-/*****************/
-
-
-
-
-/*****************/
-/*      JRO      */
-/*****************/
-
-
-
-
-/*****************/
-/*      JGA      */
-/*****************/
-
-/*
-# Component: PopupDrawerOpened
-# Inherits: [OB.UI.PopupDrawerOpened]
-*/
-.popupDrawerOpened {}
-
-.popupDrawerOpened-table-generic {
-  position: relative;
+.paymentline-w-prepayment {
+  padding: 0px 0px 0px 10px;
+  height: 16px;
+  color: #999999;
 }
 
-.popupDrawerOpened-table_noTop {
-  top: 0px;
+.paymentline-wo-prepayment {
+  padding: 10px 0px 0px 10px;
+  height: 28px;
+  color: white;
 }
 
-.popupDrawerOpened-table_standardTop {
-  top: 35px;
-}
-
-
-/*
-# Component: ModalSelectTerminal
-# Inherits: [OB.UI.ModalSelectTerminal]
-*/
-.modalSelectTerminal {}
-
-
-/*
-# Model: Order
-*/
-.confirmationPopup-body_generic {
-  text-align: left;
-  padding-right: 10px;
-}
-
-.confirmationPopup-body_cannotCancelLayWithDeferred {
-  padding-left: 10px;
-}
-
-.confirmationPopup-body_relatedOrders {
-  padding-left: 30px;
-}
-
-.confirmationPopup-body_character {
-  padding-left: 60px;
-}
-
-
-/*
-# Component: OB.UI.ReceiptsCounter
-*/
-.obUiReceiptsCounter {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-}
-
-.obUiReceiptsCounter-receiptsCounterButton {}
-
-
-
-/*
-# Component: OB.UI.ReceiptsCounterButton
-# Inherits: [OB.UI.Button]
-*/
-.obUiReceiptsCounterButton {
-  position: relative;
-  overflow: hidden;
-  margin: 0px;
-  padding: 0px;
-  height: 50px;
-  width: 50px;
-  background-color: #e2e2e2;
-  color: black;
-  display: inline-block;
-  font-weight: 600;
-  border: none;
-  font-size: var(--font-medium-large);
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-}
-
-.obUiReceiptsCounterButton_smallFont {
-  font-size: var(--font-small);
-}
-
-.obUiReceiptsCounterButton_mediumLargeFont {
-  font-size: var(--font-medium-large);
-}
-
-.obUiReceiptsCounterButton:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px;
-}
-
-.obUiReceiptsCounterButton.btn-over,
-.obUiReceiptsCounterButton:hover {
+.stockinstorelines:hover {
   opacity: 0.75;
+  cursor: pointer;
 }
-.obUiReceiptsCounterButton.btn-down,
-.obUiReceiptsCounterButton:active {
-  opacity: 0.999; /* Instead of "1" to avoid strange displacement effect in buttons on hover effect */
+
+.stockinstorelines:active {
   background-color: #cccccc;
 }
-.obUiReceiptsCounterButton:disabled,
-.obUiReceiptsCounterButton[disabled=true]:hover{
-  background-color: #a9a9a9;
-  opacity: 1;
-  cursor: default;
-}
 
-.obUiReceiptsCounterButton-element1 {
-  position: absolute;
-  top: -35px;
-  right:-35px;
-  background: #404040;
-  height:70px;
-  width: 70px;
-  -transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  -moz-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-}
-
-.obUiReceiptsCounterButton-counter {
-  position: absolute;
-  top: 0px;
-  right:0px;
-  padding-top: 5px;
-  padding-right: 10px;
-  font-weight: bold;
-  color: white;
-  max-width: 21px;
-  max-height: 18px;
-}
-
-
-/*
-# Component: OB.UI.KeypadCoinsLegacy
-*/
-.obUiKeypadCoinsLegacy {}
-
-.obUiKeypadCoinsLegacy-container1 {}
-
-.obUiKeypadCoinsLegacy-obUiButtonKey-generic {
-  font-size: var(--font-xlarge);
-}
-
-.obUiKeypadCoinsLegacy-container1-container1 {}
-
-.obUiKeypadCoinsLegacy-container1-container1-obKeyLegacyA1 {
-/* # Inherits: [OB.UI.ButtonKey] */
-}
-
-.obUiKeypadCoinsLegacy-container1-container2 {}
-
-.obUiKeypadCoinsLegacy-container1-container2-obKeyLegacyB1 {
-/* # Inherits: [OB.UI.ButtonKey] */
-}
-
-.obUiKeypadCoinsLegacy-container1-container3 {}
-
-.obUiKeypadCoinsLegacy-container1-container3-obKeyLegacyC1 {
-/* # Inherits: [OB.UI.ButtonKey] */
-}
-
-.obUiKeypadCoinsLegacy-container2 {}
-
-.obUiKeypadCoinsLegacy-container2-container1 {}
-
-.obUiKeypadCoinsLegacy-container2-container1-obKeyObposPaymentCashA2 {
-/* # Inherits: [OB.UI.PaymentButton] */
-}
-
-.obUiKeypadCoinsLegacy-container2-container2 {}
-
-.obUiKeypadCoinsLegacy-container2-container2-obKeyOposPaymentCashB2 {
-/* # Inherits: [OB.UI.PaymentButton] */
-}
-
-.obUiKeypadCoinsLegacy-container2-container3 {}
-
-.obUiKeypadCoinsLegacy-container2-container3-obKeyObposPaymentCashC2 {
-/* # Inherits: [OB.UI.PaymentButton] */
-}
-
-.obUiKeypadCoinsLegacy-container3 {}
-
-.obUiKeypadCoinsLegacy-container3-container1 {}
-
-.obUiKeypadCoinsLegacy-container3-container1-obKeyObposPaymentCashA3 {
-/* # Inherits: [OB.UI.PaymentButton] */
-}
-
-.obUiKeypadCoinsLegacy-container3-container2 {}
-
-.obUiKeypadCoinsLegacy-container3-container2-obKeyObposPaymentCashB3 {
-/* # Inherits: [OB.UI.PaymentButton] */
-}
-
-.obUiKeypadCoinsLegacy-container3-container3 {}
-
-.obUiKeypadCoinsLegacy-container3-container3-obKeyObposPaymentCashC3 {
-/* # Inherits: [OB.UI.PaymentButton] */
-}
-
-.obUiKeypadCoinsLegacy-container4 {}
-
-.obUiKeypadCoinsLegacy-container4-container1 {}
-
-.obUiKeypadCoinsLegacy-container4-container1-obKeyObposPaymentCashA4 {
-/* # Inherits: [OB.UI.PaymentButton] */
-}
-
-.obUiKeypadCoinsLegacy-container4-container2 {}
-
-.obUiKeypadCoinsLegacy-container4-container2-obKeyObposPaymentCashB4 {
-/* # Inherits: [OB.UI.PaymentButton] */
-}
-
-.obUiKeypadCoinsLegacy-container4-container3 {}
-
-.obUiKeypadCoinsLegacy-container4-container3-obKeyObposPaymentCashC4 {
-/* # Inherits: [OB.UI.PaymentButton] */
-}
-
-.obUiKeypadCoinsLegacy-container5 {}
-
-.obUiKeypadCoinsLegacy-container5-container1 {}
-
-.obUiKeypadCoinsLegacy-container5-container1-obKeyObposPaymentCashA5 {
-/* # Inherits: [OB.UI.PaymentButton] */
-}
-
-.obUiKeypadCoinsLegacy-container5-container2 {}
-
-.obUiKeypadCoinsLegacy-container5-container2-obKeyObposPaymentCashB5 {
-/* # Inherits: [OB.UI.PaymentButton] */
-}
-
-.obUiKeypadCoinsLegacy-container5-container3 {}
-
-.obUiKeypadCoinsLegacy-container5-container3-obKeyObposPaymentCashC5 {
-/* # Inherits: [OB.UI.PaymentButton] */
-}
-
-
-/*
-# Component: OB.UI.PaymentButton
-*/
-.obUiPaymentButton {
-  margin: 5px;
-}
-
-.obUiPaymentButton-generic {
-  background-color: #6cb33f;
-  border: 10px solid #6cb33f;
-}
-
-.obUiPaymentButton_coin10 {
-  background-color: #e9b7c3;
-  border: 10px solid #e9b7c3;
-}
-
-.obUiPaymentButton_coin20 {
-  background-color: #bac3de;
-  border: 10px solid #bac3de;
-}
-
-.obUiPaymentButton_coin50 {
-  background-color: #f9bb92;
-  border: 10px solid #f9bb92;
-}
-
-.obUiPaymentButton_coin1 {
-  background-color: #e4e0e3;
-  border: 10px solid #f9e487;
-}
-
-.obUiPaymentButton_coin2 {
-  background-color: #f9e487;
-  border: 10px solid #e4e0e3;
-}
-
-.obUiPaymentButton_coin5 {
-  background-color: #bccdc5;
-  border: 10px solid #bccdc5;
-}
-
-.obUiPaymentButton_coin010 {
-  background-color: #f9e487;
-  border: 10px solid #f9e487;
-}
-
-.obUiPaymentButton_coin020 {
-  background-color: #f9e487;
-  border: 10px solid #f9e487;
-}
-
-.obUiPaymentButton_coin050 {
-  background-color: #f9e487;
-  border: 10px solid #f9e487;
-}
-
-.obUiPaymentButton_coin001 {
-  background-color: #f3bc9e;
-  border: 10px solid #f3bc9e;
-}
-
-.obUiPaymentButton_coin002 {
-  background-color: #f3bc9e;
-  border: 10px solid #f3bc9e;
-}
-
-.obUiPaymentButton_coin005 {
-  background-color: #f3bc9e;
-  border: 10px solid #f3bc9e;
-}
-
-.obUiPaymentButton-btn {
-/* # Inherits: [OB.UI.Button] */
-  display: block;
-  width: 100%;
-  border: none;
-  font-size: 18px;
+.paymentmethoditems {
+  position: relative;
+  float: left;
+  width: 120px;
+  min-width: 25%;
+  color: #666666;
   text-align: center;
-  line-height: 23px;
-  padding: 0px;
-  text-decoration: none;
-  background-color: #e2e2e2;
-  color: black;
   cursor: pointer;
-  height: 57px;
 }
 
-@media screen and (max-width: 842px) {
-  .obUiPaymentButton-btn {
-    font-size: 100%;
+.paymentmethoditemsdisabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+@media all and (max-width: 800px) {
+  .paymentmethoditems {
+    min-width: 33%;
   }
 }
 
-.obUiPaymentButton-btn.btn-over,
-.obUiPaymentButton-btn:hover {
- opacity: 0.75;
+.float-left {
+  float: left !important;
 }
 
-.obUiPaymentButton-btn.btn-down,
-.obUiPaymentButton-btn:active {
-  opacity: 1;
-  background-color: #cccccc;
+.height15 {
+  height: 15px;
 }
 
+.color-yellow {
+  color: yellow;
+}
 
-/*
-# Component: OBPOS_MockProviderVoid
-*/
-.obposMockProviderVoid {}
-
-
-
-
-/*****************/
-/*      JAR      */
-/*****************/
-
-/*
-# Component: OB.UI.ModalInvoicesHeader
-# Inherits: [OB.UI.ScrollableTableHeader]
-*/
-.obUiModalInvoicesHeader {}
-
-/*
-# Component: OB.UI.ListInvoicesLine
-# Inherits: [OB.UI.CheckboxButton]
-*/
-.obUiListInvoicesLine {
-  height: 38px;
-  background-position: 10px center;
-  cursor: pointer;
-  vertical-align: middle;
+.splitline-table {
   width: 100%;
+  background-color: #fff;
+  max-height: 200px !important;
+}
+
+.split-line {
+  width: 100%;
+  clear: both;
+  background-color: #fff;
+  height: 35px;
+  padding-top: 2px;
+}
+
+.splitline-message {
+  padding: 6px 0px 0px 14px;
+}
+
+.splitline-deletebtn {
+  border: 1px solid #D2D2D2 !important;
+  margin: 2px 0 0 5px !important;
+}
+
+.splitline-number-edit {
+  width: 30px;
+  height: 23px;
+}
+
+.splitline-line-label {
+  float: left;
+  width: 50%;
+  background-color: #e2e2e2;
+  height: 35px;
+  padding-right: 5px;
+  text-align: right;
+  font-size: 16px;
+  color: black;
+}
+
+.splitline-line-editors {
+  float: left;
+  width: 40%;
+  text-align: left;
+  padding-left: 5px;
+}
+
+.splitline-numbereditor-minusbtn {
+  border: 1px solid #E2E2E2 !important;
+  margin: -2px 2px 0 0 !important;
+}
+
+.splitline-numbereditor-plusbtn {
+  border: 1px solid #E2E2E2 !important;
+  margin: -2px 0 0 2px !important;
+}
+
+.splitline-info {
+  background-color: #fff;
+  height: 32px;
+  color: black;
+  font-size: 16px;
+}
+
+.splitline-info-numbers {
+  background-color: #fff;
+  height: 34px;
+  color: black;
+}
+
+.width6 {
+  width: 6% !important;
+}
+
+.width40 {
+  width: 40% !important;
+}
+
+.width52 {
+  width: 52% !important;
+}
+
+.twoAddrLayout {
+  width: 50%;
+  float: left;
+}
+
+.twoAddrLayoutHeader {
+  float: left;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 30px;
+  font-size: 16px;
+  padding-top: 1px;
+}
+
+@media all and (max-width: 800px) {
+  .twoAddrLayout {
+    width: 100%;
+  }
+
+  .width40 {
+    width: 20% !important;
+  }
+
+  .width52 {
+    width: 75% !important;
+  }
+}
+
+.splitline-info-label {
+  width: 25%;
+  float: left;
+  background-color: #e2e2e2;
+  border: 1px solid #fff;
+  vertical-align: middle;
+}
+
+.splitline-info-label-difference {
+  width: calc(25% - 12px);
+}
+
+.splitline-info-editor {
+  width: 25%;
+  float: left;
+  background-color: #fff;
+  text-align: center
+}
+
+.splitline-info-editor-input {
+  width: 40px;
+  height: 23px;
+}
+
+.splitline-lines-number-hide {
+  display: none;
+}
+
+.splitline-numberinfo {
+  width: 100%;
+  clear: both;
+  background-color: #fff;
+  height: 55px;
+  padding-top: 2px;
+}
+
+@media all and (max-width: 800px) {
+  .splitline-number-edit {
+    height: 45px;
+  }
+
+  .splitline-line-label {
+    width: 35%;
+    height: 53px;
+  }
+
+  .splitline-line-editors {
+    width: 59%;
+  }
+
+  .splitline-info {
+    height: 60px;
+  }
+
+  .splitline-info-label {
+    width: 33%;
+    height: 58px;
+  }
+
+  .splitline-info-label-difference {
+    width: calc(33% - 4px);
+    height: 58px;
+  }
+
+  .splitline-info-hide-lines {
+    display: none;
+  }
+
+  .splitline-info-editor {
+    width: 33%;
+  }
+
+  .splitline-lines-number-hide {
+    display: block;
+  }
+
+  .splitline-table {
+    max-height: 110px !important;
+  }
+}
+
+.paymentmethoditemstext {
+  font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
+  font-size: 16px;
+  height: 40px;
+  text-align: center;
+  padding: 2px 0px 0px 0px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.paymentmethoditemsimage {
+  width: 102px;
+  margin: 0 auto;
+}
+
+.paymentmethodnotitems {
+  width: 100%;
+  height: 80px;
+  padding-top: 30px;
+  color: #666666;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.iconServices_unreviewed {
+  width: 27px;
+  height: 26px;
+  background-image: url('./../img/iconServices_unreviewed.png');
+}
+
+.iconServices_reviewed {
+  width: 27px;
+  height: 26px;
+  background-image: url('./../img/iconServices_reviewed.png');
+}
+
+.product_category_tree_identifier {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-top: 4px;
+  height: 20px;
+}
+
+.product_category button.btnselect {
+  padding: 8px 0px 8px 10px !important;
+}
+
+.product_category_title {
+  line-height: 27px;
+  font-size: 18px;
+  font-weight: bold;
+  border-top: 1px solid #cccccc;
+  padding-left: 10px;
+}
+
+button.btnbp:disabled {
+  text-decoration: none;
+  background-color: white;
+  color: #000;
+  min-width: 115px;
+}
+
+.product_category_search li.selected>button.btnselect-browse {
+  background-color: #f8e859;
+  color: #000000;
+}
+
+.addressbillbutton {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.svg');
+  background-repeat: no-repeat;
+  background-size: 16px 18px;
+  background-position: 5px 1px;
+  width: 26px;
+  height: 22px;
+}
+
+.addressshipbutton {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.svg');
+  background-repeat: no-repeat;
+  background-size: 21px 21px;
+  background-position: 0px 0px;
+  width: 26px;
+  height: 22px;
+}
+
+.addresshipitems {
+  display: table-cell;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.svg');
+  background-repeat: no-repeat;
+  background-size: 21px 21px;
+  background-position: 12px 5px;
+  width: 35px;
+  height: 24px;
+}
+
+.addressbillitems {
+  display: table-cell;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.svg');
+  background-repeat: no-repeat;
+  background-size: 16px 18px;
+  background-position: 8px 1px;
+  width: 28px;
+  height: 24px;
+}
+
+.addressmenuselector {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconDownArrow.png');
+  background-repeat: no-repeat;
+  background-size: 14px 9px;
+  background-position: 21px 6px;
+  width: 35px;
+  height: 24px;
+  float: right;
+}
+
+.fix-bgposition-y {
+  background-position-y: 0px;
+}
+
+.iconRemove {
+  width: 30px;
+  height: 30px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorRemove.svg');
+  background-size: 24px 24px;
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+}
+
+.iconSortNone {
+  width: 58px;
+  height: 30px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDisabled.svg');
+  background-size: 52px 28px;
+  background-repeat: no-repeat;
+}
+
+.iconSortAsc {
+  width: 58px;
+  height: 30px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortAscending.svg');
+  background-size: 52px 28px;
+  background-repeat: no-repeat;
+}
+
+.iconSortDesc {
+  width: 58px;
+  height: 30px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDescending.svg');
+  background-size: 52px 28px;
+  background-repeat: no-repeat;
+}
+
+.btn-icon-split {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconChangeSplit.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+  background-size: 18px;
+}
+
+@media all and (max-width: 800px) {
+  div[id*=stBPAssignToReceipt_scrollArea] {
+    max-height: 497px !important;
+  }
+}
+
+.receipt-customer-selector-editor {
+  width: 870px !important;
+}
+
+@media (min-width: 350px) and (max-width: 470px) {
+  .taskBrowserHeader .label {
+    display: none;
+  }
+
+  .taskBrowserHeader .value {
+    width: 145px;
+  }
+
+  .receipt-customer-selector-editor {
+    width: calc(100% - 24px) !important;
+  }
+}
+
+@media (min-width: 471px) and (max-width: 549px) {
+  .taskBrowserHeader .label {
+    display: none;
+  }
+
+  .taskBrowserHeader .value {
+    width: 220px;
+  }
+
+  .receipt-customer-selector-editor {
+    width: calc(100% - 24px) !important;
+  }
+}
+
+@media (min-width: 550px) and (max-width: 649px) {
+  .taskBrowserHeader .label {
+    display: inline-block;
+  }
+
+  .taskBrowserHeader .value {
+    width: 230px;
+  }
+
+  .receipt-customer-selector-editor {
+    width: calc(100% - 24px) !important;
+  }
+}
+
+@media (min-width: 650px) and (max-width: 800px) {
+  .taskBrowserHeader .label {
+    display: inline-block;
+  }
+
+  .taskBrowserHeader .value {
+    width: 330px;
+  }
+
+  .receipt-customer-selector-editor {
+    width: calc(100% - 24px) !important;
+  }
+}
+
+@media (min-width: 801px) and (max-width: 899px) {
+  .taskBrowserHeader .label {
+    display: none;
+  }
+
+  .taskBrowserHeader .value {
+    width: 145px;
+  }
+
+  .receipt-customer-selector-editor {
+    width: 780px !important;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 979px) {
+  .taskBrowserHeader .label {
+    display: none;
+  }
+
+  .taskBrowserHeader .value {
+    width: 200px;
+  }
+}
+
+@media (min-width: 980px) and (max-width: 1119px) {
+  .taskBrowserHeader .label {
+    display: inline-block;
+  }
+
+  .taskBrowserHeader .value {
+    width: 145px;
+  }
+}
+
+@media (min-width: 1120px) and (max-width: 1199px) {
+  .taskBrowserHeader .label {
+    display: inline-block;
+  }
+
+  .taskBrowserHeader .value {
+    width: 185px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .taskBrowserHeader .label {
+    display: inline-block;
+  }
+
+  .taskBrowserHeader .value {
+    width: 260px;
+  }
+}
+
+.customer-property-label {
+  font-size: 15px;
+  color: black;
+  text-align: right;
+  border: 1px solid #FFFFFF;
+  background-color: #E2E2E2;
+  width: 20%;
+  height: 28px;
+  padding: 12px 5px 1px 0;
+  float: left;
+}
+
+.customer-property-text {
+  border: 1px solid #FFFFFF;
+  float: left;
+  width: 75%;
+}
+
+@media (min-width: 350px) and (max-width: 520px) {
+  .customer-property-label {
+    width: 40%;
+  }
+
+  .width40 {
+    width: 40% !important;
+  }
+
+  .customer-property-text {
+    width: 54%;
+  }
+
+  .width52 {
+    width: 54% !important;
+  }
+}
+
+@media (min-width: 521px) and (max-width: 800px) {
+  .customer-property-label {
+    width: 30%;
+  }
+
+  .width40 {
+    width: 30% !important;
+  }
+
+  .customer-property-text {
+    width: 64%;
+  }
+
+  .width52 {
+    width: 64% !important;
+  }
+}
+
+.whitecolor {
+  color: white;
+}
+
+.blackecolor {
+  color: black;
+}
+
+
+.orderline-quantity {
+  float: left;
+  width: 65px;
+  text-align: right;
+}
+
+.orderline-price,
+.orderline-gross {
+  float: left;
+  width: 105px;
+  text-align: right;
+}
+
+.orderline-productname {
+  float: left;
+  width: calc(100% - 275px);
+  /* The same than calc(100% - 65px - 2 * 105px); */
+  padding: 0px;
+}
+
+.orderline-characteristicsDescription {
+  width: calc(100% - 210px);
+  /* The same than calc(100% - 2 * 105px); */
+  color: grey;
+  padding-left: 0%;
+  padding-top: 4px;
+  font-size: 14px;
+  clear: both;
+}
+
+.orderline-canbedelivered {
+  color: #f8941d;
+  float: left;
+  width: 100%;
+  clear: left;
+}
+
+li.selected>button>div>div.orderline-canbedelivered {
+  color: #c46200;
+}
+
+li.selected>button.btnselect-orderline.btnselect-orderline-edit>div>div.orderline-canbedelivered {
+  color: #ffe7ce;
+}
+
+.order-total-label {
+  font-weight: bold;
+  float: left;
+  width: calc(100% - 275px);
+  /* The same than calc(100% - 65px - 2 * 105px); */
+}
+
+.order-total-qty {
+  float: left;
+  width: 65px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.order-total-gross {
+  float: left;
+  width: 210px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.order-tax-label {
+  float: left;
+  width: calc(100% - 210px);
+  /* The same than calc(100% - 2 * 105px); */
+}
+
+.order-tax-base,
+.order-tax-total {
+  float: left;
+  width: 105px;
+  text-align: right;
+}
+
+/*
+   Media query for dynamic 'unit price' and 'gross price' widths from 80px to 105px when
+   the viewport aspect ratio goes from 5:4 (1.25) to 3:2 (1.5) respectively in landscape mode and
+   from 10:16 (0.625) to 3:4 (0.75) respectively in portrait mode.
+   The product name is also adapted to fill the remaining space.
+*/
+
+@media all and (min-width: 801px) and (max-aspect-ratio: 150/100),
+(max-width: 800px) and (max-aspect-ratio: 3/4) {
+
+  .orderline-price,
+  .orderline-gross {
+    width: calc((25/79 * 100%) - 39px);
+  }
+
+  .orderline-productname {
+    width: calc((29/79 * 100%) + 13px);
+    /* The same than calc(100% - 65px - 2 * ((25/79 * 100%) - 39px)); */
+  }
+
+  .orderline-characteristicsDescription {
+    width: calc((29/79 * 100%) + 78px);
+    /* The same than calc(100% - 2 * ((25/79 * 100%) - 39px)); */
+  }
+
+  .order-total-label {
+    width: calc((29/79 * 100%) + 13px);
+    /* The same than calc(100% - 65px - 2 * ((25/79 * 100%) - 39px)); */
+  }
+
+  .order-total-gross {
+    width: calc((50/79 * 100%) - 78px);
+    /* The same than calc(2 * ((25/79 * 100%) - 39px)); */
+  }
+
+  .order-tax-label {
+    width: calc((29/79 * 100%) + 78px);
+    /* The same than calc(100% - 2 * ((25/79 * 100%) - 39px)); */
+  }
+
+  .order-tax-base,
+  .order-tax-total {
+    width: calc((25/79 * 100%) - 39px);
+  }
+}
+
+@media all and (min-width: 801px) and (max-aspect-ratio: 125/100),
+(max-width: 800px) and (max-aspect-ratio: 10/16) {
+
+  .orderline-price,
+  .orderline-gross {
+    width: 80px;
+  }
+
+  .orderline-productname {
+    width: calc(100% - 225px);
+    /* The same than calc(100% - 65px - 2 * 80px); */
+  }
+
+  .orderline-characteristicsDescription {
+    width: calc(100% - 160px);
+    /* The same than calc(100% - 2 * 80px); */
+  }
+
+  .order-total-label {
+    width: calc(100% - 225px);
+    /* The same than calc(100% - 65px - 2 * 80px); */
+  }
+
+  .order-total-gross {
+    width: 160px;
+    font-weight: bold;
+  }
+
+  .order-tax-label {
+    width: calc(100% - 160px);
+    /* The same than calc(100% - 2 * 80px); */
+  }
+
+  .order-tax-base,
+  .order-tax-total {
+    width: 80px;
+  }
+}
+
+.productLine {
+  padding: 0px 0px 6px 6px !important;
+}
+
+.productLine .productImgContainer {
+  margin: 0px 8px 0px 0px;
+  padding-top: 6px;
+}
+
+.productLine .productIdentifier {
+  overflow: hidden;
+  padding-top: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.flex-customer-buttons-item {
+  max-width: 70%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+
+  background-color: #e2e2e2;
+  color: black;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
+  height: 30px;
+  margin: 10px;
+  padding: 5px 15px 7px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 18px;
+}
+
+.flex-customer-buttons-item-text {
+  text-overflow: inherit;
+  white-space: inherit;
+  overflow: inherit;
+}
+
+.flex-customer-buttons-item-text-fullwidht {
+  max-width: 100%;
+}
+
+.flex-customer-buttons-item-text-partialwidht {
+  max-width: 90%;
+}
+
+.flex-customer-buttons-customer {
+  flex-shrink: 1;
+  /* To give more priority to the full customer visualization while start shrinking (just in case of large addresses) */
+}
+
+.flex-customer-buttons-addresses {
+  flex-shrink: 10000;
+  /* To give more priority to the full customer visualization while start shrinking (just in case of large addresses) */
+  min-width: 53px;
+}
+
+.customer-buttons-separator {
+  min-width: 5px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.modal-order-selector-check {
+  margin-top: 8px;
+  float: left;
+}
+
+.modal-order-selector-line-with-check {
+  width: calc(100% - 47px) !important;
+}
+
+.product_image {
+  margin: 0 auto;
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.msgwelcomeLbl {
+  align-items: center;
+  background-image: url(./../img/OpenbravoWelcomeLogo.svg);
+  background-position-x: right;
+  background-repeat: no-repeat;
+  background-size: 95px 23px;
+  display: flex;
+  font-size: 16px;
+  height: 23px;
+  justify-content: flex-end;
+  padding: 2px 102px 0px 0px;
+}
+
+button.payment-changebutton {
+  padding: 5px;
+  margin: -5px 10px 0px 0px;
+  width: 40px;
+  height: 25px;
+}
+
+.changedialog-properties {
+  background-color: #ffffff;
+}
+
+.changedialog-properties-label {
+  padding: 5px 8px 0px 0px;
+  font-size: 15px;
+  width: 35%;
+}
+
+.changedialog-properties-text {
+  border: 1px solid #F0F0F0;
+  float: left;
+  width: 35%;
+}
+
+.changedialog-properties-input {
+  width: 100%;
+  margin-bottom: 0px;
+  text-align: right;
+}
+
+.changedialog-properties-info {
+  float: left;
+  margin-left: 25px;
+  color: #6f6f6f;
+  font-size: 12px;
+  text-align: right;
+}
+
+.changedialog-properties-info-text {
+  line-height: 20px;
+}
+
+.changedialog-errors {
+  color: #b94a48;
+  font-size: medium;
+  height: 25px;
+}
+
+.changedialog-properties-end {
+  clear: both;
+}
+
+.changedialog-properties-validation-ok {
+  background-color: inherit;
+}
+
+.changedialog-properties-validation-error {
+  background-color: #fe7f7f;
+}
+
+.input::placeholder,
+.input-login::placeholder {
+  color: #bbbbbb;
+  font-style: italic;
+}
+
+.onyx-menu-item {
+  cursor: pointer;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+}
+
+.modal-body-label {
+  text-align: right;
+  padding-right: 10px;
+  width: 40%;
+  height: 40px;
+  float: left;
+}
+
+.btnlink-headerButton {
+  width: 180px !important;
+  margin: 0px 8px 6px 0px !important;
+}
+
+.filterSelectorTableHeader {
+  padding: 10px;
+}
+
+.filterSelectorTableHeader_buttons {
+  padding: 7px;
+}
+
+.filterSelectorTableHeader_Firstbutton {
+  display: table;
+  margin: 0 auto;
+}
+
+.selectorHeader_btnSelectAll {
+  display: table-cell;
+  text-align: right;
+  width: 38%
+}
+
+.selectorHeader_btnAdvancedFilter {
+  display: table-cell;
+  text-align: center;
+  width: 24%
+}
+
+.selectorHeader_btnAssociateSelected {
+  display: table-cell;
+  width: 38%
+}
+
+.selector_orderLines {
+  height: 40px;
+  padding: 0;
+  border-bottom: none;
+}
+
+.selector_orderList {
+  border-bottom: 1px solid #cccccc;
+}
+
+.selectorLoadingMsg {
+  border-bottom: 1px solid #cccccc;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 30px;
+  color: #cccccc
+}
+
+.ob-row-order {
+  width: 100%;
+}
+
+.ob-row-order-text {
+  float: left;
+  display: inline-block;
+  padding-top: 4px;
+  padding-left: 5px;
+  color: #888888;
+}
+
+.ob-row-order-text-bold {
+  float: left;
+  display: inline-block;
+  padding-top: 4px;
+  padding-left: 5px;
+}
+
+.ob-row-orderline {
+  height: 36px;
+  width: 100%;
+  padding: 0px 5px 0px 23px;
+  border-bottom: none;
+}
+
+.ob-cell-orderline-left {
+  float: left;
+  display: inline-block;
+  border-top: 1px solid #ccc;
+  height: 100%;
+  width: 100%;
+}
+
+.ob-cell-orderline-left-info {
+  float: left;
+  width: 300px;
+  display: inline-block;
+  padding-left: 5px;
+  padding-top: 5px;
+}
+
+li.ob-order:first-child>button>div.ob-row-order,
+li.ob-order+li.ob-orderline>button>div>div.ob-cell-orderline-left,
+li.ob-order+li.ob-orderline>button>div>div>div.ob-cell-orderline-right-col1:first-child,
+li.ob-order+li.ob-orderline>button>div>div>div.ob-cell-orderline-right-col2:first-child {
+  border-top: none;
+
+}
+
+li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right-col1:first-child {
+  border-bottom: none;
+}
+
+.ob-cell-orderline-combobox {
+  background-color: #fff;
+  border: none;
+  color: #555;
+  padding: 4px;
+  width: 100%;
+  height: 32px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ob-checkbox-half-on {
+  width: 34px;
+  height: 25px;
+  float: left;
+  display: inline-block;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-half-on.svg');
+  background-repeat: no-repeat;
+}
+
+.ob-checkbox-on {
+  width: 34px;
+  height: 25px;
+  float: left;
+  display: inline-block;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
+  background-repeat: no-repeat;
+}
+
+.ob-checkbox-off {
+  width: 34px;
+  height: 25px;
+  float: left;
+  display: inline-block;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
+  background-repeat: no-repeat;
+}
+
+.ob-checkbox-button-margin {
+  margin: 5px 0px 0px 5px;
+}
+
+.ob-button-minus-plus {
+  background-color: #e2e2e2;
+  height: 18px;
+  float: left;
+  margin: 7px 4px 0px 4px;
+  font-size: 20px;
+}
+
+.ob-button-minus-plus:hover {
+  background-color: #e9e9e9;
+}
+
+.ob-button-minus {
+  width: 15px;
+  padding: 1px 0px 0px 4px;
+}
+
+.ob-button-plus {
+  width: 15px;
+  padding: 1px 0px 0px 4px;
+}
+
+.ob-button-info {
+  background-color: #e2e2e2;
+  height: 19px;
+  width: 15px;
+  padding: 0px 0px 0px 4px;
+  float: right;
+  margin: 10px 4px 0px 4px;
+}
+
+.ob-button-info:hover {
+  background-color: #e9e9e9;
+}
+
+.ob-button-info-normal {
+  background-image: url('./../img/info-icon.png');
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+
+.ob-cell-orderline-button-disabled {
+  width: 130px;
+  height: 20px;
+  padding: 5px 0px 0px 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ob-button-info-plus {
+  background-image: url('./../img/info-icon-plus.png');
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-color: #7DA7D9;
+}
+
+.ob-cell-orderline-button {
+  background-color: #e2e2e2;
+  width: 130px;
+  height: 20px;
+  padding: 5px 0px 0px 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ob-cell-orderline-button:hover {
+  background-color: #e9e9e9;
+}
+
+.ob-text-line {
+  display: inline-block;
+  width: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.modal_associateTickets {
+  width: 725px !important;
+}
+
+.modal-removeAssociatedTickets {
+  width: 900px !important;
+}
+
+.modal-removeAssociatedTickets-scroller {
+  background-color: #ffffff;
+  margin-top: -8px;
+}
+
+.modal-removeAssociatedTickets-header {
+  padding-bottom: 0px;
+  margin: 0px !important;
+  height: 140px;
+}
+
+.modal-removeAssociatedTickets-headerLabels {
+  overflow: hidden;
+  padding-top: 20px;
+  border-bottom: 3px solid #cccccc;
+  text-align: center;
+  color: black;
+  margin-top: 15px;
+  padding-bottom: 7px;
+  font-weight: bold;
+  background-color: white;
+  height: 40px;
+}
+
+.modal-removeAssociatedTickets-headerLabels-productName {
+  line-height: 25px;
+  font-size: 17px;
+  width: 179px;
+  padding-left: 80px;
+}
+
+.modal-removeAssociatedTickets-headerLabels-totalQty {
+  line-height: 25px;
+  font-size: 17px;
+  width: 85px;
+}
+
+.modal-removeAssociatedTickets-headerLabels-receipt {
+  line-height: 25px;
+  font-size: 17px;
+  width: 180px;
+}
+
+.modal-removeAssociatedTickets-headerLabels-customer {
+  line-height: 25px;
+  font-size: 17px;
+  width: 250px;
+  padding-left: 20px;
+}
+
+.modal-removeAssociatedTickets-headerContent {
+  text-align: center;
+  color: white;
+}
+
+.modal-removeAssociatedTickets-header-serviceName {
+  line-height: 25px;
+  font-size: 24px;
+}
+
+.modal-removeAssociatedTickets-header-linesLabel {
+  line-height: 25px;
+  font-size: 20px;
+}
+
+.checkbox_removeAssociations {
+  width: 8%;
+  background-position: 15px center !important;
+}
+
+.associatedOrderLine {
+  border-bottom: 1px solid #cccccc;
+  text-align: center;
+  color: black;
+  padding-top: 9px;
+}
+
+.associatedOrderLine-productName {
+  line-height: 35px;
+  font-size: 17px;
+  width: 180px;
+  padding-left: 6px;
+}
+
+.associatedOrderLine-orderedQuantity {
+  line-height: 35px;
+  font-size: 17px;
+  width: 85px;
+}
+
+.associatedOrderLine-documentNo {
+  line-height: 35px;
+  font-size: 17px;
+  width: 180px;
+  padding-left: 5px;
+}
+
+.associatedOrderLine-customer {
+  line-height: 35px;
+  font-size: 17px;
+  width: 250px;
+  padding-left: 20px;
+}
+
+.modal-invoices-list-invoices-line {
   border-bottom: 1px solid #cccccc;
   text-align: left;
   padding-left: 70px;
   height: 58px;
 }
 
-.obUiListInvoicesLine-line {
-  line-height: 23px;
-  display: inline;
+.payOpenTicketsIsLayaway {
+  font-weight: bold;
+  color: lightblue;
+  float: right;
+  text-align: right;
 }
 
-.obUiListInvoicesLine-line-topLine {
-  display: inline;
+.payOpenTicketsIsReceipt {
+  font-weight: bold;
+  color: rgb(108, 179, 63);
+  float: right;
+  text-align: right;
 }
 
-.obUiListInvoicesLine-line-bottonLine {
-  color: #888888;
-}
+/*Modal print invoices footer*/
 
-.obUiListInvoicesLine-line-element1 {
-  clear: both;
-}
-
-/*
-# Component: OB.UI.ListInvoices
-*/
-.obUiListInvoices {}
-
-.obUiListInvoices-container1 {
-  float: left;
-  width: 100%;
-  touch-action: none;
-}
-
-.obUiListInvoices-container1-container1 {}
-
-.obUiListInvoices-container1-container1-container1 {
-  float: left;
-  width: 100%;
-  touch-action: none;
-}
-
-.obUiListInvoices-container1-container1-container1-invoiceslistitemprinter {
-  /* Inherits: [OB.UI.ScrollableTable] */
-  max-height: 300px;
-}
-
-.obUiListInvoices-container1-footer {
-  /* Inherits: [OB.UI.ModalInvoicesFooter] */
-}
-
-/*
-# Component: OB.UI.ModalInvoicesFooter
-*/
-.obUiModalInvoicesFooter {}
-
-.obUiModalInvoicesFooter-printReceipt {
-  /* Inherits: [OB.UI.SmallButton] */
-  width: 140px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.obUiModalInvoicesFooter-printInvoices {
-  /* Inherits: [OB.UI.SmallButton] */
-  width: 140px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.obUiModalInvoicesFooter-buttonsContainer {
+.modalInvoices__footer {
   display: flex;
   border-top: 1px solid #cccccc;
   flex-direction: row;
@@ -492,30 +1312,198 @@
   width: 100%;
 }
 
-.obUiModalInvoicesFooter-buttonsContainer-button_comfortable {
+.modalInvoices__footer--4>.modalInvoices__footer--button {
   width: 126px;
 }
 
-.obUiModalInvoicesFooter-buttonsContainer-button_cozy {
+.modalInvoices__footer--5>.modalInvoices__footer--button {
   width: 112px;
 }
 
-.obUiModalInvoicesFooter-buttonsContainer-button_compact {
+.modalInvoices__footer--6>.modalInvoices__footer--button {
   width: 98px;
 }
 
-.obUiModalInvoicesFooter-cancelButton {
-  /* Inherits: [OB.UI.SmallButton] */
+.modalInvoices__footer--button {
   width: 140px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
 
+.modalInvoices__footer--buttoncancel {}
+
+/*Modal BP selector*/
+.modal-bp-selector-selectedItem {
+  background-color: #fbf6d1 !important;
 }
+
+.cashup-first-empty-payment {
+  border-bottom: 1px solid #cccccc;
+  border-top: 1px solid #cccccc;
+}
+
+.buttonVoid {
+  display: table-cell;
+  vertical-align: middle;
+  width: 5%;
+}
+
+.cashupDisplayFlex {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+@media only screen and (max-width: 1456px) {
+  .cashupDisplayFlex {
+    flex-direction: column;
+  }
+}
+
+.cashupReceiptInfo {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 100%;
+  align-items: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
-# Component: OB.UI.ModalInvoices
-# Inherits: [OB.UI.Modal]
+ ************************************************************************************
+ * Copyright (C) 2019 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+/*********GENERIC********/
+
+/*
+# OB.UI.ReceiptSelectorRenderLine
 */
-.obUiModalInvoices {
-  top: 125px;
+
+
+
+
+
+
+
+
+
+/************SPECIFIC****************/
+
+.genericBodyModalContainer {}
+
+.genericBodyModalContainer-container1 {
+  border-bottom: var(--bottomseparator-slim);
 }
+
+.genericBodyModalContainer-container1-containerOfReceiptsListItemPrinter {}
+
+.genericBodyModalContainer-container1-renderLoading {}
+
+.openreceiptslistitemprinter {
+  max-height: 350px;
+}
+
+/*
+# OB.UI.ReceiptSelectorRenderLine
+*/
+.obUiReceiptSelectorRenderLine {
+  width: 100%;
+}
+
+.obUiReceiptSelectorRenderLine-iconCheck {
+  margin-top: 8px;
+  float: left;
+}
+
+.obUiReceiptSelectorRenderLine-lineInfo {
+  float: left;
+  width: 100%;
+  padding: 5px;
+}
+
+.lineInfo {}
+
+
+.lineInfo-storeContainer {
+  padding-bottom: 3px
+}
+
+.storeContainer {}
+
+.storeContainer-store {
+  float: left;
+  padding-left:105px;
+  font-weight: bold;
+  color: blue
+}
+
+.store {}
+
+.lineInfoContainer {}
+
+.lineInfo-lineInfoContainerFirstRow {}
+
+.lineInfo-lineInfoContainerSecondRow {}
+
+.lineInfoContainer-Item1 {
+  float: left;
+  width: 100px;
+}
+
+.lineInfoContainerFirstRow-date {}
+
+.lineInfoContainerSecondRow-time {}
+
+.lineInfoContainer-Item2 {
+  float: left;
+  padding-left:5px;
+}
+
+.lineInfoContainerFirstRow-documentNo {}
+
+.lineInfoContainerSecondRow-customer {}
+
+.lineInfoContainer-Item3 {
+  float: right;
+  padding-right:5px;
+  width: 100px;
+  text-align: right;
+  font-weight: bold;
+}
+.lineInfoContainerFirstRow-amount {}
+
+.lineInfoContainerSecondRow-ordertType {}

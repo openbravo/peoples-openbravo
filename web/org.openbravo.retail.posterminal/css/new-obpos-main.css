@@ -1,0 +1,521 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2019 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
+
+
+
+/*****************/
+/*      GAL      */
+/*****************/
+
+
+
+
+/*****************/
+/*      JRO      */
+/*****************/
+
+
+
+
+/*****************/
+/*      JGA      */
+/*****************/
+
+/*
+# Component: PopupDrawerOpened
+# Inherits: [OB.UI.PopupDrawerOpened]
+*/
+.popupDrawerOpened {}
+
+.popupDrawerOpened-table-generic {
+  position: relative;
+}
+
+.popupDrawerOpened-table_noTop {
+  top: 0px;
+}
+
+.popupDrawerOpened-table_standardTop {
+  top: 35px;
+}
+
+
+/*
+# Component: ModalSelectTerminal
+# Inherits: [OB.UI.ModalSelectTerminal]
+*/
+.modalSelectTerminal {}
+
+
+/*
+# Model: Order
+*/
+.confirmationPopup-body_generic {
+  text-align: left;
+  padding-right: 10px;
+}
+
+.confirmationPopup-body_cannotCancelLayWithDeferred {
+  padding-left: 10px;
+}
+
+.confirmationPopup-body_relatedOrders {
+  padding-left: 30px;
+}
+
+.confirmationPopup-body_character {
+  padding-left: 60px;
+}
+
+
+/*
+# Component: OB.UI.ReceiptsCounter
+*/
+.obUiReceiptsCounter {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.obUiReceiptsCounter-receiptsCounterButton {}
+
+
+
+/*
+# Component: OB.UI.ReceiptsCounterButton
+# Inherits: [OB.UI.Button]
+*/
+.obUiReceiptsCounterButton {
+  position: relative;
+  overflow: hidden;
+  margin: 0px;
+  padding: 0px;
+  height: 50px;
+  width: 50px;
+  background-color: #e2e2e2;
+  color: black;
+  display: inline-block;
+  font-weight: 600;
+  border: none;
+  font-size: var(--font-medium-large);
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+}
+
+.obUiReceiptsCounterButton_smallFont {
+  font-size: var(--font-small);
+}
+
+.obUiReceiptsCounterButton_mediumLargeFont {
+  font-size: var(--font-medium-large);
+}
+
+.obUiReceiptsCounterButton:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+.obUiReceiptsCounterButton.btn-over,
+.obUiReceiptsCounterButton:hover {
+  opacity: 0.75;
+}
+.obUiReceiptsCounterButton.btn-down,
+.obUiReceiptsCounterButton:active {
+  opacity: 0.999; /* Instead of "1" to avoid strange displacement effect in buttons on hover effect */
+  background-color: #cccccc;
+}
+.obUiReceiptsCounterButton:disabled,
+.obUiReceiptsCounterButton[disabled=true]:hover{
+  background-color: #a9a9a9;
+  opacity: 1;
+  cursor: default;
+}
+
+.obUiReceiptsCounterButton-element1 {
+  position: absolute;
+  top: -35px;
+  right:-35px;
+  background: #404040;
+  height:70px;
+  width: 70px;
+  -transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+}
+
+.obUiReceiptsCounterButton-counter {
+  position: absolute;
+  top: 0px;
+  right:0px;
+  padding-top: 5px;
+  padding-right: 10px;
+  font-weight: bold;
+  color: white;
+  max-width: 21px;
+  max-height: 18px;
+}
+
+
+/*
+# Component: OB.UI.KeypadCoinsLegacy
+*/
+.obUiKeypadCoinsLegacy {}
+
+.obUiKeypadCoinsLegacy-container1 {}
+
+.obUiKeypadCoinsLegacy-obUiButtonKey-generic {
+  font-size: var(--font-xlarge);
+}
+
+.obUiKeypadCoinsLegacy-container1-container1 {}
+
+.obUiKeypadCoinsLegacy-container1-container1-obKeyLegacyA1 {
+/* # Inherits: [OB.UI.ButtonKey] */
+}
+
+.obUiKeypadCoinsLegacy-container1-container2 {}
+
+.obUiKeypadCoinsLegacy-container1-container2-obKeyLegacyB1 {
+/* # Inherits: [OB.UI.ButtonKey] */
+}
+
+.obUiKeypadCoinsLegacy-container1-container3 {}
+
+.obUiKeypadCoinsLegacy-container1-container3-obKeyLegacyC1 {
+/* # Inherits: [OB.UI.ButtonKey] */
+}
+
+.obUiKeypadCoinsLegacy-container2 {}
+
+.obUiKeypadCoinsLegacy-container2-container1 {}
+
+.obUiKeypadCoinsLegacy-container2-container1-obKeyObposPaymentCashA2 {
+/* # Inherits: [OB.UI.PaymentButton] */
+}
+
+.obUiKeypadCoinsLegacy-container2-container2 {}
+
+.obUiKeypadCoinsLegacy-container2-container2-obKeyOposPaymentCashB2 {
+/* # Inherits: [OB.UI.PaymentButton] */
+}
+
+.obUiKeypadCoinsLegacy-container2-container3 {}
+
+.obUiKeypadCoinsLegacy-container2-container3-obKeyObposPaymentCashC2 {
+/* # Inherits: [OB.UI.PaymentButton] */
+}
+
+.obUiKeypadCoinsLegacy-container3 {}
+
+.obUiKeypadCoinsLegacy-container3-container1 {}
+
+.obUiKeypadCoinsLegacy-container3-container1-obKeyObposPaymentCashA3 {
+/* # Inherits: [OB.UI.PaymentButton] */
+}
+
+.obUiKeypadCoinsLegacy-container3-container2 {}
+
+.obUiKeypadCoinsLegacy-container3-container2-obKeyObposPaymentCashB3 {
+/* # Inherits: [OB.UI.PaymentButton] */
+}
+
+.obUiKeypadCoinsLegacy-container3-container3 {}
+
+.obUiKeypadCoinsLegacy-container3-container3-obKeyObposPaymentCashC3 {
+/* # Inherits: [OB.UI.PaymentButton] */
+}
+
+.obUiKeypadCoinsLegacy-container4 {}
+
+.obUiKeypadCoinsLegacy-container4-container1 {}
+
+.obUiKeypadCoinsLegacy-container4-container1-obKeyObposPaymentCashA4 {
+/* # Inherits: [OB.UI.PaymentButton] */
+}
+
+.obUiKeypadCoinsLegacy-container4-container2 {}
+
+.obUiKeypadCoinsLegacy-container4-container2-obKeyObposPaymentCashB4 {
+/* # Inherits: [OB.UI.PaymentButton] */
+}
+
+.obUiKeypadCoinsLegacy-container4-container3 {}
+
+.obUiKeypadCoinsLegacy-container4-container3-obKeyObposPaymentCashC4 {
+/* # Inherits: [OB.UI.PaymentButton] */
+}
+
+.obUiKeypadCoinsLegacy-container5 {}
+
+.obUiKeypadCoinsLegacy-container5-container1 {}
+
+.obUiKeypadCoinsLegacy-container5-container1-obKeyObposPaymentCashA5 {
+/* # Inherits: [OB.UI.PaymentButton] */
+}
+
+.obUiKeypadCoinsLegacy-container5-container2 {}
+
+.obUiKeypadCoinsLegacy-container5-container2-obKeyObposPaymentCashB5 {
+/* # Inherits: [OB.UI.PaymentButton] */
+}
+
+.obUiKeypadCoinsLegacy-container5-container3 {}
+
+.obUiKeypadCoinsLegacy-container5-container3-obKeyObposPaymentCashC5 {
+/* # Inherits: [OB.UI.PaymentButton] */
+}
+
+
+/*
+# Component: OB.UI.PaymentButton
+*/
+.obUiPaymentButton {
+  margin: 5px;
+}
+
+.obUiPaymentButton-generic {
+  background-color: #6cb33f;
+  border: 10px solid #6cb33f;
+}
+
+.obUiPaymentButton_coin10 {
+  background-color: #e9b7c3;
+  border: 10px solid #e9b7c3;
+}
+
+.obUiPaymentButton_coin20 {
+  background-color: #bac3de;
+  border: 10px solid #bac3de;
+}
+
+.obUiPaymentButton_coin50 {
+  background-color: #f9bb92;
+  border: 10px solid #f9bb92;
+}
+
+.obUiPaymentButton_coin1 {
+  background-color: #e4e0e3;
+  border: 10px solid #f9e487;
+}
+
+.obUiPaymentButton_coin2 {
+  background-color: #f9e487;
+  border: 10px solid #e4e0e3;
+}
+
+.obUiPaymentButton_coin5 {
+  background-color: #bccdc5;
+  border: 10px solid #bccdc5;
+}
+
+.obUiPaymentButton_coin010 {
+  background-color: #f9e487;
+  border: 10px solid #f9e487;
+}
+
+.obUiPaymentButton_coin020 {
+  background-color: #f9e487;
+  border: 10px solid #f9e487;
+}
+
+.obUiPaymentButton_coin050 {
+  background-color: #f9e487;
+  border: 10px solid #f9e487;
+}
+
+.obUiPaymentButton_coin001 {
+  background-color: #f3bc9e;
+  border: 10px solid #f3bc9e;
+}
+
+.obUiPaymentButton_coin002 {
+  background-color: #f3bc9e;
+  border: 10px solid #f3bc9e;
+}
+
+.obUiPaymentButton_coin005 {
+  background-color: #f3bc9e;
+  border: 10px solid #f3bc9e;
+}
+
+.obUiPaymentButton-btn {
+/* # Inherits: [OB.UI.Button] */
+  display: block;
+  width: 100%;
+  border: none;
+  font-size: 18px;
+  text-align: center;
+  line-height: 23px;
+  padding: 0px;
+  text-decoration: none;
+  background-color: #e2e2e2;
+  color: black;
+  cursor: pointer;
+  height: 57px;
+}
+
+@media screen and (max-width: 842px) {
+  .obUiPaymentButton-btn {
+    font-size: 100%;
+  }
+}
+
+.obUiPaymentButton-btn.btn-over,
+.obUiPaymentButton-btn:hover {
+ opacity: 0.75;
+}
+
+.obUiPaymentButton-btn.btn-down,
+.obUiPaymentButton-btn:active {
+  opacity: 1;
+  background-color: #cccccc;
+}
+
+
+/*
+# Component: OBPOS_MockProviderVoid
+*/
+.obposMockProviderVoid {}
+
+
+
+
+/*****************/
+/*      JAR      */
+/*****************/
+
+/*
+# Component: OB.UI.ModalInvoicesHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obUiModalInvoicesHeader {}
+
+/*
+# Component: OB.UI.ListInvoicesLine
+# Inherits: [OB.UI.CheckboxButton]
+*/
+.obUiListInvoicesLine {
+  height: 38px;
+  background-position: 10px center;
+  cursor: pointer;
+  vertical-align: middle;
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
+  text-align: left;
+  padding-left: 70px;
+  height: 58px;
+}
+
+.obUiListInvoicesLine-line {
+  line-height: 23px;
+  display: inline;
+}
+
+.obUiListInvoicesLine-line-topLine {
+  display: inline;
+}
+
+.obUiListInvoicesLine-line-bottonLine {
+  color: #888888;
+}
+
+.obUiListInvoicesLine-line-element1 {
+  clear: both;
+}
+
+/*
+# Component: OB.UI.ListInvoices
+*/
+.obUiListInvoices {}
+
+.obUiListInvoices-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obUiListInvoices-container1-container1 {}
+
+.obUiListInvoices-container1-container1-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obUiListInvoices-container1-container1-container1-invoiceslistitemprinter {
+  /* Inherits: [OB.UI.ScrollableTable] */
+  max-height: 300px;
+}
+
+.obUiListInvoices-container1-footer {
+  /* Inherits: [OB.UI.ModalInvoicesFooter] */
+}
+
+/*
+# Component: OB.UI.ModalInvoicesFooter
+*/
+.obUiModalInvoicesFooter {}
+
+.obUiModalInvoicesFooter-printReceipt {
+  /* Inherits: [OB.UI.SmallButton] */
+  width: 140px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.obUiModalInvoicesFooter-printInvoices {
+  /* Inherits: [OB.UI.SmallButton] */
+  width: 140px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.obUiModalInvoicesFooter-buttonsContainer {
+  display: flex;
+  border-top: 1px solid #cccccc;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.obUiModalInvoicesFooter-buttonsContainer-button_comfortable {
+  width: 126px;
+}
+
+.obUiModalInvoicesFooter-buttonsContainer-button_cozy {
+  width: 112px;
+}
+
+.obUiModalInvoicesFooter-buttonsContainer-button_compact {
+  width: 98px;
+}
+
+.obUiModalInvoicesFooter-cancelButton {
+  /* Inherits: [OB.UI.SmallButton] */
+  width: 140px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+
+}
+/*
+# Component: OB.UI.ModalInvoices
+# Inherits: [OB.UI.Modal]
+*/
+.obUiModalInvoices {
+  top: 125px;
+}
