@@ -136,7 +136,7 @@ enyo.kind({
     function successCallBack(result) {
       var data = [],
           productPrices = [],
-          currentPrice;
+          currentPrice, i = 0;
       if (result && !result.exception) {
         _.each(result, function (r) {
           if (r.orgId) {
@@ -154,14 +154,17 @@ enyo.kind({
             }
           }
         });
-
-        if (productPrices.length > 0) {
-          _.each(data, function (d) {
-            d.productPrices = productPrices;
-            d.currentPrice = currentPrice;
-          });
+        if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+          while (i < data.length) {
+            if (OB.UTIL.isNullOrUndefined(data[i].standardPrice) && OB.UTIL.isNullOrUndefined(currentPrice)) {
+              data.splice(i, 1);
+            } else {
+              data[i].productPrices = productPrices;
+              data[i].currentPrice = currentPrice;
+              i++;
+            }
+          }
         }
-
         me.$.csStoreSelector.collection.reset(data);
         me.$.renderLoading.hide();
       } else {
