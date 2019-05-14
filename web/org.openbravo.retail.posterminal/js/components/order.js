@@ -1120,7 +1120,7 @@ enyo.kind({
       var me = this,
           setPriceCallback, changePriceCallback, handleError, serviceLines, i;
 
-      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable') || (this.order.get('isQuotation') && this.order.get('hasbeenpaid') === 'Y')) {
+      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable') || (this.order.get('isQuotation') && this.order.get('hasbeenpaid') === 'Y') || OB.UTIL.ProcessController.isProcessActive('calculateReceipt')) {
         return;
       }
 

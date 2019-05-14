@@ -812,8 +812,8 @@
             var finishCalculateReceipt = function (callback) {
                 me.calculatingReceipt = false;
                 OB.MobileApp.view.waterfall('calculatedReceipt');
-                me.trigger('calculatedReceipt');
                 OB.UTIL.ProcessController.finish('calculateReceipt', execution);
+                me.trigger('calculatedReceipt');
                 me.getPrepaymentAmount(function () {
                   me.trigger('updatePending');
                   if (callback && callback instanceof Function) {

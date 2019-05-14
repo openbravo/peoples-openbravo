@@ -638,7 +638,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
           columns: [],
           operator: 'filter',
           value: 'ServicePriceRuleVersion_RangeFilter',
-          params: [(isUniqueQuantity ? totalRelatedAmount : relatedLineMap.linePrice)]
+          params: [(isUniqueQuantity ? totalRelatedAmount : OB.DEC.div(relatedLineMap.linePrice, relatedLineMap.qty))]
         });
         criteria.remoteFilters.push({
           columns: [],
@@ -657,7 +657,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
     } else {
       if (relatedLine) {
         relatedLineMap = relatedLinesMap[relatedLine.orderlineId];
-        relatedAmt = relatedLineMap.linePrice;
+        relatedAmt = OB.DEC.div(relatedLineMap.linePrice, relatedLineMap.qty);
         var includedProducts = product.get('includeProducts'),
             includedProductCategories = product.get('includeProductCategories');
         criteria._whereClause = "where product = '" + product.get('id');
