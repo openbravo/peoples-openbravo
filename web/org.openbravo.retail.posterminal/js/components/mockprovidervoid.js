@@ -11,6 +11,7 @@
 
 enyo.kind({
   name: 'OBPOS_MockProviderVoid',
+  classes: 'obposMockProviderVoid',
   voidConfirmation: true,
   providerComponent: {
     content: 'Voiding payment'
