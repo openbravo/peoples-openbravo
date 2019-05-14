@@ -75,6 +75,99 @@
 }
 
 
+/*
+# Component: OB.UI.ReceiptsCounter
+*/
+.obUiReceiptsCounter {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.obUiReceiptsCounter-receiptsCounterButton {}
+
+
+
+/*
+# Component: OB.UI.ReceiptsCounterButton
+# Inherits: [OB.UI.Button]
+*/
+.obUiReceiptsCounterButton {
+  position: relative;
+  overflow: hidden;
+  margin: 0px;
+  padding: 0px;
+  height: 50px;
+  width: 50px;
+  background-color: #e2e2e2;
+  color: black;
+  display: inline-block;
+  font-weight: 600;
+  border: none;
+  font-size: var(--font-medium-large);
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+}
+
+.obUiReceiptsCounterButton_smallFont {
+  font-size: var(--font-small);
+}
+
+.obUiReceiptsCounterButton_mediumLargeFont {
+  font-size: var(--font-medium-large);
+}
+
+.obUiReceiptsCounterButton:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+.obUiReceiptsCounterButton.btn-over,
+.obUiReceiptsCounterButton:hover {
+  opacity: 0.75;
+}
+.obUiReceiptsCounterButton.btn-down,
+.obUiReceiptsCounterButton:active {
+  opacity: 0.999; /* Instead of "1" to avoid strange displacement effect in buttons on hover effect */
+  background-color: #cccccc;
+}
+.obUiReceiptsCounterButton:disabled,
+.obUiReceiptsCounterButton[disabled=true]:hover{
+  background-color: #a9a9a9;
+  opacity: 1;
+  cursor: default;
+}
+
+.obUiReceiptsCounterButton-element1 {
+  position: absolute;
+  top: -35px;
+  right:-35px;
+  background: #404040;
+  height:70px;
+  width: 70px;
+  -transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+}
+
+.obUiReceiptsCounterButton-counter {
+  position: absolute;
+  top: 0px;
+  right:0px;
+  padding-top: 5px;
+  padding-right: 10px;
+  font-weight: bold;
+  color: white;
+  max-width: 21px;
+  max-height: 18px;
+}
+
+
 
 
 /*****************/
