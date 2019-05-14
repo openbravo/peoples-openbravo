@@ -1031,8 +1031,10 @@ enyo.kind({
       return;
     }
     if (OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
-      var productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(inEvent.line.get('product')),
-          checkStock = productStatus.restrictsaleoutofstock && OB.DEC.compare(inEvent.line.get('qty')) === -1;
+      var product = inEvent.line.get('product'),
+          negativeQty = OB.DEC.compare(inEvent.line.get('qty')) < 0,
+          productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
+          checkStock = negativeQty && (productStatus.restrictsaleoutofstock || OB.UTIL.isCrossStoreProduct(product));
 
       OB.UTIL.HookManager.executeHooks('OBPOS_CheckStockReturnLine', {
         order: this.model.get('order'),

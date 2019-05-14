@@ -36,8 +36,10 @@
         return;
       }
       var line = order.get('lines').at(idxOrderLine),
-          productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(line.get('product')),
-          checkStock = productStatus.restrictsaleoutofstock && OB.DEC.compare(line.get('qty')) === 1;
+          product = line.get('product'),
+          productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
+          positiveQty = OB.DEC.compare(line.get('qty')) > 0,
+          checkStock = positiveQty && (productStatus.restrictsaleoutofstock || OB.UTIL.isCrossStoreProduct(product));
 
       OB.UTIL.HookManager.executeHooks('OBPOS_CheckStockPrePayment', {
         order: order,
