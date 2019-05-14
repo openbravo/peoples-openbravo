@@ -835,7 +835,7 @@ OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
   processAndFinishCashUp: function () {
     if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
       var me = this;
-      this.printCashUp.print(this.get('cashUpReport').at(0), false, this.getCountCashSummary(), function () {
+      this.printCashUp.print(this.get('cashUpReport').at(0), this.getCountCashSummary(), false, function () {
         me.set('finished', true);
       });
     }
