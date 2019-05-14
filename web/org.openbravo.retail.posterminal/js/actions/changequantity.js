@@ -11,28 +11,21 @@
 
 (function () {
 
-  OB.MobileApp.actionsRegistry.register(
-  new OB.Actions.CommandAction({
-    window: 'retail.pointofsale',
-    name: 'changeQuantity',
-    properties: {
-      i18nContent: 'OBMOBC_KbQuantity'
-    },
-    command: function (view) {
+  var AbstractCommandQuantity = function (args) {
+    OB.Actions.AbstractAction.call(this, args);
+    this.calculateToAdd = args.calculateToAdd;
+    this.command = function (view) {
       var editboxvalue = view.state.readState({
         name: 'editbox'
       });
 
-      if (!editboxvalue) {
-        return;
-      }
       var selectedReceiptLine = view.state.readState({
         name: 'selectedReceiptLine'
       });
       var selectedReceiptLines = view.state.readState({
         name: 'selectedReceiptLines'
-      });
-      var value = OB.I18N.parseNumber(editboxvalue);
+      }); 
+      var value = OB.I18N.parseNumber(editboxvalue || '1') ;
       var receipt = view.model.get('order');
 
       var validateQuantity = function () {
@@ -74,18 +67,13 @@
 
       validateQuantity().then(function () {
         receipt.set('undo', null);
-        var toadd;
         if (selectedReceiptLines && selectedReceiptLines.length > 1) {
           receipt.set('multipleUndo', true);
         }
         selectedReceiptLines.forEach(function (line) {
-          if (receipt.get('orderType') === 1) {
-            toadd = value + line.get('qty');
-          } else {
-            toadd = value - line.get('qty');
-          }
+          var toadd = this.calculateToAdd(receipt, line.get('qty'), value);
           if (toadd !== 0) {
-            if (value === 0) { // If final quantity will be 0 then request approval
+            if (line.get('qty') + toadd === 0) { // If final quantity will be 0 then request approval
               view.deleteLine(view, {
                 selectedReceiptLines: selectedReceiptLines
               });
@@ -100,11 +88,49 @@
               });
             }
           }
-        });
+        }, this);
         receipt.set('multipleUndo', null);
         receipt.trigger('scan');
-      });
+      }.bind(this));
+    };
+  };
+
+  OB.MobileApp.actionsRegistry.register(
+  new AbstractCommandQuantity({
+    window: 'retail.pointofsale',
+    name: 'changeQuantity',
+    properties: {
+      i18nContent: 'OBMOBC_KbQuantity'
+    },
+    calculateToAdd: function (receipt, qty, value) {
+       return  (receipt.get('orderType') === 1)
+       ? value + qty
+       : value - qty;
     }
   }));
+
+  OB.MobileApp.actionsRegistry.register(
+    new AbstractCommandQuantity({
+      window: 'retail.pointofsale',
+      name: 'addQuantity',
+      properties: {
+        label: '+'
+      },
+      calculateToAdd: function (receipt, qty, value) {
+        return value || 1;
+      }
+    }));
+
+  OB.MobileApp.actionsRegistry.register(
+    new AbstractCommandQuantity({
+      window: 'retail.pointofsale',
+      name: 'removeQuantity',
+      properties: {
+        label: '-'
+      },
+      calculateToAdd: function (receipt, qty, value) {
+        return -(value || 1);
+      }
+    })); 
 
 }());
