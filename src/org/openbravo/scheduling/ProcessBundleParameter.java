@@ -47,22 +47,15 @@ class ProcessBundleParameter {
   }
 
   boolean isSupportedType() {
+    return isSupportedType(value);
+  }
+
+  static boolean isSupportedType(Object value) {
     return value instanceof String;
   }
 
   String getName() {
     return name;
-  }
-
-  void serialize(JSONObject jsonObject) {
-    if (!isSupportedType()) {
-      throw new ParameterSerializationException("Could not serialize parameter: " + this);
-    }
-    try {
-      jsonObject.put(name, value);
-    } catch (JSONException ex) {
-      throw new ParameterSerializationException("Could not serialize parameter: " + this);
-    }
   }
 
   Object deserialize() {

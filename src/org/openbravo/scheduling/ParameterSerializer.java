@@ -18,11 +18,15 @@
  */
 package org.openbravo.scheduling;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Spliterators;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -30,8 +34,8 @@ import org.codehaus.jettison.json.JSONObject;
  * A class that allows to serialize and deserialize the parameters of a {@link ProcessBundle}.
  */
 class ParameterSerializer {
-
   private static ParameterSerializer instance = new ParameterSerializer();
+  private static Logger log = LogManager.getLogger();
 
   static ParameterSerializer getInstance() {
     return instance;
@@ -41,12 +45,26 @@ class ParameterSerializer {
     if (parameters.isEmpty()) {
       return "";
     }
-    JSONObject json = new JSONObject();
-    parameters.entrySet()
+
+    checkParameters(parameters);
+
+    return new JSONObject(parameters).toString();
+  }
+
+  private void checkParameters(Map<String, Object> parameters) {
+    List<Class<?>> invalidTypes = parameters.values()
         .stream()
-        .map(ProcessBundleParameter::new)
-        .forEach(parameter -> parameter.serialize(json));
-    return json.toString();
+        .filter(((Predicate<Object>) ProcessBundleParameter::isSupportedType).negate())
+        .map(Object::getClass)
+        .distinct()
+        .collect(Collectors.toList());
+
+    if (!invalidTypes.isEmpty()) {
+      log.error("Could not serialize parameters because it has unsupported types {}. Map: {}",
+          invalidTypes, parameters);
+      throw new ParameterSerializationException(
+          "Could not serialize paramters with types " + invalidTypes);
+    }
   }
 
   Map<String, Object> deserialize(String parameters) {
