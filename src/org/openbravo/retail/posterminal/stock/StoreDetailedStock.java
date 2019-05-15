@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -34,22 +35,33 @@ public class StoreDetailedStock extends JSONProcessSimple {
     BigDecimal totalQtyCounter = BigDecimal.ZERO;
     try {
 
-      final String orgId = jsonData.has("crossOrganization")
-          ? jsonData.getString("crossOrganization")
+      final boolean isCrossStore = jsonData.has("crossOrganization") && !StringUtils
+          .equals(jsonData.getString("crossOrganization"), jsonData.getString("organization"));
+      final String orgId = isCrossStore ? jsonData.getString("crossOrganization")
           : jsonData.getString("organization");
       prodId = jsonData.getString("product");
 
-      String hqlQuery = "select ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.id, ms.storageBin.searchKey, "
-          + "sum(ms.quantityOnHand - ms.reservedQty) as qtyonhand "
-          + "from MaterialMgmtStorageDetail ms " + "where ms.storageBin.warehouse.id in ( "
-          + "SELECT ow.warehouse.id " + "FROM OrganizationWarehouse as ow " + "WHERE "
-          + "ow.organization.id = :orgId ) " + "and ms.product.id = :prodId "
-          + "and ms.storageBin.warehouse.active = true "
-          + "group by ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.warehouse.id, ms.storageBin.id, ms.storageBin.searchKey "
-          + "order by ms.storageBin.warehouse.name";
+      final StringBuilder hqlQuery = new StringBuilder();
+      hqlQuery.append(" select wh.id, wh.name, sb.id, sb.searchKey");
+      hqlQuery.append(" , sum(ms.quantityOnHand - ms.reservedQty) as qtyonhand");
+      hqlQuery.append(" from MaterialMgmtStorageDetail ms");
+      hqlQuery.append(" join ms.storageBin sb");
+      hqlQuery.append(" join sb.inventoryStatus ls");
+      hqlQuery.append(" join sb.warehouse wh");
+      hqlQuery.append(" join wh.organizationWarehouseList ow");
+      hqlQuery.append(" where ow.organization.id = :orgId");
+      hqlQuery.append(" and ms.product.id = :prodId");
+      if (isCrossStore) {
+        hqlQuery.append(" and ls.oBRETCOAvailableCrossStore = true");
+      } else {
+        hqlQuery.append(" and ls.available = true");
+      }
+      hqlQuery.append(" and wh.active = true");
+      hqlQuery.append(" group by wh.id, wh.name, sb.id, sb.searchKey");
+      hqlQuery.append(" order by wh.name");
 
       final Session session = OBDal.getInstance().getSession();
-      final Query<Object[]> query = session.createQuery(hqlQuery, Object[].class);
+      final Query<Object[]> query = session.createQuery(hqlQuery.toString(), Object[].class);
       query.setParameter("orgId", orgId);
       query.setParameter("prodId", prodId);
 
