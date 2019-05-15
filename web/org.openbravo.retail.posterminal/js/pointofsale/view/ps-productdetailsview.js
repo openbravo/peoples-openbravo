@@ -237,22 +237,37 @@ enyo.kind({
             me.leftSubWindow.product.set('currentPrice', data.currentPrice);
           }
           };
-
-      if (this.leftSubWindow.line && event && event.target.getAttribute('id') !== 'terminal_containerWindow_pointOfSale_multiColumn_leftPanel_productdetailsview_leftSubWindowBody_body_stockOthers') {
-        var data = {
-          stock: this.leftSubWindow.line.get('warehouse').warehouseqty,
-          price: this.leftSubWindow.line.get('price'),
-          warehouse: this.leftSubWindow.line.get('warehouse')
-        };
-        if (OB.UTIL.isCrossStoreProduct(this.leftSubWindow.line.get('product'))) {
-          data.currentPrice = this.leftSubWindow.line.get('product').get('currentPrice');
-        } else {
-          data.currentPrice = {
-            priceListId: OB.MobileApp.model.get('terminal').priceList,
-            price: this.leftSubWindow.line.get('product').get('standardPrice')
+      if (event && event.target.getAttribute('id') !== 'terminal_containerWindow_pointOfSale_multiColumn_leftPanel_productdetailsview_leftSubWindowBody_body_stockOthers' && (this.leftSubWindow.line || !OB.UTIL.isCrossStoreProduct(this.leftSubWindow.product))) {
+        var data = null;
+        if (this.leftSubWindow.line) {
+          data = {
+            stock: this.leftSubWindow.line.get('warehouse').warehouseqty,
+            warehouse: this.leftSubWindow.line.get('warehouse'),
+            organization: this.leftSubWindow.line.get('organization')
           };
+          if (OB.UTIL.isCrossStoreProduct(this.leftSubWindow.line.get('product'))) {
+            data.currentPrice = this.leftSubWindow.line.get('product').get('currentPrice');
+          } else {
+            data.currentPrice = {
+              priceListId: OB.MobileApp.model.get('terminal').priceList,
+              price: this.leftSubWindow.line.get('product').get('standardPrice')
+            };
+          }
+          selectedStoreCallBack(data);
+        } else {
+          data = {
+            warehouse: this.leftSubWindow.warehouse,
+            currentPrice: {
+              priceListId: OB.MobileApp.model.get('terminal').priceList,
+              price: this.leftSubWindow.product.get('standardPrice')
+            },
+            organization: {
+              id: OB.MobileApp.model.get('store')[0].id,
+              name: OB.MobileApp.model.get('store')[0].name
+            }
+          };
+          selectedStoreCallBack(data);
         }
-        selectedStoreCallBack(data);
       } else {
         this.doShowPopup({
           popup: 'OBPOS_modalCrossStoreSelector',
