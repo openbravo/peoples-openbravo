@@ -12,6 +12,7 @@
 enyo.kind({
   name: 'OB.UI.Modalnoteditableorder',
   kind: 'OB.UI.ModalInfo',
+  classes: 'obUiModalnoteditableorder',
   i18nHeader: 'OBPOS_modalNoEditableHeader',
   bodyContent: {
     i18nContent: 'OBPOS_modalNoEditableBody'

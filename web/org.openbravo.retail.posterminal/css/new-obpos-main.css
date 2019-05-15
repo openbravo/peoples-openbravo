@@ -390,6 +390,13 @@
 .obposMockProviderVoid {}
 
 
+/*
+# Component: OB.UI.Modalnoteditableorder
+# Inherits: [OB.UI.ModalInfo]
+*/
+.obUiModalnoteditableorder {}
+
+
 
 
 /*****************/
