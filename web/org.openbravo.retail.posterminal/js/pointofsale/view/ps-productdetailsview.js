@@ -367,7 +367,7 @@ enyo.kind({
     var me = this;
     if (OB.UTIL.isCrossStoreEnabled()) {
       me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock_NotCalculated'));
-      me.bodyComponent.$.stockHere.setDisabled(OB.UTIL.isCrossStoreProduct(me.product));
+      me.bodyComponent.$.stockHere.setDisabled(OB.UTIL.isCrossStoreProduct(me.product) && (!me.line || OB.DEC.compare(me.line.get('qty')) > 0));
       me.bodyComponent.$.productAddToReceipt.setDisabled(true);
       if (params.checkStockCallback) {
         params.checkStockCallback();
