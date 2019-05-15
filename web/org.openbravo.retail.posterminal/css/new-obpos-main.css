@@ -799,6 +799,77 @@
 
 
 
+/***********************   ***********************/
+/*        File: modalPriceModification.js        */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationCancel
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposPointOfSaleUiModalsBtnModalPriceModificationCancel {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationAccept
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposPointOfSaleUiModalsBtnModalPriceModificationAccept {}
+
+
+/*
+# Component: OB.UI.ModalPriceModificationReason
+# Inherits: [OB.UI.List]
+*/
+.obUiModalPriceModificationReason {
+  width: 80%;
+  height: 40px;
+  background-color: white;
+  padding: 4px;
+  margin-bottom: 9px;
+  color: #555;
+  border: 1px solid #CCC;
+}
+
+.obUiModalPriceModificationReason-renderLine-enyoOption {
+/* # Inherits: [enyo.Option] */
+}
+
+
+/*
+# Component: OB.UI.ModalPriceModification
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalPriceModification {}
+
+.obUiModalPriceModification-bodyContent {}
+
+.obUiModalPriceModification-bodyContent-labelPriceModification {
+  text-align: right;
+  padding-right: 10px;
+  width: 40%;
+  height: 40px;
+  float: left;
+}
+
+.obUiModalPriceModification-bodyContent-priceModificationReason {
+/* # Inherits: [OB.UI.ModalPriceModificationReason] */
+  width: 50%;
+  float: left;
+}
+
+.obUiModalPriceModification-bodyButtons {}
+
+.obUiModalPriceModification-bodyButtons-obObposPointOfSaleUiModalsBtnModalPriceModificationAccept {
+/* # Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationAccept] */
+}
+
+.obUiModalPriceModification-bodyButtons-obObposPointOfSaleUiModalsBtnModalPriceModificationCancel {
+/* # Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationCancel] */
+}
+
+
+
 
 /*****************/
 /*      JAR      */
