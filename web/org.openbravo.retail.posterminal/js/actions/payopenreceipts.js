@@ -26,7 +26,7 @@
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_retail.multiorders')) {
         view.model.get('orderList').saveCurrent();
-        view.doMultiOrders();
+        view.multiOrders();
       }
     }
   }));
