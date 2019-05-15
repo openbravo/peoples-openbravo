@@ -50,7 +50,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
   private Instance<ModelExtension> multiPriceExtensions;
 
   @Override
-  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
+  protected List<HQLPropertyList> getHqlProperties(final JSONObject jsonsent) {
     final List<HQLPropertyList> propertiesList = new ArrayList<>();
     final boolean isMultiPriceListEnabled = getPreference("OBPOS_EnableMultiPriceList");
 
@@ -70,6 +70,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
   protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
     OBContext.setAdminMode(true);
     try {
+      final String orgId = jsonsent.getString("organization");
       final String posId = jsonsent.getString("pos");
       final String productId = jsonsent.getString("product");
       final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
@@ -98,6 +99,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       jsonsent.put("filterByStock", filterByStock);
 
       final Map<String, Object> paramValues = new HashMap<>();
+      paramValues.put("orgId", orgId);
       paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
       paramValues.put("productId", productId);
       paramValues.put("terminalDate", terminalDate);
@@ -179,6 +181,12 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     hql.append("   from OBRETCO_Prol_Product pli");
     hql.append("   where pli.product.id = :productId");
     hql.append("   and pli.obretcoProductlist.id = o.obretcoProductlist.id");
+    hql.append(" )");
+    hql.append(" and pl.priceIncludesTax = (");
+    hql.append("   select pl2.priceIncludesTax");
+    hql.append("   from Organization o2");
+    hql.append("   join o2.obretcoPricelist pl2");
+    hql.append("   where o2.id = :orgId");
     hql.append(" )");
     hql.append(" and o.active = true");
     hql.append(" and owh.active = true");

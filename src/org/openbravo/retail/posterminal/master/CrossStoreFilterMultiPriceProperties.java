@@ -24,7 +24,6 @@ public class CrossStoreFilterMultiPriceProperties extends ModelExtension {
     final List<HQLProperty> list = new ArrayList<>();
 
     list.add(new HQLProperty("bppl.id", "multiPriceListId"));
-    list.add(new HQLProperty("bppl.priceIncludesTax", "multiPriceIncludesTax"));
     list.add(new HQLProperty("bppp.standardPrice", "multiPrice"));
 
     return list;
