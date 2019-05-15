@@ -14,6 +14,7 @@
 enyo.kind({
   name: 'OB.UI.ModalPRScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obUiModalPRScrollableHeader',
   events: {
     onSearchAction: '',
     onClearAction: ''
@@ -22,94 +23,92 @@ enyo.kind({
     onFiltered: 'searchAction'
   },
   components: [{
-    style: 'padding: 10px;',
+    classes: 'obUiModalPRScrollableHeader-container1',
     components: [{
-      style: 'display: table;',
+      classes: 'obUiModalPRScrollableHeader-container1-container1',
       components: [{
-        style: 'display: table-cell; width: 100%;',
+        classes: 'obUiModalPRScrollableHeader-container1-container1-container1',
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
           name: 'filterText',
-          style: 'width: 100%',
+          classes: 'obUiModalPRScrollableHeader-container1-container1-container1-filterText',
           skipAutoFilterPref: 'OBPOS_remote.order'
 
         }]
       }, {
-        style: 'display: table-cell;',
+        classes: 'obUiModalPRScrollableHeader-container1-container1-container2',
         components: [{
           kind: 'OB.UI.SmallButton',
           name: 'clearButton',
-          classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-          style: 'width: 100px; margin: 0px 5px 8px 19px;',
+          classes: 'obUiModalPRScrollableHeader-container1-container1-container2-clearAction',
           ontap: 'clearAction'
         }]
       }, {
-        style: 'display: table-cell;',
+        classes: 'obUiModalPRScrollableHeader-container1-container1-container3',
         components: [{
           kind: 'OB.UI.SmallButton',
           name: 'searchButton',
-          classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-          style: 'width: 100px; margin: 0px 0px 8px 5px;',
+          classes: 'obUiModalPRScrollableHeader-container1-container1-container3-searchButton',
           ontap: 'searchAction'
         }]
       }]
     }, {
-      style: 'display: table;',
+      classes: 'obUiModalPRScrollableHeader-container1-container2',
       components: [{
-        style: 'display: table-cell;',
+        classes: 'obUiModalPRScrollableHeader-container1-container2-container1',
         components: [{
           tag: 'h4',
           initComponents: function () {
             this.setContent(OB.I18N.getLabel('OBPOS_LblStartDate'));
           },
-          style: 'width: 200px;  margin: 0px 0px 2px 5px;'
+          classes: 'obUiModalPRScrollableHeader-container1-container2-container1-element1'
         }]
       }, {
-        style: 'display: table-cell;',
+        classes: 'obUiModalPRScrollableHeader-container1-container2-container2',
         components: [{
           tag: 'h4',
           initComponents: function () {
             this.setContent(OB.I18N.getLabel('OBPOS_LblEndDate'));
           },
-          style: 'width 200px; margin: 0px 0px 2px 65px;'
+          classes: 'obUiModalPRScrollableHeader-container1-container2-container2-element1'
         }]
       }]
     }, {
-      style: 'display: table;',
+      classes: 'obUiModalPRScrollableHeader-container1-container3',
       components: [{
-        style: 'display: table-cell;',
+        classes: 'obUiModalPRScrollableHeader-container1-container3-container1',
         components: [{
           kind: 'enyo.Input',
           name: 'startDate',
           size: '10',
           type: 'text',
-          style: 'width: 100px;  margin: 0px 0px 8px 5px;',
+          classes: 'obUiModalPRScrollableHeader-container1-container3-container1-startDate',
           onchange: 'searchAction'
         }]
       }, {
-        style: 'display: table-cell;',
+        classes: 'obUiModalPRScrollableHeader-container1-container3-container2',
         components: [{
           tag: 'h4',
           initComponents: function () {
             this.setContent(OB.I18N.getDateFormatLabel());
           },
-          style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
+          classes: 'obUiModalPRScrollableHeader-container1-container3-container2-element1'
         }]
       }, {
         kind: 'enyo.Input',
         name: 'endDate',
         size: '10',
         type: 'text',
-        style: 'width: 100px;  margin: 0px 0px 8px 50px;',
+        classes: 'obUiModalPRScrollableHeader-container1-container3-endDate',
         onchange: 'searchAction'
       }, {
-        style: 'display: table-cell;',
+        classes: 'obUiModalPRScrollableHeader-container1-container3-container4',
         components: [{
           tag: 'h4',
           initComponents: function () {
             this.setContent(OB.I18N.getDateFormatLabel());
           },
-          style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
+          classes: 'obUiModalPRScrollableHeader-container1-container3-container4-element1'
         }]
       }]
     }]
@@ -117,15 +116,15 @@ enyo.kind({
   showValidationErrors: function (stDate, endDate) {
     var me = this;
     if (stDate === false) {
-      this.$.startDate.addClass('error');
+      this.$.startDate.addClass('obUiModalPRScrollableHeader-enyoInput_error');
       setTimeout(function () {
-        me.$.startDate.removeClass('error');
+        me.$.startDate.removeClass('obUiModalPRScrollableHeader-enyoInput_error');
       }, 5000);
     }
     if (endDate === false) {
-      this.$.endDate.addClass('error');
+      this.$.endDate.addClass('obUiModalPRScrollableHeader-enyoInput_error');
       setTimeout(function () {
-        me.$.endDate.removeClass('error');
+        me.$.endDate.removeClass('obUiModalPRScrollableHeader-enyoInput_error');
       }, 5000);
     }
   },
@@ -178,8 +177,8 @@ enyo.kind({
       this.showValidationErrors(startDateValidated !== null, endDateValidated !== null);
       return false;
     }
-    this.$.startDate.removeClass('error');
-    this.$.endDate.removeClass('error');
+    this.$.startDate.removeClass('obUiModalPRScrollableHeader-enyoInput_error');
+    this.$.endDate.removeClass('obUiModalPRScrollableHeader-enyoInput_error');
 
     this.filters = _.extend(this.filters, {
       startDate: formattedStartDate,
@@ -218,13 +217,15 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalVerifiedReturns',
   kind: 'OB.UI.ModalSelector',
+  classes: 'obUiModalVerifiedReturns',
   topPosition: '70px',
   i18nHeader: 'OBPOS_LblPaidReceipts',
   published: {
     params: null
   },
   body: {
-    kind: 'OB.UI.ReceiptsForVerifiedReturnsList'
+    kind: 'OB.UI.ReceiptsForVerifiedReturnsList',
+    classes: 'obUiModalVerifiedReturns-body-obUiReceiptsForVerifiedReturnsList'
   },
   getFilterSelectorTableHeader: function () {
     return this.$.body.$.receiptsForVerifiedReturnsList.$.verifiedReturnsReceiptsListItemPrinter.$.theader.$.modalVerifiedReturnsScrollableHeader.$.filterSelector;

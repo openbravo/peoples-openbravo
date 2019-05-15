@@ -462,6 +462,149 @@
 }
 
 
+/*
+# Component: OB.UI.ModalPRScrollableHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obUiModalPRScrollableHeader {}
+
+.obUiModalPRScrollableHeader-container1 {
+  padding: 10px;
+}
+
+.obUiModalPRScrollableHeader-container1-container1 {
+  display: table;
+}
+
+.obUiModalPRScrollableHeader-container1-container1-container1 {
+  display: table-cell;
+  width: 100%;
+}
+
+.obUiModalPRScrollableHeader-container1-container1-container1-filterText {
+  width: 100%;
+}
+
+.obUiModalPRScrollableHeader-container1-container1-container2 {
+  display: table-cell;
+}
+
+.obUiModalPRScrollableHeader-container1-container1-container2-clearAction {
+  width: 100px;
+  margin: 0px 5px 8px 19px;
+  background-image: url('./../img/iconClear.svg');
+  background-size: 13px 13px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color:  #e2e2e2;
+  color: black;
+}
+
+.obUiModalPRScrollableHeader-container1-container1-container2-clearAction:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px !important;
+}
+
+.obUiModalPRScrollableHeader-container1-container1-container3 {
+  display: table-cell;
+}
+
+.obUiModalPRScrollableHeader-container1-container1-container3-searchButton {
+  width: 100px;
+  margin: 0px 0px 8px 5px;
+  background-image: url('./../img/iconSearch.svg');
+  background-size: 15px 16px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: #f8e859;
+  color: black;
+}
+
+.obUiModalPRScrollableHeader-container1-container2 {
+  display: table;
+}
+
+.obUiModalPRScrollableHeader-container1-container2-container1 {
+  display: table-cell;
+}
+
+.obUiModalPRScrollableHeader-container1-container2-container1-element1 {
+  width: 200px;
+  margin: 0px 0px 2px 5px;
+}
+
+.obUiModalPRScrollableHeader-container1-container2-container2 {
+  display: table-cell;
+}
+
+.obUiModalPRScrollableHeader-container1-container2-container2-element1 {
+  width: 200px;
+  margin: 0px 0px 2px 65px;
+}
+
+.obUiModalPRScrollableHeader-container1-container3 {
+  display: table;
+}
+
+.obUiModalPRScrollableHeader-container1-container3-container1 {
+  display: table-cell;
+}
+
+.obUiModalPRScrollableHeader-container1-container3-container1-startDate {
+/* # Inherits: [enyo.Input] */
+  width: 100px;
+  margin: 0px 0px 8px 5px;
+}
+
+.obUiModalPRScrollableHeader-container1-container3-container2 {
+  display: table-cell;
+}
+
+.obUiModalPRScrollableHeader-container1-container3-container2-element1 {
+  width: 100px;
+  color:gray;
+  margin: 0px 0px 8px 5px;
+}
+
+.obUiModalPRScrollableHeader-container1-container3-endDate {
+/* # Inherits: [enyo.Input] */
+  width: 100px;
+  margin: 0px 0px 8px 50px;
+}
+
+.obUiModalPRScrollableHeader-container1-container3-container4 {
+  display: table-cell;
+}
+
+.obUiModalPRScrollableHeader-container1-container3-container4-element1 {
+  width: 100px;
+  color:gray;
+  margin: 0px 0px 8px 5px;
+}
+
+.obUiModalPRScrollableHeader-enyoInput_error {
+  background-color: rgb(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.5);
+}
+
+
+/*
+# Component: OB.UI.ModalVerifiedReturns
+# Inherits: [OB.UI.ModalSelector]
+*/
+.obUiModalVerifiedReturns {}
+
+.obUiModalVerifiedReturns-body-obUiReceiptsForVerifiedReturnsList {
+/* # Inherits: [OB.UI.ReceiptsForVerifiedReturnsList] */
+}
+
+
+
 
 /*****************/
 /*      JAR      */
