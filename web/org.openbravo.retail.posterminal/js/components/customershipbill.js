@@ -15,8 +15,7 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.Customer',
-  classes: 'btnlink btnlink-small btnlink-gray',
-  style: 'float:left; margin:7px; height:27px; padding: 4px 15px 7px 15px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 80%;',
+  classes: 'obUiCustomer customerShipBill-obUiSmallButton-generic',
   published: {
     order: null,
     target: null,
@@ -82,8 +81,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.ShipTo',
-  classes: 'btnlink btnlink-small btnlink-gray',
-  style: 'float:left; margin:7px; height:27px; padding: 4px 15px 7px 15px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 80%;',
+  classes: 'obUiShipTo customerShipBill-obUiSmallButton-generic',
   published: {
     order: null,
     target: null,
@@ -134,8 +132,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BillTo',
-  classes: 'btnlink btnlink-small btnlink-gray',
-  style: 'float:left; margin:7px; height:27px; padding: 4px 15px 7px 15px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 80%;',
+  classes: 'obUiBillTo customerShipBill-obUiSmallButton-generic',
   published: {
     order: null,
     target: null,
