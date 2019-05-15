@@ -418,34 +418,10 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.MenuInvoice',
-  kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_receipt.invoice',
-  events: {
-    onReceiptToInvoice: '',
-    onCancelReceiptToInvoice: ''
-  },
-  i18nLabel: 'OBPOS_LblInvoice',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    this.taxIdValidation(this.model.get('order'));
-  },
-  taxIdValidation: function (model) {
-    if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
-      this.doCancelReceiptToInvoice();
-    } else if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !model.get('bp').get('taxID')) {
-      if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
-      } else {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
-      }
-      this.doCancelReceiptToInvoice();
-    } else {
-      this.doReceiptToInvoice();
-    }
-
+  kind: 'OB.UI.ActionMenuAction',
+  action: {
+    window: 'retail.pointofsale',
+    name: 'invoiceReceipt'
   },
   updateVisibility: function (isVisible) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {
@@ -460,8 +436,7 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    var receipt = model.get('order'),
-        me = this;
+    var receipt = model.get('order');
     receipt.on('change:generateInvoice change:bp change:isQuotation', function (model) {
       if (!model.get('isQuotation') && !model.get('generateInvoice') && model.get('bp').get('invoiceTerms') === 'I') {
         this.updateVisibility(true);
@@ -472,7 +447,10 @@ enyo.kind({
     receipt.on('change:bp', function (model) {
       // if the receip is cloning, then the called to taxIdValidation is not done because this function does a save
       if (model.get('generateInvoice') && !model.get('cloningReceipt')) {
-        me.taxIdValidation(model);
+        OB.MobileApp.actionsRegistry.execute({
+          window: 'retail.pointofsale',
+          name: 'invoiceReceipt'
+        });
       }
     }, this);
   }
@@ -480,9 +458,11 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.MenuOpenDrawer',
-  kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_retail.opendrawerfrommenu',
-  i18nLabel: 'OBPOS_LblOpenDrawer',
+  kind: 'OB.UI.ActionMenuAction',
+  action: {
+    window: 'retail.pointofsale',
+    name: 'openDrawer'
+  },
   updateVisibility: function () {
     if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
       this.hide();
@@ -491,21 +471,6 @@ enyo.kind({
   init: function (model) {
     this.model = model;
     this.updateVisibility();
-  },
-  tap: function () {
-    var me = this;
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments);
-    OB.UTIL.Approval.requestApproval(
-    me.model, 'OBPOS_approval.opendrawer.menu', function (approved, supervisor, approvalType) {
-      if (approved) {
-        OB.POS.hwserver.openDrawer({
-          openFirst: true
-        }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-      }
-    });
   }
 });
 
@@ -633,22 +598,10 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.MenuCreateOrderFromQuotation',
-  kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_receipt.createorderfromquotation',
-  events: {
-    onShowPopup: ''
-  },
-  i18nLabel: 'OBPOS_CreateOrderFromQuotation',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.inherited(arguments); // Manual dropdown menu closure
-      this.doShowPopup({
-        popup: 'modalCreateOrderFromQuotation'
-      });
-    }
+  kind: 'OB.UI.ActionMenuAction',
+  action: {
+    window: 'retail.pointofsale',
+    name: 'convertQuotation'
   },
   updateVisibility: function (model) {
     if (OB.MobileApp.model.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y' && !OB.UTIL.isCrossStoreReceipt(model)) {
@@ -840,25 +793,10 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.MenuMultiOrders',
-  kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_retail.multiorders',
-  events: {
-    onMultiOrders: ''
-  },
-  i18nLabel: 'OBPOS_LblPayOpenTickets',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (!OB.MobileApp.model.get('connectedToERP')) {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-      return;
-    }
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.model.get('orderList').saveCurrent();
-      this.doMultiOrders();
-    }
+  kind: 'OB.UI.ActionMenuAction',
+  action: {
+    window: 'retail.pointofsale',
+    name: 'payOpenReceipts'
   },
   updateVisibility: function () {
     if (OB.MobileApp.model.get('payments').length <= 0) {
