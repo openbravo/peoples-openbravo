@@ -397,6 +397,70 @@
 .obUiModalnoteditableorder {}
 
 
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationCancel
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposPointOfSaleUiModalsBtnModalRejectQuotationCancel {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationAccept
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposPointOfSaleUiModalsBtnModalRejectQuotationAccept {}
+
+
+/*
+# Component: OB.UI.ModalRejectQuotationRejectReason
+# Inherits: [OB.UI.List]
+*/
+.obUiModalRejectQuotationRejectReason {
+  width: 80%;
+  height: 40px;
+  background-color: white;
+  padding: 4px;
+  margin-bottom: 9px;
+  color: #555;
+  border: 1px solid #CCC;
+}
+
+.obUiModalRejectQuotationRejectReason-renderLine-enyoOption {
+/* # Inherits: [enyo.Option] */
+}
+
+
+/*
+# Component: OB.UI.ModalRejectQuotation
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalRejectQuotation {}
+
+.obUiModalRejectQuotation-bodyContent {}
+
+.obUiModalRejectQuotation-bodyContent-labelRejectReason {
+  text-align: right;
+  padding-right:10px;
+  width: 40%;
+  height: 40px;
+  float: left;
+}
+
+.obUiModalRejectQuotation-bodyContent-rejectReason {
+  width: 50%;
+  float: left;
+}
+
+.obUiModalRejectQuotation-bodyButtons {}
+
+.obUiModalRejectQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalRejectQuotationAccept {
+/* # Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationAccept] */
+}
+
+.obUiModalRejectQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalRejectQuotationCancel {
+/* # Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationCancel] */
+}
+
 
 
 /*****************/
