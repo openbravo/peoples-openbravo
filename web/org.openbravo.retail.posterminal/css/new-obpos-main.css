@@ -604,6 +604,117 @@
 }
 
 
+/*
+# Component: OB.UI.ListBrandsLine
+# Inherits: [OB.UI.CheckboxButton]
+*/
+.obUiListBrandsLine {
+  border-bottom: 1px solid #cccccc;
+  text-align: left;
+  padding-left: 70px;
+  height: 38px;
+  background-position: 10px center;
+  cursor: pointer;
+  vertical-align: middle;
+  width: 100%;
+}
+
+.obUiListBrandsLine:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  background-position: 8px center !important;
+}
+
+.obUiListBrandsLine_active {
+  background-image: url('./../img/checkbox-on.svg');
+  background-size: 34px 27px;
+}
+
+
+/*
+# Component: OB.UI.ListBrands
+*/
+.obUiListBrands {}
+
+.obUiListBrands-container1 {}
+
+.obUiListBrands-container1-container1 {}
+
+.obUiListBrands-container1-container1-container1 {}
+
+.obUiListBrands-container1-container1-container1-brandslistitemprinter {
+/* # Inherits: [OB.UI.ScrollableTable] */
+  max-height: 400px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+
+/*
+# Component: OB.UI.ModalProductBrandTopHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obUiModalProductBrandTopHeader {}
+
+.obUiModalProductBrandTopHeader-container1 {
+  display: table;
+}
+
+.obUiModalProductBrandTopHeader-container1-container1 {
+  display: table-cell;
+  width: 100%;
+}
+
+.obUiModalProductBrandTopHeader-container1-container1-title {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.obUiModalProductBrandTopHeader-container1-container2 {
+  display: table-cell;
+}
+
+.obUiModalProductBrandTopHeader-container1-container2-doneBrandButton {
+/* # Inherits: [OB.UI.SmallButton] */
+}
+
+.obUiModalProductBrandTopHeader-container1-container3 {
+  display: table-cell;
+}
+
+.obUiModalProductBrandTopHeader-container1-container3-cancelBrandButton {
+/* # Inherits: [OB.UI.SmallButton] */
+  background-color: #e2e2e2;
+  color: black;
+}
+
+.obUiModalProductBrandTopHeader-container1-container3-cancelBrandButton:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px !important;
+}
+
+
+/*
+# Component: OB.UI.ModalProductBrand
+# Inherits: [OB.UI.Modal]
+*/
+.obUiModalProductBrand {}
+
+.obUiModalProductBrand-header-obUiModalProductBrandTopHeader {
+/* # Inherits: [OB.UI.ModalProductBrandTopHeader] */
+  border-bottom: 0px;
+}
+
+.obUiModalProductBrand-body-obUiListBrands {
+/* # Inherits: [OB.UI.ListBrands] */
+}
+
+
 
 
 /*****************/
