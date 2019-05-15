@@ -807,6 +807,12 @@ public class ModelProvider implements OBSingleton {
       List<Property> props = new ArrayList<>(e.getProperties());
       for (final Property p : props) {
         if (!shouldGenerateChildPropertyInParent(p, generateAllChildProperties)) {
+          if (!generateAllChildProperties && shouldGenerateChildPropertyInParent(p, true)) {
+            // When creating child property parent entity, base property is flagged as referenced,
+            // let's keep this flag even it does not get generated as it affects
+            // BaseOBObject.checkDerivedReadable.
+            p.setBeingReferenced(true);
+          }
           continue;
         }
 
