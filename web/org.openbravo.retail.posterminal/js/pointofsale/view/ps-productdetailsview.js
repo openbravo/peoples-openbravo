@@ -412,15 +412,16 @@ enyo.kind({
     var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.OtherStoresDetailedStock'),
         me = this;
     if (OB.UTIL.isCrossStoreEnabled()) {
-      this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_SelectStore'));
-      this.bodyComponent.$.stockOthers.doOpenOtherStoresStockModal();
+      me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_SelectStore'));
+      me.bodyComponent.$.stockOthers.setDisabled(me.line && OB.DEC.compare(me.line.get('qty')) < 0);
+      me.bodyComponent.$.stockOthers.doOpenOtherStoresStockModal();
     } else if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-      this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock_NotCalculated'));
+      me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock_NotCalculated'));
     } else {
-      this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
+      me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
       serverCallStoreDetailedStock.exec({
         organization: OB.MobileApp.model.get('terminal').organization,
-        product: this.product.get('id')
+        product: me.product.get('id')
       }, function (data) {
         if (data && data.exception) {
           me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
