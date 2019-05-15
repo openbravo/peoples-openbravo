@@ -146,8 +146,7 @@ enyo.kind({
           if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && r.multiPriceListId) {
             productPrices.push({
               price: r.multiPrice,
-              priceListId: r.multiPriceListId,
-              priceIncludesTax: r.multiPriceIncludesTax
+              priceListId: r.multiPriceListId
             });
             if (r.multiPriceListId === OB.MobileApp.model.receipt.get('bp').get('priceList')) {
               currentPrice = productPrices[productPrices.length - 1];
@@ -228,7 +227,6 @@ enyo.kind({
         stock: this.model.get('stock'),
         currentPrice: this.model.has('currentPrice') ? this.model.get('currentPrice') : {
           priceListId: this.model.get('standardPriceListId'),
-          priceIncludesTax: this.model.get('standardPriceIncludesTax'),
           price: this.model.get('standardPrice')
         },
         productPrices: this.model.has('productPrices') ? this.model.get('productPrices') : null

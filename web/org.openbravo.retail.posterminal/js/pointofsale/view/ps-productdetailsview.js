@@ -128,13 +128,11 @@ enyo.kind({
               product.set('crossStore', false);
             }
             line.set({
-              priceIncludesTax: product.get('currentPrice').priceIncludesTax,
               priceList: product.get('currentPrice').price,
               price: product.get('currentPrice').price
             }, {
               silent: true
             });
-            OB.MobileApp.model.receipt.set('priceIncludesTax', line.get('priceIncludesTax'));
             OB.MobileApp.model.receipt.calculateReceipt();
           }
           me.doCloseLeftSubWindow();
@@ -251,7 +249,6 @@ enyo.kind({
         } else {
           data.currentPrice = {
             priceListId: OB.MobileApp.model.get('terminal').priceList,
-            priceIncludesTax: this.leftSubWindow.line.get('priceIncludesTax'),
             price: this.leftSubWindow.line.get('product').get('standardPrice')
           };
         }

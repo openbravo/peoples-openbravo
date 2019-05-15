@@ -3614,7 +3614,7 @@
           qty: OB.DEC.number(units),
           price: OB.DEC.number(p.get('standardPrice')),
           priceList: OB.DEC.number(p.get('listPrice')),
-          priceIncludesTax: p.get('currentPrice') ? p.get('currentPrice').priceIncludesTax : me.get('priceIncludesTax'),
+          priceIncludesTax: me.get('priceIncludesTax'),
           organization: {
             id: orgId,
             name: orgName
