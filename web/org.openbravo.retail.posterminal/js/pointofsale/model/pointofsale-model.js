@@ -685,6 +685,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       if (line.get('qty') < 0) {
         line.set('organization', terminalOrganization);
         line.set('warehouse', terminalWarehouse);
+        line.get('product').set('crossStore', false);
       }
       // Calculate the receipt
       receipt.calculateReceipt(null, line);
