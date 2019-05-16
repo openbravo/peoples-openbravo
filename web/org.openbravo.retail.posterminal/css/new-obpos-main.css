@@ -1219,6 +1219,10 @@
 /*      JAR      */
 /*****************/
 
+/***********************   ***********************/
+/*            File: modalinvoices.js             */
+/*            Folder: js/components/             */
+/***********************   ***********************/
 /*
 # Component: OB.UI.ModalInvoicesHeader
 # Inherits: [OB.UI.ScrollableTableHeader]
@@ -1335,6 +1339,7 @@
   white-space: nowrap;
 
 }
+
 /*
 # Component: OB.UI.ModalInvoices
 # Inherits: [OB.UI.Modal]
@@ -1342,3 +1347,296 @@
 .obUiModalInvoices {
   top: 125px;
 }
+
+
+/***********************   ***********************/
+/*       File: businesspartner_selector.js       */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.BusinessPartnerSelector
+# Inherits: OB.UI.SmallButton
+*/
+.obUiBusinessPartnerSelector {
+  background-color: #e2e2e2;
+  color: black;
+  max-width: 70%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
+  height: 30px;
+  margin: 10px;
+  padding: 5px 15px 7px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 18px;
+  flex-shrink: 1;
+}
+
+/*
+# Component: OB.UI.NewCustomerButton
+# Inherits: OB.UI.Button
+*/
+.obUiNewCustomerButton {
+  width: 170px;
+  margin: 0 9px 8px 0;
+  background-color: #f8e859;
+  color: black;
+  display: inline-block;
+  font-weight: 600;
+  border: none;
+  font-size: 18px;
+  padding: 12px 15px 14px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+  height: 30px;
+}
+
+@media all and (max-width: 800px) {
+  .obUiNewCustomerButton {
+    height: 45px;
+  }
+}
+
+
+/*
+# Component: OB.UI.AdvancedFilterButton
+# Inherits: OB.UI.ButtonAdvancedFilter
+*/
+.obUiAdvancedFilterButton {
+  width: 170px;
+  margin: 0 0 8px 9px;
+  background-color: #f8e859;
+  color: black;
+  display: inline-block;
+  font-weight: 600;
+  border: none;
+  font-size: 18px;
+  padding: 12px 15px 14px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+  height: 30px;
+}
+
+@media all and (max-width: 800px) {
+  .obUiAdvancedFilterButton {
+    height: 45px;
+  }
+}
+
+
+/*
+# Component: OB.UI.ModalBpSelectorScrollableHeader
+# Inherits: OB.UI.ScrollableTableHeader
+*/
+.obUiModalBpSelectorScrollableHeader {}
+
+.obUiModalBpSelectorScrollableHeader-filterSelector {
+  /* Inherits: [OB.UI.FilterSelectorTableHeader] */
+  padding: 10px;
+}
+
+.obUiModalBpSelectorScrollableHeader-container1 {
+  padding: 7px;
+}
+
+.obUiModalBpSelectorScrollableHeader-container1-container1 {
+  display: table;
+  width: 100%;
+}
+
+.obUiModalBpSelectorScrollableHeader-container1-container1-container1 {
+  display: table-cell;
+  text-align: right;
+}
+
+.obUiModalBpSelectorScrollableHeader-container1-container1-container1-newAction {
+  /* Inherits: [OB.UI.NewCustomerButton] */
+}
+
+.obUiModalBpSelectorScrollableHeader-container1-container1-container2 {
+  display: table-cell;
+}
+
+.obUiModalBpSelectorScrollableHeader-container1-container1-container2-element1 {
+  /* Inherits: [OB.UI.AdvancedFilterButton] */
+}
+
+/*
+# Component: OB.UI.BPDetailsContextMenuItem
+# Inherits: [OB.UI.ListContextMenuItem]
+*/
+.obUiBpDetailsContextMenuItem {}
+
+/*
+# Component: OB.UI.BPEditContextMenuItem
+# Inherits: OB.UI.ListContextMenuItem
+*/
+.obUiBpEditContextMenuItem {}
+
+/*
+# Component: OB.UI.BPAddressContextMenuItem
+# Inherits: OB.UI.ListContextMenuItem
+*/
+.obUiBpAddressContextMenuItem {}
+
+/*
+# Component: OB.UI.BPReceiptsContextMenuItem
+# Inherits: OB.UI.ListContextMenuItem
+*/
+.obUiBpReceiptsContextMenuItem {}
+
+/*
+# Component: OB.UI.BusinessPartnerContextMenu
+# Inherits: OB.UI.ListContextMenu
+*/
+.obUiBusinessPartnerContextMenu {}
+
+.obUiBusinessPartnerContextMenu-obUiBpEditContextMenuItem {
+  /* Inherits: [OB.UI.BPEditContextMenuItem] */
+}
+
+.obUiBusinessPartnerContextMenu-obUiBpAddressContextMenuItem {
+  /* Inherits: [OB.UI.BPAddressContextMenuItem] */
+}
+
+.obUiBusinessPartnerContextMenu-obUiBpReceiptsContextMenuItem {
+  /* Inherits: [OB.UI.BPReceiptsContextMenuItem] */
+}
+
+/*
+# Component: OB.UI.ListBpsSelectorLine
+# Inherits: [OB.UI.ListSelectorLine]
+*/
+.obUiListBpsSelectorLine {}
+
+.obUiListBpsSelectorLine-line {
+  line-height: 23px;
+  width: 100%;
+}
+
+.obUiListBpsSelectorLine-line-textInfo {
+  float: left;
+  width: calc(100% - 50px);
+  padding: 8px 0;
+  display: table;
+}
+
+.obUiListBpsSelectorLine-line-textInfo-container1 {
+  display: table-cell;
+}
+
+.obUiListBpsSelectorLine-line-textInfo-container1-identifier {}
+
+.obUiListBpsSelectorLine-line-textInfo-container1-filter {
+  color: #888888;
+}
+
+.obUiListBpsSelectorLine-line-textInfo-container1-onHold {
+  font-weight: bold;
+  color: red;
+}
+
+.obUiListBpsSelectorLine-line-textInfo-bottomShipIcon {
+  vertical-align: top;
+  display: table-cell;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.svg');
+  background-repeat: no-repeat;
+  background-size: 21px 21px;
+  background-position: 12px 5px;
+  width: 35px;
+  height: 24px;
+  background-position-y: 0;
+}
+
+.obUiListBpsSelectorLine-line-textInfo-bottomBillIcon {
+  vertical-align: top;
+  display: table-cell;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.svg');
+  background-repeat: no-repeat;
+  background-size: 16px 18px;
+  background-position: 8px 1px;
+  width: 28px;
+  height: 24px;
+  background-position-y: 0;
+}
+
+.obUiListBpsSelectorLine-line-textInfo-element1 {
+  clear: both;
+}
+
+.obUiListBpsSelectorLine-line-container1 {
+  float: right;
+  width: 30px;
+  margin-right: 13px;
+}
+
+.obUiListBpsSelectorLine-line-container1-btnContextMenu {
+  /* Inherits: [OB.UI.BusinessPartnerContextMenu] */
+}
+
+.obUiListBpsSelectorLine_selectedItem {
+  background-color: #fbf6d1 !important;
+}
+
+/*
+# Component: OB.UI.ListBpsSelector
+*/
+.obUiListBpsSelector {
+
+}
+
+.obUiListBpsSelector-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obUiListBpsSelector-container1-container1 {
+  border-bottom: 1px solid #CCCCCC;
+}
+
+.obUiListBpsSelector-container1-container1-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obUiListBpsSelector-container1-container1-container1-stBpAssignToReceipt {
+  max-height: 400px;
+}
+
+.obUiListBpsSelector-container1-container1-container1-renderLoading {
+  border-bottom: 1px solid #CCCCCC;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 30px;
+  color: #CCCCCC;
+}
+
+.obUiListBpsSelector-errorMessage {
+  text-align: left;
+  padding-left: 8px;
+}
+
+/*
+# Component: OB.UI.ModalSelectorBusinessPartners
+# Inherits: [OB.UI.ModalSelector]
+ */
+.obUiModalSelectorBusinessPartners {
+  top: 75px;
+}
+
+/*
+# Component: OB.UI.ModalAdvancedFilterBp
+# Inherits: [OB.UI.ModalAdvancedFilters]
+*/
+.obUiModalAdvancedFilterBp {}
