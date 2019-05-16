@@ -950,6 +950,74 @@
 
 
 
+/***********************   ***********************/
+/*      File: modalreceiptlineproperties.js      */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalReceiptLinesProperties
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalReceiptLinesProperties {}
+
+.obUiModalReceiptLinesProperties-bodyContent-scroller {
+/* # Inherits: [Scroller] */
+  background-color: #ffffff;
+  max-height: 225px;
+  overflow-x: hidden;
+}
+
+.obUiModalReceiptLinesProperties-scroller-attributes {}
+
+.obUiModalReceiptLinesProperties-scroller-attributes-obUiPropertyEditLine {
+/* # Inherits: [OB.UI.PropertyEditLine] */
+}
+
+.obUiModalReceiptLinesProperties-bodyButtons {}
+
+.obUiModalReceiptLinesProperties-bodyButtons-receiptLinePropertiesApplyBtn {
+/* # Inherits: [OB.UI.ReceiptPropertiesDialogApply] */
+}
+
+.obUiModalReceiptLinesProperties-bodyButtons-receiptLinePropertiesCancelBtn {
+/* # Inherits: [OB.UI.ReceiptPropertiesDialogCancel] */
+}
+
+
+/*
+# Component: OB.UI.ModalReceiptLinesPropertiesImpl
+# Inherits: [OB.UI.ModalReceiptLinesProperties]
+*/
+.obUiModalReceiptLinesPropertiesImpl {}
+
+.obUiModalReceiptLinesPropertiesImpl-newAttributes-receiptLineDescription {
+/* # Inherits: [OB.UI.renderTextProperty] */
+}
+
+.obUiModalReceiptLinesPropertiesImpl-receiptLineDescription-control {
+  border: 1px solid #F0F0F0;
+  float: left;
+}
+
+.obUiModalReceiptLinesPropertiesImpl-receiptLineDescription-newAttribute {
+  width: 100%;
+}
+
+.obUiModalReceiptLinesPropertiesImpl-newAttributes-priceReason {
+/* # Inherits: [OB.UI.renderComboProperty] */
+}
+
+
+/*
+# Component: OB.UI.ValidateAction
+# Inherits: [OB.UI.ModalInfo]
+*/
+.obUiValidateAction {}
+
+.obUiValidateAction-bodyContent-message {}
+
+
+
 
 /*****************/
 /*      JAR      */

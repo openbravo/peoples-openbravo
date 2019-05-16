@@ -12,6 +12,7 @@
 enyo.kind({
   name: 'OB.UI.ModalReceiptLinesProperties',
   kind: 'OB.UI.ModalAction',
+  classes: 'obUiModalReceiptLinesProperties',
   handlers: {
     onApplyChanges: 'applyChanges'
   },
@@ -31,8 +32,8 @@ enyo.kind({
       }
       setTimeout(function () {
         receiptLineDescription.focus();
-        document.getElementById(receiptLineDescriptionControl).style.cssText = 'border: 1px solid #F0F0F0; float: left;';
-        document.getElementById(receiptLineDescriptionNewAttribute).style.cssText = 'width: 100%';
+        document.getElementById(receiptLineDescriptionControl).classList.add('obUiModalReceiptLinesPropertiesImpl-receiptLineDescription-control');
+        document.getElementById(receiptLineDescriptionNewAttribute).classList.add('obUiModalReceiptLinesPropertiesImpl-receiptLineDescription-newAttribute');
       }, 200);
     }
     this.autoDismiss = true;
@@ -53,21 +54,23 @@ enyo.kind({
   i18nHeader: 'OBPOS_ReceiptLinePropertiesDialogTitle',
   bodyContent: {
     kind: 'Scroller',
-    maxHeight: '225px',
-    style: 'background-color: #ffffff;',
+    classes: 'obUiModalReceiptLinesProperties-bodyContent-scroller',
     thumb: true,
-    horizontal: 'hidden',
     components: [{
-      name: 'attributes'
+      name: 'attributes',
+      classes: 'obUiModalReceiptLinesProperties-scroller-attributes'
     }]
   },
   bodyButtons: {
+    classes: 'obUiModalReceiptLinesProperties-bodyButtons',
     components: [{
       kind: 'OB.UI.ReceiptPropertiesDialogApply',
-      name: 'receiptLinePropertiesApplyBtn'
+      name: 'receiptLinePropertiesApplyBtn',
+      classes: 'obUiModalReceiptLinesProperties-bodyButtons-receiptLinePropertiesApplyBtn'
     }, {
       kind: 'OB.UI.ReceiptPropertiesDialogCancel',
-      name: 'receiptLinePropertiesCancelBtn'
+      name: 'receiptLinePropertiesCancelBtn',
+      classes: 'obUiModalReceiptLinesProperties-bodyButtons-receiptLinePropertiesCancelBtn'
     }]
   },
   loadValue: function (mProperty, component) {
@@ -111,6 +114,7 @@ enyo.kind({
       var editline = this.$.bodyContent.$.attributes.createComponent({
         kind: 'OB.UI.PropertyEditLine',
         name: 'line_' + natt.name,
+        classes: 'obUiModalReceiptLinesProperties-scroller-attributes-obUiPropertyEditLine',
         newAttribute: natt
       });
       this.propertycomponents[natt.modelProperty] = editline.propertycomponent;
@@ -138,15 +142,18 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalReceiptLinesPropertiesImpl',
   kind: 'OB.UI.ModalReceiptLinesProperties',
+  classes: 'obUiModalReceiptLinesPropertiesImpl',
   newAttributes: [{
     kind: 'OB.UI.renderTextProperty',
     name: 'receiptLineDescription',
+    classes: 'obUiModalReceiptLinesPropertiesImpl-newAttributes-receiptLineDescription',
     modelProperty: 'description',
     i18nLabel: 'OBPOS_LblDescription',
     maxLength: 255
   }, {
     kind: 'OB.UI.renderComboProperty',
     name: 'priceReason',
+    classes: 'obUiModalReceiptLinesPropertiesImpl-newAttributes-priceReason',
     modelProperty: 'oBPOSPriceModificationReason',
     i18nLabel: 'OBPOS_PriceModification',
     retrievedPropertyForValue: 'id',
@@ -194,9 +201,11 @@ enyo.kind({
   kind: 'OB.UI.ModalInfo',
   name: 'OB.UI.ValidateAction',
   header: '',
+  classes: 'obUiValidateAction',
   isDefaultAction: true,
   bodyContent: {
     name: 'message',
+    classes: 'obUiValidateAction-bodyContent-message',
     content: ''
   },
   executeOnShow: function () {
