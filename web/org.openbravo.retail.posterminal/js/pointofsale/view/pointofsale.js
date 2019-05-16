@@ -489,7 +489,7 @@ enyo.kind({
   },
   addProductToOrder: function (inSender, inEvent) {
     var targetOrder, me = this,
-        attrs;
+        attrs, negativeLines;
     if (inEvent.product.get('ignoreAddProduct')) {
       inEvent.product.unset('ignoreAddProduct');
       return;
@@ -507,7 +507,10 @@ enyo.kind({
       });
       return false;
     }
-    if (targetOrder.get('isEditable') === false || OB.UTIL.isCrossStoreReceipt(targetOrder)) {
+    negativeLines = _.filter(targetOrder.get('lines').models, function (line) {
+      return line.get('qty') < 0;
+    }).length;
+    if (targetOrder.get('isEditable') === false || (OB.UTIL.isCrossStoreReceipt(targetOrder) && negativeLines !== 0)) {
       targetOrder.canAddAsServices(this.model, inEvent.product, function (addAsServices) {
         if (addAsServices !== 'ABORT') {
           if (addAsServices === 'OK') {
