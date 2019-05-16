@@ -447,8 +447,8 @@ enyo.kind({
     }
     // The terminal allows to pay on credit
     var visible = OB.MobileApp.model.get('terminal').allowpayoncredit;
-    // And is a layaway or a new order (no loaded order)
-    visible = visible && !this.receipt.get('isPaid') && this.receipt.get('orderType') !== 3;
+    // And not a voided layaway
+    visible = visible && this.receipt.get('orderType') !== 3;
     // And receipt has not been paid
     visible = visible && !this.receipt.getPaymentStatus().done;
     // And Business Partner exists and is elegible to sell on credit.
@@ -1364,7 +1364,7 @@ enyo.kind({
     } else if (button === 'Layaway') {
       this.updateLayawayAction(resultOK ? false : true);
     } else if (button === 'Credit') {
-      if (resultOK && statusOK) {
+      if (resultOK) {
         this.$.creditsalesaction.setLocalDisabled(false);
       } else {
         // If the ticket is a negative ticket, even when there's not enough cash, it must be possible to click on the 'Use Credit' button

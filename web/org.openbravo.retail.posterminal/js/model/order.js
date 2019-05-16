@@ -388,7 +388,7 @@
         bpModel.set('locationModel', new OB.Model.BPLocation(attributes.bp.locationModel));
         this.set('bp', bpModel);
         this.set('lines', new OrderLineList().reset(attributes.lines));
-        this.set('orderManualPromotions', new Backbone.Collection().reset(attributes.orderManualPromotions));
+        this.set('orderManualPromotions', new OB.Collection.OrderManualPromotionsList().reset(attributes.orderManualPromotions));
         this.set('payments', new PaymentLineList().reset(attributes.payments));
         if (attributes.canceledorder) {
           this.set('canceledorder', new OB.Model.Order(attributes.canceledorder));
@@ -1141,7 +1141,7 @@
       this.set('undo', null);
       this.set('bp', null);
       this.set('lines', this.get('lines') ? this.get('lines').reset() : new OrderLineList());
-      this.set('orderManualPromotions', this.get('orderManualPromotions') ? this.get('orderManualPromotions').reset() : new Backbone.Collection());
+      this.set('orderManualPromotions', this.get('orderManualPromotions') ? this.get('orderManualPromotions').reset() : new OB.Collection.OrderManualPromotionsList());
       this.set('payments', this.get('payments') ? this.get('payments').reset() : new PaymentLineList());
       this.set('payment', OB.DEC.Zero);
       this.set('paymentWithSign', OB.DEC.Zero);
@@ -3332,7 +3332,7 @@
       var singlePromotionsList = [];
       var rule = promotionToApply.rule;
       if (!this.get('orderManualPromotions')) {
-        this.set('orderManualPromotions', new Backbone.Collection());
+        this.set('orderManualPromotions', new OB.Collection.OrderManualPromotionsList());
       }
       if (!rule.obdiscAllowmultipleinstan || this.get('orderManualPromotions').length <= 0) {
         // Check there is no other manual promotion with the same ruleId and hasMultiDiscount set as false or undefined
@@ -3390,7 +3390,11 @@
       var promotions = line.get('promotions') || [],
           disc = {},
           i, replaced = false,
-          discountRule = OB.Model.Discounts.discountRules[rule.attributes.discountType];
+          discountRule = OB.Model.Discounts.discountRules[rule.attributes.discountType],
+          unitsConsumed = 0,
+          unitsConsumedByNoCascadeRules = 0,
+          unitsConsumedByTheSameRule = 0;
+
       if (discountRule.getIdentifier) {
         disc.identifier = discountRule.getIdentifier(rule, discount);
       }
@@ -3467,41 +3471,39 @@
       disc.obdiscAllowinnegativelines = (!OB.UTIL.isNullOrUndefined(rule.get('obdiscAllowinnegativelines'))) ? rule.get('obdiscAllowinnegativelines') : false;
       disc.executedAtTheEndPromo = discount.executedAtTheEndPromo || false;
 
-      var unitsConsumed = 0;
-      var unitsConsumedByNoCascadeRules = 0;
-      var unitsConsumedByTheSameRule = 0;
-      for (i = 0; i < promotions.length; i++) {
-        if (!promotions[i].applyNext) {
-          unitsConsumedByNoCascadeRules += promotions[i].qtyOffer;
-        } else if (promotions[i].ruleId === disc.ruleId) {
-          unitsConsumedByTheSameRule += promotions[i].qtyOffer;
+      if (!disc.manual) {
+        for (i = 0; i < promotions.length; i++) {
+          if (!promotions[i].applyNext) {
+            unitsConsumedByNoCascadeRules += promotions[i].qtyOffer;
+          } else if (promotions[i].ruleId === disc.ruleId) {
+            unitsConsumedByTheSameRule += promotions[i].qtyOffer;
+          }
+        }
+
+        if (disc.applyNext && unitsConsumedByTheSameRule === 0) {
+          unitsConsumed = unitsConsumedByNoCascadeRules;
+        } else {
+          unitsConsumed = unitsConsumedByNoCascadeRules + unitsConsumedByTheSameRule + disc.qtyOffer;
         }
       }
 
-      if (disc.applyNext && unitsConsumedByTheSameRule === 0) {
-        unitsConsumed = unitsConsumedByNoCascadeRules;
-      } else {
-        unitsConsumed = unitsConsumedByNoCascadeRules + unitsConsumedByTheSameRule + disc.qtyOffer;
-      }
-      if (!disc.manual) {
-        for (i = 0; i < promotions.length; i++) {
-          if (unitsConsumed > line.get('qty')) {
-            if (discount.forceReplace) {
-              if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
-                if (promotions[i].hidden !== true) {
-                  promotions[i] = disc;
-                }
-              }
-            }
-            replaced = true;
-            break;
-          } else if (discount.forceReplace) {
+      for (i = 0; i < promotions.length; i++) {
+        if (!disc.manual && unitsConsumed > line.get('qty')) {
+          if (discount.forceReplace) {
             if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
               if (promotions[i].hidden !== true) {
                 promotions[i] = disc;
-                replaced = true;
-                break;
               }
+            }
+          }
+          replaced = true;
+          break;
+        } else if (disc.manual || discount.forceReplace) {
+          if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
+            if (promotions[i].hidden !== true) {
+              promotions[i] = disc;
+              replaced = true;
+              break;
             }
           }
         }
@@ -7638,7 +7640,7 @@
       order.set('print', true);
       order.set('sendEmail', false);
       order.set('openDrawer', false);
-      order.set('orderManualPromotions', new Backbone.Collection());
+      order.set('orderManualPromotions', new OB.Collection.OrderManualPromotionsList());
       OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
         newOrder: order
       });
@@ -8035,6 +8037,21 @@
       }
     }
   });
+
+  OB.Collection.OrderManualPromotionsList = Backbone.Collection.extend({
+    model: Backbone.Model.extend({
+      defaults: {
+        discountRule: null,
+        rule: null
+      },
+      initialize: function (attributes) {
+        if (attributes && attributes.discountRule) {
+          this.set('discountRule', new OB.Model.Discount(attributes.discountRule));
+        }
+      }
+    })
+  });
+
   // order model is not registered using standard Registry method because list is
   // because collection is specific
   window.OB.Model.Order = Order;
