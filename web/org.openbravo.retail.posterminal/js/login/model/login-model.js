@@ -200,6 +200,21 @@
                       terminalModel.get('terminal').terminalType.documentTypeForReturns = OB.MobileApp.model.get('context').organization.obposCDoctyperet;
                       terminalModel.get('terminal').terminalType.documentTypeForReconciliations = OB.MobileApp.model.get('context').organization.obposCDoctyperecon;
                       terminalModel.get('terminal').terminalType.documentTypeForQuotations = OB.MobileApp.model.get('context').organization.obposCDoctypequot;
+                      
+                      //
+                      terminalModel.get('terminal').terminalType.uiConfiguration = {};
+                      terminalModel.get('terminal').terminalType.uiConfiguration.abas = [];
+                      terminalModel.get('terminal').terminalType.uiConfiguration.abas.push({
+                        searchKey: 'obpos_pointofsale-receipttoolbar1',
+                        actions: [{
+                          searchKey: 'returnReceipt'
+                        }, {
+                          searchKey: 'invoiceReceipt'
+                        }, {
+                          searchKey: 'layawayReceipt'
+                        }]
+                      });
+                      //
 
                       if (!terminalModel.usermodel) {
                         OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
