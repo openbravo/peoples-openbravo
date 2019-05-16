@@ -215,6 +215,29 @@
                         }]
                       });
                       //
+                      terminalModel.get('terminal').terminalType.uiConfiguration.abas.push({
+                        searchKey: 'obpos_pointofsale_scan_bottomrightaba1',
+                        actions: [{
+                          searchKey: 'returnReceipt'
+                        }, {
+                          searchKey: 'invoiceReceipt'
+                        }, {
+                          searchKey: 'layawayReceipt'
+                        }]
+                      });
+                      //
+                      terminalModel.get('terminal').terminalType.uiConfiguration.abas.push({
+                        searchKey: 'obpos_pointofsale_edit_bottomrightaba1',
+                        actions: [{
+                          searchKey: 'addQuantity'
+                        }, {
+                          searchKey: 'removeQuantity'
+                        }, {
+                          searchKey: 'changePrice'
+                        }]
+                      });
+                      //
+
                       if (!terminalModel.usermodel) {
                         OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
                       } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error' && !OB.RR.RequestRouter.ignoreManifestLoadError()) {

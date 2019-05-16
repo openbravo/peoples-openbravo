@@ -372,8 +372,35 @@ enyo.kind({
             kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane',
             name: 'toolbarpane'
           }, {
-            kind: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
-            name: 'keyboard'
+            name: 'bottomRightLayoutContainer',
+            classes: 'bottomRightLayoutContainer',
+            components: [{
+              name: 'bottomRightLayout',
+              showing: false,
+              components: [{
+                name: 'obpos_pointofsale_scan_bottomRightLayout',
+                components: [{
+                  kind: 'OB.UI.ActionButtonArea',
+                  name: 'obpos_pointofsale_scan_bottomrightaba1',
+                  abaIdentifier: 'obpos_pointofsale_scan_bottomrightaba1',
+                  classes: 'obpos_pointofsale_scan_bottomrightaba1'
+                }]
+              }, {
+                name: 'obpos_pointofsale_edit_bottomRightLayout',
+                components: [{
+                  kind: 'OB.UI.ActionButtonArea',
+                  name: 'obpos_pointofsale_edit_bottomrightaba1',
+                  abaIdentifier: 'obpos_pointofsale_edit_bottomrightaba1',
+                  classes: 'obpos_pointofsale_edit_bottomrightaba1'
+                }]
+              }]
+            }, {
+              name: 'keyboardWrapper',
+              components: [{
+                kind: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
+                name: 'keyboard'
+              }]
+            }]
           }]
         }]
       },
@@ -926,6 +953,7 @@ enyo.kind({
     this.waterfall('onShowingActionIcons', inEvent);
   },
   tabChange: function (inSender, inEvent) {
+    this.switchBottomRightLayout(inEvent.tabPanel);
     this.leftToolbarDisabled(inSender, {
       status: inEvent.status || false,
       disableMenu: (inEvent.keyboard === 'toolbardiscounts' || this.model.get('leftColumnViewManager').isMultiOrder() ? true : false),
@@ -1616,6 +1644,26 @@ enyo.kind({
     this.$.multiColumn.$.rightPanel.$.toolbarpane.setModel(this.model);
     this.$.multiColumn.$.rightPanel.$.keyboard.setReceipt(receipt);
     this.$.multiColumn.$.rightToolbar.$.rightToolbar.setReceipt(receipt);
+  },
+  switchBottomRightLayout: function (newTab) {
+    if (newTab === 'edit' || newTab === 'scan') {
+      this.$.multiColumn.$.rightPanel.$.keyboardWrapper.setShowing(false);
+      this.$.multiColumn.$.rightPanel.$.keyboard.setShowing(false);
+      this.$.multiColumn.$.rightPanel.$.bottomRightLayout.setShowing(true);
+      if (newTab === 'edit') {
+        this.$.multiColumn.$.rightPanel.$.obpos_pointofsale_scan_bottomRightLayout.setShowing(false);
+        this.$.multiColumn.$.rightPanel.$.obpos_pointofsale_edit_bottomRightLayout.setShowing(true);
+      } else if (newTab === 'scan') {
+        this.$.multiColumn.$.rightPanel.$.obpos_pointofsale_edit_bottomRightLayout.setShowing(false);
+        this.$.multiColumn.$.rightPanel.$.obpos_pointofsale_scan_bottomRightLayout.setShowing(true);
+      }
+    } else {
+      this.$.multiColumn.$.rightPanel.$.keyboardWrapper.setShowing(true);
+      this.$.multiColumn.$.rightPanel.$.keyboard.setShowing(true);
+      this.$.multiColumn.$.rightPanel.$.bottomRightLayout.setShowing(false);
+      this.$.multiColumn.$.rightPanel.$.obpos_pointofsale_edit_bottomRightLayout.setShowing(false);
+      this.$.multiColumn.$.rightPanel.$.obpos_pointofsale_scan_bottomRightLayout.setShowing(false);
+    }
   },
   initComponents: function () {
     this.inherited(arguments);
