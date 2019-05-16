@@ -213,6 +213,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Websockets
         "utils/rfidWebsocket",
 
+        // States
+        "actionstates/commonreceipt", "actionstates/commonwindow",
+
         // Actions
         "actions/changeprice", "actions/changequantity", "actions/convertquotation",
         "actions/createquotation", "actions/deleteline", "actions/discount", "actions/editline",

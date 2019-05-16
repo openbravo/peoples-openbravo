@@ -22,7 +22,7 @@
     isActive: function (view) {
       return view.state.getState({
         name: 'window.currentView'
-      }) === 'order' && view.state.getState({
+      }).name === 'order' && view.state.getState({
         name: 'receipt.isEditable'
       });
     }
