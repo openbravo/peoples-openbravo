@@ -306,11 +306,6 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblEmail',
     maxlength: 255
   }, {
-    kind: 'OB.UI.CustomerConsentCheckProperty',
-    name: 'isCustomerConsent',
-    modelProperty: 'isCustomerConsent',
-    i18nLabel: 'OBPOS_CustomerConsent'
-  }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'birthPlace',
     modelProperty: 'birthPlace',
@@ -357,15 +352,6 @@ enyo.kind({
       }
     }
   }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'comments',
-    modelProperty: 'comments',
-    i18nLabel: 'OBPOS_LblComments',
-    maxlength: 40,
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowComments', true);
-    }
-  }, {
     kind: 'OB.UI.CustomerComboProperty',
     name: 'customerLanguage',
     modelProperty: 'language',
@@ -399,6 +385,15 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblLanguage',
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowLanguage', true);
+    }
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
+    name: 'comments',
+    modelProperty: 'comments',
+    i18nLabel: 'OBPOS_LblComments',
+    maxlength: 40,
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowComments', true);
     }
   }, {
     kind: 'OB.UI.CustomerComboProperty',
@@ -445,6 +440,25 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SwitchShippingInvoicingAddr',
     name: 'useSameAddrCheck'
+  }, {
+    kind: 'OB.UI.CustomerConsentCheckProperty',
+    name: 'isCustomerConsent',
+    modelProperty: 'isCustomerConsent',
+    i18nLabel: 'OBPOS_CustomerConsent'
+  }, {
+    kind: 'OB.UI.CustomerCheckCommercialAuth',
+    name: 'obposCommercialauth',
+    modelProperty: 'obposCommercialauth',
+    i18nLabel: 'OBPOS_CommercialAuth',  
+  }, {
+    kind: 'OB.UI.CustomerCheckComboProperty',
+    name: 'contactpreferences',
+    modelProperty: 'contactpreferences',
+    i18nLabel: 'OBPOS_ContactPreferences',
+    setEditedProperties: function (oldBp, editedBp) {
+      editedBp.set('obposViasms', oldBp.get('obposViasms'));
+      editedBp.set('obposViaemail', oldBp.get('obposViaemail'));
+    }
   }],
   shipAddrAttributes: [{
     kind: 'OB.UI.CustomerComboProperty',

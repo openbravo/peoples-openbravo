@@ -498,6 +498,18 @@
     name: 'availableCredit',
     column: 'availableCredit',
     type: 'NUMERIC'
+  }, {
+    name: 'obposCommercialauth',
+    column: 'obposCommercialauth',
+    type: 'TEXT'
+  }, {
+    name: 'obposViaemail',
+    column: 'obposViaemail',
+    type: 'TEXT'
+  }, {
+    name: 'obposViasms',
+    column: 'obposViasms',
+    type: 'TEXT'
   }]);
 
   BusinessPartner.addIndex([{

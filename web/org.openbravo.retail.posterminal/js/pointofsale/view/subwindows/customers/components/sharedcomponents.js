@@ -643,3 +643,138 @@ enyo.kind({
     }
   }
 });
+enyo.kind({
+  name: 'OB.UI.CustomerCheckCommercialAuth',
+  kind: 'OB.UI.CustomerConsentCheckProperty',
+  loadValue: function (inSender, inEvent) {
+    var me = this;
+    if (inEvent.customer !== undefined) {
+      if (inEvent.customer.get(me.modelProperty) !== undefined) {
+        me.checked = inEvent.customer.get(me.modelProperty);
+      }
+      if (me.checked) {
+        me.addClass('active');
+      } else {
+        me.removeClass('active');
+      }
+    } else {
+      me.checked = false;
+      me.removeClass('active');
+    }
+    var contactpreferences = this.parent.parent.parent.children[16];
+    var commercialauth = inEvent.customer.attributes.obposCommercialauth;
+    if (commercialauth) {
+      contactpreferences.show();
+    } else {
+      contactpreferences.hide();
+    }
+  },
+  tap: function () {
+    var contactpreferences = this.parent.parent.parent.children[16];
+    if (this.readOnly) {
+      return;
+    }
+    this.checked = !this.checked;
+    this.addRemoveClass('active', this.checked);
+    if (this.checked) {
+      contactpreferences.show();
+    } else {
+      contactpreferences.hide();
+    }
+  }
+});
+enyo.kind({
+  name: 'OB.UI.CustomerCheckComboProperty',
+  components: [{
+    components: [{
+      name: 'checkoptions',
+      style: 'display: flex; flex - wrap: wrap;',
+      components: [{
+        name: 'smsField',
+        style: 'display: table; height: 40px; border: 1px solid #CCC; ',
+        components: [{
+          kind: 'OB.UI.CheckboxButton',
+          name: 'smsCheck',
+          style: 'background-position: 0px 5px; height: 38px; margin-left: 5px; '
+        }, {
+          name: 'smsLabel',
+          classes: 'input',
+          style: 'width: 80%; display: table-cell; vertical-align: middle; border: none; '
+        }]
+      }, {
+        name: 'emailField',
+        style: 'display: table; height: 40px; border: 1px solid #CCC; ',
+        components: [{
+          kind: 'OB.UI.CheckboxButton',
+          name: 'emailCheck',
+          style: 'background-position: 0px 5px; height: 38px; margin-left: 5px; '
+        }, {
+          name: 'emailLabel',
+          classes: 'input',
+          style: 'width: 80%; display: table-cell; vertical-align: middle; border: none; '
+        }]
+      }]
+    }],
+  }],
+  handlers: {
+    onLoadValue: 'loadValue',
+    onSaveChange: 'saveChange'
+  },
+  events: {
+    onSaveProperty: ''
+  },
+  loadValue: function (inSender, inEvent) {
+    var me = this;
+    var commertialauth = this.parent.parent.parent.children[15].$.newAttribute.$.obposCommercialauth;
+
+    if (inEvent.customer !== undefined) {
+      if (inEvent.customer.get('obposViasms') !== undefined) {
+        me.$.smsCheck.checked = inEvent.customer.get('obposViasms');
+      } else {
+        me.$.smsCheck.checked = false;
+      }
+      if (inEvent.customer.get('obposViaemail') !== undefined) {
+        me.$.emailCheck.checked = inEvent.customer.get('obposViaemail');
+      } else {
+        me.$.emailCheck.checked = false;
+      }
+      if (me.$.smsCheck.checked) {
+        me.$.smsCheck.addClass('active');
+      } else {
+        me.$.smsCheck.removeClass('active');
+      }
+      if (me.$.emailCheck.checked) {
+        me.$.emailCheck.addClass('active');
+      } else {
+        me.$.emailCheck.removeClass('active');
+      }
+      if (commertialauth.checked) {
+        if (me.$.smsCheck.checked) {
+          me.$.smsCheck.addClass('active');
+        } else {
+          me.$.smsCheck.removeClass('active');
+        }
+        if (me.$.emailCheck.checked) {
+          me.$.emailCheck.addClass('active');
+        } else {
+          me.$.emailCheck.removeClass('active');
+        }
+      }
+    }
+  },
+  saveChange: function (inSender, inEvent) {
+    var me = this;
+    inEvent.customer.set('obposViasms', me.$.smsCheck.checked);
+    inEvent.customer.set('obposViaemail', me.$.emailCheck.checked);
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.smsLabel.setContent(OB.I18N.getLabel('OBPOS_LblSms'));
+    this.$.emailLabel.setContent(OB.I18N.getLabel('OBPOS_LblEmail'));
+    if (this.readOnly) {
+      this.$.smsCheck.setDisabled(true);
+      this.$.emailCheck.setDisabled(true);
+    }
+    this.$.checkoptions.show();
+  }
+});

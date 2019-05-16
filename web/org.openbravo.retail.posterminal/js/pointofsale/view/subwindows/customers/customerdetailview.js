@@ -355,39 +355,6 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblEmail',
     readOnly: true
   }, {
-    kind: 'OB.UI.CustomerConsentCheckProperty',
-    name: 'isCustomerConsent',
-    modelProperty: 'isCustomerConsent',
-    i18nLabel: 'OBPOS_CustomerConsent',
-    readOnly: true
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'language',
-    modelProperty: 'language_name',
-    readOnly: true,
-    i18nLabel: 'OBPOS_LblLanguage',
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowLanguage', true);
-    }
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'comments',
-    modelProperty: 'comments',
-    i18nLabel: 'OBPOS_LblComments',
-    readOnly: true,
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowComments', true);
-    }
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'availableCredit',
-    modelProperty: 'availableCredit',
-    i18nLabel: 'OBPOS_LblAvailableCredit',
-    readOnly: true,
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowAvailableCredit', true);
-    }
-  }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'birthPlace',
     modelProperty: 'birthPlace',
@@ -418,6 +385,33 @@ enyo.kind({
     }
   }, {
     kind: 'OB.UI.CustomerTextProperty',
+    name: 'language',
+    modelProperty: 'language_name',
+    readOnly: true,
+    i18nLabel: 'OBPOS_LblLanguage',
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowLanguage', true);
+    }
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
+    name: 'availableCredit',
+    modelProperty: 'availableCredit',
+    i18nLabel: 'OBPOS_LblAvailableCredit',
+    readOnly: true,
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowAvailableCredit', true);
+    }
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
+    name: 'comments',
+    modelProperty: 'comments',
+    i18nLabel: 'OBPOS_LblComments',
+    readOnly: true,
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowComments', true);
+    }
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
     name: 'customerPriceList',
     modelProperty: 'priceList',
     i18nLabel: 'OBPOS_PriceList',
@@ -436,6 +430,28 @@ enyo.kind({
     },
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('EnableMultiPriceList', true);
+    }
+  }, {
+    kind: 'OB.UI.CustomerConsentCheckProperty',
+    name: 'isCustomerConsent',
+    modelProperty: 'isCustomerConsent',
+    i18nLabel: 'OBPOS_CustomerConsent',
+    readOnly: true
+  }, {
+    kind: 'OB.UI.CustomerCheckCommercialAuth',
+    name: 'obposCommercialauth',
+    modelProperty: 'obposCommercialauth',
+    i18nLabel: 'OBPOS_CommercialAuth',
+    readOnly: true
+  }, {
+    kind: 'OB.UI.CustomerCheckComboProperty',
+    name: 'contactpreferences',
+    modelProperty: 'contactpreferences',
+    i18nLabel: 'OBPOS_ContactPreferences',
+    readOnly: true,
+    setEditedProperties: function (oldBp, editedBp) {
+      editedBp.set('obposViasms', oldBp.get('obposViasms'));
+      editedBp.set('obposViaemail', oldBp.get('obposViaemail'));
     }
   }]
 });
