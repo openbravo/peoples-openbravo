@@ -1194,6 +1194,26 @@
 
 
 
+/***********************   ***********************/
+/*             File: orderdetails.js             */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.OrderDetails
+*/
+.obUiOrderDetails {
+  padding: 13px 0px 15px 10px;
+  font-weight: bold;
+  color: #6CB33F;
+  float: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+
+
 
 /*****************/
 /*      JAR      */

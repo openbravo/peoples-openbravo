@@ -11,6 +11,7 @@
 
 enyo.kind({
   name: 'OB.UI.OrderDetails',
+  classes: 'obUiOrderDetails',
   published: {
     order: null
   },
@@ -23,9 +24,7 @@ enyo.kind({
       model: this.order
     });
   },
-  attributes: {
-    style: 'padding: 13px 0px 15px 10px; font-weight: bold; color: #6CB33F; float: left; calc(100% - 50px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;'
-  },
+  attributes: {},
   events: {
     onPricelistChanged: '',
     onShowReceiptProperties: ''
