@@ -13,8 +13,7 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BusinessPartner',
-  classes: 'btnlink-gray',
-  style: 'float: left; text-overflow:ellipsis; white-space: nowrap; overflow: hidden;',
+  classes: 'obUiBusinessPartner',
   published: {
     order: null
   },
@@ -28,11 +27,11 @@ enyo.kind({
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
     if (!this.isEnabled) {
-      this.removeClass('btnlink');
-      this.addClass('btnbp');
+      this.removeClass('obUiBusinessPartner_enabled');
+      this.addClass('obUiBusinessPartner_disabled');
     } else {
-      this.removeClass('btnbp');
-      this.addClass('btnlink');
+      this.removeClass('obUiBusinessPartner_disabled');
+      this.addClass('obUiBusinessPartner_enabled');
     }
   },
   tap: function () {
@@ -105,8 +104,7 @@ enyo.kind({
     onHideThisPopup: ''
   },
   disabled: false,
-  style: 'width: 170px; margin: 0px 5px 8px 19px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  classes: 'obUiNewCustomerWindowButton businesspartner-obUiButton-generic_yellow',
   i18nLabel: 'OBPOS_LblNewCustomer',
   handlers: {
     onSetModel: 'setModel',
@@ -148,8 +146,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.AdvancedSearchCustomerWindowButton',
-  style: 'margin: 0px 0px 8px 5px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  classes: 'obUiAdvancedSearchCustomerWindowButton businesspartner-obUiButton-generic_yellow',
   i18nLabel: 'OBPOS_LblAdvancedSearch',
   disabled: false,
   handlers: {
@@ -197,6 +194,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalBpScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obUiModalBpScrollableHeader',
   events: {
     onSearchAction: '',
     onClearAction: ''
@@ -206,50 +204,50 @@ enyo.kind({
     onFiltered: 'searchAction'
   },
   components: [{
-    style: 'padding: 10px;',
+    classes: 'obUiModalBpScrollableHeader-container1',
     components: [{
-      style: 'display: table;',
+      classes: 'obUiModalBpScrollableHeader-container1-container1',
       components: [{
-        style: 'display: table-cell; width: 100%;',
+        classes: 'obUiModalBpScrollableHeader-container1-container1-container1',
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
           name: 'customerFilterText',
-          style: 'width: 100%',
+          classes: 'obUiModalBpScrollableHeader-container1-container1-container1-customerFilterText',
           skipAutoFilterPref: 'OBPOS_remote.customer'
         }]
       }, {
-        style: 'display: table-cell;',
+        classes: 'obUiModalBpScrollableHeader-container1-container1-container2',
         components: [{
           kind: 'OB.UI.SmallButton',
           name: 'OB.UI.Bp.Modal.search',
-          classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-          style: 'width: 100px; margin: 0px 5px 8px 19px;',
+          classes: 'obUiModalBpScrollableHeader-container1-container1-container2-obUiBpModalSearch',
           ontap: 'clearAction'
         }]
       }, {
-        style: 'display: table-cell;',
+        classes: 'obUiModalBpScrollableHeader-container1-container1-container3',
         components: [{
           kind: 'OB.UI.SmallButton',
-          classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-          style: 'width: 100px; margin: 0px 0px 8px 5px;',
+          classes: 'obUiModalBpScrollableHeader-container1-container1-container3-obUiSmallButton',
           ontap: 'searchAction'
         }]
       }]
     }]
   }, {
-    style: 'padding: 10px;',
+    classes: 'obUiModalBpScrollableHeader-container2',
     components: [{
-      style: 'display: table;',
+      classes: 'obUiModalBpScrollableHeader-container2-container1',
       components: [{
-        style: 'display: table-cell;',
+        classes: 'obUiModalBpScrollableHeader-container2-container1-container1',
         components: [{
           kind: 'OB.UI.NewCustomerWindowButton',
-          name: 'newAction'
+          name: 'newAction',
+          classes: 'obUiModalBpScrollableHeader-container2-container1-container1-newAction'
         }]
       }, {
-        style: 'display: table-cell;',
+        classes: 'obUiModalBpScrollableHeader-container2-container1-container2',
         components: [{
-          kind: 'OB.UI.AdvancedSearchCustomerWindowButton'
+          kind: 'OB.UI.AdvancedSearchCustomerWindowButton',
+          classes: 'obUiModalBpScrollableHeader-container2-container1-container2-obUiAdvancedSearchCustomerWindowButton'
         }]
       }]
     }]
@@ -270,20 +268,21 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListBpsLine',
   kind: 'OB.UI.listItemButton',
+  classes: 'obUiListBpsLine',
   components: [{
     name: 'line',
-    style: 'line-height: 23px;',
+    classes: 'obUiListBpsLine-line',
     components: [{
-      style: 'display: inline-block;',
-      name: 'identifier'
+      name: 'identifier',
+      classes: 'obUiListBpsLine-line-identifier'
     }, {
-      style: 'display: inline-block; font-weight: bold; color: red; padding-left:5px;',
-      name: 'onHold'
+      name: 'onHold',
+      classes: 'obUiListBpsLine-line-onHold'
     }, {
-      style: 'clear: left; color: #888888',
-      name: 'address'
+      name: 'address',
+      classes: 'obUiListBpsLine-line-address'
     }, {
-      style: 'clear: both;'
+      classes: 'obUiListBpsLine-line-element4 u-clearBoth'
     }]
   }],
   events: {
@@ -306,7 +305,7 @@ enyo.kind({
 /*scrollable table (body of modal)*/
 enyo.kind({
   name: 'OB.UI.ListBps',
-  classes: 'row-fluid',
+  classes: 'obUiListBps',
   handlers: {
     onSearchAction: 'searchAction',
     onClearAction: 'clearAction'
@@ -315,22 +314,21 @@ enyo.kind({
     onChangeBusinessPartner: ''
   },
   components: [{
-    classes: 'span12',
+    classes: 'obUiListBps-container1',
     components: [{
-      style: 'border-bottom: 1px solid #cccccc;',
-      classes: 'row-fluid',
+      classes: 'obUiListBps-container1-container1',
       components: [{
-        classes: 'span12',
+        classes: 'obUiListBps-container1-container1-container1',
         components: [{
           name: 'stBPAssignToReceipt',
           kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '350px',
+          classes: 'obUiListBps-container1-container1-container1-stBPAssignToReceipt',
           renderHeader: 'OB.UI.ModalBpScrollableHeader',
           renderLine: 'OB.UI.ListBpsLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }, {
           name: 'renderLoading',
-          style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+          classes: 'obUiListBps-container1-container1-container1-renderLoading',
           showing: false,
           initComponents: function () {
             this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
@@ -406,6 +404,7 @@ enyo.kind({
   name: 'OB.UI.ModalBusinessPartners',
   topPosition: '125px',
   kind: 'OB.UI.Modal',
+  classes: 'obUiModalBusinessPartners',
   executeOnShow: function () {
     this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerButton'));
     return true;
@@ -416,7 +415,8 @@ enyo.kind({
   },
   i18nHeader: 'OBPOS_LblAssignCustomer',
   body: {
-    kind: 'OB.UI.ListBps'
+    kind: 'OB.UI.ListBps',
+    classes: 'obUiModalBusinessPartners-body-obUiListBps'
   },
   init: function (model) {
     this.model = model;

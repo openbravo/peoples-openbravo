@@ -1585,6 +1585,287 @@ z
 
 
 
+/***********************   ***********************/
+/*           File: businesspartner.js            */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: Generic class for this file
+*/
+.businesspartner-obUiButton-generic_yellow {
+  margin: 10px;
+  background-color: #f8e859;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  height: 30px;
+  font-size: var(--font-medium);
+  padding: 5px 15px 7px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+  /* Instead of "1" to avoid strange displacement effect in buttons on hover effect */
+}
+
+.businesspartner-obUiButton-generic_yellow.btn-over,
+.businesspartner-obUiButton-generic_yellow.btnlink:hover {
+  opacity: 0.75;
+}
+
+.businesspartner-obUiButton-generic_yellow.btn-down,
+.businesspartner-obUiButton-generic_yellow:active {
+  opacity: 0.999;
+  /* Instead of "1" to avoid strange displacement effect in buttons on hover effect */
+  background-color: #cccccc;
+}
+
+.businesspartner-obUiButton-generic_yellow:disabled,
+.businesspartner-obUiButton-generic_yellow[disabled=true]:hover {
+  background-color: #a9a9a9;
+  opacity: 1;
+  cursor: default;
+}
+
+.businesspartner-obUiButton-generic_yellow.fixedheight {
+  height: 45px;
+}
+
+.businesspartner-obUiButton-generic_yellow.fixedwidth {
+  width: 45px;
+}
+
+@media all and (max-width: 800px) {
+  .businesspartner-obUiButton-generic_yellow {
+    height: 45px;
+  }
+}
+
+
+/*
+# Component: OB.UI.BusinessPartner
+# Inherits: [OB.UI.SmallButton]
+*/
+.obUiBusinessPartner {
+  float: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  background-color: #e2e2e2;
+  color: black;
+}
+
+.obUiBusinessPartner:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px !important;
+}
+
+.obUiBusinessPartner_enabled {
+  display: inline-block;
+  font-weight: 600;
+  border: none;
+  font-size: 18px;
+  padding: 12px 15px 14px 15px;
+  text-decoration: none;
+  background-color: #6cb33f;
+  color: white;
+  cursor: pointer;
+  margin: 10px;
+  opacity: 0.999;
+}
+
+.obUiBusinessPartner_disabled {
+  text-decoration: none;
+  background-color: white;
+  color: #000;
+  min-width: 115px;
+}
+
+
+/*
+# Component: OB.UI.NewCustomerWindowButton
+# Inherits: [OB.UI.Button]
+*/
+.obUiNewCustomerWindowButton {
+  width: 170px;
+  margin: 0px 5px 8px 19px;
+}
+
+
+/*
+# Component: OB.UI.AdvancedSearchCustomerWindowButton
+# Inherits: [OB.UI.Button]
+*/
+.obUiAdvancedSearchCustomerWindowButton {
+  margin: 0px 0px 8px 5px;
+}
+
+
+/*
+# Component: OB.UI.ModalBpScrollableHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obUiModalBpScrollableHeader {}
+
+.obUiModalBpScrollableHeader-container1 {
+  padding: 10px;
+}
+
+.obUiModalBpScrollableHeader-container1-container1 {
+  display: table;
+}
+
+.obUiModalBpScrollableHeader-container1-container1-container1 {
+  display: table-cell;
+  width: 100%;
+}
+
+.obUiModalBpScrollableHeader-container1-container1-container1-customerFilterText {
+/* # Inherits: [OB.UI.SearchInputAutoFilter] */
+  width: 100%;
+}
+
+.obUiModalBpScrollableHeader-container1-container1-container2 {
+  display: table-cell;
+}
+
+.obUiModalBpScrollableHeader-container1-container1-container2-obUiBpModalSearch {
+/* # Inherits: [OB.UI.SmallButton] */
+  width: 100px;
+  margin: 0px 5px 8px 19px;
+  background-image: url('./../img/iconClear.svg');
+  background-size: 13px 13px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: #e2e2e2;
+  color: black;
+}
+
+.obUiModalBpScrollableHeader-container1-container1-container2-obUiBpModalSearch:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px !important;
+}
+
+.obUiModalBpScrollableHeader-container1-container1-container3 {
+  display: table-cell;
+}
+
+.obUiModalBpScrollableHeader-container1-container1-container3-obUiSmallButton {
+/* # Inherits: [OB.UI.SmallButton] */
+  width: 100px;
+  margin: 0px 0px 8px 5px;
+  background-image: url('./../img/iconSearch.svg');
+  background-size: 15px 16px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: #f8e859;
+  color: black;
+}
+
+.obUiModalBpScrollableHeader-container2 {
+  padding: 10px;
+}
+
+.obUiModalBpScrollableHeader-container2-container1 {
+  display: table;
+}
+
+.obUiModalBpScrollableHeader-container2-container1-container1 {
+  display: table-cell;
+}
+
+.obUiModalBpScrollableHeader-container2-container1-container1-newAction  {
+/* # Inherits: [OB.UI.NewCustomerWindowButton] */
+}
+
+.obUiModalBpScrollableHeader-container2-container1-container2 {
+  display: table-cell;
+}
+
+.obUiModalBpScrollableHeader-container2-container1-container2-obUiAdvancedSearchCustomerWindowButton {
+/* # Inherits: [OB.UI.AdvancedSearchCustomerWindowButton] */
+}
+
+
+/*
+# Component: OB.UI.ListBpsLine
+# Inherits: [OB.UI.listItemButton]
+*/
+.obUiListBpsLine {}
+
+.obUiListBpsLine-line {
+  line-height: 23px;
+}
+
+.obUiListBpsLine-line-identifier {
+  display: inline-block;
+}
+
+.obUiListBpsLine-line-onHold {
+  display: inline-block;
+  font-weight: bold;
+  color: red;
+  padding-left: 5px;
+}
+
+.obUiListBpsLine-line-address {
+  clear: left;
+  color: #888888;
+}
+
+.obUiListBpsLine-line-element4 {}
+
+
+/*
+# Component: OB.UI.ListBps
+*/
+.obUiListBps {}
+
+.obUiListBps-container1 {}
+
+.obUiListBps-container1-container1 {
+  border-bottom: 1px solid #cccccc;
+}
+
+.obUiListBps-container1-container1-container1 {}
+
+.obUiListBps-container1-container1-container1-stBPAssignToReceipt {
+/* # Inherits: [OB.UI.ScrollableTable] */
+  max-height: 350px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.obUiListBps-container1-container1-container1-renderLoading {
+  border-bottom: 1px solid #cccccc;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: var(--font-huge);
+  color: #cccccc;
+}
+
+
+/*
+# Component: OB.UI.ModalBusinessPartners
+# Inherits: [OB.UI.Modal]
+*/
+.obUiModalBusinessPartners {}
+
+.obUiModalBusinessPartners-body-obUiListBps {
+  /* # Inherits: [OB.UI.ListBps] */
+}
+
+
+
 
 /*****************/
 /*      JAR      */
