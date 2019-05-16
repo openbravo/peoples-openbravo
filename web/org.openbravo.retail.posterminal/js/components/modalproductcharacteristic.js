@@ -13,8 +13,7 @@
 enyo.kind({
   name: 'OB.UI.ListValuesLineCheck',
   kind: 'OB.UI.CheckboxButton',
-  classes: 'modal-dialog-btn-check',
-  style: 'width: 86%; text-align: left; padding-left: 70px;',
+  classes: 'obUiListValuesLineCheck',
   events: {
     onAddToSelected: ''
   },
@@ -46,8 +45,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListValuesLineChildren',
   kind: 'OB.UI.Button',
-  classes: 'btn-icon-inspectTree',
-  style: 'width: 14%; margin: 0px; ',
+  classes: 'obUiListValuesLineChildren',
   showing: false,
   childrenArray: [],
   events: {
@@ -69,33 +67,35 @@ enyo.kind({
 });
 enyo.kind({
   name: 'OB.UI.ListValuesLine',
-  style: 'border-bottom: 1px solid #cccccc',
+  classes: 'obUiListValuesLine',
   components: [{
-    kind: 'OB.UI.ListValuesLineCheck'
+    kind: 'OB.UI.ListValuesLineCheck',
+    classes: 'obUiListValuesLine-obUiListValuesLineCheck'
   }, {
-    kind: 'OB.UI.ListValuesLineChildren'
+    kind: 'OB.UI.ListValuesLineChildren',
+    classes: 'obUiListValuesLine-obUiListValuesLineChildren'
   }]
 });
 
 /*scrollable table (body of modal)*/
 enyo.kind({
   name: 'OB.UI.ListValues',
-  classes: 'row-fluid',
+  classes: 'obUiListValues',
   handlers: {
     onSearchAction: 'searchAction',
     onClearAction: 'clearAction',
     onSetCollection: 'setCollection'
   },
   components: [{
-    classes: 'span12',
+    classes: 'obUiListValues-container1',
     components: [{
-      classes: 'row-fluid',
+      classes: 'obUiListValues-container1-container1',
       components: [{
-        classes: 'span12',
+        classes: 'obUiListValues-container1-container1-container1',
         components: [{
           name: 'valueslistitemprinter',
           kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '400px',
+          classes: 'obUiListValues-container1-container1-container1-valueslistitemprinter',
           renderLine: 'OB.UI.ListValuesLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }]
@@ -335,7 +335,12 @@ enyo.kind({
   parentValue: '0',
   setCollection: function (inSender, inEvent) {
     if (inEvent.parentValue !== '0') {
-      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: visible');
+      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.removelass('u-hiddenVisible');
+      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.addClass('u-resetVisible');
+
+    } else {
+      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.removeClass('u-resetVisible');
+      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.addClass('u-hiddenVisible');
     }
     this.parentValue = inEvent.parentValue;
     this.updateListSelection(inEvent.value);
@@ -418,39 +423,40 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalProductChTopHeader',
   kind: 'OB.UI.ScrollableTableHeader',
-  style: '',
+  classes: 'obUiModalProductChTopHeader',
   events: {
     onHideThisPopup: '',
     onSelectCharacteristicValue: '',
     onGetPrevCollection: ''
   },
   components: [{
-    style: 'display: table;  width: 100%;',
+    classes: 'obUiModalProductChTopHeader-container1',
     components: [{
-      style: 'display: table-cell; ',
+      classes: 'obUiModalProductChTopHeader-container1-container1',
       components: [{
-        classes: 'btnlink-gray',
+        classes: 'obUiModalProductChTopHeader-container1-container1-backChButton obUiModalProductChTopHeader-obUiSmallButton-generic_gray',
         name: 'backChButton',
         kind: 'OB.UI.SmallButton',
         ontap: 'backAction'
       }]
     }, {
-      style: 'display: table-cell; width: 55%;',
+      classes: 'obUiModalProductChTopHeader-container1-container2',
       components: [{
         name: 'title',
-        style: 'text-align: center; vertical-align: middle;'
+        classes: 'obUiModalProductChTopHeader-container1-container2-title'
       }]
     }, {
-      style: 'display: table-cell; ',
+      classes: 'obUiModalProductChTopHeader-container1-container3',
       components: [{
         name: 'doneChButton',
         kind: 'OB.UI.SmallButton',
+        classes: 'obUiModalProductChTopHeader-container1-container3-doneChButton',
         ontap: 'doneAction'
       }]
     }, {
-      style: 'display: table-cell;',
+      classes: 'obUiModalProductChTopHeader-container1-container4',
       components: [{
-        classes: 'btnlink-gray',
+        classes: 'obUiModalProductChTopHeader-container1-container4-cancelChButton obUiModalProductChTopHeader-obUiSmallButton-generic_gray',
         name: 'cancelChButton',
         kind: 'OB.UI.SmallButton',
         ontap: 'cancelAction'
@@ -460,7 +466,7 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.backChButton.setContent(OB.I18N.getLabel('OBMOBC_LblBack'));
-    this.$.backChButton.addStyles('visibility: hidden');
+    this.$.backChButton.addClass('u-hiddenVisible');
     this.$.doneChButton.setContent(OB.I18N.getLabel('OBMOBC_LblDone'));
     this.$.cancelChButton.setContent(OB.I18N.getLabel('OBMOBC_LblCancel'));
     this.selectedToSend = [];
@@ -545,6 +551,7 @@ enyo.kind({
 /*Modal definiton*/
 enyo.kind({
   name: 'OB.UI.ModalProductCharacteristic',
+  classes: 'obUiModalProductCharacteristic',
   topPosition: '170px',
   kind: 'OB.UI.Modal',
   published: {
@@ -560,22 +567,23 @@ enyo.kind({
   },
   executeOnShow: function () {
     this.$.body.$.listValues.parentValue = '0';
-    this.$.header.parent.addStyles('padding: 0px; border-bottom: 1px solid #cccccc');
-    this.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: hidden');
+    this.$.header.parent.addClass('obUiModalProductCharacteristic_boder');
+    this.$.header.$.modalProductChTopHeader.$.backChButton.addClass('u-hiddenVisible');
     this.characteristic = this.args.model;
     this.$.header.$.modalProductChTopHeader.$.title.setContent(this.args.model.get('_identifier'));
     this.waterfall('onSearchAction');
   },
   i18nHeader: '',
   body: {
-    kind: 'OB.UI.ListValues'
+    kind: 'OB.UI.ListValues',
+    classes: 'obUiModalProductCharacteristic-body-obUiListValues'
   },
   initComponents: function () {
     this.inherited(arguments);
     this.$.closebutton.hide();
     this.$.header.createComponent({
       kind: 'OB.UI.ModalProductChTopHeader',
-      style: 'border-bottom: 0px'
+      classes: 'obUiModalProductCharacteristic-header-obUiModalProductChTopHeader'
     });
   },
   addToSelected: function (inSender, inEvent) {
@@ -620,7 +628,11 @@ enyo.kind({
       this.$.body.$.listValues.valuesList.reset();
     }
     if (this.$.body.$.listValues.parentValue === '0') { //root
-      this.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: hidden');
+      this.$.header.$.modalProductChTopHeader.$.backChButton.removeClass('u-resetVisible');
+      this.$.header.$.modalProductChTopHeader.$.backChButton.addClass('u-hiddenVisible');
+    } else {
+      this.$.header.$.modalProductChTopHeader.$.backChButton.removeClass('u-hiddenVisible');
+      this.$.header.$.modalProductChTopHeader.$.backChButton.addClass('u-resetVisible');
     }
   },
   countedValues: 0,

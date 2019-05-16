@@ -48,6 +48,20 @@
 */
 
 
+/*
+# Utils for general usage
+*/
+/* This utility resets visibility property */
+.u-resetVisible {
+  visibility: visible;
+}
+
+/* This utility hides the component but takes up space on the page  */
+.u-hiddenVisible {
+  visibility: hidden !important;
+}
+
+
 
 
 /*****************/
@@ -1015,6 +1029,168 @@
 .obUiValidateAction {}
 
 .obUiValidateAction-bodyContent-message {}
+
+
+
+/***********************   ***********************/
+/*      File: modalproductcharacteristic.js      */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ListValuesLineCheck
+# Inherits: [OB.UI.CheckboxButton]
+*/
+.obUiListValuesLineCheck {
+  width: 86%;
+  text-align: left;
+  padding-left: 70px;
+  height: 38px;
+  background-position: 10px center;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.obUiListValuesLineCheck:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  background-position: 8px center !important;
+}
+
+
+/*
+# Component: OB.UI.ListValuesLineChildren
+# Inherits: [OB.UI.Button]
+*/
+.obUiListValuesLineChildren {
+  width: 14%;
+  margin: 0px;
+  border: none;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  height: 38px;
+  background-position: center;
+  cursor: pointer;
+  vertical-align: middle;
+  background-image: url('./../img/inspectTree.svg');
+  background-size: 31px 27px;
+}
+
+
+/*
+# Component: OB.UI.ListValuesLine
+*/
+.obUiListValuesLine {
+  border-bottom: 1px solid #cccccc;
+}
+
+.obUiListValuesLine-obUiListValuesLineCheck {
+/* # Inherits: [OB.UI.ListValuesLineCheck] */
+}
+
+.obUiListValuesLine-obUiListValuesLineChildren {
+/* # Inherits: [OB.UI.ListValuesLineChildren] */
+}
+
+
+/*
+# Component: OB.UI.ListValues
+*/
+.obUiListValues {}
+
+.obUiListValues-container1 {}
+
+.obUiListValues-container1-container1 {}
+
+.obUiListValues-container1-container1-container1 {}
+
+.obUiListValues-container1-container1-container1-valueslistitemprinter {
+/* # Inherits: [OB.UI.ScrollableTable] */
+  max-height: 400px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+
+/*
+# Component: OB.UI.ModalProductChTopHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obUiModalProductChTopHeader {}
+
+.obUiModalProductChTopHeader-obUiSmallButton-generic_gray {
+  background-color: #e2e2e2;
+  color: black;
+}
+
+.obUiModalProductChTopHeader-obUiSmallButton-generic_gray:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px !important;
+}
+
+.obUiModalProductChTopHeader-container1 {
+  display: table;
+  width: 100%;
+}
+
+.obUiModalProductChTopHeader-container1-container1 {
+  display: table-cell;
+}
+
+.obUiModalProductChTopHeader-container1-container1-backChButton {
+/* # Inherits: [OB.UI.SmallButton] */
+}
+
+.obUiModalProductChTopHeader-container1-container2 {
+  display: table-cell;
+  width: 55%;
+}
+
+.obUiModalProductChTopHeader-container1-container2-title {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.obUiModalProductChTopHeader-container1-container3 {
+  display: table-cell;
+}
+
+.obUiModalProductChTopHeader-container1-container3-doneChButton {
+/* # Inherits: [OB.UI.SmallButton] */
+}
+
+.obUiModalProductChTopHeader-container1-container4 {
+  display: table-cell;
+}
+
+.obUiModalProductChTopHeader-container1-container4-cancelChButton {
+/* # Inherits: [OB.UI.SmallButton] */
+}
+
+
+/*
+# Component: OB.UI.ModalProductCharacteristic
+# Inherits: [OB.UI.Modal]
+*/
+.obUiModalProductCharacteristic {}
+
+.obUiModalProductCharacteristic_boder {
+  padding: 0px;
+  border-bottom: 1px solid #cccccc;
+}
+
+.obUiModalProductCharacteristic-header-obUiModalProductChTopHeader {
+/* # Inherits: [OB.UI.ModalProductChTopHeader] */
+  border-bottom: 0px;
+}
+
+.obUiModalProductCharacteristic-body-obUiListValues {
+/* # Inherits: [OB.UI.ListValues] */
+}
 
 
 
