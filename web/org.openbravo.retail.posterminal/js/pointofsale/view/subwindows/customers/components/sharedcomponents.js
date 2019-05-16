@@ -657,16 +657,16 @@ enyo.kind({
       } else {
         me.removeClass('active');
       }
+      var contactpreferences = this.parent.parent.parent.children[16];
+      var commercialauth = inEvent.customer.attributes.obposCommercialauth;
+      if (commercialauth) {
+        contactpreferences.show();
+      } else {
+        contactpreferences.hide();
+      }
     } else {
       me.checked = false;
       me.removeClass('active');
-    }
-    var contactpreferences = this.parent.parent.parent.children[16];
-    var commercialauth = inEvent.customer.attributes.obposCommercialauth;
-    if (commercialauth) {
-      contactpreferences.show();
-    } else {
-      contactpreferences.hide();
     }
   },
   tap: function () {

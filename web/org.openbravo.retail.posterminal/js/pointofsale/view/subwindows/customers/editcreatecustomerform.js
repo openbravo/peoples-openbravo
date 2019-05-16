@@ -438,9 +438,6 @@ enyo.kind({
       return OB.MobileApp.model.hasPermission('EnableMultiPriceList', true);
     }
   }, {
-    kind: 'OB.UI.SwitchShippingInvoicingAddr',
-    name: 'useSameAddrCheck'
-  }, {
     kind: 'OB.UI.CustomerConsentCheckProperty',
     name: 'isCustomerConsent',
     modelProperty: 'isCustomerConsent',
@@ -465,6 +462,9 @@ enyo.kind({
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowCommercialAuth', true);
     }
+  }, {
+    kind: 'OB.UI.SwitchShippingInvoicingAddr',
+    name: 'useSameAddrCheck'
   }],
   shipAddrAttributes: [{
     kind: 'OB.UI.CustomerComboProperty',
