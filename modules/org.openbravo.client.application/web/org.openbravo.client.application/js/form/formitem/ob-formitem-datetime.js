@@ -296,13 +296,13 @@ isc.OBDateTimeFromDateItem.addProperties({
 });
 
 // == OBDateTimeToDateItem ==
-// OBDateTimeToDateItem inherits from OBDateTimeItem
+// OBDateTimeToDateItem inherits from OBDateTimeFromDateItem
 // It has the value of the next day of the selected date at 00:00:00
 // Note that the logic to calculate the next day is not implemented here
 // For the moment, that logic should be implemented where needed
 isc.ClassFactory.defineClass('OBDateTimeToDateItem', isc.OBDateTimeFromDateItem);
 
-// == OBDateTimeToDateItem ==
+// == OBAbsoluteDateTimeItem ==
 // OBAbsoluteDateTimeItem inherits from OBDateTimeItem
 // It displays the received date and send to the backend the modified one "as it is". So there is no any kind of UTC conversion.
 isc.ClassFactory.defineClass('OBAbsoluteDateTimeItem', isc.OBDateTimeItem);
