@@ -383,18 +383,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     OB.Dal.find(OB.Model.Order, {
       hasbeenpaid: 'N'
     }, function (pendingOrderList, me) {
-      var emptyOrders;
-      // Detect empty orders and remove them from here
-      emptyOrders = _.filter(pendingOrderList.models, function (pendingorder) {
-        if (pendingorder && pendingorder.get('lines') && pendingorder.get('lines').length === 0) {
-          return true;
-        }
-      });
-
-      _.each(emptyOrders, function (orderToRemove) {
-        pendingOrderList.remove(orderToRemove);
-      });
-
       _.each(pendingOrderList.models, function (order) {
         order.set('ignoreCheckIfIsActiveOrder', true);
       });
