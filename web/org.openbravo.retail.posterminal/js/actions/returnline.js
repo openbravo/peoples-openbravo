@@ -19,6 +19,12 @@
     properties: {
       i18nContent: 'OBPOS_LblReturnLine'
     },
+    isActive: function (view) {
+      var selectedReceiptLine = view.state.getState({
+        name: 'selectedReceiptLine'
+      });
+      return !!selectedReceiptLine;
+    },
     command: function (view) {
       var receipt = view.model.get('order');
       var selectedReceiptLines = view.state.readState({

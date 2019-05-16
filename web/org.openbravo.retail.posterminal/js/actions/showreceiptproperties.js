@@ -18,6 +18,13 @@
     permission: 'OBPOS_receipt.properties',
     properties: {
       i18nContent: 'OBPOS_LblProperties'
+    },
+    isActive: function (view) {
+      return view.state.getState({
+        name: 'window.currentView'
+      }) === 'order' && view.state.getState({
+        name: 'receipt.isEditable'
+      });
     }
   }));
 
