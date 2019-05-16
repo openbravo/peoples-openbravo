@@ -200,7 +200,7 @@
                       terminalModel.get('terminal').terminalType.documentTypeForReturns = OB.MobileApp.model.get('context').organization.obposCDoctyperet;
                       terminalModel.get('terminal').terminalType.documentTypeForReconciliations = OB.MobileApp.model.get('context').organization.obposCDoctyperecon;
                       terminalModel.get('terminal').terminalType.documentTypeForQuotations = OB.MobileApp.model.get('context').organization.obposCDoctypequot;
-                      
+
                       //
                       terminalModel.get('terminal').terminalType.uiConfiguration = {};
                       terminalModel.get('terminal').terminalType.uiConfiguration.abas = [];
@@ -215,7 +215,6 @@
                         }]
                       });
                       //
-
                       if (!terminalModel.usermodel) {
                         OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
                       } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error' && !OB.RR.RequestRouter.ignoreManifestLoadError()) {

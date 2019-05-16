@@ -385,37 +385,6 @@ enyo.kind({
     }]
   }],
   classModel: new Backbone.Model(),
-  initStateContainer: function () {
-
-    // currentView
-    var leftColumnViewManager = this.model.get('leftColumnViewManager');
-    leftColumnViewManager.on('change:currentView', function () {
-      this.state.writeState({
-        name: 'window.currentView',
-        value: leftColumnViewManager.get('currentView').name
-      });
-    }, this);
-    this.state.writeState({
-      name: 'window.currentView',
-      value: leftColumnViewManager.get('currentView').name
-    });
-
-
-    // receipt.isEditable
-    var receipt = this.model.get('order');
-    this.model.get('order').on('change:isEditable', function () {
-      this.state.writeState({
-        name: 'receipt.isEditable',
-        value: receipt.get('isEditable')
-      });
-    }, this);
-    this.state.writeState({
-      name: 'receipt.isEditable',
-      value: receipt.get('isEditable')
-    });
-
-    //OB.MobileApp.view.$.containerWindow.children[0].waterfall('onActionActivate')
-  },
   printReceipt: function (inSender, inEvent) {
     var receipt = this.model.get('order');
     if (OB.MobileApp.model.hasPermission('OBPOS_print.receipt')) {
@@ -1647,8 +1616,6 @@ enyo.kind({
     this.$.multiColumn.$.rightPanel.$.toolbarpane.setModel(this.model);
     this.$.multiColumn.$.rightPanel.$.keyboard.setReceipt(receipt);
     this.$.multiColumn.$.rightToolbar.$.rightToolbar.setReceipt(receipt);
-
-    this.initStateContainer();
   },
   initComponents: function () {
     this.inherited(arguments);
