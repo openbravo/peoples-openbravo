@@ -11,18 +11,20 @@
 
 enyo.kind({
   name: 'OB.UI.LeftSubWindow',
-  classes: 'span6',
+  classes: 'obUiLeftSubWindow span6',
   showing: false,
   events: {
     onShowLeftSubWindow: '',
     onCloseLeftSubWindow: ''
   },
   components: [{
-    style: 'margin: 5px; height: 612px; background-color: white;',
+    classes: 'obUiLeftSubWindow-container1',
     components: [{
-      name: 'leftSubWindowHeader'
+      name: 'leftSubWindowHeader',
+      classes: 'obUiLeftSubWindow-container1-leftSubWindowHeader'
     }, {
-      name: 'leftSubWindowBody'
+      name: 'leftSubWindowBody',
+      classes: 'obUiLeftSubWindow-container1-leftSubWindowBody'
     }]
   }],
   mainBeforeSetShowing: function (params) {

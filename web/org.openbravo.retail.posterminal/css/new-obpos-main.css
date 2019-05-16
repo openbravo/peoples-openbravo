@@ -1866,6 +1866,27 @@ z
 
 
 
+/***********************   ***********************/
+/*            File: leftsubwindow.js             */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.LeftSubWindow
+*/
+.obUiLeftSubWindow {}
+
+.obUiLeftSubWindow-container1 {
+  margin: 5px;
+  height: 612px;
+  background-color: white;
+}
+
+.obUiLeftSubWindow-container1-leftSubWindowHeader {}
+
+.obUiLeftSubWindow-container1-leftSubWindowBody {}
+
+
+
 
 /*****************/
 /*      JAR      */
