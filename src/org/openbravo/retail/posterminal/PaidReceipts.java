@@ -39,7 +39,6 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
@@ -49,8 +48,6 @@ import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
 import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.order.OrderLineOffer;
-import org.openbravo.retail.config.OBRETCOProductList;
-import org.openbravo.retail.config.OBRETCOProlProduct;
 import org.openbravo.service.json.JsonConstants;
 
 public class PaidReceipts extends JSONProcessSimple {
@@ -347,26 +344,6 @@ public class PaidReceipts extends JSONProcessSimple {
             }
             paidReceiptLine.put("relatedLines", relatedLines);
           }
-
-          // Assortment Status
-          boolean productInAssortment = true;
-          if (jsonsent.has("crossStore") && jsonsent.get("crossStore") != JSONObject.NULL) {
-            final OBRETCOProductList assortment = POSUtils
-                .getProductListByPosterminalId(posTerminal.getId());
-
-            final StringBuilder hql = new StringBuilder();
-            hql.append(OBRETCOProlProduct.PROPERTY_OBRETCOPRODUCTLIST + ".id = :assortmentId");
-            hql.append(" and " + OBRETCOProlProduct.PROPERTY_PRODUCT + ".id = :productId");
-
-            final OBQuery<OBRETCOProlProduct> query = OBDal.getInstance()
-                .createQuery(OBRETCOProlProduct.class, hql.toString());
-            query.setNamedParameter("assortmentId", assortment.getId());
-            query.setNamedParameter("productId", paidReceiptLine.get("id"));
-            query.setMaxResult(1);
-
-            productInAssortment = query.count() > 0;
-          }
-          paidReceiptLine.put("productInAssortment", productInAssortment);
 
           listpaidReceiptsLines.put(paidReceiptLine);
         }
