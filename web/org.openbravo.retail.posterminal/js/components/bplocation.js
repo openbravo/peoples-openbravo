@@ -14,7 +14,7 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.SmallBPButton',
-  style: 'display: table; float: right;',
+  classes: 'obUiSmallBPButton',
   published: {
     order: null
   },
@@ -25,11 +25,11 @@ enyo.kind({
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
     if (!this.isEnabled) {
-      this.removeClass('btnlink');
-      this.addClass('btnbp');
+      this.removeClass('obUiRegularButton');
+      this.addClass('obUiSmallBPButton_disabled');
     } else {
-      this.removeClass('btnbp');
-      this.addClass('btnlink');
+      this.removeClass('obUiSmallBPButton_disabled');
+      this.addClass('obUiRegularButton');
     }
   },
   initComponents: function () {
@@ -61,20 +61,20 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SmallBPButton',
   name: 'OB.UI.BPLocation',
-  classes: 'btnlink-gray flex-customer-buttons-item flex-customer-buttons-addresses',
+  classes: 'obUiBPLocation',
   locName: 'locName',
   events: {
     onShowPopup: ''
   },
   components: [{
     name: 'bottomAddrIcon',
-    classes: 'addressbillbutton',
+    classes: 'obUiBPLocation-bottomAddrIcon',
     showing: false
   }, {
     name: 'identifier',
-    classes: 'flex-customer-buttons-item-text'
+    classes: 'obUiBPLocation-identifier'
   }, {
-    style: 'clear: both;'
+    classes: 'obUiBPLocation-element1'
   }],
   tap: function () {
     if (!this.disabled) {
@@ -94,7 +94,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SmallBPButton',
   name: 'OB.UI.BPLocationShip',
-  classes: 'btnlink-gray flex-customer-buttons-item flex-customer-buttons-addresses',
+  classes: 'obUiBPLocationShip',
   showing: false,
   locName: 'shipLocName',
   events: {
@@ -102,29 +102,29 @@ enyo.kind({
   },
   components: [{
     name: 'bottomAddrIcon',
-    classes: 'addressshipbutton'
+    classes: 'obUiBPLocationShip-bottomAddrIcon'
   }, {
     name: 'identifier',
-    classes: 'flex-customer-buttons-item-text'
+    classes: 'obUiBPLocationShip-identifier'
   }, {
-    style: 'clear: both;'
+    classes: 'obUiBPLocationShip-element1'
   }],
   changeStyle: function (status) {
     var me = this;
     if (!status) {
       me.setShowing(status);
-      me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', 'none');
-      me.parent.$.bplocbutton.$.identifier.addClass('flex-customer-buttons-item-text-fullwidht');
-      me.parent.$.bplocbutton.$.identifier.removeClass('flex-customer-buttons-item-text-partialwidht');
-      me.parent.$.bplocshipbutton.$.identifier.addClass('flex-customer-buttons-item-text-fullwidht');
-      me.parent.$.bplocshipbutton.$.identifier.removeClass('flex-customer-buttons-item-text-partialwidht');
+      me.parent.$.bplocbutton.$.bottomAddrIcon.addClass('u-hideFromUI');
+      me.parent.$.bplocbutton.$.identifier.addClass('bUiBPLocationShip-identifier_fullWidth');
+      me.parent.$.bplocbutton.$.identifier.removeClass('obUiBPLocationShip-identifier_partialWidth');
+      me.parent.$.bplocshipbutton.$.identifier.addClass('bUiBPLocationShip-identifier_fullWidth');
+      me.parent.$.bplocshipbutton.$.identifier.removeClass('obUiBPLocationShip-identifier_partialWidth');
     } else {
       me.setShowing(status);
       me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', '');
-      me.parent.$.bplocbutton.$.identifier.removeClass('flex-customer-buttons-item-text-fullwidht');
-      me.parent.$.bplocbutton.$.identifier.addClass('flex-customer-buttons-item-text-partialwidht');
-      me.parent.$.bplocshipbutton.$.identifier.removeClass('flex-customer-buttons-item-text-fullwidht');
-      me.parent.$.bplocshipbutton.$.identifier.addClass('flex-customer-buttons-item-text-partialwidht');
+      me.parent.$.bplocbutton.$.identifier.removeClass('bUiBPLocationShip-identifier_fullWidth');
+      me.parent.$.bplocbutton.$.identifier.addClass('obUiBPLocationShip-identifier_partialWidth');
+      me.parent.$.bplocshipbutton.$.identifier.removeClass('bUiBPLocationShip-identifier_fullWidth');
+      me.parent.$.bplocshipbutton.$.identifier.addClass('obUiBPLocationShip-identifier_partialWidth');
     }
   },
   buttonShowing: function (bp) {
@@ -189,8 +189,7 @@ enyo.kind({
     onHideSelector: ''
   },
   disabled: false,
-  style: 'width: 170px; margin: 0px 5px 8px 19px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  classes: 'obUiNewCustomerAddressWindowButton',
   i18nLabel: 'OBPOS_LblNewCustomerAddress',
   handlers: {
     onSetModel: 'setModel',
@@ -253,21 +252,20 @@ enyo.kind({
       this.setDisabled(false);
       this.removeClass('disabled');
       this.disabled = false;
-      this.removeClass('btnlink-gray');
-      this.addClass('btnlink-yellow');
+      this.removeClass('obUiNewCustomerAddressWindowButton_gray');
       return;
     }
     this.setDisabled(true);
     this.addClass('disabled');
     this.disabled = true;
-    this.addClass('btnlink-gray');
-    this.removeClass('btnlink-yellow');
+    this.addClass('obUiNewCustomerAddressWindowButton_gray');
   }
 });
 
 enyo.kind({
   name: 'OB.UI.ModalBpLocScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obUiModalBpLocScrollableHeader',
   events: {
     onSearchAction: '',
     onClearAction: ''
@@ -277,39 +275,37 @@ enyo.kind({
     onFiltered: 'searchAction'
   },
   components: [{
-    style: 'padding: 10px;',
+    classes: 'obUiModalBpLocScrollableHeader-container1',
     components: [{
-      style: 'display: table;',
+      classes: 'obUiModalBpLocScrollableHeader-container1-container1',
       components: [{
-        style: 'display: table-cell; width: 100%;',
+        classes: 'obUiModalBpLocScrollableHeader-container1-container1-container1',
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
           name: 'bpsLocationSearchfilterText',
-          minLengthToSearch: 3,
-          style: 'width: 100%'
+          classes: 'obUiModalBpLocScrollableHeader-container1-container1-container1-bpsLocationSearchfilterText',
+          minLengthToSearch: 3
         }]
       }, {
-        style: 'display: table-cell;',
+        classes: 'obUiModalBpLocScrollableHeader-container1-container1-container2',
         components: [{
           kind: 'OB.UI.SmallButton',
-          classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-          style: 'width: 100px; margin: 0px 5px 8px 19px;',
+          classes: 'obUiModalBpLocScrollableHeader-container1-container1-container2-bpsLocationSearchClearButton',
           name: 'bpsLocationSearchClearButton',
           ontap: 'clearAction'
         }]
       }, {
-        style: 'display: table-cell;',
+        classes: 'obUiModalBpLocScrollableHeader-container1-container1-container3',
         components: [{
           kind: 'OB.UI.SmallButton',
-          classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-          style: 'width: 100px; margin: 0px 0px 8px 5px;',
+          classes: 'obUiModalBpLocScrollableHeader-container1-container1-container3-bpsLocationSearchButton',
           name: 'bpsLocationSearchButton',
           ontap: 'searchAction'
         }]
       }]
     }]
   }, {
-    style: 'padding: 10px;',
+    classes: 'obUiModalBpLocScrollableHeader-container1-container2',
     showing: true,
     handlers: {
       onSetShow: 'setShow'
@@ -319,11 +315,12 @@ enyo.kind({
       return true;
     },
     components: [{
-      style: 'display: table;',
+      classes: 'obUiModalBpLocScrollableHeader-container1-container2-container1',
       components: [{
-        style: 'display: table-cell;',
+        classes: 'obUiModalBpLocScrollableHeader-container1-container2-container1-container1',
         components: [{
           kind: 'OB.UI.NewCustomerAddressWindowButton',
+          classes: 'obUiModalBpLocScrollableHeader-container1-container2-container1-container1-newAction',
           name: 'newAction'
         }]
       }]
@@ -349,6 +346,7 @@ enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPLocDetailsContextMenuItem',
   i18NLabel: 'OBPOS_BPViewDetails',
+  classes: 'obUiBPLocDetailsContextMenuItem',
   selectItem: function (bploc) {
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
@@ -378,6 +376,7 @@ enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPLocEditContextMenuItem',
   i18NLabel: 'OBPOS_BPEdit',
+  classes: 'obUiBPLocEditContextMenuItem',
   selectItem: function (bploc) {
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
@@ -411,6 +410,7 @@ enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPLocAssignToReceiptContextMenuItem',
   i18NLabel: 'OBPOS_BPLocAssignToReceipt',
+  classes: 'obUiBPLocAssignToReceiptContextMenuItem',
   selectItem: function (bploc) {
     var contextMenu = this.owner.owner;
     contextMenu.dialog.menuSelected = true;
@@ -460,6 +460,7 @@ enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPLocAssignToReceiptShippingContextMenuItem',
   i18NLabel: 'OBPOS_BPLocAssignToReceiptShipping',
+  classes: 'obUiBPLocAssignToReceiptShippingContextMenuItem',
   selectItem: function (bploc) {
     var contextMenu = this.owner.owner;
     contextMenu.dialog.menuSelected = true;
@@ -514,6 +515,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem',
+  classes: 'obUiBPLocAssignToReceiptInvoicingContextMenuItem',
   i18NLabel: 'OBPOS_BPLocAssignToReceiptInvoicing',
   selectItem: function (bploc) {
     var contextMenu = this.owner.owner;
@@ -567,6 +569,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ListContextMenu',
   name: 'OB.UI.BPLocationContextMenu',
+  classes: 'obUiBPLocationContextMenu',
   initComponents: function () {
     this.inherited(arguments);
     var menuOptions = [],
@@ -575,29 +578,34 @@ enyo.kind({
 
     menuOptions.push({
       kind: 'OB.UI.BPLocDetailsContextMenuItem',
-      permission: 'OBPOS_receipt.customers'
+      permission: 'OBPOS_receipt.customers',
+      classes: 'obUiBPLocationContextMenu-BPLocDetailsContextMenuItem'
     }, {
       kind: 'OB.UI.BPLocEditContextMenuItem',
-      permission: 'OBPOS_retail.editCustomerLocationButton'
+      permission: 'OBPOS_retail.editCustomerLocationButton',
+      classes: 'obUiBPLocationContextMenu-BPLocDetailsContextMenuItem'
     });
 
     if (bpLoc.get('isBillTo') && bpLoc.get('isShipTo')) {
       menuOptions.push({
         kind: 'OB.UI.BPLocAssignToReceiptContextMenuItem',
-        permission: 'OBPOS_retail.assignToReceiptAddress'
+        permission: 'OBPOS_retail.assignToReceiptAddress',
+        classes: 'obUiBPLocationContextMenu-BPLocAssignToReceiptContextMenuItem'
       });
     }
     if (!bpLoc.get('onlyOneAddress') || !(bpLoc.get('isBillTo') && bpLoc.get('isShipTo'))) {
       if (bpLoc.get('isShipTo')) {
         menuOptions.push({
           kind: 'OB.UI.BPLocAssignToReceiptShippingContextMenuItem',
-          permission: 'OBPOS_retail.assignToReceiptShippingAddress'
+          permission: 'OBPOS_retail.assignToReceiptShippingAddress',
+          classes: 'obUiBPLocationContextMenu-BPLocAssignToReceiptShippingContextMenuItem'
         });
       }
       if (bpLoc.get('isBillTo')) {
         menuOptions.push({
           kind: 'OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem',
-          permission: 'OBPOS_retail.assignToReceiptInvoicingAddress'
+          permission: 'OBPOS_retail.assignToReceiptInvoicingAddress',
+          classes: 'obUiBPLocationContextMenu-BPLocAssignToReceiptInvoicingContextMenuItem'
         });
       }
     }
@@ -611,30 +619,33 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListBpsLocLine',
   kind: 'OB.UI.ListSelectorLine',
+  classes: 'obUiListSelectorLine',
   locId: 'locId',
   components: [{
     name: 'line',
-    style: 'line-height: 30px; width: 100%',
+    classes: 'obUiListSelectorLine-line',
     components: [{
       name: 'textInfo',
-      style: 'float: left; ',
+      classes: 'obUiListSelectorLine-line-textInfo',
       components: [{
-        style: 'display: table;',
+        classes: 'obUiListSelectorLine-line-textInfo-element1',
         components: [{
-          name: 'identifier',
-          style: 'display: table-cell;'
+          classes: 'obUiListSelectorLine-line-textInfo-element1-identifier',
+          name: 'identifier'
         }, {
+          classes: 'obUiListSelectorLine-line-textInfo-element1-bottomShipIcon',
           name: 'bottomShipIcon'
         }, {
+          classes: 'obUiListSelectorLine-line-textInfo-element1-bottomBillIcon',
           name: 'bottomBillIcon'
         }, {
-          style: 'clear: both;'
+          classes: 'obUiListSelectorLine-line-textInfo-element1-element1'
         }]
       }]
     }, {
       kind: 'OB.UI.BPLocationContextMenu',
       name: 'btnContextMenu',
-      style: 'float: right;'
+      classes: 'obUiListSelectorLine-line-btnContextMenu'
     }]
   }],
   canHidePopup: function () {
@@ -670,7 +681,7 @@ enyo.kind({
 /* scrollable table (body of modal) */
 enyo.kind({
   name: 'OB.UI.ListBpsLoc',
-  classes: 'row-fluid',
+  classes: 'ListBpsLoc row-fluid',
   published: {
     bPartner: null,
     manageAddress: false,
@@ -686,16 +697,16 @@ enyo.kind({
     onChangeBusinessPartner: ''
   },
   components: [{
-    classes: 'span12',
+    classes: 'obUiListBpsLoc-container1 span12',
     components: [{
       style: 'border-bottom: 1px solid #cccccc;',
-      classes: 'row-fluid',
       components: [{
-        classes: 'span12',
+        classes: 'obUiListBpsLoc-container1-container1-container1 span12',
         components: [{
           name: 'bpsloclistitemprinter',
           kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '400px',
+          classes: 'obUiListBpsLoc-container1-container1-container1-bpsloclistitemprinter',
+          scrollAreaClasses: 'obUiListBpsLoc-container1-container1-container1-bpsloclistitemprinter_scrollArea',
           renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
           renderLine: 'OB.UI.ListBpsLocLine',
           renderEmpty: 'OB.UI.RenderEmpty'
@@ -858,6 +869,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalBPLocation',
+  classes: 'obUiModalBPLocation',
   topPosition: '125px',
   events: {
     onShowPopup: ''

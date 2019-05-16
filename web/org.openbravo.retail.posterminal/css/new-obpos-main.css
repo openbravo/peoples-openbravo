@@ -68,12 +68,383 @@
 /*      GAL      */
 /*****************/
 
-
+z
 
 
 /*****************/
 /*      JRO      */
 /*****************/
+
+
+/***********************   ***********************/
+/*               File: bplocaiton.js             */
+/*             Folder: js/components             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.SmallBPButton
+# Inherits: [OB.UI.SmallButton]
+*/
+.obUiSmallBPButton {
+  display: table;
+  float: right;
+}
+
+.obUiSmallBPButton_disabled:disabled {
+  text-decoration: none;
+  background-color: white;
+  color: #000;
+  min-width: 115px;
+}
+
+
+
+/*
+# Component: OB.UI.BPLocation
+# Inherits: [OB.UI.SmallBPButton]
+*/
+.obUiBPLocation {
+  max-width: 70%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+
+  background-color: #e2e2e2;
+  color: black;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
+  height: 30px;
+  margin: 10px;
+  padding: 5px 15px 7px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 18px;
+
+  flex-shrink: 10000;
+  min-width: 53px;
+}
+
+.obUiBPLocation-bottomAddrIcon {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.svg');
+  background-repeat: no-repeat;
+  background-size: 16px 18px;
+  background-position: 5px 1px;
+  width: 26px;
+  height: 22px;
+}
+
+.obUiBPLocation-identifier {
+  text-overflow: inherit;
+  white-space: inherit;
+  overflow: inherit;
+}
+
+.obUiBPLocation-element1 {
+  clear: both;
+}
+
+
+
+/*
+# Component: OB.UI.BPLocationShip
+# Inherits: [OB.UI.SmallBPButton]
+*/
+.obUiBPLocationShip {
+  max-width: 70%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+
+  background-color: #e2e2e2;
+  color: black;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
+  height: 30px;
+  margin: 10px;
+  padding: 5px 15px 7px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 18px;
+
+  flex-shrink: 10000;
+  min-width: 53px;
+}
+
+.obUiBPLocationShip-bottomAddrIcon {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.svg');
+  background-repeat: no-repeat;
+  background-size: 21px 21px;
+  background-position: 0px 0px;
+  width: 26px;
+  height: 22px;
+}
+
+.obUiBPLocationShip-identifier {
+  text-overflow: inherit;
+  white-space: inherit;
+  overflow: inherit;
+}
+
+.obUiBPLocationShip-identifier_fullWidth {
+  max-width: 100%;
+}
+
+.obUiBPLocationShip-identifier_partialWidth {
+  max-width: 90%;
+}
+
+.obUiBPLocationShip-element1 {
+  clear: both;
+}
+
+
+
+/*
+# Component: OB.UI.NewCustomerAddressWindowButton
+# Inherits: [OB.UI.Button]
+*/
+.obUiNewCustomerAddressWindowButton {
+  width: 170px;
+  margin: 0px 5px 8px 19px;
+  background-color: #f8e859;
+  color: black;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 400;
+  height: 30px;
+  padding: 5px 15px 7px;
+  text-decoration: none;
+}
+
+.obUiNewCustomerAddressWindowButton_gray {
+  background-color: var(--color-primary-light);
+}
+
+
+
+/*
+# Component: OB.UI.ModalBpLocScrollableHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obUiModalBpLocScrollableHeader {}
+
+.obUiModalBpLocScrollableHeader-container1 {
+  padding: 10px;
+}
+
+.obUiModalBpLocScrollableHeader-container1-container1 {
+  display: table;
+}
+
+.obUiModalBpLocScrollableHeader-container1-container1-container1 {
+  display: table-cell;
+  width: 100%;
+}
+
+.obUiModalBpLocScrollableHeader-container1-container1-container1-bpsLocationSearchfilterText {
+  /* Inherits: [OB.UI.SearchInputAutoFilter] */
+  width: 100%;
+}
+
+.obUiModalBpLocScrollableHeader-container1-container1-container2 {
+  display: table-cell;
+}
+
+.obUiModalBpLocScrollableHeader-container1-container1-container2-bpsLocationSearchClearButton {
+  /* Inherits: [OB.UI.SmallButton] */
+  width: 100px;
+  margin: 0px 5px 8px 19px;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-darker);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconClear.svg');
+  background-size: 13px 13px;
+}
+
+.obUiModalBpLocScrollableHeader-container1-container1-container3 {
+  display: table-cell;
+}
+
+.obUiModalBpLocScrollableHeader-container1-container1-container3-bpsLocationSearchButton {
+  /* Inherits: [OB.UI.SmallButton] */
+  width: 100px;
+  margin: 0px 0px 8px 5px;
+  background-color: #f8e859;
+  color: var(--color-primary-darker);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconSearch.svg');
+  background-size: 15px 16px;
+}
+
+.obUiModalBpLocScrollableHeader-container1-container2 {
+  padding: 10px;
+}
+
+.obUiModalBpLocScrollableHeader-container1-container2-container1 {
+  display: table;
+}
+
+.obUiModalBpLocScrollableHeader-container1-container2-container1-container1 {
+  display: table-cell;
+}
+
+.obUiModalBpLocScrollableHeader-container1-container2-container1-container1-newAction {
+  /* Inherits: [OB.UI.NewCustomerAddressWindowButton] */
+}
+
+
+
+/*
+# Component: OB.UI.BPLocDetailsContextMenuItem
+# Inherits: [OB.UI.ListContextMenuItem]
+*/
+.obUiBPLocDetailsContextMenuItem {}
+
+
+
+/*
+# Component: OB.UI.BPLocEditContextMenuItem
+# Inherits: [OB.UI.ListContextMenuItem]
+*/
+.obUiBPLocEditContextMenuItem {}
+
+
+
+/*
+# Component: OB.UI.BPLocAssignToReceiptContextMenuItem
+# Inherits: [OB.UI.ListContextMenuItem]
+*/
+.obUiBPLocAssignToReceiptContextMenuItem {}
+
+
+
+/*
+# Component: OB.UI.BPLocAssignToReceiptShippingContextMenuItem
+# Inherits: [OB.UI.ListContextMenuItem]
+*/
+.obUiBPLocAssignToReceiptShippingContextMenuItem {}
+
+
+
+/*
+# Component: OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem
+# Inherits: [OB.UI.ListContextMenuItem]
+*/
+.obUiBPLocAssignToReceiptInvoicingContextMenuItem {}
+
+
+
+/*
+# Component: OB.UI.BPLocationContextMenu
+# Inherits: [OB.UI.ListContextMenuItem]
+*/
+.obUiBPLocationContextMenu {}
+
+.obUiBPLocationContextMenu-BPLocDetailsContextMenuItem {
+/* Inherits: [OB.UI.BPLocDetailsContextMenuItem] */
+}
+
+.obUiBPLocationContextMenu-BPLocDetailsContextMenuItem {
+/* Inherits: [OB.UI.BPLocEditContextMenuItem] */
+}
+
+.obUiBPLocationContextMenu-BPLocAssignToReceiptContextMenuItem {
+/* Inherits: [OB.UI.BPLocAssignToReceiptContextMenuItem] */
+}
+
+.obUiBPLocationContextMenu-BPLocAssignToReceiptShippingContextMenuItem {
+/* Inherits: [OB.UI.BPLocAssignToReceiptShippingContextMenuItem] */
+}
+
+
+
+/*
+# Component: OB.UI.ListBpsLocLine
+# Inherits: [OB.UI.ListSelectorLine]
+*/
+.obUiListSelectorLine {}
+
+.obUiListSelectorLine-line {
+  line-height: 30px; width: 100%
+}
+
+.obUiListSelectorLine-line-textInfo {
+  float: left;
+}
+
+.obUiListSelectorLine-line-textInfo-element1 {
+  display: table
+}
+
+.obUiListSelectorLine-line-textInfo-element1-identifier {
+  isplay: table-cell;
+}
+
+
+.obUiListSelectorLine-line-textInfo-element1-bottomShipIcon {}
+
+
+.obUiListSelectorLine-line-textInfo-element1-bottomBillIcon {}
+
+
+.obUiListSelectorLine-line-textInfo-element1-element1 {
+  clear: both;
+}
+
+.obUiListSelectorLine-line-btnContextMenu {
+  /* Inherits: [OB.UI.BPLocationContextMenu] */
+  float: right;
+}
+
+
+
+/*
+# Component: OB.UI.ListBpsLoc
+*/
+
+.ListBpsLoc {}
+
+.obUiListBpsLoc-container1 {}
+
+.obUiListBpsLoc-container1-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obUiListBpsLoc-container1-container1-container1 {}
+
+.obUiListBpsLoc-container1-container1-container1-bpsloclistitemprinter {}
+
+
+.obUiListBpsLoc-container1-container1-container1-bpsloclistitemprinter_scrollArea {
+  max-height: 400px;
+}
+
+
+
+/*
+# Component: OB.UI.ModalBPLocation
+# Inherits: [OB.UI.ModalSelector]
+*/
+.obUiModalBPLocation{
+  top: 125px;
+}
+
+
+
+
+
+
+
+
 
 
 
