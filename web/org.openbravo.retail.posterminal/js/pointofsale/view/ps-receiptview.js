@@ -37,10 +37,8 @@ enyo.kind({
           kind: 'OB.UI.OrderHeader',
           name: 'receiptheader'
         }, {
-          classes: 'row-fluid',
           style: 'max-height: 536px;',
           components: [{
-            classes: 'span12',
             components: [{
               kind: 'OB.UI.OrderView',
               name: 'orderview'

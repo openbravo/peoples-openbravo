@@ -1368,3 +1368,9 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   height: 100%;
   align-items: center;
 }
+
+.obUiOrderHeader {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #cccccc;
+}

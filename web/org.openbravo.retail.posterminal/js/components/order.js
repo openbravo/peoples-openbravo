@@ -72,7 +72,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.OrderHeader',
-  classes: 'row-fluid span12',
+  classes: 'obUiOrderHeader',
   published: {
     order: null
   },
@@ -113,9 +113,13 @@ enyo.kind({
     kind: 'OB.UI.BPLocationShip',
     name: 'bplocshipbutton'
   }],
-  style: 'border-bottom: 1px solid #cccccc;',
   components: [{
     name: 'receiptLabels'
+  }, {
+    kind: 'OB.UI.ActionButtonArea',
+    name: 'obpos_pointofsale-receipttoolbar1',
+    abaIdentifier: 'obpos_pointofsale-receipttoolbar1',
+    classes: 'obpos_pointofsale-receipttoolbar1'
   }, {
     name: 'receiptButtons',
     style: 'clear: both; ',
