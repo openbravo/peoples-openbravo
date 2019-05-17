@@ -517,7 +517,9 @@ enyo.kind({
         }
       }
 
-      receipt.set('organization', receiptLines[0].get('organization').id);
+      if (!receiptLines[0].get('isVerifiedReturn')) {
+        receipt.set('organization', receiptLines[0].get('organization').id);
+      }
       if (OB.UTIL.isCrossStoreReceipt(receipt)) {
         receipt.set('warehouse', receiptLines[0].get('warehouse').id);
         if (receiptLines[0].get('product').get('currentPrice')) {
