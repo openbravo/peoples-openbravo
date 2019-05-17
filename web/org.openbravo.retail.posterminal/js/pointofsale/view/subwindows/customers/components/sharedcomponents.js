@@ -470,6 +470,33 @@ enyo.kind({
       return true;
     }
 
+    function validateSMS(customer) {
+      //Validate that sms field is filled if  'Commercial Auth -> sms' is checked
+      var commercialAuthViaSms = customer.get('obposViasms');
+      var alternativePhone = customer.get('alternativePhone');
+      var phone = customer.get('phone');
+      if (commercialAuthViaSms && (phone === '' && alternativePhone === '')) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_PhoneRequired'));
+        enableButtonsCallback(false);
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    function validateEmail(customer) {
+      //Validate that email field is filled if 'Commercial Auth -> email' is checked
+      var commercialAuthViaEmail = customer.get('obposViaemail');
+      var email = customer.get('email');
+      if (commercialAuthViaEmail && email === '') {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_EmailRequired'));
+        enableButtonsCallback(false);
+        return false;
+      } else {
+        return true;
+      }
+    }
+
     function beforeCustomerSave(customer, isNew) {
       customer.adjustNames();
       if (customer.get('locationModel')) {
@@ -501,14 +528,15 @@ enyo.kind({
         });
       });
     }
-
     if (this.customer === undefined) {
       this.model.get('customer').newCustomer();
       this.waterfall('onSaveChange', {
         customer: this.model.get('customer')
       });
       if (validateForm(this)) {
-        beforeCustomerSave(this.model.get('customer'), true);
+        if (validateSMS(customer) && validateEmail(customer)) {
+          beforeCustomerSave(this.model.get('customer'), true);
+        }
       } else {
         enableButtonsCallback(false);
       }
@@ -518,7 +546,9 @@ enyo.kind({
           customer: customer
         });
         if (validateForm(me)) {
-          beforeCustomerSave(customer, false);
+          if (validateSMS(customer) && validateEmail(customer)) {
+            beforeCustomerSave(customer, false);
+          }
         } else {
           enableButtonsCallback(false);
         }
@@ -682,14 +712,30 @@ enyo.kind({
     for (var component in this.parent.parent.parent.children) {
       if (this.parent.parent.parent.children[component].name === 'line_contactpreferences') {
         var contactpreferences = this.parent.parent.parent.children[component];
+        var smsCheck = contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck;
+        var emailCheck = contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck;
         if (this.checked) {
           contactpreferences.show();
         } else {
           contactpreferences.hide();
+          //reset saved values when hide contact preferences
+          smsCheck.checked = false;
+          emailCheck.checked = false;
         }
       }
     }
-  }
+  },
+  saveChange: function (inSender, inEvent) {
+    var me = this;
+    inEvent.customer.set(me.modelProperty, me.checked);
+    for (var component in me.parent.parent.parent.children) {
+      if (me.parent.parent.parent.children[component].name === 'line_contactpreferences') {
+        var contactpreferences = me.parent.parent.parent.children[component];
+        inEvent.customer.set('obposViasms', contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck.checked);
+        inEvent.customer.set('obposViaemail', contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck.checked);
+      }
+    }
+  },
 });
 enyo.kind({
   name: 'OB.UI.CustomerCheckComboProperty',
