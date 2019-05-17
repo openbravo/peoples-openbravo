@@ -534,7 +534,7 @@ enyo.kind({
         customer: this.model.get('customer')
       });
       if (validateForm(this)) {
-        if (validateSMS(customer) && validateEmail(customer)) {
+        if (validateSMS(this.model.get('customer')) && validateEmail(this.model.get('customer'))) {
           beforeCustomerSave(this.model.get('customer'), true);
         }
       } else {
