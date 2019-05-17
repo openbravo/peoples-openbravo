@@ -164,13 +164,18 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
   }
 
   private static Entity[] getTreeTables() {
-    OBCriteria<Table> treeTablesCriteria = OBDal.getInstance().createCriteria(Table.class);
-    treeTablesCriteria.add(Restrictions.eq(Table.PROPERTY_ISTREE, true));
-    List<Table> treeTableList = treeTablesCriteria.list();
-    ArrayList<Entity> entityArray = new ArrayList<Entity>();
-    for (Table treeTable : treeTableList) {
-      entityArray.add(ModelProvider.getInstance().getEntityByTableId(treeTable.getId()));
+    OBContext.setAdminMode(true);
+    try {
+      OBCriteria<Table> treeTablesCriteria = OBDal.getInstance().createCriteria(Table.class);
+      treeTablesCriteria.add(Restrictions.eq(Table.PROPERTY_ISTREE, true));
+      List<Table> treeTableList = treeTablesCriteria.list();
+      ArrayList<Entity> entityArray = new ArrayList<Entity>();
+      for (Table treeTable : treeTableList) {
+        entityArray.add(ModelProvider.getInstance().getEntityByTableId(treeTable.getId()));
+      }
+      return entityArray.toArray(new Entity[entityArray.size()]);
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return entityArray.toArray(new Entity[entityArray.size()]);
   }
 }
