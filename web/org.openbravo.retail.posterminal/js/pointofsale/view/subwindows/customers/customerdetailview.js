@@ -32,7 +32,7 @@ enyo.kind({
     this.$.body.$.editcustomers_impl.setCustomer(this.args.businessPartner);
     var customerHeader = this.$.body.$.editcustomers_impl.$.bodyheader.$.editCustomerHeader;
     var buttonContainer = customerHeader.$.buttonContainer;
-    for (component in buttonContainer.$) {
+    for (var component in buttonContainer.$) {
       if (OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader.prototype.customerHeaderButtons.find(function (headerButton) {
         return headerButton.name === component;
       })) {

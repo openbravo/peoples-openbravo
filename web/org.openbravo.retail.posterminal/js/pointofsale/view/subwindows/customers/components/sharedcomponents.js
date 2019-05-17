@@ -657,12 +657,16 @@ enyo.kind({
       } else {
         me.removeClass('active');
       }
-      var contactpreferences = this.parent.parent.parent.children[16];
-      var commercialauth = inEvent.customer.attributes.obposCommercialauth;
-      if (commercialauth) {
-        contactpreferences.show();
-      } else {
-        contactpreferences.hide();
+      for (var component in me.parent.parent.parent.children) {
+        if (me.parent.parent.parent.children[component].name === 'line_contactpreferences') {
+          var contactpreferences = me.parent.parent.parent.children[component];
+          var commercialauth = inEvent.customer.attributes.obposCommercialauth;
+          if (commercialauth) {
+            contactpreferences.show();
+          } else {
+            contactpreferences.hide();
+          }
+        }
       }
     } else {
       me.checked = false;
@@ -670,16 +674,20 @@ enyo.kind({
     }
   },
   tap: function () {
-    var contactpreferences = this.parent.parent.parent.children[16];
     if (this.readOnly) {
       return;
     }
     this.checked = !this.checked;
     this.addRemoveClass('active', this.checked);
-    if (this.checked) {
-      contactpreferences.show();
-    } else {
-      contactpreferences.hide();
+    for (var component in this.parent.parent.parent.children) {
+      if (this.parent.parent.parent.children[component].name === 'line_contactpreferences') {
+        var contactpreferences = this.parent.parent.parent.children[component];
+        if (this.checked) {
+          contactpreferences.show();
+        } else {
+          contactpreferences.hide();
+        }
+      }
     }
   }
 });
@@ -725,7 +733,7 @@ enyo.kind({
   },
   loadValue: function (inSender, inEvent) {
     var me = this;
-    var commertialauth = this.parent.parent.parent.children[15].$.newAttribute.$.obposCommercialauth;
+    var commertialauth;
 
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get('obposViasms') !== undefined) {
@@ -748,16 +756,21 @@ enyo.kind({
       } else {
         me.$.emailCheck.removeClass('active');
       }
-      if (commertialauth.checked) {
-        if (me.$.smsCheck.checked) {
-          me.$.smsCheck.addClass('active');
-        } else {
-          me.$.smsCheck.removeClass('active');
-        }
-        if (me.$.emailCheck.checked) {
-          me.$.emailCheck.addClass('active');
-        } else {
-          me.$.emailCheck.removeClass('active');
+      for (var component in me.parent.parent.parent.children) {
+        if (me.parent.parent.parent.children[component].name === 'line_obposCommercialauth') {
+          commertialauth = me.parent.parent.parent.children[component].$.newAttribute.$.obposCommercialauth;
+          if (commertialauth.checked) {
+            if (me.$.smsCheck.checked) {
+              me.$.smsCheck.addClass('active');
+            } else {
+              me.$.smsCheck.removeClass('active');
+            }
+            if (me.$.emailCheck.checked) {
+              me.$.emailCheck.addClass('active');
+            } else {
+              me.$.emailCheck.removeClass('active');
+            }
+          }
         }
       }
     }
