@@ -1906,6 +1906,200 @@
 
 
 
+/***********************   ***********************/
+/*     File: modalremoveassociatedtickets.js     */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalRemoveAssociations_btnApply
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiModalRemoveAssociationsBtnApply {}
+
+
+/*
+# Component: OB.UI.ModalRemoveAssociations_btnCancel
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiModalRemoveAssociationsBtnCancel {}
+
+
+/*
+# Component: OB.UI.CheckboxButtonRemoveAssociations
+# Inherits: [OB.UI.CheckboxButton]
+*/
+.obUiCheckboxButtonRemoveAssociations {
+  width: 8%;
+  background-position: 15px center;
+  height: 38px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.obUiCheckboxButtonRemoveAssociations:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+}
+
+
+/*
+# Component: OB.UI.AssociatedOrderLine
+*/
+.obUiAssociatedOrderLine {
+  border-bottom: 1px solid #cccccc;
+  text-align: center;
+  color: black;
+  padding-top: 9px;
+}
+
+.obUiAssociatedOrderLine-checkboxButtonRemoveAssociations {
+/* # Inherits: [OB.UI.CheckboxButtonRemoveAssociations] */
+}
+
+.obUiAssociatedOrderLine-productName {
+  line-height: 35px;
+  font-size: var(--font-medium);
+  width: 180px;
+  padding-left: 6px;
+}
+
+.obUiAssociatedOrderLine-orderedQuantity {
+  line-height: 35px;
+  font-size: var(--font-medium);
+  width: 85px;
+}
+
+.obUiAssociatedOrderLine-documentNo {
+  line-height: 35px;
+  font-size: var(--font-medium);
+  width: 180px;
+  padding-left: 5px;
+}
+
+.obUiAssociatedOrderLine-customer {
+  line-height: 35px;
+  font-size: var(--font-medium);
+  width: 250px;
+  padding-left: 20px;
+}
+
+.obUiAssociatedOrderLine-element6 {}
+
+
+/*
+# Component: OB.UI.ModalRemoveAssociatedTickets
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalRemoveAssociatedTickets {
+  width: 900px;
+  color: #333;
+  overflow: visible;
+  background: #6cb33f;
+  padding: 0px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+
+@media all and (max-width: 800px) {
+  .obUiModalRemoveAssociatedTickets {
+    left: 10px;
+    margin-left: 0px;
+  }
+}
+
+.obUiModalRemoveAssociatedTickets-header {
+  padding-bottom: 0px;
+  margin: 0px;
+  height: 140px;
+}
+
+.obUiModalRemoveAssociatedTickets-header-modalRemoveAssociatedTicketsHeader {
+  text-align: center;
+  color: white;
+}
+
+.obUiModalRemoveAssociatedTickets-modalRemoveAssociatedTicketsHeader-serviceName {
+  line-height: 25px;
+  font-size: var(--font-xlarge);
+}
+
+.obUiModalRemoveAssociatedTickets-modalRemoveAssociatedTicketsHeader-linesLabel {
+  line-height: 25px;
+  font-size: var(--font-large);
+}
+
+.obUiModalRemoveAssociatedTickets-modalRemoveAssociatedTicketsHeader-element3 {}
+
+.obUiModalRemoveAssociatedTickets-header-headerLabels {
+  overflow: hidden;
+  padding-top: 20px;
+  border-bottom: 3px solid #cccccc;
+  text-align: center;
+  color: black;
+  margin-top: 15px;
+  padding-bottom: 7px;
+  font-weight: bold;
+  background-color: white;
+  height: 40px;
+}
+
+.obUiModalRemoveAssociatedTickets-headerLabels-productNameLbl {
+  line-height: 25px;
+  font-size: 17px;
+  width: 179px;
+  padding-left: 80px;
+}
+
+.obUiModalRemoveAssociatedTickets-headerLabels-totalQtyLbl {
+  line-height: 25px;
+  font-size: 17px;
+  width: 85px;
+}
+
+.obUiModalRemoveAssociatedTickets-headerLabels-receiptLbl {
+  line-height: 25px;
+  font-size: 17px;
+  width: 180px;
+}
+
+.obUiModalRemoveAssociatedTickets-headerLabels-customerLbl {
+  line-height: 25px;
+  font-size: 17px;
+  width: 250px;
+  padding-left: 20px;
+}
+
+.obUiModalRemoveAssociatedTickets-headerLabels-element5 {}
+
+.obUiModalRemoveAssociatedTickets-bodyContent-scroller {
+/* # Inherits: [Scroller] */
+  max-height: 350px;
+  overflow-x: hidden;
+  background-color: #ffffff;
+  margin-top: -8px;
+}
+
+.obUiModalRemoveAssociatedTickets-scroller-attributes {}
+
+.obUiModalRemoveAssociatedTickets-attributes-obUiAssociatedOrderLine {
+/* # Inherits: [OB.UI.AssociatedOrderLine] */
+}
+
+.obUiModalRemoveAssociatedTickets-bodyButtons {}
+
+.obUiModalRemoveAssociatedTickets-bodyButtons-obUiModalRemoveAssociationsBtnApply {
+/* # Inherits: [OB.UI.ModalRemoveAssociations_btnApply] */
+}
+
+.obUiModalRemoveAssociatedTickets-bodyButtons-obUiModalRemoveAssociationsBtnCancel {
+/* # Inherits: [OB.UI.ModalRemoveAssociations_btnCancel] */
+}
+
+
+
 
 /*****************/
 /*      JAR      */

@@ -11,6 +11,7 @@
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalRemoveAssociations_btnApply',
+  classes: 'obUiModalRemoveAssociationsBtnApply',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
   processesToListen: ['removeAssociations'],
@@ -36,6 +37,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalRemoveAssociations_btnCancel',
+  classes: 'obUiModalRemoveAssociationsBtnCancel',
   isDefaultAction: false,
   i18nContent: 'OBMOBC_LblCancel',
   events: {
@@ -50,7 +52,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.CheckboxButtonRemoveAssociations',
   kind: 'OB.UI.CheckboxButton',
-  classes: 'modal-dialog-btn-check span1 checkbox_removeAssociations',
+  classes: 'obUiCheckboxButtonRemoveAssociations span1',
   events: {
     onLineSelected: ''
   },
@@ -64,27 +66,28 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.AssociatedOrderLine',
-  classes: 'associatedOrderLine',
+  classes: 'obUiAssociatedOrderLine',
   handlers: {
     onLineSelected: 'lineSelected'
   },
   components: [{
     kind: 'OB.UI.CheckboxButtonRemoveAssociations',
-    name: 'checkboxButtonRemoveAssociations'
+    name: 'checkboxButtonRemoveAssociations',
+    classes: 'obUiAssociatedOrderLine-checkboxButtonRemoveAssociations'
   }, {
     name: 'productName',
-    classes: 'span4 associatedOrderLine-productName'
+    classes: 'obUiAssociatedOrderLine-productName span4'
   }, {
     name: 'orderedQuantity',
-    classes: 'span2 associatedOrderLine-orderedQuantity'
+    classes: 'obUiAssociatedOrderLine-orderedQuantity span2'
   }, {
     name: 'documentNo',
-    classes: 'span2 associatedOrderLine-documentNo'
+    classes: 'obUiAssociatedOrderLine-documentNo span2'
   }, {
     name: 'customer',
-    classes: 'span2 associatedOrderLine-customer'
+    classes: 'obUiAssociatedOrderLine-customer span2'
   }, {
-    classes: 'changedialog-properties-end'
+    classes: 'obUiAssociatedOrderLine-element6 u-clearBoth'
   }],
   initComponents: function () {
     this.inherited(arguments);
@@ -103,26 +106,28 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalRemoveAssociatedTickets',
   kind: 'OB.UI.ModalAction',
-  classes: 'modal-dialog modal-removeAssociatedTickets',
+  classes: 'obUiModalRemoveAssociatedTickets',
   handlers: {
     onApplyChanges: 'applyChanges',
     onLineSelected: 'lineSelected'
   },
   bodyContent: {
     kind: 'Scroller',
-    maxHeight: '225px',
-    classes: 'modal-removeAssociatedTickets-scroller',
+    classes: 'obUiModalRemoveAssociatedTickets-bodyContent-scroller',
     thumb: true,
-    horizontal: 'hidden',
     components: [{
-      name: 'attributes'
+      name: 'attributes',
+      classes: 'obUiModalRemoveAssociatedTickets-scroller-attributes'
     }]
   },
   bodyButtons: {
+    classes: 'obUiModalRemoveAssociatedTickets-bodyButtons',
     components: [{
-      kind: 'OB.UI.ModalRemoveAssociations_btnApply'
+      kind: 'OB.UI.ModalRemoveAssociations_btnApply',
+      classes: 'obUiModalRemoveAssociatedTickets-bodyButtons-obUiModalRemoveAssociationsBtnApply'
     }, {
-      kind: 'OB.UI.ModalRemoveAssociations_btnCancel'
+      kind: 'OB.UI.ModalRemoveAssociations_btnCancel',
+      classes: 'obUiModalRemoveAssociatedTickets-bodyButtons-obUiModalRemoveAssociationsBtnCancel'
     }]
   },
   initComponents: function () {
@@ -174,41 +179,41 @@ enyo.kind({
     this.$.header.destroyComponents();
     this.$.header.createComponent({
       name: 'ModalRemoveAssociatedTicketsHeader',
-      classes: 'modal-removeAssociatedTickets-headerContent',
+      classes: 'obUiModalRemoveAssociatedTickets-header-modalRemoveAssociatedTicketsHeader',
       components: [{
         content: OB.I18N.getLabel('OBPOS_ServiceHeader', [me.args.selectedLine.get('product').get('_identifier')]),
         name: 'serviceName',
-        classes: 'span12 modal-removeAssociatedTickets-header-serviceName'
+        classes: 'obUiModalRemoveAssociatedTickets-modalRemoveAssociatedTicketsHeader-serviceName'
       }, {
         content: OB.I18N.getLabel('OBPOS_SelectAssociationsToRemoved'),
         name: 'linesLabel',
-        classes: 'span12 modal-removeAssociatedTickets-header-linesLabel'
+        classes: 'obUiModalRemoveAssociatedTickets-modalRemoveAssociatedTicketsHeader-linesLabel'
       }, {
-        classes: 'changedialog-properties-end'
+        classes: 'obUiModalRemoveAssociatedTickets-modalRemoveAssociatedTicketsHeader-element3 u-clearBoth'
       }]
     });
-    this.$.header.addClass('modal-removeAssociatedTickets-header');
+    this.$.header.addClass('obUiModalRemoveAssociatedTickets-header');
     this.$.header.createComponent({
       name: 'HeaderLabels',
-      classes: 'modal-removeAssociatedTickets-headerLabels',
+      classes: 'obUiModalRemoveAssociatedTickets-header-headerLabels',
       components: [{
         content: OB.I18N.getLabel('OBPOS_LblProductName'),
         name: 'productNameLbl',
-        classes: 'span4 modal-removeAssociatedTickets-headerLabels-productName'
+        classes: 'obUiModalRemoveAssociatedTickets-headerLabels-productNameLbl span4'
       }, {
         name: 'totalQtyLbl',
         content: OB.I18N.getLabel('OBPOS_LblQty'),
-        classes: 'span2 modal-removeAssociatedTickets-headerLabels-totalQty'
+        classes: 'obUiModalRemoveAssociatedTickets-headerLabels-totalQtyLbl span2'
       }, {
         name: 'receiptLbl',
         content: OB.I18N.getLabel('OBPOS_ticket'),
-        classes: 'span2 modal-removeAssociatedTickets-headerLabels-receipt'
+        classes: 'obUiModalRemoveAssociatedTickets-headerLabels-receiptLbl span2'
       }, {
         content: OB.I18N.getLabel('OBPOS_LblCustomer'),
         name: 'customerLbl',
-        classes: 'span2 modal-removeAssociatedTickets-headerLabels-customer'
+        classes: 'obUiModalRemoveAssociatedTickets-headerLabels-customerLbl span2 modal-removeAssociatedTickets-headerLabels-customer'
       }, {
-        classes: 'changedialog-properties-end'
+        classes: 'obUiModalRemoveAssociatedTickets-headerLabels-element5 u-clearBoth'
       }]
     });
 
@@ -228,6 +233,7 @@ enyo.kind({
       me.$.bodyContent.$.attributes.createComponent({
         kind: 'OB.UI.AssociatedOrderLine',
         name: 'line' + lineNum,
+        classes: 'obUiModalRemoveAssociatedTickets-attributes-obUiAssociatedOrderLine',
         newAttribute: relatedLine
       });
       lineNum++;
