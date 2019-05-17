@@ -41,13 +41,11 @@
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTaxId')) %></text>
       <text><%= OB.MobileApp.model.get('terminal').organizationTaxId %></text>
     </line>
-    <line></line>
-    <line size="1">
+    <line>
         <%if (order.get('isReturn')){%>
                <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_paidReturn')) %></text>
         <% }  %>
     </line>
-    <line></line>
     <line>
       <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineItem'))%></text>
       <text align ="center" length="5">#</text>
