@@ -2156,6 +2156,20 @@
 
 
 
+/***********************   ***********************/
+/*         File: modalnoteditableline.js         */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalNotEditableLine
+# Inherits: [OB.UI.ModalInfo]
+*/
+.obUIModalNotEditableLine {}
+
+.obUIModalNotEditableLine-bodyContent {}
+
+
+
 
 /*****************/
 /*      JAR      */
