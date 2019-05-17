@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -67,6 +66,7 @@ public class Product extends ProcessHQLQuery {
     args.put("posPrecision", posPrecision);
     args.put("multiPriceList", isRemote && isMultipricelist && isMultiPriceListSearch);
     args.put("terminalId", getTerminalId(jsonsent));
+    args.put("isCrossStoreSearch", isCrossStoreSearch);
     args.put("crossStore", false);
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions, args);
@@ -77,12 +77,9 @@ public class Product extends ProcessHQLQuery {
       args.put("crossStore", true);
       HQLPropertyList crossStoreRegularProductsHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions, args);
-      HQLPropertyList crossStoreRegularProductsDiscHQLProperties = ModelExtensionUtils
-          .getPropertyExtensions(extensionsDisc, args);
       propertiesList.add(regularProductsHQLProperties);
       propertiesList.add(crossStoreRegularProductsHQLProperties);
       propertiesList.add(regularProductsDiscHQLProperties);
-      propertiesList.add(crossStoreRegularProductsDiscHQLProperties);
       propertiesList.add(regularProductsHQLProperties);
     } else {
       propertiesList.add(regularProductsHQLProperties);
@@ -112,11 +109,6 @@ public class Product extends ProcessHQLQuery {
       final Calendar now = Calendar.getInstance();
       final String posId = getTerminalId(jsonsent);
       final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
-      crossStoreOrgIds.remove(orgId);
-      Set<String> crossStoreNaturalTree = OBContext.getOBContext()
-          .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId())
-          .getNaturalTree(orgId);
-      crossStoreNaturalTree.addAll(POSUtils.getOrgListCrossStore(posId));
       final String assortmentId = POSUtils.getProductListByPosterminalId(posId).getId();
       final String priceListVersionId = POSUtils.getPriceListVersionByOrgId(orgId, terminalDate)
           .getId();
@@ -126,7 +118,6 @@ public class Product extends ProcessHQLQuery {
       paramValues.put("priceListVersionId", priceListVersionId);
       paramValues.put("orgId", orgId);
       paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
-      paramValues.put("crossStoreNaturalTree", crossStoreNaturalTree);
       paramValues.put("endingDate", now.getTime());
       paramValues.put("startingDate", now.getTime());
       paramValues.put("terminalDate", terminalDate);
@@ -155,7 +146,6 @@ public class Product extends ProcessHQLQuery {
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final String posId = getTerminalId(jsonsent);
       final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
-      crossStoreOrgIds.remove(orgId);
       final String assortmentId = POSUtils.getProductListByPosterminalId(posId).getId();
       final String priceListVersionId = POSUtils.getPriceListVersionByOrgId(orgId, terminalDate)
           .getId();
@@ -199,6 +189,7 @@ public class Product extends ProcessHQLQuery {
     args.put("posPrecision", posPrecision);
     args.put("multiPriceList", isRemote && isMultipricelist && isMultiPriceListSearch);
     args.put("terminalId", getTerminalId(jsonsent));
+    args.put("isCrossStoreSearch", isCrossStoreSearch);
 
     args.put("crossStore", false);
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils
@@ -208,9 +199,6 @@ public class Product extends ProcessHQLQuery {
     args.put("crossStore", true);
     HQLPropertyList crossStoreRegularProductsHQLProperties = isCrossStoreSearch
         ? ModelExtensionUtils.getPropertyExtensions(extensions, args)
-        : null;
-    HQLPropertyList crossStoreRegularProductsDiscHQLProperties = isCrossStoreSearch
-        ? ModelExtensionUtils.getPropertyExtensions(extensionsDisc, args)
         : null;
 
     // Regular products
@@ -225,22 +213,17 @@ public class Product extends ProcessHQLQuery {
       products.add(crossStoreRegularProductHqlString);
     }
 
-    // Packs, combos...
-    final String packAndCombosHqlString = getPackAndCombosHqlString(isRemote,
-        useGetForProductImages, regularProductsDiscHQLProperties);
-    products.add(packAndCombosHqlString);
-    if (isCrossStoreSearch) {
-      final String crossStorePackAndCombosHqlString = getCrossStorePackAndCombosHqlString(
-          useGetForProductImages, crossStoreRegularProductsDiscHQLProperties);
-      products.add(crossStorePackAndCombosHqlString);
-    }
+    // Packs
+    final String packHqlString = getPackProductHqlString(isRemote, useGetForProductImages,
+        isCrossStoreSearch, regularProductsDiscHQLProperties);
+    products.add(packHqlString);
 
     // Generic products
     boolean isForceRemote = jsonsent.getJSONObject("parameters").has("forceRemote")
         && jsonsent.getJSONObject("parameters").getBoolean("forceRemote");
     if (executeGenericProductQry && !isRemote && !isForceRemote) {
       // BROWSE tab is hidden, we do not need to send generic products
-      final String genericProductsHqlString = getGenericProductsHqlString(useGetForProductImages,
+      final String genericProductsHqlString = getGenericProductHqlString(useGetForProductImages,
           regularProductsHQLProperties);
       products.add(genericProductsHqlString);
     }
@@ -320,7 +303,7 @@ public class Product extends ProcessHQLQuery {
     return hql;
   }
 
-  private String getGenericProductsHqlString(final boolean useGetForProductImages,
+  private String getGenericProductHqlString(final boolean useGetForProductImages,
       HQLPropertyList regularProductsHQLProperties) {
     String genericProductsHqlString = "select " //
         + regularProductsHQLProperties.getHqlSelect() + " from Product product ";
@@ -335,44 +318,115 @@ public class Product extends ProcessHQLQuery {
     return genericProductsHqlString;
   }
 
-  private String getPackAndCombosHqlString(final boolean isRemote,
-      final boolean useGetForProductImages,
-      final HQLPropertyList regularProductsDiscHQLProperties) {
-    String packAndCombosHqlString = "select " //
-        + regularProductsDiscHQLProperties.getHqlSelect() + " from PricingAdjustment as p ";
+  private String getPackProductHqlString(final boolean isRemote, final boolean useGetForProductImages,
+      final boolean isCrossStoreSearch, final HQLPropertyList regularProductsDiscHQLProperties) {
+    final StringBuilder query = new StringBuilder();
+    query.append(" select");
+    query.append(regularProductsDiscHQLProperties.getHqlSelect());
+    query.append(" from PricingAdjustment p");
+    query.append(" join p.discountType pt");
     if (!useGetForProductImages) {
-      packAndCombosHqlString += "left outer join p.obdiscImage img ";
+      query.append(" left join p.obdiscImage img");
     }
-    packAndCombosHqlString += "where $filtersCriteria AND p.discountType.obposIsCategory = true "//
-        + "   and p.discountType.active = true " //
-        + "   and p.$readableSimpleClientCriteria"//
-        + "   and (p.endingDate is null or p.endingDate >= :endingDate)" //
-        + "   and p.startingDate <= :startingDate " + "   and (p.$incrementalUpdateCriteria) "//
-        // assortment products
-        + "and ((p.includedProducts = 'N' and not exists (select 1 "
-        + "      from PricingAdjustmentProduct pap where pap.active = true and "
-        + "      pap.priceAdjustment = p and pap.product.sale = true "
-        + "      and pap.product not in (select ppl.product.id from OBRETCO_Prol_Product ppl "
-        + "      where ppl.obretcoProductlist.id = :assortmentId and ppl.active = true))) "
-        + " or (p.includedProducts = 'Y' and not exists (select 1 "
-        + "      from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl "
-        + "      where pap.active = true and pap.priceAdjustment = p "
-        + "      and pap.product.id = ppl.product.id "
-        + "      and ppl.obretcoProductlist.id = :assortmentId))) "
-        // organization
-        + "and p.$naturalOrgCriteria and ((p.includedOrganizations='Y' "
-        + "  and not exists (select 1 " + "         from PricingAdjustmentOrganization o"
-        + "        where active = true" + "          and o.priceAdjustment = p"
-        + "          and o.organization.id = :orgId )) " + "   or (p.includedOrganizations='N' "
-        + "  and  exists (select 1 " + "         from PricingAdjustmentOrganization o"
-        + "        where active = true" + "          and o.priceAdjustment = p"
-        + "          and o.organization.id = :orgId )) )";
+    query.append(" where $filtersCriteria");
+    query.append(" and pt.obposIsCategory = true");
+    query.append(" and pt.active = true");
+    query.append(" and p.$incrementalUpdateCriteria");
+    query.append(" and" + getPackProductWhereClause("p", isCrossStoreSearch));
     if (isRemote) {
-      packAndCombosHqlString += " order by p.name asc, p.id";
+      query.append(" order by p.name asc, p.id");
     } else {
-      packAndCombosHqlString += " order by p.id";
+      query.append(" order by p.id");
     }
-    return packAndCombosHqlString;
+
+    return query.toString();
+  }
+
+  static String getPackProductWhereClause(final String packAlias, final boolean isCrossStore) {
+    final String storeFilter = isCrossStore ? ":crossStoreOrgIds" : ":orgId";
+
+    final StringBuilder query = new StringBuilder();
+    query.append(" %1$s.$readableSimpleClientCriteria");
+    query.append(" and %1$s.startingDate <= :startingDate");
+    query.append(" and (%1$s.endingDate is null");
+    query.append(" or %1$s.endingDate >= :endingDate)");
+    // Pack organization is in the natural tree of current/cross store
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from Organization o");
+    query.append("   where o.id in %2$s");
+    query.append("   and ad_org_isinnaturaltree(%1$s.organization.id, o.id, o.client.id) = 'Y'");
+    query.append(" )");
+    // Pack is included in the assortment of current/cross store
+    query.append(" and ((%1$s.includedProducts = 'N'");
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from Organization o");
+    query.append("   where o.id in %2$s");
+    query.append("   and not exists (");
+    query.append("     select 1 ");
+    query.append("     from PricingAdjustmentProduct pap");
+    query.append("     where pap.priceAdjustment.id = %1$s.id");
+    query.append("     and pap.active = true");
+    query.append("     and not exists (");
+    query.append("       select 1");
+    query.append("       from OBRETCO_Prol_Product pli");
+    query.append("       where pli.product.id = pap.product.id");
+    query.append("       and pli.obretcoProductlist.id = o.obretcoProductlist.id");
+    query.append("       and pli.active = true");
+    query.append("     )");
+    query.append("   )");
+    query.append(" ))");
+    // Pack is not excluded in the assortment of current/cross store
+    query.append(" or (%1$s.includedProducts = 'Y'");
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from Organization o");
+    query.append("   where o.id in %2$s");
+    query.append("   and not exists (");
+    query.append("     select 1 ");
+    query.append("     from PricingAdjustmentProduct pap");
+    query.append("     where pap.priceAdjustment.id = %1$s.id");
+    query.append("     and pap.active = true");
+    query.append("     and exists (");
+    query.append("       select 1");
+    query.append("       from OBRETCO_Prol_Product pli");
+    query.append("       where pli.product.id = pap.product.id");
+    query.append("       and pli.obretcoProductlist.id = o.obretcoProductlist.id");
+    query.append("       and pli.active = true");
+    query.append("     )");
+    query.append("   )");
+    query.append(" )))");
+    // Pack is included in current/cross store
+    query.append(" and ((%1$s.includedOrganizations='N'");
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from Organization o");
+    query.append("   where o.id in %2$s");
+    query.append("   and exists (");
+    query.append("     select 1");
+    query.append("     from PricingAdjustmentOrganization pao");
+    query.append("     where pao.priceAdjustment.id = %1$s.id");
+    query.append("     and pao.organization.id = o.id");
+    query.append("     and pao.active = true");
+    query.append("   )");
+    query.append(" ))");
+    // Pack is not excluded in current/cross store
+    query.append(" or (%1$s.includedOrganizations='Y'");
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from Organization o");
+    query.append("   where o.id in %2$s");
+    query.append("   and not exists (");
+    query.append("     select 1");
+    query.append("     from PricingAdjustmentOrganization pao");
+    query.append("     where pao.priceAdjustment.id = %1$s.id");
+    query.append("     and pao.organization.id = o.id");
+    query.append("     and pao.active = true");
+    query.append("   )");
+    query.append(" )))");
+
+    return String.format(query.toString(), packAlias, storeFilter);
   }
 
   private String getCrossStoreRegularProductHqlString(final JSONObject jsonsent,
@@ -423,7 +477,7 @@ public class Product extends ProcessHQLQuery {
       query.append("   )");
     }
     query.append(" )");
-    // Product doesn't exist in the assortment and price list of current store
+    // Product doesn't exist in the assortment or price list of current store
     query.append(" and (not exists (");
     query.append("   select 1");
     query.append("   from OBRETCO_Prol_Product pli");
@@ -449,100 +503,6 @@ public class Product extends ProcessHQLQuery {
     query.append(" )");
     query.append(" and product.$incrementalUpdateCriteria");
     query.append(" order by product.name asc, product.id");
-
-    return query.toString();
-  }
-
-  private String getCrossStorePackAndCombosHqlString(final boolean useGetForProductImages,
-      final HQLPropertyList crossStoreRegularProductsDiscHQLProperties) {
-    final StringBuilder query = new StringBuilder();
-    query.append(" select");
-    query.append(crossStoreRegularProductsDiscHQLProperties.getHqlSelect());
-    query.append(" from PricingAdjustment p");
-    query.append(" join p.discountType pt");
-    if (!useGetForProductImages) {
-      query.append(" left outer join p.obdiscImage img");
-    }
-    query.append(" where $filtersCriteria");
-    query.append(" and p.$readableSimpleClientCriteria");
-    query.append(" and p.$incrementalUpdateCriteria");
-    query.append(" and pt.obposIsCategory = true");
-    query.append(" and pt.active = true");
-    query.append(" and p.startingDate <= :startingDate");
-    query.append(" and (p.endingDate is null");
-    query.append(" or p.endingDate >= :endingDate)");
-    // Pack is included in the assortment of a cross store
-    query.append(" and ((p.includedProducts = 'N'");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Organization o");
-    query.append("   where o.id in :crossStoreOrgIds");
-    query.append("   and not exists (");
-    query.append("     select 1 ");
-    query.append("     from PricingAdjustmentProduct pap");
-    query.append("     join pap.product papp");
-    query.append("     where pap.active = true");
-    query.append("     and pap.priceAdjustment.id = p.id");
-    query.append("     and papp.sale = true");
-    query.append("     and not exists (");
-    query.append("       select 1");
-    query.append("       from OBRETCO_Prol_Product pli");
-    query.append("       where pli.product.id = papp.id");
-    query.append("       and pli.obretcoProductlist.id = o.obretcoProductlist.id");
-    query.append("       and pli.active = true");
-    query.append("     )");
-    query.append("   )");
-    query.append(" ))");
-    // Pack is not excluded in the assortment of a cross store
-    query.append(" or (p.includedProducts = 'Y'");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Organization o");
-    query.append("   where o.id in :crossStoreOrgIds");
-    query.append("   and not exists (");
-    query.append("     select 1 ");
-    query.append("     from PricingAdjustmentProduct pap");
-    query.append("     join pap.product papp");
-    query.append("     where pap.active = true");
-    query.append("     and pap.priceAdjustment.id = p.id");
-    query.append("     and papp.sale = true");
-    query.append("     and exists (");
-    query.append("       select 1");
-    query.append("       from OBRETCO_Prol_Product pli");
-    query.append("       where pli.product.id = papp.id");
-    query.append("       and pli.obretcoProductlist.id = o.obretcoProductlist.id");
-    query.append("       and pli.active = true");
-    query.append("     )");
-    query.append("   )");
-    query.append(" )))");
-    query.append(" and p.organization.id in :crossStoreNaturalTree");
-    // Pack is included in a cross store
-    query.append(" and ((p.includedOrganizations='N'");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Organization o");
-    query.append("   where o.id in :crossStoreOrgIds");
-    query.append("   and exists (");
-    query.append("     select 1");
-    query.append("     from PricingAdjustmentOrganization pao");
-    query.append("     where pao.organization.id = o.id");
-    query.append("     and pao.active = true");
-    query.append("   )");
-    query.append(" ))");
-    // Pack is not excluded in a cross store
-    query.append(" or (p.includedOrganizations='Y'");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Organization o");
-    query.append("   where o.id in :crossStoreOrgIds");
-    query.append("   and not exists (");
-    query.append("     select 1");
-    query.append("     from PricingAdjustmentOrganization pao");
-    query.append("     where pao.organization.id = o.id");
-    query.append("     and pao.active = true");
-    query.append("   )");
-    query.append(" )))");
-    query.append(" order by p.name asc, p.id");
 
     return query.toString();
   }

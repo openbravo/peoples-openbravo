@@ -214,7 +214,7 @@ public class POSUtils {
       return getOrgListByCrossStoreId(crossStore.getId());
     }
 
-    return Collections.emptyList();
+    return Collections.singletonList(posterminal.getOrganization().getId());
   }
 
   public static List<String> getStoreList(String orgId) {
@@ -384,6 +384,7 @@ public class POSUtils {
         productList.addAll(query.list());
       }
 
+      productList.add(getProductListByPosterminalId(posterminalId).getId());
       return productList;
     } catch (Exception e) {
       log.error("Error getting ProductList by Cross Store ID: " + e.getMessage(), e);

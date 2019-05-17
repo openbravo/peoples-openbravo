@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -32,16 +32,19 @@ public class ProductDiscProperties extends ModelExtension {
 
     // Calculate POS Precision
     String localPosPrecision = "";
+    boolean localIsCrossStoreSearch = false;
     try {
       if (params != null) {
         @SuppressWarnings("unchecked")
         HashMap<String, Object> localParams = (HashMap<String, Object>) params;
         localPosPrecision = (String) localParams.get("posPrecision");
+        localIsCrossStoreSearch = (Boolean) localParams.get("isCrossStoreSearch");
       }
     } catch (Exception e) {
       log.error("Error getting posPrecision: " + e.getMessage(), e);
     }
     final String posPrecision = localPosPrecision;
+    final boolean isCrossStoreSearch = localIsCrossStoreSearch;
 
     ArrayList<HQLProperty> list = null;
 
@@ -95,6 +98,19 @@ public class ProductDiscProperties extends ModelExtension {
         add(new HQLProperty("'false'", "isGeneric"));
         add(new HQLProperty("'false'", "stocked"));
         add(new HQLProperty("p.discountType.id", "productCategory"));
+        final StringBuilder crossStore = new StringBuilder();
+        if (isCrossStoreSearch) {
+          crossStore.append("case when exists (");
+          crossStore.append("   select 1");
+          crossStore.append("   from PricingAdjustment p2");
+          crossStore.append("   where p2.id = p.id");
+          crossStore.append("   and p2.active = true");
+          crossStore.append("   and " + Product.getPackProductWhereClause("p2", false));
+          crossStore.append(") then false else true end");
+        } else {
+          crossStore.append("false");
+        }
+        add(new HQLProperty(crossStore.toString(), "crossStore"));
       }
     };
     return list;
