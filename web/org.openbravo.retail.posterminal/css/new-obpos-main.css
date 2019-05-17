@@ -468,6 +468,62 @@
 
 
 
+/***********************   ***********************/
+/*        File: modalprovidergroupvoid.js        */
+/*            Folder: js/components              */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalProviderGroupVoid
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalProviderGroupVoid {
+  max-height: 600px;
+}
+
+.obUiModalProviderGroupVoid-body {}
+
+.obUiModalProviderGroupVoid-body-container1 {}
+
+.obUiModalProviderGroupVoid-body-container1-container1 {}
+
+.obUiModalProviderGroupVoid-body-container1-container1-lblType {
+  float:left;
+  padding-left:30px;
+}
+
+.obUiModalProviderGroupVoid-body-container1-container1-paymenttype{
+  float:right;
+  font-weight: bold;
+  padding-right:30px;
+}
+
+.obUiModalProviderGroupVoid-body-container1-container2 {
+  clear: both;
+}
+
+.obUiModalProviderGroupVoid-body-container1-container3 {}
+
+.obUiModalProviderGroupVoid-body-container1-container3-description {
+  float:center;
+  padding-left:30px;
+  padding-right:30px;
+}
+
+.obUiModalProviderGroupVoid-body-container1-container4 {
+  clear: both;
+}
+
+.obUiModalProviderGroupVoid-body-providergroupcomponent {}
+
+
+
+
+
+
+
+
+
+
 /*****************/
 /*      JGA      */
 /*****************/
