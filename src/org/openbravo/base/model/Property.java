@@ -1352,10 +1352,15 @@ public class Property {
     this.allowedCrossOrgReference = allowedCrossOrgReference;
   }
 
+  /**
+   * For FK properties, this flag indicates whether a new property in referenced entity will be
+   * created referencing this one.
+   */
   public boolean isChildPropertyInParent() {
     return isChildPropertyInParent;
   }
 
+  /** @see #isChildPropertyInParent() */
   public void setChildPropertyInParent(boolean isChildPropertyInParent) {
     this.isChildPropertyInParent = isChildPropertyInParent;
   }
