@@ -12,6 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.SearchProductCharacteristicFilter',
   name: 'OB.UI.SearchServicesFilter',
+  classes: 'obUiSearchServicesFilter',
   filterName: 'ServicesFilter',
   published: {
     type: 'PANEL',
@@ -309,6 +310,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SearchProductCharacteristicFilter',
   name: 'OB.UI.MandatoryServicesFilter',
+  classes: 'obUiMandatoryServicesFilter',
   filterName: 'MandatoryServicesFilter',
   published: {
     type: 'HIDDEN'
@@ -334,6 +336,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SearchProductCharacteristicFilter',
   name: 'OB.UI.FinalMandatoryServicesFilter',
+  classes: 'obUiFinalMandatoryServicesFilter',
   filterName: 'FinalMandatoryServicesFilter',
   published: {
     type: 'PANEL'

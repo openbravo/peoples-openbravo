@@ -130,7 +130,7 @@ z
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.svg');
   background-repeat: no-repeat;
   background-size: 16px 18px;
-  background-position: 5px 1px;
+  background-position: 5px 1px;JRO
   width: 26px;
   height: 22px;
 }
@@ -440,12 +440,31 @@ z
 
 
 
+/***********************   ***********************/
+/*             File: servicesfilter.js           */
+/*             Folder: js/components             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.SearchServicesFilter
+# Inherits: [OB.UI.SearchProductCharacteristicFilter]
+*/
+.obUiSearchServicesFilter {}
 
 
 
+/*
+# Component: OB.UI.MandatoryServicesFilter
+# Inherits: [OB.UI.SearchProductCharacteristicFilter]
+*/
+.obUiMandatoryServicesFilter {}
 
 
 
+/*
+# Component: OB.UI.FinalMandatoryServicesFilter
+# Inherits: [OB.UI.SearchProductCharacteristicFilter]
+*/
+.obUiFinalMandatoryServicesFilter {}
 
 
 
