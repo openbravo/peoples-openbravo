@@ -12,18 +12,23 @@
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalMultiOrdersLayaway',
+  classes: 'obUiModalMultiOrdersLayaway',
   executeOnShow: function () {
     this.$.bodyButtons.$.btnModalMultiSearchInput.setValue('');
   },
   bodyContent: {
+    classes: 'obUiModalMultiOrdersLayaway-bodyContent',
     i18nContent: 'OBPOS_MultiOrdersLayaway' // TODO: add this as part of the message + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone')
   },
   bodyButtons: {
+    classes: 'obUiModalMultiOrdersLayaway-bodyButtons',
     components: [{
       name: 'btnModalMultiSearchInput',
-      kind: 'OB.UI.SearchInput'
+      kind: 'OB.UI.SearchInput',
+      classes: 'obUiModalMultiOrdersLayaway-bodyButtons-btnModalMultiSearchInput'
     }, {
-      kind: 'OB.UI.btnApplyMultiLayaway'
+      kind: 'OB.UI.btnApplyMultiLayaway',
+      classes: 'obUiModalMultiOrdersLayaway-bodyButtons-obUiBtnApplyMultiLayaway'
     }]
   },
   initComponents: function () {
@@ -35,6 +40,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.btnApplyMultiLayaway',
+  classes: 'obUibtnApplyMultiLayaway',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
   tap: function () {

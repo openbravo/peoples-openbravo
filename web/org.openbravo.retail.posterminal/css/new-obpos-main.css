@@ -2170,6 +2170,37 @@
 
 
 
+/***********************   ***********************/
+/*        File: modalmultiorderslayaway.js       */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalMultiOrdersLayaway
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalMultiOrdersLayaway {}
+
+.obUiModalMultiOrdersLayaway-bodyContent {}
+
+.obUiModalMultiOrdersLayaway-bodyButtons {}
+
+.obUiModalMultiOrdersLayaway-bodyButtons-btnModalMultiSearchInput {
+/* # Inherits: [OB.UI.SearchInput] */
+}
+
+.obUiModalMultiOrdersLayaway-bodyButtons-obUiBtnApplyMultiLayaway {
+/* # Inherits: [OB.UI.btnApplyMultiLayaway] */
+}
+
+
+/*
+# Component: OB.UI.btnApplyMultiLayaway
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUibtnApplyMultiLayaway {}
+
+
+
 
 /*****************/
 /*      JAR      */
