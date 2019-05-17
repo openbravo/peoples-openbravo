@@ -491,6 +491,10 @@
     column: 'language',
     type: 'TEXT'
   }, {
+    name: 'language_name',
+    column: 'language_name',
+    type: 'TEXT'
+  }, {
     name: 'comments',
     column: 'comments',
     type: 'TEXT'
