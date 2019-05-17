@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -159,6 +159,8 @@ public class SessionLogin {
       session.setNewOBObject(true);
 
       OBDal.getInstance().save(session);
+
+      // commit new ad_session without auditing
       SessionInfo.auditThisThread(false);
       OBDal.getInstance().commitAndClose();
       setSessionID(session.getId());
@@ -168,6 +170,9 @@ public class SessionLogin {
       return 0;
     } finally {
       OBContext.restorePreviousMode();
+
+      // reset auditing so other DB modifications in this thread are audited
+      SessionInfo.auditThisThread(true);
     }
   }
 

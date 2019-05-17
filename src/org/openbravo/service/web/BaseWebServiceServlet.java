@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,7 @@ import org.openbravo.base.secureApp.AllowedCrossDomainsHandler;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.database.SessionInfo;
 
 /**
  * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext}
@@ -115,6 +116,9 @@ public class BaseWebServiceServlet extends HttpServlet {
       log.debug("WS accessed by userId " + userId);
       OBContext.setOBContext(UserContextCache.getInstance().getCreateOBContext(userId));
       OBContext.setOBContextInSession(request, OBContext.getOBContext());
+      SessionInfo.setUserId(userId);
+      SessionInfo.setProcessType("WS");
+      SessionInfo.setProcessId("DAL");
       try {
         doService(request, response);
       } finally {
