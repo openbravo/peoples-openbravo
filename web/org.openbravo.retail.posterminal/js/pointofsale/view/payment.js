@@ -1539,7 +1539,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   drawerOpened: true,
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'cancelLayaway', 'paymentDone', 'tapDoneButton'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'cancelLayaway', 'paymentDone', 'tapDoneButton', 'servicePriceCalculation'],
   init: function (model) {
     this.model = model;
     this.setDisabledIfSynchronized();
@@ -1880,7 +1880,7 @@ enyo.kind({
   },
   classes: 'btn-icon-adaptative btnlink-green',
   style: 'width: calc(50% - 5px); margin: 0px 5px 0px 0px; clear: unset',
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'servicePriceCalculation'],
   tap: function () {
     if (this.disabled) {
       return true;
@@ -1904,7 +1904,7 @@ enyo.kind({
   },
   classes: 'btn-icon-adaptative btnlink-green',
   style: 'width: calc(50% - 5px); margin: 0px 0px 0px 5px;',
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'servicePriceCalculation'],
   tap: function () {
     if (this.disabled) {
       return true;
@@ -1927,7 +1927,7 @@ enyo.kind({
     onExactPayment: ''
   },
   classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'servicePriceCalculation'],
   tap: function () {
     if (this.disabled) {
       return true;
@@ -2137,7 +2137,7 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'payOnCredit', 'paymentDone'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'payOnCredit', 'paymentDone', 'servicePriceCalculation'],
   init: function (model) {
     this.model = model;
   },
@@ -2254,7 +2254,7 @@ enyo.kind({
   content: '',
   classes: 'btn-icon-small btnlink-green',
   permission: 'OBPOS_receipt.layawayReceipt',
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'paymentDone'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'paymentDone', 'servicePriceCalculation'],
   updateVisibility: function (isVisible) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {
       this.hide();

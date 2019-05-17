@@ -365,6 +365,8 @@ enyo.kind({
         newRelatedLine.promotions = line.get('promotions');
         newRelatedLine.bpName = line.get('bpName');
         newRelatedLine.obposIspaid = (OB.UTIL.isNullOrUndefined(relatedLinePaid)) ? false : relatedLinePaid.obposIspaid;
+        newRelatedLine.productId = line.get('productId');
+        newRelatedLine.productCategory = line.get('productCategory');
         relatedLines.push(newRelatedLine);
         associatedOrderLineIds.push(line.get('orderlineId'));
       }

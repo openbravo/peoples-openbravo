@@ -88,6 +88,11 @@
     filter: false,
     type: 'TEXT'
   }, {
+    name: 'productCategory',
+    column: 'productCategory',
+    filter: false,
+    type: 'TEXT'
+  }, {
     name: 'productName',
     column: 'productName',
     filter: false,
