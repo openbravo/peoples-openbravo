@@ -361,7 +361,7 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblBirthplace',
     readOnly: true,
     displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowBirthplace', true);
     }
   }, {
     kind: 'OB.UI.CustomerTextProperty',
@@ -370,7 +370,7 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblBirthdate',
     readOnly: true,
     displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowBirthdate', true);
     },
     loadValue: function (inSender, inEvent) {
       if (inEvent.customer !== undefined) {
@@ -457,7 +457,7 @@ enyo.kind({
       editedBp.set('obposViaemail', oldBp.get('obposViaemail'));
     },
     displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowCommercialAuth', true);
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowContactPreferences', true);
     }
   }]
 });
