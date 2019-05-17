@@ -178,6 +178,10 @@ BEGIN
         COALESCE(:NEW.imagewidth                 , 1 ) = COALESCE(:OLD.imagewidth                 , 1 )AND
         COALESCE(:NEW.imageheight                , 1 ) = COALESCE(:OLD.imageheight                , 1 )AND
         COALESCE(:NEW.isusedsequence             ,'.') = COALESCE(:OLD.isusedsequence             ,'.')AND
+        COALESCE(:NEW.AllowSorting               ,'.') = COALESCE(:OLD.AllowSorting               ,'.')AND
+        COALESCE(:NEW.AllowFiltering             ,'.') = COALESCE(:OLD.AllowFiltering             ,'.')AND
+        :NEW.Allowed_Cross_Org_Link                    = :OLD.Allowed_Cross_Org_Link                   AND
+        :NEW.is_Child_Property_In_Parent               = :OLD.is_Child_Property_In_Parent              AND
         COALESCE(:OLD.ISEXCLUDEAUDIT		,'.') != COALESCE(:NEW.ISEXCLUDEAUDIT		,'.')) THEN
       
 		:NEW.UPDATED := :OLD.UPDATED;
