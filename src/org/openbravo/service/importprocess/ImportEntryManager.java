@@ -629,11 +629,12 @@ public class ImportEntryManager {
               // a next batch of entries to prevent retrieving from DB the same records we have just
               // handled in this cycle
               try {
-                // wait processingCapacityPerSecond which is the expected entries number of entries
-                // that can be processed per second, it defaults to one second per 30 records per
+                // wait a time based on the number of processed entries and
+                // processingCapacityPerSecond (which is the expected number of entries that can be
+                // processed per second), it defaults to one second per 30 records per
                 // thread, somewhat arbitrary but high enough for most cases, also always wait 300
-                // milliseconds additional to start up threads etc.
-                // note computation of timing ensures that int rounding is done on 1000* entrycount
+                // milliseconds additional to start up threads etc. note computation of timing
+                // ensures that int rounding is done on 1000* entrycount
 
                 // wait minimal 2 seconds or based on entry count, no minimal wait in case of test
                 int minWait = isTest ? 0 : 2_000;
