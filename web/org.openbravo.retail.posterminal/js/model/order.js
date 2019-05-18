@@ -4417,7 +4417,15 @@
           me = this,
           splittedDocNo = [],
           terminalDocNoPrefix, newDocNo = '',
-          cancelAndReplaceSeparator = OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator || '-';
+          cancelAndReplaceSeparator = OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator || '-',
+          terminalOrganization = {
+          id: OB.MobileApp.model.get('store')[0].id,
+          name: OB.MobileApp.model.get('store')[0].name
+          },
+          terminalWarehouse = {
+          id: OB.MobileApp.model.get('warehouses')[0].warehouseid,
+          warehousename: OB.MobileApp.model.get('warehouses')[0].warehousename
+          };
 
       //Cloning order to be canceled
       var clonedreceipt = new OB.Model.Order();
@@ -4466,6 +4474,8 @@
           line.unset('lineGrossAmount');
           line.set('obposCanbedelivered', true);
           line.set('obposIspaid', false);
+          line.set('organization', terminalOrganization);
+          line.set('warehouse', terminalWarehouse);
         });
 
         // The lines must be iterated a second time after finishing the first loop, to ensure that

@@ -682,7 +682,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       if (!receipt.get('isEditable') || receipt.get('cloningReceipt')) {
         return;
       }
-      if (line.get('qty') < 0) {
+      if (line.get('qty') < 0 && OB.UTIL.isNullOrUndefined(line.get('canceledLine'))) {
         line.set('organization', terminalOrganization);
         line.set('warehouse', terminalWarehouse);
         line.get('product').set('crossStore', false);
