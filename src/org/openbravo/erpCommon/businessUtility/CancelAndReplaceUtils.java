@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2018 Openbravo SLU
+ * All portions are Copyright (C) 2016-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -591,6 +591,15 @@ public class CancelAndReplaceUtils {
       }
       oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
       inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
+      // Cross Store C&R
+      if (jsonorder != null && jsonorder.has("paymentOrganization")) {
+        OBContext.setCrossOrgReferenceAdminMode();
+        try {
+          OBDal.getInstance().flush();
+        } finally {
+          OBContext.restorePreviousCrossOrgReferenceMode();
+        }
+      }
 
       // Payment Creation only to orders with grand total different than ZERO
       // Get the payment schedule detail of the oldOrder
@@ -1267,6 +1276,17 @@ public class CancelAndReplaceUtils {
           nettingPayment = payOriginalAndInverseOrder(jsonorder, oldOrder, inverseOrder,
               outstandingAmount, negativeAmount, useOrderDocumentNoForRelatedDocs);
 
+          if (jsonorder != null && jsonorder.has("paymentOrganization")) {
+            nettingPayment.setOrganization(
+                OBDal.getInstance().get(Organization.class, jsonorder.get("paymentOrganization")));
+            OBContext.setCrossOrgReferenceAdminMode();
+            try {
+              OBDal.getInstance().flush();
+            } finally {
+              OBContext.restorePreviousCrossOrgReferenceMode();
+            }
+          }
+
           // Pay of the new order the amount already paid in original order
           if (createPayments && paidAmount.compareTo(BigDecimal.ZERO) != 0) {
             nettingPayment = createOrUdpatePayment(nettingPayment, newOrder, null, paidAmount, null,
@@ -1462,6 +1482,9 @@ public class CancelAndReplaceUtils {
       // There should be only one with null paymentDetails
       paymentScheduleDetailCriteria
           .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+      paymentScheduleDetailCriteria.add(Restrictions
+          .eq(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION, paymentSchedule.getOrganization()));
+      paymentScheduleDetailCriteria.setFilterOnReadableOrganization(false);
       final List<FIN_PaymentScheduleDetail> pendingPaymentScheduleDetailList = paymentScheduleDetailCriteria
           .list();
       BigDecimal remainingAmount = new BigDecimal(amount.toString());
@@ -1631,6 +1654,9 @@ public class CancelAndReplaceUtils {
     OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteria = OBDal.getInstance()
         .createCriteria(FIN_PaymentSchedule.class);
     paymentScheduleCriteria.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER, order));
+    paymentScheduleCriteria
+        .add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORGANIZATION, order.getOrganization()));
+    paymentScheduleCriteria.setFilterOnReadableOrganization(false);
     paymentScheduleCriteria.setMaxResults(1);
     paymentSchedule = (FIN_PaymentSchedule) paymentScheduleCriteria.uniqueResult();
     return paymentSchedule;
