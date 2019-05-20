@@ -45,16 +45,21 @@ public class CategoryTree extends ProcessHQLQuery {
     OBContext.setAdminMode(true);
     try {
       final Calendar now = Calendar.getInstance();
+      final String posId = jsonsent.getString("pos");
+      final String clientId = OBContext.getOBContext().getCurrentClient().getId();
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
       final String assortmentId = POSUtils.getProductListByPosterminalId(jsonsent.getString("pos"))
           .getId();
 
       final Map<String, Object> paramValues = new HashMap<>();
+      paramValues.put("clientId", clientId);
       paramValues.put("orgId", orgId);
-      paramValues.put("assortmentId", assortmentId);
-      paramValues.put("productCategoryTableId", CategoryTree.productCategoryTableId);
+      paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
       paramValues.put("startingDate", now.getTime());
       paramValues.put("endingDate", now.getTime());
+      paramValues.put("assortmentId", assortmentId);
+      paramValues.put("productCategoryTableId", CategoryTree.productCategoryTableId);
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
@@ -95,36 +100,46 @@ public class CategoryTree extends ProcessHQLQuery {
     query.append(" join pCat.productCategory pc");
     query.append(" , ADTreeNode tn");
     query.append(" where tn.$readableSimpleClientCriteria");
-    query.append(" and tn.$naturalOrgCriteria");// FIXME
     query.append(" and tn.node = pc.id");
     query.append(" and tn.tree.table.id = :productCategoryTableId");
     query.append(" and " + incrementalUpdateFilter);
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from Organization o");
+    query.append("   where o.id in :crossStoreOrgIds");
+    query.append("   and ad_org_isinnaturaltree(tn.organization.id, o.id, o.client.id) = 'Y'");
+    query.append(" )");
     return query.toString();
   }
 
   private String getSummaryProductCategoryTreeHqlString(
-      final HQLPropertyList summaryProductsCategoriesTreeHQLProperties,
+      final HQLPropertyList regularProductsCategoriesTreeHQLProperties,
       final String incrementalUpdateFilter) {
     final StringBuilder query = new StringBuilder();
     query.append(" select");
-    query.append(summaryProductsCategoriesTreeHQLProperties.getHqlSelect());
+    query.append(regularProductsCategoriesTreeHQLProperties.getHqlSelect());
     query.append(" from ProductCategory pc");
     query.append(" , ADTreeNode tn");
     query.append(" where tn.$readableSimpleClientCriteria");
-    query.append(" and tn.$naturalOrgCriteria");// FIXME
     query.append(" and tn.node = pc.id");
     query.append(" and tn.tree.table.id = :productCategoryTableId");
     query.append(" and pc.summaryLevel = true");
     query.append(" and " + incrementalUpdateFilter);
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from Organization o");
+    query.append("   where o.id in :crossStoreOrgIds");
+    query.append("   and ad_org_isinnaturaltree(tn.organization.id, o.id, o.client.id) = 'Y'");
+    query.append(" )");
     return query.toString();
   }
 
   private String getPackProductCategoryTreeHqlString(final boolean isCrossStoreEnabled) {
     final StringBuilder query = new StringBuilder();
     query.append(" select pt.id as id");
-    query.append(" select pt.id as categoryId");
-    query.append(" '0' as parentId");
-    query.append(" 999999999 as seqNo");
+    query.append(" , pt.id as categoryId");
+    query.append(" , '0' as parentId");
+    query.append(" , 999999999 as seqNo");
     query.append(" , case when exists (");
     query.append("   select 1");
     query.append("   from PricingAdjustment p2");

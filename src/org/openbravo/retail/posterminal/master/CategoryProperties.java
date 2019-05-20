@@ -38,9 +38,8 @@ public class CategoryProperties extends ModelExtension {
     list.add(new HQLProperty(nameTrl, "_identifier"));
     list.add(new HQLProperty("img.bindaryData", "img"));
     list.add(new HQLProperty("pCat.active", "active"));
-    list.add(new HQLProperty("'Y'", "realCategory"));
+    list.add(new HQLProperty("true", "realCategory"));
     list.add(new HQLProperty("pCat.summaryLevel", "summaryLevel"));
-    list.add(new HQLProperty("case when aCat.id is null then true else false end", "crossStore"));
 
     return list;
   }
