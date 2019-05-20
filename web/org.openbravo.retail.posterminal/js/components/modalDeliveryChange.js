@@ -12,6 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalDeliveryChangeButtonOK',
+  classes: 'obUiModalDeliveryChangeButtonOK',
   i18nContent: 'OBMOBC_LblOk',
   events: {},
   tap: function () {
@@ -31,36 +32,45 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalDeliveryChange',
+  classes: 'obUiModalDeliveryChange',
   i18nHeader: 'OBPOS_LblActionRequired',
   autoDismiss: false,
   bodyContent: {
+    classes: 'obUiModalDeliveryChange-bodyContent',
     components: [{
-      name: 'labelPaymentInformation'
+      name: 'labelPaymentInformation',
+      classes: 'obUiModalDeliveryChange-bodyContent-labelPaymentInformation'
     }, {
       name: 'paymentOptions',
       kind: "Group",
-      style: 'background-color: white; margin: 20px 30px 0 30px; text-align: left;',
+      classes: 'obUiModalDeliveryChange-bodyContent-paymentOptions',
       components: [{
         kind: 'OB.UI.RadioButton',
         name: 'keepPayment',
+        classes: 'obUiModalDeliveryChange-paymentOptions-keepPayment',
         components: [{
-          name: 'keepPaymentLbl'
+          name: 'keepPaymentLbl',
+          classes: 'obUiModalDeliveryChange-keepPayment-keepPaymentLbl'
         }]
       }, {
-        style: 'clear: both;'
+        classes: 'obUiModalDeliveryChange-paymentOptions-element1'
       }, {
         kind: 'OB.UI.RadioButton',
         setPrepaymentChange: true,
         name: 'returnChange',
+        classes: 'obUiModalDeliveryChange-paymentOptions-returnChange',
         components: [{
+          classes: 'obUiModalDeliveryChange-returnChange-returnChangeLbl',
           name: 'returnChangeLbl'
         }]
       }]
     }]
   },
   bodyButtons: {
+    classes: 'obUiModalDeliveryChange-bodyButtons',
     components: [{
-      kind: 'OB.UI.ModalDeliveryChangeButtonOK'
+      kind: 'OB.UI.ModalDeliveryChangeButtonOK',
+      classes: 'obUiModalDeliveryChange-bodyButtons-obUiModalDeliveryChangeButtonOK'
     }]
   },
   events: {},
