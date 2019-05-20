@@ -19,6 +19,9 @@
     properties: {
       i18nContent: 'OBPOS_LblOpenDrawer'
     },
+    isActive: function (view) {
+      return OB.MobileApp.model.get('hasPaymentsForCashup');
+    },
     command: function (view) {
       OB.UTIL.Approval.requestApproval(
       view.model, 'OBPOS_approval.opendrawer.menu', function (approved, supervisor, approvalType) {

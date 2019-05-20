@@ -405,15 +405,6 @@ enyo.kind({
   action: {
     window: 'retail.pointofsale',
     name: 'openDrawer'
-  },
-  updateVisibility: function () {
-    if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
-      this.hide();
-    }
-  },
-  init: function (model) {
-    this.model = model;
-    this.updateVisibility();
   }
 });
 
