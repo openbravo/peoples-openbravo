@@ -22,7 +22,7 @@ enyo.kind({
   components: [{
     kind: 'OB.UI.SmallButton',
     name: 'btnQtyMinus',
-    classes: 'btnlink-white splitline-numbereditor-minusbtn',
+    classes: 'obUiModalNumberEditor-btnQtyMinus obUiModalNumberEditor-button-generic',
     tap: function () {
       var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
           min = this.owner.$.numberQty.getMin();
@@ -43,12 +43,12 @@ enyo.kind({
   }, {
     kind: 'OB.UI.EditNumber',
     name: 'numberQty',
-    min: 1,
-    classes: 'btnlink-white splitline-number-edit'
+    classes: 'obUiModalNumberEditor-numberQty obUiModalNumberEditor-button-generic',
+    min: 1
   }, {
     kind: 'OB.UI.SmallButton',
     name: 'btnQtyPlus',
-    classes: 'btnlink-white splitline-numbereditor-plusbtn',
+    classes: 'obUiModalNumberEditor-btnQtyPlus obUiModalNumberEditor-button-generic',
     tap: function () {
       var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
           min = this.owner.$.numberQty.getMin(),
@@ -82,7 +82,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalSplitLinesTable',
   kind: 'Scroller',
-  classes: 'splitline-table',
+  classes: 'obUiModalSplitLinesTable',
   initComponents: function () {
     this.inherited(arguments);
     this.lines = [];
@@ -90,23 +90,23 @@ enyo.kind({
   createLine: function (qty, deliveredLine) {
     var lineNum = this.lines.length,
         line = this.createComponent({
-        classes: 'split-line',
+        classes: 'obUiModalSplitLinesTable-line',
         components: [{
-          classes: 'splitline-line-label',
+          classes: 'obUiModalSplitLinesTable-line-lineNum',
           name: 'lineNum_' + lineNum,
           content: (deliveredLine ? OB.I18N.getLabel('OBPOS_lblSplitLinesQtyDelivered', [lineNum + 1]) : OB.I18N.getLabel('OBPOS_lblSplitLinesQty', [lineNum + 1]))
         }, {
-          classes: 'splitline-line-editors',
+          classes: 'obUiModalSplitLinesTable-line-container2',
           components: [{
             kind: 'OB.UI.ModalNumberEditor',
             name: 'qty_' + lineNum,
-            classes: 'float-left',
+            classes: 'obUiModalSplitLinesTable-line-container2-qty',
             isDisabled: deliveredLine
           }, {
             kind: 'OB.UI.SmallButton',
             name: 'btnRemove_' + lineNum,
             lineNum: lineNum,
-            classes: 'btnlink-gray float-left splitline-deletebtn',
+            classes: 'obUiModalSplitLinesTable-line-container2-btnRemove',
             content: 'x',
             tap: function () {
               this.owner.removeLine(this.lineNum, true);
@@ -174,6 +174,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalSplitLine_btnApply',
+  classes: 'obUiModalSplitLineBtnApply',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
   tap: function () {
@@ -185,6 +186,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalSplitLine_btnCancel',
+  classes: 'obUiModalSplitLineBtnCancel',
   isDefaultAction: false,
   i18nContent: 'OBMOBC_LblCancel',
   tap: function () {
@@ -197,6 +199,7 @@ enyo.kind({
   name: 'OB.UI.ModalSplitLine',
   i18nHeader: 'OBPOS_lblSplit',
   topPosition: '60px',
+  classes: 'obUiModalSplitLine',
   events: {
     onHideThisPopup: '',
     onAddProduct: ''
@@ -206,100 +209,103 @@ enyo.kind({
   },
   //body of the popup
   bodyContent: {
+    classes: 'obUiModalSplitLine-bodyContent',
     components: [{
-      classes: 'splitline-message',
+      classes: 'obUiModalSplitLine-bodyContent-splitlineMessage',
       name: 'splitlineMessage',
       initComponents: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_lblSplitWarning'));
       }
     }, {
-      classes: 'splitline-info',
+      classes: 'obUiModalSplitLine-bodyContent-container2',
       components: [{
-        classes: 'splitline-info-label',
+        classes: 'obUiModalSplitLine-bodyContent-container2-element1',
         initComponents: function () {
           this.setContent(OB.I18N.getLabel('OBPOS_lblSplitOriginalQty'));
         }
       }, {
-        classes: 'splitline-info-label',
+        classes: 'obUiModalSplitLine-bodyContent-container2-element2',
         initComponents: function () {
           this.setContent(OB.I18N.getLabel('OBPOS_lblSplitQty'));
         }
       }, {
-        classes: 'splitline-info-label splitline-info-label-difference',
+        classes: 'obUiModalSplitLine-bodyContent-container2-element3',
         initComponents: function () {
           this.setContent(OB.I18N.getLabel('OBPOS_lblSplitDifference'));
         }
       }, {
-        classes: 'splitline-info-label splitline-info-hide-lines',
+        classes: 'obUiModalSplitLine-bodyContent-container2-element4',
         initComponents: function () {
           this.setContent(OB.I18N.getLabel('OBPOS_lblSplitNumberLines'));
         }
       }]
     }, {
-      classes: 'splitline-info-numbers',
+      classes: 'obUiModalSplitLine-bodyContent-container3',
       components: [{
-        classes: 'splitline-info-editor',
+        classes: 'obUiModalSplitLine-bodyContent-container3-container1',
         components: [{
           kind: 'OB.UI.EditNumber',
           name: 'originalQty',
-          classes: 'splitline-info-editor-input',
+          classes: 'obUiModalSplitLine-bodyContent-container3-container1-originalQty',
           initComponents: function () {
             this.setDisabled(true);
           }
         }]
       }, {
-        classes: 'splitline-info-editor',
+        classes: 'obUiModalSplitLine-bodyContent-container3-container2',
         components: [{
           kind: 'OB.UI.EditNumber',
           name: 'splitQty',
-          classes: 'splitline-info-editor-input',
+          classes: 'obUiModalSplitLine-bodyContent-container3-container2-splitQty',
           initComponents: function () {
             this.setDisabled(true);
           }
         }]
       }, {
-        classes: 'splitline-info-editor',
+        classes: 'obUiModalSplitLine-bodyContent-container3-container3',
         components: [{
           kind: 'OB.UI.EditNumber',
           name: 'differenceQty',
-          classes: 'splitline-info-editor-input',
+          classes: 'obUiModalSplitLine-bodyContent-container3-container3-differenceQty',
           initComponents: function () {
             this.setDisabled(true);
           }
         }]
       }, {
-        classes: 'splitline-info-editor splitline-info-hide-lines',
+        classes: 'obUiModalSplitLine-bodyContent-container3-container4',
         components: [{
           kind: 'OB.UI.ModalNumberEditor',
           name: 'numberlinesQty',
+          classes: 'obUiModalSplitLine-bodyContent-container3-container4-numberlinesQty',
           maxLines: OB.SplitLine.MAX_SPLITLINE
         }]
       }]
     }, {
-      classes: 'height15'
+      classes: 'obUiModalSplitLine-bodyContent-element4'
     }, {
-      classes: 'splitline-lines-number-hide splitline-numberinfo',
+      classes: 'obUiModalSplitLine-bodyContent-container5',
       components: [{
-        classes: 'splitline-line-label',
+        classes: 'obUiModalSplitLine-bodyContent-container5-element1',
         initComponents: function () {
           this.setContent(OB.I18N.getLabel('OBPOS_lblSplitNumberLines'));
         }
       }, {
-        classes: 'splitline-line-editors',
+        classes: 'obUiModalSplitLine-bodyContent-container5-container2',
         components: [{
           kind: 'OB.UI.ModalNumberEditor',
           name: 'numberlinesQtyMobile',
-          classes: 'float-left',
+          classes: 'obUiModalSplitLine-bodyContent-container5-container2-numberlinesQtyMobile',
           maxLines: 100
         }]
       }]
     }, {
-      classes: 'splitline-lines-number-hide height15'
+      classes: 'obUiModalSplitLine-bodyContent-container6'
     }, {
       kind: 'OB.UI.ModalSplitLinesTable',
-      name: 'qtyLines'
+      name: 'qtyLines',
+      classes: 'obUiModalSplitLine-bodyContent-qtyLines'
     }, {
-      classes: 'splitline-message color-yellow',
+      classes: 'obUiModalSplitLine-bodyContent-labelError',
       name: 'labelError',
       showing: false,
       initComponents: function () {
@@ -309,11 +315,14 @@ enyo.kind({
   },
   //buttons of the popup
   bodyButtons: {
+    classes: 'obUiModalSplitLine-bodyButtons',
     components: [{
       kind: 'OB.UI.ModalSplitLine_btnApply',
-      name: 'btnApply'
+      name: 'btnApply',
+      classes: 'obUiModalSplitLine-bodyButtons-btnApply'
     }, {
-      kind: 'OB.UI.ModalSplitLine_btnCancel'
+      kind: 'OB.UI.ModalSplitLine_btnCancel',
+      classes: 'obUiModalSplitLine-bodyButtons-obUiModalSplitLineBtnCancel'
     }]
   },
 

@@ -3292,7 +3292,7 @@
 }
 
 .obUiModalCreateOrderFromQuotation-bodyButtons-obObposPointOfSaleUiModalsbtnModalCreateOrderCancel {
-  /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel] */
+/* Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel] */
 }
 
 
@@ -3305,6 +3305,305 @@
 # Component: OBPOS_StandardProviderVoid
 */
 .obposStandardProviderVoid {}
+
+
+
+/***********************   ***********************/
+/*           File: modalsplitlines.js            */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalNumberEditor
+*/
+.obUiModalNumberEditor {}
+
+.obUiModalNumberEditor-button-generic {
+  background-color: #ffffff;
+  color: black;
+}
+
+.obUiModalNumberEditor-btnQtyMinus {
+/* Inherits: [OB.UI.SmallButton] */
+  border: 1px solid #E2E2E2;
+  margin: -2px 2px 0 0;
+}
+
+.obUiModalNumberEditor-numberQt {
+/* Inherits: [OB.UI.EditNumber] */
+  width: 30px;
+  height: 23px;
+}
+
+.obUiModalNumberEditor-btnQtyPlus {
+/* Inherits: [OB.UI.SmallButton] */
+  border: 1px solid #E2E2E2;
+  margin: -2px 0 0 2px;
+}
+
+@media all and (max-width: 800px) {
+  .obUiModalNumberEditor-numberQt {
+    height: 45px;
+  }
+}
+
+
+/*
+# Component: OB.UI.ModalSplitLinesTable
+# Inherits: [Scroller]
+*/
+.obUiModalSplitLinesTable {
+  width: 100%;
+  background-color: #fff;
+  max-height: 200px;
+}
+
+.obUiModalSplitLinesTable-line {
+  width: 100%;
+  clear: both;
+  background-color: #fff;
+  height: 35px;
+  padding-top: 2px;
+}
+
+.obUiModalSplitLinesTable-line-lineNum {
+  float: left;
+  width: 50%;
+  background-color: #e2e2e2;
+  height: 35px;
+  padding-right: 5px;
+  text-align: right;
+  font-size: 16px;
+  color: black;
+}
+
+.obUiModalSplitLinesTable-line-container2 {
+  float: left;
+  width: 40%;
+  text-align: left;
+  padding-left: 5px;
+}
+
+.obUiModalSplitLinesTable-line-container2-qty {
+/* Inherits: [OB.UI.ModalNumberEditor] */
+  float: left;
+}
+
+.obUiModalSplitLinesTable-line-container2-btnRemove {
+/* Inherits: [OB.UI.SmallButton] */
+  border: 1px solid #D2D2D2;
+  margin: 2px 0 0 5px;
+  float: left;
+  background-color: #e2e2e2;
+  color: black;
+}
+
+.obUiModalSplitLinesTable-line-container2-btnRemove:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px !important;
+}
+
+@media all and (max-width: 800px) {
+  .obUiModalSplitLinesTable {
+    max-height: 110px;
+  }
+
+  .obUiModalSplitLinesTable-line-lineNum {
+    width: 35%;
+    height: 53px;
+  }
+
+  .obUiModalSplitLinesTable-line-container2 {
+    width: 59%;
+  }
+}
+
+
+/*
+# Component: OB.UI.ModalSplitLine_btnApply
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiModalSplitLineBtnApply {}
+
+
+/*
+# Component: OB.UI.ModalSplitLine_btnCancel
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiModalSplitLineBtnCancel {}
+
+
+/*
+# Component: OB.UI.ModalSplitLine
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalSplitLine {}
+
+.obUiModalSplitLine-bodyContent {}
+
+.obUiModalSplitLine-bodyContent-splitlineMessage {
+  padding: 6px 0px 0px 14px;
+}
+
+.obUiModalSplitLine-bodyContent-container2 {
+  background-color: #fff;
+  height: 32px;
+  color: black;
+  font-size: var(--font-medium);
+}
+
+.obUiModalSplitLine-bodyContent-container2-element1,
+.obUiModalSplitLine-bodyContent-container2-element2,
+.obUiModalSplitLine-bodyContent-container2-element4 {
+  width: 25%;
+  float: left;
+  background-color: #e2e2e2;
+  border: 1px solid #fff;
+  vertical-align: middle;
+}
+
+.obUiModalSplitLine-bodyContent-container2-element3 {
+  width: calc(25% - 12px);
+  float: left;
+  background-color: #e2e2e2;
+  border: 1px solid #fff;
+  vertical-align: middle;
+}
+
+.obUiModalSplitLine-bodyContent-container3 {
+  background-color: #fff;
+  height: 34px;
+  color: black;
+}
+
+.obUiModalSplitLine-bodyContent-container3-container1,
+.obUiModalSplitLine-bodyContent-container3-container2,
+.obUiModalSplitLine-bodyContent-container3-container3,
+.obUiModalSplitLine-bodyContent-container3-container4 {
+  width: 25%;
+  float: left;
+  background-color: #fff;
+  text-align: center;
+}
+
+.obUiModalSplitLine-bodyContent-container3-container1-originalQty,
+.obUiModalSplitLine-bodyContent-container3-container2-splitQty,
+.obUiModalSplitLine-bodyContent-container3-container3-differenceQty {
+/* Inherits: [OB.UI.EditNumber] */
+  width: 40px;
+  height: 23px;
+}
+
+.obUiModalSplitLine-bodyContent-container3-container4-numberlinesQty {
+/* Inherits: [OB.UI.ModalNumberEditor] */
+}
+
+.obUiModalSplitLine-bodyContent-element4 {
+  height: 15px;
+}
+
+.obUiModalSplitLine-bodyContent-container5 {
+  width: 100%;
+  clear: both;
+  background-color: #fff;
+  height: 55px;
+  padding-top: 2px;
+  display: none;
+}
+
+.obUiModalSplitLine-bodyContent-container5-element1 {
+  float: left;
+  width: 50%;
+  background-color: #e2e2e2;
+  height: 35px;
+  padding-right: 5px;
+  text-align: right;
+  font-size: 16px;
+  color: black;
+}
+
+.obUiModalSplitLine-bodyContent-container5-container2 {
+  float: left;
+  width: 40%;
+  text-align: left;
+  padding-left: 5px;
+}
+
+.obUiModalSplitLine-bodyContent-container5-container2-numberlinesQtyMobile {
+/* Inherits: [OB.UI.ModalNumberEditor] */
+  float: left;
+}
+
+.obUiModalSplitLine-bodyContent-container6 {
+  height: 15px;
+  display: none;
+}
+
+.obUiModalSplitLine-bodyContent-qtyLines {
+/* Inherits: [OB.UI.ModalSplitLinesTable] */
+}
+
+.obUiModalSplitLine-bodyContent-labelError {
+  padding: 6px 0px 0px 14px;
+  color: yellow;
+}
+
+.obUiModalSplitLine-bodyButtons {}
+
+.obUiModalSplitLine-bodyButtons-btnApply {
+/* Inherits: [OB.UI.ModalSplitLine_btnApply] */
+}
+
+.obUiModalSplitLine-bodyButtons-obUiModalSplitLineBtnCancel {
+/* Inherits: [OB.UI.ModalSplitLine_btnCancel] */
+}
+
+@media all and (max-width: 800px) {
+  .obUiModalSplitLine-bodyContent-container2 {
+    height: 60px;
+  }
+
+  .obUiModalSplitLine-bodyContent-container2-element1,
+  .obUiModalSplitLine-bodyContent-container2-element2 {
+    width: 33%;
+    height: 58px;
+  }
+
+  .obUiModalSplitLine-bodyContent-container2-element3 {
+    width: calc(33% - 4px);
+    height: 58px;
+  }
+
+  .obUiModalSplitLine-bodyContent-container2-element4 {
+    display: none;
+  }
+
+  .obUiModalSplitLine-bodyContent-container3-container1,
+  .obUiModalSplitLine-bodyContent-container3-container2,
+  .obUiModalSplitLine-bodyContent-container3-container3 {
+    width: 33%;
+  }
+
+  .obUiModalSplitLine-bodyContent-container3-container4 {
+    display: none;
+  }
+
+  .obUiModalSplitLine-bodyContent-container5,
+  .obUiModalSplitLine-bodyContent-container6 {
+    display: block;
+  }
+
+  .obUiModalSplitLine-bodyContent-container5-element1 {
+    width: 35%;
+    height: 53px;
+  }
+
+  .obUiModalSplitLine-bodyContent-container5-container2 {
+    width: 59%;
+  }
+}
 
 
 
