@@ -1104,7 +1104,6 @@ isc.OBViewGrid.addProperties({
       this.deselectAllRecords();
 
       if (localState.summaryFunctions) {
-        hasSummaryFunction = false;
         for (i = 0; i < this.getAllFields().length; i++) {
           fld = this.getAllFields()[i];
           // summary functions are not allowed in computed columns
@@ -1496,11 +1495,8 @@ isc.OBViewGrid.addProperties({
 
     ksAction_DeleteSelectedRecords = function () {
       var isRecordDeleted = me.deleteSelectedRowsByToolbarIcon();
-      if (isRecordDeleted) {
-        return false; // To avoid keyboard shortcut propagation
-      } else {
-        return true;
-      }
+      // Return false to avoid keyboard shortcut propagation
+      return isRecordDeleted ? false : true;
     };
     OB.KeyboardManager.Shortcuts.set('ViewGrid_DeleteSelectedRecords', 'OBViewGrid.body', ksAction_DeleteSelectedRecords);
 
@@ -2100,7 +2096,7 @@ isc.OBViewGrid.addProperties({
 
   getCriteria: function () {
     var criteria = this.Super('getCriteria', arguments) || {};
-    if ((criteria === null || !criteria.criteria) && this.initialCriteria) {
+    if (!criteria.criteria && this.initialCriteria) {
       criteria = isc.shallowClone(this.initialCriteria);
     }
     criteria = this.convertCriteria(criteria);
@@ -3237,7 +3233,7 @@ isc.OBViewGrid.addProperties({
     this.removeRecordFromValidationErrorList(record);
 
     // a new id has been computed use that now
-    if (record && record._newId) {
+    if (record._newId) {
       record.id = record._newId;
       delete record._newId;
       if (this.view && this.view.updateLastSelectedState) {
@@ -3706,7 +3702,7 @@ isc.OBViewGrid.addProperties({
         record[this.recordBaseStyleProperty] = null;
       }
 
-      if (record && record.editColumnLayout) {
+      if (record.editColumnLayout) {
         isc.Log.logDebug('hideInlineEditor has record and editColumnLayout', 'OB');
         record.editColumnLayout.showEditOpen();
       } else if (this.currentEditColumnLayout) {
