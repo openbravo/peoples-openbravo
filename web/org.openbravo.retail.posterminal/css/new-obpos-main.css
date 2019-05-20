@@ -739,6 +739,188 @@
 
 
 
+/***********************   ***********************/
+/*        File: openRelatedReceiptsModal.js      */
+/*           Folder: js/components               */
+/***********************   ***********************/
+/*
+# Component: OB.UI.OpenRelatedReceipts_btnApply
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiOpenRelatedReceiptsBtnApply {}
+
+
+
+/*
+# Component: OB.UI.OpenRelatedReceipts_btnCancel
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiOpenRelatedReceiptsBtnCancel {}
+
+
+
+/*
+# Component: OB.UI.CheckboxButtonOpenRelatedReceipts
+# Inherits: [OB.UI.CheckboxButton]
+*/
+.obUiCheckboxButtonOpenRelatedReceipts {
+  height: 38px;
+  background-position: 10px center;
+  cursor: pointer;
+  vertical-align: middle;
+  width: 8%;
+}
+
+
+
+/*
+# Component: OB.UI.RelatedReceipt
+*/
+.obUiRelatedReceipt {
+  border-bottom: var(--bottomseparator-slim);
+  text-align: center;
+  color: var(--color-primary-darker);
+  padding-top: 9px;
+}
+
+.obUiRelatedReceipt-checkboxButtonOpenRelatedReceipts {
+  /*Inherits: [OB.UI.CheckboxButtonOpenRelatedReceipts]*/
+}
+
+.obUiRelatedReceipt-documentNo {
+  line-height: 25px;
+  font-size: var(--font-medium-large);
+  width: 180px;
+  padding-left: 15px;
+}
+
+.obUiRelatedReceipt-orderedDate {
+  line-height: 25px;
+  font-size: var(--font-medium-large);
+  width: 180px;
+}
+
+.obUiRelatedReceipt-amount {
+  line-height: 25px;
+  font-size: var(--font-medium-large);
+  width: 80px;
+}
+
+.obUiRelatedReceipt-pending {
+  line-height: 25px;
+  font-size: var(--font-medium-large);
+  width: 80px;
+  padding-left: 20px;
+}
+
+.obUiRelatedReceipt-element1 {
+  clear: both;
+}
+
+
+
+/*
+# Component: OB.UI.ModalOpenRelatedReceipts
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalOpenRelatedReceipts {
+  color: var(--color-primary-dark);
+  overflow: visible;
+  width: 700px;
+  background: var(--color-maincolor);
+  padding: 0px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+
+@media all and (max-width: 800px) {
+  .obUiModalOpenRelatedReceipts {
+    left: 10px;
+    margin-left: 0px;
+    width: 95%;
+  }
+}
+
+.obUiModalOpenRelatedReceipts-bodyContent {
+  max-height: 225px;
+  background-color: var(--color-primary-lighter);
+  margin-top: -8px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.obUiModalOpenRelatedReceipts-bodyButtons {}
+
+.obUiModalOpenRelatedReceipts-bodyButtons-obUiOpenRelatedReceiptsBtnApply {}
+
+.obUiModalOpenRelatedReceipts-bodyButtons-obUiOpenRelatedReceiptsBtnCancel {}
+
+.obUiModalOpenRelatedReceipts-header {
+  padding-bottom: 0px;
+  margin: 0px;
+  height: 140px;
+}
+
+.obUiModalOpenRelatedReceipts-header-checkAllHeaderDocNum {
+  text-align: center;
+  color: var(--color-primary-lighter);
+}
+
+.obUiModalOpenRelatedReceipts-checkAllHeaderDocNum-headerLbl {
+  line-height: 50px;
+  font-size: var(--font-xlarge);
+}
+
+.obUiModalOpenRelatedReceipts-checkAllHeaderDocNum-element1 {
+  clear: both;
+}
+
+.obUiModalOpenRelatedReceipts-header-checkAllHeader {
+  overflow: hidden;
+  padding-top: var(--container-padding-default);
+  border-bottom: 3px solid var(--color-primary-light);
+  text-align: center;
+  color: black;
+  margin-top: 15px;
+  padding-bottom: 7px;
+  font-weight: bold;
+  background-color: var(--color-primary-lighter);
+  height: 40px;
+}
+
+.obUiModalOpenRelatedReceipts-checkAllHeader-documentNoLbl {
+  line-height: 25px;
+  font-size: var(--font-medium-large);
+  width: 180px;
+  padding-left: 70px;
+}
+
+.obUiModalOpenRelatedReceipts-checkAllHeader-orderedDateLbl {
+  line-height: 25px;
+  font-size: var(--font-medium-large);
+  width: 180px;
+}
+
+.obUiModalOpenRelatedReceipts-checkAllHeader-amountLbl {
+  line-height: 25px;
+  font-size: var(--font-medium-large);
+  width: 80px;
+}
+
+.obUiModalOpenRelatedReceipts-checkAllHeader-pendingLbl {
+  line-height: 25px;
+  font-size: var(--font-medium-large);
+  width: 80px;
+  padding-left: var(--container-padding-default);
+}
+
+.obUiModalOpenRelatedReceipts-checkAllHeader-element1 {
+  clear: both;
+}
+
+
+
 /*****************/
 /*      JGA      */
 /*****************/

@@ -12,6 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.OpenRelatedReceipts_btnApply',
+  classes: 'obUiOpenRelatedReceiptsBtnApply',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
   events: {
@@ -31,6 +32,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.OpenRelatedReceipts_btnCancel',
+  classes: 'obUiOpenRelatedReceiptsBtnCancel',
   isDefaultAction: false,
   i18nContent: 'OBMOBC_LblCancel',
   tap: function () {
@@ -42,8 +44,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.CheckboxButtonOpenRelatedReceipts',
   kind: 'OB.UI.CheckboxButton',
-  classes: 'modal-dialog-btn-check span1',
-  style: 'width: 8%',
+  classes: 'obUiCheckboxButtonOpenRelatedReceipts span1',
   events: {
     onLineSelected: ''
   },
@@ -67,31 +68,28 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.RelatedReceipt',
-  style: 'border-bottom: 1px solid #cccccc; text-align: center; color: black; padding-top: 9px;',
+  classes: 'obUiRelatedReceipt',
   handlers: {
     onLineSelected: 'lineSelected'
   },
   components: [{
     kind: 'OB.UI.CheckboxButtonOpenRelatedReceipts',
-    name: 'checkboxButtonOpenRelatedReceipts'
+    name: 'checkboxButtonOpenRelatedReceipts',
+    classes: 'obUiRelatedReceipt-checkboxButtonOpenRelatedReceipts'
   }, {
     name: 'documentNo',
-    classes: 'span4',
-    style: 'line-height: 25px; font-size: 17px; width: 180px; padding-left: 15px;'
+    classes: 'obUiRelatedReceipt-documentNo span4'
   }, {
     name: 'orderedDate',
-    classes: 'span2',
-    style: 'line-height: 25px; font-size: 17px; width: 180px;'
+    classes: 'obUiRelatedReceipt-orderedDate span2'
   }, {
     name: 'amount',
-    classes: 'span2',
-    style: 'line-height: 25px; font-size: 17px; width: 80px;'
+    classes: 'obUiRelatedReceipt-amount span2'
   }, {
     name: 'pending',
-    classes: 'span2',
-    style: 'line-height: 25px; font-size: 17px; width: 80px; padding-left: 20px;'
+    classes: 'obUiRelatedReceipt-pending span2'
   }, {
-    style: 'clear: both;'
+    classes: 'obUiRelatedReceipt-element1'
   }],
   initComponents: function () {
     this.inherited(arguments);
@@ -110,8 +108,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalOpenRelatedReceipts',
   kind: 'OB.UI.ModalAction',
-  classes: 'modal-dialog',
-  style: 'width: 700px;',
+  classes: 'obUiModalOpenRelatedReceipts',
   handlers: {
     onApplyChanges: 'applyChanges',
     onCheckedAll: 'checkedAll',
@@ -120,19 +117,21 @@ enyo.kind({
   },
   bodyContent: {
     kind: 'Scroller',
-    maxHeight: '225px',
-    style: 'background-color: #ffffff;margin-top: -8px;',
+    classes: 'obUiModalOpenRelatedReceipts-bodyContent',
     thumb: true,
-    horizontal: 'hidden',
     components: [{
-      name: 'attributes'
+      name: 'attributes',
+      classes: 'obUiModalOpenRelatedReceipts-bodyContent-attributes'
     }]
   },
   bodyButtons: {
+    classes: 'obUiModalOpenRelatedReceipts-bodyButtons',
     components: [{
-      kind: 'OB.UI.OpenRelatedReceipts_btnApply'
+      kind: 'OB.UI.OpenRelatedReceipts_btnApply',
+      classes: 'obUiModalOpenRelatedReceipts-bodyButtons-obUiOpenRelatedReceiptsBtnApply'
     }, {
-      kind: 'OB.UI.OpenRelatedReceipts_btnCancel'
+      kind: 'OB.UI.OpenRelatedReceipts_btnCancel',
+      classes: 'obUiModalOpenRelatedReceipts-bodyButtons-obUiOpenRelatedReceiptsBtnCancel'
     }]
   },
   lineSelected: function (inSender, inEvent) {
@@ -170,42 +169,40 @@ enyo.kind({
     this.$.header.destroyComponents();
     this.$.header.createComponent({
       name: 'CheckAllHeaderDocNum',
-      style: 'text-align: center; color: white;',
+      classes: 'obUiModalOpenRelatedReceipts-header-checkAllHeaderDocNum',
       components: [{
         content: OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsTitle'),
         name: 'headerLbl',
-        classes: 'span12',
-        style: 'line-height: 50px; font-size: 24px;'
+        classes: 'obUiModalOpenRelatedReceipts-checkAllHeaderDocNum-headerLbl span12'
       }, {
-        style: 'clear: both;'
+        classes: 'obUiModalOpenRelatedReceipts-checkAllHeaderDocNum-element1'
       }]
     });
-    this.$.header.addStyles('padding-bottom: 0px; margin: 0px; height: 140px;');
+    this.$.header.addClass('obUiModalOpenRelatedReceipts-header');
     this.$.header.createComponent({
       name: 'CheckAllHeader',
-      style: 'overflow: hidden; padding-top: 20px; border-bottom: 3px solid #cccccc; text-align: center; color: black; margin-top: 15px; padding-bottom: 7px;  font-weight: bold; background-color: white; height:40px;',
+      classes: 'obUiModalOpenRelatedReceipts-header-checkAllHeader',
       components: [{
         name: 'documentNoLbl',
         content: OB.I18N.getLabel('OBPOS_DocumentNo'),
-        classes: 'span4',
-        style: 'line-height: 25px; font-size: 17px; width: 180px; padding-left: 70px;'
+        classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-documentNoLbl span4'
       }, {
         name: 'orderedDateLbl',
         content: OB.I18N.getLabel('OBPOS_DateOrdered'),
-        classes: 'span2',
+        classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-orderedDateLbl span2',
         style: 'line-height: 25px; font-size: 17px; width: 180px;'
       }, {
         name: 'amountLbl',
         content: OB.I18N.getLabel('OBPOS_AmountOfCash'),
-        classes: 'span2',
+        classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-amountLbl span2',
         style: 'line-height: 25px; font-size: 17px; width: 80px;'
       }, {
         name: 'pendingLbl',
         content: OB.I18N.getLabel('OBPOS_Pending'),
-        classes: 'span2',
+        classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-pendingLbl span2',
         style: 'line-height: 25px; font-size: 17px; width: 80px; padding-left: 20px;'
       }, {
-        style: 'clear: both;'
+        classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-element1'
       }]
     });
 
