@@ -2761,6 +2761,96 @@
 
 
 
+/***********************   ***********************/
+/*    File: modalcreateorderfromquotation.js     */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposPointOfSaleUiModalsBtnModalCreateOrderCancel {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposPointOfSaleUiModalsbtnModalCreateOrderAccept {}
+
+
+/*
+# Component: OB.UI.updateprices
+# Inherits: [OB.UI.CheckboxButton]
+*/
+.obUiUpdateprices {
+  height: 38px;
+  background-position: 10px center;
+  cursor: pointer;
+  vertical-align: middle;
+  width: 100%;
+}
+
+.obUiUpdateprices:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  background-position: 8px center !important;
+}
+.obUiUpdateprices_active {
+  background-image: url('./../img/checkbox-on.svg');
+  background-size: 34px 27px;
+}
+
+
+/*
+# Component: OB.UI.ModalCreateOrderFromQuotation
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalCreateOrderFromQuotation {}
+
+.obUiModalCreateOrderFromQuotation-bodyContent {}
+
+.obUiModalCreateOrderFromQuotation-bodyButtons {}
+
+.obUiModalCreateOrderFromQuotation-bodyButtons-element1 {
+  height: 40px;
+  width: 120px;
+  float:left;
+}
+
+.obUiModalCreateOrderFromQuotation-bodyButtons-container2 {
+  height: 40px;
+  width: 50px;
+  background-color: rgb(226, 226, 226);
+  float: left;
+}
+
+.obUiModalCreateOrderFromQuotation-bodyButtons-container2-obUiupdateprices {
+/* Inherits: [OB.UI.updateprices] */
+}
+
+.obUiModalCreateOrderFromQuotation-bodyButtons-element3 {
+  text-align: left;
+  padding: 11px;
+  float: left;
+  width: 248px;
+  background: #dddddd;
+}
+
+.obUiModalCreateOrderFromQuotation-bodyButtons-element4 {}
+
+.obUiModalCreateOrderFromQuotation-bodyButtons-obObposPointOfSaleUiModalsbtnModalCreateOrderAccept {
+/* Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept] */
+}
+
+.obUiModalCreateOrderFromQuotation-bodyButtons-obObposPointOfSaleUiModalsbtnModalCreateOrderCancel {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel] */
+}
+
+
+
 
 /*****************/
 /*      JAR      */
