@@ -20,14 +20,14 @@
       i18nContent: 'OBPOS_LblReturnLine'
     },
     isActive: function (view) {
-      var selectedReceiptLine = view.state.getState({
+      var selectedReceiptLine = view.state.readState({
         name: 'selectedReceiptLine'
       });
       return !!selectedReceiptLine;
     },
     command: function (view) {
       var receipt = view.model.get('order');
-      var selectedReceiptLines = view.state.readState({
+      var selectedReceiptLines = view.state.readCommandState({
         name: 'selectedReceiptLines'
       });
 

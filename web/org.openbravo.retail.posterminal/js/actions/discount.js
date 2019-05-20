@@ -22,7 +22,7 @@
     command: function (view) {
 
       var receipt = view.model.get('order');
-      var selectedReceiptLine = view.state.readState({
+      var selectedReceiptLine = view.state.readCommandState({
         name: 'selectedReceiptLine'
       });
 

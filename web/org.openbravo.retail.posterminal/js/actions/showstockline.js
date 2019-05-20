@@ -20,7 +20,7 @@
       i18nContent: 'OBPOS_checkStock'
     },
     command: function (view) {
-      var selectedReceiptLine = view.state.readState({
+      var selectedReceiptLine = view.state.readCommandState({
         name: 'selectedReceiptLine'
       });
       var product = selectedReceiptLine.get('product');

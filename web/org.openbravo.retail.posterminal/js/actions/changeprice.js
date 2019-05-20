@@ -20,17 +20,17 @@
       i18nContent: 'OBMOBC_KbPrice'
     },
     command: function (view) {
-      var editboxvalue = view.state.readState({
+      var editboxvalue = view.state.readCommandState({
         name: 'editbox'
       });
 
       if (!editboxvalue) {
         return;
       }
-      var selectedReceiptLine = view.state.readState({
+      var selectedReceiptLine = view.state.readCommandState({
         name: 'selectedReceiptLine'
       });
-      var selectedReceiptLines = view.state.readState({
+      var selectedReceiptLines = view.state.readCommandState({
         name: 'selectedReceiptLines'
       });
       var price = OB.I18N.parseNumber(editboxvalue);

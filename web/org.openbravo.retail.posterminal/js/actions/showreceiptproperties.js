@@ -20,9 +20,9 @@
       i18nContent: 'OBPOS_LblProperties'
     },
     isActive: function (view) {
-      return view.state.getState({
+      return view.state.readState({
         name: 'window.currentView'
-      }).name === 'order' && view.state.getState({
+      }).name === 'order' && view.state.readState({
         name: 'receipt.isEditable'
       });
     }

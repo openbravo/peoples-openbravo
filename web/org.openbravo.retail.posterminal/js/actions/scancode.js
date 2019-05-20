@@ -19,7 +19,7 @@
       i18nContent: 'OBMOBC_KbCode'
     },
     command: function (view) {
-      var editboxvalue = view.state.readState({
+      var editboxvalue = view.state.readCommandState({
         name: 'editbox'
       });
 

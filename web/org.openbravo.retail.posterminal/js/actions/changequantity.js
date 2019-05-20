@@ -19,14 +19,14 @@
         var cancelQtyChange = false;
         var cancelQtyChangeReturn = false;
 
-        var editboxvalue = view.state.readState({
+        var editboxvalue = view.state.readCommandState({
           name: 'editbox'
         });
 
-        var selectedReceiptLine = view.state.readState({
+        var selectedReceiptLine = view.state.readCommandState({
           name: 'selectedReceiptLine'
         });
-        var selectedReceiptLines = view.state.readState({
+        var selectedReceiptLines = view.state.readCommandState({
           name: 'selectedReceiptLines'
         });
         var value = OB.I18N.parseNumber(editboxvalue || '1');
