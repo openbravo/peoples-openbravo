@@ -11,6 +11,7 @@
 
 enyo.kind({
   name: 'OBPOS_StandardProviderVoid',
+  classes: 'obposStandardProviderVoid',
   voidConfirmation: true,
   providerComponent: null,
   processVoid: function (voidpaymentinfo) {
