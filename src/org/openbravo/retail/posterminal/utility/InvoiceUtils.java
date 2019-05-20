@@ -536,6 +536,9 @@ public class InvoiceUtils {
         .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
     paymentScheduleCriteria
         .add(Restrictions.isNotNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+    paymentScheduleCriteria.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION,
+        paymentSchedule.getOrganization()));
+    paymentScheduleCriteria.setFilterOnReadableOrganization(false);
     if (gross.compareTo(BigDecimal.ZERO) != -1) {
       paymentScheduleCriteria
           .addOrder(org.hibernate.criterion.Order.asc(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT));
