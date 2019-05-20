@@ -12,14 +12,15 @@
 enyo.kind({
   name: 'OB.UI.ModalReceipts',
   kind: 'OB.UI.Modal',
-  topPosition: '125px',
+  classes: 'obUiModalReceipts',
   published: {
     receiptsList: null
   },
   i18nHeader: 'OBPOS_LblAssignReceipt',
   body: {
     kind: 'OB.UI.ListReceipts',
-    name: 'listreceipts'
+    name: 'listreceipts',
+    classes: 'obUiModalReceipts-listreceipts'
   },
   receiptsListChanged: function (oldValue) {
     this.$.body.$.listreceipts.setReceiptsList(this.receiptsList);
@@ -28,19 +29,20 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ListReceipts',
-  classes: 'row-fluid',
+  classes: 'obUiListReceipt row-fluid',
   published: {
     receiptsList: null
   },
   components: [{
-    classes: 'span12',
+    classes: 'obUiListReceipt-container1 span12',
     components: [{
-      style: 'border-bottom: 1px solid #cccccc;'
+      classes: 'obUiListReceipt-container1-element1'
     }, {
+      classes: 'obUiListReceipt-container1-container1',
       components: [{
         name: 'receiptslistitemprinter',
         kind: 'OB.UI.ScrollableTable',
-        scrollAreaMaxHeight: '400px',
+        classes: 'obUiListReceipt-container1-container1-receiptslistitemprinter',
         renderLine: 'OB.UI.ListReceiptLine',
         renderEmpty: 'OB.UI.RenderEmpty'
       }]
@@ -54,6 +56,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListReceiptLine',
   kind: 'OB.UI.SelectButton',
+  classes: 'obUiListReceiptLine',
   events: {
     onHideThisPopup: '',
     onChangeCurrentOrder: ''
@@ -69,40 +72,40 @@ enyo.kind({
   },
   components: [{
     name: 'line',
-    style: 'line-height: 23px; width: 100%;',
+    classes: 'obUiListReceiptLine-line',
     components: [{
-      style: 'float: left; width: 95px;',
+      classes: 'obUiListReceiptLine-line-container1',
       components: [{
-        style: 'float: left; width: 100%;',
+        classes: 'obUiListReceiptLine-container1-date',
         name: 'date'
       }, {
-        style: 'clear: both;'
+        classes: 'obUiListReceiptLine-container1-element1'
       }, {
-        style: 'float: left; width: 100%;',
+        classes: 'obUiListReceiptLine-container1-time',
         name: 'time'
       }]
     }, {
-      style: 'float: left; width: calc(100% - 185px);',
+      classes: 'obUiListReceiptLine-line-container2',
       components: [{
-        style: 'float: left; width: 100%;',
+        classes: 'obUiListReceiptLine-container2-orderNo',
         name: 'orderNo'
       }, {
-        style: 'clear: both;'
+        classes: 'obUiListReceiptLine-container2-element1'
       }, {
-        style: 'float: left; width: 100%;',
+        classes: 'obUiListReceiptLine-container2-bp',
         name: 'bp'
       }]
     }, {
       name: 'lineTotalContainer',
-      style: 'float: right;',
+      classes: 'obUiListReceiptLine-line-lineTotalContainer',
       components: [{
-        style: ' font-weight: bold; text-align: right;',
+        classes: 'obUiListReceiptLine-lineTotalContainer-total',
         name: 'total'
       }, {
-        style: 'clear: both;'
+        classes: 'obUiListReceiptLine-lineTotalContainer-element1'
       }]
     }, {
-      style: 'clear: both;'
+      classes: 'obUiListReceiptLine-line-container3'
     }]
   }],
   create: function () {
@@ -123,16 +126,21 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalDeleteReceipt',
+  classes: 'obUiModalDeleteReceipt',
   events: {
     onDisableLeftToolbar: ''
   },
   bodyContent: {
+    classes: 'obUiModalDeleteReceipt-bodyContent',
     i18nContent: 'OBPOS_MsgConfirmDelete' // TODO: add this as part of the message + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone')
   },
   bodyButtons: {
+    classes: 'obUiModalDeleteReceipt-bodyButtons',
     components: [{
+      classes: 'obUiModalDeleteReceipt-bodyButtons-obUiBtnModalApplyDelete',
       kind: 'OB.UI.btnModalApplyDelete'
     }, {
+      classes: 'obUiModalDeleteReceipt-bodyButtons-obUiBtnModalCancelDelete',
       kind: 'OB.UI.btnModalCancelDelete'
     }]
   },
@@ -152,6 +160,7 @@ enyo.kind({
   name: 'OB.UI.btnModalApplyDelete',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblYesDelete',
+  classes: 'obUiBtnModalApplyDelete',
   events: {
     onDeleteOrder: ''
   },
@@ -167,6 +176,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.btnModalCancelDelete',
   i18nContent: 'OBMOBC_LblCancel',
+  classes: 'obUiBtnModalCancelDelete',
   tap: function () {
     this.doHideThisPopup();
   }

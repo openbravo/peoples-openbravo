@@ -921,6 +921,153 @@
 
 
 
+/***********************   ***********************/
+/*            File: modalreceipt.js              */
+/*           Folder: js/components               */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalReceipts
+# Inherits: [OB.UI.Modal]
+*/
+.obUiModalReceipts {
+  top: 125px;
+}
+
+.obUiModalReceipts-listreceipts {
+  /*Inherits: [OB.UI.ListReceipts]*/
+}
+
+
+
+/*
+# Component: OB.UI.ListReceipts
+*/
+.obUiListReceipt {}
+
+.obUiListReceipt-container1 {}
+
+.obUiListReceipt-container1-element1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obUiListReceipt-container1-container1 {}
+
+.obUiListReceipt-container1-container1-receiptslistitemprinter {
+  /*Inherits: [OB.UI.ScrollableTable]*/
+  max-height: 400px;
+}
+
+
+
+/*
+# Component: OB.UI.ListReceiptLine
+# Inherits: [OB.UI.SelectButton]
+*/
+.obUiListReceiptLine {}
+
+.obUiListReceiptLine-line {
+  line-height: 23px;
+  width: 100%;
+}
+
+.obUiListReceiptLine-line-container1 {
+  float: left;
+  width: 95px;
+}
+
+.obUiListReceiptLine-container1-date {
+  float: left;
+  width: 100%;
+}
+
+.obUiListReceiptLine-container1-element1 {
+  clear: both;
+}
+
+.obUiListReceiptLine-container1-time {
+  float: left;
+  width: 100%;
+}
+
+.obUiListReceiptLine-line-container2 {
+  float: left;
+  width: calc(100% - 185px);
+}
+
+.obUiListReceiptLine-container2-orderNo {
+  float: left;
+  width: 100%;
+}
+
+.obUiListReceiptLine-container2-element1 {
+  clear: both;
+}
+
+.obUiListReceiptLine-container2-bp {
+  float: left;
+  width: 100%;
+}
+
+.obUiListReceiptLine-line-lineTotalContainer {
+  float: right;
+}
+
+.obUiListReceiptLine-lineTotalContainer-total {
+  font-weight: bold;
+  text-align: right;
+}
+
+.obUiListReceiptLine-lineTotalContainer-element1 {
+  clear: both;
+}
+
+.obUiListReceiptLine-line-container3 {
+  clear: both;
+}
+
+
+
+/*
+# Component: OB.UI.ModalDeleteReceipt
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalDeleteReceipt {}
+
+.obUiModalDeleteReceipt-bodyContent {}
+
+.obUiModalDeleteReceipt-bodyButtons {}
+
+.obUiModalDeleteReceipt-bodyButtons-obUiBtnModalApplyDelete {}
+
+.obUiModalDeleteReceipt-bodyButtons-obUiBtnModalCancelDelete {}
+
+
+
+/*
+# Component: OB.UI.btnModalApplyDelete
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiBtnModalApplyDelete {}
+
+
+
+/*
+# Component: OB.UI.btnModalCancelDelete
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiBtnModalCancelDelete {}
+
+
+
+
+
+
+
+
+
+
+
+
 /*****************/
 /*      JGA      */
 /*****************/
