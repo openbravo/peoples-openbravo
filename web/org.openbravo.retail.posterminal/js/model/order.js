@@ -3390,11 +3390,7 @@
       var promotions = line.get('promotions') || [],
           disc = {},
           i, replaced = false,
-          discountRule = OB.Model.Discounts.discountRules[rule.attributes.discountType],
-          unitsConsumed = 0,
-          unitsConsumedByNoCascadeRules = 0,
-          unitsConsumedByTheSameRule = 0;
-
+          discountRule = OB.Model.Discounts.discountRules[rule.attributes.discountType];
       if (discountRule.getIdentifier) {
         disc.identifier = discountRule.getIdentifier(rule, discount);
       }
@@ -3471,39 +3467,41 @@
       disc.obdiscAllowinnegativelines = (!OB.UTIL.isNullOrUndefined(rule.get('obdiscAllowinnegativelines'))) ? rule.get('obdiscAllowinnegativelines') : false;
       disc.executedAtTheEndPromo = discount.executedAtTheEndPromo || false;
 
-      if (!disc.manual) {
-        for (i = 0; i < promotions.length; i++) {
-          if (!promotions[i].applyNext) {
-            unitsConsumedByNoCascadeRules += promotions[i].qtyOffer;
-          } else if (promotions[i].ruleId === disc.ruleId) {
-            unitsConsumedByTheSameRule += promotions[i].qtyOffer;
-          }
-        }
-
-        if (disc.applyNext && unitsConsumedByTheSameRule === 0) {
-          unitsConsumed = unitsConsumedByNoCascadeRules;
-        } else {
-          unitsConsumed = unitsConsumedByNoCascadeRules + unitsConsumedByTheSameRule + disc.qtyOffer;
+      var unitsConsumed = 0;
+      var unitsConsumedByNoCascadeRules = 0;
+      var unitsConsumedByTheSameRule = 0;
+      for (i = 0; i < promotions.length; i++) {
+        if (!promotions[i].applyNext) {
+          unitsConsumedByNoCascadeRules += promotions[i].qtyOffer;
+        } else if (promotions[i].ruleId === disc.ruleId) {
+          unitsConsumedByTheSameRule += promotions[i].qtyOffer;
         }
       }
 
-      for (i = 0; i < promotions.length; i++) {
-        if (!disc.manual && unitsConsumed > line.get('qty')) {
-          if (discount.forceReplace) {
+      if (disc.applyNext && unitsConsumedByTheSameRule === 0) {
+        unitsConsumed = unitsConsumedByNoCascadeRules;
+      } else {
+        unitsConsumed = unitsConsumedByNoCascadeRules + unitsConsumedByTheSameRule + disc.qtyOffer;
+      }
+      if (!disc.manual) {
+        for (i = 0; i < promotions.length; i++) {
+          if (unitsConsumed > line.get('qty')) {
+            if (discount.forceReplace) {
+              if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
+                if (promotions[i].hidden !== true) {
+                  promotions[i] = disc;
+                }
+              }
+            }
+            replaced = true;
+            break;
+          } else if (discount.forceReplace) {
             if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
               if (promotions[i].hidden !== true) {
                 promotions[i] = disc;
+                replaced = true;
+                break;
               }
-            }
-          }
-          replaced = true;
-          break;
-        } else if (disc.manual || discount.forceReplace) {
-          if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
-            if (promotions[i].hidden !== true) {
-              promotions[i] = disc;
-              replaced = true;
-              break;
             }
           }
         }
