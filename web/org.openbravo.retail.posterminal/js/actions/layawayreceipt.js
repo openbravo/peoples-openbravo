@@ -19,6 +19,23 @@
     properties: {
       i18nContent: 'OBPOS_LblLayawayReceipt'
     },
+    isActive: function (view) {
+      var isEditable = view.state.readState({
+        name: 'receipt.isEditable'
+      });
+      var orderType = view.state.readState({
+        name: 'receipt.orderType'
+      });
+      var isQuotation = view.state.readState({
+        name: 'receipt.isQuotation'
+      });
+      var currentView = view.state.readState({
+        name: 'window.currentView'
+      }).name;
+
+      return currentView === 'order' && isEditable && !isQuotation //
+      && (orderType !== 1 || orderType !== 2 || OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true));
+    },
     command: function (view) {
       var negativeLines, deliveredLines;
       if (OB.UTIL.isNullOrUndefined(view.model.get('order').get('bp'))) {

@@ -342,42 +342,6 @@ enyo.kind({
   action: {
     window: 'retail.pointofsale',
     name: 'layawayReceipt'
-  },
-  updateVisibility: function (isVisible) {
-    if (!OB.MobileApp.model.hasPermission(this.permission)) {
-      this.hide();
-      return;
-    }
-    if (!isVisible) {
-      this.hide();
-      return;
-    }
-    this.show();
-  },
-  init: function (model) {
-    this.model = model;
-    var receipt = model.get('order'),
-        me = this;
-    receipt.on('change:isEditable change:isQuotation change:orderType', function (model) {
-      if (!model.get('isEditable') || model.get('isQuotation') || (model.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) || model.get('orderType') === 2) {
-        me.updateVisibility(false);
-      } else {
-        me.updateVisibility(true);
-      }
-    }, this);
-    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
-      if (changedModel.isOrder()) {
-        if (model.get('order').get('isEditable') && !this.model.get('order').get('isQuotation')) {
-          me.updateVisibility(true);
-        } else {
-          me.updateVisibility(false);
-        }
-        return;
-      }
-      if (changedModel.isMultiOrder()) {
-        me.updateVisibility(false);
-      }
-    }, this);
   }
 });
 
