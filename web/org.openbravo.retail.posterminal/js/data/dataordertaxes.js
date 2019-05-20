@@ -53,7 +53,7 @@
 
       for (i = 0; i < params.receipt.get('lines').length; i++) {
         var l = params.receipt.get('lines').at(i);
-        if (l.get('relatedLines')) {
+        if (l.get('relatedLines') && !l.get('obposIsDeleted')) {
           for (j = 0; j < l.get('relatedLines').length; j++) {
             var rell = l.get('relatedLines')[j];
             if (rell.orderlineId === params.line.get('id')) {
