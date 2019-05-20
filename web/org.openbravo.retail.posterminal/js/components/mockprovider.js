@@ -11,6 +11,7 @@
 
 enyo.kind({
   name: 'OBPOS_MockProvider',
+  classes: 'obposOBPOSMockProvider',
   checkOverpayment: true,
   providerComponent: {
     content: 'Processing payment or refund'
