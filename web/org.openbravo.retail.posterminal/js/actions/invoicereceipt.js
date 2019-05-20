@@ -30,7 +30,7 @@
         name: 'receipt.isQuotation'
       });
 
-      return !isQuotation && !generateInvoice && bp.get('invoiceTerms') === 'I';
+      return !isQuotation && !generateInvoice && (bp && bp.get('invoiceTerms') === 'I');
     },
     command: function (view) {
 
