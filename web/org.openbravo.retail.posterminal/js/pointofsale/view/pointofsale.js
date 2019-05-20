@@ -25,7 +25,7 @@ enyo.kind({
     kind: 'OB.UI.ActionButtonArea',
     name: 'bottomRightScanAba1',
     abaIdentifier: 'obpos_pointofsale_scan_bottomrightaba1',
-    classes: 'obObposPointOfSaleUiBottomRightGridLayoutScan-bottomRightScanAba1'
+    classes: 'obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic obObposPointOfSaleUiBottomRightGridLayoutScan-bottomRightScanAba1'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.GridKeyboardScan',
     name: 'bottomRightScanKeyboard',
@@ -42,7 +42,7 @@ enyo.kind({
     kind: 'OB.UI.ActionButtonArea',
     name: 'bottomRightEditAba1',
     abaIdentifier: 'obpos_pointofsale_edit_bottomrightaba1',
-    classes: 'obObposPointOfSaleUiBottomRightGridLayoutEdit-bottomRightEditAba1'
+    classes: 'obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic obObposPointOfSaleUiBottomRightGridLayoutEdit-bottomRightEditAba1'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.GridKeyboardEdit',
     name: 'bottomRightEditKeyboard',

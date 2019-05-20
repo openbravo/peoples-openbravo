@@ -1375,40 +1375,42 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   border-bottom: 1px solid #cccccc;
 }
 
-.obObposPointOfSaleUiBottomRightLayout {
+.obObposPointOfSaleUiBottomRightGridLayout {
   color: white;
   display: grid;
   grid-template-areas:
     "hside center";
 }
 
-.right.obObposPointOfSaleUiBottomRightLayout {
+.right.obObposPointOfSaleUiBottomRightGridLayout {
   color: white;
   display: grid;
   grid-template-areas:
     "center hside";
 }
 
-.btm.obObposPointOfSaleUiBottomRightLayout {
+.btm.obObposPointOfSaleUiBottomRightGridLayout {
   grid-template-areas:
     "center"
     "vside";
+  grid-auto-flow: column;
 }
 
-.top.obObposPointOfSaleUiBottomRightLayout {
+.top.obObposPointOfSaleUiBottomRightGridLayout {
   grid-template-areas:
     "vside"
     "center";
+  grid-auto-flow: column;
 }
 
-.obObposPointOfSaleUiPointOfSale_obUiActionButtonArea {
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic {
   grid-area: hside;
   display: grid;
   grid-auto-flow: row;
 }
 
-.top.obObposPointOfSaleUiPointOfSale_obUiActionButtonArea,
-.btm.obObposPointOfSaleUiPointOfSale_obUiActionButtonArea {
+.top.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic,
+.btm.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic {
   grid-area: vside;
   grid-auto-flow: column;
 }
