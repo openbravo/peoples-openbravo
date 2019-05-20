@@ -2312,6 +2312,213 @@
 
 
 
+/***********************   ***********************/
+/*                File: menu.js                  */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.MenuReturn
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuReturn {}
+
+
+/*
+# Component: OB.UI.MenuVoidLayaway
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuVoidLayaway {}
+
+
+/*
+# Component: OB.UI.MenuReceiptLayaway
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuReceiptLayaway {}
+
+
+/*
+# Component: OB.UI.MenuCancelLayaway
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuCancelLayaway {}
+
+
+/*
+# Component: OB.UI.MenuLayaway
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuLayaway {}
+
+
+/*
+# Component: OB.UI.MenuProperties
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuProperties {}
+
+
+/*
+# Component: OB.UI.MenuInvoice
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuInvoice {}
+
+
+/*
+# Component: OB.UI.MenuOpenDrawer
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuOpenDrawer {}
+
+
+/*
+# Component: OB.UI.MenuCustomers
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuCustomers {}
+
+
+/*
+# Component: OB.UI.MenuPrint
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuPrint  {}
+
+
+/*
+# Component: OB.UI.MenuQuotation
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuQuotation {}
+
+
+/*
+# Component: OB.UI.MenuDiscounts
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuDiscounts {}
+
+
+/*
+# Component: OB.UI.MenuCreateOrderFromQuotation
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuCreateOrderFromQuotation {}
+
+
+/*
+# Component: OB.UI.MenuCreateQuotationFromOrder
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuCreateQuotationFromOrder {}
+
+
+/*
+# Component: OB.UI.MenuReactivateQuotation
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuReactivateQuotation {}
+
+
+/*
+# Component: OB.UI.MenuRejectQuotation
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuRejectQuotation {}
+
+
+/*
+# Component: OB.UI.MenuReceiptSelector
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuReceiptSelector {}
+
+
+/*
+# Component: OB.UI.MenuMultiOrders
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuMultiOrders {}
+
+
+/*
+# Component: OB.UI.MenuBackOffice
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuBackOffice {}
+
+
+/*
+# Component: OB.UI.MenuDisableEnableRFIDReader
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuDisableEnableRFIDReader {
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position-x: 98%;
+  background-position-y: 50%;
+  background-color: transparent;
+}
+
+.obUiMenuDisableEnableRFIDReader:hover {
+  background-color: #E1E1E1;
+}
+
+.disabled.obUiMenuDisableEnableRFIDReader {
+  color: #cccccc;
+  cursor: default;
+}
+
+.obUiMenuDisableEnableRFIDReader_switchOn {
+  background-image: url('./../img/iconSwitchON.svg');
+  background-size: 61px 23px;
+}
+
+.obUiMenuDisableEnableRFIDReader_switchOff {
+  background-image: url('./../img/iconSwitchOFF.svg');
+  background-size: 61px 23px;
+}
+
+.obUiMenuDisableEnableRFIDReader_switchOffline {
+  background-image: url('./../img/iconSwitchOffline.svg');
+  background-size: 61px 23px;
+}
+
+.obUiMenuDisableEnableRFIDReader-lbl {
+  padding: 12px 5px 12px 15px;
+}
+
+
+/*
+# Component: OB.UI.MenuSelectPrinter
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuSelectPrinter {}
+
+
+/*
+# Component: OB.UI.MenuSelectPDFPrinter
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuSelectPDFPrinter {}
+
+
+/*
+# Component: OB.UI.MenuCancelAndReplace
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuCancelAndReplace {}
+
+
+/*
+# Component: OB.UI.MenuForceIncrementalRefresh
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuForceIncrementalRefresh {}
+
+
+
 
 /*****************/
 /*      JAR      */

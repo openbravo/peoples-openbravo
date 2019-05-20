@@ -12,6 +12,7 @@
 enyo.kind({
   name: 'OB.UI.MenuReturn',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuReturn',
   permission: 'OBPOS_receipt.return',
   events: {
     onShowDivText: '',
@@ -81,6 +82,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuVoidLayaway',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuVoidLayaway',
   permission: 'OBPOS_receipt.voidLayaway',
   events: {
     onShowDivText: '',
@@ -163,6 +165,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuReceiptLayaway',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuReceiptLayaway',
   permission: 'OBPOS_receipt.receiptLayaway',
   events: {
     onShowDivText: '',
@@ -237,6 +240,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuCancelLayaway',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuCancelLayaway',
   permission: 'OBPOS_receipt.cancelLayaway',
   events: {
     onShowDivText: '',
@@ -444,6 +448,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuProperties',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuProperties',
   permission: 'OBPOS_receipt.properties',
   events: {
     onShowReceiptProperties: ''
@@ -487,6 +492,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuInvoice',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuInvoice',
   permission: 'OBPOS_receipt.invoice',
   events: {
     onReceiptToInvoice: '',
@@ -549,6 +555,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuOpenDrawer',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuOpenDrawer',
   permission: 'OBPOS_retail.opendrawerfrommenu',
   i18nLabel: 'OBPOS_LblOpenDrawer',
   updateVisibility: function () {
@@ -580,6 +587,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuCustomers',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuCustomers',
   permission: 'OBPOS_receipt.customers',
   events: {
     onShowPopup: ''
@@ -613,6 +621,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuPrint',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuPrint',
   permission: 'OBPOS_print.receipt',
   events: {
     onPrintReceipt: '',
@@ -643,6 +652,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuQuotation',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuQuotation',
   permission: 'OBPOS_receipt.quotation',
   events: {
     onCreateQuotation: ''
@@ -685,6 +695,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuDiscounts',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuDiscounts',
   permission: 'OBPOS_retail.advDiscounts',
   events: {
     onDiscountsMode: ''
@@ -754,6 +765,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuCreateOrderFromQuotation',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuCreateOrderFromQuotation',
   permission: 'OBPOS_receipt.createorderfromquotation',
   events: {
     onShowPopup: ''
@@ -803,6 +815,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuCreateQuotationFromOrder',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuCreateQuotationFromOrder',
   permission: 'OBPOS_receipt.createquotationfromorder',
   i18nLabel: 'OBPOS_CreateQuotationFromOrder',
   events: {
@@ -858,6 +871,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuReactivateQuotation',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuReactivateQuotation',
   permission: 'OBPOS_receipt.reactivatequotation',
   events: {
     onShowReactivateQuotation: ''
@@ -905,6 +919,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuRejectQuotation',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuRejectQuotation',
   permission: 'OBPOS_quotation.rejections',
   events: {
     onShowRejectQuotation: ''
@@ -952,6 +967,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuReceiptSelector',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuReceiptSelector',
   permission: 'OBPOS_retail.menuReceiptSelector',
   events: {
     onShowPopup: ''
@@ -988,6 +1004,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuMultiOrders',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuMultiOrders',
   permission: 'OBPOS_retail.multiorders',
   events: {
     onMultiOrders: ''
@@ -1021,6 +1038,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuBackOffice',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuBackOffice',
   permission: 'OBPOS_retail.backoffice',
   url: '../..',
   events: {
@@ -1054,14 +1072,14 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.disableEnableRFIDReader',
   i18nLabel: 'OBPOS_RFID',
-  classes: 'menu-switch',
+  classes: 'obUiMenuDisableEnableRFIDReader',
   handlers: {
     onPointOfSaleLoad: 'pointOfSaleLoad'
   },
   components: [{
     name: 'lbl',
-    allowHtml: true,
-    style: 'padding: 12px 5px 12px 15px;'
+    classes: 'obUiMenuDisableEnableRFIDReader-lbl',
+    allowHtml: true
   }],
   tap: function () {
     this.inherited(arguments);
@@ -1098,19 +1116,19 @@ enyo.kind({
     }
     OB.UTIL.RfidController.on('change:connected change:connectionLost', function (model) {
       if (OB.UTIL.RfidController.get('connectionLost')) {
-        this.removeClass('btn-icon-switchon');
-        this.removeClass('btn-icon-switchoff');
-        this.addClass('btn-icon-switchoffline');
+        this.removeClass('obUiMenuDisableEnableRFIDReader_switchOn');
+        this.removeClass('obUiMenuDisableEnableRFIDReader_switchOff');
+        this.addClass('obUiMenuDisableEnableRFIDReader_switchOffline');
         this.setDisabled(true);
       } else {
-        this.removeClass('btn-icon-switchoffline');
+        this.removeClass('obUiMenuDisableEnableRFIDReader_switchOffline');
         if (OB.UTIL.RfidController.get('isRFIDEnabled') && OB.UTIL.RfidController.get('connected')) {
-          this.addClass('btn-icon-switchon');
-          this.removeClass('btn-icon-switchoff');
+          this.addClass('obUiMenuDisableEnableRFIDReader_switchOn');
+          this.removeClass('obUiMenuDisableEnableRFIDReader_switchOff');
         } else {
           OB.UTIL.RfidController.disconnectRFIDDevice();
-          this.removeClass('btn-icon-switchon');
-          this.addClass('btn-icon-switchoff');
+          this.removeClass('obUiMenuDisableEnableRFIDReader_switchOn');
+          this.addClass('obUiMenuDisableEnableRFIDReader_switchOff');
         }
         this.setDisabled(false);
       }
@@ -1121,17 +1139,17 @@ enyo.kind({
       var protocol = OB.POS.hwserver.url.split('/')[0];
       if (window.location.protocol === protocol) {
         if (OB.UTIL.RfidController.get('connectionLost') || !OB.UTIL.RfidController.get('connected')) {
-          this.addClass('btn-icon-switchoffline');
+          this.addClass('obUiMenuDisableEnableRFIDReader_switchOffline');
           return;
         } else {
-          this.removeClass('btn-icon-switchoffline');
+          this.removeClass('obUiMenuDisableEnableRFIDReader_switchOffline');
         }
         if (!OB.UTIL.RfidController.get('isRFIDEnabled') || !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
-          this.addClass('btn-icon-switchoff');
-          this.removeClass('btn-icon-switchon');
+          this.addClass('obUiMenuDisableEnableRFIDReader_switchOff');
+          this.removeClass('obUiMenuDisableEnableRFIDReader_switchOn');
         } else {
-          this.addClass('btn-icon-switchon');
-          this.removeClass('btn-icon-switchoffline');
+          this.addClass('obUiMenuDisableEnableRFIDReader_switchOn');
+          this.removeClass('obUiMenuDisableEnableRFIDReader_switchOffline');
         }
       } else {
         this.hide();
@@ -1145,6 +1163,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuSelectPrinter',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuSelectPrinter',
   permission: 'OBPOS_retail.selectprinter',
   events: {
     onModalSelectPrinters: ''
@@ -1176,6 +1195,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuSelectPDFPrinter',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuSelectPDFPrinter',
   permission: 'OBPOS_retail.selectprinter',
   events: {
     onModalSelectPDFPrinters: ''
@@ -1207,6 +1227,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuCancelAndReplace',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuCancelAndReplace',
   permission: 'OBPOS_receipt.cancelreplace',
   i18nLabel: 'OBPOS_CancelReplace',
   events: {
@@ -1304,6 +1325,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuForceIncrementalRefresh',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuForceIncrementalRefresh',
   permission: 'OBMOBC_NotAutoLoadIncrementalAtLogin',
   i18nLabel: 'OBPOS_MenuForceIncrementalRefreshLabel',
   init: function (model) {
