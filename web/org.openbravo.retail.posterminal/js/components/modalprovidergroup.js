@@ -12,35 +12,38 @@
 enyo.kind({
   name: 'OB.UI.ModalProviderGroup',
   kind: 'OB.UI.ModalAction',
+  classes: 'obUiModalProviderGroup',
   header: '',
   autoDismiss: false,
-  maxheight: '600px',
   events: {
     onHideThisPopup: ''
   },
   bodyContent: {
+    classes: 'obUiModalProviderGroup-container1',
     components: [{
+      classes: 'obUiModalProviderGroup-container1-container1',
       components: [{
-        classes: 'row-fluid',
+        classes: 'obUiModalProviderGroup-container1-container1-container1 row-fluid',
         components: [{
-          style: 'float:left; padding-left:30px',
-          name: 'lblType'
+          name: 'lblType',
+          classes: 'obUiModalProviderGroup-container1-container1-container1-lblType'
         }, {
           name: 'paymenttype',
-          style: 'float:right; font-weight: bold; padding-right:30px'
+          classes: 'obUiModalProviderGroup-container1-container1-container1-paymenttype'
         }]
       }, {
-        style: 'clear: both'
+        classes: 'obUiModalProviderGroup-container1-container1-container2'
       }, {
-        classes: 'row-fluid',
+        classes: 'obUiModalProviderGroup-container1-container1-container3 row-fluid',
         components: [{
-          style: 'float:center; padding-left:30px; padding-right:30px',
-          name: 'description'
+          name: 'description',
+          classes: 'obUiModalProviderGroup-container1-container1-container3-description'
         }]
       }, {
-        style: 'clear: both'
+        classes: 'obUiModalProviderGroup-container1-container1-container4'
       }]
     }, {
+      classes: 'obUiModalProviderGroup-container1-providergroupcomponent',
       name: 'providergroupcomponent'
     }]
   },

@@ -635,6 +635,61 @@
 
 
 
+/***********************   ***********************/
+/*        File: modalprovidergroup.js            */
+/*           Folder: js/components               */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalProviderGroup
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalProviderGroup {}
+
+.obUiModalProviderGroup-container1 {
+  max-height: 600px;
+}
+
+.obUiModalProviderGroup-container1-container1 {}
+
+.obUiModalProviderGroup-container1-container1-container1 {}
+
+.obUiModalProviderGroup-container1-container1-container1-lblType {
+  float: left;
+  padding-left: 30px;
+}
+
+.obUiModalProviderGroup-container1-container1-container1-paymenttype {
+  float: right;
+  font-weight: bold;
+  padding-right: 30px;
+}
+
+.obUiModalProviderGroup-container1-container1-container2 {
+  clear: both;
+}
+
+.obUiModalProviderGroup-container1-container1-container3 {}
+
+.obUiModalProviderGroup-container1-container1-container3-description {
+  float: center;
+  padding-left: 30px;
+  padding-right: 30px
+}
+
+.obUiModalProviderGroup-container1-container1-container4 {
+  clear: both;
+}
+
+.obUiModalProviderGroup-container1-providergroupcomponent {}
+
+
+
+
+
+
+
+
+
 /*****************/
 /*      JGA      */
 /*****************/
