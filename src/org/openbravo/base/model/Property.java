@@ -204,6 +204,7 @@ public class Property {
 
     setModule(fromColumn.getModule());
     setAllowedCrossOrgReference(fromColumn.isAllowedCrossOrgReference());
+    setChildPropertyInParent(fromColumn.isChildPropertyInParent());
     isProxy = false;
   }
 
