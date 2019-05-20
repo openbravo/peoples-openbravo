@@ -1059,6 +1059,39 @@
 
 
 
+/***********************   ***********************/
+/*       File: modalreactivatequotation.js       */
+/*           Folder: js/components               */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.btnModalReactivateQuotationCancel
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposPointOfSaleUiModalsBtnModalReactivateQuotationCancel {}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.btnModalReactivateQuotationAccept
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposPointOfSaleUiModalsBtnModalReactivateQuotationAccept {}
+
+
+
+/*
+# Component: OB.UI.ModalReactivateQuotation
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalReactivateQuotation {}
+
+.obUiModalReactivateQuotation-bodyContent {}
+
+.obUiModalReactivateQuotation-bodyButtons {}
+
+.obUiModalReactivateQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalReactivateQuotationAccept {}
+
+.obUiModalReactivateQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalReactivateQuotationCancel {}
 
 
 

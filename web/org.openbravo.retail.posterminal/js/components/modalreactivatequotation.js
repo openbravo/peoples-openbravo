@@ -13,6 +13,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalReactivateQuotationCancel',
   i18nContent: 'OBMOBC_LblCancel',
+  classes: 'obObposPointOfSaleUiModalsBtnModalReactivateQuotationCancel',
   tap: function () {
     this.doHideThisPopup();
   }
@@ -21,6 +22,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalReactivateQuotationAccept',
   i18nContent: 'OBMOBC_LblOk',
+  classes: 'obObposPointOfSaleUiModalsBtnModalReactivateQuotationAccept',
   events: {
     onReactivateQuotation: ''
   },
@@ -35,14 +37,19 @@ enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalReactivateQuotation',
   myId: 'modalReactivateQuotation',
+  classes: 'obUiModalReactivateQuotation',
   bodyContent: {
+    classes: 'obUiModalReactivateQuotation-bodyContent',
     i18nContent: 'OBPOS_ReactivateQuotationMessage'
   },
   i18nHeader: 'OBPOS_ReactivateQuotation',
   bodyButtons: {
+    classes: 'obUiModalReactivateQuotation-bodyButtons',
     components: [{
+      classes: 'obUiModalReactivateQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalReactivateQuotationAccept',
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalReactivateQuotationAccept'
     }, {
+      classes: 'obUiModalReactivateQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalReactivateQuotationCancel',
       kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalReactivateQuotationCancel'
     }]
   }
