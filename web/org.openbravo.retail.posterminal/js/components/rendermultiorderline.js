@@ -11,15 +11,14 @@
 enyo.kind({
   name: 'OB.UI.RemoveMultiOrders',
   kind: 'OB.UI.SmallButton',
-  classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-clearPayment',
+  classes: 'obUiRemoveMultiOrders',
   events: {
     onRemoveMultiOrders: ''
   },
   tap: function () {
     if ((_.isUndefined(this.deleting) || this.deleting === false)) {
       this.deleting = true;
-      this.removeClass('btn-icon-clearPayment');
-      this.addClass('btn-icon-loading');
+      this.addClass('obUiRemoveMultiOrders_loading');
       this.doRemoveMultiOrders({
         order: this.owner.model
       });
@@ -30,7 +29,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SelectButton',
   name: 'OB.UI.RenderMultiOrdersLineValues',
-  classes: 'btnselect-orderline',
+  classes: 'obUiRenderMultiOrdersLineValues',
   handlers: {
     onChangeEditMode: 'changeEditMode'
   },
@@ -39,35 +38,35 @@ enyo.kind({
   },
   components: [{
     name: 'line',
-    style: 'line-height: 23px; width: 100%;',
+    classes: 'obUiRenderMultiOrdersLineValues-line',
     components: [{
-      style: 'display: inline;',
       name: 'multiTopLine',
+      classes: 'obUiRenderMultiOrdersLineValues-line-multiTopLine',
       components: [{
-        style: 'display: inline-block;',
         name: 'documentNo',
+        classes: 'obUiRenderMultiOrdersLineValues-multiTopLine-documentNo',
         initComponents: function () {
           this.setContent(this.owner.owner.model.get('documentNo') + ' - ' + this.owner.owner.model.get('bp').get('_identifier'));
         }
       }, {
-        style: 'font-weight: bold; float: right; text-align:right; display: inline-block;',
         name: 'total',
+        classes: 'obUiRenderMultiOrdersLineValues-multiTopLine-total',
         initComponents: function () {
           this.setContent((!_.isUndefined(this.owner.owner.model.get('amountToLayaway')) && !_.isNull(this.owner.owner.model.get('amountToLayaway'))) ? OB.I18N.formatCurrency(this.owner.owner.model.get('amountToLayaway')) : this.owner.owner.model.printPending());
         }
       }]
     }, {
-      style: 'line-height: 23px; width: 100%;',
       name: 'totalAndLayaway',
+      classes: 'obUiRenderMultiOrdersLineValues-line-totalAndLayaway',
       components: [{
-        style: 'color: #888888; display: inline-block;',
         name: 'totalOrder',
+        classes: 'obUiRenderMultiOrdersLineValues-totalAndLayaway-totalOrder',
         initComponents: function () {
           this.setContent(OB.I18N.getLabel('OBPOS_LineTotal') + ': ' + this.owner.owner.model.printTotal());
         }
       }, {
-        style: 'font-weight: bold; color: lightblue; float: right; text-align:right; display: inline-block;',
         name: 'isLayaway',
+        classes: 'obUiRenderMultiOrdersLineValues-totalAndLayaway-isLayaway',
         initComponents: function () {
           if (this.owner.owner.model.get('isLayaway')) {
             this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
@@ -77,13 +76,13 @@ enyo.kind({
         }
       }]
     }, {
-      style: 'color: #888888; display: inline',
       name: 'multiBottonLine',
+      classes: 'obUiRenderMultiOrdersLineValues-line-multiBottonLine',
       initComponents: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_RemainingToPay') + ': ' + this.owner.owner.model.printPending() + ' - (' + OB.I18N.formatDate(new Date(this.owner.owner.model.get('orderDate'))) + ') ');
       }
     }, {
-      style: 'clear: both;'
+      classes: 'obUiRenderMultiOrdersLineValues-line-element1'
     }]
   }],
   tap: function () {
@@ -104,19 +103,19 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.RenderMultiOrdersLine',
-  style: 'border-bottom: 1px solid #cccccc; width: 100%',
+  classes: 'obUiRenderMultiOrdersLine',
   components: [{
-    style: 'display: inline-block; width: 8%;',
-    kind: 'OB.UI.RemoveMultiOrders'
+    kind: 'OB.UI.RemoveMultiOrders',
+    classes: 'obUiRenderMultiOrdersLine-obUiRemoveMultiOrders'
   }, {
-    style: 'display: inline-block; width: 87%; border: none; margin: 1px; padding-rigth: 5px;',
-    kind: 'OB.UI.RenderMultiOrdersLineValues'
+    kind: 'OB.UI.RenderMultiOrdersLineValues',
+    classes: 'obUiRenderMultiOrdersLine-obUiRenderMultiOrdersLineValues'
   }]
 });
 
 enyo.kind({
   name: 'OB.UI.RenderMultiOrdersLineEmpty',
-  style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+  classes: 'obUiRenderMultiOrdersLineEmpty',
   initComponents: function () {
     this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
