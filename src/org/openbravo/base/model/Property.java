@@ -126,6 +126,7 @@ public class Property {
   private boolean usedSequence;
   private boolean isProxy;
   private boolean allowedCrossOrgReference;
+  private boolean isChildPropertyInParent;
 
   /**
    * Initializes this Property using the information from the Column.
