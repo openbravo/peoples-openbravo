@@ -1095,6 +1095,90 @@
 
 
 
+/***********************   ***********************/
+/*           File: modalselectterminal.js        */
+/*           Folder: js/components               */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalSelectTerminal
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalSelectTerminal {}
+
+.obUiModalSelectTerminal-bodyContent {}
+
+.obUiModalSelectTerminal-bodyButtons {}
+
+.obUiModalSelectTerminal-bodyButtons-terminalKeyIdentifier {
+  /*Inherits: [enyo.Input]*/
+  height: 30px;
+  background-color: var(--color-primary-lighter);
+  padding: 4px;
+  margin-top: 10px;
+  color: #555;
+  border: var(--bottomseparator-slim);
+  width: calc(100% - 10px);
+  max-width: 230px;
+
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.obUiModalSelectTerminal-bodyButtons-username {
+  /*Inherits: [enyo.Input]*/
+  height: 30px;
+  background-color: var(--color-primary-lighter);
+  padding: 4px;
+  margin-top: 10px;
+  color: #555;
+  border: var(--bottomseparator-slim);
+  width: calc(100% - 10px);
+  max-width: 230px;
+
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.obUiModalSelectTerminal-bodyButtons-password {
+  /*Inherits: [enyo.Input]*/
+  height: 30px;
+  background-color: var(--color-primary-lighter);
+  padding: 4px;
+  margin-top: 10px;
+  color: #555;
+  border: var(--bottomseparator-slim);
+  width: calc(100% - 10px);
+  max-width: 230px;
+
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.obUiModalSelectTerminal-bodyButtons-element1 {
+  /*Inherits: [OB.UI.btnApplyTerminal]*/
+}
+
+
+
+/*
+# Component: OB.UI.btnApplyTerminal
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiBtnApplyTerminal {}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

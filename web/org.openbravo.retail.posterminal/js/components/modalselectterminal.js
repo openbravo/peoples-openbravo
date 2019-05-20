@@ -12,6 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalSelectTerminal',
+  classes: 'obUiModalSelectTerminal',
   closeOnEscKey: false,
   autoDismiss: false,
   executeOnShow: function () {
@@ -20,31 +21,31 @@ enyo.kind({
     this.$.bodyButtons.$.password.attributes.placeholder = OB.I18N.getLabel('OBMOBC_LoginPasswordInput');
   },
   bodyContent: {
+    classes: 'obUiModalSelectTerminal-bodyContent',
     i18nContent: 'OBPOS_SelectTerminalMsg'
   },
   bodyButtons: {
+    classes: 'obUiModalSelectTerminal-bodyButtons',
     components: [{
       kind: 'enyo.Input',
       type: 'text',
       name: 'terminalKeyIdentifier',
-      classes: 'input-login',
-      style: 'display: block; margin-left: auto; margin-right: auto;',
+      classes: 'obUiModalSelectTerminal-bodyButtons-terminalKeyIdentifier',
       onkeydown: 'inputKeydownHandler'
     }, {
       kind: 'enyo.Input',
       type: 'text',
       name: 'username',
-      classes: 'input-login',
-      style: 'display: block; margin-left: auto; margin-right: auto;',
+      classes: 'obUiModalSelectTerminal-bodyButtons-username',
       onkeydown: 'inputKeydownHandler'
     }, {
       kind: 'enyo.Input',
       type: 'password',
       name: 'password',
-      classes: 'input-login',
-      style: 'display: block; margin-left: auto; margin-right: auto;',
+      classes: 'obUiModalSelectTerminal-bodyButtons-password',
       onkeydown: 'inputKeydownHandler'
     }, {
+      classes: 'obUiModalSelectTerminal-bodyButtons-element1',
       kind: 'OB.UI.btnApplyTerminal'
     }]
   },
@@ -59,6 +60,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.btnApplyTerminal',
+  classes: 'obUiBtnApplyTerminal',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
   tap: function () {
