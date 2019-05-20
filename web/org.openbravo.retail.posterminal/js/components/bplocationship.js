@@ -15,13 +15,14 @@
 enyo.kind({
   name: 'OB.UI.ListBpsShipLocLine',
   kind: 'OB.UI.ListBpsLocLine',
+  classes: 'obUiListBpsShipLocLine',
   locId: 'shipLocId'
 });
 
 /*scrollable table (body of modal)*/
 enyo.kind({
   name: 'OB.UI.ListBpsShipLoc',
-  classes: 'row-fluid',
+  classes: 'obUiListBpsShipLoc',
   published: {
     bPartner: null,
     manageAddress: false,
@@ -36,16 +37,15 @@ enyo.kind({
     onChangeBusinessPartner: ''
   },
   components: [{
-    classes: 'span12',
+    classes: 'obUiListBpsShipLoc-container1',
     components: [{
-      style: 'border-bottom: 1px solid #cccccc;',
-      classes: 'row-fluid',
+      classes: 'obUiListBpsShipLoc-container1-container1',
       components: [{
-        classes: 'span12',
+        classes: 'obUiListBpsShipLoc-container1-container1-container1',
         components: [{
           name: 'bpsloclistitemprinter',
           kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '400px',
+          calsses: 'obUiListBpsShipLoc-container1-container1-container1-bpsloclistitemprinter',
           renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
           renderLine: 'OB.UI.ListBpsShipLocLine',
           renderEmpty: 'OB.UI.RenderEmpty'
@@ -167,6 +167,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalBPLocationShip',
+  classes: 'obUiModalSelector',
   topPosition: '125px',
   executeOnShow: function () {
     if (!this.isInitialized()) {
@@ -195,7 +196,8 @@ enyo.kind({
   },
   i18nHeader: 'OBPOS_LblAssignCustomerShipAddress',
   body: {
-    kind: 'OB.UI.ListBpsShipLoc'
+    kind: 'OB.UI.ListBpsShipLoc',
+    classes: 'obUiModalSelector-body-obUiListBpsShipLoc'
   },
   getScrollableTable: function () {
     return this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter;

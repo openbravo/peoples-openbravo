@@ -2650,6 +2650,50 @@
 
 
 
+/***********************   ***********************/
+/*            File: bplocationship.js            */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ListBpsShipLocLine
+# Inherits: [OB.UI.ListBpsLocLine]
+*/
+.obUiListBpsShipLocLine {}
+
+
+/*
+# Component:OB.UI.ListBpsShipLoc
+*/
+.obUiListBpsShipLoc {}
+
+.obUiListBpsShipLoc-container1 {}
+
+.obUiListBpsShipLoc-container1-container1 {
+  border-bottom: 1px solid #cccccc;
+}
+
+.obUiListBpsShipLoc-container1-container1-container1 {}
+
+.obUiListBpsShipLoc-container1-container1-container1-bpsloclistitemprinter {
+/* Inherits: [OB.UI.ScrollableTable] */
+  max-height: 400px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+
+/*
+# Component: OB.UI.ModalSelector
+# Inherits: [OB.UI.ModalBPLocationShip]
+*/
+.obUiModalSelector {}
+
+.obUiModalSelector-body-obUiListBpsShipLoc {
+/* Inherits: [OB.UI.ListBpsShipLoc] */
+}
+
+
+
 
 /*****************/
 /*      JAR      */
