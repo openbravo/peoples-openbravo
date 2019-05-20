@@ -837,7 +837,7 @@ public class ModelProvider implements OBSingleton {
    */
   public boolean shouldGenerateChildPropertyInParent(Property p,
       boolean generateAllChildProperties) {
-    return (true || p.isChildPropertyInParent() || generateAllChildProperties) && !p.isOneToMany()
+    return (p.isChildPropertyInParent() || generateAllChildProperties) && !p.isOneToMany()
         && !p.isId() && !p.isAuditInfo() && p.getReferencedProperty() != null
         && (!ENTITIES_WITHOUT_ALL_CHILD_PROPERTIES
             .contains(p.getReferencedProperty().getEntity().getClassName()) || p.isParent())
