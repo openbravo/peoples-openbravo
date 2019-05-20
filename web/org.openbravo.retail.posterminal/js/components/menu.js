@@ -387,32 +387,6 @@ enyo.kind({
   action: {
     window: 'retail.pointofsale',
     name: 'showModalReceiptProperties'
-  },
-  init: function (model) {
-    this.model = model;
-    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
-      if (changedModel.isOrder()) {
-        if (model.get('order').get('isEditable')) {
-          this.setDisabled(false);
-          this.adjustVisibilityBasedOnPermissions();
-        } else {
-          this.setDisabled(true);
-        }
-        return;
-      }
-      if (changedModel.isMultiOrder()) {
-        this.setDisabled(true);
-      }
-    }, this);
-    this.model.get('order').on('change:isEditable', function (newValue) {
-      if (newValue) {
-        if (newValue.get('isEditable') === false) {
-          this.setShowing(false);
-          return;
-        }
-      }
-      this.setShowing(true);
-    }, this);
   }
 });
 
