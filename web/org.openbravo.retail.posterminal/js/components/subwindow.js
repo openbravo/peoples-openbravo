@@ -169,14 +169,15 @@ enyo.kind({
   components: [{
     name: "closebutton",
     tag: 'div',
-    classes: 'subwindow-closebutton',
+    classes: 'obUiSubwindowHeader-closebutton',
     components: [{
       tag: 'span',
+      classes: 'obUiSubwindowHeader-closebutton-element1',
       allowHtml: true,
       content: '&times;'
     }]
   }, {
-    classes: 'subwindowheadertext',
+    classes: 'obUiSubwindowHeader-headermessage',
     name: 'headermessage'
   }],
   initComponents: function () {
