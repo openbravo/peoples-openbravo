@@ -759,8 +759,9 @@ public class POSUtils {
               + " null, null, p.obposApplications.client.id, "
               + "p.obposApplications.organization.id) as rate, obpos_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate"
               + " from OBPOS_App_Payment as p left join p.financialAccount as f "
-              + "left join f.currency as c where p.obposApplications.id ='" + posTerminalId + "'");
+              + "left join f.currency as c where p.obposApplications.id = :terminalId");
 
+      currencyRateQuery.setParameter("terminalId", posTerminalId);
       currencyRateQuery.list(); // No need to get the result, just execute the query
 
       // The query succeeded, then the check is valid.
