@@ -20,7 +20,7 @@ enyo.kind({
   events: {
     onChangeSubWindow: ''
   },
-  classes: 'subwindow',
+  classes: 'obUiSubwindow',
   showing: false,
   handlers: {
     onkeydown: 'keydownHandler'
@@ -137,9 +137,11 @@ enyo.kind({
   header: {},
   body: {},
   components: [{
-    name: 'subWindowHeader'
+    name: 'subWindowHeader',
+    classes: 'obUiSubwindow-subWindowHeader'
   }, {
-    name: 'subWindowBody'
+    name: 'subWindowBody',
+    classes: 'obUiSubwindow-subWindowBody'
   }],
   relComponentsWithSubWindow: function (comp, subWin) {
     if (!comp || !comp.getComponents) {
@@ -163,7 +165,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.SubwindowHeader',
-  classes: 'subwindowheader',
+  classes: 'obUiSubwindowHeader',
   components: [{
     name: "closebutton",
     tag: 'div',

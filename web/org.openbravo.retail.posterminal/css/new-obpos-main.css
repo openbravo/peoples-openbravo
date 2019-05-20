@@ -2519,6 +2519,57 @@
 
 
 
+/***********************   ***********************/
+/*              File: subwindow.js               */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.Subwindow
+# Inherits: [enyo.Popup]
+*/
+.obUiSubwindow {
+  background-color: #FFFFFF;
+  position: relative;
+  z-index: auto;
+}
+
+.obUiSubwindow-subWindowHeader {}
+
+.obUiSubwindow-subWindowBody {}
+
+
+/*
+# Component: OB.UI.SubwindowHeader
+*/
+.obUiSubwindowHeader {
+  padding: 9px 15px;
+}
+
+.obUiSubwindowHeader-closebutton {
+  cursor: pointer;
+  float: right;
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 18px;
+  color: black;
+  text-shadow: 0 1px 0 white;
+  opacity: 0.2;
+}
+
+.obUiSubwindowHeader-closebutton:hover {
+  opacity: 0.5;
+}
+
+.obUiSubwindowHeader-closebutton-element1 {}
+
+.obUiSubwindowHeader-headermessage {
+  line-height: 27px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+
+
 
 /*****************/
 /*      JAR      */
