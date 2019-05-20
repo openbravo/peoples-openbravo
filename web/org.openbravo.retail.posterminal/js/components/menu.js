@@ -396,37 +396,6 @@ enyo.kind({
   action: {
     window: 'retail.pointofsale',
     name: 'invoiceReceipt'
-  },
-  updateVisibility: function (isVisible) {
-    if (!OB.MobileApp.model.hasPermission(this.permission)) {
-      this.hide();
-      return;
-    }
-    if (!isVisible) {
-      this.hide();
-      return;
-    }
-    this.show();
-  },
-  init: function (model) {
-    this.model = model;
-    var receipt = model.get('order');
-    receipt.on('change:generateInvoice change:bp change:isQuotation', function (model) {
-      if (!model.get('isQuotation') && !model.get('generateInvoice') && model.get('bp').get('invoiceTerms') === 'I') {
-        this.updateVisibility(true);
-      } else {
-        this.updateVisibility(false);
-      }
-    }, this);
-    receipt.on('change:bp', function (model) {
-      // if the receip is cloning, then the called to taxIdValidation is not done because this function does a save
-      if (model.get('generateInvoice') && !model.get('cloningReceipt')) {
-        OB.MobileApp.actionsRegistry.execute({
-          window: 'retail.pointofsale',
-          name: 'invoiceReceipt'
-        });
-      }
-    }, this);
   }
 });
 

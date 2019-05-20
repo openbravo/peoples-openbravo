@@ -18,3 +18,35 @@ new OB.State.BackboneProperty({
   },
   property: 'isEditable'
 }));
+
+OB.MobileApp.statesRegistry.register(
+new OB.State.BackboneProperty({
+  window: 'retail.pointofsale',
+  name: 'receipt.generateInvoice',
+  object: function (view) {
+    return view.model.get('order');
+  },
+  property: 'generateInvoice'
+}));
+
+
+OB.MobileApp.statesRegistry.register(
+new OB.State.BackboneProperty({
+  window: 'retail.pointofsale',
+  name: 'receipt.bp',
+  object: function (view) {
+    return view.model.get('order');
+  },
+  property: 'bp'
+}));
+
+
+OB.MobileApp.statesRegistry.register(
+new OB.State.BackboneProperty({
+  window: 'retail.pointofsale',
+  name: 'receipt.isQuotation',
+  object: function (view) {
+    return view.model.get('order');
+  },
+  property: 'isQuotation'
+}));
