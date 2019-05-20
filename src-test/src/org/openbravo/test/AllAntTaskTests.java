@@ -62,6 +62,7 @@ import org.openbravo.test.dal.DalTest;
 import org.openbravo.test.dal.DalUtilTest;
 import org.openbravo.test.dal.DynamicEntityTest;
 import org.openbravo.test.dal.HiddenUpdateTest;
+import org.openbravo.test.dal.ImageTest;
 import org.openbravo.test.dal.IssuesTest;
 import org.openbravo.test.dal.MappingGenerationTest;
 import org.openbravo.test.dal.OBContextTest;
@@ -180,6 +181,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ComputedColumnsTest.class, //
     DatasourceEventObserver.class, //
     PersistanceObserver.class, //
+    ImageTest.class, //
 
     // expression
     EvaluationTest.class, //
