@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2018 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -44,9 +44,17 @@ public class ServicesHQLCriteria extends HQLCriteriaProcess {
           + "     and sprv.validFromDate =" //
           + "             (select max(sprv2.validFromDate)" //
           + "             from ServicePriceRuleVersion sprv2" //
+          + "             left join sprv2.relatedProduct rp" //
+          + "             left join sprv2.relatedProductCategory rpc" //
           + "             where sprv2.product.id = product.id" //
           + "             and sprv2.validFromDate <= now()" //
-          + "             and sprv2.active = true)" //
+          + "             and sprv2.active = true"
+          + "             and ((product.includedProducts = 'Y' and product.includedProductCategories = 'Y') " //
+          + "                  OR (product.includedProducts = 'Y' and  product.includedProductCategories is null) " //
+          + "                  OR (product.includedProducts is null and  product.includedProductCategories = 'Y') " //
+          + "                  OR (product.includedProducts = 'N' and (rp is null OR rp.relatedProduct.id = '$1')) " //
+          + "                  OR (product.includedProductCategories = 'N' and (rpc is null OR rpc.productCategory.id = '$2')) " //
+          + "))" //
           + "     and" //
           + "            ((product.quantityRule = 'UQ'" //
           + "             and" //

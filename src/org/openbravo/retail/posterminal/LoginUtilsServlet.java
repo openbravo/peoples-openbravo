@@ -285,9 +285,10 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       if (userId != null && !userId.isEmpty()) {
         // Terminal access will be checked to ensure that the user has access to the terminal
         OBQuery<TerminalAccess> accessCrit = OBDal.getInstance()
-            .createQuery(TerminalAccess.class, "where userContact.id='" + userId + "'");
+            .createQuery(TerminalAccess.class, "where userContact.id = :userId");
         accessCrit.setFilterOnReadableClients(false);
         accessCrit.setFilterOnReadableOrganization(false);
+        accessCrit.setNamedParameter("userId", userId);
         List<TerminalAccess> accessList = accessCrit.list();
 
         if (accessList.size() != 0) {

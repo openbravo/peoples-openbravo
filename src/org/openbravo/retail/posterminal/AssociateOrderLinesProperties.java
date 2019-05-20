@@ -45,6 +45,7 @@ public class AssociateOrderLinesProperties extends ModelExtension {
         new HQLProperty("bp.id", "bpId"), //
         new HQLProperty("bp.name", "bpName"), //
         new HQLProperty("p.id", "productId"), //
+        new HQLProperty("p.productCategory.id", "productCategory"), //
         new HQLProperty("p.name", "productName")); //
 
   }
