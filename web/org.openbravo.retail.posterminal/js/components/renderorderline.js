@@ -359,27 +359,32 @@ enyo.kind({
   handlers: {
     onRightToolbarDisabled: 'toggleVisibility'
   },
+  addServicesFilter: function (orderline) {
+    var product = orderline.get('product');
+    OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
+    OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB.UI.SearchServicesFilter({
+      text: product.get("_identifier"),
+      productId: product.id,
+      productList: null,
+      orderline: orderline,
+      orderlineList: null,
+      extraParams: this.extraParams
+    }));
+    this.bubble('onTabChange', {
+      tabPanel: 'searchCharacteristic'
+    });
+    this.bubble('onSelectFilter', {
+      params: {
+        skipProductCharacteristic: true
+      }
+    });
+  },
   tap: function (inSender, inEvent) {
-    var product = this.owner.model.get('product');
+    var product = this.owner.model.get('product'),
+        orderline = this.owner.model;
     if (product) {
-      OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
-      OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB.UI.SearchServicesFilter({
-        text: product.get("_identifier"),
-        productId: product.id,
-        productList: null,
-        orderline: this.owner.model,
-        orderlineList: null
-      }));
-      var me = this;
-      me.bubble('onTabChange', {
-        tabPanel: 'searchCharacteristic'
-      });
-      me.bubble('onSelectFilter', {
-        params: {
-          skipProductCharacteristic: true
-        }
-      });
-      me.owner.model.set("obposServiceProposed", true);
+      this.addServicesFilter(orderline);
+      orderline.set("obposServiceProposed", true);
       OB.MobileApp.model.receipt.save();
       return true;
     }

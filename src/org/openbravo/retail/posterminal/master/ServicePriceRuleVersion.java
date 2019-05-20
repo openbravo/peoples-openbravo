@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -50,7 +50,8 @@ public class ServicePriceRuleVersion extends ProcessHQLQuery {
         .getPropertyExtensions(extensions);
 
     hqlQueries.add("select" + regularPriceRuleVersionHQLProperties.getHqlSelect()
-        + "from ServicePriceRuleVersion sprv "
+        + "from ServicePriceRuleVersion sprv " + "left join sprv.relatedProduct rp "
+        + "left join sprv.relatedProductCategory rpc "
         + "where $filtersCriteria and $hqlCriteria and sprv.$naturalOrgCriteria and sprv.$incrementalUpdateCriteria "
         + "order by sprv.validFromDate desc, sprv.id ");
 
