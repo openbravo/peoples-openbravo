@@ -2563,6 +2563,8 @@ isc.OBViewGrid.addProperties({
           }
           // assume a date range filter item
           if (isc.isA.Date(value) && field.filterEditorType === 'OBMiniDateRangeItem') {
+            // set the logicalDate property to true so that the date values contained in the filter criteria will always be serialized as plain dates
+            value.logicalDate = true;
             filterFormItem.setSingleDateValue(value);
           } else {
             grid.filterEditor.getEditForm().setValue(field.name, OB.Utilities.encodeSearchOperator(value));
