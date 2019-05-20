@@ -2735,6 +2735,24 @@
 
 
 
+/***********************   ***********************/
+/*          File: modalmodulesindev.js           */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalModulesInDev
+# Inherits: [OB.UI.ModalInfo]
+*/
+.obUiModalModulesInDev {}
+
+.obUiModalModulesInDev-bodyContent {}
+
+.obUiModalModulesInDev-bodyContent-message {}
+
+.obUiModalModulesInDev-bodyContent-link {}
+
+
+
 
 /*****************/
 /*      JAR      */

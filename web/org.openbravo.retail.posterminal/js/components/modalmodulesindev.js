@@ -12,12 +12,16 @@
 enyo.kind({
   name: 'OB.UI.ModalModulesInDev',
   kind: 'OB.UI.ModalInfo',
+  classes: 'obUiModalModulesInDev',
   bodyContent: {
+    classes: 'obUiModalModulesInDev-bodyContent',
     components: [{
       name: 'message',
+      classes: 'obUiModalModulesInDev-bodyContent-message',
       content: ''
     }, {
       name: 'link',
+      classes: 'obUiModalModulesInDev-bodyContent-link',
       tag: 'a href="http://wiki.openbravo.com/wiki/WebPOS_and_HTTPS" target="_blank"',
       content: '',
       showing: false
