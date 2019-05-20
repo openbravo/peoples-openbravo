@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -42,7 +42,7 @@ public class VoidLayaway {
     executeHooks(layawayhooks, jsonorder, order);
 
     TriggerHandler.getInstance().disable();
-    OBContext.setAdminMode(true);
+    OBContext.setAdminMode();
     try {
       order.setDocumentStatus("CL");
       order.setCancelled(true);
