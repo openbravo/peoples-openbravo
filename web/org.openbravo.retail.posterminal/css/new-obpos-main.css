@@ -2625,6 +2625,31 @@
 
 
 
+/***********************   ***********************/
+/*       File: modalmorepaymentmethods.js        */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.PaymentMethods
+# Inherits: [OB.UI.Modal]
+*/
+.obObposPointOfSaleUiPaymentMethods {}
+
+.obObposPointOfSaleUiPaymentMethods-body {}
+
+.obObposPointOfSaleUiPaymentMethods-body-container1 {}
+
+.obObposPointOfSaleUiPaymentMethods-body-container1-container1 {
+  border-bottom: 1px solid #cccccc;
+}
+
+.obObposPointOfSaleUiPaymentMethods-body-container1-container1-buttonslist {
+  overflow: auto;
+  max-height: 402px;
+}
+
+
+
 
 /*****************/
 /*      JAR      */

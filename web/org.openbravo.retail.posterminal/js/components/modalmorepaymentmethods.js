@@ -11,6 +11,7 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
   kind: 'OB.UI.Modal',
+  classes: 'obObposPointOfSaleUiPaymentMethods',
   topPosition: '125px',
   i18nHeader: 'OBPOS_MorePaymentsHeader',
   sideButtons: [],
@@ -18,16 +19,14 @@ enyo.kind({
     onRegisterButton: 'registerMorePaymentMethod'
   },
   body: {
-    classes: 'row-fluid',
+    classes: 'obObposPointOfSaleUiPaymentMethods-body',
     components: [{
-      classes: 'span12',
+      classes: 'obObposPointOfSaleUiPaymentMethods-body-container1',
       components: [{
-        style: 'border-bottom: 1px solid #cccccc;',
-        classes: 'row-fluid',
+        classes: 'obObposPointOfSaleUiPaymentMethods-body-container1-container1',
         components: [{
-          style: 'overflow: auto; max-height: 402px',
           name: 'buttonslist',
-          classes: 'span12'
+          classes: 'obObposPointOfSaleUiPaymentMethods-body-container1-container1-buttonslist'
         }]
       }]
     }]
