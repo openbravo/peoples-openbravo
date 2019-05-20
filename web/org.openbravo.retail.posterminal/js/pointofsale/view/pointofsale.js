@@ -11,6 +11,156 @@
 
 // Point of sale main window view
 enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.BottomRightLayout',
+  classes: 'obObposPointOfSaleUiBottomRightLayout',
+  applyChildTask: true
+});
+
+enyo.kind({
+  name: 'OB.UI.GridKeyboard',
+  classes: 'obUiGridKeyboard',
+  components: [{
+    kind: 'OB.UI.ActionButton',
+    name: 'addqty',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-addqty',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'addQuantity'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'removeqty',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-removeqty',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'removeQuantity'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'backspace',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-backspace',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'keyboard-Backspace'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'keyboardkey0',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-keyboardkey0',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'keyboard-0'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'keyboardkey1',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-keyboardkey1',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'keyboard-1'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'keyboardkey2',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-keyboardkey2',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'keyboard-2'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'keyboardkey3',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-keyboardkey3',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'keyboard-3'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'keyboardkey4',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-keyboardkey4',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'keyboard-4'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'keyboardkey5',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-keyboardkey5',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'keyboard-5'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'keyboardkey6',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-keyboardkey6',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'keyboard-6'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'keyboardkey7',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-keyboardkey7',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'keyboard-7'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'keyboardkey8',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-keyboardkey8',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'keyboard-8'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'keyboardkey9',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-keyboardkey9',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'keyboard-9'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'keyboardkeyPeriod',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-keyboardkeyPeriod',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'keyboard-Period'
+    }
+  }, {
+    kind: 'OB.UI.ActionButton',
+    name: 'keyboardkeyEnter',
+    classes: 'btnlink btnlink-small btnlink-gray obUiGridKeyboard-obUiActionButton-generic obUiGridKeyboard-keyboardkeyEnter',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'keyboard-Enter'
+    }
+  }]
+});
+
+enyo.kind({
+  kind: 'OB.UI.GridKeyboard',
+  name: 'OB.OBPOSPointOfSale.UI.GridKeyboard',
+  classes: 'obObposPointOfSaleUiGridKeyboard'
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.GridKeyboardEdit',
+  kind: 'OB.OBPOSPointOfSale.UI.GridKeyboard',
+  classes: 'obObposPointOfSaleUiGridKeyboardEdit'
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.GridKeyboardScan',
+  kind: 'OB.OBPOSPointOfSale.UI.GridKeyboard',
+  classes: 'obObposPointOfSaleUiGridKeyboardScan'
+});
+
+enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.PointOfSale',
   kind: 'OB.UI.WindowView',
   windowmodel: OB.OBPOSPointOfSale.Model.PointOfSale,
@@ -372,26 +522,41 @@ enyo.kind({
             kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane',
             name: 'toolbarpane'
           }, {
-            name: 'bottomRightLayoutContainer',
-            classes: 'bottomRightLayoutContainer',
+            name: 'bottomRightContent',
+            classes: 'obObposPointOfSaleUiPointOfSale-keyboardTabsPanel-bottomRightContent',
             components: [{
-              name: 'bottomRightLayout',
+              name: 'bottomRightLayoutContainer',
+              classes: 'obObposPointOfSaleUiPointOfSale-bottomRightContent-bottomRightLayoutContainer',
               showing: false,
               components: [{
-                name: 'obpos_pointofsale_scan_bottomRightLayout',
+                kind: 'OB.OBPOSPointOfSale.UI.BottomRightLayout',
+                activeTab: 'scan',
+                name: 'bottomRightScan',
+                classes: 'obObposPointOfSaleUiPointOfSale-bottomRightLayoutContainer-bottomRightScan',
                 components: [{
                   kind: 'OB.UI.ActionButtonArea',
-                  name: 'obpos_pointofsale_scan_bottomrightaba1',
+                  name: 'bottomRightScanAba1',
                   abaIdentifier: 'obpos_pointofsale_scan_bottomrightaba1',
-                  classes: 'obpos_pointofsale_scan_bottomrightaba1'
+                  classes: 'obObposPointOfSaleUiPointOfSale-bottomRightScan-bottomRightScanAba1'
+                }, {
+                  kind: 'OB.OBPOSPointOfSale.UI.GridKeyboardScan',
+                  name: 'bottomRightScanKeyboard',
+                  classes: 'obObposPointOfSaleUiPointOfSale-bottomRightScan-bottomRightScanKeyboard'
                 }]
               }, {
-                name: 'obpos_pointofsale_edit_bottomRightLayout',
+                kind: 'OB.OBPOSPointOfSale.UI.BottomRightLayout',
+                activeTab: 'edit',
+                name: 'bottomRightEdit',
+                classes: 'obObposPointOfSaleUiPointOfSale-bottomRightLayout_edit',
                 components: [{
                   kind: 'OB.UI.ActionButtonArea',
-                  name: 'obpos_pointofsale_edit_bottomrightaba1',
+                  name: 'bottomRightEditAba1',
                   abaIdentifier: 'obpos_pointofsale_edit_bottomrightaba1',
-                  classes: 'obpos_pointofsale_edit_bottomrightaba1'
+                  classes: 'obObposPointOfSaleUiPointOfSale-bottomRightEdit-bottomRightEditAba1'
+                }, {
+                  kind: 'OB.OBPOSPointOfSale.UI.GridKeyboardEdit',
+                  name: 'bottomRightEditKeyboard',
+                  classes: 'obObposPointOfSaleUiPointOfSale-BottomRightEdit-bottomRightEditKeyboard'
                 }]
               }]
             }, {
@@ -1649,20 +1814,20 @@ enyo.kind({
     if (newTab === 'edit' || newTab === 'scan') {
       this.$.multiColumn.$.rightPanel.$.keyboardWrapper.setShowing(false);
       this.$.multiColumn.$.rightPanel.$.keyboard.setShowing(false);
-      this.$.multiColumn.$.rightPanel.$.bottomRightLayout.setShowing(true);
+      this.$.multiColumn.$.rightPanel.$.bottomRightLayoutContainer.setShowing(true);
       if (newTab === 'edit') {
-        this.$.multiColumn.$.rightPanel.$.obpos_pointofsale_scan_bottomRightLayout.setShowing(false);
-        this.$.multiColumn.$.rightPanel.$.obpos_pointofsale_edit_bottomRightLayout.setShowing(true);
+        this.$.multiColumn.$.rightPanel.$.bottomRightScan.setShowing(false);
+        this.$.multiColumn.$.rightPanel.$.bottomRightEdit.setShowing(true);
       } else if (newTab === 'scan') {
-        this.$.multiColumn.$.rightPanel.$.obpos_pointofsale_edit_bottomRightLayout.setShowing(false);
-        this.$.multiColumn.$.rightPanel.$.obpos_pointofsale_scan_bottomRightLayout.setShowing(true);
+        this.$.multiColumn.$.rightPanel.$.bottomRightEdit.setShowing(false);
+        this.$.multiColumn.$.rightPanel.$.bottomRightScan.setShowing(true);
       }
     } else {
       this.$.multiColumn.$.rightPanel.$.keyboardWrapper.setShowing(true);
       this.$.multiColumn.$.rightPanel.$.keyboard.setShowing(true);
-      this.$.multiColumn.$.rightPanel.$.bottomRightLayout.setShowing(false);
-      this.$.multiColumn.$.rightPanel.$.obpos_pointofsale_edit_bottomRightLayout.setShowing(false);
-      this.$.multiColumn.$.rightPanel.$.obpos_pointofsale_scan_bottomRightLayout.setShowing(false);
+      this.$.multiColumn.$.rightPanel.$.bottomRightLayoutContainer.setShowing(false);
+      this.$.multiColumn.$.rightPanel.$.bottomRightEdit.setShowing(false);
+      this.$.multiColumn.$.rightPanel.$.bottomRightScan.setShowing(false);
     }
   },
   initComponents: function () {

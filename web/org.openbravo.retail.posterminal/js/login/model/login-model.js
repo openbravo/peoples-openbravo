@@ -217,6 +217,7 @@
                       //
                       terminalModel.get('terminal').terminalType.uiConfiguration.abas.push({
                         searchKey: 'obpos_pointofsale_scan_bottomrightaba1',
+                        modifier: 'btm',
                         actions: [{
                           searchKey: 'returnReceipt'
                         }, {
