@@ -29,7 +29,6 @@ new OB.State.BackboneProperty({
   property: 'generateInvoice'
 }));
 
-
 OB.MobileApp.statesRegistry.register(
 new OB.State.BackboneProperty({
   window: 'retail.pointofsale',
@@ -40,7 +39,6 @@ new OB.State.BackboneProperty({
   property: 'bp'
 }));
 
-
 OB.MobileApp.statesRegistry.register(
 new OB.State.BackboneProperty({
   window: 'retail.pointofsale',
@@ -49,4 +47,14 @@ new OB.State.BackboneProperty({
     return view.model.get('order');
   },
   property: 'isQuotation'
+}));
+
+OB.MobileApp.statesRegistry.register(
+new OB.State.BackboneProperty({
+  window: 'retail.pointofsale',
+  name: 'receipt.orderType',
+  object: function (view) {
+    return view.model.get('order');
+  },
+  property: 'orderType'
 }));
