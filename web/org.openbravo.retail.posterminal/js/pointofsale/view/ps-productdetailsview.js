@@ -262,8 +262,8 @@ enyo.kind({
               price: this.leftSubWindow.product.get('standardPrice')
             },
             organization: {
-              id: OB.MobileApp.model.get('store')[0].id,
-              name: OB.MobileApp.model.get('store')[0].name
+              id: OB.MobileApp.model.get('terminal').organization,
+              name: OB.I18N.getLabel('OBPOS_LblThisStore', [OB.MobileApp.model.get('terminal').organization$_identifier])
             }
           };
           selectedStoreCallBack(data);

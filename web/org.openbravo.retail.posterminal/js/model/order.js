@@ -4419,8 +4419,8 @@
           terminalDocNoPrefix, newDocNo = '',
           cancelAndReplaceSeparator = OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator || '-',
           terminalOrganization = {
-          id: OB.MobileApp.model.get('store')[0].id,
-          name: OB.MobileApp.model.get('store')[0].name
+          id: OB.MobileApp.model.get('terminal').organization,
+          name: OB.I18N.getLabel('OBPOS_LblThisStore', [OB.MobileApp.model.get('terminal').organization$_identifier])
           },
           terminalWarehouse = {
           id: OB.MobileApp.model.get('warehouses')[0].warehouseid,
