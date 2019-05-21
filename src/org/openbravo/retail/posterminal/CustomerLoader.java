@@ -194,8 +194,9 @@ public class CustomerLoader extends POSDataSynchronizationProcess
     // customer tab
     customer.setCustomer(true);
     customer.setCreditLimit(BigDecimal.ZERO);
-
     customer.setNewOBObject(true);
+    setBpLanguage(customer, jsonCustomer);
+    setGreetings(customer, jsonCustomer);
     OBDal.getInstance().save(customer);
     return customer;
   }
