@@ -12,6 +12,7 @@
 enyo.kind({
   name: 'OBPOS_StandardProvider',
   checkOverpayment: true,
+  classes: 'obPosStandardProvider',
   providerComponent: null,
   statics: {
     RESULT_SUCCESS: 0,
