@@ -93,8 +93,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess
 
         customer = editBPartner(customer, jsoncustomer);
       }
-      setBpLanguage(customer, jsoncustomer);
-      setGreetings(customer, jsoncustomer);
+
       // Call all customerCreations injected.
       executeHooks(customerCreations, jsoncustomer, customer);
 
@@ -232,6 +231,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess
           OBMOBCUtils.calculateServerDate((String) jsonCustomer.get("birthDay"), timezoneOffset));
 
     }
+    setBpLanguage(customer, jsonCustomer);
+    setGreetings(customer, jsonCustomer);
     OBDal.getInstance().save(customer);
     return customer;
   }
@@ -429,7 +430,6 @@ public class CustomerLoader extends POSDataSynchronizationProcess
       obCriteria.setFilterOnReadableOrganization(false);
       obCriteria.setMaxResults(1);
       Language language = (Language) obCriteria.uniqueResult();
-      OBDal.getInstance().save(language);
       customer.setLanguage(language);
     }
   }
