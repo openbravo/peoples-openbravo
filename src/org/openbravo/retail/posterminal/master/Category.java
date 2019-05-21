@@ -100,7 +100,7 @@ public class Category extends ProcessHQLQuery {
     query.append(regularProductsCategoriesHQLProperties.getHqlSelect());
     if (isCrossStoreEnabled) {
       query.append(
-          " , min(case when aCat.obretcoProductlist.id = :productListId then 'N' else 'Y' end) as crossStore");
+          " , case when min(case when aCat.obretcoProductlist.id = :productListId then 'N' else 'Y' end) = 'N' then false else true end as crossStore");
     } else {
       query.append(" , false as crossStore");
     }
@@ -127,7 +127,7 @@ public class Category extends ProcessHQLQuery {
     query.append(regularProductsCategoriesHQLProperties.getHqlSelect());
     if (isCrossStoreEnabled) {
       query.append(
-          " , min(case when ad_org_isinnaturaltree(pCat.organization.id, :orgId, pCat.client.id) = 'Y' then 'N' else 'Y' end) as crossStore");
+          " , case when min(case when ad_org_isinnaturaltree(pCat.organization.id, :orgId, pCat.client.id) = 'Y' then 'N' else 'Y' end) = 'N' then false else true end as crossStore");
     } else {
       query.append(" , false as crossStore");
     }
