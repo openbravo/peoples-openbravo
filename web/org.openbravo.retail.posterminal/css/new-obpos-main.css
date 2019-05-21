@@ -3999,6 +3999,28 @@
 
 
 
+/***********************   ***********************/
+/*             File: modalpayment.js             */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalPayment
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalPayment {
+  max-height: 600px;
+}
+
+.obUiModalPayment-bodyContent-provider-generic {}
+
+
+/*
+# Component: OB.UI.ModalPaymentVoid
+# Inherits: [OB.UI.ModalAction]
+*/
+
+
+
 
 /*****************/
 /*      JAR      */
