@@ -100,7 +100,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SalesRepresentative',
     name: 'salesrepresentativebutton',
-    classes: 'obUiModalReceiptPropertiesImpl-newAttributes-salesRepresentativeBox',
+    classes: 'obUiModalReceiptPropertiesImpl-newAttributes-salesrepresentativebutton',
     i18nLabel: 'OBPOS_SalesRepresentative',
     permission: 'OBPOS_salesRepresentative.receipt',
     permissionOption: 'OBPOS_SR.comboOrModal'
