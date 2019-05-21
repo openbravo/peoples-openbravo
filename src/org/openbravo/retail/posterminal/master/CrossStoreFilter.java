@@ -73,7 +73,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
       final String orgId = jsonsent.getString("organization");
       final String posId = jsonsent.getString("pos");
       final String productId = jsonsent.getString("product");
-      final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
+      final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId, true);
       final Date terminalDate = OBMOBCUtils.calculateServerDate(
           jsonsent.getJSONObject("parameters").getString("terminalTime"),
           jsonsent.getJSONObject("parameters")

@@ -94,11 +94,7 @@ public class Product extends ProcessHQLQuery {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      final Date terminalDate = OBMOBCUtils.calculateServerDate(
-          jsonsent.getJSONObject("parameters").getString("terminalTime"),
-          jsonsent.getJSONObject("parameters")
-              .getJSONObject("terminalTimeOffset")
-              .getLong("value"));
+      final Date terminalDate = getTerminalDate(jsonsent);
 
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
@@ -108,18 +104,18 @@ public class Product extends ProcessHQLQuery {
 
       final Calendar now = Calendar.getInstance();
       final String posId = getTerminalId(jsonsent);
-      final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
-      final String assortmentId = POSUtils.getProductListByPosterminalId(posId).getId();
+      final List<String> orgIds = POSUtils.getOrgListCrossStore(posId, isCrossStoreSearch);
+      final String productListId = POSUtils.getProductListByPosterminalId(posId).getId();
       final String priceListVersionId = POSUtils.getPriceListVersionByOrgId(orgId, terminalDate)
           .getId();
 
       final Map<String, Object> paramValues = new HashMap<>();
-      paramValues.put("assortmentId", assortmentId);
+      paramValues.put("productListId", productListId);
       paramValues.put("priceListVersionId", priceListVersionId);
       paramValues.put("orgId", orgId);
-      paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
-      paramValues.put("endingDate", now.getTime());
+      paramValues.put("orgIds", orgIds);
       paramValues.put("startingDate", now.getTime());
+      paramValues.put("endingDate", now.getTime());
       paramValues.put("terminalDate", terminalDate);
       if (isRemote && isMultipricelist && isMultiPriceListSearch) {
         paramValues.put("multipriceListVersionId",
@@ -138,23 +134,20 @@ public class Product extends ProcessHQLQuery {
     try {
       OBContext.setAdminMode(true);
 
-      final Date terminalDate = OBMOBCUtils.calculateServerDate(
-          jsonsent.getJSONObject("parameters").getString("terminalTime"),
-          jsonsent.getJSONObject("parameters")
-              .getJSONObject("terminalTimeOffset")
-              .getLong("value"));
+      final Date terminalDate = getTerminalDate(jsonsent);
+      final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final String posId = getTerminalId(jsonsent);
-      final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
-      final String assortmentId = POSUtils.getProductListByPosterminalId(posId).getId();
+      final List<String> orgIds = POSUtils.getOrgListCrossStore(posId, isCrossStoreSearch);
+      final String productListId = POSUtils.getProductListByPosterminalId(posId).getId();
       final String priceListVersionId = POSUtils.getPriceListVersionByOrgId(orgId, terminalDate)
           .getId();
 
       final Map<String, Object> paramValues = new HashMap<>();
-      paramValues.put("assortmentId", assortmentId);
+      paramValues.put("productListId", productListId);
       paramValues.put("priceListVersionId", priceListVersionId);
       paramValues.put("orgId", orgId);
-      paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
+      paramValues.put("orgIds", orgIds);
       paramValues.put("terminalDate", terminalDate);
       return paramValues;
     } finally {
@@ -235,9 +228,7 @@ public class Product extends ProcessHQLQuery {
       final boolean useGetForProductImages, final boolean isMultipricelist,
       final boolean allowNoPriceInMainPriceList, final HQLPropertyList regularProductsHQLProperties)
       throws JSONException {
-    Long lastUpdated = jsonsent.has("lastUpdated")
-        && !jsonsent.get("lastUpdated").equals("undefined")
-        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
+    final Long lastUpdated = getLastUpdated(jsonsent);
 
     String hql = "select" + regularProductsHQLProperties.getHqlSelect();
     hql += getRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages,
@@ -294,9 +285,9 @@ public class Product extends ProcessHQLQuery {
 
     if (isMultipricelist && allowNoPriceInMainPriceList
         && (!isRemote || isMultiPriceListSearch(jsonsent))) {
-      hql += "AND (pli.obretcoProductlist.id = :assortmentId) ";
+      hql += "AND (pli.obretcoProductlist.id = :productListId) ";
     } else {
-      hql += "AND (pli.obretcoProductlist.id = :assortmentId) ";
+      hql += "AND (pli.obretcoProductlist.id = :productListId) ";
       hql += "AND (ppp.priceListVersion.id = :priceListVersionId) ";
     }
 
@@ -313,13 +304,14 @@ public class Product extends ProcessHQLQuery {
     genericProductsHqlString += "left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp "
         + " where $filtersCriteria AND ppp.priceListVersion.id = :priceListVersionId AND product.isGeneric = 'Y' AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, "
         + " PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = :priceListVersionId "
-        + " and pli2.obretcoProductlist.id = :assortmentId)" //
+        + " and pli2.obretcoProductlist.id = :productListId)" //
         + " order by product.id";
     return genericProductsHqlString;
   }
 
-  private String getPackProductHqlString(final boolean isRemote, final boolean useGetForProductImages,
-      final boolean isCrossStoreSearch, final HQLPropertyList regularProductsDiscHQLProperties) {
+  private String getPackProductHqlString(final boolean isRemote,
+      final boolean useGetForProductImages, final boolean isCrossStoreSearch,
+      final HQLPropertyList regularProductsDiscHQLProperties) {
     final StringBuilder query = new StringBuilder();
     query.append(" select");
     query.append(regularProductsDiscHQLProperties.getHqlSelect());
@@ -343,7 +335,7 @@ public class Product extends ProcessHQLQuery {
   }
 
   static String getPackProductWhereClause(final String packAlias, final boolean isCrossStore) {
-    final String storeFilter = isCrossStore ? ":crossStoreOrgIds" : ":orgId";
+    final String storeFilter = isCrossStore ? ":orgIds" : ":orgId";
 
     final StringBuilder query = new StringBuilder();
     query.append(" %1$s.$readableSimpleClientCriteria");
@@ -451,7 +443,7 @@ public class Product extends ProcessHQLQuery {
     query.append(" and exists (");
     query.append("   select 1");
     query.append("   from Organization o");
-    query.append("   where o.id in :crossStoreOrgIds");
+    query.append("   where o.id in :orgIds");
     query.append("   and exists (");
     query.append("     select 1");
     query.append("     from OBRETCO_Prol_Product pli");
@@ -482,7 +474,7 @@ public class Product extends ProcessHQLQuery {
     query.append("   select 1");
     query.append("   from OBRETCO_Prol_Product pli");
     query.append("   where pli.product.id = product.id");
-    query.append("   and pli.obretcoProductlist.id = :assortmentId");
+    query.append("   and pli.obretcoProductlist.id = :productListId");
     query.append(" )");
     if (showProductsWithCurrentPrice) {
       query.append(" or not exists (");
@@ -548,6 +540,17 @@ public class Product extends ProcessHQLQuery {
       log.error("Error while getting pos " + e.getMessage(), e);
     }
     return terminalId;
+  }
+
+  private static Date getTerminalDate(JSONObject jsonsent) throws JSONException {
+    return OBMOBCUtils.calculateServerDate(
+        jsonsent.getJSONObject("parameters").getString("terminalTime"),
+        jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
+  }
+
+  private Long getLastUpdated(final JSONObject jsonsent) throws JSONException {
+    return jsonsent.has("lastUpdated") && !jsonsent.get("lastUpdated").equals("undefined")
+        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
   }
 
   private static boolean isMultiPriceListSearch(final JSONObject jsonsent) {

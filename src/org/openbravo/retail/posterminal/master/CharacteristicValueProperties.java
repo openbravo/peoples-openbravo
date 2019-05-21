@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal.master;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
@@ -27,19 +28,7 @@ public class CharacteristicValueProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(final Object params) {
-    boolean isRemote = false;
-    try {
-      OBContext.setAdminMode(false);
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-          OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null));
-    } catch (PropertyException e) {
-      log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
+    boolean isRemote = getPreference("OBPOS_remote.product");
     final ArrayList<HQLProperty> list = new ArrayList<>();
     list.add(new HQLProperty("cv.id", "id"));
     list.add(new HQLProperty("cv.name", "name"));
@@ -54,6 +43,22 @@ public class CharacteristicValueProperties extends ModelExtension {
     list.add(new HQLProperty("cv.active", "active"));
     list.add(new HQLProperty("ch.name", "characteristicName"));
     return list;
+  }
+
+  private boolean getPreference(final String preference) {
+    OBContext.setAdminMode(false);
+    boolean value;
+    try {
+      value = StringUtils.equals(Preferences.getPreferenceValue(preference, true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null), "Y");
+    } catch (PropertyException e) {
+      value = false;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return value;
   }
 
 }

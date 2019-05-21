@@ -205,10 +205,11 @@ public class POSUtils {
     return null;
   }
 
-  public static List<String> getOrgListCrossStore(final String posterminalId) {
+  public static List<String> getOrgListCrossStore(final String posterminalId,
+      final boolean isCrossStore) {
     final OBPOSApplications posterminal = getTerminalById(posterminalId);
 
-    if (isCrossStoreEnabled(posterminal)) {
+    if (isCrossStore) {
       final Organization crossStore = posterminal.getOrganization()
           .getOBRETCOCrossStoreOrganization();
       return getOrgListByCrossStoreId(crossStore.getId());
@@ -361,13 +362,14 @@ public class POSUtils {
   }
 
   @SuppressWarnings("unchecked")
-  public static Set<String> getProductListCrossStore(final String posterminalId) {
+  public static Set<String> getProductListCrossStore(final String posterminalId,
+      final boolean isCrossStore) {
     OBContext.setAdminMode(false);
     try {
       Set<String> productList = new HashSet<>();
       final OBPOSApplications posterminal = getTerminalById(posterminalId);
 
-      if (isCrossStoreEnabled(posterminal)) {
+      if (isCrossStore) {
         final Organization crossStore = posterminal.getOrganization()
             .getOBRETCOCrossStoreOrganization();
 

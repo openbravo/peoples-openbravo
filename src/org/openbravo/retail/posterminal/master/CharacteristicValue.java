@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -58,52 +60,39 @@ public class CharacteristicValue extends ProcessHQLQuery {
   @Override
   protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
     final String posId = jsonsent.getString("pos");
-    final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
-    final String productListId = POSUtils.getProductListByPosterminalId(posId).getId();
+    final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
+    final List<String> orgIds = POSUtils.getOrgListCrossStore(posId, isCrossStoreSearch);
+    final Set<String> productListIds = POSUtils.getProductListCrossStore(posId, isCrossStoreSearch);
 
     final Map<String, Object> paramValues = new HashMap<>();
-    paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
-    paramValues.put("productListId", productListId);
+    paramValues.put("orgIds", orgIds);
+    paramValues.put("productListIds", productListIds);
     return paramValues;
   }
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    final List<String> hqlQueries = new ArrayList<>();
+    final Long lastUpdated = getLastUpdated(jsonsent);
+    final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
+    boolean isRemote = getPreference("OBPOS_remote.product") || isCrossStoreSearch;
     final HQLPropertyList characteristicValueHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
-    final Long lastUpdated = jsonsent.has("lastUpdated")
-        && !jsonsent.get("lastUpdated").equals("undefined")
-        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
-    boolean isRemote = false;
-    try {
-      OBContext.setAdminMode(false);
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-          OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null));
-    } catch (PropertyException e) {
-      log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
-    hqlQueries.add(getCharacteristicValueHqlString(characteristicValueHQLProperties, isRemote,
-        isCrossStoreSearch, lastUpdated));
+    final List<String> hqlQueries = new ArrayList<>();
+    hqlQueries.add(
+        getCharacteristicValueHqlString(characteristicValueHQLProperties, isRemote, lastUpdated));
     return hqlQueries;
   }
 
   private String getCharacteristicValueHqlString(
       final HQLPropertyList characteristicValueHQLProperties, final boolean isRemote,
-      final boolean isCrossStoreSearch, final Long lastUpdated) {
+      final Long lastUpdated) {
     final StringBuilder query = new StringBuilder();
     query.append(" select");
     query.append(characteristicValueHQLProperties.getHqlSelect());
     query.append(" from CharacteristicValue cv");
     query.append(" join cv.characteristic ch");
-    if (isRemote || isCrossStoreSearch) {
+    if (isRemote) {
       query.append(" where cv.$incrementalUpdateCriteria");
     } else {
       query.append(" , ADTreeNode node");
@@ -116,7 +105,7 @@ public class CharacteristicValue extends ProcessHQLQuery {
       query.append("   , OBRETCO_Prol_Product assort");
       query.append("   where pcv.product.id = assort.product.id");
       query.append("   and pcv.characteristicValue.id = cv.id");
-      query.append("   and assort.obretcoProductlist.id = :productListId");
+      query.append("   and assort.obretcoProductlist.id in :productListIds");
       query.append(" ))");
       query.append(" or cv.summaryLevel = true)");
       query.append(" and (cv.$incrementalUpdateCriteria");
@@ -131,11 +120,32 @@ public class CharacteristicValue extends ProcessHQLQuery {
     query.append(" and exists (");
     query.append("   select 1");
     query.append("   from Organization o");
-    query.append("   where o.id in :crossStoreOrgIds");
+    query.append("   where o.id in :orgIds");
     query.append("   and ad_org_isinnaturaltree(cv.organization.id, o.id, o.client.id) = 'Y'");
     query.append(" )");
     query.append(" order by cv.name, cv.id");
     return query.toString();
+  }
+
+  private boolean getPreference(final String preference) {
+    OBContext.setAdminMode(false);
+    boolean value;
+    try {
+      value = StringUtils.equals(Preferences.getPreferenceValue(preference, true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null), "Y");
+    } catch (PropertyException e) {
+      value = false;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return value;
+  }
+
+  private Long getLastUpdated(final JSONObject jsonsent) throws JSONException {
+    return jsonsent.has("lastUpdated") && !jsonsent.get("lastUpdated").equals("undefined")
+        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
   }
 
   private static boolean isCrossStoreSearch(final JSONObject jsonsent) {
