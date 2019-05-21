@@ -9,7 +9,9 @@
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +30,8 @@ public class CharacteristicValueProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(final Object params) {
-    boolean isRemote = getPreference("OBPOS_remote.product");
+    final boolean isCrossStoreSearch = isCrossStoreSearch(params);
+    boolean isRemote = getPreference("OBPOS_remote.product") || isCrossStoreSearch;
     final ArrayList<HQLProperty> list = new ArrayList<>();
     list.add(new HQLProperty("cv.id", "id"));
     list.add(new HQLProperty("cv.name", "name"));
@@ -59,6 +62,16 @@ public class CharacteristicValueProperties extends ModelExtension {
       OBContext.restorePreviousMode();
     }
     return value;
+  }
+
+  private static boolean isCrossStoreSearch(final Object params) {
+    boolean isCrossStoreSearch = false;
+    if (params != null) {
+      @SuppressWarnings("unchecked")
+      final Map<String, Object> args = (HashMap<String, Object>) params;
+      return (boolean) args.get("isCrossStoreSearch");
+    }
+    return isCrossStoreSearch;
   }
 
 }

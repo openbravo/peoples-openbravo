@@ -47,8 +47,9 @@ public class CharacteristicValue extends ProcessHQLQuery {
 
   @Override
   protected List<HQLPropertyList> getHqlProperties(final JSONObject jsonsent) {
-    // Get Product Properties
+    final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
     final Map<String, Object> args = new HashMap<>();
+    args.put("isCrossStoreSearch", isCrossStoreSearch);
     final HQLPropertyList characteristicsHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions, args);
 
@@ -75,8 +76,10 @@ public class CharacteristicValue extends ProcessHQLQuery {
     final Long lastUpdated = getLastUpdated(jsonsent);
     final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
     boolean isRemote = getPreference("OBPOS_remote.product") || isCrossStoreSearch;
+    final Map<String, Object> args = new HashMap<>();
+    args.put("isCrossStoreSearch", isCrossStoreSearch);
     final HQLPropertyList characteristicValueHQLProperties = ModelExtensionUtils
-        .getPropertyExtensions(extensions);
+        .getPropertyExtensions(extensions, args);
 
     final List<String> hqlQueries = new ArrayList<>();
     hqlQueries.add(
