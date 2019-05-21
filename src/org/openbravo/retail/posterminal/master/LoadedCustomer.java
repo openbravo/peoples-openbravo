@@ -75,6 +75,8 @@ public class LoadedCustomer extends ProcessHQLQuery {
     bpartnerHQLQuery.append(" join bpl.businessPartner as bp");
     bpartnerHQLQuery.append(" left outer join bp.aDUserList AS ulist");
     bpartnerHQLQuery.append(" left outer join bp.priceList AS plist");
+    bpartnerHQLQuery.append(" left outer join bp.language AS lang ");
+    bpartnerHQLQuery.append(" left outer join bp.greeting grt ");
     bpartnerHQLQuery.append(" left outer join bp.businessPartnerLocationList AS bpsl");
     bpartnerHQLQuery.append(" where bp.id = :businessPartnerId");
     bpartnerHQLQuery.append(" and bpl.id in (");

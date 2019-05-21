@@ -73,7 +73,8 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
           + "FROM BusinessPartnerLocation bpl left outer join bpl.businessPartner AS bp join bp.aDUserList AS ulist "
           + getWhereClause(location, jsonsent);
     } else {
-      hql = hql + "FROM BusinessPartner bp left outer join bp.aDUserList AS ulist "
+      hql = hql
+          + "FROM BusinessPartner bp left outer join bp.aDUserList AS ulist left outer join bp.language AS lang left outer join bp.greeting grt  "
           + getWhereClause(location, jsonsent);
     }
     hql = hql + "$orderByCriteria";

@@ -69,7 +69,8 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "FROM BusinessPartner AS bp " //
         + "join bp.priceList AS plist " //
         + "left outer join bp.language AS lang " //
-        + "left outer join bp.greeting grt " + "left outer join bp.aDUserList AS ulist "
+        + "left outer join bp.greeting AS grt " //
+        + "left outer join bp.aDUserList AS ulist " //
         + "WHERE $filtersCriteria AND " //
         + "bp.customer = true AND " + "(bp.$incrementalUpdateCriteria) AND "
         + "bp.$readableSimpleClientCriteria AND " + "bp.$naturalOrgCriteria AND "
@@ -84,7 +85,8 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "FROM BusinessPartner AS bp " //
         + "join bp.priceList AS plist " //
         + "left outer join bp.language AS lang " //
-        + "left outer join bp.greeting grt " + "left outer join bp.aDUserList AS ulist "
+        + "left outer join bp.greeting AS grt " //
+        + "left outer join bp.aDUserList AS ulist " //
         + "WHERE $filtersCriteria AND " //
         + "bp.customer = true AND " + "bp.$readableSimpleClientCriteria AND "
         + "bp.$naturalOrgCriteria AND " + "(bp.$incrementalUpdateCriteria) AND "
