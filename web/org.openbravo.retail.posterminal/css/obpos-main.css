@@ -1376,19 +1376,18 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 }
 
 .obObposPointOfSaleUiRightBottomPanelWrapper {
-  margin: 5px;
+  margin: 10px 5px 5px 5px;
 }
 
 .obObposPointOfSaleUiGridKeyboard {
-  row-gap: 10px;
-  column-gap: 10px;
+  row-gap: 8px;
+  column-gap: 8px;
 }
 
 .obObposPointOfSaleUiGridKeyboard-keyboardEditBox {
   grid-area: inp;
   background-color: white;
   color: black;
-  margin-top: 10px;
 }
 
 .obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic {
@@ -1461,18 +1460,101 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   display: grid;
   grid-template-areas:
     "hside center";
-  grid-auto-columns: auto;
+  grid-template-columns: 1fr 2fr;
+  column-gap: 12px;
 }
 
 .right.obObposPointOfSaleUiBottomRightGridLayout {
-  color: white;
-  display: grid;
   grid-template-areas:
     "center hside";
+  grid-template-columns: 2fr 1fr;
 }
 
 .obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic {
   grid-area: hside;
   display: grid;
   grid-auto-flow: row;
+  grid-template-areas:
+    "pos00 pos01"
+    "pos10 pos11"
+    "pos20 pos21"
+    "pos30 pos31"
+    "pos40 pos41"
+    "pos50 pos51";
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(6, 57px);
+  row-gap: 8px;
+  column-gap: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic {
+  height: 57px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos00 {
+  grid-area: pos00;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos01 {
+  grid-area: pos01;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos10 {
+  grid-area: pos10;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos11 {
+  grid-area: pos11;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos20 {
+  grid-area: pos20;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos21 {
+  grid-area: pos21;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos30 {
+  grid-area: pos30;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos31 {
+  grid-area: pos31;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos40 {
+  grid-area: pos40;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos41 {
+  grid-area: pos41;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos50 {
+  grid-area: pos50;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos51 {
+  grid-area: pos51;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.colspan2 {
+  grid-column-end: span 2;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.rowspan2 {
+  grid-row-end: span 2;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.rowspan3 {
+  grid-row-end: span 3;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.rowspan4 {
+  grid-row-end: span 4;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.rowspan5 {
+  grid-row-end: span 5;
 }
