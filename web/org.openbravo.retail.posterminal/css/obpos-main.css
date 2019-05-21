@@ -1806,3 +1806,21 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
   width: 80%; 
   padding: 2px; 
 }
+
+.iconDeliveryServices_unreviewed {
+  background-image: url('../../web/org.openbravo.retail.deliverymodes/img/deliveryServiceUnreviewed.svg');
+  background-repeat: no-repeat;
+  background-size: 26px 26px;
+  background-position: 0px 1px;
+  width: 31px;
+  height: 26px;
+}
+
+.iconDeliveryServices_reviewed {
+  background-image: url('../../web/org.openbravo.retail.deliverymodes/img/deliveryServiceReviewed.svg');
+  background-repeat: no-repeat;
+  background-size: 26px 26px;
+  background-position: 0px 1px;
+  width: 31px;
+  height: 26px;
+}
