@@ -107,6 +107,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalnoteditableorder", "components/modalnoteditableline",
         "components/modalmodulesindev", "components/modalselectprinters",
         "components/modalmorepaymentmethods", "components/modalDeliveryChange",
+        "components/obpos-gridkeyboard",
+
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
         "utils/cashManagementUtils", "utils/ticketCloseUtils", "utils/prepaymentUtils",
@@ -151,12 +153,14 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/obpos-supervisor-model",
 
         // Point of sale
-        "pointofsale/model/pointofsale-print", "pointofsale/model/pointofsale-model",
-        "pointofsale/model/localstock", "pointofsale/model/otherstoresstock",
-        "pointofsale/view/pointofsale", "pointofsale/view/ps-receiptview",
-        "pointofsale/view/ps-multireceiptview", "pointofsale/view/ps-productdetailsview",
-        "pointofsale/view/toolbar-left", "pointofsale/view/toolbar-right", "pointofsale/view/scan",
-        "pointofsale/view/editline", "pointofsale/view/payment", "pointofsale/view/ticketdiscount",
+        "pointofsale/view/ps-gridkeyboard", "pointofsale/view/ps-gridkeyboard-edit",
+        "pointofsale/view/ps-gridkeyboard-scan", "pointofsale/model/pointofsale-print",
+        "pointofsale/model/pointofsale-model", "pointofsale/model/localstock",
+        "pointofsale/model/otherstoresstock", "pointofsale/view/pointofsale",
+        "pointofsale/view/ps-receiptview", "pointofsale/view/ps-multireceiptview",
+        "pointofsale/view/ps-productdetailsview", "pointofsale/view/toolbar-left",
+        "pointofsale/view/toolbar-right", "pointofsale/view/scan", "pointofsale/view/editline",
+        "pointofsale/view/payment", "pointofsale/view/ticketdiscount",
         "pointofsale/view/keyboard-toolbars", "pointofsale/view/keyboardorder",
         // Point of sale subwindows
         "pointofsale/view/subwindows/customers/components/sharedcomponents",

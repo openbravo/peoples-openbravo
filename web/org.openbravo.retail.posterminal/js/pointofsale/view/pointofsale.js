@@ -1,19 +1,25 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, Backbone, enyo, _*/
+/*global enyo, _ */
 
 // Point of sale main window view
 enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.BottomRightGridLayoutsContainer',
+  classes: 'obObposPointOfSaleUiBottomRightGridLayoutsContainer',
+  tabsToCheck: ['scan', 'edit']
+});
+
+enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.BottomRightGridLayout',
   classes: 'obObposPointOfSaleUiBottomRightGridLayout',
-  tabsToCheck: ['scan', 'edit']
+  applyClassesAppliedToChildAbas: true
 });
 
 enyo.kind({
@@ -54,8 +60,8 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightBottomPanelWrapper',
   classes: 'obObposPointOfSaleUiRightBottomPanelWrapper',
   components: [{
-    kind: 'OB.OBPOSPointOfSale.UI.BottomRightGridLayout',
-    name: 'bottomRightGridLayout',
+    kind: 'OB.OBPOSPointOfSale.UI.BottomRightGridLayoutsContainer',
+    name: 'bottomRightGridLayoutsContainer',
     showing: false,
     classes: 'obObposPointOfSaleUiRightBottomPanelWrapper-bottomRightGridLayout',
     components: [{
@@ -78,7 +84,7 @@ enyo.kind({
     }]
   }],
   tabChanged: function (newTab) {
-    if (this.$.bottomRightGridLayout.tabsToCheck.indexOf(newTab) !== -1) {
+    if (this.$.bottomRightGridLayoutsContainer.tabsToCheck.indexOf(newTab) !== -1) {
       this.showGridLayout(newTab);
       return;
     }
@@ -86,12 +92,12 @@ enyo.kind({
   },
   showLegacyKeyboard: function (newTab) {
     this.$.keyboardWrapper.setShowing(true);
-    this.$.bottomRightGridLayout.setShowing(false);
+    this.$.bottomRightGridLayoutsContainer.setShowing(false);
   },
   showGridLayout: function (newTab) {
     var showGridLayout = false;
     this.$.keyboardWrapper.setShowing(false);
-    this.$.bottomRightGridLayout.setShowing(true);
+    this.$.bottomRightGridLayoutsContainer.setShowing(true);
     enyo.forEach(this.getComponents(), function (comp) {
       if (comp.activeTab) {
         comp.setShowing(false);
@@ -106,37 +112,13 @@ enyo.kind({
       }
     }, this);
     this.$.keyboardWrapper.setShowing(!showGridLayout);
-    this.$.bottomRightGridLayout.setShowing(showGridLayout);
+    this.$.bottomRightGridLayoutsContainer.setShowing(showGridLayout);
   },
   initComponents: function () {
     this.inherited(arguments);
   }
 });
 
-
-enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.BottomRightLayout',
-  classes: 'obObposPointOfSaleUiBottomRightLayout',
-  applyChildTask: true
-});
-
-enyo.kind({
-  kind: 'OB.UI.GridKeyboard',
-  name: 'OB.OBPOSPointOfSale.UI.GridKeyboard',
-  classes: 'obObposPointOfSaleUiGridKeyboard'
-});
-
-enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.GridKeyboardEdit',
-  kind: 'OB.OBPOSPointOfSale.UI.GridKeyboard',
-  classes: 'obObposPointOfSaleUiGridKeyboardEdit'
-});
-
-enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.GridKeyboardScan',
-  kind: 'OB.OBPOSPointOfSale.UI.GridKeyboard',
-  classes: 'obObposPointOfSaleUiGridKeyboardScan'
-});
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.PointOfSale',

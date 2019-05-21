@@ -1375,11 +1375,93 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   border-bottom: 1px solid #cccccc;
 }
 
+.obObposPointOfSaleUiRightBottomPanelWrapper {
+  margin: 5px;
+}
+
+.obObposPointOfSaleUiGridKeyboard {
+  row-gap: 10px;
+  column-gap: 10px;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardEditBox {
+  grid-area: inp;
+  background-color: white;
+  color: black;
+  margin-top: 10px;
+}
+
+.obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic {
+  height: 57px;
+  width: 100%;
+}
+
+.obObposPointOfSaleUiGridKeyboard-addqty {
+  grid-area: cmd1;
+}
+
+.obObposPointOfSaleUiGridKeyboard-removeqty {
+  grid-area: cmd2;
+}
+
+.obObposPointOfSaleUiGridKeyboard-backspace {
+  grid-area: cmd3;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey9 {
+  grid-area: num9;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey8 {
+  grid-area: num8;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey7 {
+  grid-area: num7;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey6 {
+  grid-area: num6;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey5 {
+  grid-area: num5;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey4 {
+  grid-area: num4;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey3 {
+  grid-area: num3;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey2 {
+  grid-area: num2;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey1 {
+  grid-area: num1;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey0 {
+  grid-area: num0;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkeyPeriod {
+  grid-area: per;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkeyEnter {
+  grid-area: cmdok;
+}
+
 .obObposPointOfSaleUiBottomRightGridLayout {
   color: white;
   display: grid;
   grid-template-areas:
     "hside center";
+  grid-auto-columns: auto;
 }
 
 .right.obObposPointOfSaleUiBottomRightGridLayout {
@@ -1389,28 +1471,8 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
     "center hside";
 }
 
-.btm.obObposPointOfSaleUiBottomRightGridLayout {
-  grid-template-areas:
-    "center"
-    "vside";
-  grid-auto-flow: column;
-}
-
-.top.obObposPointOfSaleUiBottomRightGridLayout {
-  grid-template-areas:
-    "vside"
-    "center";
-  grid-auto-flow: column;
-}
-
 .obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic {
   grid-area: hside;
   display: grid;
   grid-auto-flow: row;
-}
-
-.top.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic,
-.btm.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic {
-  grid-area: vside;
-  grid-auto-flow: column;
 }
