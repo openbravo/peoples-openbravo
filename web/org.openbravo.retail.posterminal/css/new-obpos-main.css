@@ -1171,12 +1171,103 @@
 
 
 
+/***********************   ***********************/
+/*          File: modalselectprinters.js         */
+/*           Folder: js/components               */
+/***********************   ***********************/
+/*
+# Component: SelectPrintersLine
+*/
+.selectPrinterLine {}
+
+.selectPrinterLine-container1 {
+  line-height: 23px;
+  width: 100%;
+  padding-left: 15px;
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.selectPrinterLine-container1-container1 {}
+
+.selectPrinterLine-container1-container1-selected {
+  /*Inherits: [OB.UI.RadioButton]*/
+  float: left;
+  padding-left: 60px;
+  margin: 10px;
+}
+
+.selectPrinterLine-selected-printer {
+  padding: 5px 0px 0px 0px;
+  font-size: 125%;
+}
+
+.selectPrinterLine-container1-container2 {
+  clear: both;
+}
 
 
 
+/*
+# Component: SelectPrintersApply
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.selectPrintersApply {}
 
 
 
+/*
+# Component: SelectPrintersCancel
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.selectPrintersCancel {}
+
+
+
+/*
+# Component: OB.UI.ModalSelectPrinters
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalSelectPrinters {}
+
+.obUiModalSelectPrinters-bodyContent {
+  /*Inherits: [Scroller]*/
+  max-height: 225px;
+  background-color: var(--color-primary-lighter);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.obUiModalSelectPrinters-bodyContent-printerslist {}
+
+.obUiModalSelectPrinters-bodyButtons {}
+
+.obUiModalSelectPrinters-bodyButtons-selectPrinterApply {}
+
+.obUiModalSelectPrinters-bodyButtons-selectPrinterCancel {}
+
+
+
+/*
+# Component: OB.UI.ModalSelectPDFPrinters
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalSelectPDFPrinters {}
+
+.obUiModalSelectPDFPrinters-bodyContent {
+  /*Inherits: [Scroller]*/
+  max-height: 225px;
+  background-color: var(--color-primary-lighter);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.obUiModalSelectPDFPrinters-bodyContent-printerslist {}
+
+.obUiModalSelectPDFPrinters-bodyButtons {}
+
+.obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersApply {}
+
+.obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersCancel {}
 
 
 

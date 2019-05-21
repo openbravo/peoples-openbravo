@@ -12,27 +12,29 @@
 enyo.kind({
   name: 'SelectPrintersLine',
   printer: {},
+  classes: 'selectPrinterLine',
   printerscontainer: null,
   handlers: {
     onSelectLine: 'selectLine'
   },
   components: [{
-    style: 'line-height: 23px; width: 100%; padding-left: 15px; border-bottom: 1px solid #ccc;',
+    classes: 'selectPrinterLine-container1',
     components: [{
+      classes: 'selectPrinterLine-container1-container1',
       components: [{
         kind: 'OB.UI.RadioButton',
         name: 'selected',
-        style: 'float: left; padding-left: 60px; margin: 10px;',
+        classes: 'selectPrinterLine-container1-container1-selected',
         components: [{
           name: 'printer',
-          style: 'padding: 5px 0px 0px 0px; font-size: 125%;'
+          classes: 'selectPrinterLine-selected-printer'
         }],
         tap: function () {
           this.bubble('onSelectLine');
         }
       }]
     }, {
-      style: 'clear: both;'
+      classes: 'selectPrinterLine-container1-container2'
     }]
   }],
   initComponents: function () {
@@ -47,6 +49,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'SelectPrintersApply',
+  classes: 'selectPrintersApply',
   i18nLabel: 'OBMOBC_LblApply',
   isDefaultAction: true,
   events: {
@@ -62,6 +65,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'SelectPrintersCancel',
+  classes: 'selectPrintersCancel',
   i18nLabel: 'OBMOBC_LblCancel',
   events: {
     onCancelChanges: ''
@@ -75,18 +79,18 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalSelectPrinters',
   kind: 'OB.UI.ModalAction',
+  classes: 'obUiModalSelectPrinters',
   handlers: {
     onApplyChanges: 'applyChanges',
     onCancelChanges: 'cancelChanges'
   },
   bodyContent: {
     kind: 'Scroller',
-    maxHeight: '225px',
-    style: 'background-color: #ffffff;',
     thumb: true,
-    horizontal: 'hidden',
+    classes: 'obUiModalSelectPrinters-bodyContent',
     components: [{
       name: 'printerslist',
+      classes: 'obUiModalSelectPrinters-bodyContent-printerslist',
       selectURL: function (url) {
         var isalreadychecked = false;
 
@@ -111,9 +115,12 @@ enyo.kind({
     }]
   },
   bodyButtons: {
+    classes: 'obUiModalSelectPrinters-bodyButtons',
     components: [{
+      classes: 'obUiModalSelectPrinters-bodyButtons-selectPrinterApply',
       kind: 'SelectPrintersApply'
     }, {
+      classes: 'obUiModalSelectPrinters-bodyButtons-selectPrinterCancel',
       kind: 'SelectPrintersCancel'
     }]
   },
@@ -221,18 +228,18 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalSelectPDFPrinters',
   kind: 'OB.UI.ModalAction',
+  classes: 'obUiModalSelectPDFPrinters',
   handlers: {
     onApplyChanges: 'applyChanges',
     onCancelChanges: 'cancelChanges'
   },
   bodyContent: {
+    classes: 'obUiModalSelectPDFPrinters-bodyContent',
     kind: 'Scroller',
-    maxHeight: '225px',
-    style: 'background-color: #ffffff;',
     thumb: true,
-    horizontal: 'hidden',
     components: [{
       name: 'printerslist',
+      classes: 'obUiModalSelectPDFPrinters-bodyContent-printerslist',
       selectURL: function (url) {
         var isalreadychecked = false;
 
@@ -257,10 +264,13 @@ enyo.kind({
     }]
   },
   bodyButtons: {
+    classes: 'obUiModalSelectPDFPrinters-bodyButtons',
     components: [{
+      classes: 'obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersApply',
       name: "SelectPDFPrintersApply",
       kind: 'SelectPrintersApply'
     }, {
+      classes: 'obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersCancel',
       name: "SelectPDFPrintersCancel",
       kind: 'SelectPrintersCancel'
     }]
