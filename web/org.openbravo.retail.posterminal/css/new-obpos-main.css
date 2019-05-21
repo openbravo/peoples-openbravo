@@ -3933,6 +3933,64 @@
 
 
 
+/***********************   ***********************/
+/*        File: modalreceiptproperties.js        */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalReceiptPropertiesImpl
+# Inherits: [OB.UI.ModalReceiptProperties]
+*/
+.obUiModalReceiptPropertiesImpl {}
+
+.obUiModalReceiptPropertiesImpl-newAttributes-receiptDescription {
+/* Inherits: [OB.UI.renderTextProperty] */
+}
+
+.obUiModalReceiptPropertiesImpl-newAttributes-printBox {
+/* Inherits: [OB.UI.renderBooleanProperty] */
+  height: 38px;
+  background-position: 10px center;
+  cursor: pointer;
+  vertical-align: middle;
+  width: 100%;
+}
+
+.obUiModalReceiptPropertiesImpl-newAttributes-printBox_active {
+  background-image: url('./../img/checkbox-on.svg');
+  background-size: 34px 27px;
+}
+
+.obUiModalReceiptPropertiesImpl-newAttributes-printBox:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  background-position: 8px center !important;
+}
+
+.obUiModalReceiptPropertiesImpl-newAttributes-salesRepresentativeBox {
+/* Inherits: [OB.UI.renderComboProperty] */
+}
+
+.obUiModalReceiptPropertiesImpl-newAttributes-salesrepresentativebutton {
+/* Inherits: [OB.UI.SalesRepresentative] */
+}
+
+.obUiModalReceiptPropertiesImpl-newAttributes-customerbutton {
+/* Inherits: [OB.UI.Customer] */
+}
+
+.obUiModalReceiptPropertiesImpl-newAttributes-addressshipbutton {
+/* Inherits: [OB.UI.ShipTo] */
+}
+
+.obUiModalReceiptPropertiesImpl-newAttributes-addressbillbutton {
+/* Inherits: [OB.UI.BillTo] */
+}
+
+
+
 
 /*****************/
 /*      JAR      */

@@ -12,6 +12,7 @@
 enyo.kind({
   name: 'OB.UI.ModalReceiptPropertiesImpl',
   kind: 'OB.UI.ModalReceiptProperties',
+  classes: 'obUiModalReceiptPropertiesImpl',
   handlers: {
     onCloseCancelSelector: 'closeCancelSelector',
     onUpdateFilterSelector: 'updateFilterSelector',
@@ -20,19 +21,21 @@ enyo.kind({
   newAttributes: [{
     kind: 'OB.UI.renderTextProperty',
     name: 'receiptDescription',
+    classes: 'obUiModalReceiptPropertiesImpl-newAttributes-receiptDescription',
     modelProperty: 'description',
     i18nLabel: 'OBPOS_LblDescription',
     maxLength: 255
   }, {
     kind: 'OB.UI.renderBooleanProperty',
     name: 'printBox',
+    classes: 'obUiModalReceiptPropertiesImpl-newAttributes-printBox obUiModalReceiptPropertiesImpl-newAttributes-printBox_active',
     checked: true,
-    classes: 'modal-dialog-btn-check active',
     modelProperty: 'print',
     i18nLabel: 'OBPOS_Lbl_RP_Print'
   }, {
     kind: 'OB.UI.renderComboProperty',
     name: 'salesRepresentativeBox',
+    classes: 'obUiModalReceiptPropertiesImpl-newAttributes-salesRepresentativeBox',
     modelProperty: 'salesRepresentative',
     modelPropertyText: 'salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
     i18nLabel: 'OBPOS_SalesRepresentative',
@@ -97,6 +100,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SalesRepresentative',
     name: 'salesrepresentativebutton',
+    classes: 'obUiModalReceiptPropertiesImpl-newAttributes-salesRepresentativeBox',
     i18nLabel: 'OBPOS_SalesRepresentative',
     permission: 'OBPOS_salesRepresentative.receipt',
     permissionOption: 'OBPOS_SR.comboOrModal'
@@ -105,18 +109,21 @@ enyo.kind({
     target: 'filterSelectorButton_receiptProperties',
     popup: 'receiptPropertiesDialog',
     name: 'customerbutton',
+    classes: 'obUiModalReceiptPropertiesImpl-newAttributes-customerbutton',
     i18nLabel: 'OBPOS_LblCustomer'
   }, {
     kind: 'OB.UI.ShipTo',
     target: 'filterSelectorButton_receiptProperties',
     popup: 'receiptPropertiesDialog',
     name: 'addressshipbutton',
+    classes: 'obUiModalReceiptPropertiesImpl-newAttributes-addressshipbutton',
     i18nLabel: 'OBPOS_LblShipAddr'
   }, {
     kind: 'OB.UI.BillTo',
     target: 'filterSelectorButton_receiptProperties',
     popup: 'receiptPropertiesDialog',
     name: 'addressbillbutton',
+    classes: 'obUiModalReceiptPropertiesImpl-newAttributes-addressbillbutton',
     i18nLabel: 'OBPOS_LblBillAddr'
   }],
 
