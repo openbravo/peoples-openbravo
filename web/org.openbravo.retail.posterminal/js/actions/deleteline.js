@@ -19,7 +19,13 @@
     properties: {
       i18nContent: 'OBPOS_ButtonDelete'
     },
-    viewMethodArgs: ['selectedReceiptLines']
+    viewMethodArgs: ['selectedReceiptLines'],
+    isActive: function (view) {
+      var selectedReceiptLine = view.state.readState({
+        name: 'selectedReceiptLine'
+      });
+      return selectedReceiptLine && selectedReceiptLine.get('isDeletable');
+    }
   }));
 
 }());

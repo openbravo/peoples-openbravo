@@ -216,16 +216,12 @@ enyo.kind({
     }
   }],
   actionButtons: [{
-    kind: 'OB.UI.SmallButton',
-    name: 'deleteLine',
-    i18nContent: 'OBPOS_ButtonDelete',
-    classes: 'btnlink-orange',
-    permission: 'OBPOS_ActionButtonDelete',
-    tap: function () {
-      OB.MobileApp.actionsRegistry.execute({
-        window: 'retail.pointofsale',
-        name: 'deleteLine'
-      });
+    kind: 'OB.UI.ActionButton',
+    name: 'deleteline',
+    classes: 'btnlink btnlink-small btnlink-orange',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'deleteLine'
     }
   }, {
     kind: 'OB.UI.SmallButton',
@@ -646,13 +642,6 @@ enyo.kind({
           }, 0))) {
             this.$.actionButtonsContainer.$.returnLine.hide();
           }
-        }
-      }
-      if (this.$.actionButtonsContainer.$.deleteLine) {
-        if (!line.get('isDeletable')) {
-          this.$.actionButtonsContainer.$.deleteLine.hide();
-        } else {
-          this.$.actionButtonsContainer.$.deleteLine.show();
         }
       }
       if (this.$.actionButtonsContainer.$.showRelatedServices) {
