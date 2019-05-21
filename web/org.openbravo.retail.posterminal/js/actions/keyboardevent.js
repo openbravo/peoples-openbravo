@@ -13,10 +13,10 @@
 
   var AbstractKeyboardAction = function (args) {
       OB.Actions.AbstractAction.call(this, args);
-      this.keyboardEvent = args.keyboardEvent;
+      this.action = args.action;
       this.command = function (view) {
-        view.waterfall('onGlobalKeypress', {
-          keyboardEvent: this.keyboardEvent
+        view.waterfall('onVirtualKeyboardCommand', {
+          action: this.action
         });
       };
       };
@@ -28,9 +28,7 @@
     properties: {
       label: '0'
     },
-    keyboardEvent: {
-      key: '0'
-    }
+    action: '0'
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -39,9 +37,8 @@
     properties: {
       label: '1'
     },
-    keyboardEvent: {
-      key: '1'
-    }
+    action: '1'
+
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -50,9 +47,7 @@
     properties: {
       label: '2'
     },
-    keyboardEvent: {
-      key: '2'
-    }
+    action: '2'
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -61,9 +56,7 @@
     properties: {
       label: '3'
     },
-    keyboardEvent: {
-      key: '3'
-    }
+    action: '3'
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -72,9 +65,7 @@
     properties: {
       label: '4'
     },
-    keyboardEvent: {
-      key: '4'
-    }
+    action: '4'
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -83,9 +74,7 @@
     properties: {
       label: '5'
     },
-    keyboardEvent: {
-      key: '5'
-    }
+    action: '5'
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -94,9 +83,7 @@
     properties: {
       label: '6'
     },
-    keyboardEvent: {
-      key: '6'
-    }
+    action: '6'
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -105,9 +92,7 @@
     properties: {
       label: '7'
     },
-    keyboardEvent: {
-      key: '7'
-    }
+    action: '7'
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -116,9 +101,7 @@
     properties: {
       label: '8'
     },
-    keyboardEvent: {
-      key: '8'
-    }
+    action: '8'
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -127,9 +110,7 @@
     properties: {
       label: '9'
     },
-    keyboardEvent: {
-      key: '9'
-    }
+    action: '9'
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -138,9 +119,7 @@
     properties: {
       label: '.'
     },
-    keyboardEvent: {
-      key: '.'
-    }
+    action: '.'
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -149,10 +128,7 @@
     properties: {
       label: '\u232B'
     },
-    keyboardEvent: {
-      key: 'Backspace',
-      which: 8
-    }
+    action: 'del'
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -161,10 +137,7 @@
     properties: {
       label: '\u21B5'
     },
-    keyboardEvent: {
-      key: 'Enter',
-      which: 13
-    }
+    action: 'OK'
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -173,9 +146,7 @@
     properties: {
       label: '*'
     },
-    keyboardEvent: {
-      key: '*'
-    }
+    action: '*'
   }));
   OB.MobileApp.actionsRegistry.register(
   new AbstractKeyboardAction({
@@ -184,9 +155,7 @@
     properties: {
       label: '/'
     },
-    keyboardEvent: {
-      key: '/'
-    }
+    action: '/'
   }));
 
 }());
