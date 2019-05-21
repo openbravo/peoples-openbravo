@@ -12,6 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalSelectOpenedReceipt_btnApply',
+  classes: 'obUiModalSelectOpenedReceiptBtnApply',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
   tap: function () {
@@ -22,6 +23,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ModalSelectOpenedReceipt_btnCancel',
+  classes: 'obUiModalSelectOpenedReceiptBtnCancel',
   isDefaultAction: false,
   i18nContent: 'OBMOBC_LblCancel',
   tap: function () {
@@ -32,24 +34,27 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalSelectOpenedReceipt',
+  classes: 'obUiModalSelectOpenedReceipt',
   i18nHeader: 'OBPOS_lblHeaderSelectOpenedReceiptModal',
   //body of the popup
   bodyContent: {
+    classes: 'obUiModalSelectOpenedReceipt-bodyContent',
     components: [{
+      classes: 'obUiModalSelectOpenedReceipt-bodyContent-lblSelectOpenedReceiptModal',
       name: 'lblSelectOpenedReceiptModal'
     }, {
+      classes: 'obUiModalSelectOpenedReceipt-bodyContent-listSelectOpenedReceiptModal',
       name: 'listSelectOpenedReceiptModal',
       kind: 'OB.UI.OpenedReceiptsList'
     }, {
-      style: 'display: inline-block',
+      classes: 'obUiModalSelectOpenedReceipt-bodyContent-container1',
       components: [{
         name: 'chkSelectOpenedReceiptModal',
-        kind: 'OB.UI.CheckboxButton',
-        style: 'float: left; width: 44px; height: 44px; background-position: center center; border: 1px solid white; cursor: pointer;',
-        classes: 'btn-check-alt'
+        classes: 'obUiModalSelectOpenedReceipt-container1-chkSelectOpenedReceiptModal',
+        kind: 'OB.UI.CheckboxButton'
       }, {
         name: 'lblSelectOpenedReceiptModalChk',
-        style: 'float: left; padding: 6px 0px 0px 14px;',
+        classes: 'obUiModalSelectOpenedReceipt-container1-lblSelectOpenedReceiptModalChk',
         initComponents: function () {
           this.setContent(OB.I18N.getLabel('OBPOS_lblSelectOpenedReceiptModalChk'));
         }
@@ -58,7 +63,9 @@ enyo.kind({
   },
   //buttons of the popup
   bodyButtons: {
+    classes: 'obUiModalSelectOpenedReceipt-bodyButtons',
     components: [{
+      classes: 'obUiModalSelectOpenedReceipt-bodyButtons-obUiModalSelectOpenedReceiptBtnApply',
       kind: 'OB.UI.ModalSelectOpenedReceipt_btnApply',
       disabled: true,
       checkModifyTax: function (params) {
@@ -162,6 +169,7 @@ enyo.kind({
         });
       }
     }, {
+      classes: 'obUiModalSelectOpenedReceipt-bodyButtons-obUiModalSelectOpenedReceiptBtnCancel',
       kind: 'OB.UI.ModalSelectOpenedReceipt_btnCancel'
     }]
   },
@@ -187,10 +195,6 @@ enyo.kind({
   receiptsListChanged: function (oldValue) {
     this.$.bodyContent.$.listSelectOpenedReceiptModal.setReceiptsList(this.receiptsList);
   },
-
-  init: function (model) {
-    this.$.bodyButtons.setStyle('padding-top: 5px');
-  },
   events: {
     onChangeCurrentOrder: '',
     onHideThisPopup: '',
@@ -203,6 +207,7 @@ enyo.kind({
         buttonContainer, control, openedReceiptsListLine;
 
     // Remove grey background to 'Create New Receipt' button
+    // TODO: Remove this style
     this.$.bodyContent.$.listSelectOpenedReceiptModal.$.button.setStyle(this.$.bodyContent.$.listSelectOpenedReceiptModal.$.button.style.replace(' background-color: #cccccc;', ''));
 
     // Remove grey background to opened receipts list
@@ -213,6 +218,7 @@ enyo.kind({
           for (openedReceiptsListLine in buttonContainer) {
             if (buttonContainer.hasOwnProperty(openedReceiptsListLine)) {
               if (openedReceiptsListLine.substring(0, 22) === 'openedReceiptsListLine') {
+                // TODO: Remove this style
                 buttonContainer[openedReceiptsListLine].setStyle(buttonContainer[openedReceiptsListLine].style.replace(' background-color: #cccccc;', ''));
               }
             }
@@ -226,7 +232,7 @@ enyo.kind({
     this.uncheckAllItems();
 
     // Add grey background to the new selected line
-    line.setStyle(line.style + ' background-color: #cccccc;');
+    line.addClass('obUiOpenedReceiptsListLine_disabled');
 
     // Enable 'Apply' button
     if (this.$.bodyButtons.$.modalSelectOpenedReceipt_btnApply.disabled) {
@@ -237,39 +243,38 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.OpenedReceiptsList',
-  classes: 'row-fluid',
+  classes: 'obUiOpenedReceiptsList row-fluid',
   published: {
     receiptsList: null
   },
   components: [{
-    classes: 'span12',
-    style: 'margin: 20px 0px 20px 0px; height: 189px; overflow-y: auto;',
+    classes: 'obUiOpenedReceiptsList-conteiner1 span12',
     components: [{
+      classes: 'obUiOpenedReceiptsList-conteiner1-container1',
       components: [{
         kind: 'OB.UI.Button',
-        classes: 'btnselect',
-        style: 'height: 63px; line-height: 23px; width: 100%; font-size: 16px; background-color: white; border-bottom: 1px solid #cccccc;',
+        classes: 'obUiOpenedReceiptsList-conteiner1-container1-obUiButton',
         components: [{
-          style: 'width: 100%',
+          classes: 'obUiOpenedReceiptsList-conteiner1-container1-obUiButton-container1',
           components: [{
-            style: 'float: left; width: 15%; color: black;',
+            classes: 'obUiOpenedReceiptsList-conteiner1-container1-obUiButton-container1-container1',
             components: [{
+              classes: 'obUiOpenedReceiptsList-conteiner1-container1-obUiButton-container1-container1-element1',
               tag: "img",
-              style: 'float: left; width: 19px; height: 19px; color: black; margin-left: 10px;',
               attributes: {
                 src: '../org.openbravo.mobile.core/assets/img/iconCreateNew-alt.svg'
               }
             }]
           }, {
-            style: 'float: left; width: 80%; color: black;',
+            classes: 'obUiOpenedReceiptsList-conteiner1-container1-obUiButton-container1-container2',
             initComponents: function () {
               this.setContent(OB.I18N.getLabel('OBPOS_LblCreateNewReceipt'));
             }
           }, {
-            style: 'float: left; width: 80%; color: white; display: hidden;',
+            classes: 'obUiOpenedReceiptsList-conteiner1-container1-obUiButton-container1-container3',
             content: '.'
           }, {
-            style: 'clear: both;'
+            classes: 'obUiOpenedReceiptsList-conteiner1-container1-obUiButton-container1-container4'
           }]
         }],
         tap: function () {
@@ -279,6 +284,7 @@ enyo.kind({
         }
       }, {
         name: 'openedreceiptslistitemprinter',
+        classes: 'obUiOpenedReceiptsList-conteiner1-container1-openedreceiptslistitemprinter',
         kind: 'OB.UI.ScrollableTable',
         //scrollAreaMaxHeight: '189px',
         renderLine: 'OB.UI.OpenedReceiptsListLine',
@@ -294,6 +300,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.OpenedReceiptsListLine',
   kind: 'OB.UI.SelectButton',
+  classes: 'obUiOpenedReceiptsListLine',
   tap: function () {
     this.inherited(arguments);
     if (this.owner.owner.owner.owner.owner.owner.checkItem) {
@@ -302,37 +309,39 @@ enyo.kind({
   },
   components: [{
     name: 'line',
-    style: 'line-height: 23px; width: 100%; font-size: 16px;',
+    classes: 'obUiOpenedReceiptsListLine',
     components: [{
+      classes: 'obUiOpenedReceiptsListLine-container1',
       components: [{
-        style: 'float: left; width: 15%',
+        classes: 'obUiOpenedReceiptsListLine-container1-time',
         name: 'time'
       }, {
-        style: 'float: left; width: 25%',
+        classes: 'obUiOpenedReceiptsListLine-container1-orderNo',
         name: 'orderNo'
       }, {
-        style: 'float: left; width: 60%',
+        classes: 'obUiOpenedReceiptsListLine-container1-bp',
         name: 'bp'
       }, {
-        style: 'clear: both;'
+        classes: 'obUiOpenedReceiptsListLine-container1-element1'
       }]
     }, {
+      classes: 'obUiOpenedReceiptsListLine-container2',
       components: [{
-        style: 'float: left; width: 15%; font-weight: bold;'
+        classes: 'obUiOpenedReceiptsListLine-container2-element1'
       }, {
-        style: 'float: left; width: 25%; font-weight: bold;'
+        classes: 'obUiOpenedReceiptsListLine-container2-element2'
       }, {
-        style: 'float: right; text-align: right; width: 25%; font-weight: bold;',
+        classes: 'obUiOpenedReceiptsListLine-container2-total',
         name: 'total'
       }, {
-        style: 'clear: both;'
+        classes: 'obUiOpenedReceiptsListLine-container2-element3'
       }]
     }]
   }],
   create: function () {
     this.inherited(arguments);
     if (this.model.get('isPaid') || this.model.get('isLayaway')) {
-      this.setStyle('display: none');
+      this.addClass('u-hideFromUI');
     }
     if (this.model.get('isPaid') || this.model.get('isLayaway')) {
       this.$.time.setContent(OB.I18N.formatDate(this.model.get('orderDate')));

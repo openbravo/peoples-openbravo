@@ -543,7 +543,7 @@
 }
 
 .obUiRemoveMultiOrders_loading {
-  background-image: url('./../img/iconloading.gif');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconloading.gif');
 }
 
 
@@ -1329,6 +1329,213 @@
 .obUiModalContextChanged-bodyButtons-obObpospointofsaleUiModalsBtnModaContextChangedAccept {
   /*Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModaContextChangedAccept]*/
 }
+
+
+
+/***********************   ***********************/
+/*        File: modalselectopenreceipts.js       */
+/*               Folder: js/components           */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalSelectOpenedReceipt_btnApply
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiModalSelectOpenedReceiptBtnApply {}
+
+
+
+/*
+# Component: OB.UI.ModalSelectOpenedReceipt_btnCancel
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiModalSelectOpenedReceiptBtnCancel {}
+
+
+
+/*
+# Component: OB.UI.ModalSelectOpenedReceipt
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalSelectOpenedReceipt {}
+
+.obUiModalSelectOpenedReceipt-bodyContent {}
+
+.obUiModalSelectOpenedReceipt-bodyContent-lblSelectOpenedReceiptModal {}
+
+.obUiModalSelectOpenedReceipt-bodyContent-container1 {
+  display: inline-block;
+}
+
+.obUiModalSelectOpenedReceipt-container1-chkSelectOpenedReceiptModal {
+  /*Inherits: [OB.UI.CheckboxButton]*/
+  float: left;
+  width: 44px;
+  height: 44px;
+  background-position: center center;
+  border: var(--bottomseparator-slim);
+  cursor: pointer;
+
+  background-repeat: no-repeat;
+  background-color: transparent;
+
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/checkbox-off.svg');
+  background-size: 34px 27px;
+}
+
+.obUiModalSelectOpenedReceipt-container1-lblSelectOpenedReceiptModalChk {
+  float: left;
+  padding: 6px 0px 0px 14px;
+}
+
+.obUiModalSelectOpenedReceipt-bodyButtons {
+  padding-top: 5px;
+}
+
+.obUiModalSelectOpenedReceipt-bodyButtons-obUiModalSelectOpenedReceiptBtnApply {
+  /*Inherits: [OB.UI.ModalSelectOpenedReceipt_btnApply]*/
+}
+
+.obUiModalSelectOpenedReceipt-bodyButtons-obUiModalSelectOpenedReceiptBtnCancel {
+  /*Inherits: [OB.UI.ModalSelectOpenedReceipt_btnCancel]*/
+}
+
+
+
+/*
+# Component: OB.UI.OpenedReceiptsList
+*/
+.obUiOpenedReceiptsList {}
+
+.obUiOpenedReceiptsList-conteiner1 {
+  margin: 20px 0px 20px 0px;
+  height: 189px;
+  overflow-y: auto;
+}
+
+.obUiOpenedReceiptsList-conteiner1-container1 {}
+
+.obUiOpenedReceiptsList-conteiner1-container1-obUiButton {
+  display: block;
+  width: 100%;
+  background-color: var(--color-primary-lighter);
+  position: relative;
+  border: none;
+  margin: 0px;
+  padding: 8px 10px 8px 10px;
+  text-decoration: none;
+  text-align: left;
+  color: var(--color-primary-darker);
+  cursor: pointer;
+  border-bottom: var(--bottomseparator-slim);
+  height: 63px;
+  line-height: 23px;
+  font-size: var(--font-medium);
+}
+.obUiOpenedReceiptsList-conteiner1-container1-obUiButton {
+  background-color: var(--color-primary-light);
+}
+
+.obUiOpenedReceiptsList-conteiner1-container1-obUiButton-container1 {
+  width: 100%;
+}
+
+.obUiOpenedReceiptsList-conteiner1-container1-obUiButton-container1-container1 {
+  float: left;
+  width: 15%;
+  color: var(--color-primary-darker);
+}
+
+.obUiOpenedReceiptsList-conteiner1-container1-obUiButton-container1-container1-element1 {
+  float: left;
+  width: 19px;
+  height: 19px;
+  color: var(--color-primary-darker);
+  margin-left: 10px;
+}
+
+.obUiOpenedReceiptsList-conteiner1-container1-obUiButton-container1-container2 {
+  float: left;
+  width: 80%;
+  color: var(--color-primary-darker);
+}
+
+.obUiOpenedReceiptsList-conteiner1-container1-obUiButton-container1-container3 {
+  float: left;
+  width: 80%;
+  color: var(--color-primary-lighter);
+  display: hidden;
+}
+
+.obUiOpenedReceiptsList-conteiner1-container1-obUiButton-container1-container4 {
+  clear: both;
+}
+
+.obUiOpenedReceiptsList-conteiner1-container1-openedreceiptslistitemprinter {
+  /*Inherits: [OB.UI.ScrollableTable]*/
+}
+
+
+
+/*
+# Component: OB.UI.OpenedReceiptsListLine
+# Inherits: [OB.UI.SelectButton]
+*/
+.obUiOpenedReceiptsListLine {
+  line-height: 23px;
+  width: 100%;
+  font-size: var(--font-medium);
+}
+
+.obUiOpenedReceiptsListLine_disabled {
+  background-color: var(--color-primary-light);
+}
+
+.obUiOpenedReceiptsListLine-container1 {}
+
+.obUiOpenedReceiptsListLine-container1-time {
+  float: left;
+  width: 15%;
+}
+
+.obUiOpenedReceiptsListLine-container1-orderNo {
+  float: left;
+  width: 25%;
+}
+
+.obUiOpenedReceiptsListLine-container1-bp {
+  float: left;
+  width: 60%;
+}
+
+.obUiOpenedReceiptsListLine-container1-element1 {
+  clear: both;
+}
+
+.obUiOpenedReceiptsListLine-container2 {}
+
+.obUiOpenedReceiptsListLine-container2-element1 {
+  float: left;
+  width: 15%;
+  font-weight: bold;
+}
+
+.obUiOpenedReceiptsListLine-container2-element2 {
+  float: left;
+  width: 25%;
+  font-weight: bold;
+}
+
+.obUiOpenedReceiptsListLine-container2-total {
+  float: right;
+  text-align: right;
+  width: 25%;
+  font-weight: bold;
+}
+
+.obUiOpenedReceiptsListLine-container2-element3 {
+  clear: both;
+}
+
 
 
 /*****************/
