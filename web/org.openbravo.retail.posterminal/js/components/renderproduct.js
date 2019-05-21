@@ -11,6 +11,7 @@
 enyo.kind({
   name: 'OB.UI.RenderProduct',
   kind: 'OB.UI.listItemButton',
+  classes: 'obUiRenderProduct',
   avoidDoubleClick: false,
   resizeHandler: function () {
     if (!this.model) {
@@ -23,82 +24,79 @@ enyo.kind({
     this.debounceRedraw();
     return true;
   },
-  classes: 'productLine standardFlexContainer flexColumn',
   components: [{
-    classes: 'standardFlexContainer flexAllWidth',
+    classes: 'obUiRenderProduct-container1',
     components: [{
       name: 'productImgContainer',
-      classes: 'productImgContainer',
+      classes: 'obUiRenderProduct-container1-productImgContainer',
       components: [{
         name: 'productImage',
-        style: 'max-width: 100%;',
-        classes: 'standardFlexContainer',
+        classes: 'obUiRenderProduct-productImgContainer-productImage',
         components: [{
-          style: 'vertical-align: top; width: 50px; ',
+          classes: 'obUiRenderProduct-productImage-container1',
           components: [{
             tag: 'div',
-            classes: 'flex-image-wrap',
+            classes: 'obUiRenderProduct-productImage-container1-container1',
             contentType: 'image/png',
-            style: 'width: 49px; height: 49px;',
             components: [{
               tag: 'img',
               name: 'icon',
-              classes: 'product_image'
+              classes: 'obUiRenderProduct-productImage-container1-container1-icon'
             }]
           }]
         }]
       }, {
         kind: 'OB.UI.Thumbnail',
         name: 'thumbnail',
-        cssClass: 'flex-image-wrap'
+        cssClass: 'obUiRenderProduct-productImgContainer-thumbnail'
       }]
     }, {
-      classes: 'flexAllWidth',
+      classes: 'obUiRenderProduct-container1-container2',
       components: [{
-        classes: 'standardFlexContainer',
+        classes: 'obUiRenderProduct-container1-container2-container1',
         components: [{
           name: 'identifierContainer',
-          classes: 'standardFlexContainer flexColumn',
+          classes: 'obUiRenderProduct-container1-container2-container1-identifierContainer',
           components: [{
             name: 'identifier',
-            classes: 'productIdentifier'
+            classes: 'obUiRenderProduct-identifierContainer-identifier'
           }, {
-            style: 'color: #888888',
             name: 'filterAttr',
+            classes: 'obUiRenderProduct-identifierContainer-filterAttr',
             allowHtml: true
           }]
         }, {
-          classes: 'standardFlexContainer flexColumn',
-          style: 'width: 38px;',
+          classes: 'obUiRenderProduct-container1-container2-container1-container2',
           components: [{
             kind: 'OB.UI.ProductContextMenu',
-            name: 'btnProductContextMenu'
+            name: 'btnProductContextMenu',
+            classes: 'obUiRenderProduct-container1-container2-container1-container2-btnProductContextMenu'
           }]
         }]
       }, {
-        classes: 'standardFlexContainer flexwrap flexend',
-        style: 'padding-right: 6px',
+        classes: 'obUiRenderProduct-container1-container2-container2',
         components: [{
           name: 'icons',
+          classes: 'obUiRenderProduct-container1-container2-container2-icons',
           minWidth: 0,
-          style: 'vertical-align: top;',
           components: [{
             name: 'bestseller',
-            style: 'height: 16px; width: 16px; padding: 0px 2px; float: left;',
             kind: 'OB.UI.Thumbnail.Bestseller',
+            classes: 'obUiRenderProduct-icons-bestseller',
             'default': 'img/iconBestsellerSmall.svg',
             showing: false
           }]
         }, {
           name: 'priceBox',
-          style: 'vertical-align: top;',
+          classes: 'obUiRenderProduct-container1-container2-container2-priceBox',
           components: [{
+            classes: 'obUiRenderProduct-priceBox-container1',
             components: [{
               name: 'price',
-              style: 'text-align: right; font-weight: bold;'
+              classes: 'obUiRenderProduct-priceBox-container1-price'
             }, {
               name: 'priceList',
-              style: 'text-align: right; font-weight: bold; color: grey;'
+              classes: 'obUiRenderProduct-priceBox-container1-priceList'
             }]
           }]
         }]
@@ -106,11 +104,11 @@ enyo.kind({
     }]
   }, {
     name: 'generic',
-    style: 'text-align: right; font-style: italic; color: grey; font-weight: bold; padding-right: 6px;',
+    classes: 'obUiRenderProduct-generic',
     showing: false
   }, {
-    style: 'color: #888888; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px; padding-right: 6px;',
-    name: 'bottonLine'
+    name: 'bottonLine',
+    classes: 'obUiRenderProduct-bottonLine'
   }],
   drawPriceBasedOnSize: function () {
     var shouldResizeWork = ((enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 466) || (!enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 925));
@@ -160,24 +158,30 @@ enyo.kind({
       searchTab = true;
     }
     if (this.model.get('currentStandardPrice') && this.model.get('currentStandardPrice') !== "undefined") {
+      // This inline style is allowed
       this.$.priceList.addStyles('font-size: 16px;');
       if (OB.MobileApp.model.hasPermission('ShowStandardPriceOnSearchAndBrowse', true)) {
         if (OB.I18N.formatCurrency(this.model.get('currentStandardPrice')).length > 11 && !searchTab && !hideProductImages && shouldResizeWork) {
+          // This inline style is allowed
           this.$.price.addStyles('font-size: ' + getFontSize(OB.I18N.formatCurrency(this.model.get('currentStandardPrice'))));
         }
         this.$.priceList.setContent(OB.I18N.formatCurrency(this.model.get('currentStandardPrice')));
       }
       if (this.model.get('standardPrice')) {
+        // This inline style is allowed
         this.$.price.addStyles('font-size: 16px;');
         if (!searchTab && !hideProductImages && shouldResizeWork) {
+          // This inline style is allowed
           this.$.price.addStyles('font-size: ' + getFontSize(OB.I18N.formatCurrency(this.model.get('standardPrice'))));
         }
       }
       this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
     } else {
       if (this.model.get('standardPrice')) {
+        // This inline style is allowed
         this.$.price.addStyles('font-size: 16px;');
         if (!searchTab && !hideProductImages && shouldResizeWork) {
+          // This inline style is allowed
           this.$.price.addStyles('font-size: ' + getFontSize(OB.I18N.formatCurrency(this.model.get('standardPrice'))));
         }
       }
@@ -186,12 +190,14 @@ enyo.kind({
     // Context menu
     if (this.model.get('productType') !== 'I' || this.$.btnProductContextMenu.$.menu.itemsCount === 0) {
       this.$.btnProductContextMenu.hide();
-      this.$.identifierContainer.setStyle("");
+      this.$.identifierContainer.removeClass('obUiRenderProduct-identifierContainer_withWidth');
     } else {
       this.$.btnProductContextMenu.setModel(this.model);
-      this.$.identifierContainer.setStyle("width: calc(100% - 38px)");
+      this.$.identifierContainer.addClass('obUiRenderProduct-identifierContainer_withWidth');
       if (this.model.get('showchdesc') && !this.model.get('characteristicDescription')) {
-        this.setStyle('padding: 8px 10px 0px 10px');
+        this.addClass('obUiRenderProduct_showchdesc');
+      } else {
+        this.removeClass('obUiRenderProduct_showchdesc');
       }
     }
   },
@@ -251,15 +257,20 @@ enyo.kind({
       maxWidthCalc = 0;
     }
     maxWidthCalc = Math.floor(maxWidthCalc / 20) * 20 >= 20 ? Math.floor(maxWidthCalc / 20) * 20 : 20;
+    // This inline style is allowed
     this.$.icons.addStyles('max-width: ' + maxWidthCalc + 'px');
     if (this.model.get('bestseller') !== true) {
+      // This inline style is allowed
       this.$.icons.applyStyle('min-width', this.$.icons.minWidth + 'px');
-      this.$.icons.applyStyle('width', '0px');
+      this.$.icons.addClass('u-noWidth');
+      this.$.bestseller.removeClass('u-blockDisplay');
       this.$.bestseller.$.image.hide();
     } else {
       this.$.icons.minWidth += 20;
+      // This inline style is allowed
       this.$.icons.applyStyle('min-width', this.$.icons.minWidth + 'px');
-      this.$.bestseller.addStyles('display: block');
+      this.$.icons.removeClass('u-noWidth');
+      this.$.bestseller.addClass('u-blockDisplay');
     }
 
     if (OB.MobileApp.model.hasPermission('OBPOS_HideProductImages', true) || OB.MobileApp.model.hasPermission('OBPOS_HideProductImagesInSearchAndBrowse', true)) {
@@ -282,21 +293,21 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.Thumbnail.Bestseller',
   kind: 'OB.UI.Thumbnail',
+  classes: 'obUiThumbnailBestseller',
   drawImage: function () {
     this.inherited(arguments);
-    this.$.image.applyStyle('background-position', '0px 0px');
-    this.$.image.applyStyle('background-color', 'transparent');
-    this.$.image.applyStyle('background-size', '14px 16px !important');
+    this.$.image.addClass('obUiThumbnailBestseller-image');
   },
   initComponents: function () {
     this.inherited(arguments);
-    this.removeClass('image-wrap');
+    this.removeClass('obUiThumbnail');
   }
 });
 
 enyo.kind({
   kind: 'OB.UI.ListContextMenu',
   name: 'OB.UI.ProductContextMenu',
+  classes: 'obUiProductContextMenu',
   initComponents: function () {
     this.inherited(arguments);
     this.$.menu.setItems(OB.MobileApp.model.get('productContextMenuOptions'));

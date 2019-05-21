@@ -3607,6 +3607,213 @@
 
 
 
+/***********************   ***********************/
+/*            File: renderproduct.js             */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.RenderProduct
+# Inherits: [OB.UI.listItemButton]
+*/
+.obUiRenderProduct {
+  padding: 0px 0px 6px 6px;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 0;
+  display: flex;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+.obUiRenderProduct_showchdesc {
+  padding: 8px 10px 0px 10px;
+}
+
+.obUiRenderProduct-container1 {
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+.obUiRenderProduct-container1-productImgContainer {
+  margin: 0px 8px 0px 0px;
+  padding-top: 6px;
+}
+
+.obUiRenderProduct-productImgContainer-productImage {
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+.obUiRenderProduct-productImage-container1 {
+  vertical-align: top;
+  width: 50px;
+}
+
+.obUiRenderProduct-productImage-container1-container1 {
+  width: 49px;
+  height: 49px;
+  border: solid 1px #cccccc;
+}
+
+.obUiRenderProduct-productImage-container1-container1-icon {
+  margin: 0 auto;
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.obUiRenderProduct-productImgContainer-thumbnail {
+/* Inherits: [OB.UI.Thumbnail] */
+  border: solid 1px #cccccc;
+}
+
+.obUiRenderProduct-container1-container2 {
+  width: 100%;
+  overflow: hidden;
+}
+
+.obUiRenderProduct-container1-container2-container1 {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+.obUiRenderProduct-container1-container2-container1-identifierContainer {
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+.obUiRenderProduct-identifierContainer_withWidth {
+  width: calc(100% - 38px);
+}
+
+.obUiRenderProduct-identifierContainer-identifier {
+  overflow: hidden;
+  padding-top: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.obUiRenderProduct-identifierContainer-filterAttr {
+  color: #888888;
+}
+
+.obUiRenderProduct-container1-container2-container1-container2 {
+  width: 38px;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+.obUiRenderProduct-container1-container2-container1-container2-btnProductContextMenu {
+/* Inherits: [OB.UI.ProductContextMenu] */
+}
+
+.obUiRenderProduct-container1-container2-container2 {
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  padding: 0px 6px 0px 0px;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.obUiRenderProduct-container1-container2-container2-icons {
+  vertical-align: top;
+}
+
+.obUiRenderProduct-icons-bestseller {
+  height: 16px;
+  width: 16px;
+  padding: 0px 2px;
+  float: left;
+}
+
+.obUiRenderProduct-container1-container2-container2-priceBox {
+  vertical-align: top;
+}
+
+.obUiRenderProduct-priceBox-container1 {}
+
+.obUiRenderProduct-priceBox-container1-price {
+  text-align: right;
+  font-weight: bold;
+}
+
+.obUiRenderProduct-priceBox-container1-priceList {
+  text-align: right;
+  font-weight: bold;
+  color: grey;
+}
+
+.obUiRenderProduct-generic {
+  text-align: right;
+  font-style: italic;
+  color: grey;
+  font-weight: bold;
+  padding-right: 6px;
+}
+
+.obUiRenderProduct-bottonLine {
+  color: #888888;
+  text-align: left;
+  font-style: italic;
+  color: grey;
+  font-size: var(--font-small);
+  padding-top: 10px;
+  padding-right: 6px;
+}
+
+
+/*
+# Component: OB.UI.Thumbnail.Bestseller
+# Inherits: [OB.UI.Thumbnail]
+*/
+.obUiThumbnailBestseller {}
+
+.obUiThumbnailBestseller-image {
+  background-position: 0px 0px;
+  background-color: transparent;
+  background-size: 14px 16px;
+}
+
+
+/*
+# Component: OB.UI.ProductContextMenu
+# Inherits: [OB.UI.ListContextMenu]
+*/
+.obUiProductContextMenu {}
+
+
+
 
 /*****************/
 /*      JAR      */
