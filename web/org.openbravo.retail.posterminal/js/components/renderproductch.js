@@ -13,8 +13,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.RenderProductCh',
   avoidDoubleClick: false,
-  style: 'width: 86%; padding: 0px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;',
-  classes: 'btnlink-white-simple',
+  classes: 'obUiRenderProductCh',
   events: {
     onShowPopup: ''
   },
@@ -36,7 +35,9 @@ enyo.kind({
       this.setContent(this.model.get('_identifier').substring(0, 10) + '...');
     }
     if (this.model.get('filtering')) {
-      this.addClass('btnlink-yellow-bold');
+      this.addClass('obUiRenderProductCh_yellowBold');
+    } else {
+      this.removeClass('obUiRenderProductCh_yellowBold');
     }
   }
 });

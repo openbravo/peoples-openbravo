@@ -3814,6 +3814,34 @@
 
 
 
+/***********************   ***********************/
+/*           File: renderproductch.js            */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.RenderProductCh
+# Inherits: [OB.UI.SmallButton]
+*/
+.obUiRenderProductCh {
+  width: 86%;
+  padding: 0px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  background-color: #ffffff;
+  color: black;
+  border: 2px solid #cccccc;
+}
+
+.obUiRenderProductCh_yellowBold {
+  background-color: yellow;
+  color: black;
+  font-weight: bold;
+  border: 4px solid #cccccc;
+}
+
+
+
 
 /*****************/
 /*      JAR      */
