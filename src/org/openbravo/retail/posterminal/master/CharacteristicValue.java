@@ -10,10 +10,8 @@ package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -30,7 +28,6 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
@@ -47,56 +44,40 @@ public class CharacteristicValue extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
-  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
+  protected List<HQLPropertyList> getHqlProperties(final JSONObject jsonsent) {
     // Get Product Properties
-    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
-    Map<String, Object> args = new HashMap<String, Object>();
-    HQLPropertyList characteristicsHQLProperties = ModelExtensionUtils
+    final Map<String, Object> args = new HashMap<>();
+    final HQLPropertyList characteristicsHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions, args);
-    propertiesList.add(characteristicsHQLProperties);
 
+    final List<HQLPropertyList> propertiesList = new ArrayList<>();
+    propertiesList.add(characteristicsHQLProperties);
     return propertiesList;
   }
 
   @Override
-  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
-
-    final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    final boolean crossStoreSearch = POSUtils.isCrossStoreSearch(jsonsent);
+  protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
     final String posId = jsonsent.getString("pos");
-
-    final OBRETCOProductList productList = POSUtils
-        .getProductListByPosterminalId(jsonsent.getString("pos"));
-    Set<String> productListIds = new HashSet<>();
-    productListIds.add(productList.getId());
+    final List<String> crossStoreOrgIds = POSUtils.getOrgListCrossStore(posId);
+    final String productListId = POSUtils.getProductListByPosterminalId(posId).getId();
 
     final Map<String, Object> paramValues = new HashMap<>();
-    if (crossStoreSearch) {
-      Set<String> crossStoreNaturalTree = OBContext.getOBContext()
-          .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId())
-          .getNaturalTree(orgId);
-      crossStoreNaturalTree.addAll(POSUtils.getOrgListCrossStore(posId));
-
-      productListIds = POSUtils.getProductListCrossStore(posId);
-
-      paramValues.put("crossStoreNaturalTree", crossStoreNaturalTree);
-    }
-
-    paramValues.put("productListIds", productListIds);
+    paramValues.put("crossStoreOrgIds", crossStoreOrgIds);
+    paramValues.put("productListId", productListId);
     return paramValues;
   }
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    List<String> hqlQueries = new ArrayList<String>();
-    HQLPropertyList regularProductsChValueHQLProperties = ModelExtensionUtils
+    final List<String> hqlQueries = new ArrayList<>();
+    final HQLPropertyList characteristicValueHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-    boolean isRemote = false;
 
-    Long lastUpdated = jsonsent.has("lastUpdated")
+    final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
+    final Long lastUpdated = jsonsent.has("lastUpdated")
         && !jsonsent.get("lastUpdated").equals("undefined")
         && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
-
+    boolean isRemote = false;
     try {
       OBContext.setAdminMode(false);
       isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
@@ -108,60 +89,64 @@ public class CharacteristicValue extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
-    StringBuilder query = new StringBuilder();
-    query.append(" select");
-    query.append(regularProductsChValueHQLProperties.getHqlSelect());
 
-    if (!isRemote) {
-      query.append(" from CharacteristicValue cv");
-      query.append(" inner join cv.characteristic ch,");
-      query.append(" ADTreeNode node");
-      query.append(" where ch.tree = node.tree");
-      query.append(" and cv.id = node.node");
-      query.append(" and ch.obposUseonwebpos = true");
-      query.append(" and (");
-      query.append("   cv.summaryLevel = false");
-      query.append("   and exists (");
-      query.append("     select 1");
-      query.append("     from  ProductCharacteristicValue pcv,");
-      query.append("     OBRETCO_Prol_Product assort");
-      query.append("     where pcv.characteristicValue.id = cv.id");
-      query.append("     and pcv.product.id= assort.product.id");
-      query.append("     and assort.obretcoProductlist.id in :productListIds");
-      query.append("   )");
-      query.append(" or cv.summaryLevel = true");
-      query.append(" )");
-      query.append(" and $filtersCriteria");
-      query.append(" and $hqlCriteria");
-      if (POSUtils.isCrossStoreSearch(jsonsent)) {
-        query.append(" and cv.organization.id in :crossStoreNaturalTree");
-      } else {
-        query.append(" and cv.$naturalOrgCriteria");
-      }
-      query.append(" and cv.$readableSimpleClientCriteria");
-      if (lastUpdated != null) {
-        query.append(" and (cv.$incrementalUpdateCriteria or node.$incrementalUpdateCriteria)");
-      } else {
-        query.append(" and (cv.$incrementalUpdateCriteria and node.$incrementalUpdateCriteria)");
-      }
-    } else {
-      query.append(" from CharacteristicValue cv");
-      query.append(" where cv.characteristic.obposUseonwebpos = true");
-      query.append(" and $filtersCriteria");
-      query.append(" and $hqlCriteria");
-      if (POSUtils.isCrossStoreSearch(jsonsent)) {
-        query.append(" and cv.organization.id in :crossStoreNaturalTree");
-      } else {
-        query.append(" and cv.$naturalOrgCriteria");
-      }
-      query.append(" and cv.$readableSimpleClientCriteria");
-      query.append(" and (cv.$incrementalUpdateCriteria)");
-    }
-    query.append(" and cv.active = 'Y'");
-    query.append(" order by cv.name, cv.id");
-
-    hqlQueries.add(query.toString());
-
+    hqlQueries.add(getCharacteristicValueHqlString(characteristicValueHQLProperties, isRemote,
+        isCrossStoreSearch, lastUpdated));
     return hqlQueries;
   }
+
+  private String getCharacteristicValueHqlString(
+      final HQLPropertyList characteristicValueHQLProperties, final boolean isRemote,
+      final boolean isCrossStoreSearch, final Long lastUpdated) {
+    final StringBuilder query = new StringBuilder();
+    query.append(" select");
+    query.append(characteristicValueHQLProperties.getHqlSelect());
+    query.append(" from CharacteristicValue cv");
+    query.append(" join cv.characteristic ch");
+    if (isRemote || isCrossStoreSearch) {
+      query.append(" where cv.$incrementalUpdateCriteria");
+    } else {
+      query.append(" , ADTreeNode node");
+      query.append(" where ch.tree = node.tree");
+      query.append(" and cv.id = node.node");
+      query.append(" and ((cv.summaryLevel = false");
+      query.append(" and exists (");
+      query.append("   select 1");
+      query.append("   from  ProductCharacteristicValue pcv");
+      query.append("   , OBRETCO_Prol_Product assort");
+      query.append("   where pcv.product.id = assort.product.id");
+      query.append("   and pcv.characteristicValue.id = cv.id");
+      query.append("   and assort.obretcoProductlist.id = :productListId");
+      query.append(" ))");
+      query.append(" or cv.summaryLevel = true)");
+      query.append(" and (cv.$incrementalUpdateCriteria");
+      query
+          .append(" " + (lastUpdated == null ? "and" : "or") + " node.$incrementalUpdateCriteria)");
+    }
+    query.append(" and $filtersCriteria");
+    query.append(" and $hqlCriteria");
+    query.append(" and cv.$readableSimpleClientCriteria");
+    query.append(" and ch.obposUseonwebpos = true");
+    query.append(" and cv.active = true");
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from Organization o");
+    query.append("   where o.id in :crossStoreOrgIds");
+    query.append("   and ad_org_isinnaturaltree(cv.organization.id, o.id, o.client.id) = 'Y'");
+    query.append(" )");
+    query.append(" order by cv.name, cv.id");
+    return query.toString();
+  }
+
+  private static boolean isCrossStoreSearch(final JSONObject jsonsent) {
+    boolean crossStoreSearch = false;
+    try {
+      crossStoreSearch = jsonsent.has("remoteParams")
+          && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
+    } catch (JSONException e) {
+      log.error("Error while getting crossStoreSearch " + e.getMessage(), e);
+    }
+    return crossStoreSearch;
+  }
+
 }
