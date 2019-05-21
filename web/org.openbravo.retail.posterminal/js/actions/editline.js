@@ -18,6 +18,15 @@
     permission: 'OBPOS_ActionButtonDescription',
     properties: {
       i18nContent: 'OBPOS_LblDescription'
+    },
+    isActive: function (view) {
+      var selectedReceiptLine = view.state.readState({
+        name: 'selectedReceiptLine'
+      });
+      var selectedReceiptLines = view.state.readCommandState({
+        name: 'selectedReceiptLines'
+      });
+      return selectedReceiptLine && (!selectedReceiptLines || selectedReceiptLines.length <= 1);
     }
   }));
 

@@ -224,45 +224,28 @@ enyo.kind({
       name: 'deleteLine'
     }
   }, {
-    kind: 'OB.UI.SmallButton',
-    i18nContent: 'OBPOS_LblDescription',
+    kind: 'OB.UI.ActionButton',
     name: 'descriptionButton',
-    classes: 'btnlink-orange',
-    permission: 'OBPOS_ActionButtonDescription',
-    tap: function () {
-      OB.MobileApp.actionsRegistry.execute({
-        window: 'retail.pointofsale',
-        name: 'editLine'
-      });
+    classes: 'btnlink btnlink-small btnlink-orange',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'editLine'
     }
   }, {
-    kind: 'OB.UI.SmallButton',
+    kind: 'OB.UI.ActionButton',
     name: 'returnLine',
-    i18nContent: 'OBPOS_LblReturnLine',
-    permission: 'OBPOS_ReturnLine',
-    classes: 'btnlink-orange',
-    showing: false,
-    tap: function () {
-      OB.MobileApp.actionsRegistry.execute({
-        window: 'retail.pointofsale',
-        name: 'returnLine'
-      });
+    classes: 'btnlink btnlink-small btnlink-orange',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'returnLine'
     }
   }, {
-    kind: 'OB.UI.SmallButton',
+    kind: 'OB.UI.ActionButton',
     name: 'splitlineButton',
-    i18nContent: 'OBPOS_lblSplit',
-    showing: false,
-    classes: 'btnlink-orange',
-    permission: 'OBPOS_ActionButtonSplit',
-    tap: function () {
-      this.owner.owner.doShowPopup({
-        popup: 'OBPOS_modalSplitLine',
-        args: {
-          receipt: this.owner.owner.model.get('order'),
-          model: this.owner.owner.line
-        }
-      });
+    classes: 'btnlink btnlink-small btnlink-orange',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'splitLine'
     }
   }, {
     kind: 'OB.UI.SmallButton',
@@ -352,9 +335,13 @@ enyo.kind({
       this.model = model;
     }
   }, {
-    kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenStockButton',
+    kind: 'OB.UI.ActionButton',
     name: 'checkStockButton',
-    showing: false
+    classes: 'btnlink btnlink-small btnlink-orange',
+    action: {
+      window: 'retail.pointofsale',
+      name: 'showStockLine'
+    }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
     name: 'openAttributeButton',
@@ -472,16 +459,6 @@ enyo.kind({
     }
   },
   rearrangeEditButtonBar: function (line) {
-    if (this.$.actionButtonsContainer.$.returnLine) {
-      if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
-        this.$.actionButtonsContainer.$.returnLine.show();
-      } else {
-        this.$.actionButtonsContainer.$.returnLine.hide();
-      }
-      if (this.model.get('order').get('orderType') === 1 || (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.model.get('order').get('orderType') === 2)) {
-        this.$.actionButtonsContainer.$.returnLine.hide();
-      }
-    }
     if (this.selectedModels && this.selectedModels.length > 0 && (this.selectedModels[0] instanceof OB.Model.OrderLine)) {
       var selectedServices = _.filter(this.selectedModels, function (line) {
         return line.get('product').get('productType') === 'S' || line.get('qty') < 0;
@@ -537,45 +514,6 @@ enyo.kind({
         this.line.on('change', this.render, this);
       }
       if (!this.selectedModels || this.selectedModels.length <= 1) {
-        if (this.model.get('order').get('isEditable')) {
-          if (this.$.actionButtonsContainer.$.descriptionButton) {
-            this.$.actionButtonsContainer.$.descriptionButton.show();
-          }
-          var showSplitBtn = line && line.get('qty') > 1 && (!line.get('remainingQuantity') || line.get('remainingQuantity') < line.get('qty')) && //
-          (!this.model.get('order').get('hasServices') || (line.get('product').get('productType') !== 'S' && !_.find(this.model.get('order').get('lines').models, function (l) {
-            return l.get('relatedLines') && _.find(l.get('relatedLines'), function (rl) {
-              return rl.orderlineId === line.id;
-            }) !== undefined;
-          })));
-          if (this.$.actionButtonsContainer.$.splitlineButton) {
-            if (showSplitBtn) {
-              var me = this;
-              OB.UTIL.HookManager.executeHooks('OBPOS_CheckSplitLine', {
-                receipt: me.model.get('order'),
-                orderline: line
-              }, function (args) {
-                if (args && args.cancelOperation) {
-                  me.$.actionButtonsContainer.$.splitlineButton.hide();
-                } else {
-                  me.$.actionButtonsContainer.$.splitlineButton.show();
-                }
-              });
-            } else {
-              this.$.actionButtonsContainer.$.splitlineButton.hide();
-            }
-          }
-        }
-        if (this.$.actionButtonsContainer.$.checkStockButton) {
-          if (this.line) {
-            if (this.receipt.get('isEditable') && this.line.get('product').get('productType') === 'I' && !this.line.get('product').get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
-              this.$.actionButtonsContainer.$.checkStockButton.show();
-            } else {
-              this.$.actionButtonsContainer.$.checkStockButton.hide();
-            }
-          } else {
-            this.$.actionButtonsContainer.$.checkStockButton.hide();
-          }
-        }
         if (this.$.actionButtonsContainer.$.openAttributeButton) {
           if (this.line) {
             if ((this.receipt.get('isEditable') || this.receipt.get('isLayaway')) && this.line.get('product').get('hasAttributes') && OB.MobileApp.model.get('permissions').OBPOS_EnableSupportForProductAttributes) {
@@ -588,15 +526,6 @@ enyo.kind({
           }
         }
       } else {
-        if (this.$.actionButtonsContainer.$.checkStockButton) {
-          this.$.actionButtonsContainer.$.checkStockButton.hide();
-        }
-        if (this.$.actionButtonsContainer.$.descriptionButton) {
-          this.$.actionButtonsContainer.$.descriptionButton.hide();
-        }
-        if (this.$.actionButtonsContainer.$.splitlineButton) {
-          this.$.actionButtonsContainer.$.splitlineButton.hide();
-        }
         if (this.$.actionButtonsContainer.$.openAttributeButton) {
           this.$.actionButtonsContainer.$.openAttributeButton.hide();
         }
@@ -626,22 +555,6 @@ enyo.kind({
           this.$.actionButtonsContainer.$.removeDiscountButton.show();
         } else {
           this.$.actionButtonsContainer.$.removeDiscountButton.hide();
-        }
-      }
-      if (this.$.actionButtonsContainer.$.returnLine) {
-        if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1 || (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.model.get('order').get('orderType') === 2)) {
-          if ((!_.isUndefined(line) && !line.get('isEditable')) || this.model.get('order').get('orderType') === 1 || this.model.get('order').get('orderType') === 2) {
-            this.$.actionButtonsContainer.$.returnLine.hide();
-          } else if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
-            this.$.actionButtonsContainer.$.returnLine.show();
-          }
-        }
-        if (this.$.actionButtonsContainer.$.returnLine.showing) {
-          if (this.selectedModels.length !== Math.abs(_.reduce(this.selectedModels, function (memo, lineModel) {
-            return memo + Math.sign(lineModel.get('qty'));
-          }, 0))) {
-            this.$.actionButtonsContainer.$.returnLine.hide();
-          }
         }
       }
       if (this.$.actionButtonsContainer.$.showRelatedServices) {
@@ -1046,23 +959,6 @@ enyo.kind({
       }
     }
     OB.Dal.find(OB.Model.ReturnReason, null, successCallbackReasons, errorCallback, this);
-  }
-});
-
-enyo.kind({
-  kind: 'OB.UI.SmallButton',
-  name: 'OB.OBPOSPointOfSale.UI.EditLine.OpenStockButton',
-  events: {
-    onShowLeftSubWindow: ''
-  },
-  classes: 'btnlink-orange',
-  i18nContent: 'OBPOS_checkStock',
-  permission: 'OBPOS_ActionButtonCheckStock',
-  tap: function () {
-    OB.MobileApp.actionsRegistry.execute({
-      window: 'retail.pointofsale',
-      name: 'showStockLine'
-    });
   }
 });
 

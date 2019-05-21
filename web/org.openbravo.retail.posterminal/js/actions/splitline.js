@@ -7,17 +7,17 @@
  ************************************************************************************
  */
 
-/*global OB */
+/*global OB, _ */
 
 (function () {
 
   OB.MobileApp.actionsRegistry.register(
   new OB.Actions.CommandAction({
     window: 'retail.pointofsale',
-    name: 'showStockLine',
-    permission: 'OBPOS_ActionButtonCheckStock',
+    name: 'splitLine',
+    permission: 'OBPOS_ActionButtonSplit',
     properties: {
-      i18nContent: 'OBPOS_checkStock'
+      i18nContent: 'OBPOS_lblSplit'
     },
     isActive: function (view) {
       var selectedReceiptLine = view.state.readState({
@@ -26,30 +26,35 @@
       var selectedReceiptLines = view.state.readCommandState({
         name: 'selectedReceiptLines'
       });
-      var isEditable = view.state.readCommandState({
+      var isEditable = view.state.readState({
         name: 'receipt.isEditable'
       });
+      var hasServices = view.state.readState({
+        name: 'receipt.hasServices'
+      });
+
       var active = isEditable;
-      active = active && OB.MobileApp.model.get('connectedToERP');
       active = active && selectedReceiptLine && (!selectedReceiptLines || selectedReceiptLines.length <= 1);
-      active = active && selectedReceiptLine.get('product').get('productType') === 'I' && !selectedReceiptLine.get('product').get('ispack');
+      active = active && selectedReceiptLine.get('qty') > 1 && (!selectedReceiptLine.get('remainingQuantity') || selectedReceiptLine.get('remainingQuantity') < selectedReceiptLine.get('qty'));
+      active = active && (!hasServices || (selectedReceiptLine.get('product').get('productType') !== 'S' && !_.find(view.model.get('order').get('lines').models, function (l) {
+        return l.get('relatedLines') && _.find(l.get('relatedLines'), function (rl) {
+          return rl.orderlineId === selectedReceiptLine.id;
+        }) !== undefined;
+      })));
+
       return active;
     },
     command: function (view) {
-      var selectedReceiptLine = view.state.readCommandState({
+      var selectedReceiptLine = view.state.readState({
         name: 'selectedReceiptLine'
       });
-      var product = selectedReceiptLine.get('product');
-      var warehouse = selectedReceiptLine.get('warehouse');
-      //show always or just when the product has been set to show stock screen?
-      if (product.get('productType') === 'I' && !product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
-        view.showLeftSubWindow(this, {
-          leftSubWindow: OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow,
-          line: selectedReceiptLine,
-          product: product,
-          warehouse: warehouse
-        });
-      }
+      view.doShowPopup({
+        popup: 'OBPOS_modalSplitLine',
+        args: {
+          receipt: view.model.get('order'),
+          model: selectedReceiptLine
+        }
+      });
     }
   }));
 

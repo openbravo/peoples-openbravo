@@ -52,9 +52,39 @@ new OB.State.BackboneProperty({
 OB.MobileApp.statesRegistry.register(
 new OB.State.BackboneProperty({
   window: 'retail.pointofsale',
+  name: 'receipt.isLayaway',
+  object: function (view) {
+    return view.model.get('order');
+  },
+  property: 'isLayaway'
+}));
+
+OB.MobileApp.statesRegistry.register(
+new OB.State.BackboneProperty({
+  window: 'retail.pointofsale',
+  name: 'receipt.isPaid',
+  object: function (view) {
+    return view.model.get('order');
+  },
+  property: 'isPaid'
+}));
+
+OB.MobileApp.statesRegistry.register(
+new OB.State.BackboneProperty({
+  window: 'retail.pointofsale',
   name: 'receipt.orderType',
   object: function (view) {
     return view.model.get('order');
   },
   property: 'orderType'
+}));
+
+OB.MobileApp.statesRegistry.register(
+new OB.State.BackboneProperty({
+  window: 'retail.pointofsale',
+  name: 'receipt.hasServices',
+  object: function (view) {
+    return view.model.get('order');
+  },
+  property: 'hasServices'
 }));

@@ -23,7 +23,30 @@
       var selectedReceiptLine = view.state.readState({
         name: 'selectedReceiptLine'
       });
-      return !!selectedReceiptLine;
+      var selectedReceiptLines = view.state.readState({
+        name: 'selectedReceiptLines'
+      });
+      var isPaid = view.state.readState({
+        name: 'receipt.isPaid'
+      });
+      var isLayaway = view.state.readState({
+        name: 'receipt.isLayaway'
+      });
+      var isQuotation = view.state.readState({
+        name: 'receipt.isQuotation'
+      });
+      var orderType = view.state.readState({
+        name: 'receipt.orderType'
+      });
+
+      var active = !isPaid && !isLayaway && !isQuotation;
+      active = active && orderType !== 1 && (orderType !== 2 || OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true));
+      active = active && selectedReceiptLine;
+      active = active && (selectedReceiptLines.length === Math.abs(_.reduce(selectedReceiptLines, function (memo, l) {
+        return memo + Math.sign(l.get('qty'));
+      }, 0)));
+
+      return active;
     },
     command: function (view) {
       var receipt = view.model.get('order');
