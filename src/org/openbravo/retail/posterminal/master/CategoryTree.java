@@ -102,7 +102,7 @@ public class CategoryTree extends ProcessHQLQuery {
     query.append("   select 1");
     query.append("   from Organization o");
     query.append("   where o.id in :orgIds");
-    query.append("   and ad_org_isinnaturaltree(tn.organization.id, o.id, o.client.id) = 'Y'");
+    query.append("   and ad_org_isinnaturaltree(tn.organization.id, o.id, tn.client.id) = 'Y'");
     query.append(" )");
     return query.toString();
   }
@@ -124,7 +124,7 @@ public class CategoryTree extends ProcessHQLQuery {
     query.append("   select 1");
     query.append("   from Organization o");
     query.append("   where o.id in :orgIds");
-    query.append("   and ad_org_isinnaturaltree(tn.organization.id, o.id, o.client.id) = 'Y'");
+    query.append("   and ad_org_isinnaturaltree(tn.organization.id, o.id, tn.client.id) = 'Y'");
     query.append(" )");
     return query.toString();
   }

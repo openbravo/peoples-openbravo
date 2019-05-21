@@ -124,7 +124,7 @@ public class CharacteristicValue extends ProcessHQLQuery {
     query.append("   select 1");
     query.append("   from Organization o");
     query.append("   where o.id in :orgIds");
-    query.append("   and ad_org_isinnaturaltree(cv.organization.id, o.id, o.client.id) = 'Y'");
+    query.append("   and ad_org_isinnaturaltree(cv.organization.id, o.id, cv.client.id) = 'Y'");
     query.append(" )");
     query.append(" order by cv.name, cv.id");
     return query.toString();

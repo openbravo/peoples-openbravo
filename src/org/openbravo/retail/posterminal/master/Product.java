@@ -347,7 +347,7 @@ public class Product extends ProcessHQLQuery {
     query.append("   select 1");
     query.append("   from Organization o");
     query.append("   where o.id in %2$s");
-    query.append("   and ad_org_isinnaturaltree(%1$s.organization.id, o.id, o.client.id) = 'Y'");
+    query.append("   and ad_org_isinnaturaltree(%1$s.organization.id, o.id, %1$s.client.id) = 'Y'");
     query.append(" )");
     // Pack is included in the assortment of current/cross store
     query.append(" and ((%1$s.includedProducts = 'N'");

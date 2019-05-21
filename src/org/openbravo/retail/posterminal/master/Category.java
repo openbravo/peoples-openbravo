@@ -84,9 +84,15 @@ public class Category extends ProcessHQLQuery {
 
     final List<String> hqlQueries = new ArrayList<>();
     hqlQueries.add(getRegularProductCategoryHqlString(regularProductsCategoriesHQLProperties,
-        lastUpdated, isCrossStoreEnabled));
+        lastUpdated, false));
     hqlQueries.add(getSummaryProductCategoryHqlString(regularProductsCategoriesHQLProperties,
-        lastUpdated, isCrossStoreEnabled));
+        lastUpdated, false));
+    if (isCrossStoreEnabled) {
+      hqlQueries.add(getRegularProductCategoryHqlString(regularProductsCategoriesHQLProperties,
+          lastUpdated, true));
+      hqlQueries.add(getSummaryProductCategoryHqlString(regularProductsCategoriesHQLProperties,
+          lastUpdated, true));
+    }
     hqlQueries.add(getPackProductCategoryHqlString(isCrossStoreEnabled));
 
     return hqlQueries;
@@ -94,26 +100,27 @@ public class Category extends ProcessHQLQuery {
 
   private String getRegularProductCategoryHqlString(
       final HQLPropertyList regularProductsCategoriesHQLProperties, final Long lastUpdated,
-      final boolean isCrossStoreEnabled) {
+      final boolean isCrossStore) {
+    final String assortmentFilter = isCrossStore ? ":productListIds" : ":productListId";
+
     final StringBuilder query = new StringBuilder();
     query.append(" select");
     query.append(regularProductsCategoriesHQLProperties.getHqlSelect());
-    if (isCrossStoreEnabled) {
-      query.append(
-          " , case when min(case when aCat.obretcoProductlist.id = :productListId then 'N' else 'Y' end) = 'N' then false else true end as crossStore");
-    } else {
-      query.append(" , false as crossStore");
-    }
+    query.append(" , " + isCrossStore + " as crossStore");
     query.append(" from OBRETCO_Productcategory aCat");
     query.append(" join aCat.productCategory pCat");
     query.append(" left join pCat.image img");
     query.append(" where aCat.$readableSimpleClientCriteria");
-    query.append(" and aCat.obretcoProductlist.id in :productListIds");
+    query.append(" and aCat.obretcoProductlist.id in " + assortmentFilter);
     query.append(" and (aCat.$incrementalUpdateCriteria");
     query.append(" " + (lastUpdated == null ? "and" : "or") + " pCat.$incrementalUpdateCriteria)");
-    if (isCrossStoreEnabled) {
-      query.append(" group by");
-      query.append(regularProductsCategoriesHQLProperties.getHqlGroupBy());
+    if (isCrossStore) {
+      query.append(" and not exists (");
+      query.append("   select 1");
+      query.append("   from OBRETCO_Productcategory aCat2");
+      query.append("   where aCat2.productCategory.id = pCat.id");
+      query.append("   and aCat2.obretcoProductlist.id = :productListId");
+      query.append(" )");
     }
     query.append(" order by pCat.name, pCat.id");
     return query.toString();
@@ -121,16 +128,13 @@ public class Category extends ProcessHQLQuery {
 
   private String getSummaryProductCategoryHqlString(
       final HQLPropertyList regularProductsCategoriesHQLProperties, final Long lastUpdated,
-      final boolean isCrossStoreEnabled) {
+      final boolean isCrossStore) {
+    final String storeFilter = isCrossStore ? ":orgIds" : ":orgId";
+
     final StringBuilder query = new StringBuilder();
     query.append(" select");
     query.append(regularProductsCategoriesHQLProperties.getHqlSelect());
-    if (isCrossStoreEnabled) {
-      query.append(
-          " , case when min(case when ad_org_isinnaturaltree(pCat.organization.id, :orgId, pCat.client.id) = 'Y' then 'N' else 'Y' end) = 'N' then false else true end as crossStore");
-    } else {
-      query.append(" , false as crossStore");
-    }
+    query.append(" , " + isCrossStore + " as crossStore");
     query.append(" from ProductCategory pCat");
     query.append(" left join pCat.image img");
     query.append(" , ADTreeNode tn");
@@ -141,14 +145,19 @@ public class Category extends ProcessHQLQuery {
     query.append(" and exists (");
     query.append("   select 1");
     query.append("   from Organization o");
-    query.append("   where o.id in :orgIds");
-    query.append("   and ad_org_isinnaturaltree(pCat.organization.id, o.id, o.client.id) = 'Y'");
+    query.append("   where o.id in " + storeFilter);
+    query.append("   and ad_org_isinnaturaltree(pCat.organization.id, o.id, pCat.client.id) = 'Y'");
     query.append(" )");
     query.append(" and (tn.$incrementalUpdateCriteria");
     query.append(" " + (lastUpdated == null ? "and" : "or") + " pCat.$incrementalUpdateCriteria)");
-    if (isCrossStoreEnabled) {
-      query.append(" group by");
-      query.append(regularProductsCategoriesHQLProperties.getHqlGroupBy());
+    if (isCrossStore) {
+      query.append(" and not exists (");
+      query.append("   select 1");
+      query.append("   from ProductCategory pCat2");
+      query.append("   where pCat2.id = pCat.id");
+      query.append(
+          "   and ad_org_isinnaturaltree(pCat2.organization.id, :orgId, pCat2.client.id) = 'Y'");
+      query.append(" )");
     }
     query.append(" order by pCat.name, pCat.id");
     return query.toString();

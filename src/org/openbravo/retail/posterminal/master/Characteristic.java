@@ -93,7 +93,7 @@ public class Characteristic extends ProcessHQLQuery {
     query.append("   select 1");
     query.append("   from Organization o");
     query.append("   where o.id in :orgIds");
-    query.append("   and ad_org_isinnaturaltree(ch.organization.id, o.id, o.client.id) = 'Y'");
+    query.append("   and ad_org_isinnaturaltree(ch.organization.id, o.id, ch.client.id) = 'Y'");
     query.append(" )");
     if (!isRemote) {
       query.append(" and exists (");
