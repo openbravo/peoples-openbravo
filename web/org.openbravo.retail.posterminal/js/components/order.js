@@ -1116,18 +1116,30 @@ enyo.kind({
         fixServiceOrderLines(true);
       }
     }, this);
-    this.order.on('change:net change:gross updateServicePrices', function () {
+    this.order.on('calculatedReceipt updateServicePrices', function () {
       var me = this,
-          setPriceCallback, handleError, i;
+          setPriceCallback, changePriceCallback, handleError, serviceLines, i;
 
-      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable') || (this.order.get('isQuotation') && this.order.get('hasbeenpaid') === 'Y')) {
+      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable') || (this.order.get('isQuotation') && this.order.get('hasbeenpaid') === 'Y') || OB.UTIL.ProcessController.isProcessActive('calculateReceipt')) {
         return;
       }
 
-      setPriceCallback = function (line, newprice) {
-        me.order.setPrice(line, newprice, {
-          setUndo: false
+      setPriceCallback = function (line, newprice, priceChanged) {
+        OB.UTIL.HookManager.executeHooks('OBPOS_ServicePriceRules_PreSetPriceToLine', {
+          newprice: newprice,
+          line: line,
+          priceChanged: priceChanged
+        }, function (args) {
+          if (args.newprice !== line.get('price')) {
+            me.order.setPrice(args.line, args.newprice, {
+              setUndo: false
+            });
+          }
         });
+      };
+
+      changePriceCallback = function (line, newprice) {
+        setPriceCallback(line, newprice, true);
       };
 
       handleError = function (line, message) {
@@ -1145,9 +1157,17 @@ enyo.kind({
         }
       };
 
-      for (i = 0; i < this.order.get('lines').length; i++) {
-        var line = this.order.get('lines').at(i);
-        OB.UTIL.getCalculatedPriceForService(line, line.get('product'), line.get('relatedLines'), line.get('qty'), setPriceCallback, handleError);
+      serviceLines = this.order.get('lines').filter(function (l) {
+        return l.get('product').get('productType') === 'S';
+      });
+
+      for (i = 0; i < serviceLines.length; i++) {
+        var line = serviceLines[i];
+        if (line.get('product').get('isPriceRuleBased')) {
+          OB.UTIL.getCalculatedPriceForService(line, line.get('product'), line.get('relatedLines'), line.get('qty'), changePriceCallback, handleError);
+        } else {
+          setPriceCallback(line, line.get('price'), false);
+        }
       }
     }, this);
     this.order.on('change:selectedPayment', function (model) {
