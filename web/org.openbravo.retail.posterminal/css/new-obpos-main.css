@@ -4325,6 +4325,320 @@
 # Component: OB.UI.ModalPaymentVoid
 # Inherits: [OB.UI.ModalAction]
 */
+.obUiModalPaymentVoid {
+  max-height: 600px;
+}
+
+
+
+/***********************   ***********************/
+/*        File: modalassociatetickets.js         */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ButtonSelectAll
+# Inherits: [OB.UI.SmallButton]
+*/
+.obUiButtonSelectAll {
+  width: 180px;
+  margin: 0px 8px 6px 0px;
+  background-color: #f8e859;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  height: 30px;
+  font-size: var(--font-medium);
+  padding: 5px 15px 7px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+}
+
+.obUiButtonSelectAll:hover {
+  opacity: 0.75;
+}
+
+.obUiButtonSelectAll:active {
+  opacity: 0.999;
+  background-color: #cccccc;
+}
+
+.obUiButtonSelectAll:disabled,
+.obUiButtonSelectAll[disabled=true]:hover {
+  background-color: #a9a9a9;
+  opacity: 1;
+  cursor: default;
+}
+
+@media all and (max-width: 800px) {
+  .obUiButtonSelectAll {
+    height: 45px;
+  }
+}
+
+
+/*
+# Component: OB.UI.SelectorButtonAdvancedFilter
+# Inherits: [OB.UI.ButtonAdvancedFilter]
+*/
+.obUiSelectorButtonAdvancedFilter {
+  width: 180px;
+  margin: 0px 8px 6px 0px;
+}
+
+
+/*
+# Component: OB.UI.ButtonAssociateSelected
+# Inherits: [OB.UI.SmallButton]
+*/
+.obUiButtonAssociateSelected {
+  width: 180px;
+  margin: 0px 8px 6px 0px;
+  text-decoration: none;
+  background-color: #6cb33f;
+  color: white;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  height: 30px;
+  font-size: var(--font-medium);
+  padding: 5px 15px 7px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+}
+
+.obUiButtonAssociateSelected:hover {
+  opacity: 0.75;
+}
+
+.obUiButtonAssociateSelected:active {
+  opacity: 0.999;
+  background-color: #cccccc;
+}
+
+.obUiButtoobUiButtonAssociateSelectednSelectAll:disabled,
+.obUiButtonAssociateSelected[disabled=true]:hover {
+  background-color: #a9a9a9;
+  opacity: 1;
+  cursor: default;
+}
+
+@media all and (max-width: 800px) {
+  .obUiButtonAssociateSelected {
+    height: 45px;
+  }
+}
+
+
+/*
+# Component: OB.UI.ModalOrderScrollableHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obUiModalOrderScrollableHeader {}
+
+.obUiModalOrderScrollableHeader-filterSelector {
+/* Inherits: [OB.UI.FilterSelectorTableHeader] */
+  padding: 10px;
+}
+
+.obUiModalOrderScrollableHeader-container1 {
+  padding: 7px;
+}
+
+.obUiModalOrderScrollableHeader-container1-container1 {
+  display: table;
+  margin: 0 auto;
+}
+
+.obUiModalOrderScrollableHeader-container1-container1-container1 {
+  display: table-cell;
+  text-align: right;
+  width: 38%;
+}
+
+.obUiModalOrderScrollableHeader-container1-container1-container1-obUiButtonSelectAll {
+/* Inherits: [OB.UI.ButtonSelectAll] */
+}
+
+.obUiModalOrderScrollableHeader-container1-container1-container2 {
+  display: table-cell;
+  text-align: center;
+  width: 24%;
+}
+
+.obUiModalOrderScrollableHeader-container1-container1-container2-obUiSelectorButtonAdvancedFilter {
+/* Inherits: [OB.UI.SelectorButtonAdvancedFilter] */
+}
+
+.obUiModalOrderScrollableHeader-container1-container1-container3 {
+  display: table-cell;
+  width: 38%;
+}
+
+.obUiModalOrderScrollableHeader-container1-container1-container3-obUiButtonAssociateSelected {
+/* Inherits: [OB.UI.ButtonAssociateSelected] */
+}
+
+
+/*
+# Component: OB.UI.ListOrdersLine
+# Inherits: [OB.UI.listItemButton]
+*/
+.obUiListOrdersLine {
+  height: 40px;
+  padding: 0;
+  border-bottom: none;
+}
+
+.obUiListOrdersLine-order {
+  width: 100%;
+}
+
+.obUiListOrdersLine-order-iconOrder {
+  width: 34px;
+  height: 25px;
+  float: left;
+  display: inline-block;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-half-on.svg');
+  background-repeat: no-repeat;
+}
+
+.obUiListOrdersLine-order-iconOrder_on {
+  width: 34px;
+  height: 25px;
+  float: left;
+  display: inline-block;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
+  background-repeat: no-repeat;
+}
+
+.obUiListOrdersLine-order-iconOrder_off {
+  width: 34px;
+  height: 25px;
+  float: left;
+  display: inline-block;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
+  background-repeat: no-repeat;
+}
+
+.obUiListOrdersLine-order-documentNo {
+  float: left;
+  display: inline-block;
+  padding-top: 4px;
+  padding-left: 5px;
+}
+
+.obUiListOrdersLine-order-bpName,
+.obUiListOrdersLine-order-orderedDate {
+  float: left;
+  display: inline-block;
+  padding-top: 4px;
+  padding-left: 5px;
+  color: #888888;
+}
+
+.obUiListOrdersLine-orderline {
+  height: 36px;
+  width: 100%;
+  padding: 0px 5px 0px 23px;
+  border-bottom: none;
+}
+
+.obUiListOrdersLine-orderline-container1 {
+  float: left;
+  display: inline-block;
+  border-top: 1px solid #ccc;
+  height: 100%;
+  width: 100%;
+}
+
+.obUiListOrdersLine-orderline-container1-iconOrderLine {
+  width: 34px;
+  height: 25px;
+  float: left;
+  display: inline-block;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
+  background-repeat: no-repeat;
+}
+
+.obUiListOrdersLine-orderline-container1-container2 {
+  float: left;
+  width: 300px;
+  display: inline-block;
+  padding-left: 5px;
+  padding-top: 5px;
+}
+
+.obUiListOrdersLine-orderline-container1-container2-orderlineInfo {
+  display: inline-block;
+  width: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+
+/*
+# Component: OB.UI.ListOrders
+*/
+.obUiListOrders {}
+
+.obUiListOrders-container1 {}
+
+.obUiListOrders-container1-container1 {}
+
+.obUiListOrders-container1-container1-container1 {}
+
+.obUiListOrders-container1-container1-container1-orderSelector {
+/* Inherits: [OB.UI.ScrollableTable] */
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 420px;
+}
+
+/* [TODO] Review ob-cell-orderline-right-col1 and ob-cell-orderline-right-col2 and there is no reference of tehm in code */
+li.obUiListOrders-orderSelector_obOrder:first-child>button>div.obUiListOrdersLine-order,
+li.obUiListOrders-orderSelector_obOrder+li.obUiListOrders-orderSelector_obOrderline>button>div>div.obUiListOrdersLine-orderline-container1,
+li.obUiListOrders-orderSelector_obOrder+li.obUiListOrders-orderSelector_obOrderline>button>div>div>div.ob-cell-orderline-right-col1:first-child,
+li.obUiListOrders-orderSelector_obOrder+li.obUiListOrders-orderSelector_obOrderline>button>div>div>div.ob-cell-orderline-right-col2:first-child {
+  border-top: none;
+
+}
+
+li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div.ob-cell-orderline-right-col1:first-child {
+  border-bottom: none;
+}
+
+.obUiListOrders-container1-container1-container1-renderLoading {
+  border-bottom: 1px solid #cccccc;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: var(--font-huge);
+  color: #cccccc
+}
+
+
+/*
+# Component: OB.UI.ModalAssociateTickets
+# Inherits: [OB.UI.ModalSelector]
+*/
+.obUiModalAssociateTickets {
+  width: 725px;
+}
+
+.obUiModalAssociateTickets-body-obUiListOrders {
+/* Inherits: [OB.UI.ListOrders] */
+}
+
+
+/*
+# Component: OB.UI.ModalAdvancedFilterOrders
+# Inherits: [OB.UI.ModalAdvancedFilters]
+*/
+.obUiModalAdvancedFilterOrders {}
 
 
 
