@@ -1540,6 +1540,57 @@
 
 
 
+/***********************   ***********************/
+/*            File: modalcancel.js               */
+/*               Folder: js/components           */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalCancel
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalCancel {}
+
+.obUiModalCancel-bodyContent {}
+
+.obUiModalCancel-bodyButtons-obUiModalCancelOkButton {}
+
+.obUiModalCancel-bodyButtons-obUiModalCancelCancelButton {}
+
+
+
+/*
+# Component: OB.UI.ModalCancel_OkButton
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiModalCancelOkButton {}
+
+
+
+
+/*
+# Component: OB.UI.ModalCancel_CancelButton
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiModalCancelCancelButton {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*****************/
 /*      JGA      */
 /*****************/
