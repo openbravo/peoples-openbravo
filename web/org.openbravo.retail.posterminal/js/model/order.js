@@ -7674,6 +7674,9 @@
       order.set('sendEmail', false);
       order.set('openDrawer', false);
       order.set('orderManualPromotions', new OB.Collection.OrderManualPromotionsList());
+      if (!order.get('obrdmDeliveryModeProperty')) {
+        order.set('obrdmDeliveryModeProperty', 'PickAndCarry');
+      }
       OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
         newOrder: order
       });
