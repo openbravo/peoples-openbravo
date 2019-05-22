@@ -1650,6 +1650,19 @@
       }
 
       function preDeleteLine() {
+        var undoDeliveryModes = [];
+        _.each(selectedModels, function (line) {
+          undoDeliveryModes.push({
+            id: line.get('id'),
+            prodcutId: line.get('product').get('id'),
+            nameDelivery: line.get('nameDelivery'),
+            obrdmDeliveryMode: line.get('obrdmDeliveryMode'),
+            obrdmDeliveryDate: line.get('obrdmDeliveryDate'),
+            obrdmDeliveryTime: line.get('obrdmDeliveryTime')
+          });
+        });
+        me.set('undoDeliveryModes', undoDeliveryModes);
+
         OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
           order: me,
           selectedLines: selectedModels
