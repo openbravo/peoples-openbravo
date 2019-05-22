@@ -6990,7 +6990,8 @@
                 }, null, function () {
                   //Empty
                   new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedProduct').exec({
-                    productId: iter.id
+                    productId: iter.id,
+                    salesOrderLineId: iter.lineId
                   }, function (data) {
                     addLineForProduct(OB.Dal.transform(OB.Model.Product, data[0]));
                   }, function () {
