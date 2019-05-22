@@ -2074,6 +2074,72 @@
 
 
 
+/***********************   ***********************/
+/*             File: mockpayments.js             */
+/*             Folder: js/components             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.MockPayment
+*/
+.obUiMockPayment {}
+
+.obUiMockPayment-container1 {}
+
+.obUiMockPayment-container1-container1 {}
+
+.obUiMockPayment-container1-container1-lblType {
+  float:left;
+  padding-left:30px;
+}
+
+.obUiMockPayment-container1-container1-paymenttype {
+  float:right;
+  font-weight: bold;
+  padding-right:30px;
+}
+
+.obUiMockPayment-container1-container2 {
+  clear: both;
+}
+
+.obUiMockPayment-container1-container3 {}
+
+.obUiMockPayment-container1-container3-lblAmount {
+  float:left;
+  padding-left:30px;
+}
+
+.obUiMockPayment-container1-container3-paymentamount {
+  float:right;
+  font-weight: bold;
+  padding-right:30px
+}
+
+.obUiMockPayment-container2 {
+  clear: both;
+}
+
+.obUiMockPayment-obUiMockPaymentOkButton {}
+
+
+
+/*
+# Component: OB.UI.MockPayment_OkButton
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiMockPaymentOkButton {
+  float: right;
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

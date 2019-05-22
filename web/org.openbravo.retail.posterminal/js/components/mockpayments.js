@@ -11,34 +11,37 @@
 
 enyo.kind({
   name: 'OB.UI.MockPayment',
+  classes: 'obUiMockPayment',
   events: {
     onHideThisPopup: ''
   },
   components: [{
+    classes: 'obUiMockPayment-container1',
     components: [{
-      classes: 'row-fluid',
+      classes: 'obUiMockPayment-container1-container1 row-fluid',
       components: [{
-        style: 'float:left; padding-left:30px',
+        classes: 'obUiMockPayment-container1-container1-lblType',
         name: 'lblType'
       }, {
         name: 'paymenttype',
-        style: 'float:right; font-weight: bold; padding-right:30px'
+        classes: 'obUiMockPayment-container1-container1-paymenttype'
       }]
     }, {
-      style: 'clear: both'
+      classes: 'obUiMockPayment-container1-container2'
     }, {
-      classes: 'row-fluid',
+      classes: 'obUiMockPayment-container1-container3 row-fluid',
       components: [{
-        style: 'float:left; padding-left:30px',
+        classes: 'obUiMockPayment-container1-container3-lblAmount',
         name: 'lblAmount'
       }, {
         name: 'paymentamount',
-        style: 'float:right; font-weight: bold; padding-right:30px'
+        classes: 'obUiMockPayment-container1-container3-paymentamount'
       }]
     }]
   }, {
-    style: 'clear: both'
+    classes: 'obUiMockPayment-container2'
   }, {
+    classes: 'obUiMockPayment-obUiMockPaymentOkButton',
     kind: 'OB.UI.MockPayment_OkButton'
   }],
   initComponents: function () {
@@ -69,7 +72,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.MockPayment_OkButton',
-  style: 'float: right;',
+  classes: 'obUiMockPaymentOkButton',
   i18nContent: 'OBMOBC_LblOk',
   isDefaultAction: true,
   tap: function () {
