@@ -12,15 +12,14 @@
 enyo.kind({
   kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalCategoryTree',
-  topPosition: '60px',
-  style: 'width: 400px',
+  classes: 'obUiModalCategoryTree',
   events: {
     onHideThisPopup: '',
     onSelectCategoryTreeItem: ''
   },
   body: {
     kind: 'OB.UI.ListCategories',
-    classes: 'product_category_search',
+    classes: 'obUiModalCategoryTree-body',
     showBestSellers: true,
     showAllCategories: true,
     tableName: 'searchCategoryTable'
@@ -37,7 +36,7 @@ enyo.kind({
     var me = this;
     this.startShowing = true;
     this.$.body.$.listCategories.loadCategories(function () {
-      me.$.body.$.listCategories.setStyle('margin-top: -10px');
+      me.$.body.$.listCategories.addClass('obUiModalCategoryTree-body-listCategory');
       var showOnlyReal = me.args.showOnlyReal || false;
       _.each(me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].$.tbody.children, function (item) {
         if (item.renderline.model.get('realCategory') === 'N') {

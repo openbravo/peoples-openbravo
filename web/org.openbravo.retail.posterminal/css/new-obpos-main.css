@@ -2133,6 +2133,56 @@
 
 
 
+/***********************   ***********************/
+/*           File: modalcategorytree.js          */
+/*             Folder: js/components             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.Modal
+# Inherits: [OB.UI.ModalCategoryTree]
+*/
+.obUiModalCategoryTree {
+  top: 60px;
+  width: 400px;
+}
+
+.obUiModalCategoryTree-body {
+  background-color: #f8e859;
+  color: #000000;
+}
+
+.obUiModalCategoryTree-body-listCategory {
+  margin-top: -10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
