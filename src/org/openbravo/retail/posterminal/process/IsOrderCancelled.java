@@ -36,6 +36,19 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
           result.put("orderCancelled", true);
         } else {
           result.put("orderCancelled", false);
+
+          final Query<Integer> importErrorQuery = OBDal.getInstance()
+              .getSession()
+              .createQuery("select 1 from OBPOS_Errors where client.id = :clientId "
+                  + "and typeofdata = 'Order' and orderstatus = 'N' "
+                  + "and jsoninfo LIKE CONCAT ('%', :orderId, '%')", Integer.class);
+          importErrorQuery.setParameter("clientId", order.getClient().getId());
+          importErrorQuery.setParameter("orderId", orderId);
+          importErrorQuery.setMaxResults(1);
+          if (importErrorQuery.list().size() > 0) {
+            throw new OBException(
+                OBMessageUtils.getI18NMessage("OBPOS_OrderPresentInImportErrorList", null));
+          }
           if (jsonData.has("checkNotEditableLines")
               && jsonData.getBoolean("checkNotEditableLines")) {
             // Find the deferred services or the products that have related deferred services in the

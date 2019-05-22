@@ -383,18 +383,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     OB.Dal.find(OB.Model.Order, {
       hasbeenpaid: 'N'
     }, function (pendingOrderList, me) {
-      var emptyOrders;
-      // Detect empty orders and remove them from here
-      emptyOrders = _.filter(pendingOrderList.models, function (pendingorder) {
-        if (pendingorder && pendingorder.get('lines') && pendingorder.get('lines').length === 0) {
-          return true;
-        }
-      });
-
-      _.each(emptyOrders, function (orderToRemove) {
-        pendingOrderList.remove(orderToRemove);
-      });
-
       _.each(pendingOrderList.models, function (order) {
         order.set('ignoreCheckIfIsActiveOrder', true);
       });
@@ -835,7 +823,7 @@ OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
   processAndFinishCashUp: function () {
     if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
       var me = this;
-      this.printCashUp.print(this.get('cashUpReport').at(0), false, this.getCountCashSummary(), function () {
+      this.printCashUp.print(this.get('cashUpReport').at(0), this.getCountCashSummary(), false, function () {
         me.set('finished', true);
       });
     }

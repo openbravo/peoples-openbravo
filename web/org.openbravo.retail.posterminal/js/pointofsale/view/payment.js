@@ -447,8 +447,8 @@ enyo.kind({
     }
     // The terminal allows to pay on credit
     var visible = OB.MobileApp.model.get('terminal').allowpayoncredit;
-    // And is a layaway or a new order (no loaded order)
-    visible = visible && !this.receipt.get('isPaid') && this.receipt.get('orderType') !== 3;
+    // And not a voided layaway
+    visible = visible && this.receipt.get('orderType') !== 3;
     // And receipt has not been paid
     visible = visible && !this.receipt.getPaymentStatus().done;
     // And Business Partner exists and is elegible to sell on credit.
@@ -1364,7 +1364,7 @@ enyo.kind({
     } else if (button === 'Layaway') {
       this.updateLayawayAction(resultOK ? false : true);
     } else if (button === 'Credit') {
-      if (resultOK && statusOK) {
+      if (resultOK) {
         this.$.creditsalesaction.setLocalDisabled(false);
       } else {
         // If the ticket is a negative ticket, even when there's not enough cash, it must be possible to click on the 'Use Credit' button
@@ -1539,7 +1539,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   drawerOpened: true,
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'cancelLayaway', 'paymentDone', 'tapDoneButton'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'cancelLayaway', 'paymentDone', 'tapDoneButton', 'servicePriceCalculation'],
   init: function (model) {
     this.model = model;
     this.setDisabledIfSynchronized();
@@ -1880,7 +1880,7 @@ enyo.kind({
   },
   classes: 'btn-icon-adaptative btnlink-green',
   style: 'width: calc(50% - 5px); margin: 0px 5px 0px 0px; clear: unset',
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'servicePriceCalculation'],
   tap: function () {
     if (this.disabled) {
       return true;
@@ -1904,7 +1904,7 @@ enyo.kind({
   },
   classes: 'btn-icon-adaptative btnlink-green',
   style: 'width: calc(50% - 5px); margin: 0px 0px 0px 5px;',
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'servicePriceCalculation'],
   tap: function () {
     if (this.disabled) {
       return true;
@@ -1927,7 +1927,7 @@ enyo.kind({
     onExactPayment: ''
   },
   classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'servicePriceCalculation'],
   tap: function () {
     if (this.disabled) {
       return true;
@@ -2137,7 +2137,7 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'payOnCredit', 'paymentDone'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'payOnCredit', 'paymentDone', 'servicePriceCalculation'],
   init: function (model) {
     this.model = model;
   },
@@ -2254,7 +2254,7 @@ enyo.kind({
   content: '',
   classes: 'btn-icon-small btnlink-green',
   permission: 'OBPOS_receipt.layawayReceipt',
-  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'paymentDone'],
+  processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'paymentDone', 'servicePriceCalculation'],
   updateVisibility: function (isVisible) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {
       this.hide();

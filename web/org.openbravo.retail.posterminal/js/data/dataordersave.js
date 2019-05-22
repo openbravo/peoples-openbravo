@@ -119,6 +119,17 @@
 
         };
 
+    var printWelcome = function () {
+        // Print Welcome message (Hardware Manager)
+        var templatewelcome = new OB.DS.HWResource(OB.MobileApp.model.get('terminal').printWelcomeTemplate || OB.OBPOSPointOfSale.Print.WelcomeTemplate);
+        OB.POS.hwserver.print(templatewelcome, {}, function (data) {
+          if (data && data.exception) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
+          }
+        }, OB.DS.HWServer.DISPLAY);
+        };
+
+
     // finished receipt verifications
     var mainReceiptCloseFunction = function (eventParams, context) {
         context.receipt = model.get('order');
@@ -282,9 +293,11 @@
                       receipt: receiptForPostSyncReceipt,
                       syncSuccess: true
                     }, function () {
+                      printWelcome();
                       callback();
                     });
                   } else {
+                    printWelcome();
                     callback();
                   }
                 };
@@ -538,6 +551,7 @@
                   OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
                   model.get('multiOrders').trigger('checkOpenDrawer');
                   OB.UTIL.ProcessController.finish('saveAndSyncMultiOrder', execution);
+                  printWelcome();
                 });
               });
             }, function () {

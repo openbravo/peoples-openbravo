@@ -263,7 +263,7 @@
             }
             };
         if (OB.MobileApp.model.get('terminal').terminalType.selectprinteralways) {
-          OB.OBPOS.showSelectPrintersWindow(printPdfProcess, cancelSelectPrinter, cancelSelectPrinter, false, me.isRetry);
+          OB.OBPOS.showSelectPrintersWindow(printPdfProcess, cancelSelectPrinter, cancelSelectPrinter, true, me.isRetry);
         } else {
           printPdfProcess();
         }
