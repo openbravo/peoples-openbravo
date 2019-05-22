@@ -2337,13 +2337,28 @@
 
       function checkAddProduct(warehouse, allLinesQty) {
         if (allLinesQty > warehouse.warehouseqty) {
-          var allowMessage, notAllowMessage;
+          var allowMessage, notAllowMessage, allowToAdd = true;
           if (productStatus.restrictsaleoutofstock) {
+            if (line) {
+              if (line.get('obrdmDeliveryMode') && line.get('obrdmDeliveryMode') !== 'PickAndCarry') {
+                allowToAdd = false;
+              }
+            } else {
+              if (me.get('orderType') === 2) {
+                if (p.get('obrdmDeliveryModeLyw') && p.get('obrdmDeliveryModeLyw') !== 'PickAndCarry') {
+                  allowToAdd = false;
+                }
+              } else {
+                if (p.get('obrdmDeliveryMode') && p.get('obrdmDeliveryMode') !== 'PickAndCarry') {
+                  allowToAdd = false;
+                }
+              }
+            }
             allowMessage = OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [p.get('_identifier'), productStatus.name, warehouse.warehouseqty, warehouse.warehousename, allLinesQty]);
             notAllowMessage = OB.I18N.getLabel('OBPOS_CannotSellWithoutStock', [p.get('_identifier'), productStatus.name, allLinesQty, warehouse.warehouseqty, warehouse.warehousename]);
           }
           OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductWithoutStock', {
-            allowToAdd: true,
+            allowToAdd: allowToAdd,
             allowMessage: allowMessage,
             notAllowMessage: notAllowMessage,
             askConfirmation: true,
