@@ -2157,19 +2157,66 @@
 
 
 
+/***********************   ***********************/
+/*           File: popupdraweropened.js          */
+/*             Folder: js/components             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.PopupDrawerOpened
+# Inherits: [OB.UI.Popup]
+*/
+.obUiPopupDrawerOpened {
+  color: #333;
+  overflow: visible;
+  width: 560px;
+  background: #6cb33f;
+  padding: 0px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  min-height: 180px;
+}
 
+@media all and (max-width: 800px) {
+  .obUiPopupDrawerOpened {
+    left: 10px;
+    margin-left: 0px;
+    width: 95%;
+  }
+}
 
+.obUiPopupDrawerOpened-bodyContent {
+  line-height: normal;
+  text-align: center;
+  font-size: 225%;
+  font-weight: bold;
+  color: white;
+  margin: 0px 10px 0px 10px;
+}
 
+.obUiPopupDrawerOpened-table {
+  display: block;
+  width: 100%;
+  border: none;
+  padding: 9px 0px 20px 0px;
+}
 
+.obUiPopupDrawerOpened-table-header {
+  line-height: normal;
+  text-align: center;
+  font-size: 225%;
+  font-weight: bold;
+  color: white;
+  margin: 0px 10px 0px 10px;
+}
 
+.obUiPopupDrawerOpened-bodyParent {
+  width: 100%;
+  padding: 0px;
+  text-align: center;
+}
 
-
-
-
-
-
-
-
+.obUiPopupDrawerOpened-bodyParent-bodyContent {}
 
 
 
