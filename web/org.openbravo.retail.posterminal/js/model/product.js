@@ -266,17 +266,17 @@
       sort: 'asc'
     }]
   }, {
-	name: 'obrdmDeliveryMode',
-	column: 'obrdmDeliveryMode',
-	type: 'TEXT'
+    name: 'obrdmDeliveryMode',
+    column: 'obrdmDeliveryMode',
+    type: 'TEXT'
   }, {
-	name: 'obrdmDeliveryModeLyw',
-	column: 'obrdmDeliveryModeLyw',
-	type: 'TEXT'
+    name: 'obrdmDeliveryModeLyw',
+    column: 'obrdmDeliveryModeLyw',
+    type: 'TEXT'
   }, {
-	name: 'obrdmIsdeliveryservice',
-	column: 'obrdmIsdeliveryservice',
-	type: 'BOOL'
+    name: 'obrdmIsdeliveryservice',
+    column: 'obrdmIsdeliveryservice',
+    type: 'BOOL'
   }]);
 
   OB.Data.Registry.registerModel(Product);
