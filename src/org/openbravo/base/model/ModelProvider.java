@@ -331,6 +331,16 @@ public class ModelProvider implements OBSingleton {
           if (p.isOneToMany()) {
             p.initializeName();
           }
+          if (p.getReferencedProperty() != null) {
+            Entity referencedEntity = p.getReferencedProperty().getEntity();
+            if ("ADImage".equals(referencedEntity.getName())) {
+              entitiesWithImage.computeIfAbsent(p.getEntity(), k -> new ArrayList<>())
+                  .add(p.getName());
+            } else if ("OBPRF_FILE".equals(referencedEntity.getName())) {
+              entitiesWithFile.computeIfAbsent(p.getEntity(), k -> new ArrayList<>())
+                  .add(p.getName());
+            }
+          }
         }
       }
 
@@ -859,14 +869,6 @@ public class ModelProvider implements OBSingleton {
     newProp.setOneToMany(true);
     newProp.setChild(childProperty.isParent());
     parentEntity.addProperty(newProp);
-
-    if (parentEntity.getName().equals("ADImage")) {
-      entitiesWithImage.computeIfAbsent(childProperty.getEntity(), k -> new ArrayList<>())
-          .add(childProperty.getName());
-    } else if (parentEntity.getName().equals("OBPRF_FILE")) {
-      entitiesWithFile.computeIfAbsent(childProperty.getEntity(), k -> new ArrayList<>())
-          .add(childProperty.getName());
-    }
   }
 
   /**
