@@ -224,6 +224,10 @@ public class InvoiceUtils {
     invoiceLine.setSalesOrderLine(orderLine);
     invoiceLine.setGoodsShipmentLine(inOutLine);
     invoiceLine.setAttributeSetValue(orderLine.getAttributeSetValue());
+    if (jsonInvoiceLine.has("isVerifiedReturn") && jsonInvoiceLine.getBoolean("isVerifiedReturn")
+        && !"VO".equals(invoice.getDocumentStatus())) {
+      invoice.setDocumentStatus("VO");
+    }
     invoice.getInvoiceLineList().add(invoiceLine);
     OBDal.getInstance().save(invoiceLine);
 
