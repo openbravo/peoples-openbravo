@@ -83,6 +83,7 @@ enyo.kind({
   }
 });
 
+/*global _ */
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Scan',
   published: {
@@ -133,6 +134,23 @@ enyo.kind({
                 } else {
                   me.setDisabled(false);
                 }
+
+                if (undoaction === 'DeleteLine') {
+                  var undoDeliveryModes = OB.MobileApp.model.receipt.get('undoDeliveryModes'),
+                      lines = OB.MobileApp.model.receipt.get('lines').models;
+                  _.each(undoDeliveryModes, function (delivery) {
+                    var line = _.find(lines, function (l) {
+                      return l.get('id') === delivery.id;
+                    });
+                    if (line) {
+                      line.set('nameDelivery', delivery.nameDelivery);
+                      line.set('obrdmDeliveryMode', delivery.obrdmDeliveryMode);
+                      line.set('obrdmDeliveryDate', delivery.obrdmDeliveryDate);
+                      line.set('obrdmDeliveryTime', delivery.obrdmDeliveryTime);
+                    }
+                  });
+                }
+
                 OB.UTIL.HookManager.executeHooks('OBPOS_PostUndo_' + undoaction, {
                   undoBtn: me,
                   order: OB.MobileApp.model.receipt,
