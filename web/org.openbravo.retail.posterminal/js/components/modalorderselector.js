@@ -87,25 +87,6 @@ enyo.kind({
         this.getFilterSelectorTableHeader().clearFilter();
       }
     }
-    if (this.args.customHeaderContent) {
-      this.$.header.setContent(this.args.customHeaderContent);
-    } else {
-      this.$.header.setContent(OB.I18N.getLabel('OBPOS_OpenReceipt'));
-    }
-    this.$.body.$.receiptsList.$.openreceiptslistitemprinter.hideBusinessPartnerColumn = this.args.hideBusinessPartnerColumn;
-  },
-  executeOnHide: function () {
-    if (!this.pressedBtn && this.args.navigationPath && this.args.navigationPath.length > 0) {
-      this.doShowPopup({
-        popup: this.args.navigationPath[this.args.navigationPath.length - 1],
-        args: {
-          businessPartner: this.args.businessPartner,
-          target: this.args.target,
-          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath),
-          makeSearch: this.args.makeSearch
-        }
-      });
-    }
   }
 });
 
@@ -208,7 +189,7 @@ enyo.kind({
     } else {
       this.$.customer.removeClass('hide');
     }
-    
+
     if (me.model.get('iscancelled')) {
       this.$.orderType.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
       this.$.orderType.applyStyle('color', 'rgb(83, 83, 197)');

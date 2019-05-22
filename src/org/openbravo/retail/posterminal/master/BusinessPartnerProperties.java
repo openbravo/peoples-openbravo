@@ -62,9 +62,9 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("grt.name", "greetingName"));
         add(new HQLProperty("ulist.comments", "comments"));
         add(new HQLProperty("bp.creditLimit - bp.creditUsed", "availableCredit"));
-        add(new HQLProperty("ulist.obposCommercialauth", "obposCommercialauth"));
-        add(new HQLProperty("ulist.obposViaemail", "obposViaemail"));
-        add(new HQLProperty("ulist.obposViasms", "obposViasms"));
+        add(new HQLProperty("ulist.commercialauth", "commercialauth"));
+        add(new HQLProperty("ulist.viaemail", "viaemail"));
+        add(new HQLProperty("ulist.viasms", "viasms"));
 
         String curDbms = OBPropertiesProvider.getInstance()
             .getOpenbravoProperties()

@@ -503,16 +503,16 @@
     column: 'availableCredit',
     type: 'NUMERIC'
   }, {
-    name: 'obposCommercialauth',
-    column: 'obposCommercialauth',
+    name: 'commercialauth',
+    column: 'commercialauth',
     type: 'TEXT'
   }, {
-    name: 'obposViaemail',
-    column: 'obposViaemail',
+    name: 'viaemail',
+    column: 'viaemail',
     type: 'TEXT'
   }, {
-    name: 'obposViasms',
-    column: 'obposViasms',
+    name: 'viasms',
+    column: 'viasms',
     type: 'TEXT'
   }]);
 

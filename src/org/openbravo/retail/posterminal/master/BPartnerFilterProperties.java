@@ -36,13 +36,6 @@ public class BPartnerFilterProperties extends ModelExtension {
         add(new HQLProperty("bp.businessPartnerCategory.name", "bpCategory"));
         add(new HQLProperty("ulist.email", "email"));
         add(new HQLProperty("ulist.phone", "phone"));
-        add(new HQLProperty("bp.isCustomerConsent", "isCustomerConsent"));
-        add(new HQLProperty("bp.language.language", "language"));
-        add(new HQLProperty("bp.language.name", "language_name"));
-        add(new HQLProperty("grt.id", "greetingId"));
-        add(new HQLProperty("grt.name", "greetingName"));
-        add(new HQLProperty("ulist.comments", "comments"));
-        add(new HQLProperty("bp.creditLimit - bp.creditUsed", "availableCredit"));
         if (location) {
           add(new HQLProperty("bpl.id", "id"));
           add(new HQLProperty("bpl.id", "bpLocactionId"));

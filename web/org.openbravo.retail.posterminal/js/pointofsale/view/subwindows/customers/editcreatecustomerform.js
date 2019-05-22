@@ -444,8 +444,8 @@ enyo.kind({
     i18nLabel: 'OBPOS_CustomerConsent'
   }, {
     kind: 'OB.UI.CustomerCheckCommercialAuth',
-    name: 'obposCommercialauth',
-    modelProperty: 'obposCommercialauth',
+    name: 'commercialauth',
+    modelProperty: 'commercialauth',
     i18nLabel: 'OBPOS_CommercialAuth',
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowCommercialAuth', true);
@@ -456,8 +456,8 @@ enyo.kind({
     modelProperty: 'contactpreferences',
     i18nLabel: 'OBPOS_ContactPreferences',
     setEditedProperties: function (oldBp, editedBp) {
-      editedBp.set('obposViasms', oldBp.get('obposViasms'));
-      editedBp.set('obposViaemail', oldBp.get('obposViaemail'));
+      editedBp.set('viasms', oldBp.get('viasms'));
+      editedBp.set('viaemail', oldBp.get('viaemail'));
     },
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowContactPreferences', true);

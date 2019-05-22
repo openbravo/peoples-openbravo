@@ -437,6 +437,7 @@ enyo.kind({
     }
 
     function validateForm(form) {
+      var validate = true;
       if (inEvent.validations) {
         var customer = form.model.get('customer'),
             errors = checkMandatoryFields(form.$.customerOnlyFields.children, customer);
@@ -459,24 +460,26 @@ enyo.kind({
           }
         }
         if (errors) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
-          return false;
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
+          validate = false;
         }
         if (customer.get('firstName').length + customer.get('lastName').length >= 60) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_TooLongName'));
-          return false;
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_TooLongName'));
+          validate = false;
         }
+        validate = validateSMS(customer);
+        validate = validateEmail(customer);
       }
-      return true;
+      return validate;
     }
 
     function validateSMS(customer) {
       //Validate that sms field is filled if  'Commercial Auth -> sms' is checked
-      var commercialAuthViaSms = customer.get('obposViasms');
+      var commercialAuthViaSms = customer.get('viasms');
       var alternativePhone = customer.get('alternativePhone');
       var phone = customer.get('phone');
       if (commercialAuthViaSms && (phone === '' && alternativePhone === '')) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_PhoneRequired'));
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PhoneRequired'));
         enableButtonsCallback(false);
         return false;
       } else {
@@ -486,10 +489,10 @@ enyo.kind({
 
     function validateEmail(customer) {
       //Validate that email field is filled if 'Commercial Auth -> email' is checked
-      var commercialAuthViaEmail = customer.get('obposViaemail');
+      var commercialAuthViaEmail = customer.get('viaemail');
       var email = customer.get('email');
       if (commercialAuthViaEmail && email === '') {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_EmailRequired'));
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_EmailRequired'));
         enableButtonsCallback(false);
         return false;
       } else {
@@ -534,9 +537,8 @@ enyo.kind({
         customer: this.model.get('customer')
       });
       if (validateForm(this)) {
-        if (validateSMS(this.model.get('customer')) && validateEmail(this.model.get('customer'))) {
-          beforeCustomerSave(this.model.get('customer'), true);
-        }
+        beforeCustomerSave(this.model.get('customer'), true);
+
       } else {
         enableButtonsCallback(false);
       }
@@ -546,9 +548,7 @@ enyo.kind({
           customer: customer
         });
         if (validateForm(me)) {
-          if (validateSMS(customer) && validateEmail(customer)) {
-            beforeCustomerSave(customer, false);
-          }
+          beforeCustomerSave(customer, false);
         } else {
           enableButtonsCallback(false);
         }
@@ -690,7 +690,7 @@ enyo.kind({
       for (var component in me.parent.parent.parent.children) {
         if (me.parent.parent.parent.children[component].name === 'line_contactpreferences') {
           var contactpreferences = me.parent.parent.parent.children[component];
-          var commercialauth = inEvent.customer.attributes.obposCommercialauth;
+          var commercialauth = inEvent.customer.attributes.commercialauth;
           if (commercialauth) {
             contactpreferences.show();
           } else {
@@ -731,8 +731,8 @@ enyo.kind({
     for (var component in me.parent.parent.parent.children) {
       if (me.parent.parent.parent.children[component].name === 'line_contactpreferences') {
         var contactpreferences = me.parent.parent.parent.children[component];
-        inEvent.customer.set('obposViasms', contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck.checked);
-        inEvent.customer.set('obposViaemail', contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck.checked);
+        inEvent.customer.set('viasms', contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck.checked);
+        inEvent.customer.set('viaemail', contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck.checked);
       }
     }
   },
@@ -742,7 +742,7 @@ enyo.kind({
   components: [{
     components: [{
       name: 'checkoptions',
-      style: 'display: flex; flex - wrap: wrap;',
+      style: 'display: flex; flex-wrap: wrap;',
       components: [{
         name: 'smsField',
         style: 'display: table; height: 40px; border: 1px solid #CCC; ',
@@ -782,13 +782,13 @@ enyo.kind({
     var commertialauth;
 
     if (inEvent.customer !== undefined) {
-      if (inEvent.customer.get('obposViasms') !== undefined) {
-        me.$.smsCheck.checked = inEvent.customer.get('obposViasms');
+      if (inEvent.customer.get('viasms') !== undefined) {
+        me.$.smsCheck.checked = inEvent.customer.get('viasms');
       } else {
         me.$.smsCheck.checked = false;
       }
-      if (inEvent.customer.get('obposViaemail') !== undefined) {
-        me.$.emailCheck.checked = inEvent.customer.get('obposViaemail');
+      if (inEvent.customer.get('viaemail') !== undefined) {
+        me.$.emailCheck.checked = inEvent.customer.get('viaemail');
       } else {
         me.$.emailCheck.checked = false;
       }
@@ -803,8 +803,8 @@ enyo.kind({
         me.$.emailCheck.removeClass('active');
       }
       for (var component in me.parent.parent.parent.children) {
-        if (me.parent.parent.parent.children[component].name === 'line_obposCommercialauth') {
-          commertialauth = me.parent.parent.parent.children[component].$.newAttribute.$.obposCommercialauth;
+        if (me.parent.parent.parent.children[component].name === 'line_commercialauth') {
+          commertialauth = me.parent.parent.parent.children[component].$.newAttribute.$.commercialauth;
           if (commertialauth.checked) {
             if (me.$.smsCheck.checked) {
               me.$.smsCheck.addClass('active');
@@ -823,8 +823,8 @@ enyo.kind({
   },
   saveChange: function (inSender, inEvent) {
     var me = this;
-    inEvent.customer.set('obposViasms', me.$.smsCheck.checked);
-    inEvent.customer.set('obposViaemail', me.$.emailCheck.checked);
+    inEvent.customer.set('viasms', me.$.smsCheck.checked);
+    inEvent.customer.set('viaemail', me.$.emailCheck.checked);
   },
   initComponents: function () {
     this.inherited(arguments);

@@ -218,6 +218,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.lastactivity',
   style: 'margin: 0px 0px 8px 5px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
+  i18nLabel: 'OBPOS_Cus360LblLastActivity',
   events: {
     onShowPopup: '',
     onPressedButton: ''
@@ -239,13 +240,6 @@ enyo.kind({
         }
       })
     }
-  },
-  init: function (model) {
-    this.model = model;
-  },
-  initComponents: function () {
-    this.inherited(arguments);
-    this.setContent(OB.I18N.getLabel('OBPOS_Cus360LblLastActivity'));
   }
 });
 
@@ -280,8 +274,8 @@ enyo.kind({
     }]
   }],
   components: [{
-    style: 'display: table; margin: 0 auto;',
-    name: 'buttonContainer'
+    name: 'buttonContainer',
+    style: 'display: flex; flex-wrap: wrap;'
   }],
   initComponents: function () {
     this.inherited(arguments);
@@ -439,8 +433,8 @@ enyo.kind({
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerCheckCommercialAuth',
-    name: 'obposCommercialauth',
-    modelProperty: 'obposCommercialauth',
+    name: 'commercialauth',
+    modelProperty: 'commercialauth',
     i18nLabel: 'OBPOS_CommercialAuth',
     readOnly: true,
     displayLogic: function () {
@@ -453,8 +447,8 @@ enyo.kind({
     i18nLabel: 'OBPOS_ContactPreferences',
     readOnly: true,
     setEditedProperties: function (oldBp, editedBp) {
-      editedBp.set('obposViasms', oldBp.get('obposViasms'));
-      editedBp.set('obposViaemail', oldBp.get('obposViaemail'));
+      editedBp.set('viasms', oldBp.get('viasms'));
+      editedBp.set('viaemail', oldBp.get('viaemail'));
     },
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowContactPreferences', true);
@@ -497,6 +491,19 @@ enyo.kind({
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_OpenReceipt'));
     }
     this.$.body.$.receiptsList.$.openreceiptslistitemprinter.hideBusinessPartnerColumn = this.args.hideBusinessPartnerColumn;
+  },
+  executeOnHide: function () {
+    if (!this.pressedBtn && this.args.navigationPath && this.args.navigationPath.length > 0) {
+      this.doShowPopup({
+        popup: this.args.navigationPath[this.args.navigationPath.length - 1],
+        args: {
+          businessPartner: this.args.businessPartner,
+          target: this.args.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath),
+          makeSearch: this.args.makeSearch
+        }
+      });
+    }
   }
 
 });
