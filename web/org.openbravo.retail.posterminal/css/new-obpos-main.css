@@ -1575,14 +1575,502 @@
 
 
 
+/***********************   ***********************/
+/*                File: order.js                 */
+/*              Folder: js/components            */
+/***********************   ***********************/
+/*
+# Component: OB.UI.OrderMultiSelect
+# Inherits: [Image]
+*/
+.obUiOrderMultiSelect {
+  float: right;
+  cursor: pointer;
+  margin-top: 8px;
+  width: 27px;
+  height: 27px;
+}
 
 
 
+/*
+# Component: OB.UI.OrderSingleSelect
+# Inherits: [Image]
+*/
+.obUiOrderSingleSelect {
+  float: right;
+  cursor: pointer;
+  margin-top: 8px;
+  width: 27px;
+  height: 27px;
+}
 
 
 
+/*
+# Component: OB.UI.OrderMultiSelectAll
+# Inherits: [OB.UI.SmallButton]
+*/
+.obUiOrderMultiSelectAll {
+  float: right;
+  margin-top: 6px;
+  background-color: orange;
+  color: black;
+}
 
 
+
+/*
+# Component: OB.UI.OrderHeader
+*/
+.obUiOrderHeader {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obUiOrderHeader-labelComponents-orderdetails {
+  /*Inherits: [OB.UI.OrderDetails]*/
+}
+
+.obUiOrderHeader-labelComponents-btnMultiSelection {
+  /*Inherits: [OB.UI.OrderMultiSelect]*/
+}
+
+.obUiOrderHeader-labelComponents-btnMultiSelectAll {
+  /*Inherits: [OB.UI.OrderMultiSelectAll]*/
+}
+
+.obUiOrderHeader-labelComponents-btnSingleSelection {
+  /*Inherits: [OB.UI.OrderSingleSelect]*/
+}
+
+.obUiOrderHeader-labelComponents-element1 {
+  clear: both;
+}
+
+
+.obUiOrderHeader-buttonComponents-bpbutton {
+  /*Inherits: [OB.UI.BusinessPartnerSelector]*/
+}
+
+.obUiOrderHeader-buttonComponents-separator {
+  min-width: 5px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.obUiOrderHeader-buttonComponents-bplocbutton {
+  /*Inherits: [OB.UI.BPLocation]*/
+}
+
+.obUiOrderHeader-buttonComponents-bplocshipbutton {
+  /*Inherits: [OB.UI.bplocshipbutton]*/
+}
+
+.obUiOrderHeader-receiptLabels {}
+
+.obUiOrderHeader-receiptButtons {
+  clear: both;
+
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+
+/*
+# Component: OB.UI.OrderFooter
+*/
+.obUiOrderFooter {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+
+
+/*
+# Component: OB.UI.TotalMultiReceiptLine
+*/
+.obUiTotalMultiReceiptLine {
+  position: relative;
+  padding: 10px;
+}
+
+.obUiTotalMultiReceiptLine-lblTotal {
+  float: left; width: 40%;
+}
+
+.obUiTotalMultiReceiptLine-totalqty {
+  float: left; width: 20%; text-align:right; font-weight:bold;
+}
+
+.obUiTotalMultiReceiptLine-totalgross {
+  float: left; width: 40%; text-align:right; font-weight:bold;
+}
+
+.obUiTotalMultiReceiptLine-element1 {
+  clear: both;
+}
+
+
+
+/*
+# Component: OB.UI.TotalReceiptLine
+*/
+.obUiTotalReceiptLine {
+  position: relative;
+  padding: 10px;
+  height: 35px;
+}
+
+.obUiTotalReceiptLine-lblTotal {
+  font-weight: bold;
+  float: left;
+  width: calc(100% - 225px);
+}
+
+.obUiTotalReceiptLine-lblTotal_large {
+  width: 48;
+}
+
+.obUiTotalReceiptLine-lblTotal_small {
+  width: 40;
+}
+
+.obUiTotalReceiptLine-obUiFitTextQty {
+  float: left;
+  width: 65px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.obUiTotalReceiptLine-obUiFitTextQty-totalqty {}
+
+.obUiTotalReceiptLine-obUiFitTextQty-totalqty_large {
+  width: 20;
+}
+
+.obUiTotalReceiptLine-obUiFitTextQty-totalqty_small {
+  width: 16;
+}
+
+
+
+.obUiTotalReceiptLine-obUiFitTextGross {
+  float: left;
+  width: 160px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.obUiTotalReceiptLine-obUiFitTextGross-totalgross {}
+
+.obUiTotalReceiptLine-obUiFitTextGross-totalgross_large {
+  width: 40;
+}
+
+.obUiTotalReceiptLine-obUiFitTextGross-totalgross_small {
+  width: 36;
+}
+
+.obUiTotalReceiptLine-element1 {
+  clear: both;
+}
+
+
+
+/*
+# Component: OB.UI.TotalTaxLine
+*/
+.obUiTotalTaxLine {
+  position: relative;
+  padding: 10px;
+}
+
+.obUiTotalTaxLine-lblTotalTax {
+  float: left;
+  width: 40%;
+}
+
+.obUiTotalTaxLine-totalbase {
+  float: left;
+  width: 20%;
+  text-align:right;
+  font-weight:bold;
+}
+
+.obUiTotalTaxLine-totaltax {
+  float: left;
+  width: 60%;
+  text-align:right;
+  font-weight:bold;
+}
+
+.obUiTotalTaxLine-element1 {
+  clear: both;
+}
+
+
+
+/*
+# Component: OB.UI.TaxBreakdown
+*/
+.obUiTaxBreakdown {
+  position: relative;
+  padding: 10px;
+}
+
+.obUiTaxBreakdown-lblTotalTaxBreakdown {
+  float: left;
+  widows: 40%;
+}
+
+.obUiTaxBreakdown-element1{
+  clear: both;
+}
+
+
+
+/*
+# Component: OB.UI.BtnReceiptToInvoice
+# Inherits: [OB.UI.SmallButton]
+*/
+.obUiBtnReceiptToInvoice {
+  width: 40px;
+  color: black;
+  margin: 0px 0px 0px 16px;
+  padding-top: 4px;
+  border: var(--bottomseparator-slim);
+  height: 20px;
+  background-color: transparent;
+  height: 20px;
+  background-size: 21px 17px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkBlack.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
+
+/*
+# Component: btninvoice
+*/
+.btnInvoice {
+  float: left;
+  width: 40%;
+}
+
+.btnInvoice-obUiBtnReceiptToInvoice {}
+
+.btnInvoice-element1 {}
+
+.btnInvoice-lblInvoiceReceipt {
+  font-weight:bold;
+}
+
+
+
+/*
+# Component: OB.UI.OrderViewDivText
+*/
+.obUiOrderViewDivText {
+  float: right;
+  text-align: right;
+  font-weight:bold;
+  font-size: 30px;
+  line-height: 30px;
+}
+
+.obUiOrderViewDivText_quotation {
+  width: 100%;
+  color: #f8941d;
+}
+
+.obUiOrderViewDivText_paid {
+  width: 50%;
+  color: #f8941d;
+}
+
+.obUiOrderViewDivText_layaway {
+  width: 50%;
+  color: lightblue;
+}
+
+
+.obUiOrderViewDivText_CancelAndReplaceType1 {
+  width: 90%;
+  color: lightblue;
+  line-height:30px;
+}
+
+.obUiOrderViewDivText_CancelAndReplaceType2 {
+  width: 90%;
+  color: #5353C5;
+  line-height:30px;
+}
+
+
+
+.obUiOrderViewDivText_CancelLayawayFromLayaway {
+  width: 60%;
+  color: lightblue;
+}
+
+
+
+.obUiOrderViewDivText_CancelLayaway {
+  width: 60%;
+  color: #5353C5;
+}
+
+
+.obUiOrderViewDivText_ToBeReturned {
+  width: 50%;
+  color: #f8941d;
+}
+
+
+.obUiOrderViewDivText_ToBeLaidaway {
+  width: 60%;
+  color: lightblue;
+}
+
+
+
+/*
+# Component: OB.UI.OrderView
+*/
+.obUiOrderView {}
+
+.obUiOrderView-listOrderLines {
+  /*Inherits: [OB.UI.ScrollableTable]*/
+  max-height: 250px;
+}
+
+.obUiOrderView-listOrderLines-bigger {
+  max-height: 393px;
+}
+
+.obUiOrderView-container1 {}
+
+.obUiOrderView-container1-container1 {}
+
+.obUiOrderView-container1-container1-totalTaxLine {
+  /*Inherits: [OB.UI.TotalTaxLine]*/
+}
+
+.obUiOrderView-container1-container1-totalReceiptLine {
+  /*Inherits: [OB.UI.TotalReceiptLine]*/
+}
+
+.obUiOrderView-container1-container2 {}
+
+.obUiOrderView-container1-container2-injectedFooter {}
+
+.obUiOrderView-container1-container2-container1 {
+  padding: 10px;
+  border-top: var(--bottomseparator-slim);
+  min-height: 40px;
+}
+
+.obUiOrderView-container1-container2-container1-divbtninvoice {
+  /*Inherits: [btninvoice]*/
+}
+
+.obUiOrderView-container1-container2-container1-divText {
+  /*Inherits: [OB.UI.OrderViewDivText]*/
+}
+
+.obUiOrderView-container1-container2-container1-element1 {
+  clear: both;
+}
+
+.obUiOrderView-container1-container3 {}
+
+.obUiOrderView-container1-container3-taxBreakdownDiv {
+  padding: 10px;
+  border-top: var(--bottomseparator-slim);
+  height: 40px;
+}
+
+.obUiOrderView-container1-container3-taxBreakdownDiv-taxBreakdown {
+  /*Inherits: [OB.UI.TaxBreakdown]*/
+}
+
+.obUiOrderView-container1-listTaxLines {
+  /*Inherits: [OB.UI.ScrollableTable]*/
+}
+.obUiOrderView-container1-listTaxLines-scrollAreaClasses {
+  max-height: 250px;
+}
+
+.obUiOrderView-container1-container5 {}
+
+.obUiOrderView-container1-container5-paymentBreakdown {
+  padding: 10px;
+  height: 40px;
+}
+
+.obUiOrderView-paymentBreakdown-container1 {
+  position: relative;
+  padding: 10px;
+}
+
+.obUiOrderView-paymentBreakdown-container1-lblTotalPayment {
+  float: left;
+  width: 40%;
+}
+
+.obUiOrderView-paymentBreakdown-container1-element1 {
+  clear: both;
+}
+
+.obUiOrderView-container1-listPaymentLines {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obUiOrderView-container1-listPaymentLines-scrollArea {
+  max-height: 250px;
+}
+
+
+
+/*
+# Component: OB.UI.MultiOrderView
+*/
+.obUiMultiOrderView {}
+
+.obUiMultiOrderView-listMultiOrderLines {}
+
+.obUiMultiOrderView-listMultiOrderLines-scrollArea {
+  max-height: 450px;
+}
+
+.obUiMultiOrderView-container1 {}
+
+.obUiMultiOrderView-container1-container1 {}
+
+.obUiMultiOrderView-container1-container1-totalMultiReceiptLine {
+  /*Inherits: [OB.UI.TotalMultiReceiptLine]*/
+}
+
+.obUiMultiOrderView-container1-container2 {}
+
+.obUiMultiOrderView-container1-container2-container1 {
+  padding: 10px;
+  border-top: var(--bottomseparator-slim);
+  height: 40px;
+}
+
+.obUiMultiOrderView-container1-container2-container1-multiOrderBtnInvoice {
+  /*Inherits: [btninvoice]*/
+}
+
+.obUiMultiOrderView-container1-container2-container1-element1 {
+  clear: both;
+}
 
 
 

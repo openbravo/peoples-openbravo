@@ -12,11 +12,9 @@
 enyo.kind({
   name: 'OB.UI.OrderMultiSelect',
   kind: 'Image',
+  classes: 'obUiOrderMultiSelect',
   src: '../org.openbravo.retail.posterminal/img/iconPinSelected.svg',
   sizing: "cover",
-  width: 28,
-  height: 28,
-  style: 'float: right; cursor: pointer; margin-top: 8px; width: 27px; height: 27px;',
   showing: false,
   events: {
     onToggleSelection: ''
@@ -34,11 +32,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.OrderSingleSelect',
   kind: 'Image',
+  classes: 'obUiOrderSingleSelect',
   src: '../org.openbravo.retail.posterminal/img/iconPinUnselected.svg',
   sizing: "cover",
-  width: 28,
-  height: 28,
-  style: 'float: right; cursor: pointer; margin-top: 8px; width: 27px; height: 27px;',
   events: {
     onToggleSelection: ''
   },
@@ -56,8 +52,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.OrderMultiSelectAll',
   i18nContent: 'OBPOS_lblSelectAll',
-  classes: 'btnlink-orange',
-  style: 'float: right; margin-top: 6px;',
+  classes: 'obUiOrderMultiSelectAll',
   showing: false,
   events: {
     onMultiSelectAll: ''
@@ -72,7 +67,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.OrderHeader',
-  classes: 'row-fluid span12',
+  classes: 'obUiOrderHeader row-fluid span12',
   published: {
     order: null
   },
@@ -86,40 +81,46 @@ enyo.kind({
     onMultiSelectAll: 'multiSelectAll'
   },
   newLabelComponents: [{
+    classes: 'obUiOrderHeader-labelComponents-orderdetails',
     kind: 'OB.UI.OrderDetails',
     name: 'orderdetails'
   }, {
+    classes: 'obUiOrderHeader-labelComponents-btnMultiSelection',
     kind: 'OB.UI.OrderMultiSelect',
     name: 'btnMultiSelection'
   }, {
+    classes: 'obUiOrderHeader-labelComponents-btnMultiSelectAll',
     kind: 'OB.UI.OrderMultiSelectAll',
     name: 'btnMultiSelectAll'
   }, {
+    classes: 'obUiOrderHeader-labelComponents-btnSingleSelection',
     kind: 'OB.UI.OrderSingleSelect',
     name: 'btnSingleSelection'
   }, {
-    style: 'clear: both;'
+    classes: 'obUiOrderHeader-labelComponents-element1'
   }],
   newButtonComponents: [{
+    classes: 'obUiOrderHeader-buttonComponents-bpbutton',
     kind: 'OB.UI.BusinessPartnerSelector',
     name: 'bpbutton'
   }, {
     name: 'separator',
-    classes: 'customer-buttons-separator'
+    classes: 'obUiOrderHeader-buttonComponents-separator'
   }, {
+    classes: 'obUiOrderHeader-buttonComponents-bplocbutton',
     kind: 'OB.UI.BPLocation',
     name: 'bplocbutton'
   }, {
+    classes: 'obUiOrderHeader-buttonComponents-bplocshipbutton',
     kind: 'OB.UI.BPLocationShip',
     name: 'bplocshipbutton'
   }],
-  style: 'border-bottom: 1px solid #cccccc;',
   components: [{
+    classes: 'obUiOrderHeader-receiptLabels',
     name: 'receiptLabels'
   }, {
     name: 'receiptButtons',
-    style: 'clear: both; ',
-    classes: 'standardFlexContainer'
+    classes: 'obUiOrderHeader-receiptButtons'
   }],
   resizeHandler: function () {
     this.inherited(arguments);
@@ -193,11 +194,10 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.OrderFooter',
-  classes: 'row-fluid span12',
+  classes: 'obUiOrderFooter row-fluid span12',
   published: {
     order: null
   },
-  style: 'border-bottom: 1px solid #cccccc;',
   newComponents: [],
   orderChanged: function () {
     _.each(this.$, function (comp) {
@@ -216,18 +216,18 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.TotalMultiReceiptLine',
-  style: 'position: relative; padding: 10px;',
+  classes: 'obUiTotalMultiReceiptLine',
   components: [{
     name: 'lblTotal',
-    style: 'float: left; width: 40%;'
+    classes: 'obUiTotalMultiReceiptLine-lblTotal'
   }, {
     name: 'totalqty',
-    style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
+    classes: 'obUiTotalMultiReceiptLine-totalqty'
   }, {
     name: 'totalgross',
-    style: 'float: left; width: 40%; text-align:right; font-weight:bold;'
+    classes: 'obUiTotalMultiReceiptLine-totalgross'
   }, {
-    style: 'clear: both;'
+    classes: 'obUiTotalMultiReceiptLine-element1'
   }],
   renderTotal: function (newTotal) {
     this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
@@ -242,29 +242,31 @@ enyo.kind({
 });
 enyo.kind({
   name: 'OB.UI.TotalReceiptLine',
+  classes: 'obUiTotalReceiptLine',
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines'
   },
-  style: 'position: relative; padding: 10px; height: 35px',
   components: [{
     name: 'lblTotal',
-    classes: 'order-total-label'
+    classes: 'obUiTotalReceiptLine-lblTotal'
   }, {
     kind: 'OB.UI.FitText',
-    classes: 'order-total-qty fitText',
+    classes: 'obUiTotalReceiptLine-obUiFitTextQty fitText',
     components: [{
       tag: 'span',
+      classes: 'obUiTotalReceiptLine-obUiFitTextQty-totalqty',
       name: 'totalqty'
     }]
   }, {
     kind: 'OB.UI.FitText',
-    classes: 'order-total-gross fitText',
+    classes: 'obUiTotalReceiptLine-obUiFitTextGross fitText',
     components: [{
       tag: 'span',
+      classes: 'obUiTotalReceiptLine-obUiFitTextGross-totalgross',
       name: 'totalgross'
     }]
   }, {
-    style: 'clear: both;'
+    classes: 'obUiTotalReceiptLine-element1'
   }],
   renderTotal: function (newTotal) {
     if (newTotal !== this.$.totalgross.getContent()) {
@@ -279,13 +281,13 @@ enyo.kind({
   },
   checkBoxForTicketLines: function (inSender, inEvent) {
     if (inEvent.status) {
-      this.$.lblTotal.hasNode().style.width = '48%';
-      this.$.totalqty.hasNode().style.width = '16%';
-      this.$.totalgross.hasNode().style.width = '36%';
+      this.$.lblTotal.addClass('obUiTotalReceiptLine-lblTotal_large');
+      this.$.totalqty.addClass('obUiTotalReceiptLine-obUiFitTextQty-totalqty_small');
+      this.$.totalgross.addClass('obUiTotalReceiptLine-obUiFitTextGross-totalgross_small');
     } else {
-      this.$.lblTotal.hasNode().style.width = '40%';
-      this.$.totalqty.hasNode().style.width = '20%';
-      this.$.totalgross.hasNode().style.width = '40%';
+      this.$.lblTotal.addClass('obUiTotalReceiptLine-lblTotal_small');
+      this.$.totalqty.addClass('obUiTotalReceiptLine-obUiFitTextQty-totalqty_large');
+      this.$.totalgross.addClass('obUiTotalReceiptLine-obUiFitTextGross-totalgross_large');
     }
   },
   initComponents: function () {
@@ -299,18 +301,18 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.TotalTaxLine',
-  style: 'position: relative; padding: 10px;',
+  classes: 'obUiTotalTaxLine',
   components: [{
     name: 'lblTotalTax',
-    style: 'float: left; width: 40%;'
+    classes: 'obUiTotalTaxLine-lblTotalTax'
   }, {
     name: 'totalbase',
-    style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
+    classes: 'obUiTotalTaxLine-totalbase'
   }, {
     name: 'totaltax',
-    style: 'float: left; width: 60%; text-align:right; font-weight:bold;'
+    classes: 'obUiTotalTaxLine-totaltax'
   }, {
-    style: 'clear: both;'
+    classes: 'obUiTotalTaxLine-element1'
   }],
   renderTax: function (newTax) {
     this.$.totaltax.setContent(OB.I18N.formatCurrency(newTax));
@@ -323,12 +325,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.TaxBreakdown',
-  style: 'position: relative; padding: 10px;',
+  classes: 'obUiTaxBreakdown',
   components: [{
-    name: 'lblTotalTaxBreakdown',
-    style: 'float: left; width: 40%;'
+    classes: 'obUiTaxBreakdown-lblTotalTaxBreakdown',
+    name: 'lblTotalTaxBreakdown'
   }, {
-    style: 'clear: both;'
+    classes: 'obUiTaxBreakdown-element1'
   }],
   initComponents: function () {
     this.inherited(arguments);
@@ -342,8 +344,7 @@ enyo.kind({
   events: {
     onCancelReceiptToInvoice: ''
   },
-  style: 'width: 40px;',
-  classes: 'btnlink-white btnlink-payment-clear btn-icon-small btn-icon-check',
+  classes: 'obUiBtnReceiptToInvoice',
   tap: function () {
     this.doCancelReceiptToInvoice();
   }
@@ -351,15 +352,19 @@ enyo.kind({
 
 enyo.kind({
   name: 'btninvoice',
+  classes: 'btnInvoice',
   showing: false,
   style: 'float: left; width: 40%;',
   components: [{
+    classes: 'btnInvoice-obUiBtnReceiptToInvoice',
     kind: 'OB.UI.BtnReceiptToInvoice'
   }, {
+    classes: 'btnInvoice-element1',
     tag: 'span',
     content: ' '
   }, {
     tag: 'span',
+    classes: 'btnInvoice-lblInvoiceReceipt',
     name: 'lblInvoiceReceipt',
     style: 'font-weight:bold; '
   }],
@@ -371,7 +376,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.OrderViewDivText',
-  style: 'float: right; text-align: right; font-weight:bold; font-size: 30px; line-height: 30px;',
+  classes: 'obUiOrderViewDivText',
   showing: false,
   content: '',
 
@@ -384,7 +389,7 @@ enyo.kind({
   },
 
   setQuotationLabel: function (model) {
-    this.addStyles('width: 100%; color: #f8941d;');
+    this.addClass('obUiOrderViewDivText_quotation');
     if (model.get('hasbeenpaid') === 'Y') {
       this.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
     } else {
@@ -394,7 +399,7 @@ enyo.kind({
   },
 
   setPaidLabel: function (model) {
-    this.addStyles('width: 50%; color: #f8941d;');
+    this.addClass('obUiOrderViewDivText_paid');
     if (model.get('iscancelled')) {
       this.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
     } else if (model.get('paidOnCredit')) {
@@ -412,7 +417,7 @@ enyo.kind({
   },
 
   setLayawayLabel: function (model) {
-    this.addStyles('width: 50%; color: lightblue;');
+    this.addClass('obUiOrderViewDivText_layaway');
     if (model.get('iscancelled')) {
       this.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
     } else {
@@ -423,10 +428,10 @@ enyo.kind({
 
   setCancelAndReplaceLabel: function (model) {
     if (model.get('orderType') === 2) {
-      this.addStyles('width: 90%; color: lightblue; line-height:30px');
+      this.addClass('obUiOrderViewDivText_CancelAndReplaceType1');
       this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway') + ': ' + OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
     } else {
-      this.addStyles('width: 90%; color: #5353C5; line-height:30px');
+      this.addClass('obUiOrderViewDivText_CancelAndReplaceType2');
       this.setContent(OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
     }
     this.show();
@@ -434,23 +439,23 @@ enyo.kind({
 
   setCancelLayawayLabel: function (model) {
     if (model.get('fromLayaway')) {
-      this.addStyles('width: 60%; color: lightblue;');
+      this.addClass('obUiOrderViewDivText_CancelLayawayFromLayaway');
       this.setContent(OB.I18N.getLabel('OBPOS_CancelLayaway'));
     } else {
-      this.addStyles('width: 60%; color: #5353C5;');
+      this.addClass('obUiOrderViewDivText_CancelLayaway');
       this.setContent(OB.I18N.getLabel('OBPOS_CancelOrder'));
     }
     this.show();
   },
 
   setToBeReturnedLabel: function (model) {
-    this.addStyles('width: 50%; color: #f8941d;');
+    this.addClass('obUiOrderViewDivText_ToBeReturned');
     this.setContent(OB.I18N.getLabel('OBPOS_ToBeReturned'));
     this.show();
   },
 
   setToBeLaidawayLabel: function (model) {
-    this.addStyles('width: 60%; color: lightblue;');
+    this.addClass('obUiOrderViewDivText_ToBeLaidaway');
     this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
     this.show();
   }
@@ -458,6 +463,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.OrderView',
+  classes: 'obUiOrderView',
   published: {
     order: null
   },
@@ -517,6 +523,7 @@ enyo.kind({
   components: [{
     kind: 'OB.UI.ScrollableTable',
     name: 'listOrderLines',
+    classes: 'obUiOrderView-listOrderLines',
     columns: ['product', 'quantity', 'price', 'gross'],
     scrollWhenSelected: true,
     renderLine: 'OB.UI.RenderOrderLine',
@@ -531,47 +538,57 @@ enyo.kind({
     }
   }, {
     tag: 'ul',
-    classes: 'unstyled',
+    classes: 'obUiOrderView-container1',
     components: [{
       tag: 'li',
+      classes: 'obUiOrderView-container1-container1',
       components: [{
+        classes: 'obUiOrderView-container1-container1-totalTaxLine',
         kind: 'OB.UI.TotalTaxLine',
         name: 'totalTaxLine'
       }, {
+        classes: 'obUiOrderView-container1-container1-totalReceiptLine',
         kind: 'OB.UI.TotalReceiptLine',
         name: 'totalReceiptLine'
       }]
     }, {
       tag: 'li',
+      classes: 'obUiOrderView-container1-container2',
       components: [{
+        classes: 'obUiOrderView-container1-container2-injectedFooter',
         name: 'injectedFooter'
       }, {
-        style: 'padding: 10px; border-top: 1px solid #cccccc; min-height: 40px;',
+        classes: 'obUiOrderView-container1-container2-container1',
         components: [{
           kind: 'btninvoice',
+          classes: 'obUiOrderView-container1-container2-container1-divbtninvoice',
           name: 'divbtninvoice',
           showing: false
         }, {
           kind: 'OB.UI.OrderViewDivText',
+          classes: 'obUiOrderView-container1-container2-container1-divText',
           name: 'divText'
         }, {
-          style: 'clear: both;'
+          classes: 'obUiOrderView-container1-container2-container1-element1'
         }]
       }]
     }, {
       tag: 'li',
+      classes: 'obUiOrderView-container1-container3',
       components: [{
         name: 'taxBreakdownDiv',
-        style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;',
+        classes: 'obUiOrderView-container1-container3-taxBreakdownDiv',
         components: [{
           kind: 'OB.UI.TaxBreakdown',
+          classes: 'obUiOrderView-container1-container3-taxBreakdownDiv-taxBreakdown',
           name: 'taxBreakdown'
         }]
       }]
     }, {
       kind: 'OB.UI.ScrollableTable',
+      classes: 'obUiOrderView-container1-listTaxLines',
       name: 'listTaxLines',
-      scrollAreaMaxHeight: '250px',
+      scrollAreaClasses: 'obUiOrderView-container1-listTaxLines-scrollAreaClasses',
       renderLine: 'OB.UI.RenderTaxLine',
       renderEmpty: 'OB.UI.RenderTaxLineEmpty',
       //defined on redenderorderline.js
@@ -579,26 +596,27 @@ enyo.kind({
       columns: ['tax', 'base', 'totaltax']
     }, {
       tag: 'li',
+      classes: 'obUiOrderView-container1-container5',
       components: [{
         name: 'paymentBreakdown',
-        style: 'padding: 10px; height: 40px;',
+        classes: 'obUiOrderView-container1-container5-paymentBreakdown',
         showing: false,
         components: [{
-          style: 'position: relative; padding: 10px;',
+          classes: 'obUiOrderView-paymentBreakdown-container1',
           components: [{
-            name: 'lblTotalPayment',
-            style: 'float: left; width: 40%;'
+            classes: 'obUiOrderView-paymentBreakdown-container1-lblTotalPayment',
+            name: 'lblTotalPayment'
           }, {
-            style: 'clear: both;'
+            classes: 'obUiOrderView-paymentBreakdown-container1-element1'
           }]
         }]
       }]
     }, {
       kind: 'OB.UI.ScrollableTable',
-      style: 'border-bottom: 1px solid #cccccc;',
+      classes: 'obUiOrderView-container1-listPaymentLines',
       name: 'listPaymentLines',
       showing: false,
-      scrollAreaMaxHeight: '250px',
+      scrollAreaClasses: 'obUiOrderView-container1-listPaymentLines-scrollArea',
       renderLine: 'OB.UI.RenderPaymentLine',
       renderEmpty: 'OB.UI.RenderPaymentLineEmpty',
       //defined on redenderorderline.js
@@ -607,11 +625,9 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
-    var scrollMax = 250;
     if (!OB.MobileApp.model.get('terminal').terminalType.showtaxbreakdown) {
-      scrollMax = scrollMax + 143;
+      this.$.listOrderLines.addClass('obUiOrderView-listOrderLines-bigger');
     }
-    this.$.listOrderLines.scrollAreaMaxHeight = scrollMax + 'px';
     this.$.lblTotalPayment.setContent(OB.I18N.getLabel('OBPOS_LblPaymentBreakdown'));
 
     // Inject the footer components
@@ -1160,6 +1176,7 @@ enyo.kind({
 });
 enyo.kind({
   name: 'OB.UI.MultiOrderView',
+  classes: 'obUiMultiOrderView',
   published: {
     order: null
   },
@@ -1168,31 +1185,36 @@ enyo.kind({
   },
   components: [{
     kind: 'OB.UI.ScrollableTable',
+    classes: 'obUiMultiOrderView-listMultiOrderLines',
     name: 'listMultiOrderLines',
-    scrollAreaMaxHeight: '450px',
+    scrollAreaClasses: 'obUiMultiOrderView-listMultiOrderLines-scrollArea',
     renderLine: 'OB.UI.RenderMultiOrdersLine',
     renderEmpty: 'OB.UI.RenderMultiOrdersLineEmpty',
     //defined on redenderorderline.js
     listStyle: 'edit'
   }, {
     tag: 'ul',
-    classes: 'unstyled',
+    classes: 'obUiMultiOrderView-container1',
     components: [{
+      classes: 'obUiMultiOrderView-container1-container1',
       tag: 'li',
       components: [{
+        classes: 'obUiMultiOrderView-container1-container1-totalMultiReceiptLine',
         kind: 'OB.UI.TotalMultiReceiptLine',
         name: 'totalMultiReceiptLine'
       }]
     }, {
       tag: 'li',
+      classes: 'obUiMultiOrderView-container1-container2',
       components: [{
-        style: 'padding: 10px; border-top: 1px solid #cccccc; height: 40px;',
+        classes: 'obUiMultiOrderView-container1-container2-container1',
         components: [{
+          classes: 'obUiMultiOrderView-container1-container2-container1-multiOrderBtnInvoice',
           kind: 'btninvoice',
           name: 'multiOrder_btninvoice',
           showing: false
         }, {
-          style: 'clear: both;'
+          classes: 'obUiMultiOrderView-container1-container2-container1-element1'
         }]
       }]
     }]
