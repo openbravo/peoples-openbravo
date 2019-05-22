@@ -499,8 +499,7 @@ enyo.kind({
         args: {
           businessPartner: this.args.businessPartner,
           target: this.args.target,
-          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath),
-          makeSearch: this.args.makeSearch
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath)
         }
       });
     }
