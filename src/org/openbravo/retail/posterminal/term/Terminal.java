@@ -269,9 +269,8 @@ public class Terminal extends JSONProcessSimple {
       return result;
 
     } catch (Exception e) {
-      log.error(
-          "Terminal exception: " + e.getMessage() + "Stacktrace: " + e.getStackTrace().toString());
-      throw new OBException(e.getMessage());
+      log.error("Terminal exception: " + e.getMessage(), e);
+      throw new OBException(e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }

@@ -341,12 +341,17 @@ enyo.kind({
         modalSelector = this.parent.parent,
         selectedLine = modalSelector.selectedLine,
         relatedLines = selectedLine.get('relatedLines'),
-        receipt = modalSelector.receipt ? modalSelector.receipt : OB.MobileApp.model.receipt;
+        receipt = modalSelector.receipt ? modalSelector.receipt : OB.MobileApp.model.receipt,
+        relatedLinePaid;
 
     if (OB.UTIL.isNullOrUndefined(relatedLines[0].bpName) || OB.UTIL.isNullOrUndefined(relatedLines[0].qty)) {
       relatedLines[0].bpName = receipt.get('bp').get('name');
       relatedLines[0].qty = selectedLine.getQty();
     }
+
+    relatedLinePaid = _.find(relatedLines, function (line) {
+      return line.obposIspaid === true;
+    });
 
     _.each(
     this.ordersList.models, function (line) {
@@ -363,6 +368,9 @@ enyo.kind({
         newRelatedLine.deliveredQuantity = line.get('deliveredQuantity');
         newRelatedLine.promotions = line.get('promotions');
         newRelatedLine.bpName = line.get('bpName');
+        newRelatedLine.obposIspaid = (OB.UTIL.isNullOrUndefined(relatedLinePaid)) ? false : relatedLinePaid.obposIspaid;
+        newRelatedLine.productId = line.get('productId');
+        newRelatedLine.productCategory = line.get('productCategory');
         relatedLines.push(newRelatedLine);
         associatedOrderLineIds.push(line.get('orderlineId'));
       }

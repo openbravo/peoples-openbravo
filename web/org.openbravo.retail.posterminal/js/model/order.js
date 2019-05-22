@@ -227,7 +227,7 @@
           return true;
         }
         for (i = 0; i < promotions.length; i++) {
-          if (!promotions[i].applyNext) {
+          if (!promotions[i].manual && !promotions[i].applyNext) {
             return true;
           }
         }
@@ -812,8 +812,8 @@
             var finishCalculateReceipt = function (callback) {
                 me.calculatingReceipt = false;
                 OB.MobileApp.view.waterfall('calculatedReceipt');
-                me.trigger('calculatedReceipt');
                 OB.UTIL.ProcessController.finish('calculateReceipt', execution);
+                me.trigger('calculatedReceipt');
                 me.getPrepaymentAmount(function () {
                   me.trigger('updatePending');
                   if (callback && callback instanceof Function) {
@@ -2327,7 +2327,7 @@
           var allowMessage, notAllowMessage;
           if (productStatus.restrictsaleoutofstock) {
             allowMessage = OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [p.get('_identifier'), productStatus.name, warehouse.warehouseqty, warehouse.warehousename, allLinesQty]);
-            notAllowMessage = OB.I18N.getLabel('OBPOS_CannotSellWithoutStock', [p.get('_identifier'), productStatus.name, allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]);
+            notAllowMessage = OB.I18N.getLabel('OBPOS_CannotSellWithoutStock', [p.get('_identifier'), productStatus.name, allLinesQty, warehouse.warehouseqty, warehouse.warehousename]);
           }
           OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductWithoutStock', {
             allowToAdd: true,
@@ -2932,21 +2932,25 @@
           criteria.params.push(productId);
           criteria.params.push(productCategory);
           criteria.params.push(productCategory);
-          OB.Dal.findUsingCache('productServiceCache', OB.Model.Product, criteria, function (data) {
-            if (data) {
-              data.hasservices = data.length > 0;
-              data.hasmandatoryservices = _.find(data.models, function (model) {
-                return model.get('proposalType') === 'MP';
-              });
-              callback(data);
-            } else {
+          OB.UTIL.HookManager.executeHooks('OBPOS_LoadRelatedServices_ExtendCriteria', {
+            criteria: criteria
+          }, function (args) {
+            OB.Dal.findUsingCache('productServiceCache', OB.Model.Product, args.criteria, function (data) {
+              if (data) {
+                data.hasservices = data.length > 0;
+                data.hasmandatoryservices = _.find(data.models, function (model) {
+                  return model.get('proposalType') === 'MP';
+                });
+                callback(data);
+              } else {
+                callback(null);
+              }
+            }, function (trx, error) {
+              OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
               callback(null);
-            }
-          }, function (trx, error) {
-            OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
-            callback(null);
-          }, {
-            modelsAffectedByCache: ['Product']
+            }, {
+              modelsAffectedByCache: ['Product']
+            });
           });
         }
       } else {
@@ -3390,11 +3394,10 @@
       var promotions = line.get('promotions') || [],
           disc = {},
           i, replaced = false,
-          discountRule = OB.Model.Discounts.discountRules[rule.attributes.discountType],
           unitsConsumed = 0,
           unitsConsumedByNoCascadeRules = 0,
-          unitsConsumedByTheSameRule = 0;
-
+          unitsConsumedByTheSameRule = 0,
+          discountRule = OB.Model.Discounts.discountRules[rule.attributes.discountType];
       if (discountRule.getIdentifier) {
         disc.identifier = discountRule.getIdentifier(rule, discount);
       }
@@ -3501,7 +3504,9 @@
         } else if (disc.manual || discount.forceReplace) {
           if (promotions[i].ruleId === rule.id && discount.discountinstance === promotions[i].discountinstance) {
             if (promotions[i].hidden !== true) {
-              promotions[i] = disc;
+              if (disc.applyNext === false) {
+                promotions[i] = disc;
+              }
               replaced = true;
               break;
             }
@@ -6985,7 +6990,8 @@
                 }, null, function () {
                   //Empty
                   new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedProduct').exec({
-                    productId: iter.id
+                    productId: iter.id,
+                    salesOrderLineId: iter.lineId
                   }, function (data) {
                     addLineForProduct(OB.Dal.transform(OB.Model.Product, data[0]));
                   }, function () {

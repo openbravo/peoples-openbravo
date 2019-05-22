@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2018 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,13 +12,18 @@ package org.openbravo.retail.posterminal.process;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.mobile.core.process.HQLCriteriaProcess;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.enterprise.Organization;
@@ -29,6 +34,11 @@ import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.json.JsonConstants;
 
 public class HasServices extends JSONProcessSimple {
+
+  @Inject
+  @Any
+  private Instance<HQLCriteriaProcess> hqlCriterias;
+
   @Override
   public JSONObject exec(JSONObject jsonData) throws JSONException, ServletException {
     OBContext.setAdminMode(true);
@@ -48,11 +58,17 @@ public class HasServices extends JSONProcessSimple {
       PriceListVersion priceListVersion = POSUtils
           .getPriceListVersionByOrgId(terminalOrganization.getId(), terminalDate);
 
+      JSONArray filters = jsonData.optJSONArray("remoteFilters");
+
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(
           getProductServicesQuery(productId, productCategoryId, terminalOrganization,
               priceListVersion),
           OBContext.getOBContext().getCurrentClient().getId(), terminalOrganization.getId(), null,
-          null, null);
+          filters, null);
+
+      if (hqlCriterias != null) {
+        querybuilder.setHQLCriteria(hqlCriterias);
+      }
 
       @SuppressWarnings("rawtypes")
       final Query query = querybuilder.getDalQuery();
@@ -103,7 +119,7 @@ public class HasServices extends JSONProcessSimple {
 
     hqlString.append("select count(*), s.obposProposalType ");
     hqlString.append("from OBRETCO_Prol_Product as assort left outer join assort.product as s ");
-    hqlString.append("where s.productType = 'S' and s.linkedToProduct = true ");
+    hqlString.append("where $hqlCriteria and s.productType = 'S' and s.linkedToProduct = true ");
     hqlString.append(
         "and s.$naturalOrgCriteria and s.$activeCriteria and s.$readableSimpleClientCriteria ");
     hqlString.append(
