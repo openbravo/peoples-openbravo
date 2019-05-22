@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, enyo, _*/
+/*global OB, Backbone, enyo, _, OBRDM*/
 
 OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
 OB.OBPOSPointOfSale.Model = OB.OBPOSPointOfSale.Model || {};
@@ -595,13 +595,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }
       };
 
-      OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrders_PreSetPaymentsToReceipt', {
-        multiOrderList: multiorders.get('multiOrdersList'),
-        payments: multiorders.get('payments')
-      }, function (args) {
-        setPaymentsToReceipts(args.multiOrderList, args.payments, multiorders.get('changePayments'), OB.DEC.Zero, OB.DEC.Zero, true, function () {
-          multiorders.set('change', OB.DEC.Zero);
-          multiorders.trigger('closed');
+      OBRDM.UTIL.distributePaymentsPickAndCarry(multiorders.get('multiOrdersList'), multiorders.get('payments'), function () {
+        OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrders_PreSetPaymentsToReceipt', {
+          multiOrderList: multiorders.get('multiOrdersList'),
+          payments: multiorders.get('payments')
+        }, function (args) {
+          setPaymentsToReceipts(args.multiOrderList, args.payments, multiorders.get('changePayments'), OB.DEC.Zero, OB.DEC.Zero, true, function () {
+            multiorders.set('change', OB.DEC.Zero);
+            multiorders.trigger('closed');
+          });
         });
       });
     }, this);
