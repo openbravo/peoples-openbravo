@@ -298,7 +298,7 @@ enyo.kind({
           currentTime.setSeconds(0);
         }
 
-        orderline.createComponent({
+        me.createComponent({
           style: 'float: left; width: 80%; display: block;',
           components: [{
             content: '-- ' + OB.I18N.getLabel('OBRDM_DeliveryMode') + ': ' + deliveryName,
