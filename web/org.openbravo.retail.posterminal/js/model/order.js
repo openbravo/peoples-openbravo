@@ -1650,19 +1650,6 @@
       }
 
       function preDeleteLine() {
-        var undoDeliveryModes = [];
-        _.each(selectedModels, function (line) {
-          undoDeliveryModes.push({
-            id: line.get('id'),
-            prodcutId: line.get('product').get('id'),
-            nameDelivery: line.get('nameDelivery'),
-            obrdmDeliveryMode: line.get('obrdmDeliveryMode'),
-            obrdmDeliveryDate: line.get('obrdmDeliveryDate'),
-            obrdmDeliveryTime: line.get('obrdmDeliveryTime')
-          });
-        });
-        me.set('undoDeliveryModes', undoDeliveryModes);
-
         OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
           order: me,
           selectedLines: selectedModels
@@ -2337,28 +2324,13 @@
 
       function checkAddProduct(warehouse, allLinesQty) {
         if (allLinesQty > warehouse.warehouseqty) {
-          var allowMessage, notAllowMessage, allowToAdd = true;
+          var allowMessage, notAllowMessage;
           if (productStatus.restrictsaleoutofstock) {
-            if (line) {
-              if (line.get('obrdmDeliveryMode') && line.get('obrdmDeliveryMode') !== 'PickAndCarry') {
-                allowToAdd = false;
-              }
-            } else {
-              if (me.get('orderType') === 2) {
-                if (p.get('obrdmDeliveryModeLyw') && p.get('obrdmDeliveryModeLyw') !== 'PickAndCarry') {
-                  allowToAdd = false;
-                }
-              } else {
-                if (p.get('obrdmDeliveryMode') && p.get('obrdmDeliveryMode') !== 'PickAndCarry') {
-                  allowToAdd = false;
-                }
-              }
-            }
             allowMessage = OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [p.get('_identifier'), productStatus.name, warehouse.warehouseqty, warehouse.warehousename, allLinesQty]);
             notAllowMessage = OB.I18N.getLabel('OBPOS_CannotSellWithoutStock', [p.get('_identifier'), productStatus.name, allLinesQty, warehouse.warehouseqty, warehouse.warehousename]);
           }
           OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductWithoutStock', {
-            allowToAdd: allowToAdd,
+            allowToAdd: true,
             allowMessage: allowMessage,
             notAllowMessage: notAllowMessage,
             askConfirmation: true,
@@ -2632,8 +2604,6 @@
           }
         }
 
-
-
         function execPostAddProductToOrderHook() {
           if (me.isCalculateReceiptLocked === true || !line) {
             OB.error('Save ignored before execute OBPOS_PostAddProductToOrder hook, system has detected that a line is being added when calculate receipt is closed. Ignore line creation');
@@ -2645,39 +2615,6 @@
             }
             return null;
           }
-
-          function setDeliveryModeAndTime(order, orderLine) {
-            var defaultDeliveryModeInProduct, defaultDeliveryMode;
-            if (order.get('isLayaway') || order.get('orderType') === 2) {
-              defaultDeliveryModeInProduct = orderLine.get('product').get('obrdmDeliveryModeLyw');
-              defaultDeliveryMode = defaultDeliveryModeInProduct ? defaultDeliveryModeInProduct : (order.get('obrdmDeliveryModeProperty') ? order.get('obrdmDeliveryModeProperty') : 'PickAndCarry');
-            } else {
-              defaultDeliveryModeInProduct = orderLine.get('product').get('obrdmDeliveryMode');
-              defaultDeliveryMode = defaultDeliveryModeInProduct ? defaultDeliveryModeInProduct : (order.get('obrdmDeliveryModeProperty') ? order.get('obrdmDeliveryModeProperty') : 'PickAndCarry');
-            }
-            orderLine.set('obrdmDeliveryMode', defaultDeliveryMode);
-            if (orderLine.get('obrdmDeliveryMode') === 'PickupInStoreDate' || orderLine.get('obrdmDeliveryMode') === 'HomeDelivery') {
-              var currentDate = new Date();
-              currentDate.setHours(0);
-              currentDate.setMinutes(0);
-              currentDate.setSeconds(0);
-              orderLine.set('obrdmDeliveryDate', defaultDeliveryModeInProduct ? currentDate : order.get('obrdmDeliveryDateProperty'));
-            }
-            if (orderLine.get('obrdmDeliveryMode') === 'HomeDelivery') {
-              var currentTime = new Date();
-              currentTime.setSeconds(0);
-              orderLine.set('obrdmDeliveryTime', defaultDeliveryModeInProduct ? currentTime : order.get('obrdmDeliveryTimeProperty'));
-            }
-            orderLine.set('nameDelivery', _.find(OB.MobileApp.model.get('deliveryModes'), function (dm) {
-              return dm.id === orderLine.get('obrdmDeliveryMode');
-            }).name);
-          }
-
-          if (newLine && line.get('product').get('productType') !== 'S' && !line.get('obrdmDeliveryMode')) {
-            setDeliveryModeAndTime(me, line);
-          }
-
-
           OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
             receipt: me,
             productToAdd: p,
@@ -2957,13 +2894,7 @@
           process.exec({
             product: productId,
             productCategory: productCategory,
-            parameters: params,
-            remoteFilters: [{
-              columns: [],
-              operator: "filter",
-              value: "OBRDM_DeliveryServiceFilter",
-              params: [false]
-            }]
+            parameters: params
           }, function (data, message) {
             if (data && data.exception) {
               //ERROR or no connection
@@ -7712,9 +7643,6 @@
       order.set('sendEmail', false);
       order.set('openDrawer', false);
       order.set('orderManualPromotions', new OB.Collection.OrderManualPromotionsList());
-      if (!order.get('obrdmDeliveryModeProperty')) {
-        order.set('obrdmDeliveryModeProperty', 'PickAndCarry');
-      }
       OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
         newOrder: order
       });

@@ -305,9 +305,6 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalAdvancedFilterOrders',
       name: 'OBPOS_modalAdvancedFilterOrders'
-    }, {
-      kind: 'OBRDM.UI.ModalChangeDeliveryAmount',
-      name: 'OBRDM_UI_ModalChangeDeliveryAmount'
     }]
   }, {
     name: 'mainSubWindow',

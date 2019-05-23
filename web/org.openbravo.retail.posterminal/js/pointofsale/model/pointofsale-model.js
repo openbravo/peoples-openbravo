@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, enyo, _, OBRDM*/
+/*global OB, Backbone, enyo, _*/
 
 OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
 OB.OBPOSPointOfSale.Model = OB.OBPOSPointOfSale.Model || {};
@@ -595,15 +595,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }
       };
 
-      OBRDM.UTIL.distributePaymentsPickAndCarry(multiorders.get('multiOrdersList'), multiorders.get('payments'), function () {
-        OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrders_PreSetPaymentsToReceipt', {
-          multiOrderList: multiorders.get('multiOrdersList'),
-          payments: multiorders.get('payments')
-        }, function (args) {
-          setPaymentsToReceipts(args.multiOrderList, args.payments, multiorders.get('changePayments'), OB.DEC.Zero, OB.DEC.Zero, true, function () {
-            multiorders.set('change', OB.DEC.Zero);
-            multiorders.trigger('closed');
-          });
+      OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrders_PreSetPaymentsToReceipt', {
+        multiOrderList: multiorders.get('multiOrdersList'),
+        payments: multiorders.get('payments')
+      }, function (args) {
+        setPaymentsToReceipts(args.multiOrderList, args.payments, multiorders.get('changePayments'), OB.DEC.Zero, OB.DEC.Zero, true, function () {
+          multiorders.set('change', OB.DEC.Zero);
+          multiorders.trigger('closed');
         });
       });
     }, this);
@@ -1135,19 +1133,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
    * same hook
    */
   completePayment: function (caller) {
-    var me = this,
-        receipt = me.get('order'),
-        i, line;
-    if (receipt.get('isQuotation') !== true) {
-      for (i = 0; i < receipt.get('lines').models.length; i++) {
-        line = receipt.get('lines').at(i);
-        if ((!line.get('obrdmDeliveryMode') || line.get('obrdmDeliveryMode') === 'PickAndCarry') && !line.get('obposCanbedelivered') && line.get('deliveredQuantity') !== line.get('qty')) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBRDM_PickAndCarryError'));
-          break;
-        }
-      }
-    }
-
+    var me = this;
     OB.UTIL.HookManager.executeHooks('OBPOS_PrePaymentHook', {
       context: this,
       caller: caller

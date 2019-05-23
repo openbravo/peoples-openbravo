@@ -214,17 +214,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/rfidWebsocket",
 
         "utils/preScanningFocusHook", "utils/orderSelectorUtils", "utils/stockUtils",
-        "utils/productStatusUtils",
-
-        // Delivery Modes
-        "utils/deliveryModeUtils", //
-        "hookPreOrderSave", // FIXME delete it after merge
-        "receiptEdit", // FIXME delete it after merge
-        "receiptMultiLineEdit", // FIXME delete it after merge
-        "components/menuissue", "model/dmorderfilter", "model/ordertoissue",
-        "model/ordertoselectorissue", //
-        "components/orderselector", "components/modalwarehouseselector",
-        "components/orderlineinfopopup", "components/orderlineinfostandardpopup" };
+        "utils/productStatusUtils" };
 
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static,
