@@ -2632,36 +2632,7 @@
           }
         }
 
-        function setDeliveryModeAndTime(order, orderLine) {
-          var defaultDeliveryModeInProduct, defaultDeliveryMode;
-          if (order.get('isLayaway') || order.get('orderType') === 2) {
-            defaultDeliveryModeInProduct = orderLine.get('product').get('obrdmDeliveryModeLyw');
-            defaultDeliveryMode = defaultDeliveryModeInProduct ? defaultDeliveryModeInProduct : (order.get('obrdmDeliveryModeProperty') ? order.get('obrdmDeliveryModeProperty') : 'PickAndCarry');
-          } else {
-            defaultDeliveryModeInProduct = orderLine.get('product').get('obrdmDeliveryMode');
-            defaultDeliveryMode = defaultDeliveryModeInProduct ? defaultDeliveryModeInProduct : (order.get('obrdmDeliveryModeProperty') ? order.get('obrdmDeliveryModeProperty') : 'PickAndCarry');
-          }
-          orderLine.set('obrdmDeliveryMode', defaultDeliveryMode);
-          if (orderLine.get('obrdmDeliveryMode') === 'PickupInStoreDate' || orderLine.get('obrdmDeliveryMode') === 'HomeDelivery') {
-            var currentDate = new Date();
-            currentDate.setHours(0);
-            currentDate.setMinutes(0);
-            currentDate.setSeconds(0);
-            orderLine.set('obrdmDeliveryDate', defaultDeliveryModeInProduct ? currentDate : order.get('obrdmDeliveryDateProperty'));
-          }
-          if (orderLine.get('obrdmDeliveryMode') === 'HomeDelivery') {
-            var currentTime = new Date();
-            currentTime.setSeconds(0);
-            orderLine.set('obrdmDeliveryTime', defaultDeliveryModeInProduct ? currentTime : order.get('obrdmDeliveryTimeProperty'));
-          }
-          orderLine.set('nameDelivery', _.find(OB.MobileApp.model.get('deliveryModes'), function (dm) {
-            return dm.id === orderLine.get('obrdmDeliveryMode');
-          }).name);
-        }
 
-        if (newLine && line.get('product').get('productType') !== 'S' && !line.get('obrdmDeliveryMode')) {
-          setDeliveryModeAndTime(me, line);
-        }
 
         function execPostAddProductToOrderHook() {
           if (me.isCalculateReceiptLocked === true || !line) {
@@ -2674,6 +2645,39 @@
             }
             return null;
           }
+
+          function setDeliveryModeAndTime(order, orderLine) {
+            var defaultDeliveryModeInProduct, defaultDeliveryMode;
+            if (order.get('isLayaway') || order.get('orderType') === 2) {
+              defaultDeliveryModeInProduct = orderLine.get('product').get('obrdmDeliveryModeLyw');
+              defaultDeliveryMode = defaultDeliveryModeInProduct ? defaultDeliveryModeInProduct : (order.get('obrdmDeliveryModeProperty') ? order.get('obrdmDeliveryModeProperty') : 'PickAndCarry');
+            } else {
+              defaultDeliveryModeInProduct = orderLine.get('product').get('obrdmDeliveryMode');
+              defaultDeliveryMode = defaultDeliveryModeInProduct ? defaultDeliveryModeInProduct : (order.get('obrdmDeliveryModeProperty') ? order.get('obrdmDeliveryModeProperty') : 'PickAndCarry');
+            }
+            orderLine.set('obrdmDeliveryMode', defaultDeliveryMode);
+            if (orderLine.get('obrdmDeliveryMode') === 'PickupInStoreDate' || orderLine.get('obrdmDeliveryMode') === 'HomeDelivery') {
+              var currentDate = new Date();
+              currentDate.setHours(0);
+              currentDate.setMinutes(0);
+              currentDate.setSeconds(0);
+              orderLine.set('obrdmDeliveryDate', defaultDeliveryModeInProduct ? currentDate : order.get('obrdmDeliveryDateProperty'));
+            }
+            if (orderLine.get('obrdmDeliveryMode') === 'HomeDelivery') {
+              var currentTime = new Date();
+              currentTime.setSeconds(0);
+              orderLine.set('obrdmDeliveryTime', defaultDeliveryModeInProduct ? currentTime : order.get('obrdmDeliveryTimeProperty'));
+            }
+            orderLine.set('nameDelivery', _.find(OB.MobileApp.model.get('deliveryModes'), function (dm) {
+              return dm.id === orderLine.get('obrdmDeliveryMode');
+            }).name);
+          }
+
+          if (newLine && line.get('product').get('productType') !== 'S' && !line.get('obrdmDeliveryMode')) {
+            setDeliveryModeAndTime(me, line);
+          }
+
+
           OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
             receipt: me,
             productToAdd: p,
