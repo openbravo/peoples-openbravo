@@ -208,7 +208,7 @@ public class Product extends ProcessHQLQuery {
 
     // Packs
     final String packHqlString = getPackProductHqlString(isRemote, useGetForProductImages,
-        isCrossStoreSearch, regularProductsDiscHQLProperties);
+        regularProductsDiscHQLProperties);
     products.add(packHqlString);
 
     // Generic products
@@ -310,7 +310,7 @@ public class Product extends ProcessHQLQuery {
   }
 
   private String getPackProductHqlString(final boolean isRemote,
-      final boolean useGetForProductImages, final boolean isCrossStoreSearch,
+      final boolean useGetForProductImages,
       final HQLPropertyList regularProductsDiscHQLProperties) {
     final StringBuilder query = new StringBuilder();
     query.append(" select");
@@ -324,7 +324,7 @@ public class Product extends ProcessHQLQuery {
     query.append(" and pt.obposIsCategory = true");
     query.append(" and pt.active = true");
     query.append(" and p.$incrementalUpdateCriteria");
-    query.append(" and" + getPackProductWhereClause("p", isCrossStoreSearch));
+    query.append(" and" + getPackProductWhereClause());
     if (isRemote) {
       query.append(" order by p.name asc, p.id");
     } else {
@@ -334,91 +334,62 @@ public class Product extends ProcessHQLQuery {
     return query.toString();
   }
 
-  static String getPackProductWhereClause(final String packAlias, final boolean isCrossStore) {
-    final String storeFilter = isCrossStore ? ":orgIds" : ":orgId";
-
+  static String getPackProductWhereClause() {
     final StringBuilder query = new StringBuilder();
-    query.append(" %1$s.$readableSimpleClientCriteria");
-    query.append(" and %1$s.startingDate <= :startingDate");
-    query.append(" and (%1$s.endingDate is null");
-    query.append(" or %1$s.endingDate >= :endingDate)");
-    // Pack organization is in the natural tree of current/cross store
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Organization o");
-    query.append("   where o.id in %2$s");
-    query.append("   and ad_org_isinnaturaltree(%1$s.organization.id, o.id, %1$s.client.id) = 'Y'");
-    query.append(" )");
-    // Pack is included in the assortment of current/cross store
-    query.append(" and ((%1$s.includedProducts = 'N'");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Organization o");
-    query.append("   where o.id in %2$s");
+    query.append(" p.$readableSimpleClientCriteria");
+    query.append(" and p.$naturalOrgCriteria");
+    query.append(" and p.startingDate <= :startingDate");
+    query.append(" and (p.endingDate is null");
+    query.append(" or p.endingDate >= :endingDate)");
+    // Pack is included in the assortment of current store
+    query.append(" and ((p.includedProducts = 'N'");
+    query.append(" and not exists (");
+    query.append("   select 1 ");
+    query.append("   from PricingAdjustmentProduct pap");
+    query.append("   where pap.priceAdjustment.id = p.id");
+    query.append("   and pap.active = true");
     query.append("   and not exists (");
-    query.append("     select 1 ");
-    query.append("     from PricingAdjustmentProduct pap");
-    query.append("     where pap.priceAdjustment.id = %1$s.id");
-    query.append("     and pap.active = true");
-    query.append("     and not exists (");
-    query.append("       select 1");
-    query.append("       from OBRETCO_Prol_Product pli");
-    query.append("       where pli.product.id = pap.product.id");
-    query.append("       and pli.obretcoProductlist.id = o.obretcoProductlist.id");
-    query.append("       and pli.active = true");
-    query.append("     )");
+    query.append("     select 1");
+    query.append("     from OBRETCO_Prol_Product pli");
+    query.append("     where pli.product.id = pap.product.id");
+    query.append("     and pli.obretcoProductlist.id = :productListId");
+    query.append("     and pli.active = true");
     query.append("   )");
     query.append(" ))");
-    // Pack is not excluded in the assortment of current/cross store
-    query.append(" or (%1$s.includedProducts = 'Y'");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Organization o");
-    query.append("   where o.id in %2$s");
-    query.append("   and not exists (");
-    query.append("     select 1 ");
-    query.append("     from PricingAdjustmentProduct pap");
-    query.append("     where pap.priceAdjustment.id = %1$s.id");
-    query.append("     and pap.active = true");
-    query.append("     and exists (");
-    query.append("       select 1");
-    query.append("       from OBRETCO_Prol_Product pli");
-    query.append("       where pli.product.id = pap.product.id");
-    query.append("       and pli.obretcoProductlist.id = o.obretcoProductlist.id");
-    query.append("       and pli.active = true");
-    query.append("     )");
-    query.append("   )");
-    query.append(" )))");
-    // Pack is included in current/cross store
-    query.append(" and ((%1$s.includedOrganizations='N'");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Organization o");
-    query.append("   where o.id in %2$s");
+    // Pack is not excluded in the assortment of current store
+    query.append(" or (p.includedProducts = 'Y'");
+    query.append(" and not exists (");
+    query.append("   select 1 ");
+    query.append("   from PricingAdjustmentProduct pap");
+    query.append("   where pap.priceAdjustment.id = p.id");
+    query.append("   and pap.active = true");
     query.append("   and exists (");
     query.append("     select 1");
-    query.append("     from PricingAdjustmentOrganization pao");
-    query.append("     where pao.priceAdjustment.id = %1$s.id");
-    query.append("     and pao.organization.id = o.id");
-    query.append("     and pao.active = true");
-    query.append("   )");
-    query.append(" ))");
-    // Pack is not excluded in current/cross store
-    query.append(" or (%1$s.includedOrganizations='Y'");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Organization o");
-    query.append("   where o.id in %2$s");
-    query.append("   and not exists (");
-    query.append("     select 1");
-    query.append("     from PricingAdjustmentOrganization pao");
-    query.append("     where pao.priceAdjustment.id = %1$s.id");
-    query.append("     and pao.organization.id = o.id");
-    query.append("     and pao.active = true");
+    query.append("     from OBRETCO_Prol_Product pli");
+    query.append("     where pli.product.id = pap.product.id");
+    query.append("     and pli.obretcoProductlist.id = :productListId");
+    query.append("     and pli.active = true");
     query.append("   )");
     query.append(" )))");
-
-    return String.format(query.toString(), packAlias, storeFilter);
+    // Pack is included in current store
+    query.append(" and ((p.includedOrganizations='N'");
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from PricingAdjustmentOrganization pao");
+    query.append("   where pao.priceAdjustment.id = p.id");
+    query.append("   and pao.organization.id = :orgId");
+    query.append("   and pao.active = true");
+    query.append(" ))");
+    // Pack is not excluded in current store
+    query.append(" or (p.includedOrganizations='Y'");
+    query.append(" and not exists (");
+    query.append("   select 1");
+    query.append("   from PricingAdjustmentOrganization pao");
+    query.append("   where pao.priceAdjustment.id = p.id");
+    query.append("   and pao.organization.id = :orgId");
+    query.append("   and pao.active = true");
+    query.append(" )))");
+    return query.toString();
   }
 
   private String getCrossStoreRegularProductHqlString(final JSONObject jsonsent,

@@ -184,29 +184,19 @@ public class Category extends ProcessHQLQuery {
     query.append(" ) as img");
     query.append(" , case when exists (");
     query.append("   select 1");
-    query.append("   from PricingAdjustment p2");
-    query.append("   where p2.discountType.id = pt.id");
-    query.append("   and p2.active = true");
-    query.append("   and " + Product.getPackProductWhereClause("p2", isCrossStoreEnabled));
+    query.append("   from PricingAdjustment p");
+    query.append("   where p.discountType.id = pt.id");
+    query.append("   and p.active = true");
+    query.append("   and " + Product.getPackProductWhereClause());
     query.append(" ) then true else false end as active");
-    if (isCrossStoreEnabled) {
-      query.append(" , case when exists (");
-      query.append("   select 1");
-      query.append("   from PricingAdjustment p2");
-      query.append("   where p2.discountType.id = pt.id");
-      query.append("   and p2.active = true");
-      query.append("   and " + Product.getPackProductWhereClause("p2", false));
-      query.append(" ) then false else true end as crossStore");
-    } else {
-      query.append(" , false as crossStore");
-    }
+    query.append(" , false as crossStore");
     query.append(" from PromotionType pt");
     query.append(" join pt.pricingAdjustmentList p");
     query.append(" where pt.active = true");
     query.append(" and pt.obposIsCategory = true");
     query.append(" and pt.$readableSimpleClientCriteria");
     query.append(" and p.$incrementalUpdateCriteria");
-    query.append(" and " + Product.getPackProductWhereClause("p", isCrossStoreEnabled));
+    query.append(" and " + Product.getPackProductWhereClause());
     query.append(" group by pt.id, pt.commercialName, pt.obposImage");
     return query.toString();
   }

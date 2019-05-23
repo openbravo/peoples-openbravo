@@ -58,6 +58,7 @@ public class Brand extends ProcessHQLQuery {
 
     final Map<String, Object> paramValues = new HashMap<>();
     paramValues.put("orgIds", orgIds);
+    paramValues.put("productListId", productListId);
     paramValues.put("productListIds", productListIds);
     return paramValues;
   }

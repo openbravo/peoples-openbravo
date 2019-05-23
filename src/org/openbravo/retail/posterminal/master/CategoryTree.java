@@ -42,7 +42,7 @@ public class CategoryTree extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
-  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+  protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
     OBContext.setAdminMode(true);
     try {
       final Calendar now = Calendar.getInstance();
@@ -69,9 +69,7 @@ public class CategoryTree extends ProcessHQLQuery {
   }
 
   @Override
-  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    final boolean isCrossStoreEnabled = POSUtils
-        .isCrossStoreEnabled(POSUtils.getTerminalById(jsonsent.getString("pos")));
+  protected List<String> getQuery(final JSONObject jsonsent) throws JSONException {
     final Long lastUpdated = getLastUpdated(jsonsent);
     final HQLPropertyList regularProductsCategoriesTreeHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
@@ -81,7 +79,7 @@ public class CategoryTree extends ProcessHQLQuery {
         regularProductsCategoriesTreeHQLProperties, lastUpdated));
     hqlQueries.add(getSummaryProductCategoryTreeHqlString(
         regularProductsCategoriesTreeHQLProperties, lastUpdated));
-    hqlQueries.add(getPackProductCategoryTreeHqlString(isCrossStoreEnabled));
+    hqlQueries.add(getPackProductCategoryTreeHqlString());
     return hqlQueries;
   }
 
@@ -129,7 +127,7 @@ public class CategoryTree extends ProcessHQLQuery {
     return query.toString();
   }
 
-  private String getPackProductCategoryTreeHqlString(final boolean isCrossStoreEnabled) {
+  private String getPackProductCategoryTreeHqlString() {
     final StringBuilder query = new StringBuilder();
     query.append(" select pt.id as id");
     query.append(" , pt.id as categoryId");
@@ -137,10 +135,10 @@ public class CategoryTree extends ProcessHQLQuery {
     query.append(" , 999999999 as seqNo");
     query.append(" , case when exists (");
     query.append("   select 1");
-    query.append("   from PricingAdjustment p2");
-    query.append("   where p2.discountType.id = pt.id");
-    query.append("   and p2.active = true");
-    query.append("   and " + Product.getPackProductWhereClause("p2", isCrossStoreEnabled));
+    query.append("   from PricingAdjustment p");
+    query.append("   where p.discountType.id = pt.id");
+    query.append("   and p.active = true");
+    query.append("   and " + Product.getPackProductWhereClause());
     query.append(" ) then true else false end as active");
     query.append(" from PromotionType pt");
     query.append(" join pt.pricingAdjustmentList p");
@@ -148,7 +146,7 @@ public class CategoryTree extends ProcessHQLQuery {
     query.append(" and pt.obposIsCategory = true");
     query.append(" and pt.$readableSimpleClientCriteria");
     query.append(" and p.$incrementalUpdateCriteria");
-    query.append(" and " + Product.getPackProductWhereClause("p", isCrossStoreEnabled));
+    query.append(" and " + Product.getPackProductWhereClause());
     query.append(" group by pt.id");
     return query.toString();
   }
