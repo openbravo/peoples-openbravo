@@ -357,6 +357,7 @@
         this.set('id', attributes.id);
         this.set('client', attributes.client);
         this.set('organization', attributes.organization);
+        this.set('trxOrganization', attributes.trxOrganization);
         this.set('documentType', attributes.documentType);
         this.set('createdBy', attributes.createdBy);
         this.set('updatedBy', attributes.updatedBy);
@@ -1112,6 +1113,7 @@
       this.set('id', null);
       this.set('client', null);
       this.set('organization', null);
+      this.set('trxOrganization', null);
       this.set('createdBy', null);
       this.set('updatedBy', null);
       this.set('documentType', null);
