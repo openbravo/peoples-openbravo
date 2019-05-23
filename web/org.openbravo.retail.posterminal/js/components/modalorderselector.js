@@ -12,7 +12,7 @@
 enyo.kind({
   name: 'OBPOS.UI.ReceiptSelector',
   kind: 'OB.UI.ModalSelector',
-  classes: 'modalSelector_receiptSelector u-popup-top-separation-medium',
+  classes: 'u-popup-top-separation-medium obposUiReceiptSelector',
   i18nHeader: 'OBPOS_OpenReceipt',
   events: {
     onChangeInitFilters: '',
@@ -25,7 +25,8 @@ enyo.kind({
     onActiveOpenSelectedBtn: 'activeOpenSelectedBtn'
   },
   body: {
-    kind: 'OB.UI.ReceiptsList'
+    kind: 'OB.UI.ReceiptsList',
+    classes: 'obposUiReceiptSelector-obUiReceiptsList'
   },
   getFilterSelectorTableHeader: function () {
     return this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.filterSelector;
@@ -93,6 +94,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ListSelectorLine',
   name: 'OB.UI.ReceiptSelectorRenderLine',
+  classes: 'obUiReceiptSelectorRenderLine',
   events: {
     onActiveOpenSelectedBtn: ''
   },
@@ -101,51 +103,51 @@ enyo.kind({
   },
   components: [{
     name: 'line',
-    classes: 'obUiReceiptSelectorRenderLine',
+    classes: 'obUiReceiptSelectorRender-line',
     components: [{
-      classes: 'btn-check-alt obUiReceiptSelectorRenderLine-iconCheck',
+      classes: 'obUiReceiptSelectorRender-line-iconCheck',
       name: 'iconCheck',
       showing: false
     }, {
       name: 'lineInfo',
-      classes: 'obUiReceiptSelectorRenderLine-lineInfo lineInfo',
+      classes: 'obUiReceiptSelectorRender-line-lineInfo',
       components: [{
-        classes: 'lineInfo-storeContainer storeContainer',
+        classes: 'obUiReceiptSelectorRender-lineInfo-container1',
         components: [{
           name: 'store',
-          classes: 'storeContainer-store store'
+          classes: 'obUiReceiptSelectorRender-lineInfo-container1-store'
         }, {
-          classes: 'u-clearBoth'
+          classes: 'obUiReceiptSelectorRender-lineInfo-container1-element1'
         }]
       }, {
         name: 'lineInfoContainerFirstRow',
-        classes: 'lineInfoContainer lineInfo-lineInfoContainerFirstRow',
+        classes: 'obUiReceiptSelectorRender-lineInfo-lineInfoContainerFirstRow',
         components: [{
-          classes: 'lineInfoContainer-Item1 lineInfoContainerFirstRow-date',
+          classes: 'obUiReceiptSelectorRender-lineInfoContainerFirstRow-date',
           name: 'date'
         }, {
-          classes: 'lineInfoContainer-Item2 lineInfoContainerFirstRow-documentNo',
+          classes: 'obUiReceiptSelectorRender-lineInfoContainerFirstRow-documentNo',
           name: 'documentNo'
         }, {
-          classes: 'lineInfoContainer-Item3 lineInfoContainerFirstRow-amount',
+          classes: 'obUiReceiptSelectorRender-lineInfoContainerFirstRow-amount',
           name: 'amount'
         }, {
-          classes: 'u-clearBoth'
+          classes: 'obUiReceiptSelectorRender-lineInfoContainerFirstRow-element1'
         }]
       }, {
         name: 'lineInfoContainerSecondRow',
-        classes: 'lineInfoContainer lineInfo-lineInfoContainerSecondRow',
+        classes: 'obUiReceiptSelectorRender-lineInfo-lineInfoContainerSecondRow',
         components: [{
-          classes: 'lineInfoContainer-Item1 lineInfoContainerSecondRow-time',
+          classes: 'obUiReceiptSelectorRender-lineInfoContainerSecondRow-time',
           name: 'time'
         }, {
-          classes: 'lineInfoContainer-Item2 lineInfoContainerSecondRow-customer',
+          classes: 'obUiReceiptSelectorRender-lineInfoContainerSecondRow-customer',
           name: 'customer'
         }, {
-          classes: 'lineInfoContainer-Item3 lineInfoContainerSecondRow-ordertType',
+          classes: 'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType',
           name: 'orderType'
         }, {
-          classes: 'u-clearBoth'
+          classes: 'obUiReceiptSelectorRender-lineInfoContainerSecondRow-element1'
         }]
       }]
     }]
@@ -153,11 +155,11 @@ enyo.kind({
   changeCheck: function (inSender, inEvent) {
     if (inEvent.id === this.model.get('id')) {
       if (this.model.get('receiptSelected')) {
-        this.$.iconCheck.removeClass('btn-check active');
-        this.$.iconCheck.addClass('btn-check-alt');
+        this.$.iconCheck.removeClass('obUiReceiptSelectorRender-line-iconCheck_disactive');
+        this.$.iconCheck.addClass('obUiReceiptSelectorRender-line-iconCheck_active');
       } else {
-        this.$.iconCheck.removeClass('btn-check-alt');
-        this.$.iconCheck.addClass('btn-check active');
+        this.$.iconCheck.removeClass('obUiReceiptSelectorRender-line-iconCheck_active');
+        this.$.iconCheck.addClass('obUiReceiptSelectorRender-line-iconCheck_disactive');
       }
       this.model.set('receiptSelected', !this.model.get('receiptSelected'), {
         silent: true
@@ -195,22 +197,21 @@ enyo.kind({
       this.$.orderType.setContent(orderType);
       switch (this.model.get('orderType')) {
       case 'QT':
-        this.$.orderType.applyStyle('color', 'rgb(248, 148, 29)');
+        this.$.orderType.addClass('obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_qt');
         break;
       case 'LAY':
-        this.$.orderType.applyStyle('color', 'lightblue');
+        this.$.orderType.addClass('obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_lay');
         break;
       case 'RET':
-        this.$.orderType.applyStyle('color', 'rgb(248, 148, 29)');
+        this.$.orderType.addClass('obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_ret');
         break;
       default:
-        this.$.orderType.applyStyle('color', 'rgb(108, 179, 63)');
+        this.$.orderType.addClass('obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_default');
         break;
       }
     }
-    this.applyStyle('padding', '5px');
     if (this.model.get('multiselect')) {
-      this.$.lineInfo.addClass('modal-order-selector-line-with-check');
+      this.$.lineInfo.addClass('obUiReceiptSelectorRender-line-lineInfo_check');
       this.$.iconCheck.setShowing(true);
     }
 
@@ -229,7 +230,7 @@ enyo.kind({
     defaultFilters: null,
     nameOfReceiptsListItemPrinter: null
   },
-  classes: 'genericBodyModalContainer row-fluid',
+  classes: 'obUiGenericReceiptsList row-fluid',
   handlers: {
     onClearFilterSelector: 'clearAction',
     onSearchAction: 'searchAction'
@@ -243,13 +244,13 @@ enyo.kind({
   },
   receiptList: null,
   components: [{
-    classes: 'genericBodyModalContainer-container1',
+    classes: 'obUiGenericReceiptsList-container1',
     components: [{
       name: 'containerOfReceiptsListItemPrinter',
-      classes: 'genericBodyModalContainer-container1-containerOfReceiptsListItemPrinter'
+      classes: 'obUiGenericReceiptsList-container1-containerOfReceiptsListItemPrinter'
     }, {
       name: 'renderLoading',
-      classes: 'listItemInformation genericBodyModalContainer-container1-renderLoading',
+      classes: 'obUiGenericReceiptsList-container1-renderLoading',
       showing: false,
       initComponents: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
@@ -437,6 +438,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ReceiptsForVerifiedReturnsList',
   kind: 'OB.UI.GenericReceiptsList',
+  classes: 'obUiReceiptsForVerifiedReturnsList',
   initComponents: function () {
     this.inherited(arguments);
     this.setFilterModel(OB.Model.VReturnsFilter);
@@ -444,7 +446,7 @@ enyo.kind({
     this.$.containerOfReceiptsListItemPrinter.createComponent({
       name: 'verifiedReturnsReceiptsListItemPrinter',
       kind: 'OB.UI.ScrollableTable',
-      scrollAreaMaxHeight: '350px',
+      scrollAreaClasses: 'obUiReceiptsForVerifiedReturnsList-verifiedReturnsReceiptsListItemPrinter',
       renderHeader: null,
       renderLine: 'OB.UI.ReceiptSelectorRenderLine',
       renderEmpty: 'OB.UI.RenderEmpty'
@@ -538,6 +540,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ReceiptsList',
   kind: 'OB.UI.GenericReceiptsList',
+  classes: 'obUiReceiptsList',
   initComponents: function () {
     this.inherited(arguments);
     this.setFilterModel(OB.Model.OrderFilter);
@@ -545,7 +548,7 @@ enyo.kind({
     this.$.containerOfReceiptsListItemPrinter.createComponent({
       name: 'openreceiptslistitemprinter',
       kind: 'OB.UI.ScrollableTable',
-      scrollAreaClasses: 'scrollArea scrollArea_vertical openreceiptslistitemprinter',
+      scrollAreaClasses: 'obUiReceiptsList-openreceiptslistitemprinter',
       renderHeader: null,
       renderLine: 'OB.UI.ReceiptSelectorRenderLine',
       renderEmpty: 'OB.UI.RenderEmpty'
@@ -587,8 +590,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OBPOS.UI.ButtonReceiptSelectorOpenSelected',
-  style: 'width: 170px; margin: 0px 9px 8px 0px;',
-  classes: 'btnlink-green btnlink btnlink-small',
+  classes: 'obposUiButtonReceiptSelectorOpenSelected',
   i18nLabel: 'OBPOS_OpenReceiptBtnOpenSelected',
   events: {
     onOpenSelected: ''
@@ -607,25 +609,28 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalReceiptsScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obUiModalReceiptsScrollableHeader',
   filterModel: OB.Model.OrderFilter,
   events: {
     onSearchAction: ''
   },
   components: [{
-    style: 'padding: 10px;',
     kind: 'OB.UI.FilterSelectorTableHeader',
-    name: 'filterSelector'
+    name: 'filterSelector',
+    classes: 'obUiModalReceiptsScrollableHeader-filterSelector'
   }, {
-    style: 'padding: 10px;',
+    classes: 'obUiModalReceiptsScrollableHeader-container1',
     components: [{
-      style: 'display: table; width: 100%;',
+      classes: 'obUiModalReceiptsScrollableHeader-container1-container1',
       components: [{
-        style: 'display: table-cell; text-align: center; ',
+        classes: 'obUiModalReceiptsScrollableHeader-container1-container1-container1',
         components: [{
-          kind: 'OBPOS.UI.AdvancedFilterWindowButtonReceipts'
+          kind: 'OBPOS.UI.AdvancedFilterWindowButtonReceipts',
+          classes: 'obUiModalReceiptsScrollableHeader-container1-container1-container1-obposUiAdvancedFilterWindowButtonReceipts'
         }, {
           kind: 'OBPOS.UI.ButtonReceiptSelectorOpenSelected',
-          name: 'btnOpenSelected'
+          name: 'btnOpenSelected',
+          classes: 'obUiModalReceiptsScrollableHeader-container1-container1-container1-btnOpenSelected'
         }]
       }]
     }]
@@ -641,21 +646,23 @@ enyo.kind({
   name: 'OB.UI.ModalVerifiedReturnsScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
   filterModel: OB.Model.VReturnsFilter,
+  classes: 'obUiModalVerifiedReturnsScrollableHeader',
   events: {
     onSearchAction: ''
   },
   components: [{
-    style: 'padding: 10px;',
     kind: 'OB.UI.FilterSelectorTableHeader',
-    name: 'filterSelector'
+    name: 'filterSelector',
+    classes: 'obUiModalVerifiedReturnsScrollableHeader-filterSelector'
   }, {
-    style: 'padding: 10px;',
+    classes: 'obUiModalVerifiedReturnsScrollableHeader-container1',
     components: [{
-      style: 'display: table; width: 100%;',
+      classes: 'obUiModalVerifiedReturnsScrollableHeader-container1-container1',
       components: [{
-        style: 'display: table-cell; text-align: center; ',
+        classes: 'obUiModalVerifiedReturnsScrollableHeader-container1-container1-container1',
         components: [{
-          kind: 'OBPOS.UI.AdvancedFilterWindowButtonVerifiedReturns'
+          kind: 'OBPOS.UI.AdvancedFilterWindowButtonVerifiedReturns',
+          classes: 'obUiModalVerifiedReturnsScrollableHeader-container1-container1-container1-obposUiAdvancedFilterWindowButtonVerifiedReturns'
         }]
       }]
     }]
@@ -670,6 +677,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAdvancedFilters',
   name: 'OB.UI.ModalAdvancedFilterReceipts',
+  classes: 'obUiModalAdvancedFilterReceipts',
   model: OB.Model.OrderFilter,
   initComponents: function () {
     this.inherited(arguments);
@@ -681,6 +689,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAdvancedFilters',
   name: 'OB.UI.ModalAdvancedFilterVerifiedReturns',
+  classes: 'obUiModalAdvancedFilterVerifiedReturns',
   model: OB.Model.VReturnsFilter,
   initComponents: function () {
     this.inherited(arguments);
@@ -692,11 +701,13 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ButtonAdvancedFilter',
   name: 'OBPOS.UI.AdvancedFilterWindowButtonReceipts',
+  classes: 'obposUiAdvancedFilterWindowButtonReceipts',
   dialog: 'OB_UI_ModalAdvancedFilterReceipts'
 });
 
 enyo.kind({
   kind: 'OB.UI.ButtonAdvancedFilter',
   name: 'OBPOS.UI.AdvancedFilterWindowButtonVerifiedReturns',
+  classes: 'obposUiAdvancedFilterWindowButtonVerifiedReturns',
   dialog: 'modalAdvancedFilterVerifiedReturns'
 });

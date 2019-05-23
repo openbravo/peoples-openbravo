@@ -2319,7 +2319,7 @@
 
 /***********************   ***********************/
 /*        File: modal-pay-open-tickets.js        */
-/*                  Folder: js/                  */
+/*          Folder: js/components                */
 /***********************   ***********************/
 /*
 # Component: OB.UI.ReceiptsForPayOpenTicketsList
@@ -2465,10 +2465,279 @@
 
 
 
+/***********************   ***********************/
+/*        File: modalorderselector.js            */
+/*          Folder: js/components                */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ReceiptSelector
+# Inherits: [OB.UI.ModalSelector]
+*/
+.obposUiReceiptSelector {}
+
+.obposUiReceiptSelector-obUiReceiptsList {}
+
+
+
+/*
+# Component: OB.UI.ReceiptSelectorRenderLine
+# Inherits: [OB.UI.ListSelectorLine]
+*/
+.obUiReceiptSelectorRenderLine {
+  padding: 5px;
+}
+
+.obUiReceiptSelectorRender-line {
+  width: 100%;
+}
+
+.obUiReceiptSelectorRender-line-iconCheck {
+  width: 34px;
+  height: 27px;
+  border: none;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-color: transparent;
+  background-size: 34px 27px;
+  margin-top: 8px;
+  float: left;
+}
+
+.obUiReceiptSelectorRender-line-iconCheck_disactive {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
+}
+
+.obUiReceiptSelectorRender-line-iconCheck_active {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
+}
+
+.obUiReceiptSelectorRender-line-lineInfo {
+  float: left;
+  width: 100%;
+  padding: 5px;
+}
+
+.obUiReceiptSelectorRender-line-lineInfo_check {
+  width: calc(100% - 47px);
+}
+
+.obUiReceiptSelectorRender-lineInfo-container1 {
+  padding-bottom: 3px
+}
+
+.obUiReceiptSelectorRender-lineInfo-container1-store {
+  float: left;
+  padding-left:105px;
+  font-weight: bold;
+  color: blue;
+}
+
+.obUiReceiptSelectorRender-lineInfo-container1-element1 {
+  clear: both;
+}
+
+.obUiReceiptSelectorRender-lineInfoContainerFirstRow-date {
+  float: left;
+  width: 100px;
+}
+
+.obUiReceiptSelectorRender-lineInfoContainerFirstRow-documentNo {
+  float: left;
+  padding-left:5px;
+}
+
+.obUiReceiptSelectorRender-lineInfoContainerFirstRow-amount {
+  float: right;
+  padding-right:5px;
+  width: 100px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.obUiReceiptSelectorRender-lineInfoContainerFirstRow-element1 {
+  clear: both;
+}
+
+.obUiReceiptSelectorRender-lineInfo-lineInfoContainerSecondRow {}
+
+.obUiReceiptSelectorRender-lineInfoContainerSecondRow-time {
+  float: left;
+  width: 100px;
+}
+
+.obUiReceiptSelectorRender-lineInfoContainerSecondRow-customer {
+  float: left;
+  padding-left:5px;
+}
+
+.obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType {
+  float: right;
+  padding-right:5px;
+  width: 100px;
+  text-align: right;
+  font-weight: bold;
+}
+
+
+.obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_qt {
+  color: rgb(248,148,29);
+}
+
+.obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_lay {
+  color: lightblue;
+}
+
+.obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_ret {
+  color: rgb(248,148,29);
+}
+
+.obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_default {
+  color: rgb(108, 179, 63);
+}
+
+.obUiReceiptSelectorRender-lineInfoContainerSecondRow-element1 {}
+
+
+
+/*
+# Component: OB.UI.GenericReceiptsList
+*/
+.obUiGenericReceiptsList {}
+
+.obUiGenericReceiptsList-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obUiGenericReceiptsList-container1-containerOfReceiptsListItemPrinter {}
+
+
+.obUiGenericReceiptsList-container1-renderLoading {}
+
+
+
+/*
+# Component: OB.UI.ReceiptsList
+# Inherits: [OB.UI.GenericReceiptsList]
+*/
+.obUiReceiptsList {}
+
+.obUiReceiptsList-openreceiptslistitemprinter {
+  overflow: hidden auto;
+}
+
+
+
+/*
+# Component: OB.UI.ReceiptsForVerifiedReturnsList
+# Inherits: [OB.UI.GenericReceiptsList]
+*/
+.obUiReceiptsForVerifiedReturnsList {}
+
+.obUiReceiptsForVerifiedReturnsList-verifiedReturnsReceiptsListItemPrinter {
+  max-height: 350px;
+}
+
+
+
+/*
+# Component: OBPOS.UI.ButtonReceiptSelectorOpenSelected
+# Inherits: [OB.UI.SmallButton]
+*/
+.obposUiButtonReceiptSelectorOpenSelected {
+  width: 170px;
+  margin: 0px 9px 8px 0px;
+}
+
+
+
+/*
+# Component: OB.UI.ModalReceiptsScrollableHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obUiModalReceiptsScrollableHeader {}
+
+.obUiModalReceiptsScrollableHeader-filterSelector {
+  padding: 10px;
+}
+
+.obUiModalReceiptsScrollableHeader-container1 {
+  padding: 10px;
+}
+
+.obUiModalReceiptsScrollableHeader-container1-container1 {
+  display: table;
+  width: 100%;
+}
+
+.obUiModalReceiptsScrollableHeader-container1-container1-container1 {
+  display: table-cell;
+  text-align: center;
+}
+
+.obUiModalReceiptsScrollableHeader-container1-container1-container1-obposUiAdvancedFilterWindowButtonReceipts {}
+
+.obUiModalReceiptsScrollableHeader-container1-container1-container1-btnOpenSelected {}
+
+
+
+/*
+# Component: OB.UI.ModalVerifiedReturnsScrollableHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obUiModalVerifiedReturnsScrollableHeader {}
+
+.obUiModalVerifiedReturnsScrollableHeader-filterSelector {
+  padding: 10px;
+}
+
+.obUiModalVerifiedReturnsScrollableHeader-container1 {
+  padding: 10px;
+}
+
+.obUiModalVerifiedReturnsScrollableHeader-container1-container1 {
+  display: table;
+  width: 100%;
+}
+
+.obUiModalVerifiedReturnsScrollableHeader-container1-container1-container1 {
+  display: table-cell;
+  text-align: center;
+}
+
+.obUiModalVerifiedReturnsScrollableHeader-container1-container1-container1-obposUiAdvancedFilterWindowButtonVerifiedReturns {}
+
+
+
+/*
+# Component: OB.UI.ModalAdvancedFilterReceipts
+# Inherits: [OB.UI.ModalAdvancedFilters]
+*/
+.obUiModalAdvancedFilterReceipts {}
 
 
 
 
+/*
+# Component: OB.UI.ModalAdvancedFilterVerifiedReturns
+# Inherits: [OB.UI.ModalAdvancedFilters]
+*/
+.obUiModalAdvancedFilterVerifiedReturns {}
+
+
+
+/*
+# Component: OB.UI.AdvancedFilterWindowButtonReceipts
+# Inherits: [OB.UI.ButtonAdvancedFilter]
+*/
+.obposUiAdvancedFilterWindowButtonReceipts {}
+
+
+
+/*
+# Component: OB.UI.AdvancedFilterWindowButtonVerifiedReturns
+# Inherits: [OB.UI.ButtonAdvancedFilter]
+*/
+.obposUiAdvancedFilterWindowButtonVerifiedReturns {}
 
 
 
