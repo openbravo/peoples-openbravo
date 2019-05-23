@@ -257,7 +257,7 @@ enyo.kind({
         var paymentModel = _.find(model.get('paymentList').models, function (p) {
           return p.id === payment.id;
         });
-        if (paymentModel) {
+        if (paymentModel && OB.UTIL.isNullOrUndefined(paymentModel.get('counted'))) {
           paymentModel.set('counted', paymentModel.get('expected'));
           paymentModel.set('foreignCounted', paymentModel.get('foreignExpected'));
         }
