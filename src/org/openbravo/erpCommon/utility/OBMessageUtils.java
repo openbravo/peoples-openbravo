@@ -525,7 +525,7 @@ public class OBMessageUtils {
       // ad_message.value has unique constraint
       final Message message = messages.uniqueResult();
       if (message == null) {
-        return null;
+        return key;
       }
 
       String label = message.getMessageText();
@@ -551,4 +551,8 @@ public class OBMessageUtils {
     }
   }
 
+  /** @see #getI18NMessage(String, String[]) */
+  public static String getI18NMessage(String key) {
+    return getI18NMessage(key, null);
+  }
 }
