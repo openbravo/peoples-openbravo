@@ -88,3 +88,23 @@ new OB.State.BackboneProperty({
   },
   property: 'hasServices'
 }));
+
+OB.MobileApp.statesRegistry.register(
+new OB.State.BackboneProperty({
+  window: 'retail.pointofsale',
+  name: 'receipt.gross',
+  object: function (view) {
+    return view.model.get('order');
+  },
+  property: 'gross'
+}));
+
+OB.MobileApp.statesRegistry.register(
+new OB.State.BackboneProperty({
+  window: 'retail.pointofsale',
+  name: 'receipt.replacedOrder',
+  object: function (view) {
+    return view.model.get('order');
+  },
+  property: 'replacedorder'
+}));

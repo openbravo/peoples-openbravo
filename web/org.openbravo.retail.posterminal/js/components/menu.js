@@ -15,49 +15,6 @@ enyo.kind({
   action: {
     window: 'retail.pointofsale',
     name: 'returnReceipt'
-  },
-  displayLogic: function () {
-    var negativeLines = _.filter(this.model.get('order').get('lines').models, function (line) {
-      return line.get('qty') < 0;
-    }).length;
-    if (!this.model.get('order').get('isQuotation')) {
-      this.show();
-    } else {
-      this.hide();
-      return;
-    }
-    if (negativeLines > 0) {
-      this.hide();
-      return;
-    }
-    if (this.model.get('order').get('isEditable') === false || this.model.get('order').get('orderType') === 2) {
-      this.hide();
-      return;
-    }
-    if (!_.find(OB.MobileApp.model.get('payments'), function (payment) {
-      return payment.paymentMethod.refundable;
-    })) {
-      this.hide();
-      return;
-    }
-    this.adjustVisibilityBasedOnPermissions();
-  },
-  init: function (model) {
-    this.model = model;
-    var receipt = model.get('order');
-    receipt.on('change:isEditable change:isQuotation change:gross change:orderType change:replacedorder', function (changedModel) {
-      this.displayLogic();
-    }, this);
-    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
-      if (changedModel.isOrder()) {
-        this.displayLogic();
-        return;
-      }
-      if (changedModel.isMultiOrder()) {
-        this.setShowing(false);
-        return;
-      }
-    }, this);
   }
 });
 
