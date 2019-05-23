@@ -12,6 +12,7 @@
 enyo.kind({
   name: 'OB.UI.ReceiptsForPayOpenTicketsList',
   kind: 'OB.UI.GenericReceiptsList',
+  classes: 'obUiReceiptsForPayOpenTicketsList',
   initComponents: function () {
     this.inherited(arguments);
     this.setFilterModel(OB.Model.VReturnsFilter);
@@ -19,7 +20,7 @@ enyo.kind({
     this.$.containerOfReceiptsListItemPrinter.createComponent({
       name: 'payOpenTicketsReceiptsListItemPrinter',
       kind: 'OB.UI.ScrollableTable',
-      scrollAreaMaxHeight: '350px',
+      scrollAreaClasses: 'obUiReceiptsForPayOpenTicketsList-listItemPrinter-scrollArea',
       renderHeader: null,
       renderLine: 'OB.UI.ListMultiOrdersLine',
       renderEmpty: 'OB.UI.RenderEmpty'
@@ -150,22 +151,24 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalPayOpenTicketsScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obUiModalPayOpenTicketsScrollableHeader',
   filterModel: OB.Model.VReturnsFilter,
   events: {
     onSearchAction: ''
   },
   components: [{
-    style: 'padding: 10px;',
     kind: 'OB.UI.FilterSelectorTableHeader',
-    name: 'filterSelector'
+    name: 'filterSelector',
+    classes: 'obUiModalPayOpenTicketsScrollableHeader-filterSelector'
   }, {
-    style: 'padding: 10px;',
+    classes: 'obUiModalPayOpenTicketsScrollableHeader-container1',
     components: [{
-      style: 'display: table; width: 100%;',
+      classes: 'obUiModalPayOpenTicketsScrollableHeader-container1-container1',
       components: [{
-        style: 'display: table-cell; text-align: center; ',
+        classes: 'obUiModalPayOpenTicketsScrollableHeader-container1-container1-container1',
         components: [{
-          kind: 'OBPOS.UI.AdvancedFilterWindowButtonVerifiedReturns'
+          kind: 'OBPOS.UI.AdvancedFilterWindowButtonPayOpenTickets',
+          classes: 'obUiModalPayOpenTicketsScrollableHeader-container1-container1-container1-obposUiAdvancedFilterWindowButtonVerifiedReturns'
         }]
       }]
     }]
@@ -177,20 +180,11 @@ enyo.kind({
   }
 });
 
-enyo.kind({
-  kind: 'OB.UI.ModalAdvancedFilters',
-  name: 'OB.UI.ModalAdvancedFilterVerifiedReturns',
-  model: OB.Model.VReturnsFilter,
-  initComponents: function () {
-    this.inherited(arguments);
-    OB.UTIL.hideStoreFilter(OB.Model.VReturnsFilter.getProperties());
-    this.setFilters(OB.Model.VReturnsFilter.getProperties());
-  }
-});
 
 enyo.kind({
   kind: 'OB.UI.ButtonAdvancedFilter',
-  name: 'OBPOS.UI.AdvancedFilterWindowButtonVerifiedReturns',
+  name: 'OBPOS.UI.AdvancedFilterWindowButtonPayOpenTickets',
+  classes: 'obposUiAdvancedFilterWindowButtonPayOpenTickets',
   dialog: 'modalAdvancedFilterVerifiedReturns'
 });
 
@@ -198,13 +192,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalMultiOrdersPayOpenTickets',
   kind: 'OB.UI.ModalSelector',
-  topPosition: '70px',
+  classes: 'obUiModalMultiOrdersPayOpenTickets',
   i18nHeader: 'OBPOS_LblPaidReceipts',
   published: {
     params: null
   },
   body: {
-    kind: 'OB.UI.ReceiptsForPayOpenTicketsList'
+    kind: 'OB.UI.ReceiptsForPayOpenTicketsList',
+    classes: 'obUiModalMultiOrdersPayOpenTickets-obUiReceiptsForPayOpenTicketsList'
   },
   getFilterSelectorTableHeader: function () {
     return this.$.body.$.receiptsForPayOpenTicketsList.$.payOpenTicketsReceiptsListItemPrinter.$.theader.$.modalPayOpenTicketsScrollableHeader.$.filterSelector;
@@ -241,7 +236,8 @@ enyo.kind({
   init: function (model) {
     this.model = model;
     this.$.header.createComponent({
-      kind: 'OB.UI.ModalMultiOrdersTopHeader'
+      kind: 'OB.UI.ModalMultiOrdersTopHeader',
+      classes: 'obUiModalMultiOrdersPayOpenTickets-header-obUiModalMultiOrdersTopHeader'
     });
   }
 });
@@ -249,8 +245,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListMultiOrdersLine',
   kind: 'OB.UI.CheckboxButton',
-  classes: 'modal-dialog-btn-check',
-  style: 'border-bottom: 1px solid #cccccc;text-align: left; padding-left: 70px; height: 90px;',
+  classes: 'obUiListMultiOrdersLine',
   events: {
     onHideThisPopup: ''
   },
@@ -285,22 +280,23 @@ enyo.kind({
   },
   components: [{
     name: 'line',
-    style: 'line-height: 30px; display: inline',
+    classes: 'obUiListMultiOrdersLine-line',
     components: [{
-      style: 'float: left; font-weight: bold; color: blue',
-      name: 'store'
+      name: 'store',
+      classes: 'obUiListMultiOrdersLine-line-store'
     }, {
-      style: 'clear: both;'
+      classes: 'obUiListMultiOrdersLine-line-element1'
     }, {
-      style: 'display: inline',
-      name: 'topLine'
+      name: 'topLine',
+      classes: 'obUiListMultiOrdersLine-line-topLine'
     }, {
-      name: 'isLayaway'
+      name: 'isLayaway',
+      classes: 'obUiListMultiOrdersLine-line-isLayaway'
     }, {
-      style: 'color: #888888;',
-      name: 'bottonLine'
+      name: 'bottonLine',
+      classes: 'obUiListMultiOrdersLine-line-bottonLine'
     }, {
-      style: 'clear: both;'
+      classes: 'obUiListMultiOrdersLine-line-element2'
     }]
   }],
   create: function () {
@@ -347,6 +343,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalMultiOrdersTopHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obUiModalMultiOrdersTopHeader',
   events: {
     onHideThisPopup: '',
     onSelectMultiOrders: '',
@@ -354,19 +351,20 @@ enyo.kind({
     onRightToolDisabled: ''
   },
   components: [{
-    style: 'display: table;',
+    classes: 'obUiModalMultiOrdersTopHeader-container1',
     components: [{
-      style: 'display: table-cell; float:left',
+      classes: 'obUiModalMultiOrdersTopHeader-container1-container1',
       components: [{
         name: 'doneMultiOrdersButton',
         kind: 'OB.UI.SmallButton',
+        classes: 'obUiModalMultiOrdersTopHeader-container1-container1-doneMultiOrdersButton',
         ontap: 'doneAction'
       }]
     }, {
-      style: 'display: table-cell; vertical-align: middle; width: 100%;',
+      classes: 'obUiModalMultiOrdersTopHeader-container1-container2',
       components: [{
         name: 'title',
-        style: 'text-align: center;'
+        classes: 'obUiModalMultiOrdersTopHeader-container1-container2-title'
       }]
     }]
   }],

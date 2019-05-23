@@ -2317,6 +2317,178 @@
 
 
 
+/***********************   ***********************/
+/*        File: modal-pay-open-tickets.js        */
+/*                  Folder: js/                  */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ReceiptsForPayOpenTicketsList
+# Inherits: [OB.UI.GenericReceiptsList]
+*/
+.obUiReceiptsForPayOpenTicketsList {}
+
+.obUiReceiptsForPayOpenTicketsList-listItemPrinter-scrollArea {
+  max-height: 350px;
+}
+
+
+/*
+# Component: OB.UI.ModalPayOpenTicketsScrollableHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obUiModalPayOpenTicketsScrollableHeader {}
+
+.obUiModalPayOpenTicketsScrollableHeader-filterSelector {
+  padding: 10px;
+}
+
+.obUiModalPayOpenTicketsScrollableHeader-container1 {
+  padding: 10px;
+}
+
+.obUiModalPayOpenTicketsScrollableHeader-container1-container1 {
+  display: table;
+  width: 100%;
+}
+
+.obUiModalPayOpenTicketsScrollableHeader-container1-container1-container1 {
+  display: table-cell;
+  text-align: center;
+}
+
+.obUiModalPayOpenTicketsScrollableHeader-container1-container1-container1-obposUiAdvancedFilterWindowButtonVerifiedReturns {}
+
+
+
+/*
+# Component: OBPOS.UI.AdvancedFilterWindowButtonPayOpenTickets
+# Inherits: [OB.UI.ButtonAdvancedFilter]
+*/
+.obposUiAdvancedFilterWindowButtonPayOpenTickets {}
+
+
+
+/*
+# Component: OB.UI.ModalMultiOrdersPayOpenTickets
+# Inherits: [OB.UI.ModalSelector]
+*/
+.obUiModalMultiOrdersPayOpenTickets {
+  top: 70px;
+}
+
+.obUiModalMultiOrdersPayOpenTickets-obUiReceiptsForPayOpenTicketsList {}
+
+.obUiModalMultiOrdersPayOpenTickets-header-obUiModalMultiOrdersTopHeader {}
+
+
+
+/*
+# Component: OB.UI.ListMultiOrdersLine
+# Inherits: [OB.UI.CheckboxButton]
+*/
+.obUiListMultiOrdersLine {
+  background-position: 10px center;
+  cursor: pointer;
+  vertical-align: middle;
+  width: 100%;
+  border-bottom: var(--bottomseparator-slim);
+  text-align: left;
+  padding-left: 70px;
+  height: 90px;
+}
+
+.obUiListMultiOrdersLine:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  background-position: 8px center;
+}
+
+.obUiListMultiOrdersLine-line {
+  line-height: 30px;
+  display: inline;
+}
+
+.obUiListMultiOrdersLine-line-store {
+  float: left;
+  font-weight:bold;
+  color: blue;
+}
+
+.obUiListMultiOrdersLine-line-element1 {
+  clear: both;
+}
+
+.obUiListMultiOrdersLine-line-topLine {
+  display: inline;
+}
+
+.obUiListMultiOrdersLine-line-isLayaway {}
+
+.obUiListMultiOrdersLine-line-bottonLine {
+  color: var(--color-primary-light);
+}
+
+.obUiListMultiOrdersLine-line-element2 {
+  clear: both;
+}
+
+
+
+/*
+# Component: OB.UI.ModalMultiOrdersTopHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obUiModalMultiOrdersTopHeader {}
+
+.obUiModalMultiOrdersTopHeader-container1 {
+  display: table;
+}
+
+.obUiModalMultiOrdersTopHeader-container1-container1 {
+  display: table-cell;
+  float:left;
+}
+
+.obUiModalMultiOrdersTopHeader-container1-container1-doneMultiOrdersButton {}
+
+.obUiModalMultiOrdersTopHeader-container1-container2 {
+  display: table-cell;
+  vertical-align: middle;
+  width: 100%;
+}
+
+.obUiModalMultiOrdersTopHeader-container1-container2-title {
+  text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
