@@ -83,7 +83,7 @@ public class Characteristic extends ProcessHQLQuery {
     final StringBuilder query = new StringBuilder();
     query.append(" select");
     query.append(characteristicHQLProperties.getHqlSelect());
-    query.append(" from Characteristic ch ");
+    query.append(" from Characteristic ch");
     query.append(" where $filtersCriteria");
     query.append(" and $hqlCriteria");
     query.append(" and ch.$readableSimpleClientCriteria");

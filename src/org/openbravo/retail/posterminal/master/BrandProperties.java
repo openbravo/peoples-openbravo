@@ -19,7 +19,6 @@ public class BrandProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
-    // TODO: Sandra replace the hgvol with brand reading from separate table
     boolean isRemote = false;
     try {
       OBContext.setAdminMode(false);
@@ -35,15 +34,17 @@ public class BrandProperties extends ModelExtension {
 
     ArrayList<HQLProperty> list;
     boolean forceRemote = false;
+    boolean isCrossStoreSearch = false;
     if (params != null) {
       @SuppressWarnings("unchecked")
       HashMap<String, Object> localParams = (HashMap<String, Object>) params;
       if (localParams.get("forceRemote") != null) {
         forceRemote = (Boolean) localParams.get("forceRemote");
+        isCrossStoreSearch = (Boolean) localParams.get("isCrossStoreSearch");
 
       }
     }
-    if (isRemote || forceRemote) {
+    if (isRemote || forceRemote || isCrossStoreSearch) {
       list = new ArrayList<HQLProperty>() {
         private static final long serialVersionUID = 1L;
         {
