@@ -666,7 +666,7 @@ enyo.kind({
               }
             });
 
-            var process = new OB.DS.Process('org.openbravo.retail.deliverymodes.process.IssueSalesOrderLines');
+            var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IssueSalesOrderLines');
             process.exec({
               orders: groupedLinesToPrepare
             }, function (data) {
@@ -860,7 +860,7 @@ enyo.kind({
       currentReceipt: orderId !== undefined,
       excludedModes: ['PickAndCarry']
     }, function (args) {
-      var process = new OB.DS.Process('org.openbravo.retail.deliverymodes.data.PendingOrderLines');
+      var process = new OB.DS.Process('org.openbravo.retail.posterminal.master.PendingOrderLines');
       process.exec({
         excluded: OBRDM.UTIL.deliveryModesForFilter(args.excludedModes),
         storeDocTypes: _.pluck(OB.MobileApp.model.get('OBRDM_storeDocumentTypes'), 'id'),
