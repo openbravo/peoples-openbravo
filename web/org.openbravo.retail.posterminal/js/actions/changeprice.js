@@ -19,6 +19,24 @@
     properties: {
       i18nContent: 'OBMOBC_KbPrice'
     },
+    isActive: function (view) {
+      var isEditable = view.state.readCommandState({
+        name: 'receipt.isEditable'
+      });
+      var selectedReceiptLine = view.state.readCommandState({
+        name: 'selectedReceiptLine'
+      });
+      var selectedReceiptLines = view.state.readCommandState({
+        name: 'selectedReceiptLines'
+      });
+
+      var active = isEditable;
+      active = active && selectedReceiptLine && selectedReceiptLine.get('product').get('obposEditablePrice') && selectedReceiptLine.get('product').get('isEditablePrice') !== false;
+      active = active && selectedReceiptLines && selectedReceiptLines.every(function (l) {
+        return l.get('product').get('obposEditablePrice') && l.get('product').get('isEditablePrice') !== false;
+      });
+      return active;
+    },
     command: function (view) {
       var editboxvalue = view.state.readCommandState({
         name: 'editbox'
@@ -47,27 +65,7 @@
             return Promise.resolve();
           }
           };
-      if (receipt.get('isEditable') === false) {
-        view.doShowPopup({
-          popup: 'modalNotEditableOrder'
-        });
-        return;
-      }
       if (!selectedReceiptLine) {
-        return;
-      }
-      for (i = 0; i < selectedReceiptLines.length; i++) {
-        if (!selectedReceiptLines[i].get('product').get('obposEditablePrice')) {
-          view.doShowPopup({
-            popup: 'modalNotEditableLine'
-          });
-          return;
-        }
-      }
-      if (selectedReceiptLine.get('product').get('isEditablePrice') === false) {
-        view.doShowPopup({
-          popup: 'modalNotEditableLine'
-        });
         return;
       }
       validatePrice().then(function () {
