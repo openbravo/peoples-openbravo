@@ -368,9 +368,6 @@ enyo.kind({
   action: {
     window: 'retail.pointofsale',
     name: 'printReceipt'
-  },
-  init: function (model) {
-    this.adjustVisibilityBasedOnPermissions();
   }
 });
 
