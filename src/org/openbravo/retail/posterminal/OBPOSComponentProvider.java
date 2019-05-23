@@ -217,14 +217,14 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/productStatusUtils",
 
         // Delivery Modes
-        "components/menuissue", "components/modalwarehouseselector",
-        "components/orderlineinfopopup", "components/orderlineinfostandardpopup",
-        "components/orderselector", "utils/deliveryModeUtils", "model/dmorderfilter",
-        "model/ordertoissue", "model/ordertoselectorissue", //
+        "utils/deliveryModeUtils", //
+        "hookPreOrderSave", // FIXME delete it after merge
         "receiptEdit", // FIXME delete it after merge
-        "receiptMultiLineEdit.js", // FIXME delete it after merge
-        "hookPreOrderSave.js" // FIXME delete it after merge
-    };
+        "receiptMultiLineEdit", // FIXME delete it after merge
+        "components/menuissue", "model/dmorderfilter", "model/ordertoissue",
+        "model/ordertoselectorissue", //
+        "components/orderselector", "components/modalwarehouseselector",
+        "components/orderlineinfopopup", "components/orderlineinfostandardpopup" };
 
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static,
