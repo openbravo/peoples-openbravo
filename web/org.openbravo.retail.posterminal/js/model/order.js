@@ -2795,41 +2795,50 @@
       } // End addProductToOrder
 
       function saveRemoteProduct(p) {
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          OB.Dal.saveOrUpdate(p, function () {
-            var productcriteria = {
-              columns: ['product'],
-              operator: 'equals',
-              value: p.id,
-              isId: true
-            };
-            var remoteCriteria = [productcriteria];
-            var criteriaFilter = {};
-            criteriaFilter.remoteFilters = remoteCriteria;
-            OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
-              function saveCharacteristics(characteristics, i) {
-                if (i === characteristics.length) {
-                  addProductToOrder();
-                } else {
-                  OB.Dal.saveOrUpdate(characteristics[i], function () {
-                    saveCharacteristics(characteristics, i + 1);
-                  }, function () {
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) || p.get('crossStore')) {
+          var success = function () {
+              var productcriteria = {
+                columns: ['product'],
+                operator: 'equals',
+                value: p.id,
+                isId: true
+              };
+              var remoteCriteria = [productcriteria];
+              var criteriaFilter = {};
+              criteriaFilter.remoteFilters = remoteCriteria;
+              criteriaFilter.forceRemote = true;
+              criteriaFilter.remoteParams = {};
+              criteriaFilter.remoteParams.crossStoreSearch = p.get('crossStore');
+              OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
+                function saveCharacteristics(characteristics, i) {
+                  if (i === characteristics.length) {
                     addProductToOrder();
-                  });
+                  } else {
+                    OB.Dal.saveOrUpdate(characteristics[i], function () {
+                      saveCharacteristics(characteristics, i + 1);
+                    }, function () {
+                      addProductToOrder();
+                    });
+                  }
                 }
-              }
-              if (productcharacteristic.models.length !== 0) {
-                saveCharacteristics(productcharacteristic.models, 0);
-              } else {
-                addProductToOrder();
-              }
+                if (productcharacteristic.models.length !== 0) {
+                  saveCharacteristics(productcharacteristic.models, 0);
+                } else {
+                  addProductToOrder();
+                }
 
-            }, function () {
+              }, function () {
+                addProductToOrder();
+              });
+              };
+
+          if (!p.get('crossStore')) {
+            OB.Dal.saveOrUpdate(p, success, function () {
               addProductToOrder();
             });
-          }, function () {
-            addProductToOrder();
-          });
+          } else {
+            success();
+          }
         } else {
           addProductToOrder();
         }
