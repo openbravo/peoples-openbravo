@@ -2811,6 +2811,9 @@
               criteriaFilter.forceRemote = true;
               criteriaFilter.remoteParams = {};
               criteriaFilter.remoteParams.crossStoreSearch = p.get('crossStore');
+              if (p.get('crossStore')) {
+                criteriaFilter.remoteParams.productId = p.get('id');
+              }
               OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
                 function saveCharacteristics(characteristics, i) {
                   if (i === characteristics.length) {
