@@ -357,7 +357,6 @@
         this.set('id', attributes.id);
         this.set('client', attributes.client);
         this.set('organization', attributes.organization);
-        this.set('trxOrganization', attributes.trxOrganization);
         this.set('documentType', attributes.documentType);
         this.set('createdBy', attributes.createdBy);
         this.set('updatedBy', attributes.updatedBy);
@@ -1113,7 +1112,6 @@
       this.set('id', null);
       this.set('client', null);
       this.set('organization', null);
-      this.set('trxOrganization', null);
       this.set('createdBy', null);
       this.set('updatedBy', null);
       this.set('documentType', null);
@@ -6955,31 +6953,41 @@
                 var price;
                 iter.linepos = linepos;
                 var addLineForProduct = function (prod) {
-                    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-                      OB.Dal.saveOrUpdate(prod, function () {
-                        var productcriteria = {
-                          columns: ['product'],
-                          operator: 'equals',
-                          value: prod.id,
-                          isId: true
-                        };
-                        var remoteCriteria = [productcriteria];
-                        var criteriaFilter = {};
-                        criteriaFilter.remoteFilters = remoteCriteria;
-                        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
-                          _.each(productcharacteristic.models, function (pchv) {
-                            OB.Dal.saveOrUpdate(pchv, function () {}, function () {
-                              OB.error(arguments);
+                    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) || OB.UTIL.isCrossStoreReceipt(order)) {
+                      var success = function () {
+                          var productcriteria = {
+                            columns: ['product'],
+                            operator: 'equals',
+                            value: prod.id,
+                            isId: true
+                          };
+                          var remoteCriteria = [productcriteria];
+                          var criteriaFilter = {};
+                          criteriaFilter.remoteFilters = remoteCriteria;
+                          criteriaFilter.forceRemote = true;
+                          criteriaFilter.remoteParams = {};
+                          criteriaFilter.remoteParams.crossStoreSearch = OB.UTIL.isCrossStoreReceipt(order);
+                          if (OB.UTIL.isCrossStoreReceipt(order)) {
+                            criteriaFilter.remoteParams.productId = prod.get('id');
+                          }
+                          OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
+                            _.each(productcharacteristic.models, function (pchv) {
+                              OB.Dal.saveOrUpdate(pchv, function () {}, function () {
+                                OB.error(arguments);
+                              });
                             });
+                          }, function () {
+                            OB.error(arguments);
                           });
-                        }, function () {
+                          };
+
+                      if (!OB.UTIL.isCrossStoreReceipt(order)) {
+                        OB.Dal.saveOrUpdate(prod, success, function () {
                           OB.error(arguments);
                         });
-
-                      }, function () {
-                        OB.error(arguments);
-                      });
-
+                      } else {
+                        success();
+                      }
                     }
                     // Set product services
                     order._loadRelatedServices(prod.get('productType'), prod.get('id'), prod.get('productCategory'), function (data) {
