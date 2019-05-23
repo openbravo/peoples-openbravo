@@ -387,51 +387,6 @@ enyo.kind({
   action: {
     window: 'retail.pointofsale',
     name: 'discount'
-  },
-  updateVisibility: function () {
-    var me = this;
-    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-      me.setDisabled(true);
-      return;
-    }
-
-    if (this.receipt.get('isEditable') === false) {
-      me.setDisabled(true);
-      return;
-    }
-
-    OB.UTIL.isDisableDiscount(this.receipt, function (disable) {
-      me.setDisabled(disable);
-    });
-
-    me.adjustVisibilityBasedOnPermissions();
-  },
-  init: function (model) {
-    var me = this;
-    this.model = model;
-    this.receipt = model.get('order');
-    //set disabled until ticket has lines
-    me.setDisabled(true);
-    if (!OB.MobileApp.model.hasPermission(this.permission)) {
-      //no permissions, never will be enabled
-      return;
-    }
-
-    model.get('leftColumnViewManager').on('order', function () {
-      this.updateVisibility();
-    }, this);
-
-    model.get('leftColumnViewManager').on('multiorder', function () {
-      me.setDisabled(true);
-    }, this);
-
-    this.receipt.on('change', function () {
-      this.updateVisibility();
-    }, this);
-
-    this.receipt.get('lines').on('all', function () {
-      this.updateVisibility();
-    }, this);
   }
 });
 

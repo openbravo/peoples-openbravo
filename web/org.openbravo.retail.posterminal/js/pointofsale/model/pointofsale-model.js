@@ -251,8 +251,23 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.initModels(function () {});
     this.loadModels(function () {});
   },
+
+  assignManualDiscounts: function (callback) {
+    return function () {
+      OB.Dal.queryUsingCache(OB.Model.Discount, 'select * from m_offer where m_offer_type_id in (' + OB.Model.Discounts.getManualPromotions() + ') limit 1', [], function (records, args) {
+        this.set('manualDiscounts', records.length > 0);
+        callback();
+      }.bind(this), callback, {
+        modelsAffectedByCache: ['Discount']
+      });
+    }.bind(this);
+  },
+
   initModels: function (callback) {
     var me = this;
+
+    // to be executed at the end
+    callback = this.assignManualDiscounts(callback);
 
     // create and expose the receipt
     var receipt = new OB.Model.Order();

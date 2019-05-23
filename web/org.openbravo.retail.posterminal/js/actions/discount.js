@@ -19,6 +19,19 @@
     properties: {
       i18nContent: 'OBMOBC_KbDiscount'
     },
+    isActive: function (view) {
+      var currentView = view.state.readState({
+        name: 'window.currentView'
+      }).name;
+      var isEditable = view.state.readState({
+        name: 'receipt.isEditable'
+      });
+
+      var active = isEditable && currentView === 'order';
+      active = active && view.model.get('order').get('lines').length > 0;
+      active = active && view.model.get('manualDiscounts');
+      return active;
+    },
     command: function (view) {
 
       var receipt = view.model.get('order');
