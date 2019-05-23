@@ -13,6 +13,7 @@
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard',
   kind: 'OB.UI.Keyboard',
+  classes: 'obObposcashmgmtUiCashMgmtKeyboard',
   events: {
     onShowPopup: ''
   },

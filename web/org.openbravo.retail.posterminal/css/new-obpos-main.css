@@ -2894,8 +2894,15 @@
 
 
 
-
-
+/***********************   ***********************/
+/*           File: cashmgmtkeyboard.js           */
+/*               Folder: js/view                 */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashMgmt.UI.CashMgmtKeyboard
+# Inherits: [OB.UI.MultiColumn.Keyboard]
+*/
+.obObposcashmgmtUiCashMgmtKeyboard {}
 
 
 
