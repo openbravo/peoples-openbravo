@@ -11,9 +11,40 @@
 
 (function () {
 
+  var isQtyEditable = function (line) {
+      if (!line) {
+        return false;
+      }
+      var product = line.get('product');
+      var qtyeditable = product.get('groupProduct');
+      qtyeditable = qtyeditable && line.get('isEditable');
+      qtyeditable = qtyeditable && !product.get('isSerialNo');
+      qtyeditable = qtyeditable && !(product.get('productType') === 'S' && product.get('isLinkedToProduct'));
+      return qtyeditable;
+      };
+
   var AbstractCommandQuantity = function (args) {
       OB.Actions.AbstractAction.call(this, args);
       this.calculateToAdd = args.calculateToAdd;
+      this.isActive = function (view) {
+        var product;
+        var isEditable = view.state.readCommandState({
+          name: 'receipt.isEditable'
+        });
+        var selectedReceiptLine = view.state.readCommandState({
+          name: 'selectedReceiptLine'
+        });
+        var selectedReceiptLines = view.state.readCommandState({
+          name: 'selectedReceiptLines'
+        });
+
+        var active = isEditable;
+        active = active && isQtyEditable(selectedReceiptLine);
+        active = active && selectedReceiptLines && selectedReceiptLines.every(function (l) {
+          return isQtyEditable(l);
+        });
+        return active;
+      };
       this.command = function (view) {
 
         var cancelQtyChange = false;
