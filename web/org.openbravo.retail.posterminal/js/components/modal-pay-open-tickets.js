@@ -192,7 +192,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalMultiOrdersPayOpenTickets',
   kind: 'OB.UI.ModalSelector',
-  classes: 'obUiModalMultiOrdersPayOpenTickets',
+  classes: 'u-popup-top-separation-medium obUiModalMultiOrdersPayOpenTickets',
   i18nHeader: 'OBPOS_LblPaidReceipts',
   published: {
     params: null
