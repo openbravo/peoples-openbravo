@@ -145,18 +145,16 @@ enyo.kind({
         }]
       });
     }
-    if (this.model.get('organization').id !== OB.MobileApp.model.get('terminal').organization) {
-      this.createComponent({
-        classes: 'obpos-display-block',
-        components: [{
-          name: 'storeLine',
-          content: '-- ' + OB.I18N.getLabel('OBPOS_LblStore') + ': ' + this.model.get('organization').name,
-          classes: 'orderline-store'
-        }, {
-          classes: 'obpos-clear-both'
-        }]
-      });
-    }
+    this.createComponent({
+      classes: 'obpos-display-block',
+      components: [{
+        name: 'storeLine',
+        content: '-- ' + OB.I18N.getLabel('OBPOS_LblStore') + ': ' + this.model.get('organization').name,
+        classes: 'orderline-store'
+      }, {
+        classes: 'obpos-clear-both'
+      }]
+    });
     if (this.model.get('obposSerialNumber')) {
       this.createComponent({
         style: 'display: block;',
