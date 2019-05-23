@@ -2741,21 +2741,51 @@
 
 
 
+/***********************   ***********************/
+/*              File: listevents.js              */
+/*               Folder: js/view                 */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashMgmt.UI.ListEventLine
+# Inherits: [OB.UI.SelectButton]
+*/
+.obObposcashmgmtUiListEvent {
+  height: 60px;
+  background-color: #dddddd;
+  border: 1px solid var(--color-primary-lighter);
+}
+
+.obObposcashmgmtUiListEvent-line {
+  padding: 1px 0px 1px 5px;
+}
 
 
 
+/*
+# Component: OB.OBPOSCashMgmt.UI.ListEvents
+*/
+.obObposcashmgmtUiListEvent {}
+
+.obObposcashmgmtUiListEvent-container1 {}
+
+.obObposcashmgmtUiListEvent-container1-element1 {}
+
+.obObposcashmgmtUiListEvent-obUiTable {
+  overflow: auto;
+  max-height: 600px;
+}
 
 
 
+/*
+# Component: OB.OBPOSCashMgmt.UI.ModalDepositEvents
+# Inherits: [OB.UI.Modal]
+*/
+.obposObposcashmgmtUiModalDepositEvents {
+  top:125px
+}
 
-
-
-
-
-
-
-
-
+.obposObposcashmgmtUiModalDepositEvents-obObposcashmgmtUiListEvent {}
 
 
 
