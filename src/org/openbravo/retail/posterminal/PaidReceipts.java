@@ -387,16 +387,30 @@ public class PaidReceipts extends JSONProcessSimple {
             + "obpos_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
             + "p.financialAccount.currency.iSOCode as isocode, "
             + "p.paymentMethod.openDrawer as openDrawer "
-            + " from OBPOS_App_Payment as p where p.active = true and p.financialAccount.id in (select scheduleDetail.paymentDetails.finPayment.account.id from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=:orderId)"
+            + " from OBPOS_App_Payment as p where p.financialAccount.id in (select scheduleDetail.paymentDetails.finPayment.account.id from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=:orderId)"
             + "group by  p.financialAccount.id, p.commercialName ,p.searchKey,"
             + "obpos_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
             + "obpos_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
-            + "p.financialAccount.currency.iSOCode ,p.paymentMethod.openDrawer";
+            + "p.financialAccount.currency.iSOCode, p.paymentMethod.openDrawer, p.active "
+            + "order by p.active desc";
         Query<Object[]> paymentsTypeQuery = OBDal.getInstance()
             .getSession()
             .createQuery(hqlPaymentsType, Object[].class);
         paymentsTypeQuery.setParameter("orderId", orderid);
-        for (Object[] objPaymentsType : paymentsTypeQuery.list()) {
+
+        List<Object[]> paymentsTypeQueryList = paymentsTypeQuery.list()
+            .stream()
+            .reduce(new ArrayList<>(), (List<Object[]> pml, Object[] pm) -> {
+              if (pml.stream().noneMatch(p -> p[1].equals(pm[1]))) {
+                pml.add(pm);
+              }
+              return pml;
+            }, (pm1, pm2) -> {
+              pm1.addAll(pm2);
+              return pm1;
+            });
+
+        for (Object[] objPaymentsType : paymentsTypeQueryList) {
           JSONObject paymentsType = new JSONObject();
           paymentsType.put("name", objPaymentsType[0]);
           paymentsType.put("account", objPaymentsType[1]);
