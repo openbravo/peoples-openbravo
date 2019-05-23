@@ -13,9 +13,11 @@ enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.LeftToolbarImpl',
   kind: 'OB.UI.MultiColumn.Toolbar',
   synchId: null,
+  classes: 'obObposcashmgmtUiLeftToolbarImpl',
   buttons: [{
     kind: 'OB.UI.ToolbarButton',
     name: 'btnCancel',
+    classes: 'obObposcashmgmtUiLeftToolbarImpl-btnCancel',
     disabled: false,
     i18nLabel: 'OBMOBC_LblCancel',
     stepCount: 0,
@@ -28,6 +30,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.ToolbarButton',
     name: 'btnDone',
+    classes: 'obObposcashmgmtUiLeftToolbarImpl-btnDone',
     disabled: true,
     i18nLabel: 'OBPOS_LblDone',
     stepCount: 0,
@@ -83,9 +86,11 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.RightToolbarImpl',
   kind: 'OB.UI.MultiColumn.Toolbar',
+  classes: 'obObposcashmgmtUiRightToolbarImpl',
   buttons: [{
     kind: 'OB.UI.ToolbarButton',
     name: 'btnCashMgmt',
+    classes: 'obObposcashmgmtUiRightToolbarImpl-btnCashMgmt',
     span: 12,
     disabled: true,
     i18nLabel: 'OBPOS_LblCashManagement'
@@ -96,6 +101,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.CashManagement',
   kind: 'OB.UI.WindowView',
+  classes: 'obObposcashmgmtUiCashManagement',
   windowmodel: OB.OBPOSCashMgmt.Model.CashManagement,
   tag: 'section',
   allowedIncrementalRefresh: false,
@@ -113,69 +119,84 @@ enyo.kind({
   components: [{
     kind: 'OB.UI.MultiColumn',
     name: 'cashupMultiColumn',
+    classes: 'obObposcashmgmtUiCashManagement-cashupMultiColumn',
     leftToolbar: {
       kind: 'OB.OBPOSCashMgmt.UI.LeftToolbarImpl',
       name: 'leftToolbar',
+      classes: 'obObposcashmgmtUiCashManagement-cashupMultiColumn-leftToolbar',
       showMenu: false,
       showWindowsMenu: false
     },
     rightToolbar: {
       kind: 'OB.OBPOSCashMgmt.UI.RightToolbarImpl',
       name: 'rightToolbar',
+      classes: 'obObposcashmgmtUiCashManagement-cashupMultiColumn-rightToolbar',
       showMenu: false,
       showWindowsMenu: false
     },
     leftPanel: {
       name: 'cashmgmtLeftPanel',
+      classes: 'obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtLeftPanel',
       components: [{
-        classes: 'row',
+        classes: 'obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-container1 row',
         components: [
         // 1st column: list of deposits/drops done or in process
         {
-          classes: 'span12',
+          classes: 'obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-container1-container1 span12',
           components: [{
-            kind: 'OB.OBPOSCashMgmt.UI.ListDepositsDrops'
+            kind: 'OB.OBPOSCashMgmt.UI.ListDepositsDrops',
+            classes: 'obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-container1-container1-ObposcashmgmtUiListDepositsDrops'
           }]
         }]
       }]
     },
     rightPanel: {
       name: 'cashmgmtRightPanel',
+      classes: 'obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtRightPanel',
       components: [
 
       //2nd column
       {
-        classes: 'span12',
+        classes: 'obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1 span12',
         components: [{
-          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo'
+          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo',
+          classes: 'obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1-obObposcashmgmtUiCashMgmtInfo'
         }, {
-          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard'
+          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard',
+          classes: 'obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1-obObposcashmgmtUiCashMgmtKeyboard'
         }]
       }]
     }
   }, //hidden stuff
   {
+    classes: 'obObposcashmgmtUiCashManagement-container1',
     components: [{
       kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
       i18nHeader: 'OBPOS_SelectDepositDestinations',
       name: 'modaldepositevents',
+      classes: 'obObposcashmgmtUiCashManagement-container1-modaldepositevents',
       type: 'cashMgmtDepositEvents'
     }, {
       kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
       i18nHeader: 'OBPOS_SelectDropDestinations',
       name: 'modaldropevents',
+      classes: 'obObposcashmgmtUiCashManagement-container1-modaldropevents',
       type: 'cashMgmtDropEvents'
     }, {
-      kind: 'OB.UI.ModalSelectPrinters'
+      kind: 'OB.UI.ModalSelectPrinters',
+      classes: 'obObposcashmgmtUiCashManagement-container1-obUiModalSelectPrinters'
     }]
   }, {
     name: 'otherSubWindowsContainer',
+    classes: 'obObposcashmgmtUiCashManagement-otherSubWindowsContainer',
     components: [{
       kind: 'OB.UI.ModalSelectorBusinessPartners',
-      name: 'modalcustomer'
+      name: 'modalcustomer',
+      classes: 'obObposcashmgmtUiCashManagement-otherSubWindowsContainer-modalcustomer'
     }, {
       kind: 'OB.UI.ModalAdvancedFilterBP',
-      name: 'modalAdvancedFilterBP'
+      name: 'modalAdvancedFilterBP',
+      classes: 'obObposcashmgmtUiCashManagement-otherSubWindowsContainer-modalAdvancedFilterBP'
     }]
   }],
 
@@ -271,6 +292,7 @@ enyo.kind({
   }
 });
 
+// TODO: Review this register to verify if it should has any style class
 OB.POS.registerWindow({
   windowClass: OB.OBPOSCashMgmt.UI.CashManagement,
   route: 'retail.cashmanagement',
@@ -321,5 +343,6 @@ OB.POS.registerWindow({
 
 OB.UI.WindowView.registerPopup('OB.OBPOSCashMgmt.UI.CashManagement', {
   kind: 'OB.UI.ModalPayment',
-  name: 'modalpayment'
+  name: 'modalpayment',
+  classes: 'modalPayment'
 });

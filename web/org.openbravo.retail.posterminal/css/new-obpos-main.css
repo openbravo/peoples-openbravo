@@ -2789,6 +2789,116 @@
 
 
 
+/***********************   ***********************/
+/*               File: cashmgmt.js               */
+/*               Folder: js/view                 */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashMgmt.UI.LeftToolbarImpl
+# Inherits: [OB.UI.MultiColumn.Toolbar]
+*/
+.obObposcashmgmtUiLeftToolbarImpl {}
+
+.obObposcashmgmtUiLeftToolbarImpl-btnCancel {
+  /*Inherits: [OB.UI.ToolbarButton]*/
+}
+
+.obObposcashmgmtUiLeftToolbarImpl-btnDone {
+  /*Inherits: [OB.UI.ToolbarButton]*/
+}
+
+
+/*
+# Component: OB.OBPOSCashMgmt.UI.RightToolbarImpl
+# Inherits: [OB.UI.MultiColumn.Toolbar]
+*/
+.obObposcashmgmtUiRightToolbarImpl {}
+
+.obObposcashmgmtUiRightToolbarImpl-btnCashMgmt {
+  /*Inherits: [OB.UI.ToolbarButton]*/
+}
+
+
+
+/*
+# Component: OB.OBPOSCashMgmt.UI.CashManagement
+# Inherits: [OB.UI.WindowView]
+*/
+.obObposcashmgmtUiCashManagement {}
+
+.obObposcashmgmtUiCashManagement-cashupMultiColumn {
+  /*Inherits: [OB.UI.MultiColumn]*/
+}
+
+.obObposcashmgmtUiCashManagement-cashupMultiColumn-leftToolbar {
+  /*Inherits: [OB.OBPOSCashMgmt.UI.LeftToolbarImpl]*/
+}
+
+.obObposcashmgmtUiCashManagement-cashupMultiColumn-rightToolbar {
+  /*Inherits: [OB.OBPOSCashMgmt.UI.RightToolbarImpl]*/
+}
+
+.obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtLeftPanel {}
+
+.obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-container1 {}
+
+.obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-container1-container1 {}
+
+.obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-container1-container1-ObposcashmgmtUiListDepositsDrops {
+  /*Inherits: [OB.OBPOSCashMgmt.UI.ListDepositsDrops]*/
+}
+
+.obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtRightPanel {}
+
+.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1 {}
+
+.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1-obObposcashmgmtUiCashMgmtInfo {
+  /*Inherits: [OB.OBPOSCashMgmt.UI.CashMgmtInfo]*/
+}
+
+.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1-obObposcashmgmtUiCashMgmtKeyboard {
+  /*Inherits: [OB.OBPOSCashMgmt.UI.CashMgmtKeyboard]*/
+}
+
+.obObposcashmgmtUiCashManagement-container1 {}
+
+.obObposcashmgmtUiCashManagement-container1-modaldepositevents {
+  /*Inherits: [OB.OBPOSCashMgmt.UI.ModalDepositEvents]*/
+}
+
+.obObposcashmgmtUiCashManagement-container1-modaldropevents {
+  /*Inherits: [OB.OBPOSCashMgmt.UI.ModalDepositEvents]*/
+}
+
+.obObposcashmgmtUiCashManagement-container1-obUiModalSelectPrinters {
+  /*Inherits: [OB.UI.ModalSelectPrinters]*/
+}
+
+.obObposcashmgmtUiCashManagement-otherSubWindowsContainer {}
+
+.obObposcashmgmtUiCashManagement-otherSubWindowsContainer-modalcustomer {
+  /*Inherits: [OB.UI.ModalSelectorBusinessPartners]*/
+}
+
+.obObposcashmgmtUiCashManagement-otherSubWindowsContainer-modalAdvancedFilterBP {
+  /*Inherits: [OB.UI.ModalAdvancedFilterBP]*/
+}
+
+
+
+/*
+# Component: modalpayment
+# Inherits: [OB.UI.ModalPayment]
+*/
+.modalPayment {}
+
+
+
+
+
+
+
+
 
 
 
