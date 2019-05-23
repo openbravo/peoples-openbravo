@@ -19,6 +19,21 @@
     properties: {
       i18nContent: 'OBPOS_CreateOrderFromQuotation'
     },
+    isActive: function (view) {
+      var currentView = view.state.readState({
+        name: 'window.currentView'
+      }).name;
+      var isPaid = view.state.readState({
+        name: 'receipt.isPaid'
+      });
+      var isQuotation = view.state.readState({
+        name: 'receipt.isQuotation'
+      });
+
+      var active = currentView === 'order';
+      active = active && isQuotation && isPaid && !OB.UTIL.isCrossStoreReceipt(view.model);
+      return active;
+    },
     command: function (view) {
       view.doShowPopup({
         popup: 'modalCreateOrderFromQuotation'

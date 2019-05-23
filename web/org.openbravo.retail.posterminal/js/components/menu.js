@@ -500,34 +500,6 @@ enyo.kind({
   action: {
     window: 'retail.pointofsale',
     name: 'convertQuotation'
-  },
-  updateVisibility: function (model) {
-    if (OB.MobileApp.model.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y' && !OB.UTIL.isCrossStoreReceipt(model)) {
-      this.show();
-    } else {
-      this.hide();
-    }
-  },
-  init: function (model) {
-    var receipt = model.get('order'),
-        me = this;
-    me.hide();
-
-    model.get('leftColumnViewManager').on('order', function () {
-      this.updateVisibility(receipt);
-      this.adjustVisibilityBasedOnPermissions();
-    }, this);
-
-    model.get('leftColumnViewManager').on('multiorder', function () {
-      me.hide();
-    }, this);
-
-    receipt.on('change:isQuotation', function (model) {
-      this.updateVisibility(model);
-    }, this);
-    receipt.on('change:hasbeenpaid', function (model) {
-      this.updateVisibility(model);
-    }, this);
   }
 });
 
