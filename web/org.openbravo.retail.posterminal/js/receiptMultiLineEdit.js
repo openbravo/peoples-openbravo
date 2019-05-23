@@ -49,7 +49,7 @@
         if (!line.has('hasDeliveryServices') && line.get('obrdmDeliveryMode') === 'HomeDelivery') {
           //Trigger Delivery Services Search
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-            var process = new OB.DS.Process('org.openbravo.retail.deliverymodes.process.HasDeliveryServices');
+            var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasDeliveryServices');
             var params = {},
                 date = new Date();
             process.exec({
@@ -486,7 +486,7 @@ enyo.kind({
     if (carrierLines.length === this.args.selectedLines.length) {
       //Trigger Delivery Services Search
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        var process = new OB.DS.Process('org.openbravo.retail.deliverymodes.process.HasDeliveryServices');
+        var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasDeliveryServices');
         var params = {},
             date = new Date();
         process.exec({
