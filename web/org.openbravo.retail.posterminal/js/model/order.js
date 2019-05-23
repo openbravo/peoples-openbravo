@@ -2953,7 +2953,13 @@
           process.exec({
             product: productId,
             productCategory: productCategory,
-            parameters: params
+            parameters: params,
+            remoteFilters: [{
+              columns: [],
+              operator: "filter",
+              value: "OBRDM_DeliveryServiceFilter",
+              params: [false]
+            }]
           }, function (data, message) {
             if (data && data.exception) {
               //ERROR or no connection
