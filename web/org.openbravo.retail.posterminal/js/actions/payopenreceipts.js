@@ -19,6 +19,9 @@
     properties: {
       i18nContent: 'OBPOS_LblPayOpenTickets'
     },
+    isActive: function (view) {
+      return OB.MobileApp.model.get('payments').length > 0;
+    },
     command: function (view) {
       if (!OB.MobileApp.model.get('connectedToERP')) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));

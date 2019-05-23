@@ -563,15 +563,6 @@ enyo.kind({
   action: {
     window: 'retail.pointofsale',
     name: 'payOpenReceipts'
-  },
-  updateVisibility: function () {
-    if (OB.MobileApp.model.get('payments').length <= 0) {
-      this.hide();
-    }
-  },
-  init: function (model) {
-    this.model = model;
-    this.updateVisibility();
   }
 });
 
