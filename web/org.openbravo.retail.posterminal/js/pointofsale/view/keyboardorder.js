@@ -712,7 +712,7 @@ enyo.kind({
     });
 
     if (foundPrinter) {
-      OB.POS.hwserver.setActiveURL(foundPrinter.hardwareURL);
+      OB.POS.hwserver.setActiveURL(foundPrinter.id);
       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_PrinterFound', [foundPrinter._identifier]));
 
       return true;
