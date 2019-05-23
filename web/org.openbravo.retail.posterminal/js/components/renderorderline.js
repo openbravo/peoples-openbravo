@@ -271,8 +271,9 @@ enyo.kind({
       });
     }
 
-    function renderDeliveryModesLine(orderline) {
-      var deliveryDate = orderline.get('obrdmDeliveryDate') ? (orderline.get('obrdmDeliveryDate') instanceof Date ? orderline.get('obrdmDeliveryDate') : new Date(orderline.get('obrdmDeliveryDate'))) : null,
+    function renderDeliveryModesLine() {
+      var orderline = me.model,
+          deliveryDate = orderline.get('obrdmDeliveryDate') ? (orderline.get('obrdmDeliveryDate') instanceof Date ? orderline.get('obrdmDeliveryDate') : new Date(orderline.get('obrdmDeliveryDate'))) : null,
           deliveryTime = orderline.get('obrdmDeliveryTime') ? (orderline.get('obrdmDeliveryTime') instanceof Date ? orderline.get('obrdmDeliveryTime') : new Date(orderline.get('obrdmDeliveryTime'))) : null,
           showDate = orderline.get('obrdmDeliveryMode') === 'PickupInStoreDate' || orderline.get('obrdmDeliveryMode') === 'HomeDelivery',
           showTime = orderline.get('obrdmDeliveryMode') === 'HomeDelivery',
@@ -353,20 +354,20 @@ enyo.kind({
       }
 
       if (isDeliveryService) {
-        orderline.$.serviceIcon.setSrc('img/iconShippingAddress.svg');
-        orderline.$.serviceIcon.setStyle('float: left; padding: 1px 2px 0px 0px; height: 14px;');
+        me.$.serviceIcon.setSrc('img/iconShippingAddress.svg');
+        me.$.serviceIcon.setStyle('float: left; padding: 1px 2px 0px 0px; height: 14px;');
       } else {
-        orderline.$.serviceIcon.setSrc('img/iconService_ticketline.png');
-        orderline.$.serviceIcon.setStyle('float: left; padding-right: 5px;');
+        me.$.serviceIcon.setSrc('img/iconService_ticketline.png');
+        me.$.serviceIcon.setStyle('float: left; padding-right: 5px;');
       }
       if (orderline.get('hasDeliveryServices')) {
-        orderline.createComponent({
+        me.createComponent({
           kind: 'OBRDM.UI.ShowDeliveryServicesButton',
           name: 'showDeliveryServicesButton'
         });
       }
     }
-    renderDeliveryModesLine(this);
+    renderDeliveryModesLine();
 
 
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderOrderLine', {
