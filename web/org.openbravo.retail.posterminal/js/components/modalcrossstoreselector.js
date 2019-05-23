@@ -268,7 +268,7 @@ enyo.kind({
   }],
   create: function () {
     this.inherited(arguments);
-    this.$.storeName.setContent(this.model.get('orgName'));
+    this.$.storeName.setContent(this.model.get('orgId') === OB.MobileApp.model.get('terminal').organization ? OB.I18N.getLabel('OBPOS_LblThisStore', [OB.MobileApp.model.get('terminal').organization$_identifier]) : this.model.get('orgName'));
     this.$.standarPrice.setContent(this.model.has('standardPrice') ? OB.I18N.formatCurrency(this.model.get('standardPrice')) : '');
     this.$.currentPrice.setContent(this.model.has('currentPrice') && this.model.get('standardPriceListId') !== this.model.get('currentPrice').priceListId ? OB.I18N.formatCurrency(this.model.get('currentPrice').price) : '');
     this.$.stock.setContent(this.model.get('stock') + ' ' + this.owner.owner.owner.owner.owner.owner.productUOM);
