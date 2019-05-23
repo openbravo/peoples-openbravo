@@ -423,19 +423,6 @@ enyo.kind({
   action: {
     window: 'retail.pointofsale',
     name: 'createQuotation'
-  },
-  updateVisibility: function (model) {
-    if (!model.get('isQuotation')) {
-      this.show();
-      this.adjustVisibilityBasedOnPermissions();
-    }
-  },
-  init: function (model) {
-    var receipt = model.get('order');
-    this.model = model;
-    receipt.on('change:isQuotation', function (model) {
-      this.updateVisibility(model);
-    }, this);
   }
 });
 

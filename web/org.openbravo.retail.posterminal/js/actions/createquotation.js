@@ -19,6 +19,12 @@
     properties: {
       i18nContent: 'OBPOS_CreateQuotation'
     },
+    isActive: function (view) {
+      var isQuotation = view.state.readState({
+        name: 'receipt.isQuotation'
+      });
+      return !isQuotation;
+    },
     command: function (view) {
       if (OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations) {
         if (OB.MobileApp.model.hasPermission(this.permission)) {
