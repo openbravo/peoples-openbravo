@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -152,7 +153,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
-      out.print(strcAcctSchemaId);
+      out.print(StringEscapeUtils.escapeHtml(strcAcctSchemaId));
       out.close();
     } else if (vars.commandIn("CMBORG")) {
       String strAccSchema = vars.getStringParameter("inpcAcctSchemaId");
@@ -693,7 +694,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("orgs", Utility.arrayDobleEntrada("arrOrgs", new FieldProvider[0]));
     xmlDocument.setParameter("accountingReports", Utility.arrayDobleEntrada("arrAccountingReports",
-        GeneralAccountingReportsData.selectRptDouble(readOnlyCP)));
+        GeneralAccountingReportsData.selectRptDouble(readOnlyCP, OBContext.getOBContext().getRole().getId())));
     xmlDocument.setParameter("years", Utility.arrayDobleEntrada("arrYears", new FieldProvider[0]));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

@@ -1536,7 +1536,7 @@ public class CancelAndReplaceUtils {
    *          Document number of the cancelled order.
    * @return The new document number for the order which cancels the old order.
    */
-  private static String getNextCancelDocNo(String documentNo) {
+  public static String getNextCancelDocNo(String documentNo) {
     String newDocNo = "";
     String[] splittedDocNo = documentNo.split(HYPHEN);
     if (splittedDocNo.length > 1) {

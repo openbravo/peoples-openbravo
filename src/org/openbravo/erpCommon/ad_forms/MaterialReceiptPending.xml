@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,8 +74,8 @@
     <FIELD id="fieldPartnerName" replaceCharacters="html">partnerName</FIELD>
     <FIELD id="fieldProductName" replaceCharacters="html">productName</FIELD>
     <FIELD id="fieldDescription" replaceCharacters="html">description</FIELD>
-    <FIELD id="fieldTotalQty" format="euroEdition">totalQty</FIELD>
-    <FIELD id="fieldQtyordered" attribute="value" format="euroEdition">qtyordered</FIELD>
+    <FIELD id="fieldTotalQty" format="qtyEdition">totalQty</FIELD>
+    <FIELD id="fieldQtyordered" attribute="value" format="qtyEdition">qtyordered</FIELD>
     <FIELD id="fieldQtyordered" attribute="name" replace="xx">id</FIELD>
     <FIELD id="fieldQtyordered" boolean="disabled" withId="paramDisable">isactive</FIELD>
     <FIELD id="M_Locator_ID" attribute="name" replace="ss">id</FIELD>
@@ -98,14 +98,14 @@
     <PARAMETER id="paramCalendar" name="paramColSpanCalendar" attribute="colspan" replace="xx"/>
     <PARAMETER id="paramIsUomEnabled" name="paramIsUomEnabled" attribute="value" replace="xx"/>
     
-    <FIELD id="fieldAumQty" attribute="value" format="euroEdition">aumqty</FIELD>
+    <FIELD id="fieldAumQty" attribute="value" format="qtyEdition">aumqty</FIELD>
     <FIELD id="fieldAumQty" attribute="name" replace="xx">id</FIELD>
     <FIELD id="fieldAumQty" attribute="onkeyup" replace="yy">id</FIELD>
     <FIELD id="fieldProductId" attribute="value">mProductId</FIELD>
     <FIELD id="fieldProductId" attribute="name" replace="xx">id</FIELD>
     <FIELD id="fieldUomId" attribute="value">cUomId</FIELD>
     <FIELD id="fieldUomId" attribute="name" replace="xx">id</FIELD>
-    <FIELD id="fieldHiddenQtyordered" attribute="value" format="euroEdition">qtyordered</FIELD>
+    <FIELD id="fieldHiddenQtyordered" attribute="value" format="qtyEdition">qtyordered</FIELD>
     <FIELD id="fieldHiddenQtyordered" attribute="name" replace="xx">id</FIELD>
     
     <SUBREPORT id="reportAUM_ID" name="reportAUM_ID" report="org/openbravo/erpCommon/reference/List">

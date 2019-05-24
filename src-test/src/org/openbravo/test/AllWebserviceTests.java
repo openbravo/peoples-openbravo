@@ -34,6 +34,7 @@ import org.openbravo.test.datasource.LogDatasourceTest;
 import org.openbravo.test.datasource.NonIdForeignKeyFilters;
 import org.openbravo.test.datasource.OpenRecordAfterLogin;
 import org.openbravo.test.datasource.OrganizationSelectorDataSourceTest;
+import org.openbravo.test.datasource.OrganizationWindowRoleFilterTest;
 import org.openbravo.test.datasource.OtherDatasourceRequests;
 import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
 import org.openbravo.test.datasource.ResetCookieOnLogin;
@@ -76,6 +77,7 @@ import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
     TestCSVEncoding.class, //
     SelectorFieldPropertySelectorDSTest.class, //
     SelectorPickListFieldsDataSourceTest.class, //
+    OrganizationWindowRoleFilterTest.class, //
     OrganizationSelectorDataSourceTest.class, //
     ProductSelectorDataSourceTest.class, //
     TestComboDatasource.class, //

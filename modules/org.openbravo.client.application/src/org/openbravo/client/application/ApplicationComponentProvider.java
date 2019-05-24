@@ -306,6 +306,20 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/callback/ob-extra-window-settings-actions.js",
         false));
 
+    // Upload
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/upload/ob-upload-popup.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/upload/ob-upload-bp-select-popup.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/upload/ob-upload-bp-select-button.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/upload/ob-upload-product-button.js", false));
+    globalResources
+        .add(createStyleSheetResource("web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_PARAMETER
+            + "/org.openbravo.client.application/ob-upload-styles.css", false));
+
     // Styling
     globalResources
         .add(createStyleSheetResource("web/org.openbravo.userinterface.smartclient/openbravo/skins/"

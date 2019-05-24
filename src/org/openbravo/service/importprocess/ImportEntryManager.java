@@ -153,6 +153,10 @@ public class ImportEntryManager {
   // default to number of processors plus some additionals for the main threads
   private int numberOfThreads = Runtime.getRuntime().availableProcessors() + 3;
 
+  // used to determine the time to wait after each cycle before querying for new entries to be
+  // processed
+  private int processingCapacityPerSecond;
+
   // defines the batch size of reading and processing import entries by the
   // main thread, for each type of data the batch size is being read
   private int importBatchSize = 5000;
@@ -178,9 +182,18 @@ public class ImportEntryManager {
     maxTaskQueueSize = ImportProcessUtils.getCheckIntProperty(log, "import.max.task.queue.size",
         maxTaskQueueSize, 50);
     managerWaitTime = ImportProcessUtils.getCheckIntProperty(log, "import.wait.time", 600, 1);
+    processingCapacityPerSecond = ImportProcessUtils.getCheckIntProperty(log,
+        "import.processing.capacity.per.second", numberOfThreads * 30, 10);
 
     // property defined in secs, convert to ms
     managerWaitTime = managerWaitTime * 1000;
+
+    log.info("Import entry manager settings");
+    log.info("  batch size: {}", importBatchSize);
+    log.info("  number of threads: {}", numberOfThreads);
+    log.info("  task queue size: {}", maxTaskQueueSize);
+    log.info("  wait time: {} sec", managerWaitTime);
+    log.info("  processing capacity per second: {} entries", processingCapacityPerSecond);
   }
 
   public synchronized void start() {
@@ -469,8 +482,15 @@ public class ImportEntryManager {
   }
 
   private static class ImportEntryManagerThread implements Runnable {
-
     private final ImportEntryManager manager;
+
+    // @formatter:off
+    private static final String IMPORT_ENTRY_QRY =
+          " from C_IMPORT_ENTRY "
+        + "where typeofdata = :typeOfData "
+        + "  and importStatus = 'Initial' "
+        + "order by creationDate, createdtimestamp";
+    // @formatter:on
 
     private boolean isRunning = false;
     private Object monitorObject = new Object();
@@ -552,7 +572,6 @@ public class ImportEntryManager {
 
             int entryCount = 0;
             try {
-
               // start processing, so ignore any notifications happening before
               wasNotifiedInParallel = false;
 
@@ -560,31 +579,24 @@ public class ImportEntryManager {
               // don't block eachother with the limited batch size
               // being read
               for (String typeOfData : typesOfData) {
-
-                log.debug("Reading import entries for type of data " + typeOfData);
-
-                final String importEntryQryStr = "from " + ImportEntry.ENTITY_NAME + " where "
-                    + ImportEntry.PROPERTY_TYPEOFDATA + "='" + typeOfData + "' and "
-                    + ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
-                    + ImportEntry.PROPERTY_CREATIONDATE + ", "
-                    + ImportEntry.PROPERTY_CREATEDTIMESTAMP;
+                log.debug("Reading import entries for type of data {}", typeOfData);
 
                 final Query<ImportEntry> entriesQry = OBDal.getInstance()
                     .getSession()
-                    .createQuery(importEntryQryStr, ImportEntry.class);
-                entriesQry.setFirstResult(0);
-                entriesQry.setFetchSize(100);
-                entriesQry.setMaxResults(manager.importBatchSize);
+                    .createQuery(IMPORT_ENTRY_QRY, ImportEntry.class)
+                    .setParameter("typeOfData", typeOfData)
+                    .setFirstResult(0)
+                    .setFetchSize(100)
+                    .setMaxResults(manager.importBatchSize);
 
-                final ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY);
-                try {
+                int typeOfDataEntryCount = 0;
+                try (ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY)) {
                   while (entries.next() && isHandlingImportEntries()) {
                     entryCount++;
+                    typeOfDataEntryCount++;
                     final ImportEntry entry = (ImportEntry) entries.get(0);
 
-                    if (log.isDebugEnabled()) {
-                      log.debug("Handle import entry " + entry.getIdentifier());
-                    }
+                    log.trace("Handle import entry {}", entry::getIdentifier);
 
                     try {
                       manager.handleImportEntry(entry);
@@ -599,11 +611,12 @@ public class ImportEntryManager {
                       manager.setImportEntryError(entry.getId(), t);
                     }
                   }
-                } finally {
-                  entries.close();
+                }
+
+                if (typeOfDataEntryCount > 0) {
+                  log.debug("Handled {} entries for {}", typeOfDataEntryCount, typeOfData);
                 }
               }
-
             } catch (Throwable t) {
               ImportProcessUtils.logError(log, t);
             } finally {
@@ -613,21 +626,25 @@ public class ImportEntryManager {
             if (entryCount > 0) {
               // if there was data then just wait some time
               // give the threads time to process it all before trying
-              // a next batch of entries
+              // a next batch of entries to prevent retrieving from DB the same records we have just
+              // handled in this cycle
               try {
-                // wait one second per 30 records, somewhat arbitrary
-                // but high enough for most cases, also always wait 300 millis additional to
-                // start up threads etc.
-                // note computation of timing ensures that int rounding is done on 1000* entrycount
-                if (isTest) {
-                  // in case of test don't wait minimal 2 seconds
-                  Thread.sleep(300 + ((1000 * entryCount) / 30));
-                } else {
-                  log.debug(
-                      "Entries have been processed, wait a shorter time, and try again to capture new entries which have been added");
-                  // wait minimal 2 seconds or based on entry count
-                  Thread.sleep(Math.max(2000, 300 + ((1000 * entryCount) / 30)));
-                }
+                // wait a time based on the number of processed entries and
+                // processingCapacityPerSecond (which is the expected number of entries that can be
+                // processed per second), it defaults to one second per 30 records per
+                // thread, somewhat arbitrary but high enough for most cases, also always wait 300
+                // milliseconds additional to start up threads etc. note computation of timing
+                // ensures that int rounding is done on 1000* entrycount
+
+                // wait minimal 2 seconds or based on entry count, no minimal wait in case of test
+                int minWait = isTest ? 0 : 2_000;
+                long t = Math.max(minWait,
+                    300 + ((1_000 * entryCount) / manager.processingCapacityPerSecond));
+
+                log.debug(
+                    "{} entries have been handled. Wait {} ms, and try again to capture new entries which have been added",
+                    entryCount, t);
+                Thread.sleep(t);
               } catch (Exception ignored) {
               }
             } else {
@@ -700,7 +717,9 @@ public class ImportEntryManager {
   private static class ImportStatistics {
     private String typeOfData;
     private long cnt;
+    private long cntPartial;
     private long totalTime;
+    private long totalTimePartial;
 
     public void setTypeOfData(String typeOfData) {
       this.typeOfData = typeOfData;
@@ -712,11 +731,16 @@ public class ImportEntryManager {
 
     public synchronized void addTiming(long timeForEntry) {
       cnt++;
+      cntPartial++;
       totalTime += timeForEntry;
+      totalTimePartial += timeForEntry;
     }
 
     public synchronized void log() {
-      log.info("Timings for " + typeOfData + " cnt: " + cnt + " avg millis: " + (totalTime / cnt));
+      log.info("Timings for {}. Partial [cnt: {}, avg: {} ms] - Total [cnt: {}, avg: {} ms]",
+          typeOfData, cntPartial, totalTimePartial / cntPartial, cnt, totalTime / cnt);
+      cntPartial = 0;
+      totalTimePartial = 0;
     }
   }
 

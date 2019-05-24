@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -231,9 +231,8 @@ public class SL_Order_Amt extends SimpleCallout {
       BigDecimal unitPrice = isTaxIncludedPriceList ? grossBaseUnitPrice : priceStd;
       BigDecimal discount = priceList.compareTo(BigDecimal.ZERO) == 0 || !calcDiscount
           ? BigDecimal.ZERO
-          : priceList.subtract(unitPrice)
-              .multiply(new BigDecimal("100"))
-              .divide(priceList, stdPrecision, RoundingMode.HALF_EVEN);
+          : priceList.subtract(unitPrice).divide(priceList, stdPrecision, RoundingMode.HALF_EVEN)
+              .multiply(new BigDecimal("100")).setScale(stdPrecision, RoundingMode.HALF_EVEN);
       log4j.debug("Discount rounded: " + discount.toString());
       info.addResult("inpdiscount", discount);
 

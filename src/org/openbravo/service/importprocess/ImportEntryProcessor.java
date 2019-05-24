@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2018 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -108,7 +108,7 @@ public abstract class ImportEntryProcessor {
   private static final int MAX_QUEUE_SIZE = 50000;
 
   // not static to create a Logger for each subclass
-  private Logger log;
+  private Logger log = LogManager.getLogger(this.getClass());
 
   // multiple threads access this map, its access is handled through
   // synchronized methods
@@ -116,10 +116,6 @@ public abstract class ImportEntryProcessor {
 
   @Inject
   private ImportEntryManager importEntryManager;
-
-  public ImportEntryProcessor() {
-    log = LogManager.getLogger();
-  }
 
   /**
    * Is called when the application context/tomcat stops, is called from
@@ -180,8 +176,8 @@ public abstract class ImportEntryProcessor {
     // give it the entry
     runnable.setImportEntryManager(importEntryManager);
     runnable.setImportEntryProcessor(this);
-    runnable.addEntry(importEntry);
     runnable.setKey(key);
+    runnable.addEntry(importEntry);
 
     // and make sure it can get next entries by caching it
     runnables.put(key, runnable);
@@ -370,14 +366,14 @@ public abstract class ImportEntryProcessor {
           final String typeOfData = localImportEntry.getTypeofdata();
 
           if (logger.isDebugEnabled()) {
-            logger.debug("Processing entry " + localImportEntry.getIdentifier() + " " + typeOfData);
+            logger.debug("Processing entry {} {}", localImportEntry.getIdentifier(), typeOfData);
           }
 
           processEntry(localImportEntry);
 
           if (logger.isDebugEnabled()) {
-            logger.debug(
-                "Finished Processing entry " + localImportEntry.getIdentifier() + " " + typeOfData);
+            logger.debug("Finished Processing entry {} {} in {} ms",
+                localImportEntry.getIdentifier(), typeOfData, System.currentTimeMillis() - t0);
           }
 
           // don't use the import entry anymore, touching methods on it
@@ -544,20 +540,22 @@ public abstract class ImportEntryProcessor {
       // prevents memory problems
       if (importEntries.size() > MAX_QUEUE_SIZE) {
         // set to level debug until other changes have been made in subclassing code
-        logger.debug("Ignoring import entry, will be reprocessed later, too many queue entries "
-            + importEntries.size());
+        logger.warn(
+            "Ignoring import entry {} - {}, will be reprocessed later, too many queue entries {}",
+            importEntry.getTypeofdata(), key, importEntries.size());
         return;
       }
 
       if (!importEntryIds.contains(importEntry.getId())) {
-        logger.debug("Adding entry to runnable with key " + key);
+        logger.debug("Adding entry to runnable with key {} - {}", importEntry.getTypeofdata(), key);
 
         importEntryIds.add(importEntry.getId());
         // cache a queued entry as it has a much lower mem foot print than the import
         // entry itself
         importEntries.add(new QueuedEntry(importEntry));
       } else {
-        logger.debug("Not adding entry, it is already in the list of ids " + importEntry.getId());
+        logger.debug("Not adding entry, it is already in the list of ids {} - {} - {} ",
+            importEntry.getTypeofdata(), key, importEntry.getId());
       }
     }
 

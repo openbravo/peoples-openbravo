@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2017 Openbravo SLU
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -41,7 +42,6 @@ import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.AbstractScrollableFieldProviderFilter;
-import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.LimitRowsScrollableFieldProviderFilter;
@@ -225,7 +225,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
-      out.print(strcAcctSchemaId);
+      out.print(StringEscapeUtils.escapeHtml(strcAcctSchemaId));
       out.close();
     }
 
@@ -510,15 +510,11 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
 
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_ORG_ID",
-          "", "", Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportGeneralLedger"),
-          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"), '*');
-      comboTableData.fillParameters(null, "ReportGeneralLedger", "");
-      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
+    
+    xmlDocument.setData("reportAD_ORGID", "liststructure",
+        SelectorUtilityData.selectAllOrganizations(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportGeneralLedger"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger")));
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");

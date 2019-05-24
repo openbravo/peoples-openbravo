@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,9 +48,23 @@ function printMessage(msg) {
     if (msg!=null && msg != "") alert(msg);
     var key = document.frmMain.inpInstance.value;
     var text = document.frmMain.inpDescription.value;
-    var theOpener = top.opener || getFrame('LayoutMDI');
+    var theOpener = getOpenerToCloseSearch();
     theOpener.closeSearch("SAVE", key, text, null);
     return true;
+}
+function getOpenerToCloseSearch() {
+    if (top.opener && top.opener.closeSearch) {
+        return top.opener;
+    }
+    if (getFrame('LayoutMDI')) {
+        if (getFrame('LayoutMDI').closeSearch) {
+            return getFrame('LayoutMDI')
+        }
+        if (getFrame('LayoutMDI').parent && getFrame('LayoutMDI').parent.closeSearch) {
+            return getFrame('LayoutMDI').parent
+        }
+    }
+    return null;
 }
 </script>
 <script language="JavaScript" type="text/javascript" id="paramScript">
@@ -60,7 +74,7 @@ function onloadFunctions() {
 </script>
 <script language="JavaScript" type="text/javascript">
 function validateSelector(action) {
-    var theOpener = top.opener || getFrame('LayoutMDI');
+    var theOpener = getOpenerToCloseSearch();
     if (action=="SAVE") {
         if (validate()) {
             submitCommandForm("SAVE");

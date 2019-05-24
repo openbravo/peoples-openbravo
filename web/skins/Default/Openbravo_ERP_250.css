@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2017 Openbravo SLU
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -5031,12 +5031,12 @@ td.TextBox_MsgContainerVt_td {
 }
 
 .Tree_Actions_Invisible {
-	height: 16px;
+    height: 16px;
     vertical-align: center;
     padding: 3 10 0 10 ;
     text-align: center;
     font-weight: bold;
-	-moz-border-radius-topleft: 8px;
+    -moz-border-radius-topleft: 8px;
     -moz-border-radius-topright: 8px;
     -moz-border-radius-bottomright: 8px;
     -moz-border-radius-bottomleft: 8px;
@@ -5734,8 +5734,6 @@ table.Login_ToolBar_bg {
   font-size: 7pt;
   font-weight: normal;
   font-family: tahoma,arial,helvetica,sans-serif;
-  margin-left: 25px;
-  _margin-left: 50px;
   padding: 10 0 2 25;
 }
 
@@ -5754,7 +5752,7 @@ table.Login_ToolBar_bg {
   font-family: tahoma,arial,helvetica,sans-serif;
   padding: 5 0 15 43;
   text-align: left;
-
+  display: inline-flex;
 }
 
 .AddModule_Text_Option {
@@ -9083,17 +9081,17 @@ a.Popup_Client_Help_LabelLink_focus {
 }
 
 .HelpItems h3 {
-	display: inline;
+    display: inline;
     font-size: 1.1em;
 }
 
 .HelpItems span {
-	display: block;
+    display: block;
     padding: 3px 0 0 10px;
 }
 
 .HelpItems ul {
-	margin: 0;
+    margin: 0;
     padding: 0 0 0 20px;
 }
 

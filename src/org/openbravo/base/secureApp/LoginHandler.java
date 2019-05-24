@@ -324,7 +324,6 @@ public class LoginHandler extends HttpBaseServlet {
         goToRetry(res, vars, msg, title, "Error", action);
         return;
       }
-
       // Build checks
 
       if (sysInfo.getSystemStatus() == null || sysInfo.getSystemStatus().equals("RB70")
@@ -409,6 +408,11 @@ public class LoginHandler extends HttpBaseServlet {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  /** Is current login for a back-office session */
+  protected boolean isBackOfficeLogin() {
+    return true;
   }
 
   private String getUserStartPage(String userId, RoleDefaults rd, String target,
@@ -525,7 +529,8 @@ public class LoginHandler extends HttpBaseServlet {
       jsonMsg.put("messageTitle", title);
       jsonMsg.put("messageText", msg);
 
-      if (loginHasError) {
+      if (loginHasError && isBackOfficeLogin()) {
+        // mobile apps expect session to be populated in case of backoffice restricted roles
         vars.clearSession(false);
       }
 

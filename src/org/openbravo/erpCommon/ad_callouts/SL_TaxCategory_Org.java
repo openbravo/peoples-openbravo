@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,8 +46,7 @@ public class SL_TaxCategory_Org extends SimpleCallout {
     String whereClause = "";
 
     while ("".equals(taxCategoryId)) {
-      whereClause = "as tn where tn.node = '" + organization.getId() + "' and tn.client.id = '"
-          + organization.getClient().getId() + "'";
+      whereClause = "as tn where tn.node = :organizationId and tn.client.id = :clientId";
       OBCriteria<TaxCategory> taxCategory = OBDal.getInstance().createCriteria(TaxCategory.class);
       taxCategory.add(Restrictions.eq(TaxCategory.PROPERTY_ORGANIZATION, organization));
       taxCategory.add(Restrictions.eq(TaxCategory.PROPERTY_DEFAULT, true));
@@ -56,6 +55,8 @@ public class SL_TaxCategory_Org extends SimpleCallout {
       TaxCategory taxCategoryObject = (!listTaxCategory.isEmpty() ? listTaxCategory.get(0) : null);
       if (taxCategoryObject == null && !"0".equals(organization.getId())) {
         OBQuery<TreeNode> query = OBDal.getInstance().createQuery(TreeNode.class, whereClause);
+        query.setNamedParameter("organizationId", organization.getId());
+        query.setNamedParameter("clientId", organization.getClient().getId());
         query.setMaxResult(1);
         List<TreeNode> listTreeNode = query.list();
         TreeNode treeNode = listTreeNode.get(0);

@@ -1104,7 +1104,6 @@ isc.OBViewGrid.addProperties({
       this.deselectAllRecords();
 
       if (localState.summaryFunctions) {
-        hasSummaryFunction = false;
         for (i = 0; i < this.getAllFields().length; i++) {
           fld = this.getAllFields()[i];
           // summary functions are not allowed in computed columns
@@ -1295,7 +1294,9 @@ isc.OBViewGrid.addProperties({
     if (summary) {
       config.params = config.params || {};
       config.params._summary = summary;
+      this.fetchingSummaryRow = true;
       config.params = this.getFetchRequestParams(config.params);
+      delete this.fetchingSummaryRow;
     }
     return config;
   },
@@ -1494,11 +1495,8 @@ isc.OBViewGrid.addProperties({
 
     ksAction_DeleteSelectedRecords = function () {
       var isRecordDeleted = me.deleteSelectedRowsByToolbarIcon();
-      if (isRecordDeleted) {
-        return false; // To avoid keyboard shortcut propagation
-      } else {
-        return true;
-      }
+      // Return false to avoid keyboard shortcut propagation
+      return !isRecordDeleted;
     };
     OB.KeyboardManager.Shortcuts.set('ViewGrid_DeleteSelectedRecords', 'OBViewGrid.body', ksAction_DeleteSelectedRecords);
 
@@ -1708,6 +1706,8 @@ isc.OBViewGrid.addProperties({
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' + '<span onclick="this.onclick = new Function(); setTimeout(function() { window[\'' + this.ID + '\'].view.newRow(); }, 50); return false;" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne') + '</span>';
     }
     this.resetEmptyMessage();
+
+    this.discardAllEdits();
 
     var record, ret = this.Super('dataArrived', arguments);
     this.updateRowCountDisplay();
@@ -2096,7 +2096,7 @@ isc.OBViewGrid.addProperties({
 
   getCriteria: function () {
     var criteria = this.Super('getCriteria', arguments) || {};
-    if ((criteria === null || !criteria.criteria) && this.initialCriteria) {
+    if (!criteria.criteria && this.initialCriteria) {
       criteria = isc.shallowClone(this.initialCriteria);
     }
     criteria = this.convertCriteria(criteria);
@@ -2559,6 +2559,8 @@ isc.OBViewGrid.addProperties({
           }
           // assume a date range filter item
           if (isc.isA.Date(value) && field.filterEditorType === 'OBMiniDateRangeItem') {
+            // set the logicalDate property to true so that the date values contained in the filter criteria will always be serialized as plain dates
+            value.logicalDate = true;
             filterFormItem.setSingleDateValue(value);
           } else {
             grid.filterEditor.getEditForm().setValue(field.name, OB.Utilities.encodeSearchOperator(value));
@@ -3231,7 +3233,7 @@ isc.OBViewGrid.addProperties({
     this.removeRecordFromValidationErrorList(record);
 
     // a new id has been computed use that now
-    if (record && record._newId) {
+    if (record._newId) {
       record.id = record._newId;
       delete record._newId;
       if (this.view && this.view.updateLastSelectedState) {
@@ -3700,7 +3702,7 @@ isc.OBViewGrid.addProperties({
         record[this.recordBaseStyleProperty] = null;
       }
 
-      if (record && record.editColumnLayout) {
+      if (record.editColumnLayout) {
         isc.Log.logDebug('hideInlineEditor has record and editColumnLayout', 'OB');
         record.editColumnLayout.showEditOpen();
       } else if (this.currentEditColumnLayout) {
@@ -3867,6 +3869,9 @@ isc.OBViewGrid.addProperties({
   // requests
   // https://issues.openbravo.com/view.php?id=16611
   storeUpdatedEditorValue: function (suppressChange, editCol) {
+    if (this.fetchingSummaryRow) {
+      return;
+    }
     this._storingUpdatedEditorValue = true;
     this._preventDateParsing = true;
     this.Super('storeUpdatedEditorValue', arguments);

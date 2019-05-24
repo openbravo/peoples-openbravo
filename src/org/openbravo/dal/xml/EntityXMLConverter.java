@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,6 @@ import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
@@ -155,12 +154,10 @@ public class EntityXMLConverter implements OBNotSingleton {
   // initialize the sax handlers
   private void initializeSax() throws Exception {
     final StreamResult streamResult = new StreamResult(output);
-    final SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
-
-    xmlHandler = tf.newTransformerHandler();
+    xmlHandler = XMLUtil.getInstance().newSAXTransformerHandler();
 
     // do some form of pretty printing...
-    final Transformer serializer = xmlHandler.getTransformer();
+    Transformer serializer = xmlHandler.getTransformer();
     serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
     serializer.setOutputProperty(OutputKeys.VERSION, "1.0");
     serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");

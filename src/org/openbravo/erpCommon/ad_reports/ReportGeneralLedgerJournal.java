@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2018 Openbravo SLU
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -202,10 +202,16 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     } else if (vars.commandIn("DIRECT2")) {
       String strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",
           "ReportGeneralLedgerJournal|FactAcctGroupId");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", vars.getOrg());
+      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId",
+          "ReportGeneralLedger|cAcctSchemaId");
+      if (StringUtils.isEmpty(strcAcctSchemaId)) {
+        strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      }
       setHistoryCommand(request, "DIRECT2");
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
-      printPageDataSheet(response, vars, "", "", "", "", "", "", "", strFactAcctGroupId, "", "", "",
-          "", "1", "1", "", "Y", "", "", "", "", "", "", "");
+      printPageDataSheet(response, vars, "", "", "", "", strOrg, "", "", strFactAcctGroupId,
+          strcAcctSchemaId, "", "", "", "1", "1", "", "Y", "", "", "", "", "", "", "");
     } else if (vars.commandIn("FIND")) {
       try {
         OBError msg = checkReportUsage(vars);
@@ -469,7 +475,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
-      out.print(strcAcctSchemaId);
+      out.print(StringEscapeUtils.escapeHtml(strcAcctSchemaId));
       out.close();
     } else {
       pageError(response);

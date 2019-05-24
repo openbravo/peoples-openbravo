@@ -49,6 +49,15 @@ public class TestConstants {
 
   public static class Windows {
     public static final String SALES_ORDER = "143";
+    public static final String DISCOUNTS_AND_PROMOTIONS = "800028";
+  }
+
+  public static class Entities {
+    public static final String COUNTRY = "Country";
+  }
+
+  public static class Users {
+    public static final String OPENBRAVO = "100";
   }
 
   private TestConstants() {

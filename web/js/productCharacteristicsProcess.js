@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -207,8 +207,8 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
           },
           columnName: this.characteristicList[i].name,
           inpColumnName: this.characteristicList[i].name,
-          refColumnName: this.characteristicList[i].name,
-          targetEntity: this.characteristicList[i].name,
+          refColumnName: 'name',
+          targetEntity: 'CharacteristicValue',
           treeReferenceId: '95582A51651D415993D0FD3B64C8E861',
           parentCharId: this.characteristicList[i].id,
           dataSourceId: '90034CAE96E847D78FBEF6D38CB1930D',

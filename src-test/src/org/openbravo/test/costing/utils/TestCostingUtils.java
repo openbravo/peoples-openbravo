@@ -405,6 +405,128 @@ public class TestCostingUtils {
     }
   }
 
+  // Create a new product cloning costing Product 1
+  public static Product addProductPriceCost(String name, String productType,
+      BigDecimal purchasePrice, BigDecimal salesPrice, BigDecimal cost, String costType, int year,
+      String currencyId) {
+    try {
+      int num = TestCostingUtils.getNumberOfCostingProducts(name);
+      Product product = OBDal.getInstance()
+          .get(Product.class, TestCostingConstants.COSTING_PRODUCT_ID);
+      Product productClone = (Product) DalUtil.copy(product, false);
+      setGeneralData(productClone);
+
+      productClone.setSearchKey(name + "-" + num);
+      productClone.setName(name + "-" + num);
+      productClone.setMaterialMgmtMaterialTransactionList(null);
+      productClone.setProductType(productType);
+      OBDal.getInstance().save(productClone);
+
+      StringBuffer where = new StringBuffer();
+      where.append(" as pp ");
+      where.append(" join pp." + ProductPrice.PROPERTY_PRICELISTVERSION + " as plv");
+      where.append(" join plv." + PriceListVersion.PROPERTY_PRICELIST + " as pl");
+      where.append(" where pp." + ProductPrice.PROPERTY_PRODUCT + ".id = :productId");
+      where.append(" order by pl." + PriceList.PROPERTY_NAME);
+      OBQuery<ProductPrice> hql = OBDal.getInstance()
+          .createQuery(ProductPrice.class, where.toString());
+      hql.setNamedParameter("productId", TestCostingConstants.COSTING_PRODUCT_ID);
+
+      for (ProductPrice productPrice : hql.list()) {
+        if (productPrice.getPriceListVersion().getPriceList().isSalesPriceList()
+            && salesPrice != null) {
+          ProductPrice productPriceClone = (ProductPrice) DalUtil.copy(productPrice, false);
+          setGeneralData(productPriceClone);
+          productPriceClone.setStandardPrice(salesPrice);
+          productPriceClone.setListPrice(salesPrice);
+          productPriceClone.setProduct(productClone);
+          OBDal.getInstance().save(productPriceClone);
+          productClone.getPricingProductPriceList().add(productPriceClone);
+        } else if (!productPrice.getPriceListVersion().getPriceList().isSalesPriceList()
+            && purchasePrice != null) {
+          ProductPrice productPriceClone = (ProductPrice) DalUtil.copy(productPrice, false);
+          setGeneralData(productPriceClone);
+          productPriceClone.setStandardPrice(purchasePrice);
+          productPriceClone.setListPrice(purchasePrice);
+          productPriceClone.setProduct(productClone);
+          OBDal.getInstance().save(productPriceClone);
+          productClone.getPricingProductPriceList().add(productPriceClone);
+        }
+      }
+
+      if (cost != null) {
+        Costing productCosting = OBProvider.getInstance().get(Costing.class);
+        setGeneralData(productCosting);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2000, 01, 01);
+        productCosting.setStartingDate(calendar.getTime());
+        calendar = Calendar.getInstance();
+        calendar.set(9999, 11, 31);
+        productCosting.setEndingDate(calendar.getTime());
+        productCosting.setManual(true);
+        // productCosting.setPermanent(true);
+        productCosting.setCostType(costType);
+        productCosting.setCost(cost);
+        productCosting
+            .setCurrency(OBDal.getInstance().get(Currency.class, TestCostingConstants.EURO_ID));
+        productCosting.setProduct(productClone);
+        productCosting.setWarehouse(
+            OBDal.getInstance().get(Warehouse.class, TestCostingConstants.SPAIN_EAST_WAREHOUSE_ID));
+        productClone.getMaterialMgmtCostingList().add(productCosting);
+      }
+      OBDal.getInstance().save(productClone);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().refresh(productClone);
+
+      return productClone;
+    } catch (
+
+    Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  public static Product addBOMProducts(Product product, List<Product> productList,
+      List<BigDecimal> quantityList) {
+    List<String> productIdList = new ArrayList<String>();
+    if (productList != null) {
+      for (Product raw_product : productList) {
+        productIdList.add(raw_product.getId());
+      }
+    }
+    Product productClone = product;
+    try {
+      productClone.setBillOfMaterials(true);
+      int i = 0;
+      for (String productBOMId : productIdList) {
+        ProductBOM productBOMClone = OBProvider.getInstance().get(ProductBOM.class);
+        setGeneralData(productBOMClone);
+        productBOMClone.setLineNo((i + 1) * 10L);
+        productBOMClone.setProduct(productClone);
+        productBOMClone.setBOMProduct(OBDal.getInstance().get(Product.class, productBOMId));
+        productBOMClone.setBOMQuantity(quantityList.get(i));
+        i++;
+
+        OBDal.getInstance().save(productBOMClone);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().refresh(productBOMClone);
+      }
+      OBDal.getInstance().save(productClone);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().refresh(productClone);
+
+      verifyBOM(productClone.getId());
+      productClone.setBOMVerified(true);
+
+      OBDal.getInstance().save(productClone);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().refresh(productClone);
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
+    return productClone;
+  }
+
   // Set common fields in all tables
   public static void setGeneralData(BaseOBObject document) {
     try {
@@ -880,7 +1002,7 @@ public class TestCostingUtils {
     }
   }
 
-  // Create a Goods Receipt from a purchase order, complete it and post it
+  // Create a Goods Shipment from a sales order, complete it and post it
   public static ShipmentInOut createGoodsShipment(Order salesOrder, BigDecimal price,
       BigDecimal quantity, int day) {
     try {
@@ -891,7 +1013,7 @@ public class TestCostingUtils {
     }
   }
 
-  // Create a Goods Receipt from a purchase order, complete it and post it
+  // Create a Goods Shipment from a sales order, complete it and post it
   private static ShipmentInOut createGoodsShipment(Order salesOrder, BigDecimal price,
       BigDecimal quantity, String locatorId, int day) {
     try {
@@ -1152,6 +1274,13 @@ public class TestCostingUtils {
   // Create a Inventory Amount Update and process it
   public static ProductionTransaction createBillOfMaterialsProduction(Product product,
       BigDecimal quantity, String locatorId, int day) {
+    return createBillOfMaterialsProduction(product, quantity, locatorId, day, true, false);
+  }
+
+  // Create a Inventory Amount Update and process it
+  public static ProductionTransaction createBillOfMaterialsProduction(Product product,
+      BigDecimal quantity, String locatorId, int day, boolean sortProductionLine,
+      boolean orderByLineNo) {
     try {
       ProductionTransaction billOfMaterialsProduction = createBillOfMaterialsProduction(
           product.getId(), quantity, locatorId, day);
@@ -1174,24 +1303,25 @@ public class TestCostingUtils {
       postDocument(bMaterialsProduction);
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
       List<ProductionLine> productionLinesList = getProductionLines(
-          billOfMaterialsProduction.getId());
-      productionLinesList.add(0, productionLinesList.get(productionLinesList.size() - 1));
-      productionLinesList.remove(productionLinesList.size() - 1);
-
-      final OBCriteria<AccountingFact> criteria1 = OBDal.getInstance()
-          .createCriteria(AccountingFact.class);
-      criteria1.add(
-          Restrictions.eq(AccountingFact.PROPERTY_RECORDID, billOfMaterialsProduction.getId()));
-      criteria1.addOrderBy(AccountingFact.PROPERTY_SEQUENCENUMBER, true);
-
-      if (!criteria1.list()
-          .get(2)
-          .getQuantity()
-          .equals(productionLinesList.get(1).getMovementQuantity())) {
-        productionLinesList.add(1, productionLinesList.get(productionLinesList.size() - 1));
+          billOfMaterialsProduction.getId(), orderByLineNo);
+      if (sortProductionLine) {
+        productionLinesList.add(0, productionLinesList.get(productionLinesList.size() - 1));
         productionLinesList.remove(productionLinesList.size() - 1);
-      }
 
+        final OBCriteria<AccountingFact> criteria1 = OBDal.getInstance()
+            .createCriteria(AccountingFact.class);
+        criteria1.add(
+            Restrictions.eq(AccountingFact.PROPERTY_RECORDID, billOfMaterialsProduction.getId()));
+        criteria1.addOrderBy(AccountingFact.PROPERTY_SEQUENCENUMBER, true);
+
+        if (!criteria1.list()
+            .get(2)
+            .getQuantity()
+            .equals(productionLinesList.get(1).getMovementQuantity())) {
+          productionLinesList.add(1, productionLinesList.get(productionLinesList.size() - 1));
+          productionLinesList.remove(productionLinesList.size() - 1);
+        }
+      }
       int i = 0;
       for (ProductionLine productionLine : productionLinesList) {
         BigDecimal amountTotal = BigDecimal.ZERO;
@@ -3847,18 +3977,42 @@ public class TestCostingUtils {
   }
 
   // Get Product Transaction list
-  public static List<MaterialTransaction> getProductTransactions(String productId) {
+  public static List<MaterialTransaction> getProductTransactions(String productId,
+      boolean orderByTransProcessDate) {
     try {
       OBCriteria<MaterialTransaction> criteria = OBDal.getInstance()
           .createCriteria(MaterialTransaction.class);
       criteria.add(Restrictions.eq(MaterialTransaction.PROPERTY_PRODUCT,
           OBDal.getInstance().get(Product.class, productId)));
-      criteria.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTDATE, true);
-      criteria.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTQUANTITY, true);
+      if (orderByTransProcessDate) {
+        criteria.addOrderBy(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
+      } else {
+        criteria.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTDATE, true);
+        criteria.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTQUANTITY, true);
+      }
       return criteria.list();
     } catch (Exception e) {
       throw new OBException(e);
     }
+  }
+
+  // Get Product Transaction for Production Line
+  public static MaterialTransaction getProductTransactionsForProductionLine(
+      ProductionLine productionLine) {
+    try {
+      OBCriteria<MaterialTransaction> criteria = OBDal.getInstance()
+          .createCriteria(MaterialTransaction.class);
+      criteria.add(Restrictions.eq(MaterialTransaction.PROPERTY_PRODUCTIONLINE, productionLine));
+      criteria.setMaxResults(1);
+      return criteria.uniqueResult() != null ? (MaterialTransaction) criteria.uniqueResult() : null;
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  // Get Product Transaction list
+  public static List<MaterialTransaction> getProductTransactions(String productId) {
+    return getProductTransactions(productId, false);
   }
 
   // Get Product Transaction list
@@ -3879,6 +4033,33 @@ public class TestCostingUtils {
       return hql.list();
     } catch (Exception e) {
       throw new OBException(e);
+    }
+  }
+
+  public static Boolean existsProductTransactionCostByCostIsUnitCostCurrency(
+      MaterialTransaction transaction, Boolean isUnitCost, String currencyId, BigDecimal cost) {
+    if (transaction != null) {
+      try {
+        StringBuffer where = new StringBuffer();
+        where.append(" as t ");
+        where.append(
+            "\n where t." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " = :transaction");
+        where.append("\n and t." + TransactionCost.PROPERTY_UNITCOST + " = :unitcost");
+        where.append("\n and t." + TransactionCost.PROPERTY_CURRENCY + " = :currencyId");
+        where.append("\n and t." + TransactionCost.PROPERTY_COST + " = :cost");
+        OBQuery<TransactionCost> hql = OBDal.getInstance()
+            .createQuery(TransactionCost.class, where.toString());
+        hql.setNamedParameter("transaction", transaction);
+        hql.setNamedParameter("unitcost", isUnitCost);
+        hql.setNamedParameter("currencyId", OBDal.getInstance().get(Currency.class, currencyId));
+        hql.setNamedParameter("cost", cost);
+        hql.setMaxResult(1);
+        return hql.uniqueResult() != null;
+      } catch (Exception e) {
+        throw new OBException(e);
+      }
+    } else {
+      return false;
     }
   }
 
@@ -3904,7 +4085,8 @@ public class TestCostingUtils {
   }
 
   // Get Production Line list
-  public static List<ProductionLine> getProductionLines(String productionTransactionId) {
+  public static List<ProductionLine> getProductionLines(String productionTransactionId,
+      boolean orderByLineNo) {
     try {
       StringBuffer where = new StringBuffer();
       where.append(" as t1 ");
@@ -3912,7 +4094,11 @@ public class TestCostingUtils {
       where.append("\n left join t1." + ProductionLine.PROPERTY_PRODUCT + " t3");
       where.append(
           "\n where t2." + ProductionPlan.PROPERTY_PRODUCTION + " = :productionTransaction");
-      where.append("\n order by t3." + Product.PROPERTY_NAME);
+      if (orderByLineNo) {
+        where.append("\n order by t1." + ProductionLine.PROPERTY_LINENO);
+      } else {
+        where.append("\n order by t3." + Product.PROPERTY_NAME);
+      }
       OBQuery<ProductionLine> hql = OBDal.getInstance()
           .createQuery(ProductionLine.class, where.toString());
       hql.setNamedParameter("productionTransaction",
@@ -3921,6 +4107,12 @@ public class TestCostingUtils {
     } catch (Exception e) {
       throw new OBException(e);
     }
+  }
+
+  // Get Production Line list Order by Line No
+  public static List<ProductionLine> getProductionLines(String productionTransactionId) {
+    return getProductionLines(productionTransactionId, false);
+
   }
 
   // Get transaction amount
@@ -4258,11 +4450,17 @@ public class TestCostingUtils {
     }
   }
 
-  // Assert Product Transactions
   public static void assertProductTransaction(String productId,
       List<ProductTransactionAssert> productTransactionAssertList) {
+    assertProductTransaction(productId, productTransactionAssertList, false);
+  }
+
+  // Assert Product Transactions
+  public static void assertProductTransaction(String productId,
+      List<ProductTransactionAssert> productTransactionAssertList, boolean orderByProcessDate) {
     try {
-      List<MaterialTransaction> materialTransactionList = getProductTransactions(productId);
+      List<MaterialTransaction> materialTransactionList = getProductTransactions(productId,
+          orderByProcessDate);
       assertEquals(materialTransactionList.size(), productTransactionAssertList.size());
 
       int i = 0;
@@ -4285,7 +4483,8 @@ public class TestCostingUtils {
         assertEquals(materialTransaction.isCostPermanent(), productTransactionAssert.isPermanent());
 
         if (productTransactionAssert.getOriginalPrice() != null) {
-          assertEquals(materialTransaction.getCurrency(), productTransactionAssert.getCurrency());
+          assertEquals(materialTransaction.getCurrency().getId(),
+              productTransactionAssert.getCurrency().getId());
           assertEquals(materialTransaction.getCostingAlgorithm().getName(), "Average Algorithm");
           assertTrue(materialTransaction.isCostCalculated());
           assertEquals(materialTransaction.getCostingStatus(), "CC");
@@ -4355,30 +4554,40 @@ public class TestCostingUtils {
                     .setScale(2, RoundingMode.HALF_UP));
           }
 
-          assertEquals(materialTransaction.getGoodsShipmentLine(),
-              productTransactionAssert.getShipmentReceiptLine());
-          assertEquals(materialTransaction.getPhysicalInventoryLine(),
-              productTransactionAssert.getInventoryLine());
-          assertEquals(materialTransaction.getMovementLine(),
-              productTransactionAssert.getMovementLine());
-          assertEquals(materialTransaction.getInternalConsumptionLine(),
-              productTransactionAssert.getConsumptionLine());
-          assertEquals(materialTransaction.getProductionLine(),
-              productTransactionAssert.getProductionLine());
+          if (materialTransaction.getGoodsShipmentLine() != null) {
+            assertEquals(materialTransaction.getGoodsShipmentLine().getId(),
+                productTransactionAssert.getShipmentReceiptLine().getId());
+          }
+          if (materialTransaction.getPhysicalInventoryLine() != null) {
+            assertEquals(materialTransaction.getPhysicalInventoryLine().getId(),
+                productTransactionAssert.getInventoryLine().getId());
+          }
+          if (materialTransaction.getMovementLine() != null) {
+            assertEquals(materialTransaction.getMovementLine().getId(),
+                productTransactionAssert.getMovementLine().getId());
+          }
+          if (materialTransaction.getInternalConsumptionLine() != null) {
+            assertEquals(materialTransaction.getInternalConsumptionLine().getId(),
+                productTransactionAssert.getConsumptionLine().getId());
+          }
+          if (materialTransaction.getProductionLine() != null) {
+            assertEquals(materialTransaction.getProductionLine().getId(),
+                productTransactionAssert.getProductionLine().getId());
+          }
           assertEquals(materialTransaction.getMovementType(),
               productTransactionAssert.getShipmentReceiptLine()
                   .getShipmentReceipt()
                   .getMovementType());
-          assertEquals(materialTransaction.getStorageBin(),
-              productTransactionAssert.getShipmentReceiptLine().getStorageBin());
-          assertEquals(materialTransaction.getProduct(),
-              productTransactionAssert.getShipmentReceiptLine().getProduct());
+          assertEquals(materialTransaction.getStorageBin().getId(),
+              productTransactionAssert.getShipmentReceiptLine().getStorageBin().getId());
+          assertEquals(materialTransaction.getProduct().getId(),
+              productTransactionAssert.getShipmentReceiptLine().getProduct().getId());
           assertEquals(formatDate(materialTransaction.getMovementDate()),
               formatDate(productTransactionAssert.getShipmentReceiptLine()
                   .getShipmentReceipt()
                   .getMovementDate()));
-          assertEquals(materialTransaction.getUOM(),
-              productTransactionAssert.getShipmentReceiptLine().getUOM());
+          assertEquals(materialTransaction.getUOM().getId(),
+              productTransactionAssert.getShipmentReceiptLine().getUOM().getId());
           assertTrue(materialTransaction.isCheckReservedQuantity());
         }
 
@@ -4536,8 +4745,8 @@ public class TestCostingUtils {
           assertEquals(materialTransaction.getMovementQuantity(),
               productTransactionAssert.getProductionLine().getMovementQuantity());
           assertEquals(materialTransaction.getMovementType(), "P+");
-          assertEquals(materialTransaction.getStorageBin(),
-              productTransactionAssert.getProductionLine().getStorageBin());
+          assertEquals(materialTransaction.getStorageBin().getId(),
+              productTransactionAssert.getProductionLine().getStorageBin().getId());
 
           assertEquals(materialTransaction.getGoodsShipmentLine(),
               productTransactionAssert.getShipmentReceiptLine());
@@ -4547,15 +4756,15 @@ public class TestCostingUtils {
               productTransactionAssert.getMovementLine());
           assertEquals(materialTransaction.getInternalConsumptionLine(),
               productTransactionAssert.getConsumptionLine());
-          assertEquals(materialTransaction.getProduct(),
-              productTransactionAssert.getProductionLine().getProduct());
+          assertEquals(materialTransaction.getProduct().getId(),
+              productTransactionAssert.getProductionLine().getProduct().getId());
           assertEquals(formatDate(materialTransaction.getMovementDate()),
               formatDate(productTransactionAssert.getProductionLine()
                   .getProductionPlan()
                   .getProduction()
                   .getMovementDate()));
-          assertEquals(materialTransaction.getUOM(),
-              productTransactionAssert.getProductionLine().getUOM());
+          assertEquals(materialTransaction.getUOM().getId(),
+              productTransactionAssert.getProductionLine().getUOM().getId());
           assertTrue(materialTransaction.isCheckReservedQuantity());
 
           j++;
@@ -4650,8 +4859,8 @@ public class TestCostingUtils {
           assertEquals(materialTransactionCost.getInventoryTransaction(), materialTransaction);
           assertEquals(formatDate(materialTransactionCost.getCostDate()),
               formatDate(materialTransaction.getTransactionProcessDate()));
-          assertEquals(materialTransactionCost.getCurrency(),
-              productTransactionAssert.getCurrency());
+          assertEquals(materialTransactionCost.getCurrency().getId(),
+              productTransactionAssert.getCurrency().getId());
 
           if (k == 0) {
             assertEquals(materialTransactionCost.getCost(),
