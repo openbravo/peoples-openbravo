@@ -1384,6 +1384,27 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   column-gap: 10px;
 }
 
+.obObposPointOfSaleUiGridKeyboard > button.obUiActionButton {
+  font-size: 24px;
+  background-color: #e2e2e2;
+  color: black;
+}
+.obObposPointOfSaleUiGridKeyboard > button.obUiActionButton:hover {
+  opacity: 0.75;
+}
+
+.obObposPointOfSaleUiGridKeyboard > button.obUiActionButton:disabled,
+.obObposPointOfSaleUiGridKeyboard > button.obUiActionButton[disabled=true]:hover {
+  cursor: default;
+  background-color: #717171;
+  opacity: 1;
+}
+
+.obObposPointOfSaleUiGridKeyboard > button.obUiActionButton:active {
+  opacity: 0.999;
+  background-color: #cccccc;
+}
+
 .obObposPointOfSaleUiGridKeyboard-keyboardEditBox {
   grid-area: inp;
   background-color: white;
