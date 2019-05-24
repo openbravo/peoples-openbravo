@@ -1,6 +1,22 @@
 <?xml version="1.0"?>
   <database name="MODIFIED TABLE C_ORDERLINE">
     <table name="C_ORDERLINE" primaryKey="C_ORDERLINE_KEY">
+      <column name="EM_OBRDM_DELIVERY_MODE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRDM_DELIVERY_DATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRDM_DELIVERY_TIME" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRDM_AMTTOPAYINDELIVERY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="EM_OBPOS_EPCCODE" primaryKey="false" required="false" type="VARCHAR" size="24" autoIncrement="false">
         <default/>
         <onCreateDefault/>
