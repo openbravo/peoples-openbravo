@@ -436,8 +436,30 @@ enyo.kind({
       return errors;
     }
 
+    function validateSMS(customer) {
+      //Validate that sms field is filled if  'Commercial Auth -> sms' is checked
+      var commercialAuthViaSms = customer.get('viasms');
+      var alternativePhone = customer.get('alternativePhone');
+      var phone = customer.get('phone');
+      if (commercialAuthViaSms && (phone === '' && alternativePhone === '')) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    function validateEmail(customer) {
+      //Validate that email field is filled if 'Commercial Auth -> email' is checked
+      var commercialAuthViaEmail = customer.get('viaemail');
+      var email = customer.get('email');
+      if (commercialAuthViaEmail && email === '') {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
     function validateForm(form) {
-      var validate = true;
       if (inEvent.validations) {
         var customer = form.model.get('customer'),
             errors = checkMandatoryFields(form.$.customerOnlyFields.children, customer);
@@ -461,43 +483,22 @@ enyo.kind({
         }
         if (errors) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
-          validate = false;
+          return false;
         }
         if (customer.get('firstName').length + customer.get('lastName').length >= 60) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_TooLongName'));
-          validate = false;
+          return false;
         }
-        validate = validateSMS(customer);
-        validate = validateEmail(customer);
+        if (!validateSMS(customer)) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PhoneRequired'));
+          return false;
+        }
+        if (!validateEmail(customer)) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_EmailRequired'));
+          return false;
+        }
       }
-      return validate;
-    }
-
-    function validateSMS(customer) {
-      //Validate that sms field is filled if  'Commercial Auth -> sms' is checked
-      var commercialAuthViaSms = customer.get('viasms');
-      var alternativePhone = customer.get('alternativePhone');
-      var phone = customer.get('phone');
-      if (commercialAuthViaSms && (phone === '' && alternativePhone === '')) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PhoneRequired'));
-        enableButtonsCallback(false);
-        return false;
-      } else {
-        return true;
-      }
-    }
-
-    function validateEmail(customer) {
-      //Validate that email field is filled if 'Commercial Auth -> email' is checked
-      var commercialAuthViaEmail = customer.get('viaemail');
-      var email = customer.get('email');
-      if (commercialAuthViaEmail && email === '') {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_EmailRequired'));
-        enableButtonsCallback(false);
-        return false;
-      } else {
-        return true;
-      }
+      return true;
     }
 
     function beforeCustomerSave(customer, isNew) {
@@ -678,6 +679,7 @@ enyo.kind({
   kind: 'OB.UI.CustomerConsentCheckProperty',
   loadValue: function (inSender, inEvent) {
     var me = this;
+    var i;
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get(me.modelProperty) !== undefined) {
         me.checked = inEvent.customer.get(me.modelProperty);
@@ -687,9 +689,9 @@ enyo.kind({
       } else {
         me.removeClass('active');
       }
-      for (var component in me.parent.parent.parent.children) {
-        if (me.parent.parent.parent.children[component].name === 'line_contactpreferences') {
-          var contactpreferences = me.parent.parent.parent.children[component];
+      for (i = 0; i < me.parent.parent.parent.children.length; i++) {
+        if (me.parent.parent.parent.children[i].name === 'line_contactpreferences') {
+          var contactpreferences = me.parent.parent.parent.children[i];
           var commercialauth = inEvent.customer.attributes.commercialauth;
           if (commercialauth) {
             contactpreferences.show();
@@ -707,11 +709,12 @@ enyo.kind({
     if (this.readOnly) {
       return;
     }
+    var i;
     this.checked = !this.checked;
     this.addRemoveClass('active', this.checked);
-    for (var component in this.parent.parent.parent.children) {
-      if (this.parent.parent.parent.children[component].name === 'line_contactpreferences') {
-        var contactpreferences = this.parent.parent.parent.children[component];
+    for (i = 0; i < this.parent.parent.parent.children.length; i++) {
+      if (this.parent.parent.parent.children[i].name === 'line_contactpreferences') {
+        var contactpreferences = this.parent.parent.parent.children[i];
         var smsCheck = contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck;
         var emailCheck = contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck;
         if (this.checked) {
@@ -727,15 +730,16 @@ enyo.kind({
   },
   saveChange: function (inSender, inEvent) {
     var me = this;
+    var i;
     inEvent.customer.set(me.modelProperty, me.checked);
-    for (var component in me.parent.parent.parent.children) {
-      if (me.parent.parent.parent.children[component].name === 'line_contactpreferences') {
-        var contactpreferences = me.parent.parent.parent.children[component];
+    for (i = 0; i < me.parent.parent.parent.children.length; i++) {
+      if (me.parent.parent.parent.children[i].name === 'line_contactpreferences') {
+        var contactpreferences = me.parent.parent.parent.children[i];
         inEvent.customer.set('viasms', contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck.checked);
         inEvent.customer.set('viaemail', contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck.checked);
       }
     }
-  },
+  }
 });
 enyo.kind({
   name: 'OB.UI.CustomerCheckComboProperty',
@@ -768,7 +772,7 @@ enyo.kind({
           style: 'width: 80%; display: table-cell; vertical-align: middle; border: none; '
         }]
       }]
-    }],
+    }]
   }],
   handlers: {
     onLoadValue: 'loadValue',
@@ -779,7 +783,7 @@ enyo.kind({
   },
   loadValue: function (inSender, inEvent) {
     var me = this;
-    var commertialauth;
+    var commertialauth, i;
 
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get('viasms') !== undefined) {
@@ -802,9 +806,9 @@ enyo.kind({
       } else {
         me.$.emailCheck.removeClass('active');
       }
-      for (var component in me.parent.parent.parent.children) {
-        if (me.parent.parent.parent.children[component].name === 'line_commercialauth') {
-          commertialauth = me.parent.parent.parent.children[component].$.newAttribute.$.commercialauth;
+      for (i = 0; i < me.parent.parent.parent.children.length; i++) {
+        if (me.parent.parent.parent.children[i].name === 'line_commercialauth') {
+          commertialauth = me.parent.parent.parent.children[i].$.newAttribute.$.commercialauth;
           if (commertialauth.checked) {
             if (me.$.smsCheck.checked) {
               me.$.smsCheck.addClass('active');
