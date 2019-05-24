@@ -3155,16 +3155,49 @@
 
 
 
+/***********************   ***********************/
+/*     File: OB.OBPOSCashMgmt.UI.CashMgmtInfo    */
+/*               Folder: js/view                 */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashMgmt.UI.RenderDepositLine
+*/
+.obObposcashmgmtUiCashMgmtInfo {}
+
+.obObposcashmgmtUiCashMgmtInfo-container1 {
+  position: relative;
+  background: var(--color-primary-dark);
+  color: var(--color-primary-lighter);
+  height: 200px;
+  margin: 5px;
+  padding: 5px;
+}
+
+.obObposcashmgmtUiCashMgmtInfo-container1-obUiClock {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  text-align: center;
+}
+
+.obObposcashmgmtUiCashMgmtInfo-container1-obUiClock-infoLbl {
+  padding: 10px;
+  float: left;
+  width: 320px;
+  line-height: 23px;
+}
 
 
 
-
-
-
-
-
-
-
+/*
+# Component: OB.OBPOSCashMgmt.UI.RenderDepositLine
+# Inherits: [OB.UI.RegularButton]
+*/
+.obObposcashmgmtUiDoneButton {
+  background-color: #ffffff;
+  color: #363636;
+  min-width: 115px;
+}
 
 
 
