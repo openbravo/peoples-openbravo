@@ -39,9 +39,9 @@ OB.DS.HWServer = function (urllist, url, scaleurl) {
     this.mainurl = this.mainurl.substring(0, this.mainurl.length - 8);
   }
   // load activeurl from OB.UTIL.localStorage
-  this.setActiveURL(OB.UTIL.localStorage.getItem('hw_activeurl'));
+  this.setActiveURL(OB.UTIL.localStorage.getItem('hw_activeurl_id'));
   //load activepdfurl from OB.UTIL.localStorage
-  this.setActivePDFURL(OB.UTIL.localStorage.getItem('hw_activepdfurl'));
+  this.setActivePDFURL(OB.UTIL.localStorage.getItem('hw_activepdfurl_id'));
 
   // WebPrinter
   var printertypeinfo = OB.PRINTERTYPES[OB.MobileApp.model.get('terminal').printertype];
@@ -62,60 +62,64 @@ OB.DS.HWServer.prototype.showSelected = function () {
 };
 
 
-OB.DS.HWServer.prototype.setActiveURL = function (url) {
-
-  // validate urls
-  if (this.urllist) { // Check only in the case urllist is a valid to prevent wrong initializations
-    var validprinter = _.find(this.urllist, function (item) {
-      return item.hasReceiptPrinter && item.hardwareURL === url;
+OB.DS.HWServer.prototype.setActiveURL = function (hardwareId) {
+  var validprinter;
+  if (OB.UTIL.isNullOrUndefined(hardwareId) && OB.UTIL.isNullOrUndefined(this.mainurl)) {
+    validprinter = _.find(this.urllist, function (item) {
+      return item.hasReceiptPrinter && item.hardwareURL === this.mainurl;
     }, this);
-    if (validprinter) {
-      this.activeurl = validprinter.hardwareURL;
-      this.activeidentifier = validprinter._identifier;
-    } else {
-      this.activeurl = this.mainurl;
-      this.activeidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
-    }
+  } else {
+    validprinter = _.find(this.urllist, function (item) {
+      return item.hasReceiptPrinter && item.id === hardwareId;
+    }, this);
+  }
+  if (validprinter) {
+    this.activeurl = validprinter.hardwareURL;
+    this.activeidentifier = validprinter._identifier;
+    this.activeurl_id = validprinter.id;
   } else {
     this.activeurl = this.mainurl;
     this.activeidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
+    this.activeurl_id = OB.MobileApp.model.get('terminal').id;
   }
 
   // save
   if (this.activeurl) {
-    OB.UTIL.localStorage.setItem('hw_activeurl', this.activeurl);
+    OB.UTIL.localStorage.setItem('hw_activeurl_id', this.activeurl_id);
     OB.UTIL.localStorage.setItem('hw_activeidentifier', this.activeidentifier);
   } else {
-    OB.UTIL.localStorage.removeItem('hw_activeurl');
+    OB.UTIL.localStorage.removeItem('hw_activeurl_id');
     OB.UTIL.localStorage.removeItem('hw_activeidentifier');
   }
 };
 
-OB.DS.HWServer.prototype.setActivePDFURL = function (url) {
-
-  // validate urls
-  if (this.urllist) { // Check only in the case urllist is a valid to prevent wrong initializations
-    var validprinter = _.find(this.urllist, function (item) {
-      return item.hasPDFPrinter && item.hardwareURL === url;
+OB.DS.HWServer.prototype.setActivePDFURL = function (hardwareId) {
+  var validprinter;
+  if (OB.UTIL.isNullOrUndefined(hardwareId) && OB.UTIL.isNullOrUndefined(this.mainurl)) {
+    validprinter = _.find(this.urllist, function (item) {
+      return item.hasPDFPrinter && item.hardwareURL === this.mainurl;
     }, this);
-    if (validprinter) {
-      this.activepdfurl = validprinter.hardwareURL;
-      this.activepdfidentifier = validprinter._identifier;
-    } else {
-      this.activepdfurl = this.mainurl;
-      this.activepdfidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
-    }
+  } else {
+    validprinter = _.find(this.urllist, function (item) {
+      return item.hasPDFPrinter && item.id === hardwareId;
+    }, this);
+  }
+  if (validprinter) {
+    this.activepdfurl = validprinter.hardwareURL;
+    this.activepdfidentifier = validprinter._identifier;
+    this.activepdfurl_id = validprinter.id;
   } else {
     this.activepdfurl = this.mainurl;
     this.activepdfidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
+    this.activepdfurl_id = OB.MobileApp.model.get('terminal').id;
   }
 
   // save
   if (this.activepdfurl) {
-    OB.UTIL.localStorage.setItem('hw_activepdfurl', this.activepdfurl);
+    OB.UTIL.localStorage.setItem('hw_activepdfurl_id', this.activepdfurl_id);
     OB.UTIL.localStorage.setItem('hw_activepdfidentifier', this.activepdfidentifier);
   } else {
-    OB.UTIL.localStorage.removeItem('hw_activepdfurl');
+    OB.UTIL.localStorage.removeItem('hw_activepdfurl_id');
     OB.UTIL.localStorage.removeItem('hw_activepdfidentifier');
   }
 };

@@ -365,7 +365,7 @@ enyo.kind({
         newRelatedLine.orderDocumentNo = line.get('documentNo');
         newRelatedLine.otherTicket = line.get('documentNo') === receipt.get('documentNo') ? false : true;
         newRelatedLine.qty = line.get('qty');
-        newRelatedLine.deliveredQuantity = line.get('deliveredQuantity');
+        newRelatedLine.deliveredQuantity = !OB.UTIL.isNullOrUndefined(line.get('deliveredQuantity')) ? line.get('deliveredQuantity') : line.get('qty');
         newRelatedLine.promotions = line.get('promotions');
         newRelatedLine.bpName = line.get('bpName');
         newRelatedLine.obposIspaid = (OB.UTIL.isNullOrUndefined(relatedLinePaid)) ? false : relatedLinePaid.obposIspaid;
