@@ -6751,7 +6751,150 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptfooter {
-  /* Inherits: [OB.UI.OrderFooter] */
+/* Inherits: [OB.UI.OrderFooter] */
+}
+
+
+
+/***********************   ***********************/
+/*                  File: scan.js                */
+/*         Folder: js/pointofsale/view/          */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.InDevHeader
+*/
+.obObposPointOfSaleUiInDevHeader {}
+
+.obObposPointOfSaleUiInDevHeader-innerDiv {
+  text-align: center;
+  font-size: var(--font-huge);
+  padding: 5px;
+  padding-top: 0px;
+}
+
+.obObposPointOfSaleUiInDevHeader-innerDiv-headerText {
+/* Inherits: [OB.UI.SmallButton] */
+  height: 50px;
+  margin: 5px 5px 0px 0px;
+  padding: 0px;
+  font-size: var(--font-large);
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.obObposPointOfSaleUiInDevHeader-headerText_orange {
+  background-color: orange;
+  color: black;
+}
+
+.obObposPointOfSaleUiInDevHeader-headerText_red {
+  background-color: red;
+  color: black;
+}
+
+.obObposPointOfSaleUiInDevHeader-headerText-headerImg1 {
+  float: left;
+  margin: 8px 10px;
+}
+
+.obObposPointOfSaleUiInDevHeader-headerImg1-element1 {
+  height: 32px;
+  width: 35px;
+  background: url(../org.openbravo.mobile.core/assets/img/Warning.png) no-repeat top left;
+}
+
+.obObposPointOfSaleUiInDevHeader-headerText-headerContentContainer {
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  width: calc(100% - 40px);
+}
+
+.obObposPointOfSaleUiInDevHeader-headerContentContainer-headerContent {
+  flex: 1;
+}
+
+.obObposPointOfSaleUiInDevHeader-headerText-headerImg2 {
+  float: right;
+  margin: 8px 10px;
+}
+
+.obObposPointOfSaleUiInDevHeader-headerImg2-element1 {
+  height: 32px;
+  width: 35px;
+  background: url(../org.openbravo.mobile.core/assets/img/Warning.png) no-repeat top left;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Scan
+*/
+.obObposPointOfSaleUiScan {}
+
+.obObposPointOfSaleUiScan-container1 {
+  position:relative;
+  background-color: #7da7d9;
+  background-size: cover;
+  color: white;
+  height: 200px;
+  margin: 5px;
+  padding: 5px;
+}
+
+.obObposPointOfSaleUiScan-container1-obUiClock {
+/* Inherits: [OB.UI.Clock] */
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  text-align: center;
+}
+
+.obObposPointOfSaleUiScan-container1-mainPanel {}
+
+.obObposPointOfSaleUiScan-mainPanel-msgwelcome {
+  padding: 6px;
+}
+
+.obObposPointOfSaleUiScan-msgwelcome-msgwelcomeLbl {
+  float:right;
+  align-items: center;
+  background-image: url(./../img/OpenbravoWelcomeLogo.svg);
+  background-position-x: right;
+  background-repeat: no-repeat;
+  background-size: 95px 23px;
+  display: flex;
+  font-size: 16px;
+  height: 23px;
+  justify-content: flex-end;
+  padding: 2px 102px 0px 0px;
+}
+
+.obObposPointOfSaleUiScan-mainPanel-msgaction {}
+
+.obObposPointOfSaleUiScan-msgaction-txtaction {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 134px;
+  padding: 10px;
+  float: left;
+  width: 400px;
+  line-height: 23px;
+  position: relative;
+}
+
+.obObposPointOfSaleUiScan-msgaction-container2 {
+  float: right;
+}
+
+.obObposPointOfSaleUiScan-msgaction-container2-undobutton {
+/* Inherits: [OB.UI.SmallButton] */
+  color: #7da7d9;
+  background-color: #ffffff;
+}
+
+.obObposPointOfSaleUiScan-mainPanel-divInDevHeader {
+/* Inherits: [OB.OBPOSPointOfSale.UI.InDevHeader] */
+  height: 35px;
 }
 
 
