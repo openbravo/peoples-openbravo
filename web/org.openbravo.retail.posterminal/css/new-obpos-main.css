@@ -2906,6 +2906,272 @@
 
 
 
+/***********************   ***********************/
+/*           File: listdepositsdrops.js          */
+/*               Folder: js/view                 */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashMgmt.UI.RenderDepositLine
+*/
+.obObposcashmgmtUiRenderDepositLine {}
+
+.obObposcashmgmtUiRenderDepositLine-container1 {}
+
+.obObposcashmgmtUiRenderDepositLine-container1-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposcashmgmtUiRenderDepositLine-container1-container1-description {
+  padding: 6px 20px 6px 10px;
+  float: left; width:30%;
+}
+
+.obObposcashmgmtUiRenderDepositLine-container1-container1-user {
+  text-align: right;
+  padding: 6px 20px 6px 10px;
+  float: left;
+  width: 12%;
+}
+
+.obObposcashmgmtUiRenderDepositLine-container1-container1-time {
+  text-align: right;
+  padding: 6px 20px 6px 10px;
+  float: left;
+  width: 8%;
+}
+
+.obObposcashmgmtUiRenderDepositLine-container1-container1-foreignAmt {
+  text-align: right;
+  padding: 6px 0px 6px 10px;
+  float: left;
+  width: 15%;
+}
+
+.obObposcashmgmtUiRenderDepositLine-container1-container1-amt {
+  text-align: right;
+  padding: 6px 20px 6px 10px;
+  float: right;
+  width: 20%;
+}
+
+/*
+# Component: OB.OBPOSCashMgmt.UI.RenderForeignTotal
+*/
+.obObposcashmgmtUiRenderForeignTotal {}
+
+.obObposcashmgmtUiRenderForeignTotal_negative {
+  color: red;
+}
+
+.obObposcashmgmtUiRenderForeignTotal_positive {
+  color: var(--color-primary-darker);
+}
+
+
+
+/*
+# Component: OB.OBPOSCashMgmt.UI.RenderTotal
+*/
+.obObposcashmgmtUiRenderTotal {}
+
+.obObposcashmgmtUiRenderTotal_negative {
+  color: red;
+}
+
+.obObposcashmgmtUiRenderTotal_positive {
+  color: var(--color-primary-darker);
+}
+
+
+
+/*
+# Component: OB.OBPOSCashMgmt.UI.RenderDepositsDrops
+*/
+.obObposcashmgmtUiRenderDepositsDrops {}
+
+
+.obObposcashmgmtUiRenderDepositsDrops-container1 {}
+
+.obObposcashmgmtUiRenderDepositsDrops-container1-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container1-container1-element1 {
+  padding: 10px 20px 10px 10px;
+  float: left;
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container1-container1-element2 {
+  clear: both;
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container2 {}
+
+.obObposcashmgmtUiRenderDepositsDrops-container2-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container2-container1-startingCashPayName {
+  padding: 6px 20px 6px 10px;
+  float: left; width: 61%;
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container2-container1-startingCashForeignAmnt {
+  text-align: right;
+  padding: 6px 0px 6px 10px;
+  float: left; width: 15%;
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container2-container1-startingCashAmnt {
+  text-align: right;
+  padding: 6px 20px 6px 10px;
+  float: right;
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container3 {}
+
+.obObposcashmgmtUiRenderDepositsDrops-container3-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container3-container1-tenderedLbl {
+  padding: 6px 20px 6px 10px;
+  float: left;
+  width: 61%;
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container3-container1-tenderedForeignAmnt {
+  text-align:right;
+  padding: 6px 0px 6px 10px;
+  float: left; width: 15%'
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container3-container1-tenderedAmnt {
+  text-align:right;
+  padding: 6px 20px 6px 10px;
+  float: right;
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-theList {
+  /*Inherits: [OB.UI.Table]*/
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container4 {}
+
+.obObposcashmgmtUiRenderDepositsDrops-container4-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container4-container1-availableLbl {
+  padding: 10px 20px 10px 10px;
+  float: left;
+  width: 61%;
+  font-weight:bold;
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container4-container1-container1 {
+  text-align: right;
+  padding:  6px 0px 6px 10px;
+  float: left;
+  width: 15%;
+  font-weight:bold;
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container4-container1-container1-foreignTotal {
+  float: right;
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container4-container1-container2 {
+  padding: 10px 20px 10px 0px;
+  float: right;
+}
+
+.obObposcashmgmtUiRenderDepositsDrops-container4-container1-container2-total {
+  /*Inherits: [OB.OBPOSCashMgmt.UI.RenderTotal]*/
+  float:right;
+  font-weight: bold;
+}
+
+
+
+/*
+# Component: PopupDrawerOpened
+*/
+.obObposcashmgmtUiListDepositsDrops {}
+
+.obObposcashmgmtUiListDepositsDrops-container1 {
+  overflow:auto;
+  height: 612px;
+  margin: 5px;
+  background-color: white;
+}
+
+.obObposcashmgmtUiListDepositsDrops-container1-container1 {
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary-darker);
+  padding: 5px;
+}
+
+.obObposcashmgmtUiListDepositsDrops-container1-container1-container1 {}
+
+.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-titleLbl {
+  padding: 6px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align:center;
+  font-weight:bold;
+}
+
+.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-userName {
+  padding: 6px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align:center;
+}
+
+.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-time {
+  padding: 6px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align:center;
+}
+
+.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-store {
+  padding: 6px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align:center;
+}
+
+.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-terminal {
+  padding: 6px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align:center;
+}
+
+.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-depositDropsList {
+  /*Inherits: [OB.UI.Table]*/
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
