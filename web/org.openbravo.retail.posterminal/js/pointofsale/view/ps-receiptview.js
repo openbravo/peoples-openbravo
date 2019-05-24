@@ -41,7 +41,7 @@ enyo.kind({
         }, {
           classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2',
           components: [{
-            classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1',
+            classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1 span12',
             components: [{
               kind: 'OB.UI.OrderView',
               name: 'orderview',
