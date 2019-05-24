@@ -28,22 +28,24 @@ enyo.kind({
     this.hide();
   },
   executeOnShow: function () {
-    this.pressedBtn = false;
-    this.$.body.$.editcustomers_impl.setCustomer(this.args.businessPartner);
+    var component;
+    var me = this;
+    me.pressedBtn = false;
+    me.$.body.$.editcustomers_impl.setCustomer(this.args.businessPartner);
     var customerHeader = this.$.body.$.editcustomers_impl.$.bodyheader.$.editCustomerHeader;
     var buttonContainer = customerHeader.$.buttonContainer;
-    for (var component in buttonContainer.$) {
+    Object.keys(buttonContainer.$).forEach(function (key, index) {
       if (OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader.prototype.customerHeaderButtons.find(function (headerButton) {
-        return headerButton.name === component;
+        return headerButton.name === key;
       })) {
-        buttonContainer.$[component].customer = this.args.businessPartner;
-        buttonContainer.$[component].navigationPath = this.args.navigationPath;
-        buttonContainer.$[component].target = this.args.target;
-        if (buttonContainer.$[component].permission) {
-          buttonContainer.$[component].children[0].putDisabled(!OB.MobileApp.model.hasPermission(buttonContainer.$[component].permission, true));
+        buttonContainer.$[key].customer = me.args.businessPartner;
+        buttonContainer.$[key].navigationPath = me.args.navigationPath;
+        buttonContainer.$[key].target = me.args.target;
+        if (buttonContainer.$[key].permission) {
+          buttonContainer.$[key].children[0].putDisabled(!OB.MobileApp.model.hasPermission(buttonContainer.$[key].permission, true));
         }
       }
-    }
+    });
     // Hide components depending on its displayLogic function
     _.each(this.$.body.$.editcustomers_impl.$.customerAttributes.$, function (attribute) {
       if (attribute.name !== 'strategy') {
@@ -238,7 +240,7 @@ enyo.kind({
           customHeaderContent: (parent.customer.get('_identifier') + "'s " + OB.I18N.getLabel('OBPOS_Cus360LblLastActivity')),
           hideBusinessPartnerColumn: true
         }
-      })
+      });
     }
   }
 });
