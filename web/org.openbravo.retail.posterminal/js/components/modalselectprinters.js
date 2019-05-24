@@ -40,7 +40,7 @@ enyo.kind({
     this.$.printer.setContent(this.printer._identifier);
   },
   selectLine: function (inSender, inEvent) {
-    this.printerscontainer.selectURL(this.printer.hardwareURL);
+    this.printerscontainer.selectURL(this.printer.id);
   }
 });
 
@@ -87,12 +87,12 @@ enyo.kind({
     horizontal: 'hidden',
     components: [{
       name: 'printerslist',
-      selectURL: function (url) {
+      selectURL: function (hardwareId) {
         var isalreadychecked = false;
 
         // check radio of activeurl radio
         _.each(this.$, function (value, key, list) {
-          if (!isalreadychecked && value.printer.hardwareURL === url) {
+          if (!isalreadychecked && value.printer.id === hardwareId) {
             value.$.selected.activeRadio();
             isalreadychecked = true;
           } else {
@@ -106,7 +106,7 @@ enyo.kind({
         var selected = _.find(this.$, function (value, key, list) {
           return value.$.selected.checked;
         }, this);
-        return selected.printer.hardwareURL;
+        return selected.printer.id;
       }
     }]
   },
@@ -156,6 +156,7 @@ enyo.kind({
         printerscontainer: this.printerscontainer,
         printer: {
           _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
+          id: OB.MobileApp.model.get('terminal').id,
           hardwareURL: OB.POS.hwserver.mainurl
         }
       }).render();
@@ -174,7 +175,7 @@ enyo.kind({
     }, this);
 
     // Select the active URL
-    this.printerscontainer.selectURL(OB.POS.hwserver.activeurl);
+    this.printerscontainer.selectURL(OB.POS.hwserver.activeurl_id);
   },
 
   executeOnHide: function () {
@@ -207,7 +208,7 @@ enyo.kind({
     }
 
     if (OB.POS.hwserver.activeurl) {
-      this.printerscontainer.selectURL(OB.POS.hwserver.activeurl);
+      this.printerscontainer.selectURL(OB.POS.hwserver.activeurl_id);
     }
   },
 
@@ -233,12 +234,12 @@ enyo.kind({
     horizontal: 'hidden',
     components: [{
       name: 'printerslist',
-      selectURL: function (url) {
+      selectURL: function (hardwareId) {
         var isalreadychecked = false;
 
         // check radio of activeurl radio
         _.each(this.$, function (value, key, list) {
-          if (!isalreadychecked && value.printer.hardwareURL === url) {
+          if (!isalreadychecked && value.printer.id === hardwareId) {
             value.$.selected.activeRadio();
             isalreadychecked = true;
           } else {
@@ -252,7 +253,7 @@ enyo.kind({
         var selected = _.find(this.$, function (value, key, list) {
           return value.$.selected.checked;
         }, this);
-        return selected.printer.hardwareURL;
+        return selected.printer.id;
       }
     }]
   },
@@ -304,6 +305,7 @@ enyo.kind({
         printerscontainer: this.printerscontainer,
         printer: {
           _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
+          id: OB.MobileApp.model.get('terminal').id,
           hardwareURL: OB.POS.hwserver.mainurl
         }
       }).render();
@@ -322,7 +324,7 @@ enyo.kind({
     }, this);
 
     // Select the active URL
-    this.printerscontainer.selectURL(OB.POS.hwserver.activepdfurl);
+    this.printerscontainer.selectURL(OB.POS.hwserver.activepdfurl_id);
   },
 
   executeOnHide: function () {

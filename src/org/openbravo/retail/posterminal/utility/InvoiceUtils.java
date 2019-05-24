@@ -224,10 +224,6 @@ public class InvoiceUtils {
     invoiceLine.setSalesOrderLine(orderLine);
     invoiceLine.setGoodsShipmentLine(inOutLine);
     invoiceLine.setAttributeSetValue(orderLine.getAttributeSetValue());
-    if (jsonInvoiceLine.has("isVerifiedReturn") && jsonInvoiceLine.getBoolean("isVerifiedReturn")
-        && !"VO".equals(invoice.getDocumentStatus())) {
-      invoice.setDocumentStatus("VO");
-    }
     invoice.getInvoiceLineList().add(invoiceLine);
     OBDal.getInstance().save(invoiceLine);
 
@@ -440,7 +436,12 @@ public class InvoiceUtils {
     invoice.setAccountingDate(invoiceDate);
     invoice.setInvoiceDate(invoiceDate);
     invoice.setSalesTransaction(true);
-    invoice.setDocumentStatus("CO");
+    if (invoice.getDocumentType().isReturn()) {
+      invoice.setDocumentStatus("VO");
+    } else {
+      invoice.setDocumentStatus("CO");
+    }
+    ;
     invoice.setDocumentAction("RE");
     invoice.setAPRMProcessinvoice("RE");
     invoice.setSalesOrder(order);
