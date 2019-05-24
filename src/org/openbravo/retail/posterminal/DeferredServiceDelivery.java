@@ -108,8 +108,8 @@ class DeferredServiceDelivery {
     checkServiceToDeliverHQL.append("WHERE pol.salesOrder.id = :orderId ");
     checkServiceToDeliverHQL.append("AND pol.salesOrder.id <> sol.salesOrder.id ");
     checkServiceToDeliverHQL.append("AND sol.obposIspaid = true");
-    final Query<String> checkServiceToDeliverQuery = session
-        .createQuery(checkServiceToDeliverHQL.toString(), String.class);
+    final Query<Integer> checkServiceToDeliverQuery = session
+        .createQuery(checkServiceToDeliverHQL.toString(), Integer.class);
     checkServiceToDeliverQuery.setParameter("orderId", order.getId());
     checkServiceToDeliverQuery.setMaxResults(1);
 
