@@ -1380,8 +1380,8 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 }
 
 .obObposPointOfSaleUiGridKeyboard {
-  row-gap: 8px;
-  column-gap: 8px;
+  row-gap: 10px;
+  column-gap: 10px;
 }
 
 .obObposPointOfSaleUiGridKeyboard-keyboardEditBox {
@@ -1461,7 +1461,8 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   grid-template-areas:
     "hside center";
   grid-template-columns: 1fr 2fr;
-  column-gap: 12px;
+  column-gap: 10px;
+  row-gap: 10px;
 }
 
 .right.obObposPointOfSaleUiBottomRightGridLayout {
@@ -1483,8 +1484,8 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
     "pos50 pos51";
   grid-template-columns: 1fr 1fr;
   grid-template-rows: repeat(6, 57px);
-  row-gap: 8px;
-  column-gap: 4px;
+  row-gap: 10px;
+  column-gap: 10px;
 }
 
 .obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic {
@@ -1557,4 +1558,10 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 
 .obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.rowspan5 {
   grid-row-end: span 5;
+}
+
+.obpos_pointofsale-receipttoolbar1 {
+  margin: 10px 0px 10px 0px;
+  grid-column-gap: 5px;
+  grid-row-gap: 5px;
 }
