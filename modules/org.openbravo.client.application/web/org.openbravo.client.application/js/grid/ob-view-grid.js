@@ -1496,7 +1496,7 @@ isc.OBViewGrid.addProperties({
     ksAction_DeleteSelectedRecords = function () {
       var isRecordDeleted = me.deleteSelectedRowsByToolbarIcon();
       // Return false to avoid keyboard shortcut propagation
-      return isRecordDeleted ? false : true;
+      return !isRecordDeleted;
     };
     OB.KeyboardManager.Shortcuts.set('ViewGrid_DeleteSelectedRecords', 'OBViewGrid.body', ksAction_DeleteSelectedRecords);
 
