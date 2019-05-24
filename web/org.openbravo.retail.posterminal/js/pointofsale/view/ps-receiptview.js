@@ -11,7 +11,7 @@
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ReceiptView',
-  classes: 'span6',
+  classes: 'obObposPointOfSaleUiReceiptView span6',
   published: {
     order: null,
     orderList: null
@@ -25,30 +25,33 @@ enyo.kind({
     onTableMultiSelectAll: 'tableMultiSelectAll'
   },
   components: [{
-    style: 'margin: 5px',
+    classes: 'obObposPointOfSaleUiReceiptView-container1',
     components: [{
-      style: 'position: relative; background-color: #ffffff; color: black;overflow-y: auto; max-height: 612px',
+      classes: 'obObposPointOfSaleUiReceiptView-container1-container1',
       components: [{
         kind: 'OB.UI.ReceiptsCounter',
-        name: 'receiptcounter'
+        name: 'receiptcounter',
+        classes: 'obObposPointOfSaleUiReceiptView-container1-container1-receiptcounter'
       }, {
-        style: 'padding: 5px;',
+        classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2',
         components: [{
           kind: 'OB.UI.OrderHeader',
-          name: 'receiptheader'
+          name: 'receiptheader',
+          classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptheader'
         }, {
-          classes: 'row-fluid',
-          style: 'max-height: 536px;',
+          classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2',
           components: [{
-            classes: 'span12',
+            classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1',
             components: [{
               kind: 'OB.UI.OrderView',
-              name: 'orderview'
+              name: 'orderview',
+              classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1-orderview'
             }]
           }]
         }, {
           kind: 'OB.UI.OrderFooter',
-          name: 'receiptfooter'
+          name: 'receiptfooter',
+          classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptfooter'
         }]
       }]
     }]

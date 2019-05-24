@@ -6674,6 +6674,55 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/***********************   ***********************/
+/*            File: ps-receiptview.js            */
+/*          Folder: js/pointofsale/view/         */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.ReceiptView
+*/
+.obObposPointOfSaleUiReceiptView {}
+
+.obObposPointOfSaleUiReceiptView-container1 {
+  margin: 5px;
+}
+
+.obObposPointOfSaleUiReceiptView-container1-container1 {
+  position: relative;
+  background-color: #ffffff;
+  color: black;
+  overflow-y: auto;
+  max-height: 612px;
+}
+
+.obObposPointOfSaleUiReceiptView-container1-container1-receiptcounter {
+/* Inherits: [OB.UI.ReceiptsCounter] */
+}
+
+.obObposPointOfSaleUiReceiptView-container1-container1-container2 {
+  padding: 5px;
+}
+
+.obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptheader {
+/* Inherits: [OB.UI.OrderHeader] */
+}
+
+.obObposPointOfSaleUiReceiptView-container1-container1-container2-container2 {
+  max-height: 536px;
+}
+
+.obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1 {}
+
+.obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1-orderview {
+/* Inherits: [OB.UI.OrderView] */
+}
+
+.obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptfooter {
+  /* Inherits: [OB.UI.OrderFooter] */
+}
+
+
+
 
 /*****************/
 /*      JAR      */
