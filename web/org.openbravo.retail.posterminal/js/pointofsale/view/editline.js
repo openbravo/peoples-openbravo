@@ -217,7 +217,7 @@ enyo.kind({
   }],
   actionButtons: [{
     kind: 'OB.UI.ActionButton',
-    name: 'deleteline',
+    name: 'deleteLine',
     classes: 'btnlink btnlink-small btnlink-orange',
     action: {
       window: 'retail.pointofsale',
