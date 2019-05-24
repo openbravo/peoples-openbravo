@@ -6625,6 +6625,55 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/***********************   ***********************/
+/*           File: cashmgmt-modals.js            */
+/*        Folder: js/cashmgmt/components/        */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashMgmt.UI.modalFinished
+# Inherits: [OB.UI.ModalAction]
+*/
+.obObposCashMgmtUiModalFinished {}
+
+.obObposCashMgmtUiModalFinished-bodyContent {}
+
+.obObposCashMgmtUiModalFinished-bodyButtons {}
+
+.obObposCashMgmtUiModalFinished-bodyButtons-obObposCashMgmtUiModalFinishedOkButton {
+/* Inherits: [OB.OBPOSCashMgmt.UI.modalFinished_OkButton] */
+}
+
+
+/*
+# Component: OB.OBPOSCashMgmt.UI.modalFinished_OkButton
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposCashMgmtUiModalFinishedOkButton {}
+
+
+/*
+# Component: OB.OBPOSCashMgmt.UI.modalFinishedWrongly
+# Inherits: [OB.UI.ModalAction]
+*/
+.obObposCashMgmtUiModalFinishedWrongly {}
+
+.obObposCashMgmtUiModalFinishedWrongly-bodyContent {}
+
+.obObposCashMgmtUiModalFinishedWrongly-bodyButtons {}
+
+.obObposCashMgmtUiModalFinishedWrongly-bodyButtons-obObposCashMgmtUiModalFinishedWronglyOkButton {
+/* Inherits: [OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton] */
+}
+
+
+/*
+# Component: OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposCashMgmtUiModalFinishedWronglyOkButton {}
+
+
+
 
 /*****************/
 /*      JAR      */
