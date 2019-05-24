@@ -3179,7 +3179,7 @@
 /*      JGA      */
 /*****************/
 /***********************   ***********************/
-/*        File: modal-pay-open-tickets.js        */
+/*              File: datasource.js              */
 /*                  Folder: js/                  */
 /***********************   ***********************/
 /*
@@ -6223,6 +6223,405 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 # Inherits: [OB.UI.ModalAdvancedFilters]
 */
 .obUiModalAdvancedFilterOrders {}
+
+
+
+/***********************   ***********************/
+/*           File: renderorderline.js            */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.RenderOrderLine
+# Inherits: [OB.UI.listItemButton]
+*/
+.obUiRenderOrderLine {}
+
+.obUiRenderOrderLine-checkBoxColumn {
+/* Inherits: [OB.UI.CheckboxButton] */
+  float: left;
+  width: 10%;
+}
+
+.obUiRenderOrderLine-nameContainner {
+  float: left;
+  width: calc(100% - 275px);
+  padding: 0px;
+}
+
+.obUiRenderOrderLine-nameContainner-serviceIcon {
+/* Inherits: [Image] */
+  float: left;
+  padding-right: 5px;
+}
+
+.obUiRenderOrderLine-nameContainner-product {}
+
+.obUiRenderOrderLine-nameContainner-product_showServiceIcon {
+  margin-left: 24px;
+}
+
+.obUiRenderOrderLine-nameContainner-product_hideServiceIcon {
+  float: left;
+}
+
+.obUiRenderOrderLine-container3 {
+/* Inherits: [OB.UI.FitText] */
+  float: left;
+  width: 65px;
+  text-align: right;
+}
+
+.obUiRenderOrderLine-container3-quantity {}
+
+.obUiRenderOrderLine-container4,
+.obUiRenderOrderLine-container5 {
+  /* Inherits: [OB.UI.FitText] */
+  float: left;
+  width: 105px;
+  text-align: right;
+}
+
+.obUiRenderOrderLine-container4-price,
+.obUiRenderOrderLine-container5-gross {
+  padding-left: 8px;
+}
+
+.obUiRenderOrderLine-element6 {}
+
+.obUiRenderOrderLine-container7 {
+  display: block;
+}
+
+.obUiRenderOrderLine-container7-productAttribute {
+  float: left;
+  width: 100%;
+  clear: left;
+}
+
+.obUiRenderOrderLine-container7-productAttribute_red {
+  color: red;
+}
+
+.obUiRenderOrderLine-container7-element2 {}
+
+.obUiRenderOrderLine-container8 {
+  display: block;
+}
+
+.obUiRenderOrderLine-container8-characteristicsDescription {
+  width: calc(100% - 210px);
+  color: grey;
+  padding-left: 0%;
+  padding-top: 4px;
+  font-size: 14px;
+  clear: both;
+}
+
+.obUiRenderOrderLine-characteristicsDescription_withStatus {
+  padding-left: 10%;
+  width: 50.1%;
+}
+
+.obUiRenderOrderLine-characteristicsDescription_withoutStatus {
+  padding-left: 0%;
+  width: 60.1%;
+}
+
+.obUiRenderOrderLine-container8-element2 {}
+
+.obUiRenderOrderLine-container9 {
+  display: block;
+}
+
+.obUiRenderOrderLine-container9-element1 {
+  float: left;
+  width: 80%;
+}
+
+.obUiRenderOrderLine-container9-element2 {}
+
+.obUiRenderOrderLine-container10 {
+  display: block;
+}
+
+.obUiRenderOrderLine-container10-element1 {
+  float: left;
+  width: 100%;
+  clear: left;
+}
+
+.obUiRenderOrderLine-container10-element2 {}
+
+.obUiRenderOrderLine-container11 {
+  display: block;
+}
+
+.obUiRenderOrderLine-container11-element1 {
+  float: left;
+  width: 100%;
+  clear: left;
+}
+
+.obUiRenderOrderLine-container11-element2 {}
+
+.obUiRenderOrderLine-container12 {
+  display: block;
+}
+
+.obUiRenderOrderLine-container12-element1 {
+  float: left;
+  width: 100%;
+  clear: left;
+}
+
+.obUiRenderOrderLine-container12-element2 {}
+
+.obUiRenderOrderLine-container13 {
+  display: block;
+}
+
+.obUiRenderOrderLine-container13-element1 {
+  color: #f8941d;
+  float: left;
+  width: 100%;
+  clear: left;
+}
+
+.obUiRenderOrderLine-container13-element2 {}
+
+.obUiRenderOrderLine-container14 {
+  display: block;
+  padding-top: 4px;
+}
+
+.obUiRenderOrderLine-container14-element1 {
+  float: left;
+  width: 80%;
+  clear: left;
+}
+
+.obUiRenderOrderLine-container14-element2 {
+  float: right;
+  width: 20%;
+  text-align: right;
+}
+
+.obUiRenderOrderLine-container14-element3 {}
+
+.obUiRenderOrderLine-relatedLinesContainer {
+  clear: both;
+  float: left;
+  width: 80%;
+}
+
+.obUiRenderOrderLine-relatedLinesContainer_withStatus {
+  padding-left: 10%;
+}
+
+.obUiRenderOrderLine-relatedLinesContainer_withoutStatus {
+  padding-left: 0%;
+}
+
+.obUiRenderOrderLine-relatedLinesContainer-container1 {}
+
+.obUiRenderOrderLine-relatedLinesContainer-container1-element1 {
+  font-size: var(--font-medium-small);
+  font-style: italic;
+  text-align: left;
+  padding-left: 25px;
+}
+
+.obUiRenderOrderLine-showServicesButton {
+/* Inherits: [OB.UI.ShowServicesButton] */
+}
+
+@media all and (min-width: 801px) and (max-aspect-ratio: 150/100),
+(max-width: 800px) and (max-aspect-ratio: 3/4) {
+
+  .obUiRenderOrderLine-nameContainner {
+    width: calc((29/79 * 100%) + 13px);
+  }
+
+  .obUiRenderOrderLine-container4,
+  .obUiRenderOrderLine-container5 {
+    width: calc((25/79 * 100%) - 39px);
+  }
+
+  .obUiRenderOrderLine-container8-characteristicsDescription {
+    width: calc((29/79 * 100%) + 78px);
+  }
+}
+
+@media all and (min-width: 801px) and (max-aspect-ratio: 125/100),
+(max-width: 800px) and (max-aspect-ratio: 10/16) {
+
+  .obUiRenderOrderLine-nameContainner {
+    width: calc(100% - 225px);
+  }
+
+  .obUiRenderOrderLine-container4,
+  .obUiRenderOrderLine-container5 {
+    width: 80px;
+  }
+
+  .obUiRenderOrderLine-container8-characteristicsDescription {
+    width: calc(100% - 160px);
+  }
+}
+
+
+/*
+# Component: OB.UI.RenderOrderLineEmpty
+*/
+.obUiRenderOrderLineEmpty {
+  border-bottom: 1px solid #cccccc;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: var(--font-huge);
+  color: #cccccc;
+}
+
+
+/*
+# Component: OB.UI.RenderTaxLineEmpty
+*/
+.obUiRenderTaxLineEmpty {
+  border-bottom: 1px solid #cccccc;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: var(--font-huge);
+  color: #cccccc;
+}
+
+
+/*
+# Component: OB.UI.ShowServicesButton
+*/
+.obUiShowServicesButton {
+  float: right;
+  display: block;
+}
+
+.obUiShowServicesButton_unreviewed {
+  width: 27px;
+  height: 26px;
+  background-image: url('./../img/iconServices_unreviewed.png');
+}
+
+.obUiShowServicesButton_reviewed {
+  width: 27px;
+  height: 26px;
+  background-image: url('./../img/iconServices_reviewed.png');
+}
+
+/*
+# Component: OB.UI.RenderTaxLine
+# Inherits: [OB.UI.listItemButton]
+*/
+.obUiRenderTaxLine {
+  color: #ffe7ce;
+}
+
+.obUiRenderTaxLine-tax {
+  float: left;
+  width: calc(100% - 210px);
+}
+
+.obUiRenderTaxLine-container1,
+.obUiRenderTaxLine-container2 {
+/* Inherits: [OB.UI.FitText] */
+  float: left;
+  width: 105px;
+  text-align: right;
+}
+
+.obUiRenderTaxLine-container1-base {}
+
+.obUiRenderTaxLine-container2-totaltax {
+  padding-left: 8px;
+}
+
+.obUiRenderTaxLine-container3 {}
+
+@media all and (min-width: 801px) and (max-aspect-ratio: 150/100),
+(max-width: 800px) and (max-aspect-ratio: 3/4) {
+
+  .obUiRenderTaxLine-tax {
+    width: calc((29/79 * 100%) + 78px);
+  }
+
+  .obUiRenderTaxLine-container1,
+  .obUiRenderTaxLine-container2 {
+    width: calc((25/79 * 100%) - 39px);
+  }
+}
+
+@media all and (min-width: 801px) and (max-aspect-ratio: 125/100),
+(max-width: 800px) and (max-aspect-ratio: 10/16) {
+
+  .obUiRenderTaxLine-tax {
+    width: calc(100% - 160px);
+  }
+
+  .obUiRenderTaxLine-container1,
+  .obUiRenderTaxLine-container2 {
+    width: 80px;
+  }
+}
+
+
+/*
+# Component: OB.UI.RenderPaymentLine
+# Inherits: [OB.UI.SelectButton]
+*/
+.obUiRenderPaymentLine {
+  border-bottom: 0px;
+  color: #ffe7ce;
+}
+
+.obUiRenderPaymentLine-name {
+  float: left;
+  width: 40%;
+  padding: 5px 0px 0px 0px;
+}
+
+.obUiRenderPaymentLine-date {
+  float: left;
+  width: 20%;
+  padding: 5px 0px 0px 0px;
+  text-align: right;
+}
+
+.obUiRenderPaymentLine-foreignAmount {
+  float: left;
+  width: 20%;
+  padding: 5px 0px 0px 0px;
+  text-align: right;
+}
+
+.obUiRenderPaymentLine-amount {
+  float: left;
+  width: 20%;
+  padding: 5px 0px 0px 0px;
+  text-align: right;
+}
+
+.obUiRenderPaymentLine-element5 {}
+
+
+/*
+# Component: OB.UI.RenderPaymentLineEmpty
+*/
+.obUiRenderPaymentLineEmpty {
+  border-bottom: 1px solid #cccccc;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: var(--font-huge);
+  color: #cccccc;
+}
 
 
 
