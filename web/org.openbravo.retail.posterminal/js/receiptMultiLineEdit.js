@@ -15,6 +15,7 @@
     name: 'OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton',
     i18nContent: 'OBRDM_DeliveryMode',
     classes: 'btnlink-orange',
+    detailsView: null,
     handlers: {
       onSetMultiSelected: 'setMultiSelected',
       onRearrangedEditButtonBar: 'hideShowButton'
@@ -23,18 +24,27 @@
       this.setShowing(this.model.get('order').get('orderType') !== 1);
     },
     tap: function () {
-      if (this.owner.owner.receipt.get('hasbeenpaid') === 'Y') {
+      if (OB.UTIL.isNullOrUndefined(this.detailsView) && this.owner.owner.receipt.get('hasbeenpaid') === 'Y') {
         this.owner.owner.doShowPopup({
           popup: 'modalNotEditableOrder'
         });
         return;
       }
-      this.owner.owner.doShowPopup({
-        popup: 'OBRDM_ReceiptMultilines',
-        args: {
-          selectedLines: this.owner.owner.selectedModels
-        }
-      });
+      if (OB.UTIL.isNullOrUndefined(this.detailsView)) {
+        this.owner.owner.doShowPopup({
+          popup: 'OBRDM_ReceiptMultilines',
+          args: {
+            selectedLines: this.owner.owner.selectedModels
+          }
+        });
+      } else {
+        this.detailsView.doShowPopup({
+          popup: 'OBRDM_ReceiptMultilines',
+          args: {
+            product: this.detailsView.leftSubWindow.product
+          }
+        });
+      }
     },
     init: function (model) {
       this.model = model;
@@ -133,6 +143,9 @@
       } else {
         me.setShowing(true);
       }
+    },
+    setDetailsView: function (view) {
+      this.detailsView = view;
     }
   });
   //Register the button...
@@ -280,7 +293,11 @@ enyo.kind({
     onApplyChanges: 'applyChanges'
   },
   executeOnShow: function () {
-    if (this.currentLine) {
+    if (!OB.UTIL.isNullOrUndefined(this.args.product)) {
+      this.product = this.args.product;
+      this.currentLine = null;
+    }
+    if (this.currentLine || this.product) {
       var diff = this.propertycomponents;
       var att;
       for (att in diff) {
@@ -295,6 +312,7 @@ enyo.kind({
     }
   },
   executeOnHide: function () {
+    this.product = null;
     if (this.args && this.args.requiredFiedls && this.args.requiredFieldNotPresentFunction) {
       var smthgPending = _.find(this.args.requiredFiedls, function (fieldName) {
         return OB.UTIL.isNullOrUndefined(this.currentLine.get(fieldName));
@@ -326,20 +344,21 @@ enyo.kind({
   },
   loadValue: function (mProperty, component) {
     this.waterfall('onLoadValue', {
-      model: this.currentLine,
+      model: this.currentLine || this.product,
       modelProperty: mProperty
     });
 
     // Make it visible or not...
     if (component.showProperty) {
-      component.showProperty(this.currentLine, function (value) {
+      component.showProperty(this.currentLine || this.product, function (value) {
         component.owner.owner.setShowing(value);
       });
     }
   },
   applyChanges: function (inSender, inEvent) {
     var i, diff, att, result = true,
-        me = this;
+        me = this,
+        carrierLines = null;
     diff = this.propertycomponents;
     //Delivery date validation
     var dateSelected = diff.obrdmDeliveryDate.getValue();
@@ -383,7 +402,7 @@ enyo.kind({
               result = result && diff[att].applyValue(this.args.selectedLines[i]);
             }
           } else {
-            result = result && diff[att].applyValue(this.currentLine);
+            result = result && diff[att].applyValue(this.currentLine || this.product);
           }
         }
       }
@@ -391,16 +410,17 @@ enyo.kind({
 
     this.model.get('order').save();
     this.model.get('orderList').saveCurrent();
-
-    var carrierLines = this.args.selectedLines.filter(function (l) {
-      return l.get('obrdmDeliveryMode') === 'HomeDelivery';
-    }).map(function (l) {
-      return {
-        lineId: l.id,
-        product: l.get('product').get('id'),
-        productCategory: l.get('product').get('productCategory')
-      };
-    });
+    if (this.args.selectedLines) {
+      carrierLines = this.args.selectedLines.filter(function (l) {
+        return l.get('obrdmDeliveryMode') === 'HomeDelivery';
+      }).map(function (l) {
+        return {
+          lineId: l.id,
+          product: l.get('product').get('id'),
+          productCategory: l.get('product').get('productCategory')
+        };
+      });
+    }
 
     function countDeliveryServices(data) {
       var countLines = 0;
@@ -483,7 +503,7 @@ enyo.kind({
       }
     }
 
-    if (carrierLines.length === this.args.selectedLines.length) {
+    if (carrierLines && carrierLines.length === this.args.selectedLines.length) {
       //Trigger Delivery Services Search
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
         var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasDeliveryServices');
