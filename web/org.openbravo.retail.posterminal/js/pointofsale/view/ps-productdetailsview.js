@@ -326,11 +326,7 @@ enyo.kind({
       }, {
         name: 'productDeliveryModes',
         kind: 'OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton',
-        classes: 'btnlink-green',
-        style: 'min-width: 200px; margin: 2px 5px 2px 5px;',
-        initComponents: function () {
-          this.setDetailsView(this.owner);
-        }
+        style: 'min-width: 200px; margin: 2px 5px 2px 5px;'
       }]
     }, {
       style: 'float: right;',
@@ -469,14 +465,11 @@ enyo.kind({
     }
     this.line = params.line || null;
     this.product = params.product;
-    this.product.set('nameDelivery', OB.UTIL.isNullOrUndefined(this.line) ? OB.UTIL.isCrossStoreProduct(this.product) ? 'Pickup in store' : 'Pick and carry' : this.line.get('nameDelivery'));
-    this.product.set('obrdmDeliveryMode', OB.UTIL.isNullOrUndefined(this.line) ? OB.UTIL.isCrossStoreProduct(this.product) ? 'PickupInStore' : 'Pick and carry' : this.line.get('obrdmDeliveryMode'));
-    if (this.line && !OB.UTIL.isNullOrUndefined(this.line.get('obrdmDeliveryDate'))) {
-      this.product.set('obrdmDeliveryDate', this.line.get('obrdmDeliveryDate'));
-    }
-    if (this.line && !OB.UTIL.isNullOrUndefined(this.line.get('obrdmDeliveryTime'))) {
-      this.product.set('obrdmDeliveryTime', this.line.get('obrdmDeliveryTime'));
-    }
+    this.product.set('nameDelivery', OB.UTIL.isCrossStoreProduct(this.product) ? 'Pickup in store' : 'Pick and carry');
+    this.product.set('obrdmDeliveryMode', OB.UTIL.isCrossStoreProduct(this.product) ? 'PickupInStore' : 'PickAndCarry');
+    this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(OB.UTIL.isNullOrUndefined(this.line));
+    this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setDetailsView(this.$.leftSubWindowBody.$.body);
+    this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.removeClass('btnlink-orange');
     this.localStockModel = null;
     this.otherStoresStockModel = null;
     if (params.warehouse) {
