@@ -16,8 +16,7 @@ enyo.kind({
     onOpenLocalStockModal: '',
     onOpenLocalStockClickableModal: ''
   },
-  classes: 'btnlink-green',
-  style: 'min-width: 200px; margin: 2px 5px 2px 5px;',
+  classes: 'btnlink-green obpos-product-details-view-buttons',
   tap: function () {
     if (!OB.MobileApp.model.get('permissions').OBPOS_warehouseselectionforline || !this.model.get('order').get('isEditable')) {
       this.doOpenLocalStockModal();
@@ -36,8 +35,7 @@ enyo.kind({
   events: {
     onOpenOtherStoresStockModal: ''
   },
-  classes: 'btnlink-green',
-  style: 'min-width: 200px; margin: 2px 5px 2px 5px;',
+  classes: 'btnlink-green obpos-product-details-view-buttons',
   tap: function () {
     var me = this,
         leftSubWindow = me.parent.leftSubWindow;
@@ -326,7 +324,7 @@ enyo.kind({
       }, {
         name: 'productDeliveryModes',
         kind: 'OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton',
-        style: 'min-width: 200px; margin: 2px 5px 2px 5px;'
+        classes: 'obpos-product-details-view-buttons'
       }]
     }, {
       style: 'float: right;',

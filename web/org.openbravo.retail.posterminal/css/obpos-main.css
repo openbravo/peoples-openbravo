@@ -1585,6 +1585,11 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   background-position: 3px 3px;
 }
 
+.obpos-product-details-view-buttons{
+	min-width: 200px; 
+	margin: 2px 5px 2px 5px !important;
+}
+
 /* Delivery Modes */
 .obrdm-row-order {
   height: 36px;
