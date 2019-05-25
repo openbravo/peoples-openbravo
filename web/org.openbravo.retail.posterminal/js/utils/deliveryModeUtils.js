@@ -40,6 +40,14 @@ OBRDM.UTIL = {};
   OBRDM.UTIL.fillComboCollection = function (combo, args) {
     var deliveryModes = OB.MobileApp.model.get('deliveryModes');
     if (deliveryModes && deliveryModes.length > 0) {
+      if (args.model.get('crossStore')) {
+        var pickAndCarry = _.find(deliveryModes, function (delivery) {
+          return delivery.id === 'PickAndCarry';
+        });
+        if (!OB.UTIL.isNullOrUndefined(pickAndCarry)) {
+          deliveryModes.shift(pickAndCarry);
+        }
+      }
       var data = new Backbone.Collection();
       data.add(deliveryModes);
       combo.dataReadyFunction(data, args);
