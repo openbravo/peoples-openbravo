@@ -7576,6 +7576,291 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/****************************   ****************************/
+/*             File: customeraddrdetailview.js             */
+/* Folder: js/pointofsale/view/subwindows/customeraddress/ */
+/****************************   ****************************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.editcustomeraddr
+# Inherits: [OB.UI.Modal]
+*/
+.obObposPointOfSaleUiCustomerAddrEditCustomerAddr {
+  width: 870px
+}
+
+.obObposPointOfSaleUiCustomerAddrEditCustomerAddr-body-obObposPointOfSaleUiCustomerAddrEditCustomersImpl {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.editcustomers_impl] */
+}
+
+@media (min-width: 350px) and (max-width: 470px) {
+  .obObposPointOfSaleUiCustomerAddrEditCustomerAddr {
+    width: calc(100% - 24px);
+  }
+}
+
+@media (min-width: 471px) and (max-width: 549px) {
+  .obObposPointOfSaleUiCustomerAddrEditCustomerAddr {
+    width: calc(100% - 24px);
+  }
+}
+
+@media (min-width: 550px) and (max-width: 649px) {
+  .obObposPointOfSaleUiCustomerAddrEditCustomerAddr {
+    width: calc(100% - 24px);
+  }
+}
+
+@media (min-width: 650px) and (max-width: 800px) {
+  .obObposPointOfSaleUiCustomerAddrEditCustomerAddr {
+    width: calc(100% - 24px);
+  }
+}
+
+@media (min-width: 801px) and (max-width: 899px) {
+  .obObposPointOfSaleUiCustomerAddrEditCustomerAddr{
+    width: 780px;
+  }
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketmenu
+# Inherits: [onyx.MenuDecorator]
+*/
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu {}
+
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton {
+/* Inherits: [OB.UI.Button] */
+  margin: 0px 0px 8px 5px;
+  background-color: #f8e859;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  height: 30px;
+  font-size: 16px;
+  padding: 5px 15px 7px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+}
+
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton:hover {
+  opacity: 0.75;
+}
+
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton:active {
+  opacity: 0.999;
+  background-color: #cccccc;
+}
+
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton:disabled,
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton[disabled=true]:hover {
+  background-color: #a9a9a9;
+  opacity: 1;
+  cursor: default;
+}
+
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton-identifier {}
+
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton-element2 {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconDownArrow.png');
+  background-repeat: no-repeat;
+  background-size: 14px 9px;
+  background-position: 21px 6px;
+  width: 35px;
+  height: 24px;
+  float: right;
+}
+
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-menu {
+/* Inherits: [OB.UI.ListContextDynamicMenu] */
+}
+
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-menu-obUiBPLocAssignToReceiptContextMenuItem {
+/* Inherits: [OB.UI.BPLocAssignToReceiptContextMenuItem] */
+}
+
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-menu-obUiBPLocAssignToReceiptShippingContextMenuItem {
+/* Inherits: [OB.UI.BPLocAssignToReceiptShippingContextMenuItem] */
+}
+
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-menu-obUiBPLocAssignToReceiptInvoicingContextMenuItem {
+/* Inherits: [OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem] */
+}
+
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton {
+    height: 45px;
+  }
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton
+# Inherits: [OB.UI.Button]
+*/
+.obObposPointOfSaleUiCustomeraddrAssignAddrButton {
+  margin: 0px 0px 8px 5px;
+  background-color: #f8e859;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  height: 30px;
+  font-size: 16px;
+  padding: 5px 15px 7px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+}
+
+.obObposPointOfSaleUiCustomeraddrAssignAddrButton:hover {
+  opacity: 0.75;
+}
+
+.obObposPointOfSaleUiCustomeraddrAssignAddrButton:active {
+  opacity: 0.999;
+  background-color: #cccccc;
+}
+
+.obObposPointOfSaleUiCustomeraddrAssignAddrButton:disabled,
+.obObposPointOfSaleUiCustomeraddrAssignAddrButton[disabled=true]:hover {
+  background-color: #a9a9a9;
+  opacity: 1;
+  cursor: default;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticket
+# Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton]
+*/
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticket {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketship
+# Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton]
+*/
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketship {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketinv
+# Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton]
+*/
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketinv {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.editticketcustomeraddr
+# Inherits: [OB.UI.Button]
+*/
+.obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr {
+  width: 100px;
+  margin: 0px 5px 8px 19px;
+  background-color: orange;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  height: 30px;
+  font-size: 16px;
+  padding: 5px 15px 7px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr:hover {
+  opacity: 0.75;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr:active {
+  opacity: 0.999;
+  background-color: #cccccc;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr:disabled,
+.obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr[disabled=true]:hover {
+  background-color: #a9a9a9;
+  opacity: 1;
+  cursor: default;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.EditCustomerHeader
+*/
+.obObposPointOfSaleUiCustomeraddrEditCustomerHeader {}
+
+.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1 {
+  display: table;
+  margin: 0 auto;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container1 {
+  display: table-cell;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container1-obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.editticketcustomeraddr] */
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container2 {
+  display: table-cell;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container2-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketmenu] */
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container3 {
+  display: table-cell;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container3-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketship {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketship] */
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container4 {
+  display: table-cell;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container4-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketinv {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketinv] */
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container5 {
+  display: table-cell;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container5-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticket {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticket] */
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.editcustomers_impl
+# Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers]
+*/
+.obObposPointOfSaleUiCustomeraddrEditcustomersImpl {
+  padding: 9px 15px;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrCustomerName,
+.obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrName,
+.obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrPostalCode,
+.obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrCity,
+.obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrCountry,
+.obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrShip,
+.obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrBill {
+/* Inherits: [OB.UI.CustomerAddrTextProperty] */
+}
+
+
+
 
 /*****************/
 /*      JAR      */

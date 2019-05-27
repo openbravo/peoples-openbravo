@@ -14,7 +14,7 @@
 enyo.kind({
   kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.editcustomeraddr',
-  classes: 'receipt-customer-selector-editor',
+  classes: 'obObposPointOfSaleUiCustomerAddrEditCustomerAddr',
   i18nHeader: 'OBPOS_TitleViewCustomerAddress',
   events: {
     onShowPopup: ''
@@ -23,7 +23,8 @@ enyo.kind({
     onPressedButton: 'pressedButton'
   },
   body: {
-    kind: 'OB.OBPOSPointOfSale.UI.customeraddr.editcustomers_impl'
+    kind: 'OB.OBPOSPointOfSale.UI.customeraddr.editcustomers_impl',
+    classes: 'obObposPointOfSaleUiCustomerAddrEditCustomerAddr-body-obObposPointOfSaleUiCustomerAddrEditCustomersImpl'
   },
   pressedButton: function () {
     this.pressedBtn = true;
@@ -79,6 +80,7 @@ enyo.kind({
 enyo.kind({
   kind: 'onyx.MenuDecorator',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketmenu',
+  classes: 'obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu',
   handlers: {
     onSelect: 'itemSelected'
   },
@@ -88,18 +90,19 @@ enyo.kind({
   },
   components: [{
     kind: 'OB.UI.Button',
-    style: 'margin: 0px 0px 8px 5px;',
-    classes: 'btnlink-yellow btnlink btnlink-small',
+    classes: 'obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton',
     components: [{
-      name: 'identifier'
+      name: 'identifier',
+      classes: 'obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton-identifier'
     }, {
-      classes: 'addressmenuselector'
+      classes: 'obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton-element2'
     }, {
-      style: 'clear: both;'
+      classes: 'obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton-element3 u-clearBoth'
     }]
   }, {
     kind: 'OB.UI.ListContextDynamicMenu',
-    name: 'menu'
+    name: 'menu',
+    classes: 'obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-menu'
   }],
   itemSelected: function (sender, event) {
     event.originator.selectItem(this.customerAddr);
@@ -122,14 +125,17 @@ enyo.kind({
     var menuOptions = [];
     menuOptions.push({
       kind: 'OB.UI.BPLocAssignToReceiptContextMenuItem',
+      classes: 'obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-menu-obUiBPLocAssignToReceiptContextMenuItem',
       permission: 'OBPOS_retail.assignToReceiptAddress'
     });
     menuOptions.push({
       kind: 'OB.UI.BPLocAssignToReceiptShippingContextMenuItem',
+      classes: 'obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-menu-obUiBPLocAssignToReceiptShippingContextMenuItem',
       permission: 'OBPOS_retail.assignToReceiptShippingAddress'
     });
     menuOptions.push({
       kind: 'OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem',
+      classes: 'obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-menu-obUiBPLocAssignToReceiptInvoicingContextMenuItem',
       permission: 'OBPOS_retail.assignToReceiptInvoicingAddress'
     });
     this.$.menu.setItems(menuOptions);
@@ -139,8 +145,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton',
-  style: 'margin: 0px 0px 8px 5px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  classes: 'obObposPointOfSaleUiCustomeraddrAssignAddrButton',
   handlers: {
     onAddressChanged: 'addressChanged'
   },
@@ -168,6 +173,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticket',
+  classes: 'obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticket',
   tap: function () {
     this.customer.set('locId', this.customerAddr.get('id'));
     this.customer.set('locName', this.customerAddr.get('name'));
@@ -201,6 +207,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketship',
+  classes: 'obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketship',
   tap: function () {
     this.customer.set('shipLocId', this.customerAddr.get('id'));
     this.customer.set('shipLocName', this.customerAddr.get('name'));
@@ -234,6 +241,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketinv',
+  classes: 'obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketinv',
   tap: function () {
     this.customer.set('locId', this.customerAddr.get('id'));
     this.customer.set('locName', this.customerAddr.get('name'));
@@ -267,8 +275,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.editticketcustomeraddr',
-  style: 'width: 100px; margin: 0px 5px 8px 19px;',
-  classes: 'btnlink-orange btnlink btnlink-small',
+  classes: 'obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr',
   events: {
     onShowPopup: '',
     onPressedButton: ''
@@ -309,32 +316,38 @@ enyo.kind({
 /*header of window body*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.EditCustomerHeader',
+  classes: 'obObposPointOfSaleUiCustomeraddrEditCustomerHeader',
   components: [{
-    style: 'display: table; margin: 0 auto;',
+    classes: 'obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1',
     components: [{
-      style: 'display: table-cell;',
+      classes: 'obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container1',
       components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.editticketcustomeraddr'
+        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.editticketcustomeraddr',
+        classes: 'obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container1-obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr'
       }]
     }, {
-      style: 'display: table-cell;',
+      classes: 'obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container2',
       components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketmenu'
+        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketmenu',
+        classes: 'obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container2-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu'
       }]
     }, {
-      style: 'display: table-cell;',
+      classes: 'obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container3',
       components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketship'
+        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketship',
+        classes: 'obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container3-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketship'
       }]
     }, {
-      style: 'display: table-cell;',
+      classes: 'obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container4',
       components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketinv'
+        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketinv',
+        classes: 'obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container4-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketinv'
       }]
     }, {
-      style: 'display: table-cell;',
+      classes: 'obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container5',
       components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticket'
+        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticket',
+        classes: 'obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container5-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticket'
       }]
     }]
   }]
@@ -343,47 +356,54 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.editcustomers_impl',
-  style: 'padding: 9px 15px;',
+  classes: 'obObposPointOfSaleUiCustomeraddrEditcustomersImpl',
   windowHeader: 'OB.OBPOSPointOfSale.UI.customeraddr.EditCustomerHeader',
   newAttributes: [{
     kind: 'OB.UI.CustomerAddrTextProperty',
     name: 'customerAddrCustomerName',
+    classes: 'obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrCustomerName',
     modelProperty: 'customerName',
     i18nLabel: 'OBPOS_LblCustomer',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerAddrTextProperty',
     name: 'customerAddrName',
+    classes: 'obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrName',
     modelProperty: 'name',
     i18nLabel: 'OBPOS_LblAddress',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerAddrTextProperty',
     name: 'customerAddrPostalCode',
+    classes: 'obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrPostalCode',
     modelProperty: 'postalCode',
     i18nLabel: 'OBPOS_LblPostalCode',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerAddrTextProperty',
     name: 'customerAddrCity',
+    classes: 'obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrCity',
     modelProperty: 'cityName',
     i18nLabel: 'OBPOS_LblCity',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerAddrTextProperty',
     name: 'customerAddrCountry',
+    classes: 'obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrCountry',
     modelProperty: 'countryName',
     i18nLabel: 'OBPOS_LblCountry',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerAddrCheckProperty',
     name: 'customerAddrShip',
+    classes: 'obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrShip',
     modelProperty: 'isShipTo',
     i18nLabel: 'OBPOS_LblShipAddr',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerAddrCheckProperty',
     name: 'customerAddrBill',
+    classes: 'obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrBill',
     modelProperty: 'isBillTo',
     i18nLabel: 'OBPOS_LblBillAddr',
     readOnly: true
