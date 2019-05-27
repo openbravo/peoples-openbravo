@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><ob:Openbravo xmlns:ob="http://www.openbravo.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <OBMOBC_ActionButtonArea id="119E7BF1B24441E19CE1C6ECD908047A" identifier="Top Receipt">
+    <id>119E7BF1B24441E19CE1C6ECD908047A</id>
+    <active>true</active>
+    <creationDate transient="true">2019-05-24T15:46:29.874Z</creationDate>
+    <updated transient="true">2019-05-24T15:46:29.874Z</updated>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <name>Top Receipt</name>
+    <description xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.6101 - English (USA)"/>
+    <application id="56C6848F6F3543E59C23A559914F4DE6" entity-name="ADApplication" identifier="Web POS"/>
+    <obmobcWindow id="164475F3CDCF40BBBFB5E5E8640F015B" entity-name="OBMOBC_Window" identifier="Point Of Sale"/>
+    <aBAMaxRows>1</aBAMaxRows>
+    <aBAMaxColumns>5</aBAMaxColumns>
+    <value>obpos_pointofsale-receipttoolbar1</value>
+  </OBMOBC_ActionButtonArea>
+  <OBMOBC_ActionButtonArea id="C44E786D12C8459AA6AFE6A48837763E" identifier="Edit Bottom">
+    <id>C44E786D12C8459AA6AFE6A48837763E</id>
+    <active>true</active>
+    <creationDate transient="true">2019-05-24T15:48:10.21Z</creationDate>
+    <updated transient="true">2019-05-24T15:48:10.21Z</updated>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <name>Edit Bottom</name>
+    <description xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.6101 - English (USA)"/>
+    <application id="56C6848F6F3543E59C23A559914F4DE6" entity-name="ADApplication" identifier="Web POS"/>
+    <obmobcWindow id="164475F3CDCF40BBBFB5E5E8640F015B" entity-name="OBMOBC_Window" identifier="Point Of Sale"/>
+    <aBAMaxRows>6</aBAMaxRows>
+    <aBAMaxColumns>2</aBAMaxColumns>
+    <value>obpos_pointofsale_edit_bottomrightaba1</value>
+  </OBMOBC_ActionButtonArea>
+  <OBMOBC_ActionButtonArea id="F104B3E3C9C24531B300F6B000177C74" identifier="Scan Bottom">
+    <id>F104B3E3C9C24531B300F6B000177C74</id>
+    <active>true</active>
+    <creationDate transient="true">2019-05-24T15:47:19.381Z</creationDate>
+    <updated transient="true">2019-05-24T15:47:38.459Z</updated>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <name>Scan Bottom</name>
+    <description xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.6101 - English (USA)"/>
+    <application id="56C6848F6F3543E59C23A559914F4DE6" entity-name="ADApplication" identifier="Web POS"/>
+    <obmobcWindow id="164475F3CDCF40BBBFB5E5E8640F015B" entity-name="OBMOBC_Window" identifier="Point Of Sale"/>
+    <aBAMaxRows>6</aBAMaxRows>
+    <aBAMaxColumns>2</aBAMaxColumns>
+    <value>obpos_pointofsale_scan_bottomrightaba1</value>
+  </OBMOBC_ActionButtonArea>
+  <ADApplication id="56C6848F6F3543E59C23A559914F4DE6" identifier="Web POS">
+    <id>56C6848F6F3543E59C23A559914F4DE6</id>
+    <active>true</active>
+    <creationDate transient="true">2019-05-24T15:44:30.614Z</creationDate>
+    <updated transient="true">2019-05-24T15:44:30.614Z</updated>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <name>Web POS</name>
+    <description>Openbravo Web POS is a web application used in stores to assist shop floor staff in client-side selling and enables the checkout process.</description>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.6101 - English (USA)"/>
+    <value>OBPOS</value>
+  </ADApplication>
+  <OBMOBC_Window id="164475F3CDCF40BBBFB5E5E8640F015B" identifier="Point Of Sale">
+    <id>164475F3CDCF40BBBFB5E5E8640F015B</id>
+    <active>true</active>
+    <creationDate transient="true">2019-05-24T15:45:30.768Z</creationDate>
+    <updated transient="true">2019-05-24T15:45:30.768Z</updated>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <name>Point Of Sale</name>
+    <description xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.6101 - English (USA)"/>
+    <application id="56C6848F6F3543E59C23A559914F4DE6" entity-name="ADApplication" identifier="Web POS"/>
+    <value>retail.pointofsale</value>
+  </OBMOBC_Window>
+  <OBMOBC_Action id="4ED1588D3A804765A65565118D3A187A" identifier="Change Price">
+    <id>4ED1588D3A804765A65565118D3A187A</id>
+    <active>true</active>
+    <creationDate transient="true">2019-05-24T15:49:24.280Z</creationDate>
+    <updated transient="true">2019-05-24T15:49:24.280Z</updated>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <name>Change Price</name>
+    <description xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.6101 - English (USA)"/>
+    <application id="56C6848F6F3543E59C23A559914F4DE6" entity-name="ADApplication" identifier="Web POS"/>
+    <obmobcWindow id="164475F3CDCF40BBBFB5E5E8640F015B" entity-name="OBMOBC_Window" identifier="Point Of Sale"/>
+    <value>changePrice</value>
+  </OBMOBC_Action>
+</ob:Openbravo>
