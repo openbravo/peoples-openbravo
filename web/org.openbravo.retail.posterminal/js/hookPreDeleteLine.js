@@ -9,8 +9,8 @@
 
 /*global _ */
 
-if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
-  OB.UTIL.HookManager.registerHook('OBPOS_PreDeleteLine', function (args, c) {
+OB.UTIL.HookManager.registerHook('OBPOS_PreDeleteLine', function (args, c) {
+  if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
     var undoDeliveryModes = [];
     _.each(args.selectedLines, function (line) {
       undoDeliveryModes.push({
@@ -23,6 +23,6 @@ if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
       });
     });
     args.order.set('undoDeliveryModes', undoDeliveryModes);
-    OB.UTIL.HookManager.callbackExecutor(args, c);
-  });
-}
+  }
+  OB.UTIL.HookManager.callbackExecutor(args, c);
+});

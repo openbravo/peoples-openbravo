@@ -7,8 +7,8 @@
  ************************************************************************************
  */
 
-if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
-  OB.UTIL.HookManager.registerHook('OBPOS_PrePaymentHook', function (args, callbacks) {
+OB.UTIL.HookManager.registerHook('OBPOS_PrePaymentHook', function (args, callbacks) {
+  if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
     var receipt = args.context.get('order'),
         hasErrorLines = false;
     if (receipt.get('isQuotation') !== true) {
@@ -22,6 +22,6 @@ if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
     if (hasErrorLines) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBRDM_PickAndCarryError'));
     }
-    OB.UTIL.HookManager.callbackExecutor(args, callbacks);
-  });
-}
+  }
+  OB.UTIL.HookManager.callbackExecutor(args, callbacks);
+});

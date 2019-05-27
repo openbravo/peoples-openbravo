@@ -9,8 +9,8 @@
 
 /*global _ */
 
-if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
-  OB.UTIL.HookManager.registerHook('OBPOS_PostAddProductToOrder', function (args, callbacks) {
+OB.UTIL.HookManager.registerHook('OBPOS_PostAddProductToOrder', function (args, callbacks) {
+  if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
     if (args.newLine) {
       var order = args.receipt,
           orderLine = args.orderline;
@@ -41,6 +41,6 @@ if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
         }).name);
       }
     }
-    OB.UTIL.HookManager.callbackExecutor(args, callbacks);
-  });
-}
+  }
+  OB.UTIL.HookManager.callbackExecutor(args, callbacks);
+});

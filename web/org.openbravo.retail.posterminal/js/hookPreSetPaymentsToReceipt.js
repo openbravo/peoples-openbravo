@@ -9,17 +9,9 @@
 
 /*global OBRDM, _ */
 
-if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
-  OB.UTIL.HookManager.registerHook('OBPOS_MultiOrders_PreSetPaymentsToReceipt', function (args, callbacks) {
-
+OB.UTIL.HookManager.registerHook('OBPOS_MultiOrders_PreSetPaymentsToReceipt', function (args, callbacks) {
+  if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
     var setPickAndCarryPayments;
-
-    function updateAmountToLayaway(order, amount) {
-      var amountToLayaway = order.get('amountToLayaway');
-      if (!OB.UTIL.isNullOrUndefined(amountToLayaway)) {
-        order.set('amountToLayaway', OB.DEC.sub(amountToLayaway, amount));
-      }
-    }
 
     setPickAndCarryPayments = function (orderList, paymentList, orderListIndex, paymentListIndex, callback) {
       if (orderListIndex >= orderList.length || paymentListIndex >= paymentList.length) {
@@ -39,7 +31,10 @@ if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
           origPayment: payment
         }, function (args) {
           order.addPayment(args.paymentLine, function () {
-            updateAmountToLayaway(order, args.paymentLine.get('origAmount'));
+            var amountToLayaway = order.get('amountToLayaway');
+            if (!OB.UTIL.isNullOrUndefined(amountToLayaway)) {
+              order.set('amountToLayaway', OB.DEC.sub(amountToLayaway, args.paymentLine.get('origAmount')));
+            }
             if (addPaymentCallback instanceof Function) {
               addPaymentCallback();
             }
@@ -94,6 +89,7 @@ if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
     setPickAndCarryPayments(args.multiOrderList, args.payments, OB.DEC.Zero, OB.DEC.Zero, function () {
       OB.UTIL.HookManager.callbackExecutor(args, callbacks);
     });
-
-  });
-}
+  } else {
+    OB.UTIL.HookManager.callbackExecutor(args, callbacks);
+  }
+});

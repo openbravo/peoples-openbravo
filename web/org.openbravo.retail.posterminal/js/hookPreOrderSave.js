@@ -9,14 +9,13 @@
 
 /*global _, OBRDM */
 
-if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
+(function () {
 
-  (function () {
+  if (OB.UTIL.HookManager) {
 
-    if (OB.UTIL.HookManager) {
-
-      // Hook OBPOS_PreOrderSave to get context 
-      OB.UTIL.HookManager.registerHook('OBPOS_PreOrderSave', function (args, callbacks) {
+    // Hook OBPOS_PreOrderSave to get context 
+    OB.UTIL.HookManager.registerHook('OBPOS_PreOrderSave', function (args, callbacks) {
+      if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
         var model = args.receipt,
             lines = model.get("lines"),
             deliver = model.get('completeTicket') || model.get('payOnCredit'),
@@ -158,11 +157,9 @@ if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
         }
         model.set('deliver', deliver);
         model.set('generateShipment', generateShipment);
+      }
+      OB.UTIL.HookManager.callbackExecutor(args, callbacks);
+    });
 
-        OB.UTIL.HookManager.callbackExecutor(args, callbacks);
-      });
-
-    }
-  }());
-
-}
+  }
+}());

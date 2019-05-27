@@ -7,8 +7,8 @@
  ************************************************************************************
  */
 
-if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
-  OB.UTIL.HookManager.registerHook('OBPOS_PreAddProductWithoutStock', function (args, callbacks) {
+OB.UTIL.HookManager.registerHook('OBPOS_PreAddProductWithoutStock', function (args, callbacks) {
+  if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
     if (args.line) {
       if (args.line.get('obrdmDeliveryMode') && args.line.get('obrdmDeliveryMode') !== 'PickAndCarry') {
         args.allowToAdd = false;
@@ -24,6 +24,6 @@ if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
         }
       }
     }
-    OB.UTIL.HookManager.callbackExecutor(args, callbacks);
-  });
-}
+  }
+  OB.UTIL.HookManager.callbackExecutor(args, callbacks);
+});
