@@ -463,7 +463,6 @@ enyo.kind({
     }
     this.line = params.line || null;
     this.product = params.product;
-    this.product.set('nameDelivery', OB.UTIL.isCrossStoreProduct(this.product) ? 'Pickup in store' : 'Pick and carry');
     this.product.set('obrdmDeliveryMode', OB.UTIL.isCrossStoreProduct(this.product) ? 'PickupInStore' : 'PickAndCarry');
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(OB.UTIL.isNullOrUndefined(this.line));
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setDetailsView(this.$.leftSubWindowBody.$.body);
