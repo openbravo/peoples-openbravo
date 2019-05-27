@@ -150,8 +150,7 @@ enyo.kind({
         classes: 'obpos-display-block',
         components: [{
           name: 'storeLine',
-          content: '-- ' + OB.I18N.getLabel('OBPOS_LblStore') + ': ' + this.model.get('organization').name,
-          classes: 'orderline-store'
+          content: '-- ' + OB.I18N.getLabel('OBPOS_LblStore') + ': ' + this.model.get('organization').name
         }, {
           classes: 'obpos-clear-both'
         }]
