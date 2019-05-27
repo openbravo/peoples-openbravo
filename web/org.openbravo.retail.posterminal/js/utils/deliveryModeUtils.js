@@ -38,15 +38,16 @@ OBRDM.UTIL = {};
    */
 
   OBRDM.UTIL.fillComboCollection = function (combo, args) {
-    var deliveryModes = OB.MobileApp.model.get('deliveryModes');
+    var deliveryModes = OB.MobileApp.model.get('deliveryModes'),
+        modes = [];
     if (deliveryModes && deliveryModes.length > 0) {
-      if (args.model.get('crossStore')) {
-        var pickAndCarry = _.find(deliveryModes, function (delivery) {
-          return delivery.id === 'PickAndCarry';
+      if (OB.UTIL.isCrossStoreLine(args.model) || OB.UTIL.isCrossStoreProduct(args.model)) {
+        _.each(deliveryModes, function (delivery) {
+          if (delivery.id !== 'PickAndCarry') {
+            modes.push(delivery);
+          }
         });
-        if (!OB.UTIL.isNullOrUndefined(pickAndCarry)) {
-          deliveryModes.shift(pickAndCarry);
-        }
+        deliveryModes = modes;
       }
       var data = new Backbone.Collection();
       data.add(deliveryModes);
