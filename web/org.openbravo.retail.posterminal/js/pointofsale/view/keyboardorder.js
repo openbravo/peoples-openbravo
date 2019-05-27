@@ -422,7 +422,7 @@ enyo.kind({
       stateless: true,
       action: function (keyboard, txt) {
         var qty = 1;
-        if (!me.selectedModels || !keyboard.line) {
+        if (!me.selectedModels || !keyboard.line || !keyboard.line.get('product').get('groupProduct') || (keyboard.line.get('product') === 'S' && keyboard.line.get('product').get('isLinkedToProduct')) || !keyboard.line.get('isEditable') || keyboard.line.get('product').get('isSerialNo')) {
           return;
         }
 
@@ -446,7 +446,7 @@ enyo.kind({
       action: function (keyboard, txt) {
         var qty = 1,
             value;
-        if (!me.selectedModels || !keyboard.line) {
+        if (!me.selectedModels || !keyboard.line || !keyboard.line.get('product').get('groupProduct') || (keyboard.line.get('product') === 'S' && keyboard.line.get('product').get('isLinkedToProduct')) || !keyboard.line.get('isEditable') || keyboard.line.get('product').get('isSerialNo')) {
           return;
         }
         if (!me.validateReceipt(keyboard, true)) {
@@ -712,7 +712,7 @@ enyo.kind({
     });
 
     if (foundPrinter) {
-      OB.POS.hwserver.setActiveURL(foundPrinter.hardwareURL);
+      OB.POS.hwserver.setActiveURL(foundPrinter.id);
       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_PrinterFound', [foundPrinter._identifier]));
 
       return true;
