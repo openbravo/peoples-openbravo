@@ -7318,6 +7318,264 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/***********************   ***********************/
+/*               File: editline.js               */
+/*         Folder: js/pointofsale/view/          */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.LineProperty
+*/
+.obObposPointOfSaleUiLineProperty {}
+
+.obObposPointOfSaleUiLineProperty-container1 {}
+
+.obObposPointOfSaleUiLineProperty-container1-propertyLabel {
+  width: 95px;
+}
+
+.obObposPointOfSaleUiLineProperty-container1-container2 {
+  width: 60%;
+}
+
+.obObposPointOfSaleUiLineProperty-container1-container2-propertyValue {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.LinePropertyDiv
+*/
+.obObposPointOfSaleUiLinePropertyDiv {}
+
+.obObposPointOfSaleUiLinePropertyDiv-container1 {}
+
+.obObposPointOfSaleUiLinePropertyDiv-container1-propertyLabel {}
+
+.obObposPointOfSaleUiLinePropertyDiv-container1-container2 {}
+
+.obObposPointOfSaleUiLinePropertyDiv-container1-container2-propertyValue {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.EditLine
+*/
+.obObposPointOfSaleUiEditLine {}
+
+.obObposPointOfSaleUiEditLine-propertiesToShow-descLine,
+.obObposPointOfSaleUiEditLine-propertiesToShow-returnReasonLine,
+.obObposPointOfSaleUiEditLine-propertiesToShow-qtyLine,
+.obObposPointOfSaleUiEditLine-propertiesToShow-priceStdLine,
+.obObposPointOfSaleUiEditLine-propertiesToShow-priceLine,
+.obObposPointOfSaleUiEditLine-propertiesToShow-discountedAmountLine,
+.obObposPointOfSaleUiEditLine-propertiesToShow-grossLine,
+.obObposPointOfSaleUiEditLine-propertiesToShow-warehouseLine,
+.obObposPointOfSaleUiEditLine-propertiesToShow-deliverableLine {
+/* Inherits: [OB.OBPOSPointOfSale.UI.LineProperty] */
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-deleteLine,
+.obObposPointOfSaleUiEditLine-actionButtons-descriptionButton,
+.obObposPointOfSaleUiEditLine-actionButtons-returnLine,
+.obObposPointOfSaleUiEditLine-actionButtons-splitlineButton {
+  /* Inherits: [OB.UI.SmallButton] */
+  background-color: orange;
+  color: black;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices {
+/* Inherits: [OB.UI.SmallButton] */
+  background-color: orange;
+  color: black;
+  width: 45px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_unreviewed {
+  width: 27px;
+  height: 26px;
+  background-image: url('./../img/iconServices_unreviewed.png');
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_reviewed {
+  width: 27px;
+  height: 26px;
+  background-image: url('./../img/iconServices_reviewed.png');
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-removeDiscountButton {
+/* Inherits: [OB.UI.SmallButton] */
+  background-color: orange;
+  color: black;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-checkStockButton {
+/* Inherits: [OB.OBPOSPointOfSale.UI.EditLine.OpenStockButton] */
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-openAttributeButton {
+/* Inherits: [OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton] */
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-addAssociationsButton,
+.obObposPointOfSaleUiEditLine-actionButtons-removeAssociationsButton,
+.obObposPointOfSaleUiEditLine-actionButtons-canDeliver {
+/* Inherits: [OB.UI.SmallButton] */
+  background-color: orange;
+  color: black;
+}
+
+.obObposPointOfSaleUiEditLine-discountsEdit {
+/* Inherits: [OB.OBPOSPointOfSale.UI.Discounts] */
+}
+
+.obObposPointOfSaleUiEditLine-defaultEdit {
+  background-color: #ffffff;
+  color: black;
+  height: 200px;
+  margin: 5px;
+  padding: 5px;
+}
+
+.obObposPointOfSaleUiEditLine-defaultEdit-msgedit {}
+
+.obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer {
+/* Inherits: [Scroller] */
+  padding: 0px 0px 1px 0px;
+  line-height: 50%;
+  max-height: 50px;
+  overflow-x: hidden;
+}
+
+.obObposPointOfSaleUiEditLine-msgedit-returnreason {
+  width: 90%;
+  margin-bottom: 2px;
+  margin-left: 2%;
+  height: 30px;
+  background-color: #cccccc;
+  color: #555555;
+  border: 1px solid #cccccc;
+}
+
+.obObposPointOfSaleUiEditLine-returnreason-renderHeader-enyoOption {
+/* Inherits: [enyo.Option] */
+}
+
+.obObposPointOfSaleUiEditLine-returnreason-renderLine-enyoOption {
+/* Inherits: [enyo.Option] */
+}
+
+.obObposPointOfSaleUiEditLine-msgedit-container3 {}
+
+.obObposPointOfSaleUiEditLine-msgedit-container3-linePropertiesContainer {
+/* Inherits: [Scroller] */
+  padding: 1% 0px 5px 2%;
+  line-height: 120%;
+  width: 65%;
+  max-height: 134px;
+  overflow-x: hidden;
+}
+
+.obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons {
+  max-height: 110px;
+}
+
+.obObposPointOfSaleUiEditLine-linePropertiesContainer_withoutReturnReasons {
+  max-height: 134px;
+}
+
+.obObposPointOfSaleUiEditLine-msgedit-container3-contextImage {
+  text-align: right;
+}
+
+.obObposPointOfSaleUiEditLine-contextImage-container1 {
+  padding: 2px 10px 10px 10px;
+}
+
+.obObposPointOfSaleUiEditLine-contextImage-container1-container1, {
+  width: 128px;
+  height: 128px;
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: bottom;
+}
+
+.obObposPointOfSaleUiEditLine-contextImage-container1-container1::after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  border: none;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+
+.obObposPointOfSaleUiEditLine-contextImage-container1-container1-icon {
+  margin: 0 auto;
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.obObposPointOfSaleUiEditLine-icon_noBackgroundImage {
+  background-image: '';
+}
+
+.obObposPointOfSaleUiEditLine-contextImage-container1-editlineimage {
+/* Inherits: [OB.UI.Thumbnail] */
+  width: 105px;
+  height: 105px;
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: bottom;
+}
+
+.obObposPointOfSaleUiEditLine-contextImage-container1-editlineimage::after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  border: none;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+
+.obObposPointOfSaleUiEditLine-msgedit-msgaction {
+  padding: 10px;
+}
+
+.obObposPointOfSaleUiEditLine-msgaction-txtaction {
+  float: left;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.EditLine.OpenStockButton
+# Inherits: [OB.UI.SmallButton]
+*/
+.obObposPointOfSaleUiEditLineOpenStockButton {
+  background-color: orange;
+  color: #000000;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton
+# Inherits: [OB.UI.SmallButton]
+*/
+.obObposPointOfSaleUiEditLineOpenAttributeButton {
+  background-color: orange;
+  color: #000000;
+}
+
+
+
 
 /*****************/
 /*      JAR      */

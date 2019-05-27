@@ -10,19 +10,18 @@
 /*global OB, enyo, _ */
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LineProperty',
+  classes: 'obObposPointOfSaleUiLineProperty',
   components: [{
-    classes: 'row-fluid',
-    style: 'clear: both;',
+    classes: 'obObposPointOfSaleUiLineProperty-container1 row-fluid u-clearBoth',
     components: [{
-      classes: 'span4',
-      style: 'width: 95px;',
-      name: 'propertyLabel'
+      name: 'propertyLabel',
+      classes: 'obObposPointOfSaleUiLineProperty-container1-propertyLabel span4'
     }, {
-      classes: 'span8',
-      style: 'width: 60%;',
+      classes: 'obObposPointOfSaleUiLineProperty-container1-container2 span8',
       components: [{
         tag: 'span',
-        name: 'propertyValue'
+        name: 'propertyValue',
+        classes: 'obObposPointOfSaleUiLineProperty-container1-container2-propertyValue'
       }]
     }]
   }],
@@ -41,17 +40,18 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LinePropertyDiv',
+  classes: 'obObposPointOfSaleUiLinePropertyDiv',
   components: [{
-    classes: 'row-fluid',
-    style: 'clear: both;',
+    classes: 'obObposPointOfSaleUiLinePropertyDiv-container1 row-fluid u-clearBoth',
     components: [{
-      classes: 'span4',
-      name: 'propertyLabel'
+      name: 'propertyLabel',
+      classes: 'obObposPointOfSaleUiLinePropertyDiv-container1-propertyLabel span4'
     }, {
-      classes: 'span8',
+      classes: 'obObposPointOfSaleUiLinePropertyDiv-container1-container2 span8',
       components: [{
         tag: 'div',
-        name: 'propertyValue'
+        name: 'propertyValue',
+        classes: 'obObposPointOfSaleUiLinePropertyDiv-container1-container2-propertyValue'
       }]
     }]
   }],
@@ -70,11 +70,13 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.EditLine',
+  classes: 'obObposPointOfSaleUiEditLine',
   propertiesToShow: [{
     kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
     position: 10,
     name: 'descLine',
     I18NLabel: 'OBPOS_LineDescription',
+    classes: 'obObposPointOfSaleUiEditLine-propertiesToShow-descLine',
     render: function (line) {
       if (line) {
         this.$.propertyValue.setContent(line.get('product').get('_identifier'));
@@ -87,6 +89,7 @@ enyo.kind({
     position: 15,
     name: 'returnReasonLine',
     I18NLabel: 'OBPOS_ReturnReason',
+    classes: 'obObposPointOfSaleUiEditLine-propertiesToShow-returnReasonLine',
     render: function (line) {
       if (line && line.get('returnReason')) {
         this.$.propertyValue.setContent(line.get('returnReasonName'));
@@ -100,6 +103,7 @@ enyo.kind({
     position: 20,
     name: 'qtyLine',
     I18NLabel: 'OBPOS_LineQuantity',
+    classes: 'obObposPointOfSaleUiEditLine-propertiesToShow-qtyLine',
     multiSelection: false,
     render: function (line) {
       if (line) {
@@ -117,6 +121,7 @@ enyo.kind({
     position: 25,
     name: 'priceStdLine',
     I18NLabel: 'OBPOS_LinePriceStd',
+    classes: 'obObposPointOfSaleUiEditLine-propertiesToShow-priceStdLine',
     render: function (line) {
       if (line) {
         this.$.propertyValue.setContent(OB.I18N.formatCurrency(line.get('product').get('standardPrice')));
@@ -129,6 +134,7 @@ enyo.kind({
     position: 30,
     name: 'priceLine',
     I18NLabel: 'OBPOS_LinePrice',
+    classes: 'obObposPointOfSaleUiEditLine-propertiesToShow-priceLine',
     render: function (line) {
       if (line) {
         if (this.multiSelection) {
@@ -145,6 +151,7 @@ enyo.kind({
     position: 40,
     name: 'discountedAmountLine',
     I18NLabel: 'OBPOS_LineDiscount',
+    classes: 'obObposPointOfSaleUiEditLine-propertiesToShow-discountedAmountLine',
     multiSelection: false,
     render: function (line) {
       if (line) {
@@ -168,6 +175,7 @@ enyo.kind({
     position: 50,
     name: 'grossLine',
     I18NLabel: 'OBPOS_LineTotal',
+    classes: 'obObposPointOfSaleUiEditLine-propertiesToShow-grossLine',
     render: function (line) {
       if (line) {
         if (line.get('editlinetotal')) { // Is has been calculated, (by multiline)
@@ -186,6 +194,7 @@ enyo.kind({
     position: 60,
     name: 'warehouseLine',
     I18NLabel: 'OBPOS_LineWarehouse',
+    classes: 'obObposPointOfSaleUiEditLine-propertiesToShow-warehouseLine',
     render: function (line) {
       if (line && line.get('warehouse')) {
         this.$.propertyValue.setContent(line.get('warehouse').warehousename);
@@ -198,6 +207,7 @@ enyo.kind({
     position: 70,
     name: 'deliverableLine',
     I18NLabel: 'OBPOS_LineDeliverable',
+    classes: 'obObposPointOfSaleUiEditLine-propertiesToShow-deliverableLine',
     render: function (line) {
       if (this.owner.owner.hideDeliveryLabel) {
         this.hide();
@@ -219,7 +229,7 @@ enyo.kind({
     kind: 'OB.UI.SmallButton',
     name: 'deleteLine',
     i18nContent: 'OBPOS_ButtonDelete',
-    classes: 'btnlink-orange',
+    classes: 'obObposPointOfSaleUiEditLine-actionButtons-deleteLine',
     permission: 'OBPOS_ActionButtonDelete',
     tap: function () {
       this.owner.owner.doDeleteLine({
@@ -233,7 +243,7 @@ enyo.kind({
     kind: 'OB.UI.SmallButton',
     i18nContent: 'OBPOS_LblDescription',
     name: 'descriptionButton',
-    classes: 'btnlink-orange',
+    classes: 'obObposPointOfSaleUiEditLine-actionButtons-descriptionButton',
     permission: 'OBPOS_ActionButtonDescription',
     tap: function () {
       if (this.owner.owner.receipt.get('isQuotation') && this.owner.owner.receipt.get('hasbeenpaid') === 'Y') {
@@ -254,7 +264,7 @@ enyo.kind({
     name: 'returnLine',
     i18nContent: 'OBPOS_LblReturnLine',
     permission: 'OBPOS_ReturnLine',
-    classes: 'btnlink-orange',
+    classes: 'obObposPointOfSaleUiEditLine-actionButtons-returnLine',
     showing: false,
     tap: function () {
       var me = this,
@@ -298,7 +308,7 @@ enyo.kind({
     name: 'splitlineButton',
     i18nContent: 'OBPOS_lblSplit',
     showing: false,
-    classes: 'btnlink-orange',
+    classes: 'obObposPointOfSaleUiEditLine-actionButtons-splitlineButton',
     permission: 'OBPOS_ActionButtonSplit',
     tap: function () {
       this.owner.owner.doShowPopup({
@@ -312,9 +322,8 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SmallButton',
     name: 'showRelatedServices',
-    classes: 'btnlink-orange',
+    classes: 'obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices',
     permission: 'OBPOS_ActionButtonShowRelatedServices',
-    style: 'width: 45px; background-repeat: no-repeat; background-position: center; color: rgba(0, 0, 0, 0)',
     content: '-',
     tap: function (inSender, inEvent) {
       var product = this.owner.owner.line.get('product');
@@ -351,8 +360,8 @@ enyo.kind({
             l.set("obposServiceProposed", true);
           });
         }, 1);
-        this.addRemoveClass('iconServices_unreviewed', false);
-        this.addRemoveClass('iconServices_reviewed', true);
+        this.addRemoveClass('obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_unreviewed', false);
+        this.addRemoveClass('obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_reviewed', true);
       }
     }
   }, {
@@ -360,7 +369,7 @@ enyo.kind({
     name: 'removeDiscountButton',
     i18nContent: 'OBPOS_LblRemoveDiscount',
     showing: false,
-    classes: 'btnlink-orange',
+    classes: 'obObposPointOfSaleUiEditLine-actionButtons-removeDiscountButton',
     permission: 'OBPOS_ActionButtonRemoveDiscount',
     tap: function () {
       var i, lineModel, selectedLines, checkFilter, linesWithPromotionsLength = 0,
@@ -400,17 +409,19 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenStockButton',
     name: 'checkStockButton',
     permission: 'OBPOS_ActionButtonCheckStock',
+    classes: 'obObposPointOfSaleUiEditLine-actionButtons-checkStockButton',
     showing: false
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
     name: 'openAttributeButton',
+    classes: 'obObposPointOfSaleUiEditLine-actionButtons-openAttributeButton',
     showing: false
   }, {
     kind: 'OB.UI.SmallButton',
     name: 'addAssociationsButton',
     i18nContent: 'OBPOS_AddAssociations',
     showing: false,
-    classes: 'btnlink-orange',
+    classes: 'obObposPointOfSaleUiEditLine-actionButtons-addAssociationsButton',
     tap: function () {
       this.owner.owner.doShowPopup({
         popup: 'OBPOS_modalAssociateTickets',
@@ -425,7 +436,7 @@ enyo.kind({
     name: 'removeAssociationsButton',
     i18nContent: 'OBPOS_RemoveAssociations',
     showing: false,
-    classes: 'btnlink-orange',
+    classes: 'obObposPointOfSaleUiEditLine-actionButtons-removeAssociationsButton',
     tap: function () {
       this.owner.owner.doShowPopup({
         popup: 'OBPOS_modalRemoveAssociatedTickets',
@@ -438,7 +449,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SmallButton',
     name: 'canDeliver',
-    classes: 'btnlink-orange',
+    classes: 'obObposPointOfSaleUiEditLine-actionButtons-canDeliver',
     content: '-',
     tap: function (inSender, inEvent) {
       var me = this,
@@ -709,11 +720,11 @@ enyo.kind({
           if (existRelatedServices) {
             this.$.actionButtonsContainer.$.showRelatedServices.show();
             if (proposedServices) {
-              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
-              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_unreviewed ', false);
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_reviewed', true);
             } else {
-              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', true);
-              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', false);
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_unreviewed ', true);
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_reviewed', false);
             }
           } else {
             this.$.actionButtonsContainer.$.showRelatedServices.hide();
@@ -721,11 +732,11 @@ enyo.kind({
         } else if (this.line && this.line.get('hasRelatedServices')) {
           this.$.actionButtonsContainer.$.showRelatedServices.show();
           if (this.line.get('obposServiceProposed')) {
-            this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
-            this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
+            this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_unreviewed', false);
+            this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_reviewed', true);
           } else {
-            this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', true);
-            this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', false);
+            this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_unreviewed', true);
+            this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_reviewed', false);
           }
         } else {
           this.$.actionButtonsContainer.$.showRelatedServices.hide();
@@ -791,27 +802,24 @@ enyo.kind({
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.Discounts',
     showing: false,
-    name: 'discountsEdit'
+    name: 'discountsEdit',
+    classes: 'obObposPointOfSaleUiEditLine-discountsEdit'
   }, {
     name: 'defaultEdit',
-    style: 'background-color: #ffffff; color: black; height: 200px; margin: 5px; padding: 5px',
+    classes: 'obObposPointOfSaleUiEditLine-defaultEdit',
     components: [{
       name: 'msgedit',
-      classes: 'row-fluid',
+      classes: 'obObposPointOfSaleUiEditLine-defaultEdit-msgedit row-fluid',
       showing: false,
       components: [{
         name: 'actionButtonsContainer',
         kind: 'Scroller',
-        maxHeight: '50px',
         thumb: true,
-        horizontal: 'hidden',
-        classes: 'span12',
-        style: 'padding: 0px 0px 1px 0px; line-height: 50%;'
+        classes: 'obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer span12'
       }, {
         kind: 'OB.UI.List',
         name: 'returnreason',
-        classes: 'combo',
-        style: 'width: 90%; margin-bottom: 2px; margin-left: 2%; height: 30px ',
+        classes: 'obObposPointOfSaleUiEditLine-msgedit-returnreason',
         events: {
           onSetReason: ''
         },
@@ -830,6 +838,7 @@ enyo.kind({
         },
         renderHeader: enyo.kind({
           kind: 'enyo.Option',
+          classes: 'obObposPointOfSaleUiEditLine-returnreason-renderHeader-enyoOption',
           initComponents: function () {
             this.inherited(arguments);
             this.setValue('');
@@ -838,6 +847,7 @@ enyo.kind({
         }),
         renderLine: enyo.kind({
           kind: 'enyo.Option',
+          classes: 'obObposPointOfSaleUiEditLine-returnreason-renderLine-enyoOption',
           initComponents: function () {
             this.inherited(arguments);
             this.setValue(this.model.get('id'));
@@ -846,46 +856,39 @@ enyo.kind({
         }),
         renderEmpty: 'enyo.Control'
       }, {
-        classes: 'span12',
+        classes: 'obObposPointOfSaleUiEditLine-msgedit-container3 span12',
         components: [{
-          classes: 'span7',
+          classes: 'obObposPointOfSaleUiEditLine-msgedit-container3-linePropertiesContainer span7',
           kind: 'Scroller',
           name: 'linePropertiesContainer',
-          maxHeight: '134px',
-          thumb: true,
-          horizontal: 'hidden',
-          style: 'padding: 1% 0px 5px 2%; line-height: 120%; width: 65%;'
+          thumb: true
         }, {
-          classes: 'span3',
-          sytle: 'text-align: right',
+          classes: 'obObposPointOfSaleUiEditLine-msgedit-container3-contextImage span3',
           name: 'contextImage',
           components: [{
-            style: 'padding: 2px 10px 10px 10px;',
+            classes: 'obObposPointOfSaleUiEditLine-contextImage-container1',
             components: [{
               tag: 'div',
-              classes: 'image-wrap image-editline',
+              classes: 'obObposPointOfSaleUiEditLine-contextImage-container1-container1',
               contentType: 'image/png',
-              style: 'width: 128px; height: 128px',
               components: [{
                 tag: 'img',
                 name: 'icon',
-                classes: 'product_image'
+                classes: 'obObposPointOfSaleUiEditLine-contextImage-container1-container1-icon'
               }]
             }, {
               name: 'editlineimage',
               kind: 'OB.UI.Thumbnail',
-              classes: 'image-wrap image-editline',
-              width: '105px',
-              height: '105px'
+              classes: 'obObposPointOfSaleUiEditLine-contextImage-container1-editlineimage'
             }]
           }]
         }]
       }, {
         name: 'msgaction',
-        style: 'padding: 10px;',
+        classes: 'obObposPointOfSaleUiEditLine-msgedit-msgaction',
         components: [{
           name: 'txtaction',
-          style: 'float:left;'
+          classes: 'obObposPointOfSaleUiEditLine-msgaction-txtaction'
         }]
       }]
     }]
@@ -962,23 +965,21 @@ enyo.kind({
           }
         }
         this.$.returnreason.show();
-        this.$.linePropertiesContainer.setMaxHeight("110px");
+        this.$.linePropertiesContainer.addClass('obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons');
+        this.$.linePropertiesContainer.removeClass('obObposPointOfSaleUiEditLine-linePropertiesContainer_withoutReturnReasons');
       } else {
         this.$.returnreason.hide();
-        this.$.linePropertiesContainer.setMaxHeight("134px");
+        this.$.linePropertiesContainer.addClass('obObposPointOfSaleUiEditLine-linePropertiesContainer_withoutReturnReasons');
+        this.$.linePropertiesContainer.removeClass('obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons');
       }
     } else {
       this.$.txtaction.setContent(OB.I18N.getLabel('OBPOS_NoLineSelected'));
       this.$.msgedit.hide();
       this.$.msgaction.show();
       if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
-        this.$.icon.applyStyle('background-image', '');
+        this.$.icon.addClass('obObposPointOfSaleUiEditLine-icon_noBackgroundImage');
       } else {
-        if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
-          this.$.icon.applyStyle('background-image', '');
-        } else {
-          this.$.editlineimage.setImg(null);
-        }
+        this.$.editlineimage.setImg(null);
       }
     }
     if (this.selectedModels && this.selectedModels.length > 1) {
@@ -1109,7 +1110,7 @@ enyo.kind({
     onShowLeftSubWindow: ''
   },
   content: '',
-  classes: 'btnlink-orange',
+  classes: 'obObposPointOfSaleUiEditLineOpenStockButton',
   tap: function () {
     var line = this.owner.owner.line;
     var product = this.owner.owner.line.get('product');
@@ -1133,7 +1134,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
   content: '',
-  classes: 'btnlink-orange',
+  classes: 'obObposPointOfSaleUiEditLineOpenAttributeButton',
   permission: 'OBPOS_EnableSupportForProductAttributes',
   tap: function () {
     var me = this;
