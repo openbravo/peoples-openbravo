@@ -27,6 +27,142 @@
     });
   };
 
+  OB.UTIL.StockUtils.navigateToStockScreen = function (product, warehouse, stockScreen) {
+    // Function to navigate to the stock screen window
+    if (stockScreen && OB.MobileApp.model.get('connectedToERP')) {
+      var params = {};
+      params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
+      params.product = product;
+      params.warehouse = warehouse;
+      OB.MobileApp.view.$.containerWindow.getRoot().showLeftSubWindow({}, params);
+    }
+  };
+
+  OB.UTIL.StockUtils.checkStockSuccessCallback = function (product, line, attrs, order, warehouse, allLinesQty, stockScreen, callback) {
+    // Function executed after the check stock process has sent a response, even if the response is an error response
+    if (allLinesQty > warehouse.warehouseqty) {
+      var productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
+          allowMessage, notAllowMessage;
+      if (productStatus.restrictsaleoutofstock) {
+        allowMessage = OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [product.get('_identifier'), productStatus.name, warehouse.warehouseqty, warehouse.warehousename, allLinesQty]);
+        notAllowMessage = OB.I18N.getLabel('OBPOS_CannotSellWithoutStock', [product.get('_identifier'), productStatus.name, allLinesQty, warehouse.warehouseqty, warehouse.warehousename]);
+      }
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductWithoutStock', {
+        allowToAdd: true,
+        allowMessage: allowMessage,
+        notAllowMessage: notAllowMessage,
+        askConfirmation: true,
+        order: order,
+        line: line,
+        product: product
+      }, function (args) {
+        if (args.cancelOperation) {
+          if (callback && callback instanceof Function) {
+            callback(false);
+          }
+          return;
+        }
+        if (!args.allowToAdd) {
+          if (args.askConfirmation) {
+            OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_NotEnoughStock'), args.notAllowMessage, [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              action: function () {
+                OB.UTIL.StockUtils.navigateToStockScreen(product, warehouse, stockScreen);
+              }
+            }], {
+              onHideFunction: function () {
+                OB.UTIL.StockUtils.navigateToStockScreen(product, warehouse, stockScreen);
+              }
+            });
+            if (callback && callback instanceof Function) {
+              callback(false);
+            }
+          } else {
+            if (callback && callback instanceof Function) {
+              callback(false);
+            }
+          }
+        } else {
+          OB.UTIL.showLoading(false);
+          if (args.askConfirmation) {
+            OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+              popup: 'OBPOSPointOfSale_UI_Modals_ModalStockDiscontinued',
+              args: {
+                header: OB.I18N.getLabel('OBPOS_NotEnoughStock'),
+                message: args.allowMessage,
+                product: product,
+                buttons: [{
+                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  action: function () {
+                    if (callback && callback instanceof Function) {
+                      callback(true, warehouse, allLinesQty, stockScreen);
+                    }
+                  }
+                }, {
+                  label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                  action: function () {
+                    OB.UTIL.StockUtils.navigateToStockScreen(product, warehouse, stockScreen);
+                    if (callback && callback instanceof Function) {
+                      callback(false);
+                    }
+                  }
+                }],
+                options: {
+                  onHideFunction: function () {
+                    OB.UTIL.StockUtils.navigateToStockScreen(product, warehouse, stockScreen);
+                    if (callback && callback instanceof Function) {
+                      callback(false);
+                    }
+                  }
+                },
+                acceptLine: function (accept, newAttrs) {
+                  if (accept && newAttrs) {
+                    attrs = Object.assign(attrs, newAttrs);
+                  }
+                  callback(accept);
+                }
+              }
+            });
+          } else {
+            if (callback && callback instanceof Function) {
+              callback(true, warehouse, allLinesQty, stockScreen);
+            }
+          }
+        }
+      });
+    } else if (callback && callback instanceof Function) {
+      callback(true, warehouse, allLinesQty, stockScreen);
+    }
+  };
+
+  OB.UTIL.StockUtils.checkStockErrorCallback = function (product, line, order, allLinesQty, callback) {
+    // Function executed after the check stock process hasn't sent a response (timeout, server not available, etc.)
+    var productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product);
+    OB.UTIL.showConfirmation.display(
+    OB.I18N.getLabel('OBMOBC_ConnectionFail'), OB.I18N.getLabel('OBPOS_CannotVerifyStock', [product.get('_identifier'), productStatus.name]), [{
+      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+      action: function () {
+        if (callback && callback instanceof Function) {
+          callback(true, null, null, null);
+        }
+      }
+    }, {
+      label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+      action: function () {
+        if (callback && callback instanceof Function) {
+          callback(false);
+        }
+      }
+    }], {
+      onHideFunction: function () {
+        if (callback && callback instanceof Function) {
+          callback(false);
+        }
+      }
+    });
+  };
+
   OB.UTIL.StockUtils.checkOrderLinesStock = function (orders, callback) {
     var checkedLines = [],
         checkOrderStock, checkOrderLineStock;
@@ -58,7 +194,7 @@
               options = {
               line: line
               },
-              i, j;
+              i, j, checkedLine;
           // Get the quantity if the other editable orders for this line
           for (i = orders.indexOf(order); i < orders.length; i++) {
             var currentOrder = orders[i];
@@ -71,22 +207,42 @@
               }
             }
           }
-          if (!_.find(checkedLines, function (checkedLine) {
-            return checkedLine.productId === line.get('product').get('id') && checkedLine.warehouseId === line.get('warehouse').id;
-          })) {
-            checkedLines.push({
+          checkedLine = _.find(checkedLines, function (l) {
+            return l.productId === line.get('product').get('id') && l.warehouseId === line.get('warehouse').id;
+          });
+          if (!checkedLine) {
+            checkedLine = {
               productId: line.get('product').get('id'),
               warehouseId: line.get('warehouse').id
-            });
-            order.getStoreStock(line.get('product'), qtyInOtherOrders, options, null, function (hasStock) {
+            };
+            checkedLines.push(checkedLine);
+            order.getStoreStock(line.get('product'), qtyInOtherOrders, options, null, function (hasStock, warehouse, allLinesQty, stockScreen) {
               if (hasStock) {
+                checkedLine.warehouse = warehouse;
+                checkedLine.allLinesQty = allLinesQty;
+                checkedLine.stockScreen = stockScreen;
                 checkOrderLineStock(idxOrderLine + 1, order, orderCallback);
               } else {
                 callback(false);
               }
             });
           } else {
-            checkOrderLineStock(idxOrderLine + 1, order, orderCallback);
+            var addLineCallback = function (hasStock) {
+                if (hasStock) {
+                  checkOrderLineStock(idxOrderLine + 1, order, orderCallback);
+                } else {
+                  callback(false);
+                }
+                };
+            if (!_.isNull(checkedLine.warehouse) && !_.isNull(checkedLine.allLinesQty)) {
+              OB.UTIL.StockUtils.checkStockSuccessCallback(line.get('product'), line, null, order, checkedLine.warehouse, checkedLine.allLinesQty, checkedLine.stockScreen, function (hasStock) {
+                addLineCallback(hasStock);
+              });
+            } else {
+              OB.UTIL.StockUtils.checkStockErrorCallback(line.get('product'), line, order, checkedLine.allLinesQty, function (hasStock) {
+                addLineCallback(hasStock);
+              });
+            }
           }
         } else {
           checkOrderLineStock(idxOrderLine + 1, order, orderCallback);
