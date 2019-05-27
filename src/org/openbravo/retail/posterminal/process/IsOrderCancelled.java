@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2018 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -9,6 +9,7 @@
 
 package org.openbravo.retail.posterminal.process;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.query.Query;
@@ -16,8 +17,13 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.mobile.core.process.OutDatedDataChangeException;
 import org.openbravo.mobile.core.servercontroller.MultiServerJSONProcess;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 public class IsOrderCancelled extends MultiServerJSONProcess {
@@ -37,6 +43,31 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
         } else {
           result.put("orderCancelled", false);
 
+          String loaded = jsonData.optString("orderLoaded", null),
+              updated = OBMOBCUtils.convertToUTCDateComingFromServer(order.getUpdated());
+          if (loaded == null || loaded.compareTo(updated) != 0) {
+            throw new OutDatedDataChangeException(
+                Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedLayaway",
+                    OBContext.getOBContext().getLanguage().getLanguage()));
+          }
+          final JSONArray orderlines = jsonData.optJSONArray("orderLines");
+          if (orderlines != null) {
+            for (int i = 0; i < orderlines.length(); i++) {
+              JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+              OrderLine orderLine = OBDal.getInstance()
+                  .get(OrderLine.class, jsonOrderLine.optString("id"));
+              if (orderLine != null) {
+                loaded = jsonOrderLine.optString("loaded");
+                updated = OBMOBCUtils.convertToUTCDateComingFromServer(orderLine.getUpdated());
+                if (loaded == null || loaded.compareTo(updated) != 0) {
+                  throw new OutDatedDataChangeException(
+                      Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedLayaway",
+                          OBContext.getOBContext().getLanguage().getLanguage()));
+                }
+              }
+            }
+          }
+
           final Query<Integer> importErrorQuery = OBDal.getInstance()
               .getSession()
               .createQuery("select 1 from OBPOS_Errors where client.id = :clientId "
@@ -49,6 +80,7 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
             throw new OBException(
                 OBMessageUtils.getI18NMessage("OBPOS_OrderPresentInImportErrorList", null));
           }
+
           if (jsonData.has("checkNotEditableLines")
               && jsonData.getBoolean("checkNotEditableLines")) {
             // Find the deferred services or the products that have related deferred services in the
