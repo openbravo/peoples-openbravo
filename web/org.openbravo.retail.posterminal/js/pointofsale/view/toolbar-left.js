@@ -13,12 +13,11 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbarButton',
   tag: 'li',
-  classes: 'span4',
+  classes: 'obObposPointOfSaleUiLeftToolbarButton span4',
   components: [{
     name: 'theButton',
-    attributes: {
-      style: 'margin: 0px 5px 0px 5px;'
-    }
+    classes: 'obObposPointOfSaleUiLeftToolbarButton-theButton',
+    attributes: {}
   }],
   initComponents: function () {
     this.inherited(arguments);
@@ -28,10 +27,10 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbar',
-  classes: 'span3',
+  classes: 'obObposPointOfSaleUiLeftToolbar span3',
   components: [{
     tag: 'ul',
-    classes: 'unstyled nav-pos row-fluid',
+    classes: 'obObposPointOfSaleUiLeftToolbar-toolbar row-fluid',
     name: 'toolbar'
   }],
   initComponents: function () {
@@ -39,6 +38,7 @@ enyo.kind({
     enyo.forEach(this.buttons, function (btn) {
       this.$.toolbar.createComponent({
         kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarButton',
+        classes: 'obObposPointOfSaleUiLeftToolbar-toolbar-obObposPointOfSaleUiLeftToolbarButton',
         button: btn
       });
     }, this);
@@ -48,7 +48,8 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ButtonNew',
   kind: 'OB.UI.ToolbarButton',
-  icon: 'btn-icon btn-icon-new',
+  classes: 'obUiButtonNew',
+  icon: '',
   events: {
     onAddNewOrder: ''
   },
@@ -88,13 +89,14 @@ enyo.kind({
   updateDisabled: function (isDisabled) {
     this.setDisabled(isDisabled);
     if (isDisabled) {
-      this.removeClass('btn-icon-new');
+      this.removeClass('obUiButtonNew_iconNew');
     } else {
-      this.addClass('btn-icon-new');
+      this.addClass('obUiButtonNew_iconNew');
     }
   },
   init: function (model) {
     this.model = model;
+    this.addClass('obUiButtonNew_iconNew');
   },
   tap: function () {
     var me = this;
@@ -131,7 +133,8 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ButtonDelete',
   kind: 'OB.UI.ToolbarButton',
-  icon: 'btn-icon btn-icon-delete',
+  classes: 'obUiButtonDelete',
+  icon: '',
   events: {
     onShowPopup: '',
     onDeleteOrder: '',
@@ -173,9 +176,9 @@ enyo.kind({
   updateDisabled: function (isDisabled) {
     this.setDisabled(isDisabled);
     if (isDisabled) {
-      this.removeClass('btn-icon-delete');
+      this.removeClass('obUiButtonDelete_iconDelete');
     } else {
-      this.addClass('btn-icon-delete');
+      this.addClass('obUiButtonDelete_iconDelete');
     }
   },
   tap: function () {
@@ -221,6 +224,7 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
+    this.addClass('obUiButtonDelete_iconDelete');
     this.model.get('leftColumnViewManager').on('multiorder', function () {
       this.addClass('paidticket');
       return true;
@@ -259,6 +263,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
   kind: 'OB.UI.ToolbarButtonTab',
+  classes: 'obObposPointOfSaleUiButtonTabPayment',
   tabPanel: 'payment',
   handlers: {
     onChangedTotal: 'renderTotal',
@@ -358,16 +363,16 @@ enyo.kind({
       newIsDisabledState = false;
       this.$.totalPrinter.show();
       if (!hasBeenPaid) {
-        this.$.totalPrinter.removeClass('blackcolor');
-        this.$.totalPrinter.addClass('whitecolor');
+        this.$.totalPrinter.removeClass('obObposPointOfSaleUiButtonTabPayment-totalPrinter_black');
+        this.$.totalPrinter.addClass('obObposPointOfSaleUiButtonTabPayment-totalPrinter_white ');
       }
     } else {
       newIsDisabledState = true;
       if (discountEdit) {
         this.$.totalPrinter.hide();
       } else if (OB.MobileApp.model.get('serviceSearchMode')) {
-        this.$.totalPrinter.removeClass('whitecolor');
-        this.$.totalPrinter.addClass('blackcolor');
+        this.$.totalPrinter.removeClass('obObposPointOfSaleUiButtonTabPayment-totalPrinter_white ');
+        this.$.totalPrinter.addClass('obObposPointOfSaleUiButtonTabPayment-totalPrinter_black');
       }
     }
 
@@ -395,10 +400,10 @@ enyo.kind({
     this.disabled = newIsDisabledState; // for getDisabled() to return the correct value
     this.setAttribute('disabled', newIsDisabledState); // to effectively turn the button enabled or disabled
     if (hasBeenPaid && !newIsDisabledState) {
-      this.$.totalPrinter.removeClass('whitecolor');
-      this.addClass('btnlink-gray');
+      this.$.totalPrinter.removeClass('obObposPointOfSaleUiButtonTabPayment-totalPrinter_white');
+      this.addClass('obObposPointOfSaleUiButtonTabPayment_disabled');
     } else {
-      this.removeClass('btnlink-gray');
+      this.removeClass('obObposPointOfSaleUiButtonTabPayment_disabled');
     }
   },
   events: {
@@ -553,20 +558,18 @@ enyo.kind({
       });
     }
   },
-  attributes: {
-    style: 'text-align: center; font-size: 30px;'
-  },
+  attributes: {},
   components: [{
     kind: 'OB.UI.FitText',
     name: 'totalButtonDiv',
     minFontSize: 15,
     maxFontSize: 30,
     maxHeight: 57,
-    classes: 'buttonText',
-    style: 'font-weight: bold; display: initial;',
+    classes: 'obObposPointOfSaleUiButtonTabPayment-totalButtonDiv buttonText',
     components: [{
       tag: 'span',
       name: 'totalPrinter',
+      classes: 'obObposPointOfSaleUiButtonTabPayment-totalButtonDiv-totalPrinter',
       renderTotal: function (total) {
         this.setContent(OB.I18N.formatCurrency(total));
         //It needs an small asynch to be rendered and then we can adaptFontSize
@@ -614,11 +617,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl',
   kind: 'OB.UI.MultiColumn.Toolbar',
+  classes: 'obObposPointOfSaleUiLeftToolbarImpl',
   menuEntries: [{
-    kind: 'OB.UI.MenuDisableEnableRFIDReader'
+    kind: 'OB.UI.MenuDisableEnableRFIDReader',
+    classes: 'obObposPointOfSaleUiLeftToolbarImpl-obUiMenuDisableEnableRFIDReader'
   }, {
     kind: 'OB.UI.MenuSeparator',
     name: 'sep0',
+    classes: 'obObposPointOfSaleUiLeftToolbarImpl-sep0',
     init: function (model) {
       if (!OB.MobileApp.model.get('terminal').terminalType.useRfid || !OB.POS.hwserver.url) {
         this.hide();
@@ -627,12 +633,15 @@ enyo.kind({
   }],
   buttons: [{
     kind: 'OB.UI.ButtonNew',
+    classes: 'obObposPointOfSaleUiLeftToolbarImpl-obUiButtonNew',
     span: 3
   }, {
     kind: 'OB.UI.ButtonDelete',
+    classes: 'obObposPointOfSaleUiLeftToolbarImpl-ButtonDelete',
     span: 3
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
+    classes: 'obObposPointOfSaleUiLeftToolbarImpl-ButtonTabPayment',
     name: 'btnTotalToPay',
     span: 6
   }],
@@ -641,103 +650,130 @@ enyo.kind({
     //Menu entries is used for modularity. cannot be initialized
     //this.menuEntries = [];
     this.menuEntries.push({
-      kind: 'OB.UI.MenuReceiptSelector'
+      kind: 'OB.UI.MenuReceiptSelector',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuReceiptSelector'
     });
     this.menuEntries.push({
-      kind: 'OB.UI.MenuReturn'
+      kind: 'OB.UI.MenuReturn',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuReturn'
     });
     this.menuEntries.push({
-      kind: 'OB.UI.MenuVoidLayaway'
+      kind: 'OB.UI.MenuVoidLayaway',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuVoidLayaway'
     });
     this.menuEntries.push({
-      kind: 'OB.UI.MenuReceiptLayaway'
+      kind: 'OB.UI.MenuReceiptLayaway',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuReceiptLayaway'
     });
     this.menuEntries.push({
-      kind: 'OB.UI.MenuCancelLayaway'
+      kind: 'OB.UI.MenuCancelLayaway',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuCancelLayaway'
     });
     this.menuEntries.push({
-      kind: 'OB.UI.MenuProperties'
+      kind: 'OB.UI.MenuProperties',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuProperties'
     });
     this.menuEntries.push({
-      kind: 'OB.UI.MenuInvoice'
+      kind: 'OB.UI.MenuInvoice',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuInvoice'
     });
     this.menuEntries.push({
-      kind: 'OB.UI.MenuPrint'
+      kind: 'OB.UI.MenuPrint',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuPrint'
     });
     this.menuEntries.push({
-      kind: 'OB.UI.MenuLayaway'
+      kind: 'OB.UI.MenuLayaway',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuLayaway'
     });
     this.menuEntries.push({
-      kind: 'OB.UI.MenuCancelAndReplace'
+      kind: 'OB.UI.MenuCancelAndReplace',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuCancelAndReplace'
     });
     this.menuEntries.push({
-      kind: 'OB.UI.MenuCustomers'
+      kind: 'OB.UI.MenuCustomers',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuCustomers'
     });
     this.menuEntries.push({
-      kind: 'OB.UI.MenuOpenDrawer'
+      kind: 'OB.UI.MenuOpenDrawer',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuOpenDrawer'
     });
     // TODO: what is this for?!!
     // this.menuEntries = this.menuEntries.concat(this.externalEntries);
     this.menuEntries.push({
       kind: 'OB.UI.MenuSeparator',
-      name: 'sep1'
+      name: 'sep1',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuSeparator'
     });
 
     this.menuEntries.push({
-      kind: 'OB.UI.MenuDiscounts'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuSeparator',
-      name: 'sep2'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuReactivateQuotation'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuRejectQuotation'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuCreateOrderFromQuotation'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuCreateQuotationFromOrder'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuQuotation'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuMultiOrders'
+      kind: 'OB.UI.MenuDiscounts',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuDiscounts'
     });
 
     this.menuEntries.push({
       kind: 'OB.UI.MenuSeparator',
+      name: 'sep2',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuSeparator'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuReactivateQuotation',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuReactivateQuotation'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuRejectQuotation',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuRejectQuotation'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuCreateOrderFromQuotation',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuCreateOrderFromQuotation'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuCreateQuotationFromOrder',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuCreateQuotationFromOrder'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuQuotation',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuQuotation'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuMultiOrders',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuMultiOrders'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuSeparator',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuSeparator',
       name: 'sep3'
     });
 
     this.menuEntries.push({
-      kind: 'OB.UI.MenuBackOffice'
+      kind: 'OB.UI.MenuBackOffice',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuBackOffice'
     });
 
     this.menuEntries.push({
-      kind: 'OB.UI.MenuSelectPrinter'
+      kind: 'OB.UI.MenuSelectPrinter',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuSelectPrinter'
     });
 
     this.menuEntries.push({
-      kind: 'OB.UI.MenuSelectPDFPrinter'
+      kind: 'OB.UI.MenuSelectPDFPrinter',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuSelectPDFPrinter'
     });
 
     this.menuEntries.push({
-      kind: 'OB.UI.MenuForceIncrementalRefresh'
+      kind: 'OB.UI.MenuForceIncrementalRefresh',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuForceIncrementalRefresh'
     });
 
     this.menuEntries.push({
-      kind: 'OB.UI.MenuTestPrinter'
+      kind: 'OB.UI.MenuTestPrinter',
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuTestPrinter'
     });
 
     //remove duplicates

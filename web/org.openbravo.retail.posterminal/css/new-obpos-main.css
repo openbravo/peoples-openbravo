@@ -3201,6 +3201,240 @@
 
 
 
+/***********************   ***********************/
+/*              File: datasource.js              */
+/*                  Folder: js/                  */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.LeftToolbarButton
+*/
+.obObposPointOfSaleUiLeftToolbarButton {}
+
+.obObposPointOfSaleUiLeftToolbarButton-theButton {
+  margin: 0px 5px 0px 5px;
+}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.LeftToolbar
+*/
+.obObposPointOfSaleUiLeftToolbar {}
+
+.obObposPointOfSaleUiLeftToolbar-toolbar {
+  clear: both;
+}
+
+.obObposPointOfSaleUiLeftToolbar-toolbar-obObposPointOfSaleUiLeftToolbarButton {
+  /*Inherits: [OB.UI.RegularButton]*/
+}
+
+
+
+/*
+# Component: OB.UI.ButtonNew
+# Inherits: [OB.UI.ToolbarButton]
+*/
+.obUiButtonNew {
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.obUiButtonNew_iconNew {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCreateNew.svg');
+  background-size: 19px 19px;
+}
+
+
+
+/*
+# Component: OB.UI.ButtonDelete
+# Inherits: [OB.UI.ToolbarButton]
+*/
+.obUiButtonDelete {
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.obUiButtonDelete_iconDelete {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconDelete.svg');
+  background-size: 15px 18px;
+}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.ButtonTabPayment
+# Inherits: [OB.UI.ToolbarButtonTab]
+*/
+.obObposPointOfSaleUiButtonTabPayment {
+  background-color: var(--color-maincolor);
+  text-align: center;
+  font-size: 30px;
+  color: white;
+}
+
+.obObposPointOfSaleUiButtonTabPayment_disabled {
+  background-color: #e2e2e2;
+  color: black;
+}
+
+.obObposPointOfSaleUiButtonTabPayment-totalButtonDiv {
+  /*Inherits: [OB.UI.FitText]*/
+  font-weight: bold;
+  display: initial;
+}
+
+.obObposPointOfSaleUiButtonTabPayment-totalButtonDiv-totalPrinter {}
+
+.obObposPointOfSaleUiButtonTabPayment-totalPrinter_black {
+  color: var(--color-primary-darker);
+}
+
+
+.obObposPointOfSaleUiButtonTabPayment-totalPrinter_white {
+  color: var(--color-primary-lighter);
+}
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.LeftToolbarImpl
+# Inherits: [OB.UI.MultiColumn.Toolbar]
+*/
+.obObposPointOfSaleUiLeftToolbarImpl {}
+
+.obObposPointOfSaleUiLeftToolbarImpl-obUiMenuDisableEnableRFIDReader {
+  /*Inherits: [OB.UI.MenuDisableEnableRFIDReader]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-sep0 {
+  /*Inherits: [OB.UI.MenuSeparator]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-obUiButtonNew {
+  /*Inherits: [OB.UI.ButtonNew]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-ButtonDelete {
+  /*Inherits: [OB.UI.ButtonDelete]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-ButtonTabPayment {
+  /*Inherits: [OB.UI.ButtonTabPayment]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuReceiptSelector {
+  /*Inherits: [OB.UI.ReceiptSelector]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuReturn {
+  /*Inherits: [OB.UI.MenuReturn]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuVoidLayaway {
+  /*Inherits: [OB.UI.MenuVoidLayaway]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuReceiptLayaway {
+  /*Inherits: [OB.UI.MenuReceiptLayaway]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuCancelLayaway {
+  /*Inherits: [OB.UI.MenuCancelLayaway]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuProperties {
+  /*Inherits: [OB.UI.MenuProperties]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuInvoice {
+  /*Inherits: [OB.UI.MenuInvoice]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuPrint {
+  /*Inherits: [OB.UI.MenuPrint]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuLayaway {
+  /*Inherits: [OB.UI.MenuLayaway]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuCancelAndReplace {
+  /*Inherits: [OB.UI.MenuCancelAndReplace]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuCustomers {
+  /*Inherits: [OB.UI.MenuCustomers]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuOpenDrawer {
+  /*Inherits: [OB.UI.MenuOpenDrawer]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuSeparator {
+  /*Inherits: [OB.UI.MenuSeparator]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuDiscounts {
+  /*Inherits: [OB.UI.MenuDiscounts]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuSeparator {
+  /*Inherits: [OB.UI.MenuSeparator]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuReactivateQuotation {
+  /*Inherits: [OB.UI.MenuReactivateQuotation]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuRejectQuotation {
+  /*Inherits: [OB.UI.MenuRejectQuotation]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuCreateOrderFromQuotation {
+  /*Inherits: [OB.UI.MenuCreateOrderFromQuotation]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuCreateQuotationFromOrder {
+  /*Inherits: [OB.UI.MenuCreateQuotationFromOrder]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuQuotation {
+  /*Inherits: [OB.UI.MenuQuotation]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuMultiOrders {
+  /*Inherits: [OB.UI.MenuMultiOrders]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuSeparator {
+  /*Inherits: [OB.UI.MenuSeparator]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuBackOffice {
+  /*Inherits: [OB.UI.MenuBackOffice]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuSelectPrinter {
+  /*Inherits: [OB.UI.MenuSelectPrinter]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuSelectPDFPrinter {
+  /*Inherits: [OB.UI.MenuSelectPDFPrinter]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuForceIncrementalRefresh {
+  /*Inherits: [OB.UI.MenuForceIncrementalRefresh]*/
+}
+
+.obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuTestPrinter {
+  /*Inherits: [OB.UI.MenuTestPrinter]*/
+}
+
+
+
+
 
 
 
