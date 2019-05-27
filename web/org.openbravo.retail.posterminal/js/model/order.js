@@ -4296,14 +4296,29 @@
       }
 
     },
-
+    canCancelOrder: function (cancellingReceipt, params, successCallback, errorCallback) {
+      var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
+          receipt = cancellingReceipt || this,
+          orderLines = [];
+      _.each(receipt.get('lines').models, function (line) {
+        orderLines.push({
+          id: line.get('id'),
+          loaded: line.get('loaded')
+        });
+      });
+      process.exec({
+        orderId: receipt.get('id'),
+        documentNo: receipt.get('documentNo'),
+        orderLoaded: receipt.get('loaded'),
+        orderLines: orderLines,
+        checkNotEditableLines: params ? params.checkNotEditableLines : false,
+        checkNotDeliveredDeferredServices: params ? params.checkNotDeliveredDeferredServices : false
+      }, successCallback, errorCallback);
+    },
     verifyCancelAndReplace: function (context) {
       var me = this;
       this.checkNotProcessedPayments(function () {
-        var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
-        process.exec({
-          orderId: me.get('id'),
-          documentNo: me.get('documentNo'),
+        me.canCancelOrder(null, {
           checkNotEditableLines: true
         }, function (data) {
           if (data && data.exception) {
@@ -4520,10 +4535,7 @@
     cancelLayaway: function (context) {
       var me = this;
       this.checkNotProcessedPayments(function () {
-        var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
-        process.exec({
-          orderId: me.get('id'),
-          documentNo: me.get('documentNo'),
+        me.canCancelOrder(null, {
           checkNotDeliveredDeferredServices: true
         }, function (data) {
           if (data && data.exception) {

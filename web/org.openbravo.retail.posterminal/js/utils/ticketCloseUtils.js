@@ -231,8 +231,7 @@
 
   OB.UTIL.TicketCloseUtils.paymentDone = function (receipt, callbackPaymentAccepted, callbackOverpaymentExists, callbackPaymentAmountDistinctThanReceipt, callbackErrorCancelAndReplace, callbackErrorCancelAndReplaceOffline, callbackErrorOrderCancelled, callbackPaymentCancelled) {
 
-    var isOrderCancelledProcess = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
-        triggerPaymentAccepted, triggerPaymentAcceptedImpl;
+    var triggerPaymentAccepted, triggerPaymentAcceptedImpl;
 
     triggerPaymentAccepted = function (openDrawer) {
       OB.UTIL.HookManager.executeHooks('OBPOS_PostPaymentDone', {
@@ -252,10 +251,7 @@
 
     triggerPaymentAcceptedImpl = function (openDrawer) {
       if (receipt.get('doCancelAndReplace') && receipt.get('replacedorder')) {
-        isOrderCancelledProcess.exec({
-          orderId: receipt.get('replacedorder'),
-          documentNo: receipt.get('documentNo')
-        }, function (data) {
+        receipt.canCancelOrder(receipt.get('canceledorder'), null, function (data) {
           if (data && data.exception) {
             if (data.exception.message) {
               callbackErrorCancelAndReplace(data.exception.message);

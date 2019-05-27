@@ -791,8 +791,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     receipt.on('cancelLayaway', function () {
       var finishCancelLayaway = function () {
-          var processCancelLayaway, process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
-              execution = OB.UTIL.ProcessController.start('cancelLayaway');
+          var processCancelLayaway, execution = OB.UTIL.ProcessController.start('cancelLayaway');
 
           processCancelLayaway = function () {
             var cloneOrderForNew = new OB.Model.Order(),
@@ -974,10 +973,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             });
           };
 
-          process.exec({
-            orderId: receipt.get('canceledorder').id,
-            documentNo: receipt.get('canceledorder').get('documentNo')
-          }, function (data) {
+          receipt.canCancelOrder(receipt.get('canceledorder'), null, function (data) {
             if (data && data.exception) {
               if (data.exception.message) {
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
