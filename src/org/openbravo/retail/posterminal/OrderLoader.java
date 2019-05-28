@@ -299,6 +299,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       }
 
       if (!isModified) {
+        DeferredServiceDelivery.calculateQtyToDeliver(jsonorder);
         executeOrderLoaderPreProcessHook(orderPreProcesses, jsonorder);
       } else {
         executeOrderLoaderModifiedPreProcessHook(orderModifiedPreProcesses, jsonorder);
@@ -553,6 +554,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
             TriggerHandler.getInstance().enable();
           }
         }
+
+        DeferredServiceDelivery.createShipmentLinesForDeferredServices(jsonorder, order, shipment);
 
         for (OrderLoaderHook hook : orderProcesses) {
           if (hook instanceof OrderLoaderPaymentHook) {

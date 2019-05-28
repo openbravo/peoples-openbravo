@@ -233,6 +233,18 @@
     name: 'productAssortmentStatus',
     column: 'productAssortmentStatus',
     type: 'TEXT'
+  }, {
+    name: 'obrdmDeliveryMode',
+    column: 'obrdmDeliveryMode',
+    type: 'TEXT'
+  }, {
+    name: 'obrdmDeliveryModeLyw',
+    column: 'obrdmDeliveryModeLyw',
+    type: 'TEXT'
+  }, {
+    name: 'obrdmIsdeliveryservice',
+    column: 'obrdmIsdeliveryservice',
+    type: 'BOOL'
   }]);
 
   Product.addIndex([{
