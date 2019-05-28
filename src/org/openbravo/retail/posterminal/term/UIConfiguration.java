@@ -30,7 +30,7 @@ public class UIConfiguration extends QueryTerminalProperty {
 
     MobileUiConfiguration uiConfig = POSUtils
         .getUiConfigurationByTerminalId(jsonsent.getString("pos"));
-    String uiConfId = uiConfig == null ? null : uiConfig.getId();
+    String uiConfId = uiConfig == null ? "" : uiConfig.getId();
     Map<String, Object> args = new HashMap<String, Object>();
     args.put("uiConfigId", uiConfId);
     return args;
