@@ -122,8 +122,11 @@ isc.OBToolbar.addClassProperties({
     prompt: OB.I18N.getLabel('OBUIAPP_NewRow'),
     updateState: function () {
       var view = this.view,
-          selectedRecords = view.viewGrid.getSelectedRecords();
-      this.setDisabled(view.viewGrid.isGrouped || view.isShowingForm || view.readOnly || view.editOrDeleteOnly || view.singleRecord || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1) || view.isShowingTree || !view.roleCanCreateRecords());
+          selectedRecords = view.viewGrid.getSelectedRecords(),
+          form = view.viewGrid.getEditForm(),
+          allFieldsSet = form && form.allRequiredFieldsSet(),
+          isNew = form && form.isNew;
+      this.setDisabled(view.viewGrid.isGrouped || view.isShowingForm || view.readOnly || view.editOrDeleteOnly || view.singleRecord || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1) || view.isShowingTree || !view.roleCanCreateRecords() || (isNew && !allFieldsSet));
     },
     keyboardShortcutId: 'ToolBar_NewRow'
   },

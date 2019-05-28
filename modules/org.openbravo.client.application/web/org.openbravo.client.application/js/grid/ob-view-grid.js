@@ -3495,7 +3495,11 @@ isc.OBViewGrid.addProperties({
     }
 
     // If leaving the row...
-    if (editCompletionEvent === 'enter' || editCompletionEvent === 'arrow_up' || editCompletionEvent === 'arrow_down') {
+    if (newRow) {
+      // do not leave the row if the row is new and not all mandatory fields have been set
+      if (editForm && editForm.isNew && !editForm.allRequiredFieldsSet()) {
+        return;
+      }
       // See issue https://issues.openbravo.com/view.php?id=19830
       if (this.view.standardWindow.getDirtyEditForm()) {
         this.view.standardWindow.getDirtyEditForm().validateForm();
