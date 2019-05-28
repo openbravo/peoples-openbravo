@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, _ */
+/*global OB, Backbone, enyo, _ */
 
 enyo.kind({
   kind: 'OB.UI.Modal',
@@ -196,6 +196,37 @@ enyo.kind({
   style: 'padding: 9px 15px;',
   windowHeader: 'OB.OBPOSPointOfSale.UI.customers.NewCustomer_bodyheader',
   newAttributes: [{
+    kind: 'OB.UI.CustomerComboProperty',
+    name: 'greeting',
+    modelProperty: 'greetingId',
+    modelPropertyText: 'greetingName',
+    collectionName: 'greetingsList',
+    //Default value for new lines
+    defaultValue: function () {
+      return undefined;
+    },
+    retrievedPropertyForValue: 'id',
+    retrievedPropertyForText: 'name',
+    //function to retrieve the data
+    fetchDataFunction: function (args) {
+      var me = this,
+          data = new Backbone.Collection();
+      _.each(OB.MobileApp.model.get('greetings'), function (greeting) {
+        var greetingToAdd = new Backbone.Model({
+          _identifier: greeting.name,
+          name: greeting.name,
+          id: greeting.id
+        });
+        data.push(greetingToAdd);
+      }, args);
+      me.dataReadyFunction(data, args);
+
+    },
+    i18nLabel: 'OBPOS_LblGreetings',
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowGreetings', true);
+    }
+  }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'firstName',
     modelProperty: 'firstName',
@@ -275,17 +306,12 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblEmail',
     maxlength: 255
   }, {
-    kind: 'OB.UI.CustomerConsentCheckProperty',
-    name: 'isCustomerConsent',
-    modelProperty: 'isCustomerConsent',
-    i18nLabel: 'OBPOS_CustomerConsent'
-  }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'birthPlace',
     modelProperty: 'birthPlace',
     i18nLabel: 'OBPOS_LblBirthplace',
     displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowBirthplace', true);
     }
   }, {
     kind: 'OB.UI.DatePicker',
@@ -307,7 +333,7 @@ enyo.kind({
       inEvent[this.modelProperty] = this.getValue();
     },
     displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowBirthdate', true);
     },
     loadValue: function (inSender, inEvent) {
       this.setLocale(OB.MobileApp.model.get('terminal').language_string);
@@ -324,6 +350,50 @@ enyo.kind({
       } else {
         inEvent.customer.set(this.modelProperty, '');
       }
+    }
+  }, {
+    kind: 'OB.UI.CustomerComboProperty',
+    name: 'customerLanguage',
+    modelProperty: 'language',
+    modelPropertyText: 'language_name',
+    collectionName: 'languageList',
+    defaultValue: function () {
+      return OB.MobileApp.model.get('terminal').language_string;
+    },
+    //Default value for new lines
+    retrievedPropertyForValue: 'language',
+    //property of the retrieved model to get the value of the combo item
+    retrievedPropertyForText: 'name',
+    //property of the retrieved model to get the text of the combo item
+    //function to retrieve the data
+    fetchDataFunction: function (args) {
+      var me = this,
+          data = new Backbone.Collection();
+      //This function must be called when the data is readyargs = "language";
+      _.each(OB.MobileApp.model.get('language'), function (lg) {
+        var languageToAdd = new Backbone.Model({
+          _identifier: lg.language,
+          language: lg.language,
+          name: lg.name,
+          id: lg.id
+        });
+        data.push(languageToAdd);
+      }, args);
+      me.dataReadyFunction(data, args);
+
+    },
+    i18nLabel: 'OBPOS_LblLanguage',
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowLanguage', true);
+    }
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
+    name: 'comments',
+    modelProperty: 'comments',
+    i18nLabel: 'OBPOS_LblComments',
+    maxlength: 40,
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowComments', true);
     }
   }, {
     kind: 'OB.UI.CustomerComboProperty',
@@ -366,6 +436,31 @@ enyo.kind({
     i18nLabel: 'OBPOS_PriceList',
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('EnableMultiPriceList', true);
+    }
+  }, {
+    kind: 'OB.UI.CustomerConsentCheckProperty',
+    name: 'isCustomerConsent',
+    modelProperty: 'isCustomerConsent',
+    i18nLabel: 'OBPOS_CustomerConsent'
+  }, {
+    kind: 'OB.UI.CustomerCheckCommercialAuth',
+    name: 'commercialauth',
+    modelProperty: 'commercialauth',
+    i18nLabel: 'OBPOS_CommercialAuth',
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowCommercialAuth', true);
+    }
+  }, {
+    kind: 'OB.UI.CustomerCheckComboProperty',
+    name: 'contactpreferences',
+    modelProperty: 'contactpreferences',
+    i18nLabel: 'OBPOS_ContactPreferences',
+    setEditedProperties: function (oldBp, editedBp) {
+      editedBp.set('viasms', oldBp.get('viasms'));
+      editedBp.set('viaemail', oldBp.get('viaemail'));
+    },
+    displayLogic: function () {
+      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowContactPreferences', true);
     }
   }, {
     kind: 'OB.UI.SwitchShippingInvoicingAddr',

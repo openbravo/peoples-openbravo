@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2018 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -56,6 +56,16 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bp.birthPlace", "birthPlace"));
         add(new HQLProperty("bp.active", "active"));
         add(new HQLProperty("bp.isCustomerConsent", "isCustomerConsent"));
+        add(new HQLProperty("lang.language", "language"));
+        add(new HQLProperty("lang.name", "language_name"));
+        add(new HQLProperty("grt.id", "greetingId"));
+        add(new HQLProperty("grt.name", "greetingName"));
+        add(new HQLProperty("ulist.comments", "comments"));
+        add(new HQLProperty("bp.creditLimit - bp.creditUsed", "availableCredit"));
+        add(new HQLProperty("ulist.commercialauth", "commercialauth"));
+        add(new HQLProperty("ulist.viaemail", "viaemail"));
+        add(new HQLProperty("ulist.viasms", "viasms"));
+
         String curDbms = OBPropertiesProvider.getInstance()
             .getOpenbravoProperties()
             .getProperty("bbdd.rdbms");

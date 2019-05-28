@@ -129,6 +129,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBRDM_DELIVERYPAYMENTMODE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="EM_OBPOS_DOC_AD_ORG">
         <reference local="EM_OBPOS_C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
