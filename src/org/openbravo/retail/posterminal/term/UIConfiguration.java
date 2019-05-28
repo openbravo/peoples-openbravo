@@ -9,7 +9,9 @@
 package org.openbravo.retail.posterminal.term;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -23,8 +25,16 @@ public class UIConfiguration extends QueryTerminalProperty {
   }
 
   @Override
-  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     String uiConfId = POSUtils.getUiConfigurationByTerminalId(jsonsent.getString("pos")).getId();
+    Map<String, Object> args = new HashMap<String, Object>();
+    args.put("uiConfigId", uiConfId);
+    return args;
+  }
+
+  @Override
+  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+
     StringBuilder hqlSelect = new StringBuilder();
     hqlSelect.append("SELECT ");
     hqlSelect.append("dfact.rowposition as row, dfact.columnposition as column, ");
@@ -42,7 +52,7 @@ public class UIConfiguration extends QueryTerminalProperty {
     hqlSelect.append("WHERE dfact.active = 'Y' AND ");
     hqlSelect.append("abaconf.active = 'Y' AND ");
     hqlSelect.append("abaconf.mobileUIConfiguration.active = 'Y' AND ");
-    hqlSelect.append("abaconf.mobileUIConfiguration.id = '" + uiConfId + "'");
+    hqlSelect.append("abaconf.mobileUIConfiguration.id = :uiConfigId");
     return Arrays.asList(new String[] { hqlSelect.toString() });
   }
 
