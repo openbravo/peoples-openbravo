@@ -23,7 +23,7 @@
     <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
-            INSERT INTO public.ad_preference(
+            INSERT INTO ad_preference(
             ad_preference_id, ad_client_id, ad_org_id, isactive, created, 
             createdby, updated, updatedby, ad_window_id, ad_user_id, attribute, 
             value, property, ispropertylist, visibleat_client_id, visibleat_org_id, 
@@ -32,7 +32,7 @@
             createdby, updated, updatedby, ad_window_id, ad_user_id, attribute, 
             value, ?, ispropertylist, visibleat_client_id, visibleat_org_id, 
             visibleat_role_id, selected, ad_module_id, inherited_from 
-            from ad_preference where property ='OBPOS_ShowBusinessPartnerBirthInfo' and ad_client_id <> '0';  
+            from ad_preference where property ='OBPOS_ShowBusinessPartnerBirthInfo' and ad_client_id <> '0'
         ]]>
       </Sql>
       <Parameter name="property"/>
