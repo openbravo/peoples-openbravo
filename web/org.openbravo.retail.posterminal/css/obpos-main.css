@@ -1600,3 +1600,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   opacity: 0.999;
   background-color: #cccccc;
 }
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > button.obUiActionButtonSwitch_selected {
+  background-color: #F8941D;
+}
