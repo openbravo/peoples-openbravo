@@ -351,19 +351,11 @@ public class POSUtils {
     try {
       OBContext.setAdminMode(false);
       OBPOSApplications posterminal = getTerminalById(posterminalId);
-      TerminalType terminalType = OBDal.getInstance()
-          .get(TerminalType.class, posterminal.getObposTerminaltype().getId());
-      if (terminalType.getMobileUIConfiguration() != null) {
-        return terminalType.getMobileUIConfiguration();
-      } else {
-        return null;
-      }
-    } catch (Exception e) {
-      log.error("Error getting UIConfiguration for terminal ID: " + posterminalId, e);
+      TerminalType terminalType = posterminal.getObposTerminaltype();
+      return terminalType.getMobileUIConfiguration();
     } finally {
       OBContext.restorePreviousMode();
     }
-    return null;
   }
 
   public static int getLastDocumentNumberForPOS(String searchKey, List<String> documentTypeIds) {
