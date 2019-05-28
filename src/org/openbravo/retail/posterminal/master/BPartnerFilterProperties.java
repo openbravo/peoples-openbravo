@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -36,7 +36,6 @@ public class BPartnerFilterProperties extends ModelExtension {
         add(new HQLProperty("bp.businessPartnerCategory.name", "bpCategory"));
         add(new HQLProperty("ulist.email", "email"));
         add(new HQLProperty("ulist.phone", "phone"));
-        add(new HQLProperty("bp.isCustomerConsent", "isCustomerConsent"));
         if (location) {
           add(new HQLProperty("bpl.id", "id"));
           add(new HQLProperty("bpl.id", "bpLocactionId"));
