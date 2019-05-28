@@ -34,7 +34,7 @@ enyo.kind({
       name: 'removeQuantity'
     }
   }, {
-    kind: 'OB.UI.ActionButton',
+    kind: 'OB.UI.ActionButtonKey',
     name: 'backspace',
     classes: 'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic obObposPointOfSaleUiGridKeyboard-backspace',
     action: {
@@ -42,7 +42,7 @@ enyo.kind({
       name: 'keyboard-Backspace'
     }
   }, {
-    kind: 'OB.UI.ActionButton',
+    kind: 'OB.UI.ActionButtonKey',
     name: 'keyboardkey0',
     classes: 'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic obObposPointOfSaleUiGridKeyboard-keyboardkey0',
     action: {
@@ -50,7 +50,7 @@ enyo.kind({
       name: 'keyboard-0'
     }
   }, {
-    kind: 'OB.UI.ActionButton',
+    kind: 'OB.UI.ActionButtonKey',
     name: 'keyboardkey1',
     classes: 'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic obObposPointOfSaleUiGridKeyboard-keyboardkey1',
     action: {
@@ -58,7 +58,7 @@ enyo.kind({
       name: 'keyboard-1'
     }
   }, {
-    kind: 'OB.UI.ActionButton',
+    kind: 'OB.UI.ActionButtonKey',
     name: 'keyboardkey2',
     classes: 'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic obObposPointOfSaleUiGridKeyboard-keyboardkey2',
     action: {
@@ -66,7 +66,7 @@ enyo.kind({
       name: 'keyboard-2'
     }
   }, {
-    kind: 'OB.UI.ActionButton',
+    kind: 'OB.UI.ActionButtonKey',
     name: 'keyboardkey3',
     classes: 'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic obObposPointOfSaleUiGridKeyboard-keyboardkey3',
     action: {
@@ -74,7 +74,7 @@ enyo.kind({
       name: 'keyboard-3'
     }
   }, {
-    kind: 'OB.UI.ActionButton',
+    kind: 'OB.UI.ActionButtonKey',
     name: 'keyboardkey4',
     classes: 'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic obObposPointOfSaleUiGridKeyboard-keyboardkey4',
     action: {
@@ -82,7 +82,7 @@ enyo.kind({
       name: 'keyboard-4'
     }
   }, {
-    kind: 'OB.UI.ActionButton',
+    kind: 'OB.UI.ActionButtonKey',
     name: 'keyboardkey5',
     classes: 'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic obObposPointOfSaleUiGridKeyboard-keyboardkey5',
     action: {
@@ -90,7 +90,7 @@ enyo.kind({
       name: 'keyboard-5'
     }
   }, {
-    kind: 'OB.UI.ActionButton',
+    kind: 'OB.UI.ActionButtonKey',
     name: 'keyboardkey6',
     classes: 'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic obObposPointOfSaleUiGridKeyboard-keyboardkey6',
     action: {
@@ -98,7 +98,7 @@ enyo.kind({
       name: 'keyboard-6'
     }
   }, {
-    kind: 'OB.UI.ActionButton',
+    kind: 'OB.UI.ActionButtonKey',
     name: 'keyboardkey7',
     classes: 'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic obObposPointOfSaleUiGridKeyboard-keyboardkey7',
     action: {
@@ -106,7 +106,7 @@ enyo.kind({
       name: 'keyboard-7'
     }
   }, {
-    kind: 'OB.UI.ActionButton',
+    kind: 'OB.UI.ActionButtonKey',
     name: 'keyboardkey8',
     classes: 'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic obObposPointOfSaleUiGridKeyboard-keyboardkey8',
     action: {
@@ -114,7 +114,7 @@ enyo.kind({
       name: 'keyboard-8'
     }
   }, {
-    kind: 'OB.UI.ActionButton',
+    kind: 'OB.UI.ActionButtonKey',
     name: 'keyboardkey9',
     classes: 'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic obObposPointOfSaleUiGridKeyboard-keyboardkey9',
     action: {
@@ -122,7 +122,7 @@ enyo.kind({
       name: 'keyboard-9'
     }
   }, {
-    kind: 'OB.UI.ActionButton',
+    kind: 'OB.UI.ActionButtonKey',
     name: 'keyboardkeyPeriod',
     classes: 'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic obObposPointOfSaleUiGridKeyboard-keyboardkeyPeriod',
     action: {
