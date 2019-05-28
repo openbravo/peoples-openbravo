@@ -7,28 +7,23 @@
  ************************************************************************************
  */
 
-(function () {
-
-  if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true) && OB.UTIL.HookManager) {
-
-    OB.UTIL.HookManager.registerHook('OBPOS_PreAddProductWithoutStock', function (args, callbacks) {
-      if (args.line) {
-        if (args.line.get('obrdmDeliveryMode') && args.line.get('obrdmDeliveryMode') !== 'PickAndCarry') {
+OB.UTIL.HookManager.registerHook('OBPOS_PreAddProductWithoutStock', function (args, callbacks) {
+  if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
+    if (args.line) {
+      if (args.line.get('obrdmDeliveryMode') && args.line.get('obrdmDeliveryMode') !== 'PickAndCarry') {
+        args.allowToAdd = false;
+      }
+    } else {
+      if (args.order.get('orderType') === 2) {
+        if (args.product.get('obrdmDeliveryModeLyw') && args.product.get('obrdmDeliveryModeLyw') !== 'PickAndCarry') {
           args.allowToAdd = false;
         }
       } else {
-        if (args.order.get('orderType') === 2) {
-          if (args.product.get('obrdmDeliveryModeLyw') && args.product.get('obrdmDeliveryModeLyw') !== 'PickAndCarry') {
-            args.allowToAdd = false;
-          }
-        } else {
-          if (args.product.get('obrdmDeliveryMode') && args.product.get('obrdmDeliveryMode') !== 'PickAndCarry') {
-            args.allowToAdd = false;
-          }
+        if (args.product.get('obrdmDeliveryMode') && args.product.get('obrdmDeliveryMode') !== 'PickAndCarry') {
+          args.allowToAdd = false;
         }
       }
-      OB.UTIL.HookManager.callbackExecutor(args, callbacks);
-    });
-
+    }
   }
-}());
+  OB.UTIL.HookManager.callbackExecutor(args, callbacks);
+});
