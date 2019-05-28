@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -32,15 +32,12 @@ import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.model.ad.datamodel.Table;
@@ -121,24 +118,6 @@ public class TransactionsDao {
     return 0l;
   }
 
-  public static void post(VariablesSecureApp vars, ConnectionProvider connectionProvider,
-      FIN_FinaccTransaction finFinancialAccountTransaction) {
-    final String AD_TABLE_ID = "4D8C3B3C31D1410DA046140C9F024D17";
-    try {
-      AcctServer acct = AcctServer.get(AD_TABLE_ID, vars.getClient(),
-          finFinancialAccountTransaction.getOrganization().getId(), connectionProvider);
-      if (acct == null) {
-        throw new OBException("Accounting process failed for the financial account transaction");
-      } else if (!acct.post(finFinancialAccountTransaction.getId(), false, vars, connectionProvider,
-          connectionProvider.getConnection()) || acct.errors != 0) {
-        connectionProvider.releaseRollbackConnection(connectionProvider.getConnection());
-        throw new OBException(acct.getMessageResult().getMessage());
-      }
-    } catch (Exception e) {
-      throw new OBException("Accounting process failed for the financial account transaction", e);
-    }
-  }
-
   public static FIN_Reconciliation getLastReconciliation(FIN_FinancialAccount account,
       String isProcessed) {
     OBContext.setAdminMode();
@@ -173,39 +152,6 @@ public class TransactionsDao {
           AccDefUtility.getCalendar(transaction.getOrganization()))));
     }
     return;
-  }
-
-  public static List<FIN_FinaccTransaction> getTransactionsToReconciled(
-      FIN_FinancialAccount account, Date statementDate, boolean hideAfterDate) {
-
-    OBContext.setAdminMode();
-    try {
-
-      final Map<String, Object> parameters = new HashMap<>();
-      final StringBuilder whereClause = new StringBuilder();
-      whereClause.append(" as ft");
-      whereClause.append(" left outer join ft.reconciliation as rec");
-      whereClause.append(" where ft.account.id = :accountId");
-      whereClause.append(" and (rec is null or rec.processed = 'N')");
-      whereClause.append(" and ft.processed = 'Y'");
-      parameters.put("accountId", account.getId());
-      if (hideAfterDate) {
-        whereClause.append(" and ft.transactionDate < :statementDate");
-        parameters.put("statementDate", statementDate);
-      }
-      whereClause.append(" order by ft.transactionDate, ft.lineNo");
-
-      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance()
-          .createQuery(FIN_FinaccTransaction.class, whereClause.toString(), parameters);
-
-      return obQuery.list();
-
-    } catch (Exception e) {
-      throw new OBException(e);
-
-    } finally {
-      OBContext.restorePreviousMode();
-    }
   }
 
   public static FieldProvider[] getTransactionsFiltered(FIN_FinancialAccount account,
