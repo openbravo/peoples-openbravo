@@ -8139,6 +8139,151 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/****************************   ****************************/
+/*           File: editcreatecustomeraddress.js            */
+/* Folder: js/pointofsale/view/subwindows/customeraddress/ */
+/****************************   ****************************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr
+# Inherits: [OB.UI.Modal]
+*/
+.obObposPointOfSaleUiCustomeraddrNewcustomeraddr {
+  width: 870px;
+}
+
+.obObposPointOfSaleUiCustomeraddrNewcustomeraddr-obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers_impl] */
+}
+
+@media (min-width: 350px) and (max-width: 470px) {
+  .obObposPointOfSaleUiCustomeraddrNewcustomeraddr {
+    width: calc(100% - 24px);
+  }
+}
+
+@media (min-width: 471px) and (max-width: 549px) {
+  .obObposPointOfSaleUiCustomeraddrNewcustomeraddr {
+    width: calc(100% - 24px);
+  }
+}
+
+@media (min-width: 550px) and (max-width: 649px) {
+  .obObposPointOfSaleUiCustomeraddrNewcustomeraddr {
+    width: calc(100% - 24px);
+  }
+}
+
+@media (min-width: 650px) and (max-width: 800px) {
+  .obObposPointOfSaleUiCustomeraddrNewcustomeraddr {
+    width: calc(100% - 24px);
+  }
+}
+
+@media (min-width: 801px) and (max-width: 899px) {
+  .obObposPointOfSaleUiCustomeraddrNewcustomeraddr {
+    width: 780px;
+  }
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddrsave
+# Inherits: [OB.UI.Button]
+*/
+.obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave {
+  width: 100px;
+  margin: 0px 5px 8px 19px;
+  background-color: #f8e859;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  height: 30px;
+  font-size: 16px;
+  padding: 5px 15px 7px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+}
+
+.obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave:hover {
+  opacity: 0.75;
+}
+
+.obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave:active {
+  opacity: 0.999;
+  background-color: #cccccc;
+}
+
+.obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave:disabled,
+.obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave[disabled=true]:hover {
+  background-color: #a9a9a9;
+  opacity: 1;
+  cursor: default;
+}
+
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave {
+    height: 45px;
+  }
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.subwindowNewCustomer_bodyheader
+*/
+.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader {}
+
+.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1 {}
+
+.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1 {
+  display: table;
+  margin: 0 auto;
+}
+
+.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1-container1 {
+  display: table-cell;
+}
+
+.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1-container1-obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddrsave] */
+}
+
+.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1-container2 {
+  display: table-cell;
+}
+
+.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1-container2-addressEditCancel {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.cancelEdit] */
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers_impl
+# Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers]
+*/
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl {
+  padding: 9px 15px;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrCustomerName,
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrName,
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrPostalCode,
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrCity {
+/* Inherits: [OB.UI.CustomerAddrTextProperty] */
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrCountry {
+/* Inherits: [OB.UI.CustomerAddrComboProperty] */
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrShip,
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrBill {
+/* Inherits: [OB.UI.CustomerAddrCheckProperty] */
+}
+
+
+
 
 /*****************/
 /*      JAR      */
