@@ -7861,6 +7861,284 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/**********************************   **********************************/
+/*                      File: sharedcomponents.js                      */
+/* Folder: js/pointofsale/view/subwindows/customeraddress/components/  */
+/**********************************   **********************************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers
+# Inherits: [OB.UI.ModalInfo]
+*/
+.obObposPointOfSaleUiCustomersModalConfigurationRequiredForCreateCustomers {}
+
+.obObposPointOfSaleUiCustomersModalConfigurationRequiredForCreateCustomers-bodyContent {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.cancelEdit
+# Inherits: [OB.UI.Button]
+*/
+.obObposPointOfSaleUiCustomersCancelEdit {
+  width: 100px;
+  margin: 0px 0px 8px 5px;
+  background-color: #e2e2e2;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  height: 30px;
+  font-size: var(--font-medium);
+  padding: 5px 15px 7px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+}
+
+
+.obObposPointOfSaleUiCustomersCancelEdit:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+
+.obObposPointOfSaleUiCustomersCancelEdit:hover {
+  opacity: 0.75;
+}
+
+.obObposPointOfSaleUiCustomersCancelEdit:active {
+  opacity: 0.999;
+  background-color: #cccccc;
+}
+
+.obObposPointOfSaleUiCustomersCancelEdit:disabled,
+.obObposPointOfSaleUiCustomersCancelEdit[disabled=true]:hover {
+  background-color: #a9a9a9;
+  opacity: 1;
+  cursor: default;
+}
+
+
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiCustomersCancelEdit {
+    height: 45px;
+  }
+}
+
+
+/*
+# Component: OB.UI.CustomerPropertyLine
+*/
+.obUiCustomerPropertyLine {}
+
+.obUiCustomerPropertyLine-labelLine {
+  font-size: var(--font-medium);
+  color: black;
+  text-align: right;
+  border: 1px solid #FFFFFF;
+  background-color: #E2E2E2;
+  width: 20%;
+  height: 28px;
+  padding: 12px 5px 1px 0;
+  float: left;
+}
+
+.obUiCustomerPropertyLine-newAttribute {
+  border: 1px solid #FFFFFF;
+  float: left;
+  width: 75%;
+}
+
+.obUiCustomerPropertyLine-element3 {}
+
+@media (min-width: 350px) and (max-width: 520px) {
+  .obUiCustomerPropertyLine-labelLine {
+    width: 40%;
+  }
+
+  .obUiCustomerPropertyLine-newAttribute {
+    width: 54%;
+  }
+}
+
+@media (min-width: 521px) and (max-width: 800px) {
+  .obUiCustomerPropertyLine-labelLine {
+    width: 30%;
+  }
+
+  .obUiCustomerPropertyLine-newAttribute {
+    width: 64%;
+  }
+}
+
+
+/*
+# Component: OB.UI.CustomerTextProperty
+# Inherits: [enyo.Input]
+*/
+.obUiCustomerTextProperty {
+  width: 100%;
+  height: 30px;
+  margin: 0px;
+  background-color: white;
+  padding: 4px;
+  margin-bottom: 9px;
+  color: #555555;
+  border: 1px solid #cccccc;
+  font-family: "Segoe UI", "Lucida Sans", Helvetica, Arial, sans-serif;
+  font-size: var(--font-medium);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+
+/*
+# Component: OB.UI.CustomerTextPropertyAddr
+# Inherits: [OB.UI.CustomerTextProperty]
+*/
+.obUiCustomerTextPropertyAddr {}
+
+
+/*
+# Component: OB.UI.SwitchShippingInvoicingAddr
+*/
+.obUiSwitchShippingInvoicingAddr {}
+
+.obUiSwitchShippingInvoicingAddr-useSameCheck {
+  text-align: right;
+  width: 20%;
+  float: left;
+  padding: 0px 5px 1px 0px;
+}
+
+.obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck {
+/* Inherits: [OB.UI.CheckboxButton] */
+  background-position: 0px 5px;
+  height: 38px;
+  margin-left: 5px;
+}
+
+.obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck_active {
+  background-image: url('./../img/checkbox-on.svg');
+  background-size: 34px 27px;
+}
+
+.obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck_active:active,
+.obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck_active[disabled="disabled"],
+ {
+  background-image: url('./../img/checkbox-off.svg');
+  background-size: 34px 27px;
+}
+
+.obUiSwitchShippingInvoicingAddr-info {
+  width: 75%;
+  float: left;
+}
+
+.obUiSwitchShippingInvoicingAddr-info-infotext {
+  display: table-cell;
+  vertical-align: middle;
+  height: 30px;
+  padding: 4px;
+}
+
+
+/*
+# Component: OB.UI.CustomerComboProperty
+*/
+.obUiCustomerComboProperty {}
+
+.obUiCustomerComboProperty-customerCombo {
+/* Inherits: [OB.UI.List] */
+  width: 101%;
+  margin: 0px;
+  height: 40px;
+  background-color: white;
+  padding: 4px;
+  margin-bottom: 9px;
+  color: #555555;
+  border: 1px solid #cccccc;
+}
+
+.obUiCustomerComboProperty-customerCombo-renderLine-enyoOption {
+/* Inherits: [enyo.Option] */
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.edit_createcustomers
+*/
+.obObposPointOfSaleUiCustomersEditCreatecustomers {}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-bodyheader {}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes {
+/* Inherits: [Scroller] */
+  max-height: 500px;
+  overflow-x: hidden;
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields {}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine {
+/* Inherits: [OB.UI.CustomerPropertyLine] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAddress {}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shipLbl {
+  float: left;
+  font-weight: bold;
+  font-size: var(--font-xlarge);
+  line-height: 30px;
+  padding-top: 1px;
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shippingAddrFields {}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-shippingAddrFields-obUiCustomerPropertyLine {
+/* Inherits: [OB.UI.CustomerPropertyLine] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-invAddress {}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invLbl {
+  float: left;
+  font-weight: bold;
+  font-size: var(--font-xlarge);
+  line-height: 30px;
+  padding-top: 1px;
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invoicingAddrFields {}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine {
+/* Inherits: [OB.UI.CustomerPropertyLine] */
+}
+
+
+/*
+# Component: OB.UI.CustomerConsentCheckProperty
+# Inherits: [OB.UI.CheckboxButton]
+*/
+.obUiCustomerConsentCheckProperty {
+  margin: 5px 0px 0px 5px;
+}
+
+.obUiCustomerConsentCheckProperty_active {
+  background-image: url('./../img/checkbox-on.svg');
+  background-size: 34px 27px;
+}
+
+.obUiCustomerConsentCheckProperty_active:active,
+.obUiCustomerConsentCheckProperty_active[disabled="disabled"]:active {
+  background-image: url('./../img/checkbox-off.svg');
+  background-size: 34px 27px;
+}
+
+
+
 
 /*****************/
 /*      JAR      */
