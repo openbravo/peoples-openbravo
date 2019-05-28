@@ -165,6 +165,15 @@ enyo.kind({
       this.$.bodyContent.$.attributes.$.line_addressshipbutton.show();
       this.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
     }
+    if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
+      this.$.bodyContent.$.attributes.$.line_ReceiptDeliveryMode.show();
+      this.$.bodyContent.$.attributes.$.line_ReceiptDeliveryDate.show();
+      this.$.bodyContent.$.attributes.$.line_ReceiptDeliveryTime.show();
+    } else {
+      this.$.bodyContent.$.attributes.$.line_ReceiptDeliveryMode.hide();
+      this.$.bodyContent.$.attributes.$.line_ReceiptDeliveryDate.hide();
+      this.$.bodyContent.$.attributes.$.line_ReceiptDeliveryTime.hide();
+    }
     for (p in this.newAttributes) {
       if (this.newAttributes.hasOwnProperty(p)) {
         this.loadValue(this.newAttributes[p].modelProperty);
