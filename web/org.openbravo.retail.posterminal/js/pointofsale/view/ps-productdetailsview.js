@@ -96,6 +96,9 @@ enyo.kind({
         warehousename: me.leftSubWindow.warehouse.warehousename,
         warehouseqty: me.leftSubWindow.warehouse.warehouseqty
       };
+      if (me.leftSubWindow.documentType) {
+        attrs.documentType = me.leftSubWindow.documentType;
+      }
       OB.UTIL.HookManager.executeHooks('OBPOS_PreTapStockAddReceipt', {
         context: me,
         params: attrs,
@@ -225,6 +228,7 @@ enyo.kind({
           me.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(data.currentPrice.price) + '</b>');
           me.$.productAddToReceipt.setLabel();
           me.$.productAddToReceipt.setDisabled(false);
+          me.leftSubWindow.documentType = data.documentType;
           me.leftSubWindow.organization = organization;
           me.leftSubWindow.changeWarehouseInfo(null, warehouse);
           me.leftSubWindow.product.set('listPrice', data.currentPrice.price);

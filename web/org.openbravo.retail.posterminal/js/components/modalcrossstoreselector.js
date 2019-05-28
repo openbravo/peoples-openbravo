@@ -229,7 +229,8 @@ enyo.kind({
           priceListId: this.model.get('standardPriceListId'),
           price: this.model.get('standardPrice')
         },
-        productPrices: this.model.has('productPrices') ? this.model.get('productPrices') : null
+        productPrices: this.model.has('productPrices') ? this.model.get('productPrices') : null,
+        documentType: this.model.get('documentTypeId')
       };
       this.owner.owner.owner.owner.callback(data);
       this.owner.owner.owner.owner.owner.owner.hide();

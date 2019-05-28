@@ -4234,7 +4234,9 @@
           }
         }
       } else {
-        this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+        if (!OB.UTIL.isCrossStoreReceipt(this)) {
+          this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+        }
         finishSetOrderType();
       }
     },
