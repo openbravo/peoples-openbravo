@@ -922,6 +922,7 @@ public class CancelAndReplaceUtils {
   private static ScrollableResults getOrderLineList(Order order) {
     OBCriteria<OrderLine> orderLinesCriteria = OBDal.getInstance().createCriteria(OrderLine.class);
     orderLinesCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, order));
+    orderLinesCriteria.setFilterOnReadableOrganization(false);
 
     ScrollableResults orderLines = orderLinesCriteria.scroll(ScrollMode.FORWARD_ONLY);
     return orderLines;
