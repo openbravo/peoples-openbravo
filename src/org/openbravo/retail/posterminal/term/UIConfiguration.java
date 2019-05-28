@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.mobile.core.MobileUiConfiguration;
 import org.openbravo.retail.posterminal.POSUtils;
 
 public class UIConfiguration extends QueryTerminalProperty {
@@ -26,7 +27,10 @@ public class UIConfiguration extends QueryTerminalProperty {
 
   @Override
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
-    String uiConfId = POSUtils.getUiConfigurationByTerminalId(jsonsent.getString("pos")).getId();
+
+    MobileUiConfiguration uiConfig = POSUtils
+        .getUiConfigurationByTerminalId(jsonsent.getString("pos"));
+    String uiConfId = uiConfig == null ? null : uiConfig.getId();
     Map<String, Object> args = new HashMap<String, Object>();
     args.put("uiConfigId", uiConfId);
     return args;
@@ -53,7 +57,7 @@ public class UIConfiguration extends QueryTerminalProperty {
     hqlSelect.append("abaconf.active = 'Y' AND ");
     hqlSelect.append("abaconf.mobileUIConfiguration.active = 'Y' AND ");
     hqlSelect.append("abaconf.mobileUIConfiguration.id = :uiConfigId");
-    return Arrays.asList(new String[] { hqlSelect.toString() });
+    return Arrays.asList(hqlSelect.toString());
   }
 
   @Override
