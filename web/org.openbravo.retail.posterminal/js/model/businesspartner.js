@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _ */
+/*global OB, Backbone, _ */
 
 (function () {
 
@@ -173,6 +173,7 @@
         this.set('organization', OB.MobileApp.model.get('terminal').defaultbp_bporg);
         this.set('creditLimit', OB.DEC.Zero);
         this.set('creditUsed', OB.DEC.Zero);
+        this.set('availableCredit', OB.DEC.Zero);
         this.set('customerBlocking', false);
         this.set('salesOrderBlocking', false);
       } else {
@@ -359,6 +360,14 @@
     filter: true,
     type: 'TEXT'
   }, {
+    name: 'greetingId',
+    column: 'greetingId',
+    type: 'TEXT'
+  }, {
+    name: 'greetingName',
+    column: 'greetingName',
+    type: 'TEXT'
+  }, {
     name: '_identifier',
     column: '_identifier',
     filter: true,
@@ -477,6 +486,34 @@
     name: 'isCustomerConsent',
     column: 'isCustomerConsent',
     type: 'TEXT'
+  }, {
+    name: 'language',
+    column: 'language',
+    type: 'TEXT'
+  }, {
+    name: 'language_name',
+    column: 'language_name',
+    type: 'TEXT'
+  }, {
+    name: 'comments',
+    column: 'comments',
+    type: 'TEXT'
+  }, {
+    name: 'availableCredit',
+    column: 'availableCredit',
+    type: 'NUMERIC'
+  }, {
+    name: 'commercialauth',
+    column: 'commercialauth',
+    type: 'TEXT'
+  }, {
+    name: 'viaemail',
+    column: 'viaemail',
+    type: 'TEXT'
+  }, {
+    name: 'viasms',
+    column: 'viasms',
+    type: 'TEXT'
   }]);
 
   BusinessPartner.addIndex([{
@@ -492,6 +529,7 @@
       sort: 'desc'
     }]
   }]);
-
+  window.OB.Collection.languageList = Backbone.Collection;
+  window.OB.Collection.greetingsList = Backbone.Collection;
   OB.Data.Registry.registerModel(BusinessPartner);
 }());

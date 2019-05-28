@@ -68,7 +68,10 @@ public class BusinessPartner extends ProcessHQLQuery {
     String hql = "SELECT " + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartner AS bp " //
         + "join bp.priceList AS plist " //
-        + "left outer join bp.aDUserList AS ulist " + "WHERE $filtersCriteria AND " //
+        + "left outer join bp.language AS lang " //
+        + "left outer join bp.greeting AS grt " //
+        + "left outer join bp.aDUserList AS ulist " //
+        + "WHERE $filtersCriteria AND " //
         + "bp.customer = true AND " + "(bp.$incrementalUpdateCriteria) AND "
         + "bp.$readableSimpleClientCriteria AND " + "bp.$naturalOrgCriteria AND "
         + "(not exists (select 1 from ADUser usr where usr.businessPartner = bp)) ";
@@ -81,7 +84,10 @@ public class BusinessPartner extends ProcessHQLQuery {
     String hql2 = "SELECT" + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartner AS bp " //
         + "join bp.priceList AS plist " //
-        + "left outer join bp.aDUserList AS ulist " + "WHERE $filtersCriteria AND " //
+        + "left outer join bp.language AS lang " //
+        + "left outer join bp.greeting AS grt " //
+        + "left outer join bp.aDUserList AS ulist " //
+        + "WHERE $filtersCriteria AND " //
         + "bp.customer = true AND " + "bp.$readableSimpleClientCriteria AND "
         + "bp.$naturalOrgCriteria AND " + "(bp.$incrementalUpdateCriteria) AND "
         + "(ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bp)) ";

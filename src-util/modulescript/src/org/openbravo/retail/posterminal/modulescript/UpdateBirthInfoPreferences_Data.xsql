@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+ ************************************************************************************
+ * Copyright (C) 2019 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+-->
+<SqlClass name="UpdateBirthInfoPreferencesData" package="org.openbravo.retail.posterminal.modulescript">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="dummy" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+          SELECT 1 AS dummy FROM DUAL
+        ]]>
+      </Sql>
+  </SqlMethod>
+  <SqlMethod name="updatePreference" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+            INSERT INTO ad_preference(
+            ad_preference_id, ad_client_id, ad_org_id, isactive, created, 
+            createdby, updated, updatedby, ad_window_id, ad_user_id, attribute, 
+            value, property, ispropertylist, visibleat_client_id, visibleat_org_id, 
+            visibleat_role_id, selected, ad_module_id, inherited_from)
+            select get_uuid(), ad_client_id, ad_org_id, isactive, created, 
+            createdby, updated, updatedby, ad_window_id, ad_user_id, attribute, 
+            value, ?, ispropertylist, visibleat_client_id, visibleat_org_id, 
+            visibleat_role_id, selected, ad_module_id, inherited_from 
+            from ad_preference where property ='OBPOS_ShowBusinessPartnerBirthInfo' and ad_client_id <> '0'
+        ]]>
+      </Sql>
+      <Parameter name="property"/>
+  </SqlMethod>
+</SqlClass>

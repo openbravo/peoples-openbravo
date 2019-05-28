@@ -10,102 +10,103 @@
 /*global enyo, _*/
 
 OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function (args, callbacks) {
-  var orderline = args.orderline.model,
-      order = args.order,
-      deliveryDate = orderline.get('obrdmDeliveryDate') ? (orderline.get('obrdmDeliveryDate') instanceof Date ? orderline.get('obrdmDeliveryDate') : new Date(orderline.get('obrdmDeliveryDate'))) : null,
-      deliveryTime = orderline.get('obrdmDeliveryTime') ? (orderline.get('obrdmDeliveryTime') instanceof Date ? orderline.get('obrdmDeliveryTime') : new Date(orderline.get('obrdmDeliveryTime'))) : null,
-      showDate = orderline.get('obrdmDeliveryMode') === 'PickupInStoreDate' || orderline.get('obrdmDeliveryMode') === 'HomeDelivery',
-      showTime = orderline.get('obrdmDeliveryMode') === 'HomeDelivery',
-      deliveryName = orderline.get('nameDelivery') ? orderline.get('nameDelivery') : (orderline.get('obrdmDeliveryMode') ? _.find(OB.MobileApp.model.get('deliveryModes'), function (dm) {
-      return dm.id === orderline.get('obrdmDeliveryMode');
-    }).name : null),
-      isDeliveryService = orderline.get('product').get('productType') === 'S' && orderline.get('product').get('obrdmIsdeliveryservice'),
-      deliveryPaymentMode = OB.MobileApp.model.get('deliveryPaymentMode');
+  if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
+    var orderline = args.orderline.model,
+        order = args.order,
+        deliveryDate = orderline.get('obrdmDeliveryDate') ? (orderline.get('obrdmDeliveryDate') instanceof Date ? orderline.get('obrdmDeliveryDate') : new Date(orderline.get('obrdmDeliveryDate'))) : null,
+        deliveryTime = orderline.get('obrdmDeliveryTime') ? (orderline.get('obrdmDeliveryTime') instanceof Date ? orderline.get('obrdmDeliveryTime') : new Date(orderline.get('obrdmDeliveryTime'))) : null,
+        showDate = orderline.get('obrdmDeliveryMode') === 'PickupInStoreDate' || orderline.get('obrdmDeliveryMode') === 'HomeDelivery',
+        showTime = orderline.get('obrdmDeliveryMode') === 'HomeDelivery',
+        deliveryName = orderline.get('nameDelivery') ? orderline.get('nameDelivery') : (orderline.get('obrdmDeliveryMode') ? _.find(OB.MobileApp.model.get('deliveryModes'), function (dm) {
+        return dm.id === orderline.get('obrdmDeliveryMode');
+      }).name : null),
+        isDeliveryService = orderline.get('product').get('productType') === 'S' && orderline.get('product').get('obrdmIsdeliveryservice'),
+        deliveryPaymentMode = OB.MobileApp.model.get('deliveryPaymentMode');
 
-  if (orderline.get('obrdmDeliveryMode') && deliveryName && (orderline.get('obrdmDeliveryMode') !== order.get('obrdmDeliveryModeProperty') || deliveryDate)) {
-    var currentDate, currentTime;
+    if (orderline.get('obrdmDeliveryMode') && deliveryName && (orderline.get('obrdmDeliveryMode') !== order.get('obrdmDeliveryModeProperty') || deliveryDate)) {
+      var currentDate, currentTime;
 
-    if (!deliveryDate) {
-      currentDate = new Date();
-      currentDate.setHours(0);
-      currentDate.setMinutes(0);
-      currentDate.setSeconds(0);
-    }
-
-    if (!deliveryTime) {
-      currentTime = new Date();
-      currentTime.setSeconds(0);
-    }
-
-    args.orderline.createComponent({
-      style: 'float: left; width: 80%; display: block;',
-      components: [{
-        content: '-- ' + OB.I18N.getLabel('OBRDM_DeliveryMode') + ': ' + deliveryName,
-        attributes: {
-          style: 'clear: left;'
-        }
-      }, {
-        content: showDate ? '-- ' + OB.I18N.getLabel('OBRDM_DeliveryDate') + ': ' + (deliveryDate ? OB.I18N.formatDate(deliveryDate) : OB.I18N.formatDate(currentDate)) : '',
-        attributes: {
-          style: 'clear: left;'
-        }
-      }, {
-        content: showTime ? '-- ' + OB.I18N.getLabel('OBRDM_DeliveryTime') + ': ' + (deliveryTime ? OB.I18N.formatHour(deliveryTime) : OB.I18N.formatHour(currentTime)) : '',
-        attributes: {
-          style: 'clear: left;'
-        }
-      }]
-    });
-  }
-
-  order.on('change:obrdmDeliveryModeProperty', function (model) {
-    orderline.trigger('updateView');
-  });
-
-  if (orderline.has('obrdmAmttopayindelivery') && isDeliveryService && deliveryPaymentMode === 'PD') {
-    var symbol = OB.MobileApp.model.get('terminal').symbol,
-        symbolAtTheRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
-    args.orderline.createComponent({
-      style: 'float: left; width: 80%; display: block; color: #f8941d;',
-      components: [{
-        content: '-- ' + OB.I18N.getLabel('OBRDM_AmtToPayInDeliveryLbl', [OB.I18N.formatCurrencyWithSymbol(orderline.get('obrdmAmttopayindelivery'), symbol, symbolAtTheRight)]),
-        classes: 'orderline-canbedelivered',
-        attributes: {
-          style: 'clear: left;'
-        }
-      }],
-      tap: function () {
-        if (!OB.MobileApp.model.receipt.get('isEditable')) {
-          return;
-        }
-        OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBRDM_ChangeDeliveryPaymentApproval', function (approved, supervisor, approvalType) {
-          if (approved) {
-            OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-              popup: 'OBRDM_UI_ModalChangeDeliveryAmount',
-              args: {
-                orderline: orderline
-              }
-            });
-          }
-        });
+      if (!deliveryDate) {
+        currentDate = new Date();
+        currentDate.setHours(0);
+        currentDate.setMinutes(0);
+        currentDate.setSeconds(0);
       }
-    });
-  }
 
-  if (isDeliveryService) {
-    args.orderline.$.serviceIcon.setSrc('img/iconShippingAddress.svg');
-    args.orderline.$.serviceIcon.setStyle('float: left; padding: 1px 2px 0px 0px; height: 14px;');
-  } else {
-    args.orderline.$.serviceIcon.setSrc('img/iconService_ticketline.png');
-    args.orderline.$.serviceIcon.setStyle('float: left; padding-right: 5px;');
-  }
-  if (orderline.get('hasDeliveryServices')) {
-    args.orderline.createComponent({
-      kind: 'OBRDM.UI.ShowDeliveryServicesButton',
-      name: 'showDeliveryServicesButton'
-    });
-  }
+      if (!deliveryTime) {
+        currentTime = new Date();
+        currentTime.setSeconds(0);
+      }
 
+      args.orderline.createComponent({
+        style: 'float: left; width: 80%; display: block;',
+        components: [{
+          content: '-- ' + OB.I18N.getLabel('OBRDM_DeliveryMode') + ': ' + deliveryName,
+          attributes: {
+            style: 'clear: left;'
+          }
+        }, {
+          content: showDate ? '-- ' + OB.I18N.getLabel('OBRDM_DeliveryDate') + ': ' + (deliveryDate ? OB.I18N.formatDate(deliveryDate) : OB.I18N.formatDate(currentDate)) : '',
+          attributes: {
+            style: 'clear: left;'
+          }
+        }, {
+          content: showTime ? '-- ' + OB.I18N.getLabel('OBRDM_DeliveryTime') + ': ' + (deliveryTime ? OB.I18N.formatHour(deliveryTime) : OB.I18N.formatHour(currentTime)) : '',
+          attributes: {
+            style: 'clear: left;'
+          }
+        }]
+      });
+    }
+
+    order.on('change:obrdmDeliveryModeProperty', function (model) {
+      orderline.trigger('updateView');
+    });
+
+    if (orderline.has('obrdmAmttopayindelivery') && isDeliveryService && deliveryPaymentMode === 'PD') {
+      var symbol = OB.MobileApp.model.get('terminal').symbol,
+          symbolAtTheRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+      args.orderline.createComponent({
+        style: 'float: left; width: 80%; display: block; color: #f8941d;',
+        components: [{
+          content: '-- ' + OB.I18N.getLabel('OBRDM_AmtToPayInDeliveryLbl', [OB.I18N.formatCurrencyWithSymbol(orderline.get('obrdmAmttopayindelivery'), symbol, symbolAtTheRight)]),
+          classes: 'orderline-canbedelivered',
+          attributes: {
+            style: 'clear: left;'
+          }
+        }],
+        tap: function () {
+          if (!OB.MobileApp.model.receipt.get('isEditable')) {
+            return;
+          }
+          OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBRDM_ChangeDeliveryPaymentApproval', function (approved, supervisor, approvalType) {
+            if (approved) {
+              OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                popup: 'OBRDM_UI_ModalChangeDeliveryAmount',
+                args: {
+                  orderline: orderline
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+
+    if (isDeliveryService) {
+      args.orderline.$.serviceIcon.setSrc('img/iconShippingAddress.svg');
+      args.orderline.$.serviceIcon.setStyle('float: left; padding: 1px 2px 0px 0px; height: 14px;');
+    } else {
+      args.orderline.$.serviceIcon.setSrc('img/iconService_ticketline.png');
+      args.orderline.$.serviceIcon.setStyle('float: left; padding-right: 5px;');
+    }
+    if (orderline.get('hasDeliveryServices')) {
+      args.orderline.createComponent({
+        kind: 'OBRDM.UI.ShowDeliveryServicesButton',
+        name: 'showDeliveryServicesButton'
+      });
+    }
+  }
   OB.UTIL.HookManager.callbackExecutor(args, callbacks);
 });
 

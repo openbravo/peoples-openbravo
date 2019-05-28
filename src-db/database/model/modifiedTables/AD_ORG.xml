@@ -1,10 +1,6 @@
 <?xml version="1.0"?>
   <database name="MODIFIED TABLE AD_ORG">
     <table name="AD_ORG" primaryKey="AD_ORG_KEY">
-      <column name="EM_OBRDM_DELIVERYPAYMENTMODE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="EM_OBPOS_TICKET_TEMPLATE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -130,6 +126,10 @@
         <onCreateDefault/>
       </column>
       <column name="EM_OBPOS_C_DOCTYPEQUOT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRDM_DELIVERYPAYMENTMODE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
