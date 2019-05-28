@@ -3615,13 +3615,18 @@
       var me = this,
           orgId, orgName;
       if (OB.UTIL.isNullOrUndefined(attrs) || OB.UTIL.isNullOrUndefined(attrs.organization)) {
-        orgId = me.get('organization');
-        _.each(OB.MobileApp.model.get('store'), function (s) {
-          if (s.id === orgId) {
-            orgName = s.name;
-            return;
-          }
-        });
+        if (!OB.UTIL.isCrossStoreProduct(p)) {
+          orgId = OB.MobileApp.model.get('terminal').organization;
+          orgName = OB.I18N.getLabel('OBPOS_LblThisStore', [OB.MobileApp.model.get('terminal').organization$_identifier]);
+        } else {
+          orgId = me.get('organization');
+          _.each(OB.MobileApp.model.get('store'), function (s) {
+            if (s.id === orgId) {
+              orgName = s.name;
+              return;
+            }
+          });
+        }
       } else {
         orgId = attrs.organization.id;
         orgName = attrs.organization.name;
