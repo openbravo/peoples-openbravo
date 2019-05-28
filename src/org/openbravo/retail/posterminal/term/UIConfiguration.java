@@ -43,11 +43,10 @@ public class UIConfiguration extends QueryTerminalProperty {
     hqlSelect.append("SELECT ");
     hqlSelect.append("dfact.rowposition as row, dfact.columnposition as column, ");
     hqlSelect.append("dfact.rowspan as rowspan, dfact.colspan as colspan, ");
-    hqlSelect.append("dfact.cssclass as cssclass, ctype.value as ctypevalue, ");
+    hqlSelect.append("dfact.cssclass as cssclass, dfact.actionComponent as actioncomponent, ");
     hqlSelect.append("act.value as actvalue, aba.value as abavalue, ");
     hqlSelect.append("win.value as winvalue, layvar.value as layvarvalue ");
     hqlSelect.append("FROM OBMOBC_UiConfigurationWindowAbaAction AS dfact ");
-    hqlSelect.append("LEFT JOIN dfact.componentType AS ctype ");
     hqlSelect.append("LEFT JOIN dfact.aBAUiConfiguration AS abaconf ");
     hqlSelect.append("LEFT JOIN dfact.action AS act ");
     hqlSelect.append("LEFT JOIN abaconf.window AS win ");
