@@ -39,9 +39,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.common.actionhandler.createlinesfromprocess.CreateInvoiceLinesFromProcess;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
@@ -58,7 +56,6 @@ import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchron
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.OutDatedDataChangeException;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
-import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -67,8 +64,6 @@ import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.common.invoice.InvoiceLine;
-import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
@@ -119,7 +114,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
   private boolean payOnCredit = false;
   private boolean isNegative = false;
   private boolean isNewReceipt = false;
-  private ArrayList<OrderLine> servicesOrderLines = new ArrayList<OrderLine>();
 
   @Inject
   private ShipmentUtils su;
@@ -437,58 +431,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
           invoice = iu.createNewInvoice(jsoninvoice, order, useOrderDocumentNoForRelatedDocs,
               documentNoHandlers.get());
-
-          for (OrderLine orderRelatedLine : order.getOrderLineList()) {
-            if (orderRelatedLine.getOrderlineServiceRelationCOrderlineRelatedIDList().size() > 0) {
-              List<OrderlineServiceRelation> orderLinesServiceRelation = orderRelatedLine
-                  .getOrderlineServiceRelationCOrderlineRelatedIDList();
-              for (OrderlineServiceRelation orderLineServiceRelation : orderLinesServiceRelation) {
-                if (orderLineServiceRelation.getSalesOrderLine().getGoodsShipmentLine() == null) {
-                  servicesOrderLines.add(orderLineServiceRelation.getSalesOrderLine());
-                }
-              }
-            }
-          }
-          if (servicesOrderLines.size() > 0) {
-            CreateInvoiceLinesFromProcess createInvoiceLineProcess = WeldUtils
-                .getInstanceFromStaticBeanManager(CreateInvoiceLinesFromProcess.class);
-            createInvoiceLineProcess.createInvoiceLinesFromDocumentLines(
-                formatOrderLineToBeInvoiced(servicesOrderLines, invoice), invoice, OrderLine.class);
-
-            // Create the tax line for the invoice line
-            int ind = 0;
-            for (InvoiceLine invoiceline : invoice.getInvoiceLineList()) {
-              if (invoiceline.getInvoiceLineTaxList().size() == 0) {
-                InvoiceLineTax invoicelinetax = OBProvider.getInstance().get(InvoiceLineTax.class);
-                invoicelinetax.setOrganization(invoiceline.getOrganization());
-                invoicelinetax.setTax(invoiceline.getTax());
-                invoicelinetax.setTaxableAmount(invoiceline.getTaxableAmount());
-                invoicelinetax.setTaxAmount(invoiceline.getTaxAmount());
-                invoicelinetax.setInvoiceLine(invoiceline);
-                invoicelinetax.setInvoice(invoice);
-                invoicelinetax.setLineNo((long) ((ind + 1) * 10));
-                ind++;
-                invoiceline.getInvoiceLineTaxList().add(invoicelinetax);
-                invoice.getInvoiceLineTaxList().add(invoicelinetax);
-                invoicelinetax.setId(OBMOBCUtils.getUUIDbyString(
-                    invoicelinetax.getInvoiceLine().getId() + invoicelinetax.getLineNo()));
-                invoicelinetax.setNewOBObject(true);
-                InvoiceTax invoicetax = (InvoiceTax) invoice.getInvoiceTaxList()
-                    .stream()
-                    .filter(tax -> invoicelinetax.getTax().getId().equals(tax.getTax().getId()))
-                    .findFirst()
-                    .get();
-                invoicetax
-                    .setTaxAmount(invoicetax.getTaxAmount().add(invoicelinetax.getTaxAmount()));
-                invoicetax.setTaxableAmount(
-                    invoicetax.getTaxableAmount().add(invoicelinetax.getTaxableAmount()));
-                OBDal.getInstance().save(invoicetax);
-                OBDal.getInstance().save(invoicelinetax);
-
-              }
-            }
-          }
-
         }
 
         if (log.isDebugEnabled()) {
@@ -1449,52 +1391,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
       iu.createPaymentTerms(order, invoice);
     }
 
-    if (servicesOrderLines.size() > 0) {
-      List<Order> servicesOrders = new ArrayList<>();
-      BigDecimal amount = BigDecimal.ZERO, newGross = BigDecimal.ZERO, newNet = BigDecimal.ZERO;
-      for (OrderLine servicesOrderLine : servicesOrderLines) {
-        if (!servicesOrders.contains(servicesOrderLine.getSalesOrder())) {
-          servicesOrders.add(servicesOrderLine.getSalesOrder());
-        }
-      }
-      // Find Order Payment Schedule Details to add it to Invoice Payment Schedule Details
-      for (Order servicesOrder : servicesOrders) {
-        if (servicesOrder.getFINPaymentScheduleList().size() > 0) {
-          List<FIN_PaymentScheduleDetail> finPaymentScheduleDetailOrderList = servicesOrder
-              .getFINPaymentScheduleList()
-              .get(0)
-              .getFINPaymentScheduleDetailOrderPaymentScheduleList();
-          for (FIN_PaymentScheduleDetail finPaymentScheduleDetailOrder : finPaymentScheduleDetailOrderList) {
-            finPaymentScheduleDetailOrder.setInvoicePaymentSchedule(paymentScheduleInvoice);
-            OBDal.getInstance().save(finPaymentScheduleDetailOrder);
-          }
-          paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList()
-              .addAll(finPaymentScheduleDetailOrderList);
-        }
-      }
-
-      for (InvoiceLine invoiceline : invoice.getInvoiceLineList()) {
-        newGross = newGross.add(invoiceline.getGrossAmount());
-        newNet = newNet.add(invoiceline.getLineNetAmount());
-      }
-      for (FIN_PaymentScheduleDetail finPaymentScheduleDetailInvoice : paymentScheduleInvoice
-          .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-        amount = amount.add(finPaymentScheduleDetailInvoice.getPaymentDetails().getAmount());
-      }
-      paymentScheduleInvoice.setAmount(newGross.setScale(pricePrecision, RoundingMode.HALF_UP));
-      paymentScheduleInvoice.setPaidAmount(amount.setScale(pricePrecision, RoundingMode.HALF_UP));
-      paymentScheduleInvoice.setOutstandingAmount(paymentScheduleInvoice.getAmount()
-          .subtract(amount)
-          .setScale(pricePrecision, RoundingMode.HALF_UP));
-      invoice.setGrandTotalAmount(newGross.setScale(pricePrecision, RoundingMode.HALF_UP));
-      invoice.setSummedLineAmount(newNet.setScale(pricePrecision, RoundingMode.HALF_UP));
-      invoice.setOutstandingAmount(
-          newGross.subtract(amount).setScale(pricePrecision, RoundingMode.HALF_UP));
-      invoice
-          .setDueAmount(newGross.subtract(amount).setScale(pricePrecision, RoundingMode.HALF_UP));
-      invoice.setTotalPaid(newGross.setScale(pricePrecision, RoundingMode.HALF_UP));
-    }
-
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     jsonResponse.put("paymentSchedule", paymentSchedule);
     jsonResponse.put("paymentScheduleInvoice", paymentScheduleInvoice);
@@ -1913,36 +1809,4 @@ public class OrderLoader extends POSDataSynchronizationProcess
     return true;
   }
 
-  private JSONArray formatOrderLineToBeInvoiced(final List<OrderLine> orderlines,
-      final Invoice invoice) {
-    final JSONArray lines = new JSONArray();
-    try {
-      long maxInvoiceLineNo = invoice.getInvoiceLineList().size() * 10L;
-      for (OrderLine orderline : orderlines) {
-        final JSONObject line = new JSONObject();
-        line.put("uOM", orderline.getUOM().getId());
-        line.put("uOM$_identifier", orderline.getUOM().getIdentifier());
-        line.put("product", orderline.getProduct().getId());
-        line.put("product$_identifier", orderline.getProduct().getIdentifier());
-        line.put("lineNo", maxInvoiceLineNo += 10L);
-        line.put("movementQuantity", orderline.getOrderedQuantity());
-        line.put("operativeQuantity",
-            orderline.getOperativeQuantity() == null ? orderline.getOrderedQuantity().toString()
-                : orderline.getOperativeQuantity().toString());
-        line.put("id", orderline.getId());
-        line.put("operativeUOM", orderline.getOperativeUOM() == null ? orderline.getUOM().getId()
-            : orderline.getOperativeUOM().getId());
-        line.put("operativeUOM$_identifier",
-            orderline.getOperativeUOM() == null ? orderline.getUOM().getIdentifier()
-                : orderline.getOperativeUOM().getIdentifier());
-        line.put("orderQuantity", "");
-        lines.put(line);
-        orderline.setInvoicedQuantity(orderline.getOrderedQuantity());
-        OBDal.getInstance().save(orderline);
-      }
-    } catch (JSONException e) {
-      log.error(e.getMessage());
-    }
-    return lines;
-  }
 }
