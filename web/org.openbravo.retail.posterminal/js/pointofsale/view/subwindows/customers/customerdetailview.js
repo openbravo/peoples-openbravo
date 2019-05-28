@@ -10,9 +10,9 @@
 /*global OB, enyo, _ */
 
 enyo.kind({
-  kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
-  classes: 'receipt-customer-selector-editor',
+  kind: 'OB.UI.Modal',
+  classes: 'obObPosPointOfSaleUiCustomersEditCustomer',
   i18nHeader: 'OBPOS_TitleViewCustomer',
   handlers: {
     onPressedButton: 'pressedButton'
@@ -73,10 +73,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket',
-  style: 'margin: 0px 0px 8px 5px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  kind: 'OB.UI.Button',
+  classes: 'obObPosPointOfSaleUiCustomersassignCustomerToTicket',
   events: {
     onChangeBusinessPartner: '',
     onPressedButton: ''
@@ -116,10 +115,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customers.managebpaddress',
-  style: 'margin: 0px 0px 8px 5px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  kind: 'OB.UI.Button',
+  classes: 'obObPosPointOfSaleUiCustomersManageBPAddress',
   events: {
     onShowPopup: '',
     onPressedButton: ''
@@ -165,8 +163,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customers.editbp',
-  style: 'width: 100px; margin: 0px 5px 8px 19px;',
-  classes: 'btnlink-orange btnlink btnlink-small',
+  classes: 'obObPosPointOfSaleUiCustomersEditBP',
   events: {
     onShowPopup: '',
     onPressedButton: ''
@@ -217,20 +214,21 @@ enyo.kind({
 /*header of window body*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
+  classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader',
   components: [{
-    style: 'display: table; margin: 0 auto;',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-container1',
     components: [{
-      style: 'display: table-cell;',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-container1-container1',
       components: [{
         kind: 'OB.OBPOSPointOfSale.UI.customers.editbp'
       }]
     }, {
-      style: 'display: table-cell;',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-container1-container2',
       components: [{
         kind: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket'
       }]
     }, {
-      style: 'display: table-cell;',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-container1-container3',
       components: [{
         kind: 'OB.OBPOSPointOfSale.UI.customers.managebpaddress'
       }]
@@ -239,25 +237,28 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   name: 'OB.OBPOSPointOfSale.UI.customers.editcustomers_impl',
-  style: 'padding: 9px 15px;',
+  kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
+  classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl',
   windowHeader: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
   newAttributes: [{
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerName',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerName',
     modelProperty: 'firstName',
     i18nLabel: 'OBPOS_LblName',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerLastName',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerLastName',
     modelProperty: 'lastName',
     i18nLabel: 'OBPOS_LblLastName',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerBpCat',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerBpCat',
     modelProperty: 'businessPartnerCategory_name',
     i18nLabel: 'OBPOS_BPCategory',
     readOnly: true,
@@ -267,6 +268,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerTaxId',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerTaxId',
     modelProperty: 'taxID',
     i18nLabel: 'OBPOS_LblTaxId',
     readOnly: true,
@@ -276,30 +278,35 @@ enyo.kind({
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerPhone',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerPhone',
     modelProperty: 'phone',
     i18nLabel: 'OBPOS_LblPhone',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'alternativePhone',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-alternativePhone',
     modelProperty: 'alternativePhone',
     i18nLabel: 'OBPOS_LblAlternativePhone',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerEmail',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerEmail',
     modelProperty: 'email',
     i18nLabel: 'OBPOS_LblEmail',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerConsentCheckProperty',
     name: 'isCustomerConsent',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-isCustomerConsent',
     modelProperty: 'isCustomerConsent',
     i18nLabel: 'OBPOS_CustomerConsent',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'birthPlace',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-birthPlace',
     modelProperty: 'birthPlace',
     i18nLabel: 'OBPOS_LblBirthplace',
     readOnly: true,
@@ -309,6 +316,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'birthDay',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-birthDay',
     modelProperty: 'birthDay',
     i18nLabel: 'OBPOS_LblBirthdate',
     readOnly: true,
@@ -329,6 +337,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerPriceList',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerPriceList',
     modelProperty: 'priceList',
     i18nLabel: 'OBPOS_PriceList',
     readOnly: true,

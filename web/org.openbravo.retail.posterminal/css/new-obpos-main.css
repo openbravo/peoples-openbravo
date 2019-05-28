@@ -8851,3 +8851,179 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 # Inherits: [OB.UI.ModalAdvancedFilters]
 */
 .obUiModalAdvancedFilterBp {}
+
+/******************************   ******************************/
+/*                 File: customerdetailview.js                 */
+/* Folder: js/pointofsale/view/subwindows/customers/components */
+/******************************   ******************************/
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.editcustomer
+# Inherits: OB.UI.Modal
+*/
+.obObPosPointOfSaleUiCustomersEditCustomer {
+  width: 870px !important;
+}
+
+@media (min-width: 350px) and (max-width: 470px) {
+  .obObPosPointOfSaleUiCustomersEditCustomer {
+    width: calc(100% - 24px) !important;
+  }
+}
+
+@media (min-width: 471px) and (max-width: 549px) {
+  .obObPosPointOfSaleUiCustomersEditCustomer {
+    width: calc(100% - 24px) !important;
+  }
+}
+
+@media (min-width: 550px) and (max-width: 649px) {
+  .obObPosPointOfSaleUiCustomersEditCustomer {
+    width: calc(100% - 24px) !important;
+  }
+}
+
+@media (min-width: 650px) and (max-width: 800px) {
+  .obObPosPointOfSaleUiCustomersEditCustomer {
+    width: calc(100% - 24px) !important;
+  }
+}
+
+@media (min-width: 801px) and (max-width: 899px) {
+  .obObPosPointOfSaleUiCustomersEditCustomer {
+    width: 780px !important;
+  }
+}
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket
+# Inherits: OB.UI.Button
+*/
+.obObPosPointOfSaleUiCustomersassignCustomerToTicket {
+  margin: 0px 0px 8px 5px;
+  background-color: #f8e859;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+  height: 30px;
+  padding: 5px 15px 7px 15px;
+}
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.managebpaddress
+# Inherits: OB.UI.Button
+*/
+.obObPosPointOfSaleUiCustomersManageBPAddress {
+  margin: 0px 0px 8px 5px;
+  background-color: #f8e859;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+  height: 30px;
+  padding: 5px 15px 7px 15px;
+}
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.editbp
+# Inherits: OB.UI.Button
+*/
+.obObPosPointOfSaleUiCustomersEditBP {
+  width: 100px;
+  margin: 0px 0px 8px 19px;
+  background-color: #ffa500;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+  height: 30px;
+  padding: 5px 15px 7px 15px;
+}
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader
+*/
+.obObPosPointOfSaleUiCustomersEditCustomerHeader {
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomerHeader-container1 {
+  display: table;
+  margin: 0 auto;
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomerHeader-container1-container1 {
+  display: table-cell;
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomerHeader-container1-container2 {
+  display: table-cell;
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomerHeader-container1-container3 {
+  display: table-cell;
+}
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.editcustomers_impl
+# Inherits: [OB.OBPOSPointOfSale.UI.customers.edit_createcustomers]
+*/
+.obObPosPointOfSaleUiCustomersEditCustomersImpl {
+  padding: 9px 15px;
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-customerName {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-customerLastName {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-customerBpCat {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-customerTaxId {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-customerPhone {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-alternativePhone {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-customerEmail {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-isCustomerConsent {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-birthPlace {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-birthDay {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-customerPriceList {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
