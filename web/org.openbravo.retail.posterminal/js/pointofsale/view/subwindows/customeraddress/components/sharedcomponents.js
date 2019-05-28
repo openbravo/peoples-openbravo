@@ -14,6 +14,7 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.ModalConfigurationRequiredForCreateCustomers',
   kind: 'OB.UI.ModalInfo',
+  classes: 'obObposPointOfSaleUiCustomeraddrModalConfigurationRequiredForCreateCustomers',
   i18nHeader: 'OBPOS_configurationRequired',
   bodyContent: {
     i18nContent: 'OBPOS_configurationNeededToCreateCustomers'
@@ -23,8 +24,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.cancelEdit',
   kind: 'OB.UI.Button',
-  style: 'width: 100px; margin: 0px 0px 8px 5px;',
-  classes: 'btnlink-gray btnlink btnlink-small',
+  classes: 'obObposPointOfSaleUiCustomeraddrCancelEdit',
   i18nContent: 'OBMOBC_LblCancel',
   handlers: {
     onDisableButton: 'disableButton'
@@ -43,8 +43,7 @@ enyo.kind({
   name: 'OB.UI.CustomerAddrTextProperty',
   kind: 'enyo.Input',
   type: 'text',
-  classes: 'input',
-  style: 'width: 100%; height: 30px; margin:0;',
+  classes: 'obUiCustomerAddrTextProperty',
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange',
@@ -97,6 +96,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers',
+  classes: 'obObposPointOfSaleUiCustomeraddrEditCreatecustomers',
   handlers: {
     onSaveCustomerAddr: 'preSaveCustomerAddr'
   },
@@ -104,10 +104,11 @@ enyo.kind({
     onChangeBusinessPartner: ''
   },
   components: [{
-    name: 'bodyheader'
+    name: 'bodyheader',
+    classes: 'obObposPointOfSaleUiCustomeraddrEditCreatecustomers-bodyheader'
   }, {
     name: 'customerAddrAttributes',
-    style: 'overflow-x:hidden; overflow-y:auto; max-height:622px;'
+    classes: 'obObposPointOfSaleUiCustomeraddrEditCreatecustomers-customerAddrAttributes'
   }],
   setCustomerAddr: function (customer, customerAddr) {
     this.customer = customer;
@@ -375,6 +376,7 @@ enyo.kind({
       if (resultDisplay) {
         this.$.customerAddrAttributes.createComponent({
           kind: 'OB.UI.CustomerPropertyLine',
+          classes: 'obObposPointOfSaleUiCustomeraddrEditCreatecustomers-customerAddrAttributes-obUiCustomerPropertyLine',
           name: 'line_' + natt.name,
           newAttribute: natt
         });
@@ -389,7 +391,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.CustomerAddrCheckProperty',
   kind: 'OB.UI.CheckboxButton',
-  style: 'margin: 5px 0px 0px 5px;',
+  classes: 'obUiCustomerAddrCheckProperty',
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange',
@@ -418,13 +420,13 @@ enyo.kind({
         me.checked = inEvent.customerAddr.get(me.modelProperty);
       }
       if (me.checked) {
-        me.addClass('active');
+        me.addClass('obUiCustomerAddrCheckProperty_active');
       } else {
-        me.removeClass('active');
+        me.removeClass('obUiCustomerAddrCheckProperty_active');
       }
     } else {
       me.checked = true;
-      me.addClass('active');
+      me.addClass('obUiCustomerAddrCheckProperty_active');
     }
   },
   saveChange: function (inSender, inEvent) {
@@ -443,6 +445,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.CustomerAddrComboProperty',
+  classes: 'obUiCustomerAddrComboProperty',
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange',
@@ -457,10 +460,10 @@ enyo.kind({
   components: [{
     kind: 'OB.UI.List',
     name: 'customerAddrCombo',
-    classes: 'combo',
-    style: 'width: 101%; margin:0;',
+    classes: 'obUiCustomerAddrComboProperty-customerAddrCombo',
     renderLine: enyo.kind({
       kind: 'enyo.Option',
+      classes: 'obUiCustomerAddrComboProperty-customerAddrCombo-renderLine-enyoOption',
       initComponents: function () {
         this.inherited(arguments);
         this.setValue(this.model.get(this.parent.parent.retrievedPropertyForValue));

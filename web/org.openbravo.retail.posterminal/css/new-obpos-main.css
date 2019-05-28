@@ -7863,7 +7863,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 /**********************************   **********************************/
 /*                      File: sharedcomponents.js                      */
-/* Folder: js/pointofsale/view/subwindows/customeraddress/components/  */
+/*     Folder: js/pointofsale/view/subwindows/customers/components/    */
 /**********************************   **********************************/
 /*
 # Component: OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers
@@ -8280,6 +8280,147 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrShip,
 .obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrBill {
 /* Inherits: [OB.UI.CustomerAddrCheckProperty] */
+}
+
+
+
+/**********************************   **********************************/
+/*                      File: sharedcomponents.js                      */
+/* Folder: js/pointofsale/view/subwindows/customeraddress/components/  */
+/**********************************   **********************************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.ModalConfigurationRequiredForCreateCustomers
+# Inherits: [OB.UI.ModalInfo]
+*/
+.obObposPointOfSaleUiCustomeraddrModalConfigurationRequiredForCreateCustomers {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.cancelEdit
+# Inherits: [OB.UI.Button]
+*/
+.obObposPointOfSaleUiCustomeraddrCancelEdit {
+  width: 100px;
+  margin: 0px 0px 8px 5px;
+  background-color: #e2e2e2;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  height: 30px;
+  font-size: var(--font-medium);
+  padding: 5px 15px 7px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+}
+
+.obObposPointOfSaleUiCustomeraddrCancelEdit:hover {
+  opacity: 0.75;
+}
+
+.obObposPointOfSaleUiCustomeraddrCancelEdit:active {
+  opacity: 0.999;
+  background-color: #cccccc;
+}
+
+.obObposPointOfSaleUiCustomeraddrCancelEdit:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+.obObposPointOfSaleUiCustomeraddrCancelEdit:disabled,
+.obObposPointOfSaleUiCustomeraddrCancelEdit[disabled=true]:hover {
+  background-color: #a9a9a9;
+  opacity: 1;
+  cursor: default;
+}
+
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiCustomeraddrCancelEdit {
+    height: 45px;
+  }
+}
+
+
+/*
+# Component: OB.UI.CustomerAddrTextProperty
+# Inherits: [enyo.Input]
+*/
+.obUiCustomerAddrTextProperty {
+  width: 100%;
+  height: 30px;
+  margin: 0px;
+  background-color: white;
+  padding: 4px;
+  color: #555;
+  border: 1px solid #cccccc;
+  font-family: "Segoe UI", "Lucida Sans", Helvetica, Arial, sans-serif;
+  font-size: var(--font-medium);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers
+*/
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomers {}
+
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomers-bodyheader {}
+
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomers-customerAddrAttributes {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 622px;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomers-customerAddrAttributes-obUiCustomerPropertyLine {
+/* Inherits: [OB.UI.CustomerPropertyLine] */
+}
+
+
+/*
+# Component: OB.UI.CustomerAddrCheckProperty
+# Inherits: [OB.UI.CheckboxButton]
+*/
+.obUiCustomerAddrCheckProperty {
+  margin: 5px 0px 0px 5px;
+}
+
+.obUiCustomerAddrCheckProperty_active,
+.obUiCustomerAddrCheckProperty_active[disabled="disabled"]:active {
+  background-image: url('./../img/checkbox-on.svg');
+  background-size: 34px 27px;
+}
+
+.obUiCustomerAddrCheckProperty_active:active,
+.obUiCustomerAddrCheckProperty_active[disabled="disabled"]:active {
+  background-image: url('./../img/checkbox-off.svg');
+  background-size: 34px 27px;
+}
+
+
+/*
+# Component: OB.UI.CustomerAddrComboProperty
+*/
+.obUiCustomerAddrComboProperty {}
+
+.obUiCustomerAddrComboProperty-customerAddrCombo {
+/* Inherits: [OB.UI.List] */
+  width: 101%;
+  margin: 0px;
+  height: 40px;
+  background-color: #ffffff;
+  padding: 4px;
+  color: #555555;
+  border: 1px solid #cccccc;
+}
+
+.obUiCustomerAddrComboProperty-customerAddrCombo-renderLine-enyoOption {
+/* Inherits: [enyo.Option] */
 }
 
 
