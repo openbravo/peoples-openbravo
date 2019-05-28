@@ -379,7 +379,8 @@ enyo.kind({
     this.$.doneMultiOrdersButton.setDisabled(value);
   },
   doneAction: function () {
-    var selectedMultiOrders = [],
+    var execution = OB.UTIL.ProcessController.start('payOpenTicketsValidation'),
+        selectedMultiOrders = [],
         alreadyPaidOrders = [],
         alreadyPaidOrdersDocNo = '',
         me = this,
@@ -394,6 +395,7 @@ enyo.kind({
         showSomeOrderIsPaidPopup;
 
     if (checkedMultiOrders.length === 0) {
+      OB.UTIL.ProcessController.finish('payOpenTicketsValidation', execution);
       return true;
     }
 
@@ -404,15 +406,19 @@ enyo.kind({
             selectedMultiOrders: selectedMultiOrders
           }, function (args) {
             if (args && args.cancellation) {
+              OB.UTIL.ProcessController.finish('payOpenTicketsValidation', execution);
               return;
             }
             me.doSelectMultiOrders({
               value: selectedMultiOrders,
               callback: function () {
+                OB.UTIL.ProcessController.finish('payOpenTicketsValidation', execution);
                 me.showPaymentView();
               }
             });
           });
+        } else {
+          OB.UTIL.ProcessController.finish('payOpenTicketsValidation', execution);
         }
       });
     };
@@ -492,6 +498,7 @@ enyo.kind({
       } else if (wrongOrder.error === 'cancellingOrder') {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancellingOrder', [wrongOrder.docNo]));
       }
+      OB.UTIL.ProcessController.finish('payOpenTicketsValidation', execution);
       OB.UTIL.showLoading(false);
       return;
     }
@@ -535,9 +542,12 @@ enyo.kind({
               }
             });
           } else {
+            OB.UTIL.ProcessController.finish('payOpenTicketsValidation', execution);
             OB.UTIL.showLoading(false);
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
           }
+        }, function (data) {
+          OB.UTIL.ProcessController.finish('payOpenTicketsValidation', execution);
         });
       }
     });
