@@ -1506,10 +1506,6 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   grid-template-rows: repeat(6, 57px);
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic {
-  height: 57px;
-}
-
 .obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos00 {
   grid-area: pos00;
 }
