@@ -7,11 +7,16 @@
  ************************************************************************************
  */
 
-OB.UTIL.HookManager.registerHook('OBPOS_NewReceipt', function (args, callbacks) {
-  if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
-    if (!args.newOrder.get('obrdmDeliveryModeProperty')) {
-      args.newOrder.set('obrdmDeliveryModeProperty', 'PickAndCarry');
-    }
+(function () {
+
+  if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true) && OB.UTIL.HookManager) {
+
+    OB.UTIL.HookManager.registerHook('OBPOS_NewReceipt', function (args, callbacks) {
+      if (!args.newOrder.get('obrdmDeliveryModeProperty')) {
+        args.newOrder.set('obrdmDeliveryModeProperty', 'PickAndCarry');
+      }
+      OB.UTIL.HookManager.callbackExecutor(args, callbacks);
+    });
+
   }
-  OB.UTIL.HookManager.callbackExecutor(args, callbacks);
-});
+}());
