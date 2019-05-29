@@ -3619,11 +3619,32 @@
 
 
 
+/***********************   ***********************/
+/*         File: modalproductattribute.js        */
+/*              Folder: js/view                  */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalProductAttributes
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalProductAttributes {}
 
+.obUiModalProductAttributes-bodyContent {}
 
+.obUiModalProductAttributes-bodyContent-valueAttribute {
+  /*Inherits: [OB.UI.ModalAction]*/
+  text-align: center;
+  width: 400px;
+  height: 40px;
+}
 
+.obUiModalProductAttributes-bodyButtons {}
 
+.obUiModalProductAttributes-bodyButtons-obUiModalDialogButton1 {}
 
+.obUiModalProductAttributes-bodyButtons-obUiModalDialogButton2 {}
+
+.obUiModalProductAttributes-bodyButtons-obUiModalDialogButton3 {}
 
 
 

@@ -10,9 +10,11 @@
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalProductAttributes',
+  classes: 'obUiModalProductAttributes',
   i18nHeader: 'OBPOS_ProductAttributeValueDialogTitle',
   autoDismiss: false,
   bodyContent: {
+    classes: 'obUiModalProductAttributes-bodyContent',
     components: [{
       initComponents: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_ProductAttributeValueDialogTitleDesc'));
@@ -21,29 +23,34 @@ enyo.kind({
       kind: 'enyo.Input',
       type: 'text',
       attributes: {
+        //Allowed, it is not a style attribute
         maxlength: 190
       },
-      style: 'text-align: center;width: 400px; height: 40px;',
       name: 'valueAttribute',
+      classes: 'obUiModalProductAttributes-bodyContent-valueAttribute',
       selectOnFocus: true,
       isFirstFocus: true
     }]
   },
   bodyButtons: {
+    classes: 'obUiModalProductAttributes-bodyButtons',
     components: [{
       kind: 'OB.UI.ModalDialogButton',
+      classes: 'obUiModalProductAttributes-bodyButtons-obUiModalDialogButton1',
       i18nContent: 'OBMOBC_LblOk',
       tap: function () {
         this.owner.owner.saveAction();
       }
     }, {
       kind: 'OB.UI.ModalDialogButton',
+      classes: 'obUiModalProductAttributes-bodyButtons-obUiModalDialogButton2',
       i18nContent: 'OBPOS_LblClear',
       tap: function () {
         this.owner.owner.clearAction();
       }
     }, {
       kind: 'OB.UI.ModalDialogButton',
+      classes: 'obUiModalProductAttributes-bodyButtons-obUiModalDialogButton3',
       i18nContent: 'OBMOBC_LblCancel',
       tap: function () {
         this.owner.owner.cancelAction();
