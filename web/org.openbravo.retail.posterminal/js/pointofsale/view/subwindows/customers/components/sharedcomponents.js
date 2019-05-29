@@ -436,6 +436,29 @@ enyo.kind({
       return errors;
     }
 
+    function validateSMS(customer) {
+      //Validate that sms field is filled if  'Commercial Auth -> sms' is checked
+      var commercialAuthViaSms = customer.get('viasms');
+      var alternativePhone = customer.get('alternativePhone');
+      var phone = customer.get('phone');
+      if (commercialAuthViaSms && (phone === '' && alternativePhone === '')) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    function validateEmail(customer) {
+      //Validate that email field is filled if 'Commercial Auth -> email' is checked
+      var commercialAuthViaEmail = customer.get('viaemail');
+      var email = customer.get('email');
+      if (commercialAuthViaEmail && email === '') {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
     function validateForm(form) {
       if (inEvent.validations) {
         var customer = form.model.get('customer'),
@@ -459,11 +482,19 @@ enyo.kind({
           }
         }
         if (errors) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
           return false;
         }
         if (customer.get('firstName').length + customer.get('lastName').length >= 60) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_TooLongName'));
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_TooLongName'));
+          return false;
+        }
+        if (!validateSMS(customer)) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PhoneRequired'));
+          return false;
+        }
+        if (!validateEmail(customer)) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_EmailRequired'));
           return false;
         }
       }
@@ -501,7 +532,6 @@ enyo.kind({
         });
       });
     }
-
     if (this.customer === undefined) {
       this.model.get('customer').newCustomer();
       this.waterfall('onSaveChange', {
@@ -509,6 +539,7 @@ enyo.kind({
       });
       if (validateForm(this)) {
         beforeCustomerSave(this.model.get('customer'), true);
+
       } else {
         enableButtonsCallback(false);
       }
@@ -641,5 +672,172 @@ enyo.kind({
     if (this.maxlength) {
       this.setAttribute('maxlength', this.maxlength);
     }
+  }
+});
+enyo.kind({
+  name: 'OB.UI.CustomerCheckCommercialAuth',
+  kind: 'OB.UI.CustomerConsentCheckProperty',
+  loadValue: function (inSender, inEvent) {
+    var me = this;
+    var i;
+    if (inEvent.customer !== undefined) {
+      if (inEvent.customer.get(me.modelProperty) !== undefined) {
+        me.checked = inEvent.customer.get(me.modelProperty);
+      }
+      if (me.checked) {
+        me.addClass('active');
+      } else {
+        me.removeClass('active');
+      }
+      for (i = 0; i < me.parent.parent.parent.children.length; i++) {
+        if (me.parent.parent.parent.children[i].name === 'line_contactpreferences') {
+          var contactpreferences = me.parent.parent.parent.children[i];
+          var commercialauth = inEvent.customer.attributes.commercialauth;
+          if (commercialauth) {
+            contactpreferences.show();
+          } else {
+            contactpreferences.hide();
+          }
+        }
+      }
+    } else {
+      me.checked = false;
+      me.removeClass('active');
+    }
+  },
+  tap: function () {
+    if (this.readOnly) {
+      return;
+    }
+    var i;
+    this.checked = !this.checked;
+    this.addRemoveClass('active', this.checked);
+    for (i = 0; i < this.parent.parent.parent.children.length; i++) {
+      if (this.parent.parent.parent.children[i].name === 'line_contactpreferences') {
+        var contactpreferences = this.parent.parent.parent.children[i];
+        var smsCheck = contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck;
+        var emailCheck = contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck;
+        if (this.checked) {
+          contactpreferences.show();
+        } else {
+          contactpreferences.hide();
+          //reset saved values when hide contact preferences
+          smsCheck.checked = false;
+          emailCheck.checked = false;
+        }
+      }
+    }
+  },
+  saveChange: function (inSender, inEvent) {
+    var me = this;
+    var i;
+    inEvent.customer.set(me.modelProperty, me.checked);
+    for (i = 0; i < me.parent.parent.parent.children.length; i++) {
+      if (me.parent.parent.parent.children[i].name === 'line_contactpreferences') {
+        var contactpreferences = me.parent.parent.parent.children[i];
+        inEvent.customer.set('viasms', contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck.checked);
+        inEvent.customer.set('viaemail', contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck.checked);
+      }
+    }
+  }
+});
+enyo.kind({
+  name: 'OB.UI.CustomerCheckComboProperty',
+  components: [{
+    components: [{
+      name: 'checkoptions',
+      style: 'display: flex; flex-wrap: wrap;',
+      components: [{
+        name: 'smsField',
+        style: 'display: table; height: 40px; border: 1px solid #CCC; ',
+        components: [{
+          kind: 'OB.UI.CheckboxButton',
+          name: 'smsCheck',
+          style: 'background-position: 0px 5px; height: 38px; margin-left: 5px; '
+        }, {
+          name: 'smsLabel',
+          classes: 'input',
+          style: 'width: 80%; display: table-cell; vertical-align: middle; border: none; '
+        }]
+      }, {
+        name: 'emailField',
+        style: 'display: table; height: 40px; border: 1px solid #CCC; ',
+        components: [{
+          kind: 'OB.UI.CheckboxButton',
+          name: 'emailCheck',
+          style: 'background-position: 0px 5px; height: 38px; margin-left: 5px; '
+        }, {
+          name: 'emailLabel',
+          classes: 'input',
+          style: 'width: 80%; display: table-cell; vertical-align: middle; border: none; '
+        }]
+      }]
+    }]
+  }],
+  handlers: {
+    onLoadValue: 'loadValue',
+    onSaveChange: 'saveChange'
+  },
+  events: {
+    onSaveProperty: ''
+  },
+  loadValue: function (inSender, inEvent) {
+    var me = this;
+    var commertialauth, i;
+
+    if (inEvent.customer !== undefined) {
+      if (inEvent.customer.get('viasms') !== undefined) {
+        me.$.smsCheck.checked = inEvent.customer.get('viasms');
+      } else {
+        me.$.smsCheck.checked = false;
+      }
+      if (inEvent.customer.get('viaemail') !== undefined) {
+        me.$.emailCheck.checked = inEvent.customer.get('viaemail');
+      } else {
+        me.$.emailCheck.checked = false;
+      }
+      if (me.$.smsCheck.checked) {
+        me.$.smsCheck.addClass('active');
+      } else {
+        me.$.smsCheck.removeClass('active');
+      }
+      if (me.$.emailCheck.checked) {
+        me.$.emailCheck.addClass('active');
+      } else {
+        me.$.emailCheck.removeClass('active');
+      }
+      for (i = 0; i < me.parent.parent.parent.children.length; i++) {
+        if (me.parent.parent.parent.children[i].name === 'line_commercialauth') {
+          commertialauth = me.parent.parent.parent.children[i].$.newAttribute.$.commercialauth;
+          if (commertialauth.checked) {
+            if (me.$.smsCheck.checked) {
+              me.$.smsCheck.addClass('active');
+            } else {
+              me.$.smsCheck.removeClass('active');
+            }
+            if (me.$.emailCheck.checked) {
+              me.$.emailCheck.addClass('active');
+            } else {
+              me.$.emailCheck.removeClass('active');
+            }
+          }
+        }
+      }
+    }
+  },
+  saveChange: function (inSender, inEvent) {
+    var me = this;
+    inEvent.customer.set('viasms', me.$.smsCheck.checked);
+    inEvent.customer.set('viaemail', me.$.emailCheck.checked);
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.smsLabel.setContent(OB.I18N.getLabel('OBPOS_LblSms'));
+    this.$.emailLabel.setContent(OB.I18N.getLabel('OBPOS_LblEmail'));
+    if (this.readOnly) {
+      this.$.smsCheck.setDisabled(true);
+      this.$.emailCheck.setDisabled(true);
+    }
+    this.$.checkoptions.show();
   }
 });

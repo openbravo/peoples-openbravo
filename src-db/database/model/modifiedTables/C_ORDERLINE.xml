@@ -33,6 +33,22 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBRDM_DELIVERY_MODE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRDM_DELIVERY_DATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRDM_DELIVERY_TIME" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRDM_AMTTOPAYINDELIVERY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBPOS_PRICEREASON" name="EM_OBPOS_ORDERLINE_PR">
         <reference local="EM_OBPOS_PRICEREASON_ID" foreign="OBPOS_PRICEREASON_ID"/>
       </foreign-key>

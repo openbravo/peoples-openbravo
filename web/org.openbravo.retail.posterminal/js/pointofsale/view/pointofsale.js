@@ -282,6 +282,9 @@ enyo.kind({
       kind: 'OBPOS.UI.ReceiptSelector',
       name: 'modalReceiptSelector'
     }, {
+      kind: 'OBPOS.UI.ReceiptSelectorCustomerView',
+      name: 'modalReceiptSelectorCustomerView'
+    }, {
       kind: 'OB.UI.ModalAdvancedFilterReceipts',
       name: 'OB_UI_ModalAdvancedFilterReceipts'
     }, {
