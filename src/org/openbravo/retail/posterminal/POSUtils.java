@@ -842,11 +842,9 @@ public class POSUtils {
           .get(Organization.class, jsonorder.getString("organization"));
       paymentQuery.setNamedParameter("organization", organization);
       paymentQuery.setNamedParameter("currency", order.getOrganization().getCurrency());
-      if (isCrossStore(order, order.getObposApplications())) {
-        paymentQuery.setFilterOnReadableOrganization(false);
-      }
+      paymentQuery.setFilterOnReadableOrganization(false);
       paymentQuery.setMaxResult(1);
-      OBPOSAppPayment defaultPaymentType = (OBPOSAppPayment) paymentQuery.uniqueResult();
+      OBPOSAppPayment defaultPaymentType = paymentQuery.uniqueResult();
 
       if (defaultPaymentType != null) {
         JSONObject paymentTypeValues = new JSONObject();
