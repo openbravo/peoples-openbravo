@@ -31,7 +31,7 @@ isc.OBPickEditGridItem.addProperties({
     condition: function (item) {
       var grid = item.canvas.viewGrid,
           hasErrors = false,
-          undef, i, j, fields, selection, len, record, lineNumbers;
+          i, j, fields, selection, len, record, lineNumbers;
       grid.endEditing();
       fields = grid.getFields();
       selection = grid.getSelectedRecords() || [];
@@ -39,14 +39,12 @@ isc.OBPickEditGridItem.addProperties({
       for (i = 0; i < len; i++) {
         record = grid.getEditedRecord(grid.getRecordIndex(selection[i]));
         for (j = 0; j < fields.length; j++) {
-          if (fields[j].required) {
-            if (record[fields[j].name] === null || record[fields[j].name] === '' || record[fields[j] === undef]) {
-              hasErrors = true;
-              if (lineNumbers === undef) {
-                lineNumbers = grid.getRecordIndex(selection[i]).toString();
-              } else {
-                lineNumbers = lineNumbers + ',' + grid.getRecordIndex(selection[i]).toString();
-              }
+          if (fields[j].required && (!record[fields[j].name] || record[fields[j].name] === '')) {
+            hasErrors = true;
+            if (!lineNumbers) {
+              lineNumbers = grid.getRecordIndex(selection[i]).toString();
+            } else {
+              lineNumbers = lineNumbers + ',' + grid.getRecordIndex(selection[i]).toString();
             }
           }
         }
