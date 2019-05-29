@@ -228,10 +228,6 @@
         if(response.statusofstate=="Warning"){
           var warns=response.warnings;
           if (warns) {
-            if (warns instanceof Array) {
-              warns = warns[0];
-            }
-            warns = [warns.string];
             for(i=0;i<warns.length;i++){
               if (warns[i] !== undefined) {
                 var old=document.getElementById("warning_"+correspondingNode(response.state)).title;
@@ -253,16 +249,8 @@
           }
         }
         if(response.statusofstate=="Error"){
-          var errs;
-          if(response.errors instanceof Array){
-              errs=response.errors[0].string;
-          }else{
-              errs=response.errors.string;
-          }
+          var errs=response.errors;
           if(errs){
-            if(!(errs instanceof Array)){
-              errs=[errs];
-            }
             if(numoferrs[getStatusIndex(response.state)]<errs.length){
               for(i=0;i<errs.length;i++){
                 progList_addTextToTextArea('<b><i>Error: </b></i>'+errs[i]);

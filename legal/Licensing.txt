@@ -123,9 +123,6 @@ http://www.apache.org/licenses/LICENSE-2.0
 # postgresql-42.2.2.jre7.jar
 Under the BSD license, also available at http://jdbc.postgresql.org/license.html  
 
-# xstream-1.3.1.jar
-Under a modified BSD license available at http://xstream.codehaus.org/license.html
-
 # Dojo Foundation javascripts in web/js/dojo/
 All files under the Academic Free License 2.1 (license available at
 http://opensource.org/licenses/afl-2.1.php)
@@ -156,12 +153,9 @@ All files under the LGPL 2.1 (available at http://www.gnu.org/licenses/old-licen
 # poi-3.10.1.jar
 Under the Apache 2.0 license (included as Apache_poi_license.txt in this folder)
 
-# hibernate-core-5.3.2.Final.jar
-# hibernate-commons-annotations-5.0.4.Final.jar
+# hibernate-core-5.4.2.Final.jar
+# hibernate-commons-annotations-5.1.0.Final.jar
 All files under the LGPL 2.1 (available at www.gnu.org/licenses/lgpl.html)
-
-# dom4j-1.6.1.jar
-Under a BSD style license  (available at http://www.dom4j.org/license.html) 
 
 # antlr-2.7.7.jar
 Under the ANTLR license (available at http://www.antlr.org/license.html)
@@ -169,15 +163,18 @@ Under the ANTLR license (available at http://www.antlr.org/license.html)
 # junit-4.12.jar
 Under the Eclipse Public License - v 1.0 (available at https://www.eclipse.org/legal/epl-v10.html)
 
+# dom4j-2.1.1.jar
+Provided by DOM4J Project - https://dom4j.github.io, under the BSD 3-Clause license (available at https://github.com/dom4j/dom4j/blob/master/LICENSE)
+
 # hamcrest-all-1.3.jar
-Under the BSD 3-Clause license (avaliable at http://opensource.org/licenses/BSD-3-Clause)
+Under the BSD 3-Clause license (available at http://opensource.org/licenses/BSD-3-Clause)
 
 # js.jar
 # ob-rhino-1.6R7.jar
 Under MPL/GPL License (available at https://developer.mozilla.org/en/Rhino_License)
 ob-rhino-1.6R7.jar is the same code as js.jar repackaged to be available under org.openbravo
 
-# javassist-3.22.0-GA.jar
+# javassist-3.24.0-GA.jar
 Under MPL License (included as MPL-1.1.txt in this folder)
 
 # slf4j-api-1.7.25.jar
@@ -202,13 +199,14 @@ Under the LGPL license (included as LGPL-2.1.txt in this folder)
 # guava-21.0.jar
 # javax.inject-1.jar
 # jboss-logging-3.3.2.Final.jar
-# jboss-classfilewriter-1.2.3.Final.jar
+# jboss-classfilewriter-1.2.4.Final.jar
 # weld-api-3.1.Final.jar
-# weld-core-impl-3.1.0.Final.jar
-# weld-environment-common-3.1.0.Final.jar
-# weld-servlet-core-3.1.0.Final.jar
+# weld-core-impl-3.1.1.Final.jar
+# weld-environment-common-3.1.1.Final.jar
+# weld-jsf-3.1.1.Final.jar
+# weld-servlet-core-3.1.1.Final.jar
 # weld-spi-3.1.Final.jar
-# weld-web-3.1.0.Final.jar
+# weld-web-3.1.1.Final.jar
 # arquillian-config-api-1.4.1.Final.jar
 # arquillian-config-impl-base-1.4.1.Final.jar
 # arquillian-config-spi-1.4.1.Final.jar
@@ -242,12 +240,13 @@ Under the LGPL license (included as LGPL-2.1.txt in this folder)
 # tomcat-jdbc.jar
 # classmate-1.3.4.jar
 # jandex-2.0.5.Final.jar
+# FastInfoset-1.2.15.jar
 Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
 
 # reflections-0.9.11.jar
 Under the WTFPL license (included as WTFPL_license.txt in this folder)
 
-# byte-buddy-1.8.12.jar
+# byte-buddy-1.9.10.jar
 Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder),
 note that Byte Buddy depends on the ASM library which is distributed under a BSD license (included as ASM_BSD_license.txt in this folder)
 
@@ -258,12 +257,15 @@ note that Byte Buddy depends on the ASM library which is distributed under a BSD
 Under the CDDL license version 1.0 (license available at https://spdx.org/licenses/CDDL-1.0.html 
 or in the file CDDL-1.0.txt in this folder)
 
+# istack-commons-runtime-3.0.7.jar
 # javax.activation-1.2.0.jar
-# jaxb-api-2.2.12.jar
-# jaxb-impl-2.2.6.jar
+# jaxb-api-2.3.1.jar
+# jaxb-runtime-2.3.1.jar
 # javax.mail-1.6.1.jar
 # jboss-annotations-api_1.3_spec-1.0.0.Final.jar
 # jboss-el-api_3.0_spec-1.0.13.Final.jar
+# stax-ex-1.8.jar
+# txw2-2.3.1.jar
 Under the CDDL license version 1.1 (license available at https://spdx.org/licenses/CDDL-1.1.html 
 or in the file CDDL-1.1.txt in this folder)
 

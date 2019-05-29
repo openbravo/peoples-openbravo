@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.OBClassLoader;
+import org.openbravo.dal.xml.XMLUtil;
 
 /**
  * Reads the provider config file and processes it. The provider config file can be used to
@@ -42,7 +43,7 @@ class OBProviderConfigReader {
 
   void read(String prefix, InputStream is) {
     try {
-      final SAXReader reader = new SAXReader();
+      final SAXReader reader = XMLUtil.getInstance().newSAXReader();
       final Document doc = reader.read(is);
       process(prefix, doc);
     } catch (final Exception e) {
@@ -52,7 +53,7 @@ class OBProviderConfigReader {
 
   void read(String prefix, String fileLocation) {
     try {
-      final SAXReader reader = new SAXReader();
+      final SAXReader reader = XMLUtil.getInstance().newSAXReader();
       final Document doc = reader.read(new FileInputStream(fileLocation));
       process(prefix, doc);
     } catch (final Exception e) {

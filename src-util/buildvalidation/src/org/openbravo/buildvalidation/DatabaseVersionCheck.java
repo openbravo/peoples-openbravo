@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2017 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  
  *************************************************************************
@@ -39,7 +39,7 @@ public class DatabaseVersionCheck extends BuildValidation {
   private final static String POSTGRES = "PostgreSQL";
   private final static String ORACLE = "Oracle";
   private final static String MIN_PG_VERSION = "9.3";
-  private final static String MIN_ORA_VERSION = "11";
+  private final static String MIN_ORA_VERSION = "11.2";
   private final static String[] WARNING_PG_VERSIONS = {};
   private final static String[] WARNING_ORA_VERSIONS = {};
 
@@ -67,7 +67,7 @@ public class DatabaseVersionCheck extends BuildValidation {
     if (databaseVersion != null && !StringUtils.isEmpty(databaseVersion)) {
       if (compareVersion(databaseVersion, minVersion) < 0) {
         String msg1 = "The current " + databaseType + " database version (" + databaseVersion
-            + ") is not supported.";
+            + ") is not supported. Minimum supported version is " + minVersion;
         String msg2 = "Please, visit the following link: http://wiki.openbravo.com/wiki/System_Requirements "
             + "to check the list of supported versions.";
         errors.add(msg1);

@@ -1104,7 +1104,6 @@ isc.OBViewGrid.addProperties({
       this.deselectAllRecords();
 
       if (localState.summaryFunctions) {
-        hasSummaryFunction = false;
         for (i = 0; i < this.getAllFields().length; i++) {
           fld = this.getAllFields()[i];
           // summary functions are not allowed in computed columns
@@ -1496,11 +1495,8 @@ isc.OBViewGrid.addProperties({
 
     ksAction_DeleteSelectedRecords = function () {
       var isRecordDeleted = me.deleteSelectedRowsByToolbarIcon();
-      if (isRecordDeleted) {
-        return false; // To avoid keyboard shortcut propagation
-      } else {
-        return true;
-      }
+      // Return false to avoid keyboard shortcut propagation
+      return !isRecordDeleted;
     };
     OB.KeyboardManager.Shortcuts.set('ViewGrid_DeleteSelectedRecords', 'OBViewGrid.body', ksAction_DeleteSelectedRecords);
 
@@ -2100,7 +2096,7 @@ isc.OBViewGrid.addProperties({
 
   getCriteria: function () {
     var criteria = this.Super('getCriteria', arguments) || {};
-    if ((criteria === null || !criteria.criteria) && this.initialCriteria) {
+    if (!criteria.criteria && this.initialCriteria) {
       criteria = isc.shallowClone(this.initialCriteria);
     }
     criteria = this.convertCriteria(criteria);
@@ -2563,6 +2559,8 @@ isc.OBViewGrid.addProperties({
           }
           // assume a date range filter item
           if (isc.isA.Date(value) && field.filterEditorType === 'OBMiniDateRangeItem') {
+            // set the logicalDate property to true so that the date values contained in the filter criteria will always be serialized as plain dates
+            value.logicalDate = true;
             filterFormItem.setSingleDateValue(value);
           } else {
             grid.filterEditor.getEditForm().setValue(field.name, OB.Utilities.encodeSearchOperator(value));
@@ -3235,7 +3233,7 @@ isc.OBViewGrid.addProperties({
     this.removeRecordFromValidationErrorList(record);
 
     // a new id has been computed use that now
-    if (record && record._newId) {
+    if (record._newId) {
       record.id = record._newId;
       delete record._newId;
       if (this.view && this.view.updateLastSelectedState) {
@@ -3497,7 +3495,11 @@ isc.OBViewGrid.addProperties({
     }
 
     // If leaving the row...
-    if (editCompletionEvent === 'enter' || editCompletionEvent === 'arrow_up' || editCompletionEvent === 'arrow_down') {
+    if (newRow) {
+      // do not leave the row if the row is new and not all mandatory fields have been set
+      if (editForm && editForm.isNew && !editForm.allRequiredFieldsSet()) {
+        return;
+      }
       // See issue https://issues.openbravo.com/view.php?id=19830
       if (this.view.standardWindow.getDirtyEditForm()) {
         this.view.standardWindow.getDirtyEditForm().validateForm();
@@ -3704,7 +3706,7 @@ isc.OBViewGrid.addProperties({
         record[this.recordBaseStyleProperty] = null;
       }
 
-      if (record && record.editColumnLayout) {
+      if (record.editColumnLayout) {
         isc.Log.logDebug('hideInlineEditor has record and editColumnLayout', 'OB');
         record.editColumnLayout.showEditOpen();
       } else if (this.currentEditColumnLayout) {

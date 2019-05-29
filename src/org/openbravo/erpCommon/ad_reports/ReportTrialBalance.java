@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -229,7 +230,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
-      out.print(strcAcctSchemaId);
+      out.print(StringEscapeUtils.escapeHtml(strcAcctSchemaId));
       out.close();
     } else {
       pageError(response);
@@ -443,15 +444,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       xmlDocument.setParameter("messageMessage", myMessage.getMessage());
     }
 
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_ORG_ID",
-          "", "", Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportTrialBalance"),
-          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportTrialBalance"), '*');
-      comboTableData.fillParameters(null, "ReportTrialBalance", "");
-      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
+    xmlDocument.setData("reportAD_ORGID", "liststructure",
+        SelectorUtilityData.selectAllOrganizations(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportTrialBalance"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportTrialBalance")));
 
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure",
         AccountingSchemaMiscData.selectC_ACCTSCHEMA_ID(readOnlyCP,

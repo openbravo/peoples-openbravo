@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017 Openbravo SLU
+ * All portions are Copyright (C) 2017-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,13 +24,13 @@ import java.io.InputStream;
 import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.erpCommon.ad_callouts.SL_Currency_StdPrecision;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -93,9 +93,8 @@ public class ISOCurrencyPrecision {
       if (isoXMLDoc == null) {
         return null;
       }
-      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 
+      DocumentBuilder dBuilder = XMLUtil.getInstance().newDocumentBuilder();
       Document doc = dBuilder.parse(isoXMLDoc);
       doc.getDocumentElement().normalize();
       long t2 = System.currentTimeMillis();
