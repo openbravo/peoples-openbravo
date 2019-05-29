@@ -9081,3 +9081,66 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 */
 .obposUiReceiptSelectorCustomerView {
 }
+
+/***********************   ***********************/
+/*         File: ps-multireceiptview.js          */
+/*         Folder: js/pointofsale/view/          */
+/***********************   ***********************/
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.MultiReceiptView
+*/
+.obObposPointOfSaleUiMultiReceiptView {
+  float: left;
+  width: 50%;
+  touch-action: none;
+}
+
+.obObposPointOfSaleUiMultiReceiptView-container1 {
+  margin: 5px;
+}
+
+.obObposPointOfSaleUiMultiReceiptView-container1-container1 {
+  position: relative;
+  background-color: #ffffff;
+  color: #000000;
+  overflow-y: auto;
+  max-height: 622px;
+}
+
+.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1 {
+  padding: 5px;
+}
+
+.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1 {
+}
+
+.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1-container1-container1 {
+  padding: 5px 0px 10px 0px;
+  border-bottom: 1px solid #cccccc;
+}
+
+.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1-container1-container1-element1 {
+  clear: both;
+}
+
+.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container2 {
+  max-height: 536px;
+}
+
+.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container2-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container2-container1-multiorderview {
+  /* Inherits: [OB.UI.MultiOrderView] */
+}
+

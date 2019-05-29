@@ -11,36 +11,36 @@
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.MultiReceiptView',
-  classes: 'span6',
+  classes: 'obObposPointOfSaleUiMultiReceiptView',
   published: {
     order: null,
     orderList: null
   },
   components: [{
-    style: 'margin: 5px',
+    classes: 'obObposPointOfSaleUiMultiReceiptView-container1',
     components: [{
-      style: 'position: relative; background-color: #ffffff; color: black; overflow-y: auto; max-height: 622px',
+      classes: 'obObposPointOfSaleUiMultiReceiptView-container1-container1',
       components: [{
-        style: 'padding: 5px;',
+        classes: 'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1',
         components: [{
-          classes: 'row-fluid',
+          classes: 'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1 row-fluid',
           components: [{
-            classes: 'span12',
+            classes: 'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1-container1',
             components: [{
-              style: 'padding: 5px 0px 10px 0px; border-bottom: 1px solid #cccccc;',
+              classes: 'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1-container1-container1',
               components: [{
-                style: 'clear:both;'
+                classes: 'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1-container1-container1-element1'
               }]
             }]
           }]
         }, {
-          classes: 'row-fluid',
-          style: 'max-height: 536px;',
+          classes: 'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container2 row-fluid',
           components: [{
-            classes: 'span12',
+            classes: 'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container2-container1',
             components: [{
               kind: 'OB.UI.MultiOrderView',
-              name: 'multiorderview'
+              name: 'multiorderview',
+              classes: 'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container2-container1-multiorderview'
             }]
           }]
         }]
