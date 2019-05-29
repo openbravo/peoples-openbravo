@@ -517,16 +517,18 @@ enyo.kind({
         }
       }
 
-      if (!receiptLines[0].get('isVerifiedReturn')) {
-        receipt.set('organization', receiptLines[0].get('organization').id);
-      }
-      if (OB.UTIL.isCrossStoreReceipt(receipt)) {
-        receipt.set('warehouse', receiptLines[0].get('warehouse').id);
-        if (receiptLines[0].get('product').get('currentPrice')) {
-          receipt.set('priceList', receiptLines[0].get('product').get('currentPrice').priceListId);
+      if (receiptLines.length > 0) {
+        if (!receiptLines[0].get('isVerifiedReturn')) {
+          receipt.set('organization', receiptLines[0].get('organization').id);
         }
-        if (receiptLines[0].has('documentType')) {
-          receipt.set('documentType', receiptLines[0].get('documentType'));
+        if (OB.UTIL.isCrossStoreReceipt(receipt)) {
+          receipt.set('warehouse', receiptLines[0].get('warehouse').id);
+          if (receiptLines[0].get('product').get('currentPrice')) {
+            receipt.set('priceList', receiptLines[0].get('product').get('currentPrice').priceListId);
+          }
+          if (receiptLines[0].has('documentType')) {
+            receipt.set('documentType', receiptLines[0].get('documentType'));
+          }
         }
       }
 
