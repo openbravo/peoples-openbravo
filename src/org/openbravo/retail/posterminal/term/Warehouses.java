@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -42,9 +42,8 @@ public class Warehouses extends QueryTerminalProperty {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      Map<String, Object> paramValues = new HashMap<String, Object>();
-
-      paramValues.put("orgId", jsonsent.has("organization") ? jsonsent.get("organization")
+      Map<String, Object> paramValues = new HashMap<>();
+      paramValues.put("orgId", jsonsent.has("organization") ? jsonsent.getString("organization")
           : OBContext.getOBContext().getCurrentOrganization().getId());
 
       return paramValues;

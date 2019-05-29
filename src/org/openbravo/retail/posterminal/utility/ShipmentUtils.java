@@ -208,9 +208,8 @@ public class ShipmentUtils {
         continue;
       }
 
-      final Warehouse warehouse = (orderLine.getWarehouse() != null ? orderLine.getWarehouse()
-          : order.getWarehouse());
-
+      final Warehouse warehouse = orderLine.getWarehouse() != null ? orderLine.getWarehouse()
+          : order.getWarehouse();
       List<Locator> lineLocatorList = warehouse.getId().equals(order.getWarehouse().getId())
           ? locatorList
           : getLocatorList(warehouse);
