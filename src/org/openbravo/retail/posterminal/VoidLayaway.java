@@ -38,11 +38,14 @@ public class VoidLayaway {
   private Instance<VoidLayawayPostHook> layawayPosthooks;
 
   public void voidLayaway(JSONObject jsonorder, Order order) throws Exception {
+    final OBPOSApplications posTerminal = OBDal.getInstance()
+        .get(OBPOSApplications.class, jsonorder.getString("posTerminal"));
+    final boolean isCrossStore = POSUtils.isCrossStore(order, posTerminal);
 
     executeHooks(layawayhooks, jsonorder, order);
 
     TriggerHandler.getInstance().disable();
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(!isCrossStore);
     try {
       order.setDocumentStatus("CL");
       order.setCancelled(true);
@@ -92,7 +95,6 @@ public class VoidLayaway {
     }
 
     executeHooks(layawayPosthooks, jsonorder, order);
-
   }
 
   private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order) {
