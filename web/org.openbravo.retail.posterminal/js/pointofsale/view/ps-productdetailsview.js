@@ -90,7 +90,10 @@ enyo.kind({
         line = me.leftSubWindow.line;
       }
       var attrs = (me.leftSubWindow.inEvent && me.leftSubWindow.inEvent.attrs) ? me.leftSubWindow.inEvent.attrs : {};
-      attrs.organization = me.leftSubWindow.organization;
+      attrs.organization = me.leftSubWindow.organization || {
+        id: OB.MobileApp.model.get('terminal').organization,
+        name: OB.I18N.getLabel('OBPOS_LblThisStore', [OB.MobileApp.model.get('terminal').organization$_identifier])
+      };
       attrs.warehouse = {
         id: me.leftSubWindow.warehouse.warehouseid ? this.leftSubWindow.warehouse.warehouseid : this.leftSubWindow.warehouse.id,
         warehousename: me.leftSubWindow.warehouse.warehousename,
@@ -233,6 +236,7 @@ enyo.kind({
           me.leftSubWindow.changeWarehouseInfo(null, warehouse);
           me.leftSubWindow.product.set('listPrice', data.currentPrice.price);
           me.leftSubWindow.product.set('standardPrice', data.currentPrice.price);
+          me.leftSubWindow.product.set('organization', organization);
           if (data.productPrices) {
             me.leftSubWindow.product.set('productPrices', data.productPrices);
           } else {
