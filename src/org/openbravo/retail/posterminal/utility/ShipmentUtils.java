@@ -583,7 +583,7 @@ public class ShipmentUtils {
       String productId, String uomId, String warehouseId, String attributesetinstanceId,
       BigDecimal quantity, String warehouseRuleId, String reservationId) {
     String processId = SequenceIdData.getUUID();
-    OBContext.setCrossOrgReferenceAdminMode();
+    OBContext.setAdminMode(false);
     try {
       if (log.isDebugEnabled()) {
         log.debug("Parameters : '" + processId + "', '" + recordID + "', " + quantity + ", '"
@@ -606,7 +606,7 @@ public class ShipmentUtils {
       throw new OBException("Error in OrderLoader when getting stock for product " + productId
           + " order line " + recordID, ex);
     } finally {
-      OBContext.restorePreviousCrossOrgReferenceMode();
+      OBContext.restorePreviousMode();
     }
   }
 
