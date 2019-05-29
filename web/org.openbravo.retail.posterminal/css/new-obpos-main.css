@@ -8425,6 +8425,289 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/*************************   *************************/
+/*         File: editcreatecustomerform.js           */
+/* Folder: js/pointofsale/view/subwindows/customers/ */
+/*************************   *************************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.newcustomer
+# Inherits: [OB.UI.Modal]
+*/
+.obObposPointOfSaleUiCustomersNewcustomer {
+  width: 870px;
+}
+
+.obObposPointOfSaleUiCustomersNewcustomer-newAttribute_error {
+  background-color: #ff0000;
+}
+
+.obObposPointOfSaleUiCustomersNewcustomer-labelLine_black {
+  color: #000000;
+}
+
+.obObposPointOfSaleUiCustomersNewcustomer-body-obObposPointOfSaleUiCustomersEditCreatecustomersImpl {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl] */
+}
+
+@media (min-width: 350px) and (max-width: 470px) {
+  .obObposPointOfSaleUiCustomersNewcustomer {
+    width: calc(100% - 24px);
+  }
+}
+
+@media (min-width: 471px) and (max-width: 549px) {
+  .obObposPointOfSaleUiCustomersNewcustomer {
+    width: calc(100% - 24px);
+  }
+}
+
+@media (min-width: 550px) and (max-width: 649px) {
+  .obObposPointOfSaleUiCustomersNewcustomer {
+    width: calc(100% - 24px);
+  }
+}
+
+@media (min-width: 650px) and (max-width: 800px) {
+  .obObposPointOfSaleUiCustomersNewcustomer {
+    width: calc(100% - 24px);
+  }
+}
+
+@media (min-width: 801px) and (max-width: 899px) {
+  .obObposPointOfSaleUiCustomersNewcustomer {
+    width: 780px;
+  }
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.newcustomersave
+# Inherits: [OB.UI.Button]
+*/
+.obObposPointOfSaleUiCustomersNewcustomersave {
+  width: 100px;
+  margin: 0px 5px 8px 19px;
+  background-color: #f8e859;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  height: 30px;
+  font-size: var(--font-medium);
+  padding: 5px 15px 7px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+}
+
+.obObposPointOfSaleUiCustomersNewcustomersave:hover {
+  opacity: 0.75;
+}
+
+.obObposPointOfSaleUiCustomersNewcustomersave:active {
+  opacity: 0.999;
+  background-color: #cccccc;
+}
+
+.obObposPointOfSaleUiCustomersNewcustomersave:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+.obObposPointOfSaleUiCustomersNewcustomersave:disabled,
+.obObposPointOfSaleUiCustomersNewcustomersave[disabled=true]:hover {
+  background-color: #a9a9a9;
+  opacity: 1;
+  cursor: default;
+}
+
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiCustomersNewcustomersave {
+    height: 45px;
+  }
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.NewCustomer_bodyheader
+*/
+.obObposPointOfSaleUiCustomersNewCustomerBodyheader {}
+
+.obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1 {}
+
+.obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1 {
+  display: table;
+  margin: 0px auto;
+}
+
+.obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1-container1 {
+  display: table-cell;
+}
+
+.obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1-container1-obObposPointOfSaleUiCustomersNewcustomersave {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customers.newcustomersave] */
+}
+
+.obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1-container2 {
+  display: table-cell;
+}
+
+.obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1-container2-obObposPointOfSaleUiCustomersCancelEdit {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customers.cancelEdit] */
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl
+# Inherits: [OB.OBPOSPointOfSale.UI.customers.edit_createcustomers]
+*/
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl {
+  padding: 9px 15px;
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth {
+  width: 40%;
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth {
+  width: 52%;
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-greeting {
+/* Inherits: [OB.UI.CustomerComboProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-firstName {
+/* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-lastName {
+/* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-customerCategory {
+/* Inherits: [OB.UI.CustomerComboProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-customerTaxId {
+/* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-customerPhone {
+/* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-alternativePhone {
+/* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-customerEmail {
+/* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-birthPlace {
+/* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-birthDay {
+/* Inherits: [OB.UI.DatePicker] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-customerLanguage {
+/* Inherits: [OB.UI.CustomerComboProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-comments {
+/* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-customerPriceList {
+/* Inherits: [OB.UI.CustomerComboProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-isCustomerConsent {
+/* Inherits: [OB.UI.CustomerConsentCheckProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-commercialauth {
+/* Inherits: [OB.UI.CustomerCheckCommercialAuth] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-contactpreferences {
+/* Inherits: [OB.UI.CustomerCheckComboProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-useSameAddrCheck {
+/* Inherits: [OB.UI.SwitchShippingInvoicingAddr] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-shipAddrAttributes-customerShipCountry {
+/* Inherits: [OB.UI.CustomerComboProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-shipAddrAttributes-customerLocName {
+/* Inherits: [OB.UI.CustomerTextPropertyAddr] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-shipAddrAttributes-customerPostalCode {
+/* Inherits: [OB.UI.CustomerTextPropertyAddr] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-shipAddrAttributes-customerCity {
+/* Inherits: [OB.UI.CustomerTextPropertyAddr] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-invAddrAttributes-customerCountry {
+/* Inherits: [OB.UI.CustomerComboProperty] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-invAddrAttributes-customerInvLocName {
+/* Inherits: [OB.UI.CustomerTextPropertyAddr] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-invAddrAttributes-customerInvPostalCode {
+/* Inherits: [OB.UI.CustomerTextPropertyAddr] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-invAddrAttributes-customerInvCity {
+/* Inherits: [OB.UI.CustomerTextPropertyAddr] */
+}
+
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth {
+    width: 20%;
+  }
+
+  .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth {
+    width: 75%;
+  }
+}
+
+@media (min-width: 350px) and (max-width: 520px) {
+  .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth {
+    width: 40%;
+  }
+
+  .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth {
+    width: 54%;
+  }
+}
+
+@media (min-width: 521px) and (max-width: 800px) {
+  .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth {
+    width: 30%;
+  }
+
+  .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth {
+    width: 64%;
+  }
+}
+
+
+
 
 /*****************/
 /*      JAR      */
