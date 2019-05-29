@@ -172,8 +172,10 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONObject orderOrganization = new JSONObject();
         orderOrganization.put("id", paidReceipt.get("organization"));
         String organizationIdentifier = paidReceipt.get("organization$_identifier").toString();
-        if (StringUtils.equals(orderOrganization.getString("id"),
-            posTerminal.getOrganization().getId())) {
+        final String posOrganization = posTerminal != null ? posTerminal.getOrganization().getId()
+            : jsonsent.getString("organization");
+        if (posTerminal != null
+            && StringUtils.equals(orderOrganization.getString("id"), posOrganization)) {
           organizationIdentifier = OBMessageUtils.getI18NMessage("OBPOS_LblThisStore",
               new String[] { paidReceipt.get("organization$_identifier").toString() });
         }
