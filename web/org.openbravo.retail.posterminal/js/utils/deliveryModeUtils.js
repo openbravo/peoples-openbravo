@@ -41,7 +41,7 @@ OBRDM.UTIL = {};
     var deliveryModes = OB.MobileApp.model.get('deliveryModes'),
         modes = [];
     if (deliveryModes && deliveryModes.length > 0) {
-      if (OB.UTIL.isCrossStoreLine(args.model) || OB.UTIL.isCrossStoreProduct(args.model)) {
+      if (OB.UTIL.isCrossStoreLine(args.model) || (!OB.UTIL.isNullOrUndefined(args.organization) && args.organization.id !== OB.MobileApp.model.get('terminal').organization)) {
         _.each(deliveryModes, function (delivery) {
           if (delivery.id !== 'PickAndCarry') {
             modes.push(delivery);

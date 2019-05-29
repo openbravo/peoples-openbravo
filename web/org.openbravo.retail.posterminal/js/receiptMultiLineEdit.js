@@ -41,7 +41,8 @@
         this.detailsView.doShowPopup({
           popup: 'OBRDM_ReceiptMultilines',
           args: {
-            product: this.detailsView.leftSubWindow.product
+            product: this.detailsView.leftSubWindow.product,
+            organization: this.detailsView.leftSubWindow.organization
           }
         });
       }
@@ -296,6 +297,7 @@ enyo.kind({
     if (!OB.UTIL.isNullOrUndefined(this.args.product)) {
       this.product = this.args.product;
       this.currentLine = null;
+      this.organization = this.args.organization;
     }
     if (this.currentLine || this.product) {
       var diff = this.propertycomponents;
@@ -345,7 +347,8 @@ enyo.kind({
   loadValue: function (mProperty, component) {
     this.waterfall('onLoadValue', {
       model: this.currentLine || this.product,
-      modelProperty: mProperty
+      modelProperty: mProperty,
+      organization: this.organization
     });
 
     // Make it visible or not...
