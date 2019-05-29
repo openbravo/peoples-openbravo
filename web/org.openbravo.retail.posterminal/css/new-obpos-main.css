@@ -8708,6 +8708,26 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/***********************   ***********************/
+/*        File: modalstockdiscontinued.js        */
+/*      Folder: js/pointofsale/view/modals/      */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.ModalStockDiscontinued
+# Inherits: [OB.UI.ModalAction]
+*/
+.obObposPointOfSaleUiModalsModalStockDiscontinued {}
+
+.obObposPointOfSaleUiModalsModalStockDiscontinued-bodyContent {}
+
+.obObposPointOfSaleUiModalsModalStockDiscontinued-bodyContent-bodymessage {}
+
+.obObposPointOfSaleUiModalsModalStockDiscontinued-bodyButtons-obUiModalDialogButton {
+/* Inherits: [OB.UI.ModalDialogButton] */
+}
+
+
+
 
 /*****************/
 /*      JAR      */
