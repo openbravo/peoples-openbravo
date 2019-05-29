@@ -12,6 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalChange',
+  classes: 'obUiModalChange',
   events: {
     onHideThisPopup: ''
   },
@@ -21,25 +22,28 @@ enyo.kind({
   },
   bodyContent: {
     name: 'bodyattributes',
+    classes: 'obUiModalChange-bodyContent-bodyattributes',
     components: [{
       kind: 'Scroller',
-      maxHeight: '225px',
-      classes: 'changedialog-properties',
+      classes: 'obUiModalChange-bodyattributes-scroller',
       thumb: true,
-      horizontal: 'hidden',
       components: [{
-        name: 'paymentlines'
+        name: 'paymentlines',
+        classes: 'obUiModalChange-scroller-paymentlines'
       }]
     }, {
       name: 'errors',
-      classes: 'changedialog-errors'
+      classes: 'obUiModalChange-bodyattributes-errors'
     }]
   },
   bodyButtons: {
+    classes: 'obUiModalChange-bodyButtons-container1',
     components: [{
-      kind: 'OB.UI.ModalChangeButtonOK'
+      kind: 'OB.UI.ModalChangeButtonOK',
+      classes: 'obUiModalChange-bodyButtons-container1-obUiModalChangeButtonOK'
     }, {
-      kind: 'OB.UI.ModalChangeButtonCancel'
+      kind: 'OB.UI.ModalChangeButtonCancel',
+      classes: 'obUiModalChange-bodyButtons-container1-obUiModalChangeButtonCancel'
     }]
   },
   initComponents: function () {
@@ -52,6 +56,7 @@ enyo.kind({
         this.$.bodyContent.$.paymentlines.createComponent({
           kind: 'OB.UI.ModalChangeLine',
           name: 'line_' + payment.payment.searchKey,
+          classes: 'obUiModalChange-paymentlines-obUiModalChangeLine',
           index: i++,
           payment: payment
         });
@@ -218,6 +223,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalChangeButtonOK',
   kind: 'OB.UI.ModalDialogButton',
+  classes: 'obUiModalChangeButtonOK',
   i18nContent: 'OBMOBC_LblOk',
   isDefaultAction: true,
   tap: function () {
@@ -228,6 +234,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalChangeButtonCancel',
   kind: 'OB.UI.ModalDialogButton',
+  classes: 'obUiModalChangeButtonCancel',
   i18nContent: 'OBMOBC_LblCancel',
   tap: function () {
     this.doHideThisPopup();

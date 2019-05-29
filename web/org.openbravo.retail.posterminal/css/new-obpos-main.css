@@ -8728,6 +8728,63 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/***********************   ***********************/
+/*              File: modalChange.js             */
+/*      Folder: js/pointofsale/view/modals/      */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalChange
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalChange {}
+
+.obUiModalChange-bodyContent-bodyattributes {}
+
+.obUiModalChange-bodyattributes-scroller {
+/* Inherits: [Scroller] */
+  max-height: 225px;
+  overflow-x: hidden;
+  background-color: #ffffff;
+}
+
+.obUiModalChange-scroller-paymentlines {}
+
+.obUiModalChange-paymentlines-obUiModalChangeLine {
+/* Inherits: [OB.UI.ModalChangeLine] */
+}
+
+.obUiModalChange-bodyattributes-errors {
+  color: #b94a48;
+  font-size: medium;
+  height: 25px;
+}
+
+.obUiModalChange-bodyButtons-container1 {}
+
+.obUiModalChange-bodyButtons-container1-obUiModalChangeButtonOK {
+/* Inherits: [OB.UI.ModalChangeButtonOK] */
+}
+
+.obUiModalChange-bodyButtons-container1-obUiModalChangeButtonCancel {
+/* Inherits: [OB.UI.ModalChangeButtonCancel] */
+}
+
+
+/*
+# Component: OB.UI.ModalChangeButtonOK
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiModalChangeButtonOK {}
+
+
+/*
+# Component: OB.UI.ModalChangeButtonCancel
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiModalChangeButtonCancel {}
+
+
+
 
 /*****************/
 /*      JAR      */
