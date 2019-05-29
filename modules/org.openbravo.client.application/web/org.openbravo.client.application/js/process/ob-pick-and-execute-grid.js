@@ -399,8 +399,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   // loading it from the backend
   rowEditorEnter: function (record, editValues, rowNum) {
     if (this.view.actionHandler !== "org.openbravo.advpaymentmngt.actionHandler.ModifyPaymentPlanActionHandler") {
-      var i = 0,
-          editRecord = this.getEditedRecord(rowNum),
+      var i, editRecord = this.getEditedRecord(rowNum),
           gridFld, identifier, formFld, value, form = this.getEditForm();
 
       if (editRecord) {
