@@ -3434,6 +3434,198 @@
 
 
 
+/***********************   ***********************/
+/*            File: toolbar-right.js             */
+/*              Folder: js/view                  */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.RightToolbarButton
+*/
+.obObposPointOfSaleUiRightToolbarButton {}
+
+.obObposPointOfSaleUiRightToolbarButton-theButton {
+  margin: 0px 5px 0px 5px;
+}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.ButtonTabScan
+# Inherits: [OB.UI.ToolbarButtonTab]
+*/
+.obObposPointOfSaleUiButtonTabScan {
+  position: relative;
+}
+
+.obObposPointOfSaleUiButtonTabScan-status-rfidIcon_rfidOn {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconRFIDON.svg');
+  background-size: 17px 18px;
+}
+
+.obObposPointOfSaleUiButtonTabScan-status-rfidIcon_rfidOff {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img//iconRFIDOFF.svg');
+  background-size: 17px 18px;
+}
+
+.obObposPointOfSaleUiButtonTabScan-status-rfidIcon_rfidOffline {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconRFIDOffline.svg');
+  background-size: 17px 18px;
+}
+
+.obObposPointOfSaleUiButtonTabScan-status {
+  position: relative;
+  float: left;
+  height: inherit;
+}
+
+.obObposPointOfSaleUiButtonTabScan-status-rfidIcon {
+  float: left;
+  width: 17px;
+  height: 50%;
+  margin-left: 5px;
+  margin-top: 5px;
+  background-repeat: no-repeat;
+  background-position: top left;
+  background-color: transparent;
+}
+
+.obObposPointOfSaleUiButtonTabScan-lbl {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.ButtonTabBrowse
+# Inherits: [OB.UI.ToolbarButtonTab]
+*/
+.obObPosPointOfSaleUiButtonTabBrowse {}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic
+# Inherits: [OB.UI.ToolbarButtonTab]
+*/
+.obObPosPointOfSaleUiButtonTabSearchCharacteristic {}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.ButtonTabEditLine
+# Inherits: [OB.UI.ToolbarButtonTab]
+*/
+.obObPosPointOfSaleUiButtonTabEditLine {}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.RightToolbarImpl
+# Inherits: [OB.UI.MultiColumn.Toolbar]
+*/
+.obObposPointOfSaleUiRightToolbarImpl {}
+
+.obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnScan {}
+
+.obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnCatalog {}
+
+.obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnSearchCharacteristic {}
+
+.obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnEdit {}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.TabSearchCharacteristic
+# Inherits: [OB.UI.MultiColumn.TabPane]
+*/
+.obObposPointOfSaleUiTabSearchCharacteristic {}
+
+.obObposPointOfSaleUiTabSearchCharacteristic-searchCharacteristicTabContent {
+  /*Inherits: [OB.UI.SearchProductCharacteristic]*/
+}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.TabBrowse
+# Inherits: [OB.UI.MultiColumn.TabPane]
+*/
+.obObposPointOfSaleUiTabBrowse {}
+
+.obObposPointOfSaleUiTabBrowse-catalogTabContent {
+  /*Inherits: [OB.UI.ProductBrowser]*/
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.TabScan
+# Inherits: [OB.UI.TabPane]
+*/
+.obObposPointOfSaleUiTabScan {}
+
+.obObposPointOfSaleUiTabScan-scanTabContent {
+  /*Inherits: [OB.OBPOSPointOfSale.UI.Scan]*/
+}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.TabEditLine
+# Inherits: [OB.UI.TabPane]
+*/
+.obObposPointOfSaleUiTabEditLine {}
+
+.obObposPointOfSaleUiTabEditLine-editTabContent {
+  /*Inherits: [OB.UI.TabPane]*/
+}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.TabPayment
+# Inherits: [OB.UI.TabPane]
+*/
+.obObposPointOfSaleUiTabPayment {}
+
+.obObposPointOfSaleUiTabPayment-paymentTabContent {
+  /*Inherits: [OB.OBPOSPointOfSale.UI.Payment]*/
+}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.RightToolbarPane
+*/
+.obObpodPointOfSaleUiRightToolbarPane {
+  width: 100%;
+}
+
+
+.obObpodPointOfSaleUiRightToolbarPane-scan {}
+
+.obObpodPointOfSaleUiRightToolbarPane-catalog {}
+
+.obObpodPointOfSaleUiRightToolbarPane-searchCharacteristic {
+  margin: 5px;
+}
+
+.obObpodPointOfSaleUiRightToolbarPane-payment {}
+
+.obObpodPointOfSaleUiRightToolbarPane-edit {}
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -68,6 +68,7 @@
 //});
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
+  classes: 'obObposPointOfSaleUiRightToolbarImpl',
   published: {
     receipt: null
   },
@@ -144,19 +145,23 @@ enyo.kind({
   buttons: [{
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
     name: 'toolbarBtnScan',
+    classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnScan',
     tabToOpen: 'scan',
     defaultTab: true
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
     name: 'toolbarBtnCatalog',
+    classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnCatalog',
     tabToOpen: 'catalog'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic',
     name: 'toolbarBtnSearchCharacteristic',
+    classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnSearchCharacteristic',
     tabToOpen: 'searchCharacteristic'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
     name: 'toolbarBtnEdit',
+    classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnEdit',
     tabToOpen: 'edit'
   }],
 
@@ -207,12 +212,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbarButton',
+  classes: 'obObposPointOfSaleUiRightToolbarButton',
   tag: 'li',
   components: [{
     name: 'theButton',
-    attributes: {
-      style: 'margin: 0px 5px 0px 5px;'
-    }
+    classes: 'obObposPointOfSaleUiRightToolbarButton-theButton',
+    attributes: {}
   }],
   initComponents: function () {
     this.inherited(arguments);
@@ -229,9 +234,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
   kind: 'OB.UI.ToolbarButtonTab',
+  classes: 'obObposPointOfSaleUiButtonTabScan',
   tabPanel: 'scan',
   i18nLabel: 'OBMOBC_LblScan',
-  style: 'position: relative;',
   events: {
     onTabChange: '',
     onRightToolbarDisabled: ''
@@ -240,21 +245,21 @@ enyo.kind({
     onRightToolbarDisabled: 'disabledButton',
     onPointOfSaleLoad: 'pointOfSaleLoad'
   },
-  rfidOnIcon: 'btn-icon-rfidon',
-  rfidOffIcon: 'btn-icon-rfidoff',
-  rfidOfflineIcon: 'btn-icon-rfidoffline',
+  rfidOnIcon: 'obObposPointOfSaleUiButtonTabScan-status-rfidIcon_rfidOn',
+  rfidOffIcon: 'obObposPointOfSaleUiButtonTabScan-status-rfidIcon_rfidOff',
+  rfidOfflineIcon: 'obObposPointOfSaleUiButtonTabScan-status-rfidIcon_rfidOffline',
   components: [{
     name: 'status',
-    classes: 'btn-icon-toolbartab',
+    classes: 'obObposPointOfSaleUiButtonTabScan-status',
     components: [{
       name: 'rfidIcon',
       showing: false,
-      classes: 'btn-icon-toolbartabrfid'
+      classes: 'obObposPointOfSaleUiButtonTabScan-status-rfidIcon'
     }]
   }],
   init: function (model) {
     this.model = model;
-    this.$.lbl.addClass('btn-label');
+    this.$.lbl.addClass('obObposPointOfSaleUiButtonTabScan-lbl');
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       this.$.rfidIcon.show();
     }
@@ -319,6 +324,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
   kind: 'OB.UI.ToolbarButtonTab',
+  classse: 'obObPosPointOfSaleUiButtonTabBrowse',
   events: {
     onTabChange: '',
     onRightToolbarDisabled: ''
@@ -372,6 +378,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic',
   kind: 'OB.UI.ToolbarButtonTab',
+  classes: 'obObPosPointOfSaleUiButtonTabSearchCharacteristic',
   tabPanel: 'searchCharacteristic',
   i18nLabel: 'OBPOS_LblSearch',
   events: {
@@ -417,6 +424,7 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      //This setStyle is allowed due to an other one in ob-layout
       this.owner.owner.setStyle('width: 50% !important;');
     }
   }
@@ -428,6 +436,7 @@ enyo.kind({
   published: {
     ticketLines: null
   },
+  classes: 'obObPosPointOfSaleUiButtonTabEditLine',
   kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: 'edit',
   i18nLabel: 'OBPOS_LblEdit',
@@ -552,27 +561,30 @@ enyo.kind({
   published: {
     model: null
   },
-  classes: 'postab-content',
-
+  classes: 'obObpodPointOfSaleUiRightToolbarPane',
   handlers: {
     onTabButtonTap: 'tabButtonTapHandler'
   },
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.TabScan',
-    name: 'scan'
+    name: 'scan',
+    classes: 'obObpodPointOfSaleUiRightToolbarPane-scan'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabBrowse',
-    name: 'catalog'
+    name: 'catalog',
+    classes: 'obObpodPointOfSaleUiRightToolbarPane-catalog'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabSearchCharacteristic',
     name: 'searchCharacteristic',
-    style: 'margin: 5px'
+    classes: 'obObpodPointOfSaleUiRightToolbarPane-searchCharacteristic'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabPayment',
-    name: 'payment'
+    name: 'payment',
+    classes: 'obObpodPointOfSaleUiRightToolbarPane-payment'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabEditLine',
-    name: 'edit'
+    name: 'edit',
+    classes: 'obObpodPointOfSaleUiRightToolbarPane-edit'
   }],
   tabButtonTapHandler: function (inSender, inEvent) {
     if (inEvent.tabPanel) {
@@ -619,9 +631,11 @@ enyo.kind({
   published: {
     receipt: null
   },
+  classes: 'obObposPointOfSaleUiTabSearchCharacteristic',
   components: [{
     kind: 'OB.UI.SearchProductCharacteristic',
-    name: 'searchCharacteristicTabContent'
+    name: 'searchCharacteristicTabContent',
+    classes: 'obObposPointOfSaleUiTabSearchCharacteristic-searchCharacteristicTabContent'
   }],
   receiptChanged: function () {
     this.$.searchCharacteristicTabContent.setReceipt(this.receipt);
@@ -631,21 +645,25 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabBrowse',
   kind: 'OB.UI.TabPane',
+  classes: 'obObposPointOfSaleUiTabBrowse',
   components: [{
     kind: 'OB.UI.ProductBrowser',
-    name: 'catalogTabContent'
+    name: 'catalogTabContent',
+    classes: 'obObposPointOfSaleUiTabBrowse-catalogTabContent'
   }]
 });
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabScan',
   kind: 'OB.UI.TabPane',
+  classes: 'obObposPointOfSaleUiTabScan',
   published: {
     receipt: null
   },
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.Scan',
-    name: 'scanTabContent'
+    name: 'scanTabContent',
+    classes: 'obObposPointOfSaleUiTabScan-scanTabContent'
   }],
   receiptChanged: function () {
     this.$.scanTabContent.setReceipt(this.receipt);
@@ -655,12 +673,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabEditLine',
   kind: 'OB.UI.TabPane',
+  classes: 'obObposPointOfSaleUiTabEditLine',
   published: {
     receipt: null
   },
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.EditLine',
-    name: 'editTabContent'
+    name: 'editTabContent',
+    classes: 'obObposPointOfSaleUiTabEditLine-editTabContent'
   }],
   receiptChanged: function () {
     this.$.editTabContent.setReceipt(this.receipt);
@@ -670,12 +690,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabPayment',
   kind: 'OB.UI.TabPane',
+  classes: 'obObposPointOfSaleUiTabPayment',
   published: {
     receipt: null
   },
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.Payment',
-    name: 'paymentTabContent'
+    name: 'paymentTabContent',
+    classes: 'obObposPointOfSaleUiTabPayment-paymentTabContent'
   }],
   receiptChanged: function () {
     this.$.paymentTabContent.setReceipt(this.receipt);
