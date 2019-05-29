@@ -8,13 +8,14 @@
  */
 
 /*global OB, enyo, _ */
-
 OB.OBPOSPointOfSale.UI.ToolbarScan = {
   name: 'toolbarscan',
+  classes: 'obObposPointOfSaleUiToolbarScan',
   buttons: [{
+    classes: 'obObposPointOfSaleUiToolbarScan-buttons',
     command: 'code',
     i18nLabel: 'OBMOBC_KbCode',
-    classButtonActive: 'btnactive-blue',
+    classButtonActive: 'obObposPointOfSaleUiToolbarScan-buttons_bluee',
     idSufix: 'upcean'
   }],
   shown: function () {
@@ -31,6 +32,7 @@ OB.OBPOSPointOfSale.UI.ToolbarScan = {
 
 OB.OBPOSPointOfSale.UI.ToolbarDiscounts = {
   name: 'toolbardiscounts',
+  classes: 'obObposPointOfSaleUiToolbarDiscounts',
   buttons: [],
   shown: function () {
     var keyboard = this.owner.owner;
@@ -47,6 +49,7 @@ OB.OBPOSPointOfSale.UI.ToolbarDiscounts = {
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ToolbarPayment',
+  classes: 'obObposPointOfSaleUiToolbarPayment',
   sideButtons: [],
   published: {
     receipt: null
@@ -248,6 +251,7 @@ enyo.kind({
     }
     return {
       kind: 'OB.UI.BtnSide',
+      classes: 'obObposPointOfSaleUiToolbarPayment-obUiBtnSide',
       btn: {
         command: sidebutton.command,
         label: sidebutton.label,
@@ -382,6 +386,7 @@ enyo.kind({
           } else {
             btncomponent = {
               kind: 'OB.UI.BtnSide',
+              classes: 'obObposPointOfSaleUiToolbarPayment-obUiBtnSide',
               btn: {
                 command: payment.providerGroup.id,
                 label: payment.providerGroup._identifier,
@@ -504,6 +509,7 @@ enyo.kind({
     while (countbuttons++ < paymentsbuttons) {
       this.createComponent({
         kind: 'OB.UI.BtnSide',
+        classes: 'obObposPointOfSaleUiToolbarPayment-obUiBtnSide',
         btn: {}
       });
     }
@@ -511,6 +517,7 @@ enyo.kind({
     if (paymentsdialog) {
       this.createComponent({
         name: 'btnMore',
+        classes: 'obObposPointOfSaleUiToolbarPayment-btnMore',
         toolbar: this,
         dialogbuttons: dialogbuttons,
         kind: 'OB.OBPOSPointOfSale.UI.ButtonMore'
@@ -519,6 +526,7 @@ enyo.kind({
 
     this.createComponent({
       kind: 'OB.OBPOSPointOfSale.UI.ButtonSwitch',
+      classes: 'obObposPointOfSaleUiToolbarPayment-obObposPointOfSaleUiButtonSwitch',
       keyboard: this.keyboard
     });
 
@@ -717,20 +725,20 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonMore',
-  style: 'display:table; width:100%;',
+  classes: 'obObposPointOfSaleUiButtonMore',
   events: {
     onShowAllButtons: ''
   },
   handlers: {
     onButtonStatusChanged: 'buttonStatusChanged'
   },
-  classButtonActive: 'btnactive-green',
-  classButtonDisabled: 'btnkeyboard-inactive',
+  classButtonActive: 'obObposPointOfSaleUiButtonMore_active',
+  classButtonDisabled: 'obObposPointOfSaleUiButtonMore_disabled',
   components: [{
-    style: 'margin: 5px;',
+    classes: 'obObposPointOfSaleUiButtonMore-container1',
     components: [{
       kind: 'OB.UI.Button',
-      classes: 'btnkeyboard',
+      classes: 'obObposPointOfSaleUiButtonMore-container1-btn',
       name: 'btn',
       label: ''
     }]
@@ -772,16 +780,16 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonSwitch',
-  style: 'display:table; width:100%;',
-  classButtonDisabled: 'btnkeyboard-inactive',
+  classes: 'obObposPointOfSaleUiButtonSwitch',
+  classButtonDisabled: 'obObposPointOfSaleUiButtonSwitch_disabled',
   handlers: {
     onButtonStatusChanged: 'buttonStatusChanged'
   },
   components: [{
-    style: 'margin: 5px;',
+    classes: 'obObposPointOfSaleUiButtonSwitch-container1',
     components: [{
       kind: 'OB.UI.Button',
-      classes: 'btnkeyboard',
+      classes: 'obObposPointOfSaleUiButtonSwitch-container1-btn',
       name: 'btn'
     }]
   }],

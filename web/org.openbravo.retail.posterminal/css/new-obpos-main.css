@@ -8998,6 +8998,143 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/***********************   ***********************/
+/*          File: keyboard-toolbars.js           */
+/*         Folder: js/pointofsale/view/          */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.ToolbarScan
+*/
+.obObposPointOfSaleUiToolbarScan {}
+
+.obObposPointOfSaleUiToolbarScan-buttons {}
+
+.obObposPointOfSaleUiToolbarScan-buttons_blue {
+  background-color: #7da7d9;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.ToolbarDiscounts
+*/
+.obObposPointOfSaleUiToolbarDiscounts {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.ToolbarPayment
+*/
+.obObposPointOfSaleUiToolbarPayment {}
+
+.obObposPointOfSaleUiToolbarPayment-obUiBtnSide {
+/* Inherits: [OB.UI.BtnSide] */
+}
+
+.obObposPointOfSaleUiToolbarPayment-btnMore {
+/* Inherits: [OB.OBPOSPointOfSale.UI.ButtonMore] */
+}
+
+.obObposPointOfSaleUiToolbarPayment-obObposPointOfSaleUiButtonSwitch {
+/* Inherits: OB.OBPOSPointOfSale.UI.ButtonSwitch] */
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.ButtonMore
+*/
+.obObposPointOfSaleUiButtonMore {
+  display: table;
+  width: 100%;
+}
+
+.obObposPointOfSaleUiButtonMore_active {
+  background-color: #6cb33f;
+}
+
+.obObposPointOfSaleUiButtonMore_disabled,
+.obObposPointOfSaleUiButtonMore_disabled.btn-over,
+.obObposPointOfSaleUiButtonMore_disabled:hover,
+.obObposPointOfSaleUiButtonMore_disabled.btn-down,
+.obObposPointOfSaleUiButtonMore_disabled:active, {
+  opacity: 1 !important;
+  background-color: #717171 !important;
+  cursor: default;
+  color: black;
+}
+
+.obObposPointOfSaleUiButtonMore-container1 {
+  margin: 5px;
+}
+
+.obObposPointOfSaleUiButtonMore-container1-btn {
+/* Inherits: [OB.UI.Button] */
+  display: block;
+  width: 100%;
+  border: none;
+  font-size: var(--font-medium-large);
+  text-align: center;
+  line-height: 23px;
+  padding: 0px;
+  text-decoration: none;
+  background-color: #e2e2e2;
+  color: #ffffff;
+  cursor: pointer;
+  height: 57px;
+}
+
+@media screen and (max-width: 842px) {
+  .obObposPointOfSaleUiButtonMore-container1-btn {
+    font-size: 100%;
+  }
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.ButtonSwitch
+*/
+.obObposPointOfSaleUiButtonSwitch {
+  display: table;
+  width: 100%;
+}
+
+.obObposPointOfSaleUiButtonSwitch_disabled,
+.obObposPointOfSaleUiButtonSwitch_disabled.btn-over,
+.obObposPointOfSaleUiButtonSwitch_disabled:hover,
+.obObposPointOfSaleUiButtonSwitch_disabled.btn-down,
+.obObposPointOfSaleUiButtonSwitch_disabled:active, {
+  opacity: 1 !important;
+  background-color: #717171 !important;
+  cursor: default;
+  color: black;
+}
+
+.obObposPointOfSaleUiButtonSwitch-container1 {
+  margin: 5px;
+}
+
+.obObposPointOfSaleUiButtonSwitch-container1-btn {
+/* Inherits: [OB.UI.Button] */
+  display: block;
+  width: 100%;
+  border: none;
+  font-size: var(--font-medium-large);
+  text-align: center;
+  line-height: 23px;
+  padding: 0px;
+  text-decoration: none;
+  background-color: #e2e2e2;
+  color: #ffffff;
+  cursor: pointer;
+  height: 57px;
+}
+
+@media screen and (max-width: 842px) {
+  .obObposPointOfSaleUiButtonMore-container1-btn {
+    font-size: 100%;
+  }
+}
+
+
+
 
 /*****************/
 /*      JAR      */
