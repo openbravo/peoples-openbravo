@@ -3685,9 +3685,7 @@
           }
           return null;
         }
-        if (me.get('priceIncludesTax') !== newline.get('priceIncludesTax') && OB.UTIL.isCrossStoreProduct(newline.get('product'))) {
-          me.set('priceIncludesTax', newline.get('priceIncludesTax'));
-        }
+
         // add the created line
         me.get('lines').add(newline, options);
         newline.trigger('created', newline);
@@ -4513,6 +4511,7 @@
           line.unset('lineGrossAmount');
           line.set('obposCanbedelivered', true);
           line.set('obposIspaid', false);
+          line.set('documentType', me.get('documentType'));
         });
 
         // The lines must be iterated a second time after finishing the first loop, to ensure that
