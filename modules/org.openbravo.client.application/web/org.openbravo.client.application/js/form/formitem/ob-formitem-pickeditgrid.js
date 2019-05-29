@@ -39,7 +39,7 @@ isc.OBPickEditGridItem.addProperties({
       for (i = 0; i < len; i++) {
         record = grid.getEditedRecord(grid.getRecordIndex(selection[i]));
         for (j = 0; j < fields.length; j++) {
-          if (fields[j].required && (!record[fields[j].name] || record[fields[j].name] === '')) {
+          if (fields[j].required && (record[fields[j].name] === null || record[fields[j].name] === undefined || record[fields[j].name] === '')) {
             hasErrors = true;
             if (!lineNumbers) {
               lineNumbers = grid.getRecordIndex(selection[i]).toString();
