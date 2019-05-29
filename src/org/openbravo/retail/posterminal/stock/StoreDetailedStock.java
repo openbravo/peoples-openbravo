@@ -35,8 +35,9 @@ public class StoreDetailedStock extends JSONProcessSimple {
     BigDecimal totalQtyCounter = BigDecimal.ZERO;
     try {
 
-      final boolean isCrossStore = jsonData.has("crossOrganization") && !StringUtils
-          .equals(jsonData.getString("crossOrganization"), jsonData.getString("organization"));
+      final boolean isCrossStore = jsonData.has("crossOrganization")
+          && !jsonData.isNull("crossOrganization") && !StringUtils
+              .equals(jsonData.optString("crossOrganization"), jsonData.getString("organization"));
       final String orgId = isCrossStore ? jsonData.getString("crossOrganization")
           : jsonData.getString("organization");
       prodId = jsonData.getString("product");
