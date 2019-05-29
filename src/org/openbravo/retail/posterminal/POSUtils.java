@@ -183,6 +183,9 @@ public class POSUtils {
     return null;
   }
 
+  /**
+   * Retrieves the list of stores sharing the given Cross Store Organization.
+   */
   @SuppressWarnings("unchecked")
   public static List<String> getOrgListByCrossStoreId(final String crossStoreId) {
     OBContext.setAdminMode(false);
@@ -205,6 +208,10 @@ public class POSUtils {
     return null;
   }
 
+  /**
+   * If isCrossStore is true, retrieves the list of cross stores for given posTerminal store,
+   * including posTerminal store. If isCrossStore is false, retrieves given posTerminal store.
+   */
   public static List<String> getOrgListCrossStore(final String posterminalId,
       final boolean isCrossStore) {
     final OBPOSApplications posterminal = getTerminalById(posterminalId);
@@ -361,6 +368,11 @@ public class POSUtils {
     return null;
   }
 
+  /**
+   * If isCrossStore is true, retrieves the list of cross assortments for given posTerminal store,
+   * including posTerminal assortment. If isCrossStore is false, retrieves given posTerminal
+   * assortment.
+   */
   @SuppressWarnings("unchecked")
   public static Set<String> getProductListCrossStore(final String posterminalId,
       final boolean isCrossStore) {
