@@ -1379,26 +1379,26 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   margin: 10px 5px 5px 5px;
 }
 
-.obObposPointOfSaleUiGridKeyboard {
-}
+.obObposPointOfSaleUiGridKeyboard {}
 
-.obObposPointOfSaleUiGridKeyboard > button.obUiActionButton {
+.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton {
   font-size: 24px;
   background-color: #e2e2e2;
   color: black;
 }
-.obObposPointOfSaleUiGridKeyboard > button.obUiActionButton:hover {
+
+.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton:hover {
   opacity: 0.75;
 }
 
-.obObposPointOfSaleUiGridKeyboard > button.obUiActionButton:disabled,
-.obObposPointOfSaleUiGridKeyboard > button.obUiActionButton[disabled=true]:hover {
+.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton:disabled,
+.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton[disabled=true]:hover {
   cursor: default;
   background-color: #717171;
   opacity: 1;
 }
 
-.obObposPointOfSaleUiGridKeyboard > button.obUiActionButton:active {
+.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton:active {
   opacity: 0.999;
   background-color: #cccccc;
 }
@@ -1493,7 +1493,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   display: grid;
   grid-auto-flow: row;
   row-gap: 10px;
-  column-gap: 10px;  
+  column-gap: 10px;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-areas:
@@ -1506,102 +1506,223 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   grid-template-rows: repeat(6, 57px);
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos00 {
+.obUiActionButtonArea-obUiActionButton-generic.pos00 {
   grid-area: pos00;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos01 {
+.obUiActionButtonArea-obUiActionButton-generic.pos01 {
   grid-area: pos01;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos10 {
+.obUiActionButtonArea-obUiActionButton-generic.pos02 {
+  grid-area: pos02;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos03 {
+  grid-area: pos03;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos04 {
+  grid-area: pos04;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos05 {
+  grid-area: pos05;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos10 {
   grid-area: pos10;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos11 {
+.obUiActionButtonArea-obUiActionButton-generic.pos11 {
   grid-area: pos11;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos20 {
+.obUiActionButtonArea-obUiActionButton-generic.pos12 {
+  grid-area: pos12;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos13 {
+  grid-area: pos13;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos14 {
+  grid-area: pos14;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos15 {
+  grid-area: pos15;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos20 {
   grid-area: pos20;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos21 {
+.obUiActionButtonArea-obUiActionButton-generic.pos21 {
   grid-area: pos21;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos30 {
+.obUiActionButtonArea-obUiActionButton-generic.pos22 {
+  grid-area: pos22;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos23 {
+  grid-area: pos23;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos24 {
+  grid-area: pos24;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos25 {
+  grid-area: pos25;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos30 {
   grid-area: pos30;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos31 {
+.obUiActionButtonArea-obUiActionButton-generic.pos31 {
   grid-area: pos31;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos40 {
+.obUiActionButtonArea-obUiActionButton-generic.pos32 {
+  grid-area: pos32;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos33 {
+  grid-area: pos33;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos34 {
+  grid-area: pos34;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos35 {
+  grid-area: pos35;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos40 {
   grid-area: pos40;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos41 {
+.obUiActionButtonArea-obUiActionButton-generic.pos41 {
   grid-area: pos41;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos50 {
+.obUiActionButtonArea-obUiActionButton-generic.pos42 {
+  grid-area: pos42;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos43 {
+  grid-area: pos43;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos44 {
+  grid-area: pos44;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos45 {
+  grid-area: pos45;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos50 {
   grid-area: pos50;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.pos51 {
+.obUiActionButtonArea-obUiActionButton-generic.pos51 {
   grid-area: pos51;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.colspan2 {
+.obUiActionButtonArea-obUiActionButton-generic.pos52 {
+  grid-area: pos52;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos53 {
+  grid-area: pos53;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos54 {
+  grid-area: pos54;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.pos55 {
+  grid-area: pos55;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.colspan2 {
   grid-column-end: span 2;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.rowspan2 {
+.obUiActionButtonArea-obUiActionButton-generic.colspan3 {
+  grid-column-end: span 3;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.colspan4 {
+  grid-column-end: span 4;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.colspan5 {
+  grid-column-end: span 5;
+}
+
+.obUiActionButtonArea-obUiActionButton-generic.rowspan2 {
   grid-row-end: span 2;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.rowspan3 {
+.obUiActionButtonArea-obUiActionButton-generic.rowspan3 {
   grid-row-end: span 3;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.rowspan4 {
+.obUiActionButtonArea-obUiActionButton-generic.rowspan4 {
   grid-row-end: span 4;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic .obUiActionButtonArea-obUiActionButton-generic.rowspan5 {
+.obUiActionButtonArea-obUiActionButton-generic.rowspan5 {
   grid-row-end: span 5;
 }
 
 .obpos_pointofsale-receipttoolbar1 {
+  grid-template-areas:
+    "pos00 pos01 pos02 pos03 pos04";
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   margin: 10px 0px 10px 0px;
   grid-column-gap: 5px;
   grid-row-gap: 5px;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > button.obUiActionButton {
+.obpos_pointofsale-receipttoolbar1>button.obUiActionButton {
+  min-height: 35px;
+  max-height: 38px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  padding: 2px 5px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic>button.obUiActionButton {
   font-size: 16px;
   background-color: #e2e2e2;
   color: black;
 }
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > button.obUiActionButton:hover {
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic>button.obUiActionButton:hover {
   opacity: 0.75;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > button.obUiActionButton:disabled,
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > button.obUiActionButton[disabled=true]:hover {
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic>button.obUiActionButton:disabled,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic>button.obUiActionButton[disabled=true]:hover {
   cursor: default;
   background-color: #717171;
   opacity: 1;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > button.obUiActionButton:active {
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic>button.obUiActionButton:active {
   opacity: 0.999;
   background-color: #cccccc;
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > button.obUiActionButtonSwitch_selected {
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic>button.obUiActionButtonSwitch_selected {
   background-color: #F8941D;
 }
 
@@ -1627,7 +1748,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 
 .obrdm-cell-orderline-left {
   float: left;
-  display: inline-block; 
+  display: inline-block;
   border-top: 1px solid #ccc;
   border-right: 1px solid #ccc;
   padding: 5px 0px 0px 5px;
@@ -1637,19 +1758,19 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 .obrdm-cell-orderline-left-info {
   float: left;
   width: 300px;
-  display: inline-block; 
+  display: inline-block;
   padding-left: 5px;
 }
 
 
-li.obrdm-order:first-child > button > div.obrdm-row-order,
-li.obrdm-order + li.obrdm-orderline > button > div > div.obrdm-cell-orderline-left,
-li.obrdm-order + li.obrdm-orderline > button > div > div > div.obrdm-cell-orderline-right-col1:first-child, 
-li.obrdm-order + li.obrdm-orderline > button > div > div > div.obrdm-cell-orderline-right-col2:first-child {
+li.obrdm-order:first-child>button>div.obrdm-row-order,
+li.obrdm-order+li.obrdm-orderline>button>div>div.obrdm-cell-orderline-left,
+li.obrdm-order+li.obrdm-orderline>button>div>div>div.obrdm-cell-orderline-right-col1:first-child,
+li.obrdm-order+li.obrdm-orderline>button>div>div>div.obrdm-cell-orderline-right-col2:first-child {
   border-top: none;
 }
 
-li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-orderline-right-col1:first-child {
+li.obrdm-orderline:last-child>button>div>div:last-child>div.obrdm-cell-orderline-right-col1:first-child {
   border-bottom: none;
 }
 
@@ -1661,15 +1782,15 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
   border-top: 1px solid #ccc;
   width: 174px;
   height: 33px;
-  display: inline-block; 
-  float: left; 
+  display: inline-block;
+  float: left;
 }
 
 .obrdm-cell-orderline-right-col2 {
-  border-left: 1px solid #ccc;  
+  border-left: 1px solid #ccc;
   width: 143px;
-  display: inline-block; 
-  float: left; 
+  display: inline-block;
+  float: left;
 }
 
 .obrdm-cell-orderline-right-container {
@@ -1683,12 +1804,12 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
   border: none;
   color: #555;
   padding: 4px;
-  width: 100%; 
-  height: 32px; 
+  width: 100%;
+  height: 32px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-}	
+}
 
 .obrdm-orderline-icon {
   margin-top: 15px;
@@ -1697,32 +1818,32 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 .obrdm-checkbox-half-on {
   width: 37px;
   height: 30px;
-  float: left; 
+  float: left;
   display: inline-block;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-half-on.svg');
   background-repeat: no-repeat;
 }
- 
+
 .obrdm-checkbox-on {
   width: 37px;
   height: 30px;
-  float: left; 
+  float: left;
   display: inline-block;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
   background-repeat: no-repeat;
 }
- 
+
 .obrdm-checkbox-off {
   width: 37px;
   height: 30px;
-  float: left; 
+  float: left;
   display: inline-block;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
   background-repeat: no-repeat;
 }
- 
+
 .obrdm-button-minus-plus {
-  background-color: #e2e2e2;    
+  background-color: #e2e2e2;
   height: 18px;
   float: left;
   margin: 7px 4px 0px 4px;
@@ -1730,7 +1851,7 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-button-minus-plus:hover {
-  background-color: #e9e9e9;    
+  background-color: #e9e9e9;
 }
 
 .obrdm-button-minus {
@@ -1744,16 +1865,16 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-button-info {
-  background-color: #e2e2e2;    
+  background-color: #e2e2e2;
   height: 19px;
   width: 15px;
   padding: 0px 0px 0px 4px;
-  float: right; 
+  float: right;
   margin: 10px 4px 0px 4px;
 }
 
 .obrdm-button-info:hover {
-  background-color: #e9e9e9;    
+  background-color: #e9e9e9;
 }
 
 .obrdm-button-info-normal {
@@ -1779,7 +1900,7 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-cell-orderline-button {
-  background-color: #e2e2e2;    
+  background-color: #e2e2e2;
   width: 130px;
   height: 20px;
   padding: 5px 0px 0px 5px;
@@ -1789,7 +1910,7 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-cell-orderline-button:hover {
-  background-color: #e9e9e9;    
+  background-color: #e9e9e9;
 }
 
 .obrdm-text-line {
@@ -1801,12 +1922,12 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-button-select-all {
-  width: 160px; 
+  width: 160px;
   margin: 0px 9px 8px 0px;
 }
 
 .obrdm-button-prepared-selected {
-  width: 170px; 
+  width: 170px;
   margin: 0px 9px 8px 0px;
 }
 
@@ -1819,30 +1940,30 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-filter-selector-inner-1 {
-  display: table; 
+  display: table;
   width: 100%;
 }
 
 .obrdm-filter-selector-inner-1-1 {
-  display: table-cell; 
-  text-align: right; 
+  display: table-cell;
+  text-align: right;
   width: 38%;
 }
 
 .obrdm-filter-selector-inner-2 {
-  display: table-cell; 
-  text-align: center; 
+  display: table-cell;
+  text-align: center;
   width: 24%;
 }
 
 .obrdm-filter-selector-inner-3 {
-  display: table-cell; 
+  display: table-cell;
   width: 38%;
 }
 
 .obrdm-listitembutton {
-  height: auto; 
-  padding: 0px !important; 
+  height: auto;
+  padding: 0px !important;
   border-bottom: none !important;
 }
 
@@ -1859,13 +1980,13 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-orderline-prouct {
-  margin-top: 12px; 
+  margin-top: 12px;
   width: 268px;
 }
 
 .obrdm-lbl-prepare {
-  float: left; 
-  margin-top: 9px; 
+  float: left;
+  margin-top: 9px;
   padding-left: 5px;
 }
 
@@ -1874,14 +1995,14 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-orderline-qty {
-  width: 25px; 
-  height: 16px; 
-  float: left; 
+  width: 25px;
+  height: 16px;
+  float: left;
   margin-top: 4px;
 }
 
 .obrdm-orderline-deliverymode {
-  margin-top: 7px; 
+  margin-top: 7px;
   padding-left: 5px;
 }
 
@@ -1890,15 +2011,15 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-list-orders-renderloading {
-  padding: 20px; 
-  text-align: center; 
-  font-weight: bold; 
-  font-size: 30px; 
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 30px;
   color: #cccccc;
 }
 
 .obrdm-prepare-confirmation {
-  width:500px;
+  width: 500px;
   height: 350px
 }
 
@@ -1907,19 +2028,19 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-listwarehouseline-line {
-  line-height: 23px; 
+  line-height: 23px;
   width: 100%;
 }
 
 .obrdm-listwarehouseline-organization {
-  float: left; 
+  float: left;
   width: 75%;
 }
 
 .obrdm-listwarehouseline-quantity {
-  float: left; 
-  width: 20%; 
-  font-weight: bold; 
+  float: left;
+  width: 20%;
+  font-weight: bold;
   text-align: right;
 }
 
@@ -1928,21 +2049,21 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-listwarehouse-rendercomponent {
-  padding: 20px; 
-  text-align: center; 
-  font-weight: bold; 
-  font-size: 30px; 
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 30px;
   color: #cccccc;
 }
 
 .obrdm-orderlineinfo-buttonfooter {
-  display: table; 
-  width: 100%; 
+  display: table;
+  width: 100%;
   padding-bottom: 20px;
 }
 
 .obrdm-orderlineinfo-infobuttons {
-  display: table-cell; 
+  display: table-cell;
   text-align: center;
 }
 
@@ -1951,36 +2072,36 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-orderlineinfo-line {
-  display: table; 
-  width: 100%; 
+  display: table;
+  width: 100%;
   padding: 0px 0px 16px 0px;
 }
 
 .obrdm-orderlineinfo-line-label {
-  display: table-cell; 
-  width: 35%; 
-  text-align: right; 
+  display: table-cell;
+  width: 35%;
+  text-align: right;
   padding: 0px 10px 10px 10px;
 }
 
 .obrdm-orderlineinfo-line-value {
-  display: table-cell; 
-  width: 65%; 
+  display: table-cell;
+  width: 65%;
   padding: 0px 20px 10px 20px;
-} 
+}
 
 .obrdm-orderlineinfo-table {
   padding: 28px;
 }
 
 .obrdm-oederlineinfostandard-buttonfooter {
-  display: table; 
-  width: 100%; 
+  display: table;
+  width: 100%;
   padding-bottom: 20px;
 }
 
 .obrdm-oederlineinfostandard-infobuttons {
-  display: table-cell; 
+  display: table-cell;
   text-align: center;
 }
 
@@ -1989,58 +2110,58 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-orderlineinfopopupstandard {
-  display: table; 
-  width: 100%; 
+  display: table;
+  width: 100%;
 }
 
 .obrdm-orderlineinfopopupstandard-searchkey {
-  display: table-row; 
+  display: table-row;
 }
 
 .obrdm-orderlineinfopopupstandard-searchkey-lbl {
-  display: table-cell; 
-  width: 20%; 
-  padding: 2px; 
+  display: table-cell;
+  width: 20%;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-searchkey-value {
-  display: table-cell; 
-  width: 80%; 
-  padding: 2px; 
+  display: table-cell;
+  width: 80%;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-name {
-  display: table-row; 
-  padding: 2px; 
+  display: table-row;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-name-lbl {
-  display: table-cell; 
-  width: 20%; 
-  padding: 2px; 
+  display: table-cell;
+  width: 20%;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-name-value {
-  display: table-cell; 
-  width: 80%; 
-  padding: 2px; 
+  display: table-cell;
+  width: 80%;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-ean {
-  display: table-row; 
-  padding: 2px; 
+  display: table-row;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-ean-lbl {
-  display: table-cell; 
-  width: 20%; 
-  padding: 2px; 
+  display: table-cell;
+  width: 20%;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-ean-value {
-  display: table-cell; 
-  width: 80%; 
-  padding: 2px; 
+  display: table-cell;
+  width: 80%;
+  padding: 2px;
 }
 
 .iconDeliveryServices_unreviewed {
