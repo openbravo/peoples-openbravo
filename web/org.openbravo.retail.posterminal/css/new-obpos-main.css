@@ -8954,26 +8954,49 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 /*
+# Component: OB.OBPOSPointOfSale.UI.customers.lastactivity
+# Inherits: [OB.UI.Button]
+*/
+.obObPosPointOfSaleUiCustomersLastActivity {
+  margin: 0px 0px 8px 5px;
+  background-color: #f8e859;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+  height: 30px;
+  padding: 5px 15px 7px 15px;
+}
+
+/*
 # Component: OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader
 */
 .obObPosPointOfSaleUiCustomersEditCustomerHeader {
 }
 
-.obObPosPointOfSaleUiCustomersEditCustomerHeader-container1 {
-  display: table;
-  margin: 0 auto;
-}
-
-.obObPosPointOfSaleUiCustomersEditCustomerHeader-container1-container1 {
+.obObPosPointOfSaleUiCustomersEditCustomerHeader-editbp {
   display: table-cell;
 }
 
-.obObPosPointOfSaleUiCustomersEditCustomerHeader-container1-container2 {
+.obObPosPointOfSaleUiCustomersEditCustomerHeader-assigncustomertoticket {
   display: table-cell;
 }
 
-.obObPosPointOfSaleUiCustomersEditCustomerHeader-container1-container3 {
+.obObPosPointOfSaleUiCustomersEditCustomerHeader-managebpaddress {
   display: table-cell;
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomerHeader-lastactivity {
+  display: table-cell;
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomerHeader-buttonContainer {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 /*
@@ -8982,6 +9005,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 */
 .obObPosPointOfSaleUiCustomersEditCustomersImpl {
   padding: 9px 15px;
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-greeting {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
 }
 
 .obObPosPointOfSaleUiCustomersEditCustomersImpl-customerName {
@@ -9012,10 +9039,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   /* Inherits: [OB.UI.CustomerTextProperty] */
 }
 
-.obObPosPointOfSaleUiCustomersEditCustomersImpl-isCustomerConsent {
-  /* Inherits: [OB.UI.CustomerTextProperty] */
-}
-
 .obObPosPointOfSaleUiCustomersEditCustomersImpl-birthPlace {
   /* Inherits: [OB.UI.CustomerTextProperty] */
 }
@@ -9024,6 +9047,37 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   /* Inherits: [OB.UI.CustomerTextProperty] */
 }
 
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-language {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-availableCredit {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-comments {
+  /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
 .obObPosPointOfSaleUiCustomersEditCustomersImpl-customerPriceList {
   /* Inherits: [OB.UI.CustomerTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-isCustomerConsent {
+  /* Inherits: [OB.UI.CustomerConsentCheckProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-commercialauth {
+  /* Inherits: [OB.UI.CustomerCheckCommercialAuth] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-contactpreferences {
+  /* Inherits: [OB.UI.CustomerCheckComboProperty] */
+}
+
+/*
+# Component: OBPOS.UI.ReceiptSelectorCustomerView
+# Inherits: [OBPOS.UI.ReceiptSelector]
+*/
+.obposUiReceiptSelectorCustomerView {
 }

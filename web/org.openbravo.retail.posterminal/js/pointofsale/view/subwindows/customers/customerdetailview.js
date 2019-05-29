@@ -215,8 +215,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customers.lastactivity',
-  style: 'margin: 0px 0px 8px 5px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  classes: 'obObPosPointOfSaleUiCustomersLastActivity',
   i18nLabel: 'OBPOS_Cus360LblLastActivity',
   events: {
     onShowPopup: '',
@@ -245,36 +244,37 @@ enyo.kind({
 /*header of window body*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
+  classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader',
   customerHeaderButtons: [{
     name: 'editbp',
     permission: 'OBPOS_retail.editCustomerButton',
-    style: 'display: table-cell;',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-editbp',
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.customers.editbp'
     }]
   }, {
     name: 'assigncustomertoticket',
-    style: 'display: table-cell;',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-assigncustomertoticket',
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket'
     }]
   }, {
     name: 'managebpaddress',
-    style: 'display: table-cell;',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-managebpaddress',
     permission: 'OBPOS_retail.editCustomerLocationButton',
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.customers.managebpaddress'
     }]
   }, {
     name: 'lastactivity',
-    style: 'display: table-cell;',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-lastactivity',
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.customers.lastactivity'
     }]
   }],
   components: [{
     name: 'buttonContainer',
-    style: 'display: flex; flex-wrap: wrap;'
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-buttonContainer'
   }],
   initComponents: function () {
     this.inherited(arguments);
@@ -293,6 +293,7 @@ enyo.kind({
   newAttributes: [{
     kind: 'OB.UI.CustomerTextProperty',
     name: 'greeting',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-greeting',
     modelProperty: 'greetingName',
     i18nLabel: 'OBPOS_LblGreetings',
     readOnly: true,
@@ -388,6 +389,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'language',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-language',
     modelProperty: 'language_name',
     readOnly: true,
     i18nLabel: 'OBPOS_LblLanguage',
@@ -397,6 +399,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'availableCredit',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-availableCredit',
     modelProperty: 'availableCredit',
     i18nLabel: 'OBPOS_LblAvailableCredit',
     readOnly: true,
@@ -406,6 +409,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'comments',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-comments',
     modelProperty: 'comments',
     i18nLabel: 'OBPOS_LblComments',
     readOnly: true,
@@ -437,12 +441,14 @@ enyo.kind({
   }, {
     kind: 'OB.UI.CustomerConsentCheckProperty',
     name: 'isCustomerConsent',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-isCustomerConsent',
     modelProperty: 'isCustomerConsent',
     i18nLabel: 'OBPOS_CustomerConsent',
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerCheckCommercialAuth',
     name: 'commercialauth',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-commercialauth',
     modelProperty: 'commercialauth',
     i18nLabel: 'OBPOS_CommercialAuth',
     readOnly: true,
@@ -452,6 +458,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.CustomerCheckComboProperty',
     name: 'contactpreferences',
+    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-contactpreferences',
     modelProperty: 'contactpreferences',
     i18nLabel: 'OBPOS_ContactPreferences',
     readOnly: true,
@@ -464,9 +471,11 @@ enyo.kind({
     }
   }]
 });
+
 enyo.kind({
   name: 'OBPOS.UI.ReceiptSelectorCustomerView',
   kind: 'OBPOS.UI.ReceiptSelector',
+  classes: 'obposUiReceiptSelectorCustomerView',
   executeOnShow: function () {
     if (!this.initialized || (this.args && _.keys(this.args).length > 0)) {
       this.selectorHide = false;
