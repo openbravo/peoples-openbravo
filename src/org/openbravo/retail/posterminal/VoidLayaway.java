@@ -38,9 +38,10 @@ public class VoidLayaway {
   private Instance<VoidLayawayPostHook> layawayPosthooks;
 
   public void voidLayaway(JSONObject jsonorder, Order order) throws Exception {
-    final OBPOSApplications posTerminal = OBDal.getInstance()
-        .get(OBPOSApplications.class, jsonorder.getString("posTerminal"));
-    final boolean isCrossStore = POSUtils.isCrossStore(order, posTerminal);
+    final OBPOSApplications currentPosTerminal = OBDal.getInstance()
+        .get(OBPOSApplications.class,
+            jsonorder.getJSONObject("cashUpReportInformation").getString("posterminal"));
+    final boolean isCrossStore = POSUtils.isCrossStore(order, currentPosTerminal);
 
     executeHooks(layawayhooks, jsonorder, order);
 
