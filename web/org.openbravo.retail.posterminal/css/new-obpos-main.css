@@ -9706,6 +9706,141 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/***********************   ***********************/
+/*            File: modalpayments.js             */
+/*      Folder: js/pointofsale/view/modals/      */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.ModalPaymentsSelect
+# Inherits: [OB.UI.Modal]
+*/
+.obObposPointOfSaleUiModalsModalPaymentsSelect {}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-body {}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1 {
+  padding: 10px 10px 5px 10px;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1 {
+  display: table;
+  width: 100%;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1-container1 {
+  display: table-cell;
+  width: 100%;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1-container1-paymentname {
+/* Inherits: [OB.UI.SearchInputAutoFilter] */
+  width: 100%;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1-container2 {
+  display: table-cell;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1-container2-obUiSmallButton {
+/* Inherits: [OB.UI.SmallButton] */
+  width: 80px;
+  margin: 0px 5px 8px 19px;
+  background-image: url('./../img/iconClear.svg');
+  background-size: 13px 13px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: #e2e2e2;
+  color: #000000;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1-container2-obUiSmallButton:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1-container3 {
+  display: table-cell;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1-container3-obUiSmallButton {
+/* Inherits: [OB.UI.SmallButton] */
+  width: 80px;
+  margin: 0px 0px 8px 5px;
+  background-image: url('./../img/iconSearch.svg');
+  background-size: 15px 16px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: #f8e859;
+  color: #000000;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container2 {
+  margin: 5px 0px 5px 0px;
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-paymentMethods {
+/* Inherits: [Scroller] */
+  overflow-x: hidden;
+  max-height: 330px;
+  padding-top: 10px;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-paymentMethods_disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-paymentMethods-items {
+  position: relative;
+  float: left;
+  width: 120px;
+  min-width: 25%;
+  color: #666666;
+  text-align: center;
+  cursor: pointer;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-paymentMethods-items-image {
+  width: 102px;
+  margin: 0 auto;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-paymentMethods-items-text {
+  font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
+  font-size: var(--font-medium);
+  height: 40px;
+  text-align: center;
+  padding: 2px 0px 0px 0px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.obObposPointOfSaleUiModalsModalPaymentsSelect-paymentMethods-noItems {
+  width: 100%;
+  height: 80px;
+  padding-top: 30px;
+  color: #666666;
+  text-align: center;
+  font-size: var(--font-large);
+  font-weight: bold;
+}
+
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiModalsModalPaymentsSelect-paymentMethods-items {
+    min-width: 33%;
+  }
+}
+
+
+
 
 /*****************/
 /*      JAR      */

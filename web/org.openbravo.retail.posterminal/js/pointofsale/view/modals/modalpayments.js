@@ -13,6 +13,7 @@ enyo.kind({
   kind: 'OB.UI.Modal',
   topPosition: '75px',
   name: 'OB.OBPOSPointOfSale.UI.Modals.ModalPaymentsSelect',
+  classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect',
   events: {
     onHideThisPopup: ''
   },
@@ -21,47 +22,45 @@ enyo.kind({
     onFiltered: 'searchAction'
   },
   body: {
+    classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect-body',
     components: [{
-      style: 'padding: 10px 10px 5px 10px;',
+      classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1',
       components: [{
-        style: 'display: table;  width: 100%;',
+        classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1',
         components: [{
-          style: 'display: table-cell; width: 100%;',
+          classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1-container1',
           components: [{
             kind: 'OB.UI.SearchInputAutoFilter',
             name: 'paymentname',
-            style: 'width: 100%;',
+            classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1-container1-paymentname',
             isFirstFocus: true
           }]
         }, {
-          style: 'display: table-cell;',
+          classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1-container2',
           components: [{
             kind: 'OB.UI.SmallButton',
-            classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-            style: 'width: 80px; margin: 0px 5px 8px 19px;',
+            classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1-container2-obUiSmallButton',
             tap: function () {
               this.owner.$.paymentname.setValue('');
               this.bubble('onSearchAction');
             }
           }]
         }, {
-          style: 'display: table-cell;',
+          classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1-container3',
           components: [{
             kind: 'OB.UI.SmallButton',
-            classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-            style: 'width: 80px; margin: 0px 0px 8px 5px;',
+            classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container1-container3-obUiSmallButton',
             tap: function () {
               this.bubble('onSearchAction');
             }
           }]
         }]
       }, {
-        style: 'margin: 5px 0px 5px 0px; width: 100%; border-bottom: 1px solid #cccccc;'
+        classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-container2'
       }, {
         name: 'paymentMethods',
         kind: 'Scroller',
-        horizontal: 'hidden',
-        maxHeight: '330px; padding-top: 10px;',
+        classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-paymentMethods',
         setItems: function (items) {
           var i = 0,
               components = this.getComponents();
@@ -75,10 +74,10 @@ enyo.kind({
           items.forEach(function (item) {
             this.createComponent({
               name: item.payment.payment.searchKey,
-              classes: 'paymentmethoditems',
+              classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect-paymentMethods-items',
               tag: 'div',
               allowHtml: true,
-              content: '<img class="paymentmethoditemsimage" src="' + (item.image ? item.image : 'img/PMImgNotAvailable.png') + '"/><div class="paymentmethoditemstext">' + item.name + '</div>',
+              content: '<img class="obObposPointOfSaleUiModalsModalPaymentsSelect-paymentMethods-items-image" src="' + (item.image ? item.image : 'img/PMImgNotAvailable.png') + '"/><div class="obObposPointOfSaleUiModalsModalPaymentsSelect-paymentMethods-items-text">' + item.name + '</div>',
               payment: item.payment,
               tap: function () {
                 if (!item.disabled) {
@@ -102,7 +101,7 @@ enyo.kind({
               },
               initComponents: function () {
                 if (item.disabled) {
-                  this.addClass('paymentmethoditemsdisabled');
+                  this.addClass('obObposPointOfSaleUiModalsModalPaymentsSelect-body-container1-paymentMethods_disabled');
                 }
               }
             });
@@ -110,7 +109,7 @@ enyo.kind({
           if (items.length === 0) {
             this.createComponent({
               tag: 'div',
-              classes: 'paymentmethodnotitems',
+              classes: 'obObposPointOfSaleUiModalsModalPaymentsSelect-paymentMethods-noItems',
               content: OB.I18N.getLabel('OBPOS_PaymentsNoItems')
             });
           }
