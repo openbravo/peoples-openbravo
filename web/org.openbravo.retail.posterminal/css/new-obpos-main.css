@@ -3945,6 +3945,20 @@
 
 
 
+/***********************   ***********************/
+/*        File: modalwarehousesrequired.js       */
+/*       Folder: js/pointofsale/view/modals      */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore
+# Inherits: [OB.UI.ModalInfo]
+*/
+.obObposPointOfSaleUiMpdalsModalConfigurationRequiredForCrossStore {}
+
+.obObposPointOfSaleUiMpdalsModalConfigurationRequiredForCrossStore-bodyContent {}
+
+
+
 
 /*****************/
 /*      JGA      */
