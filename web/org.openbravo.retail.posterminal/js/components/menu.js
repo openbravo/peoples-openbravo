@@ -998,10 +998,6 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    if (!OB.MobileApp.model.get('connectedToERP')) {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-      return;
-    }
     if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.model.get('orderList').saveCurrent();
       this.doMultiOrders();
