@@ -162,6 +162,7 @@
             if (invoice && invoice.get('id')) {
               var invoiceToPrint = OB.UTIL.clone(invoice),
                   printInvoice = function () {
+                  invoiceToPrint.set('hasbeenpaid', 'Y');
                   receipt.trigger('print', invoiceToPrint, {
                     offline: true
                   });
