@@ -28,6 +28,17 @@
       this.doShowPopup({
         popup: 'OBRDM_ModalOrderSelector'
       });
+    },
+    displayLogic: function () {
+      if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
+        this.show();
+      } else {
+        this.hide();
+        return;
+      }
+    },
+    init: function (model) {
+      this.displayLogic();
     }
   });
 
