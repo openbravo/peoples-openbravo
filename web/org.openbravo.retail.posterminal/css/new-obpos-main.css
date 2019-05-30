@@ -3883,6 +3883,31 @@
   padding-left: 10px;
 }
 
+
+
+/***********************   ***********************/
+/*       File: modaldiscountneedqty.js           */
+/*       Folder: js/pointofsale/view/modals      */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.modalDiscountNeedQty
+# Inherits: [OB.UI.ModalInfo]
+*/
+.obObposPointOfSaleUiModalsModalDiscountNeedQty {}
+
+.obObposPointOfSaleUiModalsModalDiscountNeedQty-element1 {}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.modalNotValidValueForDiscount
+# Inherits: [OB.UI.ModalInfo]
+*/
+.obObposPointOfSaleUiModalsModalNotValidValueForDiscount {}
+
+.obObposPointOfSaleUiModalsModalNotValidValueForDiscount-element1 {}
+
+
 /*****************/
 /*      JGA      */
 /*****************/
