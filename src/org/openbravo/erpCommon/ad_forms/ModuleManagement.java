@@ -107,8 +107,6 @@ import org.openbravo.service.centralrepository.CentralRepository;
 import org.openbravo.service.centralrepository.CentralRepository.Service;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
-import org.openbravo.services.webservice.WebService3Impl;
-import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -656,35 +654,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       String recordId, boolean local) throws IOException, ServletException {
     Module module = null;
     if (!local) {
-
-      module = new Module(); // TODO: check if we want to keep Module
-      try {
-        JSONObject moduleDetail = CentralRepository
-            .get(Service.MODULE_INFO, Arrays.asList(recordId))
-            .getJSONObject("response");
-        module.setModuleID(moduleDetail.getString("moduleID"));
-        module.setModuleVersionID(moduleDetail.getString("moduleVersionID"));
-        module.setVersionNo(moduleDetail.getString("versionNo"));
-        module.setName(moduleDetail.getString("name"));
-        module.setLicenseAgreement(moduleDetail.getString("licenseAgreement"));
-        module.setLicenseType(moduleDetail.getString("licenseType"));
-        module.setPackageName(moduleDetail.getString("packageName"));
-        module.setType(moduleDetail.getString("type"));
-        module.setDescription(moduleDetail.getString("description"));
-        module.setHelp(moduleDetail.getString("help"));
-        module.setIsCommercial(moduleDetail.getBoolean("isCommercial"));
-        module.setUrl(moduleDetail.getString("url"));
-        module.setAuthor(moduleDetail.getString("author"));
-        HashMap<String, String> additionalInfo = new HashMap<>();
-        moduleDetail.getJSONObject("additionalInfo");
-        additionalInfo.put("support",
-            moduleDetail.getJSONObject("additionalInfo").getString("support"));
-        module.setAdditionalInfo(additionalInfo); // TODO: more additional info?
-
-        // TODO: dependencies
-      } catch (JSONException e) {
-        e.printStackTrace();
-      }
+      module = getRemoteModuleVersionDetail(recordId);
     } else {
       final ImportModule im = (ImportModule) vars.getSessionObject("InstallModule|ImportModule");
       module = im.getModule(recordId);
@@ -739,6 +709,37 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private Module getRemoteModuleVersionDetail(String recordId) {
+    Module module = new Module(); // TODO: check if we want to keep Module
+    try {
+      JSONObject moduleDetail = CentralRepository.get(Service.MODULE_INFO, Arrays.asList(recordId))
+          .getJSONObject("response");
+      module.setModuleID(moduleDetail.getString("moduleID"));
+      module.setModuleVersionID(moduleDetail.getString("moduleVersionID"));
+      module.setVersionNo(moduleDetail.getString("versionNo"));
+      module.setName(moduleDetail.getString("name"));
+      module.setLicenseAgreement(moduleDetail.getString("licenseAgreement"));
+      module.setLicenseType(moduleDetail.getString("licenseType"));
+      module.setPackageName(moduleDetail.getString("packageName"));
+      module.setType(moduleDetail.getString("type"));
+      module.setDescription(moduleDetail.getString("description"));
+      module.setHelp(moduleDetail.getString("help"));
+      module.setIsCommercial(moduleDetail.getBoolean("isCommercial"));
+      module.setUrl(moduleDetail.getString("url"));
+      module.setAuthor(moduleDetail.getString("author"));
+      HashMap<String, String> additionalInfo = new HashMap<>();
+      moduleDetail.getJSONObject("additionalInfo");
+      additionalInfo.put("support",
+          moduleDetail.getJSONObject("additionalInfo").getString("support"));
+      module.setAdditionalInfo(additionalInfo); // TODO: more additional info?
+
+      // TODO: dependencies
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return module;
   }
 
   private String getLink(String url) {
@@ -1257,9 +1258,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // other case the obx file is passed as an InputStream
       try {
         if (HttpsUtils.isInternetAvailable()) {
-          final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
-          final WebService3Impl ws = loc.getWebService3();
-          module = ws.moduleDetail(recordId);
+          module = getRemoteModuleVersionDetail(recordId);
         } else {
           String popUpTitle = Utility.messageBD(this, "OBUIAPP_Error", vars.getLanguage());
           String connectErrorMsg = Utility.messageBD(this, "CR_CouldNotConnect",
