@@ -9555,6 +9555,80 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/***********************   ***********************/
+/*          File: modalstockinstore.js           */
+/*      Folder: js/pointofsale/view/modals/      */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore
+# Inherits: [OB.UI.Modal]
+*/
+.obObposPointOfSaleUiModalsModalStockInStore {}
+
+.obObposPointOfSaleUiModalsModalStockInStore-body-stockDetailList {
+/* Inherits: [OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStore] */
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStore
+*/
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStore {}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStore-container1 {}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStore-container1-element1 {
+  border-bottom: 1px solid #cccccc;
+}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStore-container1-container2 {}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStore-container1-container2-scrollListStockDetails {
+  max-height: 400px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.StockInStoreLine
+*/
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine {
+  display: block;
+  position: relative;
+  padding: 8px 10px 8px 10px;
+  text-decoration: none;
+  border-bottom: 1px solid #cccccc;
+}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine-line {
+  line-height: 23px;
+}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine-line-warehouse {
+  float: left;
+  width: 60%;
+  font-size: var(--font-large);
+}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine-line-quantity {
+  float: left;
+  width: 25%;
+  font-weight: bold;
+  font-size: var(--font-large);
+}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine-line-container3 {}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine-container2 {}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine-container2-detail {
+  padding: 5px;
+  padding-left: 10px;
+}
+
+
+
 
 /*****************/
 /*      JAR      */
