@@ -9205,6 +9205,20 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/***********************   ***********************/
+/*      File: modalproductcannotbegroup.js       */
+/*     Folder: js/pointofsale/view/modals/       */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup
+# Inherits: [OB.UI.ModalInfo]
+*/
+.obObposPointOfSaleUiModalsModalProductCannotBeGroup {}
+
+.obObposPointOfSaleUiModalsModalProductCannotBeGroup-bodyContent {}
+
+
+
 
 /*****************/
 /*      JAR      */

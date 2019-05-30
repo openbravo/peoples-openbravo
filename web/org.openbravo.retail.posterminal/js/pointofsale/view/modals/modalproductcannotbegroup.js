@@ -12,8 +12,10 @@
 enyo.kind({
   kind: 'OB.UI.ModalInfo',
   name: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup',
+  classes: 'obObposPointOfSaleUiModalsModalProductCannotBeGroup',
   i18nHeader: 'OBPOS_productCannotBeGroupHeader',
   bodyContent: {
-    i18nContent: 'OBPOS_productCannotBeGroupMessage'
+    i18nContent: 'OBPOS_productCannotBeGroupMessage',
+    classes: 'obObposPointOfSaleUiModalsModalProductCannotBeGroup-bodyContent'
   }
 });
