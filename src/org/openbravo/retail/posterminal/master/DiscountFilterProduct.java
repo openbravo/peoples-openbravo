@@ -9,9 +9,7 @@
 package org.openbravo.retail.posterminal.master;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.inject.Any;
@@ -21,6 +19,7 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -35,29 +34,22 @@ public class DiscountFilterProduct extends Discount {
   private Instance<ModelExtension> extensions;
 
   @Override
-  protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
+  protected List<String> prepareQuery(final JSONObject jsonsent) throws JSONException {
     final String posId = jsonsent.getString("pos");
     final OBPOSApplications pos = POSUtils.getTerminalById(posId);
     final boolean isCrossStoreEnabled = POSUtils.isCrossStoreEnabled(pos);
     final Set<String> productListIds = POSUtils.getProductListCrossStore(posId,
         isCrossStoreEnabled);
-
-    final Map<String, Object> paramValues = new HashMap<>();
-    paramValues.put("productListIds", productListIds);
-    return paramValues;
-  }
-
-  @Override
-  protected List<String> prepareQuery(final JSONObject jsonsent) throws JSONException {
     final HQLPropertyList regularDiscFilProductPropertyExtensionHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
+
     return Arrays.asList(getDiscountFilterProductHqlString(
-        regularDiscFilProductPropertyExtensionHQLProperties, jsonsent));
+        regularDiscFilProductPropertyExtensionHQLProperties, productListIds, jsonsent));
   }
 
   private String getDiscountFilterProductHqlString(
       final HQLPropertyList regularDiscFilProductPropertyExtensionHQLProperties,
-      final JSONObject jsonsent) throws JSONException {
+      final Set<String> productListIds, final JSONObject jsonsent) throws JSONException {
     final String operator = jsonsent.getString("operator");
     final StringBuilder query = new StringBuilder();
     query.append(" select");
@@ -70,7 +62,8 @@ public class DiscountFilterProduct extends Discount {
     query.append("   select 1");
     query.append("   from OBRETCO_Prol_Product ppl");
     query.append("   where ppl.product.id = ap.product.id");
-    query.append("   and ppl.obretcoProductlist.id in :productListIds");
+    query.append("   and ppl.obretcoProductlist.id in ("
+        + StringCollectionUtils.commaSeparated(productListIds) + ")");
     query.append(" )");
     query.append(" and exists (");
     query.append("   select 1");
