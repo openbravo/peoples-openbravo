@@ -2,10 +2,15 @@ package org.openbravo.service.centralrepository;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -22,7 +27,7 @@ public class CentralRepository {
   private static final Logger log = LogManager.getLogger();
 
   public enum Service {
-    REGISTER_MODULE("register"), SEARCH_MODULES("search");
+    REGISTER_MODULE("register"), SEARCH_MODULES("search"), MODULE_INFO("module");
 
     private String endpoint;
 
@@ -36,8 +41,28 @@ public class CentralRepository {
 
     HttpPost postMethod = new HttpPost(BUTLER_API_URL + service.endpoint);
     postMethod.setEntity(requestEntity);
+    return executeRequest(postMethod, service, content);
+  }
+
+  public static JSONObject get(Service service, List<String> fragments) {
+    try {
+
+      String path = service.endpoint;
+      path += "/" + fragments.stream().collect(Collectors.joining("/"));
+      URIBuilder b = new URIBuilder(BUTLER_API_URL + path);
+      HttpGet getMethod = new HttpGet(b.build());
+
+      return executeRequest(getMethod, service, null);
+    } catch (URISyntaxException e) {
+      throw new OBException(e);
+    }
+
+  }
+
+  private static JSONObject executeRequest(HttpUriRequest request, Service service,
+      JSONObject content) {
     try (CloseableHttpClient httpclient = HttpClients.createDefault();
-        CloseableHttpResponse rawResponse = httpclient.execute(postMethod)) {
+        CloseableHttpResponse rawResponse = httpclient.execute(request)) {
 
       String result = new BufferedReader(
           new InputStreamReader(rawResponse.getEntity().getContent())).lines()
@@ -47,12 +72,12 @@ public class CentralRepository {
       msg.put("success", rawResponse.getStatusLine().getStatusCode() == 200);
       msg.put("responseCode", rawResponse.getStatusLine().getStatusCode());
       msg.put("response", r);
-
-      System.out.println(msg.toString(1));
       return msg;
     } catch (Exception e) {
       log.error("Error communicating with Central Repository service {}", service);
-      log.debug("Failed content sent to CR {}", content);
+      if (content != null) {
+        log.debug("Failed content sent to CR {}", content);
+      }
       JSONObject r = new JSONObject();
       try {
         r.put("msg", e.getMessage());
