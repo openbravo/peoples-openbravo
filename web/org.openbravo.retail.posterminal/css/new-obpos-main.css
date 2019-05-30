@@ -3959,6 +3959,143 @@
 
 
 
+/***********************   ***********************/
+/*    File: modalquotationproductattribute.js    */
+/*       Folder: js/pointofsale/view/modals      */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalQuotationProductAttributesScroller.QuotationLines
+*/
+.obUiModalQuotationProductAttributesScrollerQuotationLines {
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  background-color: #E2E2E2;
+  color: black;
+  height: 40px;
+  text-align: right;
+  padding: 6px 8px 0px 0px;
+  font-size: 16px;
+  border: 1px solid #F0F0F0;
+  float: left;
+  width: 68%;
+}
+.obUiModalQuotationProductAttributesScrollerQuotationLines-container1 {
+  border: 1px solid #F0F0F0;
+  background-color: #E2E2E2;
+  color: black;
+  width: 32%;
+  height: 40px;
+  float: left;
+  text-align: right;
+
+  padding: 6px 8px 0px 0px;
+  font-size: 16px;
+}
+
+.obUiModalQuotationProductAttributesScrollerQuotationLines-container1-productName {
+  padding: 6px 8px 0px 0px;
+  font-size: 17px;
+}
+
+.obUiModalQuotationProductAttributesScrollerQuotationLines-container2 {
+  border: 1px solid #F0F0F0;
+  float: left;
+  width: 68%;
+  box-sizing: border-box;
+  height: 100%;
+  background-position: 8px center;
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+.obUiModalQuotationProductAttributesScrollerQuotationLines-container2-newAttribute{
+  margin: 0px;
+  width: 100%;
+  border-width: 0px;
+  box-sizing: border-box;
+  background-image: url('./../img/iconDropdownArrow.svg');
+  background-repeat: no-repeat;
+  background-size: 15px 8px;
+  background-color: white;
+  appearance: none;
+  -moz-appearance: none;
+  height: 100%;
+  background-position: 8px center;
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+.obUiModalQuotationProductAttributesScrollerQuotationLines-newAttribute-valueAttribute {
+  /*Inherits: [OB.UI.renderTextProperty]*/
+  color: black;
+}
+
+.obUiModalQuotationProductAttributesScrollerQuotationLines-container3 {
+  clear: both;
+}
+
+
+
+/*
+# Component: ModalQuotationProductAttributes
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalQuotationProductAttributes {
+  width: 700px;
+}
+
+.obUiModalQuotationProductAttributes-scroller {
+  /*Inherits: [Scroller]*/
+  max-height: 225px;
+  background-color: var(--color-primary-lighter);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.obUiModalQuotationProductAttributes-scroller-quotationLinesComponent {}
+
+.obUiModalQuotationProductAttributes-quotationLinesComponent-quotationLine {}
+
+.obUiModalQuotationProductAttributes-quotationLinesComponent-quotationLine_clear {
+  background-color: none;
+}
+
+.obUiModalQuotationProductAttributes-header {}
+
+.obUiModalQuotationProductAttributes-header-headerTitle {}
+
+.obUiModalQuotationProductAttributes-bodyButtons {}
+
+.obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton1 {
+  /*Inherits: [OB.UI.ModalDialogButton]*/
+}
+
+.obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton2 {
+  /*Inherits: [OB.UI.ModalDialogButton]*/
+}
+
+.obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton3 {
+  /*Inherits: [OB.UI.ModalDialogButton]*/
+}
+
+
+
+
+
+
+
+
+
 
 /*****************/
 /*      JGA      */
