@@ -10550,6 +10550,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obObPosPointOfSaleUiCustomersEditCustomerHeader-buttonContainer {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 /*

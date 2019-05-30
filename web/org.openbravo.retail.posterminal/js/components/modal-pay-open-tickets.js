@@ -216,7 +216,7 @@ enyo.kind({
       this.inherited(arguments);
       this.getFilterSelectorTableHeader().clearFilter();
     }
-    if (OB.MobileApp.model.hasPermission('OBPOS_SelectCurrentTicketsOnPaidOpen', true)) {
+    if (!OB.MobileApp.model.get('connectedToERP') || OB.MobileApp.model.hasPermission('OBPOS_SelectCurrentTicketsOnPaidOpen', true)) {
       _.each(me.model.get('orderList').models, function (iter) {
         if (iter.get('lines') && iter.get('lines').length > 0) {
           if ((iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation') && iter.get('gross') >= 0) {

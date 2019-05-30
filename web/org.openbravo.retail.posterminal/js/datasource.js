@@ -261,7 +261,7 @@ OB.DS.HWServer.prototype.isDrawerClosed = function (popup, timeout) {
       if (args && args.exception && args.exception.message) {
         OB.info('Error checking the status of the drawer');
         me.drawerClosed = true;
-      } else {
+      } else if (args && args.resultData) {
         if (args.resultData === "Closed") {
           me.drawerClosed = true;
           errorCounter = 0;
@@ -452,7 +452,9 @@ OB.DS.HWServer.prototype._sendHWMPrinter = function (sendurl) {
           timeout: 20000,
           contentType: 'application/xml;charset=utf-8',
           data: data,
-          success: resolve,
+          success: function (inSender, inResponse) {
+            resolve(inResponse);
+          },
           fail: function (inSender, inResponse) {
             // prevent more than one entry.
             if (this.failed) {
@@ -501,9 +503,9 @@ OB.DS.HWServer.prototype._send = function (data, callback, device) {
       sendfunction = this._sendHWMPrinter(this.activeurl);
     }
   }
-  sendfunction(data).then(function () {
+  sendfunction(data).then(function (inResponse) {
     if (callback) {
-      callback();
+      callback(inResponse, data);
     }
   })['catch'](function (error) {
     if (callback) {
