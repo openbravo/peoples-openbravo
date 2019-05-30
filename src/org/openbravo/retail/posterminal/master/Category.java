@@ -176,7 +176,7 @@ public class Category extends ProcessHQLQuery {
     query.append(" , " + promoNameTrl + " as searchKey");
     query.append(" , " + promoNameTrl + " as name");
     query.append(" , " + promoNameTrl + " as _identifier");
-    query.append(" , false as realCategory");
+    query.append(" , 'N' as realCategory");
     query.append(" , (");
     query.append("   select bindaryData");
     query.append("   from ADImage ai");
