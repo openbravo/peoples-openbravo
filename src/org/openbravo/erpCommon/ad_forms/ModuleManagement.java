@@ -31,6 +31,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -102,9 +103,10 @@ import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.centralrepository.CentralRepository;
+import org.openbravo.service.centralrepository.CentralRepository.Service;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
-import org.openbravo.services.webservice.SimpleModule;
 import org.openbravo.services.webservice.WebService3Impl;
 import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 import org.openbravo.utils.Replace;
@@ -137,18 +139,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
       printPageInstalled(response, vars);
     } else if (vars.commandIn("APPLY")) {
       printPageApply(response, vars);
-    } else if (vars.commandIn("ADD")) {
-      final String searchText = vars.getGlobalVariable("inpSearchText", "ModuleManagemetAdd|text",
-          "");
-      printPageAdd(request, response, vars, searchText, true);
-    } else if (vars.commandIn("ADD_NOSEARCH")) {
-      final String searchText = vars.getGlobalVariable("inpSearchText", "ModuleManagemetAdd|text",
-          "");
-      printPageAdd(request, response, vars, searchText, false);
-    } else if (vars.commandIn("ADD_SEARCH")) {
-      final String searchText = vars.getRequestGlobalVariable("inpSearchText",
-          "ModuleManagemetAdd|text");
-      printPageAdd(request, response, vars, searchText, true);
+    } else if (vars.commandIn("SEARCH")) {
+      String q = vars.getStringParameter("q");
+      searchModules(q, response);
+    } else if (vars.commandIn("ADD", "ADD_NOSEARCH", "ADD_SEARCH")) {
+      printPageAdd(response, vars);
     } else if (vars.commandIn("HISTORY")) {
       final String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ModuleManagement|DateFrom",
           "");
@@ -468,21 +463,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
   /**
    * Displays the second tab: Add modules where it is possible to search and install modules
    * remotely or locally
-   * 
-   * @param request
-   * @param response
-   * @param vars
-   * @param searchText
-   * @param displaySearch
-   * @throws IOException
-   * @throws ServletException
    */
-  private void printPageAdd(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars, String searchText, boolean displaySearch)
+  private void printPageAdd(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) {
-      log4j.debug("Output: Installed");
-    }
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     final XmlDocument xmlDocument = xmlEngine
@@ -509,27 +492,85 @@ public class ModuleManagement extends HttpSecureAppServlet {
     } catch (final Exception ex) {
       throw new ServletException(ex);
     }
-    {
-      final OBError myMessage = vars.getMessage("ModuleManagement");
-      vars.removeMessage("ModuleManagement");
-      if (myMessage != null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
-    }
-    // //----
 
-    xmlDocument.setParameter("inpSearchText", searchText);
-
-    // In case the search results must be shown request and display them
-    if (displaySearch) {
-      xmlDocument.setParameter("searchResults",
-          getSearchResults(request, response, vars, searchText));
+    final OBError myMessage = vars.getMessage("ModuleManagement");
+    vars.removeMessage("ModuleManagement");
+    if (myMessage != null) {
+      xmlDocument.setParameter("messageType", myMessage.getType());
+      xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+      xmlDocument.setParameter("messageMessage", myMessage.getMessage());
     }
 
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private void searchModules(String q, HttpServletResponse response) {
+
+    try {
+      JSONObject searchQuery = new JSONObject();
+      searchQuery.put("search.level", getSystemMaturity(false));
+
+      searchQuery.put("installedModules", Arrays.asList(getInstalledModules()));
+      searchQuery.put("q", q);
+      JSONObject r = CentralRepository.post(Service.SEARCH_MODULES, searchQuery);
+
+      JSONArray modules = r.getJSONObject("response").getJSONArray("modules");
+      FieldProvider[] modulesBox = new FieldProvider[modules.length()];
+      for (int i = 0; i < modules.length(); i++) {
+        JSONObject mod = modules.getJSONObject(i);
+        Map<String, String> moduleBox = new HashMap<>();
+
+        // set different icon depending on module type
+        String icon = mod.getString("type");
+        icon = (icon == null ? "M" : icon).equals("M") ? "Module"
+            : icon.equals("T") ? "Template" : "Pack";
+
+        moduleBox.put("name", mod.getString("name"));
+        moduleBox.put("description", mod.getString("description"));
+        moduleBox.put("type", icon);
+        moduleBox.put("help", mod.getString("help"));
+        // If there is no url, we need to hide the 'Visit Site' link and separator.
+        String url = mod.getString("url");
+        if (url == null || url.equals("")) {
+          moduleBox.put("urlStyle", "none");
+        } else {
+          moduleBox.put("url", getLink(url));
+          moduleBox.put("urlStyle", "true");
+        }
+        moduleBox.put("moduleVersionID", mod.getString("moduleVersionID"));
+        moduleBox.put("commercialStyle", mod.getString("isCommercial"));
+
+        JSONObject additionalInfo = mod.getJSONObject("additionalInfo");
+        int maturity = additionalInfo.getInt("maturity.level");
+        if (maturity != MaturityLevel.CS_MATURITY) {
+          moduleBox.put("maturityStyle", "true");
+          moduleBox.put("maturityLevel", additionalInfo.getString("maturity.name"));
+        } else {
+          moduleBox.put("maturityStyle", "none");
+        }
+
+        String support = additionalInfo.getString("support");
+        if (!"NI".equals(support)) {
+          moduleBox.put("supportStyle", "true");
+          moduleBox.put("support", getSupportStatus(support, false));
+        } else {
+          moduleBox.put("supportStyle", "none");
+        }
+
+        modulesBox[i] = FieldProviderFactory.getFieldProvider(moduleBox);
+      }
+      final XmlDocument xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/modules/ModuleBox")
+          .createXmlDocument();
+
+      xmlDocument.setData("structureBox", modulesBox);
+      String c = xmlDocument.print();
+      response.getWriter().write(c);
+    } catch (JSONException | IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -1885,109 +1926,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
-  }
-
-  /**
-   * Executes a search query in the web service and returns a HTML with the list of modules
-   * retrieved from the query. This list is HTML with styles.
-   */
-  private String getSearchResults(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars, String text) {
-    SimpleModule[] modules = null;
-    try {
-      if (!HttpsUtils.isInternetAvailable()) {
-        final OBError message = new OBError();
-        message.setType("Error");
-        message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-        message.setMessage(Utility.messageBD(this, "WSError", vars.getLanguage()));
-        vars.setMessage("ModuleManagement", message);
-        try {
-          response.sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
-        } catch (final Exception ex) {
-          log4j.error(ex.getMessage(), ex);
-        }
-      }
-      final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
-      final WebService3Impl ws = loc.getWebService3();
-
-      // Stub stub = (javax.xml.rpc.Stub) ws;
-      // stub._setProperty(Stub.USERNAME_PROPERTY, "test");
-      // stub._setProperty(Stub.PASSWORD_PROPERTY, "1");
-
-      HashMap<String, String> maturitySearch = new HashMap<String, String>();
-      maturitySearch.put("search.level", getSystemMaturity(false));
-      modules = ws.moduleSearch(text, getInstalledModules(), maturitySearch);
-
-    } catch (final Exception e) {
-      final OBError message = new OBError();
-      message.setType("Error");
-      message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-      message.setMessage(Utility.messageBD(this, "WSError", vars.getLanguage()));
-      vars.setMessage("ModuleManagement", message);
-      log4j.error("Error searching modules", e);
-      try {
-        response.sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
-      } catch (final Exception ex) {
-        log4j.error("error searching modules", ex);
-      }
-    }
-
-    FieldProvider[] modulesBox = new FieldProvider[0];
-    if (modules != null && modules.length > 0) {
-      modulesBox = new FieldProvider[modules.length];
-      int i = 0;
-      for (SimpleModule mod : modules) {
-        HashMap<String, String> moduleBox = new HashMap<String, String>();
-
-        // set different icon depending on module type
-        String icon = mod.getType();
-        icon = (icon == null ? "M" : icon).equals("M") ? "Module"
-            : icon.equals("T") ? "Template" : "Pack";
-
-        moduleBox.put("name", mod.getName());
-        moduleBox.put("description", mod.getDescription());
-        moduleBox.put("type", icon);
-        moduleBox.put("help", mod.getHelp());
-        // If there is no url, we need to hide the 'Visit Site' link and separator.
-        if (mod.getUrl() == null || mod.getUrl().equals("")) {
-          moduleBox.put("urlStyle", "none");
-        } else {
-          moduleBox.put("url", getLink(mod.getUrl()));
-          moduleBox.put("urlStyle", "true");
-        }
-        moduleBox.put("moduleVersionID", mod.getModuleVersionID());
-        moduleBox.put("commercialStyle", (mod.isIsCommercial() ? "true" : "none"));
-
-        @SuppressWarnings("unchecked")
-        HashMap<String, String> additioanlInfo = mod.getAdditionalInfo();
-        if (additioanlInfo != null) {
-          if (!Integer.toString(MaturityLevel.CS_MATURITY)
-              .equals(additioanlInfo.get("maturity.level"))) {
-            // Display module's maturity in case it is not General availability (500)
-            moduleBox.put("maturityStyle", "true");
-            moduleBox.put("maturityLevel", additioanlInfo.get("maturity.name"));
-          } else {
-            moduleBox.put("maturityStyle", "none");
-          }
-
-          if (!"NI".equals(additioanlInfo.get("support"))) {
-            moduleBox.put("supportStyle", "true");
-            moduleBox.put("support", getSupportStatus(additioanlInfo.get("support"), false));
-          } else {
-            moduleBox.put("supportStyle", "none");
-          }
-        }
-
-        modulesBox[i] = FieldProviderFactory.getFieldProvider(moduleBox);
-        i++;
-      }
-    }
-    final XmlDocument xmlDocument = xmlEngine
-        .readXmlTemplate("org/openbravo/erpCommon/modules/ModuleBox")
-        .createXmlDocument();
-
-    xmlDocument.setData("structureBox", modulesBox);
-    return xmlDocument.print();
   }
 
   private String getSupportStatus(String supportCode, boolean detailed) {

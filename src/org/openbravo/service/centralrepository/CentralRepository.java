@@ -22,7 +22,7 @@ public class CentralRepository {
   private static final Logger log = LogManager.getLogger();
 
   public enum Service {
-    REGISTER_MODULE("register");
+    REGISTER_MODULE("register"), SEARCH_MODULES("search");
 
     private String endpoint;
 
