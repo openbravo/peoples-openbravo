@@ -3648,6 +3648,157 @@
 
 
 
+/***********************   ***********************/
+/*       File: modalDeleteDiscounts.js           */
+/*       Folder: js/pointofsale/view/modals      */
+/***********************   ***********************/
+/*
+# Component: OB.UI.DeleteDiscountLine
+*/
+.obUiDeletediscountLine {
+  border-bottom: var(--bottomseparator-slim);
+  text-align: center;
+  color: var(--color-primary-darker);
+}
+
+.obUiDeletediscountLine-checkboxButtonDiscount {
+  height: 38px;
+  background-position: 10px center;
+  cursor: pointer;
+  vertical-align: middle;
+  width: 8%;
+}
+
+.obUiDeletediscountLine-checkboxButtonDiscount:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  background-position: 8px center;
+}
+
+.obUiDeletediscountLine-checkboxButtonDiscount-discoutLineDisplay {
+  opacity: 1;
+}
+
+.obUiDeletediscountLine-checkboxButtonDiscount-discoutLineDisplay_checked {
+  opacity: 0.6;
+}
+
+.obUiDeletediscountLine-discoutLineDisplay-container1 {
+  line-height: 30px;
+  font-size: 16px;
+  width: 70%;
+  text-align: left
+}
+
+.obUiDeletediscountLine-container1-discount {}
+
+.obUiDeletediscountLine-container1-discountedProducts {
+  padding-left: 20px;
+}
+
+.obUiDeletediscountLine-checkboxButtonDiscount-price {
+  line-height: 30px;
+  font-size: 16px;
+  width: 18%;
+  text-align: right;
+  opacity: 1;
+}
+
+.obUiDeletediscountLine-checkboxButtonDiscount-price_checked {
+  opacity: 0.6;
+}
+
+.obUiDeletediscountLine-checkboxButtonDiscount-container1 {
+  clear: both;
+}
+
+.obUiDeletediscountLine-container1-discountedProducts-container1 {}
+
+.obUiDeletediscountLine-container1-discountedProducts-container1-container1 {}
+
+.obUiDeletediscountLine-container1-discountedProducts-container1-container1-element1 {}
+
+.obUiDeletediscountLine-container1-discountedProducts-container1-container1-element2 {
+  color: #999999;
+  padding-left: 10px;
+}
+
+.obUiDeletediscountLine-container1-discountedProducts-container1-container2 {
+  clear: both;
+}
+
+
+
+/*
+# Component: DeleteDiscountDeleteSelected
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiDeleteDiscountDeleteSelected {}
+
+
+
+/*
+# Component: ModalDeleteDiscount
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalDeleteDiscount {}
+
+.obUiModalDeleteDiscount-bodyContent {}
+
+.obUiModalDeleteDiscount-bodyContent-Scroller {
+ /*Inherits: [OB.UI.ModalAction]*/
+ max-height: 225px;
+ background-color: var(--color-primary-lighter);
+ overflow-x: hidden;
+ overflow-y: auto;
+}
+
+.obUiModalDeleteDiscount-Scroller-attributes {}
+
+.obUiModalDeleteDiscount-bodyContent-totalselected {
+  font-size: 16px;
+  float: right;
+  height: 35px;
+  background-color: var(--color-primary-lighter);
+  width: 45%;
+}
+
+.obUiModalDeleteDiscount-totalselected-totalselectedLbl {
+  color: var(--color-primary-darker);
+  text-align: left;
+  line-height: 35px;
+}
+
+.obUiModalDeleteDiscount-totalselected-totalselectedAmt {
+  color: var(--color-primary-darker);
+  float: right;
+  line-height: 35px;
+  width: 35%;
+  font-weight: bold;
+}
+
+.obUiModalDeleteDiscount-bodyContent-container1 {
+  clear: both;
+}
+
+.obUiModalDeleteDiscount-bodyButtons {}
+
+.obUiModalDeleteDiscount-bodyButtons-obUiDeleteDiscountDeleteSelected {
+  /*Inherits: [OB.UI.DeleteDiscountDeleteSelected]*/
+}
+
+.obUiModalDeleteDiscount-bodyButtons-obUibtnModalCancelDelete {
+  /*Inherits: [OB.UI.btnModalCancelDelete]*/
+}
+
+.obUiModalDeleteDiscount-attributes-deleteDiscountLineGeneric {
+  /*Inherits: [OB.UI.DeleteDiscountLine]*/
+}
+
+
+
 
 
 

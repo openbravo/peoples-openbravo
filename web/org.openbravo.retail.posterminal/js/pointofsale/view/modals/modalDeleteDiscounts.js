@@ -11,7 +11,7 @@
 
 enyo.kind({
   name: 'OB.UI.DeleteDiscountLine',
-  style: 'border-bottom: 1px solid #cccccc; text-align: center; color: black;',
+  classes: 'obUiDeletediscountLine',
   handlers: {
     onApplyChange: 'applyChange'
   },
@@ -31,38 +31,37 @@ enyo.kind({
   components: [{
     kind: 'OB.UI.CheckboxButton',
     name: 'checkboxButtonDiscount',
-    classes: 'modal-dialog-btn-check span1',
-    style: 'width: 8%;',
+    classes: 'obUiDeletediscountLine-checkboxButtonDiscount span1',
     tap: function () {
       if (this.checked) {
         this.unCheck();
-        this.parent.$.discoutLineDisplay.addStyles('opacity:.6');
-        this.parent.$.price.addStyles('opacity:.6');
+        this.parent.$.discoutLineDisplay.addClass('obUiDeletediscountLine-checkboxButtonDiscount-discoutLineDisplay_checked');
+        this.parent.$.price.addClass('obUiDeletediscountLine-checkboxButtonDiscount-price_checked');
       } else {
         this.check();
-        this.parent.$.discoutLineDisplay.addStyles('opacity:1');
-        this.parent.$.price.addStyles('opacity:1');
+        this.parent.$.discoutLineDisplay.removeClass('obUiDeletediscountLine-checkboxButtonDiscount-discoutLineDisplay_checked');
+        this.parent.$.price.removeClass('obUiDeletediscountLine-checkboxButtonDiscount-price_checked');
       }
       this.owner.doChangeSelected();
     }
   }, {
     name: 'discoutLineDisplay',
+    classes: 'obUiDeletediscountLine-checkboxButtonDiscount-discoutLineDisplay',
     components: [{
-      classes: 'span4',
-      style: 'line-height: 30px; font-size: 16px; width:70%; text-align: left',
+      classes: 'obUiDeletediscountLine-discoutLineDisplay-container1 span4',
       components: [{
-        name: 'discount'
+        name: 'discount',
+        classes: 'obUiDeletediscountLine-container1-discount'
       }, {
         name: 'discountedProducts',
-        style: 'padding-left: 20px;'
+        classes: 'obUiDeletediscountLine-container1-discountedProducts'
       }]
     }]
   }, {
     name: 'price',
-    classes: 'span4',
-    style: 'line-height: 30px; font-size: 16px; width: 18%; text-align: right'
+    classes: 'obUiDeletediscountLine-checkboxButtonDiscount-price span4'
   }, {
-    style: 'clear: both;'
+    classes: 'obUiDeletediscountLine-checkboxButtonDiscount-container1'
   }],
   initComponents: function () {
     this.inherited(arguments);
@@ -87,18 +86,21 @@ enyo.kind({
         nameContent = '[' + OB.I18N.formatCurrency(productDiscAmt) + ']';
       }
       me.$.discountedProducts.createComponent({
+        classes: 'obUiDeletediscountLine-container1-discountedProducts-container1',
         components: [{
           tag: 'li',
+          classes: 'obUiDeletediscountLine-container1-discountedProducts-container1-container1',
           components: [{
             tag: 'span',
+            classes: 'obUiDeletediscountLine-container1-discountedProducts-container1-container1-element1',
             content: productName
           }, {
             tag: 'span',
-            style: 'color: #999999; padding-left:10px',
+            classes: 'obUiDeletediscountLine-container1-discountedProducts-container1-container1-element2',
             content: nameContent
           }]
         }, {
-          style: 'clear: both;'
+          classes: 'obUiDeletediscountLine-container1-discountedProducts-container1-container2'
         }]
       });
     });
@@ -108,6 +110,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.DeleteDiscountDeleteSelected',
+  classes: 'obUiDeleteDiscountDeleteSelected',
   events: {
     onApplyChanges: '',
     onCallbackExecutor: ''
@@ -127,43 +130,46 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalDeleteDiscount',
   kind: 'OB.UI.ModalAction',
-  classes: 'modal-dialog',
+  classes: 'obUiModalDeleteDiscount',
   handlers: {
     onApplyChanges: 'applyChanges',
     onCallbackExecutor: 'callbackExecutor',
     onChangeSelected: 'updateTotal'
   },
   bodyContent: {
+    classes: 'obUiModalDeleteDiscount-bodyContent',
     components: [{
       kind: 'Scroller',
-      maxHeight: '225px',
-      style: 'background-color: #ffffff;',
+      classes: 'obUiModalDeleteDiscount-bodyContent-Scroller',
       thumb: true,
-      horizontal: 'hidden',
       components: [{
-        name: 'attributes'
+        name: 'attributes',
+        classes: 'obUiModalDeleteDiscount-Scroller-attributes'
       }]
     }, {
       name: 'totalselected',
-      style: 'font-size: 16px; float: right; height: 35px; background-color: #ffffff; width: 45%;',
+      classes: 'obUiModalDeleteDiscount-bodyContent-totalselected',
       components: [{
         tag: 'span',
         name: 'totalselectedLbl',
-        style: 'color: #000000; text-align: left; line-height: 35px;'
+        classes: 'obUiModalDeleteDiscount-totalselected-totalselectedLbl'
       }, {
         tag: 'span',
         name: 'totalselectedAmt',
-        style: 'color: #000000; float: right; line-height: 35px; width: 35%; font-weight: bold;'
+        classes: 'obUiModalDeleteDiscount-totalselected-totalselectedAmt'
       }]
     }, {
-      style: 'clear: both;'
+      classes: 'obUiModalDeleteDiscount-bodyContent-container1'
     }]
   },
   bodyButtons: {
+    classes: 'obUiModalDeleteDiscount-bodyButtons',
     components: [{
-      kind: 'OB.UI.DeleteDiscountDeleteSelected'
+      kind: 'OB.UI.DeleteDiscountDeleteSelected',
+      classes: 'obUiModalDeleteDiscount-bodyButtons-obUiDeleteDiscountDeleteSelected'
     }, {
-      kind: 'OB.UI.btnModalCancelDelete'
+      kind: 'OB.UI.btnModalCancelDelete',
+      classes: 'obUiModalDeleteDiscount-bodyButtons-obUibtnModalCancelDelete'
     }]
   },
   applyChanges: function (inSender, inEvent) {
@@ -256,6 +262,7 @@ enyo.kind({
       this.$.bodyContent.$.attributes.createComponent({
         kind: 'OB.UI.DeleteDiscountLine',
         name: 'deleteDiscountLine' + lineNumber,
+        classes: 'obUiModalDeleteDiscount-attributes-deleteDiscountLineGeneric',
         newAttribute: this.promotionsList[i],
         args: this.args
       });
