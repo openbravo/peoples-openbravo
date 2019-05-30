@@ -3908,6 +3908,44 @@
 .obObposPointOfSaleUiModalsModalNotValidValueForDiscount-element1 {}
 
 
+
+/***********************   ***********************/
+/*               File: modalmessage.js           */
+/*       Folder: js/pointofsale/view/modals      */
+/***********************   ***********************/
+/*
+# Component: OB.UI.MessageDialogOK
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiMessageDialogOK {}
+
+
+
+/*
+# Component: OB.UI.MessageDialog
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiMessageDialogGeneric {}
+
+.obUiMessageDialogGeneric-bodymessage {}
+
+.obUiMessageDialogGeneric-bodyButtons {}
+
+.obUiMessageDialogGeneric-bodyButtons-obUiMessageDialogOK {
+  /*Inherits: [OB.UI.ModalAction]*/
+}
+
+
+
+/*
+# Component: OB_UI_MessageDialog
+# Inherits: [OB.UI.MessageDialog]
+*/
+.obUiMessageDialog {}
+
+
+
+
 /*****************/
 /*      JGA      */
 /*****************/
