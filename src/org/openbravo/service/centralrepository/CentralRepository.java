@@ -3,6 +3,7 @@ package org.openbravo.service.centralrepository;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,10 @@ public class CentralRepository {
   private static final Logger log = LogManager.getLogger();
 
   public enum Service {
-    REGISTER_MODULE("register"), SEARCH_MODULES("search"), MODULE_INFO("module");
+    REGISTER_MODULE("register"),
+    SEARCH_MODULES("search"),
+    MODULE_INFO("module"),
+    MATURITY_LEVEL("maturityLevel");
 
     private String endpoint;
 
@@ -42,6 +46,10 @@ public class CentralRepository {
     HttpPost postMethod = new HttpPost(BUTLER_API_URL + service.endpoint);
     postMethod.setEntity(requestEntity);
     return executeRequest(postMethod, service, content);
+  }
+
+  public static JSONObject get(Service service) {
+    return get(service, Collections.emptyList());
   }
 
   public static JSONObject get(Service service, List<String> fragments) {
