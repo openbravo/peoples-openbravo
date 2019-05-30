@@ -3799,12 +3799,89 @@
 
 
 
+/***********************   ***********************/
+/*       File: modalDeleteDiscounts.js           */
+/*       Folder: js/pointofsale/view/modals      */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores
+# Inherits: [OB.UI.Modal]
+*/
+.obObposPointOfSaleUiModalsModalStockInOtherStores {}
 
 
 
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.ListStockInOtherStores
+*/
+.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsListStockInOtherStores {}
+
+.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsListStockInOtherStores-container1 {}
+
+.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsListStockInOtherStores-container1-element1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsListStockInOtherStores-container1-container1-scrollListStockDetails {
+  /*Inherits: [OB.UI.ScrollableTable]*/
+}
+
+.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsListStockInOtherStores-container1-container1-scrollListStockDetails-scrollArea {
+  max-height: 400px;
+}
 
 
 
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.StockInOtherStoresLine
+*/
+.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine {
+  display: block;
+  width: 100%;
+  background-color: var(--color-primary-lighter);
+  position: relative;
+  border: none;
+  margin: 0px;
+  padding: 8px 10px 8px 10px;
+  text-decoration: none;
+  text-align: left;
+  color: var(--color-primary-darker);
+  cursor: pointer;
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine:active {
+  background-color: var(--color-primary-light);
+}
+
+.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-line {
+  line-height: 23px;
+}
+
+.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-line-organization {
+  float: left;
+  width: 60%;
+  font-size: 20px;
+}
+
+.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-line-quantity {
+  float: left;
+  width: 25%;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-line-container1 {
+  clear: both;
+}
+
+.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-container1 {}
+
+
+.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-container1-detail {
+  padding: 5px;
+  padding-left: 10px;
+}
 
 /*****************/
 /*      JGA      */

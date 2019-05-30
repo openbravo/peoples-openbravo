@@ -11,6 +11,7 @@
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores',
+  classes: 'obObposPointOfSaleUiModalsModalStockInOtherStores',
   myId: 'ModalStockInOtherStores',
   published: {
     stockInfo: null
@@ -19,7 +20,8 @@ enyo.kind({
   header: '',
   body: {
     kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.ListStockInOtherStores',
-    name: 'stockDetailList'
+    name: 'stockDetailList',
+    classes: 'obObposPointOfSaleUiModalsModalStockInOtherStores-stockDetailList'
   },
   executeOnHide: function () {
     this.stockInfo = null;
@@ -39,19 +41,21 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.ListStockInOtherStores',
-  classes: 'row-fluid',
+  classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsListStockInOtherStores row-fluid',
   published: {
     stockValuesOtherStores: null
   },
   components: [{
-    classes: 'span12',
+    classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsListStockInOtherStores-container1 span12',
     components: [{
-      style: 'border-bottom: 1px solid #cccccc;'
+      classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsListStockInOtherStores-container1-element1'
     }, {
+      classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsListStockInOtherStores-container1-container1',
       components: [{
         name: 'scrollListStockDetails',
         kind: 'OB.UI.ScrollableTable',
-        scrollAreaMaxHeight: '400px',
+        classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsListStockInOtherStores-container1-container1-scrollListStockDetails',
+        scrollAreaClasses: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsListStockInOtherStores-container1-container1-scrollListStockDetails-scrollArea',
         renderLine: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.StockInOtherStoresLine',
         renderEmpty: 'OB.UI.RenderEmpty'
       }]
@@ -64,23 +68,25 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.StockInOtherStoresLine',
-  classes: 'btnselect',
+  classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine',
   components: [{
     name: 'line',
-    style: 'line-height: 23px;',
+    classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-line',
     components: [{
-      style: 'float: left; width: 60%; font-size: 20px;',
+      classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-line-organization',
       name: 'organization'
     }, {
-      style: 'float: left; width: 25%; font-weight: bold; font-size: 20px;',
+      classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-line-quantity',
       name: 'quantity'
     }, {
-      style: 'clear: both'
+      classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-line-container1'
     }]
   }, {
+    classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-container1',
     components: [{
       style: 'padding: 5px; padding-left: 10px;',
       name: 'detail',
+      classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-container1-detail',
       allowHtml: true
     }]
   }],
