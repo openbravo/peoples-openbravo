@@ -9370,6 +9370,59 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/***********************   ***********************/
+/*     File: modalstockinstoreclickable.js       */
+/*     Folder: js/pointofsale/view/modals/       */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.ModalStockInStoreClickable
+# Inherits: [OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore]
+*/
+.obObposPointOfSaleUiModalsModalStockInStoreClickable {}
+
+.obObposPointOfSaleUiModalsModalStockInStoreClickable-body-stockDetailListClickable {
+/* Inherits: [OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStoreClickable] */
+}
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStoreClickable
+# Inherits: [OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStore]
+*/
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStoreClickable {}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStoreClickable-container1 {}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStoreClickable-container1-element1 {
+  border-bottom: 1px solid #cccccc;
+}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStoreClickable-container1-container2 {}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStoreClickable-container1-container2-scrollListStockDetailsClickable {
+  /* Inherits: [OB.UI.ScrollableTable] */
+  max-height: 400px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.StockInStoreLineClickable
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLineClickable {}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLineClickable:hover {
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+.obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLineClickable:active {
+  background-color: #cccccc;
+}
+
+
+
 
 /*****************/
 /*      JAR      */

@@ -13,9 +13,11 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStoreClickable',
   myId: 'ModalStockInStoreClickable',
   kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore',
+  classes: 'obObposPointOfSaleUiModalsModalStockInStoreClickable',
   body: {
     kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStoreClickable',
-    name: 'stockDetailListClickable'
+    name: 'stockDetailListClickable',
+    classes: 'obObposPointOfSaleUiModalsModalStockInStoreClickable-body-stockDetailListClickable'
   },
   stockInfoChanged: function (oldValue) {
     if (this.stockInfo) {
@@ -30,15 +32,17 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStoreClickable',
   kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStore',
+  classes: 'obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStoreClickable',
   components: [{
-    classes: 'span12',
+    classes: 'obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStoreClickable-container1 span12',
     components: [{
-      style: 'border-bottom: 1px solid #cccccc;'
+      classes: 'obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStoreClickable-container1-element1'
     }, {
+      classes: 'obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStoreClickable-container1-container2',
       components: [{
         name: 'scrollListStockDetailsClickable',
         kind: 'OB.UI.ScrollableTable',
-        scrollAreaMaxHeight: '400px',
+        classes: 'obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStoreClickable-container1-container2-scrollListStockDetailsClickable',
         renderLine: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.StockInStoreLineClickable',
         renderEmpty: 'OB.UI.RenderEmpty'
       }]
@@ -54,7 +58,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.StockInStoreLineClickable',
   kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.StockInStoreLine',
-  classes: 'stockinstorelines',
+  classes: 'obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLineClickable',
   events: {
     onHideThisPopup: '',
     onWarehouseSelected: ''
