@@ -9423,6 +9423,61 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/***********************   ***********************/
+/*           File: modalcreditsales.js           */
+/*      Folder: js/pointofsale/view/modals/      */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit
+# Inherits: [OB.UI.ModalAction]
+*/
+.obObposPointOfSaleUiModalsModalEnoughCredit {}
+
+.obObposPointOfSaleUiModalsModalEnoughCredit-bodyContent-popupmessage {}
+
+.obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons {}
+
+.obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalEnoughCreditComponentsApplyButton {
+/* Inherits: [OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button] */
+}
+
+.obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalEnoughCreditComponentsCancelButton {
+/* Inherits: [OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button] */
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposPointOfSaleUiModalsModalEnoughCreditComponentsApplyButton {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposPointOfSaleUiModalsModalEnoughCreditComponentsCancelButton {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit
+# Inherits: [OB.UI.ModalAction]
+*/
+.obObposPointOfSaleUiModalsModalNotEnoughCredit {
+  background-color: #eba001;
+}
+
+.obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyContent-popupmessage {}
+
+.obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyButtons {}
+
+.obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalNotEnoughCreditComponentsOkButton {
+/* Inherits: [OB.UI.ModalDialogButton] */
+}
+
+
+
 
 /*****************/
 /*      JAR      */

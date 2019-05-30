@@ -12,15 +12,20 @@
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit',
+  classes: 'obObposPointOfSaleUiModalsModalEnoughCredit',
   bodyContent: {
     name: 'popupmessage',
+    classes: 'obObposPointOfSaleUiModalsModalEnoughCredit-bodyContent-popupmessage',
     content: ''
   },
   bodyButtons: {
+    classes: 'obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons',
     components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button'
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button',
+      classes: 'obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalEnoughCreditComponentsApplyButton'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button'
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button',
+      classes: 'obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalEnoughCreditComponentsCancelButton'
     }]
   },
   init: function (model) {
@@ -55,6 +60,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button',
+  classes: 'obObposPointOfSaleUiModalsModalEnoughCreditComponentsApplyButton',
   i18nContent: 'OBPOS_ConfirmSellOnCredit',
   isDefaultAction: true,
   init: function (model) {
@@ -113,6 +119,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button',
+  classes: 'obObposPointOfSaleUiModalsModalEnoughCreditComponentsCancelButton',
   i18nContent: 'OBMOBC_LblCancel',
   init: function (model) {
     this.model = model;
@@ -125,7 +132,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
-  style: 'background-color: #EBA001;',
+  classes: 'obObposPointOfSaleUiModalsModalNotEnoughCredit',
   i18nHeader: 'OBPOS_notEnoughCreditHeader',
   executeOnShow: function () {
     if (this.args) {
@@ -134,12 +141,15 @@ enyo.kind({
   },
   bodyContent: {
     name: 'popupmessage',
+    classes: 'obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyContent-popupmessage',
     content: ''
   },
   bodyButtons: {
+    classes: 'obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyButtons',
     components: [{
       kind: 'OB.UI.ModalDialogButton',
       name: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit.Components.ok_button',
+      classes: 'obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalNotEnoughCreditComponentsOkButton',
       i18nContent: 'OBMOBC_LblOk',
       isDefaultAction: true,
       init: function (model) {
