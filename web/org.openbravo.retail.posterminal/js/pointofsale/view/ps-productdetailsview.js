@@ -471,7 +471,12 @@ enyo.kind({
     }
     this.line = params.line || null;
     this.product = params.product;
-    this.product.set('obrdmDeliveryMode', OB.UTIL.isCrossStoreProduct(this.product) ? 'PickupInStore' : 'PickAndCarry');
+    if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
+      var defaultOrderDeliveryMode = OB.MobileApp.model.receipt.get('obrdmDeliveryModeProperty');
+      this.product.set('obrdmDeliveryMode', OB.UTIL.isCrossStoreProduct(this.product) && defaultOrderDeliveryMode === 'PickAndCarry' ? 'PickupInStore' : defaultOrderDeliveryMode);
+      this.product.set('obrdmDeliveryDate', OB.MobileApp.model.receipt.get('obrdmDeliveryDateProperty'));
+      this.product.set('obrdmDeliveryTime', OB.MobileApp.model.receipt.get('obrdmDeliveryTimeProperty'));
+    }
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(OB.UTIL.isNullOrUndefined(this.line));
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setDetailsView(this.$.leftSubWindowBody.$.body);
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.removeClass('btnlink-orange');
