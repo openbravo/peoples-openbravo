@@ -10698,3 +10698,335 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   /* Inherits: [OB.UI.MultiOrderView] */
 }
 
+/***********************   ***********************/
+/*               File: pointofsale.js            */
+/*         Folder: js/pointofsale/view/          */
+/***********************   ***********************/
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.PointOfSale
+# Inherits: [OB.UI.WindowView]
+*/
+.obObposPointOfSaleUiPointOfSale {}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer {}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalConfigurationRequiredForCreateNewCustomers {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-customerCreateAndEdit {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.customers.newcustomer] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-customerView {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.customers.editcustomer] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-customerAddrCreateAndEdit {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-customerAddressView {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.editcustomeraddr] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalcustomer {
+  /* Inherits: [OB.UI.ModalSelectorBusinessPartners] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalAdvancedFilterBP {
+  /* Inherits: [OB.UI.ModalAdvancedFilterBP] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalcustomeraddress {
+  /* Inherits: [OB.UI.ModalBPLocation] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalcustomershipaddress {
+  /* Inherits: [OB.UI.ModalBPLocationShip] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalConfirmReceiptDelete {
+  /* Inherits: [OB.UI.ModalDeleteReceipt] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalProductCannotBeGroup {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalNotEditableOrder {
+  /* Inherits: [OB.UI.Modalnoteditableorder] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalNotEditableLine {
+  /* Inherits: [OB.UI.ModalNotEditableLine] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalreceipts {
+  /* Inherits: [OB.UI.ModalReceipts] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalVerifiedReturns {
+  /* Inherits: [OB.UI.ModalVerifiedReturns] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalReceiptSelector {
+  /* Inherits: [OBPOS.UI.ReceiptSelector] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalReceiptSelectorCustomerView {
+  /* Inherits: [OBPOS.UI.ReceiptSelectorCustomerView] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-ObUiModalAdvancedFilterReceipts {
+  /* Inherits: [OB.UI.ModalAdvancedFilterReceipts] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalAdvancedFilterVerifiedReturns {
+  /* Inherits: [OB.UI.ModalAdvancedFilterVerifiedReturns] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalMultiOrders {
+  /* Inherits: [OB.UI.ModalMultiOrdersPayOpenTickets] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalInvoices {
+  /* Inherits: [OB.UI.ModalInvoices] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalCreateOrderFromQuotation {
+  /* Inherits: [OB.UI.ModalCreateOrderFromQuotation] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalRejectQuotation {
+  /* Inherits: [OB.UI.ModalRejectQuotation] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalPriceModification {
+    /* Inherits: [OB.UI.ModalRejectQuotation] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-receiptPropertiesDialog {
+    /* Inherits: [OB.UI.ModalReceiptPropertiesImpl] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalDeliveryChange {
+    /* Inherits: [OB.UI.ModalDeliveryChange] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalpayment {
+    /* Inherits: [OB.UI.ModalPayment] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalpaymentvoid {
+    /* Inherits: [OB.UI.ModalPaymentVoid] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalprovidergroup {
+    /* Inherits: [OB.UI.ModalProviderGroup] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalprovidergroupvoid {
+    /* Inherits: [OB.UI.ModalProviderGroupVoid] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalchange {
+    /* Inherits: [OB.UI.ModalChange] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalConfigurationRequiredForCrossStore {
+    /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalLocalStock {
+    /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalLocalStockClickable {
+    /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.ModalStockInStoreClickable] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalStockInOtherStores {
+    /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalEnoughCredit {
+    /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalNotEnoughCredit {
+    /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalValidateAction {
+    /* Inherits: [OB.UI.ValidateAction] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalDiscountNeedQty {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.modalDiscountNeedQty] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalNotValidValueForDiscount {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.modalNotValidValueForDiscount] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalsalesrepresentative {
+  /* Inherits: [OB.UI.ModalSalesRepresentative] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalproductcharacteristic {
+  /* Inherits: [OB.UI.ModalProductCharacteristic] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalproductbrand {
+  /* Inherits: [OB.UI.ModalProductBrand] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalcategorytree {
+  /* Inherits: [OB.UI.ModalCategoryTree] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalsearchfilterbuilder {
+  /* Inherits: [OB.UI.ModalSearchFilterBuilder] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalPaymentsSelect {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.ModalPaymentsSelect] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalSelectPrinters {
+  /* Inherits: [OB.UI.ModalSelectPrinters] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalSelectPDFPrinters {
+  /* Inherits: [OB.UI.ModalSelectPDFPrinters] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalModulesInDev {
+  /* Inherits: [OB.UI.ModalModulesInDev] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSUIPaymentMethods {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.PaymentMethods] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSmodalSelectOpenedReceipt {
+  /* Inherits: [OB.UI.ModalSelectOpenedReceipt] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalSplitLine {
+  /* Inherits: [OB.UI.ModalSplitLine] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalDeleteDiscount {
+  /* Inherits: [OB.UI.ModalDeleteDiscount] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalProductAttribute {
+  /* Inherits: [OB.UI.ModalProductAttributes] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalQuotationProductAttributes {
+  /* Inherits: [OB.UI.ModalQuotationProductAttributes] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalOpenRelatedReceipts {
+  /* Inherits: [OB.UI.ModalOpenRelatedReceipts] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalAssociateTickets {
+  /* Inherits: [OB.UI.ModalAssociateTickets] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalRemoveAssociatedTickets {
+  /* Inherits: [OB.UI.ModalRemoveAssociatedTickets] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalAdvancedFilterOrders {
+  /* Inherits: [OB.UI.ModalAdvancedFilterOrders] */
+}
+
+.obObposPointOfSaleUiPointOfSale-mainSubWindow {}
+
+.obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn {
+    /* Inherits: [OB.UI.MultiColumn] */
+}
+
+.obObposPointOfSaleUiPointOfSale-multiColumn-leftToolbar {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.LeftToolbarImpl] */
+}
+
+.obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel {
+    max-height: 622px;
+}
+
+.obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-divHeader {
+    /* Inherits: [OB.OBPOSPointOfSale.UI.LeftHeader] */
+    height: 35px;
+    float: left;
+    width: 100%;
+    touch-action: none;
+}
+
+.obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-receiptview {
+    /* Inherits: [OB.OBPOSPointOfSale.UI.ReceiptView] */
+    float: left;
+    width: 100%;
+    touch-action: none;
+}
+
+.obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-multireceiptview {
+    /* Inherits: [OB.OBPOSPointOfSale.UI.MultiReceiptView] */
+    float: left;
+    width: 100%;
+    touch-action: none;
+}
+
+.obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-leftSubWindowsContainer {}
+
+.obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-leftSubWindowsContainer-productdetailsview {
+    /* Inherits: [OB.OBPOSPointOfSale.UI.ProductDetailsView] */
+    float: left;
+    width: 100%;
+    touch-action: none;
+}
+
+.obObposPointOfSaleUiPointOfSale-multiColumn-rightToolbar {
+    /* Inherits: [OB.OBPOSPointOfSale.UI.RightToolbarImpl] */
+}
+
+.obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel {}
+
+.obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1 {
+    float: left;
+    width: 100%;
+    touch-action: none;
+}
+
+.obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1-toolbarpane {
+    /* Inherits: [OB.OBPOSPointOfSale.UI.RightToolbarPane] */
+}
+
+.obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1-keyboard {
+    /* Inherits: [OB.OBPOSPointOfSale.UI.KeyboardOrder] */
+}
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.LeftHeader
+*/
+.obObPosPointOfSaleUiLeftHeader {}
+
+.obObPosPointOfSaleUiLeftHeader-innerDiv {
+    text-align: center;
+    font-size: 30px;
+    padding: 5px;
+    padding-top: 0px;
+}
+
+.obObPosPointOfSaleUiLeftHeader-innerDiv-headerText {
+    background-color: #ffffff;
+    height: 30px;
+    font-weight:bold;
+    padding-top: 15px;
+}
