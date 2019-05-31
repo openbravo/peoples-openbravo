@@ -12,6 +12,7 @@
 enyo.kind({
   name: 'OB.UI.MenuTestPrinter',
   kind: 'OB.UI.MenuAction',
+  classes: 'obUiMenuTestPrinter',
   i18nLabel: 'OBPOS_TestPrinter',
   template: //
   '<output>' + //

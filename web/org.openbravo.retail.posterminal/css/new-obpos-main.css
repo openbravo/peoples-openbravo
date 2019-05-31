@@ -4333,8 +4333,15 @@
 
 
 
-
-
+/***********************   ***********************/
+/*              File: testprinter.js             */
+/*            Folder: js/webprinter              */
+/***********************   ***********************/
+/*
+# Component: OB.UI.MenuTestPrinter
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuTestPrinter {}
 
 
 
