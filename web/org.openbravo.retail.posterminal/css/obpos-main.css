@@ -1494,8 +1494,8 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   grid-auto-flow: row;
   row-gap: 10px;
   column-gap: 10px;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(6, 57px);
   grid-template-areas:
     "pos00 pos01"
     "pos10 pos11"
@@ -1503,7 +1503,6 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
     "pos30 pos31"
     "pos40 pos41"
     "pos50 pos51";
-  grid-template-rows: repeat(6, 57px);
 }
 
 .obUiActionButtonArea-obUiActionButton-generic.pos00 {
@@ -1685,7 +1684,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 .obpos_pointofsale-receipttoolbar1 {
   grid-template-areas:
     "pos00 pos01 pos02 pos03 pos04";
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(5, 1fr);
   margin: 10px 0px 10px 0px;
   grid-column-gap: 5px;
   grid-row-gap: 5px;
