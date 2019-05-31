@@ -4373,6 +4373,28 @@
 
 
 
+/*
+# Component: OB.CashUp.PaymentMethods
+# Inherits: [enyo.Object]
+*/
+.obCashUpPaymentMethods {}
+
+
+
+/*
+# Component: OB.CashUp.CashToKeep
+# Inherits: [enyo.Object]
+*/
+.obCashUpCashToKeep {}
+
+
+
+/*
+# Component: OB.CashUp.PostPrintAndClose
+# Inherits: [enyo.Object]
+*/
+.obCashUpPostPrintAndClose {}
+
 
 
 
