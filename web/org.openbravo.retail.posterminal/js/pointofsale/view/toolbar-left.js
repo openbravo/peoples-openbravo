@@ -529,6 +529,9 @@ enyo.kind({
           if (receiptLines[0].has('documentType')) {
             receipt.set('documentType', receiptLines[0].get('documentType'));
           }
+        } else {
+          receipt.set('warehouse', OB.MobileApp.model.get('warehouses')[0].warehouseid);
+          receipt.set('priceList', OB.MobileApp.model.get('pricelist'));
         }
       }
 
