@@ -1685,7 +1685,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   grid-template-areas:
     "pos00 pos01 pos02 pos03 pos04";
   grid-template-columns: repeat(5, 1fr);
-  margin: 10px 0px 10px 0px;
+  margin: 3px 0px 1px 0px;
   grid-column-gap: 5px;
   grid-row-gap: 5px;
 }
@@ -2180,3 +2180,29 @@ li.obrdm-orderline:last-child>button>div>div:last-child>div.obrdm-cell-orderline
   width: 31px;
   height: 26px;
 }
+
+.obUiOrderHeader-receiptLabels {
+  display: flex;
+  padding-right: 55px;
+  max-height: 45px;
+}
+
+.obUiOrderSingleSelect {
+  cursor: pointer;
+  margin-top: 8px; 
+  width: 27px;
+  height: 27px;
+}
+
+.obUiOrderMultiSelect {
+  cursor: pointer;
+  margin-top: 8px;
+  width: 27px;
+  height: 27px;
+}
+
+.obUiOrderMultiSelectAll {
+  margin-top: 6px;
+  white-space: nowrap;
+}
+

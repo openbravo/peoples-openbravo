@@ -11,12 +11,12 @@
 
 enyo.kind({
   name: 'OB.UI.OrderMultiSelect',
+  classes: 'obUiOrderMultiSelect',
   kind: 'Image',
   src: '../org.openbravo.retail.posterminal/img/iconPinSelected.svg',
   sizing: "cover",
   width: 28,
   height: 28,
-  style: 'float: right; cursor: pointer; margin-top: 8px; width: 27px; height: 27px;',
   showing: false,
   events: {
     onToggleSelection: ''
@@ -33,12 +33,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.OrderSingleSelect',
+  classes: 'obUiOrderSingleSelect',
   kind: 'Image',
   src: '../org.openbravo.retail.posterminal/img/iconPinUnselected.svg',
   sizing: "cover",
   width: 28,
   height: 28,
-  style: 'float: right; cursor: pointer; margin-top: 8px; width: 27px; height: 27px;',
   events: {
     onToggleSelection: ''
   },
@@ -56,8 +56,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.OrderMultiSelectAll',
   i18nContent: 'OBPOS_lblSelectAll',
-  classes: 'btnlink-orange',
-  style: 'float: right; margin-top: 6px;',
+  classes: 'btnlink-orange obUiOrderMultiSelectAll',
   showing: false,
   events: {
     onMultiSelectAll: ''
@@ -97,8 +96,6 @@ enyo.kind({
   }, {
     kind: 'OB.UI.OrderSingleSelect',
     name: 'btnSingleSelection'
-  }, {
-    style: 'clear: both;'
   }],
   newButtonComponents: [{
     kind: 'OB.UI.BusinessPartnerSelector',
@@ -114,7 +111,8 @@ enyo.kind({
     name: 'bplocshipbutton'
   }],
   components: [{
-    name: 'receiptLabels'
+    name: 'receiptLabels',
+    classes: 'obUiOrderHeader-receiptLabels'
   }, {
     kind: 'OB.UI.ActionButtonArea',
     name: 'obpos_pointofsale-receipttoolbar1',

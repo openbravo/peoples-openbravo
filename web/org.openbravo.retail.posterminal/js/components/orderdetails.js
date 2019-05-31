@@ -11,6 +11,7 @@
 
 enyo.kind({
   name: 'OB.UI.OrderDetails',
+  classes: 'obUiOrderDetails',
   published: {
     order: null
   },
