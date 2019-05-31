@@ -10,6 +10,7 @@
 /*global OB, enyo, Backbone, _*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts',
+  classes: 'obObposPointOfSaleUiDiscounts',
   handlers: {
     onApplyDiscounts: 'applyDiscounts',
     onDiscountsClose: 'closingDiscounts',
@@ -25,87 +26,90 @@ enyo.kind({
     onCheckAllTicketLines: ''
   },
   checkedLines: [],
-  style: 'position:relative; background-color: orange; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px;',
   components: [{
     kind: 'Scroller',
-    maxHeight: '130px',
-    style: 'height: 130px',
+    classes: 'obObposPointOfSaleUiDiscounts-scroller',
     thumb: true,
-    horizontal: 'hidden',
     components: [{
+      classes: 'obObposPointOfSaleUiDiscounts-scroller-container1',
       components: [{
-        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left; text-align: left;',
+        classes: 'obObposPointOfSaleUiDiscounts-scroller-container1-container1',
         components: [{
-          style: 'padding: 5px 8px 0px 3px;',
+          classes: 'obObposPointOfSaleUiDiscounts-scroller-container1-container1-element1',
           initComponents: function () {
             this.setContent(OB.I18N.getLabel('OBPOS_LineDiscount'));
           }
         }]
       }, {
         name: 'discountsContainer',
-        style: 'border: 1px solid #F0F0F0; float: left; width: 63%;',
+        classes: 'obObposPointOfSaleUiDiscounts-scroller-container1-discountsContainer',
         components: [{
           name: 'discountsList',
+          classes: 'obObposPointOfSaleUiDiscounts-scroller-container1-discountsContainer-discountsList',
           kind: 'OB.UI.DiscountList'
         }]
       }]
     }, {
-      style: 'clear: both'
+      classes: 'obObposPointOfSaleUiDiscounts-scroller-container2'
     }, {
+      classes: 'obObposPointOfSaleUiDiscounts-scroller-container3',
       components: [{
-        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left; text-align: left;',
+        classes: 'obObposPointOfSaleUiDiscounts-scroller-container3-container1',
         components: [{
-          style: 'padding: 5px 8px 0px 3px;',
+          classes: 'obObposPointOfSaleUiDiscounts-scroller-container3-container1-container1',
           initComponents: function () {
             this.setContent(OB.I18N.getLabel('OBPOS_overridePromotions'));
           }
         }]
       }, {
-        style: 'border: 1px solid #F0F0F0; float: left; width: 63%;',
+        classes: 'obObposPointOfSaleUiDiscounts-scroller-container3-container2',
         components: [{
-          classes: 'modal-dialog-profile-checkbox',
+          classes: 'obObposPointOfSaleUiDiscounts-scroller-container3-container2-container1',
           components: [{
             kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
             name: 'checkOverride',
-            classes: 'modal-dialog-btn-check'
+            classes: 'obObposPointOfSaleUiDiscounts-scroller-container3-container2-container1-checkOverride'
           }]
         }]
       }]
     }, {
-      style: 'clear: both'
+      classes: 'obObposPointOfSaleUiDiscounts-scroller-container3-container3'
     }, {
       name: 'applyCheckSelectAll',
+      classes: 'obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll',
       components: [{
-        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left;  text-align: left;',
+        classes: 'obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container1',
         components: [{
-          style: 'padding: 5px 8px 0px 3px;',
+          classes: 'obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container1-element1',
           initComponents: function () {
             this.setContent(OB.I18N.getLabel('OBPOS_applyToAllLines'));
           }
         }]
       }, {
-        style: 'border: 1px solid #F0F0F0; float: left; width: 63%;',
+        classes: 'obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container2',
         components: [{
-          classes: 'modal-dialog-profile-checkbox',
+          classes: 'obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container2-container1',
           components: [{
             kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
             name: 'checkSelectAll',
-            classes: 'modal-dialog-btn-check'
+            classes: 'obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container2-container1-checkSelectAll'
           }]
         }]
       }]
     }, {
-      style: 'clear: both'
+      classes: 'obObposPointOfSaleUiDiscounts-scroller-container3-container4'
     }]
   }, {
-    style: 'padding: 10px;',
+    classes: 'obObposPointOfSaleUiDiscounts-container1',
     components: [{
-      style: 'text-align: center;',
+      classes: 'obObposPointOfSaleUiDiscounts-container1-container1',
       components: [{
         kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
-        name: 'btnApply'
+        name: 'btnApply',
+        classes: 'obObposPointOfSaleUiDiscounts-container1-container1-btnApply'
       }, {
-        kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel'
+        kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel',
+        classes: 'obObposPointOfSaleUiDiscounts-container1-container1-obObposPointOfSaleUiBtnDiscountsCancel'
       }]
     }]
   }],
@@ -270,10 +274,10 @@ enyo.kind({
     });
     if (this.checkedLines.length > 0 && this.discounts.length !== 0 && activateButton) {
       this.$.btnApply.setDisabled(false);
-      this.$.btnApply.addStyles('color: orange;');
+      this.$.btnApply.addClass('obObposPointOfSaleUiDiscounts-container1-container1-btnApply_activate');
     } else {
       this.$.btnApply.setDisabled(true);
-      this.$.btnApply.addStyles('color: #4C4949;');
+      this.$.btnApply.addClass('obObposPointOfSaleUiDiscounts-container1-container1-btnApply_desactivate');
     }
   },
   discountChanged: function (inSender, inEvent) {
@@ -311,17 +315,17 @@ enyo.kind({
         args.context.$.applyCheckSelectAll.hide();
         args.context.order.get('lines').trigger('hideAllCheckBtn');
         args.context.$.btnApply.setDisabled(false);
-        args.context.$.btnApply.addStyles('color: orange;');
+        args.context.$.btnApply.addClass('obObposPointOfSaleUiDiscounts-container1-container1-btnApply_activate');
       } else {
         args.context.$.applyCheckSelectAll.show();
         args.context.order.get('lines').trigger('showAllCheckBtn');
 
         if (args.context.checkedLines.length > 0 && ((!OB.UTIL.isNullOrUndefined(args.context.discounts) && args.context.discounts.length !== 0) || (!OB.UTIL.isNullOrUndefined(args.discountsContainer) && !OB.UTIL.isNullOrUndefined(args.discountsContainer.model)))) {
           args.context.$.btnApply.setDisabled(false);
-          args.context.$.btnApply.addStyles('color: orange;');
+          args.context.$.btnApply.addClass('obObposPointOfSaleUiDiscounts-container1-container1-btnApply_activate');
         } else {
           args.context.$.btnApply.setDisabled(true);
-          args.context.$.btnApply.addStyles('color: #4C4949;');
+          args.context.$.btnApply.addClass('obObposPointOfSaleUiDiscounts-container1-container1-btnApply_desactivate');
         }
       }
     });
@@ -383,7 +387,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
   kind: 'OB.UI.ModalDialogButton',
-  style: 'color: orange; font-weight: bold;',
+  classes: 'obObposPointOfSaleUiDiscountsBtnDiscountsApply',
   i18nLabel: 'OBMOBC_LblApply',
   events: {
     onApplyDiscounts: ''
@@ -400,6 +404,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
   kind: 'OB.UI.CheckboxButton',
+  classes: 'obObposPointOfSaleUiDiscountsBtnCheckAll',
   events: {
     onCheckAllTicketLines: ''
   },
@@ -415,13 +420,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
   kind: 'OB.UI.CheckboxButton',
+  classes: 'obObposPointOfSaleUiDiscountsBtnCheckOverride',
   checked: false
 });
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel',
   kind: 'OB.UI.ModalDialogButton',
-  style: 'color: orange; font-weight: bold;',
+  classes: 'obObposPointOfSaleUiDiscountsBtnDiscountsCancel',
   events: {
     onDiscountsClose: ''
   },
@@ -438,7 +444,7 @@ enyo.kind({
   handlers: {
     onchange: 'changeDiscount'
   },
-  classes: 'discount-dialog-profile-combo',
+  classes: 'obUiDiscountList',
   renderEmpty: enyo.Control,
   renderLine: 'OB.UI.DiscountList.Options',
   initComponents: function () {
@@ -471,6 +477,7 @@ enyo.kind({
 enyo.kind({
   kind: 'enyo.Option',
   name: 'OB.UI.DiscountList.Options',
+  classses: 'obUiDiscountListOptions',
   initComponents: function () {
     var rule = OB.Model.Discounts.discountRules[this.model.get('discountType')],
         propertyToShow = '';

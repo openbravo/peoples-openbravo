@@ -4090,6 +4090,250 @@
 
 
 
+/***********************   ***********************/
+/*            File: ticketdiscount.js            */
+/*           Folder: js/pointofsale/view/        */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply
+# Inherits: [OB.UI.ModalDialog]
+*/
+.obObposPointOfSaleUiDiscountsBtnDiscountsApply {
+  color: var(--color-actioncolor);
+  font-weight: bold;
+}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll
+# Inherits: [OB.UI.CheckboxButton]
+*/
+.obObposPointOfSaleUiDiscountsBtnCheckAll {}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride
+# Inherits: [OB.UI.CheckboxButton]
+*/
+.obObposPointOfSaleUiDiscountsBtnCheckOverride {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposPointOfSaleUiDiscountsBtnDiscountsCancel {
+  color: var(--color-actioncolor);
+  font-weight: bold;
+}
+
+
+
+/*
+# Component: OB.UI.DiscountList
+# Inherits: [OB.UI.List]
+*/
+.obUiDiscountList {
+  height: 40px;
+  width: 100%;
+  margin: 0px;
+  background-color: var(--color-primary-lighter);
+  padding: 4px;
+  border: var(--bottomseparator-slim);
+}
+
+/*
+# Component: OB.UI.DiscountList.Options
+# Inherits: [enyo.Option]
+*/
+.obUiDiscountListOptions {}
+
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Discounts
+*/
+.obObposPointOfSaleUiDiscounts {
+  position: relative;
+  background-color: var(--color-actioncolor);
+  background-size: cover;
+  color: var(--color-primary-lighter);
+  height: 200px;
+  margin: 5px;
+  padding: 5px;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller {
+  /*Inherits: [OB.UI.Scroller]*/
+  max-height: 130px;
+  height: 130px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container1 {}
+
+.obObposPointOfSaleUiDiscounts-scroller-container1-container1 {
+  border: 1px solid #F0F0F0;
+  background-color: #E2E2E2;
+  color: var(--color-primary-darker);
+  width: 35%;
+  height: 40px;
+  float: left;
+  text-align: left;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container1-container1-element1 {
+  padding: 5px 8px 0px 3px;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container1-discountsContainer {
+  border: 1px solid #F0F0F0;
+  float: left;
+  width: 63%;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container1-discountsContainer-discountsList{
+  /*Inherits: [OB.UI.DiscountList]*/
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container2 {
+  clear: both;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3 {}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3-container1 {
+  border: 1px solid #F0F0F0;
+  background-color: #E2E2E2;
+  color: var(--color-primary-darker);
+  width: 35%;
+  height: 40px;
+  float: left;
+  text-align: left;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3-container1-container1 {
+  padding: 5px 8px 0px 3px;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3-container2 {
+  border: 1px solid #F0F0F0;
+  float: left;
+  width: 63%;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3-container2-container1 {
+  height: 40px;
+  margin: 0px;
+  background-color: white;
+  width: 59%;
+  float: left;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3-container2-container1-checkOverride {
+  height: 38px;
+  cursor: pointer;
+  vertical-align: middle;
+  width: 100%;
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  background-position: 8px center;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3-container3 {
+  clear: both;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll {}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container1 {
+  border: 1px solid #F0F0F0;
+  background-color: #E2E2E2;
+  color: var(--color-primary-darker);
+  width: 35%;
+  height: 40px;
+  float: left;
+  text-align: left;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container1-element1 {
+  padding: 5px 8px 0px 3px;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container2 {
+  border: 1px solid #F0F0F0;
+  float: left;
+  width: 63%;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container2-container1 {
+  height: 40px;
+  margin: 0px;
+  background-color: white;
+  width: 59%;
+  float: left;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container2-container1-checkSelectAll {
+  height: 38px;
+  cursor: pointer;
+  vertical-align: middle;
+  width: 100%;
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  background-position: 8px center;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-container3-container4 {
+  clear: both;
+}
+
+.obObposPointOfSaleUiDiscounts-container1 {
+  padding: 10px;
+}
+
+.obObposPointOfSaleUiDiscounts-container1-container1 {
+  text-align: center;
+}
+
+.obObposPointOfSaleUiDiscounts-container1-container1-btnApply {
+  /*Inherits: [OB.UI.PopupDrawerOpened]*/
+}
+
+.obObposPointOfSaleUiDiscounts-container1-container1-btnApply_activate {
+  color: var(--color-actioncolor);
+}
+
+.obObposPointOfSaleUiDiscounts-container1-container1-btnApply_desactivate {
+  color: #4C4949;
+}
+
+.obObposPointOfSaleUiDiscounts-container1-container1-obObposPointOfSaleUiBtnDiscountsCancel {
+  /*Inherits: [OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel]*/
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
