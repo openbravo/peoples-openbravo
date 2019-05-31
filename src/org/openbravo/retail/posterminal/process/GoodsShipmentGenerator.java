@@ -73,6 +73,7 @@ class GoodsShipmentGenerator {
     this.shipment.setNewOBObject(true);
     this.shipment.setClient(organization.getClient());
     this.shipment.setOrganization(organization);
+    this.shipment.setTrxOrganization(salesOrder.getTrxOrganization());
     this.shipment.setSalesTransaction(true);
     this.shipment
         .setDocumentType(FIN_Utility.getDocumentType(organization, DOCBASETYPE_MATERIAL_SHIPMENT));
