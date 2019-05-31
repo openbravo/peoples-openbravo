@@ -194,7 +194,7 @@ enyo.kind({
   tap: function () {
     if (OB.MobileApp.model.hasPermission(this.paymenttype)) {
       var me = this,
-          myWindowModel = this.owner.owner.owner.owner.owner.owner.model;
+          myWindowModel = this.owner.owner.owner.owner.owner.owner.owner.model;
       //FIXME: TOO MANY OWNERS
       var i, max, p, receipt = myWindowModel.get('order'),
           multiOrders = myWindowModel.get('multiOrders'),
