@@ -33,6 +33,7 @@ import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,7 @@ import org.apache.ddlutils.io.DatabaseDataIO;
 import org.apache.ddlutils.model.Database;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -77,6 +79,8 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.Zip;
 import org.openbravo.model.ad.module.ModuleInstall;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.service.centralrepository.CentralRepository;
+import org.openbravo.service.centralrepository.CentralRepository.Service;
 import org.openbravo.service.web.ResourceNotFoundException;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
@@ -142,10 +146,10 @@ public class ImportModule implements Serializable {
    * able to read the xml information within the obx file.
    * 
    * @param obdir
-   *          base directory for the application
+   *                base directory for the application
    * @param _vars
-   *          VariablesSecureApp that will be used to parse messages, if null they will not be
-   *          parsed.
+   *                VariablesSecureApp that will be used to parse messages, if null they will not be
+   *                parsed.
    */
   public ImportModule(ConnectionProvider conn, String obdir, VariablesSecureApp _vars) {
     vars = _vars;
@@ -178,10 +182,10 @@ public class ImportModule implements Serializable {
    * Checks whether the given .obx InputStream contains an update to an already installed version.
    * 
    * @param is
-   *          an InputStream to the module .obx file
+   *             an InputStream to the module .obx file
    * @return true if the .obx represents an update to the module
    * @throws Exception
-   *           if an error occurs performing the comparison
+   *                     if an error occurs performing the comparison
    */
   public boolean isModuleUpdate(InputStream is) throws Exception {
 
@@ -337,7 +341,7 @@ public class ImportModule implements Serializable {
    * Obtains a new {@link Module} from a {@link org.openbravo.model.ad.module.Module DAL Module}
    * 
    * @param dalModule
-   *          Original DAL module to convert
+   *                    Original DAL module to convert
    * @return new Module based on DAL module
    */
   private Module getWsModuleFromDalModule(org.openbravo.model.ad.module.Module dalModule) {
@@ -893,15 +897,15 @@ public class ImportModule implements Serializable {
 
       final OBError rt = new OBError();
       switch (logLevel) {
-        case MSG_ERROR:
-          rt.setType("Error");
-          break;
-        case MSG_WARN:
-          rt.setType("Warning");
-          break;
-        default:
-          rt.setType("Success");
-          break;
+      case MSG_ERROR:
+        rt.setType("Error");
+        break;
+      case MSG_WARN:
+        rt.setType("Warning");
+        break;
+      default:
+        rt.setType("Success");
+        break;
       }
 
       if (vars != null) {
@@ -1142,8 +1146,7 @@ public class ImportModule implements Serializable {
           // calculate enforcements, set the local one in case is editable and there is one, other
           // case set the defined in the obx
           OBCriteria<org.openbravo.model.ad.module.ModuleDependency> qDependentMod = OBDal
-              .getInstance()
-              .createCriteria(org.openbravo.model.ad.module.ModuleDependency.class);
+              .getInstance().createCriteria(org.openbravo.model.ad.module.ModuleDependency.class);
           qDependentMod.add(Restrictions.eq(
               org.openbravo.model.ad.module.ModuleDependency.PROPERTY_MODULE + ".id",
               ad_module_id));
@@ -1345,8 +1348,8 @@ public class ImportModule implements Serializable {
    * @param dDependencies
    * @param obx
    * @param merges
-   *          (output param) It contains all the merges defines in the obx as
-   *          (MergedModuleId,MergedBy)
+   *                            (output param) It contains all the merges defines in the obx as
+   *                            (MergedModuleId,MergedBy)
    * @throws Exception
    */
   private void getModulesFromObx(Vector<DynaBean> dModulesToInstall, Vector<DynaBean> dDependencies,
@@ -1365,8 +1368,7 @@ public class ImportModule implements Serializable {
         final ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
         obxInputStream.closeEntry();
         getModulesFromObx(dModulesToInstall, dDependencies, dDBprefix, ba, merges);
-      } else if (entry.getName()
-          .replace("\\", "/")
+      } else if (entry.getName().replace("\\", "/")
           .endsWith("src-db/database/sourcedata/AD_MODULE.xml")) {
         final Vector<DynaBean> module = getEntryDynaBeans(
             getBytesCurrentEntryStream(obxInputStream));
@@ -1377,20 +1379,17 @@ public class ImportModule implements Serializable {
         dModulesToInstall.addAll(module);
         obxInputStream.closeEntry();
         foundModule = true && !isPackage;
-      } else if (entry.getName()
-          .replace("\\", "/")
+      } else if (entry.getName().replace("\\", "/")
           .endsWith("src-db/database/sourcedata/AD_MODULE_DEPENDENCY.xml")) {
         dDependencies.addAll(getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream)));
         obxInputStream.closeEntry();
         foundDependency = true;
-      } else if (entry.getName()
-          .replace("\\", "/")
+      } else if (entry.getName().replace("\\", "/")
           .endsWith("src-db/database/sourcedata/AD_MODULE_DBPREFIX.xml")) {
         dDBprefix.addAll(getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream)));
         obxInputStream.closeEntry();
         foundPrefix = true;
-      } else if (entry.getName()
-          .replace("\\", "/")
+      } else if (entry.getName().replace("\\", "/")
           .endsWith("/src-db/database/sourcedata/AD_MODULE_MERGE.xml")) {
         Vector<DynaBean> dynMerges = getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream));
         for (DynaBean merge : dynMerges) {
@@ -1425,7 +1424,7 @@ public class ImportModule implements Serializable {
    * Installs or updates the modules in the obx file
    * 
    * @param moduleID
-   *          The ID for the current module to install
+   *                   The ID for the current module to install
    * @throws Exception
    */
   private void installModule(InputStream obx, String moduleID, Vector<DynaBean> dModulesToInstall,
@@ -1484,8 +1483,7 @@ public class ImportModule implements Serializable {
           byte[] entryBytes = null;
           boolean found = false;
           // Read the xml file to obtain module info
-          if (entry.getName()
-              .replace("\\", "/")
+          if (entry.getName().replace("\\", "/")
               .endsWith("src-db/database/sourcedata/AD_MODULE.xml")) {
             entryBytes = getBytesCurrentEntryStream(obxInputStream);
             final Vector<DynaBean> module = getEntryDynaBeans(entryBytes);
@@ -1495,8 +1493,7 @@ public class ImportModule implements Serializable {
             }
             obxInputStream.closeEntry();
             found = true;
-          } else if (entry.getName()
-              .replace("\\", "/")
+          } else if (entry.getName().replace("\\", "/")
               .endsWith("src-db/database/sourcedata/AD_MODULE_DEPENDENCY.xml")) {
             entryBytes = getBytesCurrentEntryStream(obxInputStream);
             final Vector<DynaBean> dep = getEntryDynaBeans(entryBytes);
@@ -1505,8 +1502,7 @@ public class ImportModule implements Serializable {
             }
             obxInputStream.closeEntry();
             found = true;
-          } else if (entry.getName()
-              .replace("\\", "/")
+          } else if (entry.getName().replace("\\", "/")
               .endsWith("src-db/database/sourcedata/AD_MODULE_DBPREFIX.xml")) {
             entryBytes = getBytesCurrentEntryStream(obxInputStream);
             final Vector<DynaBean> dbp = getEntryDynaBeans(entryBytes);
@@ -1623,7 +1619,7 @@ public class ImportModule implements Serializable {
       final String user = vars == null ? "0" : vars.getUser();
       ImportModuleData.insertLog(conn, user, "", "", "", "Scanning For Updates", "S");
 
-      if (!HttpsUtils.isInternetAvailable()) {
+      if (false && !HttpsUtils.isInternetAvailable()) {
         // Check Internet availability and set proxy if required
         ImportModuleData.insertLog(conn, user, "", "", "",
             "Scan for updates: Couldn't contact with webservice server", "E");
@@ -1632,15 +1628,28 @@ public class ImportModule implements Serializable {
         return updateModules;
       }
 
-      WebService3ImplServiceLocator loc;
-      WebService3Impl ws = null;
-      SimpleModule[] updates;
+      List<SimpleModule> updates;
       try {
-        loc = new WebService3ImplServiceLocator();
-        ws = loc.getWebService3();
+        if (false) {
+          WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
+          WebService3Impl ws = loc.getWebService3();
+          updates = Arrays.asList(ws.moduleScanForUpdates(getInstalledModulesAndDeps(),
+              ModuleUtiltiy.getSystemMaturityLevels(false)));
+        } else {
+          JSONObject mods = getJsonInstalledModulesAndDeps();
+          JSONObject additionalInfo = new JSONObject(ModuleUtiltiy.getSystemMaturityLevels(false));
+          JSONObject req = new JSONObject();
+          req.put("modules", mods);
+          req.put("additionalInfo", additionalInfo);
 
-        updates = ws.moduleScanForUpdates(getInstalledModulesAndDeps(),
-            ModuleUtiltiy.getSystemMaturityLevels(false));
+          JSONObject r = CentralRepository.post(Service.SCAN, req);
+          JSONArray jsonUpdates = r.getJSONObject("response").getJSONArray("updates");
+          updates = new ArrayList<SimpleModule>(jsonUpdates.length());
+          for (int i = 0; i < jsonUpdates.length(); i++) {
+            JSONObject update = jsonUpdates.getJSONObject(i);
+            updates.add(org.openbravo.service.centralrepository.SimpleModule.fromJson(update));
+          }
+        }
       } catch (final Exception e) {
         // do nothing just log the error
         log4j.error("Scan for updates coulnd't contact WS", e);
@@ -1654,40 +1663,37 @@ public class ImportModule implements Serializable {
         return updateModules; // return empty hashmap
       }
 
-      if (updates != null && updates.length > 0) {
-        for (int i = 0; i < updates.length; i++) {
+      // for (int i = 0; i < updates.length; i++) {
+      for (SimpleModule update : updates) {
+        if (!ImportModuleData.existsVersion(conn, update.getVersionNo(),
+            update.getModuleVersionID())) {
+          ImportModuleData.updateNewVersionAvailable(conn, update.getVersionNo(),
+              update.getModuleVersionID(), update.getUpdateDescription(), update.getModuleID());
+          ImportModuleData.insertLog(conn, user, update.getModuleID(), update.getModuleVersionID(),
+              update.getName(),
+              "Found new version " + update.getVersionNo() + " for module " + update.getName(),
+              "S");
+          updateModules.put(update.getModuleID(), "U");
+        }
 
-          if (!ImportModuleData.existsVersion(conn, updates[i].getVersionNo(),
-              updates[i].getModuleVersionID())) {
-            ImportModuleData.updateNewVersionAvailable(conn, updates[i].getVersionNo(),
-                updates[i].getModuleVersionID(), updates[i].getUpdateDescription(),
-                updates[i].getModuleID());
-            ImportModuleData.insertLog(conn, user, updates[i].getModuleID(),
-                updates[i].getModuleVersionID(), updates[i].getName(), "Found new version "
-                    + updates[i].getVersionNo() + " for module " + updates[i].getName(),
-                "S");
-            updateModules.put(updates[i].getModuleID(), "U");
-          }
-
-          HashMap<String, String> additionalInfo = updates[i].getAdditionalInfo();
-          if (additionalInfo != null && additionalInfo.containsKey("upgrade")) {
-            log4j.info("Upgrade found:" + additionalInfo.get("upgrade"));
-            JSONObject upgrade = new JSONObject(additionalInfo.get("upgrade"));
-            final String moduleId = upgrade.getString("moduleId");
-            org.openbravo.model.ad.module.Module module = OBDal.getInstance()
-                .get(org.openbravo.model.ad.module.Module.class, moduleId);
-            if (module != null) {
-              try {
-                OBInterceptor.setPreventUpdateInfoChange(true);
-                module.setUpgradeAvailable(upgrade.getJSONArray("showVersion").toString());
-                OBDal.getInstance().flush();
-              } finally {
-                OBInterceptor.setPreventUpdateInfoChange(false);
-              }
-            } else {
-              log4j.error("There is an upgrade for module " + moduleId
-                  + ", but it is not present in the instance.");
+        HashMap<String, String> additionalInfo = update.getAdditionalInfo();
+        if (additionalInfo != null && additionalInfo.containsKey("upgrade")) {
+          log4j.info("Upgrade found:" + additionalInfo.get("upgrade"));
+          JSONObject upgrade = new JSONObject(additionalInfo.get("upgrade"));
+          final String moduleId = upgrade.getString("moduleId");
+          org.openbravo.model.ad.module.Module module = OBDal.getInstance()
+              .get(org.openbravo.model.ad.module.Module.class, moduleId);
+          if (module != null) {
+            try {
+              OBInterceptor.setPreventUpdateInfoChange(true);
+              module.setUpgradeAvailable(upgrade.getJSONArray("showVersion").toString());
+              OBDal.getInstance().flush();
+            } finally {
+              OBInterceptor.setPreventUpdateInfoChange(false);
             }
+          } else {
+            log4j.error("There is an upgrade for module " + moduleId
+                + ", but it is not present in the instance.");
           }
         }
         addParentUpdates(updateModules, conn);
@@ -1762,8 +1768,7 @@ public class ImportModule implements Serializable {
     try {
       OBContext.setAdminMode();
 
-      String defaultMaturity = OBDal.getInstance()
-          .get(SystemInformation.class, "0")
+      String defaultMaturity = OBDal.getInstance().get(SystemInformation.class, "0")
           .getMaturityUpdate();
       List<String> installingMods = new ArrayList<String>();
 
@@ -1839,6 +1844,25 @@ public class ImportModule implements Serializable {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  public static JSONObject getJsonInstalledModulesAndDeps() {
+    JSONObject r = new JSONObject();
+    try {
+      HashMap<String, String[][]> mods = getInstalledModulesAndDeps();
+      for (Entry<String, String[][]> mod : mods.entrySet()) {
+        String[][] origVerInfo = mod.getValue();
+        JSONArray verInfo = new JSONArray();
+        for (String[] verInfoRow : origVerInfo) {
+          verInfo.put(Arrays.asList(verInfoRow));
+        }
+
+        r.put(mod.getKey(), verInfo);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return r;
   }
 
   /**

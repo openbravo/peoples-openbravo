@@ -31,7 +31,8 @@ public class CentralRepository {
     REGISTER_MODULE("register"),
     SEARCH_MODULES("search"),
     MODULE_INFO("module"),
-    MATURITY_LEVEL("maturityLevel");
+    MATURITY_LEVEL("maturityLevel"),
+    SCAN("scan");
 
     private String endpoint;
 
