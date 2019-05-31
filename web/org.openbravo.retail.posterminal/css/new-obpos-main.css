@@ -4345,6 +4345,34 @@
 
 
 
+/***********************   ***********************/
+/*             File: cashup-steps.js             */
+/*        Folder: js/closecash/model             */
+/***********************   ***********************/
+/*
+# Component: OB.CashUp.StepPendingOrders
+# Inherits: [enyo.Object]
+*/
+.obCashUpStepPendingOrders {}
+
+
+
+/*
+# Component: OB.CashUp.Master
+# Inherits: [enyo.Object]
+*/
+.obCashUpMaster {}
+
+
+
+/*
+# Component: OB.CashUp.CashPayments
+# Inherits: [enyo.Object]
+*/
+.obCashUpCashPayments {}
+
+
+
 
 
 

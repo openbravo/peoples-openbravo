@@ -12,6 +12,7 @@
 enyo.kind({
   name: 'OB.CashUp.StepPendingOrders',
   kind: enyo.Object,
+  classes: 'obCashUpStepPendingOrders',
   getStepComponent: function (leftpanel$) {
     return leftpanel$.listPendingReceipts;
   },
@@ -35,6 +36,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.CashUp.Master',
   kind: enyo.Object,
+  classes: 'obCashUpMaster',
   getStepComponent: function (leftpanel$) {
     return leftpanel$.cashMaster;
   },
@@ -58,6 +60,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.CashUp.CashPayments',
   kind: enyo.Object,
+  classes: 'obCashUpCashPayments',
   getStepComponent: function (leftpanel$) {
     return leftpanel$.cashPayments;
   },
@@ -83,6 +86,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.CashUp.PaymentMethods',
   kind: enyo.Object,
+  classes: 'obCashUpPaymentMethods',
   getStepComponent: function (leftpanel$) {
     return leftpanel$.listPaymentMethods;
   },
@@ -110,6 +114,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.CashUp.CashToKeep',
   kind: enyo.Object,
+  classes: 'obCashUpCashToKeep',
   getStepComponent: function (leftpanel$) {
     return leftpanel$.cashToKeep;
   },
@@ -172,6 +177,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.CashUp.PostPrintAndClose',
   kind: enyo.Object,
+  classes: 'obCashUpPostPrintAndClose',
   getStepComponent: function (leftpanel$) {
     return leftpanel$.postPrintClose;
   },
