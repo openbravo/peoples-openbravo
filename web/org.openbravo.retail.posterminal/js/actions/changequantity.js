@@ -107,7 +107,7 @@
             } else if (oldqty < 0 && line.get('remainingQuantity')) {
               cancelQtyChangeReturn = true;
             }
-          });
+          }, this);
 
           if (cancelQtyChange) {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEdit'));
