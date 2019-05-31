@@ -9978,6 +9978,517 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 
+/***********************   ***********************/
+/*               File: payment.js                */
+/*         Folder: js/pointofsale/view/          */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.Change
+*/
+.obObposPointOfSaleUiChange {
+  font-weight: bold;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.Payment
+*/
+.obObposPointOfSaleUiPayment {}
+
+.obObposPointOfSaleUiPayment-container1 {
+  background-color: #363636;
+  color: #ffffff;
+  height: 200px;
+  margin: 5px;
+  padding: 5px;
+  position: relative;
+}
+
+.obObposPointOfSaleUiPayment-container1-container1 {}
+
+.obObposPointOfSaleUiPayment-container1-container1-container1 {}
+
+.obObposPointOfSaleUiPayment-container1-container2 {}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1 {}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-prepaymentLine {
+  padding: 0px 0px 0px 10px;
+  height: 17px;
+}
+
+.obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending {
+  font-size: var(--font-large);
+  font-weight: bold;
+}
+
+.obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_defaultColor {
+  color: #ffffff;
+}
+
+.obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_alternativeColor {
+  color: #6cb33f;
+}
+
+.obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpendinglbl {}
+
+.obObposPointOfSaleUiPayment-prepaymentLine-prepaymentexactlbl {}
+
+.obObposPointOfSaleUiPayment-prepaymentLine-deliverychangelbl {}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine {
+  padding: 5px 0px 0px 10px;
+  height: 17px;
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_wPrepayment {
+  padding: 0px 0px 0px 10px;
+  height: 16px;
+  color: #999999;
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_woPrepayment {
+  padding: 10px 0px 0px 10px;
+  height: 28px;
+  color: #ffffff;
+}
+
+.obObposPointOfSaleUiPayment-paymentLine-totalpending {
+  font-weight: bold;
+}
+
+.obObposPointOfSaleUiPayment-paymentLine-totalpending_smallFont {
+  font-size: var(--font-medium-large);
+}
+
+.obObposPointOfSaleUiPayment-paymentLine-totalpending_bigFont {
+  font-size: 24px;
+}
+
+.obObposPointOfSaleUiPayment-paymentLine-totalpendinglbl {}
+
+.obObposPointOfSaleUiPayment-paymentLine-remainingfortotallbl {}
+
+.obObposPointOfSaleUiPayment-paymentLine-changebutton {
+/* Inherits: [OB.UI.RegularButton] */
+  padding: 5px;
+  margin: -5px 10px 0px 0px;
+  width: 40px;
+  height: 25px;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconChangeSplit.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+  background-size: 18px;
+}
+
+.obObposPointOfSaleUiPayment-paymentLine-change {}
+
+.obObposPointOfSaleUiPayment-paymentLine-changelbl {}
+
+.obObposPointOfSaleUiPayment-paymentLine-overpayment {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.obObposPointOfSaleUiPayment-paymentLine-overpaymentlbl {}
+
+.obObposPointOfSaleUiPayment-paymentLine-exactlbl {}
+
+.obObposPointOfSaleUiPayment-paymentLine-donezerolbl {}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-container3 {}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1 {
+  padding: 5px;
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-element1 {
+  margin: 2px 0px 0px 0px;
+  border-bottom: 1px solid #cccccc;
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-payments {
+/* Inherits: [OB.UI.ScrollableTable] */
+  height: 115px;
+  max-height: 115px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.obObposPointOfSaleUiPayment-payments-renderEmpty {
+  height: 36px;
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-multiPayments {
+/* Inherits: [OB.UI.ScrollableTable] */
+  height: 115px;
+  max-height: 115px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.obObposPointOfSaleUiPayment-multiPayments-renderEmpty {
+  height: 36px;
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-errorLabelArea {
+  overflow: hidden;
+  height: 30px;
+  margin-top: 3px;
+  color: #ff0000;
+  padding: 5px;
+  position: relative;
+}
+
+.obObposPointOfSaleUiPayment-errorLabelArea-noenoughchangelbl,
+.obObposPointOfSaleUiPayment-errorLabelArea-changeexceedlimit,
+.obObposPointOfSaleUiPayment-errorLabelArea-overpaymentnotavailable,
+.obObposPointOfSaleUiPayment-errorLabelArea-overpaymentexceedlimit,
+.obObposPointOfSaleUiPayment-errorLabelArea-onlycashpaymentmethod,
+.obObposPointOfSaleUiPayment-errorLabelArea-errorMaxlimitamount,
+.obObposPointOfSaleUiPayment-errorLabelArea-allAttributesNeedValue {}
+
+.obObposPointOfSaleUiPayment-errorLabelArea-paymentMethodSelect {
+  color: #ffa500;
+}
+
+.obObposPointOfSaleUiPayment-errorLabelArea-extrainfo {
+  font-weight: bold;
+  color: #1e90ff;
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container2 {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container2-prepaymentsbuttons {
+  width: 85%; max-width: 125px;
+  float: right;
+  margin: 5px 5px 10px 0px;
+  clear: right;
+  font-weight: normal;
+  padding: 0px;
+}
+
+.obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsexactbutton {
+/* Inherits: [OB.OBPOSPointOfSale.UI.PrepaymentsExactButton] */
+}
+
+.obObposPointOfSaleUiPayment-prepaymentsexactbutton-prepaymentsexactbuttonicon {
+  display: block;
+  width: auto;
+  height: 20px;
+  background-size: 32px 17px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkDoubleBlack.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.obObposPointOfSaleUiPayment-prepaymentsexactbutton-prepaymentsexactbuttonlbl {
+  font-size: var(--font-xsmall);
+  font-weight: bold;
+  color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  position: relative;
+}
+
+.obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsdeliverybutton {
+/* Inherits: [OB.OBPOSPointOfSale.UI.PrepaymentsDeliveryButton] */
+}
+
+.obObposPointOfSaleUiPayment-prepaymentsdeliverybutton-prepaymentsdeliverybuttonicon {
+  display: block;
+  width: auto;
+  height: 20px;
+  background-size: 21px 17px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkBlack.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.obObposPointOfSaleUiPayment-prepaymentsdeliverybutton-prepaymentsdeliverybuttonlbl {
+  font-size: var(--font-xsmall);
+  font-weight: bold;
+  color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  position: relative;
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container2-exactbutton {
+/* Inherits: [OB.OBPOSPointOfSale.UI.ExactButton] */
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container2-donebutton {
+/* Inherits: [OB.OBPOSPointOfSale.UI.DoneButton] */
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container2-creditsalesaction {
+/* Inherits: [OB.OBPOSPointOfSale.UI.CreditButton] */
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container2-layawayaction {
+/* Inherits: [OB.OBPOSPointOfSale.UI.LayawayButton] */
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.ProcessButton
+# Inherits: [OB.UI.RegularButton]
+*/
+.obObposPointOfSaleUiProcessButton {
+  width: 85%;
+  max-width: 125px;
+  float: right;
+  margin: 5px 5px 10px 0px;
+  height: 2.5em;
+  display:block;
+  clear: right;
+  font-weight: normal;
+  padding: 0px;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.DoneButton
+# Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
+*/
+.obObposPointOfSaleUiDoneButton {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.PrepaymentsDeliveryButton
+# Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
+*/
+.obObposPointOfSaleUiPrepaymentsDeliveryButton {
+  width: calc(50% - 5px);
+  margin: 0px 5px 0px 0px;
+  clear: unset;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.PrepaymentsExactButton
+# Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
+*/
+.obObposPointOfSaleUiPrepaymentsExactButton {
+  width: calc(50% - 5px);
+  margin: 0px 0px 0px 5px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.ExactButton
+# Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
+*/
+.obObposPointOfSaleUiExactButton {
+  background-size: 21px 17px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkBlack.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.RenderPaymentLine
+*/
+.obObposPointOfSaleUiRenderPaymentLine {
+  display: block;
+  position: relative;
+  padding: 8px 10px 8px 10px;
+  text-decoration: none;
+  border-bottom: 1px solid #cccccc;
+}
+
+.obObposPointOfSaleUiRenderPaymentLine_renderPaymentLine {
+  min-height: 29px;
+}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1 {
+  color: #ffffff;
+}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container1 {
+  float: left;
+  width: 85%;
+}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1 {}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1-name {
+  float: left;
+  width: 65%;
+  padding: 5px 0px 0px 0px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1-amount {
+  float: left;
+  width: 35%;
+  padding: 5px 0px 0px 0px;
+  text-align: right;
+}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1-element3 {}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2 {}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2-info {
+  float: left;
+  width: 65%;
+  padding: 5px 0px 0px 0px;
+  font-size: smaller;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2-foreignAmount {
+  float: left;
+  width: 35%;
+  padding: 5px 0px 0px 0px;
+  font-size: smaller;
+  text-align: right;
+}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2-element3 {}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container2 {
+  float: left;
+  width: 15%;
+  text-align: right;
+}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container2-removePayment {
+/* Inherits: [OB.OBPOSPointOfSale.UI.RemovePayment] */
+  width: 75%;
+  max-width: 50px;
+  height: 25px;
+  margin-left: 10%;
+}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container2-removePayment_withContent {
+  margin-top: 10px;
+}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container3 {
+  float: left;
+  width: 15%;
+  text-align: right;
+}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-container3-reversePayment {
+/* Inherits: [OB.OBPOSPointOfSale.UI.ReversePayment] */
+  width: 75%;
+  max-width: 50px;
+  height: 25px;
+  margin-left: 10%;
+}
+
+.obObposPointOfSaleUiRenderPaymentLine-container1-element4 {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.RemovePayment
+# Inherits: [OB.UI.SmallButton]
+*/
+.obObposPointOfSaleUiRemovePayment {
+  background-color: #363636;
+  color: white;
+  margin: 0px 0px 0px 16px;
+  padding-top: 4px;
+  border: 1px #cccccc solid;
+  width: 100%;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.obObposPointOfSaleUiRemovePayment_iconClearPayment {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClearPayment.svg');
+  background-size: 13px 13px;
+}
+
+.obObposPointOfSaleUiRemovePayment_iconLoading {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconloading.gif');
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.ReversePayment
+# Inherits: [OB.UI.SmallButton]
+*/
+.obObposPointOfSaleUiReversePayment {
+  background-color: #363636;
+  color: white;
+  margin: 0px 0px 0px 16px;
+  padding-top: 4px;
+  border: 1px #cccccc solid;
+  width: 100%;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.obObposPointOfSaleUiReversePayment_iconReversePayment {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconReversePayment.png');
+}
+
+.obObposPointOfSaleUiReversePayment_iconLoading {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconloading.gif');
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.CreditButton
+# Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
+*/
+.obObposPointOfSaleUiCreditButton {
+  width: 100%;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.LayawayButton
+# Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
+*/
+.obObposPointOfSaleUiLayawayButton {
+  width: 100%;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+}
+
+
+/*
+# Component: OB.Payments.Change
+# Inherits: [enyo.Component]
+*/
+.obPaymentsChange {}
+
+
+
 
 /*****************/
 /*      JAR      */

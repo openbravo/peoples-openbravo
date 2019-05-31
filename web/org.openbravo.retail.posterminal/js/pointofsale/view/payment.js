@@ -12,7 +12,7 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Change',
   tag: 'span',
-  style: 'font-weight: bold;',
+  classes: 'obObposPointOfSaleUiChange',
   setContent: function () {
     var size, length;
 
@@ -27,12 +27,14 @@ enyo.kind({
     } else {
       size = 14;
     }
+    // This inline style is allowed
     this.setStyle('font-size: ' + size + 'px;');
   }
 });
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Payment',
+  classes: 'obObposPointOfSaleUiPayment',
   published: {
     receipt: null
   },
@@ -149,83 +151,93 @@ enyo.kind({
     this.alignErrorMessages();
   },
   components: [{
-    style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px; position: relative;',
+    classes: 'obObposPointOfSaleUiPayment-container1',
     components: [{
-      classes: 'row-fluid',
+      classes: 'obObposPointOfSaleUiPayment-container1-container1 row-fluid',
       components: [{
-        classes: 'span12'
+        classes: 'obObposPointOfSaleUiPayment-container1-container1-container1 span12'
       }]
     }, {
-      classes: 'row-fluid',
+      classes: 'obObposPointOfSaleUiPayment-container1-container2 row-fluid',
       components: [{
-        classes: 'span9',
+        classes: 'obObposPointOfSaleUiPayment-container1-container2-container1 span9',
         components: [{
-          style: 'padding: 0px 0px 0px 10px; height: 17px;',
+          classes: 'obObposPointOfSaleUiPayment-container1-container2-container1-prepaymentLine',
           name: 'prepaymentLine',
           components: [{
             tag: 'span',
             name: 'prepaymenttotalpending',
-            style: 'font-size: 20px; font-weight: bold;'
+            classes: 'obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending'
           }, {
             tag: 'span',
-            name: 'prepaymenttotalpendinglbl'
+            name: 'prepaymenttotalpendinglbl',
+            classes: 'obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpendinglbl'
           }, {
             tag: 'span',
-            name: 'prepaymentexactlbl'
+            name: 'prepaymentexactlbl',
+            classes: 'obObposPointOfSaleUiPayment-prepaymentLine-prepaymentexactlbl'
           }, {
             tag: 'span',
-            name: 'deliverychangelbl'
+            name: 'deliverychangelbl',
+            classes: 'obObposPointOfSaleUiPayment-prepaymentLine-deliverychangelbl'
           }]
         }, {
-          style: 'padding: 5px 0px 0px 10px; height: 17px;',
           name: 'paymentLine',
+          classes: 'obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine',
           components: [{
             tag: 'span',
             name: 'totalpending',
-            style: 'font-weight: bold;'
+            classes: 'obObposPointOfSaleUiPayment-paymentLine-totalpending'
           }, {
             tag: 'span',
-            name: 'totalpendinglbl'
+            name: 'totalpendinglbl',
+            classes: 'obObposPointOfSaleUiPayment-paymentLine-totalpendinglbl'
           }, {
             tag: 'span',
-            name: 'remainingfortotallbl'
+            name: 'remainingfortotallbl',
+            classes: 'obObposPointOfSaleUiPayment-paymentLine-remainingfortotallbl'
           }, {
             kind: 'OB.UI.RegularButton',
             name: 'changebutton',
-            classes: 'btn-icon-split btnlink-green payment-changebutton',
+            classes: 'obObposPointOfSaleUiPayment-paymentLine-changebutton',
             ontap: 'actionChangeButton'
           }, {
             kind: 'OB.OBPOSPointOfSale.UI.Change',
-            name: 'change'
+            name: 'change',
+            classes: 'obObposPointOfSaleUiPayment-paymentLine-change'
           }, {
             tag: 'span',
-            name: 'changelbl'
+            name: 'changelbl',
+            classes: 'obObposPointOfSaleUiPayment-paymentLine-changelbl'
           }, {
             tag: 'span',
             name: 'overpayment',
-            style: 'font-size: 24px; font-weight: bold;'
+            classes: 'obObposPointOfSaleUiPayment-paymentLine-overpayment'
           }, {
             tag: 'span',
-            name: 'overpaymentlbl'
+            name: 'overpaymentlbl',
+            classes: 'obObposPointOfSaleUiPayment-paymentLine-overpaymentlbl'
           }, {
             tag: 'span',
-            name: 'exactlbl'
+            name: 'exactlbl',
+            classes: 'obObposPointOfSaleUiPayment-paymentLine-exactlbl'
           }, {
             tag: 'span',
-            name: 'donezerolbl'
+            name: 'donezerolbl',
+            classes: 'obObposPointOfSaleUiPayment-paymentLine-donezerolbl'
           }]
         }, {
+          classes: 'obObposPointOfSaleUiPayment-container1-container2-container1-container3',
           components: [{
-            style: 'padding: 5px',
+            classes: 'obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1',
             components: [{
-              style: 'margin: 2px 0px 0px 0px; border-bottom: 1px solid #cccccc;'
+              classes: 'obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-element1'
             }, {
               kind: 'OB.UI.ScrollableTable',
-              scrollAreaMaxHeight: '115px',
-              style: 'height: 115px',
+              classes: 'obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-payments',
               name: 'payments',
               renderEmpty: enyo.kind({
-                style: 'height: 36px'
+                classes: 'obObposPointOfSaleUiPayment-payments-renderEmpty'
               }),
               skipLineRender: function (model) {
                 return model.get('changePayment');
@@ -233,56 +245,62 @@ enyo.kind({
               renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
             }, {
               kind: 'OB.UI.ScrollableTable',
-              scrollAreaMaxHeight: '115px',
-              style: 'height: 115px',
               name: 'multiPayments',
+              classes: 'obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-multiPayments',
               showing: false,
               renderEmpty: enyo.kind({
-                style: 'height: 36px'
+                classes: 'obObposPointOfSaleUiPayment-multiPayments-renderEmpty'
               }),
               skipLineRender: function (model) {
                 return model.get('changePayment');
               },
               renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
             }, {
-              style: 'overflow: hidden; height: 30px; margin-top: 3px; color: #ff0000; padding: 5px; position: relative;',
               name: 'errorLabelArea',
+              classes: 'obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-errorLabelArea',
               components: [{
                 name: 'noenoughchangelbl',
+                classes: 'obObposPointOfSaleUiPayment-errorLabelArea-noenoughchangelbl',
                 showing: false,
                 type: 'error'
               }, {
                 name: 'changeexceedlimit',
+                classes: 'obObposPointOfSaleUiPayment-errorLabelArea-changeexceedlimit',
                 showing: false,
                 type: 'error'
               }, {
                 name: 'overpaymentnotavailable',
+                classes: 'obObposPointOfSaleUiPayment-errorLabelArea-overpaymentnotavailable',
                 showing: false,
                 type: 'error'
               }, {
                 name: 'overpaymentexceedlimit',
+                classes: 'obObposPointOfSaleUiPayment-errorLabelArea-overpaymentexceedlimit',
                 showing: false,
                 type: 'error'
               }, {
                 name: 'onlycashpaymentmethod',
+                classes: 'obObposPointOfSaleUiPayment-errorLabelArea-onlycashpaymentmethod',
                 showing: false,
                 type: 'error'
               }, {
                 name: 'errorMaxlimitamount',
+                classes: 'obObposPointOfSaleUiPayment-errorLabelArea-errorMaxlimitamount',
                 showing: false,
                 type: 'error'
               }, {
                 name: 'allAttributesNeedValue',
+                classes: 'obObposPointOfSaleUiPayment-errorLabelArea-allAttributesNeedValue',
                 type: 'error',
                 showing: false
               }, {
                 name: 'paymentMethodSelect',
-                style: 'color: orange',
+                classes: 'obObposPointOfSaleUiPayment-errorLabelArea-paymentMethodSelect',
                 type: 'info',
                 showing: false
               }, {
                 name: 'extrainfo',
-                style: 'font-weight: bold; color: dodgerblue;',
+                classes: 'obObposPointOfSaleUiPayment-errorLabelArea-extrainfo',
                 type: 'info',
                 showing: false
               }]
@@ -291,45 +309,49 @@ enyo.kind({
           }]
         }]
       }, {
-        classes: 'span3 paymentbuttons-scroll',
+        classes: 'obObposPointOfSaleUiPayment-container1-container2-container2 span3',
         components: [{
           name: 'prepaymentsbuttons',
-          style: 'width: 85%; max-width: 125px; float: right; margin: 5px 5px 10px 0px; clear: right; font-weight: normal; padding: 0px',
+          classes: 'obObposPointOfSaleUiPayment-container1-container2-container2-prepaymentsbuttons',
           components: [{
             name: 'prepaymentsexactbutton',
             kind: 'OB.OBPOSPointOfSale.UI.PrepaymentsExactButton',
+            classes: 'obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsexactbutton',
             components: [{
               name: 'prepaymentsexactbuttonicon',
-              classes: 'btn-icon-doubleCheck',
-              style: 'display: block'
+              classes: 'obObposPointOfSaleUiPayment-prepaymentsexactbutton-prepaymentsexactbuttonicon'
             }, {
               name: 'prepaymentsexactbuttonlbl',
-              style: 'font-size: 10px; font-weight: bold; color: black; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; position: relative;'
+              classes: 'obObposPointOfSaleUiPayment-prepaymentsexactbutton-prepaymentsexactbuttonlbl'
             }]
           }, {
             name: 'prepaymentsdeliverybutton',
             kind: 'OB.OBPOSPointOfSale.UI.PrepaymentsDeliveryButton',
+            classes: 'obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsdeliverybutton',
             components: [{
               name: 'prepaymentsdeliverybuttonicon',
-              classes: 'btn-icon-check',
-              style: 'display: block'
+              classes: 'obObposPointOfSaleUiPayment-prepaymentsdeliverybutton-prepaymentsdeliverybuttonicon'
             }, {
               name: 'prepaymentsdeliverybuttonlbl',
-              style: 'font-size: 10px; font-weight: bold; color: black; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; position: relative;'
+              classes: 'obObposPointOfSaleUiPayment-prepaymentsdeliverybutton-prepaymentsdeliverybuttonlbl'
             }]
           }]
         }, {
           name: 'exactbutton',
-          kind: 'OB.OBPOSPointOfSale.UI.ExactButton'
+          kind: 'OB.OBPOSPointOfSale.UI.ExactButton',
+          classes: 'obObposPointOfSaleUiPayment-container1-container2-container2-exactbutton'
         }, {
           name: 'donebutton',
-          kind: 'OB.OBPOSPointOfSale.UI.DoneButton'
+          kind: 'OB.OBPOSPointOfSale.UI.DoneButton',
+          classes: 'obObposPointOfSaleUiPayment-container1-container2-container2-donebutton'
         }, {
           name: 'creditsalesaction',
-          kind: 'OB.OBPOSPointOfSale.UI.CreditButton'
+          kind: 'OB.OBPOSPointOfSale.UI.CreditButton',
+          classes: 'obObposPointOfSaleUiPayment-container1-container2-container2-creditsalesaction'
         }, {
           name: 'layawayaction',
-          kind: 'OB.OBPOSPointOfSale.UI.LayawayButton'
+          kind: 'OB.OBPOSPointOfSale.UI.LayawayButton',
+          classes: 'obObposPointOfSaleUiPayment-container1-container2-container2-layawayaction'
         }]
       }]
     }]
@@ -636,20 +658,25 @@ enyo.kind({
     //Update styles based on the prepayment amount
     if (receiptHasPrepaymentAmount && paymentstatus.pendingAmt !== 0) {
       this.$.prepaymentLine.show();
-      this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', true);
-      this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', false);
-      this.$.totalpending.applyStyle('font-size', '18px');
+      this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_wPrepayment', true);
+      this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_woPrepayment', false);
+      this.$.totalpending.addClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_smallFont');
+      this.$.totalpending.removeClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_bigFont');
     } else {
       this.$.prepaymentLine.hide();
-      this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', false);
-      this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', true);
-      this.$.totalpending.applyStyle('font-size', '24px');
+      this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_wPrepayment', false);
+      this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_woPrepayment', true);
+      this.$.totalpending.addClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_bigFont');
+      this.$.totalpending.removeClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_smallFont');
     }
+
+    this.$.prepaymenttotalpending.removeClass('obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_defaultColor');
+    this.$.prepaymenttotalpending.removeClass('obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_alternativeColor');
 
     if ((OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && this.receipt.get('obposPrepaymentlimitamt') < this.receipt.get('gross') && pendingPrepayment > 0 && receiptHasPrepaymentAmount)) {
       this.setPrepaymentTotalPending(OB.DEC.mul(pendingPrepayment, rate, precision), symbol, symbolAtRight);
       this.$.prepaymenttotalpending.show();
-      this.$.prepaymenttotalpending.applyStyle('color', 'white');
+      this.$.prepaymenttotalpending.addClass('obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_defaultColor');
       this.$.prepaymenttotalpendinglbl.show();
       this.$.prepaymentexactlbl.hide();
       this.$.deliverychangelbl.hide();
@@ -659,7 +686,7 @@ enyo.kind({
       this.$.prepaymenttotalpendinglbl.hide();
       if (pendingPrepayment === 0) {
         this.$.prepaymenttotalpending.hide();
-        this.$.prepaymenttotalpending.applyStyle('color', 'white');
+        this.$.prepaymenttotalpending.addClass('obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_defaultColor');
         this.$.prepaymentexactlbl.show();
         this.$.deliverychangelbl.hide();
       } else {
@@ -667,19 +694,21 @@ enyo.kind({
         this.$.prepaymentexactlbl.hide();
         if (this.receipt.get('prepaymentChangeMode')) {
           this.setPrepaymentTotalPending(OB.DEC.mul(this.receipt.getChange(), rate, precision), symbol, symbolAtRight);
-          this.$.prepaymenttotalpending.applyStyle('color', '#6cb33f');
+          this.$.prepaymenttotalpending.addClass('obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_alternativeColor');
           this.$.deliverychangelbl.show();
           this.$.prepaymentLine.show();
-          this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', true);
-          this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', false);
-          this.$.totalpending.applyStyle('font-size', '18px');
+          this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_wPrepayment', true);
+          this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_woPrepayment', false);
+          this.$.totalpending.addClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_smallFont');
+          this.$.totalpending.removeClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_bigFont');
         } else {
-          this.$.prepaymenttotalpending.applyStyle('color', 'white');
+          this.$.prepaymenttotalpending.addClass('obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_defaultColor');
           this.$.deliverychangelbl.hide();
           this.$.prepaymentLine.hide();
-          this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', false);
-          this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', true);
-          this.$.totalpending.applyStyle('font-size', '24px');
+          this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_wPrepayment', false);
+          this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_woPrepayment', true);
+          this.$.totalpending.addClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_bigFont');
+          this.$.totalpending.removeClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_smallFont');
         }
       }
       if (!receiptHasPrepaymentAmount || !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
@@ -807,19 +836,25 @@ enyo.kind({
     //Update styles based on the prepayment amount
     if (receiptHasPrepaymentAmount && OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) < 0) {
       this.$.prepaymentLine.show();
-      this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', true);
-      this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', false);
-      this.$.totalpending.applyStyle('font-size', '18px');
+      this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_wPrepayment', true);
+      this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_woPrepayment', false);
+      this.$.totalpending.addClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_smallFont');
+      this.$.totalpending.removeClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_bigFont');
     } else {
       this.$.prepaymentLine.hide();
-      this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', false);
-      this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', true);
-      this.$.totalpending.applyStyle('font-size', '24px');
+      this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_wPrepayment', false);
+      this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_woPrepayment', true);
+      this.$.totalpending.addClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_bigFont');
+      this.$.totalpending.removeClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_smallFont');
     }
+
+    this.$.prepaymenttotalpending.removeClass('obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_defaultColor');
+    this.$.prepaymenttotalpending.removeClass('obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_alternativeColor');
+
     if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && multiOrders.get('amountToLayaway') === 0 && pendingPrepayment > 0 && pendingPrepayment !== OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment'))) {
       this.setPrepaymentTotalPending(OB.DEC.mul(pendingPrepayment, rate, precision), symbol, symbolAtRight);
       this.$.prepaymenttotalpending.show();
-      this.$.prepaymenttotalpending.applyStyle('color', 'white');
+      this.$.prepaymenttotalpending.addClass('obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_defaultColor');
       this.$.prepaymenttotalpendinglbl.show();
       this.$.prepaymentexactlbl.hide();
       this.$.deliverychangelbl.hide();
@@ -830,7 +865,7 @@ enyo.kind({
       this.$.prepaymenttotalpendinglbl.hide();
       if (pendingPrepayment === 0) {
         this.$.prepaymenttotalpending.hide();
-        this.$.prepaymenttotalpending.applyStyle('color', 'white');
+        this.$.prepaymenttotalpending.addClass('obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_defaultColor');
         this.$.prepaymentexactlbl.show();
         this.$.deliverychangelbl.hide();
       } else {
@@ -838,19 +873,21 @@ enyo.kind({
         this.$.prepaymentexactlbl.hide();
         if (multiOrders.get('prepaymentChangeMode')) {
           this.setPrepaymentTotalPending(OB.DEC.mul(multiOrders.getChange(), rate, precision), symbol, symbolAtRight);
-          this.$.prepaymenttotalpending.applyStyle('color', '#6cb33f');
+          this.$.prepaymenttotalpending.addClass('obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_alternativeColor');
           this.$.deliverychangelbl.show();
           this.$.prepaymentLine.show();
-          this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', true);
-          this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', false);
-          this.$.totalpending.applyStyle('font-size', '18px');
+          this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_wPrepayment', true);
+          this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_woPrepayment', false);
+          this.$.totalpending.addClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_smallFont');
+          this.$.totalpending.removeClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_bigFont');
         } else {
-          this.$.prepaymenttotalpending.applyStyle('color', 'white');
+          this.$.prepaymenttotalpending.addClass('obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_defaultColor');
           this.$.deliverychangelbl.hide();
           this.$.prepaymentLine.hide();
-          this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', false);
-          this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', true);
-          this.$.totalpending.applyStyle('font-size', '24px');
+          this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_wPrepayment', false);
+          this.$.paymentLine.addRemoveClass('obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_woPrepayment', true);
+          this.$.totalpending.addClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_bigFont');
+          this.$.totalpending.removeClass('obObposPointOfSaleUiPayment-paymentLine-totalpending_smallFont');
         }
       }
 
@@ -1241,6 +1278,7 @@ enyo.kind({
   animateErrorMessages: function () {
     if (OB.MobileApp.view.currentWindow === 'retail.pointofsale' && typeof (this.$.errorLabelArea) !== 'undefined') {
       clearInterval(this.animateErrorInterval);
+      // Not sure if this defaultStyle initialization is necessary as it is used once, and it is completely overrided when used
       var me = this,
           marginTop = 0,
           resizediStyle = '',
@@ -1254,11 +1292,13 @@ enyo.kind({
           marginTop = marginTop - 2;
           this.marginTop = marginTop;
           resizediStyle = 'margin-top: ' + marginTop + 'px';
+          // This inline style is allowed
           me.firstShowingObject.addStyles(resizediStyle);
         }, 100);
       }
       if (this.showingCount === 1) {
         defaultStyle = 'margin-top: ' + initialTop + 'px';
+        // This inline style is allowed
         this.firstShowingObject.addStyles(defaultStyle);
       }
     }
@@ -1309,6 +1349,7 @@ enyo.kind({
     if (inEvent.originator.type === 'error') {
       clearInterval(this.maxAnimateErrorInterval);
       clearInterval(this.animateErrorInterval);
+      // This inline style is allowed
       inEvent.originator.addStyles(this.marginTop);
     }
 
@@ -1490,7 +1531,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   kind: 'OB.UI.RegularButton',
-  style: 'width: 85%; max-width: 125px; float: right; margin: 5px 5px 10px 0px; height: 2.5em; display:block; clear: right; font-weight: normal; padding: 0px',
+  classes: 'obObposPointOfSaleUiProcessButton',
   processdisabled: false,
   localdisabled: false,
   disabled: false,
@@ -1538,6 +1579,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
+  classes: 'obObposPointOfSaleUiDoneButton',
   drawerOpened: true,
   processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'cancelLayaway', 'paymentDone', 'tapDoneButton', 'servicePriceCalculation'],
   init: function (model) {
@@ -1878,8 +1920,7 @@ enyo.kind({
   events: {
     onDeliveryPayment: ''
   },
-  classes: 'btn-icon-adaptative btnlink-green',
-  style: 'width: calc(50% - 5px); margin: 0px 5px 0px 0px; clear: unset',
+  classes: 'obObposPointOfSaleUiPrepaymentsDeliveryButton',
   processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'servicePriceCalculation'],
   tap: function () {
     if (this.disabled) {
@@ -1902,8 +1943,7 @@ enyo.kind({
   events: {
     onExactPayment: ''
   },
-  classes: 'btn-icon-adaptative btnlink-green',
-  style: 'width: calc(50% - 5px); margin: 0px 0px 0px 5px;',
+  classes: 'obObposPointOfSaleUiPrepaymentsExactButton',
   processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'servicePriceCalculation'],
   tap: function () {
     if (this.disabled) {
@@ -1926,7 +1966,7 @@ enyo.kind({
   events: {
     onExactPayment: ''
   },
-  classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
+  classes: 'obObposPointOfSaleUiExactButton',
   processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'servicePriceCalculation'],
   tap: function () {
     if (this.disabled) {
@@ -1939,55 +1979,57 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine',
-  classes: 'btnselect',
+  classes: 'obObposPointOfSaleUiRenderPaymentLine',
   handlers: {
     onRenderPaymentLine: 'renderPaymentLine'
   },
   components: [{
-    style: 'color:white;',
+    classes: 'obObposPointOfSaleUiRenderPaymentLine-container1',
     components: [{
-      style: 'float: left; width: 85%;',
+      classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-container1',
       components: [{
+        classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1',
         components: [{
           name: 'name',
-          style: 'float: left; width: 65%; padding: 5px 0px 0px 0px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
+          classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1-name'
         }, {
           name: 'amount',
-          style: 'float: left; width: 35%; padding: 5px 0px 0px 0px; text-align: right;'
+          classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1-amount'
         }, {
-          style: 'clear: both;'
+          classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1-element3 u-clearBoth'
         }]
       }, {
+        classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2',
         components: [{
           name: 'info',
-          style: 'float: left; width: 65%; padding: 5px 0px 0px 0px; font-size: smaller; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
+          classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2-info'
         }, {
           name: 'foreignAmount',
-          style: 'float: left; width: 35%; padding: 5px 0px 0px 0px; font-size: smaller; text-align: right;'
+          classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2-foreignAmount'
         }, {
-          style: 'clear: both;'
+          classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2-element3 u-clearBoth'
         }]
       }]
     }, {
-      style: 'float: left; width: 15%; text-align: right;',
+      classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-container2',
       components: [{
         name: 'removePayment',
         kind: 'OB.OBPOSPointOfSale.UI.RemovePayment',
-        style: 'width: 75%; max-width: 50px; height: 25px; margin-left: 10%;'
+        classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-container2-removePayment'
       }]
     }, {
-      style: 'float: left; width: 15%; text-align: right;',
+      classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-container3',
       components: [{
         name: 'reversePayment',
         kind: 'OB.OBPOSPointOfSale.UI.ReversePayment',
-        style: 'width: 75%; max-width: 50px; height: 25px; margin-left: 10%;'
+        classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-container3-reversePayment'
       }]
     }, {
-      style: 'clear: both;'
+      classes: 'obObposPointOfSaleUiRenderPaymentLine-container1-element4 u-clearBoth'
     }]
   }],
   renderPaymentLine: function (inSender, inEvent) {
-    this.addStyles('min-height: 29px;');
+    this.addClass('obObposPointOfSaleUiRenderPaymentLine_renderPaymentLine');
     if (this.model.get('reversedPaymentId')) {
       this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + OB.I18N.getLabel('OBPOS_ReversedPayment'));
       this.$.amount.setContent(this.model.printAmount());
@@ -2023,7 +2065,7 @@ enyo.kind({
       }
     }
     if (this.$.foreignAmount.content || this.$.info.content) {
-      this.$.removePayment.style = this.$.removePayment.style + ' margin-top: 10px;';
+      this.$.removePayment.addClass('obObposPointOfSaleUiRenderPaymentLine-container1-container2-removePayment_withContent');
     }
     if (this.model.get('isReversed') || (this.model.get('isPrePayment') && (this.model.get('reversedPaymentId') || !this.model.get('paymentAmount') || this.owner.owner.owner.owner.model.get('order').get('doCancelAndReplace')))) {
       this.$.removePayment.hide();
@@ -2047,17 +2089,17 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RemovePayment',
+  kind: 'OB.UI.SmallButton',
+  classes: 'obObposPointOfSaleUiRemovePayment obObposPointOfSaleUiRemovePayment_iconClearPayment',
   events: {
     onRemovePayment: ''
   },
-  kind: 'OB.UI.SmallButton',
-  classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-clearPayment',
   tap: function () {
     var me = this;
     if ((_.isUndefined(this.deleting) || this.deleting === false)) {
       this.deleting = true;
-      this.removeClass('btn-icon-clearPayment');
-      this.addClass('btn-icon-loading');
+      this.removeClass('obObposPointOfSaleUiRemovePayment_iconClearPayment');
+      this.addClass('obObposPointOfSaleUiRemovePayment_iconLoading');
       this.bubble('onMaxLimitAmountError', {
         show: false,
         maxLimitAmount: 0,
@@ -2068,8 +2110,8 @@ enyo.kind({
         payment: this.owner.model,
         removeCallback: function () {
           me.deleting = false;
-          me.removeClass('btn-icon-loading');
-          me.addClass('btn-icon-clearPayment');
+          me.removeClass('obObposPointOfSaleUiRemovePayment_iconLoading');
+          me.addClass('obObposPointOfSaleUiRemovePayment_iconClearPayment');
         }
       });
     }
@@ -2078,11 +2120,11 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ReversePayment',
+  kind: 'OB.UI.SmallButton',
+  classes: 'obObposPointOfSaleUiReversePayment obObposPointOfSaleUiReversePayment_iconReversePayment',
   events: {
     onReversePayment: ''
   },
-  kind: 'OB.UI.SmallButton',
-  classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-reversePayment',
   tap: function () {
     var me = this;
     if (OB.MobileApp.model.get('terminal').id !== me.owner.model.get('oBPOSPOSTerminal')) {
@@ -2097,8 +2139,8 @@ enyo.kind({
       action: function (popup) {
         if ((_.isUndefined(me.deleting) || me.deleting === false)) {
           me.deleting = true;
-          me.removeClass('btn-icon-reversePayment');
-          me.addClass('btn-icon-loading');
+          me.removeClass('obObposPointOfSaleUiReversePayment_iconReversePayment');
+          me.addClass('obObposPointOfSaleUiReversePayment_iconLoading');
           me.bubble('onMaxLimitAmountError', {
             show: false,
             maxLimitAmount: 0,
@@ -2116,8 +2158,8 @@ enyo.kind({
             sender: me,
             reverseCallback: function () {
               me.deleting = false;
-              me.removeClass('btn-icon-loading');
-              me.addClass('btn-icon-reversePayment');
+              me.removeClass('obobObposPointOfSaleUiReversePayment_iconLoading');
+              me.addClass('obObposPointOfSaleUiReversePayment_iconReversePayment');
             }
           });
         }
@@ -2132,7 +2174,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.CreditButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   i18nLabel: 'OBPOS_LblSellOnCredit',
-  classes: 'btn-icon-small btnlink-green',
+  classes: 'obObposPointOfSaleUiCreditButton',
   permission: 'OBPOS_receipt.creditsales',
   events: {
     onShowPopup: ''
@@ -2248,11 +2290,12 @@ enyo.kind({
     }
   }
 });
+
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LayawayButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   content: '',
-  classes: 'btn-icon-small btnlink-green',
+  classes: 'obObposPointOfSaleUiLayawayButton',
   permission: 'OBPOS_receipt.layawayReceipt',
   processesToListen: ['calculateReceipt', 'showPaymentTab', 'addProduct', 'addPayment', 'updatePending', 'updatePendingMultiOrders', 'paymentDone', 'servicePriceCalculation'],
   updateVisibility: function (isVisible) {
@@ -2380,6 +2423,7 @@ enyo.kind({
 enyo.kind({
   kind: 'enyo.Component',
   name: 'OB.Payments.Change',
+  classes: 'obPaymentsChange',
   statics: {
     getChangeRounded: function (change) {
       var precision, roundingto, roundinggap;
