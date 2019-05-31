@@ -399,8 +399,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   // loading it from the backend
   rowEditorEnter: function (record, editValues, rowNum) {
     if (this.view.actionHandler !== "org.openbravo.advpaymentmngt.actionHandler.ModifyPaymentPlanActionHandler") {
-      var i = 0,
-          editRecord = this.getEditedRecord(rowNum),
+      var i, editRecord = this.getEditedRecord(rowNum),
           gridFld, identifier, formFld, value, form = this.getEditForm();
 
       if (editRecord) {
@@ -981,6 +980,11 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   showInlineEditor: function (rowNum, colNum, newCell, newRow, suppressFocus) {
     var editForm, items, i, updatedBlur;
+
+    if (this.hasNewRecordWithEmptyMandatoryFields()) {
+      return;
+    }
+
     // retrieve the initial values only if a new row has been selected
     // see issue https://issues.openbravo.com/view.php?id=20653
     if (newRow) {
@@ -1022,13 +1026,17 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   hideInlineEditor: function (focusInBody, suppressCMHide) {
     var ret;
-    if (this.viewProperties && this.viewProperties.allowAdd && this.isRequiredFieldWithNoValue()) {
+    if (this.hasNewRecordWithEmptyMandatoryFields()) {
       return;
     } else {
       ret = this.Super('hideInlineEditor', arguments);
       this.validateRows();
       return ret;
     }
+  },
+
+  hasNewRecordWithEmptyMandatoryFields: function () {
+    return this.viewProperties && this.viewProperties.allowAdd && this.isRequiredFieldWithNoValue();
   },
 
   validateRows: function () {

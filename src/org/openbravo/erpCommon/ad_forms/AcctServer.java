@@ -2911,7 +2911,7 @@ public abstract class AcctServer {
     if (multiply) {
       return amount.multiply(conversionRateDoc.getRate());
     } else {
-      return amount.divide(conversionRateDoc.getRate(), 6, RoundingMode.HALF_EVEN);
+      return amount.divide(conversionRateDoc.getRate(), 12, RoundingMode.HALF_EVEN);
     }
   }
 
