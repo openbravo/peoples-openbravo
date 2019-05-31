@@ -276,7 +276,7 @@ enyo.kind({
             me.leftSubWindow.product.set('currentPrice', data.currentPrice);
           }
           };
-      if (event && event.target.getAttribute('id') !== 'terminal_containerWindow_pointOfSale_multiColumn_leftPanel_productdetailsview_leftSubWindowBody_body_stockOthers' && (this.leftSubWindow.line || !OB.UTIL.isCrossStoreProduct(this.leftSubWindow.product))) {
+      if (!this.leftSubWindow.forceSelectStore && event && event.target.getAttribute('id') !== 'terminal_containerWindow_pointOfSale_multiColumn_leftPanel_productdetailsview_leftSubWindowBody_body_stockOthers' && (this.leftSubWindow.line || !OB.UTIL.isCrossStoreProduct(this.leftSubWindow.product))) {
         var data = null;
         if (this.leftSubWindow.line) {
           data = {
@@ -284,7 +284,7 @@ enyo.kind({
             warehouse: this.leftSubWindow.line.get('warehouse'),
             organization: this.leftSubWindow.line.get('organization')
           };
-          if (OB.UTIL.isCrossStoreOrganization(this.leftSubWindow.line.get('organization'))) {
+          if (OB.UTIL.isCrossStoreOrganization(this.leftSubWindow.line.get('organization')) || OB.UTIL.isCrossStoreProduct(this.leftSubWindow.line.get('product'))) {
             data.currentPrice = this.leftSubWindow.line.get('product').get('currentPrice');
           } else {
             data.currentPrice = {
@@ -504,6 +504,7 @@ enyo.kind({
     }
     this.line = params.line || null;
     this.product = params.product;
+    this.forceSelectStore = params.forceSelectStore || false;
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(OB.UTIL.isNullOrUndefined(this.line));
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setDetailsView(this.$.leftSubWindowBody.$.body);
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.removeClass('btnlink-orange');

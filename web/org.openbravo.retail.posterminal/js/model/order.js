@@ -1273,8 +1273,9 @@
     },
 
     setUnit: function (line, qty, text) {
-      var permission, me = this;
-
+      var permission, me = this,
+          showProductCard = line.get('qty') < 0 && qty > 0 && OB.UTIL.isCrossStoreProduct(line.get('product')),
+          params = {};
       if (OB.DEC.isNumber(qty) && qty !== 0) {
         var oldqty = line.get('qty');
         permission = 'OBPOS_ReturnLine';
@@ -1302,6 +1303,14 @@
           var setQuantity = function () {
               // sets the new quantity
               line.set('qty', qty);
+              if (showProductCard) {
+                params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
+                params.product = line.get('product');
+                params.line = line;
+                params.forceSelectStore = true;
+                params.warehouse = line.get('warehouse');
+                OB.MobileApp.view.$.containerWindow.getRoot().showLeftSubWindow({}, params);
+              }
               };
           // sets the undo action
           if (this.get('multipleUndo')) {
@@ -3712,7 +3721,9 @@
     },
 
     returnLine: function (line, options, skipValidaton) {
-      var me = this;
+      var me = this,
+          showProductCard = line.get('qty') < 0 && OB.UTIL.isCrossStoreProduct(line.get('product')),
+          params = {};
       if (line.get('qty') > 0) {
         line.get('product').set('ignorePromotions', true);
       } else {
@@ -3765,6 +3776,14 @@
           });
           line.set('promotions', promotions);
         }
+      }
+      if (showProductCard) {
+        params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
+        params.product = line.get('product');
+        params.line = line;
+        params.forceSelectStore = true;
+        params.warehouse = line.get('warehouse');
+        OB.MobileApp.view.$.containerWindow.getRoot().showLeftSubWindow({}, params);
       }
       this.set('skipCalculateReceipt', false);
       this.calculateReceipt();
