@@ -1604,7 +1604,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 
 .obrdm-cell-orderline-left {
   float: left;
-  display: inline-block; 
+  display: inline-block;
   border-top: 1px solid #ccc;
   border-right: 1px solid #ccc;
   padding: 5px 0px 0px 5px;
@@ -1614,19 +1614,19 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 .obrdm-cell-orderline-left-info {
   float: left;
   width: 300px;
-  display: inline-block; 
+  display: inline-block;
   padding-left: 5px;
 }
 
 
-li.obrdm-order:first-child > button > div.obrdm-row-order,
-li.obrdm-order + li.obrdm-orderline > button > div > div.obrdm-cell-orderline-left,
-li.obrdm-order + li.obrdm-orderline > button > div > div > div.obrdm-cell-orderline-right-col1:first-child, 
-li.obrdm-order + li.obrdm-orderline > button > div > div > div.obrdm-cell-orderline-right-col2:first-child {
+li.obrdm-order:first-child>button>div.obrdm-row-order,
+li.obrdm-order+li.obrdm-orderline>button>div>div.obrdm-cell-orderline-left,
+li.obrdm-order+li.obrdm-orderline>button>div>div>div.obrdm-cell-orderline-right-col1:first-child,
+li.obrdm-order+li.obrdm-orderline>button>div>div>div.obrdm-cell-orderline-right-col2:first-child {
   border-top: none;
 }
 
-li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-orderline-right-col1:first-child {
+li.obrdm-orderline:last-child>button>div>div:last-child>div.obrdm-cell-orderline-right-col1:first-child {
   border-bottom: none;
 }
 
@@ -1638,15 +1638,15 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
   border-top: 1px solid #ccc;
   width: 174px;
   height: 33px;
-  display: inline-block; 
-  float: left; 
+  display: inline-block;
+  float: left;
 }
 
 .obrdm-cell-orderline-right-col2 {
-  border-left: 1px solid #ccc;  
+  border-left: 1px solid #ccc;
   width: 143px;
-  display: inline-block; 
-  float: left; 
+  display: inline-block;
+  float: left;
 }
 
 .obrdm-cell-orderline-right-container {
@@ -1660,12 +1660,12 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
   border: none;
   color: #555;
   padding: 4px;
-  width: 100%; 
-  height: 32px; 
+  width: 100%;
+  height: 32px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-}	
+}
 
 .obrdm-orderline-icon {
   margin-top: 15px;
@@ -1674,32 +1674,32 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 .obrdm-checkbox-half-on {
   width: 37px;
   height: 30px;
-  float: left; 
+  float: left;
   display: inline-block;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-half-on.svg');
   background-repeat: no-repeat;
 }
- 
+
 .obrdm-checkbox-on {
   width: 37px;
   height: 30px;
-  float: left; 
+  float: left;
   display: inline-block;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
   background-repeat: no-repeat;
 }
- 
+
 .obrdm-checkbox-off {
   width: 37px;
   height: 30px;
-  float: left; 
+  float: left;
   display: inline-block;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
   background-repeat: no-repeat;
 }
- 
+
 .obrdm-button-minus-plus {
-  background-color: #e2e2e2;    
+  background-color: #e2e2e2;
   height: 18px;
   float: left;
   margin: 7px 4px 0px 4px;
@@ -1707,7 +1707,7 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-button-minus-plus:hover {
-  background-color: #e9e9e9;    
+  background-color: #e9e9e9;
 }
 
 .obrdm-button-minus {
@@ -1721,16 +1721,16 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-button-info {
-  background-color: #e2e2e2;    
+  background-color: #e2e2e2;
   height: 19px;
   width: 15px;
   padding: 0px 0px 0px 4px;
-  float: right; 
+  float: right;
   margin: 10px 4px 0px 4px;
 }
 
 .obrdm-button-info:hover {
-  background-color: #e9e9e9;    
+  background-color: #e9e9e9;
 }
 
 .obrdm-button-info-normal {
@@ -1756,7 +1756,7 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-cell-orderline-button {
-  background-color: #e2e2e2;    
+  background-color: #e2e2e2;
   width: 130px;
   height: 20px;
   padding: 5px 0px 0px 5px;
@@ -1766,7 +1766,7 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-cell-orderline-button:hover {
-  background-color: #e9e9e9;    
+  background-color: #e9e9e9;
 }
 
 .obrdm-text-line {
@@ -1778,12 +1778,12 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-button-select-all {
-  width: 160px; 
+  width: 160px;
   margin: 0px 9px 8px 0px;
 }
 
 .obrdm-button-prepared-selected {
-  width: 170px; 
+  width: 170px;
   margin: 0px 9px 8px 0px;
 }
 
@@ -1796,30 +1796,30 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-filter-selector-inner-1 {
-  display: table; 
+  display: table;
   width: 100%;
 }
 
 .obrdm-filter-selector-inner-1-1 {
-  display: table-cell; 
-  text-align: right; 
+  display: table-cell;
+  text-align: right;
   width: 38%;
 }
 
 .obrdm-filter-selector-inner-2 {
-  display: table-cell; 
-  text-align: center; 
+  display: table-cell;
+  text-align: center;
   width: 24%;
 }
 
 .obrdm-filter-selector-inner-3 {
-  display: table-cell; 
+  display: table-cell;
   width: 38%;
 }
 
 .obrdm-listitembutton {
-  height: auto; 
-  padding: 0px !important; 
+  height: auto;
+  padding: 0px !important;
   border-bottom: none !important;
 }
 
@@ -1836,13 +1836,13 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-orderline-prouct {
-  margin-top: 12px; 
+  margin-top: 12px;
   width: 268px;
 }
 
 .obrdm-lbl-prepare {
-  float: left; 
-  margin-top: 9px; 
+  float: left;
+  margin-top: 9px;
   padding-left: 5px;
 }
 
@@ -1851,14 +1851,14 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-orderline-qty {
-  width: 25px; 
-  height: 16px; 
-  float: left; 
+  width: 25px;
+  height: 16px;
+  float: left;
   margin-top: 4px;
 }
 
 .obrdm-orderline-deliverymode {
-  margin-top: 7px; 
+  margin-top: 7px;
   padding-left: 5px;
 }
 
@@ -1867,15 +1867,15 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-list-orders-renderloading {
-  padding: 20px; 
-  text-align: center; 
-  font-weight: bold; 
-  font-size: 30px; 
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 30px;
   color: #cccccc;
 }
 
 .obrdm-prepare-confirmation {
-  width:500px;
+  width: 500px;
   height: 350px
 }
 
@@ -1884,19 +1884,19 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-listwarehouseline-line {
-  line-height: 23px; 
+  line-height: 23px;
   width: 100%;
 }
 
 .obrdm-listwarehouseline-organization {
-  float: left; 
+  float: left;
   width: 75%;
 }
 
 .obrdm-listwarehouseline-quantity {
-  float: left; 
-  width: 20%; 
-  font-weight: bold; 
+  float: left;
+  width: 20%;
+  font-weight: bold;
   text-align: right;
 }
 
@@ -1905,21 +1905,21 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-listwarehouse-rendercomponent {
-  padding: 20px; 
-  text-align: center; 
-  font-weight: bold; 
-  font-size: 30px; 
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 30px;
   color: #cccccc;
 }
 
 .obrdm-orderlineinfo-buttonfooter {
-  display: table; 
-  width: 100%; 
+  display: table;
+  width: 100%;
   padding-bottom: 20px;
 }
 
 .obrdm-orderlineinfo-infobuttons {
-  display: table-cell; 
+  display: table-cell;
   text-align: center;
 }
 
@@ -1928,36 +1928,36 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-orderlineinfo-line {
-  display: table; 
-  width: 100%; 
+  display: table;
+  width: 100%;
   padding: 0px 0px 16px 0px;
 }
 
 .obrdm-orderlineinfo-line-label {
-  display: table-cell; 
-  width: 35%; 
-  text-align: right; 
+  display: table-cell;
+  width: 35%;
+  text-align: right;
   padding: 0px 10px 10px 10px;
 }
 
 .obrdm-orderlineinfo-line-value {
-  display: table-cell; 
-  width: 65%; 
+  display: table-cell;
+  width: 65%;
   padding: 0px 20px 10px 20px;
-} 
+}
 
 .obrdm-orderlineinfo-table {
   padding: 28px;
 }
 
 .obrdm-oederlineinfostandard-buttonfooter {
-  display: table; 
-  width: 100%; 
+  display: table;
+  width: 100%;
   padding-bottom: 20px;
 }
 
 .obrdm-oederlineinfostandard-infobuttons {
-  display: table-cell; 
+  display: table-cell;
   text-align: center;
 }
 
@@ -1966,58 +1966,58 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 }
 
 .obrdm-orderlineinfopopupstandard {
-  display: table; 
-  width: 100%; 
+  display: table;
+  width: 100%;
 }
 
 .obrdm-orderlineinfopopupstandard-searchkey {
-  display: table-row; 
+  display: table-row;
 }
 
 .obrdm-orderlineinfopopupstandard-searchkey-lbl {
-  display: table-cell; 
-  width: 20%; 
-  padding: 2px; 
+  display: table-cell;
+  width: 20%;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-searchkey-value {
-  display: table-cell; 
-  width: 80%; 
-  padding: 2px; 
+  display: table-cell;
+  width: 80%;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-name {
-  display: table-row; 
-  padding: 2px; 
+  display: table-row;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-name-lbl {
-  display: table-cell; 
-  width: 20%; 
-  padding: 2px; 
+  display: table-cell;
+  width: 20%;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-name-value {
-  display: table-cell; 
-  width: 80%; 
-  padding: 2px; 
+  display: table-cell;
+  width: 80%;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-ean {
-  display: table-row; 
-  padding: 2px; 
+  display: table-row;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-ean-lbl {
-  display: table-cell; 
-  width: 20%; 
-  padding: 2px; 
+  display: table-cell;
+  width: 20%;
+  padding: 2px;
 }
 
 .obrdm-orderlineinfopopupstandard-ean-value {
-  display: table-cell; 
-  width: 80%; 
-  padding: 2px; 
+  display: table-cell;
+  width: 80%;
+  padding: 2px;
 }
 
 .iconDeliveryServices_unreviewed {

@@ -325,7 +325,6 @@ public class InvoiceUtils {
         ? order.getCurrency().getPricePrecision().intValue()
         : order.getCurrency().getObposPosprecision().intValue();
 
-    boolean multipleShipmentsLines = false;
     int lineNo = 0;
     for (int i = 0; i < invoicelines.length(); i++) {
       final List<ShipmentInOutLine> iolList = lineReferences.get(i)
@@ -354,9 +353,6 @@ public class InvoiceUtils {
           }
         }
       }
-      if (iolNotInvoicedList.size() > 1) {
-        multipleShipmentsLines = true;
-      }
       if (iolNotInvoicedList.size() == 0) {
         lineNo = lineNo + 10;
         createInvoiceLine(invoice, order, jsoninvoice, invoicelines, lineReferences, i,
@@ -380,9 +376,6 @@ public class InvoiceUtils {
               iolNotInvoicedList.size() + 1, movementQtyTotal);
         }
       }
-    }
-    if (multipleShipmentsLines) {
-      updateTaxes(invoice);
     }
   }
 
@@ -488,25 +481,6 @@ public class InvoiceUtils {
       invoice.getInvoiceTaxList().add(invoiceTax);
     }
 
-  }
-
-  private void updateTaxes(Invoice invoice) throws JSONException {
-    int pricePrecision = invoice.getCurrency().getObposPosprecision() == null
-        ? invoice.getCurrency().getPricePrecision().intValue()
-        : invoice.getCurrency().getObposPosprecision().intValue();
-    for (InvoiceTax taxInv : invoice.getInvoiceTaxList()) {
-      BigDecimal taxAmt = BigDecimal.ZERO;
-      BigDecimal taxableAmt = BigDecimal.ZERO;
-      for (InvoiceLineTax taxLine : invoice.getInvoiceLineTaxList()) {
-        if (taxLine.getTax() == taxInv.getTax()) {
-          taxAmt = taxAmt.add(taxLine.getTaxAmount());
-          taxableAmt = taxableAmt.add(taxLine.getTaxableAmount());
-        }
-      }
-      taxInv.setTaxableAmount(taxableAmt.setScale(pricePrecision, RoundingMode.HALF_UP));
-      taxInv.setTaxAmount(taxAmt.setScale(pricePrecision, RoundingMode.HALF_UP));
-      OBDal.getInstance().save(taxInv);
-    }
   }
 
   public FIN_PaymentSchedule createPSInvoice(Order order, Invoice invoice) {

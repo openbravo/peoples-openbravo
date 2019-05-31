@@ -21,7 +21,7 @@
       onRearrangedEditButtonBar: 'hideShowButton'
     },
     hideShowButton: function () {
-      this.setShowing(this.model.get('order').get('orderType') !== 1);
+      this.setShowing(this.model.get('order').get('orderType') !== 1 && OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true));
     },
     tap: function () {
       if (OB.UTIL.isNullOrUndefined(this.detailsView) && this.owner.owner.receipt.get('hasbeenpaid') === 'Y') {
@@ -142,7 +142,7 @@
       if (hideButton) {
         me.setShowing(false);
       } else {
-        me.setShowing(true);
+        me.setShowing(OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true));
       }
     },
     setDetailsView: function (view) {
