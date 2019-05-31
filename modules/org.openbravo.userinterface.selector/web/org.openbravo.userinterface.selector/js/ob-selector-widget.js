@@ -821,7 +821,7 @@ isc.OBSelectorWidget.addProperties({
       } else if (param === 'focus') {
         this._selector.focus();
       } else if (param === 'blur') {
-        var doNothing = 0; // prevent empty block
+        // prevent empty block
       } else {
         return true;
       }

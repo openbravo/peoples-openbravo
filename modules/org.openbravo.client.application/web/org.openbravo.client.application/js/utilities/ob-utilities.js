@@ -1137,7 +1137,7 @@ OB.Utilities.generateOBColor = function (r, g, b, a, seed) {
       seed = (new Date()).getTime();
     }
     seed = seed.toString();
-    seed = seed.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '0');
+    seed = seed.replace(/[&/\\#,+()$~%.'":*?<>{}]/g, '0');
     seed = seed.replace(/[a-j]/g, '1').replace(/[j-t]/g, '2').replace(/[u-z]/g, '3');
     seed = seed.replace(/[A-J]/g, '4').replace(/[J-T]/g, '4').replace(/[U-Z]/g, '6');
     seed = seed + seed.length.toString();
