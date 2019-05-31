@@ -483,6 +483,7 @@ enyo.kind({
       }, this);
       filterSelector.fixedColumn = id;
       filterSelector.searchAction();
+      filterSelector.fixedColumn = '';
     }
     var isMultiselect = this.args.multiselect === true;
     this.$.body.$.receiptsList.$.openreceiptslistitemprinter.multiselect = isMultiselect;
