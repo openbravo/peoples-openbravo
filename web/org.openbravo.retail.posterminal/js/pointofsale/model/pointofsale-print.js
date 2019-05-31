@@ -436,6 +436,7 @@
       // Show this button entry only if there are 
       dialogbuttons.push({
         name: 'selectAnotherPrinterButton',
+        classes: 'selectAnotherPrinterButton',
         label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
         action: function () {
           OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
