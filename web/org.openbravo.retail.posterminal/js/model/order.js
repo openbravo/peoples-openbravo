@@ -2585,7 +2585,7 @@
         function checkLineStock(stockCallback) {
           if (OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
             var positiveQty = OB.DEC.compare(qty) > 0,
-                checkStock = positiveQty && (productStatus.restrictsaleoutofstock || OB.UTIL.isCrossStoreProduct(p));
+                checkStock = positiveQty && (productStatus.restrictsaleoutofstock || (OB.UTIL.isCrossStoreProduct(p) && (!line || OB.DEC.compare(line.get('qty')) > 0)));
 
             OB.UTIL.HookManager.executeHooks('OBPOS_CheckStockAddProduct', {
               order: me,
