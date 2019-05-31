@@ -277,7 +277,7 @@ enyo.kind({
   }],
   components: [{
     name: 'buttonContainer',
-    style: 'display: flex; flex-wrap: wrap;'
+    style: 'display: flex; flex-wrap: wrap; justify-content: center;'
   }],
   initComponents: function () {
     this.inherited(arguments);
