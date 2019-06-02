@@ -509,7 +509,7 @@ enyo.kind({
     }
     this.line = params.line || null;
     this.product = params.product;
-    this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(OB.UTIL.isNullOrUndefined(this.line));
+    this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(OB.UTIL.isNullOrUndefined(this.line) && OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true));
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setDetailsView(this.$.leftSubWindowBody.$.body);
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.removeClass('btnlink-orange');
     this.localStockModel = null;
