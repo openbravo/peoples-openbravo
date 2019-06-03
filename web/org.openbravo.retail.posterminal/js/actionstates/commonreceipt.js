@@ -72,6 +72,16 @@ new OB.State.BackboneProperty({
 OB.MobileApp.statesRegistry.register(
 new OB.State.BackboneProperty({
   window: 'retail.pointofsale',
+  name: 'receipt.hasBeenPaid',
+  object: function (view) {
+    return view.model.get('order');
+  },
+  property: 'hasbeenpaid'
+}));
+
+OB.MobileApp.statesRegistry.register(
+new OB.State.BackboneProperty({
+  window: 'retail.pointofsale',
   name: 'receipt.orderType',
   object: function (view) {
     return view.model.get('order');

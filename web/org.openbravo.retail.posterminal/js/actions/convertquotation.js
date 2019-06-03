@@ -23,15 +23,15 @@
       var currentView = view.state.readState({
         name: 'window.currentView'
       }).name;
-      var isPaid = view.state.readState({
-        name: 'receipt.isPaid'
+      var hasBeenPaid = view.state.readState({
+        name: 'receipt.hasBeenPaid'
       });
       var isQuotation = view.state.readState({
         name: 'receipt.isQuotation'
       });
 
       var active = currentView === 'order';
-      active = active && isQuotation && isPaid && !OB.UTIL.isCrossStoreReceipt(view.model);
+      active = active && isQuotation && hasBeenPaid === 'Y' && !OB.UTIL.isCrossStoreReceipt(view.model.get('order'));
       return active;
     },
     command: function (view) {
