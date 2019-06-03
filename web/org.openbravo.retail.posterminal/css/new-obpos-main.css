@@ -4853,15 +4853,61 @@
 
 
 
+/***********************   ***********************/
+/*            File: approvalreason-modal.js      */
+/*         Folder: js/closecash/components/      */
+/***********************   ***********************/
+/*
+# Component: OB.UI.Modals.btnModalApprovalReasonAccept
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obUiModalsBtnModalApprovalReasonAccept {}
 
 
 
+/*
+# Component: OB.UI.ModalApprovalReasonList
+# Inherits: [OB.UI.List]
+*/
+.obUiModalApprovalReasonList {
+  width: 80%;
+
+  height: 40px;
+  background-color: var(--color-primary-lighter);
+  padding: 4px;
+  margin-bottom: 9px;
+  color: #555;
+  border: var(--bottomseparator-slim);
+}
 
 
 
+/*
+# Component: OB.UI.ModalApprovalReason
+# Inherits: [OB.UI.ModalAction]
+*/
+.obUiModalApprovalReason {}
 
+.obUiModalApprovalReason-bodyContent {}
 
+.obUiModalApprovalReason-bodyContent-labelApprovalReason {
+  text-align: right;
+  padding-right:10px;
+  width: 50%;
+  height: 40px;
+  float: left;
+}
 
+.obUiModalApprovalReason-bodyContent-approvalReason {
+  width: 45%;
+  float: left;
+}
+
+.obUiModalApprovalReason-bodyButtons {}
+
+.obUiModalApprovalReason-bodyButtons-obUiModalsBtnModalApprovalReasonAccept {}
+
+.obposModaApprovalReasonl {}
 
 
 

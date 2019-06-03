@@ -12,6 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.Modals.btnModalApprovalReasonAccept',
+  classes: 'obUiModalsBtnModalApprovalReasonAccept',
   i18nContent: 'OBMOBC_LblOk',
   tap: function () {
     this.model.set('approvals', {
@@ -30,8 +31,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.List',
   name: 'OB.UI.ModalApprovalReasonList',
-  classes: 'combo',
-  style: 'width: 80%',
+  classes: 'obUiModalApprovalReasonList',
   renderLine: enyo.kind({
     kind: 'enyo.Option',
     initComponents: function () {
@@ -49,21 +49,25 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalApprovalReason',
+  classes: 'obUiModalApprovalReason',
   closeOnEscKey: true,
   autoDismiss: true,
   bodyContent: {
+    classes: 'obUiModalApprovalReason-bodyContent',
     components: [{
       name: 'labelApprovalReason',
-      style: 'text-align: right; padding-right:10px; width: 50%; height: 40px; float: left;'
+      classes: 'obUiModalApprovalReason-bodyContent-labelApprovalReason'
     }, {
-      style: 'width: 45%; float: left;',
+      classes: 'obUiModalApprovalReason-bodyContent-approvalReason',
       kind: 'OB.UI.ModalApprovalReasonList',
       name: 'approvalReason'
     }]
   },
   i18nHeader: 'OBPOS_ApprovalReason',
   bodyButtons: {
+    classes: 'obUiModalApprovalReason-bodyButtons',
     components: [{
+      classes: 'obUiModalApprovalReason-bodyButtons-obUiModalsBtnModalApprovalReasonAccept',
       kind: 'OB.UI.Modals.btnModalApprovalReasonAccept'
     }]
   },
@@ -88,5 +92,6 @@ enyo.kind({
 
 OB.UI.WindowView.registerPopup('OB.OBPOSCashUp.UI.CashUp', {
   kind: 'OB.UI.ModalApprovalReason',
+  classes: 'obposModaApprovalReasonl',
   name: 'OBPOS_modalApprovalReason'
 });
