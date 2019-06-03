@@ -12,37 +12,38 @@
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUpInfo',
+  classes: 'obObposCashupUiCashupInfo',
   published: {
     model: null
   },
   components: [{
-    style: 'position: relative; background: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
+    classes: 'obObposCashupUiCashupInfo-container1',
     components: [{ //clock here
       kind: 'OB.UI.Clock',
-      classes: 'pos-clock'
+      classes: 'obObposCashupUiCashupInfo-container1-obUiClock'
     }, {
       // process info
-      style: 'padding: 5px',
+      classes: 'obObposCashupUiCashupInfo-container1-element1',
       initialize: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_LblCashUpProcess'));
       }
     }, {
-      style: 'padding: 3px',
+      classes: 'obObposCashupUiCashupInfo-container1-element2',
       initialize: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_LblStep1'));
       }
     }, {
-      style: 'padding: 3px',
+      classes: 'obObposCashupUiCashupInfo-container1-element3',
       initialize: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_LblStep2'));
       }
     }, {
-      style: 'padding: 3px',
+      classes: 'obObposCashupUiCashupInfo-container1-element4',
       initialize: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_LblStep3'));
       }
     }, {
-      style: 'padding: 3px',
+      classes: 'obObposCashupUiCashupInfo-container1-element5',
       initialize: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_LblStep4'));
       }

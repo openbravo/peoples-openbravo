@@ -4911,6 +4911,65 @@
 
 
 
+/***********************   ***********************/
+/*              File: closeinfo.js               */
+/*          Folder: js/closecash/view            */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashUp.UI.CashUpInfo
+*/
+.obObposCashupUiCashupInfo {}
+
+.obObposCashupUiCashupInfo-container1 {
+  position: relative;
+  background: #363636;
+  color: var(--color-primary-lighter);
+  height: 200px;
+  margin: 5px;
+  padding: 5px;
+}
+
+.obObposCashupUiCashupInfo-container1-obUiClock {
+  /*Inherits: [OB.UI.Clock]*/
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  text-align: center;
+}
+
+.obObposCashupUiCashupInfo-container1-element1 {
+  padding: 5px;
+}
+
+.obObposCashupUiCashupInfo-container1-element2 {
+  padding: 3px;
+}
+
+.obObposCashupUiCashupInfo-container1-element3 {
+  padding: 3px;
+}
+
+.obObposCashupUiCashupInfo-container1-element4 {
+  padding: 3px;
+}
+
+.obObposCashupUiCashupInfo-container1-element5 {
+  padding: 3px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*****************/
 /*      JGA      */
