@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -1318,25 +1318,22 @@ public abstract class AcctServer {
         OBQuery<ConversionRateDoc> conversionQuery = null;
         int conversionCount = 0;
         if (AD_Table_ID.equals(TABLEID_Invoice)) {
-          conversionQuery = OBDal.getInstance()
-              .createQuery(ConversionRateDoc.class, "invoice = '" + Record_ID + "' and currency='"
-                  + currency + "' and toCurrency='" + acctSchema.m_C_Currency_ID + "'");
+          String whereClause = "invoice.id = :recordId and currency.id = :currency and toCurrency.id = :toCurrency";
+          conversionQuery = OBDal.getInstance().createQuery(ConversionRateDoc.class, whereClause);
         } else if (AD_Table_ID.equals(TABLEID_Payment)) {
-          conversionQuery = OBDal.getInstance()
-              .createQuery(ConversionRateDoc.class, "payment = '" + Record_ID + "' and currency='"
-                  + currency + "' and toCurrency='" + acctSchema.m_C_Currency_ID + "'");
+          String whereClause = "payment.id = :recordId and currency.id = :currency and toCurrency.id = :toCurrency";
+          conversionQuery = OBDal.getInstance().createQuery(ConversionRateDoc.class, whereClause);
         } else if (AD_Table_ID.equals(TABLEID_Transaction)) {
-          conversionQuery = OBDal.getInstance()
-              .createQuery(ConversionRateDoc.class,
-                  "financialAccountTransaction = '" + Record_ID + "' and currency='" + currency
-                      + "' and toCurrency='" + acctSchema.m_C_Currency_ID + "'");
+          String whereClause = "financialAccountTransaction.id = :recordId and currency.id = :currency and toCurrency.id = :toCurrency";
+          conversionQuery = OBDal.getInstance().createQuery(ConversionRateDoc.class, whereClause);
         } else if (AD_Table_ID.equals(TABLEID_GLJournal)) {
-          conversionQuery = OBDal.getInstance()
-              .createQuery(ConversionRateDoc.class,
-                  "journalEntry = '" + Record_ID + "' and currency='" + currency
-                      + "' and toCurrency='" + acctSchema.m_C_Currency_ID + "'");
+          String whereClause = "journalEntry.id = :recordId and currency.id = :currency and toCurrency.id = :toCurrency";
+          conversionQuery = OBDal.getInstance().createQuery(ConversionRateDoc.class, whereClause);
         }
         if (conversionQuery != null) {
+          conversionQuery.setNamedParameter("recordId", Record_ID);
+          conversionQuery.setNamedParameter("currency", currency);
+          conversionQuery.setNamedParameter("toCurrency", acctSchema.m_C_Currency_ID);
           conversionCount = conversionQuery.count();
         }
         try {
@@ -2914,7 +2911,7 @@ public abstract class AcctServer {
     if (multiply) {
       return amount.multiply(conversionRateDoc.getRate());
     } else {
-      return amount.divide(conversionRateDoc.getRate(), 6, RoundingMode.HALF_EVEN);
+      return amount.divide(conversionRateDoc.getRate(), 12, RoundingMode.HALF_EVEN);
     }
   }
 
