@@ -1653,7 +1653,6 @@ public class ImportModule implements Serializable {
         return updateModules; // return empty hashmap
       }
 
-      // for (int i = 0; i < updates.length; i++) {
       for (SimpleModule update : updates) {
         if (!ImportModuleData.existsVersion(conn, update.getVersionNo(),
             update.getModuleVersionID())) {
