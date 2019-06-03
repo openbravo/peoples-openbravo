@@ -125,6 +125,11 @@
           return;
         }
 
+        // Validate based new quantity of the selected line
+        if (receipt.validateAllowSalesWithReturn(selectedReceiptLine.get('qty') + this.calculateToAdd(receipt, selectedReceiptLine.get('qty'), value), false, selectedReceiptLines)) {
+          return;
+        }
+
         validateQuantity().then(function () {
           var selection = [];
           receipt.set('undo', null);
