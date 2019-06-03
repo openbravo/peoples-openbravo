@@ -5,7 +5,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 
 public class ModuleInstallDetail {
-  private java.lang.String[] dependencyErrors;
+  private String[] dependencyErrors;
   private Module[] modulesToInstall;
   private Module[] modulesToUpdate;
   private boolean validConfiguration;
@@ -40,11 +40,11 @@ public class ModuleInstallDetail {
     }
   }
 
-  public java.lang.String[] getDependencyErrors() {
+  public String[] getDependencyErrors() {
     return dependencyErrors;
   }
 
-  public void setDependencyErrors(java.lang.String[] dependencyErrors) {
+  public void setDependencyErrors(String[] dependencyErrors) {
     this.dependencyErrors = dependencyErrors;
   }
 

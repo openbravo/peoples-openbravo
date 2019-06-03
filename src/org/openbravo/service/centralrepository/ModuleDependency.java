@@ -5,11 +5,11 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 public class ModuleDependency {
-  private java.lang.String moduleID;
-  private java.lang.String moduleName;
-  private java.lang.String moduleVersionDependencyID;
-  private java.lang.String versionEnd;
-  private java.lang.String versionStart;
+  private String moduleID;
+  private String moduleName;
+  private String moduleVersionDependencyID;
+  private String versionEnd;
+  private String versionStart;
 
   public ModuleDependency() {
   }
@@ -49,43 +49,43 @@ public class ModuleDependency {
     }
   }
 
-  public java.lang.String getModuleID() {
+  public String getModuleID() {
     return moduleID;
   }
 
-  public void setModuleID(java.lang.String moduleID) {
+  public void setModuleID(String moduleID) {
     this.moduleID = moduleID;
   }
 
-  public java.lang.String getModuleName() {
+  public String getModuleName() {
     return moduleName;
   }
 
-  public void setModuleName(java.lang.String moduleName) {
+  public void setModuleName(String moduleName) {
     this.moduleName = moduleName;
   }
 
-  public java.lang.String getModuleVersionDependencyID() {
+  public String getModuleVersionDependencyID() {
     return moduleVersionDependencyID;
   }
 
-  public void setModuleVersionDependencyID(java.lang.String moduleVersionDependencyID) {
+  public void setModuleVersionDependencyID(String moduleVersionDependencyID) {
     this.moduleVersionDependencyID = moduleVersionDependencyID;
   }
 
-  public java.lang.String getVersionEnd() {
+  public String getVersionEnd() {
     return versionEnd;
   }
 
-  public void setVersionEnd(java.lang.String versionEnd) {
+  public void setVersionEnd(String versionEnd) {
     this.versionEnd = versionEnd;
   }
 
-  public java.lang.String getVersionStart() {
+  public String getVersionStart() {
     return versionStart;
   }
 
-  public void setVersionStart(java.lang.String versionStart) {
+  public void setVersionStart(String versionStart) {
     this.versionStart = versionStart;
   }
 

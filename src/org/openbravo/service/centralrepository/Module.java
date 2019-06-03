@@ -8,22 +8,22 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 
 public class Module {
-  private java.lang.String author;
-  private java.lang.String dbPrefix;
+  private String author;
+  private String dbPrefix;
   private ModuleDependency[] dependencies;
-  private java.lang.String description;
-  private java.lang.String help;
+  private String description;
+  private String help;
   private ModuleDependency[] includes;
-  private java.lang.String licenseAgreement;
-  private java.lang.String licenseType;
-  private java.lang.String moduleID;
-  private java.lang.String moduleVersionID;
-  private java.lang.String name;
-  private java.lang.String packageName;
-  private java.lang.String type;
-  private java.lang.String updateDescription;
-  private java.lang.String url;
-  private java.lang.String versionNo;
+  private String licenseAgreement;
+  private String licenseType;
+  private String moduleID;
+  private String moduleVersionID;
+  private String name;
+  private String packageName;
+  private String type;
+  private String updateDescription;
+  private String url;
+  private String versionNo;
   private boolean isCommercial;
   private HashMap additionalInfo;
 
@@ -108,19 +108,19 @@ public class Module {
     return modules;
   }
 
-  public java.lang.String getAuthor() {
+  public String getAuthor() {
     return author;
   }
 
-  public void setAuthor(java.lang.String author) {
+  public void setAuthor(String author) {
     this.author = author;
   }
 
-  public java.lang.String getDbPrefix() {
+  public String getDbPrefix() {
     return dbPrefix;
   }
 
-  public void setDbPrefix(java.lang.String dbPrefix) {
+  public void setDbPrefix(String dbPrefix) {
     this.dbPrefix = dbPrefix;
   }
 
@@ -132,19 +132,19 @@ public class Module {
     this.dependencies = dependencies;
   }
 
-  public java.lang.String getDescription() {
+  public String getDescription() {
     return description;
   }
 
-  public void setDescription(java.lang.String description) {
+  public void setDescription(String description) {
     this.description = description;
   }
 
-  public java.lang.String getHelp() {
+  public String getHelp() {
     return help;
   }
 
-  public void setHelp(java.lang.String help) {
+  public void setHelp(String help) {
     this.help = help;
   }
 
@@ -156,83 +156,83 @@ public class Module {
     this.includes = includes;
   }
 
-  public java.lang.String getLicenseAgreement() {
+  public String getLicenseAgreement() {
     return licenseAgreement;
   }
 
-  public void setLicenseAgreement(java.lang.String licenseAgreement) {
+  public void setLicenseAgreement(String licenseAgreement) {
     this.licenseAgreement = licenseAgreement;
   }
 
-  public java.lang.String getLicenseType() {
+  public String getLicenseType() {
     return licenseType;
   }
 
-  public void setLicenseType(java.lang.String licenseType) {
+  public void setLicenseType(String licenseType) {
     this.licenseType = licenseType;
   }
 
-  public java.lang.String getModuleID() {
+  public String getModuleID() {
     return moduleID;
   }
 
-  public void setModuleID(java.lang.String moduleID) {
+  public void setModuleID(String moduleID) {
     this.moduleID = moduleID;
   }
 
-  public java.lang.String getModuleVersionID() {
+  public String getModuleVersionID() {
     return moduleVersionID;
   }
 
-  public void setModuleVersionID(java.lang.String moduleVersionID) {
+  public void setModuleVersionID(String moduleVersionID) {
     this.moduleVersionID = moduleVersionID;
   }
 
-  public java.lang.String getName() {
+  public String getName() {
     return name;
   }
 
-  public void setName(java.lang.String name) {
+  public void setName(String name) {
     this.name = name;
   }
 
-  public java.lang.String getPackageName() {
+  public String getPackageName() {
     return packageName;
   }
 
-  public void setPackageName(java.lang.String packageName) {
+  public void setPackageName(String packageName) {
     this.packageName = packageName;
   }
 
-  public java.lang.String getType() {
+  public String getType() {
     return type;
   }
 
-  public void setType(java.lang.String type) {
+  public void setType(String type) {
     this.type = type;
   }
 
-  public java.lang.String getUpdateDescription() {
+  public String getUpdateDescription() {
     return updateDescription;
   }
 
-  public void setUpdateDescription(java.lang.String updateDescription) {
+  public void setUpdateDescription(String updateDescription) {
     this.updateDescription = updateDescription;
   }
 
-  public java.lang.String getUrl() {
+  public String getUrl() {
     return url;
   }
 
-  public void setUrl(java.lang.String url) {
+  public void setUrl(String url) {
     this.url = url;
   }
 
-  public java.lang.String getVersionNo() {
+  public String getVersionNo() {
     return versionNo;
   }
 
-  public void setVersionNo(java.lang.String versionNo) {
+  public void setVersionNo(String versionNo) {
     this.versionNo = versionNo;
   }
 

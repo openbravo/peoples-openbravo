@@ -9,18 +9,18 @@ import org.openbravo.base.exception.OBException;
 public class SimpleModule {
   private static final long serialVersionUID = 1L;
 
-  private java.lang.String author;
-  private java.lang.String description;
-  private java.lang.String help;
-  private java.lang.String licenseAgreement;
-  private java.lang.String licenseType;
-  private java.lang.String moduleID;
-  private java.lang.String moduleVersionID;
-  private java.lang.String name;
-  private java.lang.String type;
-  private java.lang.String updateDescription;
-  private java.lang.String url;
-  private java.lang.String versionNo;
+  private String author;
+  private String description;
+  private String help;
+  private String licenseAgreement;
+  private String licenseType;
+  private String moduleID;
+  private String moduleVersionID;
+  private String name;
+  private String type;
+  private String updateDescription;
+  private String url;
+  private String versionNo;
   private boolean isCommercial;
   private HashMap additionalInfo;
 
@@ -71,99 +71,99 @@ public class SimpleModule {
     }
   }
 
-  public java.lang.String getAuthor() {
+  public String getAuthor() {
     return author;
   }
 
-  public void setAuthor(java.lang.String author) {
+  public void setAuthor(String author) {
     this.author = author;
   }
 
-  public java.lang.String getDescription() {
+  public String getDescription() {
     return description;
   }
 
-  public void setDescription(java.lang.String description) {
+  public void setDescription(String description) {
     this.description = description;
   }
 
-  public java.lang.String getHelp() {
+  public String getHelp() {
     return help;
   }
 
-  public void setHelp(java.lang.String help) {
+  public void setHelp(String help) {
     this.help = help;
   }
 
-  public java.lang.String getLicenseAgreement() {
+  public String getLicenseAgreement() {
     return licenseAgreement;
   }
 
-  public void setLicenseAgreement(java.lang.String licenseAgreement) {
+  public void setLicenseAgreement(String licenseAgreement) {
     this.licenseAgreement = licenseAgreement;
   }
 
-  public java.lang.String getLicenseType() {
+  public String getLicenseType() {
     return licenseType;
   }
 
-  public void setLicenseType(java.lang.String licenseType) {
+  public void setLicenseType(String licenseType) {
     this.licenseType = licenseType;
   }
 
-  public java.lang.String getModuleID() {
+  public String getModuleID() {
     return moduleID;
   }
 
-  public void setModuleID(java.lang.String moduleID) {
+  public void setModuleID(String moduleID) {
     this.moduleID = moduleID;
   }
 
-  public java.lang.String getModuleVersionID() {
+  public String getModuleVersionID() {
     return moduleVersionID;
   }
 
-  public void setModuleVersionID(java.lang.String moduleVersionID) {
+  public void setModuleVersionID(String moduleVersionID) {
     this.moduleVersionID = moduleVersionID;
   }
 
-  public java.lang.String getName() {
+  public String getName() {
     return name;
   }
 
-  public void setName(java.lang.String name) {
+  public void setName(String name) {
     this.name = name;
   }
 
-  public java.lang.String getType() {
+  public String getType() {
     return type;
   }
 
-  public void setType(java.lang.String type) {
+  public void setType(String type) {
     this.type = type;
   }
 
-  public java.lang.String getUpdateDescription() {
+  public String getUpdateDescription() {
     return updateDescription;
   }
 
-  public void setUpdateDescription(java.lang.String updateDescription) {
+  public void setUpdateDescription(String updateDescription) {
     this.updateDescription = updateDescription;
   }
 
-  public java.lang.String getUrl() {
+  public String getUrl() {
     return url;
   }
 
-  public void setUrl(java.lang.String url) {
+  public void setUrl(String url) {
     this.url = url;
   }
 
-  public java.lang.String getVersionNo() {
+  public String getVersionNo() {
     return versionNo;
   }
 
-  public void setVersionNo(java.lang.String versionNo) {
+  public void setVersionNo(String versionNo) {
     this.versionNo = versionNo;
   }
 
