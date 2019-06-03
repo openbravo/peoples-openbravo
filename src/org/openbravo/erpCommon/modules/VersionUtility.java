@@ -48,8 +48,6 @@ import org.openbravo.service.centralrepository.CentralRepository.Service;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.ModuleInstallDetail;
-import org.openbravo.services.webservice.WebService3Impl;
-import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 
 public class VersionUtility {
   protected static ConnectionProvider pool;
@@ -689,33 +687,24 @@ public class VersionUtility {
       String[] moduleVersionToUpdateId, OBError obErrors, HashMap<String, String> maturityLevels)
       throws Exception {
     ModuleInstallDetail mid = null;
-    if (false) {
-      WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
-      WebService3Impl ws = loc.getWebService3();
-      String[] errors = new String[0];
 
-      mid = ws.checkConsistency(ImportModule.getInstalledModulesAndDeps(), moduleVersionId,
-          moduleVersionToUpdateId, maturityLevels);
-    } else {
-      JSONObject mods = ImportModule.getJsonInstalledModulesAndDeps();
-      JSONObject additionalInfo = new JSONObject(maturityLevels);
-      JSONObject req = new JSONObject();
-      req.put("modules", mods);
-      req.put("additionalInfo", additionalInfo);
+    JSONObject mods = ImportModule.getJsonInstalledModulesAndDeps();
+    JSONObject additionalInfo = new JSONObject(maturityLevels);
+    JSONObject req = new JSONObject();
+    req.put("modules", mods);
+    req.put("additionalInfo", additionalInfo);
 
-      JSONArray toInstall = new JSONArray();
-      Arrays.stream(moduleVersionId).forEach(toInstall::put);
-      req.put("toInstall", toInstall);
+    JSONArray toInstall = new JSONArray();
+    Arrays.stream(moduleVersionId).forEach(toInstall::put);
+    req.put("toInstall", toInstall);
 
-      JSONArray toUpdate = new JSONArray();
-      Arrays.stream(moduleVersionToUpdateId).forEach(toUpdate::put);
-      req.put("toUpdate", toUpdate);
+    JSONArray toUpdate = new JSONArray();
+    Arrays.stream(moduleVersionToUpdateId).forEach(toUpdate::put);
+    req.put("toUpdate", toUpdate);
 
-      JSONObject installDetails = CentralRepository.post(Service.CHECK_CONSISTENCY, req);
-      System.out.println(installDetails.toString(1));
+    JSONObject installDetails = CentralRepository.post(Service.CHECK_CONSISTENCY, req);
 
-      mid = org.openbravo.service.centralrepository.ModuleInstallDetail.fromJson(installDetails);
-    }
+    mid = org.openbravo.service.centralrepository.ModuleInstallDetail.fromJson(installDetails);
 
     String[] errors = mid.getDependencyErrors();
 

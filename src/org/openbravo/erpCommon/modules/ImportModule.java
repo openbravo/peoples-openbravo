@@ -30,7 +30,6 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +50,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.axis.AxisFault;
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.io.FileUtils;
 import org.apache.ddlutils.io.DataReader;
@@ -1629,36 +1627,20 @@ public class ImportModule implements Serializable {
       final String user = vars == null ? "0" : vars.getUser();
       ImportModuleData.insertLog(conn, user, "", "", "", "Scanning For Updates", "S");
 
-      if (false && !HttpsUtils.isInternetAvailable()) {
-        // Check Internet availability and set proxy if required
-        ImportModuleData.insertLog(conn, user, "", "", "",
-            "Scan for updates: Couldn't contact with webservice server", "E");
-        log4j.error("Scan for updates, error cound't reach ws server");
-        scanError.append("InternetNotAvailable");
-        return updateModules;
-      }
-
       List<SimpleModule> updates;
       try {
-        if (false) {
-          WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
-          WebService3Impl ws = loc.getWebService3();
-          updates = Arrays.asList(ws.moduleScanForUpdates(getInstalledModulesAndDeps(),
-              ModuleUtiltiy.getSystemMaturityLevels(false)));
-        } else {
-          JSONObject mods = getJsonInstalledModulesAndDeps();
-          JSONObject additionalInfo = new JSONObject(ModuleUtiltiy.getSystemMaturityLevels(false));
-          JSONObject req = new JSONObject();
-          req.put("modules", mods);
-          req.put("additionalInfo", additionalInfo);
+        JSONObject mods = getJsonInstalledModulesAndDeps();
+        JSONObject additionalInfo = new JSONObject(ModuleUtiltiy.getSystemMaturityLevels(false));
+        JSONObject req = new JSONObject();
+        req.put("modules", mods);
+        req.put("additionalInfo", additionalInfo);
 
-          JSONObject r = CentralRepository.post(Service.SCAN, req);
-          JSONArray jsonUpdates = r.getJSONObject("response").getJSONArray("updates");
-          updates = new ArrayList<SimpleModule>(jsonUpdates.length());
-          for (int i = 0; i < jsonUpdates.length(); i++) {
-            JSONObject update = jsonUpdates.getJSONObject(i);
-            updates.add(org.openbravo.service.centralrepository.SimpleModule.fromJson(update));
-          }
+        JSONObject r = CentralRepository.post(Service.SCAN, req);
+        JSONArray jsonUpdates = r.getJSONObject("response").getJSONArray("updates");
+        updates = new ArrayList<SimpleModule>(jsonUpdates.length());
+        for (int i = 0; i < jsonUpdates.length(); i++) {
+          JSONObject update = jsonUpdates.getJSONObject(i);
+          updates.add(org.openbravo.service.centralrepository.SimpleModule.fromJson(update));
         }
       } catch (final Exception e) {
         // do nothing just log the error
@@ -1925,46 +1907,15 @@ public class ImportModule implements Serializable {
     String strUrl = "";
     boolean isCommercial;
 
-    if (false) {
-      try {
-        loc = new WebService3ImplServiceLocator();
-        ws = loc.getWebService3();
-      } catch (final Exception e) {
-        log4j.error(e);
-        addLog("@CouldntConnectToWS@", ImportModule.MSG_ERROR);
-        try {
-          ImportModuleData.insertLog(ImportModule.pool, (vars == null ? "0" : vars.getUser()), "",
-              "", "", "Couldn't contact with webservice server", "E");
-        } catch (final ServletException ex) {
-          log4j.error(ex);
-        }
-        remoteModule.setError(true);
-        return remoteModule;
-      }
+    JSONObject versionInfo = CentralRepository.get(Service.VERSION_INFO,
+        Arrays.asList(moduleVersionID));
+    try {
+      System.out.println(versionInfo.toString(1));
 
-      try {
-        isCommercial = ws.isCommercial(moduleVersionID);
-        strUrl = ws.getURLforDownload(moduleVersionID);
-      } catch (AxisFault e1) {
-        addLog("@" + e1.getFaultCode() + "@", ImportModule.MSG_ERROR);
-        remoteModule.setError(true);
-        return remoteModule;
-      } catch (RemoteException e) {
-        addLog(e.getMessage(), ImportModule.MSG_ERROR);
-        remoteModule.setError(true);
-        return remoteModule;
-      }
-    } else {
-      JSONObject versionInfo = CentralRepository.get(Service.VERSION_INFO,
-          Arrays.asList(moduleVersionID));
-      try {
-        System.out.println(versionInfo.toString(1));
-
-        isCommercial = versionInfo.getJSONObject("response").getBoolean("commercial");
-        strUrl = versionInfo.getJSONObject("response").getString("url");
-      } catch (JSONException e) {
-        throw new OBException(e);
-      }
+      isCommercial = versionInfo.getJSONObject("response").getBoolean("commercial");
+      strUrl = versionInfo.getJSONObject("response").getString("url");
+    } catch (JSONException e) {
+      throw new OBException(e);
     }
 
     if (isCommercial && !ActivationKey.isActiveInstance()) {
