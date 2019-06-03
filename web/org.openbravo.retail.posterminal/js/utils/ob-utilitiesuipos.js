@@ -961,9 +961,5 @@ OB.UTIL.isCrossStoreProduct = function (product) {
 };
 
 OB.UTIL.isCrossStoreLine = function (line) {
-  return line instanceof OB.Model.OrderLine && line.has('organization') && OB.UTIL.isCrossStoreOrganization(line.get('organization'));
-};
-
-OB.UTIL.isCrossStoreOrganization = function (organization) {
-  return organization.id !== OB.MobileApp.model.get('terminal').organization;
+  return line instanceof OB.Model.OrderLine && line.has('organization') && line.get('organization').id !== OB.MobileApp.model.get('terminal').organization;
 };
