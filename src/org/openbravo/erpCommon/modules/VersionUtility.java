@@ -20,6 +20,7 @@
 package org.openbravo.erpCommon.modules;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,8 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
@@ -40,6 +43,8 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.ModuleMerge;
+import org.openbravo.service.centralrepository.CentralRepository;
+import org.openbravo.service.centralrepository.CentralRepository.Service;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.ModuleInstallDetail;
@@ -680,17 +685,39 @@ public class VersionUtility {
    * @param maturityLevels
    * @return ModuleInstallDetail with modulesToInstall, modulesToUpdate and isValidConfiguration
    */
-  static public ModuleInstallDetail checkRemote(VariablesSecureApp vars, String[] moduleVersionId,
+  public static ModuleInstallDetail checkRemote(VariablesSecureApp vars, String[] moduleVersionId,
       String[] moduleVersionToUpdateId, OBError obErrors, HashMap<String, String> maturityLevels)
       throws Exception {
-    WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
-    WebService3Impl ws = loc.getWebService3();
-    String[] errors = new String[0];
+    ModuleInstallDetail mid = null;
+    if (false) {
+      WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
+      WebService3Impl ws = loc.getWebService3();
+      String[] errors = new String[0];
 
-    ModuleInstallDetail mid = ws.checkConsistency(ImportModule.getInstalledModulesAndDeps(),
-        moduleVersionId, moduleVersionToUpdateId, maturityLevels);
+      mid = ws.checkConsistency(ImportModule.getInstalledModulesAndDeps(), moduleVersionId,
+          moduleVersionToUpdateId, maturityLevels);
+    } else {
+      JSONObject mods = ImportModule.getJsonInstalledModulesAndDeps();
+      JSONObject additionalInfo = new JSONObject(maturityLevels);
+      JSONObject req = new JSONObject();
+      req.put("modules", mods);
+      req.put("additionalInfo", additionalInfo);
 
-    errors = mid.getDependencyErrors();
+      JSONArray toInstall = new JSONArray();
+      Arrays.stream(moduleVersionId).forEach(toInstall::put);
+      req.put("toInstall", toInstall);
+
+      JSONArray toUpdate = new JSONArray();
+      Arrays.stream(moduleVersionToUpdateId).forEach(toUpdate::put);
+      req.put("toUpdate", toUpdate);
+
+      JSONObject installDetails = CentralRepository.post(Service.CHECK_CONSISTENCY, req);
+      System.out.println(installDetails.toString(1));
+
+      mid = org.openbravo.service.centralrepository.ModuleInstallDetail.fromJson(installDetails);
+    }
+
+    String[] errors = mid.getDependencyErrors();
 
     getOBError(obErrors, pool, vars, errors);
     return mid;
