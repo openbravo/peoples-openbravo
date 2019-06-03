@@ -50,7 +50,7 @@ function formatFiles {
 
 function getPrettierIgnorePatterns {
     PATTERNS=""
-    for mod in ${1} ; do
+    for mod in ${@} ; do
         PATTERNS="${PATTERNS} !"${mod}"/**"
     done
 
@@ -61,7 +61,8 @@ function formatAllFiles {
     if [[ -d ${SCAN_BASE_PATH}/../modules ]]; then
         echo "Formatter check for Core files"
         MODS_WITH_IGNORE=$(getModulesPathWithIgnoreFile ".prettierignore")
-        IGNORE_PATTERNS=$(getPrettierIgnorePatterns "${MODS_WITH_IGNORE}")
+        MODS_COMPLETELY_IGNORED=$(getModulesPathWithIgnoreFile ".jsignore")
+        IGNORE_PATTERNS=$(getPrettierIgnorePatterns "${MODS_WITH_IGNORE}" "${MODS_COMPLETELY_IGNORED}")
 
         runFormatterInCore "${IGNORE_PATTERNS}" "${FLAGS}"
         for mod in ${MODS_WITH_IGNORE} ; do

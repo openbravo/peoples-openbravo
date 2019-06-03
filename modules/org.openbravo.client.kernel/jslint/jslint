@@ -48,7 +48,7 @@ function lintFiles {
 
 function getEslintIgnorePatterns {
     PATTERNS=""
-    for mod in ${1} ; do
+    for mod in ${@} ; do
         PATTERNS="${PATTERNS} --ignore-pattern $(basename ${mod})"
     done
 
@@ -59,7 +59,8 @@ function lintAllFiles {
     if [[ -d ${SCAN_BASE_PATH}/../modules ]]; then
         echo "Lint check for Core files"
         MODS_WITH_IGNORE=$(getModulesPathWithIgnoreFile ".eslintignore")
-        IGNORE_PATTERNS=$(getEslintIgnorePatterns "${MODS_WITH_IGNORE}")
+        MODS_COMPLETELY_IGNORED=$(getModulesPathWithIgnoreFile ".jsignore")
+        IGNORE_PATTERNS=$(getEslintIgnorePatterns "${MODS_WITH_IGNORE}" "${MODS_COMPLETELY_IGNORED}")
 
         runLinterInCore  ${SCAN_BASE_PATH} "${IGNORE_PATTERNS}" "${FLAGS}"
         for mod in ${MODS_WITH_IGNORE} ; do
