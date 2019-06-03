@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,7 +69,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   private static String QA_ONLY_SPAIN_ROLE;
   private static final String CORE = "0";
   private static final String ORDER_WAREHOUSE_COLUMN = "2202";
-  private static final String ORDER_BP_COLUMN = "2762";
+  private static final String ORDER_CREATEDBY_COLUMN = "2166";
   private static final String ORDERLINE_ORDER_COLUMN = "2213";
 
   private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays
@@ -172,7 +172,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     try {
       exception.expect(OBSecurityException.class);
 
-      order.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class, USA_BP));
+      order.setCancelledorder(OBDal.getInstance().getProxy(Order.class, USA_ORDER));
       OBDal.getInstance().commitAndClose();
     } finally {
       OBContext.restorePreviousCrossOrgReferenceMode();
@@ -414,8 +414,8 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     try {
       core.setInDevelopment(false);
 
-      Column orderBP = OBDal.getInstance().get(Column.class, ORDER_BP_COLUMN);
-      orderBP.setAllowedCrossOrganizationReference(true);
+      Column orderCreatedBy = OBDal.getInstance().get(Column.class, ORDER_CREATEDBY_COLUMN);
+      orderCreatedBy.setAllowedCrossOrganizationReference(true);
 
       exception.expect(Exception.class);
       OBDal.getInstance().commitAndClose();
