@@ -1369,6 +1369,219 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   align-items: center;
 }
 
+.obpos-filter-selector {
+  padding: 10px;
+}
+
+.obpos-center-text{
+  text-align: center;
+}
+
+.obpos-store-information {
+  width: 35px;
+  height: 35px;
+  float: left; 
+  display: inline-block;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInfo.svg');
+  background-size: 35px 35px;
+  background-repeat: no-repeat;
+}
+
+.obpos-modal-store-selector {
+  width: 550px !important;
+}
+
+.obpos-list-store {
+  border-bottom: 1px solid #cccccc;
+}
+
+.obpos-list-store-renderloading {
+  padding: 20px; 
+  text-align: center; 
+  font-weight: bold; 
+  font-size: 30px; 
+  color: #cccccc;
+}
+
+.obpos-row-store-name {
+  float: left;
+  display: inline-block;
+  padding-top: 5px;
+  padding-left: 30px;
+}
+
+.obpos-row-store-space {
+  float: left;
+  padding-top: 5px;
+  width: 15%;
+}
+
+.obpos-row-store-standard-price {
+  float: right;
+  padding-top: 5px;
+  padding-left: 5px;
+  font-weight: bold;
+}
+
+.obpos-row-store-current-price {
+  float: right;
+  padding: 5px 15px 0px 5px;
+  font-weight: bold;
+  color: grey;
+}
+
+.obpos-row-store-stock {
+  float: right;
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 30px;
+  font-weight: bold;
+}
+
+.obpos-row-store-info {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+.obpos-clear-both {
+  clear: both;
+}
+
+.obpos-display-block {
+  display: block !important; 
+}
+
+.obpos-btnlink {
+  width: 160px;
+  margin: 0px 9px 8px 0px;
+}
+
+.obpos-store-line {
+  display: table; 
+  width: 100%; 
+  padding: 5px;
+}
+
+.obpos-store-line-header {
+  height: 30px;
+}
+
+.obpos-store-line-header2 {
+  padding-top: 30px;
+}
+
+.obpos-store-information-header {
+  padding: 10px 10px 10px 0px; 
+  border-bottom: 1px solid #cccccc;
+}
+
+.obpos-store-information-header-icon {
+  display: table-cell; 
+  vertical-align: middle;
+}
+
+.obpos-store-information-openhour {
+  display: table-cell; 
+  vertical-align: middle; 
+  width: 63%; 
+  text-align: right;
+}
+
+.obpos-store-information-specialOpenHour {
+  float: left;
+  padding-left: 20px;
+}
+
+.obpos-store-information-empty1 {
+  display: table-cell; 
+  vertical-align: middle; 
+  width: 1%;
+}
+
+.obpos-store-information-empty9 {
+  display: table-cell; 
+  vertical-align: middle; 
+  width: 9%;
+}
+
+.obpos-store-information-callcenter {
+  display: table-cell; 
+  vertical-align: middle; 
+  width: 30%;
+}
+
+.obpos-icon-address {
+  width: 30px;
+  height: 30px;
+  float: left; 
+  display: inline-block;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconAddress.svg');
+  background-size: 22px 18px;
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+}
+
+.obpos-icon-phone {
+  width: 30px;
+  height: 30px;
+  float: left; 
+  display: inline-block;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconPhone.svg');
+  background-size: 17px 17px;
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+}
+
+.obpos-icon-fax {
+  width: 30px;
+  height: 30px;
+  float: left; 
+  display: inline-block;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconFax.svg');
+  background-size: 19px 19px;
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+}
+
+.obpos-icon-email {
+  width: 30px;
+  height: 30px;
+  float: left; 
+  display: inline-block;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconEmail.svg');
+  background-size: 20px 13px;
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+}
+
+.obpos-icon-cif {
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Arial';  
+  color: #6cb33f;
+  float: left;
+  padding-top: 5px;
+}
+
+.obpos-icon-schedule {
+  width: 30px;
+  height: 30px;
+  float: left; 
+  display: inline-block;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconClock.svg');
+  background-size: 21px 21px;
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+}
+
+.obpos-product-details-view-buttons{
+	min-width: 200px; 
+	margin: 2px 5px 2px 5px !important;
+}
+
 /* Delivery Modes */
 .obrdm-row-order {
   height: 36px;

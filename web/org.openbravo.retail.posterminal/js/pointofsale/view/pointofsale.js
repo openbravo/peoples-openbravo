@@ -180,6 +180,9 @@ enyo.kind({
       kind: 'OB.UI.ModalAdvancedFilterVerifiedReturns',
       name: 'modalAdvancedFilterVerifiedReturns'
     }, {
+      kind: 'OB.UI.ModalAdvancedFilterSelectStore',
+      name: 'modalAdvancedFilterSelectStore'
+    }, {
       kind: 'OB.UI.ModalMultiOrdersPayOpenTickets',
       name: 'modalMultiOrders'
     }, {
@@ -308,6 +311,12 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalAdvancedFilterOrders',
       name: 'OBPOS_modalAdvancedFilterOrders'
+    }, {
+      kind: 'OBPOS.UI.CrossStoreSelector',
+      name: 'OBPOS_modalCrossStoreSelector'
+    }, {
+      kind: 'OBPOS.UI.StoreInformation',
+      name: 'OBPOS_storeInformation'
     }]
   }, {
     name: 'mainSubWindow',
@@ -483,7 +492,7 @@ enyo.kind({
   },
   addProductToOrder: function (inSender, inEvent) {
     var targetOrder, me = this,
-        attrs;
+        attrs, negativeLines;
     if (inEvent.product.get('ignoreAddProduct')) {
       inEvent.product.unset('ignoreAddProduct');
       return;
@@ -501,7 +510,10 @@ enyo.kind({
       });
       return false;
     }
-    if (targetOrder.get('isEditable') === false || OB.UTIL.isCrossStoreReceipt(targetOrder)) {
+    negativeLines = _.filter(targetOrder.get('lines').models, function (line) {
+      return line.get('qty') < 0;
+    }).length;
+    if (targetOrder.get('isEditable') === false || (OB.UTIL.isCrossStoreReceipt(targetOrder) && negativeLines !== 0)) {
       targetOrder.canAddAsServices(this.model, inEvent.product, function (addAsServices) {
         if (addAsServices !== 'ABORT') {
           if (addAsServices === 'OK') {
@@ -575,7 +587,7 @@ enyo.kind({
     if (inEvent.ignoreStockTab) {
       this.showOrder(inSender, inEvent);
     } else {
-      if (!targetOrder.get('lines').isProductPresent(inEvent.product) && inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
+      if (!targetOrder.get('lines').isProductPresent(inEvent.product) && ((inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) || OB.UTIL.isCrossStoreProduct(inEvent.product))) {
         inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
         if (enyo.Panels.isScreenNarrow()) {
@@ -583,6 +595,19 @@ enyo.kind({
         }
         return true;
       } else {
+        if (OB.UTIL.isCrossStoreProduct(inEvent.product) && OB.UTIL.isNullOrUndefined(inEvent.product.get('listPrice')) && !inEvent.product.get('ispack') && targetOrder.get('lines').isProductPresent(inEvent.product)) {
+          var product = null;
+          _.find(targetOrder.get('lines').models, function (line) {
+            if (line.get('product').get('id') === inEvent.product.get('id')) {
+              product = line.get('product');
+              return;
+            }
+          }, this);
+          inEvent.product.set('listPrice', product.get('listPrice'));
+          inEvent.product.set('standardPrice', product.get('standardPrice'));
+          inEvent.product.set('currentPrice', product.get('currentPrice'));
+          inEvent.product.set('productPrices', product.get('productPrices'));
+        }
         this.showOrder(inSender, inEvent);
       }
     }
@@ -1012,8 +1037,10 @@ enyo.kind({
       return;
     }
     if (OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
-      var productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(inEvent.line.get('product')),
-          checkStock = productStatus.restrictsaleoutofstock && OB.DEC.compare(inEvent.line.get('qty')) === -1;
+      var product = inEvent.line.get('product'),
+          negativeQty = OB.DEC.compare(inEvent.line.get('qty')) < 0,
+          productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
+          checkStock = negativeQty && productStatus.restrictsaleoutofstock && !OB.UTIL.isCrossStoreProduct(product);
 
       OB.UTIL.HookManager.executeHooks('OBPOS_CheckStockReturnLine', {
         order: this.model.get('order'),

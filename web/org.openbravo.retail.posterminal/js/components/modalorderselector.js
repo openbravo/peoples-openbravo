@@ -174,7 +174,7 @@ enyo.kind({
     }).name;
 
     if (this.model.crossStoreInfo) {
-      this.$.store.setContent(OB.UTIL.isCrossStoreReceipt(this.model) ? this.model.get('store') : OB.I18N.getLabel('OBPOS_LblThisStore') + ' (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')');
+      this.$.store.setContent(OB.UTIL.isCrossStoreReceipt(this.model) ? this.model.get('store') : OB.I18N.getLabel('OBPOS_LblThisStore', [OB.MobileApp.model.get('terminal').organization$_identifier]));
     } else {
       this.$.store.setContent('');
     }

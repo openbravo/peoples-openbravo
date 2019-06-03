@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -21,7 +21,7 @@ public class CategoryTreeProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
-    ArrayList<HQLProperty> list = new ArrayList<HQLProperty>();
+    ArrayList<HQLProperty> list = new ArrayList<>();
     list.add(new HQLProperty("tn.id", "id"));
     list.add(new HQLProperty("tn.node", "categoryId"));
     list.add(new HQLProperty("tn.reportSet", "parentId"));

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -22,13 +23,9 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
@@ -42,111 +39,76 @@ public class Brand extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
-  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
-    // Get Product Properties
-    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
-    boolean forceRemote = false;
-    boolean isRemote = false;
-    try {
-      OBContext.setAdminMode(false);
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-          OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null));
-    } catch (PropertyException e) {
-      log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    Map<String, Object> args = new HashMap<String, Object>();
+  protected List<HQLPropertyList> getHqlProperties(final JSONObject jsonsent) {
+    final HQLPropertyList brandHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
 
-    if (!isRemote && jsonsent.has("remoteFilters")) {
-      forceRemote = true;
-      args.put("forceRemote", forceRemote);
-    }
-    HQLPropertyList brandHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
-        args);
+    final List<HQLPropertyList> propertiesList = new ArrayList<>();
     propertiesList.add(brandHQLProperties);
     return propertiesList;
   }
 
   @Override
-  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
-    try {
-      OBContext.setAdminMode(true);
-      final OBRETCOProductList productList = POSUtils
-          .getProductListByPosterminalId(jsonsent.getString("pos"));
-      boolean forceRemote = false;
-      boolean isRemote = false;
-      try {
-        OBContext.setAdminMode(false);
-        isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-            OBContext.getOBContext().getCurrentClient(),
-            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-            OBContext.getOBContext().getRole(), null));
-      } catch (PropertyException e) {
-        log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
-      } finally {
-        OBContext.restorePreviousMode();
-      }
+  protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
+    final String posId = jsonsent.getString("pos");
+    final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
+    final String productListId = POSUtils.getProductListByPosterminalId(posId).getId();
+    final List<String> orgIds = POSUtils.getOrgListCrossStore(posId, isCrossStoreSearch);
+    final Set<String> productListIds = POSUtils.getProductListCrossStore(posId, isCrossStoreSearch);
 
-      if (!isRemote && jsonsent.has("remoteFilters")) {
-        forceRemote = true;
-        Map<String, Object> args = new HashMap<String, Object>();
-        args.put("forceRemote", forceRemote);
-      }
-      Map<String, Object> paramValues = new HashMap<String, Object>();
-      paramValues.put("productListId", productList.getId());
-
-      return paramValues;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    final Map<String, Object> paramValues = new HashMap<>();
+    paramValues.put("orgIds", orgIds);
+    paramValues.put("productListId", productListId);
+    paramValues.put("productListIds", productListIds);
+    return paramValues;
   }
 
   @Override
-  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    List<String> hqlQueries = new ArrayList<String>();
-    boolean forceRemote = false;
-    HQLPropertyList regularBrandsHQLProperties;
-    boolean isRemote = false;
-    try {
-      OBContext.setAdminMode(false);
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-          OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null));
-    } catch (PropertyException e) {
-      log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+  protected List<String> getQuery(final JSONObject jsonsent) throws JSONException {
+    final HQLPropertyList brandHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
 
-    if (!isRemote && jsonsent.has("remoteFilters")) {
-      forceRemote = true;
-      Map<String, Object> args = new HashMap<String, Object>();
-      args.put("forceRemote", forceRemote);
-      regularBrandsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions, args);
-    } else {
-      regularBrandsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
-    }
-    if (isRemote || forceRemote) {
-      hqlQueries.add("select" + regularBrandsHQLProperties.getHqlSelect() //
-          + "from Brand brand " //
-          + "where " + " exists (select 1 from  Product p, OBRETCO_Prol_Product assort "
-          + " where brand.id=p.brand.id " + " and p.id= assort.product.id "
-          + " and assort.obretcoProductlist.id= :productListId)"
-          + " AND $filtersCriteria AND $hqlCriteria and  $naturalOrgCriteria and $incrementalUpdateCriteria and brand.active = true "
-          + "order by brand.name, brand.id");
-    } else {
-      hqlQueries.add("select" + regularBrandsHQLProperties.getHqlSelect() //
-          + "from Product product " //
-          + "where exists (select 1 from OBRETCO_Prol_Product assort where obretcoProductlist.id= :productListId "
-          + "and assort.product = product) "
-          + "and $naturalOrgCriteria and $incrementalUpdateCriteria and product.active = true "
-          + "order by product.brand.name, product.brand.id");
-    }
-
+    final List<String> hqlQueries = new ArrayList<>();
+    hqlQueries.add(getBrandHqlString(brandHQLProperties));
     return hqlQueries;
   }
+
+  private String getBrandHqlString(final HQLPropertyList brandHQLProperties) {
+    final StringBuilder query = new StringBuilder();
+    query.append(" select");
+    query.append(brandHQLProperties.getHqlSelect());
+    query.append(" from Brand brand");
+    query.append(" where $filtersCriteria");
+    query.append(" and $hqlCriteria");
+    query.append(" and $incrementalUpdateCriteria");
+    query.append(" and brand.active = true");
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from Product p");
+    query.append("   join p.oBRETCOProlProductList assort");
+    query.append("   where p.brand.id = brand.id");
+    query.append("   and assort.obretcoProductlist.id in :productListIds");
+    query.append(" )");
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from Organization o");
+    query.append("   where o.id in :orgIds");
+    query.append(
+        "   and ad_org_isinnaturaltree(brand.organization.id, o.id, brand.client.id) = 'Y'");
+    query.append(" )");
+    query.append(" order by brand.name, brand.id");
+    return query.toString();
+  }
+
+  private static boolean isCrossStoreSearch(final JSONObject jsonsent) {
+    boolean crossStoreSearch = false;
+    try {
+      crossStoreSearch = jsonsent.has("remoteParams")
+          && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
+    } catch (JSONException e) {
+      log.error("Error while getting crossStoreSearch " + e.getMessage(), e);
+    }
+    return crossStoreSearch;
+  }
+
 }

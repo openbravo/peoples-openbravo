@@ -24,12 +24,10 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.retail.config.OBRETCOProductList;
+import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
@@ -44,35 +42,26 @@ public class CategoryTree extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
-  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+  protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
+    OBContext.setAdminMode(true);
     try {
-      OBContext.setAdminMode(true);
-      Map<String, Object> paramValues = new HashMap<String, Object>();
-      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      final OBRETCOProductList productList = POSUtils
-          .getProductListByPosterminalId(jsonsent.getString("pos"));
-      boolean isRemote = false;
-      try {
-        OBContext.setAdminMode(false);
-        isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-            OBContext.getOBContext().getCurrentClient(),
-            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-            OBContext.getOBContext().getRole(), null));
-      } catch (PropertyException e) {
-        log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
-      } finally {
-        OBContext.restorePreviousMode();
-      }
+      final Calendar now = Calendar.getInstance();
+      final String clientId = OBContext.getOBContext().getCurrentClient().getId();
+      final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      final String posId = jsonsent.getString("pos");
+      final OBPOSApplications pos = POSUtils.getTerminalById(posId);
+      final boolean isCrossStoreEnabled = POSUtils.isCrossStoreEnabled(pos);
+      final List<String> orgIds = POSUtils.getOrgListCrossStore(posId, isCrossStoreEnabled);
+      final String productListId = POSUtils.getProductListByPosterminalId(posId).getId();
 
-      paramValues.put("productListId", productList.getId());
-      paramValues.put("productCategoryTableId", CategoryTree.productCategoryTableId);
-      if (isRemote) {
-        paramValues.put("productCategoryTableId", CategoryTree.productCategoryTableId);
-      }
-      Calendar now = Calendar.getInstance();
-      paramValues.put("endingDate", now.getTime());
-      paramValues.put("startingDate", now.getTime());
+      final Map<String, Object> paramValues = new HashMap<>();
+      paramValues.put("clientId", clientId);
       paramValues.put("orgId", orgId);
+      paramValues.put("orgIds", orgIds);
+      paramValues.put("startingDate", now.getTime());
+      paramValues.put("endingDate", now.getTime());
+      paramValues.put("productListId", productListId);
+      paramValues.put("productCategoryTableId", CategoryTree.productCategoryTableId);
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
@@ -80,88 +69,91 @@ public class CategoryTree extends ProcessHQLQuery {
   }
 
   @Override
-  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-
-    List<String> hqlQueries = new ArrayList<String>();
-
-    HQLPropertyList regularProductsCategoriesTreeHQLProperties = ModelExtensionUtils
+  protected List<String> getQuery(final JSONObject jsonsent) throws JSONException {
+    final Long lastUpdated = getLastUpdated(jsonsent);
+    final HQLPropertyList regularProductsCategoriesTreeHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    boolean isRemote = false;
-    final String clientId = OBContext.getOBContext().getCurrentClient().getId();
-    try {
-      OBContext.setAdminMode(true);
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-          OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null));
-    } catch (PropertyException e) {
-      log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
-    final Long lastUpdated = jsonsent != null && jsonsent.has("lastUpdated")
-        && !jsonsent.get("lastUpdated").equals("undefined")
-        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
-
-    final String addIncrementalUpdateFilter = lastUpdated == null
-        ? "(tn.$incrementalUpdateCriteria and pc.$incrementalUpdateCriteria) "
-        : "(tn.$incrementalUpdateCriteria or pc.$incrementalUpdateCriteria) ";
-
-    if (isRemote) {
-      hqlQueries.add("select distinct " + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
-          + "from ADTreeNode tn, OBRETCO_Productcategory pc "
-          + "where tn.$readableSimpleClientCriteria and tn.$naturalOrgCriteria "
-          + " and tn.node = pc.productCategory.id and tn.tree.table.id = :productCategoryTableId "
-          + " and " + addIncrementalUpdateFilter);
-      hqlQueries.add("select" + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
-          + "from ADTreeNode tn, ProductCategory pc "
-          + "where tn.$readableSimpleClientCriteria and tn.$naturalOrgCriteria "
-          + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId "
-          + " and pc.summaryLevel = 'Y' "
-          + " and not exists (select obpc.id from OBRETCO_Productcategory obpc where tn.node = obpc.productCategory.id) "
-          + " and " + addIncrementalUpdateFilter);
-    } else {
-      hqlQueries.add("select" + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
-          + "from ADTreeNode tn, ProductCategory pc "//
-          + "where tn.$readableSimpleClientCriteria and tn.$naturalOrgCriteria "
-          + " and pc.$readableSimpleClientCriteria and pc.$naturalOrgCriteria  "
-          + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId " + " and "
-          + addIncrementalUpdateFilter);
-    }
-
-    String whereClause = "p.client.id = '" + clientId + "' "
-        + "and p.startingDate <= :startingDate "
-        + "and (p.endingDate is null or p.endingDate >= :endingDate) "
-        // assortment products
-        + "and ((p.includedProducts = 'N' "
-        + "  and not exists (select 1 from PricingAdjustmentProduct pap"
-        + "    where pap.active = true and pap.priceAdjustment = p and pap.product.sale = true "
-        + "      and pap.product not in (select ppl.product.id from OBRETCO_Prol_Product ppl "
-        + "         where ppl.obretcoProductlist.id = :productListId and ppl.active = true))) "
-        + " or p.includedProducts = 'Y') "
-        // organization
-        + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
-        + "         from PricingAdjustmentOrganization o" + "        where active = true"
-        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId )) "
-        + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
-        + "         from PricingAdjustmentOrganization o" + "        where active = true"
-        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId ))) ";
-
-    // Discounts marked as category
-    hqlQueries.add("select pt.id as id, pt.id as categoryId, '0' as parentId, 999999999 as seqNo, "//
-        + "(case when (count(p.name) > 0 and exists (select 1 from PricingAdjustment p "
-        + "where p.discountType = pt and p.active = true and " + whereClause + ")) "
-        + "then true else false end) as active "
-        + "from PromotionType pt inner join pt.pricingAdjustmentList p "
-        + "where pt.active = true and pt.obposIsCategory = true "//
-        + "and pt.$readableSimpleClientCriteria "//
-        + "and (p.$incrementalUpdateCriteria) " //
-        + "and " + whereClause //
-        + "group by pt.id");
-
+    final List<String> hqlQueries = new ArrayList<>();
+    hqlQueries.add(getRegularProductCategoryTreeHqlString(
+        regularProductsCategoriesTreeHQLProperties, lastUpdated));
+    hqlQueries.add(getSummaryProductCategoryTreeHqlString(
+        regularProductsCategoriesTreeHQLProperties, lastUpdated));
+    hqlQueries.add(getPackProductCategoryTreeHqlString());
     return hqlQueries;
+  }
+
+  private String getRegularProductCategoryTreeHqlString(
+      final HQLPropertyList regularProductsCategoriesTreeHQLProperties, final Long lastUpdated) {
+    final StringBuilder query = new StringBuilder();
+    query.append(" select distinct");
+    query.append(regularProductsCategoriesTreeHQLProperties.getHqlSelect());
+    query.append(" from OBRETCO_Productcategory pCat");
+    query.append(" join pCat.productCategory pc");
+    query.append(" , ADTreeNode tn");
+    query.append(" where tn.$readableSimpleClientCriteria");
+    query.append(" and tn.node = pc.id");
+    query.append(" and tn.tree.table.id = :productCategoryTableId");
+    query.append(" and (tn.$incrementalUpdateCriteria");
+    query.append(" " + (lastUpdated == null ? "and" : "or") + " pc.$incrementalUpdateCriteria)");
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from Organization o");
+    query.append("   where o.id in :orgIds");
+    query.append("   and ad_org_isinnaturaltree(tn.organization.id, o.id, tn.client.id) = 'Y'");
+    query.append(" )");
+    return query.toString();
+  }
+
+  private String getSummaryProductCategoryTreeHqlString(
+      final HQLPropertyList regularProductsCategoriesTreeHQLProperties, final Long lastUpdated) {
+    final StringBuilder query = new StringBuilder();
+    query.append(" select");
+    query.append(regularProductsCategoriesTreeHQLProperties.getHqlSelect());
+    query.append(" from ProductCategory pc");
+    query.append(" , ADTreeNode tn");
+    query.append(" where tn.$readableSimpleClientCriteria");
+    query.append(" and tn.node = pc.id");
+    query.append(" and tn.tree.table.id = :productCategoryTableId");
+    query.append(" and pc.summaryLevel = true");
+    query.append(" and (tn.$incrementalUpdateCriteria");
+    query.append(" " + (lastUpdated == null ? "and" : "or") + " pc.$incrementalUpdateCriteria)");
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from Organization o");
+    query.append("   where o.id in :orgIds");
+    query.append("   and ad_org_isinnaturaltree(tn.organization.id, o.id, tn.client.id) = 'Y'");
+    query.append(" )");
+    return query.toString();
+  }
+
+  private String getPackProductCategoryTreeHqlString() {
+    final StringBuilder query = new StringBuilder();
+    query.append(" select pt.id as id");
+    query.append(" , pt.id as categoryId");
+    query.append(" , '0' as parentId");
+    query.append(" , 999999999 as seqNo");
+    query.append(" , case when exists (");
+    query.append("   select 1");
+    query.append("   from PricingAdjustment p");
+    query.append("   where p.discountType.id = pt.id");
+    query.append("   and p.active = true");
+    query.append("   and " + Product.getPackProductWhereClause());
+    query.append(" ) then true else false end as active");
+    query.append(" from PromotionType pt");
+    query.append(" join pt.pricingAdjustmentList p");
+    query.append(" where pt.active = true");
+    query.append(" and pt.obposIsCategory = true");
+    query.append(" and pt.$readableSimpleClientCriteria");
+    query.append(" and p.$incrementalUpdateCriteria");
+    query.append(" and " + Product.getPackProductWhereClause());
+    query.append(" group by pt.id");
+    return query.toString();
+  }
+
+  private Long getLastUpdated(final JSONObject jsonsent) throws JSONException {
+    return jsonsent.has("lastUpdated") && !jsonsent.get("lastUpdated").equals("undefined")
+        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
   }
 
   @Override

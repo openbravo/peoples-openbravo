@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -38,11 +38,15 @@ public class VoidLayaway {
   private Instance<VoidLayawayPostHook> layawayPosthooks;
 
   public void voidLayaway(JSONObject jsonorder, Order order) throws Exception {
+    final OBPOSApplications currentPosTerminal = OBDal.getInstance()
+        .get(OBPOSApplications.class,
+            jsonorder.getJSONObject("cashUpReportInformation").getString("posterminal"));
+    final boolean isCrossStore = POSUtils.isCrossStore(order, currentPosTerminal);
 
     executeHooks(layawayhooks, jsonorder, order);
 
     TriggerHandler.getInstance().disable();
-    OBContext.setAdminMode(true);
+    OBContext.setAdminMode(!isCrossStore);
     try {
       order.setDocumentStatus("CL");
       order.setCancelled(true);
@@ -92,7 +96,6 @@ public class VoidLayaway {
     }
 
     executeHooks(layawayPosthooks, jsonorder, order);
-
   }
 
   private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order) {
