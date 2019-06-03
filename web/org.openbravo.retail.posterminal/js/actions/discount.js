@@ -40,7 +40,7 @@
       });
 
       if (receipt.get('isEditable') === false) {
-        this.doShowPopup({
+        view.doShowPopup({
           popup: 'modalNotEditableOrder'
         });
         return;
@@ -51,7 +51,7 @@
       }
 
       if (selectedReceiptLine.get('product').get('isEditableQty') === false) {
-        this.doShowPopup({
+        view.doShowPopup({
           popup: 'modalNotEditableLine'
         });
         return;

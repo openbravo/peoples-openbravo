@@ -80,7 +80,7 @@
         }
 
         if (receipt.get('isEditable') === false) {
-          this.doShowPopup({
+          view.doShowPopup({
             popup: 'modalNotEditableOrder'
           });
           return;
@@ -89,7 +89,7 @@
         if (selectedReceiptLines.find(function (line) {
           return line.get('product').get('isEditableQty') === false;
         })) {
-          this.doShowPopup({
+          view.doShowPopup({
             popup: 'modalNotEditableLine'
           });
           return;
