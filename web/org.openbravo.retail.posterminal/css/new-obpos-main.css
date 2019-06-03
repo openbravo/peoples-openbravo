@@ -4676,6 +4676,132 @@
 
 
 
+/***********************   ***********************/
+/*              File: tabcashtokeep.js           */
+/*          Folder: js/closecash/view/           */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashUp.UI.CashToKeepRadioButton
+# Inherits: [OB.UI.RadioButton]
+*/
+.obObposCashupUiCashToKeepRadioButton {
+  padding-top: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-left: 40px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+
+.obObposCashupUiCashToKeepRadioButton-lbl {
+  padding: 5px 0px 0px 0px;
+}
+
+
+
+/*
+# Component: OB.OBPOSCashUp.UI.KeepDetails
+*/
+.obObposCashupUiKeepDetails {
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary-darker);
+}
+
+.obObposCashupUiKeepDetails-RadioGroup {
+  /*Inherits: [Group]*/
+}
+
+.obObposCashupUiKeepDetails-RadioGroup-keepfixedamount {
+  /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
+}
+
+.obObposCashupUiKeepDetails-RadioGroup-element1 {
+  clear: both;
+}
+
+.obObposCashupUiKeepDetails-RadioGroup-allowmoveeverything {
+  /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
+}
+
+.obObposCashupUiKeepDetails-RadioGroup-element2 {
+  clear: both;
+}
+
+.obObposCashupUiKeepDetails-RadioGroup-allowdontmove {
+  /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
+}
+
+.obObposCashupUiKeepDetails-RadioGroup-element3 {
+  clear: both;
+}
+
+.obObposCashupUiKeepDetails-RadioGroup-allowvariableamount {
+  /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
+  padding-top: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-left: 40px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+
+.obObposCashupUiKeepDetails-RadioGroup-allowvariableamount-container1 {
+  display: table-row;
+}
+
+.obObposCashupUiKeepDetails-RadioGroup-allowvariableamount-container1-variableamount {
+  vertical-align: middle;
+  display: table-cell;
+}
+
+.obObposCashupUiKeepDetails-RadioGroup-allowvariableamount-container1-variableInput {
+  padding-left: 20px;
+  display: table-cell;
+}
+
+
+
+/*
+# Component: OB.OBPOSCashUp.UI.CashToKeep
+*/
+.obObposCashupUiCashToKeep {}
+
+.obObposCashupUiCashToKeep-container1 {}
+
+.obObposCashupUiCashToKeep-container1-container1 {
+  overflow:auto;
+  height: 500px;
+  margin: 5px;
+}
+
+.obObposCashupUiCashToKeep-container1-container1-container1 {
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary-darker);
+  padding: 5px;
+}
+
+.obObposCashupUiCashToKeep-container1-container1-container1-container1 {}
+
+.obObposCashupUiCashToKeep-container1-container1-container1-container1-container1 {}
+
+.obObposCashupUiCashToKeep-container1-container1-container1-container1-container1-cashtokeepheader {
+  padding: 10px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align: center;
+}
+
+.obObposCashupUiCashToKeep-container1-container1-container1-formkeep {}
+
+
+
+
+
+
+
 
 
 
