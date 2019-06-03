@@ -33,7 +33,8 @@ public class CentralRepository {
     MODULE_INFO("module"),
     MATURITY_LEVEL("maturityLevel"),
     SCAN("scan"),
-    CHECK_CONSISTENCY("checkConsistency");
+    CHECK_CONSISTENCY("checkConsistency"),
+    VERSION_INFO("versionInfo");
 
     private String endpoint;
 
