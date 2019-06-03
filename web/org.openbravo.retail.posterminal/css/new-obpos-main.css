@@ -4798,6 +4798,26 @@
 
 
 
+/***********************   ***********************/
+/*              File: cashup-model.js            */
+/*          Folder: js/closecash/model/          */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashUp.Model.CashUp
+*/
+.cashupStepsDefinition-obCashupStepPendingOrders {}
+
+.cashupStepsDefinition-obCashupMaster {}
+
+.cashupStepsDefinition-obCashupCashPayments {}
+
+.cashupStepsDefinition-obCashupPaymentMethods {}
+
+.cashupStepsDefinition-obCashupCashToKeep {}
+
+.cashupStepsDefinition-obCashupPostPrintAndClose {}
+
+
 
 
 

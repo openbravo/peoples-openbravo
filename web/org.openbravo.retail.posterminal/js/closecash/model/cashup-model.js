@@ -31,26 +31,32 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   cashupStepsDefinition: [{
     name: 'OB.CashUp.StepPendingOrders',
     loaded: false,
+    classes: 'cashupStepsDefinition-obCashupStepPendingOrders',
     active: true
   }, {
     name: 'OB.CashUp.Master',
     loaded: true,
+    classes: 'cashupStepsDefinition-obCashupMaster',
     active: false
   }, {
     name: 'OB.CashUp.CashPayments',
     loaded: false,
+    classes: 'cashupStepsDefinition-obCashupCashPayments',
     active: true
   }, {
     name: 'OB.CashUp.PaymentMethods',
     loaded: false,
+    classes: 'cashupStepsDefinition-obCashupPaymentMethods',
     active: true
   }, {
     name: 'OB.CashUp.CashToKeep',
     loaded: true,
-    active: true
+    active: true,
+    classes: 'cashupStepsDefinition-obCashupCashToKeep'
   }, {
     name: 'OB.CashUp.PostPrintAndClose',
     loaded: true,
+    classes: 'cashupStepsDefinition-obCashupPostPrintAndClose',
     active: true
   }],
   init: function () {
