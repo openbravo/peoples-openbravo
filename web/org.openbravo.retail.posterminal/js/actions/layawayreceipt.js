@@ -34,7 +34,7 @@
       }).name;
 
       return currentView === 'order' && isEditable && !isQuotation //
-      && (!(orderType === 1 || orderType === 2) || OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true));
+      && (orderType !== 1 || OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) && orderType !== 2;
     },
     command: function (view) {
       var negativeLines, deliveredLines;
