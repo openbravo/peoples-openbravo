@@ -8,8 +8,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 
 public class SimpleModule {
-  private static final long serialVersionUID = 1L;
-
   private String author;
   private String description;
   private String help;
@@ -181,10 +179,6 @@ public class SimpleModule {
 
   public void setAdditionalInfo(Map<String, Object> additionalInfo) {
     this.additionalInfo = additionalInfo;
-  }
-
-  public static long getSerialversionuid() {
-    return serialVersionUID;
   }
 
 }
