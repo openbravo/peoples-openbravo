@@ -161,7 +161,9 @@
           view.setMultiSelectionItems(view, {
             selection: selection
           });
-        }.bind(this));
+        }.bind(this))['catch'](function (error) {
+          // Dialog cancelled, finish the action
+        });
       };
       };
 
