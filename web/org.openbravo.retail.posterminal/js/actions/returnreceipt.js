@@ -34,15 +34,15 @@
       });
 
       var active = currentView === 'order';
-      active = active && !isQuotation && isEditable && orderType !== 2;
+      active = active && !isQuotation && isEditable && (orderType !== 2 || OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true));
       // No negative lines
       active = active && !view.model.get('order').get('lines').find(function (line) {
         return line.get('qty') < 0;
       });
-      // There is at least one refundable payment method
-      active = active && OB.MobileApp.model.get('payments').find(function (payment) {
+      // Allows payment on credit or there is at least one refundable payment method
+      active = active && (OB.MobileApp.model.get('terminal').allowpayoncredit || OB.MobileApp.model.get('payments').find(function (payment) {
         return payment.paymentMethod.refundable;
-      });
+      }));
       return active;
     },
     command: function (view) {
