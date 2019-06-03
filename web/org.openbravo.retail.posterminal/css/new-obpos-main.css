@@ -4819,6 +4819,44 @@
 
 
 
+/***********************   ***********************/
+/*              File: cashup-modals.js            */
+/*          Folder: js/closecash/model/          */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposCashupUiModalPendingToProcessOkButton {}
+
+/*
+# Component: OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObposCashupUiModalPendingToProcessCancelButton {}
+
+
+
+/*
+# Component: OB.OBPOSCashUp.UI.modalPendingToProcess
+# Inherits: [OB.UI.ModalAction]
+*/
+.obObposCashupUiModalPendingToProcess {}
+
+.obObposCashupUiModalPendingToProcess-bodyContent {}
+
+.obObposCashupUiModalPendingToProcess-bodyButtons {}
+
+.obObposCashupUiModalPendingToProcess-bodyButtons-obObposCashupUiModalPendingToProcessOkButton {}
+
+.obObposCashupUiModalPendingToProcess-bodyButtons-obObposCashupUiModalPendingToProcessCancelButton {}
+
+
+
+
+
+
+
 
 
 
