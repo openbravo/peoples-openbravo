@@ -12415,3 +12415,147 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
     font-weight:bold;
     padding-top: 15px;
 }
+
+/***********************   ***********************/
+/*              File: closecash.js               */
+/*          Folder: js/closecash/view/           */
+/***********************   ***********************/
+
+/*
+# Component: OB.OBPOSCashUp.UI.Button
+# Inherits: [OB.UI.ToolbarButton]
+*/
+.obObPosCashUpUiButton {}
+
+/*
+# Component: OB.OBPOSCashUp.UI.CancelButton
+# Inherits: [OB.UI.ToolbarButton]
+*/
+.obObPosCashUpUiCancelButton {}
+
+/*
+# Component: OB.OBPOSCashUp.UI.LeftToolbarImpl
+# Inherits: [OB.UI.MultiColumn.Toolbar]
+*/
+.obObPosCashUpUiLeftToolbarImpl {}
+
+.obObPosCashUpUiLeftToolbarImpl-btnPrevious {
+  /* Inherits: [OB.OBPOSCashUp.UI.Button] */
+}
+
+.obObPosCashUpUiLeftToolbarImpl-btnPrevious.btn-over,
+.obObPosCashUpUiLeftToolbarImpl-btnPrevious:hover {
+  opacity: 0.75;
+}
+
+.obObPosCashUpUiLeftToolbarImpl-btnCancel {
+  /* Inherits: [OB.OBPOSCashUp.UI.CancelButton] */
+}
+
+.obObPosCashUpUiLeftToolbarImpl-btnNext {
+  /* Inherits: [OB.OBPOSCashUp.UI.Button] */
+}
+
+.obObPosCashUpUiLeftToolbarImpl-btnNext.btn-over,
+.obObPosCashUpUiLeftToolbarImpl-btnNext:hover {
+  opacity: 0.75;
+}
+
+.obObPosCashUpUiLeftToolbarImpl_btnOver {
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.CashUp
+# Inherits: [OB.UI.WindowView]
+*/
+.obObPosCashupUiCashUp {}
+
+.obObPosCashupUiCashUp-cashupMultiColumn {
+  /* Inherits: [OB.UI.MultiColumn] */
+}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-leftToolbar {
+  /* Inherits: [OB.OBPOSCashUp.UI.LeftToolbarImpl] */
+}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-rightToolbar {
+  /* Inherits:[OB.UI.MultiColumn.Toolbar] */
+}
+
+.obObPosCashupUiCashUp-rightToolbar-btnCashUp {
+  /* Inherits:[OB.OBPOSCashUp.UI.Button] */
+}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel {}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-listPendingReceipts {
+  /* Inherits: [OB.OBPOSCashUp.UI.ListPendingReceipts] */
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashMaster {
+  /* Inherits: [OB.OBPOSCashUp.UI.CashMaster] */
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashPayments {
+  /* Inherits: [OB.OBPOSCashUp.UI.CashPayments] */
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-listPaymentMethods {
+  /* Inherits: [OB.OBPOSCashUp.UI.ListPaymentMethods] */
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashToKeep {
+  /* Inherits: [OB.OBPOSCashUp.UI.CashToKeep] */
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-postPrintClose {
+  /* Inherits: [OB.OBPOSCashUp.UI.PostPrintClose] */
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel-cashUpInfo {}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel-cashUpKeyboard {}
+
+.obObPosCashupUiCashUp-modalCancel {
+  /* Inherits: [OB.UI.ModalCancel] */
+}
+
+.obObPosCashupUiCashUp-modalPendingToProcess {
+  /* Inherits: [OB.OBPOSCashUp.UI.modalPendingToProcess] */
+}
+
+.obObPosCashupUiCashUp-modalSelectPrinters {
+  /* Inherits: [OB.UI.ModalSelectPrinters] */
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.CashUpPartial
+# Inherits: [OB.OBPOSCashUp.UI.CashUp]
+*/
+.obObPosCashUpUiCashUpPartial {
+
+}
