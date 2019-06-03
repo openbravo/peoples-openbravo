@@ -35,21 +35,9 @@ public class ProductProperties extends ModelExtension {
   private static final Logger log = LogManager.getLogger();
 
   @Override
-  public List<HQLProperty> getHQLProperties(Object params) {
-
-    List<HQLProperty> list = ProductProperties.getMainProductHQLProperties(params);
-
-    Boolean localCrossStore = false;
-    try {
-      if (params != null) {
-        @SuppressWarnings("unchecked")
-        HashMap<String, Object> localParams = (HashMap<String, Object>) params;
-        localCrossStore = (Boolean) localParams.get("crossStore");
-      }
-    } catch (Exception e) {
-      log.error("Error getting params: " + e.getMessage(), e);
-    }
-    final boolean crossStore = localCrossStore;
+  public List<HQLProperty> getHQLProperties(final Object params) {
+    final List<HQLProperty> list = ProductProperties.getMainProductHQLProperties(params);
+    final boolean crossStore = (boolean) getParam(params, "crossStore");
 
     list.addAll(new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
@@ -100,30 +88,13 @@ public class ProductProperties extends ModelExtension {
     });
 
     return list;
-
   }
 
-  public static List<HQLProperty> getMainProductHQLProperties(Object params) {
-
-    OBPOSApplications posDetail = null;
-    Boolean localmultiPriceList = false;
-    Boolean localCrossStore = false;
-    try {
-      if (params != null) {
-        @SuppressWarnings("unchecked")
-        HashMap<String, Object> localParams = (HashMap<String, Object>) params;
-        posDetail = POSUtils.getTerminalById((String) localParams.get("terminalId"));
-        localmultiPriceList = (Boolean) localParams.get("multiPriceList");
-        localCrossStore = localParams.containsKey("crossStore")
-            ? (Boolean) localParams.get("crossStore")
-            : false;
-      }
-    } catch (Exception e) {
-      log.error("Error getting params: " + e.getMessage(), e);
-    }
-
-    final boolean multiPriceList = localmultiPriceList;
-    final boolean crossStore = localCrossStore;
+  public static List<HQLProperty> getMainProductHQLProperties(final Object params) {
+    final OBPOSApplications posDetail = POSUtils
+        .getTerminalById((String) getParam(params, "terminalId"));
+    final boolean multiPriceList = (boolean) getParam(params, "multiPriceList");
+    final boolean crossStore = (boolean) getParam(params, "crossStore");
 
     if (posDetail == null) {
       throw new OBException("terminal id is not present in session ");
@@ -197,7 +168,7 @@ public class ProductProperties extends ModelExtension {
             if (OBContext.hasTranslationInstalled()) {
               trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
                   + OBContext.getOBContext().getLanguage().getLanguage()
-                  + "'  and pt.product=product), product.name)";
+                  + "'  and pt.product.id = product.id), product.name)";
             } else {
               trlName = "product.name";
             }
@@ -212,5 +183,18 @@ public class ProductProperties extends ModelExtension {
     list.add(new HQLProperty("product.taxCategory.id", "taxCategory", 0));
 
     return list;
+  }
+
+  protected static Object getParam(final Object params, final String paramName) {
+    try {
+      if (params != null) {
+        @SuppressWarnings("unchecked")
+        final HashMap<String, Object> localParams = (HashMap<String, Object>) params;
+        return localParams.containsKey(paramName) ? localParams.get(paramName) : false;
+      }
+    } catch (Exception e) {
+      log.error("Error getting params: " + e.getMessage(), e);
+    }
+    return null;
   }
 }
