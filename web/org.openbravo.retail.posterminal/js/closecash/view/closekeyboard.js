@@ -11,6 +11,7 @@
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUpKeyboard',
+  classes: 'obObposCashupUiCashUpKeyboard',
   published: {
     payments: null
   },

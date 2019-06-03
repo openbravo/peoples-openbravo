@@ -4396,6 +4396,7 @@
 .obCashUpPostPrintAndClose {}
 
 
+
 /***********************   ***********************/
 /*            File: tabcashpayments.js           */
 /*            Folder: js/closecash/view          */
@@ -4664,7 +4665,14 @@
 
 
 
-
+/***********************   ***********************/
+/*             File: closekeyboard.js            */
+/*         Folder: js/closecash/view/            */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashUp.UI.CashUpKeyboard
+*/
+.obObposCashupUiCashUpKeyboard {}
 
 
 
