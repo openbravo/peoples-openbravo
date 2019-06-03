@@ -1,6 +1,7 @@
 package org.openbravo.service.centralrepository;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
@@ -22,12 +23,12 @@ public class SimpleModule {
   private String url;
   private String versionNo;
   private boolean isCommercial;
-  private HashMap additionalInfo;
+  private Map<String, Object> additionalInfo;
 
   public SimpleModule(String author, String description, String help, String licenseAgreement,
       String licenseType, String moduleID, String moduleVersionID, String name, String type,
       String updateDescription, String url, String versionNo, boolean isCommercial,
-      HashMap additionalInfo) {
+      Map<String, Object> additionalInfo) {
     this.author = author;
     this.description = description;
     this.help = help;
@@ -46,8 +47,7 @@ public class SimpleModule {
 
   public static SimpleModule fromJson(JSONObject jsonModule) {
     try {
-
-      HashMap<String, String> additionalInfo = new HashMap<>();
+      Map<String, Object> additionalInfo = new HashMap<>();
       if (jsonModule.get("additionalInfo") instanceof JSONObject) {
         JSONObject jsonAdditionalInfo = jsonModule.getJSONObject("additionalInfo");
         JSONArray keys = jsonAdditionalInfo.names();
@@ -175,11 +175,11 @@ public class SimpleModule {
     this.isCommercial = isCommercial;
   }
 
-  public HashMap getAdditionalInfo() {
+  public Map<String, Object> getAdditionalInfo() {
     return additionalInfo;
   }
 
-  public void setAdditionalInfo(HashMap additionalInfo) {
+  public void setAdditionalInfo(Map<String, Object> additionalInfo) {
     this.additionalInfo = additionalInfo;
   }
 

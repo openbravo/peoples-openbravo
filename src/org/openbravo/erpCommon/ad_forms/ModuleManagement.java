@@ -2086,7 +2086,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     // clean module updates if there are any
     cleanModulesUpdates();
 
-    final HashMap<String, String> updates = ImportModule.scanForUpdates(this, vars);
+    final Map<String, String> updates = ImportModule.scanForUpdates(this, vars);
 
     JSONObject notifications = new JSONObject();
     try {

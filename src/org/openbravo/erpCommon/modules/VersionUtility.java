@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.ServletContext;
@@ -597,8 +598,7 @@ public class VersionUtility {
       ver.dependencies = new HashMap<String, Dep>();
       ver.includes = new HashMap<String, Dep>();
 
-      HashMap<String, String> enforcements = (HashMap<String, String>) modules[i]
-          .getAdditionalInfo()
+      Map<String, String> enforcements = (Map<String, String>) modules[i].getAdditionalInfo()
           .get("enforcements");
 
       ModuleDependency[] dependencies = modules[i].getDependencies();

@@ -1,6 +1,7 @@
 package org.openbravo.service.centralrepository;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -25,7 +26,7 @@ public class Module {
   private String url;
   private String versionNo;
   private boolean isCommercial;
-  private HashMap additionalInfo;
+  private Map<String, Object> additionalInfo;
 
   public Module() {
   }
@@ -34,7 +35,7 @@ public class Module {
       String help, ModuleDependency[] includes, String licenseAgreement, String licenseType,
       String moduleID, String moduleVersionID, String name, String packageName, String type,
       String updateDescription, String url, String versionNo, boolean isCommercial,
-      HashMap additionalInfo) {
+      Map<String, Object> additionalInfo) {
     this.author = author;
     this.dbPrefix = dbPrefix;
     this.dependencies = dependencies;
@@ -73,11 +74,10 @@ public class Module {
       String versionNo = jsonModule.getString("versionNo");
       boolean isCommercial = jsonModule.getBoolean("isCommercial");
 
-      HashMap<String, String> additionalInfo = new HashMap<>();
+      Map<String, Object> additionalInfo = new HashMap<>();
       if (jsonModule.get("additionalInfo") instanceof JSONObject) {
         JSONObject jsonAdditionalInfo = jsonModule.getJSONObject("additionalInfo");
         JSONArray keys = jsonAdditionalInfo.names();
-        additionalInfo = new HashMap<>(keys.length());
 
         for (int i = 0; i < keys.length(); i++) {
           String key = keys.getString(i);
@@ -244,11 +244,11 @@ public class Module {
     this.isCommercial = isCommercial;
   }
 
-  public HashMap getAdditionalInfo() {
+  public Map<String, Object> getAdditionalInfo() {
     return additionalInfo;
   }
 
-  public void setAdditionalInfo(HashMap additionalInfo) {
+  public void setAdditionalInfo(Map<String, Object> additionalInfo) {
     this.additionalInfo = additionalInfo;
   }
 }

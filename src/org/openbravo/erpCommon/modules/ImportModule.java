@@ -33,6 +33,7 @@ import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -254,7 +255,7 @@ public class ImportModule implements Serializable {
         // Merged module is installed locally, add it as merge to uninstall. In case it is not
         // installed, it does not make sense to show any message to user.
         Module mergedModule = getWsModuleFromDalModule(mergedDALModule);
-        HashMap<String, String> additionalInfo = new HashMap<String, String>();
+        Map<String, Object> additionalInfo = new HashMap<>();
         additionalInfo.put("remove", "true");
         additionalInfo.put("mergedWith", getMergedWith(merge.getValue()));
         mergedModule.setAdditionalInfo(additionalInfo);
@@ -1616,12 +1617,11 @@ public class ImportModule implements Serializable {
    * @param vars
    * @return the list of updates keyed by module id
    */
-  @SuppressWarnings("unchecked")
-  public static HashMap<String, String> scanForUpdates(ConnectionProvider conn,
+  public static Map<String, String> scanForUpdates(ConnectionProvider conn,
       VariablesSecureApp vars) {
     scanError = new StringBuilder();
     try {
-      final HashMap<String, String> updateModules = new HashMap<String, String>();
+      final Map<String, String> updateModules = new HashMap<>();
       final String user = vars == null ? "0" : vars.getUser();
       ImportModuleData.insertLog(conn, user, "", "", "", "Scanning For Updates", "S");
 
@@ -1665,10 +1665,10 @@ public class ImportModule implements Serializable {
           updateModules.put(update.getModuleID(), "U");
         }
 
-        HashMap<String, String> additionalInfo = update.getAdditionalInfo();
+        Map<String, Object> additionalInfo = update.getAdditionalInfo();
         if (additionalInfo != null && additionalInfo.containsKey("upgrade")) {
           log4j.info("Upgrade found:" + additionalInfo.get("upgrade"));
-          JSONObject upgrade = new JSONObject(additionalInfo.get("upgrade"));
+          JSONObject upgrade = new JSONObject((String) additionalInfo.get("upgrade"));
           final String moduleId = upgrade.getString("moduleId");
           org.openbravo.model.ad.module.Module module = OBDal.getInstance()
               .get(org.openbravo.model.ad.module.Module.class, moduleId);
@@ -1703,19 +1703,20 @@ public class ImportModule implements Serializable {
         log4j.error("Error inserting log", ex);
       }
       scanError.append("ScanUpdatesFailed");
-      return new HashMap<String, String>();
+      return Collections.emptyMap();
     }
   }
 
-  private static void addParentUpdates(HashMap<String, String> updates, ConnectionProvider conn) {
+  private static void addParentUpdates(Map<String, String> updates, ConnectionProvider conn) {
     @SuppressWarnings("unchecked")
-    final HashMap<String, String> iniUpdates = (HashMap<String, String>) updates.clone();
+    final HashMap<String, String> iniUpdates = (HashMap<String, String>) ((HashMap<String, String>) updates)
+        .clone();
     for (final String node : iniUpdates.keySet()) {
       addParentNode(node, updates, iniUpdates, conn);
     }
   }
 
-  private static void addParentNode(String node, HashMap<String, String> updates,
+  private static void addParentNode(String node, Map<String, String> updates,
       HashMap<String, String> iniUpdates, ConnectionProvider conn) {
     String parentId;
     try {
