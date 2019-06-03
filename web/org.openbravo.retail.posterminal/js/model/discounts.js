@@ -472,8 +472,8 @@
           return;
         }
 
-        linePrice = receipt.getCurrentDiscountedLinePrice(l, true) || l.get('price');
-        if (linePrice < clonedDiscountRule.get('fixedPrice')) {
+        linePrice = receipt.getCurrentDiscountedLinePrice(l, true);
+        if (linePrice <= 0 || linePrice < clonedDiscountRule.get('fixedPrice')) {
           return;
         }
 
@@ -495,8 +495,14 @@
         } else {
           if (!OB.UTIL.isNullOrUndefined(clonedDiscountRule.get('fixedPrice')) && clonedDiscountRule.get('fixedPrice') >= 0) {
             discountedLinePrice = clonedDiscountRule.get('fixedPrice');
+            if (discountedLinePrice > linePrice) {
+              discountedLinePrice = 0;
+            }
           } else {
             discountedLinePrice = (linePrice - clonedDiscountRule.get('discountAmount')) * (1 - clonedDiscountRule.get('discount') / 100);
+            if (discountedLinePrice < 0) {
+              discountedLinePrice = 0;
+            }
           }
           discountAmt = OB.DEC.toNumber((linePrice - OB.DEC.toNumber(new BigDecimal(String(discountedLinePrice)))) * qty);
         }
