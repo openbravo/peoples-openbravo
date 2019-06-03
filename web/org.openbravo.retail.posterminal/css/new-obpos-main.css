@@ -4396,6 +4396,276 @@
 .obCashUpPostPrintAndClose {}
 
 
+/***********************   ***********************/
+/*            File: tabcashpayments.js           */
+/*            Folder: js/closecash/view          */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashUp.UI.RenderCashPaymentsLine
+*/
+.obObposCashUpUiRenderCashPaymentsLine {}
+
+.obObposCashUpUiRenderCashPaymentsLine-container1 {}
+
+.obObposCashUpUiRenderCashPaymentsLine-container1-container1 {}
+
+.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-coin {
+  /*Inherits: [OB.UI.MediumButton]*/
+  background-color: #e2e2e2;
+  color: var(--color-primary-darker);
+  margin: 4px 5px 4px 5px;
+  float: left;
+  width: 27%;
+  text-align: center;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-coin:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-qtyminus {
+  /*Inherits: [OB.UI.SmallButton]*/
+  background-color: #e2e2e2;
+  color: var(--color-primary-darker);
+  margin: 4px 5px 4px 5px;
+  width: 8%;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-qtyminus:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+
+.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-numberOfCoins {
+  /*Inherits: [OB.UI.MediumButton]*/
+  color: var(--color-primary-darker);
+  margin: 4px 5px 4px 5px;
+  background-color: var(--color-primary-lighter);
+  border: var(--bottomseparator-slim);
+  border-radius: 3px;
+  width: 18%;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-numberOfCoins_mainColor {
+  background-color: var(--color-maincolor);
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-numberOfCoins:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-qtyplus {
+  /*Inherits: [OB.UI.SmallButton]*/
+  background-color: #e2e2e2;
+  color: var(--color-primary-darker);
+  margin: 4px 5px 4px 5px;
+  width: 8%;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-qtyplus:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-total {
+  margin-left: 2%;
+  display: inline-block;
+  padding: 10px 0px 10px 0px;
+  width: 26%;
+  text-align: center;
+}
+
+
+
+/*
+# Component: OB.OBPOSCashUp.UI.RenderTotal
+*/
+.obObposCashupUiRenderTotal {
+  font-weight: bold;
+}
+
+.obObposCashupUiRenderTotal_negative {
+  color: red;
+}
+
+.obObposCashupUiRenderTotal_positive {
+  color: var(--color-primary-darker)
+}
+
+
+/*
+# Component: OB.OBPOSCashUp.UI.CashPayments
+*/
+.obObposCashupUiCashPayments {}
+
+.obObposCashupUiCashPayments-container1 {}
+
+.obObposCashupUiCashPayments-container1-container1 {
+  margin: 5px;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1 {
+  background-color: var(--color-primary-lighter);
+  color: black;
+  padding: 5px;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container1 {}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container1-container1 {}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container1-container1-title {
+  padding: 10px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align:center;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2 {
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary-darker);
+  height: 100%;
+  width:100%
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1 {}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1 {}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1-container1-element1 {
+  padding: 10px 20px 10px 10px;
+  float: left;
+  width: 30%;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1-container1-element2 {
+  padding: 10px 20px 10px 0px;
+  float: left;
+  width: 30%;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1-container1-element3 {
+  padding: 10px 0px 10px 0px; 
+  float: left;
+  width: 25%;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container2 {
+  background-color: var(--color-primary-lighter);
+  height: 454px;
+  clear:left;
+  width:100%;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container2-paymentsList {
+  /*Inherits: [OB.UI.ScrollableTable]*/
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container2-paymentsList-scrollArea {
+  max-height: 454px;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container2-renderLoading {
+  border-bottom: var(--bottomseparator-slim);
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 30px;
+  color: var(--color-primary-light);
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3 {}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1 {
+  border-bottom: var(--bottomseparator-slim);
+  border-top: var(--bottomseparator-slim);
+  height: 70px;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container1 {
+  float:left;
+  display: table-row;
+  width: 33%;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container1-totalLbl {
+  padding: 10px 20px 10px 10px;
+  display: table-cell;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container1-container1 {
+  padding: 10px 20px 10px 0px;
+  display: table-cell;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container1-container1-total {
+  /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container2 {
+  float:left;
+  display: table-row;
+  width: 33%;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container2-countedLbl {
+  padding: 10px 20px 10px 10px;
+  display: table-cell;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container2-container1 {
+  padding: 10px 5px 10px 0px;
+  display: table-cell;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container2-container1-counted {
+  /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container3 {
+  float:left; display: table-row; width: 33%;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container3-differenceLbl {
+  padding: 10px 20px 10px 10px;
+  display: table-cell;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container3-container1 {
+  padding: 10px 5px 10px 0px;
+  display: table-cell;
+}
+
+.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container3-container1-difference {
+  /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
+}
+
+
+
+
+
 
 
 

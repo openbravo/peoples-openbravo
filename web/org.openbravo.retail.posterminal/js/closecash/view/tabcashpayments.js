@@ -11,6 +11,7 @@
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderCashPaymentsLine',
+  classes: 'obObposCashUpUiRenderCashPaymentsLine',
   statics: {
     getLegacyCoins: function () {
       return new Backbone.Collection([{
@@ -60,42 +61,39 @@ enyo.kind({
     onSubUnit: ''
   },
   components: [{
+    classes: 'obObposCashUpUiRenderCashPaymentsLine-container1',
     components: [{
-      classes: 'row-fluid',
+      classes: 'obObposCashUpUiRenderCashPaymentsLine-container1-container1 row-fluid',
       components: [{
-        classes: 'span12',
-        style: 'border-bottom: 1px solid #cccccc;',
+        classes: 'obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1 span12',
         components: [{
           name: 'coin',
           kind: 'OB.UI.MediumButton',
           avoidDoubleClick: false,
-          classes: 'btnlink-gray btnlink-cashup-edit',
+          classes: 'obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-coin',
           ontap: 'addUnit'
         }, {
           name: 'qtyminus',
           kind: 'OB.UI.SmallButton',
           avoidDoubleClick: false,
-          style: 'width: 8%;',
-          classes: 'btnlink-gray btnlink-cashup-edit',
+          classes: 'obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-qtyminus',
           content: '-',
           ontap: 'subUnit'
         }, {
           name: 'numberOfCoins',
           kind: 'OB.UI.MediumButton',
-          classes: 'btnlink-gray btnlink-cashup-edit',
-          style: 'background-color: white; border: 1px solid lightgray; border-radius: 3px; width: 18%',
+          classes: 'obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-numberOfCoins',
           ontap: 'lineEdit'
         }, {
           name: 'qtyplus',
           kind: 'OB.UI.SmallButton',
           avoidDoubleClick: false,
-          style: 'width: 8%',
-          classes: 'btnlink-gray btnlink-cashup-edit',
+          classes: 'obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-qtyplus',
           content: '+',
           ontap: 'addUnit'
         }, {
           name: 'total',
-          style: 'margin-left: 2%; display:inline-block;padding: 10px 0px 10px 0px; width: 26%; text-align: center;'
+          classes: 'obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-total'
         }]
       }]
     }]
@@ -103,7 +101,8 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.coin.setContent(OB.I18N.formatCurrency(this.model.get('coinValue')));
-    var style = 'float: left; width: 27%; text-align: center;';
+    //This inline style is allowed
+    var style = '';
     if (this.model.get('bordercolor')) {
       style += ' border:6px solid ' + this.model.get('bordercolor') + ';';
     }
@@ -143,24 +142,24 @@ enyo.kind({
     } else if (contentLengthCoins >= 8) {
       newFontSize = 10;
     }
-    var newStyle = "font-size: " + newFontSize + "px; background-color: white; border: 1px solid lightgray; border-radius: 3px; width: 18%;";
+    var newStyle = "font-size: " + newFontSize + "px;";
     this.$.numberOfCoins.setStyle(newStyle);
     newFontSize = 16;
     if (contentLengthTotal > 18) {
       newFontSize = 12;
     }
-    newStyle = "font-size: " + newFontSize + "px; margin-left: 2%; display:inline-block;padding: 10px 0px 10px 0px; width: 26%; text-align: center;";
+    newStyle = "font-size: " + newFontSize + "px;";
     this.$.total.setStyle(newStyle);
   }
 });
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderTotal',
+  classes: 'obObposCashupUiRenderTotal',
   tag: 'span',
-  style: 'font-weight: bold;',
   printAmount: function (value) {
     this.setContent(OB.I18N.formatCurrency(value));
-    this.applyStyle('color', OB.DEC.compare(value) < 0 ? 'red' : 'black');
+    this.addClass(OB.DEC.compare(value) < 0 ? 'obObposCashupUiRenderTotal_negative' : 'obObposCashupUiRenderTotal_positive');
     var contentLength = this.getContent().length;
     var newFontSize = 16;
     if (contentLength > 21) {
@@ -176,117 +175,124 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashPayments',
+  classes: 'obObposCashupUiCashPayments',
   handlers: {
     onAddUnit: 'addUnit',
     onSubUnit: 'subUnit',
     onLineEditCash: 'lineEditCash'
   },
   components: [{
-    classes: 'tab-pane',
+    classes: 'obObposCashupUiCashPayments-container1',
     components: [{
-      style: 'margin: 5px',
+      classes: 'obObposCashupUiCashPayments-container1-container1',
       components: [{
-        style: 'background-color: #ffffff; color: black; padding: 5px;',
+        classes: 'obObposCashupUiCashPayments-container1-container1-container1',
         components: [{
-          classes: 'row-fluid',
+          classes: 'obObposCashupUiCashPayments-container1-container1-container1-container1 row-fluid',
           components: [{
-            classes: 'span12',
+            classes: 'obObposCashupUiCashPayments-container1-container1-container1-container1-container1 span12',
             components: [{
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
               name: 'title',
+              classes: 'obObposCashupUiCashPayments-container1-container1-container1-container1-container1-title',
               renderHeader: function (value, step, count) {
                 this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepCashPayments', [value]) + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
               }
             }]
           }]
         }, {
-          style: 'background-color: #ffffff; color: black; height: 100%; width:100%',
+          classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2',
           components: [{
+            classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1',
             components: [{
-              classes: 'row-fluid',
+              classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1 row-fluid',
               components: [{
-                classes: 'span12',
-                style: 'border-bottom: 1px solid #cccccc;',
+                classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1-container1 span12',
                 components: [{
-                  style: 'padding: 10px 20px 10px 10px; float: left; width: 30%',
+                  classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1-container1-element1',
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_CoinType'));
                   }
                 }, {
-                  style: 'padding: 10px 20px 10px 0px; float: left; width: 30%',
+                  classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1-container1-element2',
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_NumberOfItems'));
                   }
                 }, {
-                  style: 'padding: 10px 0px 10px 0px;  float: left; width: 25%',
+                  classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1-container1-element3',
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_AmountOfCash'));
                   }
                 }]
               }]
             }, {
-              style: 'background-color: #ffffff; height: 454px; clear:left; width:100%',
+              classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container2',
               components: [{
                 name: 'paymentsList',
                 kind: 'OB.UI.ScrollableTable',
+                classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container2-paymentsList',
                 renderLine: 'OB.OBPOSCashUp.UI.RenderCashPaymentsLine',
                 renderEmpty: 'OB.UI.RenderEmpty',
-                scrollAreaMaxHeight: '454px',
+                scrollAreaMaxHeight: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container2-paymentsList-scrollArea',
                 listStyle: 'list'
               }, {
                 name: 'renderLoading',
-                style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+                classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container2-renderLoading',
                 showing: false,
                 initComponents: function () {
                   this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
                 }
               }]
             }, {
-              classes: 'row-fluid',
+              classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3 row-fluid',
               components: [{
-                style: 'border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; height: 70px;',
+                classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1',
                 components: [{
-                  style: 'float:left; display: table-row; width: 33%',
+                  classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container1',
                   components: [{
                     name: 'totalLbl',
-                    style: 'padding: 10px 20px 10px 10px; display: table-cell;',
+                    classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container1-totalLbl',
                     initComponents: function () {
                       this.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
                     }
                   }, {
-                    style: 'padding: 10px 20px 10px 0px; display: table-cell;',
+                    classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container1-container1',
                     components: [{
                       name: 'total',
+                      classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container1-container1-total',
                       kind: 'OB.OBPOSCashUp.UI.RenderTotal'
                     }]
                   }]
                 }, {
-                  style: 'float:left; display: table-row; width: 33%',
+                  classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container2',
                   components: [{
                     name: 'countedLbl',
-                    style: 'padding: 10px 20px 10px 10px; display: table-cell;',
+                    classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container2-countedLbl',
                     initComponents: function () {
                       this.setContent(OB.I18N.getLabel('OBPOS_Counted'));
                     }
                   }, {
-                    style: 'padding: 10px 5px 10px 0px; display: table-cell;',
+                    classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container2-container1',
                     components: [{
                       name: 'counted',
+                      classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container2-container1-counted',
                       kind: 'OB.OBPOSCashUp.UI.RenderTotal'
                     }]
                   }]
                 }, {
-                  style: 'float:left; display: table-row; width: 33%',
+                  classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container3',
                   components: [{
                     name: 'differenceLbl',
+                    classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container3-differenceLbl',
                     style: 'padding: 10px 20px 10px 10px; display: table-cell;',
                     initComponents: function () {
                       this.setContent(OB.I18N.getLabel('OBPOS_Remaining'));
                     }
                   }, {
-                    style: 'padding: 10px 5px 10px 0px; display: table-cell;',
+                    classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container3-container1',
                     components: [{
                       name: 'difference',
+                      classes: 'obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container3-container1-difference',
                       kind: 'OB.OBPOSCashUp.UI.RenderTotal'
                     }]
                   }]
@@ -324,13 +330,13 @@ enyo.kind({
 
     // reset previous status  
     if (this.originator && this.originator.$.numberOfCoins) {
-      this.originator.$.numberOfCoins.applyStyle('background-color', 'white');
+      this.originator.$.numberOfCoins.removeClass('obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-numberOfCoins_mainColor');
     }
 
     // set new status
     if (originator && originator !== this.originator) {
       this.originator = originator;
-      this.originator.$.numberOfCoins.applyStyle('background-color', '#6CB33F');
+      this.originator.$.numberOfCoins.addClass('obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-numberOfCoins_mainColor');
       this.model.trigger('action:SetStatusCoin');
     } else {
       this.originator = null;
