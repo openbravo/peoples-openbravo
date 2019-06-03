@@ -105,8 +105,8 @@ import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.centralrepository.CentralRepository;
 import org.openbravo.service.centralrepository.CentralRepository.Service;
-import org.openbravo.services.webservice.Module;
-import org.openbravo.services.webservice.ModuleDependency;
+import org.openbravo.service.centralrepository.Module;
+import org.openbravo.service.centralrepository.ModuleDependency;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -712,34 +712,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
   }
 
   private Module getRemoteModuleVersionDetail(String recordId) {
-    Module module = new Module(); // TODO: check if we want to keep Module
     try {
       JSONObject moduleDetail = CentralRepository.get(Service.MODULE_INFO, Arrays.asList(recordId))
           .getJSONObject("response");
-      module.setModuleID(moduleDetail.getString("moduleID"));
-      module.setModuleVersionID(moduleDetail.getString("moduleVersionID"));
-      module.setVersionNo(moduleDetail.getString("versionNo"));
-      module.setName(moduleDetail.getString("name"));
-      module.setLicenseAgreement(moduleDetail.getString("licenseAgreement"));
-      module.setLicenseType(moduleDetail.getString("licenseType"));
-      module.setPackageName(moduleDetail.getString("packageName"));
-      module.setType(moduleDetail.getString("type"));
-      module.setDescription(moduleDetail.getString("description"));
-      module.setHelp(moduleDetail.getString("help"));
-      module.setIsCommercial(moduleDetail.getBoolean("isCommercial"));
-      module.setUrl(moduleDetail.getString("url"));
-      module.setAuthor(moduleDetail.getString("author"));
-      HashMap<String, String> additionalInfo = new HashMap<>();
-      moduleDetail.getJSONObject("additionalInfo");
-      additionalInfo.put("support",
-          moduleDetail.getJSONObject("additionalInfo").getString("support"));
-      module.setAdditionalInfo(additionalInfo); // TODO: more additional info?
-
-      // TODO: dependencies
+      return Module.fromJson(moduleDetail);
     } catch (JSONException e) {
-      e.printStackTrace();
+      throw new OBException(e);
     }
-    return module;
   }
 
   private String getLink(String url) {

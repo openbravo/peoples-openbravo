@@ -45,9 +45,9 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.ModuleMerge;
 import org.openbravo.service.centralrepository.CentralRepository;
 import org.openbravo.service.centralrepository.CentralRepository.Service;
-import org.openbravo.services.webservice.Module;
-import org.openbravo.services.webservice.ModuleDependency;
-import org.openbravo.services.webservice.ModuleInstallDetail;
+import org.openbravo.service.centralrepository.Module;
+import org.openbravo.service.centralrepository.ModuleDependency;
+import org.openbravo.service.centralrepository.ModuleInstallDetail;
 
 public class VersionUtility {
   protected static ConnectionProvider pool;

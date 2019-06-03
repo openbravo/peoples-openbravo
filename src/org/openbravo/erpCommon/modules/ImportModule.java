@@ -81,13 +81,11 @@ import org.openbravo.model.ad.module.ModuleInstall;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.service.centralrepository.CentralRepository;
 import org.openbravo.service.centralrepository.CentralRepository.Service;
+import org.openbravo.service.centralrepository.Module;
+import org.openbravo.service.centralrepository.ModuleDependency;
+import org.openbravo.service.centralrepository.ModuleInstallDetail;
+import org.openbravo.service.centralrepository.SimpleModule;
 import org.openbravo.service.web.ResourceNotFoundException;
-import org.openbravo.services.webservice.Module;
-import org.openbravo.services.webservice.ModuleDependency;
-import org.openbravo.services.webservice.ModuleInstallDetail;
-import org.openbravo.services.webservice.SimpleModule;
-import org.openbravo.services.webservice.WebService3Impl;
-import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -1637,10 +1635,10 @@ public class ImportModule implements Serializable {
 
         JSONObject r = CentralRepository.post(Service.SCAN, req);
         JSONArray jsonUpdates = r.getJSONObject("response").getJSONArray("updates");
-        updates = new ArrayList<SimpleModule>(jsonUpdates.length());
+        updates = new ArrayList<>(jsonUpdates.length());
         for (int i = 0; i < jsonUpdates.length(); i++) {
           JSONObject update = jsonUpdates.getJSONObject(i);
-          updates.add(org.openbravo.service.centralrepository.SimpleModule.fromJson(update));
+          updates.add(SimpleModule.fromJson(update));
         }
       } catch (final Exception e) {
         // do nothing just log the error
@@ -1902,9 +1900,7 @@ public class ImportModule implements Serializable {
    */
   private RemoteModule getRemoteModule(String moduleVersionID) {
     RemoteModule remoteModule = new RemoteModule();
-    WebService3ImplServiceLocator loc;
-    WebService3Impl ws = null;
-    String strUrl = "";
+    String strUrl;
     boolean isCommercial;
 
     JSONObject versionInfo = CentralRepository.get(Service.VERSION_INFO,

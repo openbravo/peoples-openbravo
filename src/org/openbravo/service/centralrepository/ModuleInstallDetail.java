@@ -4,12 +4,19 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 
-@SuppressWarnings("serial")
-public class ModuleInstallDetail extends org.openbravo.services.webservice.ModuleInstallDetail {
-  public ModuleInstallDetail(java.lang.String[] dependencyErrors,
-      org.openbravo.services.webservice.Module[] modulesToInstall,
-      org.openbravo.services.webservice.Module[] modulesToUpdate, boolean validConfiguration) {
-    super(dependencyErrors, modulesToInstall, modulesToUpdate, validConfiguration);
+public class ModuleInstallDetail {
+  private java.lang.String[] dependencyErrors;
+  private Module[] modulesToInstall;
+  private Module[] modulesToUpdate;
+  private boolean validConfiguration;
+
+  public ModuleInstallDetail(String[] dependencyErrors, Module[] modulesToInstall,
+      Module[] modulesToUpdate, boolean validConfiguration) {
+    super();
+    this.dependencyErrors = dependencyErrors;
+    this.modulesToInstall = modulesToInstall;
+    this.modulesToUpdate = modulesToUpdate;
+    this.validConfiguration = validConfiguration;
   }
 
   public static ModuleInstallDetail fromJson(JSONObject jsonResponse) {
@@ -22,10 +29,8 @@ public class ModuleInstallDetail extends org.openbravo.services.webservice.Modul
         dependencyErrors[i] = errors.getString(i);
       }
 
-      org.openbravo.services.webservice.Module[] modulesToInstall = Module
-          .fromJson(jsonDetail.getJSONArray("modulesToInstall"));
-      org.openbravo.services.webservice.Module[] modulesToUpdate = Module
-          .fromJson(jsonDetail.getJSONArray("modulesToUpdate"));
+      Module[] modulesToInstall = Module.fromJson(jsonDetail.getJSONArray("modulesToInstall"));
+      Module[] modulesToUpdate = Module.fromJson(jsonDetail.getJSONArray("modulesToUpdate"));
 
       boolean validConfing = jsonDetail.getBoolean("validConfiguration");
       return new ModuleInstallDetail(dependencyErrors, modulesToInstall, modulesToUpdate,
@@ -33,5 +38,37 @@ public class ModuleInstallDetail extends org.openbravo.services.webservice.Modul
     } catch (Exception e) {
       throw new OBException(e);
     }
+  }
+
+  public java.lang.String[] getDependencyErrors() {
+    return dependencyErrors;
+  }
+
+  public void setDependencyErrors(java.lang.String[] dependencyErrors) {
+    this.dependencyErrors = dependencyErrors;
+  }
+
+  public Module[] getModulesToInstall() {
+    return modulesToInstall;
+  }
+
+  public void setModulesToInstall(Module[] modulesToInstall) {
+    this.modulesToInstall = modulesToInstall;
+  }
+
+  public Module[] getModulesToUpdate() {
+    return modulesToUpdate;
+  }
+
+  public void setModulesToUpdate(Module[] modulesToUpdate) {
+    this.modulesToUpdate = modulesToUpdate;
+  }
+
+  public boolean isValidConfiguration() {
+    return validConfiguration;
+  }
+
+  public void setValidConfiguration(boolean validConfiguration) {
+    this.validConfiguration = validConfiguration;
   }
 }

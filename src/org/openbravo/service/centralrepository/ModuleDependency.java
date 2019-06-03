@@ -4,12 +4,23 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-public class ModuleDependency extends org.openbravo.services.webservice.ModuleDependency {
+public class ModuleDependency {
+  private java.lang.String moduleID;
+  private java.lang.String moduleName;
+  private java.lang.String moduleVersionDependencyID;
+  private java.lang.String versionEnd;
+  private java.lang.String versionStart;
 
-  public ModuleDependency(java.lang.String moduleID, java.lang.String moduleName,
-      java.lang.String moduleVersionDependencyID, java.lang.String versionEnd,
-      java.lang.String versionStart) {
-    super(moduleID, moduleName, moduleVersionDependencyID, versionEnd, versionStart);
+  public ModuleDependency() {
+  }
+
+  public ModuleDependency(String moduleID, String moduleName, String moduleVersionDependencyID,
+      String versionEnd, String versionStart) {
+    this.moduleID = moduleID;
+    this.moduleName = moduleName;
+    this.moduleVersionDependencyID = moduleVersionDependencyID;
+    this.versionEnd = versionEnd;
+    this.versionStart = versionStart;
   }
 
   public static ModuleDependency fromJson(JSONObject jsonDep) {
@@ -26,7 +37,7 @@ public class ModuleDependency extends org.openbravo.services.webservice.ModuleDe
     }
   }
 
-  public static org.openbravo.services.webservice.ModuleDependency[] fromJson(JSONArray jsonArray) {
+  public static ModuleDependency[] fromJson(JSONArray jsonArray) {
     ModuleDependency[] deps = new ModuleDependency[jsonArray.length()];
     try {
       for (int i = 0; i < jsonArray.length(); i++) {
@@ -36,6 +47,46 @@ public class ModuleDependency extends org.openbravo.services.webservice.ModuleDe
     } catch (JSONException e) {
       return null;
     }
+  }
+
+  public java.lang.String getModuleID() {
+    return moduleID;
+  }
+
+  public void setModuleID(java.lang.String moduleID) {
+    this.moduleID = moduleID;
+  }
+
+  public java.lang.String getModuleName() {
+    return moduleName;
+  }
+
+  public void setModuleName(java.lang.String moduleName) {
+    this.moduleName = moduleName;
+  }
+
+  public java.lang.String getModuleVersionDependencyID() {
+    return moduleVersionDependencyID;
+  }
+
+  public void setModuleVersionDependencyID(java.lang.String moduleVersionDependencyID) {
+    this.moduleVersionDependencyID = moduleVersionDependencyID;
+  }
+
+  public java.lang.String getVersionEnd() {
+    return versionEnd;
+  }
+
+  public void setVersionEnd(java.lang.String versionEnd) {
+    this.versionEnd = versionEnd;
+  }
+
+  public java.lang.String getVersionStart() {
+    return versionStart;
+  }
+
+  public void setVersionStart(java.lang.String versionStart) {
+    this.versionStart = versionStart;
   }
 
 }

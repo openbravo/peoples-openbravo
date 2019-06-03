@@ -13,9 +13,9 @@ package org.openbravo.services.webservice;
 public class ModuleInstallDetail  implements java.io.Serializable {
     private java.lang.String[] dependencyErrors;
 
-    private org.openbravo.services.webservice.Module[] modulesToInstall;
+    private org.openbravo.service.centralrepository.Module[] modulesToInstall;
 
-    private org.openbravo.services.webservice.Module[] modulesToUpdate;
+    private org.openbravo.service.centralrepository.Module[] modulesToUpdate;
 
     private boolean validConfiguration;
 
@@ -24,8 +24,8 @@ public class ModuleInstallDetail  implements java.io.Serializable {
 
     public ModuleInstallDetail(
            java.lang.String[] dependencyErrors,
-           org.openbravo.services.webservice.Module[] modulesToInstall,
-           org.openbravo.services.webservice.Module[] modulesToUpdate,
+           org.openbravo.service.centralrepository.Module[] modulesToInstall,
+           org.openbravo.service.centralrepository.Module[] modulesToUpdate,
            boolean validConfiguration) {
            this.dependencyErrors = dependencyErrors;
            this.modulesToInstall = modulesToInstall;
@@ -59,7 +59,7 @@ public class ModuleInstallDetail  implements java.io.Serializable {
      * 
      * @return modulesToInstall
      */
-    public org.openbravo.services.webservice.Module[] getModulesToInstall() {
+    public org.openbravo.service.centralrepository.Module[] getModulesToInstall() {
         return modulesToInstall;
     }
 
@@ -69,7 +69,7 @@ public class ModuleInstallDetail  implements java.io.Serializable {
      * 
      * @param modulesToInstall
      */
-    public void setModulesToInstall(org.openbravo.services.webservice.Module[] modulesToInstall) {
+    public void setModulesToInstall(org.openbravo.service.centralrepository.Module[] modulesToInstall) {
         this.modulesToInstall = modulesToInstall;
     }
 
@@ -79,7 +79,7 @@ public class ModuleInstallDetail  implements java.io.Serializable {
      * 
      * @return modulesToUpdate
      */
-    public org.openbravo.services.webservice.Module[] getModulesToUpdate() {
+    public org.openbravo.service.centralrepository.Module[] getModulesToUpdate() {
         return modulesToUpdate;
     }
 
@@ -89,7 +89,7 @@ public class ModuleInstallDetail  implements java.io.Serializable {
      * 
      * @param modulesToUpdate
      */
-    public void setModulesToUpdate(org.openbravo.services.webservice.Module[] modulesToUpdate) {
+    public void setModulesToUpdate(org.openbravo.service.centralrepository.Module[] modulesToUpdate) {
         this.modulesToUpdate = modulesToUpdate;
     }
 
