@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -21,7 +21,7 @@ import org.openbravo.mobile.core.model.ModelExtension;
 public class CategoryProperties extends ModelExtension {
 
   @Override
-  public List<HQLProperty> getHQLProperties(Object params) {
+  public List<HQLProperty> getHQLProperties(final Object params) {
     String nameTrl;
     if (OBContext.hasTranslationInstalled()) {
       nameTrl = "coalesce((select t.name from ProductCategoryTrl AS t where t.language='"
@@ -30,7 +30,8 @@ public class CategoryProperties extends ModelExtension {
     } else {
       nameTrl = "pCat.name";
     }
-    ArrayList<HQLProperty> list = new ArrayList<HQLProperty>();
+
+    final ArrayList<HQLProperty> list = new ArrayList<>();
     list.add(new HQLProperty("pCat.id", "id"));
     list.add(new HQLProperty("pCat.searchKey", "searchKey"));
     list.add(new HQLProperty(nameTrl, "name"));
@@ -39,6 +40,7 @@ public class CategoryProperties extends ModelExtension {
     list.add(new HQLProperty("pCat.active", "active"));
     list.add(new HQLProperty("'Y'", "realCategory"));
     list.add(new HQLProperty("pCat.summaryLevel", "summaryLevel"));
+
     return list;
   }
 

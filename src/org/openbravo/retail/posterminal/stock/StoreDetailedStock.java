@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2018 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -28,26 +29,40 @@ import org.openbravo.retail.posterminal.JSONProcessSimple;
 public class StoreDetailedStock extends JSONProcessSimple {
   @Override
   public JSONObject exec(JSONObject jsonData) throws JSONException, ServletException {
-    String orgId, prodId;
+    String prodId;
     OBContext.setAdminMode(true);
     JSONArray responseArray = new JSONArray();
     BigDecimal totalQtyCounter = BigDecimal.ZERO;
     try {
 
-      orgId = jsonData.getString("organization");
+      final boolean isCrossStore = jsonData.has("crossOrganization")
+          && !jsonData.isNull("crossOrganization") && !StringUtils
+              .equals(jsonData.optString("crossOrganization"), jsonData.getString("organization"));
+      final String orgId = isCrossStore ? jsonData.getString("crossOrganization")
+          : jsonData.getString("organization");
       prodId = jsonData.getString("product");
 
-      String hqlQuery = "select ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.id, ms.storageBin.searchKey, "
-          + "sum(ms.quantityOnHand - ms.reservedQty) as qtyonhand "
-          + "from MaterialMgmtStorageDetail ms " + "where ms.storageBin.warehouse.id in ( "
-          + "SELECT ow.warehouse.id " + "FROM OrganizationWarehouse as ow " + "WHERE "
-          + "ow.organization.id = :orgId ) " + "and ms.product.id = :prodId "
-          + "and ms.storageBin.warehouse.active = true "
-          + "group by ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.warehouse.id, ms.storageBin.id, ms.storageBin.searchKey "
-          + "order by ms.storageBin.warehouse.name";
+      final StringBuilder hqlQuery = new StringBuilder();
+      hqlQuery.append(" select wh.id, wh.name, sb.id, sb.searchKey");
+      hqlQuery.append(" , sum(ms.quantityOnHand - ms.reservedQty) as qtyonhand");
+      hqlQuery.append(" from MaterialMgmtStorageDetail ms");
+      hqlQuery.append(" join ms.storageBin sb");
+      hqlQuery.append(" join sb.inventoryStatus ls");
+      hqlQuery.append(" join sb.warehouse wh");
+      hqlQuery.append(" join wh.organizationWarehouseList ow");
+      hqlQuery.append(" where ow.organization.id = :orgId");
+      hqlQuery.append(" and ms.product.id = :prodId");
+      if (isCrossStore) {
+        hqlQuery.append(" and ls.oBRETCOAvailableCrossStore = true");
+      } else {
+        hqlQuery.append(" and ls.available = true");
+      }
+      hqlQuery.append(" and wh.active = true");
+      hqlQuery.append(" group by wh.id, wh.name, sb.id, sb.searchKey");
+      hqlQuery.append(" order by wh.name");
 
       final Session session = OBDal.getInstance().getSession();
-      final Query<Object[]> query = session.createQuery(hqlQuery, Object[].class);
+      final Query<Object[]> query = session.createQuery(hqlQuery.toString(), Object[].class);
       query.setParameter("orgId", orgId);
       query.setParameter("prodId", prodId);
 

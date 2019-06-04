@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2016 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -18,6 +18,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -34,6 +36,7 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class ProductCharacteristicValue extends ProcessHQLQuery {
   public static final String productCharacteristicValuePropertyExtension = "OBPOS_ProductCharacteristicValueExtension";
+  public static final Logger log = LogManager.getLogger();
 
   @Inject
   @Any
@@ -41,46 +44,42 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
-  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
-    // Get Product Properties
-    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
-    Map<String, Object> args = new HashMap<String, Object>();
-    HQLPropertyList productcharacteristicsHQLProperties = ModelExtensionUtils
+  protected List<HQLPropertyList> getHqlProperties(final JSONObject jsonsent) {
+    final Map<String, Object> args = new HashMap<>();
+    final HQLPropertyList productcharacteristicsHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions, args);
-    propertiesList.add(productcharacteristicsHQLProperties);
 
+    final List<HQLPropertyList> propertiesList = new ArrayList<>();
+    propertiesList.add(productcharacteristicsHQLProperties);
     return propertiesList;
   }
 
   @Override
-  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+  protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
+    OBContext.setAdminMode(true);
     try {
-      OBContext.setAdminMode(true);
-      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      final OBRETCOProductList productList = POSUtils
-          .getProductListByPosterminalId(jsonsent.getString("pos"));
-
-      final Date terminalDate = OBMOBCUtils.calculateServerDate(
-          jsonsent.getJSONObject("parameters").getString("terminalTime"),
-          jsonsent.getJSONObject("parameters")
-              .getJSONObject("terminalTimeOffset")
-              .getLong("value"));
-
+      final String posId = jsonsent.getString("pos");
+      final Date terminalDate = getTerminalDate(jsonsent);
+      final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
+      final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(posId);
       final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
           terminalDate);
-      Map<String, Object> paramValues = new HashMap<String, Object>();
-      paramValues.put("productListId", productList.getId());
-      paramValues.put("priceListVersionId", priceListVersion.getId());
 
+      final Map<String, Object> paramValues = new HashMap<>();
+      if (isCrossStoreSearch) {
+        paramValues.put("productId", jsonsent.getJSONObject("remoteParams").getString("productId"));
+      }
       // Optional filtering by a list of m_product_id
       if (jsonsent.getJSONObject("parameters").has("filterProductList")
           && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
           && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null")) {
-        JSONArray filterProductList = jsonsent.getJSONObject("parameters")
+        final JSONArray filterProductList = jsonsent.getJSONObject("parameters")
             .getJSONArray("filterProductList");
         paramValues.put("filterProductList", filterProductList);
       }
-
+      paramValues.put("productListId", productList.getId());
+      paramValues.put("priceListVersionId", priceListVersion.getId());
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
@@ -89,46 +88,82 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-
-    List<String> hqlQueries = new ArrayList<String>();
-    String hqlQuery = "";
-
-    Long lastUpdated = jsonsent.has("lastUpdated")
+    final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
+    final Long lastUpdated = jsonsent.has("lastUpdated")
         && !jsonsent.get("lastUpdated").equals("undefined")
         && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
-
-    HQLPropertyList regularProductsCharacteristicHQLProperties = ModelExtensionUtils
+    // Optional filtering by a list of m_product_id
+    final boolean filterProductList = jsonsent.getJSONObject("parameters").has("filterProductList")
+        && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
+        && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null");
+    final HQLPropertyList regularProductsCharacteristicHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    hqlQuery = "select " + regularProductsCharacteristicHQLProperties.getHqlSelect()
-        + "from ProductCharacteristicValue pcv " + "inner join pcv.characteristic characteristic "
-        + "inner join pcv.characteristicValue characteristicValue "
-        + "inner join pcv.product product " + "inner join product.oBRETCOProlProductList opp "
-        + "inner join product.pricingProductPriceList ppp "
-        + "where opp.obretcoProductlist.id= :productListId "
-        + "and ppp.priceListVersion.id= :priceListVersionId "
-        + "and characteristic.obposUseonwebpos = true "
-        + "and pcv.$filtersCriteria AND pcv.$hqlCriteria "
-        + "and pcv.$naturalOrgCriteria and pcv.$readableSimpleClientCriteria "
-        + ((lastUpdated != null)
-            ? "and (opp.$incrementalUpdateCriteria OR ppp.$incrementalUpdateCriteria OR "
-                + "pcv.$incrementalUpdateCriteria OR characteristic.$incrementalUpdateCriteria OR "
-                + "characteristicValue.$incrementalUpdateCriteria) "
-            : "and (opp.$incrementalUpdateCriteria AND ppp.$incrementalUpdateCriteria AND "
-                + "pcv.$incrementalUpdateCriteria AND characteristic.$incrementalUpdateCriteria AND "
-                + "characteristicValue.$incrementalUpdateCriteria) ")
-        + "and characteristic.active = 'Y' ";
-
-    // Optional filtering by a list of m_product_id
-    if (jsonsent.getJSONObject("parameters").has("filterProductList")
-        && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
-        && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null")) {
-      hqlQuery += "and pcv.product.id in (:filterProductList) ";
-    }
-
-    hqlQuery += "order by pcv.id";
-
-    hqlQueries.add(hqlQuery);
+    final List<String> hqlQueries = new ArrayList<>();
+    hqlQueries
+        .add(getProductCharacteristicValueHqlString(regularProductsCharacteristicHQLProperties,
+            filterProductList, lastUpdated, isCrossStoreSearch));
     return hqlQueries;
+  }
+
+  private String getProductCharacteristicValueHqlString(
+      final HQLPropertyList regularProductsCharacteristicHQLProperties,
+      final boolean filterProductList, final Long lastUpdated, final boolean isCrossStoreSearch) {
+    final StringBuilder query = new StringBuilder();
+    query.append(" select");
+    query.append(regularProductsCharacteristicHQLProperties.getHqlSelect());
+    query.append(" from ProductCharacteristicValue pcv");
+    query.append(" join pcv.characteristic characteristic");
+    query.append(" join pcv.characteristicValue characteristicValue");
+    query.append(" join pcv.product product");
+    query.append(" join product.oBRETCOProlProductList opp");
+    query.append(" join product.pricingProductPriceList ppp");
+    query.append(" where pcv.$readableSimpleClientCriteria");
+    query.append(" and characteristic.obposUseonwebpos = true");
+    query.append(" and characteristic.active = true");
+    if (isCrossStoreSearch) {
+      query.append(" and pcv.product.id = :productId");
+    } else {
+      query.append(" and pcv.$filtersCriteria");
+      query.append(" and pcv.$hqlCriteria");
+      query.append(" and pcv.$naturalOrgCriteria");
+      query.append(" and opp.obretcoProductlist.id = :productListId");
+      query.append(" and ppp.priceListVersion.id = :priceListVersionId");
+      if (filterProductList) {
+        query.append(" and pcv.product.id in :filterProductList");
+      }
+      if (lastUpdated == null) {
+        query.append(" and (opp.$incrementalUpdateCriteria");
+        query.append(" and ppp.$incrementalUpdateCriteria");
+        query.append(" and pcv.$incrementalUpdateCriteria");
+        query.append(" and characteristic.$incrementalUpdateCriteria");
+        query.append(" and characteristicValue.$incrementalUpdateCriteria)");
+      } else {
+        query.append(" and (opp.$incrementalUpdateCriteria");
+        query.append(" or ppp.$incrementalUpdateCriteria");
+        query.append(" or pcv.$incrementalUpdateCriteria");
+        query.append(" or characteristic.$incrementalUpdateCriteria");
+        query.append(" or characteristicValue.$incrementalUpdateCriteria)");
+      }
+    }
+    query.append(" order by pcv.id");
+    return query.toString();
+  }
+
+  private Date getTerminalDate(final JSONObject jsonsent) throws JSONException {
+    return OBMOBCUtils.calculateServerDate(
+        jsonsent.getJSONObject("parameters").getString("terminalTime"),
+        jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
+  }
+
+  private static boolean isCrossStoreSearch(final JSONObject jsonsent) {
+    boolean crossStoreSearch = false;
+    try {
+      crossStoreSearch = jsonsent.has("remoteParams")
+          && jsonsent.getJSONObject("remoteParams").optBoolean("crossStoreSearch");
+    } catch (JSONException e) {
+      log.error("Error while getting crossStoreSearch " + e.getMessage(), e);
+    }
+    return crossStoreSearch;
   }
 }

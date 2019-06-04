@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -35,9 +35,9 @@ public class ProductProperties extends ModelExtension {
   private static final Logger log = LogManager.getLogger();
 
   @Override
-  public List<HQLProperty> getHQLProperties(Object params) {
-
-    List<HQLProperty> list = ProductProperties.getMainProductHQLProperties(params);
+  public List<HQLProperty> getHQLProperties(final Object params) {
+    final List<HQLProperty> list = ProductProperties.getMainProductHQLProperties(params);
+    final boolean crossStore = (boolean) getParam(params, "crossStore");
 
     list.addAll(new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
@@ -58,21 +58,26 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("img.id", "imgId"));
           add(new HQLProperty("img.mimetype", "mimetype"));
         }
-        add(new HQLProperty("pli.bestseller", "bestseller"));
-        add(new HQLProperty("pli.productStatus.id", "productAssortmentStatus"));
+        if (crossStore) {
+          add(new HQLProperty("false", "bestseller"));
+          add(new HQLProperty("product.active", "active"));
+        } else {
+          add(new HQLProperty("pli.bestseller", "bestseller"));
+          add(new HQLProperty("pli.productStatus.id", "productAssortmentStatus"));
+          add(new HQLProperty("ppp.listPrice", "listPrice"));
+          add(new HQLProperty("ppp.standardPrice", "standardPrice"));
+          add(new HQLProperty("ppp.priceLimit", "priceLimit"));
+          add(new HQLProperty("ppp.cost", "cost"));
+          Entity productPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
+          if (productPrice.hasProperty("algorithm")) {
+            add(new HQLProperty("ppp.algorithm", "algorithm"));
+          }
+          add(new HQLProperty(
+              "case when product.active = 'Y' and pli.active is not null then pli.active else product.active end",
+              "active"));
+        }
         add(new HQLProperty("product.obposEditablePrice", "obposEditablePrice"));
         add(new HQLProperty("'false'", "ispack"));
-        add(new HQLProperty("ppp.listPrice", "listPrice"));
-        add(new HQLProperty("ppp.standardPrice", "standardPrice"));
-        add(new HQLProperty("ppp.priceLimit", "priceLimit"));
-        add(new HQLProperty("ppp.cost", "cost"));
-        Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
-        if (ProductPrice.hasProperty("algorithm") == true) {
-          add(new HQLProperty("ppp.algorithm", "algorithm"));
-        }
-        add(new HQLProperty(
-            "case when product.active = 'Y' and pli.active is not null then pli.active else product.active end",
-            "active"));
         add(new HQLProperty(
             "(select case when atri.id is not null then true else false end from Product as prod left join prod.attributeSet as atri where prod.id = product.id)",
             "hasAttributes"));
@@ -83,24 +88,13 @@ public class ProductProperties extends ModelExtension {
     });
 
     return list;
-
   }
 
-  public static List<HQLProperty> getMainProductHQLProperties(Object params) {
-
-    OBPOSApplications posDetail = null;
-    Boolean localmultiPriceList = false;
-    try {
-      if (params != null) {
-        @SuppressWarnings("unchecked")
-        HashMap<String, Object> localParams = (HashMap<String, Object>) params;
-        localmultiPriceList = (Boolean) localParams.get("multiPriceList");
-        posDetail = POSUtils.getTerminalById((String) localParams.get("terminalId"));
-      }
-    } catch (Exception e) {
-      log.error("Error getting params: " + e.getMessage(), e);
-    }
-    final boolean multiPriceList = localmultiPriceList;
+  public static List<HQLProperty> getMainProductHQLProperties(final Object params) {
+    final OBPOSApplications posDetail = POSUtils
+        .getTerminalById((String) getParam(params, "terminalId"));
+    final boolean multiPriceList = (boolean) getParam(params, "multiPriceList");
+    final boolean crossStore = (boolean) getParam(params, "crossStore");
 
     if (posDetail == null) {
       throw new OBException("terminal id is not present in session ");
@@ -166,14 +160,15 @@ public class ProductProperties extends ModelExtension {
             add(new HQLProperty("product.quantityRule", "quantityRule"));
             add(new HQLProperty("product.obposPrintservices", "isPrintServices"));
             add(new HQLProperty("product.weight", "weight"));
-            if (multiPriceList) {
+            if (multiPriceList && !crossStore) {
               add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
             }
+            add(new HQLProperty(String.valueOf(crossStore), "crossStore"));
           } catch (PropertyNotFoundException e) {
             if (OBContext.hasTranslationInstalled()) {
               trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
                   + OBContext.getOBContext().getLanguage().getLanguage()
-                  + "'  and pt.product=product), product.name)";
+                  + "'  and pt.product.id = product.id), product.name)";
             } else {
               trlName = "product.name";
             }
@@ -188,5 +183,18 @@ public class ProductProperties extends ModelExtension {
     list.add(new HQLProperty("product.taxCategory.id", "taxCategory", 0));
 
     return list;
+  }
+
+  protected static Object getParam(final Object params, final String paramName) {
+    try {
+      if (params != null) {
+        @SuppressWarnings("unchecked")
+        final HashMap<String, Object> localParams = (HashMap<String, Object>) params;
+        return localParams.containsKey(paramName) ? localParams.get(paramName) : false;
+      }
+    } catch (Exception e) {
+      log.error("Error getting params: " + e.getMessage(), e);
+    }
+    return null;
   }
 }

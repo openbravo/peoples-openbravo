@@ -165,7 +165,7 @@
                   var organization = terminalModel.get('terminal').organization;
                   terminalModel.get('store').splice(0, 0, {
                     id: organization,
-                    name: OB.I18N.getLabel('OBPOS_LblThisStore') + " (" + terminalModel.get('terminal').organization$_identifier + ")"
+                    name: OB.I18N.getLabel('OBPOS_LblThisStore', [terminalModel.get('terminal').organization$_identifier])
                   });
                   terminalModel.get('store').splice(1, 0, {
                     id: "all_" + organization,
@@ -622,7 +622,7 @@
 
     postSyncProcessActions: function () {
       if (OB.MobileApp.model.get('context') && OB.MobileApp.model.get('context').user && _.isUndefined(OB.MobileApp.model.get('context').user.isSalesRepresentative)) {
-        OB.Dal.get(OB.Model.SalesRepresentative, OB.MobileApp.model.usermodel.get('id'), function (salesrepresentative) {
+        OB.Dal.get(OB.Model.SalesRepresentative, OB.MobileApp.model.get('context').user.id, function (salesrepresentative) {
           if (!salesrepresentative) {
             OB.MobileApp.model.get('context').user.isSalesRepresentative = false;
           } else {

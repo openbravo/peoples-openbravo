@@ -9387,12 +9387,22 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   padding: 0px 0px 15px 0px;
 }
 
-.obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container1-stockHere {
+.obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container2{
+  padding: 0px 0px 15px 0px;
+}
+
+.obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container2-stockHere {
 /* Inherits: [OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore] */
 }
 
 .obObposPointOfSaleUiProductDetailsViewBody-container3-container1-stockOthers {
 /* Inherits: [OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockOtherStore] */
+}
+
+.obObposPointOfSaleUiProductDetailsViewBody-container3-container1-productDeliveryModes {
+ /* Inherits: [OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton] */
+  min-width: 200px;
+  margin: 2px 5px 2px 5px !important;
 }
 
 .obObposPointOfSaleUiProductDetailsViewBody-stockHere_error,
@@ -12925,6 +12935,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalAdvancedFilterOrders {
   /* Inherits: [OB.UI.ModalAdvancedFilterOrders] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalCrossStoreSelector {
+  /* Inherits: [OBPOS.UI.CrossStoreSelector] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSStoreInformation {
+  /* Inherits: [OBPOS.UI.StoreInformation] */
 }
 
 .obObposPointOfSaleUiPointOfSale-mainSubWindow {}

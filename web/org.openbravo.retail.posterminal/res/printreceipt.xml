@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -87,7 +87,48 @@
         <text align ="right" length="8"><%= line.printNet() %></text>
     <%}%>
       </line>
-    <%
+    <%if(line.has('organization') && line.get('organization').id !== OB.MobileApp.model.get('terminal').organization){%>
+      <line>
+        <text align ="right">-- <%= line.get('organization').name %></text>  
+      </line>
+    <%}
+     var deliveryDate = line.get('obrdmDeliveryDate') ? (line.get('obrdmDeliveryDate') instanceof Date ? line.get('obrdmDeliveryDate') : new Date(line.get('obrdmDeliveryDate'))) : null,
+        deliveryTime = line.get('obrdmDeliveryTime') ? (line.get('obrdmDeliveryTime') instanceof Date ? line.get('obrdmDeliveryTime') : new Date(line.get('obrdmDeliveryTime'))) : null,
+        showDate = line.get('obrdmDeliveryMode') === 'PickupInStoreDate' || line.get('obrdmDeliveryMode') === 'HomeDelivery',
+        showTime = line.get('obrdmDeliveryMode') === 'HomeDelivery',
+        deliveryName = line.get('nameDelivery') ? line.get('nameDelivery') : (line.get('obrdmDeliveryMode') ? _.find(OB.MobileApp.model.get('deliveryModes'), function (dm) {
+           return dm.id === line.get('obrdmDeliveryMode');
+         }).name : null);
+     
+     if (line.get('obrdmDeliveryMode') && deliveryName && (line.get('obrdmDeliveryMode') !== order.get('obrdmDeliveryModeProperty') || deliveryDate)) {
+      var currentDate, currentTime;
+      if (!deliveryDate) {
+        currentDate = new Date();
+        currentDate.setHours(0);
+        currentDate.setMinutes(0);
+        currentDate.setSeconds(0);
+      }
+
+      if (!deliveryTime) {
+        currentTime = new Date();
+        currentTime.setSeconds(0);
+      }
+     %>
+      <line>
+          <text align ="right">-- <%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBRDM_DeliveryMode'))%>: <%=deliveryName%></text>
+      </line>
+     <% if(showDate){%>
+		<line>
+          <text align ="right">-- <%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBRDM_DeliveryDate'))%>: <%=deliveryDate ? OB.I18N.formatDate(deliveryDate) : OB.I18N.formatDate(currentDate)%></text>
+        </line>         
+     <%}
+      if(showTime){%>
+		<line>
+          <text align ="right">-- <%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBRDM_DeliveryTime'))%>: <%=deliveryTime ? OB.I18N.formatHour(deliveryTime) : OB.I18N.formatHour(currentDate)%></text>
+        </line>
+      <%}
+     }
+   
         promotions = line.get('promotions');
         if (promotions){
           promotions.forEach(function(p) {

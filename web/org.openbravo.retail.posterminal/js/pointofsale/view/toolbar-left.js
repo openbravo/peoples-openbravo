@@ -200,6 +200,9 @@ enyo.kind({
       return false;
     }
 
+    // Set current organization to receipt
+    this.model.get('order').set('organization', OB.MobileApp.model.get('terminal').organization);
+
     // deletion without warning is allowed if the ticket has been processed
     if (this.hasClass('paidticket')) {
       this.doDeleteOrder();
@@ -493,7 +496,9 @@ enyo.kind({
         criteria = {},
         paymentModels = OB.MobileApp.model.get('payments');
     if (this.disabled === false) {
-      var receipt = me.model.get('order');
+      var receipt = me.model.get('order'),
+          receiptLines = receipt.get('lines').models,
+          i;
       if (receipt.get('isQuotation') && receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').quotation_anonymouscustomer) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_quotationsOrdersWithAnonimousCust'));
         return;
@@ -509,6 +514,29 @@ enyo.kind({
           return;
         }
       }
+
+      for (i = 1; i < receipt.get('lines').models.length; i++) {
+        if (receiptLines[0].get('organization').id !== receiptLines[i].get('organization').id) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ReceiptLinesSameStore'));
+          return;
+        }
+      }
+
+      if (receiptLines.length > 0) {
+        if (!receiptLines[0].get('isVerifiedReturn')) {
+          receipt.set('organization', receiptLines[0].get('organization').id);
+        }
+        if (OB.UTIL.isCrossStoreReceipt(receipt)) {
+          receipt.set('warehouse', receiptLines[0].get('warehouse').id);
+          if (receiptLines[0].get('product').get('currentPrice')) {
+            receipt.set('priceList', receiptLines[0].get('product').get('currentPrice').priceListId);
+          }
+          if (receiptLines[0].has('documentType')) {
+            receipt.set('documentType', receiptLines[0].get('documentType'));
+          }
+        }
+      }
+
       if (receipt.get('orderType') === 3) {
         this.showPaymentTab();
         return;

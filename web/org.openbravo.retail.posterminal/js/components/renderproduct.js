@@ -175,7 +175,11 @@ enyo.kind({
           this.$.price.addStyles('font-size: ' + getFontSize(OB.I18N.formatCurrency(this.model.get('standardPrice'))));
         }
       }
-      this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
+      if (this.model.get('crossStore')) {
+        this.$.price.setContent('?.??');
+      } else {
+        this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
+      }
     } else {
       if (this.model.get('standardPrice')) {
         // This inline style is allowed
@@ -185,7 +189,11 @@ enyo.kind({
           this.$.price.addStyles('font-size: ' + getFontSize(OB.I18N.formatCurrency(this.model.get('standardPrice'))));
         }
       }
-      this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
+      if (this.model.get('crossStore')) {
+        this.$.price.setContent('?.??');
+      } else {
+        this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
+      }
     }
     // Context menu
     if (this.model.get('productType') !== 'I' || this.$.btnProductContextMenu.$.menu.itemsCount === 0) {

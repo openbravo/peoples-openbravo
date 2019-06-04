@@ -134,9 +134,6 @@ enyo.kind({
           }
         }
       });
-      if (this.model.get('orderList').current && OB.UTIL.isCrossStoreReceipt(this.model.get('orderList').current)) {
-        this.hide();
-      }
     } else {
       this.hide();
     }
@@ -319,10 +316,6 @@ enyo.kind({
       this.show();
       this.adjustVisibilityBasedOnPermissions();
     } else {
-      this.hide();
-    }
-
-    if (this.model.get('orderList').current && OB.UTIL.isCrossStoreReceipt(this.model.get('orderList').current)) {
       this.hide();
     }
   },
@@ -783,7 +776,7 @@ enyo.kind({
     }
   },
   updateVisibility: function (model) {
-    if (OB.MobileApp.model.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y' && !OB.UTIL.isCrossStoreReceipt(model)) {
+    if (OB.MobileApp.model.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
       this.show();
     } else {
       this.hide();
@@ -887,7 +880,7 @@ enyo.kind({
     }
   },
   updateVisibility: function (model) {
-    if (OB.MobileApp.model.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y' && !OB.UTIL.isCrossStoreReceipt(model)) {
+    if (OB.MobileApp.model.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
       this.show();
     } else {
       this.hide();
@@ -935,7 +928,7 @@ enyo.kind({
     }
   },
   updateVisibility: function (model) {
-    if (OB.MobileApp.model.hasPermission(this.permission, true) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y' && !OB.UTIL.isCrossStoreReceipt(model)) {
+    if (OB.MobileApp.model.hasPermission(this.permission, true) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
       this.show();
     } else {
       this.hide();
@@ -1279,8 +1272,6 @@ enyo.kind({
       } else if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelAndReplaceOrdersWithDeliveries', true) && (deliveredresult === 'TD' || deliveredresult === 'DN')) {
         this.hide();
       } else if (OB.MobileApp.model.hasPermission('OBPOS_payments.hideCancelAndReplace', true) && !haspayments) {
-        this.hide();
-      } else if (OB.UTIL.isCrossStoreReceipt(receipt)) {
         this.hide();
       } else {
         this.show();

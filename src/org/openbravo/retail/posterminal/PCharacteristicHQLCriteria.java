@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2018 Openbravo S.L.U.
+ * Copyright (C) 2016-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -15,7 +15,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONTokener;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.process.HQLCriteriaProcess;
-import org.openbravo.retail.config.OBRETCOProductList;
 
 @ApplicationScoped
 @Qualifier("PCH_Filter")
@@ -70,11 +69,9 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
   }
 
   protected String getAllQuery(String[] param) {
-    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(param[4]);
     String sql = " exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + " where ch.id = pchv.characteristic.id "
-        + " and pchv.product.id= pli.product.id and pli.obretcoProductlist.id='"
-        + productList.getId() + "' ";
+        + " and pchv.product.id= pli.product.id and pli.obretcoProductlist.id in :productListIds ";
     if (!(param[0].equals("%") || param[0].equals("%%"))) {
       sql = sql
           + " and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1'))  ";
@@ -83,11 +80,9 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
   }
 
   protected String getProdCategoryQuery(String[] param) {
-    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(param[4]);
     String sql = " exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + " where ch.id = pchv.characteristic.id "
-        + " and pchv.product.id= pli.product.id and pli.obretcoProductlist.id='"
-        + productList.getId() + "' ";
+        + " and pchv.product.id= pli.product.id and pli.obretcoProductlist.id in :productListIds ";
     if (!(param[0].equals("%") || param[0].equals("%%"))) {
       sql = sql
           + " and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1'))  ";
@@ -97,7 +92,6 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
   }
 
   protected String getBestsellers(String[] param) {
-    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(param[4]);
     String sql = " exists (select 1 from ProductCharacteristicValue as pchv, OBRETCO_Prol_Product pli "
         + " where pchv.product.id=pli.product.id and ch.id = pchv.characteristic.id "
         + " and pli.bestseller = true ";
@@ -105,7 +99,7 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
       sql = sql
           + " and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1'))  ";
     }
-    sql = sql + " and pli.obretcoProductlist.id='" + productList.getId() + "' ";
+    sql = sql + " and pli.obretcoProductlist.id in :productListIds ";
     return sql;
   }
 

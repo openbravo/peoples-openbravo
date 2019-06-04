@@ -113,10 +113,13 @@ enyo.kind({
         i, j, params = [],
         productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent,
         forceRemote = false;
-    var productFilterText, productCategory, productCharacteristicModel, resetValueList, characteristic = [];
+    var productFilterText, productCategory, productCharacteristicModel, resetValueList, characteristic = [],
+        crossStoreSearch;
 
     productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
     productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
+    crossStoreSearch = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.crossStoreSearch;
+    forceRemote = crossStoreSearch && crossStoreSearch.checked;
 
     productCharacteristic.customFilters.forEach(function (hqlFilter) {
       if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue) && !_.isUndefined(hqlFilter.forceRemote)) {
@@ -324,6 +327,8 @@ enyo.kind({
       remoteCriteria.push(characteristicfilter);
       criteria.remoteFilters = remoteCriteria;
       criteria.forceRemote = forceRemote;
+      criteria.remoteParams = {};
+      criteria.remoteParams.crossStoreSearch = crossStoreSearch && crossStoreSearch.checked;
       OB.Dal.find(OB.Model.CharacteristicValue, criteria, function (dataValues) {
         resetValueList(dataValues);
       }, function (tx, error) {

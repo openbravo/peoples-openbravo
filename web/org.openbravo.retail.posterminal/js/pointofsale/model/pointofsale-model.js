@@ -670,9 +670,22 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     // Listening events that cause a discount recalculation
     receipt.get('lines').on('add change:qty change:price', function (line) {
+      var terminalOrganization = {
+        id: OB.MobileApp.model.get('terminal').organization,
+        name: OB.I18N.getLabel('OBPOS_LblThisStore', [OB.MobileApp.model.get('terminal').organization$_identifier])
+      },
+          terminalWarehouse = {
+          id: OB.MobileApp.model.get('warehouses')[0].warehouseid,
+          warehousename: OB.MobileApp.model.get('warehouses')[0].warehousename
+          };
       // Do not calculate the receipt if the ticket is not editable or is being cloned
       if (!receipt.get('isEditable') || receipt.get('cloningReceipt')) {
         return;
+      }
+      if (line.get('qty') < 0 && OB.UTIL.isNullOrUndefined(line.get('canceledLine')) && OB.UTIL.isNullOrUndefined(line.get('isVerifiedReturn')) && OB.UTIL.isCrossStoreLine(line)) {
+        line.set('organization', terminalOrganization);
+        line.set('warehouse', terminalWarehouse);
+        line.get('product').set('crossStore', false);
       }
       // Calculate the receipt
       receipt.calculateReceipt(null, line);

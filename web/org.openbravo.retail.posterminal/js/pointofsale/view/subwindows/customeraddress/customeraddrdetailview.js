@@ -215,6 +215,7 @@ enyo.kind({
     this.customer.set('cityName', this.customerAddr.get('cityName'));
     this.customer.set('locationModel', this.customerAddr);
     this.customer.set('countryName', this.customerAddr.get('countryName'));
+    this.customer.get('locations').push(this.customerAddr.clone());
     this.model.get('order').trigger('change:bp', this.model.get('order'));
     this.doChangeBusinessPartner({
       businessPartner: this.customer,

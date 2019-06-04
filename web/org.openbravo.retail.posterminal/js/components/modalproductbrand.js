@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -93,7 +93,8 @@ enyo.kind({
     var products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products,
         productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue(),
         characteristic = [],
-        productCategory, forceRemote = false,
+        crossStoreSearch = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.crossStoreSearch,
+        productCategory, forceRemote = crossStoreSearch && crossStoreSearch.checked,
         productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent;
     productCharacteristic.customFilters.forEach(function (hqlFilter) {
       if (!_.isUndefined(hqlFilter.hqlCriteriaBrand) && !_.isUndefined(hqlFilter.forceRemote)) {
@@ -251,6 +252,8 @@ enyo.kind({
       });
       criteria.remoteFilters = remoteCriteria;
       criteria.forceRemote = forceRemote;
+      criteria.remoteParams = {};
+      criteria.remoteParams.crossStoreSearch = crossStoreSearch && crossStoreSearch.checked;
       OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
     }
     return true;

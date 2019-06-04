@@ -84,10 +84,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/terminal",
         // "model/user",
         "utils/ob-utilitiesuipos", "model/bpartnerfilter", "model/orderfilter",
-        "model/orders-for-verified-returns-filter", "model/bpcategory", "model/bplocation", // Model
-                                                                                            // for
-                                                                                            // Customer
-                                                                                            // Address
+        "model/crossstorefilter", "model/orders-for-verified-returns-filter", "model/bpcategory",
+        "model/bplocation", // Model
+                            // for
+                            // Customer
+                            // Address
 
         "webprinter/bluetooth", "webprinter/usb", "webprinter/webprinter", "webprinter/escpos",
         "webprinter/standardprinters", "webprinter/typedarrays", "webprinter/testprinter",
@@ -113,6 +114,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/keypadcoins", "data/dataordersave", "data/dataordertaxes",
         "data/datacustomersave", "data/datacustomeraddrsave", "data/dataorderdiscount",
         "components/modalreceipts", "components/modalorderselector",
+        "components/modalcrossstoreselector", "components/storeinformation",
         "components/modalmultiorderslayaway", "components/modalcategorytree",
         "components/rendercategory", "components/renderproduct", "components/renderproductch",
         "components/modalpayment", "components/modalprovidergroup", "components/standardprovider",

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, _ */
+/*global OB, Backbone, _, moment */
 
 (function () {
   // Because of problems with module dependencies, it is possible this object to already
@@ -309,6 +309,44 @@
       this.discountRules[name] = rule;
     },
 
+    addAvailabilityRule: function () {
+      var mStartTime, mEndTime, receipt = OB.MobileApp.model.receipt;
+      if (receipt.get('discountAvailabilityExtraStartTime')) {
+        mStartTime = moment(receipt.get('discountAvailabilityExtraStartTime'));
+        mEndTime = moment(receipt.get('discountAvailabilityExtraEndTime'));
+      } else {
+        var val = OB.MobileApp.model.get('permissions').DiscountAvailabilityExtraTime,
+            extraTime = parseInt(val ? val : "1", 10);
+        if (_.isNaN(extraTime) || extraTime < 0) {
+          extraTime = 1;
+        }
+        mStartTime = moment().add(extraTime, 'minutes');
+        receipt.set('discountAvailabilityExtraStartTime', mStartTime.toDate(), {
+          silent: true
+        });
+        mEndTime = moment().add(-extraTime, 'minutes');
+        receipt.set('discountAvailabilityExtraEndTime', mEndTime.toDate(), {
+          silent: true
+        });
+      }
+      var weekday = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
+          currentStartTime = mStartTime.format('YYYY-MM-DDTHH:mm:ss'),
+          currentEndtime = mEndTime.format('YYYY-MM-DDTHH:mm:ss'),
+          day = weekday[mStartTime.day()],
+          startingtimeday = 'startingtime'.concat(day),
+          endingtimeday = 'endingtime'.concat(day),
+          availabilityRule = " AND ((allweekdays = 'true' AND ((startingtime < '" + currentStartTime + "' AND endingtime > '" + currentEndtime + "') " //
+           + "OR (endingtime is null AND startingtime < '" + currentStartTime + "') " //
+           + "OR (startingtime is null and '" + currentEndtime + "' < endingtime) " //
+           + "OR (startingtime is null AND endingtime is null))) " //
+           + "OR (" + day + " = 'true' " //
+           + "AND ((" + startingtimeday + " < '" + currentStartTime + "' AND " + endingtimeday + " > '" + currentEndtime + "') " //
+           + "OR (" + endingtimeday + " is null AND " + startingtimeday + " < '" + currentStartTime + "') " //
+           + "OR (" + startingtimeday + " is null and '" + currentEndtime + "' < " + endingtimeday + ") " //
+           + "OR (" + startingtimeday + " is null AND " + endingtimeday + " is null)))) ";
+      return availabilityRule;
+    },
+
     standardFilter: " date(?) BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))" //
     + " AND((BPARTNER_SELECTION = 'Y'" //
     + " AND NOT EXISTS" //
@@ -385,10 +423,10 @@
     + " FROM M_OFFER_PROD_CAT OP" //
     + " WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID" //
     + "   AND OP.M_PRODUCT_CATEGORY_ID = ?" //
-    + " ))) " //
+    + " )))" //
     + " AND ((CHARACTERISTICS_SELECTION = 'Y'" + " AND NOT EXISTS" + " (SELECT 1" + "  FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V" + "  WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID" + "    AND V.M_PRODUCT_ID = ?" + "    AND V.M_CH_VALUE_ID = C.M_CH_VALUE_ID" + " ))" + " OR(CHARACTERISTICS_SELECTION = 'N'" + " AND EXISTS" + " (SELECT 1" + "  FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V" + "  WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID" + "    AND V.M_PRODUCT_ID = ?" + "    AND V.M_CH_VALUE_ID = C.M_CH_VALUE_ID" + " ))" + " )" + " AND ((pricelist_selection = 'Y' AND NOT EXISTS" // 
-    + "	  (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? )) " //
-    + "	OR (pricelist_selection = 'N' AND EXISTS" // 
+    + "   (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? ))" //
+    + " OR (pricelist_selection = 'N' AND EXISTS" // 
     + "   (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? )))",
 
     additionalFilters: [],
@@ -396,6 +434,7 @@
     computeStandardFilter: function (receipt) {
       var filter = OB.Model.Discounts.standardFilter;
       var i, additionalFilter;
+      filter += this.addAvailabilityRule();
       for (i = 0; i < OB.Model.Discounts.additionalFilters.length; i++) {
         additionalFilter = OB.Model.Discounts.additionalFilters[i];
         if (additionalFilter.generateFilter) {
@@ -433,8 +472,8 @@
           return;
         }
 
-        linePrice = receipt.getCurrentDiscountedLinePrice(l, true) || l.get('price');
-        if (linePrice < clonedDiscountRule.get('fixedPrice')) {
+        linePrice = receipt.getCurrentDiscountedLinePrice(l, true);
+        if (linePrice <= 0 || linePrice < clonedDiscountRule.get('fixedPrice')) {
           return;
         }
 
@@ -456,8 +495,14 @@
         } else {
           if (!OB.UTIL.isNullOrUndefined(clonedDiscountRule.get('fixedPrice')) && clonedDiscountRule.get('fixedPrice') >= 0) {
             discountedLinePrice = clonedDiscountRule.get('fixedPrice');
+            if (discountedLinePrice > linePrice) {
+              discountedLinePrice = 0;
+            }
           } else {
             discountedLinePrice = (linePrice - clonedDiscountRule.get('discountAmount')) * (1 - clonedDiscountRule.get('discount') / 100);
+            if (discountedLinePrice < 0) {
+              discountedLinePrice = 0;
+            }
           }
           discountAmt = OB.DEC.toNumber((linePrice - OB.DEC.toNumber(new BigDecimal(String(discountedLinePrice)))) * qty);
         }
