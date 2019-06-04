@@ -7,10 +7,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -26,6 +27,13 @@ public class CentralRepository {
   private static final String BUTLER_API_URL = "https://butler.openbravo.com/openbravo/api/";
 
   private static final Logger log = LogManager.getLogger();
+
+  private static final int TIMEOUT = 10_000;
+  private static final RequestConfig TIMEOUT_CONFIG = RequestConfig.custom()
+      .setConnectionRequestTimeout(TIMEOUT)
+      .setConnectTimeout(TIMEOUT)
+      .setSocketTimeout(TIMEOUT)
+      .build();
 
   public enum Service {
     REGISTER_MODULE("register"),
@@ -70,8 +78,9 @@ public class CentralRepository {
 
   }
 
-  private static JSONObject executeRequest(HttpUriRequest request, Service service,
+  private static JSONObject executeRequest(HttpRequestBase request, Service service,
       JSONObject content) {
+    request.setConfig(TIMEOUT_CONFIG);
     try (CloseableHttpClient httpclient = HttpClients.createDefault();
         CloseableHttpResponse rawResponse = httpclient.execute(request)) {
 
@@ -85,7 +94,7 @@ public class CentralRepository {
       msg.put("response", r);
       return msg;
     } catch (Exception e) {
-      log.error("Error communicating with Central Repository service {}", service);
+      log.error("Error communicating with Central Repository service {}", service, e);
       if (content != null) {
         log.debug("Failed content sent to CR {}", content);
       }
