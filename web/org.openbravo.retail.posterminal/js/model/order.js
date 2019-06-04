@@ -4005,6 +4005,7 @@
             if (!businessPartner.get('locId') || !businessPartner.get('shipLocId')) {
               businessPartner.loadBPLocations(null, null, function (shipping, billing, locations) {
                 businessPartner.set('locationModel', billing);
+                businessPartner.set('locationBillModel', billing);
                 businessPartner.set('locId', billing.get('id'));
                 businessPartner.set('locName', billing.get('name'));
                 businessPartner.set('postalCode', billing.get('postalCode'));
@@ -4072,6 +4073,7 @@
         if (!businessPartner.get('locId') || !businessPartner.get('shipLocId')) {
           businessPartner.loadBPLocations(null, null, function (shipping, billing, locations) {
             businessPartner.set('locationModel', billing);
+            businessPartner.set('locationBillModel', billing);
             businessPartner.set('locId', billing.get('id'));
             businessPartner.set('locName', billing.get('name'));
             businessPartner.set('postalCode', billing.get('postalCode'));
