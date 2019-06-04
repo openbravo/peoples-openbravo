@@ -140,11 +140,12 @@
             selection.push(line);
             var toadd = this.calculateToAdd(receipt, line.get('qty'), value);
             if (toadd !== 0) {
-              if (line.get('qty') + toadd === 0) { // If final quantity will be 0 then request approval
+              var newqty = line.get('qty') + toadd;
+              if (newqty === 0) { // If final quantity will be 0 then request approval
                 view.deleteLine(view, {
                   selectedReceiptLines: selectedReceiptLines
                 });
-              } else if (!line.get('relatedLines')) {
+              } else if (newqty > 0) {
                 view.addProductToOrder(view, {
                   product: line.get('product'),
                   qty: toadd,
@@ -152,6 +153,17 @@
                     line: line,
                     blockAddProduct: true
                   }
+                });
+              } else {
+                receipt.checkReturnableProducts(selectedReceiptLines, line, function () {
+                  view.addProductToOrder(view, {
+                    product: line.get('product'),
+                    qty: toadd,
+                    options: {
+                      line: line,
+                      blockAddProduct: true
+                    }
+                  });
                 });
               }
             }
