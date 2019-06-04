@@ -42,19 +42,50 @@
     // Function executed after the check stock process has sent a response, even if the response is an error response
     if (allLinesQty > warehouse.warehouseqty) {
       var productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
-          allowMessage, notAllowMessage;
+          allowToAdd, allowMessage, notAllowMessage, askConfirmation;
       if (productStatus.restrictsaleoutofstock) {
-        allowMessage = OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [product.get('_identifier'), productStatus.name, warehouse.warehouseqty, warehouse.warehousename, allLinesQty]);
-        notAllowMessage = OB.I18N.getLabel('OBPOS_CannotSellWithoutStock', [product.get('_identifier'), productStatus.name, allLinesQty, warehouse.warehouseqty, warehouse.warehousename]);
+        if (allowToAdd !== false) {
+          if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
+            if (line) {
+              if (line.get('obrdmDeliveryMode') && line.get('obrdmDeliveryMode') !== 'PickAndCarry') {
+                allowToAdd = false;
+              }
+            } else {
+              if (order.get('orderType') === 2) {
+                if (product.get('obrdmDeliveryModeLyw')) {
+                  allowToAdd = product.get('obrdmDeliveryModeLyw') === 'PickAndCarry';
+                } else {
+                  allowToAdd = order.get('obrdmDeliveryModeProperty') === 'PickAndCarry';
+                }
+              } else {
+                if (product.get('obrdmDeliveryMode')) {
+                  allowToAdd = product.get('obrdmDeliveryMode') === 'PickAndCarry';
+                } else {
+                  allowToAdd = order.get('obrdmDeliveryModeProperty') === 'PickAndCarry';
+                }
+              }
+            }
+          } else {
+            allowToAdd = true;
+          }
+        }
+        if (_.isUndefined(allowMessage)) {
+          allowMessage = OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [product.get('_identifier'), productStatus.name, warehouse.warehouseqty, warehouse.warehousename, allLinesQty]);
+        }
+        if (_.isUndefined(notAllowMessage)) {
+          notAllowMessage = OB.I18N.getLabel('OBPOS_CannotSellWithoutStock', [product.get('_identifier'), productStatus.name, allLinesQty, warehouse.warehouseqty, warehouse.warehousename]);
+        }
+        askConfirmation = true;
       }
       OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductWithoutStock', {
-        allowToAdd: true,
+        allowToAdd: allowToAdd,
         allowMessage: allowMessage,
         notAllowMessage: notAllowMessage,
-        askConfirmation: true,
+        askConfirmation: askConfirmation,
         order: order,
         line: line,
-        product: product
+        product: product,
+        attrs: attrs
       }, function (args) {
         if (args.cancelOperation) {
           if (callback && callback instanceof Function) {
