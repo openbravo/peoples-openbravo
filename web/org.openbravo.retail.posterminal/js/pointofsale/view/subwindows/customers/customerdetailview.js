@@ -483,6 +483,7 @@ enyo.kind({
       }, this);
       filterSelector.fixedColumn = id;
       filterSelector.searchAction();
+      filterSelector.fixedColumn = '';
     }
     var isMultiselect = this.args.multiselect === true;
     this.$.body.$.receiptsList.$.openreceiptslistitemprinter.multiselect = isMultiselect;
@@ -496,6 +497,11 @@ enyo.kind({
   },
   executeOnHide: function () {
     if (!this.pressedBtn && this.args.navigationPath && this.args.navigationPath.length > 0) {
+      var column = _.find(OB.Model.OrderFilter.getProperties(), function (prop) {
+        return prop.name === 'businessPartner';
+      }, this);
+      column.preset.id = '';
+      column.preset.name = '';
       this.doShowPopup({
         popup: this.args.navigationPath[this.args.navigationPath.length - 1],
         args: {
