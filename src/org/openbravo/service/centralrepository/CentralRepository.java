@@ -80,18 +80,40 @@ public class CentralRepository {
 
   private static JSONObject executeRequest(HttpRequestBase request, Service service,
       JSONObject content) {
+    long t = System.currentTimeMillis();
     request.setConfig(TIMEOUT_CONFIG);
     try (CloseableHttpClient httpclient = HttpClients.createDefault();
         CloseableHttpResponse rawResponse = httpclient.execute(request)) {
 
+      log.trace("Sending request [{}] payload: {}", request.getURI(), content);
+
       String result = new BufferedReader(
           new InputStreamReader(rawResponse.getEntity().getContent())).lines()
               .collect(Collectors.joining("\n"));
-      JSONObject r = new JSONObject(result);
+
+      log.debug("Processed to Central Repository {} with status {} in {} ms", request.getURI(),
+          rawResponse.getStatusLine().getStatusCode(), System.currentTimeMillis() - t);
+      log.trace("Response to request [{}]: {}", request.getURI(), result);
+
       JSONObject msg = new JSONObject();
-      msg.put("success", rawResponse.getStatusLine().getStatusCode() == 200);
+      boolean success = 200 >= rawResponse.getStatusLine().getStatusCode()
+          && rawResponse.getStatusLine().getStatusCode() < 300;
+      msg.put("success", success);
       msg.put("responseCode", rawResponse.getStatusLine().getStatusCode());
+      JSONObject r;
+      try {
+        r = new JSONObject(result);
+      } catch (JSONException e) {
+        log.debug("Didn't receive a valid JSON response: {}", result, e);
+        r = new JSONObject();
+        if (!success) {
+          // try to get something meaningful from the status info
+          r.put("msg", rawResponse.getStatusLine().getReasonPhrase());
+        }
+      }
+
       msg.put("response", r);
+
       return msg;
     } catch (Exception e) {
       log.error("Error communicating with Central Repository service {}", service, e);
