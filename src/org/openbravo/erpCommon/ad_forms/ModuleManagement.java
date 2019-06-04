@@ -564,6 +564,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       xmlDocument.setData("structureBox", modulesBox);
       String c = xmlDocument.print();
+      response.setContentType("text/html; charset=UTF-8");
       response.getWriter().write(c);
     } catch (JSONException | IOException e) {
       // TODO Auto-generated catch block
