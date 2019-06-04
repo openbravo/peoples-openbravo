@@ -31,7 +31,7 @@
       });
 
       var active = currentView === 'order';
-      active = active && isQuotation && hasBeenPaid === 'Y' && !OB.UTIL.isCrossStoreReceipt(view.model.get('order'));
+      active = active && isQuotation && hasBeenPaid === 'Y';
       return active;
     },
     command: function (view) {
