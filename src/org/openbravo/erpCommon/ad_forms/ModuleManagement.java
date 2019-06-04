@@ -107,6 +107,7 @@ import org.openbravo.service.centralrepository.CentralRepository;
 import org.openbravo.service.centralrepository.CentralRepository.Service;
 import org.openbravo.service.centralrepository.Module;
 import org.openbravo.service.centralrepository.ModuleDependency;
+import org.openbravo.service.json.JsonConstants;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -504,72 +505,85 @@ public class ModuleManagement extends HttpSecureAppServlet {
   }
 
   private void searchModules(String q, HttpServletResponse response) {
-
     try {
       JSONObject searchQuery = new JSONObject();
       searchQuery.put("search.level", getSystemMaturity(false));
 
       searchQuery.put("installedModules", Arrays.asList(getInstalledModules()));
       searchQuery.put("q", q);
-      JSONObject r = CentralRepository.post(Service.SEARCH_MODULES, searchQuery);
+      JSONObject crResponse = CentralRepository.post(Service.SEARCH_MODULES, searchQuery);
 
-      JSONArray modules = r.getJSONObject("response").getJSONArray("modules");
-      FieldProvider[] modulesBox = new FieldProvider[modules.length()];
-      for (int i = 0; i < modules.length(); i++) {
-        JSONObject mod = modules.getJSONObject(i);
-        Map<String, String> moduleBox = new HashMap<>();
+      boolean success = crResponse.getBoolean("success") && crResponse.has("response")
+          && crResponse.getJSONObject("response").has("modules");
 
-        // set different icon depending on module type
-        String icon = mod.getString("type");
-        icon = (icon == null ? "M" : icon).equals("M") ? "Module"
-            : icon.equals("T") ? "Template" : "Pack";
-
-        moduleBox.put("name", mod.getString("name"));
-        moduleBox.put("description", mod.getString("description"));
-        moduleBox.put("type", icon);
-        moduleBox.put("help", mod.getString("help"));
-        // If there is no url, we need to hide the 'Visit Site' link and separator.
-        String url = mod.getString("url");
-        if (url == null || url.equals("")) {
-          moduleBox.put("urlStyle", "none");
-        } else {
-          moduleBox.put("url", getLink(url));
-          moduleBox.put("urlStyle", "true");
+      JSONObject r = new JSONObject();
+      r.put("success", success);
+      if (success) {
+        r.put("html", getSearchHtmlResponse(crResponse));
+      } else {
+        if (crResponse.has("response") && crResponse.getJSONObject("response").has("msg")) {
+          r.put("title", OBMessageUtils.messageBD("Error"));
+          r.put("msg", crResponse.getJSONObject("response").getString("msg"));
         }
-        moduleBox.put("moduleVersionID", mod.getString("moduleVersionID"));
-        moduleBox.put("commercialStyle", mod.getString("isCommercial"));
-
-        JSONObject additionalInfo = mod.getJSONObject("additionalInfo");
-        int maturity = additionalInfo.getInt("maturity.level");
-        if (maturity != MaturityLevel.CS_MATURITY) {
-          moduleBox.put("maturityStyle", "true");
-          moduleBox.put("maturityLevel", additionalInfo.getString("maturity.name"));
-        } else {
-          moduleBox.put("maturityStyle", "none");
-        }
-
-        String support = additionalInfo.getString("support");
-        if (!"NI".equals(support)) {
-          moduleBox.put("supportStyle", "true");
-          moduleBox.put("support", getSupportStatus(support, false));
-        } else {
-          moduleBox.put("supportStyle", "none");
-        }
-
-        modulesBox[i] = FieldProviderFactory.getFieldProvider(moduleBox);
       }
-      final XmlDocument xmlDocument = xmlEngine
-          .readXmlTemplate("org/openbravo/erpCommon/modules/ModuleBox")
-          .createXmlDocument();
-
-      xmlDocument.setData("structureBox", modulesBox);
-      String c = xmlDocument.print();
-      response.setContentType("text/html; charset=UTF-8");
-      response.getWriter().write(c);
+      response.setContentType(JsonConstants.JSON_CONTENT_TYPE);
+      response.setCharacterEncoding("UTF-8");
+      r.write(response.getWriter());
     } catch (JSONException | IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      log4j.error("Error searching for modules query: {}", q, e);
     }
+  }
+
+  private String getSearchHtmlResponse(JSONObject r) throws JSONException {
+    JSONArray modules = r.getJSONObject("response").getJSONArray("modules");
+    FieldProvider[] modulesBox = new FieldProvider[modules.length()];
+    for (int i = 0; i < modules.length(); i++) {
+      JSONObject mod = modules.getJSONObject(i);
+      Map<String, String> moduleBox = new HashMap<>();
+
+      // set different icon depending on module type
+      String icon = mod.getString("type");
+      icon = "M".equals(icon) ? "Module" : "T".equals(icon) ? "Template" : "Pack";
+
+      moduleBox.put("name", mod.getString("name"));
+      moduleBox.put("description", mod.getString("description"));
+      moduleBox.put("type", icon);
+      moduleBox.put("help", mod.getString("help"));
+      // If there is no url, we need to hide the 'Visit Site' link and separator.
+      String url = mod.getString("url");
+      if (StringUtils.isBlank(url)) {
+        moduleBox.put("urlStyle", "none");
+      } else {
+        moduleBox.put("url", getLink(url));
+        moduleBox.put("urlStyle", "true");
+      }
+      moduleBox.put("moduleVersionID", mod.getString("moduleVersionID"));
+      moduleBox.put("commercialStyle", mod.getString("isCommercial"));
+
+      JSONObject additionalInfo = mod.getJSONObject("additionalInfo");
+      int maturity = additionalInfo.getInt("maturity.level");
+      if (maturity != MaturityLevel.CS_MATURITY) {
+        moduleBox.put("maturityStyle", "true");
+        moduleBox.put("maturityLevel", additionalInfo.getString("maturity.name"));
+      } else {
+        moduleBox.put("maturityStyle", "none");
+      }
+
+      String support = additionalInfo.getString("support");
+      if (!"NI".equals(support)) {
+        moduleBox.put("supportStyle", "true");
+        moduleBox.put("support", getSupportStatus(support, false));
+      } else {
+        moduleBox.put("supportStyle", "none");
+      }
+
+      modulesBox[i] = FieldProviderFactory.getFieldProvider(moduleBox);
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/modules/ModuleBox")
+        .createXmlDocument();
+    xmlDocument.setData("structureBox", modulesBox);
+    return xmlDocument.print();
   }
 
   /**

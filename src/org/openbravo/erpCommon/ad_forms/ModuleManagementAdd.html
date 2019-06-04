@@ -46,10 +46,14 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" type="text/javascript">
   function search() {
 	  fetch('ModuleManagement.html?Command=SEARCH&q='+encodeURI(document.frmMain.inpSearchText.value)).then(function(r){
-		  return r.text()
+		  return r.json()
 	  }).then(function(j){
-		  //processResponse(j)
-		  document.getElementById('searchResults').innerHTML = j
+		  if (j.success) {
+  		    document.getElementById('searchResults').innerHTML = j.html;
+		  } else {
+			  initialize_MessageBox('messageBoxID')
+			  setValues_MessageBox('messageBoxID','ERROR', j.title, j.msg);
+		  }
 		  setProcessingMode('window',false);
 	  });
   }
