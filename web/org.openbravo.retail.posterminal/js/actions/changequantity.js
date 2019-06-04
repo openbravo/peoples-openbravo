@@ -132,6 +132,7 @@
 
         validateQuantity().then(function () {
           var selection = [];
+          var deletedlines = [];
           receipt.set('undo', null);
           if (selectedReceiptLines && selectedReceiptLines.length > 1) {
             receipt.set('multipleUndo', true);
@@ -142,9 +143,7 @@
             if (toadd !== 0) {
               var newqty = line.get('qty') + toadd;
               if (newqty === 0) { // If final quantity will be 0 then request approval
-                view.deleteLine(view, {
-                  selectedReceiptLines: selectedReceiptLines
-                });
+                deletedlines.push(line);
               } else if (newqty > 0) {
                 view.addProductToOrder(view, {
                   product: line.get('product'),
@@ -168,6 +167,11 @@
               }
             }
           }, this);
+          if (deletedlines.length > 0) {
+            view.deleteLine(view, {
+              selectedReceiptLines: deletedlines
+            });
+          }
           receipt.set('multipleUndo', null);
           receipt.trigger('scan');
           view.setMultiSelectionItems(view, {
