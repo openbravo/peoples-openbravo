@@ -56,9 +56,9 @@ public class RegisterModuleActionHandler extends BaseProcessActionHandler {
 
       Module module = OBDal.getInstance().get(Module.class, req.getString("AD_Module_ID"));
       JSONObject jsonModule = new JSONObject();
-      jsonModule.put("id", module.getId());
+      jsonModule.put("moduleID", module.getId());
       jsonModule.put("name", module.getName());
-      jsonModule.put("javapackage", module.getJavaPackage());
+      jsonModule.put("packageName", module.getJavaPackage());
       jsonModule.put("author", module.getAuthor());
       jsonModule.put("type", module.getType());
       jsonModule.put("help", module.getHelpComment());
