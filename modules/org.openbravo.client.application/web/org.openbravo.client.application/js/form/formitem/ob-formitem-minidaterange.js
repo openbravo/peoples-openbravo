@@ -242,15 +242,6 @@ isc.OBRelativeDateItem.changeDefaults('quantityFieldDefaults', {
 });
 
 isc.OBRelativeDateItem.changeDefaults('valueFieldDefaults', {
-  keyPress: function (item, form, keyName, characterValue) {
-    if (keyName === 'Enter' && !isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) {
-      // canvasItem is the rangeItem
-      form.canvasItem.showPicker();
-      return false;
-    }
-    return true;
-  },
-
   init: function () {
     this.icons = [{
       width: this.calendarIconWidth,
