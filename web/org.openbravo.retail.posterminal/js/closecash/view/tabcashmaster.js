@@ -11,18 +11,18 @@
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderCashMasterLine',
+  classes: 'obObposCashupUiRenderCashMasterLine',
   components: [{
-    classes: 'row-fluid',
+    classes: 'obObposCashupUiRenderCashMasterLine-container1 row-fluid',
     components: [{
-      classes: 'span12',
-      style: 'border-bottom: 1px solid #cccccc;',
+      classes: 'obObposCashupUiRenderCashMasterLine-container1-container1 span12',
       components: [{
-        style: 'float: left; display:table; width: 100%; ',
+        classes: 'obObposCashupUiRenderCashMasterLine-container1-container1-container1',
         components: [{
-          style: 'padding: 10px 10px 10px 10px; display: table-cell; width: 70%;',
+          classes: 'obObposCashupUiRenderCashMasterLine-container1-container1-container1-slaveTerminalName',
           name: 'slaveTerminalName'
         }, {
-          style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 30%; ',
+          classes: 'obObposCashupUiRenderCashMasterLine-container1-container1-container1-slaveCashUpIsClosed',
           name: 'slaveCashUpIsClosed'
         }]
       }]
@@ -33,57 +33,58 @@ enyo.kind({
     this.$.slaveTerminalName.setContent(this.model.get('name'));
     if (this.model.get('finish')) {
       this.$.slaveCashUpIsClosed.setContent(OB.I18N.getLabel('OBMOBC_LblYes'));
-      this.$.slaveCashUpIsClosed.addStyles("color: green");
+      this.$.slaveCashUpIsClosed.addClass('obObposCashupUiRenderCashMasterLine-container1-container1-container1-slaveCashUpIsClosed_finishOrNoTransaction');
     } else if ((!this.model.get('finish')) && (this.model.get('noOfTransactions') === 0)) {
       this.$.slaveCashUpIsClosed.setContent(OB.I18N.getLabel('OBPOS_LblNotNeeded'));
-      this.$.slaveCashUpIsClosed.addStyles("color: green");
+      this.$.slaveCashUpIsClosed.addClass('obObposCashupUiRenderCashMasterLine-container1-container1-container1-slaveCashUpIsClosed_finishOrNoTransaction');
     } else {
       this.$.slaveCashUpIsClosed.setContent(OB.I18N.getLabel('OBMOBC_LblNo'));
-      this.$.slaveCashUpIsClosed.addStyles("color: red");
+      this.$.slaveCashUpIsClosed.addClass('obObposCashupUiRenderCashMasterLine-container1-container1-container1-slaveCashUpIsClosed_noFinishNoTransaction');
     }
   }
 });
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashMaster',
+  classes: 'obObposCahupUiCashMaster',
   published: {
     paymentToKeep: null
   },
   components: [{
-    classes: 'tab-pane',
+    classes: 'obObposCahupUiCashMaster-container1',
     components: [{
-      style: 'overflow:auto; height: 400px; margin: 5px',
+      classes: 'obObposCahupUiCashMaster-container1-container1',
       components: [{
-        style: 'background-color: #ffffff; color: black; padding: 5px; height:90%',
+        classes: 'obObposCahupUiCashMaster-container1-container1-container1',
         components: [{
-          classes: 'row-fluid',
+          classes: 'obObposCahupUiCashMaster-container1-container1-container1-container1 row-fluid',
           components: [{
-            classes: 'span12',
+            classes: 'obObposCahupUiCashMaster-container1-container1-container1-container1-container1 span12',
             components: [{
               name: 'stepsheader',
-              style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
+              classes: 'obObposCahupUiCashMaster-container1-container1-container1-container1-container1-stepsheader',
               renderHeader: function (step, count) {
                 this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepMaster') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
               }
             }]
           }]
         }, {
-          style: 'background-color: #ffffff; color: black;',
+          classes: 'obObposCahupUiCashMaster-container1-container1-container1-container2',
           components: [{
+            classes: 'obObposCahupUiCashMaster-container1-container1-container1-container2-container1',
             components: [{
-              classes: 'row-fluid',
+              classes: 'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1 row-fluid',
               components: [{
-                classes: 'span12',
-                style: 'border-bottom: 1px solid #cccccc;',
+                classes: 'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1 span12',
                 components: [{
-                  style: 'float: left; display:table; width: 100%; ',
+                  classes: 'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1-container1',
                   components: [{
-                    style: 'padding: 10px 10px 10px 10px; display: table-cell; width: 70%;',
+                    classes: 'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1-container1-element1',
                     initComponents: function () {
                       this.setContent(OB.I18N.getLabel('OBPOS_LblTerminal'));
                     }
                   }, {
-                    style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 30%;',
+                    classes: 'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1-container1-element2',
                     initComponents: function () {
                       this.setContent(OB.I18N.getLabel('OBPOS_LblCashupSlaveClosed'));
                     }
@@ -93,6 +94,7 @@ enyo.kind({
             }, {
               name: 'slaveList',
               kind: 'OB.UI.Table',
+              classes: 'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-slaveList',
               renderLine: 'OB.OBPOSCashUp.UI.RenderCashMasterLine',
               renderEmpty: 'OB.UI.RenderEmpty',
               listStyle: 'list'

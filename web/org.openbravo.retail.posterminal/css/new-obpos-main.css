@@ -4959,10 +4959,113 @@
 
 
 
+/***********************   ***********************/
+/*          File: tabcashmaster.js               */
+/*          Folder: js/closecash/view            */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashUp.UI.RenderCashMasterLine
+*/
+.obObposCashupUiRenderCashMasterLine {}
+
+.obObposCashupUiRenderCashMasterLine-container1 {}
+
+.obObposCashupUiRenderCashMasterLine-container1-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposCashupUiRenderCashMasterLine-container1-container1-container1 {
+  float: left;
+  display: table;
+  width: 100%;
+}
+
+.obObposCashupUiRenderCashMasterLine-container1-container1-container1-slaveTerminalName {
+  padding: 10px 10px 10px 10px;
+  display: table-cell;
+  width: 70%;
+}
+
+.obObposCashupUiRenderCashMasterLine-container1-container1-container1-slaveCashUpIsClosed {
+  padding: 10px 10px 10px 0px;
+  display: table-cell;
+  width: 30%;
+}
+
+.obObposCashupUiRenderCashMasterLine-container1-container1-container1-slaveCashUpIsClosed_finishOrNoTransaction {
+  color: green;
+}
+
+.obObposCashupUiRenderCashMasterLine-container1-container1-container1-slaveCashUpIsClosed_noFinishNoTransaction {
+  color: red;
+}
 
 
 
+/*
+# Component: OB.OBPOSCashUp.UI.CashMaster
+*/
+.obObposCahupUiCashMaster {}
 
+.obObposCahupUiCashMaster-container1 {}
+
+.obObposCahupUiCashMaster-container1-container1 {
+  overflow:auto;
+  height: 400px;
+  margin: 5px;
+}
+
+.obObposCahupUiCashMaster-container1-container1-container1 {
+  background-color: #ffffff;
+  color: black;
+  padding: 5px;
+  height:90%;
+}
+
+.obObposCahupUiCashMaster-container1-container1-container1-container1 {}
+
+.obObposCahupUiCashMaster-container1-container1-container1-container1-container1 {}
+
+.obObposCahupUiCashMaster-container1-container1-container1-container1-container1-stepsheader {
+  padding: 10px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align:center;
+}
+
+.obObposCahupUiCashMaster-container1-container1-container1-container2 {
+  background-color: #ffffff;
+  color: black;
+}
+
+.obObposCahupUiCashMaster-container1-container1-container1-container2-container1 {}
+
+.obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1 {}
+
+.obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1-container1 {
+  float: left;
+  display:table;
+  width: 100%;
+}
+
+.obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1-container1-element1 {
+  padding: 10px 10px 10px 10px;
+  display: table-cell;
+  width: 70%;
+}
+
+.obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1-container1-element2 {
+  padding: 10px 10px 10px 0px;
+  display: table-cell;
+  width: 30%;
+}
+
+.obObposCahupUiCashMaster-container1-container1-container1-container2-container1-slaveList {
+  /*Inherits: [OB.UI.Table]*/
+}
 
 
 
