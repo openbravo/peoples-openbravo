@@ -487,6 +487,11 @@ public class OrderLoader extends POSDataSynchronizationProcess
             // Set default payment type to order in case there is no payment on the order
             POSUtils.setDefaultPaymentType(jsonorder, order);
             // Cancel and Replace the order
+            if (order.getReplacedorder() != null
+                && POSUtils.isCrossStore(order.getReplacedorder(), posTerminal)) {
+              final Organization paymentOrganization = getPaymentOrganization(posTerminal, true);
+              jsonorder.put("paymentOrganization", paymentOrganization.getId());
+            }
             CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
                 useOrderDocumentNoForRelatedDocs);
           } catch (Exception ex) {
@@ -1456,6 +1461,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
             .createQuery(FIN_PaymentScheduleDetail.class, reversedPSDHQL.toString());
         reversedPSDQuery.setNamedParameter("paymentId", payment.getString("reversedPaymentId"));
         reversedPSDQuery.setNamedParameter("paymentSchId", paymentSchedule.getId());
+        reversedPSDQuery.setFilterOnReadableOrganization(false);
         final List<FIN_PaymentScheduleDetail> reversedPSDList = reversedPSDQuery.list();
         for (final FIN_PaymentScheduleDetail reversedPSD : reversedPSDList) {
           // Create the new paymentScheduleDetail for the reversal payment

@@ -14,8 +14,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -181,6 +184,9 @@ public class POSUtils {
     return null;
   }
 
+  /**
+   * Retrieves the list of stores sharing the given Cross Store Organization.
+   */
   @SuppressWarnings("unchecked")
   public static List<String> getOrgListByCrossStoreId(final String crossStoreId) {
     OBContext.setAdminMode(false);
@@ -201,6 +207,23 @@ public class POSUtils {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  /**
+   * If isCrossStore is true, retrieves the list of cross stores for given posTerminal store,
+   * including posTerminal store. If isCrossStore is false, retrieves given posTerminal store.
+   */
+  public static List<String> getOrgListCrossStore(final String posterminalId,
+      final boolean isCrossStore) {
+    final OBPOSApplications posterminal = getTerminalById(posterminalId);
+
+    if (isCrossStore) {
+      final Organization crossStore = posterminal.getOrganization()
+          .getOBRETCOCrossStoreOrganization();
+      return getOrgListByCrossStoreId(crossStore.getId());
+    }
+
+    return Collections.singletonList(posterminal.getOrganization().getId());
   }
 
   public static List<String> getStoreList(String orgId) {
@@ -315,7 +338,6 @@ public class POSUtils {
   }
 
   public static PriceListVersion getPriceListVersionByOrgId(String orgId, Date terminalDate) {
-
     PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
     String priceListId = priceList.getId();
     return POSUtils.getPriceListVersionForPriceList(priceListId, terminalDate);
@@ -356,6 +378,46 @@ public class POSUtils {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * If isCrossStore is true, retrieves the list of cross assortments for given posTerminal store,
+   * including posTerminal assortment. If isCrossStore is false, retrieves given posTerminal
+   * assortment.
+   */
+  @SuppressWarnings("unchecked")
+  public static Set<String> getProductListCrossStore(final String posterminalId,
+      final boolean isCrossStore) {
+    OBContext.setAdminMode(false);
+    try {
+      Set<String> productList = new HashSet<>();
+      final OBPOSApplications posterminal = getTerminalById(posterminalId);
+
+      if (isCrossStore) {
+        final Organization crossStore = posterminal.getOrganization()
+            .getOBRETCOCrossStoreOrganization();
+
+        final StringBuilder select = new StringBuilder();
+        select.append(" select " + Organization.PROPERTY_OBRETCOPRODUCTLIST + ".id");
+        select.append(" from " + Organization.ENTITY_NAME);
+        select.append(" where " + Organization.PROPERTY_OBRETCOCROSSSTOREORGANIZATION
+            + ".id = :crossStoreId");
+        select.append(" and " + Organization.PROPERTY_OBRETCOPRODUCTLIST + " is not null");
+        select.append(" group by " + Organization.PROPERTY_OBRETCOPRODUCTLIST + ".id");
+
+        final Query<String> query = OBDal.getInstance().getSession().createQuery(select.toString());
+        query.setParameter("crossStoreId", crossStore.getId());
+        productList.addAll(query.list());
+      }
+
+      productList.add(getProductListByPosterminalId(posterminalId).getId());
+      return productList;
+    } catch (Exception e) {
+      log.error("Error getting ProductList by Cross Store ID: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return Collections.emptySet();
   }
 
   public static int getLastDocumentNumberForPOS(String searchKey, List<String> documentTypeIds) {
@@ -804,8 +866,9 @@ public class POSUtils {
           .get(Organization.class, jsonorder.getString("organization"));
       paymentQuery.setNamedParameter("organization", organization);
       paymentQuery.setNamedParameter("currency", order.getOrganization().getCurrency());
+      paymentQuery.setFilterOnReadableOrganization(false);
       paymentQuery.setMaxResult(1);
-      OBPOSAppPayment defaultPaymentType = (OBPOSAppPayment) paymentQuery.uniqueResult();
+      OBPOSAppPayment defaultPaymentType = paymentQuery.uniqueResult();
 
       if (defaultPaymentType != null) {
         JSONObject paymentTypeValues = new JSONObject();
@@ -896,13 +959,20 @@ public class POSUtils {
   }
 
   /**
-   * Returns true if order store is different than terminal store
+   * Returns true if Cross Store functionality is enabled for this posTerminal
    */
-  public static boolean isCrossStore(final Order order, final OBPOSApplications posTerminal) {
+  public static boolean isCrossStoreEnabled(final OBPOSApplications posTerminal) {
     final Organization crossOrganization = posTerminal.getOrganization()
         .getOBRETCOCrossStoreOrganization();
 
-    return crossOrganization != null && !StringUtils.equals(order.getOrganization().getId(),
+    return crossOrganization != null;
+  }
+
+  /**
+   * Returns true if order store is different than terminal store
+   */
+  public static boolean isCrossStore(final Order order, final OBPOSApplications posTerminal) {
+    return isCrossStoreEnabled(posTerminal) && !StringUtils.equals(order.getOrganization().getId(),
         posTerminal.getOrganization().getId());
   }
 

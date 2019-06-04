@@ -45,6 +45,9 @@ public class ServicesMultiselectionHQLCriteria extends HQLCriteriaProcess {
       boolean includeAnd = false;
       for (int i = 0; i < productArray.length(); i++) {
         Product product = OBDal.getInstance().get(Product.class, productArray.get(i));
+        if (product == null) {
+          continue;
+        }
         if (includeAnd) {
           filterResult += " and ";
         } else {

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2018 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -11,21 +11,21 @@ package org.openbravo.retail.posterminal.event;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.query.Query;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
-import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
-import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCategory;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.config.OBRETCOProductcategory;
@@ -41,64 +41,93 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
-    if (!isValidEvent(event)) {
-      return;
-    }
-    addProductCategoryToAssortment(event);
-  }
-
   public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
-    addProductCategoryToAssortment(event);
+
+    final OBRETCOProlProduct assortmentProduct = (OBRETCOProlProduct) event.getTargetInstance();
+    addProductCategoryToAssortment(assortmentProduct.getObretcoProductlist(),
+        assortmentProduct.getProduct().getProductCategory());
   }
 
-  private void addProductCategoryToAssortment(EntityPersistenceEvent event) {
-    boolean isRemote = false;
-    try {
-      OBContext.setAdminMode(false);
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-          OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null));
-    } catch (PropertyException e) {
-      logger.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
-    } finally {
-      OBContext.restorePreviousMode();
+  public void onUpdate(@Observes EntityUpdateEvent event) {
+    if (!isValidEvent(event)) {
+      return;
     }
-    if (isRemote) {
-      OBRETCOProlProduct assortmentProduct = (OBRETCOProlProduct) event.getTargetInstance();
-      ProductCategory productCategory = assortmentProduct.getProduct().getProductCategory();
-      OBRETCOProductList assortment = assortmentProduct.getObretcoProductlist();
-      if (isNewProductCategory(assortment, productCategory, assortmentProduct.getClient())) {
-        final OBRETCOProductcategory assortmentProdCat = OBProvider.getInstance()
-            .get(OBRETCOProductcategory.class);
-        assortmentProdCat.setOrganization(assortmentProduct.getOrganization());
-        assortmentProdCat.setProductCategory(productCategory);
-        assortmentProdCat.setObretcoProductlist(assortment);
-        OBDal.getInstance().save(assortmentProdCat);
-      }
+
+    final Entity prolProductEntity = ModelProvider.getInstance()
+        .getEntity(OBRETCOProlProduct.ENTITY_NAME);
+    final Property prolProductProductProperty = prolProductEntity
+        .getProperty(OBRETCOProlProduct.PROPERTY_PRODUCT);
+
+    final OBRETCOProlProduct assortmentProduct = (OBRETCOProlProduct) event.getTargetInstance();
+    final Product previousProduct = (Product) event.getPreviousState(prolProductProductProperty);
+    final Product currentProduct = (Product) event.getCurrentState(prolProductProductProperty);
+
+    if (!StringUtils.equals(previousProduct.getId(), currentProduct.getId())) {
+      removeProductCategoryFromAssortment(assortmentProduct.getObretcoProductlist(),
+          previousProduct.getProductCategory());
+      addProductCategoryToAssortment(assortmentProduct.getObretcoProductlist(),
+          currentProduct.getProductCategory());
+    }
+
+  }
+
+  public void onDelete(@Observes EntityDeleteEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+
+    final OBRETCOProlProduct assortmentProduct = (OBRETCOProlProduct) event.getTargetInstance();
+    removeProductCategoryFromAssortment(assortmentProduct.getObretcoProductlist(),
+        assortmentProduct.getProduct().getProductCategory());
+  }
+
+  private void addProductCategoryToAssortment(final OBRETCOProductList assortment,
+      final ProductCategory productCategory) {
+    final OBRETCOProductcategory assortmentProductCategory = getAssortmentProductCategory(
+        assortment, productCategory);
+    if (assortmentProductCategory == null) {
+      createAssortmentProductCategory(assortment, productCategory);
     }
   }
 
-  private boolean isNewProductCategory(OBRETCOProductList assortment,
-      ProductCategory productCategory, Client client) {
-    StringBuilder hql = new StringBuilder();
-    hql.append("select id from ").append(OBRETCOProductcategory.ENTITY_NAME);
-    hql.append(" where ").append(OBRETCOProductcategory.PROPERTY_CLIENT).append(" = :client");
-    hql.append("  and ")
-        .append(OBRETCOProductcategory.PROPERTY_PRODUCTCATEGORY)
-        .append(" = :prodCat");
-    hql.append(" and ")
-        .append(OBRETCOProductcategory.PROPERTY_OBRETCOPRODUCTLIST)
-        .append(" = :assortment");
-    Query<Object> qry = OBDal.getInstance().getSession().createQuery(hql.toString(), Object.class);
-    qry.setParameter("client", client);
-    qry.setParameter("assortment", assortment);
-    qry.setParameter("prodCat", productCategory);
-
-    return qry.uniqueResult() == null;
+  private void removeProductCategoryFromAssortment(final OBRETCOProductList assortment,
+      final ProductCategory productCategory) {
+    final OBRETCOProductcategory assortmentProductCategory = getAssortmentProductCategory(
+        assortment, productCategory);
+    if (assortmentProductCategory != null) {
+      removeAssortmentProductCategory(assortmentProductCategory);
+    }
   }
+
+  private void createAssortmentProductCategory(final OBRETCOProductList assortment,
+      final ProductCategory productCategory) {
+    final OBRETCOProductcategory assortmentProductCategory = OBProvider.getInstance()
+        .get(OBRETCOProductcategory.class);
+    assortmentProductCategory.setOrganization(assortment.getOrganization());
+    assortmentProductCategory.setObretcoProductlist(assortment);
+    assortmentProductCategory.setProductCategory(productCategory);
+    OBDal.getInstance().save(assortmentProductCategory);
+  }
+
+  private void removeAssortmentProductCategory(
+      final OBRETCOProductcategory assortmentProductCategory) {
+    OBDal.getInstance().remove(assortmentProductCategory);
+  }
+
+  private OBRETCOProductcategory getAssortmentProductCategory(final OBRETCOProductList assortment,
+      final ProductCategory productCategory) {
+    final OBCriteria<OBRETCOProductcategory> qry = OBDal.getInstance()
+        .createCriteria(OBRETCOProductcategory.class);
+    qry.add(Restrictions.eq(OBRETCOProductcategory.PROPERTY_CLIENT + ".id",
+        assortment.getClient().getId()));
+    qry.add(Restrictions.eq(OBRETCOProductcategory.PROPERTY_PRODUCTCATEGORY + ".id",
+        productCategory.getId()));
+    qry.add(Restrictions.eq(OBRETCOProductcategory.PROPERTY_OBRETCOPRODUCTLIST + ".id",
+        assortment.getId()));
+    return (OBRETCOProductcategory) qry.uniqueResult();
+  }
+
 }

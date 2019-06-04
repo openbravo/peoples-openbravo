@@ -1273,8 +1273,9 @@
     },
 
     setUnit: function (line, qty, text) {
-      var permission, me = this;
-
+      var permission, me = this,
+          showProductCard = line.get('qty') < 0 && qty > 0 && OB.UTIL.isCrossStoreProduct(line.get('product')),
+          params = {};
       if (OB.DEC.isNumber(qty) && qty !== 0) {
         var oldqty = line.get('qty');
         permission = 'OBPOS_ReturnLine';
@@ -1302,6 +1303,14 @@
           var setQuantity = function () {
               // sets the new quantity
               line.set('qty', qty);
+              if (showProductCard) {
+                params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
+                params.product = line.get('product');
+                params.line = line;
+                params.forceSelectStore = true;
+                params.warehouse = line.get('warehouse');
+                OB.MobileApp.view.$.containerWindow.getRoot().showLeftSubWindow({}, params);
+              }
               };
           // sets the undo action
           if (this.get('multipleUndo')) {
@@ -1698,8 +1707,10 @@
           deleteApproval();
         } else {
           var line = selectedModels[idx],
-              productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(line.get('product')),
-              checkStock = productStatus.restrictsaleoutofstock && OB.DEC.compare(line.get('qty')) === -1;
+              product = line.get('product'),
+              negativeQty = OB.DEC.compare(line.get('qty')) < 0,
+              productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
+              checkStock = negativeQty && (productStatus.restrictsaleoutofstock || OB.UTIL.isCrossStoreProduct(product));
 
           OB.UTIL.HookManager.executeHooks('OBPOS_CheckStockDeleteLine', {
             order: me,
@@ -1714,7 +1725,7 @@
                   options = {
                   line: line
                   };
-              me.getStoreStock(line.get('product'), qtyAdded, options, null, function (hasStock) {
+              me.getStoreStock(product, qtyAdded, options, null, function (hasStock) {
                 if (hasStock) {
                   checkLineStock(idx + 1);
                 }
@@ -1976,8 +1987,10 @@
 
       // Check the stock for each negative discontinued line that is related to a deleting line
       if (!isSelectedLine && OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
-        var productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(line.get('product')),
-            checkStock = productStatus.restrictsaleoutofstock && OB.DEC.compare(line.get('qty')) === -1;
+        var product = line.get('product'),
+            negativeQty = OB.DEC.compare(line.get('qty')) < 0,
+            productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
+            checkStock = negativeQty && (productStatus.restrictsaleoutofstock || OB.UTIL.isCrossStoreProduct(product));
 
         OB.UTIL.HookManager.executeHooks('OBPOS_CheckStockDeleteLine', {
           order: me,
@@ -2447,7 +2460,7 @@
       });
 
       if (allLinesQty > 0) {
-        if (p.get('showstock') && stockScreen && attrs && attrs.warehouse && !OB.UTIL.isNullOrUndefined(attrs.warehouse.warehouseqty)) {
+        if (stockScreen && attrs && attrs.warehouse && !OB.UTIL.isNullOrUndefined(attrs.warehouse.warehouseqty)) {
           checkAddProduct(attrs.warehouse, allLinesQty);
         } else {
           OB.UTIL.StockUtils.getReceiptLineStock(p.get('id'), line, function (data) {
@@ -2571,7 +2584,8 @@
       function addProductToOrder() {
         function checkLineStock(stockCallback) {
           if (OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
-            var checkStock = productStatus.restrictsaleoutofstock && OB.DEC.compare(qty) === 1;
+            var positiveQty = OB.DEC.compare(qty) > 0,
+                checkStock = positiveQty && (productStatus.restrictsaleoutofstock || (OB.UTIL.isCrossStoreProduct(p) && (!line || OB.DEC.compare(line.get('qty')) > 0)));
 
             OB.UTIL.HookManager.executeHooks('OBPOS_CheckStockAddProduct', {
               order: me,
@@ -2790,41 +2804,53 @@
       } // End addProductToOrder
 
       function saveRemoteProduct(p) {
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          OB.Dal.saveOrUpdate(p, function () {
-            var productcriteria = {
-              columns: ['product'],
-              operator: 'equals',
-              value: p.id,
-              isId: true
-            };
-            var remoteCriteria = [productcriteria];
-            var criteriaFilter = {};
-            criteriaFilter.remoteFilters = remoteCriteria;
-            OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
-              function saveCharacteristics(characteristics, i) {
-                if (i === characteristics.length) {
-                  addProductToOrder();
-                } else {
-                  OB.Dal.saveOrUpdate(characteristics[i], function () {
-                    saveCharacteristics(characteristics, i + 1);
-                  }, function () {
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) || p.get('crossStore')) {
+          var success = function () {
+              var productcriteria = {
+                columns: ['product'],
+                operator: 'equals',
+                value: p.id,
+                isId: true
+              };
+              var remoteCriteria = [productcriteria];
+              var criteriaFilter = {};
+              criteriaFilter.remoteFilters = remoteCriteria;
+              criteriaFilter.forceRemote = true;
+              criteriaFilter.remoteParams = {};
+              criteriaFilter.remoteParams.crossStoreSearch = p.get('crossStore');
+              if (p.get('crossStore')) {
+                criteriaFilter.remoteParams.productId = p.get('id');
+              }
+              OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
+                function saveCharacteristics(characteristics, i) {
+                  if (i === characteristics.length) {
                     addProductToOrder();
-                  });
+                  } else {
+                    OB.Dal.saveOrUpdate(characteristics[i], function () {
+                      saveCharacteristics(characteristics, i + 1);
+                    }, function () {
+                      addProductToOrder();
+                    });
+                  }
                 }
-              }
-              if (productcharacteristic.models.length !== 0) {
-                saveCharacteristics(productcharacteristic.models, 0);
-              } else {
-                addProductToOrder();
-              }
+                if (productcharacteristic.models.length !== 0) {
+                  saveCharacteristics(productcharacteristic.models, 0);
+                } else {
+                  addProductToOrder();
+                }
 
-            }, function () {
+              }, function () {
+                addProductToOrder();
+              });
+              };
+
+          if (!p.get('crossStore')) {
+            OB.Dal.saveOrUpdate(p, success, function () {
               addProductToOrder();
             });
-          }, function () {
-            addProductToOrder();
-          });
+          } else {
+            success();
+          }
         } else {
           addProductToOrder();
         }
@@ -3012,7 +3038,43 @@
       var execution = OB.UTIL.ProcessController.start('addProduct');
       OB.debug('_addProduct');
       var me = this;
-      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && this.get('priceList') !== OB.MobileApp.model.get('terminal').priceList) {
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && OB.UTIL.isCrossStoreProduct(p)) {
+        p.set('standardPrice', null);
+        p.set('listPrice', null);
+        p.set('currentPrice', null);
+        if (p.has('productPrices')) {
+          _.each(p.get('productPrices'), function (productPrice) {
+            if (productPrice.priceListId === OB.MobileApp.model.receipt.get('bp').get('priceList')) {
+              p = p.clone();
+              if (OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) || p.get('updatePriceFromPricelist')) {
+                p.set('standardPrice', productPrice.price);
+                p.set('listPrice', productPrice.price);
+                p.set('currentPrice', productPrice);
+              }
+              me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
+                OB.UTIL.ProcessController.finish('addProduct', execution);
+                if (callback) {
+                  callback(success, orderline);
+                }
+              });
+              return;
+            }
+          });
+          if (OB.UTIL.isNullOrUndefined(p.get('standardPrice'))) {
+            OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+            OB.UTIL.ProcessController.finish('addProduct', execution);
+            if (callback) {
+              callback(false, null);
+            }
+          }
+        } else {
+          OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+          OB.UTIL.ProcessController.finish('addProduct', execution);
+          if (callback) {
+            callback(false, null);
+          }
+        }
+      } else if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && this.get('priceList') !== OB.MobileApp.model.get('terminal').priceList && !OB.UTIL.isCrossStoreProduct(p)) {
         var criteria = {};
         if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
           criteria = {
@@ -3559,7 +3621,25 @@
 
     //Attrs is an object of attributes that will be set in order line
     createLine: function (p, units, options, attrs) {
-      var me = this;
+      var me = this,
+          orgId, orgName;
+      if (OB.UTIL.isNullOrUndefined(attrs) || OB.UTIL.isNullOrUndefined(attrs.organization)) {
+        if (!OB.UTIL.isCrossStoreProduct(p)) {
+          orgId = OB.MobileApp.model.get('terminal').organization;
+          orgName = OB.I18N.getLabel('OBPOS_LblThisStore', [OB.MobileApp.model.get('terminal').organization$_identifier]);
+        } else {
+          orgId = me.get('organization');
+          _.each(OB.MobileApp.model.get('store'), function (s) {
+            if (s.id === orgId) {
+              orgName = s.name;
+              return;
+            }
+          });
+        }
+      } else {
+        orgId = attrs.organization.id;
+        orgName = attrs.organization.name;
+      }
 
       function createLineAux(p, units, options, attrs, me) {
         if (me.validateAllowSalesWithReturn(units, ((options && options.allowLayawayWithReturn) || false))) {
@@ -3574,6 +3654,10 @@
           price: OB.DEC.number(p.get('standardPrice')),
           priceList: OB.DEC.number(p.get('listPrice')),
           priceIncludesTax: me.get('priceIncludesTax'),
+          organization: {
+            id: orgId,
+            name: orgName
+          },
           warehouse: {
             id: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehouseid : attrs.originalLine.get('warehouse').id,
             warehousename: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehousename : attrs.originalLine.get('warehouse').warehousename
@@ -3610,6 +3694,7 @@
           }
           return null;
         }
+
         // add the created line
         me.get('lines').add(newline, options);
         newline.trigger('created', newline);
@@ -3636,7 +3721,9 @@
     },
 
     returnLine: function (line, options, skipValidaton) {
-      var me = this;
+      var me = this,
+          showProductCard = line.get('qty') < 0 && OB.UTIL.isCrossStoreProduct(line.get('product')),
+          params = {};
       if (line.get('qty') > 0) {
         line.get('product').set('ignorePromotions', true);
       } else {
@@ -3689,6 +3776,14 @@
           });
           line.set('promotions', promotions);
         }
+      }
+      if (showProductCard) {
+        params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
+        params.product = line.get('product');
+        params.line = line;
+        params.forceSelectStore = true;
+        params.warehouse = line.get('warehouse');
+        OB.MobileApp.view.$.containerWindow.getRoot().showLeftSubWindow({}, params);
       }
       this.set('skipCalculateReceipt', false);
       this.calculateReceipt();
@@ -4044,6 +4139,29 @@
       var addProductsOfLines = null;
 
       addProductsOfLines = function (receipt, lines, index, callback, promotionLines) {
+        var success = function (product) {
+            var attrs;
+            if (!OB.UTIL.isNullOrUndefined(lines[index].get('splitline'))) {
+              attrs = {
+                splitline: lines[index].get('splitline'),
+                originalLine: lines[index]
+              };
+            }
+            attrs = attrs || {};
+            attrs.organization = lines[index].get('organization');
+            attrs.warehouse = lines[index].get('warehouse');
+            me.addProduct(product, lines[index].get('qty'), undefined, attrs, function (isInPriceList) {
+              if (isInPriceList) {
+                me.get('lines').at(index).set('promotions', promotionLines[index]);
+                me.get('lines').at(index).calculateGross();
+                addProductsOfLines(receipt, lines, index + 1, callback, promotionLines);
+              } else {
+                promotionLines.splice(index, 1);
+                lines.splice(index, 1);
+                addProductsOfLines(receipt, lines, index, callback, promotionLines);
+              }
+            });
+            };
         if (index === lines.length) {
           me.set('skipCalculateReceipt', false);
           if (callback) {
@@ -4051,31 +4169,16 @@
           }
           return;
         }
-        OB.Dal.get(OB.Model.Product, lines[index].get('product').id, function (product) {
-          var attrs;
-          if (!OB.UTIL.isNullOrUndefined(lines[index].get('splitline'))) {
-            attrs = {
-              splitline: lines[index].get('splitline'),
-              originalLine: lines[index]
-            };
-          }
-          me.addProduct(product, lines[index].get('qty'), undefined, attrs, function (isInPriceList) {
-            if (isInPriceList) {
-              me.get('lines').at(index).set('promotions', promotionLines[index]);
-              me.get('lines').at(index).calculateGross();
-              addProductsOfLines(receipt, lines, index + 1, callback, promotionLines);
-            } else {
-              promotionLines.splice(index, 1);
-              lines.splice(index, 1);
-              addProductsOfLines(receipt, lines, index, callback, promotionLines);
-            }
+        if (OB.UTIL.isCrossStoreProduct(lines[index].get('product'))) {
+          success(lines[index].get('product'));
+        } else {
+          OB.Dal.get(OB.Model.Product, lines[index].get('product').id, success, null, function () {
+            // Product doesn't exists, execute the same code as it was not included in pricelist
+            promotionLines.splice(index, 1);
+            lines.splice(index, 1);
+            addProductsOfLines(receipt, lines, index, callback, promotionLines);
           });
-        }, null, function () {
-          // Product doesn't exists, execute the same code as it was not included in pricelist
-          promotionLines.splice(index, 1);
-          lines.splice(index, 1);
-          addProductsOfLines(receipt, lines, index, callback, promotionLines);
-        });
+        }
       };
       _.each(this.get('lines').models, function (line) {
         orderlines.push(line);
@@ -4148,7 +4251,9 @@
           }
         }
       } else {
-        this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+        if (!OB.UTIL.isCrossStoreReceipt(this)) {
+          this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+        }
         finishSetOrderType();
       }
     },
@@ -4425,6 +4530,7 @@
           line.unset('lineGrossAmount');
           line.set('obposCanbedelivered', true);
           line.set('obposIspaid', false);
+          line.set('documentType', me.get('documentType'));
         });
 
         // The lines must be iterated a second time after finishing the first loop, to ensure that
@@ -6880,31 +6986,41 @@
                 var price;
                 iter.linepos = linepos;
                 var addLineForProduct = function (prod) {
-                    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-                      OB.Dal.saveOrUpdate(prod, function () {
-                        var productcriteria = {
-                          columns: ['product'],
-                          operator: 'equals',
-                          value: prod.id,
-                          isId: true
-                        };
-                        var remoteCriteria = [productcriteria];
-                        var criteriaFilter = {};
-                        criteriaFilter.remoteFilters = remoteCriteria;
-                        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
-                          _.each(productcharacteristic.models, function (pchv) {
-                            OB.Dal.saveOrUpdate(pchv, function () {}, function () {
-                              OB.error(arguments);
+                    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) || OB.UTIL.isCrossStoreReceipt(order)) {
+                      var success = function () {
+                          var productcriteria = {
+                            columns: ['product'],
+                            operator: 'equals',
+                            value: prod.id,
+                            isId: true
+                          };
+                          var remoteCriteria = [productcriteria];
+                          var criteriaFilter = {};
+                          criteriaFilter.remoteFilters = remoteCriteria;
+                          criteriaFilter.forceRemote = true;
+                          criteriaFilter.remoteParams = {};
+                          criteriaFilter.remoteParams.crossStoreSearch = OB.UTIL.isCrossStoreReceipt(order);
+                          if (OB.UTIL.isCrossStoreReceipt(order)) {
+                            criteriaFilter.remoteParams.productId = prod.get('id');
+                          }
+                          OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
+                            _.each(productcharacteristic.models, function (pchv) {
+                              OB.Dal.saveOrUpdate(pchv, function () {}, function () {
+                                OB.error(arguments);
+                              });
                             });
+                          }, function () {
+                            OB.error(arguments);
                           });
-                        }, function () {
+                          };
+
+                      if (!OB.UTIL.isCrossStoreReceipt(order)) {
+                        OB.Dal.saveOrUpdate(prod, success, function () {
                           OB.error(arguments);
                         });
-
-                      }, function () {
-                        OB.error(arguments);
-                      });
-
+                      } else {
+                        success();
+                      }
                     }
                     // Set product services
                     order._loadRelatedServices(prod.get('productType'), prod.get('id'), prod.get('productCategory'), function (data) {

@@ -20,7 +20,7 @@ public class CategoryTreeHQLCriteria extends HQLCriteriaProcess {
 
   @Override
   public String getHQLFilter(String params) {
-    return " pli.product.productCategory.id in ($1) ";
+    return " product.productCategory.id in ($1) ";
   }
 
 }

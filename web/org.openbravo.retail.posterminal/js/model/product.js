@@ -234,6 +234,10 @@
     column: 'productAssortmentStatus',
     type: 'TEXT'
   }, {
+    name: 'crossStore',
+    column: 'crossStore',
+    type: 'BOOL'
+  }, {
     name: 'obrdmDeliveryMode',
     column: 'obrdmDeliveryMode',
     type: 'TEXT'

@@ -183,6 +183,19 @@ enyo.kind({
     }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+    position: 55,
+    name: 'storeLine',
+    I18NLabel: 'OBPOS_LblStore',
+    render: function (line) {
+      if (line && line.get('organization')) {
+        this.$.propertyValue.setContent(line.get('organization').name);
+        this.show();
+      } else {
+        this.hide();
+      }
+    }
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
     position: 60,
     name: 'warehouseLine',
     I18NLabel: 'OBPOS_LineWarehouse',
@@ -467,7 +480,7 @@ enyo.kind({
       this.hideDeliveryLabel = !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments || this.receipt.get('isFullyDelivered') || selectedServices.length === this.selectedModels.length ? true : false;
       if (this.selectedModels.length > 1) {
         var selectedLinesToDeliver = _.filter(this.selectedModels, function (line) {
-          return line.get('obposCanbedelivered') && line.get('deliveredQuantity') < line.get('qty');
+          return (line.get('obposCanbedelivered') && line.get('deliveredQuantity') < line.get('qty')) || OB.UTIL.isCrossStoreLine(line);
         });
         this.hideDeliveryButton = this.hideDeliveryButton ? true : selectedLinesToDeliver.length && selectedLinesToDeliver.length < this.selectedModels.length;
         if (this.hideDeliveryButton) {
@@ -481,7 +494,7 @@ enyo.kind({
           }
         }
       } else if (this.selectedModels.length === 1) {
-        if (this.hideDeliveryButton || this.selectedModels[0].get('deliveredQuantity') < this.selectedModels[0].get('qty')) {
+        if (this.hideDeliveryButton || this.selectedModels[0].get('deliveredQuantity') < this.selectedModels[0].get('qty') || OB.UTIL.isCrossStoreLine(this.selectedModels[0])) {
           this.$.actionButtonsContainer.$.canDeliver.hide();
         } else {
           this.$.actionButtonsContainer.$.canDeliver.show();

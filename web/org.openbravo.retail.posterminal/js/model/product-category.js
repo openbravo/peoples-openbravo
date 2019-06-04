@@ -22,6 +22,7 @@
       this.set('name', OB.I18N.getLabel('OBPOS_bestSellerCategory'));
       this.set('img', 'iconBestSellers');
       this.set('_identifier', this.get('name'));
+      this.set('crossStore', 'false');
     }
   });
 
@@ -54,6 +55,10 @@
     name: 'realCategory',
     column: 'real_category',
     type: 'TEXT'
+  }, {
+    name: 'crossStore',
+    column: 'crossStore',
+    type: 'BOOL'
   }]);
 
   OB.Data.Registry.registerModel(ProductCategory);
