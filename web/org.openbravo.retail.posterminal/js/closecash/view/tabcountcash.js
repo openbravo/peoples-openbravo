@@ -11,53 +11,54 @@
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderPaymentsLine',
+  classes: 'obObposCashupUiRenderPaymentsLine',
   events: {
     onLineEditCount: ''
   },
   components: [{
+    classes: 'obObposCashupUiRenderPaymentsLine-container1',
     components: [{
-      classes: 'row-fluid',
+      classes: 'obObposCashupUiRenderPaymentsLine-container1-container1 row-fluid',
       components: [{
-        classes: 'span12',
+        classes: 'obObposCashupUiRenderPaymentsLine-container1-container1-listItem span12',
         name: 'listItem',
-        style: 'border-bottom: 1px solid #cccccc;',
         components: [{
-          style: 'float:left; display: table; width: 50%',
+          classes: 'obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner1',
           components: [{
             name: 'name',
-            style: 'padding: 10px 20px 10px 10px; display: table-cell; width: 40%;'
+            classes: 'obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner1-name'
           }, {
             name: 'foreignExpected',
-            style: 'padding: 10px 10px 10px 0px; text-align:right; display: table-cell; width: 35%;'
+            classes: 'obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner1-foreignExpected'
           }, {
             name: 'expected',
-            style: 'padding: 10px 10px 10px 0px; text-align:right; display: table-cell; width: 35%;'
+            classes: 'obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner1-expected'
           }]
         }, {
-          style: 'float:left; display: table; width: 50%;',
+          classes: 'obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2',
           components: [{
-            style: 'display: table-cell; width: 15%;',
+            classes: 'obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-container1',
             components: [{
               name: 'buttonEdit',
               kind: 'OB.UI.SmallButton',
-              classes: 'btnlink-orange btnlink-cashup-edit btn-icon-small btn-icon-edit',
+              classes: 'obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-container1-buttonEdit',
               ontap: 'lineEdit'
             }]
           }, {
-            style: 'display: table-cell; width: 15%;',
+            classes: 'obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-container2',
             components: [{
               name: 'buttonOk',
               kind: 'OB.UI.SmallButton',
-              classes: 'btnlink-green btnlink-cashup-ok btn-icon-small btn-icon-check',
+              classes: 'obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-container2-buttonOk',
               ontap: 'lineOK'
             }]
           }, {
             name: 'foreignCounted',
-            style: 'display: table-cell; padding: 10px 10px 10px 0px; text-align:right; width: 35%;',
+            classes: 'obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-foreignCounted',
             content: ''
           }, {
             name: 'counted',
-            style: 'display: table-cell; padding: 10px 10px 10px 0px; text-align:right; width: 35%;',
+            classes: 'obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-counted',
             showing: false
           }]
         }]
@@ -108,22 +109,23 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ListPaymentMethods',
+  classes: 'obObposCashupUiListPaymentMethods',
   events: {
     onCountAllOK: '',
     onShowPopup: ''
   },
   components: [{
-    classes: 'tab-pane',
+    classes: 'obObposCashupUiListPaymentMethods-container1',
     components: [{
-      style: 'margin: 5px; background-color: #ffffff',
+      classes: 'obObposCashupUiListPaymentMethods-container1-container1',
       components: [{
-        style: 'background-color: #ffffff; color: black; padding: 5px;',
+        classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1',
         components: [{
-          classes: 'row-fluid',
+          classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container1 row-fluid',
           components: [{
-            classes: 'span12',
+            classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container1-container1 span12',
             components: [{
-              style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
+              classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container1-container1-stepsheader',
               name: 'stepsheader',
               renderHeader: function (step, count) {
                 this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepPaymentMethods') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
@@ -131,30 +133,31 @@ enyo.kind({
             }]
           }]
         }, {
-          style: 'background-color: #ffffff; color: black;',
+          classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2',
           components: [{
+            classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1',
             components: [{
-              classes: 'row-fluid',
+              classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1 row-fluid',
               components: [{
-                classes: 'span12',
-                style: 'border-bottom: 1px solid #cccccc;',
+                classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1 span12',
                 components: [{
-                  style: 'float: left; display:table; width: 50%; ',
+                  classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container1',
                   components: [{
                     style: 'padding: 10px 10px 10px 10px; display: table-cell; width: 60%;',
+                    classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container1-element1',
                     initComponents: function () {
                       this.setContent(OB.I18N.getLabel('OBPOS_LblPaymentMethod'));
                     }
                   }, {
-                    style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 40%; text-align:right;',
+                    classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container1-element2',
                     initComponents: function () {
                       this.setContent(OB.I18N.getLabel('OBPOS_LblExpected'));
                     }
                   }]
                 }, {
-                  style: 'float: right; display:table;',
+                  classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container2',
                   components: [{
-                    style: 'padding: 10px 40px 10px 0px; display: table-cell; width: 100%; text-align: right;',
+                    classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container2-element1',
                     initComponents: function () {
                       this.setContent(OB.I18N.getLabel('OBPOS_LblCounted'));
                     }
@@ -162,43 +165,43 @@ enyo.kind({
                 }]
               }]
             }, {
-              classes: 'row-fluid',
-              style: 'background-color: #ffffff; max-height: 430px; overflow: auto; clear: both; width:100%; border-bottom: 1px solid #cccccc;',
+              classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container2 row-fluid',
               components: [{
                 name: 'paymentsList',
+                classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container2-paymentsList',
                 kind: 'OB.UI.Table',
                 renderLine: 'OB.OBPOSCashUp.UI.RenderPaymentsLine',
                 renderEmpty: 'OB.UI.RenderEmpty',
                 listStyle: 'list'
               }]
             }, {
-              classes: 'row-fluid',
-              style: 'background-color: #ffffff; height: 40px; width:100%; clear: both;',
+              classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3 row-fluid',
               components: [{
-                classes: 'span12',
-                style: 'border-bottom: 1px solid #cccccc;',
+                classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1 span12',
                 components: [{
-                  style: 'float: left; display:table; width: 50%; ',
+                  classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container1',
                   components: [{
                     name: 'totalLbl',
-                    style: 'padding: 10px 10px 10px 10px; display: table-cell; width: 60%;',
+                    classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container1-totalLbl',
                     initComponents: function () {
                       this.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
                     }
                   }, {
                     style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 40%; text-align:right;',
+                    classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container1-container1',
                     components: [{
                       name: 'total',
+                      classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container1-container1-total',
                       kind: 'OB.OBPOSCashUp.UI.RenderTotal'
 
                     }]
                   }]
                 }, {
                   components: [{
-                    style: 'float: left; display:table; width: 50%; ',
+                    classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container2',
                     components: [{
-                      style: 'padding: 10px 40px 10px 0px; display: table-cell; width: 100%; text-align: right;',
                       name: 'difference',
+                      classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container2-difference',
                       kind: 'OB.OBPOSCashUp.UI.RenderTotal'
                     }]
                   }]

@@ -5328,6 +5328,239 @@
 
 
 
+/***********************   ***********************/
+/*            File: tabcountcash.js              */
+/*         Folder: js/closecash/view/            */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashUp.UI.RenderPaymentsLine
+*/
+.obObposCashupUiRenderPaymentsLine {}
+
+.obObposCashupUiRenderPaymentsLine-container1 {}
+
+.obObposCashupUiRenderPaymentsLine-container1-container1 {}
+
+.obObposCashupUiRenderPaymentsLine-container1-container1-listItem {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner1 {
+  float:left;
+  display: table;
+  width: 50%;
+}
+
+.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner1-name {
+  padding: 10px 20px 10px 10px;
+  display: table-cell;
+  width: 40%;
+}
+
+.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner1-foreignExpected {
+  padding: 10px 10px 10px 0px;
+  text-align:right;
+  display: table-cell;
+  width: 35%;
+}
+
+.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner1-expected {
+  padding: 10px 10px 10px 0px;
+  text-align:right;
+  display: table-cell;
+  width: 35%;
+}
+
+.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2 {
+  float: left;
+  display: table;
+  width: 50%;
+}
+
+.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-container1 {
+  display: table-cell;
+  width: 15%;
+}
+
+.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-container1-buttonEdit {
+  /*Inherits: [OB.UI.SmallButton]*/
+  color: var(--color-primary-darker);
+  margin: 4px 5px 4px 5px;
+  width: 100%;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+  background-image: url('../../../org.openbravo.mobile.core/assets/img/iconEdit.svg');
+  background-size: 20px 20px;
+}
+
+.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-container2 {
+  display: table-cell;
+  width: 15%;
+}
+
+.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-container2-buttonOk {
+  /*Inherits: [OB.UI.SmallButton]*/
+  margin: 4px 5px 4px 5px;
+  background-color: transparent;
+  width: auto;
+  height: 20px;
+  background-size: 21px 17px;
+  background-image: url('../../../org.openbravo.mobile.core/assets/img/checkBlack.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-foreignCounted {
+  display: table-cell;
+  padding: 10px 10px 10px 0px;
+  text-align:right;
+  width: 35%;
+}
+
+.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-counted {
+  display: table-cell;
+  padding: 10px 10px 10px 0px;
+  text-align:right;
+  width: 35%;
+}
+
+
+
+/*
+# Component: OB.OBPOSCashUp.UI.ListPaymentMethods
+*/
+.obObposCashupUiListPaymentMethods {}
+
+.obObposCashupUiListPaymentMethods-container1{}
+
+.obObposCashupUiListPaymentMethods-container1-container1 {
+  margin: 5px;
+  background-color: var(--color-primary-lighter);
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1 {
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary-darker);
+  padding: 5px;
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container1 {}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container1-container1 {}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container1-container1-stepsheader {
+  padding: 10px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align:center;
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2 {
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary-darker);
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1 {}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1 {}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container1 {
+  float: left;
+  display:table;
+  width: 50%;
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container1-element1 {
+  padding: 10px 10px 10px 10px;
+  display: table-cell;
+  width: 60%;
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container1-element2 {
+  padding: 10px 10px 10px 0px;
+  display: table-cell;
+  width: 40%;
+  text-align:right;
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container2 {
+  float: right;
+  display:table;
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container2-element1 {
+  padding: 10px 40px 10px 0px;
+  display: table-cell;
+  width: 100%;
+  text-align: right;
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container2 {
+  background-color: var(--color-primary-lighter);
+  max-height: 430px;
+  overflow: auto;
+  clear: both;
+  width:100%;
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container2-paymentsList {
+  /*Inherits: [OB.UI.Table]*/
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3 {
+  background-color: var(--color-primary-lighter);
+  height: 40px;
+  width:100%;
+  clear: both;
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1 {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container1 {
+  float: left;
+  display:table;
+  width: 50%;
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container1-totalLbl {
+  padding: 10px 10px 10px 10px;
+  display: table-cell;
+  width: 60%;
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container1-container1 {
+  padding: 10px 10px 10px 0px;
+  display: table-cell;
+  width: 40%;
+  text-align:right;
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container1-container1-total {
+  /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container2 {
+  float: left;
+  display:table;
+  width: 50%;
+}
+
+.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container2-difference {
+  padding: 10px 40px 10px 0px;
+  display: table-cell;
+  width: 100%;
+  text-align: right;
+}
+
+
 
 
 
