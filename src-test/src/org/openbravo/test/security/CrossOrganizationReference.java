@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,6 +69,7 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
 
   protected static final String USA_ORG = "5EFF95EB540740A3B10510D9814EFAD5";
   protected static final String USA_WAREHOUSE = "4028E6C72959682B01295ECFE2E20270";
+  protected static final String USA_ORDER = "6394CC7B913240CCB6A54FB9C22477AF";
   protected static final String USA_BP = "4028E6C72959682B01295F40D4D20333";
 
   private static final String CREDIT_ORDER_DOC_TYPE = "FF8080812C2ABFC6012C2B3BDF4C0056";
