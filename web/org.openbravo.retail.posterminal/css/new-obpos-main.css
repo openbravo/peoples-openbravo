@@ -5069,6 +5069,265 @@
 
 
 
+/***********************   ***********************/
+/*            File: tabpendingreceipts.js        */
+/*           Folder: js/closecash/view           */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCashUp.UI.ButtonVoid
+# Inherits: [OB.UI.SmallButton]
+*/
+.obObposCashupUiButtonVoid {
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconClear.svg');
+  background-size: 13px 13px;
+  background-color: #e2e2e2;
+  margin: 5px 0px 5px 0px;
+}
+
+
+
+/*
+# Component: OB.OBPOSCashUp.UI.ButtonBring
+# Inherits: [OB.UI.SmallButton]
+*/
+.obObposCashupUiButtonBring {
+  background-color: #e2e2e2;
+  color: var(--color-primary-darker);
+  margin: 5px 0px 5px 0px;
+}
+
+.obObposCashupUiButtonBring:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+
+/*
+# Component: OB.OBPOSCashUp.UI.InfoPendingReceipt
+*/
+.obObposCashupUiInfoPendingReceipt {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 100%;
+  align-items: center;
+}
+
+.obObposCashupUiInfoPendingReceipt-documentNoAndBP {
+  /*Inherits: [OB.OBPOSCashUp.UI.DocumentNoAndBP]*/
+}
+
+.obObposCashupUiInfoPendingReceipt-grossSessionUser {
+  /*Inherits: [OB.OBPOSCashUp.UI.GrossSessionUser]*/
+}
+
+
+/*
+# Component: OB.OBPOSCashUp.UI.DocumentNoAndBP
+*/
+.obObposCashupUiDocumentNoAndBP {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+
+@media only screen and (max-width: 1456px) {
+  .obObposCashupUiDocumentNoAndBP {
+    flex-direction: column;
+  }
+}
+
+.obObposCashupUiDocumentNoAndBP-documentNo {
+  display: table-cell;
+  vertical-align: middle;
+  padding: 2px 0px 2px 5px;
+}
+
+.obObposCashupUiDocumentNoAndBP-bp {
+  display: table-cell;
+  vertical-align: middle;
+  padding: 2px 5px 2px 5px;
+}
+
+
+
+/*
+# Component: OB.OBPOSCashUp.UI.GrossSessionUser
+*/
+.obObposCashupUiGrossSessionUser {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+@media only screen and (max-width: 1456px) {
+  .obObposCashupUiGrossSessionUser {
+    flex-direction: column;
+  }
+}
+
+.obObposCashupUiGrossSessionUser-printGross {
+  display: table-cell;
+  vertical-align: middle;
+  padding: 2px 5px 2px 5px;
+  font-weight: bold;
+  text-align: right;
+}
+
+.obObposCashupUiGrossSessionUser-sessionUser {
+  display: table-cell;
+  vertical-align: middle;
+  padding: 2px 5px 2px 5px;
+  color: #d3d3d3;
+  text-align: right;
+}
+
+
+
+/*
+# OB.OBPOSCashUp.UI.RenderPendingReceiptLine
+*/
+.obObposCashupUiRenderPendingReceiptLine {}
+
+.obObposCashupUiRenderPendingReceiptLine-container1 {
+  display: table;
+  height: 42px;
+  width: 100%;
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposCashupUiRenderPendingReceiptLine-container1-orderDate {
+  display: table-cell;
+  vertical-align: middle;
+  padding: 2px 5px 2px 5px;
+  width: 10%;
+}
+
+.obObposCashupUiRenderPendingReceiptLine-container1-infoPendingReceipt {
+  /*Inherits: [OB.OBPOSCashUp.UI.InfoPendingReceipt]*/
+}
+
+.obObposCashupUiRenderPendingReceiptLine-container1-buttonBringContainer {
+  display: table-cell;
+  vertical-align: middle; 
+  padding: 2px 5px 2px 5px;
+  width: 15%;
+}
+
+.obObposCashupUiRenderPendingReceiptLine-buttonBringContainer-buttonBring {
+  /*Inherits: [OB.OBPOSCashUp.UI.ButtonBring]*/
+}
+
+.obObposCashupUiRenderPendingReceiptLine-container1-container1 {
+  display: table-cell;
+  vertical-align: middle;
+  width: 5%;
+}
+
+.obObposCashupUiRenderPendingReceiptLine-container1-container1-buttonVoid {
+  /*Inherits: [OB.OBPOSCashUp.UI.ButtonVoid]*/
+}
+
+.obObposCashupUiRenderPendingReceiptLine-container1-container2 {
+  clear: both;
+}
+
+
+
+/*
+# Component: OB.OBPOSCashUp.UI.ListPendingReceipts
+*/
+.obObposCashupUiListPendingReceipts {}
+
+.obObposCashupUiListPendingReceipts-container1 {}
+
+.obObposCashupUiListPendingReceipts-container1-container1 {
+  overflow:auto;
+  height: 500px;
+  margin: 5px;
+}
+
+.obObposCashupUiListPendingReceipts-container1-container1-container1 {
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary-darker);
+  padding: 5px;
+}
+
+.obObposCashupUiListPendingReceipts-container1-container1-container1 {}
+
+.obObposCashupUiListPendingReceipts-container1-container1-container1-container1 {}
+
+.obObposCashupUiListPendingReceipts-container1-container1-container1-container1-stepsheader {
+  padding: 10px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align:center;
+}
+
+.obObposCashupUiListPendingReceipts-container1-container1-container1-container2 {
+  clear: both;
+}
+
+.obObposCashupUiListPendingReceipts-container1-container1-rowDeleteAll {}
+
+.obObposCashupUiListPendingReceipts-container1-container1-rowDeleteAll-container1 {
+  padding: 2px 5px 2px 5px;
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obObposCashupUiListPendingReceipts-rowDeleteAll-btnDeleteAll {
+  /*Inherits: [OB.UI.SmallButton]*/
+  background-color: #e2e2e2;
+  color: black;
+  float: right;
+  min-width: 70px;
+  margin: 2px 5px 2px 5px;
+}
+
+.obObposCashupUiListPendingReceipts-rowDeleteAll-btnDeleteAll:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+.obObposCashupUiListPendingReceipts-rowDeleteAll-btnBringAl {
+  /*Inherits: [OB.UI.SmallButton]*/
+  background-color: #e2e2e2;
+  color: black;
+  float: right;
+  min-width: 70px;
+  margin: 2px 5px 2px 5px;
+}
+
+.obObposCashupUiListPendingReceipts-rowDeleteAll-btnBringAl:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px;
+}
+
+.obObposCashupUiListPendingReceipts-rowDeleteAll-element1 {
+  clear: both;
+}
+
+.obObposCashupUiListPendingReceipts-container1-container1-container2 {}
+
+.obObposCashupUiListPendingReceipts-container1-container1-container2-container1 {}
+
+.obObposCashupUiListPendingReceipts-container1-container1-container2-container1-container1 {}
+
+.obObposCashupUiListPendingReceipts-container1-container1-container2-container1-container1-pendingReceiptList {
+  /*Inherits: [OB.UI.Table]*/
+}
+
+
+
 
 
 
