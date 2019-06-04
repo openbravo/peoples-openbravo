@@ -13154,3 +13154,519 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obObPosCashUpUiCashUpPartial {
 
 }
+
+/***********************   ***********************/
+/*         File: tabpostprintclonse.js           */
+/*          Folder: js/closecash/view/           */
+/***********************   ***********************/
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_lineSeparator
+*/
+.obObPosCashUpUiPpcLineSeparator {}
+
+.obObPosCashUpUiPpcLineSeparator-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObPosCashUpUiPpcLineSeparator-container1-container1 {
+  width: 10%;
+  float: left;
+}
+
+.obObPosCashUpUiPpcLineSeparator-container1-container1-element1 {}
+
+.obObPosCashUpUiPpcLineSeparator-container1-container2 {
+  padding: 5px 0px 0px 5px;
+  float: left;
+  width: 60%;
+  font-weight:bold;
+}
+
+.obObPosCashUpUiPpcLineSeparator-container1-container2-element1 {
+  clear: both;
+}
+
+.obObPosCashUpUiPpcLineSeparator-container1-element1 {
+  clear: both;
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_totalsLine
+*/
+.obObPosCashUpUiPpcTotalsLine {}
+
+.obObPosCashUpUiPpcTotalsLine-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObPosCashUpUiPpcTotalsLine-container1-container1 {
+  width: 10%;
+  float: left;
+}
+
+.obObPosCashUpUiPpcTotalsLine-container1-container1-element1 {}
+
+.obObPosCashUpUiPpcTotalsLine-container1-totalLbl {
+  padding: 5px 0px 0px 5px;
+  border-bottom: 1px solid #cccccc;
+  border-top: 1px solid #cccccc;
+  border-right: 1px solid #cccccc;
+  float: left;
+  width: 55%;
+  font-weight:bold;
+}
+
+.obObPosCashUpUiPpcTotalsLine-container1-totalQty {
+  padding: 5px 0px 0px 5px;
+  border-bottom: 1px solid #cccccc;
+  border-top: 1px solid #cccccc;
+  float: left;
+  width: 20%;
+  text-align:right;
+  font-weight:bold;
+}
+
+.obObPosCashUpUiPpcTotalsLine-container1-totalQty-container2 {
+  width: 10%;
+  float: left;
+}
+
+.obObPosCashUpUiPpcTotalsLine-container1-totalQty-container2-element1 {}
+
+.obObPosCashUpUiPpcTotalsLine-element1 {
+  clear: both;
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_itemLine
+*/
+.obObPosCashUpUiPpcItemLine {}
+
+.obObPosCashUpUiPpcItemLine-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObPosCashUpUiPpcItemLine-container1-container1 {
+  width: 10%;
+  float: left;
+}
+
+.obObPosCashUpUiPpcItemLine-container1-container1-element1 {}
+
+.obObPosCashUpUiPpcItemLine-container1-itemLbl {
+  padding: 5px 0px 0px 5px;
+  border-top: 1px solid #cccccc;
+  float: left;
+  width: 35%;
+}
+
+.obObPosCashUpUiPpcItemLine-container1-foreignItemQty {
+  padding: 5px 0px 0px 0px;
+  border-top: 1px solid #cccccc;
+  float: left;
+  width: 20%;
+  text-align:right;
+}
+
+.obObPosCashUpUiPpcItemLine-container1-itemQty {
+  padding: 5px 0px 0px 5px;
+  border-top: 1px solid #cccccc;
+  border-left: 1px solid #cccccc;
+  float: left;
+  width: 20%;
+  text-align:right;
+}
+
+.obObPosCashUpUiPpcItemLine-container1-container2 {
+  width: 10%;
+  float: left;
+}
+
+.obObPosCashUpUiPpcItemLine-container1-container2-element1 {}
+
+.obObPosCashUpUiPpcItemLine-element1 {
+  clear: both;
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_collectionLines
+# Inherits: OB.UI.iterateArray
+*/
+.obObPosCashUpUiPpcCollectionLines {}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_table
+*/
+.obObPosCashUpUiPpcTable {}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_salesTable
+# Inherits: [OB.OBPOSCashUp.UI.ppc_table]
+*/
+.obObPosCashUpUiPpcSalesTable {
+
+}
+
+.obObPosCashUpUiPpcSalesTable-netsales {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_itemLine] */
+}
+
+.obObPosCashUpUiPpcSalesTable-salestaxes {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
+}
+
+.obObPosCashUpUiPpcSalesTable-totalsales {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
+}
+
+.obObPosCashUpUiPpcSalesTable-separator {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_returnsTable
+# Inherits: [OB.OBPOSCashUp.UI.ppc_table]
+*/
+.obObPosCashUpUiPpcReturnsTable {
+
+}
+
+.obObPosCashUpUiPpcReturnsTable-netreturns {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_itemLine] */
+}
+
+.obObPosCashUpUiPpcReturnsTable-returnstaxes {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
+}
+
+.obObPosCashUpUiPpcReturnsTable-totalreturns {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
+}
+
+.obObPosCashUpUiPpcReturnsTable-separator {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_totalTransactionsTable
+# Inherits: [OB.OBPOSCashUp.UI.ppc_table]
+*/
+.obObPosCashUpUiPpcTotalTransactionsTable {
+
+}
+
+.obObPosCashUpUiPpcTotalTransactionsTable-totaltransactionsline {
+ /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
+}
+
+.obObPosCashUpUiPpcTotalTransactionsTable-separator {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_cashDropsTable
+# Inherits: [OB.OBPOSCashUp.UI.ppc_table]
+*/
+.obObPosCashUpUiPpcCashDropsTable {}
+
+.obObPosCashUpUiPpcCashDropsTable-drops {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
+}
+
+.obObPosCashUpUiPpcCashDropsTable-totaldrops {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
+}
+
+.obObPosCashUpUiPpcCashDropsTable-separator {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_cashDepositsTable
+# Inherits: [OB.OBPOSCashUp.UI.ppc_table]
+*/
+.obObPosCashUpUiPpcCashDepositsTable {}
+
+.obObPosCashUpUiPpcCashDepositsTable-description {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
+}
+
+.obObPosCashUpUiPpcCashDepositsTable-totaldeposits {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
+}
+
+.obObPosCashUpUiPpcCashDepositsTable-separator {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_cashDepositsTable
+# Inherits: [OB.OBPOSCashUp.UI.ppc_table]
+*/
+.obObPosCashUpUiPpcCashDepositsTable {}
+
+.obObPosCashUpUiPpcCashDepositsTable-description {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
+}
+
+.obObPosCashUpUiPpcCashDepositsTable-totaldeposits {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
+}
+
+.obObPosCashUpUiPpcCashDepositsTable-separator {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_startingsTable
+# Inherits: [OB.OBPOSCashUp.UI.ppc_table]
+*/
+.obObPosCashUpUiPpcStartingsTable {}
+
+.obObPosCashUpUiPpcCashDepositsTable-startings {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
+}
+
+.obObPosCashUpUiPpcStartingsTable-totalstartings {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
+}
+
+.obObPosCashUpUiPpcStartingsTable-separator {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_cashExpectedTable
+# Inherits: [OB.OBPOSCashUp.UI.ppc_table]
+*/
+.obObPosCashUpUiPpcCashExpectedTable {}
+
+.obObPosCashUpUiPpcCashExpectedTable-expectedPerPayment {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
+}
+
+.obObPosCashUpUiPpcCashExpectedTable-totalexpected {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
+}
+
+.obObPosCashUpUiPpcCashExpectedTable-separator {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_cashDifferenceTable
+# Inherits: [OB.OBPOSCashUp.UI.ppc_table]
+*/
+.obObPosCashUpUiPpcCashDifferenceTable {}
+
+.obObPosCashUpUiPpcCashDifferenceTable-differencePerPayment {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
+}
+
+.obObPosCashUpUiPpcCashDifferenceTable-totaldifference {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
+}
+
+.obObPosCashUpUiPpcCashDifferenceTable-separator {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_cashQtyToKeepTable
+# Inherits: [OB.OBPOSCashUp.UI.ppc_table]
+*/
+.obObPosCashUpUiPpcCashQtyToKeepTable {}
+
+.obObPosCashUpUiPpcCashQtyToKeepTable-qtyToKeepPerPayment {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
+}
+
+.obObPosCashUpUiPpcCashQtyToKeepTable-totalqtyToKeep {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
+}
+
+.obObPosCashUpUiPpcCashQtyToKeepTable-separator {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable
+# Inherits: [OB.OBPOSCashUp.UI.ppc_table]
+*/
+.obObPosCashUpUiPpcCashQtyToDepoTable {}
+
+.obObPosCashUpUiPpcCashQtyToDepoTable-qtyToDepoPerPayment {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
+}
+
+.obObPosCashUpUiPpcCashQtyToDepoTable-totalqtyToDepo {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
+}
+
+.obObPosCashUpUiPpcCashQtyToDepoTable-separator {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
+}
+
+/*
+# Component: OB.OBPOSCashUp.UI.PostPrintClose
+*/
+.obObPosCashUpUiPostPrintClose {
+  display: none;
+}
+
+.obObPosCashUpUiPostPrintClose.active {
+  display: block;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea {
+  max-height: 612px;
+  margin: 5px;
+  background-color: #ffffff;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1 {
+  padding: 5px;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container1 {
+
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-container1-reporttitle {
+  padding: 10px;
+  border-bottom: 1px solid #cccccc;
+  text-align:center;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-element1 {
+  clear: both;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2 {}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1 {
+  padding: 10px;
+  text-align:center;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-img {
+  padding: 20px;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-store {
+  padding: 5px;
+  text-align:center;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-terminal {
+  padding: 5px;
+  text-align:center;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-user {
+  padding: 5px;
+  text-align:center;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-openingtime {
+  padding: 5px;
+  text-align:center;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-time {
+  padding: 5px;
+  text-align:center;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-element1 {
+  padding: 0px 0px 10px 0px;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-element1 {
+  clear: both;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1 {
+  display: block;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1 {
+
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1-sales {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_salesTable] */
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1-returns {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_returnsTable] */
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1-totaltransactions {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalTransactionsTable] */
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-element1 {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: rgb(204, 204, 204);
+  padding: 15px;
+  font-weight: bold;
+  color: rgb(204, 204, 204);
+  display: none;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-element2 {
+  display: none;
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4 {
+
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-startingsTable {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_startingsTable] */
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-dropsTable {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashDropsTable] */
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-depositsTable {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashDepositsTable] */
+}
+
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-expectedTable {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashExpectedTable] */
+}
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-countedTable {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashCountedTable] */
+}
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-differenceTable {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashDifferenceTable] */
+}
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-qtyToKeepTable {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashQtyToKeepTable] */
+}
+.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-qtyToDepoTable {
+  /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable] */
+}
