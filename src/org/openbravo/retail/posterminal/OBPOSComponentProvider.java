@@ -254,7 +254,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     globalResources.add(createComponentResource(ComponentResourceType.Static,
         prefix + "utils/openhardwareurl.js", ComponentResource.APP_OB3));
 
-    final String[] cssDependency = { "pos-login", "obpos-main" };
+    final String[] cssDependency = { "pos-login", "obpos-main", "obpos-main-uiconfig" };
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
