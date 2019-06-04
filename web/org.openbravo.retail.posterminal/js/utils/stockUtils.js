@@ -38,7 +38,7 @@
     }
   };
 
-  OB.UTIL.StockUtils.checkStockSuccessCallback = function (product, line, attrs, order, warehouse, allLinesQty, stockScreen, callback) {
+  OB.UTIL.StockUtils.checkStockSuccessCallback = function (product, line, order, attrs, warehouse, allLinesQty, stockScreen, callback) {
     // Function executed after the check stock process has sent a response, even if the response is an error response
     if (allLinesQty > warehouse.warehouseqty) {
       var productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
@@ -132,7 +132,19 @@
         }
       });
     } else if (callback && callback instanceof Function) {
-      callback(true, warehouse, allLinesQty, stockScreen);
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductWithStock', {
+        order: order,
+        line: line,
+        product: product
+      }, function (args) {
+        if (args.cancelOperation) {
+          if (callback && callback instanceof Function) {
+            callback(false);
+          }
+          return;
+        }
+        callback(true, warehouse, allLinesQty, stockScreen);
+      });
     }
   };
 
@@ -235,7 +247,7 @@
                 }
                 };
             if (!_.isNull(checkedLine.warehouse) && !_.isNull(checkedLine.allLinesQty)) {
-              OB.UTIL.StockUtils.checkStockSuccessCallback(line.get('product'), line, null, order, checkedLine.warehouse, checkedLine.allLinesQty, checkedLine.stockScreen, function (hasStock) {
+              OB.UTIL.StockUtils.checkStockSuccessCallback(line.get('product'), line, order, null, checkedLine.warehouse, checkedLine.allLinesQty, checkedLine.stockScreen, function (hasStock) {
                 addLineCallback(hasStock);
               });
             } else {

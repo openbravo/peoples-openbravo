@@ -2375,7 +2375,7 @@
                   warehouseqty: OB.DEC.Zero
                 };
               }
-              OB.UTIL.StockUtils.checkStockSuccessCallback(p, line, attrs, me, warehouse, allLinesQty, stockScreen, callback);
+              OB.UTIL.StockUtils.checkStockSuccessCallback(p, line, me, attrs, warehouse, allLinesQty, stockScreen, callback);
             }
           }, function (data) {
             OB.UTIL.StockUtils.checkStockErrorCallback(p, line, me, allLinesQty, callback);
