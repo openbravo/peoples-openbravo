@@ -480,14 +480,14 @@ enyo.kind({
     this.$.bottomShipIcon.show();
     this.$.bottomBillIcon.show();
     if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
-      this.$.bottomShipIcon.applyStyle('visibility', 'visible');
-      this.$.bottomBillIcon.applyStyle('visibility', 'visible');
+      this.$.bottomShipIcon.addClass('u-showComponent');
+      this.$.bottomBillIcon.addClass('u-showComponent');
     } else if (this.model.get('isBillTo')) {
-      this.$.bottomShipIcon.applyStyle('visibility', 'hidden');
-      this.$.bottomBillIcon.applyStyle('visibility', 'visible');
+      this.$.bottomShipIcon.addClass('u-hiddeComponent');
+      this.$.bottomBillIcon.addClass('u-showComponent');
     } else if (this.model.get('isShipTo')) {
-      this.$.bottomShipIcon.applyStyle('visibility', 'visible');
-      this.$.bottomBillIcon.applyStyle('visibility', 'hidden');
+      this.$.bottomShipIcon.addClass('u-showComponent');
+      this.$.bottomBillIcon.addClass('u-hiddeComponent');
     } else {
       this.$.bottomShipIcon.hide();
       this.$.bottomBillIcon.hide();
