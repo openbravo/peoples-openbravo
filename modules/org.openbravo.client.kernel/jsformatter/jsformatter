@@ -97,8 +97,8 @@ while getopts ":hw" arg; do
             usage
             exit 0
         ;;
-        v )
-            VERBOSE=true
+        w )
+            WRITE=true
         ;;
         \? )
             echo "Invalid option: -$OPTARG" >&2
