@@ -36,7 +36,7 @@ enyo.kind({
       if (receiptLabels) {
         // If the receipt counter button is shown, the receipt top labels should have a right padding to avoid overlapping
         // [TODO] Change at the same time as component/order.js
-        receiptLabels.applyStyle('padding-right', '55px');
+        receiptLabels.addClass('obUiReceiptsCounter-receiptsCounterButton-receiptLabel_multiLine');
       }
       if (nrItems > 100) {
         this.$.receiptsCounterButton.$.counter.removeClass('obUiReceiptsCounterButton_mediumLargeFont');
@@ -51,7 +51,7 @@ enyo.kind({
       if (receiptLabels) {
         // If the receipt counter button is not shown, the receipt top labels should reach the right of the receipt area
         // [TODO] Change at the same time as component/order.js
-        receiptLabels.applyStyle('padding-right', '5px');
+        receiptLabels.addClass('obUiReceiptsCounter-receiptsCounterButton-receiptLabel_singleLine');
       }
       this.hide();
     }

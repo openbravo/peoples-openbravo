@@ -5648,7 +5648,13 @@
 
 .obUiReceiptsCounter-receiptsCounterButton {}
 
+.obUiReceiptsCounter-receiptsCounterButton-receiptLabel_multiLine {
+  padding-right: 55px,
+}
 
+.obUiReceiptsCounter-receiptsCounterButton-receiptLabel_singleLine {
+  padding-right: 5px,
+}
 
 /*
 # Component: OB.UI.ReceiptsCounterButton
