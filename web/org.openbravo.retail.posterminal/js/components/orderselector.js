@@ -600,7 +600,7 @@ enyo.kind({
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBRDM_lblPrepareCheckCaption'), args.content, buttons, {
               autoDismiss: false,
               onShowFunction: function (popup) {
-                popup.$.bodyButtons.setStyle('clear: both;');
+                popup.$.bodyButtons.addClass('u-clearBoth');
               },
               onHideFunction: function () {
                 me.doShowSelector();
