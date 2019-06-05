@@ -72,6 +72,7 @@ import org.openbravo.model.common.order.OrderlineServiceRelation;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -1006,6 +1007,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
       order.set("creationDate", new Date(value));
     }
 
+    if (jsonorder.has("cashVAT")) {
+      order.setCashVAT(jsonorder.getBoolean("cashVAT"));
+    }
+
     int pricePrecision = order.getCurrency().getObposPosprecision() == null
         ? order.getCurrency().getPricePrecision().intValue()
         : order.getCurrency().getObposPosprecision().intValue();
@@ -1381,8 +1386,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
         if (useOrderDocumentNoForRelatedDocs) {
           paymentCount++;
         }
-        processPayments(paymentSchedule, order, posTerminal, paymentType, payment, tempWriteoffAmt,
-            jsonorder, account);
+        processPayments(paymentSchedule, order, invoice, posTerminal, paymentType, payment,
+            tempWriteoffAmt, jsonorder, account);
         if (!payment.has("reversedPaymentId")) {
           writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
         }
@@ -1390,8 +1395,13 @@ public class OrderLoader extends POSDataSynchronizationProcess
     }
 
     if (createInvoice) {
+
+      // at this moment the total paid is correctly set, so we use it to set the paidAmtAtInvoicing
+      iu.setPaidAmountAtInvoicing(invoice);
+
       // Create the payment terms for the invoice (if needed)
       iu.createPaymentTerms(order, invoice);
+
     }
 
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
@@ -1401,7 +1411,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
     return jsonResponse;
   }
 
-  private void processPayments(FIN_PaymentSchedule paymentSchedule, Order order,
+  private void processPayments(FIN_PaymentSchedule paymentSchedule, Order order, Invoice invoice,
       OBPOSApplications posTerminal, OBPOSAppPayment paymentType, JSONObject payment,
       BigDecimal writeoffAmt, JSONObject jsonorder, FIN_FinancialAccount account) throws Exception {
     final boolean isCrossStore = POSUtils.isCrossStore(order, posTerminal);
@@ -1634,15 +1644,37 @@ public class OrderLoader extends POSDataSynchronizationProcess
           false, false, order.getCurrency(), mulrate, amount, true,
           payment.has("id") ? payment.getString("id") : null);
 
+      boolean doFlush = false;
+
+      // add flag of payments done at invoicing, needed for cashvat
+      if (createInvoice && invoice != null) {
+        for (FIN_PaymentDetail paymentDetail : finPayment.getFINPaymentDetailList()) {
+          // paymentDetail has a relation one to one to paymentScheduleDetail
+          // but can be pd without psd or psd without pd
+          if (paymentDetail.getFINPaymentScheduleDetailList().size() > 0) {
+            FIN_PaymentSchedule paymentScheduleInvoice = paymentDetail
+                .getFINPaymentScheduleDetailList()
+                .get(0)
+                .getInvoicePaymentSchedule();
+            if (paymentScheduleInvoice != null
+                && paymentScheduleInvoice.getInvoice().getId().equals(invoice.getId())) {
+              paymentDetail.setPaidAtInvoicing(true);
+              doFlush = true;
+            }
+          }
+        }
+      }
+
       // Associate a GLItem with the overpayment amount to the payment which generates the
       // overpayment
       if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt,
             paymentType.getPaymentMethod().getGlitemWriteoff(),
-            payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
+            payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null, false);
         // Update Payment In amount after adding GLItem
         finPayment.setAmount(origAmountOverpayment);
         finPayment.setFinancialTransactionAmount(amountOverpayment);
+        doFlush = true;
       }
 
       // If there is a rounded amount add a new payment detail against "Rounded Difference" GL Item
@@ -1655,10 +1687,16 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
         FIN_AddPayment.saveGLItem(finPayment, roundAmount,
             paymentType.getPaymentMethod().getGlitemRound(),
-            payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
+            payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null, false);
         // Update Payment In amount after adding GLItem
         finPayment.setAmount(origAmountRounded);
         finPayment.setFinancialTransactionAmount(amountRounded);
+        doFlush = true;
+      }
+
+      // Do the flush if needed
+      if (doFlush) {
+        OBDal.getInstance().flush();
       }
 
       if (payment.has("paymentData") && payment.getString("paymentData").length() > 0

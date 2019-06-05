@@ -1567,6 +1567,12 @@
       this.set('obposPrepaymentamt', OB.DEC.Zero);
       this.set('obposPrepaymentlimitamt', OB.DEC.Zero);
       this.set('obposPrepaymentlaylimitamt', OB.DEC.Zero);
+      this.set(
+        'cashVAT',
+        OB.MobileApp.model.get('terminal')
+          ? OB.MobileApp.model.get('terminal').cashVat
+          : null
+      );
     },
 
     clearWith: function(_order) {
@@ -6105,6 +6111,7 @@
           );
 
           me.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+          me.set('cashVAT', OB.MobileApp.model.get('terminal').cashVat);
           if (!me.get('salesRepresentative')) {
             if (OB.MobileApp.model.get('context').isSalesRepresentative) {
               me.set(
@@ -10606,6 +10613,7 @@
         order.set('isQuotation', false);
         order.set('oldId', null);
         order.set('session', OB.MobileApp.model.get('session'));
+        order.set('cashVAT', OB.MobileApp.model.get('terminal').cashVat);
         order.set('bp', bp);
         if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
           // Set price list for order
