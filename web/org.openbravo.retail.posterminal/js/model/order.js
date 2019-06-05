@@ -3493,7 +3493,7 @@
         disc.chunks = undefined;
       }
 
-      disc.obdiscLineFinalgross = rule.get('obdiscLineFinalgross');
+      disc.obdiscLineFinalgross = discount.obdiscLineFinalgross || rule.get('obdiscLineFinalgross');
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
       disc.preserve = discount.preserve === true;
 
