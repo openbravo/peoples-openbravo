@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -135,10 +135,10 @@
         for (var i = 0; i < payments.length; i++) {
           var paymentDate;
           var paymentName = payments.at(i).get('name');
-          if(_.isUndefined(payments.at(i).get('paymentDate')) || _.isNull(payments.at(i).get('paymentDate'))){
+          if(_.isUndefined(payments.at(i).get('date')) || _.isNull(payments.at(i).get('date'))){
               paymentDate = new Date();
           }else{
-              paymentDate = payments.at(i).get('paymentDate');
+              paymentDate = payments.at(i).get('date');
           }
           if (payments && payments.at(i) && payments.at(i).get('paymentData') && payments.at(i).get('paymentData').name && payments.at(i).get('paymentData').name.length > 0) {
             paymentName = paymentName + ' (' + payments.at(i).get('paymentData').name + ')';

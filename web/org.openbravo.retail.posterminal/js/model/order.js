@@ -7173,6 +7173,7 @@
                 }
                 curPayment.set('orderGross', order.get('gross'));
                 curPayment.set('isPaid', order.get('isPaid'));
+                curPayment.set('date', new Date(iter.paymentDate));
                 payments.add(curPayment);
               });
               order.set('payments', payments);
