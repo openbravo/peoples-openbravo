@@ -14,7 +14,6 @@ enyo.kind({
   name: 'OB.UI.ListBrandsLine',
   kind: 'OB.UI.CheckboxButton',
   classes: 'obUiListBrandsLine modal-dialog-btn-check',
-  style: '',
   events: {
     onHideThisPopup: ''
   },
@@ -329,7 +328,7 @@ enyo.kind({
     characteristic: null
   },
   executeOnShow: function () {
-    this.$.header.parent.addStyles('padding: 0px; border-bottom: 1px solid #cccccc');
+    this.$.header.parent.addClass('obUiModalProductBrand-header-obUiModalProductBrandTopHeader_bottom');
     this.$.header.$.modalProductBrandTopHeader.$.title.setContent(OB.I18N.getLabel('OBMOBC_LblBrand'));
     this.waterfall('onSearchAction');
   },

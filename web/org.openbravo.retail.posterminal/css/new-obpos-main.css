@@ -6307,6 +6307,11 @@
   border-bottom: 0px;
 }
 
+.obUiModalProductBrand-header-obUiModalProductBrandTopHeader_bottom {
+  padding: 0px;
+  border-bottom: var(--bottomseparator-slim);
+}
+
 .obUiModalProductBrand-body-obUiListBrands {
 /* # Inherits: [OB.UI.ListBrands] */
 }
