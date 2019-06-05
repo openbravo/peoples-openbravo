@@ -59,7 +59,7 @@ enyo.kind({
     }, {
       classes: 'obObPosCashUpUiPpcTotalsLine-container1-totalQty-container2',
       components: [{
-        classes: 'obObPosCashUpUiPpcTotalsLine-container1-totalQty-container2-element1'
+        classes: 'obObPosCashUpUiPpcTotalsLine-container1-totalQty-container2-element1',
         allowHtml: true,
         tag: 'span',
         content: '&nbsp;'
