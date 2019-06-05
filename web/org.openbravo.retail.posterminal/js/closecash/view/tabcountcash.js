@@ -143,7 +143,6 @@ enyo.kind({
                 components: [{
                   classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container1',
                   components: [{
-                    style: 'padding: 10px 10px 10px 10px; display: table-cell; width: 60%;',
                     classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container1-element1',
                     initComponents: function () {
                       this.setContent(OB.I18N.getLabel('OBPOS_LblPaymentMethod'));
@@ -187,7 +186,6 @@ enyo.kind({
                       this.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
                     }
                   }, {
-                    style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 40%; text-align:right;',
                     classes: 'obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container1-container1',
                     components: [{
                       name: 'total',
