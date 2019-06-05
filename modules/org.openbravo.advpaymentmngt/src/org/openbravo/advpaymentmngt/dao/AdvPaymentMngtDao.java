@@ -1583,22 +1583,17 @@ public class AdvPaymentMngtDao {
       List<String> paymentMethods) {
     Criterion compoundExp = null;
     int paymentMethodsSize = paymentMethods.size();
-    while (paymentMethodsSize > 999) {
-      List<String> paymentMethodsToRemove = paymentMethods.subList(0, 999);
+    int batchIni = 0;
+    int batchSize = 1000;
+    while (paymentMethodsSize > batchIni) {
+      List<String> paymentMethodsToRemove = paymentMethods.subList(batchIni,
+          Math.min(batchIni + batchSize, paymentMethodsSize));
       if (compoundExp == null) {
         compoundExp = Restrictions.in("id", paymentMethodsToRemove);
       } else {
         compoundExp = Restrictions.or(compoundExp, Restrictions.in("id", paymentMethodsToRemove));
       }
-      paymentMethods.removeAll(paymentMethodsToRemove);
-      paymentMethodsSize = paymentMethods.size();
-    }
-    if (paymentMethodsSize > 0) {
-      if (compoundExp == null) {
-        compoundExp = Restrictions.in("id", paymentMethods);
-      } else {
-        compoundExp = Restrictions.or(compoundExp, Restrictions.in("id", paymentMethods));
-      }
+      batchIni += batchSize;
     }
     if (compoundExp != null) {
       obc.add(compoundExp);
