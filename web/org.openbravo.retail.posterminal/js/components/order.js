@@ -354,7 +354,6 @@ enyo.kind({
   name: 'btninvoice',
   classes: 'btnInvoice',
   showing: false,
-  style: 'float: left; width: 40%;',
   components: [{
     classes: 'btnInvoice-obUiBtnReceiptToInvoice',
     kind: 'OB.UI.BtnReceiptToInvoice'
@@ -365,8 +364,7 @@ enyo.kind({
   }, {
     tag: 'span',
     classes: 'btnInvoice-lblInvoiceReceipt',
-    name: 'lblInvoiceReceipt',
-    style: 'font-weight:bold; '
+    name: 'lblInvoiceReceipt'
   }],
   initComponents: function () {
     this.inherited(arguments);
