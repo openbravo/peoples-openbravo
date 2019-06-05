@@ -84,7 +84,6 @@ enyo.kind({
   }, {
     classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-container1',
     components: [{
-      style: 'padding: 5px; padding-left: 10px;',
       name: 'detail',
       classes: 'obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-container1-detail',
       allowHtml: true
