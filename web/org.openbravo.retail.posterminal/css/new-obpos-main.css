@@ -2582,6 +2582,9 @@
   font-weight: bold;
 }
 
+.obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_cancelled {
+  color: rgb(83, 83, 197);
+}
 
 .obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_qt {
   color: rgb(248,148,29);
@@ -9641,7 +9644,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   padding: 2px 10px 10px 10px;
 }
 
-.obObposPointOfSaleUiEditLine-contextImage-container1-container1, {
+.obObposPointOfSaleUiEditLine-contextImage-container1-container1 {
   width: 128px;
   height: 128px;
   position: relative;
@@ -10176,8 +10179,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck_active:active,
-.obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck_active[disabled="disabled"],
- {
+.obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck_active[disabled="disabled"] {
   background-image: url('./../img/checkbox-off.svg');
   background-size: 34px 27px;
 }
@@ -10992,7 +10994,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obObposPointOfSaleUiButtonMore_disabled.btn-over,
 .obObposPointOfSaleUiButtonMore_disabled:hover,
 .obObposPointOfSaleUiButtonMore_disabled.btn-down,
-.obObposPointOfSaleUiButtonMore_disabled:active, {
+.obObposPointOfSaleUiButtonMore_disabled:active {
   opacity: 1 !important;
   background-color: #717171 !important;
   cursor: default;
@@ -11038,7 +11040,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obObposPointOfSaleUiButtonSwitch_disabled.btn-over,
 .obObposPointOfSaleUiButtonSwitch_disabled:hover,
 .obObposPointOfSaleUiButtonSwitch_disabled.btn-down,
-.obObposPointOfSaleUiButtonSwitch_disabled:active, {
+.obObposPointOfSaleUiButtonSwitch_disabled:active {
   opacity: 1 !important;
   background-color: #717171 !important;
   cursor: default;
