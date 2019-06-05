@@ -120,7 +120,7 @@ enyo.kind({
       me.parent.$.bplocshipbutton.$.identifier.removeClass('obUiBPLocationShip-identifier_partialWidth');
     } else {
       me.setShowing(status);
-      me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', '');
+      me.parent.$.bplocbutton.$.bottomAddrIcon.removeClass('hideFromUI');
       me.parent.$.bplocbutton.$.identifier.removeClass('bUiBPLocationShip-identifier_fullWidth');
       me.parent.$.bplocbutton.$.identifier.addClass('obUiBPLocationShip-identifier_partialWidth');
       me.parent.$.bplocshipbutton.$.identifier.removeClass('bUiBPLocationShip-identifier_fullWidth');
@@ -655,7 +655,7 @@ enyo.kind({
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('name'));
     if (this.model.get('id') === OB.MobileApp.model.receipt.get('bp').get(this.locId)) {
-      this.applyStyle('background-color', '#fbf6d1');
+      this.addClass('obUiListSelectorLine_equalLocId');
     }
     if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
       this.$.bottomShipIcon.addClass('addresshipitems');
@@ -699,7 +699,7 @@ enyo.kind({
   components: [{
     classes: 'obUiListBpsLoc-container1 span12',
     components: [{
-      style: 'border-bottom: 1px solid #cccccc;',
+      classes: 'obUiListBpsLoc-container1-container1',
       components: [{
         classes: 'obUiListBpsLoc-container1-container1-container1 span12',
         components: [{

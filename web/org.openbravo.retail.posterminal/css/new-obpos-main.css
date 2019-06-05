@@ -373,6 +373,10 @@
 */
 .obUiListSelectorLine {}
 
+.obUiListSelectorLine_equalLocId {
+  background-color: #fbf6d1;
+}
+
 .obUiListSelectorLine-line {
   line-height: 30px; width: 100%
 }
