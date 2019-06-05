@@ -19,7 +19,6 @@ enyo.kind({
     components: [{
       name: 'productName',
       type: 'text',
-      style: 'font-size: 17px;',
       classes: 'obUiModalQuotationProductAttributesScrollerQuotationLines-container1-productName',
       content: ''
     }]
@@ -51,7 +50,6 @@ enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalQuotationProductAttributes',
   i18nHeader: 'OBPOS_QuotationProductAttributesDialogTitle',
-  style: 'width: 700px;',
   classses: 'obUiModalQuotationProductAttributes',
   autoDismiss: false,
   bodyContent: {
@@ -160,7 +158,6 @@ enyo.kind({
         lines = me.args.lines,
         i;
     me.$.header.$.headerTitle.setContent(OB.I18N.getLabel('OBPOS_QuotationProductAttributeDesc'));
-    me.$.header.$.headerTitle.addStyles('font-size: 24px');
     i = 0;
     me.$.bodyContent.$.quotationLinesComponent.destroyComponents();
     lines.forEach(function (theLine) {

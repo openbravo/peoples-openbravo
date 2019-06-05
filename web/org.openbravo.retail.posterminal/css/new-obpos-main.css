@@ -4072,7 +4072,9 @@
 
 .obUiModalQuotationProductAttributes-header {}
 
-.obUiModalQuotationProductAttributes-header-headerTitle {}
+.obUiModalQuotationProductAttributes-header-headerTitle {
+  font-size: 24px;
+}
 
 .obUiModalQuotationProductAttributes-bodyButtons {}
 
