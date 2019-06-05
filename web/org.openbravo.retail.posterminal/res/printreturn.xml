@@ -86,7 +86,8 @@
         <text align ="right">-- <%= line.get('organization').name %></text>  
       </line>
     <%}
-    var deliveryDate = line.get('obrdmDeliveryDate') ? (line.get('obrdmDeliveryDate') instanceof Date ? line.get('obrdmDeliveryDate') : new Date(line.get('obrdmDeliveryDate'))) : null,
+    if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
+      var deliveryDate = line.get('obrdmDeliveryDate') ? (line.get('obrdmDeliveryDate') instanceof Date ? line.get('obrdmDeliveryDate') : new Date(line.get('obrdmDeliveryDate'))) : null,
         deliveryTime = line.get('obrdmDeliveryTime') ? (line.get('obrdmDeliveryTime') instanceof Date ? line.get('obrdmDeliveryTime') : new Date(line.get('obrdmDeliveryTime'))) : null,
         showDate = line.get('obrdmDeliveryMode') === 'PickupInStoreDate' || line.get('obrdmDeliveryMode') === 'HomeDelivery',
         showTime = line.get('obrdmDeliveryMode') === 'HomeDelivery',
@@ -121,6 +122,7 @@
           <text align ="right">-- <%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBRDM_DeliveryTime'))%>: <%=deliveryTime ? OB.I18N.formatHour(deliveryTime) : OB.I18N.formatHour(currentDate)%></text>
         </line>
       <%}
+      }
      }
         promotions = line.get('promotions');
         if (promotions) {
