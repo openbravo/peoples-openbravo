@@ -198,7 +198,7 @@ enyo.kind({
 
     if (me.model.get('iscancelled')) {
       this.$.orderType.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
-      this.$.orderType.applyStyle('color', 'rgb(83, 83, 197)');
+      this.$.orderType.accClass('obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_cancelled');
     } else {
       this.$.orderType.setContent(orderType);
       switch (this.model.get('orderType')) {
