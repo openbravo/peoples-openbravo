@@ -81,7 +81,7 @@
         <text align ="right" length="8"><%= lines.at(i).printNet() %></text>
     <%}%>
       </line>
-    <%if(line.has('organization') && line.get('organization').id !== OB.MobileApp.model.get('terminal').organization){%>
+    <%if(line.has('organization') && OB.UTIL.isCrossStoreOrganization(line.get('organization'))){%>
       <line>
         <text align ="right">-- <%= line.get('organization').name %></text>  
       </line>
