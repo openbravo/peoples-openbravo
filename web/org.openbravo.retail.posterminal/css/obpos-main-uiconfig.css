@@ -323,7 +323,7 @@
   grid-template-areas:
     "pos00 pos01 pos02 pos03 pos04";
   grid-template-columns: repeat(5, 1fr);
-  margin: 3px 0px 1px 0px;
+  margin: 3px 10px 1px 10px;
   grid-column-gap: 5px;
   grid-row-gap: 5px;
 }
@@ -335,6 +335,14 @@
   text-overflow: ellipsis;
   font-size: 14px;
   padding: 2px 5px;
+}
+
+.obpos_pointofsale-receipttoolbar1>.obUiDummyAction {
+  background-color: transparent;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic>.obUiDummyAction {
+  background-color: #717171;
 }
 
 .obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic>button.obUiActionButton {
