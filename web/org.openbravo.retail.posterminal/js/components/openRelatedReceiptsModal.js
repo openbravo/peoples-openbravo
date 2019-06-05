@@ -189,18 +189,15 @@ enyo.kind({
       }, {
         name: 'orderedDateLbl',
         content: OB.I18N.getLabel('OBPOS_DateOrdered'),
-        classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-orderedDateLbl span2',
-        style: 'line-height: 25px; font-size: 17px; width: 180px;'
+        classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-orderedDateLbl span2'
       }, {
         name: 'amountLbl',
         content: OB.I18N.getLabel('OBPOS_AmountOfCash'),
-        classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-amountLbl span2',
-        style: 'line-height: 25px; font-size: 17px; width: 80px;'
+        classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-amountLbl span2'
       }, {
         name: 'pendingLbl',
         content: OB.I18N.getLabel('OBPOS_Pending'),
-        classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-pendingLbl span2',
-        style: 'line-height: 25px; font-size: 17px; width: 80px; padding-left: 20px;'
+        classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-pendingLbl span2'
       }, {
         classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-element1'
       }]
