@@ -125,10 +125,6 @@ public class ImportEntryManager {
 
   @Inject
   @Any
-  private Instance<ImportEntryPreProcessor> entryPreProcessors;
-
-  @Inject
-  @Any
   private Instance<ImportEntryProcessor> entryProcessors;
 
   @Inject
