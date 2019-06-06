@@ -226,6 +226,10 @@ OB.APRM.AddPayment.financialAccountOnChange = function (item, view, form, grid) 
   OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
 };
 
+OB.APRM.AddPayment.paymentDateOnChange = function (item, view, form, grid) {
+  OB.APRM.AddPayment.paymentMethodMulticurrency(view, form, true);
+};
+
 OB.APRM.AddPayment.paymentMethodOnChange = function (item, view, form, grid) {
   var ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
       defaultFilter = ordinvgrid.filterEditor.getEditForm().getValues(),

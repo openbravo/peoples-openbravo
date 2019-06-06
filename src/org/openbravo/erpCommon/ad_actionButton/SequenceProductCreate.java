@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -194,9 +194,9 @@ public class SequenceProductCreate implements Process {
   }
 
   private static Long getLineNum(String SequenceId) throws Exception {
-    String hql = "  SELECT COALESCE(MAX(l.lineNo),0)+10 AS DefaultValue FROM ManufacturingOperationProduct l WHERE l.mASequence.id= '"
-        + SequenceId + "'";
+    String hql = "  SELECT COALESCE(MAX(l.lineNo),0)+10 AS DefaultValue FROM ManufacturingOperationProduct l WHERE l.mASequence.id= :sequenceId";
     Query<Long> q = OBDal.getInstance().getSession().createQuery(hql, Long.class);
+    q.setParameter("sequenceId", SequenceId);
     try {
       Long result = q.uniqueResult();
       return result == null ? 0L : result;
