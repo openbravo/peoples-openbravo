@@ -139,7 +139,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     } else if (vars.commandIn("APPLY")) {
       printPageApply(response, vars);
     } else if (vars.commandIn("SEARCH")) {
-      String q = vars.getStringParameter("q");
+      String q = vars.getStringParameter("inpSearchText");
       searchModules(q, response);
     } else if (vars.commandIn("ADD", "ADD_NOSEARCH", "ADD_SEARCH")) {
       printPageAdd(response, vars);

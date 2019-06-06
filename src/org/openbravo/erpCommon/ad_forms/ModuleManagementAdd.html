@@ -45,17 +45,22 @@ var baseDirectory = "../../../../../web/";
 
 <script language="JavaScript" type="text/javascript">
   function search() {
-	  fetch('ModuleManagement.html?Command=SEARCH&q='+encodeURI(document.frmMain.inpSearchText.value)).then(function(r){
-		  return r.json()
-	  }).then(function(j){
-		  if (j.success) {
-  		    document.getElementById('searchResults').innerHTML = j.html;
-		  } else {
-			  initialize_MessageBox('messageBoxID')
-			  setValues_MessageBox('messageBoxID','ERROR', j.title, j.msg);
-		  }
-		  setProcessingMode('window',false);
-	  });
+    initialize_MessageBox('messageBoxID');
+    submitXmlHttpRequest(searchCallback, document.frmMain, "SEARCH", "ModuleManagement.html");
+  }
+
+  function searchCallback(p, requestObject) {
+    if (!getReadyStateHandler(requestObject)) {
+      return;
+    }
+
+    var result = JSON.parse(requestObject.responseText);
+    if (result.success) {
+      document.getElementById('searchResults').innerHTML = result.html;
+    } else {
+      setValues_MessageBox('messageBoxID','ERROR', result.title, result.msg);
+    }
+    setProcessingMode('window', false);
   }
 
   function viewDetails(id) {
