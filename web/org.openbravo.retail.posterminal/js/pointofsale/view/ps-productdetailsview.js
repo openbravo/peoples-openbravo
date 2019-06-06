@@ -102,7 +102,10 @@ enyo.kind({
       };
       if (me.leftSubWindow.documentType) {
         attrs.documentType = me.leftSubWindow.documentType;
+        attrs.quotationDocumentType = me.leftSubWindow.quotationDocumentType;
       }
+      me.leftSubWindow.documentType = null;
+      me.leftSubWindow.quotationDocumentType = null;
       if (line && line.get('obrdmDeliveryMode') !== product.get('obrdmDeliveryMode')) {
         attrs.obrdmDeliveryMode = product.get('obrdmDeliveryMode');
         attrs.obrdmDeliveryDate = product.get('obrdmDeliveryDate');
@@ -263,6 +266,7 @@ enyo.kind({
           me.$.productAddToReceipt.setLabel();
           me.$.productAddToReceipt.setDisabled(false);
           me.leftSubWindow.documentType = data.documentType;
+          me.leftSubWindow.quotationDocumentType = data.quotationDocumentType;
           me.leftSubWindow.organization = organization;
           if (OB.UTIL.isCrossStoreOrganization(organization)) {
             me.leftSubWindow.setDefaultDeliveryMode();

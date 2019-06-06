@@ -535,7 +535,11 @@ enyo.kind({
             receipt.set('priceList', receiptLines[0].get('product').get('currentPrice').priceListId);
           }
           if (receiptLines[0].has('documentType')) {
-            receipt.set('documentType', receiptLines[0].get('documentType'));
+            if (receipt.get('isQuotation')) {
+              receipt.set('documentType', receiptLines[0].get('quotationDocumentType'));
+            } else {
+              receipt.set('documentType', receiptLines[0].get('documentType'));
+            }
           }
         }
       }
