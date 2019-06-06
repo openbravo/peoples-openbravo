@@ -23,8 +23,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
@@ -107,11 +107,10 @@ public class CdiInfrastructure extends WeldBaseTest {
 
   private void assertExtensionBeansInjection(Stream<ExtensionBean> beans) {
     int numberOfExtensionBeans = 2;
-    String[] expectedNames = { "qualifiedBean", "unqualifiedBean" };
 
     List<String> names = beans.map(ExtensionBean::getName).collect(Collectors.toList());
 
-    assertThat("Retrieved the expected beans", names,
-        allOf(hasSize(numberOfExtensionBeans), containsInAnyOrder(expectedNames)));
+    assertThat("Retrieved the expected beans", names, allOf(hasSize(numberOfExtensionBeans),
+        hasItem("qualifiedBean"), hasItem("unqualifiedBean")));
   }
 }
