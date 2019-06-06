@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -830,7 +831,7 @@ public class AdvPaymentMngtDao {
         OBContext.getOBContext().getOrganizationStructureProvider().getNaturalTree(strOrgId)));
     obc.setFilterOnReadableOrganization(false);
 
-    List<String> payMethods = new ArrayList<>();
+    Set<String> payMethods = new HashSet<>();
     if (strFinancialAccountId != null && !strFinancialAccountId.isEmpty()) {
       for (FinAccPaymentMethod finAccPayMethod : getObject(FIN_FinancialAccount.class,
           strFinancialAccountId).getFinancialMgmtFinAccPaymentMethodList()) {
@@ -846,7 +847,7 @@ public class AdvPaymentMngtDao {
       if (payMethods.isEmpty()) {
         return (new ArrayList<FIN_PaymentMethod>());
       }
-      addPaymentMethodList(obc, payMethods);
+      addPaymentMethodList(obc, new ArrayList<String>(payMethods));
     } else {
       if (excludePaymentMethodWithoutAccount) {
 
@@ -862,7 +863,7 @@ public class AdvPaymentMngtDao {
         if (payMethods.isEmpty()) {
           return (new ArrayList<FIN_PaymentMethod>());
         }
-        addPaymentMethodList(obc, payMethods);
+        addPaymentMethodList(obc, new ArrayList<String>(payMethods));
       }
       if (paymentDirection == PaymentDirection.IN) {
         obc.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_PAYINALLOW, true));
@@ -905,22 +906,17 @@ public class AdvPaymentMngtDao {
       List<String> paymentMethods) {
     Criterion compoundExp = null;
     int paymentMethodsSize = paymentMethods.size();
-    while (paymentMethodsSize > 999) {
-      List<String> paymentMethodsToRemove = paymentMethods.subList(0, 999);
+    int batchIni = 0;
+    int batchSize = 1000;
+    while (paymentMethodsSize > batchIni) {
+      List<String> paymentMethodsToRemove = paymentMethods.subList(batchIni,
+          Math.min(batchIni + batchSize, paymentMethodsSize));
       if (compoundExp == null) {
         compoundExp = Restrictions.in("id", paymentMethodsToRemove);
       } else {
         compoundExp = Restrictions.or(compoundExp, Restrictions.in("id", paymentMethodsToRemove));
       }
-      paymentMethods.removeAll(paymentMethodsToRemove);
-      paymentMethodsSize = paymentMethodsSize - 999;
-    }
-    if (paymentMethodsSize > 0) {
-      if (compoundExp == null) {
-        compoundExp = Restrictions.in("id", paymentMethods);
-      } else {
-        compoundExp = Restrictions.or(compoundExp, Restrictions.in("id", paymentMethods));
-      }
+      batchIni += batchSize;
     }
     if (compoundExp != null) {
       obc.add(compoundExp);
