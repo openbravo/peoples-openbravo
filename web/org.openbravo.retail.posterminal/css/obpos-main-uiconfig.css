@@ -330,11 +330,11 @@
 
 .obpos_pointofsale-receipttoolbar1>button.obUiActionButton {
   min-height: 35px;
-  max-height: 38px;
+  max-height: 43px;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 14px;
-  padding: 2px 5px;
+  padding: 4px 5px;
 }
 
 .obpos_pointofsale-receipttoolbar1>.obUiDummyAction {
