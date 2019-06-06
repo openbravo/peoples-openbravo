@@ -26,6 +26,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -74,6 +75,8 @@ public class WeldUtils {
     staticBeanManager = theBeanManager;
   }
 
+  public static final AnnotationLiteral<Any> ANY_LITERAL = Any.Literal.INSTANCE;
+
   /**
    * Method which uses the static instance of the bean manager cached in this class. This method
    * should only be used by objects which are not created by Weld. Objects created by Weld should
@@ -84,7 +87,7 @@ public class WeldUtils {
   @SuppressWarnings("unchecked")
   public static <T> T getInstanceFromStaticBeanManager(Class<T> type) {
     final BeanManager theBeanManager = getStaticInstanceBeanManager();
-    final Set<Bean<?>> beans = theBeanManager.getBeans(type, Any.Literal.INSTANCE);
+    final Set<Bean<?>> beans = theBeanManager.getBeans(type, ANY_LITERAL);
     for (Bean<?> bean : beans) {
       if (bean.getBeanClass() == type) {
         return (T) theBeanManager.getReference(bean, type,
@@ -109,7 +112,7 @@ public class WeldUtils {
    */
   @SuppressWarnings("unchecked")
   public <T> T getInstance(Class<T> type) {
-    final Set<Bean<?>> beans = beanManager.getBeans(type, Any.Literal.INSTANCE);
+    final Set<Bean<?>> beans = beanManager.getBeans(type, ANY_LITERAL);
     for (Bean<?> bean : beans) {
       if (bean.getBeanClass() == type) {
         return (T) beanManager.getReference(bean, type, beanManager.createCreationalContext(bean));
@@ -124,7 +127,7 @@ public class WeldUtils {
   @SuppressWarnings("unchecked")
   public static <T> List<T> getInstances(Class<T> type) {
     final BeanManager beanManager = WeldUtils.getStaticInstanceBeanManager();
-    final Set<Bean<?>> beans = beanManager.getBeans(type, Any.Literal.INSTANCE);
+    final Set<Bean<?>> beans = beanManager.getBeans(type, ANY_LITERAL);
 
     final List<T> instances = new ArrayList<>();
     for (Bean<?> bean : beans) {
