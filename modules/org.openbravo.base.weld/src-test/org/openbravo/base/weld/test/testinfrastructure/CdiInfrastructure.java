@@ -24,7 +24,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
@@ -110,7 +109,10 @@ public class CdiInfrastructure extends WeldBaseTest {
 
     List<String> names = beans.map(ExtensionBean::getName).collect(Collectors.toList());
 
-    assertThat("Retrieved the expected beans", names, allOf(hasSize(numberOfExtensionBeans),
-        hasItem("qualifiedBean"), hasItem("unqualifiedBean")));
+    assertThat("Retrieved the expected number of beans", names.size(),
+        equalTo(numberOfExtensionBeans));
+
+    assertThat("Retrieved the expected beans", names,
+        allOf(hasItem("qualifiedBean"), hasItem("unqualifiedBean")));
   }
 }
