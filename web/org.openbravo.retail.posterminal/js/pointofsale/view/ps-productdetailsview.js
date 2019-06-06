@@ -39,7 +39,7 @@ enyo.kind({
   tap: function () {
     var me = this,
         leftSubWindow = me.parent.leftSubWindow;
-    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) && !OB.UTIL.isCrossStoreProduct(leftSubWindow.product)) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) && !OB.UTIL.isCrossStoreOrganization(leftSubWindow.organization)) {
       var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.OtherStoresDetailedStock');
       leftSubWindow.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
       serverCallStoreDetailedStock.exec({
@@ -161,11 +161,6 @@ enyo.kind({
             }
           }
           if (OB.UTIL.isCrossStoreEnabled()) {
-            if (me.leftSubWindow.organization && me.leftSubWindow.organization.id !== OB.MobileApp.model.get('terminal').organization) {
-              product.set('crossStore', true);
-            } else {
-              product.set('crossStore', false);
-            }
             line.set({
               priceList: product.get('currentPrice').price,
               price: product.get('currentPrice').price
@@ -281,7 +276,7 @@ enyo.kind({
             me.leftSubWindow.product.set('currentPrice', data.currentPrice);
           }
           };
-      if (event && event.target.getAttribute('id') !== 'terminal_containerWindow_pointOfSale_multiColumn_leftPanel_productdetailsview_leftSubWindowBody_body_stockOthers' && (this.leftSubWindow.line || !OB.UTIL.isCrossStoreProduct(this.leftSubWindow.product))) {
+      if (!this.leftSubWindow.forceSelectStore && event && event.target.getAttribute('id') !== 'terminal_containerWindow_pointOfSale_multiColumn_leftPanel_productdetailsview_leftSubWindowBody_body_stockOthers' && (this.leftSubWindow.line || !OB.UTIL.isCrossStoreProduct(this.leftSubWindow.product))) {
         var data = null;
         if (this.leftSubWindow.line) {
           data = {
@@ -289,7 +284,7 @@ enyo.kind({
             warehouse: this.leftSubWindow.line.get('warehouse'),
             organization: this.leftSubWindow.line.get('organization')
           };
-          if (OB.UTIL.isCrossStoreProduct(this.leftSubWindow.line.get('product'))) {
+          if (OB.UTIL.isCrossStoreOrganization(this.leftSubWindow.line.get('organization')) || OB.UTIL.isCrossStoreProduct(this.leftSubWindow.line.get('product'))) {
             data.currentPrice = this.leftSubWindow.line.get('product').get('currentPrice');
           } else {
             data.currentPrice = {
@@ -430,7 +425,7 @@ enyo.kind({
     var me = this;
     if (OB.UTIL.isCrossStoreEnabled()) {
       me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock_NotCalculated'));
-      me.bodyComponent.$.stockHere.setDisabled(OB.UTIL.isCrossStoreProduct(me.product) && (!me.line || OB.DEC.compare(me.line.get('qty')) > 0));
+      me.bodyComponent.$.stockHere.setDisabled(OB.UTIL.isNullOrUndefined(me.organization) || ((OB.UTIL.isCrossStoreOrganization(me.organization) || OB.UTIL.isCrossStoreProduct(me.product)) && (!me.line || OB.DEC.compare(me.line.get('qty')) > 0)));
       me.bodyComponent.$.productAddToReceipt.setDisabled(true);
       if (params.checkStockCallback) {
         params.checkStockCallback();
@@ -440,7 +435,7 @@ enyo.kind({
       me.bodyComponent.$.stockHere.setDisabled(false);
       me.bodyComponent.$.productAddToReceipt.setDisabled(true);
     }
-    if (!OB.UTIL.isCrossStoreProduct(me.product)) {
+    if (OB.UTIL.isNullOrUndefined(me.organization) || !OB.UTIL.isCrossStoreOrganization(me.organization)) {
       OB.UTIL.StockUtils.getReceiptLineStock(me.product.get('id'), undefined, function (data) {
         if (data && data.exception) {
           me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
@@ -509,7 +504,8 @@ enyo.kind({
     }
     this.line = params.line || null;
     this.product = params.product;
-    this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(OB.UTIL.isNullOrUndefined(this.line));
+    this.forceSelectStore = params.forceSelectStore || false;
+    this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(OB.UTIL.isNullOrUndefined(this.line) && OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true));
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setDetailsView(this.$.leftSubWindowBody.$.body);
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.removeClass('btnlink-orange');
     this.localStockModel = null;

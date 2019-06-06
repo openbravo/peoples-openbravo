@@ -3493,7 +3493,7 @@
         disc.chunks = undefined;
       }
 
-      disc.obdiscLineFinalgross = rule.get('obdiscLineFinalgross');
+      disc.obdiscLineFinalgross = discount.obdiscLineFinalgross || rule.get('obdiscLineFinalgross');
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
       disc.preserve = discount.preserve === true;
 
@@ -4005,6 +4005,7 @@
             if (!businessPartner.get('locId') || !businessPartner.get('shipLocId')) {
               businessPartner.loadBPLocations(null, null, function (shipping, billing, locations) {
                 businessPartner.set('locationModel', billing);
+                businessPartner.set('locationBillModel', billing);
                 businessPartner.set('locId', billing.get('id'));
                 businessPartner.set('locName', billing.get('name'));
                 businessPartner.set('postalCode', billing.get('postalCode'));
@@ -4072,6 +4073,7 @@
         if (!businessPartner.get('locId') || !businessPartner.get('shipLocId')) {
           businessPartner.loadBPLocations(null, null, function (shipping, billing, locations) {
             businessPartner.set('locationModel', billing);
+            businessPartner.set('locationBillModel', billing);
             businessPartner.set('locId', billing.get('id'));
             businessPartner.set('locName', billing.get('name'));
             businessPartner.set('postalCode', billing.get('postalCode'));
