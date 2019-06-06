@@ -19,7 +19,7 @@
 
 package org.openbravo.base.weld.test.testinfrastructure;
 
-/** Simple qualified bean without a qualifier */
+/** Simple bean without a qualifier */
 public class UnqualifiedBean extends ExtensionBean {
 
   @Override
