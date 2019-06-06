@@ -569,6 +569,16 @@ public class ModuleManagement extends HttpSecureAppServlet {
         moduleBox.put("maturityStyle", "none");
       }
 
+      if (additionalInfo.has("merge")) {
+        JSONObject mergeInfo = additionalInfo.getJSONObject("merge");
+        moduleBox.put("mergeDisplay", "true");
+        moduleBox.put("mergedModule", mergeInfo.getString("mergedModule"));
+        moduleBox.put("mergedInto", mergeInfo.getString("mergedIntoModule"));
+        moduleBox.put("mergedIntoVersion",
+            mergeInfo.getString("mergedIntoModule") + " - " + mergeInfo.getString("mergedVersion"));
+      } else {
+        moduleBox.put("mergeDisplay", "none");
+      }
       String support = additionalInfo.getString("support");
       if (!"NI".equals(support)) {
         moduleBox.put("supportStyle", "true");
