@@ -1621,7 +1621,6 @@ public class ImportModule implements Serializable {
       VariablesSecureApp vars) {
     scanError = new StringBuilder();
     try {
-      final Map<String, String> updateModules = new HashMap<>();
       final String user = vars == null ? "0" : vars.getUser();
       ImportModuleData.insertLog(conn, user, "", "", "", "Scanning For Updates", "S");
 
@@ -1634,11 +1633,16 @@ public class ImportModule implements Serializable {
         req.put("additionalInfo", additionalInfo);
 
         JSONObject r = CentralRepository.post(Service.SCAN, req);
-        JSONArray jsonUpdates = r.getJSONObject("response").getJSONArray("updates");
-        updates = new ArrayList<>(jsonUpdates.length());
-        for (int i = 0; i < jsonUpdates.length(); i++) {
-          JSONObject update = jsonUpdates.getJSONObject(i);
-          updates.add(SimpleModule.fromJson(update));
+        if (r.getBoolean("success")) {
+          JSONArray jsonUpdates = r.getJSONObject("response").getJSONArray("updates");
+          updates = new ArrayList<>(jsonUpdates.length());
+          for (int i = 0; i < jsonUpdates.length(); i++) {
+            JSONObject update = jsonUpdates.getJSONObject(i);
+            updates.add(SimpleModule.fromJson(update));
+          }
+        } else {
+          scanError.append(r.getJSONObject("response").getString("msg"));
+          return Collections.emptyMap();
         }
       } catch (final Exception e) {
         // do nothing just log the error
@@ -1650,9 +1654,10 @@ public class ImportModule implements Serializable {
           log4j.error("Error inserting log", e);
         }
         scanError.append("WSServerNotReachable");
-        return updateModules; // return empty hashmap
+        return Collections.emptyMap(); // return empty hashmap
       }
 
+      final Map<String, String> updateModules = new HashMap<>(updates.size());
       for (SimpleModule update : updates) {
         if (!ImportModuleData.existsVersion(conn, update.getVersionNo(),
             update.getModuleVersionID())) {
