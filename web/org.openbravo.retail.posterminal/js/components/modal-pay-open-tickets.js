@@ -435,7 +435,11 @@ enyo.kind({
             action: function () {
               showSomeOrderIsPaidPopup();
             }
-          }]);
+          }], {
+            onHideFunction: function () {
+              OB.UTIL.ProcessController.finish('payOpenTicketsValidation', execution);
+            }
+          });
         }
       } else {
         showSomeOrderIsPaidPopup();
