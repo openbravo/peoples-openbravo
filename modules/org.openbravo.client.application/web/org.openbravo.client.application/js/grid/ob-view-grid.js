@@ -3494,8 +3494,8 @@ isc.OBViewGrid.addProperties({
       return;
     }
 
-    // If leaving the row...
-    if (newRow) {
+    // If leaving the row or moving to a cell in the same row that is disabled...
+    if (newRow || nextEditCell === null) {
       // do not leave the row if the row is new and not all mandatory fields have been set
       if (editForm && editForm.isNew && !editForm.allRequiredFieldsSet()) {
         return;
