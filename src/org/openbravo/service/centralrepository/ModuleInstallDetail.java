@@ -29,7 +29,7 @@ public class ModuleInstallDetail {
   private Module[] modulesToUpdate;
   private boolean validConfiguration;
 
-  public ModuleInstallDetail(String[] dependencyErrors, Module[] modulesToInstall,
+  private ModuleInstallDetail(String[] dependencyErrors, Module[] modulesToInstall,
       Module[] modulesToUpdate, boolean validConfiguration) {
     super();
     this.dependencyErrors = dependencyErrors;

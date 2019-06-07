@@ -50,10 +50,10 @@ public class Module {
   public Module() {
   }
 
-  public Module(String author, String dbPrefix, ModuleDependency[] dependencies, String description,
-      String help, ModuleDependency[] includes, String licenseAgreement, String licenseType,
-      String moduleID, String moduleVersionID, String name, String packageName, String type,
-      String updateDescription, String url, String versionNo, boolean isCommercial,
+  private Module(String author, String dbPrefix, ModuleDependency[] dependencies,
+      String description, String help, ModuleDependency[] includes, String licenseAgreement,
+      String licenseType, String moduleID, String moduleVersionID, String name, String packageName,
+      String type, String updateDescription, String url, String versionNo, boolean isCommercial,
       Map<String, Object> additionalInfo) {
     this.author = author;
     this.dbPrefix = dbPrefix;

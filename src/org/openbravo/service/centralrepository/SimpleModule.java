@@ -42,7 +42,7 @@ public class SimpleModule {
   private boolean isCommercial;
   private Map<String, Object> additionalInfo;
 
-  public SimpleModule(String author, String description, String help, String licenseAgreement,
+  private SimpleModule(String author, String description, String help, String licenseAgreement,
       String licenseType, String moduleID, String moduleVersionID, String name, String type,
       String updateDescription, String url, String versionNo, boolean isCommercial,
       Map<String, Object> additionalInfo) {

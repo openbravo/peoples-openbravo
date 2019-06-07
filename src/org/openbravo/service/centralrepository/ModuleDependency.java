@@ -34,7 +34,7 @@ public class ModuleDependency {
   public ModuleDependency() {
   }
 
-  public ModuleDependency(String moduleID, String moduleName, String moduleVersionDependencyID,
+  private ModuleDependency(String moduleID, String moduleName, String moduleVersionDependencyID,
       String versionEnd, String versionStart) {
     this.moduleID = moduleID;
     this.moduleName = moduleName;
