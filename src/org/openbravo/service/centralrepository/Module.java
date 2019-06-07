@@ -27,6 +27,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 
+/** Marshals module objects returned from {@link CentralRepository} service requests */
 public class Module {
   private String author;
   private String dbPrefix;
@@ -75,6 +76,7 @@ public class Module {
     this.additionalInfo = additionalInfo;
   }
 
+  /** Marshals json from central repository service into a module instance */
   public static Module fromJson(JSONObject jsonModule) {
     try {
       String author = jsonModule.getString("author");
@@ -115,6 +117,7 @@ public class Module {
     }
   }
 
+  /** Marshals json from central repository service into a module array instance */
   public static Module[] fromJson(JSONArray jsonModules) {
     Module[] modules = new Module[jsonModules.length()];
     try {

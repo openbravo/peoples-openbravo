@@ -24,6 +24,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 
+/** Marshals module dependency objects returned from {@link CentralRepository} service requests */
 public class ModuleDependency {
   private String moduleID;
   private String moduleName;
@@ -43,7 +44,20 @@ public class ModuleDependency {
     this.versionStart = versionStart;
   }
 
-  public static ModuleDependency fromJson(JSONObject jsonDep) {
+  /** Marshals json from central repository service into a module dependency array instance */
+  public static ModuleDependency[] fromJson(JSONArray jsonArray) {
+    ModuleDependency[] deps = new ModuleDependency[jsonArray.length()];
+    try {
+      for (int i = 0; i < jsonArray.length(); i++) {
+        deps[i] = fromJson(jsonArray.getJSONObject(i));
+      }
+      return deps;
+    } catch (JSONException e) {
+      throw new OBException(e);
+    }
+  }
+
+  private static ModuleDependency fromJson(JSONObject jsonDep) {
     try {
       String moduleID = jsonDep.getString("moduleID");
       String moduleName = jsonDep.getString("moduleName");
@@ -52,18 +66,6 @@ public class ModuleDependency {
       String versionStart = jsonDep.getString("versionStart");
       return new ModuleDependency(moduleID, moduleName, moduleVersionDependencyID, versionEnd,
           versionStart);
-    } catch (JSONException e) {
-      throw new OBException(e);
-    }
-  }
-
-  public static ModuleDependency[] fromJson(JSONArray jsonArray) {
-    ModuleDependency[] deps = new ModuleDependency[jsonArray.length()];
-    try {
-      for (int i = 0; i < jsonArray.length(); i++) {
-        deps[i] = fromJson(jsonArray.getJSONObject(i));
-      }
-      return deps;
     } catch (JSONException e) {
       throw new OBException(e);
     }

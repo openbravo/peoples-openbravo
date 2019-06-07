@@ -42,6 +42,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 
+/** Handles communication with Central Repository Web Services. */
 public class CentralRepository {
   private static final String BUTLER_API_URL = "https://butler.openbravo.com/openbravo/api/";
 
@@ -81,24 +82,48 @@ public class CentralRepository {
     throw new IllegalStateException("No instantiable class");
   }
 
+  /** @see #executeRequest(Service, List, JSONObject) */
   public static JSONObject executeRequest(Service service) {
     return executeRequest(service, Collections.emptyList(), null);
   }
 
+  /** @see #executeRequest(Service, List, JSONObject) */
   public static JSONObject executeRequest(Service service, JSONObject payload) {
     return executeRequest(service, Collections.emptyList(), payload);
   }
 
+  /** @see #executeRequest(Service, List, JSONObject) */
   public static JSONObject executeRequest(Service service, List<String> path) {
     return executeRequest(service, path, null);
   }
 
-  private static JSONObject executeRequest(Service service, List<String> path, JSONObject content) {
+  /**
+   * Performs a request to Central Repository for a given {@link Service} returning its response as
+   * a {@link JSONObject}.
+   *
+   * @param service
+   *          Central Repository service that will be invoked.
+   * @param path
+   *          Additional path parts that the service requires to be invoked.
+   * @param payload
+   *          JSON with additional information the request requires.
+   * @return A {@link JSONObject} with the service's response, this JSON contains the following
+   *         fields:
+   *         <ul>
+   *         <li>{@code success}: {@code boolean} indicating whether the response was successful or
+   *         not.
+   *         <li>{@code responseCode}: {@code int} HTTP status code.
+   *         <li>{@code response}: {@code JSONObject} with the complete json as it was returned from
+   *         the service. In case of a unsuccessful response, it contains a {@code msg} field with a
+   *         textual description of the failure reason.
+   *         </ul>
+   */
+  private static JSONObject executeRequest(Service service, List<String> path, JSONObject payload) {
     long t = System.currentTimeMillis();
     HttpRequestBase request = getServiceRequest(service, path);
 
-    if (content != null && (request instanceof HttpPost)) {
-      StringEntity requestEntity = new StringEntity(content.toString(),
+    if (payload != null && (request instanceof HttpPost)) {
+      StringEntity requestEntity = new StringEntity(payload.toString(),
           ContentType.APPLICATION_JSON);
       ((HttpPost) request).setEntity(requestEntity);
     }
@@ -106,7 +131,7 @@ public class CentralRepository {
     try (CloseableHttpClient httpclient = HttpClients.createDefault();
         CloseableHttpResponse rawResponse = httpclient.execute(request)) {
 
-      log.trace("Sending request [{}] payload: {}", request.getURI(), content);
+      log.trace("Sending request [{}] payload: {}", request.getURI(), payload);
 
       String result = new BufferedReader(
           new InputStreamReader(rawResponse.getEntity().getContent())).lines()
@@ -127,10 +152,11 @@ public class CentralRepository {
       } catch (JSONException e) {
         log.debug("Didn't receive a valid JSON response: {}", result, e);
         r = new JSONObject();
-        if (!success) {
-          // try to get something meaningful from the status info
-          r.put("msg", rawResponse.getStatusLine().getReasonPhrase());
-        }
+      }
+
+      if (!success && !r.has("msg")) {
+        // try to get something meaningful from the status info
+        r.put("msg", rawResponse.getStatusLine().getReasonPhrase());
       }
 
       msg.put("response", r);
@@ -138,8 +164,8 @@ public class CentralRepository {
       return msg;
     } catch (Exception e) {
       log.error("Error communicating with Central Repository service {}", service, e);
-      if (content != null) {
-        log.debug("Failed content sent to CR {}", content);
+      if (payload != null) {
+        log.debug("Failed content sent to CR {}", payload);
       }
 
       try {

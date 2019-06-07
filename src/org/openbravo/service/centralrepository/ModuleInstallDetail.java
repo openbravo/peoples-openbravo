@@ -23,6 +23,10 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 
+/**
+ * Marshals module details for installation objects returned from {@link CentralRepository} service
+ * requests
+ */
 public class ModuleInstallDetail {
   private String[] dependencyErrors;
   private Module[] modulesToInstall;
@@ -38,6 +42,9 @@ public class ModuleInstallDetail {
     this.validConfiguration = validConfiguration;
   }
 
+  /**
+   * Marshals json from central repository service into a module details for installation instance
+   */
   public static ModuleInstallDetail fromJson(JSONObject jsonResponse) {
     try {
       JSONObject jsonDetail = jsonResponse.getJSONObject("response");

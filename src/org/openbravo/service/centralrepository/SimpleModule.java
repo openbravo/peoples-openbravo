@@ -26,6 +26,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 
+/** Marshals module objects returned from {@link CentralRepository} service requests */
 public class SimpleModule {
   private String author;
   private String description;
@@ -62,6 +63,7 @@ public class SimpleModule {
     this.additionalInfo = additionalInfo;
   }
 
+  /** Marshals json from central repository service into a module instance */
   public static SimpleModule fromJson(JSONObject jsonModule) {
     try {
       Map<String, Object> additionalInfo = new HashMap<>();
