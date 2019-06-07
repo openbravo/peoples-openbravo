@@ -22,6 +22,7 @@ package org.openbravo.service.centralrepository;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 
 public class ModuleDependency {
   private String moduleID;
@@ -52,7 +53,7 @@ public class ModuleDependency {
       return new ModuleDependency(moduleID, moduleName, moduleVersionDependencyID, versionEnd,
           versionStart);
     } catch (JSONException e) {
-      return null;
+      throw new OBException(e);
     }
   }
 
@@ -64,7 +65,7 @@ public class ModuleDependency {
       }
       return deps;
     } catch (JSONException e) {
-      return null;
+      throw new OBException(e);
     }
   }
 
