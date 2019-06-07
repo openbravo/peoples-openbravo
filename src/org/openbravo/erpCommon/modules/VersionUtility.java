@@ -702,7 +702,7 @@ public class VersionUtility {
     Arrays.stream(moduleVersionToUpdateId).forEach(toUpdate::put);
     req.put("toUpdate", toUpdate);
 
-    JSONObject installDetails = CentralRepository.post(Service.CHECK_CONSISTENCY, req);
+    JSONObject installDetails = CentralRepository.executeRequest(Service.CHECK_CONSISTENCY, req);
 
     mid = org.openbravo.service.centralrepository.ModuleInstallDetail.fromJson(installDetails);
 

@@ -1632,7 +1632,7 @@ public class ImportModule implements Serializable {
         req.put("modules", mods);
         req.put("additionalInfo", additionalInfo);
 
-        JSONObject r = CentralRepository.post(Service.SCAN, req);
+        JSONObject r = CentralRepository.executeRequest(Service.SCAN, req);
         if (r.getBoolean("success")) {
           JSONArray jsonUpdates = r.getJSONObject("response").getJSONArray("updates");
           updates = new ArrayList<>(jsonUpdates.length());
@@ -1908,7 +1908,7 @@ public class ImportModule implements Serializable {
     String strUrl;
     boolean isCommercial;
 
-    JSONObject versionInfo = CentralRepository.get(Service.VERSION_INFO,
+    JSONObject versionInfo = CentralRepository.executeRequest(Service.VERSION_INFO,
         Arrays.asList(moduleVersionID));
     try {
       System.out.println(versionInfo.toString(1));

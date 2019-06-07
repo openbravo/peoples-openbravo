@@ -21,6 +21,7 @@ package org.openbravo.service.centralrepository;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +32,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -54,19 +54,26 @@ public class CentralRepository {
       .setSocketTimeout(TIMEOUT)
       .build();
 
+  private enum Method {
+    GET, POST
+  }
+
+  /** Defines available services in Central Repository */
   public enum Service {
-    REGISTER_MODULE("register"),
-    SEARCH_MODULES("search"),
-    MODULE_INFO("module"),
-    MATURITY_LEVEL("maturityLevel"),
-    SCAN("scan"),
-    CHECK_CONSISTENCY("checkConsistency"),
-    VERSION_INFO("versionInfo");
+    REGISTER_MODULE("register", Method.POST),
+    SEARCH_MODULES("search", Method.POST),
+    MODULE_INFO("module", Method.GET),
+    MATURITY_LEVEL("maturityLevel", Method.GET),
+    SCAN("scan", Method.POST),
+    CHECK_CONSISTENCY("checkConsistency", Method.POST),
+    VERSION_INFO("versionInfo", Method.GET);
 
     private String endpoint;
+    private Method method;
 
-    private Service(String endpoint) {
+    private Service(String endpoint, Method method) {
       this.endpoint = endpoint;
+      this.method = method;
     }
   }
 
@@ -74,37 +81,28 @@ public class CentralRepository {
     throw new IllegalStateException("No instantiable class");
   }
 
-  public static JSONObject post(Service service, JSONObject content) {
-    StringEntity requestEntity = new StringEntity(content.toString(), ContentType.APPLICATION_JSON);
-
-    HttpPost postMethod = new HttpPost(BUTLER_API_URL + service.endpoint);
-    postMethod.setEntity(requestEntity);
-    return executeRequest(postMethod, service, content);
+  public static JSONObject executeRequest(Service service) {
+    return executeRequest(service, Collections.emptyList(), null);
   }
 
-  public static JSONObject get(Service service) {
-    return get(service, Collections.emptyList());
+  public static JSONObject executeRequest(Service service, JSONObject payload) {
+    return executeRequest(service, Collections.emptyList(), payload);
   }
 
-  public static JSONObject get(Service service, List<String> fragments) {
-    try {
+  public static JSONObject executeRequest(Service service, List<String> path) {
+    return executeRequest(service, path, null);
+  }
 
-      String path = service.endpoint;
-      path += "/" + fragments.stream().collect(Collectors.joining("/"));
-      URIBuilder b = new URIBuilder(BUTLER_API_URL + path);
-      HttpGet getMethod = new HttpGet(b.build());
+  private static JSONObject executeRequest(Service service, List<String> path, JSONObject content) {
+    long t = System.currentTimeMillis();
+    HttpRequestBase request = getServiceRequest(service, path);
 
-      return executeRequest(getMethod, service, null);
-    } catch (URISyntaxException e) {
-      throw new OBException(e);
+    if (content != null && (request instanceof HttpPost)) {
+      StringEntity requestEntity = new StringEntity(content.toString(),
+          ContentType.APPLICATION_JSON);
+      ((HttpPost) request).setEntity(requestEntity);
     }
 
-  }
-
-  private static JSONObject executeRequest(HttpRequestBase request, Service service,
-      JSONObject content) {
-    long t = System.currentTimeMillis();
-    request.setConfig(TIMEOUT_CONFIG);
     try (CloseableHttpClient httpclient = HttpClients.createDefault();
         CloseableHttpResponse rawResponse = httpclient.execute(request)) {
 
@@ -143,17 +141,39 @@ public class CentralRepository {
       if (content != null) {
         log.debug("Failed content sent to CR {}", content);
       }
-      JSONObject r = new JSONObject();
+
       try {
-        r.put("msg", e.getMessage());
         JSONObject msg = new JSONObject();
         msg.put("sucess", false);
         msg.put("responseCode", 500);
+
+        JSONObject r = new JSONObject();
+        r.put("msg", e.getMessage());
         msg.put("response", r);
         return msg;
       } catch (JSONException e1) {
         throw new OBException(e1);
       }
     }
+  }
+
+  private static HttpRequestBase getServiceRequest(Service service, List<String> path) {
+    HttpRequestBase req;
+    switch (service.method) {
+      case GET:
+        req = new HttpGet();
+        break;
+      default: // POST
+        req = new HttpPost();
+    }
+    String uri = BUTLER_API_URL + service.endpoint + "/"
+        + path.stream().collect(Collectors.joining("/"));
+    try {
+      req.setURI(new URI(uri));
+    } catch (URISyntaxException e) {
+      throw new OBException(e);
+    }
+    req.setConfig(TIMEOUT_CONFIG);
+    return req;
   }
 }

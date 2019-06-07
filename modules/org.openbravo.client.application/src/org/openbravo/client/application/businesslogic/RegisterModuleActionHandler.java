@@ -33,6 +33,7 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.service.centralrepository.CentralRepository;
 import org.openbravo.service.centralrepository.CentralRepository.Service;
 
+/** Process to register a module in Central Repository */
 public class RegisterModuleActionHandler extends BaseProcessActionHandler {
 
   @Override
@@ -42,7 +43,8 @@ public class RegisterModuleActionHandler extends BaseProcessActionHandler {
     // Do not keep connection open while communicating with WS
     OBDal.getInstance().commitAndClose();
 
-    JSONObject crResponse = CentralRepository.post(Service.REGISTER_MODULE, registationInfo);
+    JSONObject crResponse = CentralRepository.executeRequest(Service.REGISTER_MODULE,
+        registationInfo);
 
     try {
       ResponseActionsBuilder rb = getResponseBuilder();

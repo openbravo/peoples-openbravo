@@ -56,7 +56,7 @@ public class MaturityLevel implements Serializable {
   public MaturityLevel() {
     log.debug("Connecting to Internet to obtain maturity levels");
     try {
-      JSONObject jsonLevels = CentralRepository.get(Service.MATURITY_LEVEL);
+      JSONObject jsonLevels = CentralRepository.executeRequest(Service.MATURITY_LEVEL);
       levels = Level.getFrom(jsonLevels.getJSONObject("response").getJSONArray("levels"));
     } catch (final Exception e) {
       log.error("Error obtaining maturity levels", e);

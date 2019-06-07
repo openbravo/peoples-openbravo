@@ -511,7 +511,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       searchQuery.put("installedModules", Arrays.asList(getInstalledModules()));
       searchQuery.put("q", q);
-      JSONObject crResponse = CentralRepository.post(Service.SEARCH_MODULES, searchQuery);
+      JSONObject crResponse = CentralRepository.executeRequest(Service.SEARCH_MODULES, searchQuery);
 
       boolean success = crResponse.getBoolean("success") && crResponse.has("response")
           && crResponse.getJSONObject("response").has("modules");
@@ -738,7 +738,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
   private Module getRemoteModuleVersionDetail(String recordId) {
     try {
-      JSONObject moduleDetail = CentralRepository.get(Service.MODULE_INFO, Arrays.asList(recordId))
+      JSONObject moduleDetail = CentralRepository
+          .executeRequest(Service.MODULE_INFO, Arrays.asList(recordId))
           .getJSONObject("response");
       return Module.fromJson(moduleDetail);
     } catch (JSONException e) {
