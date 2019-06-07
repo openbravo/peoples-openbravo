@@ -1575,6 +1575,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   background-size: 21px 21px;
   background-repeat: no-repeat;
   background-position: 3px 3px;
+  margin-left: 3px;
 }
 
 .obpos-product-details-view-buttons{

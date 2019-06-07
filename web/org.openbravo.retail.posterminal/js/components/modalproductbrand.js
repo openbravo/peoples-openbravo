@@ -200,7 +200,7 @@ enyo.kind({
           productbrandfilter.columns = [];
           productbrandfilter.operator = OB.Dal.FILTER;
           productbrandfilter.value = this.brandValueFilterQualifier;
-          if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) || (crossStoreSearch && crossStoreSearch.checked)) {
             productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
           } else {
             productText = '%' + productFilterText + '%';

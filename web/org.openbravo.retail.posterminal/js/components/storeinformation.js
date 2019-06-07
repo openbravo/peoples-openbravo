@@ -157,7 +157,9 @@ enyo.kind({
       org: storeId,
       parameters: params
     }, enyo.bind(me, function (data) {
-      if (data && !data.exception && data.length > 0) {
+      if (data && data.exception) {
+        OB.UTIL.showError(data.exception.message);
+      } else if (data && !data.exception && data.length > 0) {
         this.$.addressValue.setContent(data[0].address);
         this.$.phoneNumber.setContent(data[0].phone);
         this.$.faxNumber.setContent(data[0].alternativePhone);
@@ -202,7 +204,9 @@ enyo.kind({
 
         this.showScheduleInfo(orgSchedule, callCenter, specialdate);
       }
-    }));
+    }), function (error) {
+      OB.UTIL.showError(error);
+    });
   },
   showScheduleInfo: function (orgSchedule, callCenter, specialdate) {
     var scheduleIndex = 0,

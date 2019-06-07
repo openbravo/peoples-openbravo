@@ -524,6 +524,10 @@ enyo.kind({
 
       if (receiptLines.length > 0) {
         if (!receiptLines[0].get('isVerifiedReturn')) {
+          if (OB.UTIL.isCrossStoreReceipt(receipt) && !OB.UTIL.isCrossStoreLine(receiptLines[0])) {
+            receipt.set('warehouse', OB.MobileApp.model.get('warehouses')[0].warehouseid);
+            receipt.set('priceList', OB.MobileApp.model.get('pricelist'));
+          }
           receipt.set('organization', receiptLines[0].get('organization').id);
         }
         if (OB.UTIL.isCrossStoreReceipt(receipt)) {
