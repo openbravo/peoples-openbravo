@@ -106,7 +106,7 @@ enyo.kind({
       }
       me.leftSubWindow.documentType = null;
       me.leftSubWindow.quotationDocumentType = null;
-      if (line && line.get('obrdmDeliveryMode') !== product.get('obrdmDeliveryMode')) {
+      if (line && line.get('obrdmDeliveryMode') !== product.get('obrdmDeliveryMode') && OB.UTIL.isCrossStoreOrganization(attrs.organization)) {
         attrs.obrdmDeliveryMode = product.get('obrdmDeliveryMode');
         attrs.obrdmDeliveryDate = product.get('obrdmDeliveryDate');
         attrs.obrdmDeliveryTime = product.get('obrdmDeliveryTime');
