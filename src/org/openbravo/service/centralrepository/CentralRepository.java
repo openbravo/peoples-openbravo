@@ -70,6 +70,10 @@ public class CentralRepository {
     }
   }
 
+  private CentralRepository() {
+    throw new IllegalStateException("No instantiable class");
+  }
+
   public static JSONObject post(Service service, JSONObject content) {
     StringEntity requestEntity = new StringEntity(content.toString(), ContentType.APPLICATION_JSON);
 
