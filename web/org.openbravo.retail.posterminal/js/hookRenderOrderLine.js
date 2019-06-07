@@ -39,22 +39,16 @@ OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function (args, callba
       }
 
       args.orderline.createComponent({
-        style: 'float: left; width: 80%; display: block;',
+        classes: 'obPosRenderOrderLine',
         components: [{
           content: '-- ' + OB.I18N.getLabel('OBRDM_DeliveryMode') + ': ' + deliveryName,
-          attributes: {
-            style: 'clear: left;'
-          }
+          classes: 'obPosRenderOrderLine-element1'
         }, {
           content: showDate ? '-- ' + OB.I18N.getLabel('OBRDM_DeliveryDate') + ': ' + (deliveryDate ? OB.I18N.formatDate(deliveryDate) : OB.I18N.formatDate(currentDate)) : '',
-          attributes: {
-            style: 'clear: left;'
-          }
+          classes: 'obPosRenderOrderLine-element2'
         }, {
           content: showTime ? '-- ' + OB.I18N.getLabel('OBRDM_DeliveryTime') + ': ' + (deliveryTime ? OB.I18N.formatHour(deliveryTime) : OB.I18N.formatHour(currentTime)) : '',
-          attributes: {
-            style: 'clear: left;'
-          }
+          classes: 'obPosRenderOrderLine-element3'
         }]
       });
     }
@@ -67,13 +61,10 @@ OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function (args, callba
       var symbol = OB.MobileApp.model.get('terminal').symbol,
           symbolAtTheRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
       args.orderline.createComponent({
-        style: 'float: left; width: 80%; display: block; color: #f8941d;',
+        classes: 'obPosRenderOrderLine-amtToPayInDelivery',
         components: [{
           content: '-- ' + OB.I18N.getLabel('OBRDM_AmtToPayInDeliveryLbl', [OB.I18N.formatCurrencyWithSymbol(orderline.get('obrdmAmttopayindelivery'), symbol, symbolAtTheRight)]),
-          classes: 'orderline-canbedelivered',
-          attributes: {
-            style: 'clear: left;'
-          }
+          classes: 'obPosRenderOrderLine-amtToPayInDelivery-orderlineCanbedelivered'
         }],
         tap: function () {
           if (!OB.MobileApp.model.receipt.get('isEditable')) {
@@ -95,15 +86,16 @@ OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function (args, callba
 
     if (isDeliveryService) {
       args.orderline.$.serviceIcon.setSrc('img/iconShippingAddress.svg');
-      args.orderline.$.serviceIcon.setStyle('float: left; padding: 1px 2px 0px 0px; height: 14px;');
+      args.orderline.$.serviceIcon.setClass('obPosRenderOrderLine-serviceIcon-isDeliveryService');
     } else {
       args.orderline.$.serviceIcon.setSrc('img/iconService_ticketline.png');
-      args.orderline.$.serviceIcon.setStyle('float: left; padding-right: 5px;');
+      args.orderline.$.serviceIcon.setClass('obPosRenderOrderLine-serviceIcon-isNotDeliveryService');
     }
     if (orderline.get('hasDeliveryServices')) {
       args.orderline.createComponent({
         kind: 'OBRDM.UI.ShowDeliveryServicesButton',
-        name: 'showDeliveryServicesButton'
+        name: 'showDeliveryServicesButton',
+        classes: 'obPosRenderOrderLine-showDeliveryServicesButton'
       });
     }
   }
@@ -113,6 +105,7 @@ OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function (args, callba
 enyo.kind({
   kind: 'OB.UI.ShowServicesButton',
   name: 'OBRDM.UI.ShowDeliveryServicesButton',
+  classes: 'obRdmUiShowDeliveryServicesButton',
   extraParams: {
     isDeliveryService: true
   },
@@ -121,15 +114,14 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
-    this.removeClass('iconServices_mandatory');
-    this.removeClass('iconServices_unreviewed');
-    this.removeClass('iconServices_reviewed');
+    this.removeClass('obUiShowServicesButton_unreviewed');
+    this.removeClass('obUiShowServicesButton_reviewed');
     if (this.owner.model.get('deliveryServiceProposed')) {
-      this.addRemoveClass('iconDeliveryServices_unreviewed', false);
-      this.addRemoveClass('iconDeliveryServices_reviewed', true);
+      this.addRemoveClass('obRdmUiShowDeliveryServicesButton_unreviewed', false);
+      this.addRemoveClass('obRdmUiShowDeliveryServicesButton_reviewed', true);
     } else {
-      this.addRemoveClass('iconDeliveryServices_unreviewed', true);
-      this.addRemoveClass('iconDeliveryServices_reviewed', false);
+      this.addRemoveClass('obRdmUiShowDeliveryServicesButton_unreviewed', true);
+      this.addRemoveClass('obRdmUiShowDeliveryServicesButton_reviewed', false);
     }
     if (OB.MobileApp.model.get('serviceSearchMode')) {
       this.hide();
@@ -159,6 +151,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OBRDM.UI.ModalChangeDeliveryAmount',
+  classes: 'obRdmUiModalChangeDeliveryAmount',
   executeOnShow: function () {
     this.$.bodyButtons.$.inputNewDeliveryAmount.setValue(this.args.orderline.get('obrdmAmttopayindelivery'));
   },
@@ -168,9 +161,11 @@ enyo.kind({
   bodyButtons: {
     components: [{
       name: 'inputNewDeliveryAmount',
-      kind: 'OB.UI.SearchInput'
+      kind: 'OB.UI.SearchInput',
+      classes: 'obRdmUiModalChangeDeliveryAmount-inputNewDeliveryAmount'
     }, {
-      kind: 'OB.UI.ButtonApplyDeliveryAmount'
+      kind: 'OB.UI.ButtonApplyDeliveryAmount',
+      classes: 'obRdmUiModalChangeDeliveryAmount-element1'
     }]
   },
   initComponents: function () {
@@ -182,6 +177,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ButtonApplyDeliveryAmount',
+  classes: 'ObUiButtonApplyDeliveryAmount',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
   tap: function () {

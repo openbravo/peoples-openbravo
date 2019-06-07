@@ -13707,3 +13707,102 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-qtyToDepoTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable] */
 }
+
+/***********************   ***********************/
+/*         File: hookRenderOrderLine.js          */
+/*                  Folder: js/                  */
+/***********************   ***********************/
+
+/*
+# Component: OBPOS_RenderOrderLine
+*/
+.obPosRenderOrderLine {
+  float: left;
+  width: 80%;
+  display: block;
+}
+
+.obPosRenderOrderLine-element1 {
+  clear: left;
+}
+
+.obPosRenderOrderLine-element2 {
+  clear: left;
+}
+
+.obPosRenderOrderLine-element3 {
+  clear: left;
+}
+
+.obPosRenderOrderLine-amtToPayInDelivery {
+  float: left;
+  width: 80%;
+  display: block;
+  color: #f8941d;
+}
+
+.obPosRenderOrderLine-amtToPayInDelivery-orderlineCanbedelivered {
+  color: #f8941d;
+  float: left;
+  width: 100%;
+  clear: left;
+}
+
+.obPosRenderOrderLine-serviceIcon-isDeliveryService {
+  float: left;
+  padding: 1px 2px 0px 0px;
+  height: 14px;
+}
+
+.obPosRenderOrderLine-serviceIcon-isNotDeliveryService {
+  float: left;
+  padding-right: 5px;
+}
+
+.obPosRenderOrderLine-showDeliveryServicesButton {
+  /* Inherits: [OBRDM.UI.ShowDeliveryServicesButton] */
+}
+
+/*
+# Component: OBRDM.UI.ShowDeliveryServicesButton
+# Inherits: [OB.UI.ShowServicesButton]
+*/
+.obRdmUiShowDeliveryServicesButton {}
+
+.obRdmUiShowDeliveryServicesButton_unreviewed {
+  background-image: url('../../web/org.openbravo.retail.posterminal/img/deliveryServiceUnreviewed.svg');
+  background-repeat: no-repeat;
+  background-size: 26px 26px;
+  background-position: 0px 1px;
+  width: 31px;
+  height: 26px;
+}
+
+.obRdmUiShowDeliveryServicesButton_reviewed {
+  background-image: url('../../web/org.openbravo.retail.posterminal/img/deliveryServiceReviewed.svg');
+  background-repeat: no-repeat;
+  background-size: 26px 26px;
+  background-position: 0px 1px;
+  width: 31px;
+  height: 26px;
+}
+
+/*
+# Component: OBRDM.UI.ModalChangeDeliveryAmount
+# Inherits: [OB.UI.ModalAction]
+*/
+.obRdmUiModalChangeDeliveryAmount {}
+
+.obRdmUiModalChangeDeliveryAmount-inputNewDeliveryAmount {
+  /* Inherits: [OB.UI.SearchInput] */
+}
+
+.obRdmUiModalChangeDeliveryAmount-element1 {
+  /* Inherits: [OB.UI.ButtonApplyDeliveryAmount] */
+}
+
+/*
+# Component: OB.UI.ButtonApplyDeliveryAmount
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.ObUiButtonApplyDeliveryAmount {}
