@@ -585,7 +585,7 @@ enyo.kind({
                     }
                     if (args3.approvals.length > 0) {
                       OB.UTIL.Approval.requestApproval(
-                      me, args3.approvals, function (approved) {
+                      me.model, args3.approvals, function (approved) {
                         if (approved) {
                           showPaymentTab(!_.isUndefined(args3.approved) ? args3.approved : true);
                         } else {
