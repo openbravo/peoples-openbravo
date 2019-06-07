@@ -4767,7 +4767,7 @@
         args.order.set('isQuotation', false);
         args.order.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0);
         args.order.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
-        args.order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+        args.order.set('documentType', OB.UTIL.isCrossStoreReceipt(args.order) ? args.order.get('lines').models[0].get('documentTypeId') : OB.MobileApp.model.get('terminal').terminalType.documentType);
         args.order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
         if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
           args.order.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
