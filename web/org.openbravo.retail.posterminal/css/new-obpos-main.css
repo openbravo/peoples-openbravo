@@ -63,6 +63,83 @@
 
 
 
+/*****************/
+/*     FINAL     */
+/*****************/
+/***********************   ***********************/
+/*                 File: order.js                */
+/*               Folder: js/model/               */
+/***********************   ***********************/
+/*
+# Model: Order
+*/
+.confirmationPopup-body_generic {
+  text-align: left;
+  padding-right: 10px;
+}
+
+.confirmationPopup-body_cannotCancelLayWithDeferred {
+  padding-left: 10px;
+}
+
+.confirmationPopup-body_relatedOrders {
+  padding-left: 30px;
+}
+
+.confirmationPopup-body_character {
+  padding-left: 60px;
+}
+
+
+
+/***********************   ***********************/
+/*              File: login-model.js             */
+/*            Folder: js/login/model/            */
+/***********************   ***********************/
+/*
+# Component: ModalSelectTerminal
+# Inherits: [OB.UI.ModalSelectTerminal]
+*/
+.modalSelectTerminal {}
+
+
+
+/***********************   ***********************/
+/*              File: datasource.js              */
+/*                  Folder: js/                  */
+/***********************   ***********************/
+/*
+# Component: PopupDrawerOpened
+# Inherits: [OB.UI.PopupDrawerOpened]
+*/
+.popupDrawerOpened {}
+
+.popupDrawerOpened-table-generic {
+  position: relative;
+}
+
+.popupDrawerOpened-table_noTop {
+  top: 0px;
+}
+
+.popupDrawerOpened-table_standardTop {
+  top: 35px;
+}
+
+
+
+/***********************   ***********************/
+/*              File: testprinter.js             */
+/*            Folder: js/webprinter              */
+/***********************   ***********************/
+/*
+# Component: OB.UI.MenuTestPrinter
+# Inherits: [OB.UI.MenuAction]
+*/
+.obUiMenuTestPrinter {}
+
+
+
 
 /*****************/
 /*      GAL      */
@@ -4343,18 +4420,6 @@
 
 
 /***********************   ***********************/
-/*              File: testprinter.js             */
-/*            Folder: js/webprinter              */
-/***********************   ***********************/
-/*
-# Component: OB.UI.MenuTestPrinter
-# Inherits: [OB.UI.MenuAction]
-*/
-.obUiMenuTestPrinter {}
-
-
-
-/***********************   ***********************/
 /*             File: cashup-steps.js             */
 /*        Folder: js/closecash/model             */
 /***********************   ***********************/
@@ -5578,68 +5643,6 @@
 /*****************/
 /*      JGA      */
 /*****************/
-/***********************   ***********************/
-/*              File: datasource.js              */
-/*                  Folder: js/                  */
-/***********************   ***********************/
-/*
-# Component: PopupDrawerOpened
-# Inherits: [OB.UI.PopupDrawerOpened]
-*/
-.popupDrawerOpened {}
-
-.popupDrawerOpened-table-generic {
-  position: relative;
-}
-
-.popupDrawerOpened-table_noTop {
-  top: 0px;
-}
-
-.popupDrawerOpened-table_standardTop {
-  top: 35px;
-}
-
-
-
-/***********************   ***********************/
-/*              File: login-model.js             */
-/*            Folder: js/login/model/            */
-/***********************   ***********************/
-/*
-# Component: ModalSelectTerminal
-# Inherits: [OB.UI.ModalSelectTerminal]
-*/
-.modalSelectTerminal {}
-
-
-
-/***********************   ***********************/
-/*                 File: order.js                */
-/*               Folder: js/model/               */
-/***********************   ***********************/
-/*
-# Model: Order
-*/
-.confirmationPopup-body_generic {
-  text-align: left;
-  padding-right: 10px;
-}
-
-.confirmationPopup-body_cannotCancelLayWithDeferred {
-  padding-left: 10px;
-}
-
-.confirmationPopup-body_relatedOrders {
-  padding-left: 30px;
-}
-
-.confirmationPopup-body_character {
-  padding-left: 60px;
-}
-
-
-
 /***********************   ***********************/
 /*          File: listreceiptscounter.js         */
 /*            Folder: js/components/             */
