@@ -487,11 +487,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
             // Set default payment type to order in case there is no payment on the order
             POSUtils.setDefaultPaymentType(jsonorder, order);
             // Cancel and Replace the order
-            if (order.getReplacedorder() != null
-                && POSUtils.isCrossStore(order.getReplacedorder(), posTerminal)) {
-              final Organization paymentOrganization = getPaymentOrganization(posTerminal, true);
-              jsonorder.put("paymentOrganization", paymentOrganization.getId());
-            }
+            final Organization paymentOrganization = getPaymentOrganization(posTerminal,
+                POSUtils.isCrossStore(order.getReplacedorder(), posTerminal));
+            jsonorder.put("paymentOrganization", paymentOrganization.getId());
             CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
                 useOrderDocumentNoForRelatedDocs);
           } catch (Exception ex) {
