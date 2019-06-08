@@ -566,8 +566,8 @@ enyo.kind({
                     caller: me
                   }, function (args3) {
 
-                    function showPaymentTab(approved) {
-                      if (approved) {
+                    function showPaymentTab() {
+                      if (!_.isUndefined(args3.approved) ? args3.approved : true) {
                         me.model.get('order').getPrepaymentAmount(function () {
                           OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
                           me.showPaymentTab();
@@ -587,13 +587,13 @@ enyo.kind({
                       OB.UTIL.Approval.requestApproval(
                       me.model, args3.approvals, function (approved) {
                         if (approved) {
-                          showPaymentTab(!_.isUndefined(args3.approved) ? args3.approved : true);
+                          showPaymentTab();
                         } else {
                           OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
                         }
                       });
                     } else {
-                      showPaymentTab(!_.isUndefined(args3.approved) ? args3.approved : true);
+                      showPaymentTab();
                     }
                   });
                 });
@@ -620,7 +620,9 @@ enyo.kind({
           }
           OB.Dal.find(OB.Model.Product, criteria, function (data) {
             if (data && data.length > 0 && !receipt.get('isPaid') && !receipt.get('isLayaway')) {
+              OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
               receipt.trigger('showProductList', null, 'final', function () {
+                execution = OB.UTIL.ProcessController.start('totalAmountValidation');
                 completePayment();
                 me.doClearUserInput();
               });
