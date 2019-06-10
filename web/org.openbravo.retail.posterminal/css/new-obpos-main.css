@@ -3379,6 +3379,160 @@
 
 
 /***********************   ***********************/
+/*          File: salesrepresentative.js         */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.SalesRepresentative
+# Inherits: [OB.UI.SmallButton]
+*/
+.obUiSalesRepresentative {
+  float: left;
+  margin: 7px;
+  height: 27px;
+  padding: 4px 15px 7px 15px;
+  background-color: #e2e2e2;
+  color: black;
+  display: inline-block;
+  font-weight: normal;
+  border: none;
+  font-size: var(--font-medium);
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+}
+
+.obUiSalesRepresentative:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px !important;
+}
+
+@media all and (max-width: 800px) {
+  .obUiSalesRepresentative {
+    height: 45px;
+  }
+}
+
+
+/*
+# Component: OB.UI.ModalSrScrollableHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obUiModalSrScrollableHeader {}
+
+.obUiModalSrScrollableHeader-container1 {
+  padding: 10px;
+}
+
+.obUiModalSrScrollableHeader-container1-container1 {
+  display: table;
+}
+
+.obUiModalSrScrollableHeader-container1-container1-container1 {
+  display: table-cell;
+  width: 100%;
+}
+
+.obUiModalSrScrollableHeader-container1-container1-container1-filterText {
+  /* Inherits: [OB.UI.SearchInputAutoFilter] */
+  width: 100%;
+}
+
+.obUiModalSrScrollableHeader-container1-container1-container2 {
+  display: table-cell;
+}
+
+.obUiModalSrScrollableHeader-container1-container1-container2-obUiSmallButton {
+  /* Inherits: [OB.UI.SmallButton] */
+  width: 100px;
+  margin: 0px 5px 8px 19px;
+  background-image: url('./../img/iconClear.svg');
+  background-size: 13px 13px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: #e2e2e2;
+  color: black;
+}
+
+.obUiModalSrScrollableHeader-container1-container1-container2-obUiSmallButton:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #0078d7;
+  border-style: solid;
+  padding: 2px 13px 5px 13px !important;
+}
+
+.obUiModalSrScrollableHeader-container1-container1-container3 {
+  display: table-cell;
+}
+
+.obUiModalSrScrollableHeader-container1-container1-container3-obUiSmallButton {
+  /* Inherits: [OB.UI.SmallButton] */
+  width: 100px;
+  margin: 0px 0px 8px 5px;
+  background-image: url('./../img/iconSearch.svg');
+  background-size: 15px 16px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: #f8e859;
+  color: black;
+}
+
+
+/*
+# Component: OB.UI.ListSrsLine
+# Inherits: [OB.UI.SelectButton]
+*/
+.obUiListSrsLine {}
+
+.obUiListSrsLine-line {
+  line-height: 23px;
+}
+
+.obUiListSrsLine-line-name {}
+
+.obUiListSrsLine-line-element2 {}
+
+
+/*
+# Component: OB.UI.ListSrs
+*/
+.obUiListSrs {}
+
+.obUiListSrs-container1 {}
+
+.obUiListSrs-container1-container1 {
+  border-bottom: 1px solid #cccccc;
+}
+
+.obUiListSrs-container1-container1-container1 {}
+
+.obUiListSrs-container1-container1-container1-srslistitemprinter {
+  /* Inherits: [OB.UI.ScrollableTable] */
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+
+/*
+# Component: OB.UI.ModalSalesRepresentative
+# Inherits: [OB.UI.Modal]
+*/
+.obUiModalSalesRepresentative {}
+
+.obUiModalSalesRepresentative-body-obUiListSrs {
+  /* Inherits: [OB.UI.ListSrs] */
+}
+
+
+
+/***********************   ***********************/
 /*          File: listreceiptscounter.js         */
 /*            Folder: js/components/             */
 /***********************   ***********************/
