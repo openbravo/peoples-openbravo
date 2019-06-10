@@ -334,6 +334,16 @@ isc.OBCharacteristicsFilterDialog.addProperties({
       },
 
       setDataSource: function (ds, fields) {
+
+        ds.transformRequest = function (dsRequest) {
+          var filterDialog = me;
+          dsRequest.params = dsRequest.params || {};
+          if (me.creator && me.creator.parentGrid && me.creator.parentGrid.view && me.creator.parentGrid.view.buttonOwnerView) {
+            dsRequest.params._buttonOwnerContextInfo = me.creator.parentGrid.view.buttonOwnerView.getContextInfo(false, true, true, false);
+          }
+          return this.Super('transformRequest', arguments);
+        };
+
         var treeField;
         if (!fields || fields.length === 0) {
           treeField = isc.shallowClone(isc.TreeGrid.TREE_FIELD);
@@ -344,6 +354,10 @@ isc.OBCharacteristicsFilterDialog.addProperties({
         ds.requestProperties.params._parentDSIdentifier = me.parentDSIdentifier;
         ds.requestProperties.params._propertyPath = me.propertyName;
         ds.requestProperties.params._selectorDefinition = me.selectorDefinition;
+
+        if (me.processId) {
+          ds.requestProperties.params._processId = me.processId;
+        }
 
         return this.Super('setDataSource', [ds, fields]);
       }
@@ -513,7 +527,8 @@ isc.OBCharacteristicsFilterItem.addProperties({
 
   init: function () {
     var propertyPath, i, parentDSIdentifier = null,
-        selectorDefinition = null;
+        selectorDefinition = null,
+        filterDialogProperties;
     this.canEdit = false;
 
     // Getting the product property in the entity we are filtering it.
@@ -549,19 +564,33 @@ isc.OBCharacteristicsFilterItem.addProperties({
       selectorDefinition = this.parentGrid.selector.selectorDefinitionId;
     }
 
-    this.addAutoChild('filterDialog', {
+    filterDialogProperties = {
       title: this.title,
       callback: this.getID() + '.filterDialogCallback(value)',
       parentDSIdentifier: parentDSIdentifier,
       selectorDefinition: selectorDefinition,
       propertyName: this.propertyName
-    });
+    };
+
+    if (this.isPickAndExecute()) {
+      filterDialogProperties.processId = this.parentGrid.view.processId;
+    }
+
+    this.addAutoChild('filterDialog', filterDialogProperties);
 
     this.icons = [isc.addProperties({
       prompt: this.pickerIconPrompt
     }, this.pickerIconDefaults, this.pickerIconProperties)];
 
     this.Super('init', arguments);
+  },
+
+
+  isPickAndExecute: function () {
+    if (this.parentGrid && this.parentGrid.view && this.parentGrid.view.uiPattern === 'OBUIAPP_PickAndExecute') {
+      return true;
+    }
+    return false;
   },
 
   isProductEntity: function () {
