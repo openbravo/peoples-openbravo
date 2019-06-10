@@ -2325,112 +2325,6 @@
           productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(p),
           warehouseId, warehouse;
 
-      function navigateToStockScreen(warehouse) {
-        if (stockScreen && OB.MobileApp.model.get('connectedToERP')) {
-          var params = {};
-          params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
-          params.product = p;
-          params.warehouse = warehouse;
-          OB.MobileApp.view.$.containerWindow.getRoot().showLeftSubWindow({}, params);
-        }
-      }
-
-      function checkAddProduct(warehouse, allLinesQty) {
-        if (allLinesQty > warehouse.warehouseqty) {
-          var allowMessage, notAllowMessage;
-          if (productStatus.restrictsaleoutofstock) {
-            allowMessage = OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [p.get('_identifier'), productStatus.name, warehouse.warehouseqty, warehouse.warehousename, allLinesQty]);
-            notAllowMessage = OB.I18N.getLabel('OBPOS_CannotSellWithoutStock', [p.get('_identifier'), productStatus.name, allLinesQty, warehouse.warehouseqty, warehouse.warehousename]);
-          }
-          OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductWithoutStock', {
-            allowToAdd: true,
-            allowMessage: allowMessage,
-            notAllowMessage: notAllowMessage,
-            askConfirmation: true,
-            order: me,
-            line: line,
-            product: p
-          }, function (args) {
-            if (args.cancelOperation) {
-              if (callback && callback instanceof Function) {
-                callback(false);
-              }
-              return;
-            }
-            if (!args.allowToAdd) {
-              if (args.askConfirmation) {
-                OB.UTIL.showConfirmation.display(
-                OB.I18N.getLabel('OBPOS_NotEnoughStock'), args.notAllowMessage, [{
-                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                  action: function () {
-                    navigateToStockScreen(warehouse);
-                  }
-                }], {
-                  onHideFunction: function () {
-                    navigateToStockScreen(warehouse);
-                  }
-                });
-                if (callback) {
-                  callback(false);
-                }
-              } else {
-                if (callback && callback instanceof Function) {
-                  callback(false);
-                }
-              }
-            } else {
-              OB.UTIL.showLoading(false);
-              if (args.askConfirmation) {
-                OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-                  popup: 'OBPOSPointOfSale_UI_Modals_ModalStockDiscontinued',
-                  args: {
-                    header: OB.I18N.getLabel('OBPOS_NotEnoughStock'),
-                    message: args.allowMessage,
-                    product: p,
-                    buttons: [{
-                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                      action: function () {
-                        if (callback) {
-                          callback(true);
-                        }
-                      }
-                    }, {
-                      label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-                      action: function () {
-                        navigateToStockScreen(warehouse);
-                        if (callback) {
-                          callback(false);
-                        }
-                      }
-                    }],
-                    options: {
-                      onHideFunction: function () {
-                        navigateToStockScreen(warehouse);
-                        if (callback) {
-                          callback(false);
-                        }
-                      }
-                    },
-                    acceptLine: function (accept, newAttrs) {
-                      if (accept && newAttrs) {
-                        attrs = Object.assign(attrs, newAttrs);
-                      }
-                      callback(accept);
-                    }
-                  }
-                });
-              } else {
-                if (callback && callback instanceof Function) {
-                  callback(true);
-                }
-              }
-            }
-          });
-        } else if (callback) {
-          callback(true);
-        }
-      }
-
       if (!line && p.get('groupProduct')) {
         var affectedByPack;
         line = lines.find(function (l) {
@@ -2461,7 +2355,7 @@
 
       if (allLinesQty > 0) {
         if (stockScreen && attrs && attrs.warehouse && !OB.UTIL.isNullOrUndefined(attrs.warehouse.warehouseqty)) {
-          checkAddProduct(attrs.warehouse, allLinesQty);
+          OB.UTIL.StockUtils.checkStockSuccessCallback(p, line, me, attrs, attrs.warehouse, allLinesQty, stockScreen, callback);
         } else {
           OB.UTIL.StockUtils.getReceiptLineStock(p.get('id'), line, function (data) {
             if (data && data.exception) {
@@ -2481,31 +2375,10 @@
                   warehouseqty: OB.DEC.Zero
                 };
               }
-              checkAddProduct(warehouse, allLinesQty);
+              OB.UTIL.StockUtils.checkStockSuccessCallback(p, line, me, attrs, warehouse, allLinesQty, stockScreen, callback);
             }
           }, function (data) {
-            OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_ConnectionFail'), OB.I18N.getLabel('OBPOS_CannotVerifyStock', [p.get('_identifier'), productStatus.name]), [{
-              label: OB.I18N.getLabel('OBMOBC_LblOk'),
-              action: function () {
-                if (callback) {
-                  callback(true);
-                }
-              }
-            }, {
-              label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-              action: function () {
-                if (callback) {
-                  callback(false);
-                }
-              }
-            }], {
-              onHideFunction: function () {
-                if (callback) {
-                  callback(false);
-                }
-              }
-            });
+            OB.UTIL.StockUtils.checkStockErrorCallback(p, line, me, allLinesQty, callback);
           });
         }
       } else if (callback) {
@@ -6635,47 +6508,36 @@
       var receiptShouldBeInvoiced = false,
           me = this,
           invoice, isDeleted = this.get('obposIsDeleted'),
-          receiptShouldBeShipped = false,
           deliveredNotInvoicedLine;
 
       function finalCallback(invoice) {
-        if (callback instanceof Function) {
+        if (callback && callback instanceof Function) {
           callback(invoice);
         }
       }
 
-      if (!isDeleted) {
-        if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || this.get('payOnCredit')) {
+      if (isDeleted || (!this.get('payOnCredit') && !this.get('completeTicket'))) {
+        finalCallback();
+        return;
+      }
+
+      if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || this.get('payOnCredit')) {
+        receiptShouldBeInvoiced = true;
+      } else if (this.get('bp').get('invoiceTerms') === 'O') {
+        if (this.get('deliver')) {
           receiptShouldBeInvoiced = true;
-        } else if (this.get('bp').get('invoiceTerms') === 'O') {
-          if (this.get('deliver')) {
-            receiptShouldBeInvoiced = true;
-          } else if (this.get('iscancelled') || this.get('replacedorder')) {
-            var notDeliveredLine = _.find(this.get('lines').models, function (line) {
-              return line.get('obposQtytodeliver') !== line.get('qty');
-            });
-            // If the ticket is delivered but some line is pending to be invoiced, generate the invoice for them
-            if (_.isUndefined(notDeliveredLine)) {
-              deliveredNotInvoicedLine = _.find(this.get('lines').models, function (line) {
-                return line.get('obposQtytodeliver') !== line.get('invoicedQuantity');
-              });
-              receiptShouldBeInvoiced = !_.isUndefined(deliveredNotInvoicedLine);
-            }
-          }
-        } else if (this.get('bp').get('invoiceTerms') === 'D') {
-          receiptShouldBeShipped = this.get('payOnCredit') || this.get('completeTicket');
-          if (receiptShouldBeShipped) {
-            if (this.get('generateShipment')) {
-              receiptShouldBeInvoiced = true;
-            } else if (this.get('iscancelled') || this.get('replacedorder')) {
-              deliveredNotInvoicedLine = _.find(this.get('lines').models, function (line) {
-                return line.getDeliveredQuantity() === line.get('qty') && line.getDeliveredQuantity() !== line.get('invoicedQuantity');
-              });
-              receiptShouldBeInvoiced = !_.isUndefined(deliveredNotInvoicedLine);
-            }
-          }
+        }
+      } else if (this.get('bp').get('invoiceTerms') === 'D') {
+        if (this.get('generateShipment')) {
+          receiptShouldBeInvoiced = true;
+        } else {
+          deliveredNotInvoicedLine = _.find(this.get('lines').models, function (line) {
+            return line.getDeliveredQuantity() !== line.get('invoicedQuantity');
+          });
+          receiptShouldBeInvoiced = !_.isUndefined(deliveredNotInvoicedLine);
         }
       }
+
       if (receiptShouldBeInvoiced) {
         invoice = new OB.Model.Order();
         OB.UTIL.clone(this, invoice);
@@ -6692,21 +6554,10 @@
               qtyAlreadyInvoiced = ol.get('invoicedQuantity') || OB.DEC.Zero,
               qtyPendingToBeInvoiced = OB.DEC.sub(ol.get('qty'), qtyAlreadyInvoiced),
               qtyToDeliver = !OB.UTIL.isNullOrUndefined(ol.get('obposQtytodeliver')) ? ol.get('obposQtytodeliver') : ol.get('qty'),
-              qtyPendingToDeliver = OB.DEC.sub(qtyToDeliver, ol.getDeliveredQuantity()),
               qtyToInvoice = OB.DEC.Zero,
               lineToInvoice;
           if (me.get('bp').get('invoiceTerms') === 'D') {
-            if (qtyPendingToDeliver !== 0) {
-              if (OB.DEC.compare(OB.DEC.sub(OB.DEC.abs(qtyPendingToDeliver), OB.DEC.abs(qtyPendingToBeInvoiced))) === 1) {
-                qtyToInvoice = qtyPendingToBeInvoiced;
-              } else {
-                qtyToInvoice = qtyPendingToDeliver;
-              }
-            } else if (qtyToDeliver !== qtyAlreadyInvoiced) {
-              qtyToInvoice = OB.DEC.sub(qtyToDeliver, qtyAlreadyInvoiced);
-            } else {
-              qtyToInvoice = 0;
-            }
+            qtyToInvoice = OB.DEC.sub(qtyToDeliver, qtyAlreadyInvoiced);
           } else if (me.get('bp').get('invoiceTerms') === 'I' || me.get('bp').get('invoiceTerms') === 'O') {
             qtyToInvoice = qtyPendingToBeInvoiced;
           }
@@ -7195,6 +7046,7 @@
                 }
                 curPayment.set('orderGross', order.get('gross'));
                 curPayment.set('isPaid', order.get('isPaid'));
+                curPayment.set('date', new Date(iter.paymentDate));
                 payments.add(curPayment);
               });
               order.set('payments', payments);
