@@ -45,6 +45,9 @@
       if (!editboxvalue) {
         return;
       }
+      var isEditable = view.state.readCommandState({
+        name: 'receipt.isEditable'
+      });
       var selectedReceiptLine = view.state.readCommandState({
         name: 'selectedReceiptLine'
       });
@@ -65,9 +68,27 @@
             return Promise.resolve();
           }
           };
+
       if (!selectedReceiptLine) {
         return;
       }
+
+      if (isEditable === false) {
+        view.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return;
+      }
+
+      if (!selectedReceiptLines.every(function (l) {
+        return l.get('product').get('obposEditablePrice') && l.get('product').get('isEditablePrice') !== false;
+      })) {
+        view.doShowPopup({
+          popup: 'modalNotEditableLine'
+        });
+        return;
+      }
+
       validatePrice().then(function () {
         // Finally price is editable...
         OB.UTIL.Approval.requestApproval(

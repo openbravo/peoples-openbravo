@@ -53,7 +53,9 @@
         var editboxvalue = view.state.readCommandState({
           name: 'editbox'
         });
-
+        var isEditable = view.state.readCommandState({
+          name: 'receipt.isEditable'
+        });
         var selectedReceiptLine = view.state.readCommandState({
           name: 'selectedReceiptLine'
         });
@@ -79,7 +81,7 @@
           return;
         }
 
-        if (receipt.get('isEditable') === false) {
+        if (isEditable === false) {
           view.doShowPopup({
             popup: 'modalNotEditableOrder'
           });
