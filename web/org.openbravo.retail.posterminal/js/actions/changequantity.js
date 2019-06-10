@@ -203,7 +203,7 @@
       label: '+'
     },
     calculateToAdd: function (receipt, qty, value) {
-      return value || 1;
+      return Math.sign(qty) * (value || 1);
     }
   }));
 
@@ -215,7 +215,7 @@
       label: '-'
     },
     calculateToAdd: function (receipt, qty, value) {
-      return -(value || 1);
+      return -Math.sign(qty) * (value || 1);
     }
   }));
 
