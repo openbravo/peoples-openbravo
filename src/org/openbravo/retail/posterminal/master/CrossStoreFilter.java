@@ -199,6 +199,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     if (filterByStock) {
       hql.append(" and coalesce(sum(sd.quantityOnHand - sd.reservedQty), 0) > 0");
     }
+    hql.append(" order by case when o.id = :orgId then 0 else 1 end, o.name");
     return hql.toString();
   }
 
