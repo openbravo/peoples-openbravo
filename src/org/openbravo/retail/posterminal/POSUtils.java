@@ -972,8 +972,19 @@ public class POSUtils {
    * Returns true if order store is different than terminal store
    */
   public static boolean isCrossStore(final Order order, final OBPOSApplications posTerminal) {
-    return isCrossStoreEnabled(posTerminal) && !StringUtils.equals(order.getOrganization().getId(),
-        posTerminal.getOrganization().getId());
+    if (isCrossStoreEnabled(posTerminal)) {
+      if (!StringUtils.equals(order.getOrganization().getId(),
+          order.getObposApplications().getOrganization().getId())) {
+        return true;
+      }
+
+      if (!StringUtils.equals(order.getOrganization().getId(),
+          posTerminal.getOrganization().getId())) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
 }
