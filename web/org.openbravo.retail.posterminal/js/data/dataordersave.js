@@ -493,6 +493,13 @@
                 OB.Dal.saveInTransaction(tx, currentReceipt, function () {
                   OB.info('Multiorders ticket closed', currentReceipt.get('json').replace(/logclientErrors/g, "logErrors"), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
 
+                  _.each(me.context.get('orderList').models, function (mdl) {
+                    if (mdl.get('id') === currentReceipt.get('id')) {
+                      mdl.set('hasbeenpaid', 'Y');
+                      return true;
+                    }
+                  }, this);
+
                   OB.Dal.getInTransaction(tx, OB.Model.Order, me.receipt.get('id'), function (savedReceipt) {
                     if (!OB.UTIL.isNullOrUndefined(savedReceipt.get('amountToLayaway')) && savedReceipt.get('generateInvoice')) {
                       me.hasInvLayaways = true;
