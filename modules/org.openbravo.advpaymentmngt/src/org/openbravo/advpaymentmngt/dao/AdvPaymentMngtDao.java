@@ -21,6 +21,7 @@ package org.openbravo.advpaymentmngt.dao;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -689,6 +690,7 @@ public class AdvPaymentMngtDao {
       BigDecimal writeoffAmount, BigDecimal debtAmount) {
     final FIN_PaymentScheduleDetail newPaymentScheduleDetail = (FIN_PaymentScheduleDetail) DalUtil
         .copy(paymentScheduleDetail);
+    newPaymentScheduleDetail.setCreationDate(Calendar.getInstance().getTime());
     newPaymentScheduleDetail.setAmount(writeoffAmount);
     newPaymentScheduleDetail.setDoubtfulDebtAmount(debtAmount);
     OBDal.getInstance().save(newPaymentScheduleDetail);
