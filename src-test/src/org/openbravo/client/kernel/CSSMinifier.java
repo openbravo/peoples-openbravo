@@ -41,14 +41,29 @@ public class CSSMinifier {
         "        grid-area: obUiMultiColumn-left-leftToolbar;\n" + 
         "}";
     //@formatter:on
-    String minified = CSSMinimizer.formatString(original);
 
-    String shouldBe = ".*grid-area:\\s*?obUiMultiColumn-left-leftToolbar.*";
-    Pattern p = Pattern.compile(shouldBe, Pattern.DOTALL);
+    String shouldBe = "grid-area:\\s*?obUiMultiColumn-left-leftToolbar";
 
-    assertThat("Original CSS [" + original + "] contains " + shouldBe,
-        p.matcher(original).matches(), is(true));
-    assertThat("Minified CSS [" + minified + "] contains " + shouldBe,
+    assertMinification(original, shouldBe);
+  }
+
+  /** see issue #41068 */
+  @Test
+  public void repeatedParamaters() {
+    String original = ".testElement { grid-template-columns: 1fr 1fr 1fr; }";
+    String shouldBe = "1fr 1fr 1fr";
+
+    assertMinification(original, shouldBe);
+  }
+
+  private void assertMinification(String originalCSS, String expectedRegexp) {
+    String minified = CSSMinimizer.formatString(originalCSS);
+
+    Pattern p = Pattern.compile(".*" + expectedRegexp + ".*", Pattern.DOTALL);
+
+    assertThat("Original CSS [" + originalCSS + "] contains " + expectedRegexp,
+        p.matcher(originalCSS).matches(), is(true));
+    assertThat("Minified CSS [" + minified + "] contains " + expectedRegexp,
         p.matcher(minified).matches(), is(true));
   }
 
