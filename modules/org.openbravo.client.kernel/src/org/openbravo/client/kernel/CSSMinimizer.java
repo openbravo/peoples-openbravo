@@ -521,9 +521,8 @@ class Part {
     // Simplify font weights
     simplifyFontWeights();
 
-    // Strip unnecessary quotes from url() and single-word parts, and make as much lowercase as
-    // possible.
-    simplifyQuotesAndCaps();
+    // Strip unnecessary quotes from url() and single-word parts
+    simplifyQuotes();
 
     // Simplify colours
     simplifyColourNames();
@@ -586,14 +585,13 @@ class Part {
     }
   }
 
-  private void simplifyQuotesAndCaps() {
+  private void simplifyQuotes() {
     // Strip quotes from URLs
     if ((this.contents.length() > 4) && (this.contents.substring(0, 4).equalsIgnoreCase("url("))) {
       this.contents = this.contents.replaceAll("(?i)url\\(('|\")?(.*?)\\1\\)", "url($2)");
     } else {
       String[] words = this.contents.split("\\s");
       if (words.length == 1) {
-        this.contents = this.contents.toLowerCase();
         this.contents = this.contents.replaceAll("('|\")?(.*?)\1", "$2");
       }
     }

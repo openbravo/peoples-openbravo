@@ -35,6 +35,7 @@ import org.openbravo.client.application.test.MenuTemplateTest;
 import org.openbravo.client.application.test.MenuTest;
 import org.openbravo.client.application.test.event.DatasourceEventObserver;
 import org.openbravo.client.application.test.event.PersistanceObserver;
+import org.openbravo.client.kernel.CSSMinifier;
 import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTest;
 import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
 import org.openbravo.client.kernel.freemarker.test.LabelTest;
@@ -284,6 +285,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     MenuTest.class, //
     MenuTemplateTest.class, //
     DisplayLogicAtServerLevelTest.class, //
+    CSSMinifier.class, //
 
     // client kernel
     FreemarkerTemplateProcessorTest.class, //
