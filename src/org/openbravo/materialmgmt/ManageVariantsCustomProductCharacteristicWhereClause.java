@@ -31,7 +31,9 @@ import org.openbravo.client.kernel.ComponentProvider;
  * Implementation of ManageVariantsCustomProductCharacteristicWhereClause for the Manage Variants
  * process
  * 
- * Defines a where clause that returns the variant characteristics of the selected product
+ * Defines a where clause that returns the variant characteristics of the selected product. If the
+ * product characteristic references a characterictisc value subset, only the values that are part
+ * of the subset are shown
  */
 @ComponentProvider.Qualifier(ManageVariantsCustomProductCharacteristicWhereClause.MANAGE_VARIANTS_PROCESS_ID)
 public class ManageVariantsCustomProductCharacteristicWhereClause
@@ -48,7 +50,13 @@ public class ManageVariantsCustomProductCharacteristicWhereClause
       JSONObject params = new JSONObject(requestParameters.get("_buttonOwnerContextInfo"));
       String productId = params.getString("inpmProductId");
       queryNamedParameters.put("productId", productId);
-      return "exists (from ProductCharacteristic pc where pc.characteristic = c and pc.product.id = :productId and pc.variant = true)";
+      StringBuilder hqlWhereClause = new StringBuilder();
+      hqlWhereClause.append(" exists (from ProductCharacteristic pc ");
+      hqlWhereClause.append(
+          " where pc.characteristic = c and pc.product.id = :productId and pc.variant = true ");
+      hqlWhereClause.append(
+          " and (characteristicSubset is null or exists (from CharacteristicSubsetValue csv where csv.characteristicSubset.id = characteristicSubset.id and csv.characteristicValue.id = v.id)))");
+      return hqlWhereClause.toString();
     } catch (JSONException e) {
       log.error("There was a problem when creating a JSONObject from the request parameters", e);
       throw new OBException(e);
