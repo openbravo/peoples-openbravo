@@ -2558,8 +2558,8 @@
             } else {
               line = me.get('lines').find(function (l) {
                 if (l.get('product').id === p.id && l.get('isEditable') && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
-                  if (attributeSearchAllowed && attrs) {
-                    if (attrs.attributeValue && (l.get('attributeValue') === attrs.attributeValue)) {
+                  if (attributeSearchAllowed && attrs && attrs.attributeValue) {
+                    if (l.get('attributeValue') === attrs.attributeValue) {
                       return true;
                     }
                   } else {
