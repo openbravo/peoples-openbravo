@@ -45,6 +45,10 @@
       active = active && (selectedReceiptLines.length === Math.abs(_.reduce(selectedReceiptLines, function (memo, l) {
         return memo + Math.sign(l.get('qty'));
       }, 0)));
+      active = active && selectedReceiptLine.get('isEditable');
+      active = active && selectedReceiptLines.every(function (l) {
+        return l.get('isEditable');
+      });
 
       return active;
     },
