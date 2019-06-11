@@ -42,8 +42,8 @@ public class ServicePriceRuleVersionHQLCriteria extends HQLCriteriaProcess {
             + "         and ((sprv.product.includedProducts = 'Y' and sprv.product.includedProductCategories = 'Y') " //
             + "                  OR (sprv.product.includedProducts = 'Y' and sprv.product.includedProductCategories is null) " //
             + "                  OR (sprv.product.includedProducts is null and sprv.product.includedProductCategories = 'Y') " //
-            + "                  OR (sprv.product.includedProducts = 'N' and (rp is null OR rp.relatedProduct.id = $1)) " //
-            + "                  OR (sprv.product.includedProductCategories = 'N' and (rpc is null OR rpc.productCategory.id = $2)))";
+            + "                  OR (sprv.product.includedProducts = 'N' and ((rp is null and rpc.productCategory.id is null) OR rp.relatedProduct.id = $1)) " //
+            + "                  OR (sprv.product.includedProductCategories = 'N' and ((rpc is null and rp.relatedProduct.id is null) OR rpc.productCategory.id = $2)))";
 
       } else {
         filter = " (to_date(sprv.validFromDate) <= now())";

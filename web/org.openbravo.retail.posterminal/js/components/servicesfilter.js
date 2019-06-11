@@ -130,10 +130,8 @@ enyo.kind({
         }
         where +=
           ' EXISTS (SELECT 1' + //
-          ' FROM m_product_service sp,' + //
-          '      m_servicepricerule_version sprv' + //
-          ' WHERE product.m_product_id = sp.m_product_id' + //
-          ' AND   sprv.product = product.m_product_id' + //
+          ' FROM m_servicepricerule_version sprv' + //
+          ' WHERE sprv.product = product.m_product_id' + //
           ' AND   sprv.validFromDate = (SELECT MAX(sprv2.validFromDate)' + //
           '                             FROM m_servicepricerule_version sprv2' + //
           '                             WHERE sprv2.product = product.m_product_id' + //
@@ -158,10 +156,8 @@ enyo.kind({
         }
         where +=
           ' EXISTS (SELECT 1' + //
-          ' FROM m_product_service sp,' + //
-          '      m_servicepricerule_version sprv' + //
-          ' WHERE product.m_product_id = sp.m_product_id' + //
-          ' AND   sprv.product = product.m_product_id' + //
+          ' FROM m_servicepricerule_version sprv' + //
+          ' WHERE sprv.product = product.m_product_id' + //
           ' AND   sprv.validFromDate = (SELECT MAX(sprv2.validFromDate)' + //
           '                             FROM m_servicepricerule_version sprv2' + //
           '                             WHERE sprv2.product = product.m_product_id' + //
@@ -266,10 +262,8 @@ enyo.kind({
       where +=
         " AND (product.isPriceRuleBased = 'false' " + //
         " OR (product.quantityRule = 'UQ' AND EXISTS (SELECT 1" + //
-        ' FROM m_product_service sp,' + //
-        '      m_servicepricerule_version sprv' + //
-        ' WHERE product.m_product_id = sp.m_product_id' + //
-        ' AND   sprv.product = product.m_product_id' + //
+        ' FROM m_servicepricerule_version sprv' + //
+        ' WHERE sprv.product = product.m_product_id' + //
         ' AND   sprv.validFromDate = (SELECT MAX(sprv2.validFromDate)' + //
         '                             FROM m_servicepricerule_version sprv2' + //
         '                             WHERE sprv2.product = product.m_product_id' + //
@@ -284,10 +278,8 @@ enyo.kind({
         ' AND   (sprv.maximum IS NULL OR sprv.maximum >= ?)' + //
         " AND   sprv.active = 'true')) " + //
         " OR (product.quantityRule = 'PP' AND EXISTS (SELECT 1" + //
-        ' FROM m_product_service sp,' + //
-        '      m_servicepricerule_version sprv' + //
-        ' WHERE product.m_product_id = sp.m_product_id' + //
-        ' AND   sprv.product = product.m_product_id' + //
+        ' FROM m_servicepricerule_version sprv' + //
+        ' WHERE sprv.product = product.m_product_id' + //
         ' AND   sprv.validFromDate = (SELECT MAX(sprv2.validFromDate)' + //
         '                             FROM m_servicepricerule_version sprv2' + //
         '                             WHERE sprv2.product = product.m_product_id' + //
