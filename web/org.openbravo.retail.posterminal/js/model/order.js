@@ -6952,6 +6952,7 @@
           payment.set('origAmount', payment.get('amount'));
         }
         payment.set('paid', payment.get('origAmount'));
+        payment.set('precision', precision);
       };
 
       _.each(payments.models, function(payment) {
@@ -7196,7 +7197,7 @@
 
       payments = this.get('payments');
       precision = this.getPrecision(payment);
-      payment.set('amount', OB.DEC.number(payment.get('amount')));
+      payment.set('amount', OB.DEC.toNumber(payment.get('amount'), precision));
       if (this.get('prepaymentChangeMode')) {
         this.unset('prepaymentChangeMode');
         this.adjustPayment();
@@ -10939,7 +10940,7 @@
 
       payments = this.get('payments');
       precision = this.getPrecision(payment);
-      payment.set('amount', OB.DEC.number(payment.get('amount')));
+      payment.set('amount', OB.DEC.toNumber(payment.get('amount'), precision));
       order = this;
       if (this.get('prepaymentChangeMode')) {
         this.unset('prepaymentChangeMode');

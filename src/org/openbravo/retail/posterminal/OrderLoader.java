@@ -1416,16 +1416,26 @@ public class OrderLoader extends POSDataSynchronizationProcess
           .setScale(pricePrecision, RoundingMode.HALF_UP);
       BigDecimal amount = payment.has("amount")
           ? BigDecimal.valueOf(payment.getDouble("amount"))
-              .setScale(pricePrecision, RoundingMode.HALF_UP)
-          : origAmount.multiply(mulrate).setScale(pricePrecision, RoundingMode.HALF_UP);
+              .setScale((payment.has("precision") && payment.get("precision") != JSONObject.NULL)
+                  ? payment.getInt("precision")
+                  : pricePrecision, RoundingMode.HALF_UP)
+          : origAmount.multiply(mulrate)
+              .setScale((payment.has("precision") && payment.get("precision") != JSONObject.NULL)
+                  ? payment.getInt("precision")
+                  : pricePrecision, RoundingMode.HALF_UP);
 
       final BigDecimal origAmountOverpayment = origAmount;
       final BigDecimal amountOverpayment = amount;
       if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0) {
         // There was an overpayment, we need to take into account the writeoffamt
         origAmount = origAmount.subtract(writeoffAmt)
-            .setScale(pricePrecision, RoundingMode.HALF_UP);
-        amount = origAmount.multiply(mulrate).setScale(pricePrecision, RoundingMode.HALF_UP);
+            .setScale((payment.has("precision") && payment.get("precision") != JSONObject.NULL)
+                ? payment.getInt("precision")
+                : pricePrecision, RoundingMode.HALF_UP);
+        amount = origAmount.multiply(mulrate)
+            .setScale((payment.has("precision") && payment.get("precision") != JSONObject.NULL)
+                ? payment.getInt("precision")
+                : pricePrecision, RoundingMode.HALF_UP);
       }
 
       BigDecimal origAmountRounded = origAmount;
@@ -1436,7 +1446,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
         origAmountRounded = BigDecimal.valueOf(payment.getDouble("origAmountRounded"))
             .setScale(pricePrecision, RoundingMode.HALF_UP);
         amountRounded = BigDecimal.valueOf(payment.getDouble("amountRounded"))
-            .setScale(pricePrecision, RoundingMode.HALF_UP);
+            .setScale((payment.has("precision") && payment.get("precision") != JSONObject.NULL)
+                ? payment.getInt("precision")
+                : pricePrecision, RoundingMode.HALF_UP);
         roundAmount = origAmountRounded.subtract(origAmount)
             .setScale(pricePrecision, RoundingMode.HALF_UP);
       }
