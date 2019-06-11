@@ -35,7 +35,6 @@ public class ModuleInstallDetail {
 
   private ModuleInstallDetail(String[] dependencyErrors, Module[] modulesToInstall,
       Module[] modulesToUpdate, boolean validConfiguration) {
-    super();
     this.dependencyErrors = dependencyErrors;
     this.modulesToInstall = modulesToInstall;
     this.modulesToUpdate = modulesToUpdate;

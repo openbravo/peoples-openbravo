@@ -629,29 +629,25 @@ public class VersionUtility {
     return mods;
   }
 
-  static private boolean installModulesLocal(Module[] modulesToInstall, Module[] modulesToUpdate,
+  private static boolean installModulesLocal(Module[] modulesToInstall, Module[] modulesToUpdate,
       Module[] modulesToMerge, Vector<String> vecErrors) throws Exception {
     boolean checked = false;
     HashMap<String, Mod> modsInstalled = fillModules(modulesToMerge);
     HashMap<String, Mod> modsToInstall = modules2mods(modulesToInstall);
     HashMap<String, Mod> modsToUpdate = modules2mods(modulesToUpdate);
 
-    try {
-      /** Check if all dependencies are satisfied with installed modules */
-      checked = checkAllDependencies(modsInstalled, modsToInstall, modsToUpdate, modulesToMerge,
-          vecErrors);
-    } catch (Exception e) {
-      throw e;
-    }
+    /** Check if all dependencies are satisfied with installed modules */
+    checked = checkAllDependencies(modsInstalled, modsToInstall, modsToUpdate, modulesToMerge,
+        vecErrors);
 
     return checked;
   }
 
-  static public boolean getOBError(OBError rt, ConnectionProvider conn, VariablesSecureApp vars,
+  public static boolean getOBError(OBError rt, ConnectionProvider conn, VariablesSecureApp vars,
       String[] errors) {
     if (errors.length != 0) {
       rt.setType("Error");
-      StringBuffer strErrors = new StringBuffer();
+      StringBuilder strErrors = new StringBuilder();
       for (String s : errors) {
         strErrors.append(s).append("\n");
       }
@@ -686,8 +682,6 @@ public class VersionUtility {
   public static ModuleInstallDetail checkRemote(VariablesSecureApp vars, String[] moduleVersionId,
       String[] moduleVersionToUpdateId, OBError obErrors, HashMap<String, String> maturityLevels)
       throws Exception {
-    ModuleInstallDetail mid = null;
-
     JSONObject mods = ImportModule.getJsonInstalledModulesAndDeps();
     JSONObject additionalInfo = new JSONObject(maturityLevels);
     JSONObject req = new JSONObject();
@@ -704,7 +698,7 @@ public class VersionUtility {
 
     JSONObject installDetails = CentralRepository.executeRequest(Service.CHECK_CONSISTENCY, req);
 
-    mid = org.openbravo.service.centralrepository.ModuleInstallDetail.fromJson(installDetails);
+    ModuleInstallDetail mid = ModuleInstallDetail.fromJson(installDetails);
 
     String[] errors = mid.getDependencyErrors();
 

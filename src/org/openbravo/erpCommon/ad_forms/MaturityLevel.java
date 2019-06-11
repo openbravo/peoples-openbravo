@@ -128,7 +128,6 @@ public class MaturityLevel implements Serializable {
     String name;
 
     Level(int value, String name) {
-      super();
       this.value = value;
       this.name = name;
     }
