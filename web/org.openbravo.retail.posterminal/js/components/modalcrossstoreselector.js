@@ -12,7 +12,6 @@
 enyo.kind({
   name: 'OBPOS.UI.CrossStoreSelector',
   kind: 'OB.UI.ModalSelector',
-  classes: 'obpos-modal-store-selector',
   topPosition: '70px',
   i18nHeader: 'OBPOS_SelectStore',
   body: {

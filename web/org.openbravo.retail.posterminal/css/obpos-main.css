@@ -1391,10 +1391,6 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   background-repeat: no-repeat;
 }
 
-.obpos-modal-store-selector {
-  width: 550px !important;
-}
-
 .obpos-list-store {
   border-bottom: 1px solid #cccccc;
 }
