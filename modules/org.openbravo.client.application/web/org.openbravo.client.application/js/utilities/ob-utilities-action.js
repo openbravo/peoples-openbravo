@@ -32,12 +32,12 @@ OB.Utilities.Action = {
   // Parameters:
   // * {{{threadId}}}: the id of the thread to pause
   // * {{{delay}}}: delay in ms to pause the thread
-  pauseThread: function (threadId, delay) {
+  pauseThread: function(threadId, delay) {
     var position = this._pausedThreads.length,
-        i;
+      i;
 
     if (delay && Object.prototype.toString.apply(delay) === '[object Number]') {
-      setTimeout(function () {
+      setTimeout(function() {
         OB.Utilities.Action.pauseThread(threadId);
       }, delay);
       return true;
@@ -57,12 +57,12 @@ OB.Utilities.Action = {
   // Parameters:
   // * {{{threadId}}}: the id of the thread to resume
   // * {{{delay}}}: delay in ms to resume the thread
-  resumeThread: function (threadId, delay) {
+  resumeThread: function(threadId, delay) {
     var position = null,
-        i;
+      i;
 
     if (delay && Object.prototype.toString.apply(delay) === '[object Number]') {
-      setTimeout(function () {
+      setTimeout(function() {
         OB.Utilities.Action.resumeThread(threadId);
       }, delay);
       return true;
@@ -86,9 +86,9 @@ OB.Utilities.Action = {
   // Else it returns false.
   // Parameters:
   // * {{{threadId}}}: the id of the thread to check
-  isThreadPaused: function (threadId) {
+  isThreadPaused: function(threadId) {
     var position = this._pausedThreads.length,
-        i;
+      i;
 
     for (i = 0; i < position; i++) {
       if (this._pausedThreads[i] === threadId) {
@@ -103,11 +103,11 @@ OB.Utilities.Action = {
   // Parameters:
   // * {{{threadId}}}: the id of the thread to cancel
   // * {{{delay}}}: delay in ms to cancel the thread
-  cancelThread: function (threadId, delay) {
+  cancelThread: function(threadId, delay) {
     var position = this._cancelledThreads.length;
 
     if (delay && Object.prototype.toString.apply(delay) === '[object Number]') {
-      setTimeout(function () {
+      setTimeout(function() {
         OB.Utilities.Action.cancelThread(threadId);
       }, delay);
       return true;
@@ -124,9 +124,9 @@ OB.Utilities.Action = {
   // Else it returns false.
   // Parameters:
   // * {{{threadId}}}: the id of the thread to check
-  isThreadCancelled: function (threadId) {
+  isThreadCancelled: function(threadId) {
     var position = this._cancelledThreads.length,
-        i;
+      i;
 
     for (i = 0; i < position; i++) {
       if (this._cancelledThreads[i] === threadId) {
@@ -142,9 +142,9 @@ OB.Utilities.Action = {
   // Parameters:
   // * {{{name}}}: name of the function
   // * {{{action}}}: function associated to "name"
-  set: function (name, action) {
+  set: function(name, action) {
     var position = this._list.length,
-        i;
+      i;
 
     for (i = 0; i < position; i++) {
       if (this._list[i].name === name) {
@@ -162,9 +162,9 @@ OB.Utilities.Action = {
   // Removes a new function. After it, it won't be avallable anymore to access it using execute/executeJSON
   // Parameters:
   // * {{{name}}}: name of the function
-  remove: function (name) {
+  remove: function(name) {
     var position = null,
-        i;
+      i;
 
     for (i = 0; i < this._list.length; i++) {
       if (this._list[i].name === name) {
@@ -186,18 +186,22 @@ OB.Utilities.Action = {
   // * {{{name}}}: name of the function
   // * {{{paramObj}}}: object passed as parameter to the function
   // * {{{delay}}}: delay in ms to start the action execution
-  execute: function (name, paramObj, delay) {
+  execute: function(name, paramObj, delay) {
     var length = this._list.length,
-        i;
+      i;
 
     if (delay && Object.prototype.toString.apply(delay) === '[object Number]') {
-      setTimeout(function () {
+      setTimeout(function() {
         OB.Utilities.Action.execute(name, paramObj);
       }, delay);
       return true;
     }
     for (i = 0; i < length; i++) {
-      if (this._list[i].name === name && this._list[i].action !== null && typeof this._list[i].action === 'function') {
+      if (
+        this._list[i].name === name &&
+        this._list[i].action !== null &&
+        typeof this._list[i].action === 'function'
+      ) {
         return this._list[i].action(paramObj);
       }
     }
@@ -216,12 +220,14 @@ OB.Utilities.Action = {
   // * {{{threadId}}}: the Id of the execution thread. If empty, a random one will be generated
   // * {{{delay}}}: delay in ms to start the action execution
   // * {{{processView}}}: view of the process that invoked the execution
-  executeJSON: function (jsonArray, threadId, delay, processView) {
+  executeJSON: function(jsonArray, threadId, delay, processView) {
     var length = jsonArray.length,
-        object, member, paramObj;
+      object,
+      member,
+      paramObj;
 
     if (delay && Object.prototype.toString.apply(delay) === '[object Number]') {
-      setTimeout(function () {
+      setTimeout(function() {
         OB.Utilities.Action.executeJSON(jsonArray, threadId, null, processView);
       }, delay);
       return true;
@@ -245,7 +251,10 @@ OB.Utilities.Action = {
     if (Object.prototype.toString.apply(object) === '[object Object]') {
       for (member in object) {
         if (object.hasOwnProperty(member)) {
-          if (Object.prototype.toString.apply(object[member]) === '[object Object]') {
+          if (
+            Object.prototype.toString.apply(object[member]) ===
+            '[object Object]'
+          ) {
             object[member].threadId = threadId;
             paramObj = object[member];
             if (paramObj) {

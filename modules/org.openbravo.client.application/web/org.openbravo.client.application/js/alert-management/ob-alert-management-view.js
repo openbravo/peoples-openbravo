@@ -20,21 +20,23 @@
 isc.ClassFactory.defineClass('OBUIAPP_AlertManagement', isc.VLayout);
 isc.OBUIAPP_AlertManagement.addProperties({
   // Allow only one instance of the view.
-  isSameTab: function (viewId, params) {
+  isSameTab: function(viewId, params) {
     return viewId === 'OBUIAPP_AlertManagement';
   },
-  getBookMarkParams: function () {
+  getBookMarkParams: function() {
     var result = {};
     result.viewId = 'OBUIAPP_AlertManagement';
     return result;
   },
 
-  createAlertDataSource: function () {
+  createAlertDataSource: function() {
     return OB.Datasource.create({
       createClassName: '',
       ID: 'DB9F062472294F12A0291A7BD203F922' + '_' + new Date().getTime(),
       potentiallyShared: true,
-      dataURL: OB.Utilities.applicationUrl('org.openbravo.service.datasource/DB9F062472294F12A0291A7BD203F922'),
+      dataURL: OB.Utilities.applicationUrl(
+        'org.openbravo.service.datasource/DB9F062472294F12A0291A7BD203F922'
+      ),
       requestProperties: {
         params: {
           _contextUrl: OB.Utilities.getLocationUrlWithoutFragment(),
@@ -45,26 +47,33 @@ isc.OBUIAPP_AlertManagement.addProperties({
           _create: 'true'
         }
       },
-      fields: [{
-        name: 'id',
-        type: '_id_13',
-        primaryKey: true
-      }, {
-        name: 'creationDate',
-        type: '_id_16'
-      }, {
-        name: 'description',
-        type: '_id_14'
-      }, {
-        name: 'alertRule',
-        type: '_id_19'
-      }, {
-        name: 'comments',
-        type: '_id_14'
-      }, {
-        name: 'recordID',
-        type: '_id_10'
-      }]
+      fields: [
+        {
+          name: 'id',
+          type: '_id_13',
+          primaryKey: true
+        },
+        {
+          name: 'creationDate',
+          type: '_id_16'
+        },
+        {
+          name: 'description',
+          type: '_id_14'
+        },
+        {
+          name: 'alertRule',
+          type: '_id_19'
+        },
+        {
+          name: 'comments',
+          type: '_id_14'
+        },
+        {
+          name: 'recordID',
+          type: '_id_10'
+        }
+      ]
     });
   },
 
@@ -85,40 +94,64 @@ isc.OBUIAPP_AlertManagement.addProperties({
   SuppressedNew: null,
   SuppressedAcknowledged: null,
 
-  initWidget: function () {
+  initWidget: function() {
     OB.AlertManagement = this;
-    OB.I18N.getLabel('AlertStatus_New', null, {
-      setTranslatedStatus: function (label) {
-        OB.AlertManagement.translatedStatus.New = label;
-        OB.AlertManagement.checkInitializeStatus();
-      }
-    }, 'setTranslatedStatus');
-    OB.I18N.getLabel('AlertStatus_Acknowledged', null, {
-      setTranslatedStatus: function (label) {
-        OB.AlertManagement.translatedStatus.Acknowledged = label;
-        OB.AlertManagement.checkInitializeStatus();
-      }
-    }, 'setTranslatedStatus');
-    OB.I18N.getLabel('AlertStatus_Suppressed', null, {
-      setTranslatedStatus: function (label) {
-        OB.AlertManagement.translatedStatus.Suppressed = label;
-        OB.AlertManagement.checkInitializeStatus();
-      }
-    }, 'setTranslatedStatus');
-    OB.I18N.getLabel('AlertStatus_Solved', null, {
-      setTranslatedStatus: function (label) {
-        OB.AlertManagement.translatedStatus.Solved = label;
-        OB.AlertManagement.checkInitializeStatus();
-      }
-    }, 'setTranslatedStatus');
+    OB.I18N.getLabel(
+      'AlertStatus_New',
+      null,
+      {
+        setTranslatedStatus: function(label) {
+          OB.AlertManagement.translatedStatus.New = label;
+          OB.AlertManagement.checkInitializeStatus();
+        }
+      },
+      'setTranslatedStatus'
+    );
+    OB.I18N.getLabel(
+      'AlertStatus_Acknowledged',
+      null,
+      {
+        setTranslatedStatus: function(label) {
+          OB.AlertManagement.translatedStatus.Acknowledged = label;
+          OB.AlertManagement.checkInitializeStatus();
+        }
+      },
+      'setTranslatedStatus'
+    );
+    OB.I18N.getLabel(
+      'AlertStatus_Suppressed',
+      null,
+      {
+        setTranslatedStatus: function(label) {
+          OB.AlertManagement.translatedStatus.Suppressed = label;
+          OB.AlertManagement.checkInitializeStatus();
+        }
+      },
+      'setTranslatedStatus'
+    );
+    OB.I18N.getLabel(
+      'AlertStatus_Solved',
+      null,
+      {
+        setTranslatedStatus: function(label) {
+          OB.AlertManagement.translatedStatus.Solved = label;
+          OB.AlertManagement.checkInitializeStatus();
+        }
+      },
+      'setTranslatedStatus'
+    );
 
-    this.refreshButton = isc.OBToolbarIconButton.create(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES);
+    this.refreshButton = isc.OBToolbarIconButton.create(
+      isc.OBToolbar.REFRESH_BUTTON_PROPERTIES
+    );
 
-    this.addMember(isc.OBToolbar.create({
-      view: this,
-      leftMembers: [this.refreshButton],
-      rightMembers: []
-    }));
+    this.addMember(
+      isc.OBToolbar.create({
+        view: this,
+        leftMembers: [this.refreshButton],
+        rightMembers: []
+      })
+    );
 
     this.sectionStack = isc.OBSectionStack.create();
     this.addMember(this.sectionStack);
@@ -127,25 +160,31 @@ isc.OBUIAPP_AlertManagement.addProperties({
     OB.AlertManagement.checkInitializeStatus();
   },
 
-  tabSelected: function (tabNum, tabPane, ID, tab) {
+  tabSelected: function(tabNum, tabPane, ID, tab) {
     if (OB.AlertManagement.grids.New) {
       // TODO: Add a more sophisticated focus logic to ensure each time the Alert Management is selected,
       // the previous focused item is selected instead of the first grid filter editor
-      setTimeout(function () {
+      setTimeout(function() {
         OB.AlertManagement.grids.New.focusInFirstFilterEditor();
       }, 10);
     }
   },
 
-  checkInitializeStatus: function () {
-    if (OB.AlertManagement.translatedStatus.New !== '' && OB.AlertManagement.translatedStatus.Acknowledged !== '' && OB.AlertManagement.translatedStatus.Suppressed !== '' && OB.AlertManagement.translatedStatus.Solved !== '' && OB.AlertManagement.sectionStack) {
+  checkInitializeStatus: function() {
+    if (
+      OB.AlertManagement.translatedStatus.New !== '' &&
+      OB.AlertManagement.translatedStatus.Acknowledged !== '' &&
+      OB.AlertManagement.translatedStatus.Suppressed !== '' &&
+      OB.AlertManagement.translatedStatus.Solved !== '' &&
+      OB.AlertManagement.sectionStack
+    ) {
       // Sections are created after status translations are set.
       // This is needed to be able to filter properly the grids of the sections.
       OB.AlertManagement.createSections();
     }
   },
 
-  createSections: function () {
+  createSections: function() {
     this.grids.New = isc.OBAlertGrid.create({
       alertStatus: 'New'
     });
@@ -230,7 +269,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
     this.grids.Solved.setDataSource(this.createAlertDataSource());
   },
 
-  destroy: function () {
+  destroy: function() {
     if (this.grids) {
       if (this.grids.New) {
         this.grids.New.destroy();
@@ -276,40 +315,57 @@ isc.OBUIAPP_AlertManagement.addProperties({
     this.Super('destroy', arguments);
   },
 
-  moveToStatus: function (alertIDs, oldStatus, newStatus) {
+  moveToStatus: function(alertIDs, oldStatus, newStatus) {
     var post = {
-      'eventType': 'moveToStatus',
-      'oldStatus': oldStatus,
-      'newStatus': newStatus,
-      'alertIDs': alertIDs
+      eventType: 'moveToStatus',
+      oldStatus: oldStatus,
+      newStatus: newStatus,
+      alertIDs: alertIDs
     };
 
     // persist not saved editions before moving
     this.grids[oldStatus].saveAllEdits();
 
-    OB.RemoteCallManager.call('org.openbravo.client.application.AlertManagementActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
-      OB.AlertManagement.grids[data.newStatus].invalidateCache();
-      // If section has not been expanded the grid is not reloaded so the total rows is not updated.
-      if (!OB.AlertManagement.sections[data.newStatus].expanded) {
-        OB.AlertManagement.grids[data.newStatus].getGridTotalRows();
+    OB.RemoteCallManager.call(
+      'org.openbravo.client.application.AlertManagementActionHandler',
+      post,
+      {},
+      function(rpcResponse, data, rpcRequest) {
+        OB.AlertManagement.grids[data.newStatus].invalidateCache();
+        // If section has not been expanded the grid is not reloaded so the total rows is not updated.
+        if (!OB.AlertManagement.sections[data.newStatus].expanded) {
+          OB.AlertManagement.grids[data.newStatus].getGridTotalRows();
+        }
+        // Old status is always expanded to be able to select the rows
+        OB.AlertManagement.grids[data.oldStatus].invalidateCache();
+        OB.AlertManager.call();
       }
-      // Old status is always expanded to be able to select the rows
-      OB.AlertManagement.grids[data.oldStatus].invalidateCache();
-      OB.AlertManager.call();
-    });
+    );
   },
 
-  setTotalRows: function (totalRows, status) {
+  setTotalRows: function(totalRows, status) {
     if (OB.AlertManagement.sections[status]) {
-      if (OB.AlertManagement.grids[status] && OB.AlertManagement.grids[status].dataPageSize < totalRows) {
+      if (
+        OB.AlertManagement.grids[status] &&
+        OB.AlertManagement.grids[status].dataPageSize < totalRows
+      ) {
         totalRows = '>' + OB.AlertManagement.grids[status].dataPageSize;
       }
-      OB.AlertManagement.sections[status].getSectionHeader().setTitle(OB.I18N.getLabel('OBUIAPP_AlertSectionHeader', [OB.AlertManagement.translatedStatus[status], totalRows]));
+      OB.AlertManagement.sections[status]
+        .getSectionHeader()
+        .setTitle(
+          OB.I18N.getLabel('OBUIAPP_AlertSectionHeader', [
+            OB.AlertManagement.translatedStatus[status],
+            totalRows
+          ])
+        );
     }
   },
 
-  refresh: function () {
-    var i, section, alertStatus = ['New', 'Acknowledged', 'Suppressed', 'Solved'];
+  refresh: function() {
+    var i,
+      section,
+      alertStatus = ['New', 'Acknowledged', 'Suppressed', 'Solved'];
     for (i = 0; i < 4; i++) {
       OB.AlertManagement.grids[alertStatus[i]].invalidateCache();
       section = OB.AlertManagement.sections[alertStatus[i]];
@@ -323,8 +379,9 @@ isc.OBUIAPP_AlertManagement.addProperties({
     }
   },
 
-  notifyRefreshEnd: function () {
-    var i, alertStatus = ['New', 'Acknowledged', 'Suppressed', 'Solved'];
+  notifyRefreshEnd: function() {
+    var i,
+      alertStatus = ['New', 'Acknowledged', 'Suppressed', 'Solved'];
     for (i = 0; i < 4; i++) {
       if (OB.AlertManagement.grids[alertStatus[i]].isRefreshing) {
         return;
@@ -337,20 +394,32 @@ isc.OBUIAPP_AlertManagement.addProperties({
   }
 });
 
-isc.ClassFactory.defineClass('OBAlertSectionStackControl', isc.OBLinkButtonItem);
+isc.ClassFactory.defineClass(
+  'OBAlertSectionStackControl',
+  isc.OBLinkButtonItem
+);
 isc.OBAlertSectionStackControl.addProperties({
   newStatus: null,
   currentStatus: null,
 
-  initWidget: function () {
-    this.setTitle("[ " + OB.I18N.getLabel('OBUIAPP_MoveSelectedToStatus', [OB.AlertManagement.translatedStatus[this.newStatus]]) + " ]");
+  initWidget: function() {
+    this.setTitle(
+      '[ ' +
+        OB.I18N.getLabel('OBUIAPP_MoveSelectedToStatus', [
+          OB.AlertManagement.translatedStatus[this.newStatus]
+        ]) +
+        ' ]'
+    );
     this.Super('initWidget', arguments);
   },
 
-  action: function () {
-    var i, alerts = '',
-        selectedAlerts = OB.AlertManagement.grids[this.currentStatus].getSelection(),
-        selAlertsLength = selectedAlerts.length;
+  action: function() {
+    var i,
+      alerts = '',
+      selectedAlerts = OB.AlertManagement.grids[
+        this.currentStatus
+      ].getSelection(),
+      selAlertsLength = selectedAlerts.length;
     if (selAlertsLength === 0) {
       return;
     }

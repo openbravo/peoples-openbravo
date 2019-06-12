@@ -23,13 +23,15 @@
 //
 isc.defineClass('OBUrlWidget', isc.OBWidget).addProperties({
   contentSource: null,
-  createWindowContents: function () {
+  createWindowContents: function() {
     if (!this.contentSource) {
       this.contentSource = this.evaluateContents(this.parameters.src);
     }
 
     if (this.contentSource.indexOf('butler.openbravo.com') !== -1) {
-      this.contentSource = document.location.protocol + this.contentSource.substring(this.contentSource.indexOf('//'));
+      this.contentSource =
+        document.location.protocol +
+        this.contentSource.substring(this.contentSource.indexOf('//'));
     }
 
     return isc.HTMLFlow.create({
@@ -39,15 +41,15 @@ isc.defineClass('OBUrlWidget', isc.OBWidget).addProperties({
       width: '100%'
     });
   },
-  refresh: function () {
+  refresh: function() {
     if (this.parameters.src) {
       this.contentSource = this.evaluateContents(this.parameters.src);
     }
     this.windowContents.setContentsURL(this.contentSource);
   },
-  evaluateContents: function (str) {
+  evaluateContents: function(str) {
     if (str.indexOf('google.com/calendar') !== -1) {
-      str = str.replace("account", OB.User.email);
+      str = str.replace('account', OB.User.email);
     }
     return this.Super('evaluateContents', arguments);
   }

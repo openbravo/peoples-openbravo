@@ -27,15 +27,19 @@ isc.defineClass('OBWidgetMenu', isc.Menu).addProperties({
   fields: ['icon', 'title'],
 
   // overridden to get reliable custom style name
-  getBaseStyle: function (record, rowNum, colNum) {
+  getBaseStyle: function(record, rowNum, colNum) {
     var name = this.getField(colNum).name;
-    return this.baseStyle + name.substr(0, 1).toUpperCase() + name.substr(1) + 'Field';
+    return (
+      this.baseStyle +
+      name.substr(0, 1).toUpperCase() +
+      name.substr(1) +
+      'Field'
+    );
   },
-
 
   // overridden to let the menu to expand to the left, within the widget
   // TODO: how to handle RTL?
-  placeNear: function (left, top) {
+  placeNear: function(left, top) {
     var newLeft = left - this.width + this.menuButton.getVisibleWidth();
     // don't show left from the portlet, in that extremely rare
     // case use the old left
@@ -59,7 +63,7 @@ isc.defineClass('OBWidgetMenuItem', isc.MenuButton).addProperties({
   windowContents: null,
   menuItems: null,
 
-  initWidget: function (args) {
+  initWidget: function(args) {
     this.widget = args.portlet;
     this.menuItems = this.widget.menuItems;
     this.menu = isc.OBWidgetMenu.create({
@@ -68,9 +72,12 @@ isc.defineClass('OBWidgetMenuItem', isc.MenuButton).addProperties({
     this.Super('initWidget', args);
   },
 
-  showMenu: function () {
+  showMenu: function() {
     var me = this,
-        menuItems, i, baseMenuItem, clickFunction;
+      menuItems,
+      i,
+      baseMenuItem,
+      clickFunction;
 
     baseMenuItem = {
       title: '',
@@ -83,43 +90,48 @@ isc.defineClass('OBWidgetMenuItem', isc.MenuButton).addProperties({
 
     this.menu.menuButton = this;
 
-    menuItems = [{
-      title: OB.I18N.getLabel('OBKMO_WMO_EditSettings'),
-      widget: this.widget,
-      enableIf: function (target, menu, item) {
-        // already in edit mode
-        if (this.widget.widgetMode === this.widget.EDIT_MODE) {
-          return false;
-        }
-        return this.widget.fieldDefinitions.length > 0;
-      },
-      click: function (target, item, menu) {
-        this.widget.switchMode();
-      }
-    }, {
-      isSeparator: true
-    }, {
-      title: OB.I18N.getLabel('OBKMO_WMO_Refresh'),
-      iconHeight: 0,
-      iconWidth: 0,
-      widget: this.widget,
-      click: function (target, item, menu) {
-        this.widget.refresh();
-      }
-    }, {
-      title: OB.I18N.getLabel('OBKMO_WMO_DeleteThisWidget'),
-      widget: this.widget,
-      enableIf: function (target, menu, item) {
-        if (OB.User.isPortal) {
-          return false;
-        } else {
-          return this.widget.canDelete;
+    menuItems = [
+      {
+        title: OB.I18N.getLabel('OBKMO_WMO_EditSettings'),
+        widget: this.widget,
+        enableIf: function(target, menu, item) {
+          // already in edit mode
+          if (this.widget.widgetMode === this.widget.EDIT_MODE) {
+            return false;
+          }
+          return this.widget.fieldDefinitions.length > 0;
+        },
+        click: function(target, item, menu) {
+          this.widget.switchMode();
         }
       },
-      click: function (target, item, menu) {
-        this.widget.closeClick();
+      {
+        isSeparator: true
+      },
+      {
+        title: OB.I18N.getLabel('OBKMO_WMO_Refresh'),
+        iconHeight: 0,
+        iconWidth: 0,
+        widget: this.widget,
+        click: function(target, item, menu) {
+          this.widget.refresh();
+        }
+      },
+      {
+        title: OB.I18N.getLabel('OBKMO_WMO_DeleteThisWidget'),
+        widget: this.widget,
+        enableIf: function(target, menu, item) {
+          if (OB.User.isPortal) {
+            return false;
+          } else {
+            return this.widget.canDelete;
+          }
+        },
+        click: function(target, item, menu) {
+          this.widget.closeClick();
+        }
       }
-    }];
+    ];
     if (isc.isAn.Array(this.menuItems) && this.menuItems.length > 0) {
       for (i = 0; i < this.menuItems.length; i++) {
         if (this.menuItems[i].isSeparator) {
@@ -132,20 +144,34 @@ isc.defineClass('OBWidgetMenuItem', isc.MenuButton).addProperties({
         // click can be a method within the widget or a global function
         if (isc.isA.Function(this.widget[this.menuItems[i].click])) {
           clickFunction = this.widget[this.menuItems[i].click];
-        } else if (isc.isA.Function(isc.Func.expressionToFunction('', this.menuItems[i].click)())) {
-          clickFunction = isc.Func.expressionToFunction('', this.menuItems[i].click)();
+        } else if (
+          isc.isA.Function(
+            isc.Func.expressionToFunction('', this.menuItems[i].click)()
+          )
+        ) {
+          clickFunction = isc.Func.expressionToFunction(
+            '',
+            this.menuItems[i].click
+          )();
         } else {
           clickFunction = null;
         }
 
         if (!clickFunction) {
-          isc.Log.logWarn('Method: ' + this.menuItems[i].click + ' not defined for widget: ' + this.widget);
+          isc.Log.logWarn(
+            'Method: ' +
+              this.menuItems[i].click +
+              ' not defined for widget: ' +
+              this.widget
+          );
         }
 
-        menuItems.push(isc.addProperties({}, baseMenuItem, {
-          title: this.menuItems[i].title,
-          click: clickFunction
-        }));
+        menuItems.push(
+          isc.addProperties({}, baseMenuItem, {
+            title: this.menuItems[i].title,
+            click: clickFunction
+          })
+        );
       }
     }
     menuItems.push({
@@ -156,7 +182,7 @@ isc.defineClass('OBWidgetMenuItem', isc.MenuButton).addProperties({
       iconHeight: 0,
       iconWidth: 0,
       widget: this.widget,
-      click: function (target, item, menu) {
+      click: function(target, item, menu) {
         this.widget.showAbout();
       }
     });
@@ -172,7 +198,6 @@ isc.defineClass('OBWidgetMenuItem', isc.MenuButton).addProperties({
 // Implements the base class from where all MyOpenbravo widgets extend.
 //
 isc.defineClass('OBWidget', isc.Portlet).addProperties({
-
   CONTENT_MODE: 'content',
   EDIT_MODE: 'edit',
 
@@ -180,7 +205,9 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   showMaximizeButton: false,
   showMinimizeButton: false,
   showCloseButton: false,
-  closeConfirmationMessage: OB.I18N.getLabel('OBKMO_DeleteThisWidgetConfirmation'),
+  closeConfirmationMessage: OB.I18N.getLabel(
+    'OBKMO_DeleteThisWidgetConfirmation'
+  ),
   destroyOnClose: true,
 
   canDelete: true,
@@ -195,22 +222,21 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   fieldDefinitions: [],
   parameters: {},
 
-
   headerProperties: {
     defaultLayoutAlign: 'center'
   },
 
-  // note: dragappearance target gives strange results if one attempts to 
+  // note: dragappearance target gives strange results if one attempts to
   // drag a widget outside of the portallayout, this because actually
-  // the target is dragged and not a separate layout  
+  // the target is dragged and not a separate layout
   dragAppearance: 'outline',
-  dragRepositionStart: function () {
+  dragRepositionStart: function() {
     // keep the widget in the portallayout
     this.keepInParentRect = OB.MyOB.portalLayout.getPageRect();
     return true;
   },
 
-  // set by my openbravo  
+  // set by my openbravo
   widgetManager: null,
 
   widgetMode: null,
@@ -218,7 +244,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   // viewForm if widget widget is embedded into a generated window
   viewForm: null,
 
-  initWidget: function (args) {
+  initWidget: function(args) {
     var headerControls = ['headerLabel'];
 
     // when widget placed inside generated window
@@ -227,7 +253,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
       this.canDragReposition = false;
       this.height = '0px'; // together with overflow:visible to get height up-to rowspan
     } else {
-      // set the headercontrols in initWidget otherwise only  
+      // set the headercontrols in initWidget otherwise only
       // one menubutton gets created for all widgets
       this.menuButton = isc.OBWidgetMenuItem.create({
         portlet: this
@@ -259,7 +285,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     this.Super('initWidget', arguments);
   },
 
-  confirmedClosePortlet: function (ok) {
+  confirmedClosePortlet: function(ok) {
     if (ok) {
       this.Super('confirmedClosePortlet', arguments);
       OB.MyOB.notifyEvent('WIDGET_REMOVED');
@@ -269,9 +295,9 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   // ** {{{ OBMyOpenbravo.switchMode() }}} **
   //
   // Switches the widget from edit to content mode and vice versa.
-  // Edit mode is the edit parameters mode, content mode shows the 
-  // normal content of the widget. 
-  switchMode: function () {
+  // Edit mode is the edit parameters mode, content mode shows the
+  // normal content of the widget.
+  switchMode: function() {
     if (this.widgetMode === this.CONTENT_MODE) {
       this.toMode(this.EDIT_MODE);
     } else {
@@ -280,11 +306,13 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     }
   },
 
-  toMode: function (targetMode) {
+  toMode: function(targetMode) {
     if (targetMode === this.EDIT_MODE) {
       this.windowContents.hide();
       this.editFormLayout.editForm.clearValues();
-      this.editFormLayout.editForm.setValues(isc.addProperties({}, this.parameters));
+      this.editFormLayout.editForm.setValues(
+        isc.addProperties({}, this.parameters)
+      );
       this.editFormLayout.show();
       this.widgetMode = this.EDIT_MODE;
     } else {
@@ -297,9 +325,14 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   // ** {{{ OBMyOpenbravo.createEditFormLayout() }}} **
   //
   // Creates the edit form layout used to edit parameters.
-  createEditFormLayout: function () {
-    var formLayout, theForm, buttonLayout, widget = this,
-        i, fieldDefinition, items = [];
+  createEditFormLayout: function() {
+    var formLayout,
+      theForm,
+      buttonLayout,
+      widget = this,
+      i,
+      fieldDefinition,
+      items = [];
 
     formLayout = isc.VStack.create({
       defaultLayoutAlign: 'center',
@@ -327,13 +360,16 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     // set the initial values
     theForm.values = isc.addProperties({}, this.parameters);
 
-    // create the fields    
+    // create the fields
     for (i = 0; i < this.fieldDefinitions.length; i++) {
       fieldDefinition = this.fieldDefinitions[i];
 
       // handle it when there are fieldProperties
       if (fieldDefinition.fieldProperties) {
-        fieldDefinition = isc.addProperties(fieldDefinition, fieldDefinition.fieldProperties);
+        fieldDefinition = isc.addProperties(
+          fieldDefinition,
+          fieldDefinition.fieldProperties
+        );
         delete fieldDefinition.fieldProperties;
       }
 
@@ -355,42 +391,52 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
       width: '100%'
     });
 
-    buttonLayout.addMembers(isc.OBFormButton.create({
-      autoFit: true,
-      // note reusing label from navba, is fine as these are 
-      // moved to client.app later
-      title: OB.I18N.getLabel('UINAVBA_Save'),
-      click: function () {
-        if (theForm.validate(true)) {
-          widget.setParameters(isc.addProperties(widget.parameters, theForm.getValues()));
-          theForm.rememberValues();
-          widget.saveParameters();
+    buttonLayout.addMembers(
+      isc.OBFormButton.create({
+        autoFit: true,
+        // note reusing label from navba, is fine as these are
+        // moved to client.app later
+        title: OB.I18N.getLabel('UINAVBA_Save'),
+        click: function() {
+          if (theForm.validate(true)) {
+            widget.setParameters(
+              isc.addProperties(widget.parameters, theForm.getValues())
+            );
+            theForm.rememberValues();
+            widget.saveParameters();
+          }
         }
-      }
-    }));
-    buttonLayout.addMembers(isc.OBFormButton.create({
-      autoFit: true,
-      // note reusing label from navba, is fine as these are 
-      // moved to client.app later
-      title: OB.I18N.getLabel('UINAVBA_Cancel'),
-      click: function () {
-        if (widget.allRequiredParametersSet()) {
-          widget.switchMode();
-        } else {
-          isc.warn(OB.I18N.getLabel('OBKMO_NotAllParametersSet'));
+      })
+    );
+    buttonLayout.addMembers(
+      isc.OBFormButton.create({
+        autoFit: true,
+        // note reusing label from navba, is fine as these are
+        // moved to client.app later
+        title: OB.I18N.getLabel('UINAVBA_Cancel'),
+        click: function() {
+          if (widget.allRequiredParametersSet()) {
+            widget.switchMode();
+          } else {
+            isc.warn(OB.I18N.getLabel('OBKMO_NotAllParametersSet'));
+          }
         }
-      }
-    }));
+      })
+    );
     formLayout.addMembers(buttonLayout);
 
     return formLayout;
   },
 
-  allRequiredParametersSet: function () {
+  allRequiredParametersSet: function() {
     var i, fieldDefinition;
     for (i = 0; i < this.fieldDefinitions.length; i++) {
       fieldDefinition = this.fieldDefinitions[i];
-      if (fieldDefinition.required && !this.parameters[fieldDefinition.name] && this.parameters[fieldDefinition.name] !== false) {
+      if (
+        fieldDefinition.required &&
+        !this.parameters[fieldDefinition.name] &&
+        this.parameters[fieldDefinition.name] !== false
+      ) {
         return false;
       }
     }
@@ -401,7 +447,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   //
   // Creates the Canvas which implements the normal content
   // of the window. Must be overridden by the implementing subclass.
-  createWindowContents: function () {
+  createWindowContents: function() {
     return isc.Label.create({
       contents: 'Implement the createWindowContents method in the subclass!'
     });
@@ -410,18 +456,18 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   // ** {{{ OBMyOpenbravo.evaluateContents() }}} **
   //
   // Evaluates the str and replaces all parameters which have the form
-  // ${parameter} with a value read from the javascript context. The 
-  // parameters of this widget are also set as values. 
-  evaluateContents: function (str) {
+  // ${parameter} with a value read from the javascript context. The
+  // parameters of this widget are also set as values.
+  evaluateContents: function(str) {
     return str.evalDynamicString(this, this.parameters);
   },
 
   // ** {{{ OBMyOpenbravo.setParameters(parameters) }}} **
   //
-  // Is called when the edit parameters form is saved, the parameters 
+  // Is called when the edit parameters form is saved, the parameters
   // object is passed in. The default implementation sets the parameters
   // of the widget.
-  setParameters: function (parameters) {
+  setParameters: function(parameters) {
     this.parameters = parameters;
   },
 
@@ -431,16 +477,16 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   // The refresh is called from the widget menu. The OBWidget subclass needs to
   // implement this method and handle the refresh of its contents
   //
-  refresh: function () {
+  refresh: function() {
     isc.Log.logInfo('The subclass needs to implement this method');
   },
 
   //
   // ** {{{ OBWidget.showAbout }}} **
   //
-  // The showAbout is called from the widget menu. 
+  // The showAbout is called from the widget menu.
   //
-  showAbout: function () {
+  showAbout: function() {
     isc.OBAboutPopupWindow.create({
       title: OB.I18N.getLabel('OBKMO_WMO_About') + ' ' + this.title,
       aboutFieldDefinitions: this.aboutFieldDefinitions
@@ -451,12 +497,12 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   // ** {{{ OBWidget.isSameWidget }}} **
   //
   // Returns true if the object passed as parameter is the same instance.
-  // 
+  //
   // Parameters:
   // {{widget}} an object to which you want to compare
   // {{isNew}} If this flag is true, the comparison is based on the ID of the
   // client side object, otherwise the dbInstanceId is used
-  isSameWidget: function (widget, isNew) {
+  isSameWidget: function(widget, isNew) {
     if (!widget) {
       return false;
     }
@@ -468,12 +514,12 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     return this.ID === widget.ID;
   },
 
-  setDbInstanceId: function (instanceId) {
+  setDbInstanceId: function(instanceId) {
     this.dbInstanceId = instanceId;
     this.refresh();
   },
 
-  saveParameters: function () {
+  saveParameters: function() {
     var post, i, param, paramObj, fieldDef;
 
     if (isc.isA.emptyObject(this.parameters)) {
@@ -506,14 +552,23 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
         }
       }
     }
-    OB.RemoteCallManager.call('org.openbravo.client.application.ParametersActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
-      if (data && data.ID && window[data.ID]) {
-        window[data.ID].saveParametersResponseHandler(rpcResponse, data, rpcRequest);
+    OB.RemoteCallManager.call(
+      'org.openbravo.client.application.ParametersActionHandler',
+      post,
+      {},
+      function(rpcResponse, data, rpcRequest) {
+        if (data && data.ID && window[data.ID]) {
+          window[data.ID].saveParametersResponseHandler(
+            rpcResponse,
+            data,
+            rpcRequest
+          );
+        }
       }
-    });
+    );
   },
 
-  saveParametersResponseHandler: function (rpcReponse, data, rpcRequest) {
+  saveParametersResponseHandler: function(rpcReponse, data, rpcRequest) {
     if (data && data.message) {
       if (data.message.type !== 'Success') {
         isc.Log.logError(data.message.message);

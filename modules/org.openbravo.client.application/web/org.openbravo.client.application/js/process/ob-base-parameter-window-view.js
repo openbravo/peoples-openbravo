@@ -47,11 +47,16 @@ isc.OBBaseParameterWindowView.addProperties({
   // allows to calculate extra context info (ie. when invoking from menu)
   additionalContextInfo: {},
 
-  initWidget: function () {
-    var i, field, items = [],
-        buttonLayout = [],
-        view = this,
-        newShowIf, context, updatedExpandSection, params;
+  initWidget: function() {
+    var i,
+      field,
+      items = [],
+      buttonLayout = [],
+      view = this,
+      newShowIf,
+      context,
+      updatedExpandSection,
+      params;
 
     // this flag can be used by Selenium to determine when defaults are set
     this.defaultsAreSet = false;
@@ -71,12 +76,12 @@ isc.OBBaseParameterWindowView.addProperties({
     this.messageBar = isc.OBMessageBar.create({
       visibility: 'hidden',
       view: this,
-      show: function () {
+      show: function() {
         var showMessageBar = true;
         this.Super('show', arguments);
         view.resized(showMessageBar);
       },
-      hide: function () {
+      hide: function() {
         var showMessageBar = false;
         this.Super('hide', arguments);
         view.resized(showMessageBar);
@@ -84,9 +89,10 @@ isc.OBBaseParameterWindowView.addProperties({
     });
     this.members.push(this.messageBar);
 
-    newShowIf = function (item, value, form, values) {
-      var currentValues, originalShowIfValue = false,
-          parentContext;
+    newShowIf = function(item, value, form, values) {
+      var currentValues,
+        originalShowIfValue = false,
+        parentContext;
 
       currentValues = isc.shallowClone(values) || {};
       if (isc.isA.emptyObject(currentValues) && form && form.view) {
@@ -95,21 +101,41 @@ isc.OBBaseParameterWindowView.addProperties({
         currentValues = isc.shallowClone(form.getValues());
       }
       OB.Utilities.fixNull250(currentValues);
-      parentContext = this.view.getUnderLyingRecordContext(false, true, true, true);
+      parentContext = this.view.getUnderLyingRecordContext(
+        false,
+        true,
+        true,
+        true
+      );
 
       try {
         if (isc.isA.Function(this.originalShowIf)) {
-          originalShowIfValue = this.originalShowIf(item, value, form, currentValues, parentContext);
+          originalShowIfValue = this.originalShowIf(
+            item,
+            value,
+            form,
+            currentValues,
+            parentContext
+          );
         } else {
           originalShowIfValue = isc.JSON.decode(this.originalShowIf);
         }
       } catch (_exception) {
-        isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
+        isc.warn(
+          _exception + ' ' + _exception.message + ' ' + _exception.stack
+        );
       }
       if (originalShowIfValue && item.getType() === 'OBPickEditGridItem') {
         // load the grid if it is being shown for the first time
-        if (item.canvas && item.canvas.viewGrid && !isc.isA.ResultSet(item.canvas.viewGrid.data)) {
-          if (item.defaultFilter !== null && !isc.isA.emptyObject(item.defaultFilter)) {
+        if (
+          item.canvas &&
+          item.canvas.viewGrid &&
+          !isc.isA.ResultSet(item.canvas.viewGrid.data)
+        ) {
+          if (
+            item.defaultFilter !== null &&
+            !isc.isA.emptyObject(item.defaultFilter)
+          ) {
             // if it has a default filter, apply it and use it when filtering
             item.canvas.viewGrid.setFilterEditorCriteria(item.defaultFilter);
             item.canvas.viewGrid.filterByEditor();
@@ -126,13 +152,16 @@ isc.OBBaseParameterWindowView.addProperties({
     };
     // this function is only used in OBSectionItems that are collapsed originally
     // this is done to force the data fetch of its stored OBPickEditGridItems
-    updatedExpandSection = function () {
+    updatedExpandSection = function() {
       var i, itemName, item;
       this.originalExpandSection();
       for (i = 0; i < this.itemIds.length; i++) {
         itemName = this.itemIds[i];
         item = this.form.getItem(itemName);
-        if (item.type === 'OBPickEditGridItem' && !isc.isA.ResultSet(item.canvas.viewGrid.data)) {
+        if (
+          item.type === 'OBPickEditGridItem' &&
+          !isc.isA.ResultSet(item.canvas.viewGrid.data)
+        ) {
           item.canvas.viewGrid.fetchData(item.canvas.viewGrid.getCriteria());
         }
       }
@@ -142,9 +171,12 @@ isc.OBBaseParameterWindowView.addProperties({
     if (this.viewProperties.fields) {
       for (i = 0; i < this.viewProperties.fields.length; i++) {
         field = this.viewProperties.fields[i];
-        field = isc.addProperties({
-          view: this
-        }, field);
+        field = isc.addProperties(
+          {
+            view: this
+          },
+          field
+        );
 
         if (field.showIf) {
           field.originalShowIf = field.showIf;
@@ -154,17 +186,21 @@ isc.OBBaseParameterWindowView.addProperties({
           // the default
           field.onChangeFunction.sort = 50;
 
-          OB.OnChangeRegistry.register(this.viewId || this.processId, field.name, field.onChangeFunction, 'default');
+          OB.OnChangeRegistry.register(
+            this.viewId || this.processId,
+            field.name,
+            field.onChangeFunction,
+            'default'
+          );
         }
 
         if (field.type === 'OBSectionItem' && !field.sectionExpanded) {
-          // modifies the expandSection function of OBSectionItems collapsed originally to avoid having 
+          // modifies the expandSection function of OBSectionItems collapsed originally to avoid having
           // unloaded grids when a section is expanded for the first time
           field.originalExpandSection = isc.OBSectionItem.getPrototype().expandSection;
           field.expandSection = updatedExpandSection;
         }
         items.push(field);
-
       }
 
       if (items.length !== 0) {
@@ -172,7 +208,12 @@ isc.OBBaseParameterWindowView.addProperties({
         this.formProps.paramWindow = this;
         this.theForm = isc.OBParameterWindowForm.create(this.formProps);
         // If there is only one paremeter, it is a grid and the window is opened in a popup, then the window is a P&E window
-        if (items && items.length === 1 && items[0].type === 'OBPickEditGridItem' && this.popup) {
+        if (
+          items &&
+          items.length === 1 &&
+          items[0].type === 'OBPickEditGridItem' &&
+          this.popup
+        ) {
           this.isPickAndExecuteWindow = true;
         }
         this.theForm.setItems(items);
@@ -189,18 +230,20 @@ isc.OBBaseParameterWindowView.addProperties({
         align: 'center',
         width: '100%',
         height: OB.Styles.Process.PickAndExecute.buttonLayoutHeight,
-        members: [isc.HLayout.create({
-          width: 1,
-          overflow: 'visible',
-          styleName: this.buttonBarStyleName,
-          height: this.buttonBarHeight,
-          defaultLayoutAlign: 'center',
-          members: buttonLayout
-        })]
+        members: [
+          isc.HLayout.create({
+            width: 1,
+            overflow: 'visible',
+            styleName: this.buttonBarStyleName,
+            height: this.buttonBarHeight,
+            defaultLayoutAlign: 'center',
+            members: buttonLayout
+          })
+        ]
       });
       this.members.push(this.popupButtons);
-      this.closeClick = function () {
-        this.closeClick = function () {
+      this.closeClick = function() {
+        this.closeClick = function() {
           return true;
         }; // To avoid loop when "Super call"
         this.enableParentViewShortcuts(); // restore active view shortcuts before closing
@@ -211,7 +254,9 @@ isc.OBBaseParameterWindowView.addProperties({
         }
       };
     }
-    this.loading = OB.Utilities.createLoadingLayout(OB.I18N.getLabel('OBUIAPP_PROCESSING'));
+    this.loading = OB.Utilities.createLoadingLayout(
+      OB.I18N.getLabel('OBUIAPP_PROCESSING')
+    );
     this.loading.hide();
     this.members.push(this.loading);
     this.Super('initWidget', arguments);
@@ -222,31 +267,47 @@ isc.OBBaseParameterWindowView.addProperties({
     // allow to add external parameters
     isc.addProperties(context, this.externalParams);
 
-    if (this.callerField && this.callerField.view && this.callerField.view.getContextInfo) {
-      isc.addProperties(context || {}, this.callerField.view.getContextInfo(true /*excludeGrids*/ ));
+    if (
+      this.callerField &&
+      this.callerField.view &&
+      this.callerField.view.getContextInfo
+    ) {
+      isc.addProperties(
+        context || {},
+        this.callerField.view.getContextInfo(true /*excludeGrids*/)
+      );
     }
 
     this.disableParentViewShortcuts();
 
     params.windowId = this.windowId;
-    OB.RemoteCallManager.call(this.defaultsActionHandler, context, params, function (rpcResponse, data, rpcRequest) {
-      if (data && data.message && data.message.severity === isc.OBMessageBar.TYPE_ERROR) {
-        view.handleErrorState(data.message);
-      } else {
-        view.handleDefaults(data);
+    OB.RemoteCallManager.call(
+      this.defaultsActionHandler,
+      context,
+      params,
+      function(rpcResponse, data, rpcRequest) {
+        if (
+          data &&
+          data.message &&
+          data.message.severity === isc.OBMessageBar.TYPE_ERROR
+        ) {
+          view.handleErrorState(data.message);
+        } else {
+          view.handleDefaults(data);
+        }
       }
-    });
+    );
   },
 
   /*
    * Function that creates the layout with the buttons. Classes implementing OBBaseParameterWindowView
    * have to override this function to add the needed buttons.
    */
-  buildButtonLayout: function () {
+  buildButtonLayout: function() {
     return [];
   },
 
-  disableFormItems: function () {
+  disableFormItems: function() {
     var i, params;
     if (this.theForm && this.theForm.getItems) {
       params = this.theForm.getItems();
@@ -259,9 +320,9 @@ isc.OBBaseParameterWindowView.addProperties({
   },
 
   // dummy required by OBStandardView.prepareGridFields
-  setFieldFormProperties: function () {},
+  setFieldFormProperties: function() {},
 
-  validate: function () {
+  validate: function() {
     var isValid;
     if (this.theForm) {
       isValid = this.theForm.validate();
@@ -272,7 +333,7 @@ isc.OBBaseParameterWindowView.addProperties({
     return true;
   },
 
-  showProcessing: function (processing) {
+  showProcessing: function(processing) {
     if (processing) {
       if (this.theForm) {
         this.theForm.hide();
@@ -291,7 +352,7 @@ isc.OBBaseParameterWindowView.addProperties({
     }
   },
 
-  hideToolBarLayoutChildren: function () {
+  hideToolBarLayoutChildren: function() {
     var i;
     if (this.toolBarLayout) {
       for (i = 0; i < this.toolBarLayout.children.length; i++) {
@@ -303,7 +364,7 @@ isc.OBBaseParameterWindowView.addProperties({
   },
 
   // Checks params with readonly logic enabling or disabling them based on it
-  handleReadOnlyLogic: function () {
+  handleReadOnlyLogic: function() {
     var form, fields, i, field, parentContext;
 
     form = this.theForm;
@@ -321,7 +382,7 @@ isc.OBBaseParameterWindowView.addProperties({
     }
   },
 
-  handleDisplayLogicForGridColumns: function () {
+  handleDisplayLogicForGridColumns: function() {
     var form, fields, i, field;
 
     form = this.theForm;
@@ -340,7 +401,7 @@ isc.OBBaseParameterWindowView.addProperties({
     }
   },
 
-  handleErrorState: function (message) {
+  handleErrorState: function(message) {
     // Disable the parameter view elements
     this.disableFormItems();
     if (this.theForm) {
@@ -358,15 +419,22 @@ isc.OBBaseParameterWindowView.addProperties({
     if (message.title) {
       this.messageBar.setMessage(message.severity, message.title, message.text);
     } else {
-      this.messageBar.setMessage(message.severity, OB.I18N.getLabel('OBUIAPP_Error'), message.text);
+      this.messageBar.setMessage(
+        message.severity,
+        OB.I18N.getLabel('OBUIAPP_Error'),
+        message.text
+      );
     }
   },
 
-  handleDefaults: function (result) {
-    var i, field, def, defaults = result.defaults,
-        filterExpressions = result.filterExpressions,
-        defaultFilter = {},
-        gridsToBeFiltered = [];
+  handleDefaults: function(result) {
+    var i,
+      field,
+      def,
+      defaults = result.defaults,
+      filterExpressions = result.filterExpressions,
+      defaultFilter = {},
+      gridsToBeFiltered = [];
     if (!this.theForm) {
       if (this.onLoadFunction) {
         this.onLoadFunction(this);
@@ -425,9 +493,10 @@ isc.OBBaseParameterWindowView.addProperties({
     this.defaultsAreSet = true;
   },
 
-  getContextInfo: function (excludeGrids) {
+  getContextInfo: function(excludeGrids) {
     var result = {},
-        params, i;
+      params,
+      i;
     if (!this.theForm) {
       return result;
     }
@@ -445,25 +514,50 @@ isc.OBBaseParameterWindowView.addProperties({
     return result;
   },
 
-  getUnderLyingRecordContext: function (onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat) {
-    var ctxInfo = (this.buttonOwnerView && this.buttonOwnerView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat)) || {};
+  getUnderLyingRecordContext: function(
+    onlySessionProperties,
+    classicMode,
+    forceSettingContextVars,
+    convertToClassicFormat
+  ) {
+    var ctxInfo =
+      (this.buttonOwnerView &&
+        this.buttonOwnerView.getContextInfo(
+          onlySessionProperties,
+          classicMode,
+          forceSettingContextVars,
+          convertToClassicFormat
+        )) ||
+      {};
     return isc.addProperties(ctxInfo, this.additionalContextInfo);
   },
 
   /**
    * Given a value, it returns the proper value according to the provided type
    */
-  getTypeSafeValue: function (type, value) {
+  getTypeSafeValue: function(type, value) {
     var isNumber;
     if (!type) {
       return value;
     }
-    isNumber = isc.SimpleType.inheritsFrom(type, 'integer') || isc.SimpleType.inheritsFrom(type, 'float');
+    isNumber =
+      isc.SimpleType.inheritsFrom(type, 'integer') ||
+      isc.SimpleType.inheritsFrom(type, 'float');
     if (isNumber && isc.isA.Number(value)) {
       return value;
-    } else if (isNumber && OB.Utilities.Number.IsValidValueString(type, value)) {
-      return OB.Utilities.Number.OBMaskedToJS(value, type.decSeparator, type.groupSeparator);
-    } else if (isNumber && isc.isA.Number(OB.Utilities.Number.OBMaskedToJS(value, '.', ','))) {
+    } else if (
+      isNumber &&
+      OB.Utilities.Number.IsValidValueString(type, value)
+    ) {
+      return OB.Utilities.Number.OBMaskedToJS(
+        value,
+        type.decSeparator,
+        type.groupSeparator
+      );
+    } else if (
+      isNumber &&
+      isc.isA.Number(OB.Utilities.Number.OBMaskedToJS(value, '.', ','))
+    ) {
       // it might happen that default value uses the default '.' and ',' as decimal and group separator
       return OB.Utilities.Number.OBMaskedToJS(value, '.', ',');
     } else {
@@ -471,7 +565,7 @@ isc.OBBaseParameterWindowView.addProperties({
     }
   },
 
-  setAllButtonEnabled: function (enabled) {
+  setAllButtonEnabled: function(enabled) {
     if (this.isReport) {
       if (this.pdfExport) {
         this.pdfButton.setEnabled(enabled);
@@ -489,15 +583,17 @@ isc.OBBaseParameterWindowView.addProperties({
     }
   },
 
-  handleButtonsStatus: function () {
+  handleButtonsStatus: function() {
     var allRequiredSet = this.allRequiredParametersSet();
     this.setAllButtonEnabled(allRequiredSet);
   },
 
   // returns true if any non-grid required parameter does not have a value
-  allRequiredParametersSet: function () {
-    var i, item, length = this.theForm && this.theForm.getItems().length,
-        value;
+  allRequiredParametersSet: function() {
+    var i,
+      item,
+      length = this.theForm && this.theForm.getItems().length,
+      value;
     for (i = 0; i < length; i++) {
       item = this.theForm.getItems()[i];
       value = item.getValue();
@@ -506,21 +602,28 @@ isc.OBBaseParameterWindowView.addProperties({
         value = null;
       }
       // do not take into account the grid parameters when looking for required parameters without value
-      if (item.type !== 'OBPickEditGridItem' && item.required && item.isVisible() && value !== false && value !== 0 && !value) {
+      if (
+        item.type !== 'OBPickEditGridItem' &&
+        item.required &&
+        item.isVisible() &&
+        value !== false &&
+        value !== 0 &&
+        !value
+      ) {
         return false;
       }
     }
     return true;
   },
 
-  getParentActiveView: function () {
+  getParentActiveView: function() {
     if (this.buttonOwnerView && this.buttonOwnerView.standardWindow) {
       return this.buttonOwnerView.standardWindow.activeView;
     }
     return null;
   },
 
-  disableParentViewShortcuts: function () {
+  disableParentViewShortcuts: function() {
     var activeView = this.getParentActiveView();
     if (activeView && activeView.viewGrid && activeView.toolBar) {
       activeView.viewGrid.disableShortcuts();
@@ -528,7 +631,7 @@ isc.OBBaseParameterWindowView.addProperties({
     }
   },
 
-  enableParentViewShortcuts: function () {
+  enableParentViewShortcuts: function() {
     var activeView = this.getParentActiveView();
     if (activeView && activeView.viewGrid && activeView.toolBar) {
       activeView.viewGrid.enableShortcuts();
@@ -536,14 +639,14 @@ isc.OBBaseParameterWindowView.addProperties({
     }
   },
 
-  getBookMarkParams: function () {
+  getBookMarkParams: function() {
     var result = {};
     result.viewId = this.getClassName();
     result.tabTitle = this.tabTitle;
     return result;
   },
 
-  isSameTab: function (viewName, params) {
+  isSameTab: function(viewName, params) {
     // process definition based windows can be opened in more than one tab at the same time
     return false;
   }

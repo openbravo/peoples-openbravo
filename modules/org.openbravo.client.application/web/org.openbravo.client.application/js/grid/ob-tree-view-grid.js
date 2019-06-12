@@ -49,7 +49,7 @@ isc.OBTreeViewGrid.addProperties({
   // - The tree category is LinkToParent and
   // - There has been at least a reparent
   needsViewGridRefresh: false,
-  init: function () {
+  init: function() {
     this.copyFunctionsFromViewGrid();
     this.Super('init', arguments);
     if (this.orderedTree) {
@@ -57,14 +57,29 @@ isc.OBTreeViewGrid.addProperties({
     } else {
       this.canSort = true;
     }
-    this.confirmNodeReparent = OB.PropertyStore.get('OBUIAPP_ConfirmNodeReparent', this.view.windowId);
-    this.filterNoRecordsEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].clearFilter();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter') + '</span>';
+    this.confirmNodeReparent = OB.PropertyStore.get(
+      'OBUIAPP_ConfirmNodeReparent',
+      this.view.windowId
+    );
+    this.filterNoRecordsEmptyMessage =
+      '<span class="' +
+      this.emptyMessageStyle +
+      '">' +
+      OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') +
+      '</span>' +
+      '<span onclick="window[\'' +
+      this.ID +
+      '\'].clearFilter();" class="' +
+      this.emptyMessageLinkStyle +
+      '">' +
+      OB.I18N.getLabel('OBUIAPP_GridClearFilter') +
+      '</span>';
   },
 
   // Some OBTreeViewGrid functionality is alreadyd implemented in OBViewGrid
   // Instead of rewriting it, copy it
   // Do not do this for functions that makes call to super() if it needs to use code from OBGrid. It would not use OBGrid as prototype, but ListGrid
-  copyFunctionsFromViewGrid: function () {
+  copyFunctionsFromViewGrid: function() {
     this.filterEditorProperties = this.view.viewGrid.filterEditorProperties;
     this.checkShowFilterFunnelIcon = this.view.viewGrid.checkShowFilterFunnelIcon;
     this.isGridFiltered = this.view.viewGrid.isGridFiltered;
@@ -81,9 +96,10 @@ isc.OBTreeViewGrid.addProperties({
   },
 
   // Sets the fields of the datasource and extends the transformRequest and transformResponse functions
-  setDataSource: function (ds, fields) {
-    var ret, me = this;
-    ds.transformRequest = function (dsRequest) {
+  setDataSource: function(ds, fields) {
+    var ret,
+      me = this;
+    ds.transformRequest = function(dsRequest) {
       dsRequest.params = dsRequest.params || {};
       dsRequest.params._startRow = 0;
       dsRequest.params._endRow = OB.Properties.TreeDatasourceFetchLimit;
@@ -92,7 +108,9 @@ isc.OBTreeViewGrid.addProperties({
       dsRequest.params.parentRecordId = me.parentTabRecordId;
       dsRequest.params.tabId = me.view.tabId;
       dsRequest.params._noActiveFilter = true;
-      dsRequest.params._extraProperties = me.view.dataSource && me.view.dataSource.requestProperties.params._extraProperties;
+      dsRequest.params._extraProperties =
+        me.view.dataSource &&
+        me.view.dataSource.requestProperties.params._extraProperties;
       if (dsRequest.dropIndex || dsRequest.dropIndex === 0) {
         //Only send the index if the tree is ordered
         dsRequest = me.addOrderedTreeParameters(dsRequest);
@@ -103,10 +121,14 @@ isc.OBTreeViewGrid.addProperties({
       return this.Super('transformRequest', arguments);
     };
 
-    ds.transformResponse = function (dsResponse, dsRequest, jsonData) {
+    ds.transformResponse = function(dsResponse, dsRequest, jsonData) {
       var i, node;
       if (jsonData.response.message) {
-        me.view.messageBar.setMessage(jsonData.response.message.messageType, null, jsonData.response.message.message);
+        me.view.messageBar.setMessage(
+          jsonData.response.message.messageType,
+          null,
+          jsonData.response.message.message
+        );
       } else if (dsRequest.operationType === 'update') {
         me.view.messageBar.hide();
       }
@@ -126,7 +148,7 @@ isc.OBTreeViewGrid.addProperties({
       return this.Super('transformResponse', arguments);
     };
 
-    ds.handleError = function (response, request) {
+    ds.handleError = function(response, request) {
       var errorMessage;
       if (!response || !response.error) {
         return;
@@ -136,32 +158,40 @@ isc.OBTreeViewGrid.addProperties({
       } else if (response.error.type === 'user' && response.error.message) {
         errorMessage = response.error.message;
       }
-      me.view.messageBar.setMessage('error', null, OB.I18N.getLabel(errorMessage));
+      me.view.messageBar.setMessage(
+        'error',
+        null,
+        OB.I18N.getLabel(errorMessage)
+      );
     };
 
-    ds.updateData = function (updatedRecord, callback, requestProperties) {
+    ds.updateData = function(updatedRecord, callback, requestProperties) {
       // the new callback checks if the node movement has to be reverted
-      var newCallback = function (dsResponse, data, dsRequest) {
-          var i, node, parentNode;
-          if (dsResponse.error) {
-            ds.handleError(dsResponse, dsRequest);
-          } else if (dsRequest.newParentNode && dsRequest.dragTree && dsRequest.newParentNode.nodeId === dsRequest.dragTree.rootValue) {
-            // if the node is being moved to the root, reload the grid to force
-            // displaying properly the node in its new position. see issue https://issues.openbravo.com/view.php?id=26898
-            dsRequest.dragTree.invalidateCache();
-          } else {
-            for (i = 0; i < data.length; i++) {
-              node = data[i];
-              if (node.revertMovement) {
-                parentNode = dsRequest.dragTree.find('id', node.parentId);
-                if (parentNode) {
-                  // move the node back to its previous index
-                  dsRequest.dragTree.move(node, parentNode, node.prevIndex);
-                }
+      var newCallback = function(dsResponse, data, dsRequest) {
+        var i, node, parentNode;
+        if (dsResponse.error) {
+          ds.handleError(dsResponse, dsRequest);
+        } else if (
+          dsRequest.newParentNode &&
+          dsRequest.dragTree &&
+          dsRequest.newParentNode.nodeId === dsRequest.dragTree.rootValue
+        ) {
+          // if the node is being moved to the root, reload the grid to force
+          // displaying properly the node in its new position. see issue https://issues.openbravo.com/view.php?id=26898
+          dsRequest.dragTree.invalidateCache();
+        } else {
+          for (i = 0; i < data.length; i++) {
+            node = data[i];
+            if (node.revertMovement) {
+              parentNode = dsRequest.dragTree.find('id', node.parentId);
+              if (parentNode) {
+                // move the node back to its previous index
+                dsRequest.dragTree.move(node, parentNode, node.prevIndex);
               }
             }
           }
-          };
+        }
+      };
       this.Super('updateData', [updatedRecord, newCallback, requestProperties]);
     };
     fields = this.getTreeGridFields(me.fields);
@@ -177,9 +207,10 @@ isc.OBTreeViewGrid.addProperties({
 
   // Used to copy the fields from the OBViewGrid to the OBTreeViewGrid.
   // It does not copy the fields that start with underscore
-  getTreeGridFields: function (fields) {
+  getTreeGridFields: function(fields) {
     var treeGridFields = isc.shallowClone(fields),
-        i, nDeleted = 0;
+      i,
+      nDeleted = 0;
     for (i = 0; i < treeGridFields.length; i++) {
       if (treeGridFields[i - nDeleted].name[0] === '_') {
         treeGridFields.splice(i - nDeleted, 1);
@@ -192,7 +223,7 @@ isc.OBTreeViewGrid.addProperties({
   // Adds to the request the parameters related with the node ordering
   // * prevNodeId: Id of the node placed right before the moved node. Null if there are none
   // * prevNodeId: Id of the node placed right after the moved node. Null if there are none
-  addOrderedTreeParameters: function (dsRequest) {
+  addOrderedTreeParameters: function(dsRequest) {
     var childrenOfNewParent, prevNode, nextNode;
     if (this.orderedTree) {
       dsRequest.params.dropIndex = dsRequest.dropIndex;
@@ -215,38 +246,44 @@ isc.OBTreeViewGrid.addProperties({
     return dsRequest;
   },
 
-
   // Returns the id of the parent tab, if any
-  getParentTabRecordId: function () {
-    if (!this.view.parentView || !this.view.parentView.viewGrid.getSelectedRecord()) {
+  getParentTabRecordId: function() {
+    if (
+      !this.view.parentView ||
+      !this.view.parentView.viewGrid.getSelectedRecord()
+    ) {
       return null;
     }
     return this.view.parentView.viewGrid.getSelectedRecord().id;
   },
 
-  // Returns a string that represents a jsonarray containing the names of all the TreeGrid fields 
-  getSelectedPropertiesString: function () {
+  // Returns a string that represents a jsonarray containing the names of all the TreeGrid fields
+  getSelectedPropertiesString: function() {
     var selectedProperties = '[',
-        first = true,
-        len = this.fields.length,
-        i;
+      first = true,
+      len = this.fields.length,
+      i;
     for (i = 0; i < len; i++) {
       if (first) {
         first = false;
-        selectedProperties = selectedProperties + "'" + this.fields[i].name + "'";
+        selectedProperties =
+          selectedProperties + "'" + this.fields[i].name + "'";
       } else {
-        selectedProperties = selectedProperties + ',' + "'" + this.fields[i].name + "'";
+        selectedProperties =
+          selectedProperties + ',' + "'" + this.fields[i].name + "'";
       }
     }
     selectedProperties = selectedProperties + ']';
     return selectedProperties;
   },
 
-  transferNodes: function (nodes, folder, index, sourceWidget, callback) {
+  transferNodes: function(nodes, folder, index, sourceWidget, callback) {
     var me = this,
-        i, len = nodes.length,
-        nodesIdentifier = "",
-        parentIdentifier, message;
+      i,
+      len = nodes.length,
+      nodesIdentifier = '',
+      parentIdentifier,
+      message;
     if (folder.canBeParentNode === false) {
       return;
     }
@@ -254,8 +291,8 @@ isc.OBTreeViewGrid.addProperties({
       if (this.confirmNodeReparent && this.canReorderRecords) {
         for (i = 0; i < len; i++) {
           nodesIdentifier = nodesIdentifier + nodes[i][OB.Constants.IDENTIFIER];
-          if ((i + 1) < len) {
-            nodesIdentifier = nodesIdentifier + ", ";
+          if (i + 1 < len) {
+            nodesIdentifier = nodesIdentifier + ', ';
           }
         }
         if (folder.nodeId === this.dataProperties.rootValue) {
@@ -264,8 +301,11 @@ isc.OBTreeViewGrid.addProperties({
           parentIdentifier = folder[OB.Constants.IDENTIFIER];
         }
 
-        message = OB.I18N.getLabel('OBUIAPP_MoveTreeNode', [nodesIdentifier, parentIdentifier]);
-        isc.confirm(message, function (value) {
+        message = OB.I18N.getLabel('OBUIAPP_MoveTreeNode', [
+          nodesIdentifier,
+          parentIdentifier
+        ]);
+        isc.confirm(message, function(value) {
           if (value) {
             me.doTransferNodes(nodes, folder, index, sourceWidget, callback);
           }
@@ -278,7 +318,7 @@ isc.OBTreeViewGrid.addProperties({
 
   // smartclients transferNodes does not update the tree it a node is moved within its same parent
   // do it here
-  doTransferNodes: function (nodes, folder, index, sourceWidget, callback) {
+  doTransferNodes: function(nodes, folder, index, sourceWidget, callback) {
     var node, dataSource, oldValues, dragTree, dataSourceProperties, i;
     if (this.movedToSameParent(nodes, folder)) {
       dragTree = sourceWidget.getData();
@@ -286,7 +326,9 @@ isc.OBTreeViewGrid.addProperties({
       for (i = 0; i < nodes.length; i++) {
         node = nodes[i];
         // stores the node original index just in case the movement is not valid and the node has to be moved back to its original position
-        node.prevIndex = this.getData().getChildren(this.getData().getParent(node)).indexOf(node);
+        node.prevIndex = this.getData()
+          .getChildren(this.getData().getParent(node))
+          .indexOf(node);
         oldValues = isc.addProperties({}, node);
         dataSourceProperties = {
           oldValues: oldValues,
@@ -298,9 +340,16 @@ isc.OBTreeViewGrid.addProperties({
           dropIndex: index
         };
         if (index > 0) {
-          dataSourceProperties.dropNeighbor = this.data.getChildren(folder)[index - 1];
+          dataSourceProperties.dropNeighbor = this.data.getChildren(folder)[
+            index - 1
+          ];
         }
-        this.updateDataViaDataSource(node, dataSource, dataSourceProperties, sourceWidget);
+        this.updateDataViaDataSource(
+          node,
+          dataSource,
+          dataSourceProperties,
+          sourceWidget
+        );
       }
     } else {
       if (this.treeStructure === 'LinkToParent') {
@@ -312,8 +361,9 @@ isc.OBTreeViewGrid.addProperties({
   },
 
   // Checks if any node has been moved to another position of its current parent node
-  movedToSameParent: function (nodes, newParent) {
-    var i, len = nodes.length;
+  movedToSameParent: function(nodes, newParent) {
+    var i,
+      len = nodes.length;
     for (i = 0; i < len; i++) {
       if (nodes[i].parentId === this.dataProperties.rootValue) {
         if (nodes[i].parentId !== newParent.nodeId) {
@@ -330,8 +380,10 @@ isc.OBTreeViewGrid.addProperties({
 
   // Returns a node from its id (the id property of the record, not the nodeId property)
   // If no node exists with that id, it return null
-  getNodeByID: function (nodeId) {
-    var i, node, nodeList = this.data.getNodeList();
+  getNodeByID: function(nodeId) {
+    var i,
+      node,
+      nodeList = this.data.getNodeList();
     for (i = 0; i < nodeList.length; i++) {
       node = nodeList[i];
       if (node.id === nodeId) {
@@ -341,24 +393,32 @@ isc.OBTreeViewGrid.addProperties({
     return null;
   },
 
-  setView: function (view) {
+  setView: function(view) {
     this.view = view;
   },
 
   // Opens the record in the edit form
   // TODO: Check if the record is readonly?
-  recordDoubleClick: function (viewer, record, recordNum, field, fieldNum, value, rawValue) {
-    this.view.editRecordFromTreeGrid(record, false, (field ? field.name : null));
+  recordDoubleClick: function(
+    viewer,
+    record,
+    recordNum,
+    field,
+    fieldNum,
+    value,
+    rawValue
+  ) {
+    this.view.editRecordFromTreeGrid(record, false, field ? field.name : null);
   },
 
-  show: function () {
+  show: function() {
     this.view.toolBar.updateButtonState();
     this.Super('show', arguments);
     this.checkShowFilterFunnelIcon(this.getCriteria());
   },
 
   // When hiding the tree grid to show the view grid, only refresh it if needed
-  hide: function () {
+  hide: function() {
     this.copyCriteriaToViewGrid();
     if (this.needsViewGridRefresh) {
       this.needsViewGridRefresh = false;
@@ -368,18 +428,18 @@ isc.OBTreeViewGrid.addProperties({
   },
 
   // Takes the criteria from the view grid and applies it to the tree grid
-  copyCriteriaFromViewGrid: function () {
+  copyCriteriaFromViewGrid: function() {
     var viewGridCriteria = this.view.viewGrid.getCriteria();
     this.setCriteria(viewGridCriteria);
   },
 
   // Takes the criteria from the tree grid and applies it to the view grid
-  copyCriteriaToViewGrid: function () {
+  copyCriteriaToViewGrid: function() {
     var treeGridCriteria = this.getCriteria();
     this.view.viewGrid.setCriteria(treeGridCriteria);
   },
 
-  rowMouseDown: function (record, rowNum, colNum) {
+  rowMouseDown: function(record, rowNum, colNum) {
     this.Super('rowMouseDown', arguments);
     if (!isc.EventHandler.ctrlKeyDown()) {
       this.deselectAllRecords();
@@ -387,7 +447,15 @@ isc.OBTreeViewGrid.addProperties({
     this.selectRecord(rowNum);
   },
 
-  recordClick: function (viewer, record, recordNum, field, fieldNum, value, rawValue) {
+  recordClick: function(
+    viewer,
+    record,
+    recordNum,
+    field,
+    fieldNum,
+    value,
+    rawValue
+  ) {
     if (isc.EH.getEventType() === 'mouseUp') {
       // Don't do anything on the mouseUp event, the record is actually selected in the mouseDown event
       return;
@@ -396,16 +464,20 @@ isc.OBTreeViewGrid.addProperties({
     this.selectRecord(recordNum);
   },
 
-  selectionUpdated: function (record, recordList) {
+  selectionUpdated: function(record, recordList) {
     var me = this,
-        callback = function () {
+      callback = function() {
         me.delayedSelectionUpdated();
-        };
+      };
     // wait 2 times longer than the fire on pause delay default
-    this.fireOnPause('delayedSelectionUpdated_' + this.ID, callback, this.fireOnPauseDelay * 2);
+    this.fireOnPause(
+      'delayedSelectionUpdated_' + this.ID,
+      callback,
+      this.fireOnPauseDelay * 2
+    );
   },
 
-  delayedSelectionUpdated: function (record, recordList) {
+  delayedSelectionUpdated: function(record, recordList) {
     var length, tabViewPane, i;
     this.view.updateSubtabVisibility();
     this.view.toolBar.updateButtonState();
@@ -419,24 +491,24 @@ isc.OBTreeViewGrid.addProperties({
     }
   },
 
-  getFetchRequestParams: function (params) {
+  getFetchRequestParams: function(params) {
     params = this.view.viewGrid.getFetchRequestParams(params);
     params._tabId = this.view.tabId;
     return params;
   },
 
   // show or hide the filter button
-  filterEditorSubmit: function (criteria) {
+  filterEditorSubmit: function(criteria) {
     this.checkShowFilterFunnelIcon(criteria);
   },
 
   // If any filter change, the view grid will have to te refreshed when the tree grid is hidden
-  editorChanged: function (item) {
+  editorChanged: function(item) {
     this.needsViewGridRefresh = true;
     this.Super('editorChanged', arguments);
   },
 
-  getCriteria: function () {
+  getCriteria: function() {
     var criteria = this.Super('getCriteria', arguments) || {};
     if ((criteria === null || !criteria.criteria) && this.initialCriteria) {
       criteria = isc.shallowClone(this.initialCriteria);
@@ -445,14 +517,19 @@ isc.OBTreeViewGrid.addProperties({
     return criteria;
   },
 
-  refreshGrid: function (callback) {
+  refreshGrid: function(callback) {
     this.actionAfterDataArrived = callback;
     this.fetchData(this.getCriteria());
   },
 
-  dataArrived: function (startRow, endRow) {
+  dataArrived: function(startRow, endRow) {
     // reset noDataEmptyMessage to prevent showing "loading..." indefinitely if the datasource does not return any data
-    this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
+    this.noDataEmptyMessage =
+      '<span class="' +
+      this.emptyMessageStyle +
+      '">' +
+      OB.I18N.getLabel('OBUIAPP_NoDataInGrid') +
+      '</span>';
     this.resetEmptyMessage();
     if (this.actionAfterDataArrived) {
       this.actionAfterDataArrived();
@@ -461,7 +538,7 @@ isc.OBTreeViewGrid.addProperties({
   },
 
   // refreshes record after edition
-  refreshRecord: function (values) {
+  refreshRecord: function(values) {
     var record, p, childrenProperty;
     record = this.getNodeByID(values.id);
     if (record) {
@@ -479,7 +556,7 @@ isc.OBTreeViewGrid.addProperties({
     }
   },
 
-  isWritable: function (record) {
+  isWritable: function(record) {
     return !record._readOnly;
   }
 });

@@ -37,9 +37,13 @@ OB.Utilities.Date.centuryReference = 50; // Notice that change this value
 //
 // Parameters:
 // * {{{displayFormat}}}: the string displayFormat definition to repair.
-OB.Utilities.Date.normalizeDisplayFormat = function (displayFormat) {
+OB.Utilities.Date.normalizeDisplayFormat = function(displayFormat) {
   var newFormat = '';
-  displayFormat = displayFormat.replace('mm', 'MM').replace('dd', 'DD').replace('yyyy', 'YYYY').replace('yy', 'YY');
+  displayFormat = displayFormat
+    .replace('mm', 'MM')
+    .replace('dd', 'DD')
+    .replace('yyyy', 'YYYY')
+    .replace('yy', 'YY');
   displayFormat = displayFormat.replace('%D', '%d').replace('%M', '%m');
   if (displayFormat !== null && displayFormat !== '') {
     newFormat = displayFormat;
@@ -49,10 +53,22 @@ OB.Utilities.Date.normalizeDisplayFormat = function (displayFormat) {
     newFormat = newFormat.replace('DD', '%d');
     newFormat = newFormat.substring(0, 8);
   }
-  displayFormat = displayFormat.replace('hh', 'HH').replace('HH24', 'HH').replace('mi', 'MI').replace('ss', 'SS');
-  displayFormat = displayFormat.replace('%H', 'HH').replace('HH:%m', 'HH:MI').replace('HH.%m', 'HH.MI').replace('%S', 'SS');
-  displayFormat = displayFormat.replace('HH:mm', 'HH:MI').replace('HH.mm', 'HH.MI');
-  displayFormat = displayFormat.replace('HH:MM', 'HH:MI').replace('HH.MM', 'HH.MI');
+  displayFormat = displayFormat
+    .replace('hh', 'HH')
+    .replace('HH24', 'HH')
+    .replace('mi', 'MI')
+    .replace('ss', 'SS');
+  displayFormat = displayFormat
+    .replace('%H', 'HH')
+    .replace('HH:%m', 'HH:MI')
+    .replace('HH.%m', 'HH.MI')
+    .replace('%S', 'SS');
+  displayFormat = displayFormat
+    .replace('HH:mm', 'HH:MI')
+    .replace('HH.mm', 'HH.MI');
+  displayFormat = displayFormat
+    .replace('HH:MM', 'HH:MI')
+    .replace('HH.MM', 'HH.MI');
   if (displayFormat.indexOf(' HH:MI:SS') !== -1) {
     newFormat += ' %H:%M:%S';
   } else if (displayFormat.indexOf(' HH:MI') !== -1) {
@@ -70,17 +86,24 @@ OB.Utilities.Date.normalizeDisplayFormat = function (displayFormat) {
 
 //** {{{ OB.Utilities.getTimeFormat }}} **
 //
-// Returns an object with the timeformatter, a boolean if 24 hours 
+// Returns an object with the timeformatter, a boolean if 24 hours
 // time clock are being used and the timeformat itself
-OB.Utilities.getTimeFormatDefinition = function () {
-  var timeFormat, is24h = true;
+OB.Utilities.getTimeFormatDefinition = function() {
+  var timeFormat,
+    is24h = true;
   if (OB.Format.dateTime.indexOf(' ') === -1) {
     return 'to24HourTime';
   }
 
-  timeFormat = OB.Format.dateTime.substring(OB.Format.dateTime.indexOf(' ') + 1);
+  timeFormat = OB.Format.dateTime.substring(
+    OB.Format.dateTime.indexOf(' ') + 1
+  );
 
-  if (timeFormat && timeFormat.toUpperCase().lastIndexOf(' A') !== -1 && timeFormat.toUpperCase().lastIndexOf(' A') === timeFormat.length - 2) {
+  if (
+    timeFormat &&
+    timeFormat.toUpperCase().lastIndexOf(' A') !== -1 &&
+    timeFormat.toUpperCase().lastIndexOf(' A') === timeFormat.length - 2
+  ) {
     is24h = false;
   }
 
@@ -107,17 +130,17 @@ OB.Utilities.getTimeFormatDefinition = function () {
 // * {{{dateFormat}}}: the dateFormat pattern to use
 // Return:
 // * a Date object or null if conversion was not possible.
-OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
+OB.Utilities.Date.OBToJS = function(OBDate, dateFormat) {
   if (!OBDate) {
     return null;
   }
 
   // if already a date then return true
   var isADate = Object.prototype.toString.call(OBDate) === '[object Date]',
-      PMIndicator = ' PM',
-      AMIndicator = ' AM',
-      is24h = true,
-      isPM = false;
+    PMIndicator = ' PM',
+    AMIndicator = ' AM',
+    is24h = true,
+    isPM = false;
   if (isADate) {
     return OBDate;
   }
@@ -132,8 +155,11 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
   dateFormat = OB.Utilities.Date.normalizeDisplayFormat(dateFormat);
   dateFormat = dateFormat.replace(' A', '');
 
-  var isFullYear = (dateFormat.indexOf('%Y') !== -1);
-  if (OBDate.indexOf(PMIndicator) !== -1 || OBDate.indexOf(AMIndicator) !== -1) {
+  var isFullYear = dateFormat.indexOf('%Y') !== -1;
+  if (
+    OBDate.indexOf(PMIndicator) !== -1 ||
+    OBDate.indexOf(AMIndicator) !== -1
+  ) {
     is24h = false;
   }
   if (!is24h && OBDate.indexOf(PMIndicator) !== -1) {
@@ -158,17 +184,46 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
     return null;
   }
 
-  var year = dateFormat.indexOf('%y') !== -1 ? OBDate.substring(dateFormat.indexOf('%y'), dateFormat.indexOf('%y') + 2) : 0;
-  var fullYear = dateFormat.indexOf('%Y') !== -1 ? OBDate.substring(dateFormat.indexOf('%Y'), dateFormat.indexOf('%Y') + 4) : 0;
-  var month = dateFormat.indexOf('%m') !== -1 ? OBDate.substring(dateFormat.indexOf('%m'), dateFormat.indexOf('%m') + 2) : 0;
-  var day = dateFormat.indexOf('%d') !== -1 ? OBDate.substring(dateFormat.indexOf('%d'), dateFormat.indexOf('%d') + 2) : 0;
-  var hours = dateFormat.indexOf('%H') !== -1 ? OBDate.substring(dateFormat.indexOf('%H'), dateFormat.indexOf('%H') + 2) : 0;
-  var minutes = dateFormat.indexOf('%M') !== -1 ? OBDate.substring(dateFormat.indexOf('%M'), dateFormat.indexOf('%M') + 2) : 0;
-  var seconds = dateFormat.indexOf('%S') !== -1 ? OBDate.substring(dateFormat.indexOf('%S'), dateFormat.indexOf('%S') + 2) : 0;
+  var year =
+    dateFormat.indexOf('%y') !== -1
+      ? OBDate.substring(dateFormat.indexOf('%y'), dateFormat.indexOf('%y') + 2)
+      : 0;
+  var fullYear =
+    dateFormat.indexOf('%Y') !== -1
+      ? OBDate.substring(dateFormat.indexOf('%Y'), dateFormat.indexOf('%Y') + 4)
+      : 0;
+  var month =
+    dateFormat.indexOf('%m') !== -1
+      ? OBDate.substring(dateFormat.indexOf('%m'), dateFormat.indexOf('%m') + 2)
+      : 0;
+  var day =
+    dateFormat.indexOf('%d') !== -1
+      ? OBDate.substring(dateFormat.indexOf('%d'), dateFormat.indexOf('%d') + 2)
+      : 0;
+  var hours =
+    dateFormat.indexOf('%H') !== -1
+      ? OBDate.substring(dateFormat.indexOf('%H'), dateFormat.indexOf('%H') + 2)
+      : 0;
+  var minutes =
+    dateFormat.indexOf('%M') !== -1
+      ? OBDate.substring(dateFormat.indexOf('%M'), dateFormat.indexOf('%M') + 2)
+      : 0;
+  var seconds =
+    dateFormat.indexOf('%S') !== -1
+      ? OBDate.substring(dateFormat.indexOf('%S'), dateFormat.indexOf('%S') + 2)
+      : 0;
 
   // Check that really all date parts (if they are present) are numbers
   var digitRegExp = ['^\\d+$', 'gm'];
-  if ((year && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(year))) || (fullYear && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(fullYear))) || (month && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(month))) || (day && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(day))) || (hours && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(hours))) || (minutes && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(minutes))) || (seconds && !(new RegExp(digitRegExp[0], digitRegExp[1]).test(seconds)))) {
+  if (
+    (year && !new RegExp(digitRegExp[0], digitRegExp[1]).test(year)) ||
+    (fullYear && !new RegExp(digitRegExp[0], digitRegExp[1]).test(fullYear)) ||
+    (month && !new RegExp(digitRegExp[0], digitRegExp[1]).test(month)) ||
+    (day && !new RegExp(digitRegExp[0], digitRegExp[1]).test(day)) ||
+    (hours && !new RegExp(digitRegExp[0], digitRegExp[1]).test(hours)) ||
+    (minutes && !new RegExp(digitRegExp[0], digitRegExp[1]).test(minutes)) ||
+    (seconds && !new RegExp(digitRegExp[0], digitRegExp[1]).test(seconds))
+  ) {
     return null;
   }
 
@@ -187,7 +242,14 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
     }
   }
 
-  if (day < 1 || day > 31 || month < 1 || month > 12 || year > 99 || fullYear > 9999) {
+  if (
+    day < 1 ||
+    day > 31 ||
+    month < 1 ||
+    month > 12 ||
+    year > 99 ||
+    fullYear > 9999
+  ) {
     return null;
   }
 
@@ -237,14 +299,14 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
 // * {{{dateFormat}}}: the dateFormat pattern to use
 // Return:
 // * a String or null if the JSDate is not a date.
-OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
+OB.Utilities.Date.JSToOB = function(JSDate, dateFormat) {
   dateFormat = OB.Utilities.Date.normalizeDisplayFormat(dateFormat);
 
   var isADate = Object.prototype.toString.call(JSDate) === '[object Date]',
-      PMIndicator = ' PM',
-      AMIndicator = ' AM',
-      is24h = true,
-      isPM = false;
+    PMIndicator = ' PM',
+    AMIndicator = ' AM',
+    is24h = true,
+    isPM = false;
   if (!isADate) {
     return null;
   }
@@ -255,7 +317,10 @@ OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
   if (window.isc && isc.Time && isc.Time.AMIndicator) {
     AMIndicator = isc.Time.AMIndicator;
   }
-  if (dateFormat.toUpperCase().lastIndexOf(' A') !== -1 && dateFormat.toUpperCase().lastIndexOf(' A') === dateFormat.length - 2) {
+  if (
+    dateFormat.toUpperCase().lastIndexOf(' A') !== -1 &&
+    dateFormat.toUpperCase().lastIndexOf(' A') === dateFormat.length - 2
+  ) {
     is24h = false;
   }
 
@@ -269,7 +334,10 @@ OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
 
   var centuryReference = OB.Utilities.Date.centuryReference;
   if (dateFormat.indexOf('%y') !== -1) {
-    if (parseInt(fullYear, 10) >= 1900 + centuryReference && parseInt(fullYear, 10) < 2100 - centuryReference) {
+    if (
+      parseInt(fullYear, 10) >= 1900 + centuryReference &&
+      parseInt(fullYear, 10) < 2100 - centuryReference
+    ) {
       if (parseInt(year, 10) >= 100) {
         year = parseInt(year, 10) - 100;
         year = year.toString();
@@ -342,9 +410,11 @@ OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
 // * {{{allFields}}}: complete list of fields
 // Return:
 // * an array with the names of the time fields contained in allFields.
-OB.Utilities.Date.getTimeFields = function (allFields) {
-  var i, field, timeFields = [],
-      length = allFields.length;
+OB.Utilities.Date.getTimeFields = function(allFields) {
+  var i,
+    field,
+    timeFields = [],
+    length = allFields.length;
   for (i = 0; i < length; i++) {
     field = allFields[i];
     if (field.type === '_id_24') {
@@ -363,12 +433,16 @@ OB.Utilities.Date.getTimeFields = function (allFields) {
 // * {{{allFields}}}: array with the fields of the records
 // Return:
 // * Nothing. newData, after converting its time fields from UTC timezone the the client side timezone
-OB.Utilities.Date.convertUTCTimeToLocalTime = function (newData, allFields) {
-  var textField, fieldToDate, i, j, UTCOffsetInMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds(),
-      timeFields = OB.Utilities.Date.getTimeFields(allFields),
-      timeFieldsLength = timeFields.length,
-      convertedData = isc.clone(newData),
-      convertedDataLength = convertedData.length;
+OB.Utilities.Date.convertUTCTimeToLocalTime = function(newData, allFields) {
+  var textField,
+    fieldToDate,
+    i,
+    j,
+    UTCOffsetInMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds(),
+    timeFields = OB.Utilities.Date.getTimeFields(allFields),
+    timeFieldsLength = timeFields.length,
+    convertedData = isc.clone(newData),
+    convertedDataLength = convertedData.length;
   for (i = 0; i < timeFieldsLength; i++) {
     for (j = 0; j < convertedDataLength; j++) {
       textField = convertedData[j][timeFields[i].name];
@@ -381,7 +455,12 @@ OB.Utilities.Date.convertUTCTimeToLocalTime = function (newData, allFields) {
         fieldToDate = textField;
       }
       fieldToDate.setTime(fieldToDate.getTime() + UTCOffsetInMiliseconds);
-      convertedData[j][timeFields[i].name] = fieldToDate.getHours() + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
+      convertedData[j][timeFields[i].name] =
+        fieldToDate.getHours() +
+        ':' +
+        fieldToDate.getMinutes() +
+        ':' +
+        fieldToDate.getSeconds();
     }
   }
   return convertedData;
@@ -393,18 +472,20 @@ OB.Utilities.Date.convertUTCTimeToLocalTime = function (newData, allFields) {
 //
 // Parameters:
 // * {{{date}}}: date in which it be added its timezone offset
-OB.Utilities.Date.addTimezoneOffset = function (date) {
+OB.Utilities.Date.addTimezoneOffset = function(date) {
   var newDate, originalTimezoneOffset, newTimezoneOffset;
 
   if (Object.prototype.toString.call(date) !== '[object Date]') {
     return date;
   }
   originalTimezoneOffset = date.getTimezoneOffset();
-  newDate = new Date(date.getTime() + (originalTimezoneOffset * 60000));
+  newDate = new Date(date.getTime() + originalTimezoneOffset * 60000);
   newTimezoneOffset = newDate.getTimezoneOffset();
   // Apply a correction if the timezone offset has changed
   if (originalTimezoneOffset !== newTimezoneOffset) {
-    newDate = new Date(newDate.getTime() + (newTimezoneOffset - originalTimezoneOffset) * 60000);
+    newDate = new Date(
+      newDate.getTime() + (newTimezoneOffset - originalTimezoneOffset) * 60000
+    );
   }
   return newDate;
 };
@@ -415,36 +496,41 @@ OB.Utilities.Date.addTimezoneOffset = function (date) {
 //
 // Parameters:
 // * {{{date}}}: date in which it be substracted its timezone offset
-OB.Utilities.Date.substractTimezoneOffset = function (date) {
+OB.Utilities.Date.substractTimezoneOffset = function(date) {
   var newDate;
 
   if (Object.prototype.toString.call(date) !== '[object Date]') {
     return date;
   }
-  newDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+  newDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
   return newDate;
 };
 
 //** {{{ OB.Utilities.Date.getUTCOffsetInMiliseconds }}} **
 //
 // Return the offset with UTC measured in miliseconds
-OB.Utilities.Date.getUTCOffsetInMiliseconds = function () {
+OB.Utilities.Date.getUTCOffsetInMiliseconds = function() {
   var UTCHourOffset = isc.Time.getUTCHoursDisplayOffset(new Date()),
-      UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date());
-  return (UTCHourOffset * 60 * 60 * 1000) + (UTCMinuteOffset * 60 * 1000);
+    UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date());
+  return UTCHourOffset * 60 * 60 * 1000 + UTCMinuteOffset * 60 * 1000;
 };
 
 //** {{{ OB.Utilities.Date.roundToNextQuarter }}} **
 //
 // Round any date to the next quarter
-OB.Utilities.Date.roundToNextQuarter = function (date) {
+OB.Utilities.Date.roundToNextQuarter = function(date) {
   var newDate = new Date(date),
-      minutes = newDate.getMinutes(),
-      timeBreak = 15;
-  if (newDate.getMilliseconds() === 0 && newDate.getSeconds() === 0 && minutes % timeBreak === 0) {
+    minutes = newDate.getMinutes(),
+    timeBreak = 15;
+  if (
+    newDate.getMilliseconds() === 0 &&
+    newDate.getSeconds() === 0 &&
+    minutes % timeBreak === 0
+  ) {
     return newDate;
   }
-  var roundedMinutes = (parseInt((minutes + timeBreak) / timeBreak, 10) * timeBreak) % 60;
+  var roundedMinutes =
+    (parseInt((minutes + timeBreak) / timeBreak, 10) * timeBreak) % 60;
   newDate.setMilliseconds(0);
   newDate.setSeconds(0);
   newDate.setMinutes(roundedMinutes);
@@ -457,14 +543,19 @@ OB.Utilities.Date.roundToNextQuarter = function (date) {
 //** {{{ OB.Utilities.Date.roundToNextHalfHour }}} **
 //
 // Round any date to the next half hour
-OB.Utilities.Date.roundToNextHalfHour = function (date) {
+OB.Utilities.Date.roundToNextHalfHour = function(date) {
   var newDate = new Date(date),
-      minutes = newDate.getMinutes(),
-      timeBreak = 30;
-  if (newDate.getMilliseconds() === 0 && newDate.getSeconds() === 0 && minutes % timeBreak === 0) {
+    minutes = newDate.getMinutes(),
+    timeBreak = 30;
+  if (
+    newDate.getMilliseconds() === 0 &&
+    newDate.getSeconds() === 0 &&
+    minutes % timeBreak === 0
+  ) {
     return newDate;
   }
-  var roundedMinutes = (parseInt((minutes + timeBreak) / timeBreak, 10) * timeBreak) % 60;
+  var roundedMinutes =
+    (parseInt((minutes + timeBreak) / timeBreak, 10) * timeBreak) % 60;
   newDate.setMilliseconds(0);
   newDate.setSeconds(0);
   newDate.setMinutes(roundedMinutes);
@@ -477,8 +568,12 @@ OB.Utilities.Date.roundToNextHalfHour = function (date) {
 //** {{{ OB.Utilities.Date.getDateSeparator }}} **
 //
 // Returns the date separator
-OB.Utilities.Date.getDateSeparator = function (dateFormat) {
+OB.Utilities.Date.getDateSeparator = function(dateFormat) {
   // obtains the date separator by selecting the first characters that is not 'D', 'M' or 'Y'
-  return dateFormat.toUpperCase().replace(/D/g, '').replace(/M/g, '').replace(/Y/g, '').substr(0, 1);
-
+  return dateFormat
+    .toUpperCase()
+    .replace(/D/g, '')
+    .replace(/M/g, '')
+    .replace(/Y/g, '')
+    .substr(0, 1);
 };

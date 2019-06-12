@@ -46,18 +46,21 @@ isc.OBListItem.addProperties({
   // if set to false then the picklist is shown at focus:
   // https://issues.openbravo.com/view.php?id=18075
   // addUnknownValues: true,
-  // changeOnKeypress should not be set to false together 
-  // with addUnknownValues (to false) as this will 
+  // changeOnKeypress should not be set to false together
+  // with addUnknownValues (to false) as this will
   // cause the picklist not to show
   // changeOnKeypress: false,
   moveFocusOnPickValue: true,
 
-  hidePickListOnBlur: function () {
-
+  hidePickListOnBlur: function() {
     // when the form gets redrawn the the focus may not be in
     // the item but it is still the item which gets the focus
     // after redrawing
-    if (this.form && this.form._isRedrawing && this.form.getFocusItem() === this) {
+    if (
+      this.form &&
+      this.form._isRedrawing &&
+      this.form.getFocusItem() === this
+    ) {
       return;
     }
 
@@ -65,14 +68,16 @@ isc.OBListItem.addProperties({
   },
 
   // is overridden to keep track that a value has been explicitly picked
-  pickValue: function (value) {
+  pickValue: function(value) {
     var i, referenceType;
     this._pickedValue = true;
     // force the update of the list
     // if the user has entered with the keyboard the exact content of a list option,
     // its callout would not be called because the change would not be detected
     // see issue https://issues.openbravo.com/view.php?id=21491
-    this._value = (this.value) ? this._value.concat(Math.random()) : Math.random();
+    this._value = this.value
+      ? this._value.concat(Math.random())
+      : Math.random();
     //in case the reference is a foreign key reference,
     //adding double equals to filter the exact value and not all matching sub strings.
     //Refer issue https://issues.openbravo.com/view.php?id=24574.
@@ -101,7 +106,7 @@ isc.OBListItem.addProperties({
     }
   },
 
-  changed: function (form, item, value) {
+  changed: function(form, item, value) {
     this.Super('changed', arguments);
     // if not picking a value then don't do a fic call
     // otherwise every keypress would result in a fic call
@@ -118,17 +123,20 @@ isc.OBListItem.addProperties({
   // the solution is to keep a separate entries array with the
   // records in the correct order, see also the setEntries/setEntry
   // methods
-  getClientPickListData: function () {
+  getClientPickListData: function() {
     if (this.entries) {
       return this.entries;
     }
     return this.Super('getClientPickListData', arguments);
   },
 
-  setEntries: function (entries) {
+  setEntries: function(entries) {
     var length = entries.length,
-        i, id, identifier, valueField = this.getValueFieldName(),
-        valueMap = {};
+      i,
+      id,
+      identifier,
+      valueField = this.getValueFieldName(),
+      valueMap = {};
     this.entries = [];
     for (i = 0; i < length; i++) {
       id = entries[i][OB.Constants.ID] || '';
@@ -140,11 +148,12 @@ isc.OBListItem.addProperties({
     this.setValueMap(valueMap);
   },
 
-  setEntry: function (id, identifier) {
-    var i, entries = this.entries || [],
-        entry = {},
-        valueField = this.getValueFieldName(),
-        length = entries.length;
+  setEntry: function(id, identifier) {
+    var i,
+      entries = this.entries || [],
+      entry = {},
+      valueField = this.getValueFieldName(),
+      length = entries.length;
     for (i = 0; i < length; i++) {
       if (entries[i][valueField] === id) {
         return;
@@ -164,7 +173,7 @@ isc.OBListItem.addProperties({
   },
 
   // prevent ids from showing up
-  mapValueToDisplay: function (value) {
+  mapValueToDisplay: function(value) {
     var ret = this.Super('mapValueToDisplay', arguments);
 
     // the datasource should handle it
@@ -193,16 +202,24 @@ isc.OBListItem.addProperties({
         this.valueMap[value] = '';
         return '';
       } //there may be cases if the value is an number within 10 digits, it is identified as an UUID. In that case check is done to confirm whether it is indeed UUID by checking if it is available in the valueMap.
-      else if (!this.valueMap[value] && OB.Utilities.isUUID(value) && this.valueMap.hasOwnProperty(value)) {
+      else if (
+        !this.valueMap[value] &&
+        OB.Utilities.isUUID(value) &&
+        this.valueMap.hasOwnProperty(value)
+      ) {
         return '';
       }
     }
     return ret;
   },
 
-  isUnknownValue: function (value) {
+  isUnknownValue: function(value) {
     var i, array;
-    if (!value || !this.multiple || !value.contains(this.multipleValueSeparator)) {
+    if (
+      !value ||
+      !this.multiple ||
+      !value.contains(this.multipleValueSeparator)
+    ) {
       return this.Super('isUnknownValue', arguments);
     }
     // handle multi-select
@@ -215,18 +232,25 @@ isc.OBListItem.addProperties({
     return false;
   },
 
-  mapDisplayToValue: function (display) {
+  mapDisplayToValue: function(display) {
     var i, array, result;
 
     if (display === '') {
       return null;
     }
-    if (this.lastSelectedValue && display === this.mapValueToDisplay(this.lastSelectedValue)) {
+    if (
+      this.lastSelectedValue &&
+      display === this.mapValueToDisplay(this.lastSelectedValue)
+    ) {
       // Prevents mapDisplayToValue from failing when there are several
       // entries in the valuemap with the same value
       // See issue https://issues.openbravo.com/view.php?id=21553
       return this.lastSelectedValue;
-    } else if (!display || !this.multiple || !display.contains(this.multipleValueSeparator)) {
+    } else if (
+      !display ||
+      !this.multiple ||
+      !display.contains(this.multipleValueSeparator)
+    ) {
       return this.Super('mapDisplayToValue', arguments);
     } else {
       array = display.split(this.multipleValueSeparator);
@@ -237,5 +261,4 @@ isc.OBListItem.addProperties({
       return result;
     }
   }
-
 });

@@ -19,10 +19,14 @@
 
 OB.APRM.FindTransactions = {};
 
-OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSideValidationFail) {
+OB.APRM.FindTransactions.onProcess = function(
+  view,
+  actionHandlerCall,
+  clientSideValidationFail
+) {
   var execute;
 
-  execute = function (ok) {
+  execute = function(ok) {
     if (ok) {
       actionHandlerCall();
     } else {
@@ -30,17 +34,29 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSi
     }
   };
 
-  if (view && typeof view.getContextInfo === 'function' && view.callerField && view.callerField.view && typeof view.callerField.view.getContextInfo === 'function') {
-    var i, trxSelection = view.getContextInfo().findtransactiontomatch._selection;
+  if (
+    view &&
+    typeof view.getContextInfo === 'function' &&
+    view.callerField &&
+    view.callerField.view &&
+    typeof view.callerField.view.getContextInfo === 'function'
+  ) {
+    var i,
+      trxSelection = view.getContextInfo().findtransactiontomatch._selection;
 
     if (trxSelection && trxSelection[0]) {
       var totalTrxAmt = BigDecimal.prototype.ZERO,
-          blineAmt = new BigDecimal(String(view.callerField.record.amount)),
-          hideSplitConfirmation = OB.PropertyStore.get('APRM_MATCHSTATEMENT_HIDE_PARTIALMATCH_POPUP', view.windowId);
+        blineAmt = new BigDecimal(String(view.callerField.record.amount)),
+        hideSplitConfirmation = OB.PropertyStore.get(
+          'APRM_MATCHSTATEMENT_HIDE_PARTIALMATCH_POPUP',
+          view.windowId
+        );
       for (i = 0; i < trxSelection.length; i++) {
-        var trxDepositAmt = new BigDecimal(String(trxSelection[i].depositAmount)),
-            trxPaymentAmt = new BigDecimal(String(trxSelection[i].paymentAmount)),
-            trxAmt = trxDepositAmt.subtract(trxPaymentAmt);
+        var trxDepositAmt = new BigDecimal(
+            String(trxSelection[i].depositAmount)
+          ),
+          trxPaymentAmt = new BigDecimal(String(trxSelection[i].paymentAmount)),
+          trxAmt = trxDepositAmt.subtract(trxPaymentAmt);
         totalTrxAmt = totalTrxAmt.add(trxAmt);
       }
       if (totalTrxAmt.compareTo(blineAmt) !== 0) {
@@ -50,7 +66,25 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSi
           actionHandlerCall();
         } else {
           if (isc.isA.emptyObject(OB.TestRegistry.registry)) {
-            isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm', [OB.Utilities.Number.JSToOBMasked(blineAmt, OB.Format.defaultNumericMask, OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol, OB.Format.defaultGroupingSize), OB.Utilities.Number.JSToOBMasked(totalTrxAmt, OB.Format.defaultNumericMask, OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol, OB.Format.defaultGroupingSize)]), execute);
+            isc.confirm(
+              OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm', [
+                OB.Utilities.Number.JSToOBMasked(
+                  blineAmt,
+                  OB.Format.defaultNumericMask,
+                  OB.Format.defaultDecimalSymbol,
+                  OB.Format.defaultGroupingSymbol,
+                  OB.Format.defaultGroupingSize
+                ),
+                OB.Utilities.Number.JSToOBMasked(
+                  totalTrxAmt,
+                  OB.Format.defaultNumericMask,
+                  OB.Format.defaultDecimalSymbol,
+                  OB.Format.defaultGroupingSymbol,
+                  OB.Format.defaultGroupingSize
+                )
+              ]),
+              execute
+            );
           } else {
             execute(true);
           }
@@ -61,7 +95,11 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSi
       }
     } else {
       // No Transaction selected
-      view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_SELECT_RECORD_ERROR'));
+      view.messageBar.setMessage(
+        isc.OBMessageBar.TYPE_ERROR,
+        null,
+        OB.I18N.getLabel('APRM_SELECT_RECORD_ERROR')
+      );
       clientSideValidationFail();
     }
   }

@@ -31,7 +31,7 @@ isc.OBToolbar.addClassProperties({
   TYPE_CLONE: 'clone',
 
   SAVE_BUTTON_PROPERTIES: {
-    action: function () {
+    action: function() {
       this.focus();
       this.view.savingWithShortcut = true;
       this.view.saveRow();
@@ -41,18 +41,35 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'save',
     sortPosition: 30,
     prompt: OB.I18N.getLabel('OBUIAPP_SaveRow'),
-    updateState: function () {
+    updateState: function() {
       var view = this.view,
-          form = view.viewForm,
-          hasErrors = false,
-          editRow;
+        form = view.viewForm,
+        hasErrors = false,
+        editRow;
       if (view.isShowingForm) {
-        this.setDisabled(!(form.isNew && form.allRequiredFieldsSet()) && (form.isSaving || form.readOnly || !view.hasValidState() || form.hasErrors() || !form.hasChanged || !form.allRequiredFieldsSet()));
+        this.setDisabled(
+          !(form.isNew && form.allRequiredFieldsSet()) &&
+            (form.isSaving ||
+              form.readOnly ||
+              !view.hasValidState() ||
+              form.hasErrors() ||
+              !form.hasChanged ||
+              !form.allRequiredFieldsSet())
+        );
       } else if (view.isEditingGrid) {
         form = view.viewGrid.getEditForm();
         editRow = view.viewGrid.getEditRow();
         hasErrors = view.viewGrid.rowHasErrors(editRow);
-        this.setDisabled(!(form.isNew && form.allRequiredFieldsSet()) && (form.isSaving || form.readOnly || !view.hasValidState() || hasErrors || form.hasErrors() || !form.hasChanged || !form.allRequiredFieldsSet()));
+        this.setDisabled(
+          !(form.isNew && form.allRequiredFieldsSet()) &&
+            (form.isSaving ||
+              form.readOnly ||
+              !view.hasValidState() ||
+              hasErrors ||
+              form.hasErrors() ||
+              !form.hasChanged ||
+              !form.allRequiredFieldsSet())
+        );
       } else {
         this.setDisabled(true);
       }
@@ -62,7 +79,7 @@ isc.OBToolbar.addClassProperties({
 
   SAVECLOSE_BUTTON_PROPERTIES: {
     saveDisabled: true,
-    action: function () {
+    action: function() {
       var actionObject = {
         target: this,
         method: this.saveAndClose,
@@ -71,7 +88,7 @@ isc.OBToolbar.addClassProperties({
       this.view.standardWindow.doActionAfterAutoSave(actionObject, false, true);
     },
 
-    saveAndClose: function () {
+    saveAndClose: function() {
       if (!this.saveDisabled && !this.view.viewForm.validateForm()) {
         return;
       }
@@ -82,12 +99,19 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'savecloseX',
     sortPosition: 40,
     prompt: OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON'),
-    updateState: function () {
+    updateState: function() {
       var view = this.view,
-          form = view.viewForm;
+        form = view.viewForm;
       if (view.isShowingForm) {
         this.setDisabled(false);
-        var saveDisabled = !(form.isNew && form.allRequiredFieldsSet()) && (form.isSaving || form.readOnly || !view.hasValidState() || form.hasErrors() || !form.hasChanged || !form.allRequiredFieldsSet());
+        var saveDisabled =
+          !(form.isNew && form.allRequiredFieldsSet()) &&
+          (form.isSaving ||
+            form.readOnly ||
+            !view.hasValidState() ||
+            form.hasErrors() ||
+            !form.hasChanged ||
+            !form.allRequiredFieldsSet());
         if (saveDisabled) {
           this.buttonType = 'savecloseX';
           this.prompt = OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON');
@@ -105,9 +129,9 @@ isc.OBToolbar.addClassProperties({
   },
 
   NEW_ROW_BUTTON_PROPERTIES: {
-    action: function () {
+    action: function() {
       var view = this.view,
-          grid = view.viewGrid;
+        grid = view.viewGrid;
       // In case of no record selected getRecordIndex(undefined) returns -1,
       // which is the top position, other case it adds bellow current selected row.
       if (grid.getSelectedRecord()) {
@@ -120,49 +144,76 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'newRow',
     sortPosition: 20,
     prompt: OB.I18N.getLabel('OBUIAPP_NewRow'),
-    updateState: function () {
+    updateState: function() {
       var view = this.view,
-          selectedRecords = view.viewGrid.getSelectedRecords(),
-          form = view.viewGrid.getEditForm(),
-          allFieldsSet = form && form.allRequiredFieldsSet(),
-          isNew = form && form.isNew;
-      this.setDisabled(view.viewGrid.isGrouped || view.isShowingForm || view.readOnly || view.editOrDeleteOnly || view.singleRecord || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1) || view.isShowingTree || !view.roleCanCreateRecords() || (isNew && !allFieldsSet));
+        selectedRecords = view.viewGrid.getSelectedRecords(),
+        form = view.viewGrid.getEditForm(),
+        allFieldsSet = form && form.allRequiredFieldsSet(),
+        isNew = form && form.isNew;
+      this.setDisabled(
+        view.viewGrid.isGrouped ||
+          view.isShowingForm ||
+          view.readOnly ||
+          view.editOrDeleteOnly ||
+          view.singleRecord ||
+          !view.hasValidState() ||
+          (selectedRecords && selectedRecords.length > 1) ||
+          view.isShowingTree ||
+          !view.roleCanCreateRecords() ||
+          (isNew && !allFieldsSet)
+      );
     },
     keyboardShortcutId: 'ToolBar_NewRow'
   },
 
   NEW_DOC_BUTTON_PROPERTIES: {
-    action: function () {
+    action: function() {
       var view = this.view;
       view.newDocument();
     },
     buttonType: 'newDoc',
     sortPosition: 10,
     prompt: OB.I18N.getLabel('OBUIAPP_NewDoc'),
-    updateState: function () {
+    updateState: function() {
       var view = this.view,
-          form = view.viewForm;
+        form = view.viewForm;
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || view.readOnly || view.singleRecord || !view.hasValidState() || view.editOrDeleteOnly || !view.roleCanCreateRecords());
+        this.setDisabled(
+          form.isSaving ||
+            view.readOnly ||
+            view.singleRecord ||
+            !view.hasValidState() ||
+            view.editOrDeleteOnly ||
+            !view.roleCanCreateRecords()
+        );
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || view.editOrDeleteOnly || !view.roleCanCreateRecords());
+        this.setDisabled(
+          view.readOnly ||
+            view.singleRecord ||
+            !view.hasValidState() ||
+            view.editOrDeleteOnly ||
+            !view.roleCanCreateRecords()
+        );
       }
     },
     keyboardShortcutId: 'ToolBar_NewDoc'
   },
 
   DELETE_BUTTON_PROPERTIES: {
-    action: function () {
+    action: function() {
       this.view.deleteSelectedRows();
     },
     disabled: true,
     buttonType: 'eliminate',
     sortPosition: 60,
     prompt: OB.I18N.getLabel('OBUIAPP_DeleteRow'),
-    updateState: function () {
+    updateState: function() {
       var view = this.view,
-          form = view.viewForm,
-          currentGrid, length, selectedRecords, i;
+        form = view.viewForm,
+        currentGrid,
+        length,
+        selectedRecords,
+        i;
       if (view.isShowingTree) {
         currentGrid = view.treeGrid;
       } else {
@@ -185,22 +236,37 @@ isc.OBToolbar.addClassProperties({
         }
       }
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew || (view.standardWindow.allowDelete === 'N'));
+        this.setDisabled(
+          form.isSaving ||
+            form.readOnly ||
+            view.singleRecord ||
+            !view.hasValidState() ||
+            form.isNew ||
+            view.standardWindow.allowDelete === 'N'
+        );
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !currentGrid.getSelectedRecords() || currentGrid.getSelectedRecords().length === 0 || (view.standardWindow.allowDelete === 'N'));
+        this.setDisabled(
+          view.readOnly ||
+            view.singleRecord ||
+            !view.hasValidState() ||
+            !currentGrid.getSelectedRecords() ||
+            currentGrid.getSelectedRecords().length === 0 ||
+            view.standardWindow.allowDelete === 'N'
+        );
       }
     },
     keyboardShortcutId: 'ToolBar_Eliminate'
   },
 
   REFRESH_BUTTON_PROPERTIES: {
-    action: function () {
+    action: function() {
       var refreshChildren = true,
-          callbackEnableButton, me = this;
+        callbackEnableButton,
+        me = this;
       this.view.isRefreshing = true;
       // Disable the refresh button until the refresh is finished
       this.setDisabled(true);
-      callbackEnableButton = function () {
+      callbackEnableButton = function() {
         // Enable the refresh button in the callback
         delete me.view.isRefreshing;
         me.setDisabled(false);
@@ -220,19 +286,26 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'refresh',
     sortPosition: 70,
     prompt: OB.I18N.getLabel('OBUIAPP_RefreshData'),
-    updateState: function () {
+    updateState: function() {
       var gridVisibleAndWithValidationErrors = false;
-      if (!this.view.isShowingForm && this.view.viewGrid.gridHasValidationErrors()) {
+      if (
+        !this.view.isShowingForm &&
+        this.view.viewGrid.gridHasValidationErrors()
+      ) {
         // do not allow refreshing the grid if it has validation errors
         gridVisibleAndWithValidationErrors = true;
       }
-      this.setDisabled(gridVisibleAndWithValidationErrors || this.view.isRefreshing || !this.view.hasNotChanged());
+      this.setDisabled(
+        gridVisibleAndWithValidationErrors ||
+          this.view.isRefreshing ||
+          !this.view.hasNotChanged()
+      );
     },
     keyboardShortcutId: 'ToolBar_Refresh'
   },
 
   UNDO_BUTTON_PROPERTIES: {
-    action: function () {
+    action: function() {
       this.view.undo();
       if (!this.view.isShowingForm) {
         this.setDisabled(true);
@@ -242,24 +315,31 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'undo',
     sortPosition: 50,
     prompt: OB.I18N.getLabel('OBUIAPP_CancelEdit'),
-    updateState: function () {
+    updateState: function() {
       if (this.view.isShowingForm) {
         this.setDisabled(false);
       } else {
         // Only enabled when the grid is being edited or when
         // the selected records have errors
-        this.setDisabled(!this.view.isEditingGrid && this.view.hasNotChanged() && !this.view.viewGrid.selectedRecordHasValidationErrors());
+        this.setDisabled(
+          !this.view.isEditingGrid &&
+            this.view.hasNotChanged() &&
+            !this.view.viewGrid.selectedRecordHasValidationErrors()
+        );
       }
     },
     keyboardShortcutId: 'ToolBar_Undo'
   },
 
   EXPORT_BUTTON_PROPERTIES: {
-    action: function () {
+    action: function() {
       var requestProperties = {
         exportAs: 'csv',
         exportDisplay: 'download',
-        _extraProperties: this.view && this.view.dataSource && this.view.dataSource.requestProperties.params._extraProperties,
+        _extraProperties:
+          this.view &&
+          this.view.dataSource &&
+          this.view.dataSource.requestProperties.params._extraProperties,
         params: {
           exportToFile: true
         },
@@ -272,19 +352,27 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'export',
     sortPosition: 80,
     prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
-    updateState: function () {
-      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.windowId) === 'N' || this.view.isShowingTree);
+    updateState: function() {
+      this.setDisabled(
+        this.view.isShowingForm ||
+          this.view.viewGrid.getTotalRows() === 0 ||
+          OB.PropertyStore.get(
+            'ExportToCsv',
+            this.view.standardWindow.windowId
+          ) === 'N' ||
+          this.view.isShowingTree
+      );
     },
     keyboardShortcutId: 'ToolBar_Export'
   },
 
   ATTACHMENTS_BUTTON_PROPERTIES: {
-    action: function () {
+    action: function() {
       var selectedRows = this.view.viewGrid.getSelectedRecords(),
-          attachmentExists = this.view.attachmentExists,
-          attachmentSection = this.view.viewForm.getItem('_attachments_'),
-          me = this,
-          i;
+        attachmentExists = this.view.attachmentExists,
+        attachmentSection = this.view.viewForm.getItem('_attachments_'),
+        me = this,
+        i;
       if (this.view.isShowingForm) {
         if (!attachmentSection.isExpanded()) {
           attachmentSection.expandSection();
@@ -292,11 +380,18 @@ isc.OBToolbar.addClassProperties({
         attachmentSection.focusInItem();
         if (this.view.viewForm.parentElement) {
           // scroll after things have been expanded
-          this.view.viewForm.parentElement.delayCall('scrollTo', [null, attachmentSection.getTop()], 100);
+          this.view.viewForm.parentElement.delayCall(
+            'scrollTo',
+            [null, attachmentSection.getTop()],
+            100
+          );
         }
 
         if (!attachmentExists) {
-          attachmentSection.attachmentCanvasItem.canvas.getMember(0).getMember(0).click();
+          attachmentSection.attachmentCanvasItem.canvas
+            .getMember(0)
+            .getMember(0)
+            .click();
         }
         return;
       }
@@ -309,15 +404,18 @@ isc.OBToolbar.addClassProperties({
         // Move from grid view to form view could take a while.
         // Section needs to be expanded before the viewport adjustment.
         var expandedCount = 0,
-            expandedInterval;
-        expandedInterval = setInterval(function () {
+          expandedInterval;
+        expandedInterval = setInterval(function() {
           expandedCount += 1;
           if (attachmentSection === null) {
             // In case attachmenSection was not created try to load it again
             attachmentSection = me.view.viewForm.getItem('_attachments_');
           }
           if (attachmentSection !== null && attachmentSection.isExpanded()) {
-            me.view.viewForm.parentElement.scrollTo(null, attachmentSection.getTop());
+            me.view.viewForm.parentElement.scrollTo(
+              null,
+              attachmentSection.getTop()
+            );
             clearInterval(expandedInterval);
           }
           if (expandedCount === 50) {
@@ -330,21 +428,33 @@ isc.OBToolbar.addClassProperties({
             // In case attachmenSection was not created try to load it again
             attachmentSection = me.view.viewForm.getItem('_attachments_');
           }
-          if (attachmentSection !== null && attachmentSection.attachmentCanvasItem.canvas.getMember(0)) {
-            attachmentSection.attachmentCanvasItem.canvas.getMember(0).getMember(0).click();
+          if (
+            attachmentSection !== null &&
+            attachmentSection.attachmentCanvasItem.canvas.getMember(0)
+          ) {
+            attachmentSection.attachmentCanvasItem.canvas
+              .getMember(0)
+              .getMember(0)
+              .click();
           } else {
             // The first time the form view is loaded, the section is not already built and it could take a while to be.
             // Section needs to be built before the click event.
             var clickCount = 0,
-                clickInterval;
-            clickInterval = setInterval(function () {
+              clickInterval;
+            clickInterval = setInterval(function() {
               clickCount += 1;
               if (attachmentSection === null) {
                 // In case attachmenSection was not created try to load it again
                 attachmentSection = me.view.viewForm.getItem('_attachments_');
               }
-              if (attachmentSection !== null && attachmentSection.attachmentCanvasItem.canvas.getMember(0)) {
-                attachmentSection.attachmentCanvasItem.canvas.getMember(0).getMember(0).click();
+              if (
+                attachmentSection !== null &&
+                attachmentSection.attachmentCanvasItem.canvas.getMember(0)
+              ) {
+                attachmentSection.attachmentCanvasItem.canvas
+                  .getMember(0)
+                  .getMember(0)
+                  .click();
                 clearInterval(clickInterval);
               }
               if (clickCount === 50) {
@@ -354,31 +464,37 @@ isc.OBToolbar.addClassProperties({
           }
         }
       } else {
-        var recordIds = "";
+        var recordIds = '';
         for (i = 0; i < selectedRows.size(); i++) {
           if (i > 0) {
-            recordIds = recordIds + ",";
+            recordIds = recordIds + ',';
           }
           recordIds = recordIds + selectedRows[i].id;
         }
         var vTabId = this.view.tabId;
         var viewId = this.view.ID;
         var vbuttonId = this.ID;
-        isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmDownloadMultiple'), function (clickedOK) {
-          if (clickedOK) {
-            var d = {
-              Command: 'DOWNLOAD_ALL',
-              tabId: vTabId,
-              buttonId: vbuttonId,
-              recordIds: recordIds,
-              viewId: viewId
-            };
-            OB.Utilities.postThroughHiddenForm('./businessUtility/TabAttachments_FS.html', d);
+        isc.confirm(
+          OB.I18N.getLabel('OBUIAPP_ConfirmDownloadMultiple'),
+          function(clickedOK) {
+            if (clickedOK) {
+              var d = {
+                Command: 'DOWNLOAD_ALL',
+                tabId: vTabId,
+                buttonId: vbuttonId,
+                recordIds: recordIds,
+                viewId: viewId
+              };
+              OB.Utilities.postThroughHiddenForm(
+                './businessUtility/TabAttachments_FS.html',
+                d
+              );
+            }
           }
-        });
+        );
       }
     },
-    callback: function () {
+    callback: function() {
       if (this.oldForm) {
         this.oldForm.destroy();
       }
@@ -389,7 +505,7 @@ isc.OBToolbar.addClassProperties({
     disabled: false,
     buttonType: 'attach',
     sortPosition: 90,
-    updateState: function () {
+    updateState: function() {
       var selectedRows = this.view.viewGrid.getSelectedRecords();
       var attachmentExists = this.view.attachmentExists;
       if (attachmentExists) {
@@ -429,41 +545,44 @@ isc.OBToolbar.addClassProperties({
   },
 
   LINK_BUTTON_PROPERTIES: {
-    action: function () {
+    action: function() {
       var url = this.view.getDirectLinkUrl();
       var form = isc.OBViewForm.create({
         width: 390,
         height: 1,
         numCols: 1,
         overflow: 'visible',
-        fields: [{
-          type: 'OBTextAreaItem',
-          selectOnFocus: true,
-          width: 390,
-          height: 50,
-          canFocus: true,
-          showTitle: false,
-          name: 'url',
-          title: OB.I18N.getLabel('OBUIAPP_PasteLink'),
-          value: url
-        }, {
-          type: 'CanvasItem',
-          showTitle: false,
-          width: '100%',
-          height: 1,
-          overFlow: 'visible',
-          cellStyle: 'OBFormField',
-          titleStyle: 'OBFormFieldLabel',
-          textBoxStyle: 'OBFormFieldInput',
-          name: 'url',
-          canvas: isc.Label.create({
-            width: 360,
-            contents: OB.I18N.getLabel('OBUIAPP_DeepLinkNote'),
+        fields: [
+          {
+            type: 'OBTextAreaItem',
+            selectOnFocus: true,
+            width: 390,
+            height: 50,
+            canFocus: true,
+            showTitle: false,
+            name: 'url',
+            title: OB.I18N.getLabel('OBUIAPP_PasteLink'),
+            value: url
+          },
+          {
+            type: 'CanvasItem',
+            showTitle: false,
+            width: '100%',
             height: 1,
-            overflow: 'visible'
-          })
-        }],
-        show: function () {
+            overFlow: 'visible',
+            cellStyle: 'OBFormField',
+            titleStyle: 'OBFormFieldLabel',
+            textBoxStyle: 'OBFormFieldInput',
+            name: 'url',
+            canvas: isc.Label.create({
+              width: 360,
+              contents: OB.I18N.getLabel('OBUIAPP_DeepLinkNote'),
+              height: 1,
+              overflow: 'visible'
+            })
+          }
+        ],
+        show: function() {
           var fld = this.getFields()[0];
           this.setFocusItem(fld);
           this.Super('show', arguments);
@@ -471,7 +590,9 @@ isc.OBToolbar.addClassProperties({
           this.fireOnPause('link_button_show', this.focus, 50, this);
         }
       });
-      var dialog = OB.Utilities.createDialog(OB.I18N.getLabel('OBUIAPP_Document_Link'));
+      var dialog = OB.Utilities.createDialog(
+        OB.I18N.getLabel('OBUIAPP_Document_Link')
+      );
       dialog.setContent(form);
       dialog.show();
     },
@@ -479,17 +600,17 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'link',
     sortPosition: 300,
     prompt: OB.I18N.getLabel('OBUIAPP_GetDirectLink'),
-    updateState: function () {},
+    updateState: function() {},
     keyboardShortcutId: 'ToolBar_Link'
   },
   // This offers a mechanism to add properties at runtime to buttons created through
   // templates and java
   BUTTON_PROPERTIES: {
-    'audit': {
-      updateState: function () {
+    audit: {
+      updateState: function() {
         var view = this.view,
-            form = view.viewForm,
-            grid = view.viewGrid;
+          form = view.viewForm,
+          grid = view.viewGrid;
         var selectedRecords = grid.getSelectedRecords();
         var disabled = false;
         if (selectedRecords && selectedRecords.length > 1) {
@@ -498,18 +619,26 @@ isc.OBToolbar.addClassProperties({
           disabled = true;
         } else if (view.isEditingGrid && grid.getEditForm().isNew) {
           disabled = true;
-        } else if ((selectedRecords && selectedRecords.length > 1) || (selectedRecords && selectedRecords.length === 1 && selectedRecords[0].updated && selectedRecords[0].creationDate && selectedRecords[0].updated.getTime() === selectedRecords[0].creationDate.getTime())) {
+        } else if (
+          (selectedRecords && selectedRecords.length > 1) ||
+          (selectedRecords &&
+            selectedRecords.length === 1 &&
+            selectedRecords[0].updated &&
+            selectedRecords[0].creationDate &&
+            selectedRecords[0].updated.getTime() ===
+              selectedRecords[0].creationDate.getTime())
+        ) {
           disabled = true;
         }
         this.setDisabled(disabled);
       },
       keyboardShortcutId: 'ToolBar_Audit'
     },
-    'print': {
-      updateState: function () {
+    print: {
+      updateState: function() {
         var view = this.view,
-            form = view.viewForm,
-            grid = view.viewGrid;
+          form = view.viewForm,
+          grid = view.viewGrid;
         var selectedRecords = grid.getSelectedRecords();
         var disabled = false;
         if (selectedRecords.length === 0) {
@@ -535,11 +664,11 @@ isc.OBToolbar.addClassProperties({
       },
       keyboardShortcutId: 'ToolBar_Print'
     },
-    'email': {
-      updateState: function () {
+    email: {
+      updateState: function() {
         var view = this.view,
-            form = view.viewForm,
-            grid = view.viewGrid;
+          form = view.viewForm,
+          grid = view.viewGrid;
         var selectedRecords = grid.getSelectedRecords();
         var disabled = false;
         if (selectedRecords.length === 0) {
@@ -558,8 +687,8 @@ isc.OBToolbar.addClassProperties({
       },
       keyboardShortcutId: 'ToolBar_Email'
     },
-    'treeGrid': {
-      updateState: function () {
+    treeGrid: {
+      updateState: function() {
         if (this.view) {
           this.setDisabled(this.view.isShowingForm || this.view.isEditingGrid);
         } else {
@@ -567,10 +696,10 @@ isc.OBToolbar.addClassProperties({
         }
       }
     },
-    'tree': {
-      updateState: function () {
+    tree: {
+      updateState: function() {
         var view = this.view,
-            grid = view.viewGrid;
+          grid = view.viewGrid;
         var selectedRecords = grid.getSelectedRecords();
         var disabled = false;
         if (selectedRecords && selectedRecords.length === 0) {
@@ -582,18 +711,18 @@ isc.OBToolbar.addClassProperties({
   },
 
   CLONE_BUTTON_PROPERTIES: {
-    action: function () {
+    action: function() {
       alert('This method must be overridden when registering the button');
     },
     disabled: false,
     buttonType: 'clone',
     sortPosition: 100,
     prompt: OB.I18N.getLabel('OBUIAPP_CloneData'),
-    updateState: function () {
+    updateState: function() {
       var view = this.view,
-          form = view.viewForm,
-          grid = view.viewGrid,
-          selectedRecords = grid.getSelectedRecords();
+        form = view.viewForm,
+        grid = view.viewGrid,
+        selectedRecords = grid.getSelectedRecords();
 
       if (selectedRecords && selectedRecords.length > 1) {
         this.setDisabled(true);
@@ -601,7 +730,10 @@ isc.OBToolbar.addClassProperties({
         this.setDisabled(true);
       } else if (view.isEditingGrid && grid.getEditForm().isNew) {
         this.setDisabled(true);
-      } else if (form.hasChanged || (view.isEditingGrid && grid.getEditForm().hasChanged)) {
+      } else if (
+        form.hasChanged ||
+        (view.isEditingGrid && grid.getEditForm().hasChanged)
+      ) {
         this.setDisabled(true);
       } else {
         this.setDisabled(selectedRecords.length === 0);
@@ -617,15 +749,21 @@ isc.OBToolbar.addClassProperties({
 //
 isc.OBToolbar.addProperties({
   randomId: null,
-  initWidget: function () {
+  initWidget: function() {
     var newMembers = [],
-        i = 0,
-        j = 0,
-        length;
+      i = 0,
+      j = 0,
+      length;
 
     this.Super('initWidget', arguments);
 
-    this.randomId = OB.Utilities.generateRandomString(8, true, true, true, false);
+    this.randomId = OB.Utilities.generateRandomString(
+      8,
+      true,
+      true,
+      true,
+      false
+    );
 
     this.members = null;
 
@@ -640,20 +778,28 @@ isc.OBToolbar.addProperties({
     j++;
 
     if (this.leftMembers) {
-
       length = this.leftMembers.length;
 
       for (i = 0; i < length; i++) {
-
         newMembers[j] = this.leftMembers[i];
 
-        if (newMembers[j].buttonType && isc.OBToolbar.BUTTON_PROPERTIES[newMembers[j].buttonType]) {
-
-          isc.addProperties(newMembers[j], isc.OBToolbar.BUTTON_PROPERTIES[newMembers[j].buttonType]);
-
+        if (
+          newMembers[j].buttonType &&
+          isc.OBToolbar.BUTTON_PROPERTIES[newMembers[j].buttonType]
+        ) {
+          isc.addProperties(
+            newMembers[j],
+            isc.OBToolbar.BUTTON_PROPERTIES[newMembers[j].buttonType]
+          );
         }
 
-        OB.TestRegistry.register('org.openbravo.client.application.toolbar.button.' + this.leftMembers[i].buttonType + '.' + this.view.tabId, this.leftMembers[i]);
+        OB.TestRegistry.register(
+          'org.openbravo.client.application.toolbar.button.' +
+            this.leftMembers[i].buttonType +
+            '.' +
+            this.view.tabId,
+          this.leftMembers[i]
+        );
 
         newMembers[j].toolBar = this;
         newMembers[j].view = this.view;
@@ -678,12 +824,17 @@ isc.OBToolbar.addProperties({
     j++;
 
     if (this.rightMembers) {
-
       length = this.rightMembers.length;
 
       for (i = 0; i < length; i++) {
         newMembers[j] = this.rightMembers[i];
-        OB.TestRegistry.register('org.openbravo.client.application.toolbar.button.' + this.rightMembers[i].property + '.' + this.view.tabId, this.rightMembers[i]);
+        OB.TestRegistry.register(
+          'org.openbravo.client.application.toolbar.button.' +
+            this.rightMembers[i].property +
+            '.' +
+            this.view.tabId,
+          this.rightMembers[i]
+        );
         newMembers[j].toolBar = this;
         newMembers[j].view = this.view;
         j++;
@@ -704,7 +855,7 @@ isc.OBToolbar.addProperties({
     this.Super('addMembers', [newMembers]);
   },
 
-  addMems: function (m) {
+  addMems: function(m) {
     this.Super('addMembers', m);
   },
 
@@ -712,21 +863,27 @@ isc.OBToolbar.addProperties({
   //
   // Updates the visible and disabled state of buttons using the view's form and
   // grid information.
-  // 
+  //
   // NOTE: new buttons should implement the updateState method.
   //
-  updateButtonState: function (noSetSession, changeEvent, forceUpdate) {
+  updateButtonState: function(noSetSession, changeEvent, forceUpdate) {
     var me = this;
-    if (forceUpdate || (this.view && this.view.isActiveView && this.view.isActiveView())) {
-      this.fireOnPause('updateButtonState', function () {
+    if (
+      forceUpdate ||
+      (this.view && this.view.isActiveView && this.view.isActiveView())
+    ) {
+      this.fireOnPause('updateButtonState', function() {
         me.pausedUpdateButtonState(noSetSession, changeEvent);
       });
     }
   },
 
-  pausedUpdateButtonState: function (noSetSession, changeEvent) {
+  pausedUpdateButtonState: function(noSetSession, changeEvent) {
     var length = this.leftMembers.length,
-        i, form = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm;
+      i,
+      form = this.view.isEditingGrid
+        ? this.view.viewGrid.getEditForm()
+        : this.view.viewForm;
 
     for (i = 0; i < length; i++) {
       if (this.leftMembers[i].updateState) {
@@ -738,7 +895,7 @@ isc.OBToolbar.addProperties({
     if (!changeEvent) {
       this.refreshCustomButtons(noSetSession);
     } else if (this.rightMembers) {
-      // determine if the buttons should be hidden or not      
+      // determine if the buttons should be hidden or not
       if (this.view.isEditingGrid || this.view.isShowingForm) {
         if (form.hasErrors() || !form.allRequiredFieldsSet()) {
           this.hideShowRightMembers(false, noSetSession);
@@ -762,9 +919,9 @@ isc.OBToolbar.addProperties({
   // * {{{member}}} type: String | Number | Canvas - identifier for the required left member.
   //
   // Returns:  type: Canvas - left member widget.
-  getLeftMember: function (member) {
+  getLeftMember: function(member) {
     var i = 0,
-        length = this.leftMembers.length;
+      length = this.leftMembers.length;
     if (typeof member === 'number') {
       if (member >= 0 && member < this.leftMembers.length) {
         return this.leftMembers[member];
@@ -792,7 +949,7 @@ isc.OBToolbar.addProperties({
   // NOTE: the returned array should not be modified.
   //
   // Returns: type: Array - the Array of left members.
-  getLeftMembers: function () {
+  getLeftMembers: function() {
     return this.leftMembers;
   },
 
@@ -807,10 +964,10 @@ isc.OBToolbar.addProperties({
   // * {{{value}}} type: String | Number | Canvas - desired value of the attribute.
   //
   // Returns: type: Array - the Array of matching left members.
-  getLeftMembersByAttribute: function (attribute, value) {
+  getLeftMembersByAttribute: function(attribute, value) {
     var members = [],
-        i = 0,
-        length = this.leftMembers.length;
+      i = 0,
+      length = this.leftMembers.length;
     for (i = 0; i < length; i++) {
       if (this.leftMembers[i][attribute] === value) {
         members.push(this.leftMembers[i]);
@@ -829,9 +986,9 @@ isc.OBToolbar.addProperties({
   // * {{{member}}} type: Canvas - left member Canvas to obtain its position.
   //
   // Returns: type: Number - the left member Canvas position (starting from 0).
-  getLeftMemberNumber: function (member) {
+  getLeftMemberNumber: function(member) {
     var i = 0,
-        length = this.leftMembers.length;
+      length = this.leftMembers.length;
     for (i = 0; i < length; i++) {
       if (this.leftMembers[i] === member) {
         return i;
@@ -847,22 +1004,30 @@ isc.OBToolbar.addProperties({
   //
   // Parameters:
   // * {{{members}}} type: Array | Canvas - array of left members to be removed, or reference to single left member.
-  removeLeftMembers: function (members) {
+  removeLeftMembers: function(members) {
     var oldMembersSorted = [],
-        oldArray = [],
-        position = 0,
-        length, i = 0,
-        sortFunc;
+      oldArray = [],
+      position = 0,
+      length,
+      i = 0,
+      sortFunc;
 
-    sortFunc = function (a, b) {
-      return (a - b);
+    sortFunc = function(a, b) {
+      return a - b;
     };
 
-    if (!(typeof members.length === 'number' && !(members.propertyIsEnumerable('length')) && typeof members.splice === 'function')) {
+    if (
+      !(
+        typeof members.length === 'number' &&
+        !members.propertyIsEnumerable('length') &&
+        typeof members.splice === 'function'
+      )
+    ) {
       members = [members];
     }
     length = members.length;
-    for (i = 0; i < length; i++) { /* Clean-up of the given input and sort */
+    for (i = 0; i < length; i++) {
+      /* Clean-up of the given input and sort */
       if (typeof members[i] !== 'number') {
         members[i] = this.getLeftMemberNumber(members[i]);
       }
@@ -872,7 +1037,8 @@ isc.OBToolbar.addProperties({
       oldMembersSorted = oldMembersSorted.sort(sortFunc);
     }
     length = oldMembersSorted.length;
-    for (i = 0; i < length; i++) { /* Generate an array to determine which elements visually will be removed */
+    for (i = 0; i < length; i++) {
+      /* Generate an array to determine which elements visually will be removed */
       position = oldMembersSorted[i];
       position = position * 2;
       position = position + 1;
@@ -881,10 +1047,13 @@ isc.OBToolbar.addProperties({
     oldMembersSorted = oldMembersSorted.reverse();
 
     length = oldMembersSorted.length;
-    for (i = 0; i < length; i++) { /* Update the 'leftMembers' array */
+    for (i = 0; i < length; i++) {
+      /* Update the 'leftMembers' array */
       this.leftMembers.splice(oldMembersSorted[i], 1);
     }
-    this.destroyAndRemoveMembers(oldArray); /* Remove visually the desired elements */
+    this.destroyAndRemoveMembers(
+      oldArray
+    ); /* Remove visually the desired elements */
   },
 
   // ** {{{ removeAllLeftMembers() }}} **
@@ -892,10 +1061,10 @@ isc.OBToolbar.addProperties({
   // It works just for left side members.
   // Removes all left members from the layout.
   //
-  removeAllLeftMembers: function () {
+  removeAllLeftMembers: function() {
     var membersNumArray = [],
-        i = 0,
-        length = this.leftMembers.length;
+      i = 0,
+      length = this.leftMembers.length;
     for (i = 0; i < length; i++) {
       membersNumArray.push(i);
     }
@@ -910,10 +1079,16 @@ isc.OBToolbar.addProperties({
   // Parameters:
   // * {{{newMembers}}} type: Array || Object - array of canvases to be added, or reference to single canvas.
   // * {{{position (optional)}}} type: Number - position to add newMembers; if omitted newMembers will be added at the last position.
-  addLeftMembers: function (newMembers, position) {
+  addLeftMembers: function(newMembers, position) {
     var i = 0,
-        length;
-    if (!(typeof newMembers.length === 'number' && !(newMembers.propertyIsEnumerable('length')) && typeof newMembers.splice === 'function')) {
+      length;
+    if (
+      !(
+        typeof newMembers.length === 'number' &&
+        !newMembers.propertyIsEnumerable('length') &&
+        typeof newMembers.splice === 'function'
+      )
+    ) {
       newMembers = [newMembers];
     }
     if (position > this.leftMembers.length || typeof position === 'undefined') {
@@ -929,10 +1104,13 @@ isc.OBToolbar.addProperties({
     for (i = 0; i < length; i++) {
       this.Super('addMembers', [newMembers[i], position]);
       position = position + 1;
-      this.Super('addMembers', [isc.HLayout.create({
-        width: this.leftMembersMargin,
-        height: 1
-      }), position]);
+      this.Super('addMembers', [
+        isc.HLayout.create({
+          width: this.leftMembersMargin,
+          height: 1
+        }),
+        position
+      ]);
       position = position + 1;
     }
   },
@@ -944,7 +1122,7 @@ isc.OBToolbar.addProperties({
   //
   // Parameters:
   // * {{{newMembers}}} type: Array || Object - array of canvases to be displayed, or reference to single canvas.
-  setLeftMembers: function (newMembers) {
+  setLeftMembers: function(newMembers) {
     this.removeAllLeftMembers();
     this.addLeftMembers(newMembers);
   },
@@ -957,7 +1135,7 @@ isc.OBToolbar.addProperties({
   // Parameters:
   // * {{{member}}} type: String | Number | Canvas - identifier for the left member to perform the action.
   // * {{{state}}} type: Boolean - new disabled state of this object; pass true to disable the left member.
-  setLeftMemberDisabled: function (member, state) {
+  setLeftMemberDisabled: function(member, state) {
     member = this.getLeftMember(member);
     if (member) {
       member.setDisabled(state);
@@ -973,14 +1151,13 @@ isc.OBToolbar.addProperties({
   // Parameters:
   // * {{{member}}} type: String | Number | Canvas - identifier for the left member to perform the action.
   // * {{{state}}} type: Boolean - new disabled state of this object; pass true to select the left member.
-  setLeftMemberSelected: function (member, state) {
+  setLeftMemberSelected: function(member, state) {
     member = this.getLeftMember(member);
     if (member) {
       member.setSelected(state);
     }
     return;
   },
-
 
   // ** {{{ getRightMember(member) }}} **
   //
@@ -993,15 +1170,14 @@ isc.OBToolbar.addProperties({
   // * {{{member}}} type: String | Number | Canvas - identifier for the required right member.
   //
   // Returns: type: Canvas - right member widget.
-  getRightMember: function (member) {
+  getRightMember: function(member) {
     var i = 0,
-        length = this.rightMembers.length;
+      length = this.rightMembers.length;
     if (typeof member === 'number') {
       if (member >= 0 && member < this.rightMembers.length) {
         return this.rightMembers[member];
       }
     } else if (typeof member === 'string') {
-
       for (i = 0; i < length; i++) {
         if (this.rightMembers[i].ID === member) {
           return this.rightMembers[i];
@@ -1024,7 +1200,7 @@ isc.OBToolbar.addProperties({
   // NOTE: the returned array should not be modified.
   //
   // Returns: type: Array - the Array of right members.
-  getRightMembers: function () {
+  getRightMembers: function() {
     return this.rightMembers;
   },
 
@@ -1039,10 +1215,10 @@ isc.OBToolbar.addProperties({
   // * {{{value}}} type: String | Number | Canvas - desired value of the attribute.
   //
   // Returns: type: Array - the Array of matching right members.
-  getRightMembersByAttribute: function (attribute, value) {
+  getRightMembersByAttribute: function(attribute, value) {
     var members = [],
-        i = 0,
-        length = this.rightMembers.length;
+      i = 0,
+      length = this.rightMembers.length;
     for (i = 0; i < length; i++) {
       if (this.rightMembers[i][attribute] === value) {
         members.push(this.rightMembers[i]);
@@ -1061,9 +1237,9 @@ isc.OBToolbar.addProperties({
   // * {{{member}}} type: Canvas - right member Canvas to obtain its position.
   //
   // Returns: type: Number - the right member Canvas position (starting from 0).
-  getRightMemberNumber: function (member) {
+  getRightMemberNumber: function(member) {
     var i = 0,
-        length = this.rightMembers.length;
+      length = this.rightMembers.length;
     for (i = 0; i < length; i++) {
       if (this.rightMembers[i] === member) {
         return i;
@@ -1079,21 +1255,29 @@ isc.OBToolbar.addProperties({
   //
   // Parameters:
   // * {{{members}}} type: Array | Canvas - array of right members to be removed, or reference to single right member.
-  removeRightMembers: function (members) {
+  removeRightMembers: function(members) {
     var oldMembersSorted = [],
-        length, oldArray = [],
-        position = 0,
-        i = 0,
-        sortFunc;
+      length,
+      oldArray = [],
+      position = 0,
+      i = 0,
+      sortFunc;
 
-    sortFunc = function (a, b) {
-      return (a - b);
+    sortFunc = function(a, b) {
+      return a - b;
     };
-    if (!(typeof members.length === 'number' && !(members.propertyIsEnumerable('length')) && typeof members.splice === 'function')) {
+    if (
+      !(
+        typeof members.length === 'number' &&
+        !members.propertyIsEnumerable('length') &&
+        typeof members.splice === 'function'
+      )
+    ) {
       members = [members];
     }
     length = members.length;
-    for (i = 0; i < length; i++) { /* Clean-up of the given input and sort */
+    for (i = 0; i < length; i++) {
+      /* Clean-up of the given input and sort */
       if (typeof members[i] !== 'number') {
         members[i] = this.getRightMemberNumber(members[i]);
       }
@@ -1104,7 +1288,8 @@ isc.OBToolbar.addProperties({
     }
 
     length = oldMembersSorted.length;
-    for (i = 0; i < length; i++) { /* Generate an array to determine which elements visually will be removed */
+    for (i = 0; i < length; i++) {
+      /* Generate an array to determine which elements visually will be removed */
       position = oldMembersSorted[i];
       position = position * 2;
       position = position + 3;
@@ -1113,10 +1298,13 @@ isc.OBToolbar.addProperties({
     }
     oldMembersSorted = oldMembersSorted.reverse();
     length = oldMembersSorted.length;
-    for (i = 0; i < length; i++) { /* Update the 'rightMembers' array */
+    for (i = 0; i < length; i++) {
+      /* Update the 'rightMembers' array */
       this.rightMembers.splice(oldMembersSorted[i], 1);
     }
-    this.destroyAndRemoveMembers(oldArray); /* Remove visually the desired elements */
+    this.destroyAndRemoveMembers(
+      oldArray
+    ); /* Remove visually the desired elements */
   },
 
   // ** {{{ removeAllRightMembers() }}} **
@@ -1124,10 +1312,10 @@ isc.OBToolbar.addProperties({
   // It works just for right side members.
   // Removes all right members from the layout.
   //
-  removeAllRightMembers: function () {
+  removeAllRightMembers: function() {
     var membersNumArray = [],
-        i = 0,
-        length = this.rightMembers.length;
+      i = 0,
+      length = this.rightMembers.length;
     for (i = 0; i < length; i++) {
       membersNumArray.push(i);
     }
@@ -1142,13 +1330,22 @@ isc.OBToolbar.addProperties({
   // Parameters:
   // * {{{newMembers}}} type: Array || Object - array of canvases to be added, or reference to single canvas.
   // * {{{position (optional)}}} type: Number - position to add newMembers; if omitted newMembers will be added at the last position.
-  addRightMembers: function (newMembers, position) {
+  addRightMembers: function(newMembers, position) {
     var i = 0,
-        length;
-    if (!(typeof newMembers.length === 'number' && !(newMembers.propertyIsEnumerable('length')) && typeof newMembers.splice === 'function')) {
+      length;
+    if (
+      !(
+        typeof newMembers.length === 'number' &&
+        !newMembers.propertyIsEnumerable('length') &&
+        typeof newMembers.splice === 'function'
+      )
+    ) {
       newMembers = [newMembers];
     }
-    if (position > this.rightMembers.length || typeof position === 'undefined') {
+    if (
+      position > this.rightMembers.length ||
+      typeof position === 'undefined'
+    ) {
       position = this.rightMembers.length;
     }
 
@@ -1164,10 +1361,13 @@ isc.OBToolbar.addProperties({
     for (i = 0; i < length; i++) {
       this.Super('addMembers', [newMembers[i], position]);
       position = position + 1;
-      this.Super('addMembers', [isc.HLayout.create({
-        width: this.rightMembersMargin,
-        height: 1
-      }), position]);
+      this.Super('addMembers', [
+        isc.HLayout.create({
+          width: this.rightMembersMargin,
+          height: 1
+        }),
+        position
+      ]);
       position = position + 1;
     }
   },
@@ -1179,7 +1379,7 @@ isc.OBToolbar.addProperties({
   //
   // Parameters:
   // * {{{newMembers}}} type: Array || Object - array of canvases to be displayed, or reference to single canvas.
-  setRightMembers: function (newMembers) {
+  setRightMembers: function(newMembers) {
     this.removeAllRightMembers();
     this.addRightMembers(newMembers);
   },
@@ -1192,7 +1392,7 @@ isc.OBToolbar.addProperties({
   // Parameters:
   // * {{{member}}} type: String | Number | Canvas - identifier for the right member to perform the action.
   // * {{{state}}} type: Boolean - new disabled state of this object; pass true to disable the right member.
-  setRightMemberDisabled: function (member, state) {
+  setRightMemberDisabled: function(member, state) {
     member = this.getRightMember(member);
     if (member) {
       member.setDisabled(state);
@@ -1208,7 +1408,7 @@ isc.OBToolbar.addProperties({
   // Parameters:
   // * {{{member}}} type: String | Number | Canvas - identifier for the right member to perform the action.
   // * {{{state}}} type: Boolean - new disabled state of this object; pass true to select the right member.
-  setRightMemberSelected: function (member, state) {
+  setRightMemberSelected: function(member, state) {
     member = this.getRightMember(member);
     if (member) {
       member.setSelected(state);
@@ -1220,27 +1420,43 @@ isc.OBToolbar.addProperties({
   //
   // Refreshes all the custom buttons in the toolbar based on current record selection
   //
-  refreshCustomButtons: function (noSetSession) {
+  refreshCustomButtons: function(noSetSession) {
     var selectedRecords, multipleSelectedRowIds, allProperties, i;
 
     var currentTabCalled = false,
-        me = this,
-        requestParams;
+      me = this,
+      requestParams;
 
     var buttons = this.getRightMembers(),
-        buttonContexts = [],
-        currentContext, buttonsByContext = [],
-        length, iButtonContext, callbackHandler;
+      buttonContexts = [],
+      currentContext,
+      buttonsByContext = [],
+      length,
+      iButtonContext,
+      callbackHandler;
 
-    function doRefresh(buttons, currentValues, hideAllButtons, noneOrMultipleRecordsSelected, me) {
-      var i, length = me.rightMembers.length;
-      for (i = 0; i < length; i++) { // To disable any button previous defined keyboard shortcut
+    function doRefresh(
+      buttons,
+      currentValues,
+      hideAllButtons,
+      noneOrMultipleRecordsSelected,
+      me
+    ) {
+      var i,
+        length = me.rightMembers.length;
+      for (i = 0; i < length; i++) {
+        // To disable any button previous defined keyboard shortcut
         me.rightMembers[i].disableShortcut();
       }
       length = buttons.length;
       for (i = 0; i < length; i++) {
         if (buttons[i].updateState) {
-          buttons[i].updateState(currentValues, hideAllButtons, null, !noneOrMultipleRecordsSelected);
+          buttons[i].updateState(
+            currentValues,
+            hideAllButtons,
+            null,
+            !noneOrMultipleRecordsSelected
+          );
         }
       }
       length = me.leftMembers.length;
@@ -1271,14 +1487,17 @@ isc.OBToolbar.addProperties({
       }
 
       // This is needed to prevent JSLint complaining about "Don't make functions within a loop.
-      callbackHandler = function (currentContext, me) {
-        return function (response, data, request) {
-          var grid = currentContext.isShowingTree ? currentContext.treeGrid : currentContext.viewGrid,
-              noneOrMultipleRecordsSelected = grid.getSelectedRecords().length !== 1;
+      callbackHandler = function(currentContext, me) {
+        return function(response, data, request) {
+          var grid = currentContext.isShowingTree
+              ? currentContext.treeGrid
+              : currentContext.viewGrid,
+            noneOrMultipleRecordsSelected =
+              grid.getSelectedRecords().length !== 1;
           var sessionAttributes = data.sessionAttributes,
-              auxInputs = data.auxiliaryInputValues,
-              attachmentExists = data.attachmentExists,
-              prop;
+            auxInputs = data.auxiliaryInputValues,
+            attachmentExists = data.attachmentExists,
+            prop;
           if (sessionAttributes) {
             currentContext.viewForm.sessionAttributes = sessionAttributes;
           }
@@ -1293,13 +1512,18 @@ isc.OBToolbar.addProperties({
             }
           }
           currentContext.viewForm.view.attachmentExists = attachmentExists;
-          doRefresh(buttonsByContext[currentContext], currentContext.getCurrentValues() || {}, noneOrMultipleRecordsSelected, noneOrMultipleRecordsSelected, me);
+          doRefresh(
+            buttonsByContext[currentContext],
+            currentContext.getCurrentValues() || {},
+            noneOrMultipleRecordsSelected,
+            noneOrMultipleRecordsSelected,
+            me
+          );
           //compute and apply tab display logic again after fetching auxilary inputs.
           currentContext.handleDefaultTreeView();
           currentContext.updateSubtabVisibility();
         };
       };
-
 
       length = buttonContexts.length;
       for (iButtonContext = 0; iButtonContext < length; iButtonContext++) {
@@ -1311,15 +1535,22 @@ isc.OBToolbar.addProperties({
           selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];
         }
         var numOfSelRecords = 0,
-            theForm = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm,
-            isNew = currentContext.viewForm.isNew,
-            hideAllButtons = selectedRecords.size() === 0 && !currentContext.isShowingForm,
-            currentValues = currentContext.getCurrentValues(),
-            gridVisibleProperties = [],
-            len;
+          theForm = this.view.isEditingGrid
+            ? this.view.viewGrid.getEditForm()
+            : this.view.viewForm,
+          isNew = currentContext.viewForm.isNew,
+          hideAllButtons =
+            selectedRecords.size() === 0 && !currentContext.isShowingForm,
+          currentValues = currentContext.getCurrentValues(),
+          gridVisibleProperties = [],
+          len;
 
-        if (!hideAllButtons && (this.view.isEditingGrid || this.view.isShowingForm)) {
-          hideAllButtons = theForm.hasErrors() || !theForm.allRequiredFieldsSet();
+        if (
+          !hideAllButtons &&
+          (this.view.isEditingGrid || this.view.isShowingForm)
+        ) {
+          hideAllButtons =
+            theForm.hasErrors() || !theForm.allRequiredFieldsSet();
         }
         if (hideAllButtons) {
           this.hideShowRightMembers(false, noSetSession);
@@ -1331,7 +1562,14 @@ isc.OBToolbar.addProperties({
 
         var noneOrMultipleRecordsSelected = numOfSelRecords !== 1 && !isNew;
 
-        if (currentValues && !noSetSession && !currentContext.isShowingForm && !isNew && !hideAllButtons && currentContext.ID === this.view.ID) {
+        if (
+          currentValues &&
+          !noSetSession &&
+          !currentContext.isShowingForm &&
+          !isNew &&
+          !hideAllButtons &&
+          currentContext.ID === this.view.ID
+        ) {
           if (this.view.tabId === currentContext.tabId) {
             currentTabCalled = true;
           }
@@ -1343,7 +1581,12 @@ isc.OBToolbar.addProperties({
             ROW_ID: currentValues.id
           };
           multipleSelectedRowIds = [];
-          allProperties = currentContext.getContextInfo(false, true, false, true);
+          allProperties = currentContext.getContextInfo(
+            false,
+            true,
+            false,
+            true
+          );
           if (selectedRecords.size() > 1) {
             for (i = 0; i < selectedRecords.size(); i++) {
               multipleSelectedRowIds[i] = selectedRecords[i].id;
@@ -1354,18 +1597,37 @@ isc.OBToolbar.addProperties({
             len = currentContext.viewGrid.fields.length;
             for (i = 0; i < len; i++) {
               if (currentContext.viewGrid.fields[i].name[0] !== '_') {
-                gridVisibleProperties.push(currentContext.viewGrid.fields[i].name);
+                gridVisibleProperties.push(
+                  currentContext.viewGrid.fields[i].name
+                );
               }
             }
             allProperties._gridVisibleProperties = gridVisibleProperties;
           }
-          OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, callbackHandler(currentContext, me));
+          OB.RemoteCallManager.call(
+            'org.openbravo.client.application.window.FormInitializationComponent',
+            allProperties,
+            requestParams,
+            callbackHandler(currentContext, me)
+          );
         } else {
-          doRefresh(buttonsByContext[currentContext], currentValues || {}, hideAllButtons || noneOrMultipleRecordsSelected, numOfSelRecords !== 1, this);
+          doRefresh(
+            buttonsByContext[currentContext],
+            currentValues || {},
+            hideAllButtons || noneOrMultipleRecordsSelected,
+            numOfSelRecords !== 1,
+            this
+          );
         }
       }
     }
-    if (!currentTabCalled && !noSetSession && !this.view.isShowingForm && !this.view.viewForm.isNew && this.view.viewGrid.getSelectedRecords().size() !== 0) {
+    if (
+      !currentTabCalled &&
+      !noSetSession &&
+      !this.view.isShowingForm &&
+      !this.view.viewForm.isNew &&
+      this.view.viewGrid.getSelectedRecords().size() !== 0
+    ) {
       selectedRecords = this.view.viewGrid.getSelectedRecords();
       //The call to the FIC for the current tab was not done (probably because it doesn't have buttons, or the buttons do not depend on session vars/aux ins.
       //However, a call still needs to be done, to set the attachments information
@@ -1387,33 +1649,38 @@ isc.OBToolbar.addProperties({
           allProperties.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
         }
       }
-      OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function (response, data, request) {
-        var attachmentExists = data.attachmentExists,
+      OB.RemoteCallManager.call(
+        'org.openbravo.client.application.window.FormInitializationComponent',
+        allProperties,
+        requestParams,
+        function(response, data, request) {
+          var attachmentExists = data.attachmentExists,
             auxInputs = data.auxiliaryInputValues,
             prop;
-        me.view.attachmentExists = attachmentExists;
+          me.view.attachmentExists = attachmentExists;
 
-        // Added sessionAttributes to updateSubtabVisibility 
-        me.view.viewForm.sessionAttributes = data.sessionAttributes;
-        if (auxInputs) {
-          this.auxInputs = {};
-          for (prop in auxInputs) {
-            if (auxInputs.hasOwnProperty(prop)) {
-              me.view.viewForm.setValue(prop, auxInputs[prop].value);
-              me.view.viewForm.auxInputs[prop] = auxInputs[prop].value;
+          // Added sessionAttributes to updateSubtabVisibility
+          me.view.viewForm.sessionAttributes = data.sessionAttributes;
+          if (auxInputs) {
+            this.auxInputs = {};
+            for (prop in auxInputs) {
+              if (auxInputs.hasOwnProperty(prop)) {
+                me.view.viewForm.setValue(prop, auxInputs[prop].value);
+                me.view.viewForm.auxInputs[prop] = auxInputs[prop].value;
+              }
             }
           }
-        }
-        me.view.handleDefaultTreeView();
-        me.view.updateSubtabVisibility();
+          me.view.handleDefaultTreeView();
+          me.view.updateSubtabVisibility();
 
-        //Call to refresh the buttons. As its called with noSetSession=true, it will not cause an infinite recursive loop
-        me.updateButtonState(true);
-      });
+          //Call to refresh the buttons. As its called with noSetSession=true, it will not cause an infinite recursive loop
+          me.updateButtonState(true);
+        }
+      );
     }
   },
 
-  hideShowRightMembers: function (show, noSetSession) {
+  hideShowRightMembers: function(show, noSetSession) {
     var i, button, context;
     // if showing make sure that they are not always shown
     if (show) {
@@ -1426,7 +1693,11 @@ isc.OBToolbar.addProperties({
         } else {
           // do not hide non autosave buttons, keep them in case display logic allows it
           context = button.contextView;
-          button.updateState(context.getCurrentValues(), false, context.getContextInfo(false, true, true));
+          button.updateState(
+            context.getCurrentValues(),
+            false,
+            context.getContextInfo(false, true, true)
+          );
         }
       }
     }
@@ -1437,19 +1708,24 @@ isc.OBToolbar.addProperties({
   // Refreshes all the custom buttons in the toolbar having contextView === view
   // Used to update state of buttons dynamically on field change
   //
-  refreshCustomButtonsView: function (view) {
-    var i, context = view.getContextInfo(false, true, true),
-        length;
+  refreshCustomButtonsView: function(view) {
+    var i,
+      context = view.getContextInfo(false, true, true),
+      length;
 
     length = this.rightMembers.length;
     for (i = 0; i < length; i++) {
       if (this.rightMembers[i].contextView === view) {
-        this.rightMembers[i].updateState(view.getCurrentValues(), false, context);
+        this.rightMembers[i].updateState(
+          view.getCurrentValues(),
+          false,
+          context
+        );
       }
     }
   },
 
-  visibilityChanged: function (state) {
+  visibilityChanged: function(state) {
     if (state) {
       this.enableShortcuts();
     } else {
@@ -1457,7 +1733,7 @@ isc.OBToolbar.addProperties({
     }
   },
 
-  draw: function () {
+  draw: function() {
     this.Super('draw', arguments);
     this.defineRightMembersShortcuts();
     this.enableShortcuts();
@@ -1465,7 +1741,7 @@ isc.OBToolbar.addProperties({
 
   rightMembersShortcuts: [],
 
-  defineRightMembersShortcuts: function () {
+  defineRightMembersShortcuts: function() {
     var i, j, k, length, titleLength;
 
     function isAssignedCharacter(character, me) {
@@ -1488,21 +1764,25 @@ isc.OBToolbar.addProperties({
     length = this.rightMembers.length;
     for (i = 0; i < length; i++) {
       var title = this.rightMembers[i].realTitle,
-          haveToContinue = true;
+        haveToContinue = true;
       this.rightMembersShortcuts[i] = [];
-      if (haveToContinue) { // Check if free character and assign
+      if (haveToContinue) {
+        // Check if free character and assign
         haveToContinue = true;
         titleLength = title.length;
         for (j = 0; j < titleLength; j++) {
           if (!isAssignedCharacter(title.substring(j, j + 1), this)) {
-            this.rightMembersShortcuts[i][0] = title.substring(j, j + 1).toUpperCase();
+            this.rightMembersShortcuts[i][0] = title
+              .substring(j, j + 1)
+              .toUpperCase();
             this.rightMembersShortcuts[i][1] = j + 1;
             haveToContinue = false;
             break;
           }
         }
       }
-      if (haveToContinue) { // Check if free number and assign
+      if (haveToContinue) {
+        // Check if free number and assign
         haveToContinue = true;
         for (k = 1; k < 10; k++) {
           if (!isAssignedCharacter(k, this)) {
@@ -1518,12 +1798,16 @@ isc.OBToolbar.addProperties({
         this.rightMembersShortcuts[i][1] = 0;
       }
       this.rightMembers[i].keyboardShortcutId = this.randomId + '_' + i;
-      this.rightMembers[i].keyboardShortcutCharacter = this.rightMembersShortcuts[i][0];
-      this.rightMembers[i].keyboardShortcutPosition = this.rightMembersShortcuts[i][1];
+      this.rightMembers[
+        i
+      ].keyboardShortcutCharacter = this.rightMembersShortcuts[i][0];
+      this.rightMembers[
+        i
+      ].keyboardShortcutPosition = this.rightMembersShortcuts[i][1];
     }
   },
 
-  enableShortcuts: function () {
+  enableShortcuts: function() {
     var length, i;
     if (this.leftMembers) {
       length = this.leftMembers.length;
@@ -1544,7 +1828,7 @@ isc.OBToolbar.addProperties({
     }
   },
 
-  disableShortcuts: function () {
+  disableShortcuts: function() {
     var length, i;
     if (this.leftMembers) {
       length = this.leftMembers.length;
@@ -1574,9 +1858,7 @@ isc.OBToolbar.addProperties({
   membersMargin: 0
 });
 
-
 /** ----------------------------- **/
-
 
 isc.ClassFactory.defineClass('OBToolbarIconButton', isc.MenuButton);
 
@@ -1591,14 +1873,14 @@ isc.OBToolbarIconButton.addProperties({
   customState: '',
   showMenuButtonImage: false,
 
-  initWidget: function () {
+  initWidget: function() {
     this.Super('initWidget', arguments);
     this.resetBaseStyle();
   },
 
-  resetBaseStyle: function () {
+  resetBaseStyle: function() {
     var isMenu = false,
-        extraClass;
+      extraClass;
     if (this.menu !== null) {
       isMenu = true;
     }
@@ -1612,28 +1894,42 @@ isc.OBToolbarIconButton.addProperties({
       this.iconHeight = 1;
     }
 
-    this.setBaseStyle('OBToolbarIconButton_icon_' + this.buttonType + this.customState + extraClass + 'OBToolbarIconButton');
+    this.setBaseStyle(
+      'OBToolbarIconButton_icon_' +
+        this.buttonType +
+        this.customState +
+        extraClass +
+        'OBToolbarIconButton'
+    );
   },
 
   keyboardShortcutId: null,
-  enableShortcut: function () {
+  enableShortcut: function() {
     if (this.keyboardShortcutId) {
       var me = this,
-          ksAction;
-      ksAction = function () {
+        ksAction;
+      ksAction = function() {
         if (!me.disabled) {
           me.action();
         }
         return false; //To avoid keyboard shortcut propagation
       };
-      OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction);
+      OB.KeyboardManager.Shortcuts.set(
+        this.keyboardShortcutId,
+        'Canvas',
+        ksAction
+      );
     }
   },
-  disableShortcut: function () {
+  disableShortcut: function() {
     if (this.keyboardShortcutId) {
-      OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, null, function () {
-        return true;
-      });
+      OB.KeyboardManager.Shortcuts.set(
+        this.keyboardShortcutId,
+        null,
+        function() {
+          return true;
+        }
+      );
     }
   }
 });
@@ -1650,10 +1946,10 @@ isc.OBToolbarTextButton.addProperties({
   title: '',
   realTitle: '',
   // difference between title and realTitle is just the <u>xx</u> for keyboard shortcut notation.
-  action: function () {
+  action: function() {
     alert(this.title);
   },
-  initWidget: function () {
+  initWidget: function() {
     this.Super('initWidget', arguments);
     this.realTitle = this.title;
   },
@@ -1661,13 +1957,13 @@ isc.OBToolbarTextButton.addProperties({
   keyboardShortcutId: null,
   keyboardShortcutCharacter: null,
   keyboardShortcutPosition: null,
-  enableShortcut: function () {
+  enableShortcut: function() {
     if (this.keyboardShortcutId) {
       var me = this,
-          newTitle = this.realTitle,
-          ksAction;
+        newTitle = this.realTitle,
+        ksAction;
 
-      ksAction = function () {
+      ksAction = function() {
         if (!me.disabled && me.visible) {
           me.action();
         }
@@ -1675,58 +1971,87 @@ isc.OBToolbarTextButton.addProperties({
       };
 
       if (this.keyboardShortcutPosition === 'end') {
-        newTitle = newTitle + ' (<u>' + this.keyboardShortcutCharacter + '</u>)';
+        newTitle =
+          newTitle + ' (<u>' + this.keyboardShortcutCharacter + '</u>)';
       } else {
-        newTitle = newTitle.substring(0, this.keyboardShortcutPosition - 1) + '<u>' + newTitle.substring(this.keyboardShortcutPosition - 1, this.keyboardShortcutPosition) + '</u>' + newTitle.substring(this.keyboardShortcutPosition, newTitle.length);
+        newTitle =
+          newTitle.substring(0, this.keyboardShortcutPosition - 1) +
+          '<u>' +
+          newTitle.substring(
+            this.keyboardShortcutPosition - 1,
+            this.keyboardShortcutPosition
+          ) +
+          '</u>' +
+          newTitle.substring(this.keyboardShortcutPosition, newTitle.length);
       }
       this.setTitle(newTitle);
-      if (this.keyboardShortcutPosition) { // If 'this.keyboardShortcutPosition' equals 0 means that there is no shortcut assigned
-        OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction, null, {
-          'ctrl': true,
-          'alt': true,
-          'shift': true,
-          'key': this.keyboardShortcutCharacter
-        });
+      if (this.keyboardShortcutPosition) {
+        // If 'this.keyboardShortcutPosition' equals 0 means that there is no shortcut assigned
+        OB.KeyboardManager.Shortcuts.set(
+          this.keyboardShortcutId,
+          'Canvas',
+          ksAction,
+          null,
+          {
+            ctrl: true,
+            alt: true,
+            shift: true,
+            key: this.keyboardShortcutCharacter
+          }
+        );
       }
     }
   },
-  disableShortcut: function () {
+  disableShortcut: function() {
     if (this.keyboardShortcutId) {
       var newTitle = this.realTitle;
       this.setTitle(newTitle);
-      OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, null, function () {
-        return true;
-      }, '', {
-        'ctrl': true,
-        'alt': true,
-        'shift': true,
-        'key': 'xyz'
-      });
+      OB.KeyboardManager.Shortcuts.set(
+        this.keyboardShortcutId,
+        null,
+        function() {
+          return true;
+        },
+        '',
+        {
+          ctrl: true,
+          alt: true,
+          shift: true,
+          key: 'xyz'
+        }
+      );
     }
   }
 });
 
 OB.ToolbarUtils = {};
 
-OB.ToolbarUtils.print = function (view, url, directPrint, type) {
+OB.ToolbarUtils.print = function(view, url, directPrint, type) {
   var selectedRecords = view.viewGrid.getSelectedRecords(),
-      length = selectedRecords.length;
+    length = selectedRecords.length;
 
   if (length === 0) {
-    view.messageBar.setMessage(isc.OBMessageBar.TYPE_WARNING, '', OB.I18N.getLabel('OBUIAPP_PrintNoRecordSelected'));
+    view.messageBar.setMessage(
+      isc.OBMessageBar.TYPE_WARNING,
+      '',
+      OB.I18N.getLabel('OBUIAPP_PrintNoRecordSelected')
+    );
     return;
   }
 
   var popupParams = {},
-      allProperties = view.getContextInfo(false, true, false, true),
-      sessionProperties = view.getContextInfo(true, true, false, true),
-      param, i, value, selectedIds = '';
+    allProperties = view.getContextInfo(false, true, false, true),
+    sessionProperties = view.getContextInfo(true, true, false, true),
+    param,
+    i,
+    value,
+    selectedIds = '';
 
   popupParams = {
     Command: 'DEFAULT',
     inppdfpath: url,
     inphiddenkey: view.standardProperties.inpKeyName,
-    inpdirectprint: (directPrint ? 'Y' : 'N'),
+    inpdirectprint: directPrint ? 'Y' : 'N',
     inpButtonType: type
   };
 
@@ -1749,17 +2074,28 @@ OB.ToolbarUtils.print = function (view, url, directPrint, type) {
 
   popupParams.inphiddenvalue = selectedIds;
 
-  view.setContextInfo(sessionProperties, function () {
-    OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + 'businessUtility/PrinterReports.html', '', window, false, false, true, popupParams);
+  view.setContextInfo(sessionProperties, function() {
+    OB.Layout.ClassicOBCompatibility.Popup.open(
+      'print',
+      0,
+      0,
+      OB.Application.contextUrl + 'businessUtility/PrinterReports.html',
+      '',
+      window,
+      false,
+      false,
+      true,
+      popupParams
+    );
   });
 };
 
-OB.ToolbarUtils.showAuditTrail = function (view) {
+OB.ToolbarUtils.showAuditTrail = function(view) {
   var selectedRecords = view.viewGrid.getSelectedRecords();
 
   if (selectedRecords.length > 1) {
     var setWarning = {
-      set: function (label) {
+      set: function(label) {
         view.messageBar.setMessage(isc.OBMessageBar.TYPE_WARNING, '', label);
       }
     };
@@ -1775,10 +2111,22 @@ OB.ToolbarUtils.showAuditTrail = function (view) {
     popupParams += '&inpRecordId=' + view.viewGrid.getSelectedRecord().id;
   }
 
-  OB.Layout.ClassicOBCompatibility.Popup.open('audit', 900, 600, OB.Application.contextUrl + 'businessUtility/AuditTrail.html?' + popupParams, '', window, false, false, true);
+  OB.Layout.ClassicOBCompatibility.Popup.open(
+    'audit',
+    900,
+    600,
+    OB.Application.contextUrl +
+      'businessUtility/AuditTrail.html?' +
+      popupParams,
+    '',
+    window,
+    false,
+    false,
+    true
+  );
 };
 
-OB.ToolbarUtils.showTree = function (view) {
+OB.ToolbarUtils.showTree = function(view) {
   var tabId = view.tabId;
 
   function openPopupTree() {
@@ -1786,19 +2134,42 @@ OB.ToolbarUtils.showTree = function (view) {
     popupParams += '&inpTabId=' + tabId;
     popupParams += '&hideMenu=true&noprefs=true';
 
-    if (OB.Utilities.isIE9Strict) { // Drag and drop tree is not well rendered with IE9 + HTML5, so it should be opened in an isolated popup
-      OB.Utilities.openProcessPopup(OB.Application.contextUrl + 'utility/WindowTree.html?' + popupParams, true, null, 670, 750);
+    if (OB.Utilities.isIE9Strict) {
+      // Drag and drop tree is not well rendered with IE9 + HTML5, so it should be opened in an isolated popup
+      OB.Utilities.openProcessPopup(
+        OB.Application.contextUrl + 'utility/WindowTree.html?' + popupParams,
+        true,
+        null,
+        670,
+        750
+      );
     } else {
-      OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + 'utility/WindowTree.html?' + popupParams, '', window, true, true, true, null, false);
+      OB.Layout.ClassicOBCompatibility.Popup.open(
+        'tree',
+        750,
+        625,
+        OB.Application.contextUrl + 'utility/WindowTree.html?' + popupParams,
+        '',
+        window,
+        true,
+        true,
+        true,
+        null,
+        false
+      );
     }
   }
 
-  view.setContextInfo(view.getContextInfo(true, true, true, true), openPopupTree, true);
+  view.setContextInfo(
+    view.getContextInfo(true, true, true, true),
+    openPopupTree,
+    true
+  );
 };
 
-OB.ToolbarUtils.showTreeGrid = function (view) {
+OB.ToolbarUtils.showTreeGrid = function(view) {
   var treeGrid = view.treeGrid,
-      viewGrid = view.viewGrid;
+    viewGrid = view.viewGrid;
 
   if (viewGrid && treeGrid) {
     // Copy the viewGrid fields to the treeGrid, so that both views always display the same fields
@@ -1813,9 +2184,9 @@ OB.ToolbarUtils.showTreeGrid = function (view) {
   view.isShowingTree = true;
 };
 
-OB.ToolbarUtils.hideTreeGrid = function (view) {
+OB.ToolbarUtils.hideTreeGrid = function(view) {
   var treeGrid = view.treeGrid,
-      viewGrid = view.viewGrid;
+    viewGrid = view.viewGrid;
 
   if (viewGrid && treeGrid) {
     viewGrid.show();
@@ -1824,14 +2195,13 @@ OB.ToolbarUtils.hideTreeGrid = function (view) {
   view.isShowingTree = false;
 };
 
-OB.ToolbarUtils.toggleTreeGridVisibility = function (view) {
+OB.ToolbarUtils.toggleTreeGridVisibility = function(view) {
   if (view.isShowingTree) {
     OB.ToolbarUtils.hideTreeGrid(view);
   } else {
     OB.ToolbarUtils.showTreeGrid(view);
   }
 };
-
 
 // ** {{{ OB.ToolbarUtils.createCloneButton(/*String*/ actionHandler, /*Object*/ requestParams, /*Array[String]*/ tabIds, /*String*/ askMsg, /*Integer*/ sortOrder, /*Boolean*/ editRecordAfterClone, /*String*/ buttonId, /*Boolean*/ overwriteIfExists, /*Array[String]*/ tabIdsToAvoid}}} **
 // Automatically set up a clone button for the provided tabs
@@ -1845,8 +2215,21 @@ OB.ToolbarUtils.toggleTreeGridVisibility = function (view) {
 // * {{{buttonId}}}: (Optional, random by default) Don't set it unless you plan to do advanced coding with this button (as, for example, overwrite it later in another place).
 // * {{{overwriteIfExists}}}: (Optional, false by default) To be able to overwrite a particular existing clone button. The buttonId should match with the overwritten one.
 // * {{{tabIdsToAvoid}}}: (Optional, no tabs to avoid by default) array of tabIds where this button should not be shown
-OB.ToolbarUtils.createCloneButton = function (actionHandler, requestParams, tabIds, askMsg, sortOrder, editRecordAfterClone, buttonId, overwriteIfExists, tabIdsToAvoid) {
-  var cloneButtonProps = isc.addProperties({}, isc.OBToolbar.CLONE_BUTTON_PROPERTIES);
+OB.ToolbarUtils.createCloneButton = function(
+  actionHandler,
+  requestParams,
+  tabIds,
+  askMsg,
+  sortOrder,
+  editRecordAfterClone,
+  buttonId,
+  overwriteIfExists,
+  tabIdsToAvoid
+) {
+  var cloneButtonProps = isc.addProperties(
+    {},
+    isc.OBToolbar.CLONE_BUTTON_PROPERTIES
+  );
 
   if (!askMsg) {
     askMsg = OB.I18N.getLabel('OBUIAPP_WantToCloneRecord');
@@ -1858,17 +2241,18 @@ OB.ToolbarUtils.createCloneButton = function (actionHandler, requestParams, tabI
     editRecordAfterClone = true;
   }
   if (!buttonId) {
-    buttonId = cloneButtonProps.buttonType + '_' + OB.Utilities.generateRandomString(8);
+    buttonId =
+      cloneButtonProps.buttonType + '_' + OB.Utilities.generateRandomString(8);
   }
   if (overwriteIfExists !== true) {
     overwriteIfExists = false;
   }
 
-  cloneButtonProps.action = function () {
+  cloneButtonProps.action = function() {
     var view = this.view,
-        callback;
+      callback;
 
-    callback = function (ok) {
+    callback = function(ok) {
       if (!requestParams) {
         requestParams = {};
       }
@@ -1877,9 +2261,17 @@ OB.ToolbarUtils.createCloneButton = function (actionHandler, requestParams, tabI
       requestParams.windowId = view.windowId;
 
       if (ok) {
-        OB.RemoteCallManager.call(actionHandler, {}, requestParams, function (rpcResponse, data, rpcRequest) {
-          var recordIndex = view.viewGrid.getRecordIndex(view.viewGrid.getSelectedRecord()) + 1,
-              recordsData = view.viewGrid.getDataSource().recordsFromObjects(data)[0];
+        OB.RemoteCallManager.call(actionHandler, {}, requestParams, function(
+          rpcResponse,
+          data,
+          rpcRequest
+        ) {
+          var recordIndex =
+              view.viewGrid.getRecordIndex(view.viewGrid.getSelectedRecord()) +
+              1,
+            recordsData = view.viewGrid
+              .getDataSource()
+              .recordsFromObjects(data)[0];
           view.viewGrid.addToCacheData(recordsData, recordIndex);
           view.viewGrid.scrollToRow(recordIndex);
           view.viewGrid.markForRedraw();
@@ -1896,14 +2288,30 @@ OB.ToolbarUtils.createCloneButton = function (actionHandler, requestParams, tabI
     isc.ask(askMsg, callback);
   };
 
-  OB.ToolbarRegistry.registerButton(buttonId, isc.OBToolbarIconButton, cloneButtonProps, sortOrder, tabIds, tabIdsToAvoid, overwriteIfExists);
+  OB.ToolbarRegistry.registerButton(
+    buttonId,
+    isc.OBToolbarIconButton,
+    cloneButtonProps,
+    sortOrder,
+    tabIds,
+    tabIdsToAvoid,
+    overwriteIfExists
+  );
 };
 
 OB.ToolbarRegistry = {
   buttonDefinitions: [],
 
   // note tabIds is an array of strings, but maybe null/undefined
-  registerButton: function (buttonId, clazz, properties, sortOrder, tabIds, tabIdsToAvoid, overwriteIfExists) {
+  registerButton: function(
+    buttonId,
+    clazz,
+    properties,
+    sortOrder,
+    tabIds,
+    tabIdsToAvoid,
+    overwriteIfExists
+  ) {
     var length;
 
     if (tabIds && !isc.isA.Array(tabIds)) {
@@ -1915,8 +2323,9 @@ OB.ToolbarRegistry = {
     }
 
     // declare the vars and the object which will be stored
-    var i, index = 0,
-        buttonDef;
+    var i,
+      index = 0,
+      buttonDef;
 
     buttonDef = {
       buttonId: buttonId,
@@ -1955,16 +2364,22 @@ OB.ToolbarRegistry = {
     }
   },
 
-  getButtons: function (tabId) {
+  getButtons: function(tabId) {
     // get the buttons for the tabId, this includes all buttons with that tabId or with no tabId set
     // as the button defs are already stored by their sortorder we can just iterate over the array
     // and pick them up in the correct order
-    // the return should be an array of button instances created by doing 
+    // the return should be an array of button instances created by doing
     //  btnDefinitionClass.create(btnDefinitionProperties);
     var result = [],
-        j, resultIndex = 0,
-        i, validTabId, tabIds, tabIdsToAvoid, length = this.buttonDefinitions.length,
-        tabIdsLength, tabIdsToAvoidLength;
+      j,
+      resultIndex = 0,
+      i,
+      validTabId,
+      tabIds,
+      tabIdsToAvoid,
+      length = this.buttonDefinitions.length,
+      tabIdsLength,
+      tabIdsToAvoidLength;
     for (i = 0; i < length; i++) {
       tabIds = this.buttonDefinitions[i].tabIds;
       tabIdsToAvoid = this.buttonDefinitions[i].tabIdsToAvoid;
@@ -1979,7 +2394,10 @@ OB.ToolbarRegistry = {
         }
       }
       if (validTabId) {
-        tabIdsToAvoidLength = (tabIdsToAvoid && isc.isA.Array(tabIdsToAvoid) && tabIdsToAvoid.length ? tabIdsToAvoid.length : 0);
+        tabIdsToAvoidLength =
+          tabIdsToAvoid && isc.isA.Array(tabIdsToAvoid) && tabIdsToAvoid.length
+            ? tabIdsToAvoid.length
+            : 0;
         for (j = 0; j < tabIdsToAvoidLength; j++) {
           if (tabIdsToAvoid[j] === tabId) {
             validTabId = false;
@@ -1988,23 +2406,105 @@ OB.ToolbarRegistry = {
         }
       }
       if (validTabId) {
-        result[resultIndex++] = this.buttonDefinitions[i].clazz.create(isc.clone(this.buttonDefinitions[i].properties));
+        result[resultIndex++] = this.buttonDefinitions[i].clazz.create(
+          isc.clone(this.buttonDefinitions[i].properties)
+        );
       }
     }
     return result;
   }
 };
 
-//These are the icon toolbar buttons shown in all the tabs 
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES, isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES.sortPosition, null, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES, isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES.sortPosition, null, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.SAVE_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.SAVE_BUTTON_PROPERTIES, isc.OBToolbar.SAVE_BUTTON_PROPERTIES.sortPosition, null, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES, isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES.sortPosition, null, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.UNDO_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.UNDO_BUTTON_PROPERTIES, isc.OBToolbar.UNDO_BUTTON_PROPERTIES.sortPosition, null, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.DELETE_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.DELETE_BUTTON_PROPERTIES, isc.OBToolbar.DELETE_BUTTON_PROPERTIES.sortPosition, null, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.REFRESH_BUTTON_PROPERTIES, isc.OBToolbar.REFRESH_BUTTON_PROPERTIES.sortPosition, null, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.EXPORT_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.EXPORT_BUTTON_PROPERTIES, isc.OBToolbar.EXPORT_BUTTON_PROPERTIES.sortPosition, null, null, false);
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES, isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES.sortPosition, null, null, false);
+//These are the icon toolbar buttons shown in all the tabs
+OB.ToolbarRegistry.registerButton(
+  isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES.buttonType,
+  isc.OBToolbarIconButton,
+  isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES,
+  isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES.sortPosition,
+  null,
+  null,
+  false
+);
+OB.ToolbarRegistry.registerButton(
+  isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES.buttonType,
+  isc.OBToolbarIconButton,
+  isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES,
+  isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES.sortPosition,
+  null,
+  null,
+  false
+);
+OB.ToolbarRegistry.registerButton(
+  isc.OBToolbar.SAVE_BUTTON_PROPERTIES.buttonType,
+  isc.OBToolbarIconButton,
+  isc.OBToolbar.SAVE_BUTTON_PROPERTIES,
+  isc.OBToolbar.SAVE_BUTTON_PROPERTIES.sortPosition,
+  null,
+  null,
+  false
+);
+OB.ToolbarRegistry.registerButton(
+  isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES.buttonType,
+  isc.OBToolbarIconButton,
+  isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES,
+  isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES.sortPosition,
+  null,
+  null,
+  false
+);
+OB.ToolbarRegistry.registerButton(
+  isc.OBToolbar.UNDO_BUTTON_PROPERTIES.buttonType,
+  isc.OBToolbarIconButton,
+  isc.OBToolbar.UNDO_BUTTON_PROPERTIES,
+  isc.OBToolbar.UNDO_BUTTON_PROPERTIES.sortPosition,
+  null,
+  null,
+  false
+);
+OB.ToolbarRegistry.registerButton(
+  isc.OBToolbar.DELETE_BUTTON_PROPERTIES.buttonType,
+  isc.OBToolbarIconButton,
+  isc.OBToolbar.DELETE_BUTTON_PROPERTIES,
+  isc.OBToolbar.DELETE_BUTTON_PROPERTIES.sortPosition,
+  null,
+  null,
+  false
+);
+OB.ToolbarRegistry.registerButton(
+  isc.OBToolbar.REFRESH_BUTTON_PROPERTIES.buttonType,
+  isc.OBToolbarIconButton,
+  isc.OBToolbar.REFRESH_BUTTON_PROPERTIES,
+  isc.OBToolbar.REFRESH_BUTTON_PROPERTIES.sortPosition,
+  null,
+  null,
+  false
+);
+OB.ToolbarRegistry.registerButton(
+  isc.OBToolbar.EXPORT_BUTTON_PROPERTIES.buttonType,
+  isc.OBToolbarIconButton,
+  isc.OBToolbar.EXPORT_BUTTON_PROPERTIES,
+  isc.OBToolbar.EXPORT_BUTTON_PROPERTIES.sortPosition,
+  null,
+  null,
+  false
+);
+OB.ToolbarRegistry.registerButton(
+  isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES.buttonType,
+  isc.OBToolbarIconButton,
+  isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES,
+  isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES.sortPosition,
+  null,
+  null,
+  false
+);
 
 //and add the direct link at the end
-OB.ToolbarRegistry.registerButton(isc.OBToolbar.LINK_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.LINK_BUTTON_PROPERTIES, isc.OBToolbar.LINK_BUTTON_PROPERTIES.sortPosition, null, null, false);
+OB.ToolbarRegistry.registerButton(
+  isc.OBToolbar.LINK_BUTTON_PROPERTIES.buttonType,
+  isc.OBToolbarIconButton,
+  isc.OBToolbar.LINK_BUTTON_PROPERTIES,
+  isc.OBToolbar.LINK_BUTTON_PROPERTIES.sortPosition,
+  null,
+  null,
+  false
+);

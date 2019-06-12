@@ -18,7 +18,7 @@
  */
 
 // = Manage Views =
-// This file contains implementations for the 3 main actions pertaining to views: storing, deleting and 
+// This file contains implementations for the 3 main actions pertaining to views: storing, deleting and
 // applying views to a window.
 //
 // == View state json structure ==
@@ -27,9 +27,9 @@
 // - grid state: which columns are visible etc.
 // - form state: the layout and first focus of the form
 // - window state: the layout of the parent/child tabs
-// 
+//
 // The view state is stored as json on the server in a structure like this:
-// { 
+// {
 //  viewDefinition: [
 //      name: 'name',
 //      isDefault: true,
@@ -49,43 +49,43 @@
 // == View state stored in the UIPersonalization table ==
 // On the server the view state is stored on the server in the UIPersonalization table.
 // Records stored as viewstate have as type: Window and have ad_window_id set.
-// 
+//
 // In the same UIPersonalization table the layout of forms is persisted as it was
 // delivered in MP2. See the ob-personalize-form.js file for more information.
 // Form layout records in the UIPersonalization table have type: Form and have ad_tab_id set.
 //
 // == Server side implementation ==
-// The server side implementation of the view state saving is implemented in the 
+// The server side implementation of the view state saving is implemented in the
 // PersonalizationActionHandler and PersonalizationHandler classes. The first is
-// called from the client, the second class (which is used by the first) contains 
-// the actual logic to store and retrieve personalization settings from the database. 
+// called from the client, the second class (which is used by the first) contains
+// the actual logic to store and retrieve personalization settings from the database.
 //
 // == Reading the state from the server ==
 // When reading the viewstate from the server for a window the MP2 form layout and the newer viewstate
-// are combined into one json record. 
-// 
+// are combined into one json record.
+//
 // There is one main difference between the form layout state and the
-// complete view state. For the form layout state only the record on the most detailed level is read. 
-// For the viewstate all records are read (as the user can choose which viewstate to apply). 
-// 
-// In addition the json structure read from the server side will contain information to fill the 
+// complete view state. For the form layout state only the record on the most detailed level is read.
+// For the viewstate all records are read (as the user can choose which viewstate to apply).
+//
+// In addition the json structure read from the server side will contain information to fill the
 // comboboxes of the popups to store a view. These combos allow a user to store personalization
-// records on different levels. 
-// 
+// records on different levels.
+//
 // The server side component which is called is the WindowSettingsActionHandler. This component is
-// called from the ob-standard-window.js file in the readWindowSettings method. This action handler is 
+// called from the ob-standard-window.js file in the readWindowSettings method. This action handler is
 // only called once for each specific OBStandardWindow class. The returned json object is stored in the
-// Smartclient class instance (standardWindow.getClass()). 
+// Smartclient class instance (standardWindow.getClass()).
 // By storing this information on class level, only one call to the server is needed when the specific
 // ADWindow is opened for the first time (during that user session). Subsequence window openings will
 // read the personalization (and other settings) from the class.
-// 
+//
 // The personalization json object returned from the server will consist of 3 parts:
 // - forms: the form layouts stored for each tab (see the ob-personalization* files for more information)
 // - views: the views, an array of viewdefinitions, one covering a complete window. Each record
 //      in the array will have the following information:
 //      - the window layout state
-//      - view: consists of 3 parts: 
+//      - view: consists of 3 parts:
 //        - name: the name to be shown in the user interface
 //        - for each tab a record containing the grid and form state
 //        - the window layout
@@ -97,21 +97,35 @@
 //      (clients, orgs, roles) a 'valuemap' is contained in this object.
 // ** {{{OB.Personalization.applyViewDefinition}}} **
 // Apply a selected view definition to a window
-OB.Personalization.applyViewDefinition = function (persId, viewDefinition, standardWindow) {
-  var i, view, viewTabDefinition, showTreeGrid, selectedView, length = standardWindow.views.length,
-      windowDefinition = viewDefinition.window;
+OB.Personalization.applyViewDefinition = function(
+  persId,
+  viewDefinition,
+  standardWindow
+) {
+  var i,
+    view,
+    viewTabDefinition,
+    showTreeGrid,
+    selectedView,
+    length = standardWindow.views.length,
+    windowDefinition = viewDefinition.window;
 
-  // delete the current form personalization 
+  // delete the current form personalization
   // as these will be overwritten by the new settings
   standardWindow.removeAllFormPersonalizations();
 
   standardWindow.selectedPersonalizationId = persId;
 
-  // the viewdefinition contains both the global info (form, canDelete, personalizationid)  
+  // the viewdefinition contains both the global info (form, canDelete, personalizationid)
   // set the view state for each tab
   for (i = 0; i < length; i++) {
     view = standardWindow.views[i];
-    if (!selectedView && windowDefinition && windowDefinition.activeTabId && standardWindow.views[i].tabId === windowDefinition.activeTabId) {
+    if (
+      !selectedView &&
+      windowDefinition &&
+      windowDefinition.activeTabId &&
+      standardWindow.views[i].tabId === windowDefinition.activeTabId
+    ) {
       selectedView = view;
     }
     viewTabDefinition = viewDefinition[view.tabId];
@@ -125,7 +139,11 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
         view.childTabSet.selectTab(viewTabDefinition.selectedTab);
       }
       if (view.isRootView || view.isRenderedChildView) {
-        OB.Personalization.applyViewDefinitionToView(view, viewTabDefinition, showTreeGrid);
+        OB.Personalization.applyViewDefinitionToView(
+          view,
+          viewTabDefinition,
+          showTreeGrid
+        );
       } else {
         // If the view has not been rendered yet, store the 'initialTabDefinition' to be able
         // to set the proper view definition as soon as the view be loaded.
@@ -141,14 +159,23 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
       // in this case the visibility of the top part of the parent view has to be set
       // as it can be hidden previously
       // https://issues.openbravo.com/view.php?id=18951
-      if (selectedView.parentView && !selectedView.parentView.members[0].isVisible() && isc.OBStandardView.STATE_BOTTOM_MAX !== windowDefinition.parentTabSetState) {
+      if (
+        selectedView.parentView &&
+        !selectedView.parentView.members[0].isVisible() &&
+        isc.OBStandardView.STATE_BOTTOM_MAX !==
+          windowDefinition.parentTabSetState
+      ) {
         selectedView.parentView.members[0].show();
       }
     } else if (windowDefinition.childTabSetState && selectedView.childTabSet) {
       // in this case the visibility of the top part of the view has to be set
       // as it can be hidden previously
       // https://issues.openbravo.com/view.php?id=18951
-      if (!selectedView.members[0].isVisible() && isc.OBStandardView.STATE_BOTTOM_MAX !== windowDefinition.childTabSetState) {
+      if (
+        !selectedView.members[0].isVisible() &&
+        isc.OBStandardView.STATE_BOTTOM_MAX !==
+          windowDefinition.childTabSetState
+      ) {
         selectedView.members[0].show();
       }
       selectedView.childTabSet.setState(windowDefinition.childTabSetState);
@@ -161,12 +188,15 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
     }
     selectedView.setAsActiveView(true);
   }
-
 };
 
 // ** {{{OB.Personalization.applyViewDefinitionToView}}} **
 // Apply a passed view definition to a particular view
-OB.Personalization.applyViewDefinitionToView = function (view, viewTabDefinition, showTreeGrid) {
+OB.Personalization.applyViewDefinitionToView = function(
+  view,
+  viewTabDefinition,
+  showTreeGrid
+) {
   if (!view || !viewTabDefinition) {
     return;
   }
@@ -191,7 +221,11 @@ OB.Personalization.applyViewDefinitionToView = function (view, viewTabDefinition
     //clear grouping, will be applied later
     view.viewGrid.clearGroupBy();
     view.viewGrid.setViewState(viewTabDefinition.grid);
-    if (!view.viewGrid.lazyFiltering && !view.viewGrid.targetRecordId && !view.deferOpenNewEdit) {
+    if (
+      !view.viewGrid.lazyFiltering &&
+      !view.viewGrid.targetRecordId &&
+      !view.deferOpenNewEdit
+    ) {
       // do not refresh contents if:
       //  -lazy: requires user action to refresh
       //  -direct navigation: it is done centrally after applying personalizations
@@ -214,9 +248,18 @@ OB.Personalization.applyViewDefinitionToView = function (view, viewTabDefinition
 // Retrieve the view state from the window.
 // The levelInformation contains the level at which to store the view. After the save the internal
 // view state is stored in the standardWindow.getClass().personalization object.
-OB.Personalization.getViewDefinition = function (standardWindow, name, isDefault) {
-  var view, persDataByTab, personalizationData = {},
-      i, formFields, formData, length = standardWindow.views.length;
+OB.Personalization.getViewDefinition = function(
+  standardWindow,
+  name,
+  isDefault
+) {
+  var view,
+    persDataByTab,
+    personalizationData = {},
+    i,
+    formFields,
+    formData,
+    length = standardWindow.views.length;
 
   // retrieve the viewstate from the server
   for (i = 0; i < length; i++) {
@@ -233,7 +276,10 @@ OB.Personalization.getViewDefinition = function (standardWindow, name, isDefault
         formFields = null;
       }
 
-      formData = OB.Personalization.getPersonalizationDataFromForm(view.viewForm, formFields);
+      formData = OB.Personalization.getPersonalizationDataFromForm(
+        view.viewForm,
+        formFields
+      );
       persDataByTab.form = formData.form;
 
       if (view.isShowingTree) {
@@ -261,7 +307,9 @@ OB.Personalization.getViewDefinition = function (standardWindow, name, isDefault
   }
   if (standardWindow.activeView) {
     personalizationData.window = {
-      activeTabId: standardWindow.activeView ? standardWindow.activeView.tabId : null
+      activeTabId: standardWindow.activeView
+        ? standardWindow.activeView.tabId
+        : null
     };
 
     if (standardWindow.activeView.parentTabSet) {
@@ -279,8 +327,19 @@ OB.Personalization.getViewDefinition = function (standardWindow, name, isDefault
 // Retrieve the view state from the window and stores it in the server using the specified name and id (if set).
 // The levelInformation contains the level at which to store the view. After the save the internal
 // view state is stored in the standardWindow.getClass().personalization object.
-OB.Personalization.storeViewDefinition = function (standardWindow, levelInformation, persId, name, isDefault) {
-  var params, personalizationData = OB.Personalization.getViewDefinition(standardWindow, name, isDefault);
+OB.Personalization.storeViewDefinition = function(
+  standardWindow,
+  levelInformation,
+  persId,
+  name,
+  isDefault
+) {
+  var params,
+    personalizationData = OB.Personalization.getViewDefinition(
+      standardWindow,
+      name,
+      isDefault
+    );
 
   // if there is a personalization id then use that
   // this ensures that a specific record will be updated
@@ -299,7 +358,6 @@ OB.Personalization.storeViewDefinition = function (standardWindow, levelInformat
       personalizationId: persId,
       applyLevelInformation: true
     };
-
   } else {
     // this case is used if there is no personalization record
     // use the level information to store the view state
@@ -316,92 +374,124 @@ OB.Personalization.storeViewDefinition = function (standardWindow, levelInformat
   }
 
   // and store on the server
-  OB.RemoteCallManager.call('org.openbravo.client.application.personalization.PersonalizationActionHandler', personalizationData, params, function (resp, data, req) {
-    var i = 0,
+  OB.RemoteCallManager.call(
+    'org.openbravo.client.application.personalization.PersonalizationActionHandler',
+    personalizationData,
+    params,
+    function(resp, data, req) {
+      var i = 0,
         fnd = false,
-        length, newView, personalization = standardWindow.getClass().personalization,
-        views = personalization && personalization.views ? personalization.views : [];
+        length,
+        newView,
+        personalization = standardWindow.getClass().personalization,
+        views =
+          personalization && personalization.views ? personalization.views : [];
 
-    standardWindow.selectedPersonalizationId = data.personalizationId;
+      standardWindow.selectedPersonalizationId = data.personalizationId;
 
-    // create a new structure, the same way as it is 
-    // returned from the server
-    newView = isc.addProperties({
-      canEdit: true,
-      personalizationId: data.personalizationId,
-      viewDefinition: personalizationData
-    }, levelInformation);
+      // create a new structure, the same way as it is
+      // returned from the server
+      newView = isc.addProperties(
+        {
+          canEdit: true,
+          personalizationId: data.personalizationId,
+          viewDefinition: personalizationData
+        },
+        levelInformation
+      );
 
-    // when returning update the in-memory entry,
-    // first check if there is an existing record, if so 
-    // update it
-    if (views) {
-      length = views.length;
-      for (i = 0; i < length; i++) {
-        if (views[i].personalizationId === data.personalizationId) {
-          views[i] = newView;
-          fnd = true;
-          break;
+      // when returning update the in-memory entry,
+      // first check if there is an existing record, if so
+      // update it
+      if (views) {
+        length = views.length;
+        for (i = 0; i < length; i++) {
+          if (views[i].personalizationId === data.personalizationId) {
+            views[i] = newView;
+            fnd = true;
+            break;
+          }
         }
       }
-    }
 
-    // not found create a new one, take into account
-    // that the initial structure maybe empty
-    if (!fnd) {
-      if (!standardWindow.getClass().personalization) {
-        standardWindow.getClass().personalization = {};
-      }
-      if (!standardWindow.getClass().personalization.views) {
-        standardWindow.getClass().personalization.views = [];
-        views = standardWindow.getClass().personalization.views;
-      }
-      views.push(newView);
-      if (newView.viewDefinition && newView.viewDefinition.isDefault) {
-        OB.PropertyStore.set('OBUIAPP_DefaultSavedView', data.personalizationId, standardWindow.windowId);
-      }
+      // not found create a new one, take into account
+      // that the initial structure maybe empty
+      if (!fnd) {
+        if (!standardWindow.getClass().personalization) {
+          standardWindow.getClass().personalization = {};
+        }
+        if (!standardWindow.getClass().personalization.views) {
+          standardWindow.getClass().personalization.views = [];
+          views = standardWindow.getClass().personalization.views;
+        }
+        views.push(newView);
+        if (newView.viewDefinition && newView.viewDefinition.isDefault) {
+          OB.PropertyStore.set(
+            'OBUIAPP_DefaultSavedView',
+            data.personalizationId,
+            standardWindow.windowId
+          );
+        }
 
-      // sort the viewdefinitions
-      views.sort(function (v1, v2) {
-        var t1 = v1.viewDefinition.name,
+        // sort the viewdefinitions
+        views.sort(function(v1, v2) {
+          var t1 = v1.viewDefinition.name,
             t2 = v2.viewDefinition.name;
-        if (t1 < t2) {
-          return -1;
-        } else if (t1 === t2) {
-          return 0;
-        }
-        return 1;
-      });
-
+          if (t1 < t2) {
+            return -1;
+          } else if (t1 === t2) {
+            return 0;
+          }
+          return 1;
+        });
+      }
     }
-  });
+  );
 };
 
 //** {{{OB.Personalization.deleteViewDefinition}}} **
-// Delete the view definition from the server, also remove it from the 
+// Delete the view definition from the server, also remove it from the
 // in-memory structure.
-OB.Personalization.deleteViewDefinition = function (standardWindow, personalizationId) {
-  OB.RemoteCallManager.call('org.openbravo.client.application.personalization.PersonalizationActionHandler', {}, {
-    personalizationId: personalizationId,
-    action: 'delete'
-  }, function (resp, data, req) {
-    var personalization = standardWindow.getClass().personalization,
-        length, i, views = personalization && personalization.views ? personalization.views : [];
+OB.Personalization.deleteViewDefinition = function(
+  standardWindow,
+  personalizationId
+) {
+  OB.RemoteCallManager.call(
+    'org.openbravo.client.application.personalization.PersonalizationActionHandler',
+    {},
+    {
+      personalizationId: personalizationId,
+      action: 'delete'
+    },
+    function(resp, data, req) {
+      var personalization = standardWindow.getClass().personalization,
+        length,
+        i,
+        views =
+          personalization && personalization.views ? personalization.views : [];
 
-    if (views) {
-      length = views.length;
-      // remove the entry from the global list
-      for (i = 0; i < length; i++) {
-        if (views[i].personalizationId === personalizationId) {
-          views.splice(i, 1);
-          break;
+      if (views) {
+        length = views.length;
+        // remove the entry from the global list
+        for (i = 0; i < length; i++) {
+          if (views[i].personalizationId === personalizationId) {
+            views.splice(i, 1);
+            break;
+          }
+        }
+        if (
+          OB.PropertyStore.get(
+            'OBUIAPP_DefaultSavedView',
+            standardWindow.windowId
+          ) === personalizationId
+        ) {
+          // If the 'Default View' has been deleted, the local property pointing to it is still
+          // in the browser until the following logout/login, so it should be deleted
+          delete OB.Properties[
+            'OBUIAPP_DefaultSavedView' + '_' + standardWindow.windowId
+          ];
         }
       }
-      if (OB.PropertyStore.get('OBUIAPP_DefaultSavedView', standardWindow.windowId) === personalizationId) {
-        // If the 'Default View' has been deleted, the local property pointing to it is still
-        // in the browser until the following logout/login, so it should be deleted
-        delete OB.Properties['OBUIAPP_DefaultSavedView' + '_' + standardWindow.windowId];
-      }
     }
-  });
+  );
 };

@@ -24,14 +24,14 @@
 
 //Global variables definition
 var frm = null,
-    isReceipt = true,
-    isCreditAllowed = true,
-    isCreditCheckedFromBPinGrid = false,
-    isGLItemEnabled = false,
-    globalMaskNumeric = "#0.00",
-    globalDecSeparator = ".",
-    globalGroupSeparator = ",",
-    globalGroupInterval = "3";
+  isReceipt = true,
+  isCreditAllowed = true,
+  isCreditCheckedFromBPinGrid = false,
+  isGLItemEnabled = false,
+  globalMaskNumeric = '#0.00',
+  globalDecSeparator = '.',
+  globalGroupSeparator = ',',
+  globalGroupInterval = '3';
 
 function isTrue(objectName) {
   return frm.elements[objectName].value === 'Y';
@@ -39,11 +39,19 @@ function isTrue(objectName) {
 
 /* exported initFIN_Utilities */
 
-function initFIN_Utilities(_frm, _creditAllowed, _isCreditCheckedFromBPinGrid, _isGLItemEnabled) {
+function initFIN_Utilities(
+  _frm,
+  _creditAllowed,
+  _isCreditCheckedFromBPinGrid,
+  _isGLItemEnabled
+) {
   frm = _frm;
   isReceipt = isTrue('isReceipt');
   isCreditAllowed = _creditAllowed !== undefined ? _creditAllowed : true;
-  isCreditCheckedFromBPinGrid = _isCreditCheckedFromBPinGrid !== undefined ? _isCreditCheckedFromBPinGrid : false;
+  isCreditCheckedFromBPinGrid =
+    _isCreditCheckedFromBPinGrid !== undefined
+      ? _isCreditCheckedFromBPinGrid
+      : false;
   isGLItemEnabled = _isGLItemEnabled !== undefined ? _isGLItemEnabled : false;
   if (!isCreditAllowed) {
     frm.inpUseCredit.checked = false;
@@ -55,7 +63,13 @@ function initFIN_Utilities(_frm, _creditAllowed, _isCreditCheckedFromBPinGrid, _
   globalMaskNumeric = formatNameToMask('euroEdition');
   if (!globalMaskNumeric && OB && OB.Format && OB.Format.formats) {
     globalMaskNumeric = OB.Format.formats.euroEdition;
-    globalMaskNumeric = returnMaskChange(globalMaskNumeric, '.', ',', globalDecSeparator, globalGroupSeparator);
+    globalMaskNumeric = returnMaskChange(
+      globalMaskNumeric,
+      '.',
+      ',',
+      globalDecSeparator,
+      globalGroupSeparator
+    );
   }
   globalMaskNumeric = globalMaskNumeric || getDefaultMaskNumeric();
 }
@@ -64,7 +78,7 @@ function initFIN_Utilities(_frm, _creditAllowed, _isCreditCheckedFromBPinGrid, _
 
 function processLabels() {
   var receiptlbls = getElementsByName('lblR'),
-      i;
+    i;
   for (i = 0; i < receiptlbls.length; i++) {
     displayLogicElement(receiptlbls[i].id, isReceipt);
   }
@@ -76,10 +90,10 @@ function processLabels() {
 
 function selectDifferenceAction(value) {
   var diffAction = frm.inpDifferenceAction,
-      i;
+    i;
   for (i = 0; i < diffAction.length; i++) {
     diffAction[i].checked = false;
-    diffAction[i].checked = (diffAction[i].value === value);
+    diffAction[i].checked = diffAction[i].value === value;
   }
 }
 
@@ -91,7 +105,13 @@ function selectDifferenceAction(value) {
  */
 
 function applyFormat(number) {
-  return returnFormattedNumber(number, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+  return returnFormattedNumber(
+    number,
+    globalMaskNumeric,
+    globalDecSeparator,
+    globalGroupSeparator,
+    globalGroupInterval
+  );
 }
 
 /**
@@ -106,15 +126,24 @@ function applyFormatJSToOBMasked(number, _globalMaskNumeric) {
   if (!_globalMaskNumeric) {
     _globalMaskNumeric = globalMaskNumeric;
   }
-  return OB.Utilities.Number.JSToOBMasked(number, _globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+  return OB.Utilities.Number.JSToOBMasked(
+    number,
+    _globalMaskNumeric,
+    globalDecSeparator,
+    globalGroupSeparator,
+    globalGroupInterval
+  );
 }
 
 /* exported applyFormatOBMaskedToJS */
 
 function applyFormatOBMaskedToJS(number) {
-  return OB.Utilities.Number.OBMaskedToJS(number, globalDecSeparator, globalGroupSeparator);
+  return OB.Utilities.Number.OBMaskedToJS(
+    number,
+    globalDecSeparator,
+    globalGroupSeparator
+  );
 }
-
 
 /**
  * Function to operate with formatted number
@@ -130,19 +159,27 @@ function applyFormatOBMaskedToJS(number) {
  * @deprecated TO BE REMOVED ON MP22
  */
 
-function formattedNumberOpTemp(number1, operator, number2, result_maskNumeric, decSeparator, groupSeparator, groupInterval) {
+function formattedNumberOpTemp(
+  number1,
+  operator,
+  number2,
+  result_maskNumeric,
+  decSeparator,
+  groupSeparator,
+  groupInterval
+) {
   var result;
 
-  if (result_maskNumeric === null || result_maskNumeric === "") {
+  if (result_maskNumeric === null || result_maskNumeric === '') {
     result_maskNumeric = getDefaultMaskNumeric();
   }
-  if (decSeparator === null || decSeparator === "") {
+  if (decSeparator === null || decSeparator === '') {
     decSeparator = getGlobalDecSeparator();
   }
-  if (groupSeparator === null || groupSeparator === "") {
+  if (groupSeparator === null || groupSeparator === '') {
     groupSeparator = getGlobalGroupSeparator();
   }
-  if (groupInterval === null || groupInterval === "") {
+  if (groupInterval === null || groupInterval === '') {
     groupInterval = getGlobalGroupInterval();
   }
 
@@ -152,15 +189,21 @@ function formattedNumberOpTemp(number1, operator, number2, result_maskNumeric, d
   number2 = returnFormattedToCalc(number2, decSeparator, groupSeparator);
   number2 = parseFloat(number2);
 
-  if (operator === "sqrt") {
+  if (operator === 'sqrt') {
     result = Math.sqrt(number1);
-  } else if (operator === "round") {
+  } else if (operator === 'round') {
     result = roundNumber(number1, number2);
   } else {
     result = eval('(' + number1 + ')' + operator + '(' + number2 + ')');
   }
-  if (result !== true && result !== false && result !== null && result !== "") {
-    result = returnCalcToFormatted(result, result_maskNumeric, decSeparator, groupSeparator, groupInterval);
+  if (result !== true && result !== false && result !== null && result !== '') {
+    result = returnCalcToFormatted(
+      result,
+      result_maskNumeric,
+      decSeparator,
+      groupSeparator,
+      groupInterval
+    );
   }
   return result;
 }
@@ -174,12 +217,22 @@ function formattedNumberOpTemp(number1, operator, number2, result_maskNumeric, d
 
 function abs(number1) {
   var result;
-  number1 = returnFormattedToCalc(number1, globalDecSeparator, globalGroupSeparator);
+  number1 = returnFormattedToCalc(
+    number1,
+    globalDecSeparator,
+    globalGroupSeparator
+  );
   number1 = parseFloat(number1);
   result = Math.abs(number1);
 
-  if (result !== null && result !== "") {
-    result = returnCalcToFormatted(result, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+  if (result !== null && result !== '') {
+    result = returnCalcToFormatted(
+      result,
+      globalMaskNumeric,
+      globalDecSeparator,
+      globalGroupSeparator,
+      globalGroupInterval
+    );
   }
   return result;
 }
@@ -193,7 +246,15 @@ function abs(number1) {
  */
 
 function add(number1, number2) {
-  return formattedNumberOpTemp(number1, '+', number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+  return formattedNumberOpTemp(
+    number1,
+    '+',
+    number2,
+    globalMaskNumeric,
+    globalDecSeparator,
+    globalGroupSeparator,
+    globalGroupInterval
+  );
 }
 
 /**
@@ -205,7 +266,15 @@ function add(number1, number2) {
  */
 
 function subtract(number1, number2) {
-  return formattedNumberOpTemp(number1, '-', number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+  return formattedNumberOpTemp(
+    number1,
+    '-',
+    number2,
+    globalMaskNumeric,
+    globalDecSeparator,
+    globalGroupSeparator,
+    globalGroupInterval
+  );
 }
 
 /**
@@ -218,7 +287,15 @@ function subtract(number1, number2) {
 /* exported divide */
 
 function divide(number1, number2) {
-  return formattedNumberOpTemp(number1, '/', number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+  return formattedNumberOpTemp(
+    number1,
+    '/',
+    number2,
+    globalMaskNumeric,
+    globalDecSeparator,
+    globalGroupSeparator,
+    globalGroupInterval
+  );
 }
 
 /**
@@ -231,7 +308,15 @@ function divide(number1, number2) {
 /* exported multiply */
 
 function multiply(number1, number2) {
-  return formattedNumberOpTemp(number1, '*', number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+  return formattedNumberOpTemp(
+    number1,
+    '*',
+    number2,
+    globalMaskNumeric,
+    globalDecSeparator,
+    globalGroupSeparator,
+    globalGroupInterval
+  );
 }
 
 /**
@@ -244,7 +329,15 @@ function multiply(number1, number2) {
  */
 
 function compare(number1, operator, number2) {
-  return formattedNumberOpTemp(number1, operator, number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+  return formattedNumberOpTemp(
+    number1,
+    operator,
+    number2,
+    globalMaskNumeric,
+    globalDecSeparator,
+    globalGroupSeparator,
+    globalGroupInterval
+  );
 }
 
 /**
@@ -254,25 +347,60 @@ function compare(number1, operator, number2) {
 
 function compareWithSign(number1, operator, number2) {
   if (compare(number1, '<', 0) && compare(number2, '<', 0)) {
-    if (operator === '<' || operator === '>' || operator === '<=' || operator === '>=') {
-      return formattedNumberOpTemp(abs(number2), operator, abs(number1), globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+    if (
+      operator === '<' ||
+      operator === '>' ||
+      operator === '<=' ||
+      operator === '>='
+    ) {
+      return formattedNumberOpTemp(
+        abs(number2),
+        operator,
+        abs(number1),
+        globalMaskNumeric,
+        globalDecSeparator,
+        globalGroupSeparator,
+        globalGroupInterval
+      );
     } else {
-      return formattedNumberOpTemp(abs(number1), operator, abs(number2), globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+      return formattedNumberOpTemp(
+        abs(number1),
+        operator,
+        abs(number2),
+        globalMaskNumeric,
+        globalDecSeparator,
+        globalGroupSeparator,
+        globalGroupInterval
+      );
     }
   } else {
-    return formattedNumberOpTemp(number1, operator, number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+    return formattedNumberOpTemp(
+      number1,
+      operator,
+      number2,
+      globalMaskNumeric,
+      globalDecSeparator,
+      globalGroupSeparator,
+      globalGroupInterval
+    );
   }
 }
 
 function isBetweenZeroAndMaxValue(value, maxValue) {
-  return ((compare(value, '>=', 0) && compare(value, '<=', maxValue)) || (compare(value, '<=', 0) && compare(value, '>=', maxValue)));
+  return (
+    (compare(value, '>=', 0) && compare(value, '<=', maxValue)) ||
+    (compare(value, '<=', 0) && compare(value, '>=', maxValue))
+  );
 }
 
 function applyPrecisionToMask(currencyPrecision) {
   var i, c, currentDecimalMask, currentPrecision;
   var toConvertDecimalMask = globalMaskNumeric;
   if (globalMaskNumeric.indexOf(globalDecSeparator) !== -1) {
-    currentDecimalMask = globalMaskNumeric.substring(globalMaskNumeric.indexOf(globalDecSeparator), globalMaskNumeric.length);
+    currentDecimalMask = globalMaskNumeric.substring(
+      globalMaskNumeric.indexOf(globalDecSeparator),
+      globalMaskNumeric.length
+    );
     currentPrecision = currentDecimalMask.length - globalDecSeparator.length;
     if (currentPrecision) {
       toConvertDecimalMask = globalDecSeparator;
@@ -280,7 +408,10 @@ function applyPrecisionToMask(currencyPrecision) {
       for (i = 0; i < currencyPrecision; i++) {
         toConvertDecimalMask = toConvertDecimalMask + c;
       }
-      toConvertDecimalMask = globalMaskNumeric.replace(currentDecimalMask, toConvertDecimalMask);
+      toConvertDecimalMask = globalMaskNumeric.replace(
+        currentDecimalMask,
+        toConvertDecimalMask
+      );
     }
   }
   return toConvertDecimalMask;
@@ -288,10 +419,18 @@ function applyPrecisionToMask(currencyPrecision) {
 
 function updateConvertedAmounts(recalcExchangeRate) {
   var exchangeRate = frm.inpExchangeRate;
-  var precision = frm.inpFinancialAccountCurrencyPrecision ? frm.inpFinancialAccountCurrencyPrecision.value : 2;
+  var precision = frm.inpFinancialAccountCurrencyPrecision
+    ? frm.inpFinancialAccountCurrencyPrecision.value
+    : 2;
   var roundedMask = applyPrecisionToMask(precision);
   var exchangeRateRoundedMask = OB.Format.formats.generalQtyEdition;
-  exchangeRateRoundedMask = returnMaskChange(exchangeRateRoundedMask, '.', ',', globalDecSeparator, globalGroupSeparator);
+  exchangeRateRoundedMask = returnMaskChange(
+    exchangeRateRoundedMask,
+    '.',
+    ',',
+    globalDecSeparator,
+    globalGroupSeparator
+  );
   var expectedConverted = frm.inpExpectedConverted;
   var actualConverted = frm.inpActualConverted;
   var expectedPayment = frm.inpExpectedPayment;
@@ -301,50 +440,79 @@ function updateConvertedAmounts(recalcExchangeRate) {
     if (recalcExchangeRate) {
       if (actualConverted.value && actualPayment.value) {
         if (compare(actualPayment.value, '!=', 0)) {
-          exchangeRate.value = formattedNumberOpTemp(actualConverted.value, '/', actualPayment.value, exchangeRateRoundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+          exchangeRate.value = formattedNumberOpTemp(
+            actualConverted.value,
+            '/',
+            actualPayment.value,
+            exchangeRateRoundedMask,
+            globalDecSeparator,
+            globalGroupSeparator,
+            globalGroupInterval
+          );
         }
       } else {
         exchangeRate.value = '';
       }
     } else {
       if (exchangeRate.value) {
-        actualConverted.value = formattedNumberOpTemp(actualPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+        actualConverted.value = formattedNumberOpTemp(
+          actualPayment.value,
+          '*',
+          exchangeRate.value,
+          roundedMask,
+          globalDecSeparator,
+          globalGroupSeparator,
+          globalGroupInterval
+        );
       } else {
         actualConverted.value = applyFormat('0');
       }
     }
     if (exchangeRate.value && expectedPayment.value) {
-      expectedConverted.value = formattedNumberOpTemp(expectedPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+      expectedConverted.value = formattedNumberOpTemp(
+        expectedPayment.value,
+        '*',
+        exchangeRate.value,
+        roundedMask,
+        globalDecSeparator,
+        globalGroupSeparator,
+        globalGroupInterval
+      );
     } else {
       expectedConverted.value = applyFormat('0');
     }
   }
 }
 
-function validateSelectedAmounts(recordID, existsPendingAmount, selectedAction) {
-  var pendingAmount = document.frmMain.elements["inpRecordAmt" + recordID].value,
-      amount = document.frmMain.elements["inpPaymentAmount" + recordID].value;
+function validateSelectedAmounts(
+  recordID,
+  existsPendingAmount,
+  selectedAction
+) {
+  var pendingAmount =
+      document.frmMain.elements['inpRecordAmt' + recordID].value,
+    amount = document.frmMain.elements['inpPaymentAmount' + recordID].value;
   if (existsPendingAmount === null) {
     existsPendingAmount = false;
   }
-  if (amount === null || amount === "") {
-    setWindowElementFocus(frm.elements["inpPaymentAmount" + recordID]);
+  if (amount === null || amount === '') {
+    setWindowElementFocus(frm.elements['inpPaymentAmount' + recordID]);
     showJSMessage(7);
     return false;
   }
   if (!isBetweenZeroAndMaxValue(amount, pendingAmount)) {
-    setWindowElementFocus(frm.elements["inpPaymentAmount" + recordID]);
+    setWindowElementFocus(frm.elements['inpPaymentAmount' + recordID]);
     showJSMessage(9);
     return false;
   }
   // Only possible to pay 0 in case of a write off
-  if (selectedAction !== "writeoff" && compare(amount, '==', 0)) {
-    setWindowElementFocus(frm.elements["inpPaymentAmount" + recordID]);
+  if (selectedAction !== 'writeoff' && compare(amount, '==', 0)) {
+    setWindowElementFocus(frm.elements['inpPaymentAmount' + recordID]);
     showJSMessage('APRM_JSZEROUNDERPAYMENT');
     return false;
   }
   if (existsPendingAmount && compare(amount, '<', pendingAmount)) {
-    setWindowElementFocus(frm.elements["inpPaymentAmount" + recordID]);
+    setWindowElementFocus(frm.elements['inpPaymentAmount' + recordID]);
     showJSMessage('APRM_JSNOTALLAMOUTALLOCATED');
     return false;
   }
@@ -352,9 +520,15 @@ function validateSelectedAmounts(recordID, existsPendingAmount, selectedAction) 
 }
 
 function updateDifference() {
-  var expected = (frm.inpExpectedPayment && frm.inpExpectedPayment.value) ? frm.inpExpectedPayment.value : applyFormat('0'),
-      total = (frm.inpTotal && frm.inpTotal.value) ? frm.inpTotal.value : applyFormat('0'),
-      amount = total;
+  var expected =
+      frm.inpExpectedPayment && frm.inpExpectedPayment.value
+        ? frm.inpExpectedPayment.value
+        : applyFormat('0'),
+    total =
+      frm.inpTotal && frm.inpTotal.value
+        ? frm.inpTotal.value
+        : applyFormat('0'),
+    amount = total;
   var exchangeRate = frm.inpExchangeRate;
 
   if (frm.inpActualPayment !== null) {
@@ -370,10 +544,27 @@ function updateDifference() {
   } else {
     frm.inpDifference.value = applyFormat('0');
   }
-  document.getElementById('paramDifference').innerHTML = frm.inpDifference.value;
-  displayLogicElement('sectionDifference', (compare(expected, '!=', total) || compareWithSign(amount, '>', total)));
-  displayLogicElement('sectionDifferenceBox', (compare(expected, '!=', total) || (isCreditAllowed && compareWithSign(amount, '>', total))));
-  if ((frm.strWriteOffLimit.value === 'Y') && (compare(expected, '!=', total)) && (frm.strtypewriteoff.value === 'A') && (compareWithSign((applyFormat((subtract(expected, total)) * exchangeRate.value)), '>', frm.strAmountwriteoff.value))) {
+  document.getElementById('paramDifference').innerHTML =
+    frm.inpDifference.value;
+  displayLogicElement(
+    'sectionDifference',
+    compare(expected, '!=', total) || compareWithSign(amount, '>', total)
+  );
+  displayLogicElement(
+    'sectionDifferenceBox',
+    compare(expected, '!=', total) ||
+      (isCreditAllowed && compareWithSign(amount, '>', total))
+  );
+  if (
+    frm.strWriteOffLimit.value === 'Y' &&
+    compare(expected, '!=', total) &&
+    frm.strtypewriteoff.value === 'A' &&
+    compareWithSign(
+      applyFormat(subtract(expected, total) * exchangeRate.value),
+      '>',
+      frm.strAmountwriteoff.value
+    )
+  ) {
     displayLogicElement('writeofflimit', true);
     displayLogicElement('writeoff', false);
   } else {
@@ -381,9 +572,20 @@ function updateDifference() {
     displayLogicElement('writeoff', compare(expected, '!=', total));
   }
   displayLogicElement('underpayment', compareWithSign(expected, '>', total));
-  displayLogicElement('credit', isCreditAllowed && compareWithSign(amount, '>', total));
-  displayLogicElement('refund', isCreditAllowed && isReceipt && compareWithSign(amount, '>', total));
-  if (!(compare(expected, '!=', total) || (isCreditAllowed && compareWithSign(amount, '>', total)))) {
+  displayLogicElement(
+    'credit',
+    isCreditAllowed && compareWithSign(amount, '>', total)
+  );
+  displayLogicElement(
+    'refund',
+    isCreditAllowed && isReceipt && compareWithSign(amount, '>', total)
+  );
+  if (
+    !(
+      compare(expected, '!=', total) ||
+      (isCreditAllowed && compareWithSign(amount, '>', total))
+    )
+  ) {
     // No action available
     selectDifferenceAction('none');
   } else if (isCreditAllowed && compareWithSign(amount, '>', total)) {
@@ -398,11 +600,15 @@ function updateDifference() {
 function updateTotal() {
   var chk = frm.inpScheduledPaymentDetailId;
   var total = applyFormat('0'),
-      i, invalidSpan;
-  var scheduledPaymentDetailId, pendingAmount, amount, isAnyChecked = false;
+    i,
+    invalidSpan;
+  var scheduledPaymentDetailId,
+    pendingAmount,
+    amount,
+    isAnyChecked = false;
   var selectedBusinessPartners = {
     numberofitems: 0,
-    increase: function (obj) {
+    increase: function(obj) {
       if (obj && obj.value) {
         var key = obj.value;
         var value = this[key];
@@ -414,19 +620,19 @@ function updateTotal() {
         }
       }
     },
-    reset: function () {
+    reset: function() {
       var i;
       this.numberofitems = 0;
       for (i in this) {
         if (this.hasOwnProperty(i)) {
-          if (typeof this[i] !== "function") {
+          if (typeof this[i] !== 'function') {
             this[i] = 0;
           }
         }
       }
     },
-    isMultibpleSelection: function () {
-      return (this.numberofitems > 1);
+    isMultibpleSelection: function() {
+      return this.numberofitems > 1;
     }
   };
 
@@ -442,52 +648,89 @@ function updateTotal() {
     //}
   } else if (!chk.length) {
     scheduledPaymentDetailId = frm.inpRecordId0.value;
-    pendingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
-    amount = frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value;
-    if (amount !== "" && !isBetweenZeroAndMaxValue(amount, pendingAmount)) {
-      setWindowElementFocus(frm.elements["inpPaymentAmount" + scheduledPaymentDetailId]);
+    pendingAmount =
+      frm.elements['inpRecordAmt' + scheduledPaymentDetailId].value;
+    amount = frm.elements['inpPaymentAmount' + scheduledPaymentDetailId].value;
+    if (amount !== '' && !isBetweenZeroAndMaxValue(amount, pendingAmount)) {
+      setWindowElementFocus(
+        frm.elements['inpPaymentAmount' + scheduledPaymentDetailId]
+      );
     } else {
       initialize_MessageBox('messageBoxID');
     }
     if (chk.checked) {
-      invalidSpan = document.getElementById('paraminvalidSpan' + scheduledPaymentDetailId);
+      invalidSpan = document.getElementById(
+        'paraminvalidSpan' + scheduledPaymentDetailId
+      );
       if (invalidSpan) {
-        document.getElementById('paraminvalidSpan' + scheduledPaymentDetailId).style.display = !isBetweenZeroAndMaxValue(amount, pendingAmount) ? 'block' : 'none';
+        document.getElementById(
+          'paraminvalidSpan' + scheduledPaymentDetailId
+        ).style.display = !isBetweenZeroAndMaxValue(amount, pendingAmount)
+          ? 'block'
+          : 'none';
       }
-      total = (frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value === '') ? "0" : frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value;
-      selectedBusinessPartners.increase(frm.elements['inpRecordBP' + scheduledPaymentDetailId]);
+      total =
+        frm.elements['inpPaymentAmount' + scheduledPaymentDetailId].value === ''
+          ? '0'
+          : frm.elements['inpPaymentAmount' + scheduledPaymentDetailId].value;
+      selectedBusinessPartners.increase(
+        frm.elements['inpRecordBP' + scheduledPaymentDetailId]
+      );
       isAnyChecked = true;
     }
   } else {
     var rows = chk.length;
     for (i = 0; i < rows; i++) {
-      scheduledPaymentDetailId = frm.elements["inpRecordId" + i].value;
-      pendingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
-      amount = frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value;
-      if (amount !== "" && !isBetweenZeroAndMaxValue(amount, pendingAmount)) {
-        setWindowElementFocus(frm.elements["inpPaymentAmount" + scheduledPaymentDetailId]);
+      scheduledPaymentDetailId = frm.elements['inpRecordId' + i].value;
+      pendingAmount =
+        frm.elements['inpRecordAmt' + scheduledPaymentDetailId].value;
+      amount =
+        frm.elements['inpPaymentAmount' + scheduledPaymentDetailId].value;
+      if (amount !== '' && !isBetweenZeroAndMaxValue(amount, pendingAmount)) {
+        setWindowElementFocus(
+          frm.elements['inpPaymentAmount' + scheduledPaymentDetailId]
+        );
       } else {
         initialize_MessageBox('messageBoxID');
       }
       if (chk[i].checked) {
-        invalidSpan = document.getElementById('paraminvalidSpan' + scheduledPaymentDetailId);
+        invalidSpan = document.getElementById(
+          'paraminvalidSpan' + scheduledPaymentDetailId
+        );
         if (invalidSpan) {
-          document.getElementById('paraminvalidSpan' + scheduledPaymentDetailId).style.display = !isBetweenZeroAndMaxValue(amount, pendingAmount) ? 'block' : 'none';
+          document.getElementById(
+            'paraminvalidSpan' + scheduledPaymentDetailId
+          ).style.display = !isBetweenZeroAndMaxValue(amount, pendingAmount)
+            ? 'block'
+            : 'none';
         }
-        total = (frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value === '') ? total : add(total, frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value);
-        selectedBusinessPartners.increase(frm.elements['inpRecordBP' + scheduledPaymentDetailId]);
+        total =
+          frm.elements['inpPaymentAmount' + scheduledPaymentDetailId].value ===
+          ''
+            ? total
+            : add(
+                total,
+                frm.elements['inpPaymentAmount' + scheduledPaymentDetailId]
+                  .value
+              );
+        selectedBusinessPartners.increase(
+          frm.elements['inpRecordBP' + scheduledPaymentDetailId]
+        );
         isAnyChecked = true;
       }
     }
   }
   if (isGLItemEnabled) {
     frm.inpInvoiceAmount.value = total;
-    document.getElementById('paramInvoicesAmt').innerHTML = frm.inpInvoiceAmount.value;
+    document.getElementById('paramInvoicesAmt').innerHTML =
+      frm.inpInvoiceAmount.value;
     total = add(total, frm.inpGLSumAmount.value);
   }
   frm.inpTotal.value = total;
   document.getElementById('paramTotal').innerHTML = frm.inpTotal.value;
-  var inheritedActualPayment = (frm.paramInheritedActualPayment && frm.paramInheritedActualPayment.value === "Y");
+  var inheritedActualPayment =
+    frm.paramInheritedActualPayment &&
+    frm.paramInheritedActualPayment.value === 'Y';
   if (!isReceipt && !inheritedActualPayment) {
     if (frm.inpUseCredit.checked) {
       if (compare(total, '>', frm.inpCredit.value)) {
@@ -500,7 +743,10 @@ function updateTotal() {
         frm.inpActualPayment.value = frm.inpTotal.value;
       }
       if (frm.inpGeneratedCredit) {
-        frm.inpActualPayment.value = add(frm.inpTotal.value, frm.inpGeneratedCredit.value);
+        frm.inpActualPayment.value = add(
+          frm.inpTotal.value,
+          frm.inpGeneratedCredit.value
+        );
       }
     }
   }
@@ -528,7 +774,8 @@ function distributeAmount(_amount) {
     return;
   } else if (!chk.length) {
     scheduledPaymentDetailId = frm.inpRecordId0.value;
-    outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
+    outstandingAmount =
+      frm.elements['inpRecordAmt' + scheduledPaymentDetailId].value;
     if (compare(outstandingAmount, '<', 0) && compare(amount, '<', 0)) {
       if (compare(abs(outstandingAmount), '>', abs(amount))) {
         outstandingAmount = amount;
@@ -538,7 +785,9 @@ function distributeAmount(_amount) {
         outstandingAmount = amount;
       }
     }
-    frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = outstandingAmount;
+    frm.elements[
+      'inpPaymentAmount' + scheduledPaymentDetailId
+    ].value = outstandingAmount;
     if (!chk.checked && compare(outstandingAmount, '!=', 0)) {
       chk.checked = true;
       updateData(chk.value, chk.checked);
@@ -547,10 +796,16 @@ function distributeAmount(_amount) {
     var total = chk.length;
     for (i = 0; i < total; i++) {
       if (chk[i].checked) {
-        distributedAmount = add(distributedAmount, frm.elements["inpPaymentAmount" + chk[i].value].value);
+        distributedAmount = add(
+          distributedAmount,
+          frm.elements['inpPaymentAmount' + chk[i].value].value
+        );
       }
     }
-    if (compare(amount, '>', distributedAmount) || compare(amount, '==', distributedAmount)) {
+    if (
+      compare(amount, '>', distributedAmount) ||
+      compare(amount, '==', distributedAmount)
+    ) {
       amount = subtract(amount, distributedAmount);
       keepSelection = true;
     }
@@ -558,8 +813,9 @@ function distributeAmount(_amount) {
       if (chk[i].checked && keepSelection) {
         continue;
       }
-      scheduledPaymentDetailId = frm.elements["inpRecordId" + i].value;
-      outstandingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
+      scheduledPaymentDetailId = frm.elements['inpRecordId' + i].value;
+      outstandingAmount =
+        frm.elements['inpRecordAmt' + scheduledPaymentDetailId].value;
       if (compare(outstandingAmount, '<', 0) && compare(amount, '<', 0)) {
         if (compare(abs(outstandingAmount), '>', abs(amount))) {
           outstandingAmount = amount;
@@ -570,7 +826,7 @@ function distributeAmount(_amount) {
         }
       }
       if (compare(amount, '==', 0)) {
-        frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = "";
+        frm.elements['inpPaymentAmount' + scheduledPaymentDetailId].value = '';
         for (j = 0; j < total; j++) {
           if (chk[j].checked && chk[j].value === scheduledPaymentDetailId) {
             chk[j].checked = false;
@@ -578,7 +834,9 @@ function distributeAmount(_amount) {
           }
         }
       } else {
-        frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = outstandingAmount;
+        frm.elements[
+          'inpPaymentAmount' + scheduledPaymentDetailId
+        ].value = outstandingAmount;
         for (j = 0; j < total; j++) {
           if (!chk[j].checked && chk[j].value === scheduledPaymentDetailId) {
             chk[j].checked = true;
@@ -599,20 +857,24 @@ function updateReadOnly(key, mark) {
   if (mark === null) {
     mark = false;
   }
-  frm.elements["inpPaymentAmount" + key].disabled = !mark;
+  frm.elements['inpPaymentAmount' + key].disabled = !mark;
   var expectedAmount = frm.inpExpectedPayment.value,
-      invalidSpan;
-  var recordAmount = frm.elements["inpRecordAmt" + key].value;
+    invalidSpan;
+  var recordAmount = frm.elements['inpRecordAmt' + key].value;
 
   if (mark) {
-    frm.elements["inpPaymentAmount" + key].className = frm.elements["inpPaymentAmount" + key].className.replace(' readonly', '');
+    frm.elements['inpPaymentAmount' + key].className = frm.elements[
+      'inpPaymentAmount' + key
+    ].className.replace(' readonly', '');
     frm.inpExpectedPayment.value = add(expectedAmount, recordAmount);
   } else {
-    var classText = frm.elements["inpPaymentAmount" + key].className;
+    var classText = frm.elements['inpPaymentAmount' + key].className;
     if (classText.search('readonly') === -1) {
-      frm.elements["inpPaymentAmount" + key].className = classText.concat(" readonly");
+      frm.elements['inpPaymentAmount' + key].className = classText.concat(
+        ' readonly'
+      );
     }
-    frm.elements["inpPaymentAmount" + key].value = '';
+    frm.elements['inpPaymentAmount' + key].value = '';
     frm.inpExpectedPayment.value = subtract(expectedAmount, recordAmount);
     invalidSpan = document.getElementById('paraminvalidSpan' + key);
     if (invalidSpan) {
@@ -640,16 +902,22 @@ function updateAll(drivenByGrid) {
     return;
   } else if (!chk.length) {
     if (!chk.checked) {
-      recordAmount = frm.elements["inpRecordAmt" + chk.value].value;
-      frm.inpExpectedPayment.value = add(frm.inpExpectedPayment.value, recordAmount);
+      recordAmount = frm.elements['inpRecordAmt' + chk.value].value;
+      frm.inpExpectedPayment.value = add(
+        frm.inpExpectedPayment.value,
+        recordAmount
+      );
     }
     updateData(chk.value, chk.checked, drivenByGrid);
   } else {
     var total = chk.length;
     for (i = 0; i < total; i++) {
       if (!chk[i].checked) {
-        recordAmount = frm.elements["inpRecordAmt" + chk[i].value].value;
-        frm.inpExpectedPayment.value = add(frm.inpExpectedPayment.value, recordAmount);
+        recordAmount = frm.elements['inpRecordAmt' + chk[i].value].value;
+        frm.inpExpectedPayment.value = add(
+          frm.inpExpectedPayment.value,
+          recordAmount
+        );
       }
       updateData(chk[i].value, chk[i].checked, drivenByGrid);
     }
@@ -665,16 +933,20 @@ function updateAll(drivenByGrid) {
  */
 /* exported validateSelectedPendingPayments */
 
-function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action) {
+function validateSelectedPendingPayments(
+  allowNotSelectingPendingPayment,
+  action
+) {
   if (allowNotSelectingPendingPayment === undefined) {
     allowNotSelectingPendingPayment = false;
   }
   // If no credit usage is allowed we are forced to select at least one pending payment.
-  allowNotSelectingPendingPayment = isCreditAllowed && allowNotSelectingPendingPayment;
+  allowNotSelectingPendingPayment =
+    isCreditAllowed && allowNotSelectingPendingPayment;
   var actualPayment = document.frmMain.inpActualPayment.value;
   var i;
   if (document.frmMain.inpUseCredit.checked) {
-/*if ( compare(expectedPayment, '<=', actualPayment) ) {
+    /*if ( compare(expectedPayment, '<=', actualPayment) ) {
       setWindowElementFocus(document.frmMain.inpUseCredit);
       showJSMessage('APRM_JSCANNOTUSECREDIT');
       return false;
@@ -696,11 +968,20 @@ function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action
     return true;
   } else if (!chk.length) {
     if (chk.checked) {
-      if (!validateSelectedAmounts(chk.value, compare(selectedTotal, '<', actualPayment), action)) {
+      if (
+        !validateSelectedAmounts(
+          chk.value,
+          compare(selectedTotal, '<', actualPayment),
+          action
+        )
+      ) {
         return false;
       }
     } else {
-      if (!(typeof OB !== 'undefined' && OB.APRM && OB.APRM.HasGLItems) && (!allowNotSelectingPendingPayment || compare(actualPayment, '==', "0"))) {
+      if (
+        !(typeof OB !== 'undefined' && OB.APRM && OB.APRM.HasGLItems) &&
+        (!allowNotSelectingPendingPayment || compare(actualPayment, '==', '0'))
+      ) {
         showJSMessage('APRM_JSNOTLINESELECTED');
         return false;
       }
@@ -711,12 +992,22 @@ function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action
     for (i = 0; i < total; i++) {
       if (chk[i].checked) {
         isAnyChecked = true;
-        if (!validateSelectedAmounts(chk[i].value, compare(selectedTotal, '<', actualPayment), action)) {
+        if (
+          !validateSelectedAmounts(
+            chk[i].value,
+            compare(selectedTotal, '<', actualPayment),
+            action
+          )
+        ) {
           return false;
         }
       }
     }
-    if (!(typeof OB !== 'undefined' && OB.APRM && OB.APRM.HasGLItems) && !isAnyChecked && (!allowNotSelectingPendingPayment || compare(actualPayment, '==', "0"))) {
+    if (
+      !(typeof OB !== 'undefined' && OB.APRM && OB.APRM.HasGLItems) &&
+      !isAnyChecked &&
+      (!allowNotSelectingPendingPayment || compare(actualPayment, '==', '0'))
+    ) {
       showJSMessage('APRM_JSNOTLINESELECTED');
       return false;
     }
@@ -734,22 +1025,25 @@ function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action
 /* exported createCombo */
 
 function createCombo(object, innerHTML) {
-  object.innerHTML = "";
-  var selTemp = document.createElement("temp");
+  object.innerHTML = '';
+  var selTemp = document.createElement('temp');
   var opt, i, j;
-  selTemp.id = "temp1";
+  selTemp.id = 'temp1';
   document.body.appendChild(selTemp);
-  selTemp = document.getElementById("temp1");
-  selTemp.style.display = "none";
-  innerHTML = innerHTML.replace(/<option/g, "<span").replace(/<\/option/g, "</span");
+  selTemp = document.getElementById('temp1');
+  selTemp.style.display = 'none';
+  innerHTML = innerHTML
+    .replace(/<option/g, '<span')
+    .replace(/<\/option/g, '</span');
   selTemp.innerHTML = innerHTML;
 
   for (i = 0; i < selTemp.childNodes.length; i++) {
     var spantemp = selTemp.childNodes[i];
 
     if (spantemp.tagName) {
-      opt = document.createElement("option");
-      if (document.all) { //IE
+      opt = document.createElement('option');
+      if (document.all) {
+        //IE
         object.add(opt);
       } else {
         object.appendChild(opt);
@@ -769,7 +1063,7 @@ function createCombo(object, innerHTML) {
         }
       }
       //value and text
-      opt.value = spantemp.getAttribute("value");
+      opt.value = spantemp.getAttribute('value');
       opt.text = spantemp.innerHTML;
       //IE
       opt.selected = spantemp.getAttribute('selected');
@@ -791,17 +1085,28 @@ function reloadParentGrid() {
   try {
     f = getFrame('LayoutMDI');
     popup = f && f.OB && f.OB.Layout.ClassicOBCompatibility.Popup;
-    layoutMDI = popup && popup.getPopup('process') && popup.getPopup('process').getIframeHtmlObj() && popup.getPopup('process').getIframeHtmlObj().contentWindow && popup.getPopup('process').getIframeHtmlObj().contentWindow.frames[0];
+    layoutMDI =
+      popup &&
+      popup.getPopup('process') &&
+      popup.getPopup('process').getIframeHtmlObj() &&
+      popup.getPopup('process').getIframeHtmlObj().contentWindow &&
+      popup.getPopup('process').getIframeHtmlObj().contentWindow.frames[0];
     dad = layoutMDI || top.opener;
     if (dad) {
-      if (typeof dad.loadGrid === "function" || typeof dad.loadGrid === "object") {
+      if (
+        typeof dad.loadGrid === 'function' ||
+        typeof dad.loadGrid === 'object'
+      ) {
         dad.loadGrid();
-      } else if (typeof dad.updateGridDataAfterFilter === "function" || typeof dad.updateGridDataAfterFilter === "object") {
+      } else if (
+        typeof dad.updateGridDataAfterFilter === 'function' ||
+        typeof dad.updateGridDataAfterFilter === 'object'
+      ) {
         dad.updateGridDataAfterFilter();
       }
     } else if (f && f.OB.MainView.TabSet.getSelectedTab().pane.view) {
       var theView = f.OB.MainView.TabSet.getSelectedTab().pane.view;
-      theView.refresh(function () {
+      theView.refresh(function() {
         theView.getTabMessage();
         theView.toolBar.refreshCustomButtons();
       });
@@ -821,6 +1126,8 @@ function decodeJSON(jsonString) {
   try {
     return eval('(' + jsonString + ')'); // do the eval
   } catch (e) {
-    throw new SyntaxError("Invalid JSON string: " + e.message + " parsing: " + jsonString);
+    throw new SyntaxError(
+      'Invalid JSON string: ' + e.message + ' parsing: ' + jsonString
+    );
   }
 }

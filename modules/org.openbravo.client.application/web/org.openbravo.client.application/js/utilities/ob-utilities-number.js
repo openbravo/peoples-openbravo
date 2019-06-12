@@ -21,8 +21,8 @@ OB = window.OB || {};
 OB.Utilities = window.OB.Utilities || {};
 
 // = Openbravo Number Utilities =
-// Defines utility methods related to handling numbers on the client, for 
-// example formatting. 
+// Defines utility methods related to handling numbers on the client, for
+// example formatting.
 OB.Utilities.Number = {};
 
 // ** {{{ OB.Utilities.Number.roundJSNumber }}} **
@@ -34,13 +34,15 @@ OB.Utilities.Number = {};
 // * {{{dec}}}: the JS number of decimals
 // Return:
 // * The rounded JS number
-OB.Utilities.Number.roundJSNumber = function (num, dec) {
+OB.Utilities.Number.roundJSNumber = function(num, dec) {
   var strNum;
   if (isNaN(num)) {
     return NaN;
   }
-  strNum = ((typeof num === 'string') ? num : String(num));
-  return parseFloat(new BigDecimal(strNum).setScale(dec, BigDecimal.prototype.ROUND_HALF_UP));
+  strNum = typeof num === 'string' ? num : String(num);
+  return parseFloat(
+    new BigDecimal(strNum).setScale(dec, BigDecimal.prototype.ROUND_HALF_UP)
+  );
 };
 
 // ** {{{ OB.Utilities.Number.OBMaskedToOBPlain }}} **
@@ -53,10 +55,14 @@ OB.Utilities.Number.roundJSNumber = function (num, dec) {
 // * {{{groupSeparator}}}: the group separator of the OB number
 // Return:
 // * The plain OB number
-OB.Utilities.Number.OBMaskedToOBPlain = function (number, decSeparator, groupSeparator) {
+OB.Utilities.Number.OBMaskedToOBPlain = function(
+  number,
+  decSeparator,
+  groupSeparator
+) {
   number = number.toString();
   var plainNumber = number,
-      decimalNotation = (number.indexOf('E') === -1 && number.indexOf('e') === -1);
+    decimalNotation = number.indexOf('E') === -1 && number.indexOf('e') === -1;
 
   // Remove group separators
   if (groupSeparator) {
@@ -81,18 +87,27 @@ OB.Utilities.Number.OBMaskedToOBPlain = function (number, decSeparator, groupSep
 
   // Remove ending decimal '0'
   if (plainNumber.indexOf(decSeparator) !== -1) {
-    while (plainNumber.substring(plainNumber.length - 1, plainNumber.length) === '0') {
+    while (
+      plainNumber.substring(plainNumber.length - 1, plainNumber.length) === '0'
+    ) {
       plainNumber = plainNumber.substring(0, plainNumber.length - 1);
     }
   }
 
   // Remove starting integer '0'
-  while (plainNumber.substring(0, 1) === '0' && plainNumber.substring(1, 2) !== decSeparator && plainNumber.length > 1) {
+  while (
+    plainNumber.substring(0, 1) === '0' &&
+    plainNumber.substring(1, 2) !== decSeparator &&
+    plainNumber.length > 1
+  ) {
     plainNumber = plainNumber.substring(1, plainNumber.length);
   }
 
   // Remove decimal separator if is the last character
-  if (plainNumber.substring(plainNumber.length - 1, plainNumber.length) === decSeparator) {
+  if (
+    plainNumber.substring(plainNumber.length - 1, plainNumber.length) ===
+    decSeparator
+  ) {
     plainNumber = plainNumber.substring(0, plainNumber.length - 1);
   }
 
@@ -118,7 +133,13 @@ OB.Utilities.Number.OBMaskedToOBPlain = function (number, decSeparator, groupSep
 // * {{{groupInterval}}}: The group interval of the OB number
 // Return:
 // * The OB formatted number.
-OB.Utilities.Number.OBPlainToOBMasked = function (number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
+OB.Utilities.Number.OBPlainToOBMasked = function(
+  number,
+  maskNumeric,
+  decSeparator,
+  groupSeparator,
+  groupInterval
+) {
   if (number === '' || number === null || number === undefined) {
     return number;
   }
@@ -130,7 +151,12 @@ OB.Utilities.Number.OBPlainToOBMasked = function (number, maskNumeric, decSepara
   if (maskNumeric.indexOf('+') === 0 || maskNumeric.indexOf('-') === 0) {
     maskNumeric = maskNumeric.substring(1, maskNumeric.length);
   }
-  if (groupSeparator && maskNumeric.indexOf(groupSeparator) !== -1 && maskNumeric.indexOf(decSeparator) !== -1 && maskNumeric.indexOf(groupSeparator) > maskNumeric.indexOf(decSeparator)) {
+  if (
+    groupSeparator &&
+    maskNumeric.indexOf(groupSeparator) !== -1 &&
+    maskNumeric.indexOf(decSeparator) !== -1 &&
+    maskNumeric.indexOf(groupSeparator) > maskNumeric.indexOf(decSeparator)
+  ) {
     var fixRegExp = new RegExp('\\' + groupSeparator, 'g');
     maskNumeric = maskNumeric.replace(fixRegExp, '');
   }
@@ -142,7 +168,10 @@ OB.Utilities.Number.OBPlainToOBMasked = function (number, maskNumeric, decSepara
   var intMask = maskNumeric.substring(0, decMaskPosition);
   var decMask = maskNumeric.substring(decMaskPosition + 1, maskLength);
 
-  if ((groupSeparator && decMask.indexOf(groupSeparator) !== -1) || decMask.indexOf(decSeparator) !== -1) {
+  if (
+    (groupSeparator && decMask.indexOf(groupSeparator) !== -1) ||
+    decMask.indexOf(decSeparator) !== -1
+  ) {
     if (groupSeparator) {
       var fixRegExp_1 = new RegExp('\\' + groupSeparator, 'g');
       decMask = decMask.replace(fixRegExp_1, '');
@@ -153,7 +182,11 @@ OB.Utilities.Number.OBPlainToOBMasked = function (number, maskNumeric, decSepara
 
   // Management of the number
   number = number.toString();
-  number = OB.Utilities.Number.OBMaskedToOBPlain(number, decSeparator, groupSeparator);
+  number = OB.Utilities.Number.OBMaskedToOBPlain(
+    number,
+    decSeparator,
+    groupSeparator
+  );
   var numberSign = '';
   if (number.substring(0, 1) === '+') {
     numberSign = '';
@@ -181,7 +214,10 @@ OB.Utilities.Number.OBPlainToOBMasked = function (number, maskNumeric, decSepara
 
     // Check if the number is on Scientific notation
     if (decNumber.indexOf('e') !== -1 || decNumber.indexOf('E') !== -1) {
-      decNumber = OB.Utilities.Number.ScientificToDecimal(decNumber, decSeparator);
+      decNumber = OB.Utilities.Number.ScientificToDecimal(
+        decNumber,
+        decSeparator
+      );
     }
     if (decNumber.substring(0, 1) === '1') {
       intNumber = parseFloat(intNumber);
@@ -193,8 +229,8 @@ OB.Utilities.Number.OBPlainToOBMasked = function (number, maskNumeric, decSepara
 
   if (decNumber.length < decMask.length) {
     var decNumber_temp = '',
-        decMaskLength = decMask.length,
-        i;
+      decMaskLength = decMask.length,
+      i;
     for (i = 0; i < decMaskLength; i++) {
       if (decMask.substring(i, i + 1) === '#') {
         if (decNumber.substring(i, i + 1) !== '') {
@@ -227,15 +263,17 @@ OB.Utilities.Number.OBPlainToOBMasked = function (number, maskNumeric, decSepara
   if (intNumber.length < intMask.length) {
     intNumber_temp = '';
     var diff = intMask.length - intNumber.length,
-        j;
+      j;
     for (j = intMask.length; j > 0; j--) {
       if (intMask.substring(j - 1, j) === '#') {
         if (intNumber.substring(j - 1 - diff, j - diff) !== '') {
-          intNumber_temp = intNumber.substring(j - 1 - diff, j - diff) + intNumber_temp;
+          intNumber_temp =
+            intNumber.substring(j - 1 - diff, j - diff) + intNumber_temp;
         }
       } else if (intMask.substring(j - 1, j) === '0') {
         if (intNumber.substring(j - 1 - diff, j - diff) !== '') {
-          intNumber_temp = intNumber.substring(j - 1 - diff, j - diff) + intNumber_temp;
+          intNumber_temp =
+            intNumber.substring(j - 1 - diff, j - diff) + intNumber_temp;
         } else {
           intNumber_temp = '0' + intNumber_temp;
         }
@@ -247,7 +285,7 @@ OB.Utilities.Number.OBPlainToOBMasked = function (number, maskNumeric, decSepara
   if (isGroup === true) {
     intNumber_temp = '';
     var groupCounter = 0,
-        k;
+      k;
     for (k = intNumber.length; k > 0; k--) {
       intNumber_temp = intNumber.substring(k - 1, k) + intNumber_temp;
       groupCounter++;
@@ -282,11 +320,19 @@ OB.Utilities.Number.OBPlainToOBMasked = function (number, maskNumeric, decSepara
 // * {{{groupSeparator}}}: The group separator of the OB number
 // Return:
 // * The JS number.
-OB.Utilities.Number.OBMaskedToJS = function (numberStr, decSeparator, groupSeparator) {
+OB.Utilities.Number.OBMaskedToJS = function(
+  numberStr,
+  decSeparator,
+  groupSeparator
+) {
   if (!numberStr || numberStr.trim() === '') {
     return null;
   }
-  var calcNumber = OB.Utilities.Number.OBMaskedToOBPlain(numberStr, decSeparator, groupSeparator);
+  var calcNumber = OB.Utilities.Number.OBMaskedToOBPlain(
+    numberStr,
+    decSeparator,
+    groupSeparator
+  );
   calcNumber = calcNumber.replace(decSeparator, '.');
   var numberResult = parseFloat(calcNumber);
   if (isNaN(numberResult)) {
@@ -308,7 +354,13 @@ OB.Utilities.Number.OBMaskedToJS = function (numberStr, decSeparator, groupSepar
 // * {{{groupInterval}}}: The group interval of the OB number
 // Return:
 // * The OB formatted number.
-OB.Utilities.Number.JSToOBMasked = function (number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
+OB.Utilities.Number.JSToOBMasked = function(
+  number,
+  maskNumeric,
+  decSeparator,
+  groupSeparator,
+  groupInterval
+) {
   var isANumber = Object.prototype.toString.call(number) === '[object Number]';
   if (!isANumber) {
     return number;
@@ -316,11 +368,17 @@ OB.Utilities.Number.JSToOBMasked = function (number, maskNumeric, decSeparator, 
   var formattedNumber = number;
   formattedNumber = formattedNumber.toString();
   formattedNumber = formattedNumber.replace('.', decSeparator);
-  formattedNumber = OB.Utilities.Number.OBPlainToOBMasked(formattedNumber, maskNumeric, decSeparator, groupSeparator, groupInterval);
+  formattedNumber = OB.Utilities.Number.OBPlainToOBMasked(
+    formattedNumber,
+    maskNumeric,
+    decSeparator,
+    groupSeparator,
+    groupInterval
+  );
   return formattedNumber;
 };
 
-OB.Utilities.Number.IsValidValueString = function (type, numberStr) {
+OB.Utilities.Number.IsValidValueString = function(type, numberStr) {
   var maskNumeric = type.maskNumeric;
   // note 0 is also okay to return true
   if (!numberStr) {
@@ -342,20 +400,28 @@ OB.Utilities.Number.IsValidValueString = function (type, numberStr) {
   if (bolNegative) {
     checkPattern += '([+]|[-])?';
   }
-  checkPattern += '(\\d+)?((\\' + type.groupSeparator + '\\d{' + OB.Format.defaultGroupingSize + '})?)+';
+  checkPattern +=
+    '(\\d+)?((\\' +
+    type.groupSeparator +
+    '\\d{' +
+    OB.Format.defaultGroupingSize +
+    '})?)+';
   if (bolDecimal) {
     checkPattern += '(\\' + type.decSeparator + '\\d+)?';
   }
   checkPattern += '$';
   var checkRegExp = new RegExp(checkPattern);
-  if (numberStr.match(checkRegExp) && numberStr.substring(0, 1) !== type.groupSeparator) {
+  if (
+    numberStr.match(checkRegExp) &&
+    numberStr.substring(0, 1) !== type.groupSeparator
+  ) {
     return true;
   }
   return false;
 };
 
 OB.Utilities.Number.Grouping = {
-  getGroupingModes: function () {
+  getGroupingModes: function() {
     return this.groupingModes;
   },
   groupingModes: {
@@ -370,29 +436,31 @@ OB.Utilities.Number.Grouping = {
   defaultGroupingMode: 'by10',
   //default grouping mode
   groupingMode: 'by10',
-  getGroupingMultiplier: function (groupingMode) {
+  getGroupingMultiplier: function(groupingMode) {
     switch (groupingMode) {
-    case 'byDecimal10':
-      return 0.1;
-    case 'by1':
-      return 1;
-    case 'by10':
-      return 10;
-    case 'by100':
-      return 100;
-    case 'by1000':
-      return 1000;
-    case 'by10000':
-      return 10000;
-    case 'by100000':
-      return 100000;
+      case 'byDecimal10':
+        return 0.1;
+      case 'by1':
+        return 1;
+      case 'by10':
+        return 10;
+      case 'by100':
+        return 100;
+      case 'by1000':
+        return 1000;
+      case 'by10000':
+        return 10000;
+      case 'by100000':
+        return 100000;
     }
     // default
     return 10;
   },
-  getGroupValue: function (value, record, field, fieldName, grid) {
-    var returnValue, groupingMode = (field.groupingMode || OB.Utilities.Number.Grouping.defaultGroupingMode),
-        multiplier = this.getGroupingMultiplier(groupingMode);
+  getGroupValue: function(value, record, field, fieldName, grid) {
+    var returnValue,
+      groupingMode =
+        field.groupingMode || OB.Utilities.Number.Grouping.defaultGroupingMode,
+      multiplier = this.getGroupingMultiplier(groupingMode);
 
     if (!isc.isA.Number(value) || !groupingMode) {
       return value;
@@ -403,10 +471,11 @@ OB.Utilities.Number.Grouping = {
     returnValue = returnValue * multiplier;
     return returnValue;
   },
-  getGroupTitle: function (value, record, field, fieldName, grid) {
+  getGroupTitle: function(value, record, field, fieldName, grid) {
     var groupValue = this.getGroupValue(value, record, field, fieldName, grid),
-        groupingMode = (field.groupingMode || OB.Utilities.Number.Grouping.defaultGroupingMode),
-        multiplier = this.getGroupingMultiplier(groupingMode);
+      groupingMode =
+        field.groupingMode || OB.Utilities.Number.Grouping.defaultGroupingMode,
+      multiplier = this.getGroupingMultiplier(groupingMode);
     return groupValue + ' - ' + (groupValue + multiplier);
   }
 };
@@ -419,22 +488,28 @@ OB.Utilities.Number.Grouping = {
 // * {{{number}}}: the number on scientific notation
 // * {{{decSeparator}}}: the decimal separator of the OB number
 // Return:
-// * The OB number on decimal notation 
-OB.Utilities.Number.ScientificToDecimal = function (number, decSeparator) {
-
+// * The OB number on decimal notation
+OB.Utilities.Number.ScientificToDecimal = function(number, decSeparator) {
   number = number.toString();
   // remove leading zeros
   // see issue https://issues.openbravo.com/view.php?id=28561
   number = number.replace(/^0+/, '');
-  var coeficient, exponent, numberOfZeros, zeros = '',
-      i, split, index, sign;
+  var coeficient,
+    exponent,
+    numberOfZeros,
+    zeros = '',
+    i,
+    split,
+    index,
+    sign;
 
-  // Look for 'e' or 'E' 
+  // Look for 'e' or 'E'
   if (number.indexOf('e') !== -1) {
     index = number.indexOf('e');
   } else if (number.indexOf('E') !== -1) {
     index = number.indexOf('E');
-  } else { // Number is not expressed in scientific notation
+  } else {
+    // Number is not expressed in scientific notation
     return number;
   }
 
@@ -448,7 +523,8 @@ OB.Utilities.Number.ScientificToDecimal = function (number, decSeparator) {
     coeficient = split[0] + split[1];
   }
 
-  if (exponent.indexOf('-') !== -1) { // Case the number is smaller than 1
+  if (exponent.indexOf('-') !== -1) {
+    // Case the number is smaller than 1
     numberOfZeros = exponent.substring(1, exponent.length);
 
     //Create the string of zeros
@@ -463,8 +539,12 @@ OB.Utilities.Number.ScientificToDecimal = function (number, decSeparator) {
     } else {
       number = '0.' + zeros + coeficient;
     }
-  } else { // Case the number is bigger than 1
-    numberOfZeros = exponent.indexOf('+') !== -1 ? exponent.substring(1, exponent.length) : exponent;
+  } else {
+    // Case the number is bigger than 1
+    numberOfZeros =
+      exponent.indexOf('+') !== -1
+        ? exponent.substring(1, exponent.length)
+        : exponent;
     if (split) {
       numberOfZeros = numberOfZeros - split[1].length;
     }
@@ -478,7 +558,10 @@ OB.Utilities.Number.ScientificToDecimal = function (number, decSeparator) {
       number = coeficient + zeros;
     } else {
       // final decimal number is not integer: add dot decimal separator in the correct position
-      number = coeficient.substr(0, coeficient.length + numberOfZeros) + '.' + coeficient.substr(coeficient.length + numberOfZeros);
+      number =
+        coeficient.substr(0, coeficient.length + numberOfZeros) +
+        '.' +
+        coeficient.substr(coeficient.length + numberOfZeros);
     }
   }
 

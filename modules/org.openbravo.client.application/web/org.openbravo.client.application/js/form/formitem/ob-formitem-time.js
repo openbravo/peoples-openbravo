@@ -26,12 +26,12 @@ isc.Time.displayFormat = OB.Utilities.getTimeFormatDefinition().timeFormatter;
 isc.ClassFactory.defineClass('OBTimeItem', isc.TimeItem);
 
 isc.OBTimeItem.addClassMethods({
-  setTodaysDate: function (date) {
+  setTodaysDate: function(date) {
     var today = new Date();
     // Set the month initially to January to prevent error like this
     // provided date: 15/02/2014
     // today: 31/03/2014
-    // date.setDate(today.getDate()) would result in Mon Mar 02 2014 18:00:00 GMT+0100 (CET), because february does not have 31 days 
+    // date.setDate(today.getDate()) would result in Mon Mar 02 2014 18:00:00 GMT+0100 (CET), because february does not have 31 days
     date.setMonth(0);
     date.setDate(today.getDate());
     date.setMonth(today.getMonth());
@@ -46,7 +46,7 @@ isc.OBTimeItem.addProperties({
   showHint: false,
   timeFormatter: isc.Time.displayFormat,
 
-  mapValueToDisplay: function (value) {
+  mapValueToDisplay: function(value) {
     var newValue = value;
     if (isc.isA.Date(newValue)) {
       if (this.isAbsoluteTime) {
@@ -59,9 +59,12 @@ isc.OBTimeItem.addProperties({
     return newValue;
   },
 
-  mapDisplayToValue: function (value) {
+  mapDisplayToValue: function(value) {
     var newValue = value;
-    if (newValue && Object.prototype.toString.call(newValue) === '[object String]') {
+    if (
+      newValue &&
+      Object.prototype.toString.call(newValue) === '[object String]'
+    ) {
       newValue = isc.Time.parseInput(newValue);
       isc.OBTimeItem.setTodaysDate(newValue);
       if (this.isAbsoluteTime) {
@@ -77,11 +80,19 @@ isc.OBTimeItem.addProperties({
   // this because changeOnKeypress is false. Activating changeOnKeypress makes the
   // item not editable as it is reformatted on keyStroke, the same happens calling
   // from this method form.itemChangeActions
-  keyPress: function (item, form, keyName, characterValue) {
-    var i, f = this.form,
-        toolBarButtons;
+  keyPress: function(item, form, keyName, characterValue) {
+    var i,
+      f = this.form,
+      toolBarButtons;
 
-    if ((f && f.view && f.view.toolBar && f.view.messageBar && f.setHasChanged) && (characterValue || keyName === 'Backspace' || keyName === 'Delete')) {
+    if (
+      f &&
+      f.view &&
+      f.view.toolBar &&
+      f.view.messageBar &&
+      f.setHasChanged &&
+      (characterValue || keyName === 'Backspace' || keyName === 'Delete')
+    ) {
       toolBarButtons = f.view.toolBar.leftMembers;
       f.setHasChanged(true);
       f.view.messageBar.hide();
@@ -95,7 +106,7 @@ isc.OBTimeItem.addProperties({
 
   // SmartClient's TimeItem doesn't keep time zone. Preserve it in case the
   // string contains time zone. So time in this format is kept: 12:00+01:00
-  setValue: function (value) {
+  setValue: function(value) {
     if (isc.isA.String(value) && (value.contains('+') || value.contains('-'))) {
       value = isc.Time.parseInput(value, null, null, true);
     }
@@ -114,7 +125,7 @@ isc.OBTimeItem.addProperties({
     return this.Super('setValue', arguments);
   },
 
-  getValue: function () {
+  getValue: function() {
     var value = this.Super('getValue', arguments);
     if (value && isc.isA.Date(value) && !this.isAbsoluteTime) {
       isc.OBTimeItem.setTodaysDate(value);
@@ -124,7 +135,7 @@ isc.OBTimeItem.addProperties({
 
   /* The following functions allow proper timeGrid operation */
 
-  doShowTimeGrid: function (timeValue) {
+  doShowTimeGrid: function(timeValue) {
     if (this.timeGrid && !this.timeGrid.isVisible()) {
       this.timeGrid.show();
       if (this.getValue()) {
@@ -132,17 +143,19 @@ isc.OBTimeItem.addProperties({
       }
     }
   },
-  doHideTimeGrid: function (timeValue) {
+  doHideTimeGrid: function(timeValue) {
     var me = this;
     if (this.timeGrid) {
-      setTimeout(function () {
+      setTimeout(function() {
         me.timeGrid.hide();
       }, 100);
     }
   },
 
-  init: function () {
-    var oldShowHint, hint, formatDefinition = OB.Utilities.getTimeFormatDefinition();
+  init: function() {
+    var oldShowHint,
+      hint,
+      formatDefinition = OB.Utilities.getTimeFormatDefinition();
 
     this.timeFormat = formatDefinition.timeFormat;
 
@@ -162,20 +175,37 @@ isc.OBTimeItem.addProperties({
       hint = this.getHint();
       this.showHint = oldShowHint;
       this.timeGridProps = this.timeGridProps || {};
-      this.timeGrid = isc.OBTimeItemGrid.create(isc.addProperties({
-        formItem: this,
-        timeFormat: hint || this.timeFormat,
-        is24hTime: formatDefinition.is24h
-      }, this.timeGridProps));
+      this.timeGrid = isc.OBTimeItemGrid.create(
+        isc.addProperties(
+          {
+            formItem: this,
+            timeFormat: hint || this.timeFormat,
+            is24hTime: formatDefinition.is24h
+          },
+          this.timeGridProps
+        )
+      );
       this.form.addChild(this.timeGrid); // Added grid in the form to avoid position problems
     }
   },
 
-  keyDown: function () {
+  keyDown: function() {
     if (this.timeGrid) {
-      if (isc.EH.getKey() === 'Arrow_Up' && (!isc.EH.ctrlKeyDown() && !isc.EH.altKeyDown() && !isc.EH.shiftKeyDown()) && this.timeGrid.isVisible()) {
+      if (
+        isc.EH.getKey() === 'Arrow_Up' &&
+        (!isc.EH.ctrlKeyDown() &&
+          !isc.EH.altKeyDown() &&
+          !isc.EH.shiftKeyDown()) &&
+        this.timeGrid.isVisible()
+      ) {
         this.timeGrid.selectPreviousRecord();
-      } else if (isc.EH.getKey() === 'Arrow_Down' && (!isc.EH.ctrlKeyDown() && !isc.EH.altKeyDown() && !isc.EH.shiftKeyDown()) && this.timeGrid.isVisible()) {
+      } else if (
+        isc.EH.getKey() === 'Arrow_Down' &&
+        (!isc.EH.ctrlKeyDown() &&
+          !isc.EH.altKeyDown() &&
+          !isc.EH.shiftKeyDown()) &&
+        this.timeGrid.isVisible()
+      ) {
         this.timeGrid.selectNextRecord();
       } else {
         this.timeGrid.hide();
@@ -183,7 +213,7 @@ isc.OBTimeItem.addProperties({
     }
   },
 
-  click: function () {
+  click: function() {
     var selectedDate = isc.Time.parseInput(this.getEnteredValue());
     if (this.isAbsoluteTime) {
       selectedDate = OB.Utilities.Date.addTimezoneOffset(selectedDate);
@@ -191,7 +221,7 @@ isc.OBTimeItem.addProperties({
     this.doShowTimeGrid(selectedDate);
   },
 
-  focus: function () {
+  focus: function() {
     var selectedDate = this.getValue();
     if (this.isAbsoluteTime) {
       selectedDate = OB.Utilities.Date.addTimezoneOffset(selectedDate);
@@ -199,23 +229,25 @@ isc.OBTimeItem.addProperties({
     this.doShowTimeGrid(selectedDate);
     return this.Super('focus', arguments);
   },
-  blur: function () {
+  blur: function() {
     this.doHideTimeGrid();
     return this.Super('blur', arguments);
   },
-  moved: function () {
+  moved: function() {
     if (this.timeGrid) {
       this.timeGrid.updatePosition();
     }
     return this.Super('moved', arguments);
   },
-  formSaved: function (request, response, data) {
+  formSaved: function(request, response, data) {
     var UTCOffsetInMiliseconds;
     if (data && this.getValue() !== data[this.name]) {
       // it has not been converted to the local time yet, do it now
       if (data[this.name] && data[this.name].getFullYear() <= 1970) {
         UTCOffsetInMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds();
-        data[this.name].setTime(data[this.name].getTime() + UTCOffsetInMiliseconds);
+        data[this.name].setTime(
+          data[this.name].getTime() + UTCOffsetInMiliseconds
+        );
       }
       this.setValue(data[this.name]);
     }
@@ -223,7 +255,7 @@ isc.OBTimeItem.addProperties({
 });
 
 isc.OBTimeItem.changeDefaults('textFieldDefaults', {
-  getTextBoxStyle: function () {
+  getTextBoxStyle: function() {
     // Changes in 'setDisable' in the parent item doesn't affect the text field (issue #29561)
     // With this hack, each time the text box style should be retreived, we ensure also that
     // the 'disable' state is in sync with the parent item.
@@ -233,23 +265,26 @@ isc.OBTimeItem.changeDefaults('textFieldDefaults', {
     var me = this;
     if (this.parentItem.isDisabled() && !this.isDisabled()) {
       // Timeout to avoid fireOnPause
-      setTimeout(function () {
+      setTimeout(function() {
         me.setDisabled(true);
       }, 10);
     } else if (!this.parentItem.isDisabled() && this.isDisabled()) {
       // Timeout to avoid fireOnPause
-      setTimeout(function () {
+      setTimeout(function() {
         me.setDisabled(false);
       }, 10);
     }
     // SC does not handle properly styles for inner textItem representing the time,
     // this is a temporary hack till it is fixed in SC code
     //   see issue #27670
-    return this.parentItem.textBoxStyle + (this.isDisabled() ? 'Disabled' : (this.required ? 'Required' : ''));
+    return (
+      this.parentItem.textBoxStyle +
+      (this.isDisabled() ? 'Disabled' : this.required ? 'Required' : '')
+    );
   }
 });
 
-isc.ClassFactory.defineClass("OBTimeItemGrid", isc.ListGrid);
+isc.ClassFactory.defineClass('OBTimeItemGrid', isc.ListGrid);
 
 isc.OBTimeItemGrid.addProperties({
   formItem: null,
@@ -273,10 +308,15 @@ isc.OBTimeItemGrid.addProperties({
   _avoidHideOnBlur: false,
   _waitingForReFocus: [],
 
-  dateObjToTimeString: function (dateObj) {
-    var tmpString, isPM = false,
-        dateString = '';
-    if (this.precission === 'hour' || this.precission === 'minute' || this.precission === 'second') {
+  dateObjToTimeString: function(dateObj) {
+    var tmpString,
+      isPM = false,
+      dateString = '';
+    if (
+      this.precission === 'hour' ||
+      this.precission === 'minute' ||
+      this.precission === 'second'
+    ) {
       tmpString = dateObj.getHours();
       if (!this.is24hTime && tmpString - 12 >= 0) {
         tmpString = tmpString - 12;
@@ -315,7 +355,7 @@ isc.OBTimeItemGrid.addProperties({
 
     return dateString;
   },
-  timeStringToDateObj: function (stringTime) {
+  timeStringToDateObj: function(stringTime) {
     if (stringTime.length < 3) {
       stringTime = stringTime + ':00:00';
     } else if (stringTime.length < 6) {
@@ -331,9 +371,13 @@ isc.OBTimeItemGrid.addProperties({
     }
     return stringTime;
   },
-  normalizeDateObj: function (dateObj) {
+  normalizeDateObj: function(dateObj) {
     var timeRefHrs, timeRefMins, timeRefSecs, newTimeRef;
-    if (this.precission === 'hour' || this.precission === 'minute' || this.precission === 'second') {
+    if (
+      this.precission === 'hour' ||
+      this.precission === 'minute' ||
+      this.precission === 'second'
+    ) {
       timeRefHrs = dateObj.getHours();
     } else {
       timeRefHrs = 0;
@@ -355,12 +399,12 @@ isc.OBTimeItemGrid.addProperties({
     newTimeRef = new Date(newTimeRef.setMilliseconds(0));
     return newTimeRef;
   },
-  getDiffText: function (date, reference) {
-    var diffMs = (date - reference),
-        diffHrs = ((diffMs % 86400000) / 3600000),
-        diffMins = (((diffMs % 86400000) % 3600000) / 60000),
-        diffSecs = ((((diffMs % 86400000) % 3600000) % 60000) / 1000),
-        diffText = '';
+  getDiffText: function(date, reference) {
+    var diffMs = date - reference,
+      diffHrs = (diffMs % 86400000) / 3600000,
+      diffMins = ((diffMs % 86400000) % 3600000) / 60000,
+      diffSecs = (((diffMs % 86400000) % 3600000) % 60000) / 1000,
+      diffText = '';
 
     if (diffHrs >= 0) {
       diffHrs = Math.floor(diffHrs);
@@ -400,7 +444,10 @@ isc.OBTimeItemGrid.addProperties({
 
     if (diffSecs === 1 || diffSecs === -1) {
       diffText += diffSecs + ' ' + this.timeLabels[41];
-    } else if (diffSecs || (!diffHrs && !diffMins && this.precission === 'second')) {
+    } else if (
+      diffSecs ||
+      (!diffHrs && !diffMins && this.precission === 'second')
+    ) {
       diffText += diffSecs + ' ' + this.timeLabels[42];
     }
 
@@ -412,12 +459,12 @@ isc.OBTimeItemGrid.addProperties({
 
     return diffText;
   },
-  convertTimes: function () {
+  convertTimes: function() {
     this.minTime = this.timeStringToDateObj(this.minTime);
     this.maxTime = this.timeStringToDateObj(this.maxTime);
     this.timeReference = this.timeStringToDateObj(this.timeReference);
   },
-  selectTimeInList: function (time) {
+  selectTimeInList: function(time) {
     var rowNum, i;
 
     time = this.timeStringToDateObj(time);
@@ -436,7 +483,7 @@ isc.OBTimeItemGrid.addProperties({
     this.doSelectionUpdated = true;
   },
   doSelectionUpdated: true,
-  selectionUpdated: function (record) {
+  selectionUpdated: function(record) {
     if (this.formItem && record && this.doSelectionUpdated) {
       var selectedDate = record.jsTime;
       if (this.formItem.isAbsoluteTime) {
@@ -447,7 +494,7 @@ isc.OBTimeItemGrid.addProperties({
     }
   },
 
-  show: function () {
+  show: function() {
     var timeRef, formItemWidth;
     if (this.isVisible()) {
       return;
@@ -466,11 +513,23 @@ isc.OBTimeItemGrid.addProperties({
     }
 
     if (this.precission === 'hour') {
-      this.setWidth(3 * this.characterWidth + this.maxTimeStringLength * this.characterWidth + 18);
+      this.setWidth(
+        3 * this.characterWidth +
+          this.maxTimeStringLength * this.characterWidth +
+          18
+      );
     } else if (this.precission === 'minute') {
-      this.setWidth(6 * this.characterWidth + this.maxTimeStringLength * this.characterWidth + 18);
+      this.setWidth(
+        6 * this.characterWidth +
+          this.maxTimeStringLength * this.characterWidth +
+          18
+      );
     } else if (this.precission === 'second') {
-      this.setWidth(9 * this.characterWidth + this.maxTimeStringLength * this.characterWidth + 18);
+      this.setWidth(
+        9 * this.characterWidth +
+          this.maxTimeStringLength * this.characterWidth +
+          18
+      );
     }
     if (this.formItem) {
       formItemWidth = this.formItem.getVisibleWidth();
@@ -482,16 +541,16 @@ isc.OBTimeItemGrid.addProperties({
     this.updatePosition();
     return this.Super('show', arguments);
   },
-  scrolled: function () {
+  scrolled: function() {
     var me = this;
     if (isc.Browser.isIE) {
       //To avoid a problem in IE that once the scroll is pressed, the formItem loses the focus
       this._avoidHideOnBlur = true;
       this._waitingForReFocus.push('dummy');
-      setTimeout(function () {
+      setTimeout(function() {
         me.formItem.form.focus();
       }, 10);
-      setTimeout(function () {
+      setTimeout(function() {
         me._waitingForReFocus.pop();
         if (me._waitingForReFocus.length === 0) {
           me._avoidHideOnBlur = false;
@@ -500,13 +559,16 @@ isc.OBTimeItemGrid.addProperties({
     }
     this.Super('scrolled', arguments);
   },
-  hide: function () {
+  hide: function() {
     if (!this._avoidHideOnBlur) {
       return this.Super('hide', arguments);
     }
   },
-  generateData: function () {
-    var dateObj, timeGranularityInMilliSeconds, timeRef, dateArray = [];
+  generateData: function() {
+    var dateObj,
+      timeGranularityInMilliSeconds,
+      timeRef,
+      dateArray = [];
     this.convertTimes();
     this.maxTimeStringLength = 0;
     timeRef = this.timeReference;
@@ -514,14 +576,20 @@ isc.OBTimeItemGrid.addProperties({
     if (this.precission === 'second') {
       timeGranularityInMilliSeconds = this.timeGranularity * 1000;
     } else if (this.precission === 'minute') {
-      timeGranularityInMilliSeconds = Math.ceil(this.timeGranularity / 60) * 1000 * 60;
+      timeGranularityInMilliSeconds =
+        Math.ceil(this.timeGranularity / 60) * 1000 * 60;
     } else if (this.precission === 'hour') {
-      timeGranularityInMilliSeconds = Math.ceil(this.timeGranularity / (60 * 60)) * 1000 * 60 * 60;
+      timeGranularityInMilliSeconds =
+        Math.ceil(this.timeGranularity / (60 * 60)) * 1000 * 60 * 60;
     }
 
     while (this.minTime <= timeRef) {
       dateObj = {
-        time: this.dateObjToTimeString(timeRef) + (this.showDiffText ? ' ' + this.getDiffText(timeRef, this.timeReference) : ''),
+        time:
+          this.dateObjToTimeString(timeRef) +
+          (this.showDiffText
+            ? ' ' + this.getDiffText(timeRef, this.timeReference)
+            : ''),
         jsTime: timeRef
       };
       dateArray.unshift(dateObj);
@@ -530,7 +598,11 @@ isc.OBTimeItemGrid.addProperties({
     timeRef = this.timeReference;
     while (timeRef <= this.maxTime) {
       dateObj = {
-        time: this.dateObjToTimeString(timeRef) + (this.showDiffText ? ' ' + this.getDiffText(timeRef, this.timeReference) : ''),
+        time:
+          this.dateObjToTimeString(timeRef) +
+          (this.showDiffText
+            ? ' ' + this.getDiffText(timeRef, this.timeReference)
+            : ''),
         jsTime: timeRef
       };
       if (timeRef !== this.timeReference) {
@@ -540,9 +612,9 @@ isc.OBTimeItemGrid.addProperties({
     }
     return dateArray;
   },
-  selectPreviousRecord: function () {
+  selectPreviousRecord: function() {
     var selectedRecord = this.getSelectedRecord(),
-        i;
+      i;
     if (selectedRecord) {
       for (i = 0; i < this.data.length; i++) {
         if (this.data[i] === selectedRecord && i !== 0) {
@@ -556,9 +628,9 @@ isc.OBTimeItemGrid.addProperties({
       this.selectSingleRecord(0);
     }
   },
-  selectNextRecord: function () {
+  selectNextRecord: function() {
     var selectedRecord = this.getSelectedRecord(),
-        i;
+      i;
     if (selectedRecord) {
       for (i = 0; i < this.data.length; i++) {
         if (this.data[i] === selectedRecord && i !== this.data.length - 1) {
@@ -572,12 +644,15 @@ isc.OBTimeItemGrid.addProperties({
       this.selectSingleRecord(0);
     }
   },
-  updatePosition: function () {
+  updatePosition: function() {
     if (this.formItem) {
-      this.placeNear(this.formItem.getPageLeft() + 2, this.formItem.getPageTop() + 26);
+      this.placeNear(
+        this.formItem.getPageLeft() + 2,
+        this.formItem.getPageTop() + 26
+      );
     }
   },
-  initWidget: function () {
+  initWidget: function() {
     var labels;
     if (this.timeFormat.indexOf('SS') !== -1) {
       this.precission = 'second';
@@ -587,7 +662,10 @@ isc.OBTimeItemGrid.addProperties({
       this.precission = 'hour';
     }
 
-    if (this.timeFormat.toUpperCase().indexOf(isc.Time.AMIndicator) !== -1 || this.timeFormat.toUpperCase().indexOf(isc.Time.PMIndicator) !== -1) {
+    if (
+      this.timeFormat.toUpperCase().indexOf(isc.Time.AMIndicator) !== -1 ||
+      this.timeFormat.toUpperCase().indexOf(isc.Time.PMIndicator) !== -1
+    ) {
       this.is24hTime = false;
     }
 
@@ -595,7 +673,11 @@ isc.OBTimeItemGrid.addProperties({
       this.timeGranularity = this.formItem.timeGranularity;
     }
 
-    if (this.formItem && this.formItem.relativeField && this.showDiffText !== false) {
+    if (
+      this.formItem &&
+      this.formItem.relativeField &&
+      this.showDiffText !== false
+    ) {
       this.showDiffText = true;
     }
 
@@ -608,16 +690,18 @@ isc.OBTimeItemGrid.addProperties({
 
     return this.Super('initWidget', arguments);
   },
-  fields: [{
-    name: 'time',
-    title: 'Time'
-  }, {
-    name: 'jsTime',
-    title: 'JS Time',
-    showIf: 'false'
-  }]
+  fields: [
+    {
+      name: 'time',
+      title: 'Time'
+    },
+    {
+      name: 'jsTime',
+      title: 'JS Time',
+      showIf: 'false'
+    }
+  ]
 });
-
 
 isc.ClassFactory.defineClass('OBAbsoluteTimeItem', isc.OBTimeItem);
 

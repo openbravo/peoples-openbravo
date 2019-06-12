@@ -22,8 +22,7 @@
 // The Remote Call Manager provides support for calling java from the client
 // and retrieving the result.
 //
-(function (OB, isc) {
-
+(function(OB, isc) {
   if (!OB || !isc) {
     throw {
       name: 'ReferenceError',
@@ -37,7 +36,6 @@
   function RemoteCallManager() {}
 
   RemoteCallManager.prototype = {
-
     // ** {{{ RemoteCallManager.call(actionName, params, content, callBack)
     // }}} **
     //
@@ -58,8 +56,14 @@
     // (as rpcRequest.clientContext) when the callback gets called
     // * {{{errorCallback}}}: a function that is executed when the call returns with an error status
     //
-    call: function (actionName, data, requestParams, callback, callerContext, errorCallback) {
-
+    call: function(
+      actionName,
+      data,
+      requestParams,
+      callback,
+      callerContext,
+      errorCallback
+    ) {
       var requestParameters = {};
       ISC.addProperties(requestParameters, requestParams);
       requestParameters._action = actionName;
@@ -70,7 +74,8 @@
         rpcRequest.httpMethod = requestParameters.httpMethod;
       }
 
-      rpcRequest.actionURL = OB.Application.contextUrl + 'org.openbravo.client.kernel';
+      rpcRequest.actionURL =
+        OB.Application.contextUrl + 'org.openbravo.client.kernel';
       rpcRequest.callback = callback;
       if (isc.isA.Function(errorCallback)) {
         rpcRequest.errorCallback = errorCallback;
@@ -92,4 +97,4 @@
 
   // Initialize RemoteCallManager object
   OB.RemoteCallManager = new RemoteCallManager();
-}(OB, isc));
+})(OB, isc);

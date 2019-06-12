@@ -23,30 +23,33 @@
 // There are 2 popups: one to save, and one to delete
 //
 // The implementation is split in 3 parts:
-// - OB.Personalization.ManageViewsPopupProperties: common properties for 
+// - OB.Personalization.ManageViewsPopupProperties: common properties for
 //  both the save and the delete function.
 // - OB.Personalization.ManageViewsPopupPropertiesDelete: properties/overrides
 //  specific for the delete popup.
-// - OB.Personalization.ManageViewsPopupPropertiesSave: properties specific 
+// - OB.Personalization.ManageViewsPopupPropertiesSave: properties specific
 //  for the save popup
 // ** {{{OB.Personalization.ManageViewsPopupProperties}}} **
-// The common part of the popup which allows to save or delete 
-// a view. 
+// The common part of the popup which allows to save or delete
+// a view.
 OB.Personalization.ManageViewsPopupProperties = {
   toggleSave: true,
   showMaximizeButton: false,
   showMinimizeButton: false,
 
-  initWidget: function () {
-    var layout, window = this,
-        form, saveButton, buttonsLayout;
+  initWidget: function() {
+    var layout,
+      window = this,
+      form,
+      saveButton,
+      buttonsLayout;
 
     // create a save button, it is enabled/disabled
     // from the form
     saveButton = isc.OBFormButton.create({
       title: this.actionLabel,
-      action: function () {
-        // the doAction is overridden/implemented in the 
+      action: function() {
+        // the doAction is overridden/implemented in the
         // specific save/delete properties
         window.doAction(this.form);
         window.closeClick();
@@ -55,7 +58,7 @@ OB.Personalization.ManageViewsPopupProperties = {
     });
 
     form = isc.DynamicForm.create({
-      // TODO: parts are the same as in the user-profile 
+      // TODO: parts are the same as in the user-profile
       // navigation bar component form, should be put in
       // a generic style somewhere
       autoFocus: true,
@@ -72,16 +75,16 @@ OB.Personalization.ManageViewsPopupProperties = {
       numCols: 1,
       errorOrientation: 'right',
       toggleSave: this.toggleSave,
-      itemChanged: function () {
-        var pers = this.getValue("personalization");
+      itemChanged: function() {
+        var pers = this.getValue('personalization');
         if (this.toggleSave) {
-          // enable the save button when there is a 
+          // enable the save button when there is a
           // personalization record chosen/name entered
           saveButton.setDisabled(!pers);
         }
       },
 
-      handleKeyPress: function () {
+      handleKeyPress: function() {
         var key = isc.EH.lastEvent.keyName;
         if (key === 'Enter' && !this.saveButton.isDisabled()) {
           this.saveButton.action();
@@ -105,14 +108,19 @@ OB.Personalization.ManageViewsPopupProperties = {
     });
     this.addItem(layout);
 
-    buttonsLayout = isc.HStack.create({}, OB.Styles.Personalization.popupButtonLayout);
+    buttonsLayout = isc.HStack.create(
+      {},
+      OB.Styles.Personalization.popupButtonLayout
+    );
     buttonsLayout.addMembers(saveButton);
-    buttonsLayout.addMembers(isc.OBFormButton.create({
-      title: OB.I18N.getLabel('UINAVBA_Cancel'),
-      click: function () {
-        window.closeClick();
-      }
-    }));
+    buttonsLayout.addMembers(
+      isc.OBFormButton.create({
+        title: OB.I18N.getLabel('UINAVBA_Cancel'),
+        click: function() {
+          window.closeClick();
+        }
+      })
+    );
 
     layout.addMember(form);
     layout.addMember(buttonsLayout);
@@ -120,8 +128,8 @@ OB.Personalization.ManageViewsPopupProperties = {
     this.Super('initWidget', arguments);
   },
 
-  getFields: function () {
-    // is overridden/implemented in the specific 
+  getFields: function() {
+    // is overridden/implemented in the specific
     // implementation below.
   }
 };
@@ -133,39 +141,51 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
   actionLabel: OB.I18N.getLabel('OBUIAPP_Apply'),
   toggleSave: true,
 
-  getFields: function () {
-    var i, value, personalization = this.standardWindow.getClass().personalization,
-        views = personalization && personalization.views ? personalization.views : [],
-        valueMap = {},
-        flds = [],
-        standardWindow = this.standardWindow,
-        length, originalView = standardWindow.getClass().originalView;
+  getFields: function() {
+    var i,
+      value,
+      personalization = this.standardWindow.getClass().personalization,
+      views =
+        personalization && personalization.views ? personalization.views : [],
+      valueMap = {},
+      flds = [],
+      standardWindow = this.standardWindow,
+      length,
+      originalView = standardWindow.getClass().originalView;
 
     if (views) {
       length = views.length;
       for (i = 0; i < length; i++) {
         valueMap[views[i].personalizationId] = views[i].viewDefinition.name;
       }
-      valueMap[originalView.personalizationId] = originalView.viewDefinition.name;
+      valueMap[originalView.personalizationId] =
+        originalView.viewDefinition.name;
     }
 
-    flds[0] = isc.addProperties({
-      name: 'personalization',
-      title: OB.I18N.getLabel('OBUIAPP_DefaultView'),
-      valueMap: valueMap,
-      editorType: 'select',
-      addUnknownValues: false,
-      required: true,
-      changed: function () {
-        // enable the save button when there is a change
-        this.form.saveButton.setDisabled(false);
-        // don't let it be disabled again
-        this.form.toggleSave = false;
-      }
-    }, OB.Styles.Personalization.viewFieldDefaults, OB.Styles.OBFormField.DefaultComboBox);
+    flds[0] = isc.addProperties(
+      {
+        name: 'personalization',
+        title: OB.I18N.getLabel('OBUIAPP_DefaultView'),
+        valueMap: valueMap,
+        editorType: 'select',
+        addUnknownValues: false,
+        required: true,
+        changed: function() {
+          // enable the save button when there is a change
+          this.form.saveButton.setDisabled(false);
+          // don't let it be disabled again
+          this.form.toggleSave = false;
+        }
+      },
+      OB.Styles.Personalization.viewFieldDefaults,
+      OB.Styles.OBFormField.DefaultComboBox
+    );
 
     // set the value
-    value = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.standardWindow.windowId);
+    value = OB.PropertyStore.get(
+      'OBUIAPP_DefaultSavedView',
+      this.standardWindow.windowId
+    );
     if (value && flds[0].valueMap[value]) {
       flds[0].value = value;
     } else {
@@ -176,9 +196,13 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
   },
 
   // do the set default action
-  doAction: function (form) {
-    var personalizationId = form.getValue("personalization");
-    OB.PropertyStore.set('OBUIAPP_DefaultSavedView', personalizationId, this.standardWindow.windowId);
+  doAction: function(form) {
+    var personalizationId = form.getValue('personalization');
+    OB.PropertyStore.set(
+      'OBUIAPP_DefaultSavedView',
+      personalizationId,
+      this.standardWindow.windowId
+    );
   }
 };
 
@@ -190,12 +214,14 @@ OB.Personalization.ManageViewsPopupPropertiesDelete = {
 
   // creates one combo with the viewdefinitions which can
   // be deleted by the current user
-  getFields: function () {
-    var i, personalization = this.standardWindow.getClass().personalization,
-        views = personalization && personalization.views ? personalization.views : [],
-        valueMap = {},
-        flds = [],
-        length;
+  getFields: function() {
+    var i,
+      personalization = this.standardWindow.getClass().personalization,
+      views =
+        personalization && personalization.views ? personalization.views : [],
+      valueMap = {},
+      flds = [],
+      length;
 
     if (views) {
       length = views.length;
@@ -206,21 +232,25 @@ OB.Personalization.ManageViewsPopupPropertiesDelete = {
       }
     }
 
-    flds[0] = isc.addProperties({
-      name: 'personalization',
-      title: OB.I18N.getLabel('OBUIAPP_View'),
-      valueMap: valueMap,
-      editorType: 'select',
-      required: true,
-      allowEmptyValue: true
-    }, OB.Styles.Personalization.viewFieldDefaults, OB.Styles.OBFormField.DefaultComboBox);
+    flds[0] = isc.addProperties(
+      {
+        name: 'personalization',
+        title: OB.I18N.getLabel('OBUIAPP_View'),
+        valueMap: valueMap,
+        editorType: 'select',
+        required: true,
+        allowEmptyValue: true
+      },
+      OB.Styles.Personalization.viewFieldDefaults,
+      OB.Styles.OBFormField.DefaultComboBox
+    );
     return flds;
   },
 
   // do the delete action
-  doAction: function (form) {
+  doAction: function(form) {
     var standardWindow = this.standardWindow,
-        personalizationId = form.getValue("personalization");
+      personalizationId = form.getValue('personalization');
     OB.Personalization.deleteViewDefinition(standardWindow, personalizationId);
   }
 };
@@ -235,16 +265,20 @@ OB.Personalization.ManageViewsPopupPropertiesSave = {
   // 3 combo fields are created: views, level and level value
   // the last 2 are only created if the user is allowed to
   // change or set views for different levels
-  getFields: function () {
-    var i, formData, valueMap = {},
-        levelMapSet = false,
-        levelMap = {
+  getFields: function() {
+    var i,
+      formData,
+      valueMap = {},
+      levelMapSet = false,
+      levelMap = {
         '': ''
-        },
-        flds = [],
-        length, standardWindow = this.standardWindow,
-        personalization = standardWindow.getClass().personalization,
-        views = personalization && personalization.views ? personalization.views : [];
+      },
+      flds = [],
+      length,
+      standardWindow = this.standardWindow,
+      personalization = standardWindow.getClass().personalization,
+      views =
+        personalization && personalization.views ? personalization.views : [];
 
     // create the view combo
     if (views) {
@@ -256,53 +290,59 @@ OB.Personalization.ManageViewsPopupPropertiesSave = {
       }
     }
 
-    flds[0] = isc.addProperties({
-      standardWindow: standardWindow,
-      name: 'personalization',
-      title: OB.I18N.getLabel('OBUIAPP_SaveAs'),
-      valueMap: valueMap,
-      editorType: 'ComboBoxItem',
-      allowEmptyValue: true,
-      required: true,
+    flds[0] = isc.addProperties(
+      {
+        standardWindow: standardWindow,
+        name: 'personalization',
+        title: OB.I18N.getLabel('OBUIAPP_SaveAs'),
+        valueMap: valueMap,
+        editorType: 'ComboBoxItem',
+        allowEmptyValue: true,
+        required: true,
 
-      // if changed, then set the level and levelvalue
-      // fields to the current level of the personalization
-      changed: function (form, item, value) {
-        var i, levelField = form.getField('level'),
-            length, levelValueField = form.getField('levelValue'),
+        // if changed, then set the level and levelvalue
+        // fields to the current level of the personalization
+        changed: function(form, item, value) {
+          var i,
+            levelField = form.getField('level'),
+            length,
+            levelValueField = form.getField('levelValue'),
             personalization = this.standardWindow.getClass().personalization,
             views;
 
-        // find the personalization
-        if (levelField && personalization.views) {
-          // and the view, and set the level and level value
-          // combos
-          views = personalization.views;
-          length = views.length;
-          for (i = 0; i < length; i++) {
-            if (views[i].personalizationId === value) {
-              if (views[i].clientId) {
-                levelField.storeValue('clients');
-                levelValueField.storeValue(views[i].clientId);
+          // find the personalization
+          if (levelField && personalization.views) {
+            // and the view, and set the level and level value
+            // combos
+            views = personalization.views;
+            length = views.length;
+            for (i = 0; i < length; i++) {
+              if (views[i].personalizationId === value) {
+                if (views[i].clientId) {
+                  levelField.storeValue('clients');
+                  levelValueField.storeValue(views[i].clientId);
+                }
+                if (views[i].orgId) {
+                  levelField.storeValue('orgs');
+                  levelValueField.storeValue(views[i].orgId);
+                }
+                if (views[i].roleId) {
+                  levelField.storeValue('roles');
+                  levelValueField.storeValue(views[i].roleId);
+                }
+                if (views[i].viewDefinition) {
+                  form.setValue('default', views[i].viewDefinition.isDefault);
+                }
+                levelField.updateValueMap(true);
+                levelValueField.updateValueMap(true);
               }
-              if (views[i].orgId) {
-                levelField.storeValue('orgs');
-                levelValueField.storeValue(views[i].orgId);
-              }
-              if (views[i].roleId) {
-                levelField.storeValue('roles');
-                levelValueField.storeValue(views[i].roleId);
-              }
-              if (views[i].viewDefinition) {
-                form.setValue('default', views[i].viewDefinition.isDefault);
-              }
-              levelField.updateValueMap(true);
-              levelValueField.updateValueMap(true);
             }
           }
         }
-      }
-    }, OB.Styles.Personalization.viewFieldDefaults, OB.Styles.OBFormField.DefaultComboBox);
+      },
+      OB.Styles.Personalization.viewFieldDefaults,
+      OB.Styles.OBFormField.DefaultComboBox
+    );
 
     // create the level combo
     if (personalization && personalization.formData) {
@@ -310,64 +350,77 @@ OB.Personalization.ManageViewsPopupPropertiesSave = {
       // note the key in the levelMap (clients, orgs, roles) corresponds
       // to the property name in the formData
       if (formData.clients) {
-        levelMap.clients = OB.I18N.getLabel("OBUIAPP_Client");
+        levelMap.clients = OB.I18N.getLabel('OBUIAPP_Client');
         levelMapSet = true;
       }
       if (formData.orgs) {
-        levelMap.orgs = OB.I18N.getLabel("OBUIAPP_Organization");
+        levelMap.orgs = OB.I18N.getLabel('OBUIAPP_Organization');
         levelMapSet = true;
       }
       if (formData.roles) {
-        levelMap.roles = OB.I18N.getLabel("OBUIAPP_Role");
+        levelMap.roles = OB.I18N.getLabel('OBUIAPP_Role');
         levelMapSet = true;
       }
     }
 
-    // if the user is allowed to set views on different 
+    // if the user is allowed to set views on different
     // levels, then create the 2 combos
     if (levelMapSet) {
-      flds[1] = isc.addProperties({
-        name: 'level',
-        title: OB.I18N.getLabel('OBUIAPP_Level'),
-        valueMap: levelMap,
-        editorType: 'select',
-        defaultToFirstOption: true,
-        emptyDisplayValue: OB.I18N.getLabel('OBUIAPP_User'),
-        changed: function (form, item, value) {
-          // if the level combo changes, then set the
-          // level value map (so that it shows clients, orgs
-          // or roles resp.)
-          var levelValueField = form.getField('levelValue');
-          levelValueField.setValueMap(formData[value]);
-          levelValueField.clearValue();
-        }
-      }, OB.Styles.Personalization.viewFieldDefaults, OB.Styles.OBFormField.DefaultComboBox);
+      flds[1] = isc.addProperties(
+        {
+          name: 'level',
+          title: OB.I18N.getLabel('OBUIAPP_Level'),
+          valueMap: levelMap,
+          editorType: 'select',
+          defaultToFirstOption: true,
+          emptyDisplayValue: OB.I18N.getLabel('OBUIAPP_User'),
+          changed: function(form, item, value) {
+            // if the level combo changes, then set the
+            // level value map (so that it shows clients, orgs
+            // or roles resp.)
+            var levelValueField = form.getField('levelValue');
+            levelValueField.setValueMap(formData[value]);
+            levelValueField.clearValue();
+          }
+        },
+        OB.Styles.Personalization.viewFieldDefaults,
+        OB.Styles.OBFormField.DefaultComboBox
+      );
 
-      flds[2] = isc.addProperties({
-        name: 'levelValue',
-        title: OB.I18N.getLabel('OBUIAPP_Value'),
-        valueMap: {},
-        editorType: 'select',
-        emptyDisplayValue: OB.User.userName,
-        defaultToFirstOption: true
-      }, OB.Styles.Personalization.viewFieldDefaults, OB.Styles.OBFormField.DefaultComboBox);
+      flds[2] = isc.addProperties(
+        {
+          name: 'levelValue',
+          title: OB.I18N.getLabel('OBUIAPP_Value'),
+          valueMap: {},
+          editorType: 'select',
+          emptyDisplayValue: OB.User.userName,
+          defaultToFirstOption: true
+        },
+        OB.Styles.Personalization.viewFieldDefaults,
+        OB.Styles.OBFormField.DefaultComboBox
+      );
 
-      // and create the checkbox to let it be the default 
+      // and create the checkbox to let it be the default
       // for other users
-      flds[3] = isc.addProperties({
-        name: 'default',
-        title: OB.I18N.getLabel('OBUIAPP_DefaultView'),
-        editorType: 'OBCheckboxItem'
-      }, OB.Styles.Personalization.viewFieldDefaults, OB.Styles.OBFormField.DefaultCheckbox);
+      flds[3] = isc.addProperties(
+        {
+          name: 'default',
+          title: OB.I18N.getLabel('OBUIAPP_DefaultView'),
+          editorType: 'OBCheckboxItem'
+        },
+        OB.Styles.Personalization.viewFieldDefaults,
+        OB.Styles.OBFormField.DefaultCheckbox
+      );
     }
     return flds;
   },
 
-  doAction: function (form) {
-    var name, levelInformation = {},
-        persId = {},
-        level = form.getValue('level'),
-        levelValue = form.getValue('levelValue');
+  doAction: function(form) {
+    var name,
+      levelInformation = {},
+      persId = {},
+      level = form.getValue('level'),
+      levelValue = form.getValue('levelValue');
 
     if (level === 'clients' && levelValue) {
       levelInformation.clientId = levelValue;
@@ -378,17 +431,27 @@ OB.Personalization.ManageViewsPopupPropertiesSave = {
     if (level === 'orgs' && levelValue) {
       levelInformation.orgId = levelValue;
     }
-    if (!levelInformation.clientId && !levelInformation.orgId && !levelInformation.roleId) {
+    if (
+      !levelInformation.clientId &&
+      !levelInformation.orgId &&
+      !levelInformation.roleId
+    ) {
       levelInformation.userId = OB.User.id;
     }
-    persId = form.getValue("personalization");
-    name = form.getField("personalization").getDisplayValue();
+    persId = form.getValue('personalization');
+    name = form.getField('personalization').getDisplayValue();
 
     // same value, the user typed in a new name
     if (name === persId) {
       persId = null;
     }
 
-    OB.Personalization.storeViewDefinition(this.standardWindow, levelInformation, persId, name, form.getValue('default'));
+    OB.Personalization.storeViewDefinition(
+      this.standardWindow,
+      levelInformation,
+      persId,
+      name,
+      form.getValue('default')
+    );
   }
 };

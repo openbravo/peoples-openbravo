@@ -24,15 +24,15 @@ isc.ClassFactory.defineClass('OBPAttributeSearchItem', isc.OBSearchItem);
 isc.OBPAttributeSearchItem.addProperties({
   operator: 'iContains',
 
-  showPicker: function () {
+  showPicker: function() {
     if (this.isDisabled()) {
       return;
     }
     var parameters = [],
-        index = 0,
-        values;
+      index = 0,
+      values;
     var form = this.form,
-        view = form.view;
+      view = form.view;
     if (this.isFocusable()) {
       this.focusInItem();
     }
@@ -53,6 +53,10 @@ isc.OBPAttributeSearchItem.addProperties({
       parameters[index++] = 'inpmAttributesetId';
       parameters[index++] = values.inpmAttributesetId;
     }
-    this.openSearchWindow('/info/AttributeSetInstance.html', parameters, this.getValue());
+    this.openSearchWindow(
+      '/info/AttributeSetInstance.html',
+      parameters,
+      this.getValue()
+    );
   }
 });

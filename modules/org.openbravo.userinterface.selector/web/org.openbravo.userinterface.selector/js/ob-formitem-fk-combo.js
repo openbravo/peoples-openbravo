@@ -29,11 +29,13 @@ isc.OBFKComboItem.addProperties({
   addDummyCriterion: false,
 
   textMatchStyle: 'substring',
-  pickListFields: [{
-    title: ' ',
-    name: '_identifier',
-    type: 'text'
-  }],
+  pickListFields: [
+    {
+      title: ' ',
+      name: '_identifier',
+      type: 'text'
+    }
+  ],
   showSelectorGrid: false,
   selectorGridFields: [],
   extraSearchFields: [],
@@ -44,14 +46,14 @@ isc.OBFKComboItem.addProperties({
   // whenever a validation field changes, a new record is created or a different
   // record is opened, local data requires to be invalidated to force a new DS
   // request as possible values might change
-  invalidateLocalValueMapCache: function () {
+  invalidateLocalValueMapCache: function() {
     this.invalidateDisplayValueCache();
     delete this.wholeMapSet;
     if (!this.pickList && this.makePickList) {
       // pick list is not yet created, let's force it now so later we can cache
       // data locally if needed
       this.preventPickListRequest = true;
-      this.addDummyCriterion = true; // to force next request 
+      this.addDummyCriterion = true; // to force next request
       this.makePickList(false); // make pick list executes fetch, so we prevent it
     }
     if (this.pickList && this.pickList.invalidateCache) {
@@ -69,7 +71,7 @@ isc.OBFKComboItem.addProperties({
   //   2. wholeMapSet is flagged when a callout sets all the possible values in
   //      the pick list, when in this situation all filtering needs to be done in
   //      local
-  filterPickList: function () {
+  filterPickList: function() {
     if (this.preventPickListRequest) {
       // nothing to filter, prevent DS request in this case
       delete this.preventPickListRequest;
@@ -84,7 +86,7 @@ isc.OBFKComboItem.addProperties({
         this.pickList.setData(records);
       }
 
-      // explicitly fire filterComplete() as we have now filtered the data for the 
+      // explicitly fire filterComplete() as we have now filtered the data for the
       // pickList
       this.filterComplete();
       if (!this.isPickListShown()) {
@@ -96,16 +98,17 @@ isc.OBFKComboItem.addProperties({
     this.Super('filterPickList', arguments);
   },
 
-  getPickListFilterCriteria: function () {
+  getPickListFilterCriteria: function() {
     var criteria = this.Super('getPickListFilterCriteria', arguments),
-        simpleCriteria = {},
-        i;
+      simpleCriteria = {},
+      i;
     if (this.wholeMapSet) {
       // filterClientPickListData doesn't support advanced criteria, let's transform it
       // here to make it work
       if (criteria.criteria) {
         for (i = 0; i < criteria.criteria.length; i++) {
-          simpleCriteria[criteria.criteria[i].fieldName] = criteria.criteria[i].value;
+          simpleCriteria[criteria.criteria[i].fieldName] =
+            criteria.criteria[i].value;
         }
       }
       return simpleCriteria;
@@ -114,19 +117,24 @@ isc.OBFKComboItem.addProperties({
     return criteria;
   },
 
-  init: function () {
+  init: function() {
     this.Super('init', arguments);
     this.optionDataSource = OB.Datasource.create({
-      dataURL: OB.Application.contextUrl + 'org.openbravo.service.datasource/ComboTableDatasourceService',
-      fields: [{
-        name: 'id',
-        type: 'text',
-        primaryKey: true,
-        escapeHTML: true
-      }, {
-        name: '_identifier',
-        escapeHTML: true
-      }],
+      dataURL:
+        OB.Application.contextUrl +
+        'org.openbravo.service.datasource/ComboTableDatasourceService',
+      fields: [
+        {
+          name: 'id',
+          type: 'text',
+          primaryKey: true,
+          escapeHTML: true
+        },
+        {
+          name: '_identifier',
+          escapeHTML: true
+        }
+      ],
       requestProperties: {
         params: {
           fieldId: this.id
@@ -135,7 +143,7 @@ isc.OBFKComboItem.addProperties({
     });
   },
 
-  destroy: function () {
+  destroy: function() {
     var p;
     if (this.pickList && isc.isA.Array(this.pickList.gridComponents)) {
       for (p = 0; p < this.pickList.gridComponents.length; p++) {

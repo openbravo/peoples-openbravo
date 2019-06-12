@@ -42,7 +42,7 @@ isc.OBPopup.addProperties({
   showCloseButton: true,
   autoDraw: false,
   dragAppearance: 'target',
-  closeClick: function () {
+  closeClick: function() {
     this.Super('closeClick', arguments);
     if (this.destroyOnClose !== false) {
       this.Super('destroy', arguments);

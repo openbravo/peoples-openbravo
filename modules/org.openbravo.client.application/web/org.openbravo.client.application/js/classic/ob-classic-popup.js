@@ -35,19 +35,35 @@ isc.defineClass('OBPopupClassicWindow', isc.Class).addProperties({
 });
 
 isc.OBPopupClassicWindow.addMethods({
-  show: function () {
+  show: function() {
     var urlCharacter = '?',
-        contentsURL;
+      contentsURL;
     if (this.appURL.indexOf('?') !== -1) {
       urlCharacter = '&';
     }
     if (this.obManualURL !== '') {
-      contentsURL = OB.Utilities.applicationUrl(this.obManualURL) + '?Command=' + this.command;
+      contentsURL =
+        OB.Utilities.applicationUrl(this.obManualURL) +
+        '?Command=' +
+        this.command;
     } else {
-      contentsURL = this.appURL + urlCharacter + 'Command=' + this.command + '&noprefs=true&tabId=' + this.tabId + '&hideMenu=true';
+      contentsURL =
+        this.appURL +
+        urlCharacter +
+        'Command=' +
+        this.command +
+        '&noprefs=true&tabId=' +
+        this.tabId +
+        '&hideMenu=true';
     }
 
-    OB.Utilities.openProcessPopup(contentsURL, false, this.postParams, this.height, this.width);
+    OB.Utilities.openProcessPopup(
+      contentsURL,
+      false,
+      this.postParams,
+      this.height,
+      this.width
+    );
   }
 });
 
@@ -57,10 +73,21 @@ isc.OBPopupClassicWindow.addMethods({
 //
 isc.defineClass('OBClassicPopupModal', isc.Class).addProperties({
   showsItself: true,
-  show: function () {
-    OB.Layout.ClassicOBCompatibility.Popup.open(this.id, 625, 450, OB.Utilities.applicationUrl(this.obManualURL) + '?Command=' + this.command, '', null, false, false, true);
+  show: function() {
+    OB.Layout.ClassicOBCompatibility.Popup.open(
+      this.id,
+      625,
+      450,
+      OB.Utilities.applicationUrl(this.obManualURL) +
+        '?Command=' +
+        this.command,
+      '',
+      null,
+      false,
+      false,
+      true
+    );
   }
-
 });
 
 isc.ClassFactory.defineClass('OBClassicPopup', isc.OBPopup);
@@ -71,8 +98,7 @@ isc.ClassFactory.defineClass('OBClassicPopup', isc.OBPopup);
 // the OBPopup type (declared in the ob-popup.js file).
 //
 isc.OBClassicPopup.addProperties({
-
-  init: function () {
+  init: function() {
     if (typeof this.width === 'string' && this.width.indexOf('%') !== -1) {
       this.percentualWidth = true;
     }
@@ -82,11 +108,12 @@ isc.OBClassicPopup.addProperties({
     this.Super('init', arguments);
   },
 
-  initWidget: function () {
+  initWidget: function() {
     this.items = [
-    isc.OBPopupHTMLFlow.create({
-      contentsURL: ''
-    })];
+      isc.OBPopupHTMLFlow.create({
+        contentsURL: ''
+      })
+    ];
     this.Super('initWidget', arguments);
     var frameWidth, frameHeight;
     if (!this.percentualWidth) {
@@ -123,7 +150,7 @@ isc.OBClassicPopup.addProperties({
   percentualWidth: false,
   percentualHeight: false,
 
-  getIframeHtmlObj: function () {
+  getIframeHtmlObj: function() {
     var container, iframes;
     container = this.getHandle();
     if (container && container.getElementsByTagName) {

@@ -26,7 +26,7 @@ OB.KernelUtilities = {};
 // Parameters:
 // * {{{msg}}}: Translatable message to show
 // * {{{params}}}: Optional parameters to add to the message
-OB.KernelUtilities.handleUserException = function (msg, params) {
+OB.KernelUtilities.handleUserException = function(msg, params) {
   // todo: make this nice
   OB.I18N.getLabel(msg, params, isc, 'warn');
 };
@@ -37,7 +37,7 @@ OB.KernelUtilities.handleUserException = function (msg, params) {
 //
 // Parameters:
 // * {{{msg}}}: Message to show
-OB.KernelUtilities.handleSystemException = function (msg) {
+OB.KernelUtilities.handleSystemException = function(msg) {
   // todo: make this nice
   isc.warn('Error occured: ' + msg);
 };

@@ -26,7 +26,7 @@
 // Note: property may also be a function expecting the label as a string
 // if the label is not defined and object and property are set
 // then a call to the server is done to request the label.
-OB.I18N.getLabel = function (key, params, object, property) {
+OB.I18N.getLabel = function(key, params, object, property) {
   var label, i;
 
   if (!OB.I18N.labels[key]) {
@@ -40,11 +40,13 @@ OB.I18N.getLabel = function (key, params, object, property) {
 
   if (params && params.length && params.length > 0) {
     for (i = 0; i < params.length; i++) {
-      label = label.replace("%" + i, params[i]);
+      label = label.replace('%' + i, params[i]);
     }
   }
   if (object && property) {
-    if (Object.prototype.toString.call(object[property]) === '[object Function]') {
+    if (
+      Object.prototype.toString.call(object[property]) === '[object Function]'
+    ) {
       object[property](label);
     } else {
       object[property] = label;
@@ -59,7 +61,7 @@ OB.I18N.getLabel = function (key, params, object, property) {
 // params is used for parameter substitution
 // if object and property are set then the label is set directly in
 // the object
-OB.I18N.getLabelFromServer = function (key, params, object, property) {
+OB.I18N.getLabelFromServer = function(key, params, object, property) {
   var requestParameters, rpcRequest;
 
   if (!isc) {
@@ -67,21 +69,31 @@ OB.I18N.getLabelFromServer = function (key, params, object, property) {
   }
 
   requestParameters = {};
-  requestParameters._action = 'org.openbravo.client.kernel.GetLabelActionHandler';
+  requestParameters._action =
+    'org.openbravo.client.kernel.GetLabelActionHandler';
   requestParameters.key = key;
 
   rpcRequest = {};
-  rpcRequest.actionURL = OB.Application.contextUrl + 'org.openbravo.client.kernel';
-  rpcRequest.callback = function (response, data, request) {
+  rpcRequest.actionURL =
+    OB.Application.contextUrl + 'org.openbravo.client.kernel';
+  rpcRequest.callback = function(response, data, request) {
     var clientContext = response.clientContext;
     if (data.label) {
       OB.I18N.labels[clientContext.key] = data.label;
-      OB.I18N.getLabel(clientContext.key, clientContext.params, clientContext.object, clientContext.property);
+      OB.I18N.getLabel(
+        clientContext.key,
+        clientContext.params,
+        clientContext.object,
+        clientContext.property
+      );
     } else {
       if (isc.isA.Function(clientContext.object[clientContext.property])) {
-        clientContext.object[clientContext.property]('LABEL NOT FOUND ' + clientContext.key);
+        clientContext.object[clientContext.property](
+          'LABEL NOT FOUND ' + clientContext.key
+        );
       } else {
-        clientContext.object[clientContext.property] = 'LABEL NOT FOUND ' + clientContext.key;
+        clientContext.object[clientContext.property] =
+          'LABEL NOT FOUND ' + clientContext.key;
       }
     }
   };
@@ -91,10 +103,10 @@ OB.I18N.getLabelFromServer = function (key, params, object, property) {
   rpcRequest.evalResult = true;
   rpcRequest.params = requestParameters;
   rpcRequest.clientContext = {
-    'key': key,
-    'object': object,
-    'params': params,
-    'property': property
+    key: key,
+    object: object,
+    params: params,
+    property: property
   };
   isc.RPCManager.sendRequest(rpcRequest);
 };

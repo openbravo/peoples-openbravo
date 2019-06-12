@@ -27,26 +27,29 @@ isc.OBUploadBPView.addProperties({
   popupHeight: '350',
 
   viewProperties: {
-    additionalFields: [{
-      type: 'OBDateItem',
-      selectOnFocus: true,
-      width: '100%',
-      canFocus: true,
-      name: 'startDate',
-      title: OB.I18N.getLabel('OBUIAPP_StartDate')
-    }, {
-      type: 'OBDateItem',
-      selectOnFocus: true,
-      width: '100%',
-      canFocus: true,
-      name: 'endDate',
-      title: OB.I18N.getLabel('OBUIAPP_EndDate')
-    }]
+    additionalFields: [
+      {
+        type: 'OBDateItem',
+        selectOnFocus: true,
+        width: '100%',
+        canFocus: true,
+        name: 'startDate',
+        title: OB.I18N.getLabel('OBUIAPP_StartDate')
+      },
+      {
+        type: 'OBDateItem',
+        selectOnFocus: true,
+        width: '100%',
+        canFocus: true,
+        name: 'endDate',
+        title: OB.I18N.getLabel('OBUIAPP_EndDate')
+      }
+    ]
   },
 
-  validate: function (form) {
+  validate: function(form) {
     var stDate = form.getValue('startDate'),
-        endDate = form.getValue('endDate');
+      endDate = form.getValue('endDate');
     if (stDate && endDate) {
       if (stDate.getTime() > endDate.getTime()) {
         return OB.I18N.getLabel('OBUIAPP_StartBeforeEnd');

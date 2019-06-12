@@ -32,8 +32,13 @@ isc.OBWidgetInFormItem.addProperties({
     inWidgetInFormMode: true
   },
 
-  createCanvas: function () {
-    var widgetProperties, i, w, widgetClass, widgetParameters, locAvailWidgetClasses;
+  createCanvas: function() {
+    var widgetProperties,
+      i,
+      w,
+      widgetClass,
+      widgetParameters,
+      locAvailWidgetClasses;
 
     locAvailWidgetClasses = OB.MyOB.availableWidgetClasses;
     for (i = 0; i < locAvailWidgetClasses.length; i++) {
@@ -54,7 +59,7 @@ isc.OBWidgetInFormItem.addProperties({
 
     if (!widgetClass && this.isPreviewFormItem) {
       widgetClass = isc.OBWidget;
-      widgetProperties.createWindowContents = function () {
+      widgetProperties.createWindowContents = function() {
         return isc.Label.create({
           width: 1,
           height: 1,
@@ -63,12 +68,15 @@ isc.OBWidgetInFormItem.addProperties({
       };
     }
 
-    this.widgetInstance = isc.ClassFactory.newInstance(widgetClass, widgetProperties);
+    this.widgetInstance = isc.ClassFactory.newInstance(
+      widgetClass,
+      widgetProperties
+    );
     return this.widgetInstance;
   },
 
   // called via processFICReturn
-  refresh: function () {
+  refresh: function() {
     // refresh widget, passing special parameter which is link to formValues for currently displayed record
     if (this.widgetInstance) {
       this.widgetInstance.parameters.formValues = this.form.values;

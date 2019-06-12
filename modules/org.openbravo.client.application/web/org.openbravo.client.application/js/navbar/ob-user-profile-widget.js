@@ -48,7 +48,7 @@ isc.OBUserProfile.addProperties({
   // ** {{{ doShow() }}} **
   //
   // Is called when the forms are shown.
-  doShow: function () {
+  doShow: function() {
     this.initialize();
 
     // reset before showing
@@ -64,28 +64,58 @@ isc.OBUserProfile.addProperties({
     this.Super('doShow', arguments);
   },
 
-  formActionHandler: 'org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler',
+  formActionHandler:
+    'org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler',
 
   keyboardShortcutId: 'NavBar_OBUserProfile',
 
-  initWidget: function () {
+  initWidget: function() {
     var me = this;
     me.formData = isc.clone(OB.User.userInfo);
     // ** {{{ setPrompt }}} **
     // Shown on hover, shows some user information.
     if (!OB.User.isPortal) {
-      this.setPrompt('<b>' + OB.I18N.getLabel('UINAVBA_Role') + '</b>: ' + OB.User.roleName.asHTML() + '<br/>' + '<b>' + OB.I18N.getLabel('UINAVBA_Client') + '</b>: ' + OB.User.clientName.asHTML() + '<br/>' + '<b>' + OB.I18N.getLabel('UINAVBA_Organization') + '</b>: ' + OB.User.organizationName.asHTML());
+      this.setPrompt(
+        '<b>' +
+          OB.I18N.getLabel('UINAVBA_Role') +
+          '</b>: ' +
+          OB.User.roleName.asHTML() +
+          '<br/>' +
+          '<b>' +
+          OB.I18N.getLabel('UINAVBA_Client') +
+          '</b>: ' +
+          OB.User.clientName.asHTML() +
+          '<br/>' +
+          '<b>' +
+          OB.I18N.getLabel('UINAVBA_Organization') +
+          '</b>: ' +
+          OB.User.organizationName.asHTML()
+      );
     }
 
     this.title = this.title.asHTML();
 
     this.Super('initWidget', arguments);
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileButton', this);
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfileButton',
+      this
+    );
   },
 
-  createProfileForm: function () {
+  createProfileForm: function() {
     var me = this,
-        profileFormLayout, buttonLayout, profileForm, comboBoxFieldProperties, roleField, orgField, warehouseField, languageField, checkboxFieldProperties, defaultField, clientField, textFieldProperties;
+      profileFormLayout,
+      buttonLayout,
+      profileForm,
+      comboBoxFieldProperties,
+      roleField,
+      orgField,
+      warehouseField,
+      languageField,
+      checkboxFieldProperties,
+      defaultField,
+      clientField,
+      textFieldProperties;
 
     if (OB.User.isPortal && !this.showProfileFormInPortal) {
       return false;
@@ -97,24 +127,29 @@ isc.OBUserProfile.addProperties({
       cellStyle: OB.Styles.OBFormField.DefaultComboBox.cellStyle,
       titleStyle: OB.Styles.OBFormField.DefaultComboBox.titleStyle,
       textBoxStyle: OB.Styles.OBFormField.DefaultComboBox.textBoxStyle,
-      pendingTextBoxStyle: OB.Styles.OBFormField.DefaultComboBox.pendingTextBoxStyle,
+      pendingTextBoxStyle:
+        OB.Styles.OBFormField.DefaultComboBox.pendingTextBoxStyle,
       controlStyle: OB.Styles.OBFormField.DefaultComboBox.controlStyle,
       width: '*',
-      pickListBaseStyle: OB.Styles.OBFormField.DefaultComboBox.pickListBaseStyle,
-      pickListTallBaseStyle: OB.Styles.OBFormField.DefaultComboBox.pickListTallBaseStyle,
+      pickListBaseStyle:
+        OB.Styles.OBFormField.DefaultComboBox.pickListBaseStyle,
+      pickListTallBaseStyle:
+        OB.Styles.OBFormField.DefaultComboBox.pickListTallBaseStyle,
       pickerIconSrc: OB.Styles.OBFormField.DefaultComboBox.pickerIconSrc,
 
       height: OB.Styles.OBFormField.DefaultComboBox.height,
       pickerIconWidth: OB.Styles.OBFormField.DefaultComboBox.pickerIconWidth,
-      pickListCellHeight: OB.Styles.OBFormField.DefaultComboBox.pickListCellHeight,
+      pickListCellHeight:
+        OB.Styles.OBFormField.DefaultComboBox.pickListCellHeight,
       pickListProperties: {
-        bodyStyleName: OB.Styles.OBFormField.DefaultComboBox.pickListProperties.bodyStyleName
+        bodyStyleName:
+          OB.Styles.OBFormField.DefaultComboBox.pickListProperties.bodyStyleName
       },
 
       // workaround for this issue:
       // https://issues.openbravo.com/view.php?id=18501
-      setUpPickList: function () {
-        this.Super("setUpPickList", arguments);
+      setUpPickList: function() {
+        this.Super('setUpPickList', arguments);
         if (this.pickList) {
           this.pickList.setBodyStyleName(this.pickListProperties.bodyStyleName);
         }
@@ -133,17 +168,20 @@ isc.OBUserProfile.addProperties({
       // the solution is to keep a separate entries array with the
       // records in the correct order, see also the setEntries
       // method
-      getClientPickListData: function () {
+      getClientPickListData: function() {
         if (this.entries) {
           return this.entries;
         }
         return this.Super('getClientPickListData', arguments);
       },
 
-      setEntries: function (entries) {
+      setEntries: function(entries) {
         var length = entries.length,
-            i, id, identifier, valueField = this.getValueFieldName(),
-            valueMap = {};
+          i,
+          id,
+          identifier,
+          valueField = this.getValueFieldName(),
+          valueMap = {};
         this.entries = [];
         for (i = 0; i < length; i++) {
           id = entries[i][OB.Constants.ID] || '';
@@ -156,36 +194,50 @@ isc.OBUserProfile.addProperties({
       }
     };
 
-    roleField = isc.addProperties({
-      name: 'role',
-      title: OB.I18N.getLabel('UINAVBA_Role'),
-      sortField: 'role'
-    }, comboBoxFieldProperties);
+    roleField = isc.addProperties(
+      {
+        name: 'role',
+        title: OB.I18N.getLabel('UINAVBA_Role'),
+        sortField: 'role'
+      },
+      comboBoxFieldProperties
+    );
 
-    orgField = isc.addProperties({
-      name: 'organization',
-      title: OB.I18N.getLabel('UINAVBA_Organization'),
-      sortField: 'organization'
-    }, comboBoxFieldProperties);
+    orgField = isc.addProperties(
+      {
+        name: 'organization',
+        title: OB.I18N.getLabel('UINAVBA_Organization'),
+        sortField: 'organization'
+      },
+      comboBoxFieldProperties
+    );
 
-    warehouseField = isc.addProperties({
-      name: 'warehouse',
-      title: OB.I18N.getLabel('UINAVBA_Warehouse'),
-      sortField: 'warehouse'
-    }, comboBoxFieldProperties);
+    warehouseField = isc.addProperties(
+      {
+        name: 'warehouse',
+        title: OB.I18N.getLabel('UINAVBA_Warehouse'),
+        sortField: 'warehouse'
+      },
+      comboBoxFieldProperties
+    );
 
-    languageField = isc.addProperties({
-      name: 'language',
-      title: OB.I18N.getLabel('UINAVBA_Language'),
-      sortField: 'language'
-    }, comboBoxFieldProperties);
+    languageField = isc.addProperties(
+      {
+        name: 'language',
+        title: OB.I18N.getLabel('UINAVBA_Language'),
+        sortField: 'language'
+      },
+      comboBoxFieldProperties
+    );
 
     checkboxFieldProperties = {
       cellStyle: OB.Styles.OBFormField.DefaultCheckbox.cellStyle,
       titleStyle: OB.Styles.OBFormField.DefaultCheckbox.titleStyle,
       textBoxStyle: OB.Styles.OBFormField.DefaultCheckbox.textBoxStyle,
-      showValueIconOver: OB.Styles.OBFormField.DefaultCheckbox.showValueIconOver,
-      showValueIconFocused: OB.Styles.OBFormField.DefaultCheckbox.showValueIconFocused,
+      showValueIconOver:
+        OB.Styles.OBFormField.DefaultCheckbox.showValueIconOver,
+      showValueIconFocused:
+        OB.Styles.OBFormField.DefaultCheckbox.showValueIconFocused,
       showFocused: OB.Styles.OBFormField.DefaultCheckbox.showFocused,
       defaultValue: OB.Styles.OBFormField.DefaultCheckbox.defaultValue,
       checkedImage: OB.Styles.OBFormField.DefaultCheckbox.checkedImage,
@@ -194,10 +246,13 @@ isc.OBUserProfile.addProperties({
       editorType: 'checkbox'
     };
 
-    defaultField = isc.addProperties({
-      name: 'default',
-      title: OB.I18N.getLabel('UINAVBA_SetAsDefault')
-    }, checkboxFieldProperties);
+    defaultField = isc.addProperties(
+      {
+        name: 'default',
+        title: OB.I18N.getLabel('UINAVBA_SetAsDefault')
+      },
+      checkboxFieldProperties
+    );
 
     textFieldProperties = {
       errorOrientation: OB.Styles.OBFormField.DefaultTextItem.errorOrientation,
@@ -213,10 +268,13 @@ isc.OBUserProfile.addProperties({
       editorType: 'TextItem'
     };
 
-    clientField = isc.addProperties({
-      name: 'client',
-      title: OB.I18N.getLabel('UINAVBA_Client')
-    }, textFieldProperties);
+    clientField = isc.addProperties(
+      {
+        name: 'client',
+        title: OB.I18N.getLabel('UINAVBA_Client')
+      },
+      textFieldProperties
+    );
 
     // create the form for the role information
     profileForm = isc.DynamicForm.create({
@@ -229,12 +287,12 @@ isc.OBUserProfile.addProperties({
       showInlineErrors: false,
       widgetInstance: me,
 
-      initWidget: function () {
+      initWidget: function() {
         this.Super('initWidget', arguments);
         this.setInitialData(this.widgetInstance.formData);
       },
 
-      itemKeyPress: function (item, keyName, characterValue) {
+      itemKeyPress: function(item, keyName, characterValue) {
         if (keyName === 'Escape') {
           if (isc.OBQuickRun.currentQuickRun) {
             isc.OBQuickRun.currentQuickRun.doHide();
@@ -245,7 +303,7 @@ isc.OBUserProfile.addProperties({
       },
 
       localFormData: null,
-      reset: function () {
+      reset: function() {
         // note order is important, first order item then do ValueMaps
         // then do setValues
         // this is needed because the select items will reject values
@@ -258,11 +316,14 @@ isc.OBUserProfile.addProperties({
         this.setWarehouseValueMap();
         //We set initial values again to set warehouse correctly
         this.setValues(isc.addProperties({}, this.localFormData.initialValues));
-        if (this.getItem('warehouse').getClientPickListData().length > 0 && !this.getItem('warehouse').getValue()) {
+        if (
+          this.getItem('warehouse').getClientPickListData().length > 0 &&
+          !this.getItem('warehouse').getValue()
+        ) {
           this.getItem('warehouse').moveToFirstValue();
         }
       },
-      setInitialData: function (data) {
+      setInitialData: function(data) {
         // order of these statements is important see comments in reset
         // function
         this.localFormData = data;
@@ -279,7 +340,7 @@ isc.OBUserProfile.addProperties({
         this.setValues(isc.addProperties({}, data.initialValues));
       },
       // updates the dependent combos
-      itemChanged: function (item, newValue) {
+      itemChanged: function(item, newValue) {
         this.setOtherEntries();
         if (item.name === 'role') {
           if (this.getItem('organization').getClientPickListData().length > 0) {
@@ -287,15 +348,21 @@ isc.OBUserProfile.addProperties({
           }
         }
         this.setWarehouseValueMap();
-        if (item.name !== 'warehouse' && item.name !== 'default' && item.name !== 'language') {
+        if (
+          item.name !== 'warehouse' &&
+          item.name !== 'default' &&
+          item.name !== 'language'
+        ) {
           if (this.getItem('warehouse').getClientPickListData().length > 0) {
             this.getItem('warehouse').moveToFirstValue();
           }
         }
       },
-      setOtherEntries: function () {
-        var i, role, roleId = this.getValue('role'),
-            length = this.localFormData.role.roles.length;
+      setOtherEntries: function() {
+        var i,
+          role,
+          roleId = this.getValue('role'),
+          length = this.localFormData.role.roles.length;
         for (i = 0; i < length; i++) {
           role = this.localFormData.role.roles[i];
           if (role.id === roleId) {
@@ -305,8 +372,15 @@ isc.OBUserProfile.addProperties({
           }
         }
       },
-      setWarehouseValueMap: function () {
-        var i, j, warehouseOrg, role, roleId, roleLength, length, orgId = this.getItem('organization').getValue();
+      setWarehouseValueMap: function() {
+        var i,
+          j,
+          warehouseOrg,
+          role,
+          roleId,
+          roleLength,
+          length,
+          orgId = this.getItem('organization').getValue();
         if (!orgId) {
           return;
         }
@@ -328,15 +402,20 @@ isc.OBUserProfile.addProperties({
       },
 
       // call the server to save the information
-      doSave: function () {
+      doSave: function() {
         OB.User.loggingIn = true;
-        OB.RemoteCallManager.call(this.widgetInstance.formActionHandler, this.getValues(), {
-          'command': 'save'
-        }, this.doSaveCallback);
+        OB.RemoteCallManager.call(
+          this.widgetInstance.formActionHandler,
+          this.getValues(),
+          {
+            command: 'save'
+          },
+          this.doSaveCallback
+        );
       },
 
       // and reload
-      doSaveCallback: function (rpcResponse, data, rpcRequest) {
+      doSaveCallback: function(rpcResponse, data, rpcRequest) {
         delete OB.User.loggingIn;
         // if not success then an error, can not really occur
         // is handled as an exception is returned anyway
@@ -346,7 +425,14 @@ isc.OBUserProfile.addProperties({
         }
       },
 
-      fields: [roleField, clientField, orgField, warehouseField, languageField, defaultField]
+      fields: [
+        roleField,
+        clientField,
+        orgField,
+        warehouseField,
+        languageField,
+        defaultField
+      ]
     });
 
     // create the form layout which contains both the form and the buttons
@@ -367,40 +453,79 @@ isc.OBUserProfile.addProperties({
       height: 1,
       width: 248
     });
-    if (isc.Page.isRTL()) { //HACK: in RTL mode this width is higher than in LTR (Even with width: '100%'). Manual set to a lower value.
+    if (isc.Page.isRTL()) {
+      //HACK: in RTL mode this width is higher than in LTR (Even with width: '100%'). Manual set to a lower value.
       buttonLayout.width = 220;
     }
 
-    buttonLayout.addMembers(isc.OBFormButton.create({
-      title: OB.I18N.getLabel('OBUIAPP_Apply'),
-      click: function () {
-        isc.OBQuickRun.currentQuickRun.doHide();
-        profileForm.doSave();
-      }
-    }));
-    buttonLayout.addMembers(isc.OBFormButton.create({
-      title: OB.I18N.getLabel('UINAVBA_Cancel'),
-      click: isc.OBQuickRun.hide
-    }));
+    buttonLayout.addMembers(
+      isc.OBFormButton.create({
+        title: OB.I18N.getLabel('OBUIAPP_Apply'),
+        click: function() {
+          isc.OBQuickRun.currentQuickRun.doHide();
+          profileForm.doSave();
+        }
+      })
+    );
+    buttonLayout.addMembers(
+      isc.OBFormButton.create({
+        title: OB.I18N.getLabel('UINAVBA_Cancel'),
+        click: isc.OBQuickRun.hide
+      })
+    );
     profileFormLayout.addMembers(buttonLayout);
 
     // pointer to the form
     this.profileForm = profileForm;
     this.profileFormLayout = profileFormLayout;
 
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.RoleField', profileForm.getField('role'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.OrgField', profileForm.getField('organization'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.WarehouseField', profileForm.getField('warehouse'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.LanguageField', profileForm.getField('language'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.DefaultField', profileForm.getField('default'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.ClientField', profileForm.getField('client'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.Form', profileForm);
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.SaveButton', buttonLayout.members[0]);
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.CancelButton', buttonLayout.members[1]);
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfileRole.RoleField',
+      profileForm.getField('role')
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfileRole.OrgField',
+      profileForm.getField('organization')
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfileRole.WarehouseField',
+      profileForm.getField('warehouse')
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfileRole.LanguageField',
+      profileForm.getField('language')
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfileRole.DefaultField',
+      profileForm.getField('default')
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfileRole.ClientField',
+      profileForm.getField('client')
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfileRole.Form',
+      profileForm
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfileRole.SaveButton',
+      buttonLayout.members[0]
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfileRole.CancelButton',
+      buttonLayout.members[1]
+    );
   },
 
-  createPwdForm: function () {
-    var newPasswordField, pwdForm, confirmPasswordField, currentPasswordField, pwdButtonLayout, pwdFormLayout, pwdSaveButton, passwordFieldProperties;
+  createPwdForm: function() {
+    var newPasswordField,
+      pwdForm,
+      confirmPasswordField,
+      currentPasswordField,
+      pwdButtonLayout,
+      pwdFormLayout,
+      pwdSaveButton,
+      passwordFieldProperties;
 
     // now create the fields for the password form
     passwordFieldProperties = {
@@ -417,20 +542,29 @@ isc.OBUserProfile.addProperties({
       editorType: 'PasswordItem'
     };
 
-    currentPasswordField = isc.addProperties({
-      name: 'currentPwd',
-      title: OB.I18N.getLabel('UINAVBA_CurrentPwd')
-    }, passwordFieldProperties);
+    currentPasswordField = isc.addProperties(
+      {
+        name: 'currentPwd',
+        title: OB.I18N.getLabel('UINAVBA_CurrentPwd')
+      },
+      passwordFieldProperties
+    );
 
-    newPasswordField = isc.addProperties({
-      name: 'newPwd',
-      title: OB.I18N.getLabel('UINAVBA_NewPwd')
-    }, passwordFieldProperties);
+    newPasswordField = isc.addProperties(
+      {
+        name: 'newPwd',
+        title: OB.I18N.getLabel('UINAVBA_NewPwd')
+      },
+      passwordFieldProperties
+    );
 
-    confirmPasswordField = isc.addProperties({
-      name: 'confirmPwd',
-      title: OB.I18N.getLabel('UINAVBA_ConfirmPwd')
-    }, passwordFieldProperties);
+    confirmPasswordField = isc.addProperties(
+      {
+        name: 'confirmPwd',
+        title: OB.I18N.getLabel('UINAVBA_ConfirmPwd')
+      },
+      passwordFieldProperties
+    );
 
     // create the password form
     pwdForm = isc.DynamicForm.create({
@@ -447,21 +581,21 @@ isc.OBUserProfile.addProperties({
       errorOrientation: 'right',
 
       // overridden to pass suppressautofocus to parent
-      addFieldErrors: function (fieldName, errors, showErrors) {
+      addFieldErrors: function(fieldName, errors, showErrors) {
         if (!this.errors) {
           this.errors = {};
         }
 
         this.addValidationError(this.errors, fieldName, errors);
 
-        // Don't bother updating hiddenErrors - this will be updated by 
+        // Don't bother updating hiddenErrors - this will be updated by
         // showErrors() / showFieldErrors()
         if (showErrors) {
           this.showFieldErrors(fieldName, true);
         }
       },
 
-      itemKeyPress: function (item, keyName, characterValue) {
+      itemKeyPress: function(item, keyName, characterValue) {
         if (keyName === 'Escape') {
           if (isc.OBQuickRun.currentQuickRun) {
             isc.OBQuickRun.currentQuickRun.doHide();
@@ -472,18 +606,26 @@ isc.OBUserProfile.addProperties({
       },
 
       // call the server
-      formActionHandler: 'org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler',
-      doSave: function () {
-        OB.RemoteCallManager.call(pwdForm.formActionHandler, pwdForm.getValues(), {
-          'command': 'changePwd'
-        }, pwdForm.doSaveCallback);
+      formActionHandler:
+        'org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler',
+      doSave: function() {
+        OB.RemoteCallManager.call(
+          pwdForm.formActionHandler,
+          pwdForm.getValues(),
+          {
+            command: 'changePwd'
+          },
+          pwdForm.doSaveCallback
+        );
       },
 
       // the callback displays an info dialog and then hides the form
-      doSaveCallback: function (rpcResponse, data, rpcRequest) {
-        var i, length, dialogCallback = function () {
+      doSaveCallback: function(rpcResponse, data, rpcRequest) {
+        var i,
+          length,
+          dialogCallback = function() {
             return true;
-            };
+          };
 
         if (data.result === OB.Constants.SUCCESS) {
           isc.OBQuickRun.hide();
@@ -510,11 +652,16 @@ isc.OBUserProfile.addProperties({
 
       // enable/disable the save button, show an error if the two values
       // are unequal
-      itemChanged: function (item, newValue) {
+      itemChanged: function(item, newValue) {
         var currentPwd = this.getValue('currentPwd');
         var newPwd = this.getValue('newPwd');
         var confirmPwd = this.getValue('confirmPwd');
-        if (OB.Utilities.isNonEmptyString(currentPwd) && OB.Utilities.isNonEmptyString(newPwd) && OB.Utilities.isNonEmptyString(confirmPwd) && OB.Utilities.areEqualWithTrim(newPwd, confirmPwd)) {
+        if (
+          OB.Utilities.isNonEmptyString(currentPwd) &&
+          OB.Utilities.isNonEmptyString(newPwd) &&
+          OB.Utilities.isNonEmptyString(confirmPwd) &&
+          OB.Utilities.areEqualWithTrim(newPwd, confirmPwd)
+        ) {
           if (pwdSaveButton.isDisabled()) {
             pwdSaveButton.enable();
           }
@@ -524,13 +671,17 @@ isc.OBUserProfile.addProperties({
         }
         if (item.name === 'newPwd' || item.name === 'confirmPwd') {
           if (!OB.Utilities.areEqualWithTrim(newPwd, confirmPwd)) {
-            pwdForm.addFieldErrors('confirmPwd', OB.I18N.getLabel('UINAVBA_UnequalPwd'), true);
+            pwdForm.addFieldErrors(
+              'confirmPwd',
+              OB.I18N.getLabel('UINAVBA_UnequalPwd'),
+              true
+            );
           }
         }
         pwdForm.focusInItem(item.name);
       },
 
-      itemHoverHTML: function (item) {
+      itemHoverHTML: function(item) {
         if (!item.isVisible()) {
           return null;
         }
@@ -567,34 +718,57 @@ isc.OBUserProfile.addProperties({
       overflow: 'visible',
       height: 1
     });
-    if (isc.Page.isRTL()) { //HACK: in RTL mode this width is higher than in LTR (Even with width: '100%'). Manual set to a lower value.
+    if (isc.Page.isRTL()) {
+      //HACK: in RTL mode this width is higher than in LTR (Even with width: '100%'). Manual set to a lower value.
       pwdButtonLayout.width = 220;
     }
     pwdButtonLayout.addMembers(pwdSaveButton);
-    pwdButtonLayout.addMembers(isc.OBFormButton.create({
-      title: OB.I18N.getLabel('UINAVBA_Cancel'),
-      click: isc.OBQuickRun.hide
-    }));
+    pwdButtonLayout.addMembers(
+      isc.OBFormButton.create({
+        title: OB.I18N.getLabel('UINAVBA_Cancel'),
+        click: isc.OBQuickRun.hide
+      })
+    );
     pwdFormLayout.addMembers(pwdButtonLayout);
 
     // pointer to the form
     this.pwdForm = pwdForm;
     this.pwdFormLayout = pwdFormLayout;
 
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.SaveButton', pwdSaveButton);
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.CancelButton', pwdButtonLayout.members[1]);
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.CurrentPasswordField', pwdForm.getField('currentPwd'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.NewPasswordField', pwdForm.getField('newPwd'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.ConfirmPasswordField', pwdForm.getField('confirmPwd'));
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.Form', pwdForm);
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.SaveButton',
+      pwdSaveButton
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.CancelButton',
+      pwdButtonLayout.members[1]
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.CurrentPasswordField',
+      pwdForm.getField('currentPwd')
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.NewPasswordField',
+      pwdForm.getField('newPwd')
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.ConfirmPasswordField',
+      pwdForm.getField('confirmPwd')
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.Form',
+      pwdForm
+    );
   },
 
   // ** {{{ initialize() }}} **
   //
   // Creates the forms, fields and buttons.
-  initialize: function () {
+  initialize: function() {
     var me = this,
-        tabSet, dummyFirstField, dummyLastField;
+      tabSet,
+      dummyFirstField,
+      dummyLastField;
 
     if (this.profileForm || this.pwdForm) {
       return;
@@ -616,7 +790,7 @@ isc.OBUserProfile.addProperties({
         baseLineThickness: 0
       },
       width: 250,
-      initWidget: function () {
+      initWidget: function() {
         this.Super('initWidget', arguments);
         if (me.profileFormLayout) {
           this.addTab({
@@ -637,17 +811,21 @@ isc.OBUserProfile.addProperties({
     this.tabSet = tabSet;
 
     dummyFirstField = isc.OBFocusButton.create({
-      getFocusTarget: function () {
+      getFocusTarget: function() {
         var tabSet = this.parentElement.members[1];
         var selectedTabNumber = tabSet.getSelectedTabNumber();
         var length1 = tabSet.getTabPane(selectedTabNumber).members.length - 1;
-        var length2 = tabSet.getTabPane(selectedTabNumber).members[length1].members.length - 1;
-        return tabSet.getTabPane(selectedTabNumber).members[length1].members[length2];
+        var length2 =
+          tabSet.getTabPane(selectedTabNumber).members[length1].members.length -
+          1;
+        return tabSet.getTabPane(selectedTabNumber).members[length1].members[
+          length2
+        ];
       }
     });
 
     dummyLastField = isc.OBFocusButton.create({
-      getFocusTarget: function () {
+      getFocusTarget: function() {
         var tabSet = this.parentElement.members[1];
         var selectedTabNumber = tabSet.getSelectedTabNumber();
         return tabSet.tabBar.members[selectedTabNumber];
@@ -656,7 +834,10 @@ isc.OBUserProfile.addProperties({
 
     this.members = [dummyFirstField, tabSet, dummyLastField];
 
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfile.Tabset', tabSet);
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.UserProfile.Tabset',
+      tabSet
+    );
 
     this.resetLayout();
     this.computeSetContent();

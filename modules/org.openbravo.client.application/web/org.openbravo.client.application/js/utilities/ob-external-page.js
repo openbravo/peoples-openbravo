@@ -39,15 +39,18 @@ isc.defineClass('OBExternalPage', isc.HTMLFlow).addProperties({
 OB.I18N.getLabel('OBUIAPP_Loading', null, isc.OBExternalPage, 'loadingMessage');
 
 isc.OBExternalPage.addMethods({
-
   // the following methods are used to support history management
-  getBookMarkParams: function () {
+  getBookMarkParams: function() {
     var result = {};
     result.contentsURL = this.contentsURL;
     return result;
   },
 
-  isSameTab: function (params) {
-    return (params && (params.contentsURL || this.contentsURL) && params.contentsURL === this.contentsURL);
+  isSameTab: function(params) {
+    return (
+      params &&
+      (params.contentsURL || this.contentsURL) &&
+      params.contentsURL === this.contentsURL
+    );
   }
 });

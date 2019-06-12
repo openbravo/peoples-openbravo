@@ -25,8 +25,7 @@ isc.OBGettingStartedView.addProperties({
   width: '100%',
   height: '100%',
   iframe: null,
-  initWidget: function (args) {
-
+  initWidget: function(args) {
     if (!args.contentsURL) {
       isc.Log.logError('contentsURL parameter is required');
     }
@@ -35,7 +34,7 @@ isc.OBGettingStartedView.addProperties({
       width: '100%',
       height: '100%',
       contentsType: 'page',
-      contentsURL: (args.contentsURL ? args.contentsURL : 'about:blank')
+      contentsURL: args.contentsURL ? args.contentsURL : 'about:blank'
     });
     this.addMember(this.iframe);
     this.Super('initWidget', arguments);

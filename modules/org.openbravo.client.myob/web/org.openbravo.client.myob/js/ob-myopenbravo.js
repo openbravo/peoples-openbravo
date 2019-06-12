@@ -32,8 +32,8 @@ isc.OBMyOpenbravo.addProperties({
   // ** {{{ OBMyOpenbravo.getBookMarkParams() }}} **
   //
   // Parameters:
-  // * {{{}}}: 
-  getBookMarkParams: function () {
+  // * {{{}}}:
+  getBookMarkParams: function() {
     var result = {};
     result.myOB = this.myOB;
     // are passed on to the tab
@@ -44,7 +44,7 @@ isc.OBMyOpenbravo.addProperties({
   // ** {{{ OBMyOpenbravo.getBookMarkParams() }}} **
   //
   // Used for creating bookmarks in recent quick launch/menu
-  isEqualParams: function (params) {
+  isEqualParams: function(params) {
     // if the params are for a my ob return true
     if (params.myOB === this.myOB) {
       return true;
@@ -59,9 +59,9 @@ isc.OBMyOpenbravo.addProperties({
   // if so then it is not re-opened. Calls isEqualParams.
   //
   // Parameters:
-  // * {{{viewId}}}: the id of the view used by the view-manager 
-  // * {{{params}}}: the parameters used to create the main tab 
-  isSameTab: function (viewId, params) {
+  // * {{{viewId}}}: the id of the view used by the view-manager
+  // * {{{params}}}: the parameters used to create the main tab
+  isSameTab: function(viewId, params) {
     return this.isEqualParams(params);
   },
 
@@ -92,49 +92,64 @@ isc.OBMyOpenbravo.addProperties({
   adminLevel: '',
   adminLevelValue: '',
 
-
-  createLeftColumnLayout: function () {
+  createLeftColumnLayout: function() {
     var me = this,
-        recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
+      recentViewsLayout,
+      recentViewsLinksLayout,
+      recentDocumentsLayout,
+      recentDocumentsLinksLayout,
+      addWidgetLayout,
+      adminOtherMyOBLayout,
+      refreshLayout;
 
     if (OB.User.isPortal && OB.Application.licenseType === 'C') {
-      this.addMember(isc.HLayout.create({
-        width: '100%',
-        align: 'center',
-        layoutTopMargin: '30%',
-        members: [isc.Dialog.create({
-          width: 350,
-          height: 150,
-          canDragReposition: false,
-          canDragResize: false,
-          showCloseButton: false,
-          showMaximizeButton: false,
-          showMinimizeButton: false,
-          title: OB.I18N.getLabel('OBUIAPP_AlertGrid_Note'),
-          initWidget: function () {
-            this.icon = this.warnIcon;
-            this.Super('initWidget', arguments);
-          },
-          message: OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBUIAPP_ActivateMessagePortal')])
-        })]
-      }));
+      this.addMember(
+        isc.HLayout.create({
+          width: '100%',
+          align: 'center',
+          layoutTopMargin: '30%',
+          members: [
+            isc.Dialog.create({
+              width: 350,
+              height: 150,
+              canDragReposition: false,
+              canDragResize: false,
+              showCloseButton: false,
+              showMaximizeButton: false,
+              showMinimizeButton: false,
+              title: OB.I18N.getLabel('OBUIAPP_AlertGrid_Note'),
+              initWidget: function() {
+                this.icon = this.warnIcon;
+                this.Super('initWidget', arguments);
+              },
+              message: OB.I18N.getLabel('OBUIAPP_ActivateMessage', [
+                OB.I18N.getLabel('OBUIAPP_ActivateMessagePortal')
+              ])
+            })
+          ]
+        })
+      );
       return false;
     }
 
     if (OB.User.isPortal && !this.showLeftColumnInPortal) {
-      this.addMember(isc.VLayout.create({
-        width: 14
-      }));
+      this.addMember(
+        isc.VLayout.create({
+          width: 14
+        })
+      );
       return false;
     }
 
     recentViewsLayout = isc.VLayout.create({});
-    recentViewsLayout.addMember(isc.Label.create({
-      height: 1,
-      overflow: 'visible',
-      baseStyle: OB.Styles.OBMyOpenbravo.recentViewsLayout.baseStyle,
-      contents: OB.I18N.getLabel('OBKMO_RecentViews')
-    }));
+    recentViewsLayout.addMember(
+      isc.Label.create({
+        height: 1,
+        overflow: 'visible',
+        baseStyle: OB.Styles.OBMyOpenbravo.recentViewsLayout.baseStyle,
+        contents: OB.I18N.getLabel('OBKMO_RecentViews')
+      })
+    );
 
     recentViewsLinksLayout = isc.VLayout.create({
       height: 1,
@@ -143,19 +158,25 @@ isc.OBMyOpenbravo.addProperties({
     recentViewsLayout.addMember(recentViewsLinksLayout);
     this.setRecentList(recentViewsLinksLayout);
 
-    OB.PropertyStore.addListener(function (propertyName, currentValue, newValue) {
+    OB.PropertyStore.addListener(function(
+      propertyName,
+      currentValue,
+      newValue
+    ) {
       if (propertyName === 'OBUIAPP_RecentViewList') {
         me.setRecentList(recentViewsLinksLayout);
       }
     });
 
     recentDocumentsLayout = isc.VLayout.create({});
-    recentDocumentsLayout.addMember(isc.Label.create({
-      height: 1,
-      overflow: 'visible',
-      baseStyle: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.baseStyle,
-      contents: OB.I18N.getLabel('OBKMO_RecentDocuments')
-    }));
+    recentDocumentsLayout.addMember(
+      isc.Label.create({
+        height: 1,
+        overflow: 'visible',
+        baseStyle: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.baseStyle,
+        contents: OB.I18N.getLabel('OBKMO_RecentDocuments')
+      })
+    );
 
     recentDocumentsLinksLayout = isc.VLayout.create({
       height: 1,
@@ -164,7 +185,11 @@ isc.OBMyOpenbravo.addProperties({
     recentDocumentsLayout.addMember(recentDocumentsLinksLayout);
     this.setRecentDocumentsList(recentDocumentsLinksLayout);
 
-    OB.PropertyStore.addListener(function (propertyName, currentValue, newValue) {
+    OB.PropertyStore.addListener(function(
+      propertyName,
+      currentValue,
+      newValue
+    ) {
       if (propertyName === 'OBUIAPP_RecentDocumentsList') {
         me.setRecentDocumentsList(recentDocumentsLinksLayout);
       }
@@ -174,102 +199,70 @@ isc.OBMyOpenbravo.addProperties({
       height: 1,
       overflow: 'visible'
     });
-    actionTitle.addMember(isc.Label.create({
-      height: 1,
-      overflow: 'visible',
-      baseStyle: OB.Styles.OBMyOpenbravo.actionTitle.baseStyle,
-      contents: OB.I18N.getLabel('OBKMO_Manage_MyOpenbravo')
-    }));
+    actionTitle.addMember(
+      isc.Label.create({
+        height: 1,
+        overflow: 'visible',
+        baseStyle: OB.Styles.OBMyOpenbravo.actionTitle.baseStyle,
+        contents: OB.I18N.getLabel('OBKMO_Manage_MyOpenbravo')
+      })
+    );
 
     refreshLayout = isc.VLayout.create({
       height: 1,
       overflow: 'visible'
     });
-    refreshLayout.addMember(isc.Label.create({
-      styleName: OB.Styles.OBMyOpenbravo.refreshLayout.styleName,
-      width: '100%',
-      height: 1,
-      overflow: 'visible',
-      contents: OB.I18N.getLabel('OBKMO_WMO_Refresh'),
-      action: function () {
-        OB.MyOB.reloadWidgets();
-      },
-      canFocus: true,
-      showFocused: true,
-      showRollOver: true
-    }));
+    refreshLayout.addMember(
+      isc.Label.create({
+        styleName: OB.Styles.OBMyOpenbravo.refreshLayout.styleName,
+        width: '100%',
+        height: 1,
+        overflow: 'visible',
+        contents: OB.I18N.getLabel('OBKMO_WMO_Refresh'),
+        action: function() {
+          OB.MyOB.reloadWidgets();
+        },
+        canFocus: true,
+        showFocused: true,
+        showRollOver: true
+      })
+    );
 
     // the available widget classes the user may/can create
     addWidgetLayout = isc.VLayout.create({
       height: 1,
       overflow: 'visible'
     });
-    addWidgetLayout.addMember(isc.Label.create({
-      styleName: OB.Styles.OBMyOpenbravo.addWidgetLayout.styleName,
-      width: '100%',
-      height: 1,
-      overflow: 'visible',
-      contents: OB.I18N.getLabel('OBKMO_AddWidget') + ' »',
-      addWidgetLayout: addWidgetLayout,
-      doOpen: function () {
-        this.setContents(OB.I18N.getLabel('OBKMO_AddWidget') + ' «');
-        this.addWidgetLayout.addMember(isc.OBMyOBAddWidgetDialog.create({
-          myParent: this
-        }));
-      },
-      doBeforeClose: function () { // Invoked directly from widget dialog 'destroy' function
-        this.setContents(OB.I18N.getLabel('OBKMO_AddWidget') + ' »');
-      },
-      isOpened: function () {
-        if (this.addWidgetLayout.getMembers().length >= 2) {
-          return true;
-        } else {
-          return false;
-        }
-      },
-      action: function () {
-        if (this.isOpened()) {
-          this.addWidgetLayout.getMembers()[1].destroy();
-        } else {
-          this.doOpen();
-        }
-      },
-      canFocus: true,
-      showFocused: true,
-      showRollOver: true
-    }));
-
-    if (this.enableAdminMode) {
-      adminOtherMyOBLayout = isc.VLayout.create({
-        height: 1,
-        overflow: 'visible'
-      });
-      adminOtherMyOBLayout.addMember(isc.Label.create({
-        styleName: OB.Styles.OBMyOpenbravo.adminOtherMyOBLayout.styleName,
-        height: 1,
+    addWidgetLayout.addMember(
+      isc.Label.create({
+        styleName: OB.Styles.OBMyOpenbravo.addWidgetLayout.styleName,
         width: '100%',
+        height: 1,
         overflow: 'visible',
-        contents: OB.I18N.getLabel('OBKMO_AdminOtherMyOpenbravos') + ' »',
-        adminOtherMyOBLayout: adminOtherMyOBLayout,
-        doOpen: function () {
-          this.setContents(OB.I18N.getLabel('OBKMO_AdminOtherMyOpenbravos') + ' «');
-          this.adminOtherMyOBLayout.addMember(isc.OBMyOBAdminModeDialog.create({
-            myParent: this
-          }));
+        contents: OB.I18N.getLabel('OBKMO_AddWidget') + ' »',
+        addWidgetLayout: addWidgetLayout,
+        doOpen: function() {
+          this.setContents(OB.I18N.getLabel('OBKMO_AddWidget') + ' «');
+          this.addWidgetLayout.addMember(
+            isc.OBMyOBAddWidgetDialog.create({
+              myParent: this
+            })
+          );
         },
-        doBeforeClose: function () { // Invoked directly from widget dialog 'destroy' function
-          this.setContents(OB.I18N.getLabel('OBKMO_AdminOtherMyOpenbravos') + ' »');
+        doBeforeClose: function() {
+          // Invoked directly from widget dialog 'destroy' function
+          this.setContents(OB.I18N.getLabel('OBKMO_AddWidget') + ' »');
         },
-        isOpened: function () {
-          if (this.adminOtherMyOBLayout.getMembers().length >= 2) {
+        isOpened: function() {
+          if (this.addWidgetLayout.getMembers().length >= 2) {
             return true;
           } else {
             return false;
           }
         },
-        action: function () {
+        action: function() {
           if (this.isOpened()) {
-            this.adminOtherMyOBLayout.getMembers()[1].destroy();
+            this.addWidgetLayout.getMembers()[1].destroy();
           } else {
             this.doOpen();
           }
@@ -277,7 +270,57 @@ isc.OBMyOpenbravo.addProperties({
         canFocus: true,
         showFocused: true,
         showRollOver: true
-      }));
+      })
+    );
+
+    if (this.enableAdminMode) {
+      adminOtherMyOBLayout = isc.VLayout.create({
+        height: 1,
+        overflow: 'visible'
+      });
+      adminOtherMyOBLayout.addMember(
+        isc.Label.create({
+          styleName: OB.Styles.OBMyOpenbravo.adminOtherMyOBLayout.styleName,
+          height: 1,
+          width: '100%',
+          overflow: 'visible',
+          contents: OB.I18N.getLabel('OBKMO_AdminOtherMyOpenbravos') + ' »',
+          adminOtherMyOBLayout: adminOtherMyOBLayout,
+          doOpen: function() {
+            this.setContents(
+              OB.I18N.getLabel('OBKMO_AdminOtherMyOpenbravos') + ' «'
+            );
+            this.adminOtherMyOBLayout.addMember(
+              isc.OBMyOBAdminModeDialog.create({
+                myParent: this
+              })
+            );
+          },
+          doBeforeClose: function() {
+            // Invoked directly from widget dialog 'destroy' function
+            this.setContents(
+              OB.I18N.getLabel('OBKMO_AdminOtherMyOpenbravos') + ' »'
+            );
+          },
+          isOpened: function() {
+            if (this.adminOtherMyOBLayout.getMembers().length >= 2) {
+              return true;
+            } else {
+              return false;
+            }
+          },
+          action: function() {
+            if (this.isOpened()) {
+              this.adminOtherMyOBLayout.getMembers()[1].destroy();
+            } else {
+              this.doOpen();
+            }
+          },
+          canFocus: true,
+          showFocused: true,
+          showRollOver: true
+        })
+      );
     }
 
     // the left layout containing the recent views and available widgets
@@ -288,17 +331,26 @@ isc.OBMyOpenbravo.addProperties({
       overflow: 'auto',
       // Changed from 'visible' to 'auto' due to issue https://issues.openbravo.com/view.php?id=17870
       leaveScrollbarGap: true,
-      members: [recentViewsLayout, recentDocumentsLayout, isc.LayoutSpacer.create({
-        height: 5
-      }), actionTitle, refreshLayout, addWidgetLayout]
+      members: [
+        recentViewsLayout,
+        recentDocumentsLayout,
+        isc.LayoutSpacer.create({
+          height: 5
+        }),
+        actionTitle,
+        refreshLayout,
+        addWidgetLayout
+      ]
     });
 
     if (this.enableAdminMode) {
       this.leftColumnLayout.addMember(adminOtherMyOBLayout);
     }
-    this.leftColumnLayout.addMember(isc.VLayout.create({
-      height: 10
-    }));
+    this.leftColumnLayout.addMember(
+      isc.VLayout.create({
+        height: 10
+      })
+    );
     this.leftColumnLayout.recentViewsLayout = recentViewsLayout;
     this.leftColumnLayout.recentDocumentsLayout = recentDocumentsLayout;
     this.leftColumnLayout.addWidgetLayout = addWidgetLayout;
@@ -308,7 +360,7 @@ isc.OBMyOpenbravo.addProperties({
     this.addMember(this.leftColumnLayout);
   },
 
-  createPortalLayout: function () {
+  createPortalLayout: function() {
     if (OB.User.isPortal && OB.Application.licenseType === 'C') {
       return false;
     }
@@ -332,22 +384,23 @@ isc.OBMyOpenbravo.addProperties({
       // child name of 'column', the properties of the Column
       // can be set like this using the AutoChild concept of SC
       columnProperties: {
-        membersMargin: OB.Styles.OBMyOpenbravo.portalLayout.columnProperties.membersMargin,
+        membersMargin:
+          OB.Styles.OBMyOpenbravo.portalLayout.columnProperties.membersMargin,
         canAcceptDrop: true,
         overflow: 'visible',
 
-        // is used to prevent dropping on the left or right 
+        // is used to prevent dropping on the left or right
         // of a widget
-        // the Row is an autochild of Column, the 
+        // the Row is an autochild of Column, the
         // rowProperties are used to set properties of Row
         rowProperties: {
-          isHDrop: function () {
+          isHDrop: function() {
             return false;
           }
         },
 
         // after dropping create the widget here
-        getDropComponent: function (dragTarget, position) {
+        getDropComponent: function(dragTarget, position) {
           var component;
           if (dragTarget.createWidgetInstance) {
             component = dragTarget.createWidgetInstance(this.colNum, position);
@@ -359,7 +412,7 @@ isc.OBMyOpenbravo.addProperties({
 
         // copied from Column (portal) to set fixed row heights based
         // on the portlets height, see the NOTE line below
-        addPortlet: function (portlet, position) {
+        addPortlet: function(portlet, position) {
           var eventType = '';
 
           // offset position to be position within rows
@@ -399,10 +452,12 @@ isc.OBMyOpenbravo.addProperties({
           }
         },
 
-        getTotalHeight: function () {
+        getTotalHeight: function() {
           var rows = this.getMembers(),
-              widget, i, height = 0,
-              row;
+            widget,
+            i,
+            height = 0,
+            row;
           for (i = 0; i < rows.length; i++) {
             row = rows[i];
             widget = row.getMembers()[0];
@@ -414,7 +469,7 @@ isc.OBMyOpenbravo.addProperties({
           return height;
         },
 
-        removeAllRows: function () {
+        removeAllRows: function() {
           while (this.getMembers().length > 0) {
             this.getMembers()[0].destroy();
           }
@@ -425,8 +480,7 @@ isc.OBMyOpenbravo.addProperties({
     this.addMember(this.portalLayout);
   },
 
-
-  initWidget: function (args) {
+  initWidget: function(args) {
     this.createLeftColumnLayout();
     this.createPortalLayout();
 
@@ -435,7 +489,7 @@ isc.OBMyOpenbravo.addProperties({
     OB.MyOB = this;
 
     // tell each column their index number
-    // is used when dragging/dropping 
+    // is used when dragging/dropping
     if (this.portalLayout) {
       this.portalLayout.members[0].colNum = 0;
       this.portalLayout.members[1].colNum = 1;
@@ -444,9 +498,9 @@ isc.OBMyOpenbravo.addProperties({
     }
   },
 
-  loadWidgets: function () {
+  loadWidgets: function() {
     var params = {
-      'preventWidgetMove': true
+      preventWidgetMove: true
     };
     this.portalLayout.sendEvents = false;
     this.isReloading = true;
@@ -455,26 +509,45 @@ isc.OBMyOpenbravo.addProperties({
     this.notifyEvent('RELOAD_WIDGETS', params);
   },
 
-  setRecentList: function (layout) {
-    var recentList, newRecent, handleClickFunction, recentIndex = 0,
-        recent, lbl, newIcon, entryLayout, icon, destroyFunction, handleEnterKeyPressFunction;
+  setRecentList: function(layout) {
+    var recentList,
+      newRecent,
+      handleClickFunction,
+      recentIndex = 0,
+      recent,
+      lbl,
+      newIcon,
+      entryLayout,
+      icon,
+      destroyFunction,
+      handleEnterKeyPressFunction;
 
     // start with a fresh content
     layout.destroyAndRemoveMembers(layout.members);
 
     // reads the list of recents and displays them
-    recentList = OB.Layout.ViewManager.recentManager.getRecentValue('OBUIAPP_RecentViewList');
+    recentList = OB.Layout.ViewManager.recentManager.getRecentValue(
+      'OBUIAPP_RecentViewList'
+    );
     if (recentList && recentList.length > 0) {
-
-      handleClickFunction = function () {
+      handleClickFunction = function() {
         if (this.recent.viewId) {
-          if (this.recent.openLinkInBrowser && this.recent.viewId === 'OBExternalPage') {
+          if (
+            this.recent.openLinkInBrowser &&
+            this.recent.viewId === 'OBExternalPage'
+          ) {
             if (this.recent.contentsURL.indexOf('://') === -1) {
               this.recent.contentsURL = 'http://' + this.recent.contentsURL;
             }
-            OB.ViewManager.recentManager.addRecent('OBUIAPP_RecentViewList', isc.addProperties({
-              icon: OB.Styles.OBApplicationMenu.Icons.externalLink
-            }, this.recent));
+            OB.ViewManager.recentManager.addRecent(
+              'OBUIAPP_RecentViewList',
+              isc.addProperties(
+                {
+                  icon: OB.Styles.OBApplicationMenu.Icons.externalLink
+                },
+                this.recent
+              )
+            );
             window.open(this.recent.contentsURL);
           } else {
             OB.Layout.ViewManager.openView(this.recent.viewId, this.recent);
@@ -484,14 +557,14 @@ isc.OBMyOpenbravo.addProperties({
         }
       };
 
-      handleEnterKeyPressFunction = function () {
+      handleEnterKeyPressFunction = function() {
         var keyName = isc.EH.lastEvent.keyName;
         if (keyName === 'Enter' || keyName === 'Space') {
           return this.handleClick();
         }
       };
 
-      destroyFunction = function () {
+      destroyFunction = function() {
         this.destroyAndRemoveMembers(this.members);
         this.Super('destroy', arguments);
       };
@@ -502,7 +575,8 @@ isc.OBMyOpenbravo.addProperties({
           icon = null;
           if (recent.icon) {
             if (recent.icon === 'Process') {
-              icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Process;
+              icon =
+                OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Process;
             } else if (recent.icon === 'Report') {
               icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Report;
             } else if (recent.icon === 'Form') {
@@ -510,7 +584,9 @@ isc.OBMyOpenbravo.addProperties({
             } else if (recent.icon === 'Window') {
               icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Window;
             } else if (recent.icon === 'ExternalLink') {
-              icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.ExternalLink;
+              icon =
+                OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons
+                  .ExternalLink;
             } else {
               icon = recent.icon; // icon is already a path
             }
@@ -529,7 +605,8 @@ isc.OBMyOpenbravo.addProperties({
             recent: recent,
             width: '100%',
             updateRecent: true,
-            baseStyle: OB.Styles.OBMyOpenbravo.recentViewsLayout.Label.baseStyle,
+            baseStyle:
+              OB.Styles.OBMyOpenbravo.recentViewsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',
             icon: icon,
@@ -545,13 +622,17 @@ isc.OBMyOpenbravo.addProperties({
           });
           entryLayout.addMember(lbl);
           // if a standard window then show the new icon
-          if (recent.windowId && !recent.singleRecord && !recent.readOnly && !recent.editOrDeleteOnly) {
+          if (
+            recent.windowId &&
+            !recent.singleRecord &&
+            !recent.readOnly &&
+            !recent.editOrDeleteOnly
+          ) {
             // make a copy
             newRecent = isc.addProperties({}, recent);
             newRecent.command = 'NEW';
 
             newIcon = isc.ImgButton.create({
-
               align: 'left',
               showRollOver: true,
 
@@ -577,27 +658,38 @@ isc.OBMyOpenbravo.addProperties({
     }
   },
 
-  setRecentDocumentsList: function (layout) {
-    var recentList, recentIndex = 0,
-        recent, lbl, entryLayout, handleClickFunction, handleEnterKeyPressFunction;
+  setRecentDocumentsList: function(layout) {
+    var recentList,
+      recentIndex = 0,
+      recent,
+      lbl,
+      entryLayout,
+      handleClickFunction,
+      handleEnterKeyPressFunction;
 
     // start with a fresh content
     layout.destroyAndRemoveMembers(layout.members);
 
     // reads the list of recents and displays them
-    recentList = OB.Layout.ViewManager.recentManager.getRecentValue('OBUIAPP_RecentDocumentsList');
+    recentList = OB.Layout.ViewManager.recentManager.getRecentValue(
+      'OBUIAPP_RecentDocumentsList'
+    );
     if (recentList && recentList.length > 0) {
-
-      handleClickFunction = function () {
+      handleClickFunction = function() {
         // Add the targetTabId as id for using it as the link for the Direct navigation
         if (this.recent) {
           this.recent.id = this.recent.targetTabId;
         }
         //Direct set to true in order to open just the record selected
-        OB.Layout.ViewManager.openView(this.recent.viewId, this.recent, null, true);
+        OB.Layout.ViewManager.openView(
+          this.recent.viewId,
+          this.recent,
+          null,
+          true
+        );
       };
 
-      handleEnterKeyPressFunction = function () {
+      handleEnterKeyPressFunction = function() {
         var keyName = isc.EH.lastEvent.keyName;
         if (keyName === 'Enter' || keyName === 'Space') {
           this.handleClick();
@@ -617,7 +709,8 @@ isc.OBMyOpenbravo.addProperties({
             showHover: true,
             showPrompt: true,
             prompt: (recent.tabTitle + ' - ' + recent.recentTitle).asHTML(),
-            baseStyle: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.baseStyle,
+            baseStyle:
+              OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',
             icon: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.icon,
@@ -647,8 +740,8 @@ isc.OBMyOpenbravo.addProperties({
   //
   // Parameters:
   // * {{{widgetProperties}}}: properties used to create an instance of the widget
-  // like the widgetClassName, height and title 
-  addWidget: function (widgetProperties) {
+  // like the widgetClassName, height and title
+  addWidget: function(widgetProperties) {
     var i, widgetInstance;
 
     // if not there yet load it
@@ -664,28 +757,51 @@ isc.OBMyOpenbravo.addProperties({
         },
         httpMethod: 'POST',
         useSimpleHttp: true,
-        actionURL: OB.Application.contextUrl + 'org.openbravo.client.kernel/OBMYOB_MyOpenbravo/MyOpenbravoWidgetComponent'
+        actionURL:
+          OB.Application.contextUrl +
+          'org.openbravo.client.kernel/OBMYOB_MyOpenbravo/MyOpenbravoWidgetComponent'
       };
       rpcMgr.sendRequest(reqObj);
     } else {
       var localWidgetProperties = isc.addProperties({}, widgetProperties);
       for (i = 0; i < this.availableWidgetClasses.length; i++) {
-        if (this.availableWidgetClasses[i].widgetClassId === widgetProperties.widgetClassId) {
-          localWidgetProperties.showMaximizeButton = this.availableWidgetClasses[i].showMaximizeButton;
-          localWidgetProperties.menuItems = this.availableWidgetClasses[i].menuItems;
-          localWidgetProperties.fieldDefinitions = this.availableWidgetClasses[i].fieldDefinitions;
+        if (
+          this.availableWidgetClasses[i].widgetClassId ===
+          widgetProperties.widgetClassId
+        ) {
+          localWidgetProperties.showMaximizeButton = this.availableWidgetClasses[
+            i
+          ].showMaximizeButton;
+          localWidgetProperties.menuItems = this.availableWidgetClasses[
+            i
+          ].menuItems;
+          localWidgetProperties.fieldDefinitions = this.availableWidgetClasses[
+            i
+          ].fieldDefinitions;
           if (!localWidgetProperties.aboutFieldDefinitions) {
-            localWidgetProperties.aboutFieldDefinitions = this.availableWidgetClasses[i].aboutFieldDefinitions;
+            localWidgetProperties.aboutFieldDefinitions = this.availableWidgetClasses[
+              i
+            ].aboutFieldDefinitions;
           }
           if (!localWidgetProperties.parameters) {
-            localWidgetProperties.parameters = isc.addProperties({}, widgetProperties.parameters);
+            localWidgetProperties.parameters = isc.addProperties(
+              {},
+              widgetProperties.parameters
+            );
           }
           break;
         }
       }
-      widgetInstance = isc.ClassFactory.newInstance(widgetProperties.widgetClassName, localWidgetProperties);
+      widgetInstance = isc.ClassFactory.newInstance(
+        widgetProperties.widgetClassName,
+        localWidgetProperties
+      );
       widgetInstance.widgetManager = this;
-      this.portalLayout.addPortlet(widgetInstance, localWidgetProperties.colNum, localWidgetProperties.rowNum);
+      this.portalLayout.addPortlet(
+        widgetInstance,
+        localWidgetProperties.colNum,
+        localWidgetProperties.rowNum
+      );
     }
   },
 
@@ -694,7 +810,7 @@ isc.OBMyOpenbravo.addProperties({
   // Is called when the widget class has been loaded from the backend, method
   // will call the addWidget method again (as now the class is loaded).
   //
-  widgetLoadCallback: function (rpcResponse, data, rpcRequest) {
+  widgetLoadCallback: function(rpcResponse, data, rpcRequest) {
     var widgetProperties = rpcRequest.clientContext.widgetProperties;
     var widgetManager = rpcRequest.clientContext.widgetManager;
 
@@ -705,7 +821,7 @@ isc.OBMyOpenbravo.addProperties({
     widgetManager.addWidget(widgetProperties);
   },
 
-  notifyEvent: function (eventType, callbackProperties) {
+  notifyEvent: function(eventType, callbackProperties) {
     var post;
     if (!eventType) {
       return;
@@ -714,10 +830,10 @@ isc.OBMyOpenbravo.addProperties({
     this.updateWidgetsCache();
 
     post = {
-      'eventType': eventType,
-      'widgets': OB.MyOB.widgets,
-      'context': {
-        'adminMode': OB.MyOB.adminMode
+      eventType: eventType,
+      widgets: OB.MyOB.widgets,
+      context: {
+        adminMode: OB.MyOB.adminMode
       }
     };
 
@@ -726,25 +842,31 @@ isc.OBMyOpenbravo.addProperties({
       post.context.availableAtLevelValue = OB.MyOB.adminLevelValue;
     }
 
-    OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
-      data = data || {};
-      data.extraProperties = callbackProperties || {};
-      OB.MyOB.eventResponseHandler(rpcResponse, data, rpcRequest);
-    });
+    OB.RemoteCallManager.call(
+      'org.openbravo.client.myob.MyOpenbravoActionHandler',
+      post,
+      {},
+      function(rpcResponse, data, rpcRequest) {
+        data = data || {};
+        data.extraProperties = callbackProperties || {};
+        OB.MyOB.eventResponseHandler(rpcResponse, data, rpcRequest);
+      }
+    );
   },
 
-  eventResponseHandler: function (rpcResponse, data, rpcRequest) {
+  eventResponseHandler: function(rpcResponse, data, rpcRequest) {
     var i, adminLevel, adminLevelValue, publishMessage, levelKey, levelValueKey;
 
     if (!data || !data.message || !data.context || !data.widgets) {
-      isc.Log.logError('Response does not contain required data for processing');
+      isc.Log.logError(
+        'Response does not contain required data for processing'
+      );
       return;
     }
 
     this.updateWidgetsCache(data.eventType, data.widgets);
 
     if (data.eventType === 'RELOAD_WIDGETS') {
-
       this.updateClassesCache(data.availableWidgetClasses);
 
       for (i = 0; i < this.widgets.length; i++) {
@@ -767,14 +889,21 @@ isc.OBMyOpenbravo.addProperties({
       }
 
       if (OB.MyOB.adminModeValueMap.level.system) {
-        publishMessage = publishMessage.replace('_level_ _levelvalue_', OB.MyOB.adminModeValueMap.level.system.toUpperCase());
+        publishMessage = publishMessage.replace(
+          '_level_ _levelvalue_',
+          OB.MyOB.adminModeValueMap.level.system.toUpperCase()
+        );
       } else {
         levelKey = data.context.availableAtLevel.toLowerCase();
         levelValueKey = data.context.availableAtLevelValue;
         adminLevel = OB.MyOB.adminModeValueMap.level[levelKey];
-        adminLevelValue = OB.MyOB.adminModeValueMap.levelValue[levelKey][levelValueKey];
+        adminLevelValue =
+          OB.MyOB.adminModeValueMap.levelValue[levelKey][levelValueKey];
         publishMessage = publishMessage.replace('_level_', adminLevel);
-        publishMessage = publishMessage.replace('_levelvalue_', adminLevelValue);
+        publishMessage = publishMessage.replace(
+          '_levelvalue_',
+          adminLevelValue
+        );
       }
 
       OB.MyOB.setUserMode();
@@ -792,11 +921,13 @@ isc.OBMyOpenbravo.addProperties({
     }
   },
 
-  updateClassesCache: function (cache) {
+  updateClassesCache: function(cache) {
     var i, classDef;
 
     if (!cache || !isc.isAn.Array(cache)) {
-      isc.Log.logError('Trying to update classes cache without without a valid argument');
+      isc.Log.logError(
+        'Trying to update classes cache without without a valid argument'
+      );
       return;
     }
 
@@ -834,9 +965,16 @@ isc.OBMyOpenbravo.addProperties({
   // Is called when an widget is added/removed from the layout
   // The widgets cache is refreshed before sending the event notification to the backend
   //
-  updateWidgetsCache: function (eventType, responseWidgets) {
+  updateWidgetsCache: function(eventType, responseWidgets) {
     var columns = this.portalLayout.getMembers(),
-        i, j, k, newWidget, col, rows, row, widget;
+      i,
+      j,
+      k,
+      newWidget,
+      col,
+      rows,
+      row,
+      widget;
 
     this.widgets = []; // clear cache
     if (eventType === 'RELOAD_WIDGETS' && isc.isAn.Array(responseWidgets)) {
@@ -885,17 +1023,16 @@ isc.OBMyOpenbravo.addProperties({
     this.sortWidgetsCache();
   },
 
-  sortWidgetsCache: function () {
+  sortWidgetsCache: function() {
     var col0 = 0,
-        col1 = 0,
-        i;
+      col1 = 0,
+      i;
 
     if (this.widgets.length < 2) {
       return;
     }
 
-    this.widgets.sort(function (a, b) {
-
+    this.widgets.sort(function(a, b) {
       if (a.priority < b.priority) {
         return -1;
       } else if (a.priority === b.priority) {
@@ -925,17 +1062,19 @@ isc.OBMyOpenbravo.addProperties({
     }
   },
 
-  getNextWidgetPosition: function () {
+  getNextWidgetPosition: function() {
     var height0 = this.portalLayout.getMembers()[0].getTotalHeight(),
-        height1 = this.portalLayout.getMembers()[1].getTotalHeight(),
-        pos = {},
-        rows;
+      height1 = this.portalLayout.getMembers()[1].getTotalHeight(),
+      pos = {},
+      rows;
 
     pos.colNum = height0 <= height1 ? 0 : 1;
     rows = this.portalLayout.getMembers();
 
     if (rows) {
-      pos.rowNum = this.portalLayout.getMembers()[pos.colNum].getMembers().length;
+      pos.rowNum = this.portalLayout
+        .getMembers()
+        [pos.colNum].getMembers().length;
     } else {
       pos.rowNum = 0;
     }
@@ -943,9 +1082,10 @@ isc.OBMyOpenbravo.addProperties({
     return pos;
   },
 
-  setAdminMode: function (level, levelValue) {
+  setAdminMode: function(level, levelValue) {
     var leftColumn = this.leftColumnLayout,
-        levelLabel, levelValueLabel;
+      levelLabel,
+      levelValueLabel;
 
     this.adminMode = true;
     this.portalLayout.sendEvents = false;
@@ -957,22 +1097,26 @@ isc.OBMyOpenbravo.addProperties({
     leftColumn.recentDocumentsLayout.hide();
     //set this values before destroy because after that there will be undefined
     levelLabel = level.getDisplayValue();
-    levelValueLabel = levelValue.getDisplayValue ? levelValue.getDisplayValue() : '';
+    levelValueLabel = levelValue.getDisplayValue
+      ? levelValue.getDisplayValue()
+      : '';
     leftColumn.adminOtherMyOBLayout.getMembers()[1].destroy(); // remove DynamicForm
     leftColumn.adminOtherMyOBLayout.hide();
     if (!leftColumn.addWidgetLayout.getMember(0).isOpened()) {
       leftColumn.addWidgetLayout.getMember(0).doOpen();
     }
-    leftColumn.addMember(isc.OBMyOBPublishChangesDialog.create({
-      levelLabel: levelLabel,
-      levelValueLabel: levelValueLabel
-    }));
+    leftColumn.addMember(
+      isc.OBMyOBPublishChangesDialog.create({
+        levelLabel: levelLabel,
+        levelValueLabel: levelValueLabel
+      })
+    );
     this.reloadWidgets();
   },
 
-  setUserMode: function () {
+  setUserMode: function() {
     var leftColumn = this.leftColumnLayout,
-        publishDialog;
+      publishDialog;
 
     this.adminMode = false;
     this.adminLevel = '';
@@ -984,7 +1128,9 @@ isc.OBMyOpenbravo.addProperties({
     leftColumn.adminOtherMyOBLayout.show();
 
     publishDialog = leftColumn.getMembers()[leftColumn.getMembers().length - 1];
-    if (publishDialog.getClass().getClassName() === 'OBMyOBPublishChangesDialog') {
+    if (
+      publishDialog.getClass().getClassName() === 'OBMyOBPublishChangesDialog'
+    ) {
       publishDialog.destroy();
     }
 
@@ -993,8 +1139,7 @@ isc.OBMyOpenbravo.addProperties({
     this.portalLayout.sendEvents = true;
   },
 
-  reloadWidgets: function () {
-
+  reloadWidgets: function() {
     if (this.isReloading) {
       return;
     }
@@ -1007,10 +1152,12 @@ isc.OBMyOpenbravo.addProperties({
   }
 });
 
-isc.defineClass('OBMyOpenbravoImplementation', isc.OBMyOpenbravo).addProperties({
-  enableAdminMode: OB.OBMyOpenbravoProperties.enableAdminMode,
-  adminModeValueMap: OB.OBMyOpenbravoProperties.adminModeValueMap
-});
+isc
+  .defineClass('OBMyOpenbravoImplementation', isc.OBMyOpenbravo)
+  .addProperties({
+    enableAdminMode: OB.OBMyOpenbravoProperties.enableAdminMode,
+    adminModeValueMap: OB.OBMyOpenbravoProperties.adminModeValueMap
+  });
 
 isc.defineClass('OBMyOBDialog', isc.Window).addProperties({
   width: '100%',
@@ -1023,7 +1170,7 @@ isc.defineClass('OBMyOBDialog', isc.Window).addProperties({
   loadingLabel: null,
   actionHandler: 'org.openbravo.client.myob.MyOpenbravoActionHandler',
 
-  initWidget: function () {
+  initWidget: function() {
     this.buttonsLayout = isc.VStack.create({
       layoutTopMargin: 10,
       layoutBottomMargin: 5,
@@ -1044,7 +1191,7 @@ isc.defineClass('OBMyOBDialog', isc.Window).addProperties({
     this.Super('initWidget', arguments);
   },
 
-  closeClick: function () {
+  closeClick: function() {
     this.destroy();
   }
 });
@@ -1053,13 +1200,13 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
   myParent: null,
   canDragReposition: false,
 
-  initWidget: function () {
+  initWidget: function() {
     var post = {
-      'ID': this.ID,
-      'eventType': 'GET_AVAILABLE_WIDGET_CLASSES',
-      'widgets': [],
-      'context': {
-        'adminMode': OB.MyOB.adminMode
+      ID: this.ID,
+      eventType: 'GET_AVAILABLE_WIDGET_CLASSES',
+      widgets: [],
+      context: {
+        adminMode: OB.MyOB.adminMode
       }
     };
 
@@ -1070,14 +1217,18 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
 
     this.Super('initWidget', arguments);
 
-    OB.RemoteCallManager.call(this.actionHandler, post, {}, function (rpcResponse, data, rpcRequest) {
+    OB.RemoteCallManager.call(this.actionHandler, post, {}, function(
+      rpcResponse,
+      data,
+      rpcRequest
+    ) {
       if (data && data.ID && window[data.ID]) {
         window[data.ID].createDialogContents(rpcResponse, data, rpcRequest);
       }
     });
   },
 
-  destroy: function () {
+  destroy: function() {
     this.myParent.doBeforeClose();
     this.Super('destroy', arguments);
   },
@@ -1087,16 +1238,17 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
   // Is called when after refreshing the cache of available widget classes
   // to reflect the available widgets in the drop down list
   //
-  refreshAvailableWidgets: function () {
-    var i, availableWidgetsMap = {},
-        widgetClasses = OB.MyOB.availableWidgetClasses;
+  refreshAvailableWidgets: function() {
+    var i,
+      availableWidgetsMap = {},
+      widgetClasses = OB.MyOB.availableWidgetClasses;
     for (i = 0; i < widgetClasses.length; i++) {
       availableWidgetsMap[i] = widgetClasses[i].title;
     }
     this.form.setValueMap('widget', availableWidgetsMap);
   },
 
-  createDialogContents: function (rpcResponse, data, rpcRequest) {
+  createDialogContents: function(rpcResponse, data, rpcRequest) {
     this.form = isc.DynamicForm.create({
       width: '100%',
       height: 1,
@@ -1105,36 +1257,44 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
       requiredTitleSuffix: '',
       autoDraw: false,
       titleOrientation: 'top',
-      fields: [{
-        name: 'widget',
-        width: '*',
-        errorOrientation: 'left',
-        cellStyle: OB.Styles.OBMyOBAddWidgetDialog.cellStyle,
-        titleStyle: OB.Styles.OBMyOBAddWidgetDialog.titleStyle,
-        textBoxStyle: OB.Styles.OBMyOBAddWidgetDialog.textBoxStyle,
-        pendingTextBoxStyle: OB.Styles.OBFormField.DefaultComboBox.pendingTextBoxStyle,
-        controlStyle: OB.Styles.OBMyOBAddWidgetDialog.controlStyle,
-        pickListBaseStyle: OB.Styles.OBMyOBAddWidgetDialog.pickListBaseStyle,
-        pickListTallBaseStyle: OB.Styles.OBMyOBAddWidgetDialog.pickListTallBaseStyle,
-        pickerIconSrc: OB.Styles.OBMyOBAddWidgetDialog.pickerIconSrc,
-        height: OB.Styles.OBMyOBAddWidgetDialog.height,
-        pickListCellHeight: OB.Styles.OBMyOBAddWidgetDialog.pickListCellHeight,
-        pickerIconWidth: OB.Styles.OBMyOBAddWidgetDialog.pickerIconWidth,
-        pickListProperties: {
-          bodyStyleName: OB.Styles.OBMyOBAddWidgetDialog.pickListProperties.bodyStyleName
-        },
-        title: OB.I18N.getLabel('OBKMO_WidgetLabel'),
-        titleSuffix: '',
-        requiredTitleSuffix: '',
-        type: 'select',
-        sortField: 'widget',
-        valueMap: {},
-        changed: function (form, item, value) {
-          if (value) {
-            form.parentElement.parentElement.buttonsLayout.getMember(0).setDisabled(false);
+      fields: [
+        {
+          name: 'widget',
+          width: '*',
+          errorOrientation: 'left',
+          cellStyle: OB.Styles.OBMyOBAddWidgetDialog.cellStyle,
+          titleStyle: OB.Styles.OBMyOBAddWidgetDialog.titleStyle,
+          textBoxStyle: OB.Styles.OBMyOBAddWidgetDialog.textBoxStyle,
+          pendingTextBoxStyle:
+            OB.Styles.OBFormField.DefaultComboBox.pendingTextBoxStyle,
+          controlStyle: OB.Styles.OBMyOBAddWidgetDialog.controlStyle,
+          pickListBaseStyle: OB.Styles.OBMyOBAddWidgetDialog.pickListBaseStyle,
+          pickListTallBaseStyle:
+            OB.Styles.OBMyOBAddWidgetDialog.pickListTallBaseStyle,
+          pickerIconSrc: OB.Styles.OBMyOBAddWidgetDialog.pickerIconSrc,
+          height: OB.Styles.OBMyOBAddWidgetDialog.height,
+          pickListCellHeight:
+            OB.Styles.OBMyOBAddWidgetDialog.pickListCellHeight,
+          pickerIconWidth: OB.Styles.OBMyOBAddWidgetDialog.pickerIconWidth,
+          pickListProperties: {
+            bodyStyleName:
+              OB.Styles.OBMyOBAddWidgetDialog.pickListProperties.bodyStyleName
+          },
+          title: OB.I18N.getLabel('OBKMO_WidgetLabel'),
+          titleSuffix: '',
+          requiredTitleSuffix: '',
+          type: 'select',
+          sortField: 'widget',
+          valueMap: {},
+          changed: function(form, item, value) {
+            if (value) {
+              form.parentElement.parentElement.buttonsLayout
+                .getMember(0)
+                .setDisabled(false);
+            }
           }
         }
-      }]
+      ]
     });
 
     OB.MyOB.leftColumnLayout.addWigetSelector = this;
@@ -1149,35 +1309,39 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
 
     this.addItem(this.form);
 
-    this.buttonsLayout.addMember(isc.OBFormButton.create({
-      autoFit: true,
-      title: OB.I18N.getLabel('OBKMO_AddLabel'),
-      form: this.form,
-      dialog: this,
-      draw: function () {
-        if (!this.form.getItem('widget').getValue()) {
-          this.setDisabled(true);
-        }
-        this.Super('draw', arguments);
-      },
-      click: function () {
+    this.buttonsLayout.addMember(
+      isc.OBFormButton.create({
+        autoFit: true,
+        title: OB.I18N.getLabel('OBKMO_AddLabel'),
+        form: this.form,
+        dialog: this,
+        draw: function() {
+          if (!this.form.getItem('widget').getValue()) {
+            this.setDisabled(true);
+          }
+          this.Super('draw', arguments);
+        },
+        click: function() {
+          if (!this.form.getItem('widget').getValue()) {
+            return;
+          }
 
-        if (!this.form.getItem('widget').getValue()) {
-          return;
-        }
-
-        var index = parseInt(this.form.getItem('widget').getValue(), 10),
-            widgetInstanceProperties = isc.addProperties({}, OB.MyOB.availableWidgetClasses[index]),
+          var index = parseInt(this.form.getItem('widget').getValue(), 10),
+            widgetInstanceProperties = isc.addProperties(
+              {},
+              OB.MyOB.availableWidgetClasses[index]
+            ),
             position = OB.MyOB.getNextWidgetPosition();
 
-        widgetInstanceProperties.colNum = position.colNum;
-        widgetInstanceProperties.rowNum = position.rowNum;
+          widgetInstanceProperties.colNum = position.colNum;
+          widgetInstanceProperties.rowNum = position.rowNum;
 
-        OB.MyOB.addWidget(widgetInstanceProperties);
-        this.dialog.form.reset();
-        this.setDisabled(true);
-      }
-    }));
+          OB.MyOB.addWidget(widgetInstanceProperties);
+          this.dialog.form.reset();
+          this.setDisabled(true);
+        }
+      })
+    );
     this.addItem(this.buttonsLayout);
   }
 });
@@ -1186,14 +1350,15 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
   myParent: null,
   canDragReposition: false,
 
-  destroy: function () {
+  destroy: function() {
     this.myParent.doBeforeClose();
     this.Super('destroy', arguments);
   },
 
-  initWidget: function () {
+  initWidget: function() {
     var valueMap = isc.addProperties({}, OB.MyOB.adminModeValueMap.level),
-        prop, formFields = [];
+      prop,
+      formFields = [];
 
     this.Super('initWidget', arguments);
 
@@ -1204,7 +1369,9 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
     if (!OB.MyOB.isValueMapTranslated) {
       for (prop in valueMap) {
         if (valueMap.hasOwnProperty(prop)) {
-          OB.MyOB.adminModeValueMap.level[prop] = OB.I18N.getLabel(valueMap[prop]);
+          OB.MyOB.adminModeValueMap.level[prop] = OB.I18N.getLabel(
+            valueMap[prop]
+          );
         }
       }
       OB.MyOB.isValueMapTranslated = true;
@@ -1218,26 +1385,35 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
       cellStyle: OB.Styles.OBMyOBAdminModeDialog.cellStyle,
       titleStyle: OB.Styles.OBMyOBAdminModeDialog.titleStyle,
       textBoxStyle: OB.Styles.OBMyOBAdminModeDialog.textBoxStyle,
-      pendingTextBoxStyle: OB.Styles.OBFormField.DefaultComboBox.pendingTextBoxStyle,
+      pendingTextBoxStyle:
+        OB.Styles.OBFormField.DefaultComboBox.pendingTextBoxStyle,
       controlStyle: OB.Styles.OBMyOBAdminModeDialog.controlStyle,
       pickListBaseStyle: OB.Styles.OBMyOBAdminModeDialog.pickListBaseStyle,
-      pickListTallBaseStyle: OB.Styles.OBMyOBAdminModeDialog.pickListTallBaseStyle,
+      pickListTallBaseStyle:
+        OB.Styles.OBMyOBAdminModeDialog.pickListTallBaseStyle,
       pickerIconSrc: OB.Styles.OBMyOBAdminModeDialog.pickerIconSrc,
       height: OB.Styles.OBMyOBAdminModeDialog.height,
       pickListCellHeight: OB.Styles.OBMyOBAdminModeDialog.pickListCellHeight,
       pickerIconWidth: OB.Styles.OBMyOBAdminModeDialog.pickerIconWidth,
       pickListProperties: {
-        bodyStyleName: OB.Styles.OBMyOBAdminModeDialog.pickListProperties.bodyStyleName
+        bodyStyleName:
+          OB.Styles.OBMyOBAdminModeDialog.pickListProperties.bodyStyleName
       },
       valueMap: OB.MyOB.adminModeValueMap.level,
-      changed: function (form, item, value) {
+      changed: function(form, item, value) {
         var levelValue = this.form.getField('levelValue');
         if (levelValue) {
-          levelValue.setValueMap(OB.MyOB.adminModeValueMap.levelValue[this.getValue()]);
+          levelValue.setValueMap(
+            OB.MyOB.adminModeValueMap.levelValue[this.getValue()]
+          );
           levelValue.setDisabled(false);
-          form.parentElement.parentElement.buttonsLayout.getMember(0).setDisabled(true);
+          form.parentElement.parentElement.buttonsLayout
+            .getMember(0)
+            .setDisabled(true);
         } else if (value) {
-          form.parentElement.parentElement.buttonsLayout.getMember(0).setDisabled(false);
+          form.parentElement.parentElement.buttonsLayout
+            .getMember(0)
+            .setDisabled(false);
         }
       }
     });
@@ -1252,19 +1428,22 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
         cellStyle: OB.Styles.OBMyOBAdminModeDialog.cellStyle,
         titleStyle: OB.Styles.OBMyOBAdminModeDialog.titleStyle,
         textBoxStyle: OB.Styles.OBMyOBAdminModeDialog.textBoxStyle,
-        pendingTextBoxStyle: OB.Styles.OBFormField.DefaultComboBox.pendingTextBoxStyle,
+        pendingTextBoxStyle:
+          OB.Styles.OBFormField.DefaultComboBox.pendingTextBoxStyle,
         controlStyle: OB.Styles.OBMyOBAdminModeDialog.controlStyle,
         pickListBaseStyle: OB.Styles.OBMyOBAdminModeDialog.pickListBaseStyle,
-        pickListTallBaseStyle: OB.Styles.OBMyOBAdminModeDialog.pickListTallBaseStyle,
+        pickListTallBaseStyle:
+          OB.Styles.OBMyOBAdminModeDialog.pickListTallBaseStyle,
         pickerIconSrc: OB.Styles.OBMyOBAdminModeDialog.pickerIconSrc,
         height: OB.Styles.OBMyOBAdminModeDialog.height,
         pickListCellHeight: OB.Styles.OBMyOBAdminModeDialog.pickListCellHeight,
         pickerIconWidth: OB.Styles.OBMyOBAdminModeDialog.pickerIconWidth,
         pickListProperties: {
-          bodyStyleName: OB.Styles.OBMyOBAdminModeDialog.pickListProperties.bodyStyleName
+          bodyStyleName:
+            OB.Styles.OBMyOBAdminModeDialog.pickListProperties.bodyStyleName
         },
         addUnknownValues: false,
-        setDisabled: function (value) {
+        setDisabled: function(value) {
           if (value) {
             this.title = '';
           } else {
@@ -1272,15 +1451,17 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
           }
           this.Super('setDisabled', arguments);
         },
-        init: function () {
+        init: function() {
           this.Super('init', arguments);
           if (!this.getValue()) {
             this.setDisabled(true);
           }
         },
-        changed: function (form, item, value) {
+        changed: function(form, item, value) {
           if (value) {
-            form.parentElement.parentElement.buttonsLayout.getMember(0).setDisabled(false);
+            form.parentElement.parentElement.buttonsLayout
+              .getMember(0)
+              .setDisabled(false);
           }
         }
       });
@@ -1298,31 +1479,33 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
 
     this.addItem(this.form);
 
-    this.buttonsLayout.addMember(isc.OBFormButton.create({
-      title: OB.I18N.getLabel('OBKMO_AdminEdit'),
-      form: this.form,
-      dialog: this,
-      draw: function () {
-        if (!this.form.getItem('level').getValue()) {
-          this.setDisabled(true);
-        }
-        this.Super('draw', arguments);
-      },
-      click: function () {
-        var level = this.form.getField('level'),
+    this.buttonsLayout.addMember(
+      isc.OBFormButton.create({
+        title: OB.I18N.getLabel('OBKMO_AdminEdit'),
+        form: this.form,
+        dialog: this,
+        draw: function() {
+          if (!this.form.getItem('level').getValue()) {
+            this.setDisabled(true);
+          }
+          this.Super('draw', arguments);
+        },
+        click: function() {
+          var level = this.form.getField('level'),
             levelValue = this.form.getField('levelValue');
 
-        if (level.getValue() === 'system') {
-          OB.MyOB.setAdminMode(level, {});
-        } else if (level.getValue() && levelValue.getValue()) {
-          OB.MyOB.setAdminMode(level, levelValue);
+          if (level.getValue() === 'system') {
+            OB.MyOB.setAdminMode(level, {});
+          } else if (level.getValue() && levelValue.getValue()) {
+            OB.MyOB.setAdminMode(level, levelValue);
+          }
         }
-      }
-    }));
+      })
+    );
     this.addItem(this.buttonsLayout);
   },
 
-  closeClick: function () {
+  closeClick: function() {
     OB.MyOB.leftColumnLayout.recentViewsLayout.show();
     OB.MyOB.leftColumnLayout.adminOtherMyOBLayout.show();
     this.Super('closeClick', arguments);
@@ -1334,9 +1517,9 @@ isc.defineClass('OBMyOBPublishChangesDialog', isc.OBMyOBDialog).addProperties({
   levelValueLabel: '',
   canDragReposition: false,
 
-  initWidget: function () {
+  initWidget: function() {
     var htmlContents = '',
-        label = OB.I18N.getLabel('OBKMO_PublishLabel');
+      label = OB.I18N.getLabel('OBKMO_PublishLabel');
     this.Super('initWidget', arguments);
 
     if (this.loadingLabel) {
@@ -1348,11 +1531,19 @@ isc.defineClass('OBMyOBPublishChangesDialog', isc.OBMyOBDialog).addProperties({
       label = label.replace(': _levelvalue_', '');
     } else {
       label = label.replace('_level_', this.levelLabel);
-      label = label.replace('_levelvalue_', '<b>' + this.levelValueLabel + '</b>');
+      label = label.replace(
+        '_levelvalue_',
+        '<b>' + this.levelValueLabel + '</b>'
+      );
     }
 
-
-    htmlContents = '<p style=\'padding: 2px 3px 5px 3px; margin: 0px;\'>' + label + '</p>' + '<p style=\'color:red; padding: 7px 3px 5px 3px; margin: 0px;\'>' + OB.I18N.getLabel('OBKMO_PublishWarning') + '</p>';
+    htmlContents =
+      "<p style='padding: 2px 3px 5px 3px; margin: 0px;'>" +
+      label +
+      '</p>' +
+      "<p style='color:red; padding: 7px 3px 5px 3px; margin: 0px;'>" +
+      OB.I18N.getLabel('OBKMO_PublishWarning') +
+      '</p>';
 
     this.form = isc.HTMLFlow.create({
       height: 1,
@@ -1363,32 +1554,38 @@ isc.defineClass('OBMyOBPublishChangesDialog', isc.OBMyOBDialog).addProperties({
 
     this.addItem(this.form);
 
-    this.buttonsLayout.addMember(isc.OBFormButton.create({
-      autoFit: true,
-      title: OB.I18N.getLabel('OBKMO_Publish'),
-      form: this.form,
-      dialog: this,
-      click: function () {
-        OB.MyOB.notifyEvent('PUBLISH_CHANGES');
-      }
-    }));
+    this.buttonsLayout.addMember(
+      isc.OBFormButton.create({
+        autoFit: true,
+        title: OB.I18N.getLabel('OBKMO_Publish'),
+        form: this.form,
+        dialog: this,
+        click: function() {
+          OB.MyOB.notifyEvent('PUBLISH_CHANGES');
+        }
+      })
+    );
 
-    this.buttonsLayout.addMember(isc.VLayout.create({
-      height: 5
-    }));
+    this.buttonsLayout.addMember(
+      isc.VLayout.create({
+        height: 5
+      })
+    );
 
-    this.buttonsLayout.addMember(isc.OBFormButton.create({
-      title: OB.I18N.getLabel('UINAVBA_Cancel'),
-      form: this.form,
-      dialog: this,
-      click: function () {
-        this.dialog.closeClick();
-      }
-    }));
+    this.buttonsLayout.addMember(
+      isc.OBFormButton.create({
+        title: OB.I18N.getLabel('UINAVBA_Cancel'),
+        form: this.form,
+        dialog: this,
+        click: function() {
+          this.dialog.closeClick();
+        }
+      })
+    );
     this.addItem(this.buttonsLayout);
   },
 
-  closeClick: function () {
+  closeClick: function() {
     OB.MyOB.setUserMode();
     this.Super('closeClick', arguments);
   }
