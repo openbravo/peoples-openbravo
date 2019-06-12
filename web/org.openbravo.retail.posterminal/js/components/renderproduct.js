@@ -370,8 +370,6 @@ enyo.kind({
       this.$.icons.applyStyle('width', '0px');
       this.$.bestseller.$.image.hide();
     } else {
-      this.$.icons.minWidth += 20;
-      this.$.icons.applyStyle('min-width', this.$.icons.minWidth + 'px');
       this.$.bestseller.addStyles('display: block');
     }
 
@@ -391,6 +389,11 @@ enyo.kind({
     }
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderProduct', {
       model: this
+    }, function (args) {
+      if (args.model.$.icons.children.length) {
+        args.model.$.icons.minWidth = OB.DEC.add(args.model.$.icons.minWidth, OB.DEC.mul(args.model.$.icons.children.length, 20));
+        args.model.$.icons.applyStyle('min-width', args.model.$.icons.minWidth + 'px');
+      }
     });
   },
   setIdentifierContent: function() {

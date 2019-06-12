@@ -830,6 +830,10 @@ li.selected>button.btnselect-orderline.btnselect-orderline-edit>div>div.orderlin
   margin: 0px;
 }
 
+.obpos-edit-error {
+  border: 1px solid red !important;
+}
+
 .modal-order-selector-check {
   margin-top: 8px;
   float: left;
