@@ -21,7 +21,6 @@
 isc.ClassFactory.defineClass('OBFunctionRegistry');
 
 isc.OBFunctionRegistry.addProperties({
-
   registry: null,
 
   // Registers a function (callback) for a particular element within a registry (registryId).
@@ -29,8 +28,10 @@ isc.OBFunctionRegistry.addProperties({
   // The callback function accepts two properties together with the function definition itself:
   // callback.id: used for the same purpose as the id parameter (function overriding)
   // callback.sort: number used to determine the execution order when having multiple actions for the same element.
-  register: function (registryId, element, callback, id) {
-    var registryEntry, i, overwritten = false;
+  register: function(registryId, element, callback, id) {
+    var registryEntry,
+      i,
+      overwritten = false;
 
     if (!this.registry) {
       this.registry = {};
@@ -60,7 +61,10 @@ isc.OBFunctionRegistry.addProperties({
 
     // check if there is one with the same name and override it
     for (i = 0; i < registryEntry[element].length; i++) {
-      if (registryEntry[element][i] && registryEntry[element][i].id === callback.id) {
+      if (
+        registryEntry[element][i] &&
+        registryEntry[element][i].id === callback.id
+      ) {
         registryEntry[element][i] = callback;
         overwritten = true;
         break;
@@ -78,14 +82,15 @@ isc.OBFunctionRegistry.addProperties({
 
   // Checks if a function can be assigned to a particular element of the registry.
   // This method should be overridden to implement the validation logic in each case.
-  isValidElement: function (element) {
+  isValidElement: function(element) {
     return true;
   },
 
   // Iterates over all functions for a particular element within a registry and executes them.
-  call: function (registryId, element, view, form, grid) {
-    var callResult, entries = this.getEntries(registryId, element),
-        i;
+  call: function(registryId, element, view, form, grid) {
+    var callResult,
+      entries = this.getEntries(registryId, element),
+      i;
 
     if (!entries) {
       return;
@@ -101,7 +106,7 @@ isc.OBFunctionRegistry.addProperties({
   },
 
   // Retrieves all functions for a particular element within a registry.
-  getEntries: function (registryId, element) {
+  getEntries: function(registryId, element) {
     var entry;
     if (!this.registry || !this.registry[registryId]) {
       return;
@@ -109,5 +114,4 @@ isc.OBFunctionRegistry.addProperties({
     entry = this.registry[registryId];
     return entry[element];
   }
-
 });

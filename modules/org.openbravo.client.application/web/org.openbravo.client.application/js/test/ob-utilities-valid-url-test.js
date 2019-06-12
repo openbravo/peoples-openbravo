@@ -21,9 +21,15 @@
 
 QUnit.module('org.openbravo.client.application');
 
-QUnit.test('OB.Utilities.isValidUrl', function () {
+QUnit.test('OB.Utilities.isValidUrl', function() {
   QUnit.expect(2);
 
-  QUnit.notOk(OB.Utilities.isValidURL('http://localhost'), 'http://localhost is not a valid URL');
-  QUnit.ok(OB.Utilities.isValidURL('http://localhost.localdomain'), 'http://localhost.localdomain is a valid URL');
+  QUnit.notOk(
+    OB.Utilities.isValidURL('http://localhost'),
+    'http://localhost is not a valid URL'
+  );
+  QUnit.ok(
+    OB.Utilities.isValidURL('http://localhost.localdomain'),
+    'http://localhost.localdomain is a valid URL'
+  );
 });

@@ -20,15 +20,15 @@
 // = Defines the OBPersonalizationTree =
 // Defines the tree shown on the left in the personalization form.
 // Uses standard Smartclient features except for:
-// - status bar fields which can not be used on the form can not 
+// - status bar fields which can not be used on the form can not
 //  be dragged out
 // - clicking a folder opens/closes it
-// - when dragging a normal field on the status bar folder then 
-//  a copy is made as a normal field may exist both on the form 
+// - when dragging a normal field on the status bar folder then
+//  a copy is made as a normal field may exist both on the form
 //  as in the status bar
 // - added a context menu to make it easy to directly update
 //  item properties
-// - changed styling of hidden fields 
+// - changed styling of hidden fields
 //
 isc.ClassFactory.defineClass('OBPersonalizationTreeGrid', isc.TreeGrid);
 
@@ -39,7 +39,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
   leaveScrollbarGap: false,
   showCellContextMenus: true,
 
-  // when an item gets dropped on a closed folder its icon 
+  // when an item gets dropped on a closed folder its icon
   // changes
   showDropIcons: true,
   showOpenIcons: true,
@@ -48,34 +48,36 @@ isc.OBPersonalizationTreeGrid.addProperties({
   openIconSuffix: 'open',
   selectionType: 'single',
 
-  fields: [{
-    name: 'title',
-    canHover: true,
-    showHover: true,
-    treeField: true,
-    showTitle: false,
-    type: 'text',
-    width: '100%',
-    canEdit: false
-  }
-  // disabled for now, it can be an idea to support direct editing in the tree
-  //    {name: 'colSpan', title: OB.I18N.getLabel('OBUIAPP_Personalization_Colspan'), type: 'number', editorType: 'TextItem', keyPressFilterNumeric: '[0-9]'}, 
-  //    {name: 'rowSpan', title: OB.I18N.getLabel('OBUIAPP_Personalization_Rowspan'),  type: 'number', editorType: 'TextItem', keyPressFilterNumeric: '[0-9]'}, 
-  //    {name: 'startRow', title: OB.I18N.getLabel('OBUIAPP_Personalization_Startrow'), type: 'boolean'}, 
-  //    {name: 'hiddenInForm', title: OB.I18N.getLabel('OBUIAPP_Personalization_Hidden'), type: 'boolean'}
+  fields: [
+    {
+      name: 'title',
+      canHover: true,
+      showHover: true,
+      treeField: true,
+      showTitle: false,
+      type: 'text',
+      width: '100%',
+      canEdit: false
+    }
+    // disabled for now, it can be an idea to support direct editing in the tree
+    //    {name: 'colSpan', title: OB.I18N.getLabel('OBUIAPP_Personalization_Colspan'), type: 'number', editorType: 'TextItem', keyPressFilterNumeric: '[0-9]'},
+    //    {name: 'rowSpan', title: OB.I18N.getLabel('OBUIAPP_Personalization_Rowspan'),  type: 'number', editorType: 'TextItem', keyPressFilterNumeric: '[0-9]'},
+    //    {name: 'startRow', title: OB.I18N.getLabel('OBUIAPP_Personalization_Startrow'), type: 'boolean'},
+    //    {name: 'hiddenInForm', title: OB.I18N.getLabel('OBUIAPP_Personalization_Hidden'), type: 'boolean'}
   ],
 
-  initWidget: function () {
+  initWidget: function() {
     var length = this.fields.length,
-        me = this,
-        changedFunction, i;
+      me = this,
+      changedFunction,
+      i;
 
     // todo: show custom items for different types of fields
     this.nodeIcon = OB.Styles.Personalization.Icons.field;
     this.folderIcon = OB.Styles.Personalization.Icons.fieldGroup;
 
     // register a change notifier
-    changedFunction = function () {
+    changedFunction = function() {
       me.personalizeForm.changed();
     };
 
@@ -84,7 +86,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
     }
 
     // hovering
-    this.fields[0].hoverHTML = function (record, value) {
+    this.fields[0].hoverHTML = function(record, value) {
       return me.personalizeForm.getHoverHTML(record, null);
     };
 
@@ -97,17 +99,20 @@ isc.OBPersonalizationTreeGrid.addProperties({
       idField: 'name',
       parentIdField: 'parentName',
       data: this.fieldData,
-      dataChanged: function () {
+      dataChanged: function() {
         me.personalizeForm.changed();
       },
       // note Tree is not a widget, it more like a datasource
       // it has no visual representation, therefore overriding init
-      init: function () {
+      init: function() {
         var mainNode;
         this.Super('init', arguments);
 
         // open the main folder as a default
-        mainNode = this.getAllNodes().find('name', OB.Personalization.MAIN_GROUPNAME);
+        mainNode = this.getAllNodes().find(
+          'name',
+          OB.Personalization.MAIN_GROUPNAME
+        );
         this.openFolder(mainNode);
       }
     });
@@ -122,7 +127,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
 
   // open the folders and expands form items, needs to be called
   // after the preview form has been build
-  openFolders: function () {
+  openFolders: function() {
     var i, nodes;
     // open the folders which need to be opened
     for (i = 0, nodes = this.data.getAllNodes(); i < nodes.length; i++) {
@@ -132,7 +137,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
     }
   },
 
-  destroy: function () {
+  destroy: function() {
     if (this.data) {
       this.data.destroy();
     }
@@ -140,7 +145,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
   },
 
   // open/close a folder on folder click
-  folderClick: function (viewer, folder, recordNum) {
+  folderClick: function(viewer, folder, recordNum) {
     if (this.data.isOpen(folder)) {
       this.closeFolder(folder);
     } else {
@@ -148,8 +153,10 @@ isc.OBPersonalizationTreeGrid.addProperties({
     }
   },
 
-  closeFolder: function (folder) {
-    var i, length, flds = this.personalizeForm.previewForm.getFields();
+  closeFolder: function(folder) {
+    var i,
+      length,
+      flds = this.personalizeForm.previewForm.getFields();
 
     this.Super('closeFolder', arguments);
 
@@ -164,8 +171,10 @@ isc.OBPersonalizationTreeGrid.addProperties({
     }
   },
 
-  openFolder: function (folder) {
-    var i, length, flds = this.personalizeForm.previewForm.getFields();
+  openFolder: function(folder) {
+    var i,
+      length,
+      flds = this.personalizeForm.previewForm.getFields();
 
     this.Super('openFolder', arguments);
 
@@ -184,7 +193,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
   // - prevent a change event if a node is dropped
   // in the same location (code commented out, seems to prevent move..)
   // - set isStatusBarField flag when moved into the status bar folder
-  folderDrop: function (nodes, folder, index, sourceWidget, callback) {
+  folderDrop: function(nodes, folder, index, sourceWidget, callback) {
     var i, length;
 
     if (!nodes) {
@@ -198,17 +207,21 @@ isc.OBPersonalizationTreeGrid.addProperties({
 
     length = nodes.length;
 
-    // don't allow required fields without default value 
+    // don't allow required fields without default value
     // to be dropped on the statusbar
     if (folder.name === OB.Personalization.STATUSBAR_GROUPNAME) {
       for (i = 0; i < length; i++) {
-        if (!nodes[i].wasOnStatusBarField && nodes[i].required && !nodes[i].hasDefaultValue) {
+        if (
+          !nodes[i].wasOnStatusBarField &&
+          nodes[i].required &&
+          !nodes[i].hasDefaultValue
+        ) {
           return;
         }
       }
     }
 
-    //    
+    //
     //    // check if the nodes are all dropped on their current parent
     //    // in the same place they are now (note index + i is done, as
     //    // index is not an array)
@@ -216,7 +229,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
     //    // event
     //    changed = false;
     //    for (i = 0; i < nodes.length; i++) {
-    //      if (nodes[i].parentName !== folder.name || 
+    //      if (nodes[i].parentName !== folder.name ||
     //          this.data.indexOf(nodes[i]) !== (index + i)) {
     //        changed = true;
     //        break;
@@ -227,17 +240,21 @@ isc.OBPersonalizationTreeGrid.addProperties({
     //    }
     // folders can not be dropped outside of the main group
     for (i = 0; i < length; i++) {
-      if (nodes[i].isFolder && (!folder || folder.name !== OB.Personalization.MAIN_GROUPNAME)) {
+      if (
+        nodes[i].isFolder &&
+        (!folder || folder.name !== OB.Personalization.MAIN_GROUPNAME)
+      ) {
         return;
       }
-      nodes[i].isStatusBarField = (folder.name === OB.Personalization.STATUSBAR_GROUPNAME);
+      nodes[i].isStatusBarField =
+        folder.name === OB.Personalization.STATUSBAR_GROUPNAME;
     }
 
     this.Super('folderDrop', arguments);
   },
 
   // show hidden items in a different style
-  getBaseStyle: function (record, rowNum, colNum) {
+  getBaseStyle: function(record, rowNum, colNum) {
     if (record.hiddenInForm) {
       return this.baseStyle + 'Hidden';
     }
@@ -245,20 +262,20 @@ isc.OBPersonalizationTreeGrid.addProperties({
   },
 
   // no context menu on folders
-  folderContextClick: function (me, record, recordNum) {
+  folderContextClick: function(me, record, recordNum) {
     return false;
   },
 
   // Overridden as it seems that the 8.3 version
   // of SC does not call the selectionUpdated event anymore
-  cellClick: function (record, rowNum, colNum) {
+  cellClick: function(record, rowNum, colNum) {
     this.deselectAllRecords();
     this.selectRecord(record);
   },
 
-  // overridden to create context menu items specific 
+  // overridden to create context menu items specific
   // for the clicked record
-  cellContextClick: function (record, rowNum, colNum) {
+  cellContextClick: function(record, rowNum, colNum) {
     // select when right clicking, this can have some side effects
     // focus and menus appearing/disappearing, check if this happens
     this.deselectAllRecords();
@@ -272,12 +289,15 @@ isc.OBPersonalizationTreeGrid.addProperties({
 
   // the menu entries when right clicking a field, different menu
   // entries are shown for status bar or normal fields
-  createCellContextItems: function (record) {
-    var i, menuItems = [],
-        updatePropertyFunction, personalizeForm = this.personalizeForm,
-        length, allNodes;
+  createCellContextItems: function(record) {
+    var i,
+      menuItems = [],
+      updatePropertyFunction,
+      personalizeForm = this.personalizeForm,
+      length,
+      allNodes;
 
-    updatePropertyFunction = function (record, property, value) {
+    updatePropertyFunction = function(record, property, value) {
       record[property] = value;
 
       // make sure only one record has first focus
@@ -297,9 +317,15 @@ isc.OBPersonalizationTreeGrid.addProperties({
 
       // set the value in the properties form also
       if (property === 'hiddenInForm') {
-        personalizeForm.propertiesLayout.formLayout.form.setValue('displayed', !value);
+        personalizeForm.propertiesLayout.formLayout.form.setValue(
+          'displayed',
+          !value
+        );
       } else {
-        personalizeForm.propertiesLayout.formLayout.form.setValue(property, value);
+        personalizeForm.propertiesLayout.formLayout.form.setValue(
+          property,
+          value
+        );
       }
 
       // this will reset everything
@@ -312,7 +338,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Personalization_Displayed'),
         checked: !record.hiddenInForm,
-        click: function () {
+        click: function() {
           updatePropertyFunction(record, 'hiddenInForm', !record.hiddenInForm);
         }
       });
@@ -321,17 +347,25 @@ isc.OBPersonalizationTreeGrid.addProperties({
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Personalization_Startrow'),
         checked: record.startRow,
-        click: function () {
+        click: function() {
           updatePropertyFunction(record, 'startRow', !record.startRow);
         }
       });
 
-      if (record.wasOnStatusBarField || !record.required || record.hasDefaultValue) {
+      if (
+        record.wasOnStatusBarField ||
+        !record.required ||
+        record.hasDefaultValue
+      ) {
         menuItems.add({
           title: OB.I18N.getLabel('OBUIAPP_Personalization_Displayed'),
           checked: !record.hiddenInForm,
-          click: function () {
-            updatePropertyFunction(record, 'hiddenInForm', !record.hiddenInForm);
+          click: function() {
+            updatePropertyFunction(
+              record,
+              'hiddenInForm',
+              !record.hiddenInForm
+            );
           }
         });
       }
@@ -339,7 +373,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Personalization_FirstFocus'),
         checked: record.firstFocus,
-        click: function () {
+        click: function() {
           updatePropertyFunction(record, 'firstFocus', !record.firstFocus);
         }
       });
@@ -348,14 +382,17 @@ isc.OBPersonalizationTreeGrid.addProperties({
     return menuItems;
   },
 
-  redraw: function () {
+  redraw: function() {
     this.computeNodeIcons();
     this.Super('redraw', arguments);
   },
 
-  computeNodeIcons: function (nodes) {
-    var iconSuffix, node, i, data = nodes || this.data.getAllNodes(),
-        length = data.length;
+  computeNodeIcons: function(nodes) {
+    var iconSuffix,
+      node,
+      i,
+      data = nodes || this.data.getAllNodes(),
+      length = data.length;
     for (i = 0; i < length; i++) {
       node = data[i];
       if (node.isFolder) {

@@ -24,7 +24,7 @@
 // - getPersonalizationDataFromForm: computes the personalization data structure (the fields
 //  from an existing form instance, or if the form has already been personalized returns the
 //  personalization data used to personalize the form
-// - personalizeWindow/personalizeForm: personalize a form by applying the 
+// - personalizeWindow/personalizeForm: personalize a form by applying the
 //  personalization data to it. This method is used to update the form preview as well
 //  to update the real form. It is called from the standard window
 //
@@ -37,16 +37,21 @@ OB.Personalization = {
 // Creates the data structure used by the form personalizer and stored
 // as personalized form information in the UI personalization record.
 // If an existing personalization data is passed in then that one is
-// used as the basis. This can be used to make sure that the 
+// used as the basis. This can be used to make sure that the
 // personalizationData used is up-to-date with the current form fields.
-OB.Personalization.getPersonalizationDataFromForm = function (form, formFields) {
-  var i, dataFields = [],
-      statusBarFields, length, record, origPersonalizationData = form && form.view ? form.view.getFormPersonalization(true) : null;
+OB.Personalization.getPersonalizationDataFromForm = function(form, formFields) {
+  var i,
+    dataFields = [],
+    statusBarFields,
+    length,
+    record,
+    origPersonalizationData =
+      form && form.view ? form.view.getFormPersonalization(true) : null;
   if (typeof formFields === 'undefined' || formFields === null) {
     formFields = form.getFields();
   }
 
-  // just use the personalization data which was used on the 
+  // just use the personalization data which was used on the
   // form, we can not reconstruct it completely from the form fields
   // as we don't store extra personalization data in the form fields
   // themselves
@@ -68,7 +73,11 @@ OB.Personalization.getPersonalizationDataFromForm = function (form, formFields) 
   // update with the form data, new fields may have been added, titles
   // may have changed etc.
   // the content of dataFields will be updated
-  this.updatePersonalizationDataFromFields(dataFields, formFields, statusBarFields || form.statusBarFields);
+  this.updatePersonalizationDataFromFields(
+    dataFields,
+    formFields,
+    statusBarFields || form.statusBarFields
+  );
 
   // set the first focus field
   if (form.firstFocusedField) {
@@ -97,10 +106,14 @@ OB.Personalization.getPersonalizationDataFromForm = function (form, formFields) 
 };
 
 //** {{{OB.Personalization.updatePersonalizationDataFromFields}}} **
-// will update the personalization data from a form, this to handle addition 
+// will update the personalization data from a form, this to handle addition
 // of new fields in the AD, changes in required and the title and removal of
 // fields.
-OB.Personalization.updatePersonalizationDataFromFields = function (dataFields, fields, statusBarFields) {
+OB.Personalization.updatePersonalizationDataFromFields = function(
+  dataFields,
+  fields,
+  statusBarFields
+) {
   var fld, j, record, i, dataField, undef, length;
 
   // required and title and removal of fields
@@ -112,13 +125,15 @@ OB.Personalization.updatePersonalizationDataFromFields = function (dataFields, f
     fld = fields.find('name', dataField.name);
     if (fld) {
       dataField.required = fld.required;
-      dataField.hasDisplayLogic = fld.hasShowIf === true || (fld.showIf !== undef && !isc.isA.OBSectionItem(fld));
+      dataField.hasDisplayLogic =
+        fld.hasShowIf === true ||
+        (fld.showIf !== undef && !isc.isA.OBSectionItem(fld));
       // disabled extra * for now, as we have an icon for it
       //      if (false && dataField.required) {
       //        if (isc.Page.isRTL()) {
-      //          dataField.title = '* ' + fld.title;       
+      //          dataField.title = '* ' + fld.title;
       //        } else {
-      //          dataField.title = fld.title + ' *';       
+      //          dataField.title = fld.title + ' *';
       //        }
       //      } else {
       dataField.title = fld.title;
@@ -206,14 +221,13 @@ OB.Personalization.updatePersonalizationDataFromFields = function (dataFields, f
         hiddenInForm: fld.hiddenInForm,
         required: fld.required,
         hasDefaultValue: fld.hasDefaultValue,
-        colSpan: (fld.colSpan !== undefined) ? fld.colSpan : 1,
-        rowSpan: (fld.rowSpan !== undefined) ? fld.rowSpan : 1,
-        startRow: (fld.startRow !== undefined) ? fld.startRow : false
+        colSpan: fld.colSpan !== undefined ? fld.colSpan : 1,
+        rowSpan: fld.rowSpan !== undefined ? fld.rowSpan : 1,
+        startRow: fld.startRow !== undefined ? fld.startRow : false
       };
-
     }
 
-    // is used below to get rid of non-displayed fields which 
+    // is used below to get rid of non-displayed fields which
     // are not part of the statusbar, explicit equals to false
     // as it might not be set
     if (fld.displayed === false) {
@@ -250,7 +264,7 @@ OB.Personalization.updatePersonalizationDataFromFields = function (dataFields, f
       record.parentName = OB.Personalization.STATUSBAR_GROUPNAME;
       // these items can not be moved from the statusbar
       record.isStatusBarField = true;
-      // keep track that this at one point was a 
+      // keep track that this at one point was a
       // status bar field, allow it to be put back there
       record.wasOnStatusBarField = true;
     }
@@ -276,12 +290,18 @@ OB.Personalization.updatePersonalizationDataFromFields = function (dataFields, f
 
 // ** {{{OB.Personalization.personalizeWindow}}} **
 // Applies the data structure which contains the personalization settings to
-// a complete window (an instance of ob-standard-window). 
+// a complete window (an instance of ob-standard-window).
 // Also handles the case that a personalization record is deleted so that the
 // form falls back to the default state
-OB.Personalization.personalizeWindow = function (data, window) {
-  var tabId, personalizationData, undef, view, i, viewsToReset = [],
-      done, length;
+OB.Personalization.personalizeWindow = function(data, window) {
+  var tabId,
+    personalizationData,
+    undef,
+    view,
+    i,
+    viewsToReset = [],
+    done,
+    length;
 
   // no personalization, nothing to do
   if (!data) {
@@ -362,9 +382,18 @@ OB.Personalization.personalizeWindow = function (data, window) {
 // ** {{{OB.Personalization.personalizeForm}}} **
 // Applies the data structure which contains the personalization settings to a
 // form.
-OB.Personalization.personalizeForm = function (data, form) {
-  var i, j, fld, undef, fldDef, newField, newFields = [],
-      record, length, allChildFieldsHidden, statusBarFields = [];
+OB.Personalization.personalizeForm = function(data, form) {
+  var i,
+    j,
+    fld,
+    undef,
+    fldDef,
+    newField,
+    newFields = [],
+    record,
+    length,
+    allChildFieldsHidden,
+    statusBarFields = [];
 
   if (!data || !data.form || !data.form.fields || !form) {
     return;
@@ -426,7 +455,11 @@ OB.Personalization.personalizeForm = function (data, form) {
       // if all fields are hidden then don't show the section item either
       allChildFieldsHidden = true;
       for (j = 0; j < data.length; j++) {
-        if (!data[j].isStatusBarField && data[j].parentName && data[j].parentName === newField.name) {
+        if (
+          !data[j].isStatusBarField &&
+          data[j].parentName &&
+          data[j].parentName === newField.name
+        ) {
           newField.itemIds.push(data[j].name);
           allChildFieldsHidden = allChildFieldsHidden && data[j].hiddenInForm;
         }
@@ -472,7 +505,7 @@ OB.Personalization.personalizeForm = function (data, form) {
     newFields.push(newField);
   }
 
-  // now add the ones we did not know about, these maybe new 
+  // now add the ones we did not know about, these maybe new
   // fields or hidden fields
   if (!form.isPreviewForm) {
     length = form.getFields().length;
@@ -499,7 +532,11 @@ OB.Personalization.personalizeForm = function (data, form) {
   }
   form.setFields(newFields);
 
-  if (form.view && isc.isAn.Array(form.view.formFields) && form.view.formFields.length === 0) {
+  if (
+    form.view &&
+    isc.isAn.Array(form.view.formFields) &&
+    form.view.formFields.length === 0
+  ) {
     // restore formFiels as setFields can invalidate it
     form.view.formFields = form.getFields();
   }

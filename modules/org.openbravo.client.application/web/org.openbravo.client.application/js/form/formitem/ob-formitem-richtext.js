@@ -29,7 +29,7 @@ isc.OBRichTextItem.addProperties({
   moveFocusOnTab: true,
   canvasConstructor: 'OBRichTextEditor',
 
-  editAreaFocusChanged: function () {
+  editAreaFocusChanged: function() {
     var ret = this.Super('editAreaFocusChanged', arguments);
     this.canvas.handleFocus(this.hasFocus);
     return ret;
@@ -40,10 +40,10 @@ isc.OBRichTextItem.addProperties({
     editAreaBackgroundColor: 'transparent',
 
     // "fontControls", "formatControls", "styleControls" and "colorControls"
-    initialControlGroups: ["fontControls", "styleControls", "formatControls"],
-    controlGroups: ["fontControls", "styleControls", "formatControls"],
+    initialControlGroups: ['fontControls', 'styleControls', 'formatControls'],
+    controlGroups: ['fontControls', 'styleControls', 'formatControls'],
 
-    keyDown: function (event, eventInfo) {
+    keyDown: function(event, eventInfo) {
       var response = OB.KeyboardManager.Shortcuts.monitor('OBViewForm');
       if (response !== false) {
         response = this.Super('keyDown', arguments);
@@ -51,18 +51,20 @@ isc.OBRichTextItem.addProperties({
       return response;
     },
 
-    handleFocus: function (hasFocus) {
+    handleFocus: function(hasFocus) {
       if (hasFocus && !this.styleName.endsWith('Focused')) {
         this.setStyleName(this.styleName + 'Focused');
       } else if (!hasFocus && this.styleName.endsWith('Focused')) {
-        this.setStyleName(this.styleName.substring(0, this.styleName.length - 'Focused'.length));
+        this.setStyleName(
+          this.styleName.substring(0, this.styleName.length - 'Focused'.length)
+        );
       }
       if (hasFocus && !this.hasFocus) {
         this.setFocus(true);
       }
     },
 
-    setDisabled: function (disabled) {
+    setDisabled: function(disabled) {
       if (disabled) {
         this.previousStyleName = this.styleName;
         this.setStyleName(this.editorStyleName + 'Disabled');
@@ -82,7 +84,7 @@ isc.OBRichTextItem.addProperties({
       canFocus: true,
       styleName: 'OBFormFieldStatic',
 
-      keyDown: function (event, eventInfo) {
+      keyDown: function(event, eventInfo) {
         var response = OB.KeyboardManager.Shortcuts.monitor('OBViewForm');
         if (response !== false) {
           response = this.Super('keyDown', arguments);
@@ -93,7 +95,7 @@ isc.OBRichTextItem.addProperties({
     toolbarProperties: {
       canFocus: true,
 
-      keyDown: function (event, eventInfo) {
+      keyDown: function(event, eventInfo) {
         var response = OB.KeyboardManager.Shortcuts.monitor('OBViewForm');
         if (response !== false) {
           response = this.Super('keyDown', arguments);
@@ -101,13 +103,13 @@ isc.OBRichTextItem.addProperties({
         return response;
       },
 
-      focusChanged: function (hasFocus) {
+      focusChanged: function(hasFocus) {
         this.parentElement.parentElement.handleFocus(hasFocus);
       },
 
       // autochild of the autochild
       buttonProperties: {
-        keyDown: function (event, eventInfo) {
+        keyDown: function(event, eventInfo) {
           var response = OB.KeyboardManager.Shortcuts.monitor('OBViewForm');
           if (response !== false) {
             response = this.Super('keyDown', arguments);
@@ -115,7 +117,7 @@ isc.OBRichTextItem.addProperties({
           return response;
         },
 
-        focusChanged: function (hasFocus) {
+        focusChanged: function(hasFocus) {
           this.parentElement.parentElement.handleFocus(hasFocus);
         }
       }
@@ -131,14 +133,14 @@ isc.OBRichTextItem.addProperties({
   // smartclient sets this property by default to fill a whole row
   // this would not allow to set the colSpan to 1
   colSpan: 1,
-  init: function () {
+  init: function() {
     if (this.initStyle) {
       this.initStyle();
     }
     this.Super('init', arguments);
   },
 
-  itemHoverHTML: function (item, form) {
+  itemHoverHTML: function(item, form) {
     if (this.isDisabled()) {
       return this.getValue();
     }
@@ -150,16 +152,24 @@ isc.OBRichTextEditor.addProperties({
   fontSizePrompt: OB.I18N.getLabel('OBUIAPP_SetFontSize'),
   linkUrlTitle: OB.I18N.getLabel('OBUIAPP_SetHyperlinkURL'),
 
-  initWidget: function () {
-    this.boldSelectionDefaults.prompt = OB.I18N.getLabel('OBUIAPP_MakeSelectionBold');
+  initWidget: function() {
+    this.boldSelectionDefaults.prompt = OB.I18N.getLabel(
+      'OBUIAPP_MakeSelectionBold'
+    );
 
-    this.italicSelectionDefaults.prompt = OB.I18N.getLabel('OBUIAPP_MakeSelectionItalic');
-    this.underlineSelectionDefaults.prompt = OB.I18N.getLabel('OBUIAPP_MakeSelectionUnderlined');
-    this.strikethroughSelectionDefaults.prompt = OB.I18N.getLabel('OBUIAPP_StrikeThroughSelection');
+    this.italicSelectionDefaults.prompt = OB.I18N.getLabel(
+      'OBUIAPP_MakeSelectionItalic'
+    );
+    this.underlineSelectionDefaults.prompt = OB.I18N.getLabel(
+      'OBUIAPP_MakeSelectionUnderlined'
+    );
+    this.strikethroughSelectionDefaults.prompt = OB.I18N.getLabel(
+      'OBUIAPP_StrikeThroughSelection'
+    );
 
     this.Super('initWidget', arguments);
 
-    // Added setDisabled on init to remove the toolArea 
+    // Added setDisabled on init to remove the toolArea
     this.setDisabled(this.disabled);
   }
 });

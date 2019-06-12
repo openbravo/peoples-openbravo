@@ -44,8 +44,9 @@ isc.defineClass('ClassicOBHelp', isc.HTMLPane).addProperties({
 OB.I18N.getLabel('OBUIAPP_Loading', null, isc.ClassicOBHelp, 'loadingMessage');
 
 isc.ClassicOBHelp.addMethods({
-  initWidget: function (args) {
-    this.contentsURL = this.appURL + '?url=/ad_help/DisplayHelp.html&hideMenu=true&noprefs=true';
+  initWidget: function(args) {
+    this.contentsURL =
+      this.appURL + '?url=/ad_help/DisplayHelp.html&hideMenu=true&noprefs=true';
     if (this.windowId) {
       this.contentsURL = this.contentsURL + '&inpwindowId=' + this.windowId;
     }
@@ -58,9 +59,9 @@ isc.ClassicOBHelp.addMethods({
     this.Super('initWidget', args);
   },
 
-  // The following methods are involved in making sure that a help tab for a 
+  // The following methods are involved in making sure that a help tab for a
   // certain window is only opened once.
-  getBookMarkParams: function () {
+  getBookMarkParams: function() {
     var result = {};
     if (this.windowId) {
       result.windowId = this.windowId;
@@ -75,26 +76,35 @@ isc.ClassicOBHelp.addMethods({
     return result;
   },
 
-  isEqualParams: function (params) {
+  isEqualParams: function(params) {
     if (!params || params.viewId !== 'ClassicOBHelp') {
       return false;
     }
-    if ((this.windowId || params.windowId) && params.windowId !== this.windowId) {
+    if (
+      (this.windowId || params.windowId) &&
+      params.windowId !== this.windowId
+    ) {
       return false;
     }
 
-    if ((this.windowType || params.windowType) && params.windowType !== this.windowType) {
+    if (
+      (this.windowType || params.windowType) &&
+      params.windowType !== this.windowType
+    ) {
       return false;
     }
 
-    if ((this.windowName || params.windowName) && params.windowName !== this.windowName) {
+    if (
+      (this.windowName || params.windowName) &&
+      params.windowName !== this.windowName
+    ) {
       return false;
     }
 
     return true;
   },
 
-  isSameTab: function (viewId, params) {
+  isSameTab: function(viewId, params) {
     if (viewId !== 'ClassicOBHelp') {
       return false;
     }

@@ -43,9 +43,12 @@ OB.DateItemProperties = {
   validateOnChange: false,
   stopOnError: false,
 
-  setDateParams: function () {
-    var i, dateFormatUpper, index = 0,
-        length, currentTime;
+  setDateParams: function() {
+    var i,
+      dateFormatUpper,
+      index = 0,
+      length,
+      currentTime;
 
     this.dateFormat = OB.Format.date;
     this.dateParts = [];
@@ -73,7 +76,7 @@ OB.DateItemProperties = {
     this.currentYear = String(currentTime.getFullYear());
   },
 
-  doInit: function () {
+  doInit: function() {
     this.setDateParams();
 
     var ret = this.Super('init', arguments);
@@ -83,23 +86,27 @@ OB.DateItemProperties = {
       if (this.length) {
         this.textField.length = this.length;
       }
-      this.textField.changed = function () {
+      this.textField.changed = function() {
         // when the textfield of the date is updated, the date
         // field should be flagged as changed
         // see issue 20071 (https://issues.openbravo.com/view.php?id=20071)
         this._textChanged = true;
         this.parentItem._hasChanged = true;
-        // There is a mechanism to prevent infinite looping in number fields 
+        // There is a mechanism to prevent infinite looping in number fields
         // (see issue https://issues.openbravo.com/view.php?id=17290) that
-        // interferes with the correct behaviour of the date fields 
-        // The infinite looping described in the issue does not apply to date fields, 
+        // interferes with the correct behaviour of the date fields
+        // The infinite looping described in the issue does not apply to date fields,
         // so it is safe to delete the saveFocusItemChanged flag when a date is modified
-        if (this.parentItem.form && this.parentItem.form.view && this.parentItem.form.view.viewForm) {
+        if (
+          this.parentItem.form &&
+          this.parentItem.form.view &&
+          this.parentItem.form.view.viewForm
+        ) {
           delete this.parentItem.form.view.viewForm.saveFocusItemChanged;
         }
       };
       // This is needed for the unit tests to be able to enter the dates using the setValue method
-      this.dateTextField.setValue = function (newValue) {
+      this.dateTextField.setValue = function(newValue) {
         var oldValue = this.getValue();
         if (newValue && !this.parentItem.hasSeparator(newValue)) {
           newValue = oldValue;
@@ -107,12 +114,16 @@ OB.DateItemProperties = {
         this.Super('setValue', newValue);
         // only flag the date as changed if it had a value, and it
         // has been actually changed
-        if (!newValue || !oldValue || (oldValue === newValue)) {
+        if (!newValue || !oldValue || oldValue === newValue) {
           return;
         }
         this.parentItem.textField._textChanged = true;
         this.parentItem._hasChanged = true;
-        if (this.parentItem.form && this.parentItem.form.view && this.parentItem.form.view.viewForm) {
+        if (
+          this.parentItem.form &&
+          this.parentItem.form.view &&
+          this.parentItem.form.view.viewForm
+        ) {
           delete this.parentItem.form.view.viewForm.saveFocusItemChanged;
         }
       };
@@ -126,15 +137,17 @@ OB.DateItemProperties = {
   },
 
   // compare while ignoring milli difference
-  compareValues: function (value1, value2) {
-    return (0 === isc.Date.compareLogicalDates(value1, value2));
+  compareValues: function(value1, value2) {
+    return 0 === isc.Date.compareLogicalDates(value1, value2);
   },
 
-  parseValue: function () {
-    var i, str = this.blurValue(),
-        length, parts = ['', '', ''],
-        partIndex = 0,
-        result;
+  parseValue: function() {
+    var i,
+      str = this.blurValue(),
+      length,
+      parts = ['', '', ''],
+      partIndex = 0,
+      result;
 
     if (!str || isc.isA.Date(str) || str.replace(/0/g, '') === '') {
       return str;
@@ -172,17 +185,21 @@ OB.DateItemProperties = {
     }
 
     for (i = 0; i < 3; i++) {
-      if ((parts[i] === '0' || parts[i] === '00') && (this.dateParts[i] === 'D' || this.dateParts[i] === 'M')) {
+      if (
+        (parts[i] === '0' || parts[i] === '00') &&
+        (this.dateParts[i] === 'D' || this.dateParts[i] === 'M')
+      ) {
         return str;
       } else {
         parts[i] = this.expandPart(parts[i], i);
       }
     }
-    result = parts[0] + this.dateSeparator + parts[1] + this.dateSeparator + parts[2];
+    result =
+      parts[0] + this.dateSeparator + parts[1] + this.dateSeparator + parts[2];
     return result;
   },
 
-  expandPart: function (part, index) {
+  expandPart: function(part, index) {
     var year;
     if (this.reachedLength(part, index)) {
       return part;
@@ -210,7 +227,7 @@ OB.DateItemProperties = {
     return part;
   },
 
-  reachedLength: function (part, index) {
+  reachedLength: function(part, index) {
     var maxLength;
     if (this.dateParts[index] === 'D' || this.dateParts[index] === 'M') {
       maxLength = 2;
@@ -220,17 +237,23 @@ OB.DateItemProperties = {
     return part.length >= maxLength;
   },
 
-  isNumber: function (str, position) {
+  isNumber: function(str, position) {
     return str.charAt(position) >= '0' && str.charAt(position) <= '9';
   },
 
-  isSeparator: function (str, position) {
-    return str.charAt(position) === '-' || str.charAt(position) === '\\' || str.charAt(position) === '/' || str.charAt(position) === OB.Utilities.Date.getDateSeparator(OB.Format.date);
+  isSeparator: function(str, position) {
+    return (
+      str.charAt(position) === '-' ||
+      str.charAt(position) === '\\' ||
+      str.charAt(position) === '/' ||
+      str.charAt(position) ===
+        OB.Utilities.Date.getDateSeparator(OB.Format.date)
+    );
   },
 
-  hasSeparator: function (str) {
+  hasSeparator: function(str) {
     var result = false,
-        i;
+      i;
     if (typeof str === 'string') {
       for (i = 0; i < str.length; i++) {
         if (this.isSeparator(str, i)) {
@@ -242,11 +265,11 @@ OB.DateItemProperties = {
     return result;
   },
 
-  pickerDataChanged: function (picker) {
+  pickerDataChanged: function(picker) {
     this.isAPickerDataChange = true;
     this.Super('pickerDataChanged', arguments);
     this.isAPickerDataChange = false;
-    // update the date field after picking a new date 
+    // update the date field after picking a new date
     this.textField._textChanged = true;
     this.updateValue();
     if (this.form.focusInNextItem) {
@@ -272,7 +295,7 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   startDate: Date.createLogicalDate(1951, 0, 1),
   endDate: Date.createLogicalDate(2050, 11, 31),
 
-  init: function () {
+  init: function() {
     // this call super.init
     if (typeof this.doInit === 'function') {
       return this.doInit();
@@ -281,17 +304,29 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     }
   },
 
-  setValue: function (value) {
-    var ret, oldValue, newArguments = arguments;
+  setValue: function(value) {
+    var ret,
+      oldValue,
+      newArguments = arguments;
 
     oldValue = this.getValue();
-    if (Object.prototype.toString.call(newArguments[0]) === '[object String]' && !this.hasSeparator(newArguments[0])) {
+    if (
+      Object.prototype.toString.call(newArguments[0]) === '[object String]' &&
+      !this.hasSeparator(newArguments[0])
+    ) {
       newArguments[0] = oldValue;
     }
 
     //Setting the value to the textual value in case text field is changed. Fixes Issue https://issues.openbravo.com/view.php?id=22381
-    if (this.textField._textChanged && this.textField.getValue() && (this.textField.getValue() !== value)) {
-      value = OB.Utilities.Date.OBToJS(this.textField.getValue(), (this.showTime ? OB.Format.dateTime : OB.Format.date));
+    if (
+      this.textField._textChanged &&
+      this.textField.getValue() &&
+      this.textField.getValue() !== value
+    ) {
+      value = OB.Utilities.Date.OBToJS(
+        this.textField.getValue(),
+        this.showTime ? OB.Format.dateTime : OB.Format.date
+      );
     }
 
     ret = this.Super('setValue', newArguments);
@@ -299,7 +334,7 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     return ret;
   },
 
-  setDateParameterValue: function (value) {
+  setDateParameterValue: function(value) {
     // See issue https://issues.openbravo.com/view.php?id=29544
     // After setting the parameter value from an onchange function, the _textChanged was always true. This prevented the parameter value to be updated after the first change.
     this.setValue(value);
@@ -308,9 +343,9 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     }
   },
 
-  expandValue: function () {
+  expandValue: function() {
     var newValue = this.parseValue(),
-        oldValue = this.blurValue();
+      oldValue = this.blurValue();
 
     if (oldValue !== newValue) {
       this.dateTextField.setValue(newValue);
@@ -319,33 +354,51 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
 
   // update the value in update value as this is called from cellEditEnd in the
   // grid, after losing the focus on the form and when autosaving
-  updateValue: function () {
+  updateValue: function() {
     var savingWithShortcut;
     if (this.grid && this.grid.view && this.grid.view.savingWithShortcut) {
       savingWithShortcut = this.grid.view.savingWithShortcut;
     } else {
       savingWithShortcut = false;
     }
-    if (this.grid && this.grid._preventDateParsing && !this.grid._autoSaving && !savingWithShortcut && !this.grid._leavingCell) {
+    if (
+      this.grid &&
+      this.grid._preventDateParsing &&
+      !this.grid._autoSaving &&
+      !savingWithShortcut &&
+      !this.grid._leavingCell
+    ) {
       return;
     }
     if (this.textField._textChanged) {
       this.expandValue();
       this.Super('updateValue', arguments);
-      //  when the date field has a callout and all the mandatory fields have been entered, 
-      //  the grid does not save the value before making the FIC call, so the value has to 
+      //  when the date field has a callout and all the mandatory fields have been entered,
+      //  the grid does not save the value before making the FIC call, so the value has to
       //  be saved explicitly
       //  See issue 19694 (https://issues.openbravo.com/view.php?id=19694)
       if (this.grid && this.grid.isEditing && this.grid.isEditing()) {
-        this.grid.setEditValue(this.grid.getEditRow(), this.name, this.getValue(), true, true);
+        this.grid.setEditValue(
+          this.grid.getEditRow(),
+          this.name,
+          this.getValue(),
+          true,
+          true
+        );
       }
       this.textField._textChanged = false;
     }
   },
 
-  getPickerData: function () {
+  getPickerData: function() {
     var dateValue = this.getValue(),
-        date, utcDate, utcMonth, utcFullYear, utcHours, utcMinutes, utcSeconds;
+      date,
+      utcDate,
+      utcMonth,
+      utcFullYear,
+      utcHours,
+      utcMinutes,
+      utcSeconds;
     // To visualize in the calendar the displayed value instead of internal value, since due to the GMT difference it can be in a different day
     if (this.isAbsoluteDateTime && isc.isA.Date(dateValue)) {
       date = new Date(dateValue);
@@ -376,20 +429,20 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     }
   },
 
-  blur: function () {
+  blur: function() {
     // force the update of the date when its field loses the focus
     // it has to be done before the call to the super because the
-    // date should be updated before calling handleItemChange, 
-    // which is called in the super blur  
+    // date should be updated before calling handleItemChange,
+    // which is called in the super blur
     this.updateValue();
     this.Super('blur', arguments);
   },
 
-  blurValue: function () {
+  blurValue: function() {
     return this.dateTextField.getElementValue();
   },
 
-  validateOBDateItem: function (value) {
+  validateOBDateItem: function(value) {
     var dateValue = OB.Utilities.Date.OBToJS(value, this.dateFormat);
     var isValid = true;
     if (this.getValue() && dateValue === null) {
@@ -404,19 +457,31 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     return true;
   },
 
-  formSaved: function (request, response, data) {
+  formSaved: function(request, response, data) {
     if (this.textField) {
       delete this.textField._textChanged;
     }
   },
 
-  validators: [{
-    type: 'custom',
-    condition: function (item, validator, value) {
-      return item.validateOBDateItem(value);
+  validators: [
+    {
+      type: 'custom',
+      condition: function(item, validator, value) {
+        return item.validateOBDateItem(value);
+      }
     }
-  }]
+  ]
 });
 
-OB.I18N.getLabel('OBUIAPP_InvalidValue', null, isc.OBDateItem, 'invalidValueLabel');
-OB.I18N.getLabel('OBUISC_Validator.requiredField', null, isc.OBDateItem, 'requiredValueLabel');
+OB.I18N.getLabel(
+  'OBUIAPP_InvalidValue',
+  null,
+  isc.OBDateItem,
+  'invalidValueLabel'
+);
+OB.I18N.getLabel(
+  'OBUISC_Validator.requiredField',
+  null,
+  isc.OBDateItem,
+  'requiredValueLabel'
+);

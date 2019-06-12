@@ -19,15 +19,14 @@
 
 // = Property Store =
 //
-// The Property Store maintains properties. A property can be anything from the width of a column to 
-// the last menu selections of a user. If a component sets a property then the property is also set 
+// The Property Store maintains properties. A property can be anything from the width of a column to
+// the last menu selections of a user. If a component sets a property then the property is also set
 // on the server. All properties defined on the server are loaded when the application starts. So
 // the property store has always a complete set of properties (read at page start and updated).
-// If a component requests a certain property then the local cache (OB.Properties) is checked. 
-// If no value can be found there then an undefined value is returned. 
+// If a component requests a certain property then the local cache (OB.Properties) is checked.
+// If no value can be found there then an undefined value is returned.
 //
-(function (OB, isc) {
-
+(function(OB, isc) {
   if (!OB || !isc) {
     throw {
       name: 'ReferenceError',
@@ -38,7 +37,6 @@
   function PropertyStore() {}
 
   PropertyStore.prototype = {
-
     // array of functions which are called when a property change
     // occurs
     listeners: [],
@@ -52,7 +50,7 @@
     // * {{{propertyName}}}: the name of the property
     // * {{{windowId}}}: the system will first search for property on windowId level
     //
-    get: function (propertyName, windowId) {
+    get: function(propertyName, windowId) {
       if (windowId && OB.Properties[propertyName + '_' + windowId]) {
         return OB.Properties[propertyName + '_' + windowId];
       }
@@ -72,10 +70,12 @@
     // * {{{propertyName}}}: the name of the property
     // * {{{value}}}: the value of the property
     //
-    set: function (propertyName, value, windowId, noSetInServer, setAsSystem) {
+    set: function(propertyName, value, windowId, noSetInServer, setAsSystem) {
       var currentValue = OB.Properties[propertyName],
-          localPropertyName = propertyName,
-          i, length, data;
+        localPropertyName = propertyName,
+        i,
+        length,
+        data;
 
       data = {
         property: propertyName,
@@ -92,7 +92,12 @@
 
       if (!noSetInServer) {
         // and set it in the server also
-        OB.RemoteCallManager.call('org.openbravo.client.application.StorePropertyActionHandler', value, data, function () {});
+        OB.RemoteCallManager.call(
+          'org.openbravo.client.application.StorePropertyActionHandler',
+          value,
+          data,
+          function() {}
+        );
       }
 
       // call the listeners
@@ -100,7 +105,6 @@
       for (i = 0; i < length; i++) {
         this.listeners[i](localPropertyName, currentValue, value);
       }
-
     },
 
     // ** {{{addListener(listener) }}} **
@@ -111,11 +115,11 @@
     // Parameters:
     // * {{{listener}}}: a function which is called when a new alert result is
     // received. The function will get three parameters: property name, old value, new value
-    addListener: function (listener) {
+    addListener: function(listener) {
       this.listeners[this.listeners.length] = listener;
     }
   };
 
   // Initialize PropertyStore object
   OB.PropertyStore = new PropertyStore();
-}(OB, isc));
+})(OB, isc);

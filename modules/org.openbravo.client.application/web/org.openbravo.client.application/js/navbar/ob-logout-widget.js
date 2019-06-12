@@ -28,7 +28,7 @@ isc.OBLogout.addProperties({
 
   showLogoutText: false,
 
-  initWidget: function () {
+  initWidget: function() {
     if (this.showLogoutText) {
       this.baseStyle = isc.OBAlertIcon.getInstanceProperty('baseStyle');
       this.height = '100%';
@@ -40,26 +40,33 @@ isc.OBLogout.addProperties({
     this.Super('initWidget', arguments);
   },
 
-  draw: function () {
+  draw: function() {
     var ksAction;
 
-    ksAction = function () {
+    ksAction = function() {
       OB.Utilities.logout();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction);
-    this.Super("draw", arguments);
+    OB.KeyboardManager.Shortcuts.set(
+      this.keyboardShortcutId,
+      'Canvas',
+      ksAction
+    );
+    this.Super('draw', arguments);
 
     if (!this.showLogoutText) {
       this.setPrompt(OB.I18N.getLabel('UINAVBA_EndSession'));
     }
-/* Avoid declare directly "prompt: " in this widget definition.
+    /* Avoid declare directly "prompt: " in this widget definition.
        Declared as "setPrompt" inside "draw" function in order to solve issue https://issues.openbravo.com/view.php?id=18192 in FF */
 
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.QuitButton', this);
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.QuitButton',
+      this
+    );
   },
 
-  click: function () {
+  click: function() {
     this.getHandle();
     OB.Utilities.logout();
   }

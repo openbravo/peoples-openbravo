@@ -25,7 +25,11 @@ try {
   if (window.parent && window.parent.OB && window.parent.OB.Layout) {
     isc.Log.logDebug('Reloading in parent frame', 'OB');
     window.parent.location.href = window.location.href;
-  } else if (window.parent.parent && window.parent.parent.OB && window.parent.parent.OB.Layout) {
+  } else if (
+    window.parent.parent &&
+    window.parent.parent.OB &&
+    window.parent.parent.OB.Layout
+  ) {
     isc.Log.logDebug('Reloading in parent.parent frame', 'OB');
     window.parent.parent.location.href = window.location.href;
   } else {
@@ -48,7 +52,6 @@ isc.Canvas.addClassProperties({
 OB.KeyboardManager.Shortcuts.setPredefinedList('OBUIAPP_KeyboardShortcuts');
 OB.KeyboardManager.Shortcuts.setPredefinedList('UINAVBA_KeyboardShortcuts');
 
-
 // the OB.Layout contains everything
 OB.Layout = isc.VLayout.create({
   width: '100%',
@@ -58,95 +61,107 @@ OB.Layout = isc.VLayout.create({
 
 // initialize the content of the layout, as late as possible
 // is called from index.jsp
-OB.Layout.initialize = function () {
-
+OB.Layout.initialize = function() {
   // create the bar with navigation components
-  OB.NavBar = isc.ToolStrip.create({
-    addMembers: function (members) {
-      // encapsulate the members
-      var newMembers = [],
+  OB.NavBar = isc.ToolStrip.create(
+    {
+      addMembers: function(members) {
+        // encapsulate the members
+        var newMembers = [],
           i;
-      for (i = 0; i < members.length; i++) {
-        // encapsulate in 2 hlayouts to handle correct mouse over/hover and show of box
-        if (OB.User.isPortal && !members[i].showInPortal) {
-          continue;
+        for (i = 0; i < members.length; i++) {
+          // encapsulate in 2 hlayouts to handle correct mouse over/hover and show of box
+          if (OB.User.isPortal && !members[i].showInPortal) {
+            continue;
+          }
+          var newMember = isc.HLayout.create({
+            layoutLeftMargin: 0,
+            layoutRightMargin: 0,
+            width: '100%',
+            height: '100%',
+            styleName: 'OBNavBarComponent',
+            members: [members[i]]
+          });
+          newMembers[i] = newMember;
         }
-        var newMember = isc.HLayout.create({
-          layoutLeftMargin: 0,
-          layoutRightMargin: 0,
-          width: '100%',
-          height: '100%',
-          styleName: 'OBNavBarComponent',
-          members: [members[i]]
-        });
-        newMembers[i] = newMember;
-      }
-      // note the array has to be placed in an array otherwise the newMembers
-      // is considered to the argument list
-      this.Super('addMembers', [newMembers]);
-    },
+        // note the array has to be placed in an array otherwise the newMembers
+        // is considered to the argument list
+        this.Super('addMembers', [newMembers]);
+      },
 
-    createMembers: function (allMembers) {
-      var members = [],
+      createMembers: function(allMembers) {
+        var members = [],
           dynamicMembers = [],
-          i, j = 0;
-      if (!allMembers) {
-        return;
-      }
-      if (OB.Application.dynamicNavigationBarComponents) {
-        dynamicMembers = OB.Application.dynamicNavigationBarComponents();
-      }
-      for (i = 0; i < allMembers.length; i++) {
-        if (!allMembers[i].className) {
-          continue;
+          i,
+          j = 0;
+        if (!allMembers) {
+          return;
         }
-        if (allMembers[i].className !== '_OBNavBarDynamicComponent') {
-          this.translateLabels(allMembers[i]);
-          members.push(isc.ClassFactory.newInstance(allMembers[i].className, allMembers[i].properties));
-        } else if (dynamicMembers && dynamicMembers[j]) {
-          members.push(dynamicMembers[j]);
-          j++;
+        if (OB.Application.dynamicNavigationBarComponents) {
+          dynamicMembers = OB.Application.dynamicNavigationBarComponents();
+        }
+        for (i = 0; i < allMembers.length; i++) {
+          if (!allMembers[i].className) {
+            continue;
+          }
+          if (allMembers[i].className !== '_OBNavBarDynamicComponent') {
+            this.translateLabels(allMembers[i]);
+            members.push(
+              isc.ClassFactory.newInstance(
+                allMembers[i].className,
+                allMembers[i].properties
+              )
+            );
+          } else if (dynamicMembers && dynamicMembers[j]) {
+            members.push(dynamicMembers[j]);
+            j++;
+          }
+        }
+        this.addMembers(members);
+      },
+
+      translateLabels: function(member) {
+        if (!member.properties) {
+          return;
+        }
+        if (member.properties.title) {
+          member.properties.title = OB.I18N.getLabel(member.properties.title);
+        }
+        if (member.properties.itemPrompt) {
+          member.properties.itemPrompt = OB.I18N.getLabel(
+            member.properties.itemPrompt
+          );
+        }
+      },
+
+      isFirstDraw: true,
+
+      draw: function() {
+        this.Super('draw', arguments);
+        if (isc.Browser.isIE && this.isFirstDraw) {
+          this.isFirstDraw = false;
+          this.markForRedraw(); //To solve issue https://issues.openbravo.com/view.php?id=18192 in IE
         }
       }
-      this.addMembers(members);
     },
-
-    translateLabels: function (member) {
-      if (!member.properties) {
-        return;
-      }
-      if (member.properties.title) {
-        member.properties.title = OB.I18N.getLabel(member.properties.title);
-      }
-      if (member.properties.itemPrompt) {
-        member.properties.itemPrompt = OB.I18N.getLabel(member.properties.itemPrompt);
-      }
-    },
-
-    isFirstDraw: true,
-
-    draw: function () {
-      this.Super('draw', arguments);
-      if (isc.Browser.isIE && this.isFirstDraw) {
-        this.isFirstDraw = false;
-        this.markForRedraw(); //To solve issue https://issues.openbravo.com/view.php?id=18192 in IE
-      }
-    }
-  }, OB.Styles.TopLayout.NavBar);
+    OB.Styles.TopLayout.NavBar
+  );
   // the TopLayout has the navigation bar on the left and the logo on the right
   OB.TopLayout = isc.HLayout.create({}, OB.Styles.TopLayout);
-
 
   //create the navbar on the left and the logo on the right
   OB.TopLayout.CompanyImageLogo = isc.Img.create({
     width: OB.Application.companyImage.width,
     height: OB.Application.companyImage.height,
-    src: OB.Application.contextUrl + 'utility/ShowImageLogo?logo=yourcompanymenu',
+    src:
+      OB.Application.contextUrl + 'utility/ShowImageLogo?logo=yourcompanymenu',
     imageType: 'normal'
   });
 
-
-  OB.TestRegistry.register('org.openbravo.client.application.companylogo', OB.TopLayout.CompanyImageLogo);
+  OB.TestRegistry.register(
+    'org.openbravo.client.application.companylogo',
+    OB.TopLayout.CompanyImageLogo
+  );
 
   OB.TopLayout.OpenbravoLogo = isc.Img.create({
     imageType: 'normal',
@@ -154,29 +169,42 @@ OB.Layout.initialize = function () {
     imageHeight: '32',
     src: OB.Application.contextUrl + 'utility/GetOpenbravoLogo.png',
 
-    getInnerHTML: function () {
+    getInnerHTML: function() {
       var html = this.Super('getInnerHTML', arguments);
       if (!OB.Application.isActiveInstance) {
-        return '<a href="http://www.openbravo.com/product/erp/professional/" target="_new">' + html + '</a>';
+        return (
+          '<a href="http://www.openbravo.com/product/erp/professional/" target="_new">' +
+          html +
+          '</a>'
+        );
       } else {
         return html;
       }
     }
   });
-  OB.TestRegistry.register('org.openbravo.client.application.openbravologo', OB.TopLayout.OpenbravoLogo);
+  OB.TestRegistry.register(
+    'org.openbravo.client.application.openbravologo',
+    OB.TopLayout.OpenbravoLogo
+  );
   if (OB.Styles && OB.Styles.hideOpenbravoLogo) {
     OB.TopLayout.OpenbravoLogo.hide();
   }
   OB.TopLayout.addMember(
-  isc.HLayout.create({}, OB.Styles.TopLayout.LeftSpacer));
+    isc.HLayout.create({}, OB.Styles.TopLayout.LeftSpacer)
+  );
   OB.TopLayout.addMember(OB.NavBar);
   OB.TopLayout.addMember(
-  isc.HLayout.create({}, OB.Styles.TopLayout.MiddleSpacer));
+    isc.HLayout.create({}, OB.Styles.TopLayout.MiddleSpacer)
+  );
 
   OB.TopLayout.addMember(
-  isc.HLayout.create({
-    members: [OB.TopLayout.CompanyImageLogo, OB.TopLayout.OpenbravoLogo]
-  }, OB.Styles.TopLayout.LogosContainer));
+    isc.HLayout.create(
+      {
+        members: [OB.TopLayout.CompanyImageLogo, OB.TopLayout.OpenbravoLogo]
+      },
+      OB.Styles.TopLayout.LogosContainer
+    )
+  );
   //add the top part to the main layout
   OB.Layout.addMember(OB.TopLayout);
   OB.MainView = isc.VLayout.create({
@@ -189,9 +217,18 @@ OB.Layout.initialize = function () {
 
   OB.MainView.addMember(OB.MainView.TabSet);
 
-  OB.TestRegistry.register('org.openbravo.client.application.mainview', OB.MainView);
-  OB.TestRegistry.register('org.openbravo.client.application.mainview.tabset', OB.MainView.TabSet);
-  OB.TestRegistry.register('org.openbravo.client.application.layout', OB.Layout);
+  OB.TestRegistry.register(
+    'org.openbravo.client.application.mainview',
+    OB.MainView
+  );
+  OB.TestRegistry.register(
+    'org.openbravo.client.application.mainview.tabset',
+    OB.MainView.TabSet
+  );
+  OB.TestRegistry.register(
+    'org.openbravo.client.application.layout',
+    OB.Layout
+  );
 
   OB.NavBar.createMembers(OB.Application.navigationBarComponents);
 

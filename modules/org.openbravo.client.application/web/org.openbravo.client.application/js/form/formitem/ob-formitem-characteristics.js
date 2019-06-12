@@ -22,10 +22,8 @@ isc.ClassFactory.defineClass('OBCharacteristicsItem', isc.CanvasItem);
 isc.OBCharacteristicsItem.addProperties({
   completeValue: null,
   showTitle: false,
-  init: function () {
-    this.canvas = isc.OBCharacteristicsLayout.create({
-
-    });
+  init: function() {
+    this.canvas = isc.OBCharacteristicsLayout.create({});
 
     this.colSpan = 4;
     this.disabled = false;
@@ -33,9 +31,10 @@ isc.OBCharacteristicsItem.addProperties({
     this.Super('init', arguments);
   },
 
-  setValue: function (value) {
-    var field, formFields = [],
-        itemIds = [];
+  setValue: function(value) {
+    var field,
+      formFields = [],
+      itemIds = [];
 
     this.completeValue = value;
     if (!value || !value.characteristics) {
@@ -77,14 +76,13 @@ isc.OBCharacteristicsItem.addProperties({
       itemIds: itemIds
     });
 
-
     this.canvas.setFields(formFields);
 
     // actual value is the one in DB
     this.setValue(value.dbValue);
   },
 
-  destroy: function () {
+  destroy: function() {
     if (this.canvas && typeof this.canvas.destroy === 'function') {
       this.canvas.destroy();
       this.canvas = null;
@@ -140,7 +138,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
     width: 80,
     canFocus: true,
     autoParent: 'buttonLayout',
-    click: function () {
+    click: function() {
       this.creator.accept();
     }
   },
@@ -151,7 +149,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
     width: 80,
     canFocus: true,
     autoParent: 'buttonLayout',
-    click: function () {
+    click: function() {
       this.creator.clearValues();
     }
   },
@@ -162,7 +160,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
     width: 80,
     canFocus: true,
     autoParent: 'buttonLayout',
-    click: function () {
+    click: function() {
       this.creator.cancel();
     }
   },
@@ -174,11 +172,15 @@ isc.OBCharacteristicsFilterDialog.addProperties({
    *   -Filtering: includes all selected leaf nodes
    *   -Visualization: includes the top in branch fully selected nodes
    */
-  getValue: function () {
+  getValue: function() {
     var selection = this.tree.getSelection(),
-        result = {},
-        i, c, completeParentNodes = [],
-        node, currentChar, grandParent;
+      result = {},
+      i,
+      c,
+      completeParentNodes = [],
+      node,
+      currentChar,
+      grandParent;
 
     for (i = 0; i < selection.length; i++) {
       node = selection[i];
@@ -230,24 +232,26 @@ isc.OBCharacteristicsFilterDialog.addProperties({
     return result;
   },
 
-  accept: function () {
+  accept: function() {
     if (this.callback) {
       this.fireCallback(this.callback, 'value', [this.getValue()]);
     }
     this.hide();
   },
 
-  clearValues: function () {
+  clearValues: function() {
     this.tree.deselectAllRecords();
   },
 
-  cancel: function () {
+  cancel: function() {
     this.hide();
   },
 
-  initWidget: function () {
+  initWidget: function() {
     var me = this,
-        dataArrived, checkInitialNodes, getNodeByID;
+      dataArrived,
+      checkInitialNodes,
+      getNodeByID;
 
     this.Super('initWidget', arguments);
 
@@ -258,15 +262,17 @@ isc.OBCharacteristicsFilterDialog.addProperties({
     });
     this.mainLayout.addMember(this.selectionVisualization);
 
-
-
     /**
      * Overrides dataArrived to initialize the tree initial selection
      * based on the filter initial criteria
      */
-    dataArrived = function () {
+    dataArrived = function() {
       this.Super('dataArrived', arguments);
-      if (this.topElement && this.topElement.creator && this.topElement.creator.internalValue) {
+      if (
+        this.topElement &&
+        this.topElement.creator &&
+        this.topElement.creator.internalValue
+      ) {
         this.checkInitialNodes(this.topElement.creator.internalValue);
       }
     };
@@ -275,7 +281,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
      * Marks the checkboxes of the nodes that
      * are present in the initial criteria
      */
-    checkInitialNodes = function (internalValue) {
+    checkInitialNodes = function(internalValue) {
       var c, v, value, node, characteristic;
       for (c in internalValue) {
         if (internalValue.hasOwnProperty(c)) {
@@ -296,8 +302,10 @@ isc.OBCharacteristicsFilterDialog.addProperties({
     /**
      * Returns a tree node given its id
      */
-    getNodeByID = function (nodeId) {
-      var i, node, nodeList = this.data.getNodeList();
+    getNodeByID = function(nodeId) {
+      var i,
+        node,
+        nodeList = this.data.getNodeList();
       for (i = 0; i < nodeList.length; i++) {
         node = nodeList[i];
         if (node.id === nodeId) {
@@ -326,20 +334,36 @@ isc.OBCharacteristicsFilterDialog.addProperties({
       showSelectedStyle: false,
       showPartialSelection: true,
       cascadeSelection: true,
-      selectionChanged: function () {
-        me.fireOnPause('updateCharacteristicsText', function () {
-          //fire on pause because selecting a node raises several time selectionChanged to select its parants
-          me.selectionVisualization.setContents(isc.OBCharacteristicsFilterItem.getDisplayValue(me.getValue()).asHTML());
-        }, 100);
+      selectionChanged: function() {
+        me.fireOnPause(
+          'updateCharacteristicsText',
+          function() {
+            //fire on pause because selecting a node raises several time selectionChanged to select its parants
+            me.selectionVisualization.setContents(
+              isc.OBCharacteristicsFilterItem.getDisplayValue(
+                me.getValue()
+              ).asHTML()
+            );
+          },
+          100
+        );
       },
 
-      setDataSource: function (ds, fields) {
-
-        ds.transformRequest = function (dsRequest) {
-          var filterDialog = me;
+      setDataSource: function(ds, fields) {
+        ds.transformRequest = function(dsRequest) {
           dsRequest.params = dsRequest.params || {};
-          if (me.creator && me.creator.parentGrid && me.creator.parentGrid.view && me.creator.parentGrid.view.buttonOwnerView) {
-            dsRequest.params._buttonOwnerContextInfo = me.creator.parentGrid.view.buttonOwnerView.getContextInfo(false, true, true, false);
+          if (
+            me.creator &&
+            me.creator.parentGrid &&
+            me.creator.parentGrid.view &&
+            me.creator.parentGrid.view.buttonOwnerView
+          ) {
+            dsRequest.params._buttonOwnerContextInfo = me.creator.parentGrid.view.buttonOwnerView.getContextInfo(
+              false,
+              true,
+              true,
+              false
+            );
           }
           return this.Super('transformRequest', arguments);
         };
@@ -363,7 +387,12 @@ isc.OBCharacteristicsFilterDialog.addProperties({
       }
     });
 
-    OB.Datasource.get('BE2735798ECC4EF88D131F16F1C4EC72', this.tree, null, true);
+    OB.Datasource.get(
+      'BE2735798ECC4EF88D131F16F1C4EC72',
+      this.tree,
+      null,
+      true
+    );
 
     this.mainLayout.addMember(this.tree);
     this.addAutoChild('buttonLayout');
@@ -383,13 +412,16 @@ isc.OBCharacteristicsFilterDialog.addProperties({
   }
 });
 
-
 isc.ClassFactory.defineClass('OBCharacteristicsFilterItem', isc.OBTextItem);
 
 isc.OBCharacteristicsFilterItem.addClassProperties({
-  getDisplayValue: function (displayValue) {
-    var c, characteristic, v, value, hasAny = false,
-        result = '';
+  getDisplayValue: function(displayValue) {
+    var c,
+      characteristic,
+      v,
+      value,
+      hasAny = false,
+      result = '';
 
     for (c in displayValue) {
       if (displayValue.hasOwnProperty(c)) {
@@ -420,28 +452,30 @@ isc.OBCharacteristicsFilterItem.addProperties({
   allowExpressions: true,
   canEdit: false,
   disableIconsOnReadOnly: false,
-  hqlExists: 'exists (from ProductCharacteristicValue v where {productInEntity} = v.product and v.characteristicValue.id in ($value))',
+  hqlExists:
+    'exists (from ProductCharacteristicValue v where {productInEntity} = v.product and v.characteristicValue.id in ($value))',
   showPickerIcon: false,
   filterDialogConstructor: isc.OBCharacteristicsFilterDialog,
   propertyName: null,
   pickerIconDefaults: {
     name: 'showDateRange',
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/productCharacteristicsFilter_ico.png',
+    src:
+      OB.Styles.skinsPath +
+      'Default/org.openbravo.client.application/images/form/productCharacteristicsFilter_ico.png',
     width: 21,
     height: 21,
     showOver: false,
     showFocused: false,
     showFocusedWithItem: false,
     hspace: 0,
-    click: function (form, item, icon) {
+    click: function(form, item, icon) {
       if (!item.disabled) {
         item.showDialog();
       }
     }
   },
 
-
-  setCriterion: function (criterion) {
+  setCriterion: function(criterion) {
     if (criterion && criterion.internalValue) {
       this.internalValue = criterion.internalValue;
     }
@@ -453,7 +487,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
    * It might be changed to query actual table of characteristic values, but this would make it
    * not usable in other views than Product
    */
-  getCriterion: function () {
+  getCriterion: function() {
     var c, characteristic, v, value, charCriteria, inValues;
     if (!this.internalValue) {
       return;
@@ -494,20 +528,23 @@ isc.OBCharacteristicsFilterItem.addProperties({
     return result;
   },
 
-  setValue: function (value) {
-    this.Super('setValue', isc.OBCharacteristicsFilterItem.getDisplayValue(this.internalValue));
+  setValue: function(value) {
+    this.Super(
+      'setValue',
+      isc.OBCharacteristicsFilterItem.getDisplayValue(this.internalValue)
+    );
   },
 
   /**
    * Reusing same method as in OBMiniDateRangeItem. It is invoked when filter is removed
    * from grid.
    */
-  clearFilterValues: function () {
+  clearFilterValues: function() {
     this.filterDialog.tree.deselectAllRecords();
     delete this.internalValue;
   },
 
-  filterDialogCallback: function (value) {
+  filterDialogCallback: function(value) {
     // Whenever filter is changed, new criteria must force a backend call, adaptive
     // filter cannot be used for characteristics as the information to do the matching
     // is not present in client. Cache of localData needs to be cleaned up to force it;
@@ -521,23 +558,36 @@ isc.OBCharacteristicsFilterItem.addProperties({
     }
 
     this.internalValue = value;
-    this.setElementValue(isc.OBCharacteristicsFilterItem.getDisplayValue(value));
+    this.setElementValue(
+      isc.OBCharacteristicsFilterItem.getDisplayValue(value)
+    );
     this.form.grid.performAction();
   },
 
-  init: function () {
-    var propertyPath, i, parentDSIdentifier = null,
-        selectorDefinition = null,
-        filterDialogProperties;
+  init: function() {
+    var propertyPath,
+      i,
+      parentDSIdentifier = null,
+      selectorDefinition = null,
+      filterDialogProperties;
     this.canEdit = false;
 
     // Getting the product property in the entity we are filtering it.
     // It is obtained based on fieldName, in case its path is compound (i.e.
     // product$characteristicDescription), path is included up to the element
-    // previous to the last one 
-    if (this.grid && this.grid.parentElement && this.grid.parentElement.viewProperties && this.grid.parentElement.viewProperties.gridProperties && this.grid.parentElement.viewProperties.gridProperties.alias) {
+    // previous to the last one
+    if (
+      this.grid &&
+      this.grid.parentElement &&
+      this.grid.parentElement.viewProperties &&
+      this.grid.parentElement.viewProperties.gridProperties &&
+      this.grid.parentElement.viewProperties.gridProperties.alias
+    ) {
       this.propertyName = this.grid.parentElement.viewProperties.gridProperties.alias;
-      if (!this.isProductEntity() && !this.isPropertyPathFromProduct(this.getFieldName())) {
+      if (
+        !this.isProductEntity() &&
+        !this.isPropertyPathFromProduct(this.getFieldName())
+      ) {
         this.propertyName += '.product';
       }
     } else {
@@ -547,7 +597,10 @@ isc.OBCharacteristicsFilterItem.addProperties({
     for (i = 0; i < propertyPath.length - 1; i++) {
       this.propertyName += '.' + propertyPath[i];
     }
-    this.hqlExists = this.hqlExists.replace('{productInEntity}', this.propertyName);
+    this.hqlExists = this.hqlExists.replace(
+      '{productInEntity}',
+      this.propertyName
+    );
 
     if (this.grid.parentElement.view && this.grid.parentElement.view.viewGrid) {
       this.parentGrid = this.grid.parentElement.view.viewGrid;
@@ -555,8 +608,16 @@ isc.OBCharacteristicsFilterItem.addProperties({
       this.parentGrid = this.grid.parentElement;
     }
 
-    if (this.parentGrid.getDataSource().dataURL.indexOf('org.openbravo.service.datasource') !== -1) {
-      parentDSIdentifier = this.parentGrid.getDataSource().dataURL.substr(this.parentGrid.getDataSource().dataURL.lastIndexOf('/') + 1);
+    if (
+      this.parentGrid
+        .getDataSource()
+        .dataURL.indexOf('org.openbravo.service.datasource') !== -1
+    ) {
+      parentDSIdentifier = this.parentGrid
+        .getDataSource()
+        .dataURL.substr(
+          this.parentGrid.getDataSource().dataURL.lastIndexOf('/') + 1
+        );
     }
 
     if (this.parentGrid.selector) {
@@ -578,22 +639,31 @@ isc.OBCharacteristicsFilterItem.addProperties({
 
     this.addAutoChild('filterDialog', filterDialogProperties);
 
-    this.icons = [isc.addProperties({
-      prompt: this.pickerIconPrompt
-    }, this.pickerIconDefaults, this.pickerIconProperties)];
+    this.icons = [
+      isc.addProperties(
+        {
+          prompt: this.pickerIconPrompt
+        },
+        this.pickerIconDefaults,
+        this.pickerIconProperties
+      )
+    ];
 
     this.Super('init', arguments);
   },
 
-
-  isPickAndExecute: function () {
-    if (this.parentGrid && this.parentGrid.view && this.parentGrid.view.uiPattern === 'OBUIAPP_PickAndExecute') {
+  isPickAndExecute: function() {
+    if (
+      this.parentGrid &&
+      this.parentGrid.view &&
+      this.parentGrid.view.uiPattern === 'OBUIAPP_PickAndExecute'
+    ) {
       return true;
     }
     return false;
   },
 
-  isProductEntity: function () {
+  isProductEntity: function() {
     var entity, theGrid;
 
     if (this.grid && !this.grid.sourceWidget) {
@@ -610,33 +680,39 @@ isc.OBCharacteristicsFilterItem.addProperties({
     return entity === 'Product';
   },
 
-  isPropertyPathFromProduct: function (propertyName) {
+  isPropertyPathFromProduct: function(propertyName) {
     return propertyName.startsWith('product' + OB.Constants.FIELDSEPARATOR);
   },
 
-  removeProductCharacteristicsCriteria: function (fullCriteria) {
+  removeProductCharacteristicsCriteria: function(fullCriteria) {
     var newCriteria = isc.shallowClone(fullCriteria);
-    if (fullCriteria.criteria && fullCriteria.criteria.find('isProductCharacteristicsCriteria', true)) {
-      newCriteria.criteria.remove(newCriteria.criteria.find('isProductCharacteristicsCriteria', true));
+    if (
+      fullCriteria.criteria &&
+      fullCriteria.criteria.find('isProductCharacteristicsCriteria', true)
+    ) {
+      newCriteria.criteria.remove(
+        newCriteria.criteria.find('isProductCharacteristicsCriteria', true)
+      );
     }
     return newCriteria;
   },
 
-  showDialog: function () {
+  showDialog: function() {
     if (this.showFkDropdownUnfiltered) {
       this.filterDialog.show();
     } else {
-      var criteria = this.removeProductCharacteristicsCriteria(this.parentGrid.getCriteria());
+      var criteria = this.removeProductCharacteristicsCriteria(
+        this.parentGrid.getCriteria()
+      );
       this.filterDialog.tree.fetchData(criteria);
       this.filterDialog.show();
     }
   },
 
-  destroy: function () {
+  destroy: function() {
     this.filterDialog.destroy();
     this.filterDialog = null;
     this.Super('destroy', arguments);
-
   }
 });
 
@@ -647,7 +723,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
 isc.ClassFactory.defineClass('OBCharacteristicsGridItem', isc.OBTextItem);
 
 isc.OBCharacteristicsGridItem.addProperties({
-  setValue: function (value) {
+  setValue: function(value) {
     // forget about complex object value and use just what is in DB
     if (!value || !value.characteristics || !value.dbValue) {
       this.Super('setValue', arguments);

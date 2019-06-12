@@ -40,7 +40,7 @@ OB.Datasource = {};
 // * {{{doNew}}}: if set to true then a new datasource is created
 // If not set then setDataSource or optionDataSource are used.
 //
-OB.Datasource.get = function (dataSourceId, target, dsFieldName, doNew) {
+OB.Datasource.get = function(dataSourceId, target, dsFieldName, doNew) {
   var ds, callback, rpcRequest;
 
   if (!doNew) {
@@ -61,7 +61,7 @@ OB.Datasource.get = function (dataSourceId, target, dsFieldName, doNew) {
   }
 
   // create the callback
-  callback = function (rpcResponse, data, rpcRequest) {
+  callback = function(rpcResponse, data, rpcRequest) {
     // prevent registering it again
     var ds = isc.DataSource.getDataSource(data.ID);
     if (ds) {
@@ -84,13 +84,16 @@ OB.Datasource.get = function (dataSourceId, target, dsFieldName, doNew) {
 
   rpcRequest = {};
   rpcRequest.params = {
-    '_create': true
+    _create: true
   };
   if (doNew) {
     rpcRequest.params._new = true;
   }
   rpcRequest.httpMethod = 'GET';
-  rpcRequest.actionURL = OB.Application.contextUrl + 'org.openbravo.client.kernel/OBSERDS_Datasource/' + dataSourceId;
+  rpcRequest.actionURL =
+    OB.Application.contextUrl +
+    'org.openbravo.client.kernel/OBSERDS_Datasource/' +
+    dataSourceId;
   rpcRequest.callback = callback;
   rpcRequest.useSimpleHttp = true;
   rpcRequest.evalResult = true;
@@ -107,33 +110,38 @@ OB.Datasource.get = function (dataSourceId, target, dsFieldName, doNew) {
 // Parameters:
 // * {{{dsProperties}}}: the properties of the datasource which needs to be
 // created.
-OB.Datasource.create = function (dsProperties) {
+OB.Datasource.create = function(dsProperties) {
   var i, length, flds;
 
   // set some default properties
   if (!dsProperties.operationBindings) {
-    dsProperties.operationBindings = [{
-      operationType: 'fetch',
-      dataProtocol: 'postParams',
-      requestProperties: {
-        httpMethod: 'POST'
+    dsProperties.operationBindings = [
+      {
+        operationType: 'fetch',
+        dataProtocol: 'postParams',
+        requestProperties: {
+          httpMethod: 'POST'
+        }
+      },
+      {
+        operationType: 'add',
+        dataProtocol: 'postMessage'
+      },
+      {
+        operationType: 'remove',
+        dataProtocol: 'postParams',
+        requestProperties: {
+          httpMethod: 'DELETE'
+        }
+      },
+      {
+        operationType: 'update',
+        dataProtocol: 'postMessage',
+        requestProperties: {
+          httpMethod: 'PUT'
+        }
       }
-    }, {
-      operationType: 'add',
-      dataProtocol: 'postMessage'
-    }, {
-      operationType: 'remove',
-      dataProtocol: 'postParams',
-      requestProperties: {
-        httpMethod: 'DELETE'
-      }
-    }, {
-      operationType: 'update',
-      dataProtocol: 'postMessage',
-      requestProperties: {
-        httpMethod: 'PUT'
-      }
-    }];
+    ];
   }
   dsProperties.recordXPath = dsProperties.recordXPath || '/response/data';
   dsProperties.dataFormat = dsProperties.dataFormat || 'json';
@@ -149,7 +157,7 @@ OB.Datasource.create = function (dsProperties) {
     }
   }
 
-  // if must be a new datasource then change the id 
+  // if must be a new datasource then change the id
   // https://issues.openbravo.com/view.php?id=16581
   if (dsProperties._new && dsProperties.ID) {
     dsProperties.ID = dsProperties.ID + '_' + new Date().getTime();
@@ -173,7 +181,7 @@ isc.OBRestDataSource.addClassProperties({
   // is used to force a unique criterion with a unique value
   DUMMY_CRITERION_NAME: '_dummy',
 
-  getDummyCriterion: function () {
+  getDummyCriterion: function() {
     return {
       fieldName: isc.OBRestDataSource.DUMMY_CRITERION_NAME,
       operator: 'equals',
@@ -185,14 +193,23 @@ isc.OBRestDataSource.addClassProperties({
 isc.OBRestDataSource.addProperties({
   csrfToken: OB.User.csrfToken,
 
-  sendDSRequest: function (dsRequest) {
+  sendDSRequest: function(dsRequest) {
     //TODO: Report an issue to SmartClient - This part is a work around
     var extraProperties = {};
-    if (dsRequest.params && this.requestProperties && this.requestProperties.params) {
+    if (
+      dsRequest.params &&
+      this.requestProperties &&
+      this.requestProperties.params
+    ) {
       if (dsRequest.params._extraProperties) {
-        extraProperties[OB.Constants.EXTRA_PROPERTIES] = dsRequest.params._extraProperties;
+        extraProperties[OB.Constants.EXTRA_PROPERTIES] =
+          dsRequest.params._extraProperties;
       }
-      isc.addProperties(dsRequest.params, this.requestProperties.params, extraProperties);
+      isc.addProperties(
+        dsRequest.params,
+        this.requestProperties.params,
+        extraProperties
+      );
     }
     // if the datasource is not paginated, paginate them in case of selectors working in 2.50 UI.
     // in other cases error is thrown from server side.
@@ -208,7 +225,7 @@ isc.OBRestDataSource.addProperties({
     this.Super('sendDSRequest', arguments);
   },
 
-  transformRequest: function (dsRequest) {
+  transformRequest: function(dsRequest) {
     var operationType = dsRequest.operationType;
 
     if (this.csrfToken && operationType === 'remove') {
@@ -223,7 +240,10 @@ isc.OBRestDataSource.addProperties({
     //
     var encodedParams = this.Super('transformRequest', arguments);
 
-    if (this.csrfToken && (operationType === 'add' || operationType === 'update')) {
+    if (
+      this.csrfToken &&
+      (operationType === 'add' || operationType === 'update')
+    ) {
       var decodedParams = isc.JSON.decode(encodedParams);
       decodedParams.csrfToken = this.csrfToken;
       encodedParams = isc.JSON.encode(decodedParams);
@@ -233,8 +253,12 @@ isc.OBRestDataSource.addProperties({
   },
 
   // always let the dummy criterion be true
-  evaluateCriterion: function (record, criterion) {
-    if (criterion && criterion.fieldName && criterion.fieldName === isc.OBRestDataSource.DUMMY_CRITERION_NAME) {
+  evaluateCriterion: function(record, criterion) {
+    if (
+      criterion &&
+      criterion.fieldName &&
+      criterion.fieldName === isc.OBRestDataSource.DUMMY_CRITERION_NAME
+    ) {
       return true;
     }
     return this.Super('evaluateCriterion', arguments);

@@ -35,40 +35,41 @@ isc.OBNumberItem.addProperties({
   valueValidator: null,
   doBlurLogic: true,
 
-  init: function () {
+  init: function() {
     this.setKeyPressFilter(this.keyPressFilterNumeric);
     this.typeInstance = isc.SimpleType.getType(this.type);
     return this.Super('init', arguments);
   },
 
-  changed: function (form, item, value) {
+  changed: function(form, item, value) {
     var view = form.grid ? form.grid.view : form.view,
-        isParamWindow = form.paramWindow || (view.theForm && view.theForm.paramWindow);
+      isParamWindow =
+        form.paramWindow || (view.theForm && view.theForm.paramWindow);
     if (!isParamWindow && item && item.setValue) {
       item.setValue(this.getEnteredValue());
     }
     this.Super('changed', arguments);
   },
 
-  getMaskNumeric: function () {
+  getMaskNumeric: function() {
     return this.typeInstance.maskNumeric;
   },
 
-  getDecSeparator: function () {
+  getDecSeparator: function() {
     return this.typeInstance.decSeparator;
   },
 
-  getGroupSeparator: function () {
+  getGroupSeparator: function() {
     return this.typeInstance.groupSeparator;
   },
 
-  getGlobalGroupInterval: function () {
+  getGlobalGroupInterval: function() {
     return OB.Format.defaultGroupingSize;
   },
 
-  returnNewCaretPosition: function (numberStr, oldCaretPosition) {
+  returnNewCaretPosition: function(numberStr, oldCaretPosition) {
     var newCaretPosition = oldCaretPosition,
-        i;
+      i;
     for (i = oldCaretPosition; i > 0; i--) {
       if (numberStr.substring(i - 1, i) === this.getGroupSeparator()) {
         newCaretPosition = newCaretPosition - 1;
@@ -78,18 +79,28 @@ isc.OBNumberItem.addProperties({
   },
 
   // focus changes the formatted value to one without grouping
-  focusNumberInput: function () {
+  focusNumberInput: function() {
     var oldCaretPosition = 0;
     if (this.getSelectionRange()) {
       oldCaretPosition = this.getSelectionRange()[0];
     }
     // getElementValue returns the current value string, so not the typed value
-    var newCaretPosition = this.returnNewCaretPosition(this.getElementValue(), oldCaretPosition);
+    var newCaretPosition = this.returnNewCaretPosition(
+      this.getElementValue(),
+      oldCaretPosition
+    );
     // update the value shown, mapValueToDisplay will call the editFormatter
     // get the edit value, without grouping symbol.
-    var editValue = OB.Utilities.Number.OBMaskedToOBPlain(this.getElementValue(), this.getDecSeparator(), this.getGroupSeparator());
+    var editValue = OB.Utilities.Number.OBMaskedToOBPlain(
+      this.getElementValue(),
+      this.getDecSeparator(),
+      this.getGroupSeparator()
+    );
 
-    if (oldCaretPosition !== newCaretPosition || editValue !== this.getElementValue()) {
+    if (
+      oldCaretPosition !== newCaretPosition ||
+      editValue !== this.getElementValue()
+    ) {
       this.setElementValue(editValue);
       // in grid editing always the complete value is selected on focus
       if (this.form && this.form.grid && this.form.selectOnFocus) {
@@ -100,8 +111,13 @@ isc.OBNumberItem.addProperties({
     }
   },
 
-  replaceAt: function (string, what, ini, end) {
-    if (typeof end === 'undefined' || end === null || end === 'null' || end === '') {
+  replaceAt: function(string, what, ini, end) {
+    if (
+      typeof end === 'undefined' ||
+      end === null ||
+      end === 'null' ||
+      end === ''
+    ) {
       end = ini;
     }
     if (ini > end) {
@@ -110,12 +126,15 @@ isc.OBNumberItem.addProperties({
       end = temp;
     }
     var newString = '';
-    newString = string.substring(0, ini) + what + string.substring(end + 1, string.length);
+    newString =
+      string.substring(0, ini) +
+      what +
+      string.substring(end + 1, string.length);
     return newString;
   },
 
   // handles the decimal point of the numeric keyboard
-  manageDecPoint: function (keyCode) {
+  manageDecPoint: function(keyCode) {
     var decSeparator = this.getDecSeparator();
 
     if (decSeparator === '.') {
@@ -131,14 +150,21 @@ isc.OBNumberItem.addProperties({
      * replaceAt(obj.value, '', caretPosition); setCaretToPos(obj,
      * caretPosition);},5); }
      */
-    if (navigator.userAgent.toUpperCase().indexOf('OPERA') !== -1 && keyCode === 78) {
+    if (
+      navigator.userAgent.toUpperCase().indexOf('OPERA') !== -1 &&
+      keyCode === 78
+    ) {
       keyCode = 110;
     }
 
     var obj = this;
     if (keyCode === 110) {
-      setTimeout(function () {
-        var newValue = obj.replaceAt(obj.getElementValue(), decSeparator, caretPosition);
+      setTimeout(function() {
+        var newValue = obj.replaceAt(
+          obj.getElementValue(),
+          decSeparator,
+          caretPosition
+        );
         obj.setElementValue(newValue);
         obj.setSelectionRange(caretPosition + 1, caretPosition + 1);
       }, 5);
@@ -146,13 +172,13 @@ isc.OBNumberItem.addProperties({
     return true;
   },
 
-  manageEqualSymbol: function () {
+  manageEqualSymbol: function() {
     var obj = this;
     var caretPosition = 0;
     if (this.getSelectionRange()) {
       caretPosition = obj.getSelectionRange()[0];
     }
-    setTimeout(function () {
+    setTimeout(function() {
       // can happen when a dynamic form has already been removed
       if (!obj.getElementValue()) {
         return;
@@ -194,26 +220,37 @@ isc.OBNumberItem.addProperties({
     }, 5);
   },
 
-  keyDown: function (item, form, keyName) {
+  keyDown: function(item, form, keyName) {
     this.keyDownAction(item, form, keyName);
   },
 
-  keyDownAction: function (item, form, keyName) {
+  keyDownAction: function(item, form, keyName) {
     var keyCode = isc.EventHandler.lastEvent.nativeKeyCode;
     this.manageEqualSymbol();
     this.manageDecPoint(keyCode);
   },
 
-  validateOBNumberItem: function () {
+  validateOBNumberItem: function() {
     var value = this.getElementValue();
     var isValid = this.valueValidator.condition(this, this.form, value);
     var isRequired = this.required;
     if (isValid === false) {
-      this.form.setFieldErrors(this.name, isc.OBDateItem.invalidValueLabel, false);
+      this.form.setFieldErrors(
+        this.name,
+        isc.OBDateItem.invalidValueLabel,
+        false
+      );
       this.form.markForRedraw();
       return false;
-    } else if (isRequired === true && (value === null || value === '' || typeof value === 'undefined')) {
-      this.form.setFieldErrors(this.name, isc.OBDateItem.requiredValueLabel, false);
+    } else if (
+      isRequired === true &&
+      (value === null || value === '' || typeof value === 'undefined')
+    ) {
+      this.form.setFieldErrors(
+        this.name,
+        isc.OBDateItem.requiredValueLabel,
+        false
+      );
       this.form.markForRedraw();
       return false;
     } else {
@@ -223,7 +260,7 @@ isc.OBNumberItem.addProperties({
     return true;
   },
 
-  focus: function (form, item) {
+  focus: function(form, item) {
     if (!this.getErrors()) {
       // only do the focus/reformat if no errors
       this.focusNumberInput();
@@ -231,7 +268,7 @@ isc.OBNumberItem.addProperties({
     return this.Super('focus', arguments);
   },
 
-  checkMathExpression: function (expression) {
+  checkMathExpression: function(expression) {
     var jsExpression = expression;
     var dummy = 'xyxdummyxyx';
 
@@ -351,7 +388,7 @@ isc.OBNumberItem.addProperties({
   // sin(x)            Returns the sine of x (x is in radians)
   // sqrt(x)           Returns the square root of x
   // tan(x)            Returns the tangent of an angle
-  evalMathExpression: function (expression) {
+  evalMathExpression: function(expression) {
     if (!this.checkMathExpression(expression)) {
       return 'error';
     }
@@ -417,26 +454,48 @@ isc.OBNumberItem.addProperties({
     return result;
   },
 
-  blur: function () {
-    var value, isFormula = false;
+  blur: function() {
+    var value,
+      isFormula = false;
 
     // Make sure the number is rounded using the number of decimal digits specified in the number typeInstance
     if (isc.isA.String(this.getValue())) {
       //if the string is a math expression do not perform rounding yet.
       if (this.getValue().indexOf('=') === -1) {
-        value = OB.Utilities.Number.OBPlainToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator, OB.Format.defaultGroupingSize);
+        value = OB.Utilities.Number.OBPlainToOBMasked(
+          this.getValue(),
+          this.typeInstance.maskNumeric,
+          this.typeInstance.decSeparator,
+          this.typeInstance.groupSeparator,
+          OB.Format.defaultGroupingSize
+        );
       } else {
         value = this.getValue();
         isFormula = true;
       }
-      this.setValue(OB.Utilities.Number.OBMaskedToJS(value, this.typeInstance.decSeparator, this.typeInstance.groupSeparator));
+      this.setValue(
+        OB.Utilities.Number.OBMaskedToJS(
+          value,
+          this.typeInstance.decSeparator,
+          this.typeInstance.groupSeparator
+        )
+      );
     } else {
-      value = this.roundJsNumberUsingTypeInstance(this.getValue(), this.typeInstance);
+      value = this.roundJsNumberUsingTypeInstance(
+        this.getValue(),
+        this.typeInstance
+      );
       this.setValue(value);
     }
 
     if (this.grid && this.grid.isEditing && this.grid.isEditing()) {
-      this.grid.setEditValue(this.grid.getEditRow(), this.name, this.getValue(), true, true);
+      this.grid.setEditValue(
+        this.grid.getEditRow(),
+        this.name,
+        this.getValue(),
+        true,
+        true
+      );
     }
 
     if (this.form && this.form._isRedrawing) {
@@ -461,21 +520,36 @@ isc.OBNumberItem.addProperties({
       // first check if the number is valid
       if (!isc.isA.String(value)) {
         // format the value to be displayed.
-        value = OB.Utilities.Number.JSToOBMasked(value, this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator, OB.Format.defaultGroupingSize);
+        value = OB.Utilities.Number.JSToOBMasked(
+          value,
+          this.typeInstance.maskNumeric,
+          this.typeInstance.decSeparator,
+          this.typeInstance.groupSeparator,
+          OB.Format.defaultGroupingSize
+        );
         this.setElementValue(this.mapValueToDisplay(value));
       }
     }
     return this.Super('blur', arguments);
   },
 
-  roundJsNumberUsingTypeInstance: function (jsNumber, typeInstance) {
-    var roundedStringNumber = OB.Utilities.Number.JSToOBMasked(jsNumber, typeInstance.maskNumeric, typeInstance.decSeparator, typeInstance.groupSeparator);
-    return OB.Utilities.Number.OBMaskedToJS(roundedStringNumber, typeInstance.decSeparator, typeInstance.groupSeparator);
+  roundJsNumberUsingTypeInstance: function(jsNumber, typeInstance) {
+    var roundedStringNumber = OB.Utilities.Number.JSToOBMasked(
+      jsNumber,
+      typeInstance.maskNumeric,
+      typeInstance.decSeparator,
+      typeInstance.groupSeparator
+    );
+    return OB.Utilities.Number.OBMaskedToJS(
+      roundedStringNumber,
+      typeInstance.decSeparator,
+      typeInstance.groupSeparator
+    );
   }
 });
 
 // Use our custom validator for float and integers
-isc.OBNumberItem.validateCondition = function (item, validator, value) {
+isc.OBNumberItem.validateCondition = function(item, validator, value) {
   var undef, type;
 
   if (!item.typeInstance) {
@@ -498,7 +572,11 @@ isc.OBNumberItem.validateCondition = function (item, validator, value) {
   // return a formatted value, if it was valid
   if (isc.isA.String(value)) {
     if (OB.Utilities.Number.IsValidValueString(type, value)) {
-      validator.resultingValue = OB.Utilities.Number.OBMaskedToJS(value, type.decSeparator, type.groupSeparator);
+      validator.resultingValue = OB.Utilities.Number.OBMaskedToJS(
+        value,
+        type.decSeparator,
+        type.groupSeparator
+      );
       item.storeValue(validator.resultingValue);
       return true;
     } else {
@@ -528,17 +606,35 @@ isc.OBNumberFilterItem.addProperties({
   keyPressFilterNumeric: null,
   doBlurLogic: false,
   operator: 'equals',
-  validOperators: ['equals', 'lessThan', 'greaterThan', 'notEqual', 'lessThan', 'lessOrEqual', 'greaterOrEqual', 'between', 'betweenInclusive', 'isNull', 'isNotNull', 'equalsField', 'notEqualField', 'greaterThanField', 'lessThanField', 'greaterOrEqualField', 'lessOrEqualField'],
+  validOperators: [
+    'equals',
+    'lessThan',
+    'greaterThan',
+    'notEqual',
+    'lessThan',
+    'lessOrEqual',
+    'greaterOrEqual',
+    'between',
+    'betweenInclusive',
+    'isNull',
+    'isNotNull',
+    'equalsField',
+    'notEqualField',
+    'greaterThanField',
+    'lessThanField',
+    'greaterOrEqualField',
+    'lessOrEqualField'
+  ],
   // In P&E grids, on blur will be overridden to ensure correct record selection having filter on change disabled
   canOverrideOnBlur: true,
 
   // prevent handling of equal symbol in filteritem
-  keyDownAction: function (item, form, keyName) {
+  keyDownAction: function(item, form, keyName) {
     var keyCode = isc.EventHandler.lastEvent.nativeKeyCode;
     this.manageDecPoint(keyCode);
   },
 
-  parseValueExpressions: function (value, fieldName, operator) {
+  parseValueExpressions: function(value, fieldName, operator) {
     var ret, strValue;
 
     // smartclient's implementation of parseValueExpressions does not work properly of the formitem value is 0
@@ -573,9 +669,10 @@ isc.OBNumberFilterItem.addProperties({
     return ret;
   },
 
-  buildValueExpressions: function (criterion) {
+  buildValueExpressions: function(criterion) {
     var i = 0,
-        criteria, length;
+      criteria,
+      length;
     if (criterion && !criterion.criteria) {
       criterion = {
         criteria: [criterion]
@@ -608,7 +705,7 @@ isc.OBNumberFilterItem.addProperties({
   },
 
   // If the filter has not been applied yet, apply it when it loses the focus
-  blur: function () {
+  blur: function() {
     var undef;
     //do not apply the filter if the value is undefined. Can happen in cases where a record is opened directly and creates an additional datasource call.
     //Refer issue https://issues.openbravo.com/view.php?id=24692
@@ -619,25 +716,38 @@ isc.OBNumberFilterItem.addProperties({
     return this.Super('blur', arguments);
   },
 
-  convertToStringValue: function (value) {
+  convertToStringValue: function(value) {
     var type = this.typeInstance;
     if (isc.isA.String(value) && !isNaN(value)) {
       value = parseFloat(value);
     }
     if (!isc.isA.String(value)) {
-      return OB.Utilities.Number.JSToOBMasked(value, type.maskNumeric, type.decSeparator, type.groupSeparator, OB.Format.defaultGroupingSize);
+      return OB.Utilities.Number.JSToOBMasked(
+        value,
+        type.maskNumeric,
+        type.decSeparator,
+        type.groupSeparator,
+        OB.Format.defaultGroupingSize
+      );
     }
     return value;
   },
 
-  focusNumberInput: function () {},
+  focusNumberInput: function() {},
 
-  convertToTypedValue: function (value) {
+  convertToTypedValue: function(value) {
     if (isc.isA.String(value)) {
       value = value.trim();
     }
-    if (isc.isA.String(value) && OB.Utilities.Number.IsValidValueString(this.typeInstance, value)) {
-      return OB.Utilities.Number.OBMaskedToJS(value, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
+    if (
+      isc.isA.String(value) &&
+      OB.Utilities.Number.IsValidValueString(this.typeInstance, value)
+    ) {
+      return OB.Utilities.Number.OBMaskedToJS(
+        value,
+        this.typeInstance.decSeparator,
+        this.typeInstance.groupSeparator
+      );
     }
     return value;
   }

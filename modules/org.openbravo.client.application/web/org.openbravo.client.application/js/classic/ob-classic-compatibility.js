@@ -23,8 +23,7 @@
 // and the {{{Main View}}}. This includes opening views from the linked items display,
 // from direct links in other tabs.
 //
-(function (OB, isc) {
-
+(function(OB, isc) {
   if (!OB || !isc) {
     throw {
       name: 'ReferenceError',
@@ -34,15 +33,14 @@
 
   // cache object references locally
   var O = OB,
-      L = OB.Layout,
-      M = OB.MainView,
-      ISC = isc,
-      cobcomp;
+    L = OB.Layout,
+    M = OB.MainView,
+    ISC = isc,
+    cobcomp;
 
   function ClassicOBCompatibility() {}
 
   ClassicOBCompatibility.prototype = {
-
     // ** {{{ openLinkedItem(tabId, recordId) }}} **
     //
     // Opens a window from the linked item view.
@@ -51,10 +49,9 @@
     // * {{{tabId}}} id of the tab to open
     // * {{{recordId}}} the record to show
     //
-    openLinkedItem: function (tabId, recordId) {
+    openLinkedItem: function(tabId, recordId) {
       var doOpenClassicWindow;
-      doOpenClassicWindow = function (response, data, request) {
-
+      doOpenClassicWindow = function(response, data, request) {
         if (!data.recordId || data.recordId.length === 0) {
           L.ViewManager.openView('OBClassicWindow', {
             tabTitle: data.tabTitle,
@@ -76,10 +73,15 @@
         }
       };
 
-      OB.RemoteCallManager.call('org.openbravo.client.application.ComputeWindowActionHandler', {}, {
-        'tabId': tabId,
-        'recordId': recordId
-      }, doOpenClassicWindow);
+      OB.RemoteCallManager.call(
+        'org.openbravo.client.application.ComputeWindowActionHandler',
+        {},
+        {
+          tabId: tabId,
+          recordId: recordId
+        },
+        doOpenClassicWindow
+      );
     },
 
     // ** {{{ sendDirectLink(action, form) }}} **
@@ -91,15 +93,20 @@
     // e.g. {{{ JSON }}}
     // * {{{form}}} is an Object of the form from where it has been submitted
     //
-    sendDirectLink: function (action, form) {
-
+    sendDirectLink: function(action, form) {
       //
       // Returns a form field and value as a javascript object composed by name and value fields
       //
 
       function inputValueForms(name, field) {
         var result = {};
-        if (!field || name.toString().replace(/^\s*/, '').replace(/\s*$/, '') === '') {
+        if (
+          !field ||
+          name
+            .toString()
+            .replace(/^\s*/, '')
+            .replace(/\s*$/, '') === ''
+        ) {
           return result;
         }
         if (!field.type && field.length > 1) {
@@ -111,7 +118,7 @@
               return result;
             } else {
               var length = field.options.length,
-                  fieldsCount;
+                fieldsCount;
               for (fieldsCount = 0; fieldsCount < length; fieldsCount++) {
                 if (field.options[fieldsCount].selected) {
                   result.name = name;
@@ -120,7 +127,10 @@
               }
               return result;
             }
-          } else if (field.type.toUpperCase().indexOf('RADIO') !== -1 || field.type.toUpperCase().indexOf('CHECK') !== -1) {
+          } else if (
+            field.type.toUpperCase().indexOf('RADIO') !== -1 ||
+            field.type.toUpperCase().indexOf('CHECK') !== -1
+          ) {
             if (!field.length) {
               if (field.checked) {
                 result.name = name;
@@ -131,7 +141,7 @@
               }
             } else {
               var total = field.length,
-                  i;
+                i;
               for (i = 0; i < total; i++) {
                 if (field[i].checked) {
                   result.name = name;
@@ -157,14 +167,18 @@
 
       function getXHRParamsObj(action, formObject) {
         var paramsObj = {},
-            i, length = formObject.elements.length;
+          i,
+          length = formObject.elements.length;
 
         paramsObj.Command = action;
         paramsObj.IsAjaxCall = '1';
 
         for (i = 0; i < length; i++) {
           if (formObject.elements[i].type) {
-            var param = inputValueForms(formObject.elements[i].name, formObject.elements[i]);
+            var param = inputValueForms(
+              formObject.elements[i].name,
+              formObject.elements[i]
+            );
 
             if (param && param.name !== 'Command') {
               paramsObj[param.name] = param.value;
@@ -180,7 +194,12 @@
       //
 
       function fetchSendDirectLinkCallback(response, data) {
-        OB.Utilities.openView(data.windowId, data.tabId, data.tabTitle, data.recordId);
+        OB.Utilities.openView(
+          data.windowId,
+          data.tabId,
+          data.tabTitle,
+          data.recordId
+        );
       }
 
       //
@@ -194,7 +213,8 @@
         // formObject.action.toString();
         // hardcode to prevent this issue with chrome:
         // https://issues.openbravo.com/view.php?id=13837
-        var actionURL = OB.Application.contextUrl + 'utility/ReferencedLink.html';
+        var actionURL =
+          OB.Application.contextUrl + 'utility/ReferencedLink.html';
 
         var rpcMgr = ISC.RPCManager;
         var reqObj = {
@@ -210,16 +230,33 @@
       fetchSendDirectLink(action, form);
     },
 
-    setTabInformation: function (windowId, tabId, recordId, mode, obManualURL, title) {
+    setTabInformation: function(
+      windowId,
+      tabId,
+      recordId,
+      mode,
+      obManualURL,
+      title
+    ) {
       var tabNumber = null,
-          tabSet, tabPane;
+        tabSet,
+        tabPane;
       tabSet = M.TabSet;
       if (windowId) {
-        tabNumber = L.ViewManager.views.getTabNumberFromViewParam('windowId', windowId);
+        tabNumber = L.ViewManager.views.getTabNumberFromViewParam(
+          'windowId',
+          windowId
+        );
       } else if (obManualURL) {
-        tabNumber = L.ViewManager.views.getTabNumberFromViewParam('obManualURL', obManualURL);
+        tabNumber = L.ViewManager.views.getTabNumberFromViewParam(
+          'obManualURL',
+          obManualURL
+        );
       } else if (tabId) {
-        tabNumber = L.ViewManager.views.getTabNumberFromViewParam('tabId', tabId);
+        tabNumber = L.ViewManager.views.getTabNumberFromViewParam(
+          'tabId',
+          tabId
+        );
       }
 
       if (!tabNumber) {
@@ -233,14 +270,29 @@
       tabPane = tabSet.getTabPane(tabNumber);
 
       tabSet.setTabTitle(tabNumber, title);
-      tabPane.updateTabInformation(windowId, tabId, recordId, mode, obManualURL, title);
+      tabPane.updateTabInformation(
+        windowId,
+        tabId,
+        recordId,
+        mode,
+        obManualURL,
+        title
+      );
     },
 
     Keyboard: {
-      getMDIKS: function () {
-        var key, auxKey, action, funcParam, keyMap, ClassicKeyJSON = [],
-            LKS = O.KeyboardManager.Shortcuts,
-            i, j, isCanvasShortcut, length = LKS.list.length;
+      getMDIKS: function() {
+        var key,
+          auxKey,
+          action,
+          funcParam,
+          keyMap,
+          ClassicKeyJSON = [],
+          LKS = O.KeyboardManager.Shortcuts,
+          i,
+          j,
+          isCanvasShortcut,
+          length = LKS.list.length;
 
         for (i = 0; i < length; i++) {
           auxKey = '';
@@ -284,44 +336,44 @@
             // Special keys nomenclature adaptation from Smartclient way to
             // classic utils.js way
             keyMap = {
-              'Backspace': 'BACKSPACE',
-              'Tab': 'TAB',
-              'Enter': 'ENTER',
-              'Space': 'SPACE',
-              'Insert': 'INSERT',
-              'End': 'END',
-              'Home': 'HOME',
-              'Page_Up': 'REPAGE',
-              'Page_Down': 'AVPAGE',
-              'Arrow_Left': 'LEFTARROW',
-              'Arrow_Right': 'RIGHTARROW',
-              'Arrow_Up': 'UPARROW',
-              'Arrow_Down': 'DOWNARROW',
+              Backspace: 'BACKSPACE',
+              Tab: 'TAB',
+              Enter: 'ENTER',
+              Space: 'SPACE',
+              Insert: 'INSERT',
+              End: 'END',
+              Home: 'HOME',
+              Page_Up: 'REPAGE',
+              Page_Down: 'AVPAGE',
+              Arrow_Left: 'LEFTARROW',
+              Arrow_Right: 'RIGHTARROW',
+              Arrow_Up: 'UPARROW',
+              Arrow_Down: 'DOWNARROW',
               '+': 'NUMBERPOSITIVE',
               '-': 'NUMBERNEGATIVE',
               '.': 'NUMBERDECIMAL',
-              'Escape': 'ESCAPE',
-              'f1': 'F1',
-              'f2': 'F2',
-              'f3': 'F3',
-              'f4': 'F4',
-              'f5': 'F5',
-              'f6': 'F6',
-              'f7': 'F7',
-              'f8': 'F8',
-              'f9': 'F9',
-              'f10': 'F10',
-              'f11': 'F11',
-              'f12': 'F12'
+              Escape: 'ESCAPE',
+              f1: 'F1',
+              f2: 'F2',
+              f3: 'F3',
+              f4: 'F4',
+              f5: 'F5',
+              f6: 'F6',
+              f7: 'F7',
+              f8: 'F8',
+              f9: 'F9',
+              f10: 'F10',
+              f11: 'F11',
+              f12: 'F12'
             };
 
             key = keyMap[key] || key;
 
             ClassicKeyJSON.push({
-              'key': key,
-              'auxKey': auxKey,
-              'action': action,
-              'funcParam': funcParam
+              key: key,
+              auxKey: auxKey,
+              action: action,
+              funcParam: funcParam
             });
           }
         }
@@ -329,7 +381,7 @@
         return ClassicKeyJSON;
       },
 
-      executeKSFunction: function (func, funcParam) {
+      executeKSFunction: function(func, funcParam) {
         func(funcParam);
       }
     },
@@ -357,10 +409,23 @@
       // * {{{postParams}}} type: Object - parameters to be sent to the url using POST instead of GET
       // * {{{isModal}}} type: Boolean - to specify if the popup should be modal or not. The default value is 'true' if it is not specified
       // * {{{show}}} type: Boolean - to specify if the popup should be shown or not. The default value is 'true' if it is not specified
-      // 
+      //
       // returns the created OBClassicPopupWindow
-      open: function (name, width, height, url, title, theOpener, showMinimizeControl, showMaximizeControl, showCloseControl, postParams, isModal, show) {
-        var urlCharacter = (url && url.indexOf('?') !== -1) ? '&' : '?';
+      open: function(
+        name,
+        width,
+        height,
+        url,
+        title,
+        theOpener,
+        showMinimizeControl,
+        showMaximizeControl,
+        showCloseControl,
+        postParams,
+        isModal,
+        show
+      ) {
+        var urlCharacter = url && url.indexOf('?') !== -1 ? '&' : '?';
 
         if (showMinimizeControl !== false) {
           showMinimizeControl = true;
@@ -377,11 +442,26 @@
         if (show !== false) {
           show = true;
         }
-        var _htmlCode, _navUserAgent = navigator.userAgent.toUpperCase();
-        if (OB.Utilities.isIE9Strict || _navUserAgent.indexOf('MSIE') === -1) { // IE >= 9 (Strict) or any other browser
-          _htmlCode = '<html><head></head><body style="margin: 0; padding: 0; border: none;">' + '<iframe id="MDIPopupContainer" name="MDIPopupContainer" style="margin: 0; padding: 0; border: none; width: 100%; height: 100%;"></iframe>' + '<iframe name="frameMenu" scrolling="no" src="' + OB.Application.contextUrl + 'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading" style="margin: 0px; padding: 0px; border: 0px; height: 0px; width: 0px;"></iframe>' + '</body></html>';
-        } else { // IE <= 8
-          _htmlCode = '<html><head></head><frameset cols="*, 0%" rows="*" frameborder="no" border="0" framespacing="0">' + '<frame id="MDIPopupContainer" name="MDIPopupContainer"></frame>' + '<frame name="frameMenu" scrolling="no" src="' + OB.Application.contextUrl + 'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading"></frame>' + '</frameset><body></body></html>';
+        var _htmlCode,
+          _navUserAgent = navigator.userAgent.toUpperCase();
+        if (OB.Utilities.isIE9Strict || _navUserAgent.indexOf('MSIE') === -1) {
+          // IE >= 9 (Strict) or any other browser
+          _htmlCode =
+            '<html><head></head><body style="margin: 0; padding: 0; border: none;">' +
+            '<iframe id="MDIPopupContainer" name="MDIPopupContainer" style="margin: 0; padding: 0; border: none; width: 100%; height: 100%;"></iframe>' +
+            '<iframe name="frameMenu" scrolling="no" src="' +
+            OB.Application.contextUrl +
+            'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading" style="margin: 0px; padding: 0px; border: 0px; height: 0px; width: 0px;"></iframe>' +
+            '</body></html>';
+        } else {
+          // IE <= 8
+          _htmlCode =
+            '<html><head></head><frameset cols="*, 0%" rows="*" frameborder="no" border="0" framespacing="0">' +
+            '<frame id="MDIPopupContainer" name="MDIPopupContainer"></frame>' +
+            '<frame name="frameMenu" scrolling="no" src="' +
+            OB.Application.contextUrl +
+            'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading"></frame>' +
+            '</frameset><body></body></html>';
         }
         var cPopup = isc.OBClassicPopup.create({
           ID: name + '_' + cobcomp.Popup.secString,
@@ -418,24 +498,33 @@
       // Parameters:
       // * {{{cPopup}}} type: Canvas - the drawn popup
       // * {{{postParams}}} type: Object - parameters to be sent to the url using POST instead of GET
-      postOpen: function (cPopup, postParams) {
+      postOpen: function(cPopup, postParams) {
         if (!cPopup.isFramesetDraw) {
-          cPopup.getIframeHtmlObj().contentWindow.document.write(cPopup.htmlCode);
+          cPopup
+            .getIframeHtmlObj()
+            .contentWindow.document.write(cPopup.htmlCode);
           cPopup.getIframeHtmlObj().contentWindow.document.close();
           cPopup.isFramesetDraw = true;
         }
         if (!cPopup.getIframeHtmlObj().contentWindow.frames[0].document.body) {
-          setTimeout(function () {
+          setTimeout(function() {
             cobcomp.Popup.postOpen(cPopup, postParams);
           }, 50);
           return true;
         }
         if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
           //  In IE (non-Strict) if window.open is executed against a frame, the target frame doesn't know which is its opener
-          if (typeof cPopup.getIframeHtmlObj().contentWindow.frames[0].opener === 'undefined') {
-            cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
-            if (typeof cPopup.getIframeHtmlObj().contentWindow.frames[0].opener === 'undefined') {
-              setTimeout(function () {
+          if (
+            typeof cPopup.getIframeHtmlObj().contentWindow.frames[0].opener ===
+            'undefined'
+          ) {
+            cPopup.getIframeHtmlObj().contentWindow.frames[0].opener =
+              cPopup.theOpener;
+            if (
+              typeof cPopup.getIframeHtmlObj().contentWindow.frames[0]
+                .opener === 'undefined'
+            ) {
+              setTimeout(function() {
                 cobcomp.Popup.postOpen(cPopup, postParams);
               }, 50);
               return true;
@@ -443,35 +532,54 @@
           }
         }
         var wName = cPopup.ID;
-        wName = wName.substring(0, wName.lastIndexOf(cobcomp.Popup.secString) - 1);
+        wName = wName.substring(
+          0,
+          wName.lastIndexOf(cobcomp.Popup.secString) - 1
+        );
         if (!cPopup.areParamsSet) {
           if (!postParams) {
-            cPopup.getIframeHtmlObj().contentWindow.frames[0].location.href = cPopup.popupURL;
+            cPopup.getIframeHtmlObj().contentWindow.frames[0].location.href =
+              cPopup.popupURL;
             if (OB.Utilities.isIE9Strict || OB.Utilities.isEdge) {
               // In IE9 Strict and Edge, when the location.href or .src is defined, the previous defined opener is lost, and it should be defined again
-              cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
+              cPopup.getIframeHtmlObj().contentWindow.frames[0].opener =
+                cPopup.theOpener;
               var setOpenerInterval;
-              setOpenerInterval = setInterval(
-
-              function () {
+              setOpenerInterval = setInterval(function() {
                 if (!cPopup.getIframeHtmlObj()) {
                   clearInterval(setOpenerInterval);
-                } else if (cPopup.getIframeHtmlObj().contentWindow.frames[0].document.readyState === 'complete') {
-                  if (!cPopup.getIframeHtmlObj().contentWindow.frames[0].opener) {
-                    cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
+                } else if (
+                  cPopup.getIframeHtmlObj().contentWindow.frames[0].document
+                    .readyState === 'complete'
+                ) {
+                  if (
+                    !cPopup.getIframeHtmlObj().contentWindow.frames[0].opener
+                  ) {
+                    cPopup.getIframeHtmlObj().contentWindow.frames[0].opener =
+                      cPopup.theOpener;
                   }
-                  if (cPopup.getIframeHtmlObj().contentWindow.frames[0].window.MDIPopupId !== wName) {
-                    cPopup.getIframeHtmlObj().contentWindow.document.getElementById('MDIPopupContainer').name = wName;
-                    cPopup.getIframeHtmlObj().contentWindow.frames[0].window.checkWindowInMDIPopup();
+                  if (
+                    cPopup.getIframeHtmlObj().contentWindow.frames[0].window
+                      .MDIPopupId !== wName
+                  ) {
+                    cPopup
+                      .getIframeHtmlObj()
+                      .contentWindow.document.getElementById(
+                        'MDIPopupContainer'
+                      ).name = wName;
+                    cPopup
+                      .getIframeHtmlObj()
+                      .contentWindow.frames[0].window.checkWindowInMDIPopup();
                   }
                 }
               }, 100);
             }
           } else {
             // Create a form and POST parameters as input hidden values
-            var doc = cPopup.getIframeHtmlObj().contentWindow.frames[0].document,
-                frm = doc.createElement('form'),
-                i;
+            var doc = cPopup.getIframeHtmlObj().contentWindow.frames[0]
+                .document,
+              frm = doc.createElement('form'),
+              i;
             frm.setAttribute('method', 'post');
             frm.setAttribute('action', cPopup.popupURL);
             for (i in postParams) {
@@ -487,11 +595,18 @@
             frm.submit();
           }
           cPopup.getIframeHtmlObj().contentWindow.frames[0].name = wName;
-          cPopup.getIframeHtmlObj().contentWindow.document.getElementById('MDIPopupContainer').name = wName;
+          cPopup
+            .getIframeHtmlObj()
+            .contentWindow.document.getElementById(
+              'MDIPopupContainer'
+            ).name = wName;
           cPopup.areParamsSet = true;
         }
-        if (cPopup.areParamsSet && cPopup.getIframeHtmlObj().contentWindow.frames[0].name !== wName) {
-          setTimeout(function () {
+        if (
+          cPopup.areParamsSet &&
+          cPopup.getIframeHtmlObj().contentWindow.frames[0].name !== wName
+        ) {
+          setTimeout(function() {
             cobcomp.Popup.postOpen(cPopup, postParams);
           }, 50);
         }
@@ -504,7 +619,7 @@
       //
       // Parameters:
       // * {{{name}}} type: String - the name of the window
-      close: function (name, cancelEvent) {
+      close: function(name, cancelEvent) {
         var activateView;
 
         name = name + '_' + cobcomp.Popup.secString;
@@ -522,7 +637,7 @@
       //
       // Parameters:
       // * {{{name}}} type: String - the name of the window
-      getPopup: function (name) {
+      getPopup: function(name) {
         return window[name + '_' + cobcomp.Popup.secString];
       },
 
@@ -534,7 +649,7 @@
       // * {{{name}}} type: String - the name of the window
       // * {{{width}}} type: Number - width to resize to
       // * {{{height}}} type: Number - height to resize to
-      resize: function (name, width, height) {
+      resize: function(name, width, height) {
         name = name + '_' + cobcomp.Popup.secString;
         window[name].resizeTo(width, height);
       },
@@ -546,7 +661,7 @@
       // Parameters:
       // * {{{name}}} type: String - the name of the window
       // * {{{title}}} type: String - the title of the window
-      setTitle: function (name, title) {
+      setTitle: function(name, title) {
         name = name + '_' + cobcomp.Popup.secString;
         window[name].setTitle(title);
       },
@@ -557,7 +672,7 @@
       //
       // Parameters:
       // * {{{name}}} type: String - the name of the window
-      isLoaded: function (name) {
+      isLoaded: function(name) {
         name = name + '_' + cobcomp.Popup.secString;
         if (window[name].isLoaded) {
           return true;
@@ -566,14 +681,13 @@
         }
       },
 
-
       /** Upgrading process pop ups **/
-      standardUpgrading: function () {
+      standardUpgrading: function() {
         var actionButton = isc.addProperties({}, isc.Dialog.OK, {
-          getTitle: function () {
+          getTitle: function() {
             return '<b>' + OB.I18N.getLabel('OBUIAPP_LogOut') + '</b>';
           },
-          click: function () {
+          click: function() {
             this.topElement.cancelClick();
             OB.Utilities.logout(true);
           }
@@ -587,19 +701,23 @@
         });
       },
 
-      openAPRMPopup: function () {
+      openAPRMPopup: function() {
         var actionButton = isc.addProperties({}, isc.Dialog.OK, {
-          getTitle: function () {
-            return '<b>' + OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMBtn') + '</b>';
+          getTitle: function() {
+            return (
+              '<b>' + OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMBtn') + '</b>'
+            );
           },
-          click: function () {
+          click: function() {
             this.topElement.cancelClick();
             OB.Layout.ViewManager.openView('OBClassicWindow', {
               command: 'DEFAULT',
               formId: 'E4F4AAC7DD6D4FBDA3AF973B7767F374',
               icon: 'Form',
-              id: '/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html',
-              obManualURL: '/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html',
+              id:
+                '/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html',
+              obManualURL:
+                '/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html',
               tabTitle: OB.I18N.getLabel('APRMT_MigrationToolTitle'),
               viewId: 'OBClassicWindow'
             });
@@ -614,9 +732,9 @@
         });
       },
 
-      openConfigScriptPopup: function (scripts) {
+      openConfigScriptPopup: function(scripts) {
         var actionButton = isc.addProperties({}, isc.Dialog.OK, {
-          click: function () {
+          click: function() {
             this.topElement.cancelClick();
           }
         });
@@ -629,9 +747,9 @@
         });
       },
 
-      openSuccessUpgradePopup: function () {
+      openSuccessUpgradePopup: function() {
         var actionButton = isc.addProperties({}, isc.Dialog.OK, {
-          click: function () {
+          click: function() {
             this.topElement.cancelClick();
             OB.PropertyStore.set('isUpgrading', 'N', null, false, true);
           }
@@ -649,19 +767,39 @@
       // ** {{{ Popup.openInstancePurpose() }}} **
       //
       // Opens directly the "Instance Purpose" window inside a popup
-      openInstancePurpose: function () {
-        cobcomp.Popup.open('InstancePurpose', 600, 500, OB.Application.contextUrl + 'ad_forms/InstancePurpose.html', '', window, false, false, true);
+      openInstancePurpose: function() {
+        cobcomp.Popup.open(
+          'InstancePurpose',
+          600,
+          500,
+          OB.Application.contextUrl + 'ad_forms/InstancePurpose.html',
+          '',
+          window,
+          false,
+          false,
+          true
+        );
       },
 
       // ** {{{ Popup.openHeartbeat() }}} **
       //
       // Opens directly the "Heartbeat" window inside a popup
-      openHeartbeat: function () {
-        cobcomp.Popup.open('Heartbeat', 600, 500, OB.Application.contextUrl + 'ad_forms/Heartbeat.html', '', window, false, false, true);
+      openHeartbeat: function() {
+        cobcomp.Popup.open(
+          'Heartbeat',
+          600,
+          500,
+          OB.Application.contextUrl + 'ad_forms/Heartbeat.html',
+          '',
+          window,
+          false,
+          false,
+          true
+        );
       }
     }
   };
 
   // Initialize ClassicOBCompatibility object
   cobcomp = L.ClassicOBCompatibility = new ClassicOBCompatibility();
-}(OB, isc));
+})(OB, isc);

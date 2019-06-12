@@ -21,7 +21,6 @@
 // Implements the Query / List widget superclass.
 //
 isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
-
   widgetId: null,
   widgetInstanceId: null,
   fields: null,
@@ -36,20 +35,22 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   showAllLabel: null,
   OBQueryListShowAllLabelHeight: null,
 
-  initWidget: function () {
+  initWidget: function() {
     var field, i;
     this.showAllLabel = isc.HLayout.create({
       height: this.OBQueryListShowAllLabelHeight,
       members: [
-      isc.OBQueryListRowsNumberLabel.create({
-        contents: ''
-      }), isc.OBQueryListShowAllLabel.create({
-        contents: OB.I18N.getLabel('OBCQL_ShowAll'),
-        widget: this,
-        action: function () {
-          this.widget.maximize();
-        }
-      })]
+        isc.OBQueryListRowsNumberLabel.create({
+          contents: ''
+        }),
+        isc.OBQueryListShowAllLabel.create({
+          contents: OB.I18N.getLabel('OBCQL_ShowAll'),
+          widget: this,
+          action: function() {
+            this.widget.maximize();
+          }
+        })
+      ]
     });
 
     this.gridDataSource = this.createGridDataSource();
@@ -72,23 +73,28 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     }
   },
 
-  setDbInstanceId: function (instanceId) {
+  setDbInstanceId: function(instanceId) {
     this.Super('setDbInstanceId', instanceId);
     if (this.allRequiredParametersSet()) {
       this.grid.fetchData();
     }
   },
 
-  setWidgetHeight: function () {
+  setWidgetHeight: function() {
     // when used inside generated window, just accept externally defined height (via rowspan) and
     // don't override it as will break normal window layout
     if (this.inWidgetInFormMode) {
       return;
     }
     var currentHeight = this.getHeight(),
-        edgeTop = this.edgeTop,
-        edgeBottom = this.edgeBottom,
-        newGridHeight = this.grid.headerHeight + (this.grid.cellHeight * (this.parameters.RowsNumber ? this.parameters.RowsNumber : 10)) + this.grid.summaryRowHeight + 2;
+      edgeTop = this.edgeTop,
+      edgeBottom = this.edgeBottom,
+      newGridHeight =
+        this.grid.headerHeight +
+        this.grid.cellHeight *
+          (this.parameters.RowsNumber ? this.parameters.RowsNumber : 10) +
+        this.grid.summaryRowHeight +
+        2;
     this.grid.setHeight(newGridHeight);
 
     var newHeight = edgeTop + newGridHeight + edgeBottom;
@@ -98,13 +104,14 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     this.setHeight(newHeight);
     if (this.parentElement) {
       var heightDiff = newHeight - currentHeight,
-          parentHeight = this.parentElement.getHeight();
+        parentHeight = this.parentElement.getHeight();
       this.parentElement.setHeight(parentHeight + heightDiff);
     }
   },
 
-  createWindowContents: function () {
-    var layout, showFilter = (this.viewMode === 'maximized');
+  createWindowContents: function() {
+    var layout,
+      showFilter = this.viewMode === 'maximized';
 
     layout = isc.VStack.create({
       height: '100%',
@@ -116,11 +123,16 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
       showFilterEditor: showFilter
     });
 
-    this.grid = isc.OBQueryListGrid.create(isc.addProperties({
-      dataSource: this.gridDataSource,
-      widget: this,
-      fields: this.fields
-    }, this.gridProperties));
+    this.grid = isc.OBQueryListGrid.create(
+      isc.addProperties(
+        {
+          dataSource: this.gridDataSource,
+          widget: this,
+          fields: this.fields
+        },
+        this.gridProperties
+      )
+    );
 
     layout.addMember(this.grid);
     layout.addMember(this.showAllLabel);
@@ -128,7 +140,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     return layout;
   },
 
-  refresh: function () {
+  refresh: function() {
     if (this.viewMode === 'widget') {
       this.setWidgetHeight();
     }
@@ -146,16 +158,22 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     }
   },
 
-  exportGrid: function () {
+  exportGrid: function() {
     var grid = this.widget.grid,
-        requestProperties, additionalProperties;
+      requestProperties,
+      additionalProperties;
 
     if (OB.Application.licenseType === 'C') {
-      isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBCQL_ActivateMessageExport')]), {
-        isModal: true,
-        showModalMask: true,
-        toolbarButtons: [isc.Dialog.OK]
-      });
+      isc.warn(
+        OB.I18N.getLabel('OBUIAPP_ActivateMessage', [
+          OB.I18N.getLabel('OBCQL_ActivateMessageExport')
+        ]),
+        {
+          isModal: true,
+          showModalMask: true,
+          toolbarButtons: [isc.Dialog.OK]
+        }
+      );
       return;
     }
 
@@ -174,7 +192,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     grid.exportData(requestProperties, additionalProperties);
   },
 
-  maximize: function () {
+  maximize: function() {
     OB.Layout.ViewManager.openView('OBQueryListView', {
       tabTitle: this.widgetTitle,
       widgetInstanceId: this.dbInstanceId,
@@ -188,7 +206,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     });
   },
 
-  setTotalRows: function (totalRows) {
+  setTotalRows: function(totalRows) {
     // totalRows is the total number of rows retrieved from backend, in order to
     // improve performance count of actual number of records is not performed, so
     // we can only give a hint about having more items in case it is equal to the
@@ -199,13 +217,19 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
       return;
     }
 
-    if (this.parameters.showAll || this.totalRows < this.parameters.RowsNumber) {
+    if (
+      this.parameters.showAll ||
+      this.totalRows < this.parameters.RowsNumber
+    ) {
       // if showing pagination or all the records, hide the label
       this.showAllLabel.hide();
     } else {
       if (this.showAllLabel.getMembers()[0]) {
-        this.showAllLabel.getMembers()[0].setContents(
-        OB.I18N.getLabel('OBCQL_RowsNumber', [this.parameters.RowsNumber]));
+        this.showAllLabel
+          .getMembers()[0]
+          .setContents(
+            OB.I18N.getLabel('OBCQL_RowsNumber', [this.parameters.RowsNumber])
+          );
       }
       this.showAllLabel.show();
     }
@@ -244,7 +268,7 @@ isc.OBQueryListGrid.addProperties({
     //useClientSorting: false
   },
 
-  initWidget: function () {
+  initWidget: function() {
     var i;
     // overridden as query list widgets can't handle date ranges (yet)
     for (i = 0; i < this.getFields().length; i++) {
@@ -256,9 +280,10 @@ isc.OBQueryListGrid.addProperties({
     this.Super('initWidget', arguments);
   },
 
-  filterData: function (criteria, callback, requestProperties) {
-    var newCallBack, crit = criteria || {},
-        reqProperties = requestProperties || {};
+  filterData: function(criteria, callback, requestProperties) {
+    var newCallBack,
+      crit = criteria || {},
+      reqProperties = requestProperties || {};
 
     reqProperties.params = reqProperties.params || {};
     reqProperties.params = this.getFetchRequestParams(reqProperties.params);
@@ -270,8 +295,12 @@ isc.OBQueryListGrid.addProperties({
       criteria: crit
     };
 
-    newCallBack = function (dsResponse, data, dsRequest) {
-      dsResponse.clientContext.grid.getWidgetTotalRows(dsResponse, data, dsRequest);
+    newCallBack = function(dsResponse, data, dsRequest) {
+      dsResponse.clientContext.grid.getWidgetTotalRows(
+        dsResponse,
+        data,
+        dsRequest
+      );
       if (callback) {
         callback();
       }
@@ -280,7 +309,7 @@ isc.OBQueryListGrid.addProperties({
     return this.Super('filterData', [crit, newCallBack, reqProperties]);
   },
 
-  getFetchRequestParams: function (params) {
+  getFetchRequestParams: function(params) {
     var localWidgetProperties, propName, propValue;
 
     // process dynamic parameters
@@ -290,7 +319,9 @@ isc.OBQueryListGrid.addProperties({
       if (localWidgetProperties.hasOwnProperty(propName)) {
         propValue = localWidgetProperties[propName];
         if (typeof propValue === 'string') {
-          localWidgetProperties[propName] = this.widget.evaluateContents(propValue);
+          localWidgetProperties[propName] = this.widget.evaluateContents(
+            propValue
+          );
         }
       }
     }
@@ -309,7 +340,7 @@ isc.OBQueryListGrid.addProperties({
     return params;
   },
 
-  destroy: function () {
+  destroy: function() {
     if (this.dataSource) {
       this.dataSource.destroy();
       this.dataSource = null;
@@ -317,9 +348,10 @@ isc.OBQueryListGrid.addProperties({
     this.Super('destroy', arguments);
   },
 
-  fetchData: function (criteria, callback, requestProperties) {
-    var newCallBack, crit = criteria || {},
-        reqProperties = requestProperties || {};
+  fetchData: function(criteria, callback, requestProperties) {
+    var newCallBack,
+      crit = criteria || {},
+      reqProperties = requestProperties || {};
 
     reqProperties.params = reqProperties.params || {};
     reqProperties.params = this.getFetchRequestParams(reqProperties.params);
@@ -331,8 +363,12 @@ isc.OBQueryListGrid.addProperties({
       criteria: crit
     };
 
-    newCallBack = function (dsResponse, data, dsRequest) {
-      dsResponse.clientContext.grid.getWidgetTotalRows(dsResponse, data, dsRequest);
+    newCallBack = function(dsResponse, data, dsRequest) {
+      dsResponse.clientContext.grid.getWidgetTotalRows(
+        dsResponse,
+        data,
+        dsRequest
+      );
       if (callback) {
         callback();
       }
@@ -341,7 +377,7 @@ isc.OBQueryListGrid.addProperties({
     return this.Super('fetchData', [crit, newCallBack, reqProperties]);
   },
 
-  getWidgetTotalRows: function (dsResponse, data, dsRequest) {
+  getWidgetTotalRows: function(dsResponse, data, dsRequest) {
     if (this.widget.viewMode === 'widget' && !this.widget.parameters.showAll) {
       var requestProperties = {};
       requestProperties.showPrompt = false;
@@ -349,7 +385,9 @@ isc.OBQueryListGrid.addProperties({
         grid: this
       };
       requestProperties.params = requestProperties.params || {};
-      requestProperties.params = this.getFetchRequestParams(requestProperties.params);
+      requestProperties.params = this.getFetchRequestParams(
+        requestProperties.params
+      );
 
       requestProperties.params.showAll = true;
       // sometimes we get here before the datasource
@@ -363,15 +401,15 @@ isc.OBQueryListGrid.addProperties({
   },
 
   // the next three functions allow to support obtaining the values of the summary fields from the server
-  getSummaryRowDataSource: function () {
+  getSummaryRowDataSource: function() {
     if (this.getSummarySettings()) {
       return this.getDataSource();
     }
   },
 
-  getSummaryRowFetchRequestConfig: function () {
+  getSummaryRowFetchRequestConfig: function() {
     var summary = this.getSummarySettings(),
-        config = this.Super('getSummaryRowFetchRequestConfig', arguments);
+      config = this.Super('getSummaryRowFetchRequestConfig', arguments);
     if (summary) {
       config.params = config.params || {};
       config.params._summary = summary;
@@ -380,12 +418,15 @@ isc.OBQueryListGrid.addProperties({
     return config;
   },
 
-  getSummarySettings: function () {
+  getSummarySettings: function() {
     var fld, i, summary;
 
     for (i = 0; i < this.getFields().length; i++) {
       fld = this.getFields()[i];
-      if (fld.summaryFunction && isc.OBViewGrid.SUPPORTED_SUMMARY_FUNCTIONS.contains(fld.summaryFunction)) {
+      if (
+        fld.summaryFunction &&
+        isc.OBViewGrid.SUPPORTED_SUMMARY_FUNCTIONS.contains(fld.summaryFunction)
+      ) {
         summary = summary || {};
         summary[fld.displayField || fld.name] = fld.summaryFunction;
       }

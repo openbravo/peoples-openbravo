@@ -23,9 +23,11 @@ isc.OBCalendarWidget.addProperties({
   widgetId: null,
   widgetInstanceId: null,
 
-  createWindowContents: function () {
+  createWindowContents: function() {
     var layout, calendarProps;
-    this.calendarProps = new Function('return ' + this.parameters.calendarProps)();
+    this.calendarProps = new Function(
+      'return ' + this.parameters.calendarProps
+    )();
     if (!this.calendarProps.isMultiCalendar && this.parameters.legendId) {
       this.calendarProps.legendId = this.parameters.legendId;
     }
@@ -34,13 +36,18 @@ isc.OBCalendarWidget.addProperties({
     if (!calendarProps) {
       return isc.VStack.create({
         members: [
-        isc.Label.create({
-          contents: 'This widget must have a parameter "calendarProps" (DB Column Name) with a fixed value pointing to the object with the calendar properties'
-        })]
+          isc.Label.create({
+            contents:
+              'This widget must have a parameter "calendarProps" (DB Column Name) with a fixed value pointing to the object with the calendar properties'
+          })
+        ]
       });
     }
 
-    if (this.viewMode === 'maximized' && calendarProps.maximizedDefaultViewName) {
+    if (
+      this.viewMode === 'maximized' &&
+      calendarProps.maximizedDefaultViewName
+    ) {
       calendarProps.defaultViewName = calendarProps.maximizedDefaultViewName;
     } else if (calendarProps.restoredDefaultViewName) {
       calendarProps.defaultViewName = calendarProps.restoredDefaultViewName;
@@ -53,21 +60,25 @@ isc.OBCalendarWidget.addProperties({
     });
 
     if (calendarProps.isMultiCalendar) {
-      layout.addMember(isc.OBMultiCalendar.create({
-        calendarProps: calendarProps
-      }));
+      layout.addMember(
+        isc.OBMultiCalendar.create({
+          calendarProps: calendarProps
+        })
+      );
     } else {
-      layout.addMember(isc.OBMultiCalendarCalendar.create(isc.addProperties(calendarProps, {})));
+      layout.addMember(
+        isc.OBMultiCalendarCalendar.create(isc.addProperties(calendarProps, {}))
+      );
     }
 
     return layout;
   },
 
-  refresh: function () {
+  refresh: function() {
     this.members[1].members[0].members[0].initComponents();
   },
 
-  maximize: function () {
+  maximize: function() {
     OB.Layout.ViewManager.openView('OBCalendarWidgetView', {
       tabTitle: this.title,
       widgetInstanceId: this.dbInstanceId,
@@ -86,21 +97,23 @@ isc.OBCalendarWidgetView.addProperties({
   showColumnMenus: false,
   canDropComponents: false,
 
-  initWidget: function (args) {
+  initWidget: function(args) {
     var widgetInstance, i;
     this.Super('initWidget', arguments);
 
     if (isc['_' + this.widgetId]) {
-      widgetInstance = isc['_' + this.widgetId].create(isc.addProperties({
-        viewMode: 'maximized',
-        title: this.tabTitle,
-        widgetInstanceId: this.widgetInstanceId,
-        widgetId: this.widgetId,
-        dbInstanceId: this.widgetInstanceId,
-        parameters: this.parameters,
-        menuItems: this.menuItems,
-        canDelete: false
-      }));
+      widgetInstance = isc['_' + this.widgetId].create(
+        isc.addProperties({
+          viewMode: 'maximized',
+          title: this.tabTitle,
+          widgetInstanceId: this.widgetInstanceId,
+          widgetId: this.widgetId,
+          dbInstanceId: this.widgetInstanceId,
+          parameters: this.parameters,
+          menuItems: this.menuItems,
+          canDelete: false
+        })
+      );
       this.addPortlet(widgetInstance);
     } else {
       //If the instance doesn't exist, just close the tab
@@ -111,10 +124,9 @@ isc.OBCalendarWidgetView.addProperties({
         }
       }
     }
-
   },
 
-  isSameTab: function (viewName, params) {
+  isSameTab: function(viewName, params) {
     return this.widgetInstanceId === params.widgetInstanceId;
   }
 });

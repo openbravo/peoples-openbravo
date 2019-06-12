@@ -20,22 +20,26 @@
 // ** {{{Personalization Toolbar Buttons}}} **
 // Registers buttons to open the form layout manager from a normal form/grid
 // view and from the Window Personalization view.
-(function () {
+(function() {
   var personalizationButtonProperties, windowPersonalizationTabButtonProperties;
 
   personalizationButtonProperties = {
-    action: function () {
+    action: function() {
       var tabIdentifier, personalizeForm;
 
-      if (!OB.Utilities.checkProfessionalLicense(
-      OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization'))) {
+      if (
+        !OB.Utilities.checkProfessionalLicense(
+          OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization')
+        )
+      ) {
         return;
       }
 
       if (this.view === this.view.standardWindow.view) {
         tabIdentifier = this.view.tabTitle;
       } else {
-        tabIdentifier = this.view.standardWindow.tabTitle + ' - ' + this.view.tabTitle;
+        tabIdentifier =
+          this.view.standardWindow.tabTitle + ' - ' + this.view.tabTitle;
       }
 
       personalizeForm = isc.OBPersonalizeFormLayout.create({
@@ -49,12 +53,15 @@
     disabled: false,
     buttonType: 'personalization',
     prompt: OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Button'),
-    updateState: function () {
+    updateState: function() {
       var propValue, undef;
 
-      // set it 
+      // set it
       if (this.userWindowPersonalizationAllowed === undef) {
-        propValue = OB.PropertyStore.get('OBUIAPP_WindowPersonalization_Override', this.view.standardWindow ? this.view.standardWindow.windowId : null);
+        propValue = OB.PropertyStore.get(
+          'OBUIAPP_WindowPersonalization_Override',
+          this.view.standardWindow ? this.view.standardWindow.windowId : null
+        );
         if (propValue === 'false' || propValue === 'N') {
           this.userWindowPersonalizationAllowed = false;
         } else {
@@ -71,15 +78,24 @@
     keyboardShortcutId: 'ToolBar_Personalization'
   };
 
-  OB.ToolbarRegistry.registerButton(personalizationButtonProperties.buttonType, isc.OBToolbarIconButton, personalizationButtonProperties, 310, null, null, false);
+  OB.ToolbarRegistry.registerButton(
+    personalizationButtonProperties.buttonType,
+    isc.OBToolbarIconButton,
+    personalizationButtonProperties,
+    310,
+    null,
+    null,
+    false
+  );
 
-  // and register the toolbar button the window personalization tab  
+  // and register the toolbar button the window personalization tab
   windowPersonalizationTabButtonProperties = {
-    action: function () {
+    action: function() {
       var personalizationData = {},
-          personalizeForm, view = this.view,
-          grid = view.viewGrid,
-          record = grid.getSelectedRecord();
+        personalizeForm,
+        view = this.view,
+        grid = view.viewGrid,
+        record = grid.getSelectedRecord();
       if (record.value) {
         personalizationData = isc.JSON.decode(record.value);
       }
@@ -93,27 +109,45 @@
         openedFromMaintenanceWindow: true,
 
         tabId: record.tab,
-        tabIdentifier: record['tab' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER],
+        tabIdentifier:
+          record['tab' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER],
         clientId: record.visibleAtClient,
-        clientIdentifier: record['visibleAtClient' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER],
+        clientIdentifier:
+          record[
+            'visibleAtClient' +
+              OB.Constants.FIELDSEPARATOR +
+              OB.Constants.IDENTIFIER
+          ],
         orgId: record.visibleAtOrganization,
-        orgIdentifier: record['visibleAtOrganization' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER],
+        orgIdentifier:
+          record[
+            'visibleAtOrganization' +
+              OB.Constants.FIELDSEPARATOR +
+              OB.Constants.IDENTIFIER
+          ],
         roleId: record.visibleAtRole,
-        roleIdentifier: record['visibleAtRole' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER],
+        roleIdentifier:
+          record[
+            'visibleAtRole' +
+              OB.Constants.FIELDSEPARATOR +
+              OB.Constants.IDENTIFIER
+          ],
         userId: record.user,
-        userIdentifier: record['user' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]
+        userIdentifier:
+          record['user' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]
       });
       personalizeForm.doOpen();
     },
     disabled: false,
     buttonType: 'edit_personalization',
     prompt: OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Edit_Button'),
-    updateState: function () {
+    updateState: function() {
       var view = this.view,
-          form = view.viewForm,
-          grid = view.viewGrid,
-          length, selectedRecords = grid.getSelectedRecords(),
-          i;
+        form = view.viewForm,
+        grid = view.viewGrid,
+        length,
+        selectedRecords = grid.getSelectedRecords(),
+        i;
 
       // only show for records which can be edited
       if (selectedRecords.length !== 1) {
@@ -138,15 +172,34 @@
         }
       }
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew);
+        this.setDisabled(
+          form.isSaving ||
+            form.readOnly ||
+            view.singleRecord ||
+            !view.hasValidState() ||
+            form.isNew
+        );
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length !== 1);
+        this.setDisabled(
+          view.readOnly ||
+            view.singleRecord ||
+            !view.hasValidState() ||
+            !grid.getSelectedRecords() ||
+            grid.getSelectedRecords().length !== 1
+        );
       }
     },
     keyboardShortcutId: 'ToolBar_Personalization_Edit'
   };
 
   // register only for the window personalization tab
-  OB.ToolbarRegistry.registerButton(windowPersonalizationTabButtonProperties.buttonType, isc.OBToolbarIconButton, windowPersonalizationTabButtonProperties, 320, 'FF8081813157AED2013157BF6D810023', null, false);
-
-}());
+  OB.ToolbarRegistry.registerButton(
+    windowPersonalizationTabButtonProperties.buttonType,
+    isc.OBToolbarIconButton,
+    windowPersonalizationTabButtonProperties,
+    320,
+    'FF8081813157AED2013157BF6D810023',
+    null,
+    false
+  );
+})();

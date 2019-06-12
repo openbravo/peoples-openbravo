@@ -19,22 +19,28 @@
 
 OB.APRM.AddTransaction = {};
 
-
-OB.APRM.AddTransaction.onLoad = function (view) {
+OB.APRM.AddTransaction.onLoad = function(view) {
   var bankStatementLineId = view.callerField.record.id;
-  view.theForm.addField(isc.OBTextItem.create({
-    name: 'bankStatementLineId',
-    value: bankStatementLineId
-  }));
+  view.theForm.addField(
+    isc.OBTextItem.create({
+      name: 'bankStatementLineId',
+      value: bankStatementLineId
+    })
+  );
   view.theForm.hideItem('bankStatementLineId');
-  view.theForm.getItem('ad_org_id_process').setValue(view.theForm.getItem('ad_org_id').getValue());
+  view.theForm
+    .getItem('ad_org_id_process')
+    .setValue(view.theForm.getItem('ad_org_id').getValue());
 };
 
-
-OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall, clientSideValidationFail) {
+OB.APRM.AddTransaction.onProcess = function(
+  view,
+  actionHandlerCall,
+  clientSideValidationFail
+) {
   var execute;
 
-  execute = function (ok) {
+  execute = function(ok) {
     if (ok) {
       actionHandlerCall();
     } else {
@@ -43,18 +49,31 @@ OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall, clientSide
   };
 
   // Called from Match Statement grid when we have view.callerField.record.match
-  if (view && view.callerField && view.callerField.record && view.callerField.record.match && typeof view.getContextInfo === 'function') {
+  if (
+    view &&
+    view.callerField &&
+    view.callerField.record &&
+    view.callerField.record.match &&
+    typeof view.getContextInfo === 'function'
+  ) {
     var blineAmt = view.callerField.record.amount,
-        trxDepositAmt = view.getContextInfo().depositamt,
-        trxPaymentAmt = view.getContextInfo().withdrawalamt,
-        trxAmt = trxDepositAmt - trxPaymentAmt,
-        paymentId = view.getContextInfo().fin_payment_id,
-        glitemId = view.getContextInfo().c_glitem_id,
-        trxType = view.getContextInfo().trxtype,
-        hideSplitConfirmation = OB.PropertyStore.get('APRM_MATCHSTATEMENT_HIDE_PARTIALMATCH_POPUP', view.windowId);
+      trxDepositAmt = view.getContextInfo().depositamt,
+      trxPaymentAmt = view.getContextInfo().withdrawalamt,
+      trxAmt = trxDepositAmt - trxPaymentAmt,
+      paymentId = view.getContextInfo().fin_payment_id,
+      glitemId = view.getContextInfo().c_glitem_id,
+      trxType = view.getContextInfo().trxtype,
+      hideSplitConfirmation = OB.PropertyStore.get(
+        'APRM_MATCHSTATEMENT_HIDE_PARTIALMATCH_POPUP',
+        view.windowId
+      );
 
-    if (("BPD" === trxType || "BPW" === trxType) && !glitemId && !paymentId) {
-      view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_INVALID_TRANSACTION'));
+    if (('BPD' === trxType || 'BPW' === trxType) && !glitemId && !paymentId) {
+      view.messageBar.setMessage(
+        isc.OBMessageBar.TYPE_ERROR,
+        null,
+        OB.I18N.getLabel('APRM_INVALID_TRANSACTION')
+      );
       clientSideValidationFail();
     } else if (trxAmt !== blineAmt) {
       // Split required
@@ -62,7 +81,25 @@ OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall, clientSide
         // Continue with the match
         actionHandlerCall();
       } else {
-        isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm', [OB.Utilities.Number.JSToOBMasked(blineAmt, OB.Format.defaultNumericMask, OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol, OB.Format.defaultGroupingSize), OB.Utilities.Number.JSToOBMasked(trxAmt, OB.Format.defaultNumericMask, OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol, OB.Format.defaultGroupingSize)]), execute);
+        isc.confirm(
+          OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm', [
+            OB.Utilities.Number.JSToOBMasked(
+              blineAmt,
+              OB.Format.defaultNumericMask,
+              OB.Format.defaultDecimalSymbol,
+              OB.Format.defaultGroupingSymbol,
+              OB.Format.defaultGroupingSize
+            ),
+            OB.Utilities.Number.JSToOBMasked(
+              trxAmt,
+              OB.Format.defaultNumericMask,
+              OB.Format.defaultDecimalSymbol,
+              OB.Format.defaultGroupingSymbol,
+              OB.Format.defaultGroupingSize
+            )
+          ]),
+          execute
+        );
       }
     } else {
       // Continue with the match
@@ -73,7 +110,12 @@ OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall, clientSide
   }
 };
 
-OB.APRM.AddTransaction.trxTypeOnChangeFunction = function (item, view, form, grid) {
+OB.APRM.AddTransaction.trxTypeOnChangeFunction = function(
+  item,
+  view,
+  form,
+  grid
+) {
   if (item.getValue() === 'BPW') {
     form.getItem('depositamt').setDisabled(true);
     form.getItem('withdrawalamt').setDisabled(false);
@@ -89,46 +131,80 @@ OB.APRM.AddTransaction.trxTypeOnChangeFunction = function (item, view, form, gri
   }
 };
 
-OB.APRM.AddTransaction.paymentOnChangeFunction = function (item, view, form, grid) {
-  var callback, strPaymentId = item.getValue(),
-      strDescription = form.getItem('description').getValue();
+OB.APRM.AddTransaction.paymentOnChangeFunction = function(
+  item,
+  view,
+  form,
+  grid
+) {
+  var callback,
+    strPaymentId = item.getValue(),
+    strDescription = form.getItem('description').getValue();
 
-  callback = function (response, data, request) {
+  callback = function(response, data, request) {
     form.getItem('description').setValue(data.description);
     form.getItem('depositamt').setValue(data.depositamt);
     form.getItem('withdrawalamt').setValue(data.paymentamt);
     form.getItem('c_bpartner_id').setValue(data.cBpartnerId);
   };
 
-  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddTransactionOnChangePaymentActionHandler', {
-    strPaymentId: strPaymentId,
-    strDescription: strDescription
-  }, {}, callback);
+  OB.RemoteCallManager.call(
+    'org.openbravo.advpaymentmngt.actionHandler.AddTransactionOnChangePaymentActionHandler',
+    {
+      strPaymentId: strPaymentId,
+      strDescription: strDescription
+    },
+    {},
+    callback
+  );
 };
 
-OB.APRM.AddTransaction.glitemOnChangeFunction = function (item, view, form, grid) {
-  var callback, strGLItemId = item.getValue(),
-      strDescription = form.getItem('description').getValue();
+OB.APRM.AddTransaction.glitemOnChangeFunction = function(
+  item,
+  view,
+  form,
+  grid
+) {
+  var callback,
+    strGLItemId = item.getValue(),
+    strDescription = form.getItem('description').getValue();
 
-  callback = function (response, data, request) {
+  callback = function(response, data, request) {
     form.getItem('description').setValue(data.description);
   };
 
-  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.GLItemTransactionActionHandler', {
-    strGLItemId: strGLItemId,
-    strDescription: strDescription
-  }, {}, callback);
+  OB.RemoteCallManager.call(
+    'org.openbravo.advpaymentmngt.actionHandler.GLItemTransactionActionHandler',
+    {
+      strGLItemId: strGLItemId,
+      strDescription: strDescription
+    },
+    {},
+    callback
+  );
 };
 
-OB.APRM.AddTransaction.trxDateOnChangeFunction = function (item, view, form, grid) {
+OB.APRM.AddTransaction.trxDateOnChangeFunction = function(
+  item,
+  view,
+  form,
+  grid
+) {
   form.getItem('dateacct').setDateParameterValue(new Date(item.getValue()));
 };
 
-OB.APRM.AddTransaction.organizationOnChangeFunction = function (item, view, form, grid) {
-  form.getItem('ad_org_id_process').setValue(form.getItem('ad_org_id').getValue());
+OB.APRM.AddTransaction.organizationOnChangeFunction = function(
+  item,
+  view,
+  form,
+  grid
+) {
+  form
+    .getItem('ad_org_id_process')
+    .setValue(form.getItem('ad_org_id').getValue());
 };
 
-OB.APRM.AddTransaction.amtOnChangeFunction = function (item, view, form, grid) {
+OB.APRM.AddTransaction.amtOnChangeFunction = function(item, view, form, grid) {
   var trxType = form.getItem('trxtype').getValue();
   if (trxType === 'BF') {
     if (item.name === 'depositamt') {

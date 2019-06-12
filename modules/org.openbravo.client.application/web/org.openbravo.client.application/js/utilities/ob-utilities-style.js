@@ -24,7 +24,6 @@ OB.Utilities = window.OB.Utilities || {};
 // Defines utility methods related to Styles.
 OB.Utilities.Style = {};
 
-
 // ** {{{ OB.Utilities.Style.getSheet }}} **
 //
 // Gets a CSS spreadsheet
@@ -33,7 +32,7 @@ OB.Utilities.Style = {};
 // * {{{position}}}: {Integer} position
 // Return:
 // * The CSS spreadsheet
-OB.Utilities.Style.getSheet = function (position, type) {
+OB.Utilities.Style.getSheet = function(position, type) {
   var stylesheet, i;
   if (position) {
     stylesheet = document.styleSheets[position];
@@ -46,7 +45,10 @@ OB.Utilities.Style.getSheet = function (position, type) {
       }
     } else if (type) {
       for (i = 0; i < document.styleSheets.length; i++) {
-        if (document.styleSheets[i].href && document.styleSheets[i].href.indexOf(type) === -1) {
+        if (
+          document.styleSheets[i].href &&
+          document.styleSheets[i].href.indexOf(type) === -1
+        ) {
           stylesheet = document.styleSheets[i];
         }
       }
@@ -61,13 +63,16 @@ OB.Utilities.Style.getSheet = function (position, type) {
 // Parameters:
 // * {{{selector}}}: {String} the selector name to be added
 // * {{{declaration}}}: {String} the properties of this selector
-OB.Utilities.Style.addRule = function (selector, declaration) {
+OB.Utilities.Style.addRule = function(selector, declaration) {
   var stylesheet = OB.Utilities.Style.getSheet();
   if (typeof stylesheet === 'object') {
     if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
       stylesheet.addRule(selector, declaration);
     } else {
-      stylesheet.insertRule(selector + ' { ' + declaration + ' }', stylesheet.cssRules.length);
+      stylesheet.insertRule(
+        selector + ' { ' + declaration + ' }',
+        stylesheet.cssRules.length
+      );
     }
   }
 };
@@ -78,7 +83,7 @@ OB.Utilities.Style.addRule = function (selector, declaration) {
 //
 // Parameters:
 // * {{{selectorIndex}}}: {Integer} the position of the selector to remove
-OB.Utilities.Style.removeRule = function (selectorIndex) {
+OB.Utilities.Style.removeRule = function(selectorIndex) {
   var stylesheet = OB.Utilities.Style.getSheet();
 
   if (typeof stylesheet === 'object') {
@@ -98,21 +103,28 @@ OB.Utilities.Style.removeRule = function (selectorIndex) {
 // * {{{selector}}}: {String} the name of the selector to obtain position
 // Return:
 // * The selector position
-OB.Utilities.Style.getRulePosition = function (selector) {
+OB.Utilities.Style.getRulePosition = function(selector) {
   var stylesheet = OB.Utilities.Style.getSheet(),
-      position = [],
-      i;
+    position = [],
+    i;
 
   if (typeof stylesheet === 'object') {
     if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
       for (i = 0; i < stylesheet.rules.length; i++) {
-        if (stylesheet.rules[i].selectorText.toLowerCase() === selector.toLowerCase()) {
+        if (
+          stylesheet.rules[i].selectorText.toLowerCase() ===
+          selector.toLowerCase()
+        ) {
           position.push(i);
         }
       }
     } else {
       for (i = 0; i < stylesheet.cssRules.length; i++) {
-        if (typeof stylesheet.cssRules[i].selectorText !== 'undefined' && stylesheet.cssRules[i].selectorText.toLowerCase() === selector.toLowerCase()) {
+        if (
+          typeof stylesheet.cssRules[i].selectorText !== 'undefined' &&
+          stylesheet.cssRules[i].selectorText.toLowerCase() ===
+            selector.toLowerCase()
+        ) {
           position.push(i);
         }
       }

@@ -20,60 +20,79 @@
 // = Manage views toolbar buttons =
 // Registers button to open the menu which shows the available views
 // and the save/delete option (if enabled).
-(function () {
+(function() {
   var manageViewButtonProperties = {
+    initWidget: function() {
+      this.menu = isc.Menu.create(
+        {
+          button: this,
 
-    initWidget: function () {
-      this.menu = isc.Menu.create({
-        button: this,
-
-        // overridden to get much simpler custom style name
-        getBaseStyle: function (record, rowNum, colNum) {
-          if (colNum === 0) {
-            return this.baseStyle + 'Icon';
-          }
-          if (record.showSeparator) {
-            return this.baseStyle + 'Separator';
-          }
-          return this.baseStyle;
-        },
-
-        itemClick: function (item, colNum) {
-          var standardWindow = this.button.view.standardWindow;
-          if (item.viewDefinition) {
-            if (item.originalView) {
-              standardWindow.clearLastViewPersonalization();
+          // overridden to get much simpler custom style name
+          getBaseStyle: function(record, rowNum, colNum) {
+            if (colNum === 0) {
+              return this.baseStyle + 'Icon';
             }
-            delete standardWindow.lastViewApplied;
+            if (record.showSeparator) {
+              return this.baseStyle + 'Separator';
+            }
+            return this.baseStyle;
+          },
 
-            OB.Personalization.applyViewDefinition(item.personalizationId, item.viewDefinition, this.button.view.standardWindow);
-          } else {
-            item.doClick(this.button.view.standardWindow);
+          itemClick: function(item, colNum) {
+            var standardWindow = this.button.view.standardWindow;
+            if (item.viewDefinition) {
+              if (item.originalView) {
+                standardWindow.clearLastViewPersonalization();
+              }
+              delete standardWindow.lastViewApplied;
+
+              OB.Personalization.applyViewDefinition(
+                item.personalizationId,
+                item.viewDefinition,
+                this.button.view.standardWindow
+              );
+            } else {
+              item.doClick(this.button.view.standardWindow);
+            }
           }
-        }
-      }, OB.Styles.Personalization.Menu);
+        },
+        OB.Styles.Personalization.Menu
+      );
     },
 
-    showMenu: function () {
-      if (!OB.Utilities.checkProfessionalLicense(
-      OB.I18N.getLabel('OBUIAPP_ActivateMessageWindowPersonalization'))) {
+    showMenu: function() {
+      if (
+        !OB.Utilities.checkProfessionalLicense(
+          OB.I18N.getLabel('OBUIAPP_ActivateMessageWindowPersonalization')
+        )
+      ) {
         return;
       }
       return this.Super('showMenu', arguments);
     },
 
-    // shows the menu with the available views and the save 
+    // shows the menu with the available views and the save
     // and delete option
-    action: function () {
+    action: function() {
       var data = [],
-          icon, i, item, view, formData, standardWindow = this.view.standardWindow,
-          adminLevel = false,
-          length, personalization = standardWindow.getClass().personalization,
-          views = personalization && personalization.views ? personalization.views : [],
-          canDelete = false;
+        icon,
+        i,
+        item,
+        view,
+        formData,
+        standardWindow = this.view.standardWindow,
+        adminLevel = false,
+        length,
+        personalization = standardWindow.getClass().personalization,
+        views =
+          personalization && personalization.views ? personalization.views : [],
+        canDelete = false;
 
-      if (!OB.Utilities.checkProfessionalLicense(
-      OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization'))) {
+      if (
+        !OB.Utilities.checkProfessionalLicense(
+          OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization')
+        )
+      ) {
         return;
       }
 
@@ -94,7 +113,10 @@
         view = views[i];
         canDelete = view.canEdit || canDelete;
 
-        if (standardWindow.selectedPersonalizationId && view.personalizationId === standardWindow.selectedPersonalizationId) {
+        if (
+          standardWindow.selectedPersonalizationId &&
+          view.personalizationId === standardWindow.selectedPersonalizationId
+        ) {
           icon = this.menu.itemIcon;
         } else {
           icon = null;
@@ -117,8 +139,10 @@
       // compute the menu items, only if the user is allowed
       // to personalize
       if (this.isWindowPersonalizationAllowed()) {
-
-        if (standardWindow.getClass().personalization && standardWindow.getClass().personalization.formData) {
+        if (
+          standardWindow.getClass().personalization &&
+          standardWindow.getClass().personalization.formData
+        ) {
           formData = standardWindow.getClass().personalization.formData;
           if (formData.clients || formData.orgs || formData.roles) {
             adminLevel = true;
@@ -128,10 +152,17 @@
         data.push({
           title: OB.I18N.getLabel('OBUIAPP_SaveView'),
           showSeparator: data.length > 0,
-          doClick: function (standardWindow) {
-            var popup = isc.OBPopup.create({
-              standardWindow: standardWindow
-            }, OB.Personalization.ManageViewsPopupProperties, OB.Personalization.ManageViewsPopupPropertiesSave, adminLevel ? OB.Styles.Personalization.saveViewPopupLarge : OB.Styles.Personalization.saveViewPopupSmall);
+          doClick: function(standardWindow) {
+            var popup = isc.OBPopup.create(
+              {
+                standardWindow: standardWindow
+              },
+              OB.Personalization.ManageViewsPopupProperties,
+              OB.Personalization.ManageViewsPopupPropertiesSave,
+              adminLevel
+                ? OB.Styles.Personalization.saveViewPopupLarge
+                : OB.Styles.Personalization.saveViewPopupSmall
+            );
             popup.show();
           }
         });
@@ -141,24 +172,34 @@
           data.push({
             title: OB.I18N.getLabel('OBUIAPP_SetDefaultView'),
             standardWindow: standardWindow,
-            doClick: function (standardWindow) {
-              var popup = isc.OBPopup.create({
-                standardWindow: standardWindow
-              }, OB.Personalization.ManageViewsPopupProperties, OB.Personalization.ManageViewsPopupPropertiesDefault, OB.Styles.Personalization.deleteViewPopup);
+            doClick: function(standardWindow) {
+              var popup = isc.OBPopup.create(
+                {
+                  standardWindow: standardWindow
+                },
+                OB.Personalization.ManageViewsPopupProperties,
+                OB.Personalization.ManageViewsPopupPropertiesDefault,
+                OB.Styles.Personalization.deleteViewPopup
+              );
               popup.show();
             }
           });
         }
 
-        // only show the delete option if there are deletable options        
+        // only show the delete option if there are deletable options
         if (canDelete) {
           data.push({
             title: OB.I18N.getLabel('OBUIAPP_DeleteView'),
             standardWindow: standardWindow,
-            doClick: function (standardWindow) {
-              var popup = isc.OBPopup.create({
-                standardWindow: standardWindow
-              }, OB.Personalization.ManageViewsPopupProperties, OB.Personalization.ManageViewsPopupPropertiesDelete, OB.Styles.Personalization.deleteViewPopup);
+            doClick: function(standardWindow) {
+              var popup = isc.OBPopup.create(
+                {
+                  standardWindow: standardWindow
+                },
+                OB.Personalization.ManageViewsPopupProperties,
+                OB.Personalization.ManageViewsPopupPropertiesDelete,
+                OB.Styles.Personalization.deleteViewPopup
+              );
               popup.show();
             }
           });
@@ -178,7 +219,7 @@
     buttonType: 'manageviews',
     title: OB.I18N.getLabel('OBUIAPP_ManageViews_Toolbar_Button'),
     prompt: OB.I18N.getLabel('OBUIAPP_ManageViews_Toolbar_Button'),
-    updateState: function () {
+    updateState: function() {
       this.resetBaseStyle();
 
       // no items are shown in this case
@@ -191,16 +232,22 @@
       this.show();
     },
 
-    viewsToSelect: function () {
+    viewsToSelect: function() {
       // standardwindow is not set during initialization
-      var pers = (this.view.standardWindow ? this.view.standardWindow.getClass().personalization : null);
-      return (pers && pers.views && pers.views.length > 0);
+      var pers = this.view.standardWindow
+        ? this.view.standardWindow.getClass().personalization
+        : null;
+      return pers && pers.views && pers.views.length > 0;
     },
 
-    isWindowPersonalizationAllowed: function () {
-      var propValue, undef, standardWindow = this.view.standardWindow,
-          personalization = (standardWindow ? standardWindow.getClass().personalization : null),
-          formData = (personalization ? personalization.formData : null);
+    isWindowPersonalizationAllowed: function() {
+      var propValue,
+        undef,
+        standardWindow = this.view.standardWindow,
+        personalization = standardWindow
+          ? standardWindow.getClass().personalization
+          : null,
+        formData = personalization ? personalization.formData : null;
 
       // standardwindow is not set during initialization
       // don't set the variable yet, but do not allow either
@@ -215,7 +262,10 @@
         if (formData && (formData.orgs || formData.clients || formData.roles)) {
           this.userWindowPersonalizationAllowed = true;
         } else {
-          propValue = OB.PropertyStore.get('OBUIAPP_WindowPersonalization_Override', standardWindow ? standardWindow.windowId : null);
+          propValue = OB.PropertyStore.get(
+            'OBUIAPP_WindowPersonalization_Override',
+            standardWindow ? standardWindow.windowId : null
+          );
           if (propValue === 'false' || propValue === 'N') {
             return false;
           } else {
@@ -228,6 +278,13 @@
     keyboardShortcutId: 'ToolBar_ManageViews'
   };
 
-  OB.ToolbarRegistry.registerButton(manageViewButtonProperties.buttonType, isc.OBToolbarIconButton, manageViewButtonProperties, 320, null, null, false);
-
-}());
+  OB.ToolbarRegistry.registerButton(
+    manageViewButtonProperties.buttonType,
+    isc.OBToolbarIconButton,
+    manageViewButtonProperties,
+    320,
+    null,
+    null,
+    false
+  );
+})();

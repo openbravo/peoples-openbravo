@@ -19,19 +19,18 @@
 
 // = OBDateTimeItem =
 // Contains the widget for editing Date Time, it works differently than the OBDateItem
-// in that it auto-completes while typing. A TODO: make this widget work the same as the 
+// in that it auto-completes while typing. A TODO: make this widget work the same as the
 // OBDateItem, autocomplete when blurring.
 isc.ClassFactory.defineClass('OBDateTimeItem', isc.OBDateItem);
 
 isc.OBDateTimeItem.addClassProperties({
-
   // ** {{{ autoCompleteData }}} **
   //
   // Autocomplets the date entered.
   // Parameters:
   // * {{{dateFormat}}}: the dateFormat in OB format
   // * {{{value}}}: the current entered value
-  autoCompleteDate: function (dateFormat, value, item) {
+  autoCompleteDate: function(dateFormat, value, item) {
     var fmt;
 
     // if (!isTabPressed) {
@@ -40,7 +39,10 @@ isc.OBDateTimeItem.addClassProperties({
     }
     fmt = OB.Utilities.Date.normalizeDisplayFormat(dateFormat);
     try {
-      if (item.getSelectionRange() && item.getSelectionRange()[0] !== value.length) {
+      if (
+        item.getSelectionRange() &&
+        item.getSelectionRange()[0] !== value.length
+      ) {
         // If we are inserting in a position different from  the last one, we don't autocomplete
         return value;
       }
@@ -50,7 +52,7 @@ isc.OBDateTimeItem.addClassProperties({
     var strDate = value;
     var b = fmt.match(/%./g);
     var i = 0,
-        j = -1;
+      j = -1;
     var text = '';
     var length = 0;
     var pos = fmt.indexOf(b[0]) + b[0].length;
@@ -61,7 +63,11 @@ isc.OBDateTimeItem.addClassProperties({
       separatorH = fmt.substring(pos + 2, pos + 3);
     }
     while (strDate.charAt(i)) {
-      if (strDate.charAt(i) === separator || strDate.charAt(i) === separatorH || strDate.charAt(i) === ' ') {
+      if (
+        strDate.charAt(i) === separator ||
+        strDate.charAt(i) === separatorH ||
+        strDate.charAt(i) === ' '
+      ) {
         i++;
         continue;
       }
@@ -77,38 +83,38 @@ isc.OBDateTimeItem.addClassProperties({
           }
         }
         switch (b[j]) {
-        case '%d':
-        case '%e':
-          text += strDate.charAt(i);
-          length = 2;
-          break;
-        case '%m':
-          text += strDate.charAt(i);
-          length = 2;
-          break;
-        case '%Y':
-          text += strDate.charAt(i);
-          length = 4;
-          break;
-        case '%y':
-          text += strDate.charAt(i);
-          length = 2;
-          break;
-        case '%H':
-        case '%I':
-        case '%k':
-        case '%l':
-          text += strDate.charAt(i);
-          length = 2;
-          break;
-        case '%M':
-          text += strDate.charAt(i);
-          length = 2;
-          break;
-        case '%S':
-          text += strDate.charAt(i);
-          length = 2;
-          break;
+          case '%d':
+          case '%e':
+            text += strDate.charAt(i);
+            length = 2;
+            break;
+          case '%m':
+            text += strDate.charAt(i);
+            length = 2;
+            break;
+          case '%Y':
+            text += strDate.charAt(i);
+            length = 4;
+            break;
+          case '%y':
+            text += strDate.charAt(i);
+            length = 2;
+            break;
+          case '%H':
+          case '%I':
+          case '%k':
+          case '%l':
+            text += strDate.charAt(i);
+            length = 2;
+            break;
+          case '%M':
+            text += strDate.charAt(i);
+            length = 2;
+            break;
+          case '%S':
+            text += strDate.charAt(i);
+            length = 2;
+            break;
         }
       } else {
         text += strDate.charAt(i);
@@ -130,7 +136,7 @@ isc.OBDateTimeItem.addProperties({
   showTime: true,
   fixedTime: null,
 
-  doInit: function () {
+  doInit: function() {
     if (Object.prototype.toString.call(this.fixedTime) === '[object String]') {
       this.fixedTime = isc.Time.parseInput(this.fixedTime);
     }
@@ -139,7 +145,11 @@ isc.OBDateTimeItem.addProperties({
     } else {
       this.showPickerTimeItem = false;
     }
-    if (OB.Format.dateTime.toUpperCase().lastIndexOf(' A') !== -1 && OB.Format.dateTime.toUpperCase().lastIndexOf(' A') === OB.Format.dateTime.length - 2) {
+    if (
+      OB.Format.dateTime.toUpperCase().lastIndexOf(' A') !== -1 &&
+      OB.Format.dateTime.toUpperCase().lastIndexOf(' A') ===
+        OB.Format.dateTime.length - 2
+    ) {
       this.use24HourTime = false;
     } else {
       this.use24HourTime = true;
@@ -147,7 +157,7 @@ isc.OBDateTimeItem.addProperties({
     return this.Super('doInit', arguments);
   },
 
-  parseValue: function () {
+  parseValue: function() {
     var parseVal = this.Super('parseValue', arguments);
     if (this.showTime && parseVal.indexOf(' ') === -1) {
       if (this.use24HourTime) {
@@ -161,15 +171,22 @@ isc.OBDateTimeItem.addProperties({
 
   // ** {{{ change }}} **
   // Called when changing a value.
-  change: function (form, item, value, oldValue) { // transformInput 
-    var isADate = value !== null && Object.prototype.toString.call(value) === '[object Date]';
+  change: function(form, item, value, oldValue) {
+    // transformInput
+    var isADate =
+      value !== null &&
+      Object.prototype.toString.call(value) === '[object Date]';
     if (isADate) {
       return;
     }
     // prevent change events from happening
     if (!this.fixedTime || !this.getValue()) {
       //FIXME: autoCompleteDate works wrong if partial time has been set
-      var completedDate = isc.OBDateTimeItem.autoCompleteDate(item.dateFormat, value, this);
+      var completedDate = isc.OBDateTimeItem.autoCompleteDate(
+        item.dateFormat,
+        value,
+        this
+      );
       if (completedDate !== oldValue) {
         item.setValue(completedDate);
       }
@@ -178,18 +195,20 @@ isc.OBDateTimeItem.addProperties({
     }
   },
 
-  showPicker: function () {
+  showPicker: function() {
     // keep previously selected date
     this.previousValue = this.getValue();
     this.Super('showPicker', arguments);
   },
 
-  pickerDataChanged: function (picker) {
-    var date, time, fixedTime = this.fixedTime;
+  pickerDataChanged: function(picker) {
+    var date,
+      time,
+      fixedTime = this.fixedTime;
     this.Super('pickerDataChanged', arguments);
 
     // SC sets time to local 0:00 to date in pickerDataChanged method
-    // setting now time if there was one previously selected, or current time if not 
+    // setting now time if there was one previously selected, or current time if not
     date = picker.chosenDate;
 
     if (this.showPickerTimeItem) {
@@ -208,7 +227,11 @@ isc.OBDateTimeItem.addProperties({
 
     if (fixedTime && Object.prototype.toString.call(time) === '[object Date]') {
       if (Object.prototype.toString.call(fixedTime) === '[object Date]') {
-        time.setHours(fixedTime.getHours(), fixedTime.getMinutes(), fixedTime.getSeconds());
+        time.setHours(
+          fixedTime.getHours(),
+          fixedTime.getMinutes(),
+          fixedTime.getSeconds()
+        );
       }
     }
     date.setHours(time.getHours(), time.getMinutes(), time.getSeconds());
@@ -222,18 +245,28 @@ isc.OBDateTimeItem.addProperties({
     this.updateValue();
   },
 
-  compareValues: function (value1, value2) {
-    return (0 === isc.Date.compareDates(value1, value2));
+  compareValues: function(value1, value2) {
+    return 0 === isc.Date.compareDates(value1, value2);
   },
 
   // Convert a text value entered in this item's text field to a final data value for storage
-  parseEditorValue: function (value, form, item) {
-    var newValue = OB.Utilities.Date.OBToJS(value, (this.showTime ? OB.Format.dateTime : OB.Format.date)),
-        fixedTime = this.fixedTime;
+  parseEditorValue: function(value, form, item) {
+    var newValue = OB.Utilities.Date.OBToJS(
+        value,
+        this.showTime ? OB.Format.dateTime : OB.Format.date
+      ),
+      fixedTime = this.fixedTime;
 
-    if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
+    if (
+      fixedTime &&
+      Object.prototype.toString.call(newValue) === '[object Date]'
+    ) {
       if (Object.prototype.toString.call(fixedTime) === '[object Date]') {
-        newValue.setHours(fixedTime.getHours(), fixedTime.getMinutes(), fixedTime.getSeconds());
+        newValue.setHours(
+          fixedTime.getHours(),
+          fixedTime.getMinutes(),
+          fixedTime.getSeconds()
+        );
       }
     }
 
@@ -246,9 +279,9 @@ isc.OBDateTimeItem.addProperties({
   },
 
   // Convert this item's data value to a text value for display in this item's text field
-  formatEditorValue: function (value, record, form, item) {
+  formatEditorValue: function(value, record, form, item) {
     var newValue = value,
-        fixedTime = this.fixedTime;
+      fixedTime = this.fixedTime;
 
     if (this.isAbsoluteDateTime) {
       // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
@@ -256,17 +289,27 @@ isc.OBDateTimeItem.addProperties({
       newValue = OB.Utilities.Date.addTimezoneOffset(newValue);
     }
 
-    if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
+    if (
+      fixedTime &&
+      Object.prototype.toString.call(newValue) === '[object Date]'
+    ) {
       if (Object.prototype.toString.call(fixedTime) === '[object Date]') {
-        newValue.setHours(fixedTime.getHours(), fixedTime.getMinutes(), fixedTime.getSeconds());
+        newValue.setHours(
+          fixedTime.getHours(),
+          fixedTime.getMinutes(),
+          fixedTime.getSeconds()
+        );
       }
     }
-    return OB.Utilities.Date.JSToOB(newValue, (this.showTime ? OB.Format.dateTime : OB.Format.date));
+    return OB.Utilities.Date.JSToOB(
+      newValue,
+      this.showTime ? OB.Format.dateTime : OB.Format.date
+    );
   }
 });
 
 isc.OBDateTimeItem.changeDefaults('pickerDefaults', {
-  initWidget: function () {
+  initWidget: function() {
     if (OB.Format.dateTime.toLowerCase().indexOf('ss') !== -1) {
       this.showSecondItem = true;
     } else {
@@ -285,7 +328,7 @@ isc.ClassFactory.defineClass('OBDateTimeFromDateItem', isc.OBDateTimeItem);
 isc.OBDateTimeFromDateItem.addProperties({
   showTime: false,
   fixedTime: '00:00:00',
-  pickerDataChanged: function (picker) {
+  pickerDataChanged: function(picker) {
     if (picker.chosenDate && picker.chosenDate.logicalDate) {
       // The picker is returning a logical date because this class is defined to not show the time
       // Remove the logicalDate flag because the value to be saved should be a datetime value
@@ -300,7 +343,10 @@ isc.OBDateTimeFromDateItem.addProperties({
 // It has the value of the next day of the selected date at 00:00:00
 // Note that the logic to calculate the next day is not implemented here
 // For the moment, that logic should be implemented where needed
-isc.ClassFactory.defineClass('OBDateTimeToDateItem', isc.OBDateTimeFromDateItem);
+isc.ClassFactory.defineClass(
+  'OBDateTimeToDateItem',
+  isc.OBDateTimeFromDateItem
+);
 
 // == OBAbsoluteDateTimeItem ==
 // OBAbsoluteDateTimeItem inherits from OBDateTimeItem

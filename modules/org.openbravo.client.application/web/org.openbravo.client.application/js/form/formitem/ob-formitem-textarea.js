@@ -29,44 +29,73 @@ isc.OBTextAreaItem.addProperties({
   selectOnFocus: false,
   rowSpan: 2,
 
-  init: function () {
+  init: function() {
     if (this.initStyle) {
       this.initStyle();
     }
     this.Super('init', arguments);
   },
 
-  isDisabled: function () {
+  isDisabled: function() {
     var ret = this.Super('isDisabled', arguments);
     if (ret && this.showDisabled) {
       this.readOnly = true;
       this.canEdit = false;
-      if (this.cellStyle.indexOf('Disabled') === -1 || (this.cellStyle.indexOf('Disabled') !== -1 && this.cellStyle.lastIndexOf('Disabled') !== this.cellStyle.length - 8)) {
+      if (
+        this.cellStyle.indexOf('Disabled') === -1 ||
+        (this.cellStyle.indexOf('Disabled') !== -1 &&
+          this.cellStyle.lastIndexOf('Disabled') !== this.cellStyle.length - 8)
+      ) {
         this.cellStyle = this.cellStyle + 'Disabled';
       }
-      if (this.titleStyle.indexOf('Disabled') === -1 || (this.titleStyle.indexOf('Disabled') !== -1 && this.titleStyle.lastIndexOf('Disabled') !== this.titleStyle.length - 8)) {
+      if (
+        this.titleStyle.indexOf('Disabled') === -1 ||
+        (this.titleStyle.indexOf('Disabled') !== -1 &&
+          this.titleStyle.lastIndexOf('Disabled') !==
+            this.titleStyle.length - 8)
+      ) {
         this.titleStyle = this.titleStyle + 'Disabled';
       }
-      if (this.textBoxStyle.indexOf('Disabled') === -1 || (this.textBoxStyle.indexOf('Disabled') !== -1 && this.textBoxStyle.lastIndexOf('Disabled') !== this.textBoxStyle.length - 8)) {
+      if (
+        this.textBoxStyle.indexOf('Disabled') === -1 ||
+        (this.textBoxStyle.indexOf('Disabled') !== -1 &&
+          this.textBoxStyle.lastIndexOf('Disabled') !==
+            this.textBoxStyle.length - 8)
+      ) {
         this.textBoxStyle = this.textBoxStyle + 'Disabled';
       }
     } else {
       this.readOnly = false;
       this.canEdit = true;
-      if (this.cellStyle.lastIndexOf('Disabled') === this.cellStyle.length - 8) {
+      if (
+        this.cellStyle.lastIndexOf('Disabled') ===
+        this.cellStyle.length - 8
+      ) {
         this.cellStyle = this.cellStyle.substring(0, this.cellStyle.length - 8);
       }
-      if (this.titleStyle.lastIndexOf('Disabled') === this.titleStyle.length - 8) {
-        this.titleStyle = this.titleStyle.substring(0, this.titleStyle.length - 8);
+      if (
+        this.titleStyle.lastIndexOf('Disabled') ===
+        this.titleStyle.length - 8
+      ) {
+        this.titleStyle = this.titleStyle.substring(
+          0,
+          this.titleStyle.length - 8
+        );
       }
-      if (this.textBoxStyle.lastIndexOf('Disabled') === this.textBoxStyle.length - 8) {
-        this.textBoxStyle = this.textBoxStyle.substring(0, this.textBoxStyle.length - 8);
+      if (
+        this.textBoxStyle.lastIndexOf('Disabled') ===
+        this.textBoxStyle.length - 8
+      ) {
+        this.textBoxStyle = this.textBoxStyle.substring(
+          0,
+          this.textBoxStyle.length - 8
+        );
       }
     }
     return false;
   },
 
-  itemHoverHTML: function (item, form) {
+  itemHoverHTML: function(item, form) {
     if (this.isDisabled()) {
       return this.getValue();
     }

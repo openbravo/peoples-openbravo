@@ -16,27 +16,46 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-isc.ClassFactory.defineClass('OBSelectorFilterSelectItem', isc.OBFKFilterTextItem);
+isc.ClassFactory.defineClass(
+  'OBSelectorFilterSelectItem',
+  isc.OBFKFilterTextItem
+);
 
 isc.OBSelectorFilterSelectItem.addProperties({
-
-  filterDataBoundPickList: function (requestProperties, dropCache) {
+  filterDataBoundPickList: function(requestProperties, dropCache) {
     requestProperties = requestProperties || {};
     requestProperties.params = requestProperties.params || {};
     // selector can be placed on a standard window view or on a process definition view.
     var contextInfo;
-    if (this.selectorWindow.selector && this.selectorWindow.selector.form && this.selectorWindow.selector.form.view) {
+    if (
+      this.selectorWindow.selector &&
+      this.selectorWindow.selector.form &&
+      this.selectorWindow.selector.form.view
+    ) {
       // on purpose not passing the third boolean param
-      contextInfo = this.selectorWindow.selector.form.view.getContextInfo(false, true);
-    } else if (this.selectorWindow.selector && this.selectorWindow.selector.form && this.selectorWindow.selector.form.paramWindow) {
-      contextInfo = this.selectorWindow.selector.form.paramWindow.getContextInfo(false, true);
+      contextInfo = this.selectorWindow.selector.form.view.getContextInfo(
+        false,
+        true
+      );
+    } else if (
+      this.selectorWindow.selector &&
+      this.selectorWindow.selector.form &&
+      this.selectorWindow.selector.form.paramWindow
+    ) {
+      contextInfo = this.selectorWindow.selector.form.paramWindow.getContextInfo(
+        false,
+        true
+      );
     }
 
     // also add the special ORG parameter
     if (this.selectorWindow.selector.form.getField('organization')) {
-      requestProperties.params[OB.Constants.ORG_PARAMETER] = this.selectorWindow.selector.form.getValue('organization');
+      requestProperties.params[
+        OB.Constants.ORG_PARAMETER
+      ] = this.selectorWindow.selector.form.getValue('organization');
     } else if (contextInfo.inpadOrgId) {
-      requestProperties.params[OB.Constants.ORG_PARAMETER] = contextInfo.inpadOrgId;
+      requestProperties.params[OB.Constants.ORG_PARAMETER] =
+        contextInfo.inpadOrgId;
     }
 
     return this.Super('filterDataBoundPickList', [requestProperties, true]);

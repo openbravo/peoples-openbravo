@@ -17,27 +17,32 @@
  ************************************************************************
  */
 OB.APRM.FundsTranfer = {
-  depositToOnChange: function (item, view, form, grid) {
+  depositToOnChange: function(item, view, form, grid) {
     // the callback called after the server side call returns
-    var callback = function (response, data, request) {
-        var currencyTo = form.getItem('c_currency_to_id');
-        if (!currencyTo.valueMap) {
-          currencyTo.valueMap = {};
-        }
-        currencyTo.valueMap[data.currencyID] = data.currencyISO;
-        currencyTo.setValue(data.currencyID);
+    var callback = function(response, data, request) {
+      var currencyTo = form.getItem('c_currency_to_id');
+      if (!currencyTo.valueMap) {
+        currencyTo.valueMap = {};
+      }
+      currencyTo.valueMap[data.currencyID] = data.currencyISO;
+      currencyTo.setValue(data.currencyID);
 
-        // redraw popup after field change to update display logic
-        form.redraw();
-        };
+      // redraw popup after field change to update display logic
+      form.redraw();
+    };
     // do a server side call and on return call the callback
-    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.FundsTransferOnChangeDepositToActionHandler', {
-      accountID: item.getValue()
-    }, {}, callback);
+    OB.RemoteCallManager.call(
+      'org.openbravo.advpaymentmngt.actionHandler.FundsTransferOnChangeDepositToActionHandler',
+      {
+        accountID: item.getValue()
+      },
+      {},
+      callback
+    );
   },
-  onLoad: function (view) {
+  onLoad: function(view) {
     var form = view.theForm,
-        description = form.getItem('description');
+      description = form.getItem('description');
 
     description.setValue(OB.I18N.getLabel('FundsTransfer'));
   }
