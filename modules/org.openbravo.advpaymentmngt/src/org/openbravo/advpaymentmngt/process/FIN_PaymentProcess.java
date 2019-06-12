@@ -21,7 +21,6 @@ package org.openbravo.advpaymentmngt.process;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -519,8 +518,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         // ***********************
       } else if (strAction.equals("RV")) {
         FIN_Payment reversedPayment = (FIN_Payment) DalUtil.copy(payment, false);
-        final Calendar calendar = Calendar.getInstance();
-        final Date now = calendar.getTime();
+        final Date now = new Date();
         updateAuditInformation(reversedPayment, now);
         OBContext.setAdminMode();
         try {
