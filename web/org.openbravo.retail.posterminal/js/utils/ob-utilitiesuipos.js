@@ -737,7 +737,6 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
       rangeCriteria._limit = 1;
     }
     OB.Dal.find(OB.Model.ServicePriceRuleRange, rangeCriteria, function (sprr) {
-      var range, priceCriteria = {};
       if (sprr && sprr.length > 0) {
         callback(sprr.at(0));
       } else {

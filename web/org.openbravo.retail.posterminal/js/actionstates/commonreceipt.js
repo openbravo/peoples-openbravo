@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Promise */
+/*global OB*/
 
 OB.MobileApp.statesRegistry.register(
 new OB.State.BackboneProperty({

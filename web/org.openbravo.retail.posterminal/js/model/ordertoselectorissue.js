@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global Backbone, _ */
-
 (function () {
   OB.Model.OBRDM_OrderToSelectorIssue = OB.Data.ExtensibleModel.extend({
     modelName: 'OrderToSelectorIssue',

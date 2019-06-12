@@ -27,7 +27,6 @@
       OB.Actions.AbstractAction.call(this, args);
       this.calculateToAdd = args.calculateToAdd;
       this.isActive = function (view) {
-        var product;
         var isEditable = view.state.readCommandState({
           name: 'receipt.isEditable'
         });

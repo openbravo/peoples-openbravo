@@ -28,7 +28,6 @@ enyo.kind({
     this.hide();
   },
   executeOnShow: function () {
-    var component;
     var me = this;
     me.pressedBtn = false;
     me.$.body.$.editcustomers_impl.setCustomer(this.args.businessPartner);

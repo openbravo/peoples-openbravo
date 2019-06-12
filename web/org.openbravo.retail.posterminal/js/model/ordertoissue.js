@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global Backbone, _ */
-
 (function () {
   var OrderToIssue = OB.Data.ExtensibleModel.extend({
     modelName: 'OrderToIssue',

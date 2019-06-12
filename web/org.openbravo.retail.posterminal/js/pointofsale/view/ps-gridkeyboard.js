@@ -7,7 +7,8 @@
  ************************************************************************************
  */
 
-/*global enyo, _ */
+/*global enyo*/
+
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.GridKeyboard',
   kind: 'OB.OBPOS.UI.GridKeyboard',

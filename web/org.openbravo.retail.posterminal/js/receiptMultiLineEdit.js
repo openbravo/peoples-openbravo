@@ -61,8 +61,7 @@
           //Trigger Delivery Services Search
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
             var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasDeliveryServices');
-            var params = {},
-                date = new Date();
+            var date = new Date();
             process.exec({
               lines: [{
                 lineId: line.id,
@@ -209,7 +208,6 @@
       this.model = model;
     },
     setMultiSelected: function (inSender, inEvent) {
-      var me = this;
       if (this.owner.owner.selectedModels && this.owner.owner.selectedModels.length > 0) {
         var proposedServices, existRelatedServices;
         existRelatedServices = this.owner.owner.selectedModels.filter(function (line) {
@@ -264,7 +262,6 @@ enyo.kind({
     onApplyChanges: ''
   },
   tap: function () {
-    var me = this;
     if (this.doApplyChanges()) {
       this.doHideThisPopup();
     }
@@ -510,8 +507,7 @@ enyo.kind({
       //Trigger Delivery Services Search
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
         var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasDeliveryServices');
-        var params = {},
-            date = new Date();
+        var date = new Date();
         process.exec({
           lines: carrierLines,
           terminalTime: date,

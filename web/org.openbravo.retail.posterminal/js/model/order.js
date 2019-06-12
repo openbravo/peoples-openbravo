@@ -473,7 +473,7 @@
         }
 
         this.set('json', JSON.stringify(this.serializeToJSON()));
-        if (callback === undefined || !callback instanceof Function) {
+        if (callback === undefined || !(callback instanceof Function)) {
           callback = function () {};
         }
 
@@ -2322,7 +2322,6 @@
           line = !OB.UTIL.isNullOrUndefined(options) ? options.line : null,
           stockScreen = options && options.stockScreen,
           allLinesQty = qty,
-          productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(p),
           warehouseId, warehouse;
 
       if (!line && p.get('groupProduct')) {
@@ -7235,7 +7234,6 @@
 
     addPaidReceipt: function (model, callback) {
       var me = this,
-          synchId = null,
           execution = OB.UTIL.ProcessController.start('addPaidReceipt');
 
       function executeFinalCallback() {
