@@ -6,9 +6,9 @@
     "jslint": "eslint --max-warnings 0",
     "jsformat": "prettier"
   },
-  "repository": "http://code.openbravo.com/",
+  "repository": "https://code.openbravo.com/erp/devel/pi",
   "author": "Openbravo SLU",
-  "license": "OBPL",
+  "license": "SEE LICENSE IN legal/Openbravo_license.txt",
   "devDependencies": {
     "eslint": "~5.16.0",
     "eslint-config-prettier": "~4.3.0",
