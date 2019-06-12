@@ -236,7 +236,11 @@ public class Product extends ProcessHQLQuery {
     if (lastUpdated != null) {
       hql += "AND ((product.$incrementalUpdateCriteria) OR (pli.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria) OR (product.uOM.$incrementalUpdateCriteria))";
     } else {
-      hql += "AND ((product.$incrementalUpdateCriteria) AND (pli.$incrementalUpdateCriteria)) ";
+      hql += "AND ((product.$incrementalUpdateCriteria) AND (pli.$incrementalUpdateCriteria) AND (product.uOM.$incrementalUpdateCriteria) ";
+      if (!allowNoPriceInMainPriceList) {
+        hql += " AND (ppp.$incrementalUpdateCriteria)";
+      }
+      hql += ") ";
     }
     if (isRemote) {
       hql += "order by product.name asc, product.id";
