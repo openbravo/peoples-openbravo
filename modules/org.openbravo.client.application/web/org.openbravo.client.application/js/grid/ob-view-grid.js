@@ -2079,6 +2079,7 @@ isc.OBViewGrid.addProperties({
     callback = function () {
       delete me.isFilteringExternally;
     };
+    this.closeAnyOpenEditor();
     if (isc.isAn.Array(this.data) || (this.data.willFetchData && this.data.willFetchData(this.convertCriteria(criteria)))) {
       // Use this flag when a filter editor submit results a datasource request
       // This flag will be used to prevent unneeded datasource requests, see https://issues.openbravo.com/view.php?id=29896
@@ -3289,7 +3290,7 @@ isc.OBViewGrid.addProperties({
     // Update the focus cell value if different from edit form values.
     // To avoid the case where sometimes data updated through trigger is not showing up without refreshing.
     // Refer issue https://issues.openbravo.com/view.php?id=25028
-    this.setEditValue(rowNum, this.getField(colNum).name, record[this.getField(colNum).name], true, true);
+    this.setEditValue(rowNum, this.getField(colNum).name, this.getRecord(rowNum)[this.getField(colNum).name], true, true);
 
     if (this.getEditRow() === rowNum) {
       this.getEditForm().markForRedraw();
@@ -3494,8 +3495,8 @@ isc.OBViewGrid.addProperties({
       return;
     }
 
-    // If leaving the row...
-    if (newRow) {
+    // If leaving the row or moving to a cell in the same row that is disabled...
+    if (newRow || nextEditCell === null) {
       // do not leave the row if the row is new and not all mandatory fields have been set
       if (editForm && editForm.isNew && !editForm.allRequiredFieldsSet()) {
         return;

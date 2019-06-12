@@ -689,6 +689,7 @@ public class AdvPaymentMngtDao {
       BigDecimal writeoffAmount, BigDecimal debtAmount) {
     final FIN_PaymentScheduleDetail newPaymentScheduleDetail = (FIN_PaymentScheduleDetail) DalUtil
         .copy(paymentScheduleDetail);
+    newPaymentScheduleDetail.setCreationDate(new Date());
     newPaymentScheduleDetail.setAmount(writeoffAmount);
     newPaymentScheduleDetail.setDoubtfulDebtAmount(debtAmount);
     OBDal.getInstance().save(newPaymentScheduleDetail);
