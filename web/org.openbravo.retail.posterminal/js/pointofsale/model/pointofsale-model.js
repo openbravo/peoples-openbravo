@@ -251,8 +251,23 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.initModels(function () {});
     this.loadModels(function () {});
   },
+
+  assignManualDiscounts: function (callback) {
+    return function () {
+      OB.Dal.queryUsingCache(OB.Model.Discount, 'select * from m_offer where m_offer_type_id in (' + OB.Model.Discounts.getManualPromotions() + ') limit 1', [], function (records, args) {
+        this.set('manualDiscounts', records.length > 0);
+        callback();
+      }.bind(this), callback, {
+        modelsAffectedByCache: ['Discount']
+      });
+    }.bind(this);
+  },
+
   initModels: function (callback) {
     var me = this;
+
+    // to be executed at the end
+    callback = this.assignManualDiscounts(callback);
 
     // create and expose the receipt
     var receipt = new OB.Model.Order();
@@ -1131,72 +1146,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     //Because in terminal we've the BP id and we want to have the BP model.
     //In this moment we can ensure data is already loaded in the local database
     searchCurrentBP(loadModelsCallback);
-  },
-
-  /**
-   * This method is invoked before paying a ticket, it is intended to do global
-   * modifications in the ticket with OBPOS_PrePaymentHook hook, after this hook
-   * execution checkPaymentApproval is invoked
-   * OBPOS_PrePaymentApproval can be used to ensure certain order within the
-   * same hook
-   */
-  completePayment: function (caller) {
-    var me = this;
-    OB.UTIL.HookManager.executeHooks('OBPOS_PrePaymentHook', {
-      context: this,
-      caller: caller
-    }, function (args) {
-      if (args && args.cancellation) {
-        return;
-      }
-      OB.UTIL.HookManager.executeHooks('OBPOS_PrePaymentApproval', {
-        context: me,
-        caller: caller
-      }, function () {
-        me.on('approvalChecked', function (event) {
-          me.off('approvalChecked');
-          if (event.approved) {
-            me.trigger('showPaymentTab');
-          }
-        }, this);
-        me.checkPaymentApproval(caller);
-      });
-    });
-  },
-
-  /**
-   * Hooks for OBPOS_CheckPaymentApproval can modify args.approved to check if
-   * payment is approved. In case value is true the process will continue, if not
-   * it is aborted
-   */
-  checkPaymentApproval: function (caller) {
-    var me = this;
-    OB.UTIL.HookManager.executeHooks('OBPOS_CheckPaymentApproval', {
-      approvals: [],
-      context: this,
-      caller: caller
-    }, function (args) {
-      var negativeLines = _.filter(me.get('order').get('lines').models, function (line) {
-        return line.get('qty') < 0;
-      }).length;
-      if (negativeLines > 0 && !OB.MobileApp.model.get('permissions')['OBPOS_approval.returns']) {
-        args.approvals.push('OBPOS_approval.returns');
-      }
-      if (args.approvals.length > 0) {
-        OB.UTIL.Approval.requestApproval(
-        me, args.approvals, function (approved) {
-          if (approved) {
-            me.trigger('approvalChecked', {
-              approved: (args.approved !== undefined) ? args.approved : true
-            });
-          }
-        });
-      } else {
-        me.trigger('approvalChecked', {
-          approved: (args.approved !== undefined) ? args.approved : true
-        });
-      }
-    });
   },
 
   /**

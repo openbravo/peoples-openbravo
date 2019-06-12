@@ -108,6 +108,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalnoteditableorder", "components/modalnoteditableline",
         "components/modalmodulesindev", "components/modalselectprinters",
         "components/modalmorepaymentmethods", "components/modalDeliveryChange",
+        "components/obpos-gridkeyboard",
+
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
         "utils/cashManagementUtils", "utils/ticketCloseUtils", "utils/prepaymentUtils",
@@ -153,12 +155,14 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/obpos-supervisor-model",
 
         // Point of sale
-        "pointofsale/model/pointofsale-print", "pointofsale/model/pointofsale-model",
-        "pointofsale/model/localstock", "pointofsale/model/otherstoresstock",
-        "pointofsale/view/pointofsale", "pointofsale/view/ps-receiptview",
-        "pointofsale/view/ps-multireceiptview", "pointofsale/view/ps-productdetailsview",
-        "pointofsale/view/toolbar-left", "pointofsale/view/toolbar-right", "pointofsale/view/scan",
-        "pointofsale/view/editline", "pointofsale/view/payment", "pointofsale/view/ticketdiscount",
+        "pointofsale/view/ps-gridkeyboard", "pointofsale/view/ps-gridkeyboard-edit",
+        "pointofsale/view/ps-gridkeyboard-scan", "pointofsale/model/pointofsale-print",
+        "pointofsale/model/pointofsale-model", "pointofsale/model/localstock",
+        "pointofsale/model/otherstoresstock", "pointofsale/view/pointofsale",
+        "pointofsale/view/ps-receiptview", "pointofsale/view/ps-multireceiptview",
+        "pointofsale/view/ps-productdetailsview", "pointofsale/view/toolbar-left",
+        "pointofsale/view/toolbar-right", "pointofsale/view/scan", "pointofsale/view/editline",
+        "pointofsale/view/payment", "pointofsale/view/ticketdiscount",
         "pointofsale/view/keyboard-toolbars", "pointofsale/view/keyboardorder",
         // Point of sale subwindows
         "pointofsale/view/subwindows/customers/components/sharedcomponents",
@@ -215,6 +219,17 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Websockets
         "utils/rfidWebsocket",
 
+        // States
+        "actionstates/commonreceipt", "actionstates/commonwindow",
+
+        // Actions
+        "actions/changeprice", "actions/changequantity", "actions/convertquotation",
+        "actions/createquotation", "actions/deleteline", "actions/discount", "actions/editline",
+        "actions/invoicereceipt", "actions/keyboardevent", "actions/layawayreceipt",
+        "actions/opendrawer", "actions/openreceipt", "actions/payopenreceipts",
+        "actions/printreceipt", "actions/returnline", "actions/returnreceipt", "actions/scancode",
+        "actions/showreceiptproperties", "actions/showstockline", "actions/splitline",
+
         "utils/preScanningFocusHook", "utils/orderSelectorUtils", "utils/stockUtils",
         "utils/productStatusUtils",
 
@@ -222,8 +237,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/deliveryModeUtils", "hookPreOrderSave", "hookPreDeleteLine",
         "hookPostUndo_DeleteLine", "receiptEdit", "receiptMultiLineEdit", "hookNewReceipt",
         "hookRenderOrderLine", "hookPrePayment", "hookPreSetPaymentsToReceipt",
-        "hookPreAddProductWithoutStock", "hookPostAddProductToOrder", "components/menuissue",
-        "model/dmorderfilter", "model/ordertoissue", "utils/utils",
+        "hookPostAddProductToOrder", "components/menuissue", "model/dmorderfilter",
+        "model/ordertoissue", "utils/utils",
 
         "model/ordertoselectorissue", "components/orderselector",
         "components/modalwarehouseselector", "components/orderlineinfopopup",
@@ -242,7 +257,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         prefix + "utils/openhardwareurl.js", ComponentResource.APP_OB3));
 
     // [TODO] Remove pos-login and obpos-legacy after the renaming
-    final String[] cssDependency = { "pos-login", "obpos-main", "new-obpos-main" };
+    final String[] cssDependency = { "pos-login", "obpos-main", "obpos-main-uiconfig", "new-obpos-main" };
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

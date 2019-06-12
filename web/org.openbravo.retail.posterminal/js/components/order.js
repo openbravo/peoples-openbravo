@@ -96,8 +96,6 @@ enyo.kind({
     classes: 'obUiOrderHeader-labelComponents-btnSingleSelection',
     kind: 'OB.UI.OrderSingleSelect',
     name: 'btnSingleSelection'
-  }, {
-    classes: 'obUiOrderHeader-labelComponents-element1'
   }],
   newButtonComponents: [{
     classes: 'obUiOrderHeader-buttonComponents-bpbutton',
@@ -116,8 +114,13 @@ enyo.kind({
     name: 'bplocshipbutton'
   }],
   components: [{
-    classes: 'obUiOrderHeader-receiptLabels',
-    name: 'receiptLabels'
+    name: 'receiptLabels',
+    classes: 'obUiOrderHeader-receiptLabels'
+  }, {
+    kind: 'OB.UI.ActionButtonArea',
+    name: 'obpos_pointofsale-receipttoolbar1',
+    abaIdentifier: 'obpos_pointofsale-receipttoolbar1',
+    classes: 'obpos_pointofsale-receipttoolbar1'
   }, {
     name: 'receiptButtons',
     classes: 'obUiOrderHeader-receiptButtons'

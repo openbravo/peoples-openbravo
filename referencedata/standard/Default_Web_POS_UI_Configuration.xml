@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><ob:Openbravo xmlns:ob="http://www.openbravo.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <OBMOBC_UiConfigurationWindowAbaAction id="0DEE84C8B7DA4A7291AA8BCE198FBB88" identifier="Receipt discounts - Edit - Bottom Right Button Area">
+    <id>0DEE84C8B7DA4A7291AA8BCE198FBB88</id>
+    <active>true</active>
+    <creationDate transient="true">2019-06-11T18:29:28.128Z</creationDate>
+    <updated transient="true">2019-06-11T18:29:34.106Z</updated>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <action id="B00D30606F5C4BE6B9FEB32D2D832713" entity-name="OBMOBC_Action" identifier="Receipt discounts"/>
+    <aBAUiConfiguration id="1B9A88252F6A4ADAB0617615806DCD46" entity-name="OBMOBC_UiConfigurationWindowAba" identifier="Edit - Bottom Right Button Area"/>
+    <rowposition>4</rowposition>
+    <columnposition>0</columnposition>
+    <colspan>2</colspan>
+    <rowspan>1</rowspan>
+    <cssclass xsi:nil="true"/>
+    <actionComponent>OB.UI.ActionButton</actionComponent>
+  </OBMOBC_UiConfigurationWindowAbaAction>
+  <OBMOBC_UiConfigurationWindowAbaAction id="690F6F34F10C428FBF5486A34C60734B" identifier="Scan code - Scan - Bottom Right Button Area">
+    <id>690F6F34F10C428FBF5486A34C60734B</id>
+    <active>true</active>
+    <creationDate transient="true">2019-06-11T18:22:24.885Z</creationDate>
+    <updated transient="true">2019-06-11T18:22:24.885Z</updated>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <action id="6A2FC5AB39E14E31B7A8025F6E82AE98" entity-name="OBMOBC_Action" identifier="Scan code"/>
+    <aBAUiConfiguration id="A6FD5A8F22A04EA3B15443D794774445" entity-name="OBMOBC_UiConfigurationWindowAba" identifier="Scan - Bottom Right Button Area"/>
+    <rowposition>0</rowposition>
+    <columnposition>0</columnposition>
+    <colspan>2</colspan>
+    <rowspan>1</rowspan>
+    <cssclass xsi:nil="true"/>
+    <actionComponent>OB.UI.ActionButton</actionComponent>
+  </OBMOBC_UiConfigurationWindowAbaAction>
+  <OBMOBC_UiConfigurationWindowAbaAction id="9C7C5194B7924B83B842B0C89D2D19CF" identifier="Change price - Edit - Bottom Right Button Area">
+    <id>9C7C5194B7924B83B842B0C89D2D19CF</id>
+    <active>true</active>
+    <creationDate transient="true">2019-06-11T18:28:52.468Z</creationDate>
+    <updated transient="true">2019-06-11T18:28:52.468Z</updated>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <action id="16C9F8B5B29B4B74985D824FE66AEA1B" entity-name="OBMOBC_Action" identifier="Change price"/>
+    <aBAUiConfiguration id="1B9A88252F6A4ADAB0617615806DCD46" entity-name="OBMOBC_UiConfigurationWindowAba" identifier="Edit - Bottom Right Button Area"/>
+    <rowposition>3</rowposition>
+    <columnposition>0</columnposition>
+    <colspan>2</colspan>
+    <rowspan>1</rowspan>
+    <cssclass xsi:nil="true"/>
+    <actionComponent>OB.UI.ActionButton</actionComponent>
+  </OBMOBC_UiConfigurationWindowAbaAction>
+  <OBMOBC_UiConfigurationWindowAbaAction id="BE153F359B70412F84F2E83724A3D525" identifier="Change quantity - Edit - Bottom Right Button Area">
+    <id>BE153F359B70412F84F2E83724A3D525</id>
+    <active>true</active>
+    <creationDate transient="true">2019-06-11T18:28:23.722Z</creationDate>
+    <updated transient="true">2019-06-11T18:28:23.722Z</updated>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <action id="041C89EFAAE24560A9340B00BE37ADAC" entity-name="OBMOBC_Action" identifier="Change quantity"/>
+    <aBAUiConfiguration id="1B9A88252F6A4ADAB0617615806DCD46" entity-name="OBMOBC_UiConfigurationWindowAba" identifier="Edit - Bottom Right Button Area"/>
+    <rowposition>2</rowposition>
+    <columnposition>0</columnposition>
+    <colspan>2</colspan>
+    <rowspan>1</rowspan>
+    <cssclass xsi:nil="true"/>
+    <actionComponent>OB.UI.ActionButton</actionComponent>
+  </OBMOBC_UiConfigurationWindowAbaAction>
+  <OBMOBC_UiConfigurationWindowAba id="1B9A88252F6A4ADAB0617615806DCD46" identifier="Edit - Bottom Right Button Area">
+    <id>1B9A88252F6A4ADAB0617615806DCD46</id>
+    <active>true</active>
+    <creationDate transient="true">2019-06-11T18:22:42.65Z</creationDate>
+    <updated transient="true">2019-06-11T18:22:42.65Z</updated>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <actionButtonArea id="90CDCFBDC0114DFCBDBD25423361C0A3" entity-name="OBMOBC_ActionButtonArea" identifier="Edit - Bottom Right Button Area"/>
+    <actionButtonAreaLayoutVariant id="E18F4747BD33489FACEF372D7F4646E7" entity-name="OBMOBC_ActionButtonArea_Layout_Variant" identifier="Left"/>
+    <window id="BA1D9014A1764267A35F475CCF0E1F84" entity-name="OBMOBC_Window" identifier="Touchpoint"/>
+    <mobileUIConfiguration id="9A4BF675E1674C058F473A4358854B1D" entity-name="OBMOBC_UiConfiguration" identifier="Default POS UI Configuration"/>
+  </OBMOBC_UiConfigurationWindowAba>
+  <OBMOBC_UiConfigurationWindowAba id="A6FD5A8F22A04EA3B15443D794774445" identifier="Scan - Bottom Right Button Area">
+    <id>A6FD5A8F22A04EA3B15443D794774445</id>
+    <active>true</active>
+    <creationDate transient="true">2019-06-11T18:22:02.245Z</creationDate>
+    <updated transient="true">2019-06-11T18:22:54.12Z</updated>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <actionButtonArea id="3EE433EFC6674FB9A7308B5FBB69E378" entity-name="OBMOBC_ActionButtonArea" identifier="Scan - Bottom Right Button Area"/>
+    <actionButtonAreaLayoutVariant id="E18F4747BD33489FACEF372D7F4646E7" entity-name="OBMOBC_ActionButtonArea_Layout_Variant" identifier="Left"/>
+    <window id="BA1D9014A1764267A35F475CCF0E1F84" entity-name="OBMOBC_Window" identifier="Touchpoint"/>
+    <mobileUIConfiguration id="9A4BF675E1674C058F473A4358854B1D" entity-name="OBMOBC_UiConfiguration" identifier="Default POS UI Configuration"/>
+  </OBMOBC_UiConfigurationWindowAba>
+  <OBMOBC_UiConfiguration id="9A4BF675E1674C058F473A4358854B1D" identifier="Default POS UI Configuration">
+    <id>9A4BF675E1674C058F473A4358854B1D</id>
+    <active>true</active>
+    <creationDate transient="true">2019-06-11T18:09:35.103Z</creationDate>
+    <updated transient="true">2019-06-11T18:09:35.103Z</updated>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <name>Default POS UI Configuration</name>
+    <searchKey>OBPOS_Default_ui_configuration</searchKey>
+    <description xsi:nil="true"/>
+    <application id="2C482867F38942ACA54BF82C1BE4D779" entity-name="ADApplication" identifier="Web POS"/>
+  </OBMOBC_UiConfiguration>
+</ob:Openbravo>

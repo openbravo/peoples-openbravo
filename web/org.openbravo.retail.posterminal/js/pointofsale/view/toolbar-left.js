@@ -272,7 +272,7 @@ enyo.kind({
     onChangedTotal: 'renderTotal',
     onRightToolbarDisabled: 'disabledButton'
   },
-  processesToListen: ['calculateReceipt', 'completeQuotation', 'clearWith', 'addProduct', 'servicePriceCalculation'],
+  processesToListen: ['calculateReceipt', 'completeQuotation', 'clearWith', 'addProduct', 'servicePriceCalculation', 'totalAmountValidation'],
   isEnabled: true,
   disabledButton: function (inSender, inEvent) {
     if (inEvent.exceptionPanel === this.tabPanel) {
@@ -496,11 +496,13 @@ enyo.kind({
         criteria = {},
         paymentModels = OB.MobileApp.model.get('payments');
     if (this.disabled === false) {
-      var receipt = me.model.get('order'),
+      var execution = OB.UTIL.ProcessController.start('totalAmountValidation'),
+          receipt = me.model.get('order'),
           receiptLines = receipt.get('lines').models,
           i;
       if (receipt.get('isQuotation') && receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').quotation_anonymouscustomer) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_quotationsOrdersWithAnonimousCust'));
+        OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
         return;
       }
       if (!OB.MobileApp.model.get('isMultiOrderState') && receipt.isNegative()) {
@@ -511,6 +513,7 @@ enyo.kind({
           OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_LblNoRefundablePayments'), [{
             label: OB.I18N.getLabel('OBMOBC_LblOk')
           }]);
+          OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
           return;
         }
       }
@@ -518,6 +521,7 @@ enyo.kind({
       for (i = 1; i < receipt.get('lines').models.length; i++) {
         if (receiptLines[0].get('organization').id !== receiptLines[i].get('organization').id) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ReceiptLinesSameStore'));
+          OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
           return;
         }
       }
@@ -542,17 +546,64 @@ enyo.kind({
       }
 
       if (receipt.get('orderType') === 3) {
+        OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
         this.showPaymentTab();
         return;
       }
       OB.UTIL.StockUtils.checkOrderLinesStock([receipt], function (hasStock) {
         if (hasStock) {
-          me.model.on('showPaymentTab', function (event) {
-            me.model.get('order').getPrepaymentAmount(function () {
-              me.model.off('showPaymentTab');
-              me.showPaymentTab();
-            }, true);
-          });
+          var completePayment = function () {
+              OB.UTIL.HookManager.executeHooks('OBPOS_PrePaymentHook', {
+                context: me.model,
+                caller: me
+              }, function (args) {
+                if (args && args.cancellation) {
+                  OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
+                  return;
+                }
+                OB.UTIL.HookManager.executeHooks('OBPOS_PrePaymentApproval', {
+                  context: me.model,
+                  caller: me
+                }, function (args2) {
+                  OB.UTIL.HookManager.executeHooks('OBPOS_CheckPaymentApproval', {
+                    approvals: [],
+                    context: me.model,
+                    caller: me
+                  }, function (args3) {
+
+                    function showPaymentTab() {
+                      if (!_.isUndefined(args3.approved) ? args3.approved : true) {
+                        me.model.get('order').getPrepaymentAmount(function () {
+                          OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
+                          me.showPaymentTab();
+                        }, true);
+                      } else {
+                        OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
+                      }
+                    }
+
+                    var negativeLines = _.filter(receipt.get('lines').models, function (line) {
+                      return line.get('qty') < 0;
+                    }).length;
+                    if (negativeLines > 0 && !OB.MobileApp.model.get('permissions')['OBPOS_approval.returns']) {
+                      args3.approvals.push('OBPOS_approval.returns');
+                    }
+                    if (args3.approvals.length > 0) {
+                      OB.UTIL.Approval.requestApproval(
+                      me.model, args3.approvals, function (approved) {
+                        if (approved) {
+                          showPaymentTab();
+                        } else {
+                          OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
+                        }
+                      });
+                    } else {
+                      showPaymentTab();
+                    }
+                  });
+                });
+              });
+              };
 
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
             criteria.remoteFilters = [];
@@ -574,18 +625,22 @@ enyo.kind({
           }
           OB.Dal.find(OB.Model.Product, criteria, function (data) {
             if (data && data.length > 0 && !receipt.get('isPaid') && !receipt.get('isLayaway')) {
+              OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
               receipt.trigger('showProductList', null, 'final', function () {
-                me.model.completePayment();
+                execution = OB.UTIL.ProcessController.start('totalAmountValidation');
+                completePayment();
                 me.doClearUserInput();
               });
             } else {
-              me.model.completePayment(me);
+              completePayment();
               me.doClearUserInput();
             }
           }, function (trx, error) {
-            me.model.completePayment(me);
+            completePayment();
             me.doClearUserInput();
           });
+        } else {
+          OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
         }
       });
     }

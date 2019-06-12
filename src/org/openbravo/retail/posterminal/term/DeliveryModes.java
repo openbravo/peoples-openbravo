@@ -30,7 +30,7 @@ public class DeliveryModes extends QueryTerminalProperty {
     hqlDeliveryModes.append("COALESCE((SELECT trl.name ");
     hqlDeliveryModes.append("FROM list.aDListTrlList AS trl ");
     hqlDeliveryModes.append("WHERE trl.language = '");
-    hqlDeliveryModes.append(OBContext.getOBContext().getLanguage());
+    hqlDeliveryModes.append(OBContext.getOBContext().getLanguage().getLanguage());
     hqlDeliveryModes.append("'), list.name) AS name ");
     hqlDeliveryModes.append("FROM ADList AS list ");
     hqlDeliveryModes.append("WHERE list.reference.id = '41D44C94D0AC41DEBA9A2BEB0EAF059C' ");

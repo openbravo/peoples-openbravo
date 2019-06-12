@@ -157,6 +157,10 @@
         <default><![CDATA[OBPOS]]></default>
         <onCreateDefault/>
       </column>
+      <column name="OBMOBC_UICONFIGURATION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_DOCTYPE_QUOT_ID">
         <reference local="C_DOCTYPEQUOT_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
@@ -183,6 +187,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_TERTYPELICATIONS_RECON">
         <reference local="C_DOCTYPERECON_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBMOBC_UICONFIGURATION" name="OBPOS_TTYPE_OBMOBCUICONFIG">
+        <reference local="OBMOBC_UICONFIGURATION_ID" foreign="OBMOBC_UICONFIGURATION_ID"/>
       </foreign-key>
       <index name="OBPOS_DOCTYPE_QUOT_ID" unique="false">
         <index-column name="C_DOCTYPEQUOT_ID"/>

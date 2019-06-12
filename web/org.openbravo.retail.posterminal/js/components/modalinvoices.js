@@ -288,7 +288,7 @@ enyo.kind({
   printReceiptAction: function () {
     var execution = OB.UTIL.ProcessController.start('invoicesPrintReceipt');
     this.owner.model.get('order').set('forceReceiptTemplate', true);
-    this.doPrintReceipt({
+    this.doPrintSingleReceipt({
       callback: function () {
         OB.UTIL.ProcessController.finish('invoicesPrintReceipt', execution);
       }

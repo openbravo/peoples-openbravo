@@ -22,7 +22,8 @@ enyo.kind({
     onSetDiscountQty: '',
     onDiscountsMode: '',
     onSetMultiSelectionItems: '',
-    onDeleteLine: ''
+    onDeleteLine: '',
+    onWriteState: ''
   },
   discountsMode: false,
   handlers: {
@@ -34,6 +35,10 @@ enyo.kind({
       return;
     }
     this.selectedModels = inEvent.models;
+    this.doWriteState({
+      name: 'selectedReceiptLines',
+      value: inEvent.models
+    });
     this.selectedEditPrice = OB.MobileApp.model.hasPermission('OBPOS_order.changePrice', false);
     if (this.selectedEditPrice) {
       var i;
@@ -99,35 +104,19 @@ enyo.kind({
     this.$.toolbarcontainer.$.toolbarPayment.setReceipt(this.receipt);
 
     this.line = null;
+    this.doWriteState({
+      name: 'selectedReceiptLine',
+      value: null
+    });
 
     this.receipt.get('lines').on('selected', function (line) {
       this.line = line;
       this.clearEditBox();
+      this.doWriteState({
+        name: 'selectedReceiptLine',
+        value: line
+      });
     }, this);
-  },
-  validateQuantity: function (keyboard, value, callback) {
-    var me = this;
-    if (!isFinite(value)) {
-      return true;
-    }
-    var valueBigDecimal = OB.DEC.toBigDecimal(value);
-    if (valueBigDecimal.scale() > keyboard.line.get('product').get('uOMstandardPrecision')) {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_StdPrecisionLimitError', [keyboard.line.get('product').get('uOMstandardPrecision')]));
-      return false;
-    }
-    if (OB.MobileApp.model.hasPermission('OBPOS_maxQtyUsingKeyboard', true) && value >= OB.I18N.parseNumber(OB.MobileApp.model.hasPermission('OBPOS_maxQtyUsingKeyboard', true))) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_maxQtyUsingKeyboardHeader'), OB.I18N.getLabel('OBPOS_maxQtyUsingKeyboardBody', [value]), [{
-        isConfirmButton: true,
-        label: OB.I18N.getLabel('OBMOBC_LblOk'),
-        action: function () {
-          callback(me, keyboard, value);
-        }
-      }, {
-        label: OB.I18N.getLabel('OBMOBC_LblCancel')
-      }]);
-      return false;
-    }
-    return true;
   },
   validatePrice: function (keyboard, price, callback) {
     var me = this;
@@ -168,70 +157,6 @@ enyo.kind({
   initComponents: function () {
     var me = this;
 
-    var actionAddProduct = function (keyboard, value) {
-        if (keyboard.line.get('relatedLines')) {
-          return;
-        }
-        if (!me.validateReceipt(keyboard, true)) {
-          return true;
-        }
-        if (keyboard.line) {
-          if (_.isNaN(value)) {
-            return true;
-          } else {
-            me.doAddProduct({
-              product: keyboard.line.get('product'),
-              qty: value,
-              options: {
-                line: keyboard.line,
-                blockAddProduct: true
-              }
-            });
-            keyboard.receipt.trigger('scan');
-          }
-        }
-        };
-
-    var actionAddMultiProduct = function (keyboard, qty) {
-        var cancelQtyChange = false,
-            cancelQtyChangeReturn = false;
-
-        // Check if is trying to remove delivered units or to modify negative lines in a cancel and replace ticket.
-        // In that case stop the flow and show an error popup.
-        if (keyboard.receipt.get('replacedorder')) {
-          _.each(me.selectedModels, function (l) {
-            var oldqty = l.get('qty'),
-                newqty = oldqty + qty;
-
-            if (oldqty > 0 && newqty < l.get('remainingQuantity')) {
-              cancelQtyChange = true;
-            } else if (oldqty < 0 && l.get('remainingQuantity')) {
-              cancelQtyChangeReturn = true;
-            }
-          });
-        }
-        if (cancelQtyChange) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEdit'));
-          return;
-        } else if (cancelQtyChangeReturn) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
-          return;
-        }
-
-        keyboard.receipt.set('undo', null);
-        keyboard.receipt.set('multipleUndo', true);
-        var selection = [];
-        _.each(me.selectedModels, function (model) {
-          selection.push(model);
-          keyboard.line = model;
-          actionAddProduct(keyboard, qty);
-        });
-        keyboard.receipt.set('multipleUndo', null);
-        me.doSetMultiSelectionItems({
-          selection: selection
-        });
-        };
-
     // action bindable to a command that completely deletes a product from the order list
     var actionDeleteLine = function (keyboard) {
         if (!me.validateReceipt(keyboard, true)) {
@@ -240,7 +165,7 @@ enyo.kind({
         if (keyboard.model.get('leftColumnViewManager') && !keyboard.model.get('leftColumnViewManager').isMultiOrder()) {
           if (keyboard.line) {
             keyboard.doDeleteLine({
-              selectedModels: keyboard.selectedModels
+              selectedReceiptLines: keyboard.selectedModels
             });
           }
         } else {
@@ -249,117 +174,22 @@ enyo.kind({
 
         };
 
-    var changePrice = function (keyboardComponent, keyboard, price) {
-
-        var setPrices = function () {
-            keyboard.receipt.setPrices(keyboardComponent.selectedModels, price);
-            keyboard.receipt.trigger('scan');
-            };
-
-        if (OB.MobileApp.model.get('priceModificationReasons').length > 0) {
-          me.doShowPopup({
-            popup: 'modalPriceModification',
-            args: {
-              callback: setPrices,
-              selectedModels: me.selectedModels,
-              receipt: keyboard.receipt,
-              line: keyboard.line
-            }
-          });
-        } else {
-          setPrices();
-        }
-        };
-
-    var changeQuantity = function (keyboardComponent, keyboard, value) {
-        keyboard.receipt.set('undo', null);
-        var selection = [];
-        var toadd;
-        if (keyboardComponent.selectedModels && keyboardComponent.selectedModels.length > 1) {
-          keyboard.receipt.set('multipleUndo', true);
-        }
-        _.each(keyboardComponent.selectedModels, function (model) {
-          selection.push(model);
-          keyboard.line = model;
-          if (keyboard.receipt.get('orderType') === 1) {
-            toadd = value - (-keyboard.line.get('qty'));
-          } else {
-            toadd = value - keyboard.line.get('qty');
-          }
-          if (toadd !== 0) {
-            if (value === 0) { // If final quantity will be 0 then request approval
-              keyboard.doDeleteLine({
-                selectedModels: keyboard.selectedModels
-              });
-            } else {
-              actionAddProduct(keyboard, toadd);
-            }
-          } else {
-            keyboard.clearInput();
-          }
-        });
-        keyboard.receipt.set('multipleUndo', null);
-        keyboardComponent.doSetMultiSelectionItems({
-          selection: selection
-        });
-        };
-
     this.addCommand('line:qty', {
       action: function (keyboard, txt) {
-        var value = OB.I18N.parseNumber(txt);
-
-        if (!keyboard.line) {
-          return true;
-        }
-        if (value || value === 0) {
-          if (!me.validateQuantity(keyboard, value, changeQuantity)) {
-            return true;
-          }
-          changeQuantity(me, keyboard, value);
-        }
+        OB.MobileApp.actionsRegistry.execute({
+          window: 'retail.pointofsale',
+          name: 'changeQuantity'
+        });
       }
     });
 
     this.addCommand('line:price', {
       permission: 'OBPOS_order.changePrice',
       action: function (keyboard, txt) {
-        var price = OB.I18N.parseNumber(txt);
-
-        if (!me.validateReceipt(keyboard, false)) {
-          return true;
-        }
-        if (!keyboard.line) {
-          return true;
-        }
-        if (!me.validatePrice(keyboard, price, changePrice)) {
-          return true;
-        }
-        if (keyboard.line.get('product').get('isEditablePrice') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableLine'
-          });
-          return true;
-        }
-        if (keyboard.line) {
-          OB.UTIL.Approval.requestApproval(
-          me.model, 'OBPOS_approval.setPrice', function (approved, supervisor, approvalType) {
-            if (approved) {
-              var approvals = keyboard.receipt.get('approvals') || [],
-                  approval = {
-                  approvalType: {
-                    approval: 'OBPOS_approval.setPrice',
-                    message: 'OBPOS_approval.setPriceMessage',
-                    params: [keyboard.line.get('product').get('_identifier'), OB.I18N.formatCurrency(keyboard.line.getGross()), OB.I18N.formatCurrency(price)]
-                  },
-                  userContact: supervisor.get('id'),
-                  created: (new Date()).getTime()
-                  };
-              approvals.push(approval);
-              keyboard.receipt.set('approvals', approvals);
-              changePrice(me, keyboard, price);
-            }
-          });
-        }
+        OB.MobileApp.actionsRegistry.execute({
+          window: 'retail.pointofsale',
+          name: 'changePrice'
+        });
       }
     });
 
@@ -389,16 +219,9 @@ enyo.kind({
       stateless: true,
       permission: 'OBPOS_order.discount',
       action: function (keyboard, txt) {
-        if (!me.validateReceipt(keyboard, true)) {
-          return true;
-        }
-        me.doDiscountsMode({
-          tabPanel: 'edit',
-          keyboard: 'toolbardiscounts',
-          edit: false,
-          options: {
-            discounts: true
-          }
+        OB.MobileApp.actionsRegistry.execute({
+          window: 'retail.pointofsale',
+          name: 'discount'
         });
       }
     });
@@ -421,80 +244,20 @@ enyo.kind({
     this.addCommand('+', {
       stateless: true,
       action: function (keyboard, txt) {
-        var qty = 1;
-        if (!me.selectedModels || !keyboard.line || !keyboard.line.get('product').get('groupProduct') || (keyboard.line.get('product') === 'S' && keyboard.line.get('product').get('isLinkedToProduct')) || !keyboard.line.get('isEditable') || keyboard.line.get('product').get('isSerialNo')) {
-          return;
-        }
-
-        if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
-          qty = OB.I18N.parseNumber(txt);
-          if (!me.validateQuantity(keyboard, qty)) {
-            return true;
-          }
-        }
-        if (me.selectedModels.length > 1) {
-          actionAddMultiProduct(keyboard, qty);
-        } else {
-          keyboard.receipt.set('multipleUndo', null);
-          actionAddProduct(keyboard, qty);
-        }
+        OB.MobileApp.actionsRegistry.execute({
+          window: 'retail.pointofsale',
+          name: 'addQuantity'
+        });
       }
     });
 
     this.addCommand('-', {
       stateless: true,
       action: function (keyboard, txt) {
-        var qty = 1,
-            value;
-        if (!me.selectedModels || !keyboard.line || !keyboard.line.get('product').get('groupProduct') || (keyboard.line.get('product') === 'S' && keyboard.line.get('product').get('isLinkedToProduct')) || !keyboard.line.get('isEditable') || keyboard.line.get('product').get('isSerialNo')) {
-          return;
-        }
-        if (!me.validateReceipt(keyboard, true)) {
-          return true;
-        }
-
-        if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
-          qty = OB.I18N.parseNumber(txt);
-          if (!me.validateQuantity(keyboard, qty)) {
-            return true;
-          }
-        }
-        if (me.selectedModels.length > 0) {
-          if (keyboard.receipt.get('orderType') === 1) {
-            value = me.selectedModels[0].get('qty') + qty;
-          } else {
-            value = me.selectedModels[0].get('qty') - qty;
-          }
-        } else if (!_.isUndefined(keyboard.line)) {
-          value = keyboard.line.get('qty') - qty;
-        }
-        if (value === 0) { // If final quantity will be 0 then request approval
-          keyboard.doDeleteLine({
-            selectedModels: keyboard.selectedModels
-          });
-        } else {
-          var actionAddProducts;
-          actionAddProducts = function (doNotReturnServices) {
-            if (keyboard.receipt.validateAllowSalesWithReturn(value, false, me.selectedModels)) {
-              return;
-            }
-            keyboard.receipt.set('undo', null);
-            if (me.selectedModels.length > 1) {
-              actionAddMultiProduct(keyboard, -qty);
-            } else {
-              keyboard.receipt.set('multipleUndo', null);
-              actionAddProduct(keyboard, -qty);
-            }
-          };
-
-          if (value > 0) {
-            actionAddProducts();
-          } else {
-            me.getReceipt().checkReturnableProducts(me.selectedModels, me.model, function () {
-              actionAddProducts();
-            });
-          }
-        }
+        OB.MobileApp.actionsRegistry.execute({
+          window: 'retail.pointofsale',
+          name: 'removeQuantity'
+        });
       }
     });
 

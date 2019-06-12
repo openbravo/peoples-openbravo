@@ -11,71 +11,11 @@
 
 enyo.kind({
   name: 'OB.UI.MenuReturn',
-  kind: 'OB.UI.MenuAction',
+  kind: 'OB.UI.ActionMenuAction',
   classes: 'obUiMenuReturn',
-  permission: 'OBPOS_receipt.return',
-  events: {
-    onShowDivText: '',
-    onRearrangeEditButtonBar: ''
-  },
-  i18nLabel: 'OBPOS_LblReturn',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    this.model.get('order').setDocumentNo(true, false);
-    this.doShowDivText({
-      permission: this.permission,
-      orderType: 1
-    });
-    if (OB.MobileApp.model.get('lastPaneShown') === 'payment') {
-      this.model.get('order').trigger('scan');
-    }
-    this.doRearrangeEditButtonBar();
-  },
-  displayLogic: function () {
-    var negativeLines = _.filter(this.model.get('order').get('lines').models, function (line) {
-      return line.get('qty') < 0;
-    }).length;
-    if (!this.model.get('order').get('isQuotation')) {
-      this.show();
-    } else {
-      this.hide();
-      return;
-    }
-    if (negativeLines > 0) {
-      this.hide();
-      return;
-    }
-    if (this.model.get('order').get('isEditable') === false || this.model.get('order').get('orderType') === 2) {
-      this.hide();
-      return;
-    }
-    if (!_.find(OB.MobileApp.model.get('payments'), function (payment) {
-      return payment.paymentMethod.refundable;
-    })) {
-      this.hide();
-      return;
-    }
-    this.adjustVisibilityBasedOnPermissions();
-  },
-  init: function (model) {
-    this.model = model;
-    var receipt = model.get('order');
-    receipt.on('change:isEditable change:isQuotation change:gross change:orderType change:replacedorder', function (changedModel) {
-      this.displayLogic();
-    }, this);
-    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
-      if (changedModel.isOrder()) {
-        this.displayLogic();
-        return;
-      }
-      if (changedModel.isMultiOrder()) {
-        this.setShowing(false);
-        return;
-      }
-    }, this);
+  action: {
+    window: 'retail.pointofsale',
+    name: 'returnReceipt'
   }
 });
 
@@ -352,228 +292,40 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.MenuLayaway',
-  kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_receipt.layawayReceipt',
-  events: {
-    onShowDivText: '',
-    onRearrangeEditButtonBar: ''
-  },
-  i18nLabel: 'OBPOS_LblLayawayReceipt',
-  tap: function () {
-    var negativeLines, deliveredLines, me = this;
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.UTIL.isNullOrUndefined(this.model.get('order').get('bp'))) {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_layawaysOrderWithNotBP'));
-      return true;
-    }
-    if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) {
-      negativeLines = _.find(this.model.get('order').get('lines').models, function (line) {
-        return line.get('qty') < 0;
-      });
-      if (negativeLines) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
-        return true;
-      }
-    }
-    if (this.model.get('order').get('doCancelAndReplace')) {
-      deliveredLines = _.find(this.model.get('order').get('lines').models, function (line) {
-        return line.get('deliveredQuantity') && OB.DEC.compare(line.get('deliveredQuantity')) === 1;
-      });
-      if (deliveredLines) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_LayawaysOrdersWithDeliveries'));
-        return true;
-      }
-    }
-    OB.UTIL.HookManager.executeHooks('OBPOS_LayawayReceipt', {
-      context: me
-    }, function (args) {
-      if (args && args.cancelOperation && args.cancelOperation === true) {
-        return;
-      }
-      me.doShowDivText({
-        permission: me.permission,
-        orderType: 2
-      });
-      me.doRearrangeEditButtonBar();
-    });
-  },
-  updateVisibility: function (isVisible) {
-    if (!OB.MobileApp.model.hasPermission(this.permission)) {
-      this.hide();
-      return;
-    }
-    if (!isVisible) {
-      this.hide();
-      return;
-    }
-    this.show();
-  },
-  init: function (model) {
-    this.model = model;
-    var receipt = model.get('order'),
-        me = this;
-    receipt.on('change:isEditable change:isQuotation change:orderType', function (model) {
-      if (!model.get('isEditable') || model.get('isQuotation') || (model.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) || model.get('orderType') === 2) {
-        me.updateVisibility(false);
-      } else {
-        me.updateVisibility(true);
-      }
-    }, this);
-    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
-      if (changedModel.isOrder()) {
-        if (model.get('order').get('isEditable') && !this.model.get('order').get('isQuotation')) {
-          me.updateVisibility(true);
-        } else {
-          me.updateVisibility(false);
-        }
-        return;
-      }
-      if (changedModel.isMultiOrder()) {
-        me.updateVisibility(false);
-      }
-    }, this);
+  kind: 'OB.UI.ActionMenuAction',
+  action: {
+    window: 'retail.pointofsale',
+    name: 'layawayReceipt'
   }
 });
 
 enyo.kind({
   name: 'OB.UI.MenuProperties',
-  kind: 'OB.UI.MenuAction',
+  kind: 'OB.UI.ActionMenuAction',
   classes: 'obUiMenuProperties',
-  permission: 'OBPOS_receipt.properties',
-  events: {
-    onShowReceiptProperties: ''
-  },
-  i18nLabel: 'OBPOS_LblProperties',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    this.doShowReceiptProperties();
-  },
-  init: function (model) {
-    this.model = model;
-    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
-      if (changedModel.isOrder()) {
-        if (model.get('order').get('isEditable')) {
-          this.setDisabled(false);
-          this.adjustVisibilityBasedOnPermissions();
-        } else {
-          this.setDisabled(true);
-        }
-        return;
-      }
-      if (changedModel.isMultiOrder()) {
-        this.setDisabled(true);
-      }
-    }, this);
-    this.model.get('order').on('change:isEditable', function (newValue) {
-      if (newValue) {
-        if (newValue.get('isEditable') === false) {
-          this.setShowing(false);
-          return;
-        }
-      }
-      this.setShowing(true);
-    }, this);
+  action: {
+    window: 'retail.pointofsale',
+    name: 'showModalReceiptProperties'
   }
 });
 
 enyo.kind({
   name: 'OB.UI.MenuInvoice',
-  kind: 'OB.UI.MenuAction',
+  kind: 'OB.UI.ActionMenuAction',
   classes: 'obUiMenuInvoice',
-  permission: 'OBPOS_receipt.invoice',
-  events: {
-    onReceiptToInvoice: '',
-    onCancelReceiptToInvoice: ''
-  },
-  i18nLabel: 'OBPOS_LblInvoice',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    this.taxIdValidation(this.model.get('order'));
-  },
-  taxIdValidation: function (model) {
-    if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
-      this.doCancelReceiptToInvoice();
-    } else if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !model.get('bp').get('taxID')) {
-      if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
-      } else {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
-      }
-      this.doCancelReceiptToInvoice();
-    } else {
-      this.doReceiptToInvoice();
-    }
-
-  },
-  updateVisibility: function (isVisible) {
-    if (!OB.MobileApp.model.hasPermission(this.permission)) {
-      this.hide();
-      return;
-    }
-    if (!isVisible) {
-      this.hide();
-      return;
-    }
-    this.show();
-  },
-  init: function (model) {
-    this.model = model;
-    var receipt = model.get('order'),
-        me = this;
-    receipt.on('change:generateInvoice change:bp change:isQuotation', function (model) {
-      if (!model.get('isQuotation') && !model.get('generateInvoice') && model.get('bp').get('invoiceTerms') === 'I') {
-        this.updateVisibility(true);
-      } else {
-        this.updateVisibility(false);
-      }
-    }, this);
-    receipt.on('change:bp', function (model) {
-      // if the receip is cloning, then the called to taxIdValidation is not done because this function does a save
-      if (model.get('generateInvoice') && !model.get('cloningReceipt')) {
-        me.taxIdValidation(model);
-      }
-    }, this);
+  action: {
+    window: 'retail.pointofsale',
+    name: 'invoiceReceipt'
   }
 });
 
 enyo.kind({
   name: 'OB.UI.MenuOpenDrawer',
-  kind: 'OB.UI.MenuAction',
+  kind: 'OB.UI.ActionMenuAction',
   classes: 'obUiMenuOpenDrawer',
-  permission: 'OBPOS_retail.opendrawerfrommenu',
-  i18nLabel: 'OBPOS_LblOpenDrawer',
-  updateVisibility: function () {
-    if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
-      this.hide();
-    }
-  },
-  init: function (model) {
-    this.model = model;
-    this.updateVisibility();
-  },
-  tap: function () {
-    var me = this;
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments);
-    OB.UTIL.Approval.requestApproval(
-    me.model, 'OBPOS_approval.opendrawer.menu', function (approved, supervisor, approvalType) {
-      if (approved) {
-        OB.POS.hwserver.openDrawer({
-          openFirst: true
-        }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-      }
-    });
+  action: {
+    window: 'retail.pointofsale',
+    name: 'openDrawer'
   }
 });
 
@@ -613,195 +365,42 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.MenuPrint',
-  kind: 'OB.UI.MenuAction',
+  kind: 'OB.UI.ActionMenuAction',
   classes: 'obUiMenuPrint',
-  permission: 'OBPOS_print.receipt',
-  events: {
-    onPrintReceipt: '',
-    onShowPopup: ''
-  },
-  i18nLabel: 'OBPOS_LblPrintReceipt',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      if (this.receipt.get('isPaid') && !this.receipt.get('isQuotation')) {
-        this.doShowPopup({
-          popup: 'modalInvoices'
-        });
-      } else {
-        this.doPrintReceipt();
-      }
-    }
-  },
-  init: function (model) {
-    this.receipt = model.get('order');
-    this.adjustVisibilityBasedOnPermissions();
+  action: {
+    window: 'retail.pointofsale',
+    name: 'printReceipt'
   }
 });
 
 enyo.kind({
   name: 'OB.UI.MenuQuotation',
-  kind: 'OB.UI.MenuAction',
+  kind: 'OB.UI.ActionMenuAction',
   classes: 'obUiMenuQuotation',
-  permission: 'OBPOS_receipt.quotation',
-  events: {
-    onCreateQuotation: ''
-  },
-  i18nLabel: 'OBPOS_CreateQuotation',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations) {
-      if (OB.MobileApp.model.hasPermission(this.permission)) {
-        if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-          if (this.model.get('multiorders')) {
-            this.model.get('multiorders').resetValues();
-          }
-          this.model.get('leftColumnViewManager').setOrderMode();
-        }
-        this.doCreateQuotation();
-      }
-    } else {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationNoDocType'));
-    }
-  },
-  updateVisibility: function (model) {
-    if (!model.get('isQuotation')) {
-      this.show();
-      this.adjustVisibilityBasedOnPermissions();
-    }
-  },
-  init: function (model) {
-    var receipt = model.get('order');
-    this.model = model;
-    receipt.on('change:isQuotation', function (model) {
-      this.updateVisibility(model);
-    }, this);
+  action: {
+    window: 'retail.pointofsale',
+    name: 'createQuotation'
   }
 });
 
 enyo.kind({
   name: 'OB.UI.MenuDiscounts',
-  kind: 'OB.UI.MenuAction',
+  kind: 'OB.UI.ActionMenuAction',
   classes: 'obUiMenuDiscounts',
-  permission: 'OBPOS_retail.advDiscounts',
-  events: {
-    onDiscountsMode: ''
-  },
-  //TODO
   i18nLabel: 'OBPOS_LblReceiptDiscounts',
-  tap: function () {
-    if (!this.disabled) {
-      this.inherited(arguments); // Manual dropdown menu closure
-      this.doDiscountsMode({
-        tabPanel: 'edit',
-        keyboard: 'toolbardiscounts',
-        edit: false,
-        options: {
-          discounts: true
-        }
-      });
-    }
-  },
-  updateVisibility: function () {
-    var me = this;
-    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-      me.setDisabled(true);
-      return;
-    }
-
-    if (this.receipt.get('isEditable') === false) {
-      me.setDisabled(true);
-      return;
-    }
-
-    OB.UTIL.isDisableDiscount(this.receipt, function (disable) {
-      me.setDisabled(disable);
-    });
-
-    me.adjustVisibilityBasedOnPermissions();
-  },
-  init: function (model) {
-    var me = this;
-    this.model = model;
-    this.receipt = model.get('order');
-    //set disabled until ticket has lines
-    me.setDisabled(true);
-    if (!OB.MobileApp.model.hasPermission(this.permission)) {
-      //no permissions, never will be enabled
-      return;
-    }
-
-    model.get('leftColumnViewManager').on('order', function () {
-      this.updateVisibility();
-    }, this);
-
-    model.get('leftColumnViewManager').on('multiorder', function () {
-      me.setDisabled(true);
-    }, this);
-
-    this.receipt.on('change', function () {
-      this.updateVisibility();
-    }, this);
-
-    this.receipt.get('lines').on('all', function () {
-      this.updateVisibility();
-    }, this);
+  action: {
+    window: 'retail.pointofsale',
+    name: 'discount'
   }
 });
 
 enyo.kind({
   name: 'OB.UI.MenuCreateOrderFromQuotation',
-  kind: 'OB.UI.MenuAction',
+  kind: 'OB.UI.ActionMenuAction',
   classes: 'obUiMenuCreateOrderFromQuotation',
-  permission: 'OBPOS_receipt.createorderfromquotation',
-  events: {
-    onShowPopup: ''
-  },
-  i18nLabel: 'OBPOS_CreateOrderFromQuotation',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.inherited(arguments); // Manual dropdown menu closure
-      this.doShowPopup({
-        popup: 'modalCreateOrderFromQuotation'
-      });
-    }
-  },
-  updateVisibility: function (model) {
-    if (OB.MobileApp.model.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
-      this.show();
-    } else {
-      this.hide();
-    }
-  },
-  init: function (model) {
-    var receipt = model.get('order'),
-        me = this;
-    me.hide();
-
-    model.get('leftColumnViewManager').on('order', function () {
-      this.updateVisibility(receipt);
-      this.adjustVisibilityBasedOnPermissions();
-    }, this);
-
-    model.get('leftColumnViewManager').on('multiorder', function () {
-      me.hide();
-    }, this);
-
-    receipt.on('change:isQuotation', function (model) {
-      this.updateVisibility(model);
-    }, this);
-    receipt.on('change:hasbeenpaid', function (model) {
-      this.updateVisibility(model);
-    }, this);
+  action: {
+    window: 'retail.pointofsale',
+    name: 'convertQuotation'
   }
 });
 
@@ -959,68 +558,21 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.MenuReceiptSelector',
-  kind: 'OB.UI.MenuAction',
+  kind: 'OB.UI.ActionMenuAction',
   classes: 'obUiMenuReceiptSelector',
-  permission: 'OBPOS_retail.menuReceiptSelector',
-  events: {
-    onShowPopup: ''
-  },
-  i18nLabel: 'OBPOS_OpenReceipt',
-  tap: function () {
-    var me = this;
-    var connectedCallback = function () {
-        if (OB.MobileApp.model.hasPermission(me.permission)) {
-          me.doShowPopup({
-            popup: 'modalReceiptSelector',
-            args: {
-              keepFiltersOnClose: true
-            }
-          });
-        }
-        };
-    var notConnectedCallback = function () {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-        return;
-        };
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (!OB.MobileApp.model.get('connectedToERP')) {
-      OB.UTIL.checkOffLineConnectivity(500, connectedCallback, notConnectedCallback);
-    } else {
-      connectedCallback();
-    }
+  action: {
+    window: 'retail.pointofsale',
+    name: 'openReceipt'
   }
 });
 
 enyo.kind({
   name: 'OB.UI.MenuMultiOrders',
-  kind: 'OB.UI.MenuAction',
+  kind: 'OB.UI.ActionMenuAction',
   classes: 'obUiMenuMultiOrders',
-  permission: 'OBPOS_retail.multiorders',
-  events: {
-    onMultiOrders: ''
-  },
-  i18nLabel: 'OBPOS_LblPayOpenTickets',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.model.get('orderList').saveCurrent();
-      this.doMultiOrders();
-    }
-  },
-  updateVisibility: function () {
-    if (OB.MobileApp.model.get('payments').length <= 0) {
-      this.hide();
-    }
-  },
-  init: function (model) {
-    this.model = model;
-    this.updateVisibility();
+  action: {
+    window: 'retail.pointofsale',
+    name: 'payOpenReceipts'
   }
 });
 

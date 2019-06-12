@@ -4258,7 +4258,7 @@
   /*Inherits: [OB.UI.OrderSingleSelect]*/
 }
 
-.obUiOrderHeader-labelComponents-element1 {
+.obUiOrderHeader-labelComponents-btnSingleSelection {
   clear: both;
 }
 
@@ -7005,7 +7005,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   /* Inherits: [OB.OBPOSPointOfSale.UI.RightToolbarPane] */
 }
 
-.obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1-keyboard {
+.obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1-rightBottomPanel {
   /* Inherits: [OB.OBPOSPointOfSale.UI.KeyboardOrder] */
 }
 

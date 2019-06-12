@@ -42,6 +42,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.mobile.core.MobileUiConfiguration;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
 import org.openbravo.model.common.enterprise.Locator;
@@ -366,6 +367,17 @@ public class POSUtils {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  public static MobileUiConfiguration getUiConfigurationByTerminalId(String posterminalId) {
+    try {
+      OBContext.setAdminMode(false);
+      OBPOSApplications posterminal = getTerminalById(posterminalId);
+      TerminalType terminalType = posterminal.getObposTerminaltype();
+      return terminalType.getMobileUIConfiguration();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**

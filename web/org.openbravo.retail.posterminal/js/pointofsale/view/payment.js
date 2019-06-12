@@ -2042,7 +2042,7 @@ enyo.kind({
       } else {
         this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
       }
-      var receipt = this.owner.owner.owner.owner.model.get('order');
+      var receipt = this.owner.owner.owner.owner.owner.owner.model.get('order');
       this.$.amount.setContent(this.model.printAmountWithSignum(receipt));
     }
     if (this.model.get('rate') && this.model.get('rate') !== '1') {

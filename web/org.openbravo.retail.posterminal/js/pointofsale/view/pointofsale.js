@@ -1,15 +1,125 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, Backbone, enyo, _*/
+/*global enyo, _, Backbone */
 
 // Point of sale main window view
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.BottomRightGridLayoutsContainer',
+  classes: 'obObposPointOfSaleUiBottomRightGridLayoutsContainer',
+  tabsToCheck: ['scan', 'edit']
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.BottomRightGridLayout',
+  classes: 'obObposPointOfSaleUiBottomRightGridLayout',
+  applyClassesAppliedToChildAbas: true
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.BottomRightGridLayoutScan',
+  kind: 'OB.OBPOSPointOfSale.UI.BottomRightGridLayout',
+  activeTab: 'scan',
+  classes: 'obObposPointOfSaleUiBottomRightGridLayoutScan',
+  components: [{
+    kind: 'OB.UI.ActionButtonArea',
+    name: 'bottomRightScanAba1',
+    abaIdentifier: 'obpos_pointofsale_scan_bottomrightaba1',
+    classes: 'obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic obObposPointOfSaleUiBottomRightGridLayoutScan-bottomRightScanAba1'
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.GridKeyboardScan',
+    name: 'bottomRightScanKeyboard',
+    classes: 'obObposPointOfSaleUiBottomRightGridLayoutScan-bottomRightScanKeyboard'
+  }]
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.BottomRightGridLayoutEdit',
+  kind: 'OB.OBPOSPointOfSale.UI.BottomRightGridLayout',
+  activeTab: 'edit',
+  classes: 'obObposPointOfSaleUiBottomRightGridLayoutEdit',
+  components: [{
+    kind: 'OB.UI.ActionButtonArea',
+    name: 'bottomRightEditAba1',
+    abaIdentifier: 'obpos_pointofsale_edit_bottomrightaba1',
+    classes: 'obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic obObposPointOfSaleUiBottomRightGridLayoutEdit-bottomRightEditAba1'
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.GridKeyboardEdit',
+    name: 'bottomRightEditKeyboard',
+    classes: 'obObposPointOfSaleUiBottomRightGridLayoutEdit-bottomRightEditKeyboard'
+  }]
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.RightBottomPanelWrapper',
+  classes: 'obObposPointOfSaleUiRightBottomPanelWrapper',
+  components: [{
+    kind: 'OB.OBPOSPointOfSale.UI.BottomRightGridLayoutsContainer',
+    name: 'bottomRightGridLayoutsContainer',
+    showing: false,
+    classes: 'obObposPointOfSaleUiRightBottomPanelWrapper-bottomRightGridLayout',
+    components: [{
+      kind: 'OB.OBPOSPointOfSale.UI.BottomRightGridLayoutScan',
+      name: 'bottomRightScan',
+      classes: 'obObposPointOfSaleUiRightBottomPanelWrapper-bottomRightGridLayout-bottomRightScan'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.BottomRightGridLayoutEdit',
+      name: 'bottomRightEdit',
+      classes: 'obObposPointOfSaleUiRightBottomPanelWrapper-bottomRightGridLayout-bottomRightEdit'
+    }]
+  }, {
+    name: 'keyboardWrapper',
+    showing: true,
+    classes: 'obObposPointOfSaleUiRightBottomPanelWrapper-keyboardWrapper',
+    components: [{
+      kind: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
+      name: 'keyboard',
+      classes: 'obObposPointOfSaleUiRightBottomPanelWrapper-keyboardWrapper-keyboard'
+    }]
+  }],
+  tabChanged: function (newTab) {
+    if (this.$.bottomRightGridLayoutsContainer.tabsToCheck.indexOf(newTab) !== -1) {
+      this.showGridLayout(newTab);
+      return;
+    }
+    this.showLegacyKeyboard();
+  },
+  showLegacyKeyboard: function (newTab) {
+    this.$.keyboardWrapper.setShowing(true);
+    this.$.bottomRightGridLayoutsContainer.setShowing(false);
+  },
+  showGridLayout: function (newTab) {
+    var showGridLayout = false;
+    this.$.keyboardWrapper.setShowing(false);
+    this.$.bottomRightGridLayoutsContainer.setShowing(true);
+    enyo.forEach(this.getComponents(), function (comp) {
+      if (comp.activeTab) {
+        comp.setShowing(false);
+      }
+      if (comp.activeTab === newTab) {
+        enyo.forEach(comp.getComponents(), function (subComp) {
+          if (subComp.configuredToBeVisible) {
+            comp.setShowing(true);
+            showGridLayout = true;
+          }
+        }, this);
+      }
+    }, this);
+    this.$.keyboardWrapper.setShowing(!showGridLayout);
+    this.$.bottomRightGridLayoutsContainer.setShowing(showGridLayout);
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+  }
+});
+
+
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.PointOfSale',
   kind: 'OB.UI.WindowView',
@@ -46,6 +156,7 @@ enyo.kind({
     onChangeCurrentOrder: 'changeCurrentOrder',
     onChangeBusinessPartner: 'changeBusinessPartner',
     onPrintReceipt: 'printReceipt',
+    onPrintSingleReceipt: 'printSingleReceipt',
     onBackOffice: 'backOffice',
     onVerifiedReturns: 'verifiedReturns',
     onChangeSubWindow: 'changeSubWindow',
@@ -454,9 +565,9 @@ enyo.kind({
             name: 'toolbarpane',
             classes: 'obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1-toolbarpane'
           }, {
-            kind: 'OB.OBPOSPointOfSale.UI.KeyboardOrder',
-            name: 'keyboard',
-            classes: 'obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1-keyboard'
+            kind: 'OB.OBPOSPointOfSale.UI.RightBottomPanelWrapper',
+            name: 'rightBottomPanel',
+            classes: 'obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1-rightBottomPanel'
           }]
         }]
       },
@@ -469,6 +580,18 @@ enyo.kind({
   }],
   classModel: new Backbone.Model(),
   printReceipt: function (inSender, inEvent) {
+    var receipt = this.model.get('order');
+    if (OB.MobileApp.model.hasPermission('OBPOS_print.receipt')) {
+      if (receipt.get('isPaid') && !receipt.get('isQuotation')) {
+        this.doShowPopup({
+          popup: 'modalInvoices'
+        });
+      } else {
+        this.printSingleReceipt(inSender, inEvent);
+      }
+    }
+  },
+  printSingleReceipt: function (inSender, inEvent) {
     if (OB.MobileApp.model.hasPermission('OBPOS_print.receipt')) {
       if (this.model.get('leftColumnViewManager').isOrder()) {
         var receipt = this.model.get('order');
@@ -1013,6 +1136,7 @@ enyo.kind({
     this.waterfall('onShowingActionIcons', inEvent);
   },
   tabChange: function (inSender, inEvent) {
+    this.switchBottomRightLayout(inEvent.tabPanel);
     this.leftToolbarDisabled(inSender, {
       status: inEvent.status || false,
       disableMenu: (inEvent.keyboard === 'toolbardiscounts' || this.model.get('leftColumnViewManager').isMultiOrder() ? true : false),
@@ -1079,13 +1203,20 @@ enyo.kind({
     this.tabChange(inSender, inEvent);
   },
   deleteLine: function (inSender, inEvent) {
-    var selectedModels = inEvent.selectedModels,
+    var selectedModels = inEvent.selectedReceiptLines,
         receipt = this.model.get('order');
 
     receipt.deleteLinesFromOrder(selectedModels);
   },
   editLine: function (inSender, inEvent) {
-    if (this.model.get('order').get('isEditable') === false) {
+    var receipt = this.model.get('order');
+    if (receipt.get('isQuotation') && receipt.get('hasbeenpaid') === 'Y') {
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
+      return true;
+    }
+    if (receipt.get('isEditable') === false) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
       });
@@ -1693,18 +1824,41 @@ enyo.kind({
       this.enableKeyboardButton(true);
     }, this);
 
+    receipt.on('change:bp', function (model) {
+      // if the receip is cloning, then the called to taxIdValidation is not done because this function does a save
+      if (model.get('generateInvoice') && !model.get('cloningReceipt')) {
+        OB.MobileApp.actionsRegistry.execute({
+          window: 'retail.pointofsale',
+          name: 'invoiceReceipt'
+        });
+      }
+    }, this);
+
     this.$.multiColumn.$.leftPanel.$.receiptview.setOrder(receipt);
     this.$.multiColumn.$.leftPanel.$.receiptview.setOrderList(receiptList);
     this.$.multiColumn.$.rightPanel.$.toolbarpane.setModel(this.model);
     this.$.multiColumn.$.rightPanel.$.keyboard.setReceipt(receipt);
     this.$.multiColumn.$.rightToolbar.$.rightToolbar.setReceipt(receipt);
   },
+  switchBottomRightLayout: function (newTab) {
+    this.$.multiColumn.$.rightPanel.$.rightBottomPanel.tabChanged(newTab);
+  },
   initComponents: function () {
     this.inherited(arguments);
+    this.$.multiColumn.$.rightPanel.$.keyboard = this.$.multiColumn.$.rightPanel.$.rightBottomPanel.$.keyboard;
     if (OB.UTIL.Debug.isDebug()) {
       document.body.style.background = '';
       document.body.className += ' indev-background';
       this.waterfall('onInDevHeaderShow');
+    }
+
+    // Create test components if defined
+    if (OB.UI.TestComponent) {
+      Object.keys(OB.UI.TestComponent).forEach(function (item) {
+        this.createComponent({
+          kind: OB.UI.TestComponent[item]
+        });
+      }, this);
     }
   }
 });
