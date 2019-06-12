@@ -8,13 +8,11 @@
  */
 
 /*global OB */
-(function () {
-
+(function() {
   OB.PRINTERTYPES.GENERICUSB.register({
     name: 'EPSON TM T20',
-    vendorId: 0x04B8,
-    productId: 0x0E03,
+    vendorId: 0x04b8,
+    productId: 0x0e03,
     ESCPOS: OB.ESCPOS.Standard
   });
-
-}());
+})();

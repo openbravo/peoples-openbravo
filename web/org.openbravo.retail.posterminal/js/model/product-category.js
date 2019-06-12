@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var ProductCategory = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductCategory',
     tableName: 'm_product_category',
@@ -16,7 +15,7 @@
     source: 'org.openbravo.retail.posterminal.master.Category',
     dataLimit: OB.Dal.DATALIMIT,
     includeTerminalDate: true,
-    createBestSellerCategory: function () {
+    createBestSellerCategory: function() {
       this.set('id', 'OBPOS_bestsellercategory');
       this.set('searchKey', 'bestseller');
       this.set('name', OB.I18N.getLabel('OBPOS_bestSellerCategory'));
@@ -26,40 +25,49 @@
     }
   });
 
-  ProductCategory.addProperties([{
-    name: 'id',
-    column: 'm_product_category_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'searchKey',
-    column: 'value',
-    type: 'TEXT'
-  }, {
-    name: 'name',
-    column: 'name',
-    type: 'TEXT'
-  }, {
-    name: 'img',
-    column: 'ad_image_id',
-    type: 'TEXT'
-  }, {
-    name: '_identifier',
-    column: '_identifier',
-    type: 'TEXT'
-  }, {
-    name: 'summaryLevel',
-    column: 'isSummary',
-    type: 'TEXT'
-  }, {
-    name: 'realCategory',
-    column: 'real_category',
-    type: 'TEXT'
-  }, {
-    name: 'crossStore',
-    column: 'crossStore',
-    type: 'BOOL'
-  }]);
+  ProductCategory.addProperties([
+    {
+      name: 'id',
+      column: 'm_product_category_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'searchKey',
+      column: 'value',
+      type: 'TEXT'
+    },
+    {
+      name: 'name',
+      column: 'name',
+      type: 'TEXT'
+    },
+    {
+      name: 'img',
+      column: 'ad_image_id',
+      type: 'TEXT'
+    },
+    {
+      name: '_identifier',
+      column: '_identifier',
+      type: 'TEXT'
+    },
+    {
+      name: 'summaryLevel',
+      column: 'isSummary',
+      type: 'TEXT'
+    },
+    {
+      name: 'realCategory',
+      column: 'real_category',
+      type: 'TEXT'
+    },
+    {
+      name: 'crossStore',
+      column: 'crossStore',
+      type: 'BOOL'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(ProductCategory);
-}());
+})();

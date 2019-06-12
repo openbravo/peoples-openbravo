@@ -9,18 +9,25 @@
 
 /*global OB*/
 
-(function () {
-
+(function() {
   OB.UTIL.prepaymentRules = {};
   OB.UTIL.prepaymentRules.OBPOS_Default = {
-    execute: function (receipt, callback) {
+    execute: function(receipt, callback) {
       var me = this,
-          prepaymentPerc = OB.MobileApp.model.get('terminal').obposPrepaymentPerc,
-          prepaymentPercLimit = OB.MobileApp.model.get('terminal').obposPrepaymentPercLimit,
-          prepaymentPercLayLimit = OB.MobileApp.model.get('terminal').obposPrepayPercLayLimit,
-          prepaymentAmount = receipt.get('lines').reduce(function (memo, line) {
-          if (line.get('obposCanbedelivered') || line.get('deliveredQuantity') === line.get('qty')) {
-            var linePrepaymentAmount = me.currentLinePrepaymentAmount(line, prepaymentPerc);
+        prepaymentPerc = OB.MobileApp.model.get('terminal').obposPrepaymentPerc,
+        prepaymentPercLimit = OB.MobileApp.model.get('terminal')
+          .obposPrepaymentPercLimit,
+        prepaymentPercLayLimit = OB.MobileApp.model.get('terminal')
+          .obposPrepayPercLayLimit,
+        prepaymentAmount = receipt.get('lines').reduce(function(memo, line) {
+          if (
+            line.get('obposCanbedelivered') ||
+            line.get('deliveredQuantity') === line.get('qty')
+          ) {
+            var linePrepaymentAmount = me.currentLinePrepaymentAmount(
+              line,
+              prepaymentPerc
+            );
             line.set('obposLinePrepaymentAmount', linePrepaymentAmount);
             return OB.DEC.add(memo, linePrepaymentAmount);
           } else {
@@ -28,25 +35,38 @@
             return memo;
           }
         }, 0),
-          prepaymentLimitAmount = OB.DEC.div(OB.DEC.mul(prepaymentAmount, prepaymentPercLimit), 100),
-          prepaymentLayawayLimitAmount = OB.DEC.div(OB.DEC.mul(prepaymentAmount, prepaymentPercLayLimit), 100);
-      callback(prepaymentAmount, prepaymentLimitAmount, prepaymentLayawayLimitAmount);
+        prepaymentLimitAmount = OB.DEC.div(
+          OB.DEC.mul(prepaymentAmount, prepaymentPercLimit),
+          100
+        ),
+        prepaymentLayawayLimitAmount = OB.DEC.div(
+          OB.DEC.mul(prepaymentAmount, prepaymentPercLayLimit),
+          100
+        );
+      callback(
+        prepaymentAmount,
+        prepaymentLimitAmount,
+        prepaymentLayawayLimitAmount
+      );
     },
-    currentLinePrepaymentAmount: function (line, percentage, units) {
+    currentLinePrepaymentAmount: function(line, percentage, units) {
       var price, discount;
       if (units) {
         price = line.get('grossListPrice') || line.get('priceList');
         if (line.get('promotions') && line.get('promotions').length > 0) {
-          discount = line.get('promotions').reduce(function (total, model) {
+          discount = line.get('promotions').reduce(function(total, model) {
             return OB.DEC.add(total, model.amt);
           }, 0);
-          price = OB.DEC.sub(price, OB.DEC.div(OB.DEC.mul(discount, units), line.get('qty')));
+          price = OB.DEC.sub(
+            price,
+            OB.DEC.div(OB.DEC.mul(discount, units), line.get('qty'))
+          );
         }
         price = OB.DEC.mul(price, units);
       } else {
         price = line.get('gross');
         if (line.get('promotions') && line.get('promotions').length > 0) {
-          discount = line.get('promotions').reduce(function (total, model) {
+          discount = line.get('promotions').reduce(function(total, model) {
             return OB.DEC.add(total, model.amt);
           }, 0);
           price = OB.DEC.sub(price, discount);
@@ -55,4 +75,4 @@
       return OB.DEC.div(OB.DEC.mul(price, percentage), 100);
     }
   };
-}());
+})();

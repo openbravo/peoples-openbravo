@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var SalesRepresentative = OB.Data.ExtensibleModel.extend({
     modelName: 'SalesRepresentative',
     tableName: 'ad_sales_representative',
@@ -17,32 +16,41 @@
     dataLimit: OB.Dal.DATALIMIT
   });
 
-  SalesRepresentative.addProperties([{
-    name: 'id',
-    column: 'ad_sales_representative_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'name',
-    column: 'name',
-    type: 'TEXT'
-  }, {
-    name: 'username',
-    column: 'username',
-    type: 'TEXT'
-  }, {
-    name: '_identifier',
-    column: '_identifier',
-    filter: true,
-    type: 'TEXT'
-  }]);
-
-  SalesRepresentative.addIndex([{
-    name: 'salesrep_identifier_idx',
-    columns: [{
+  SalesRepresentative.addProperties([
+    {
+      name: 'id',
+      column: 'ad_sales_representative_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'name',
+      column: 'name',
+      type: 'TEXT'
+    },
+    {
+      name: 'username',
+      column: 'username',
+      type: 'TEXT'
+    },
+    {
       name: '_identifier',
-      sort: 'desc'
-    }]
-  }]);
+      column: '_identifier',
+      filter: true,
+      type: 'TEXT'
+    }
+  ]);
+
+  SalesRepresentative.addIndex([
+    {
+      name: 'salesrep_identifier_idx',
+      columns: [
+        {
+          name: '_identifier',
+          sort: 'desc'
+        }
+      ]
+    }
+  ]);
   OB.Data.Registry.registerModel(SalesRepresentative);
-}());
+})();

@@ -9,111 +9,147 @@
 
 /*global OB */
 
-(function () {
-
+(function() {
   var CashManagement = OB.Data.ExtensibleModel.extend({
     modelName: 'CashManagement',
     tableName: 'cashmanagement',
     entityName: 'CashManagement',
     source: '',
     local: true,
-    serializeToJSON: function () {
+    serializeToJSON: function() {
       return JSON.parse(JSON.stringify(this.toJSON()));
     },
-    getRelevantInformationString: function () {
-      return 'Id: ' + this.get('id') + ' Amount: ' + this.get('amount') + ' origAmount: ' + this.get('origAmount') + ' currency: ' + this.get('isocode') + ' paymentMethodId: ' + this.get('paymentMethodId') + ' cashup_id: ' + this.get('cashup_id');
+    getRelevantInformationString: function() {
+      return (
+        'Id: ' +
+        this.get('id') +
+        ' Amount: ' +
+        this.get('amount') +
+        ' origAmount: ' +
+        this.get('origAmount') +
+        ' currency: ' +
+        this.get('isocode') +
+        ' paymentMethodId: ' +
+        this.get('paymentMethodId') +
+        ' cashup_id: ' +
+        this.get('cashup_id')
+      );
     }
   });
 
-
-  CashManagement.addProperties([{
-    name: 'id',
-    column: 'cashmanagement_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'description',
-    column: 'description',
-    type: 'TEXT'
-  }, {
-    name: 'amount',
-    column: 'amount',
-    type: 'NUMERIC'
-  }, {
-    name: 'origAmount',
-    column: 'origAmount',
-    type: 'NUMERIC'
-  }, {
-    name: 'json',
-    column: 'json',
-    type: 'TEXT'
-  }, {
-    name: 'type',
-    column: 'type',
-    type: 'TEXT'
-  }, {
-    name: 'reasonId',
-    column: 'reasonId',
-    type: 'TEXT'
-  }, {
-    name: 'paymentMethodId',
-    column: 'paymentMethodId',
-    type: 'TEXT'
-  }, {
-    name: 'user',
-    column: 'user',
-    type: 'TEXT'
-  }, {
-    name: 'userId',
-    column: 'userId',
-    type: 'TEXT'
-  }, {
-    name: 'creationDate',
-    column: 'creationDate',
-    type: 'TEXT'
-  }, {
-    name: 'timezoneOffset',
-    column: 'timezoneOffset',
-    type: 'TEXT'
-  }, {
-    name: 'isocode',
-    column: 'isocode',
-    type: 'TEXT'
-  }, {
-    name: 'cashup_id',
-    column: 'cashup_id',
-    type: 'TEXT'
-  }, {
-    name: 'glItem',
-    column: 'glItem',
-    type: 'TEXT'
-  }, {
-    name: 'isbeingprocessed',
-    column: 'isbeingprocessed',
-    type: 'TEXT'
-  }, {
-    name: 'posTerminal',
-    column: 'posTerminal',
-    type: 'TEXT'
-  }, {
-    name: 'defaultProcess',
-    column: 'defaultProcess',
-    type: 'TEXT'
-  }, {
-    name: 'extendedType',
-    column: 'extendedType',
-    type: 'TEXT'
-  }]);
-
-  CashManagement.addIndex([{
-    name: 'cashmgmt_idx',
-    columns: [{
-      name: 'cashup_id',
-      sort: 'desc'
-    }, {
+  CashManagement.addProperties([
+    {
+      name: 'id',
+      column: 'cashmanagement_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'description',
+      column: 'description',
+      type: 'TEXT'
+    },
+    {
+      name: 'amount',
+      column: 'amount',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'origAmount',
+      column: 'origAmount',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'json',
+      column: 'json',
+      type: 'TEXT'
+    },
+    {
+      name: 'type',
+      column: 'type',
+      type: 'TEXT'
+    },
+    {
+      name: 'reasonId',
+      column: 'reasonId',
+      type: 'TEXT'
+    },
+    {
       name: 'paymentMethodId',
-      sort: 'desc'
-    }]
-  }]);
+      column: 'paymentMethodId',
+      type: 'TEXT'
+    },
+    {
+      name: 'user',
+      column: 'user',
+      type: 'TEXT'
+    },
+    {
+      name: 'userId',
+      column: 'userId',
+      type: 'TEXT'
+    },
+    {
+      name: 'creationDate',
+      column: 'creationDate',
+      type: 'TEXT'
+    },
+    {
+      name: 'timezoneOffset',
+      column: 'timezoneOffset',
+      type: 'TEXT'
+    },
+    {
+      name: 'isocode',
+      column: 'isocode',
+      type: 'TEXT'
+    },
+    {
+      name: 'cashup_id',
+      column: 'cashup_id',
+      type: 'TEXT'
+    },
+    {
+      name: 'glItem',
+      column: 'glItem',
+      type: 'TEXT'
+    },
+    {
+      name: 'isbeingprocessed',
+      column: 'isbeingprocessed',
+      type: 'TEXT'
+    },
+    {
+      name: 'posTerminal',
+      column: 'posTerminal',
+      type: 'TEXT'
+    },
+    {
+      name: 'defaultProcess',
+      column: 'defaultProcess',
+      type: 'TEXT'
+    },
+    {
+      name: 'extendedType',
+      column: 'extendedType',
+      type: 'TEXT'
+    }
+  ]);
+
+  CashManagement.addIndex([
+    {
+      name: 'cashmgmt_idx',
+      columns: [
+        {
+          name: 'cashup_id',
+          sort: 'desc'
+        },
+        {
+          name: 'paymentMethodId',
+          sort: 'desc'
+        }
+      ]
+    }
+  ]);
   OB.Data.Registry.registerModel(CashManagement);
-}());
+})();

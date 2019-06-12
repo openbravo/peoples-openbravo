@@ -18,7 +18,7 @@ enyo.kind({
     onApplyChanges: '',
     onExecuteCallback: ''
   },
-  tap: function () {
+  tap: function() {
     this.inherited(arguments);
     this.doExecuteCallback({
       executeCallback: false
@@ -33,7 +33,7 @@ enyo.kind({
   name: 'OB.UI.OpenRelatedReceipts_btnCancel',
   isDefaultAction: false,
   i18nContent: 'OBMOBC_LblCancel',
-  tap: function () {
+  tap: function() {
     this.inherited(arguments);
     this.doHideThisPopup();
   }
@@ -50,14 +50,14 @@ enyo.kind({
   handlers: {
     onCheckAll: 'checkAll'
   },
-  checkAll: function (inSender, inEvent) {
+  checkAll: function(inSender, inEvent) {
     if (inEvent.checked) {
       this.check();
     } else {
       this.unCheck();
     }
   },
-  tap: function () {
+  tap: function() {
     this.inherited(arguments);
     this.doLineSelected({
       selected: this.checked
@@ -67,42 +67,67 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.RelatedReceipt',
-  style: 'border-bottom: 1px solid #cccccc; text-align: center; color: black; padding-top: 9px;',
+  style:
+    'border-bottom: 1px solid #cccccc; text-align: center; color: black; padding-top: 9px;',
   handlers: {
     onLineSelected: 'lineSelected'
   },
-  components: [{
-    kind: 'OB.UI.CheckboxButtonOpenRelatedReceipts',
-    name: 'checkboxButtonOpenRelatedReceipts'
-  }, {
-    name: 'documentNo',
-    classes: 'span4',
-    style: 'line-height: 25px; font-size: 17px; width: 180px; padding-left: 15px;'
-  }, {
-    name: 'orderedDate',
-    classes: 'span2',
-    style: 'line-height: 25px; font-size: 17px; width: 180px;'
-  }, {
-    name: 'amount',
-    classes: 'span2',
-    style: 'line-height: 25px; font-size: 17px; width: 80px;'
-  }, {
-    name: 'pending',
-    classes: 'span2',
-    style: 'line-height: 25px; font-size: 17px; width: 80px; padding-left: 20px;'
-  }, {
-    style: 'clear: both;'
-  }],
-  initComponents: function () {
+  components: [
+    {
+      kind: 'OB.UI.CheckboxButtonOpenRelatedReceipts',
+      name: 'checkboxButtonOpenRelatedReceipts'
+    },
+    {
+      name: 'documentNo',
+      classes: 'span4',
+      style:
+        'line-height: 25px; font-size: 17px; width: 180px; padding-left: 15px;'
+    },
+    {
+      name: 'orderedDate',
+      classes: 'span2',
+      style: 'line-height: 25px; font-size: 17px; width: 180px;'
+    },
+    {
+      name: 'amount',
+      classes: 'span2',
+      style: 'line-height: 25px; font-size: 17px; width: 80px;'
+    },
+    {
+      name: 'pending',
+      classes: 'span2',
+      style:
+        'line-height: 25px; font-size: 17px; width: 80px; padding-left: 20px;'
+    },
+    {
+      style: 'clear: both;'
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     var symbol = OB.MobileApp.model.get('terminal').symbol,
-        symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+      symbolAtRight = OB.MobileApp.model.get('terminal')
+        .currencySymbolAtTheRight;
     this.$.documentNo.setContent(this.order.get('documentNo'));
-    this.$.orderedDate.setContent(OB.I18N.formatDate(new Date(this.order.get('orderDate'))));
-    this.$.amount.setContent(OB.I18N.formatCurrencyWithSymbol(this.order.get('amount'), symbol, symbolAtRight));
-    this.$.pending.setContent(OB.I18N.formatCurrencyWithSymbol(this.order.get('pending'), symbol, symbolAtRight));
+    this.$.orderedDate.setContent(
+      OB.I18N.formatDate(new Date(this.order.get('orderDate')))
+    );
+    this.$.amount.setContent(
+      OB.I18N.formatCurrencyWithSymbol(
+        this.order.get('amount'),
+        symbol,
+        symbolAtRight
+      )
+    );
+    this.$.pending.setContent(
+      OB.I18N.formatCurrencyWithSymbol(
+        this.order.get('pending'),
+        symbol,
+        symbolAtRight
+      )
+    );
   },
-  lineSelected: function (inSender, inEvent) {
+  lineSelected: function(inSender, inEvent) {
     inEvent.selectedLine = this.order.id;
   }
 });
@@ -124,19 +149,24 @@ enyo.kind({
     style: 'background-color: #ffffff;margin-top: -8px;',
     thumb: true,
     horizontal: 'hidden',
-    components: [{
-      name: 'attributes'
-    }]
+    components: [
+      {
+        name: 'attributes'
+      }
+    ]
   },
   bodyButtons: {
-    components: [{
-      kind: 'OB.UI.OpenRelatedReceipts_btnApply'
-    }, {
-      kind: 'OB.UI.OpenRelatedReceipts_btnCancel'
-    }]
+    components: [
+      {
+        kind: 'OB.UI.OpenRelatedReceipts_btnApply'
+      },
+      {
+        kind: 'OB.UI.OpenRelatedReceipts_btnCancel'
+      }
+    ]
   },
-  lineSelected: function (inSender, inEvent) {
-    var selectedOrder = _.find(this.args.models, function (model) {
+  lineSelected: function(inSender, inEvent) {
+    var selectedOrder = _.find(this.args.models, function(model) {
       return model.id === inEvent.selectedLine;
     });
     if (inEvent.selected) {
@@ -151,19 +181,28 @@ enyo.kind({
       }
       this.selectedOrders.splice(index, 1);
     }
-    this.$.bodyButtons.$.openRelatedReceipts_btnApply.setDisabled(_.reduce(this.$.bodyContent.$.attributes.$, function (count, line) {
-      return (line.$.checkboxButtonOpenRelatedReceipts.checked ? count + 1 : count);
-    }, 0) === 0);
+    this.$.bodyButtons.$.openRelatedReceipts_btnApply.setDisabled(
+      _.reduce(
+        this.$.bodyContent.$.attributes.$,
+        function(count, line) {
+          return line.$.checkboxButtonOpenRelatedReceipts.checked
+            ? count + 1
+            : count;
+        },
+        0
+      ) === 0
+    );
   },
-  applyChanges: function (inSender, inEvent) {
+  applyChanges: function(inSender, inEvent) {
     this.args.callback(this.selectedOrders);
   },
-  executeCallback: function (inSender, inEvent) {
+  executeCallback: function(inSender, inEvent) {
     this.execCallback = inEvent.executeCallback;
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     var lineNum = 0,
-        model, i;
+      model,
+      i;
     this.selectedOrders = JSON.parse(JSON.stringify(this.args.models));
     this.execCallback = true;
     this.$.bodyContent.$.attributes.destroyComponents();
@@ -171,42 +210,54 @@ enyo.kind({
     this.$.header.createComponent({
       name: 'CheckAllHeaderDocNum',
       style: 'text-align: center; color: white;',
-      components: [{
-        content: OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsTitle'),
-        name: 'headerLbl',
-        classes: 'span12',
-        style: 'line-height: 50px; font-size: 24px;'
-      }, {
-        style: 'clear: both;'
-      }]
+      components: [
+        {
+          content: OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsTitle'),
+          name: 'headerLbl',
+          classes: 'span12',
+          style: 'line-height: 50px; font-size: 24px;'
+        },
+        {
+          style: 'clear: both;'
+        }
+      ]
     });
     this.$.header.addStyles('padding-bottom: 0px; margin: 0px; height: 140px;');
     this.$.header.createComponent({
       name: 'CheckAllHeader',
-      style: 'overflow: hidden; padding-top: 20px; border-bottom: 3px solid #cccccc; text-align: center; color: black; margin-top: 15px; padding-bottom: 7px;  font-weight: bold; background-color: white; height:40px;',
-      components: [{
-        name: 'documentNoLbl',
-        content: OB.I18N.getLabel('OBPOS_DocumentNo'),
-        classes: 'span4',
-        style: 'line-height: 25px; font-size: 17px; width: 180px; padding-left: 70px;'
-      }, {
-        name: 'orderedDateLbl',
-        content: OB.I18N.getLabel('OBPOS_DateOrdered'),
-        classes: 'span2',
-        style: 'line-height: 25px; font-size: 17px; width: 180px;'
-      }, {
-        name: 'amountLbl',
-        content: OB.I18N.getLabel('OBPOS_AmountOfCash'),
-        classes: 'span2',
-        style: 'line-height: 25px; font-size: 17px; width: 80px;'
-      }, {
-        name: 'pendingLbl',
-        content: OB.I18N.getLabel('OBPOS_Pending'),
-        classes: 'span2',
-        style: 'line-height: 25px; font-size: 17px; width: 80px; padding-left: 20px;'
-      }, {
-        style: 'clear: both;'
-      }]
+      style:
+        'overflow: hidden; padding-top: 20px; border-bottom: 3px solid #cccccc; text-align: center; color: black; margin-top: 15px; padding-bottom: 7px;  font-weight: bold; background-color: white; height:40px;',
+      components: [
+        {
+          name: 'documentNoLbl',
+          content: OB.I18N.getLabel('OBPOS_DocumentNo'),
+          classes: 'span4',
+          style:
+            'line-height: 25px; font-size: 17px; width: 180px; padding-left: 70px;'
+        },
+        {
+          name: 'orderedDateLbl',
+          content: OB.I18N.getLabel('OBPOS_DateOrdered'),
+          classes: 'span2',
+          style: 'line-height: 25px; font-size: 17px; width: 180px;'
+        },
+        {
+          name: 'amountLbl',
+          content: OB.I18N.getLabel('OBPOS_AmountOfCash'),
+          classes: 'span2',
+          style: 'line-height: 25px; font-size: 17px; width: 80px;'
+        },
+        {
+          name: 'pendingLbl',
+          content: OB.I18N.getLabel('OBPOS_Pending'),
+          classes: 'span2',
+          style:
+            'line-height: 25px; font-size: 17px; width: 80px; padding-left: 20px;'
+        },
+        {
+          style: 'clear: both;'
+        }
+      ]
     });
 
     for (i = 1; i < this.args.models.length; i++) {
@@ -225,12 +276,12 @@ enyo.kind({
     this.$.header.render();
     this.$.bodyContent.$.attributes.render();
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     if (this.execCallback) {
       this.args.callback([this.args.models[0]]);
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.attributeContainer = this.$.bodyContent.$.attributes;
   }

@@ -11,12 +11,13 @@
 enyo.kind({
   name: 'OB.UI.RemoveMultiOrders',
   kind: 'OB.UI.SmallButton',
-  classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-clearPayment',
+  classes:
+    'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-clearPayment',
   events: {
     onRemoveMultiOrders: ''
   },
-  tap: function () {
-    if ((_.isUndefined(this.deleting) || this.deleting === false)) {
+  tap: function() {
+    if (_.isUndefined(this.deleting) || this.deleting === false) {
       this.deleting = true;
       this.removeClass('btn-icon-clearPayment');
       this.addClass('btn-icon-loading');
@@ -37,56 +38,101 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
-  components: [{
-    name: 'line',
-    style: 'line-height: 23px; width: 100%;',
-    components: [{
-      style: 'display: inline;',
-      name: 'multiTopLine',
-      components: [{
-        style: 'display: inline-block;',
-        name: 'documentNo',
-        initComponents: function () {
-          this.setContent(this.owner.owner.model.get('documentNo') + ' - ' + this.owner.owner.model.get('bp').get('_identifier'));
-        }
-      }, {
-        style: 'font-weight: bold; float: right; text-align:right; display: inline-block;',
-        name: 'total',
-        initComponents: function () {
-          this.setContent((!_.isUndefined(this.owner.owner.model.get('amountToLayaway')) && !_.isNull(this.owner.owner.model.get('amountToLayaway'))) ? OB.I18N.formatCurrency(this.owner.owner.model.get('amountToLayaway')) : this.owner.owner.model.printPending());
-        }
-      }]
-    }, {
+  components: [
+    {
+      name: 'line',
       style: 'line-height: 23px; width: 100%;',
-      name: 'totalAndLayaway',
-      components: [{
-        style: 'color: #888888; display: inline-block;',
-        name: 'totalOrder',
-        initComponents: function () {
-          this.setContent(OB.I18N.getLabel('OBPOS_LineTotal') + ': ' + this.owner.owner.model.printTotal());
-        }
-      }, {
-        style: 'font-weight: bold; color: lightblue; float: right; text-align:right; display: inline-block;',
-        name: 'isLayaway',
-        initComponents: function () {
-          if (this.owner.owner.model.get('isLayaway')) {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
-          } else if ((!_.isUndefined(this.owner.owner.model.get('amountToLayaway')) && !_.isNull(this.owner.owner.model.get('amountToLayaway')))) {
-            this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
+      components: [
+        {
+          style: 'display: inline;',
+          name: 'multiTopLine',
+          components: [
+            {
+              style: 'display: inline-block;',
+              name: 'documentNo',
+              initComponents: function() {
+                this.setContent(
+                  this.owner.owner.model.get('documentNo') +
+                    ' - ' +
+                    this.owner.owner.model.get('bp').get('_identifier')
+                );
+              }
+            },
+            {
+              style:
+                'font-weight: bold; float: right; text-align:right; display: inline-block;',
+              name: 'total',
+              initComponents: function() {
+                this.setContent(
+                  !_.isUndefined(
+                    this.owner.owner.model.get('amountToLayaway')
+                  ) && !_.isNull(this.owner.owner.model.get('amountToLayaway'))
+                    ? OB.I18N.formatCurrency(
+                        this.owner.owner.model.get('amountToLayaway')
+                      )
+                    : this.owner.owner.model.printPending()
+                );
+              }
+            }
+          ]
+        },
+        {
+          style: 'line-height: 23px; width: 100%;',
+          name: 'totalAndLayaway',
+          components: [
+            {
+              style: 'color: #888888; display: inline-block;',
+              name: 'totalOrder',
+              initComponents: function() {
+                this.setContent(
+                  OB.I18N.getLabel('OBPOS_LineTotal') +
+                    ': ' +
+                    this.owner.owner.model.printTotal()
+                );
+              }
+            },
+            {
+              style:
+                'font-weight: bold; color: lightblue; float: right; text-align:right; display: inline-block;',
+              name: 'isLayaway',
+              initComponents: function() {
+                if (this.owner.owner.model.get('isLayaway')) {
+                  this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
+                } else if (
+                  !_.isUndefined(
+                    this.owner.owner.model.get('amountToLayaway')
+                  ) &&
+                  !_.isNull(this.owner.owner.model.get('amountToLayaway'))
+                ) {
+                  this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
+                }
+              }
+            }
+          ]
+        },
+        {
+          style: 'color: #888888; display: inline',
+          name: 'multiBottonLine',
+          initComponents: function() {
+            this.setContent(
+              OB.I18N.getLabel('OBPOS_RemainingToPay') +
+                ': ' +
+                this.owner.owner.model.printPending() +
+                ' - (' +
+                OB.I18N.formatDate(
+                  new Date(this.owner.owner.model.get('orderDate'))
+                ) +
+                ') '
+            );
           }
+        },
+        {
+          style: 'clear: both;'
         }
-      }]
-    }, {
-      style: 'color: #888888; display: inline',
-      name: 'multiBottonLine',
-      initComponents: function () {
-        this.setContent(OB.I18N.getLabel('OBPOS_RemainingToPay') + ': ' + this.owner.owner.model.printPending() + ' - (' + OB.I18N.formatDate(new Date(this.owner.owner.model.get('orderDate'))) + ') ');
-      }
-    }, {
-      style: 'clear: both;'
-    }]
-  }],
-  tap: function () {
+      ]
+    }
+  ],
+  tap: function() {
     if (OB.MobileApp.model.hasPermission('OBPOS_receipt.layawayReceipt')) {
       this.doShowPopup({
         popup: 'modalmultiorderslayaway',
@@ -94,7 +140,7 @@ enyo.kind({
       });
     }
   },
-  changeEditMode: function (inSender, inEvent) {
+  changeEditMode: function(inSender, inEvent) {
     this.addRemoveClass('btnselect-orderline-edit', inEvent.edit);
     this.bubble('onShowColumn', {
       colNum: 1
@@ -105,19 +151,24 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.RenderMultiOrdersLine',
   style: 'border-bottom: 1px solid #cccccc; width: 100%',
-  components: [{
-    style: 'display: inline-block; width: 8%;',
-    kind: 'OB.UI.RemoveMultiOrders'
-  }, {
-    style: 'display: inline-block; width: 87%; border: none; margin: 1px; padding-rigth: 5px;',
-    kind: 'OB.UI.RenderMultiOrdersLineValues'
-  }]
+  components: [
+    {
+      style: 'display: inline-block; width: 8%;',
+      kind: 'OB.UI.RemoveMultiOrders'
+    },
+    {
+      style:
+        'display: inline-block; width: 87%; border: none; margin: 1px; padding-rigth: 5px;',
+      kind: 'OB.UI.RenderMultiOrdersLineValues'
+    }
+  ]
 });
 
 enyo.kind({
   name: 'OB.UI.RenderMultiOrdersLineEmpty',
-  style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
-  initComponents: function () {
+  style:
+    'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+  initComponents: function() {
     this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
   }

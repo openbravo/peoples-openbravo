@@ -18,19 +18,27 @@ enyo.kind({
   kind: 'OB.UI.Modal',
   header: '',
   body: {
-    kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.ListStockInOtherStores',
+    kind:
+      'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.ListStockInOtherStores',
     name: 'stockDetailList'
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     this.stockInfo = null;
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     this.setStockInfo(this.args.stockInfo);
   },
-  stockInfoChanged: function (oldValue) {
+  stockInfoChanged: function(oldValue) {
     if (this.stockInfo) {
-      this.$.header.setContent(this.stockInfo.get('product').get('_identifier') + ' (' + this.stockInfo.get('product').get('uOMsymbol') + ')');
-      this.$.body.$.stockDetailList.setStockValuesOtherStores(this.stockInfo.get('organizations'));
+      this.$.header.setContent(
+        this.stockInfo.get('product').get('_identifier') +
+          ' (' +
+          this.stockInfo.get('product').get('uOMsymbol') +
+          ')'
+      );
+      this.$.body.$.stockDetailList.setStockValuesOtherStores(
+        this.stockInfo.get('organizations')
+      );
     } else {
       this.$.body.$.stockDetailList.setStockValuesOtherStores(null);
     }
@@ -38,61 +46,84 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.ListStockInOtherStores',
+  name:
+    'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.ListStockInOtherStores',
   classes: 'row-fluid',
   published: {
     stockValuesOtherStores: null
   },
-  components: [{
-    classes: 'span12',
-    components: [{
-      style: 'border-bottom: 1px solid #cccccc;'
-    }, {
-      components: [{
-        name: 'scrollListStockDetails',
-        kind: 'OB.UI.ScrollableTable',
-        scrollAreaMaxHeight: '400px',
-        renderLine: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.StockInOtherStoresLine',
-        renderEmpty: 'OB.UI.RenderEmpty'
-      }]
-    }]
-  }],
-  stockValuesOtherStoresChanged: function (oldValue) {
+  components: [
+    {
+      classes: 'span12',
+      components: [
+        {
+          style: 'border-bottom: 1px solid #cccccc;'
+        },
+        {
+          components: [
+            {
+              name: 'scrollListStockDetails',
+              kind: 'OB.UI.ScrollableTable',
+              scrollAreaMaxHeight: '400px',
+              renderLine:
+                'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.StockInOtherStoresLine',
+              renderEmpty: 'OB.UI.RenderEmpty'
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  stockValuesOtherStoresChanged: function(oldValue) {
     this.$.scrollListStockDetails.setCollection(this.stockValuesOtherStores);
   }
 });
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.StockInOtherStoresLine',
+  name:
+    'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores.Components.StockInOtherStoresLine',
   classes: 'btnselect',
-  components: [{
-    name: 'line',
-    style: 'line-height: 23px;',
-    components: [{
-      style: 'float: left; width: 60%; font-size: 20px;',
-      name: 'organization'
-    }, {
-      style: 'float: left; width: 25%; font-weight: bold; font-size: 20px;',
-      name: 'quantity'
-    }, {
-      style: 'clear: both'
-    }]
-  }, {
-    components: [{
-      style: 'padding: 5px; padding-left: 10px;',
-      name: 'detail',
-      allowHtml: true
-    }]
-  }],
-  create: function () {
-    var str = "";
+  components: [
+    {
+      name: 'line',
+      style: 'line-height: 23px;',
+      components: [
+        {
+          style: 'float: left; width: 60%; font-size: 20px;',
+          name: 'organization'
+        },
+        {
+          style: 'float: left; width: 25%; font-weight: bold; font-size: 20px;',
+          name: 'quantity'
+        },
+        {
+          style: 'clear: both'
+        }
+      ]
+    },
+    {
+      components: [
+        {
+          style: 'padding: 5px; padding-left: 10px;',
+          name: 'detail',
+          allowHtml: true
+        }
+      ]
+    }
+  ],
+  create: function() {
+    var str = '';
     this.inherited(arguments);
     this.$.organization.setContent(this.model.get('organizationname'));
     this.$.quantity.setContent(this.model.get('organizationqty'));
-    this.model.get('warehouses').each(function (model) {
-      str += '<b>' + model.get('warehouseqty') + ' </b> - ' + model.get('warehousename') + '<br/>';
+    this.model.get('warehouses').each(function(model) {
+      str +=
+        '<b>' +
+        model.get('warehouseqty') +
+        ' </b> - ' +
+        model.get('warehousename') +
+        '<br/>';
     });
     this.$.detail.setContent(str);
-
   }
 });

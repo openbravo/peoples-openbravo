@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var TaxCashUp = OB.Data.ExtensibleModel.extend({
     modelName: 'TaxCashUp',
     tableName: 'taxcashup',
@@ -17,28 +16,34 @@
     local: true
   });
 
-  TaxCashUp.addProperties([{
-    name: 'id',
-    column: 'taxcashup_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'name',
-    column: 'name',
-    type: 'TEXT'
-  }, {
-    name: 'amount',
-    column: 'amount',
-    type: 'NUMERIC'
-  }, {
-    name: 'orderType',
-    column: 'orderType',
-    type: 'TEXT'
-  }, {
-    name: 'cashup_id',
-    column: 'cashup_id',
-    type: 'TEXT'
-  }]);
+  TaxCashUp.addProperties([
+    {
+      name: 'id',
+      column: 'taxcashup_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'name',
+      column: 'name',
+      type: 'TEXT'
+    },
+    {
+      name: 'amount',
+      column: 'amount',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'orderType',
+      column: 'orderType',
+      type: 'TEXT'
+    },
+    {
+      name: 'cashup_id',
+      column: 'cashup_id',
+      type: 'TEXT'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(TaxCashUp);
-}());
+})();

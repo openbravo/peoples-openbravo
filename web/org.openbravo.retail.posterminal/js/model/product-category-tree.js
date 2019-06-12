@@ -7,16 +7,18 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   OB.Model.ProductCategoryTreeQuery = OB.Data.ExtensibleModel.extend({});
-  OB.Model.ProductCategoryTreeQuery.addProperties([{
-    name: 'categoryId',
-    column: 'category_id'
-  }, {
-    name: 'childs',
-    column: 'childs'
-  }]);
+  OB.Model.ProductCategoryTreeQuery.addProperties([
+    {
+      name: 'categoryId',
+      column: 'category_id'
+    },
+    {
+      name: 'childs',
+      column: 'childs'
+    }
+  ]);
 
   var ProductCategoryTree = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductCategoryTree',
@@ -25,31 +27,36 @@
     source: 'org.openbravo.retail.posterminal.master.CategoryTree',
     dataLimit: OB.Dal.DATALIMIT,
     includeTerminalDate: true,
-    createBestSellerCategory: function () {
+    createBestSellerCategory: function() {
       this.set('id', 'OBPOS_bestsellercategory');
       this.set('categoryId', 'OBPOS_bestsellercategory');
       this.set('parentId', '0');
     }
   });
 
-  ProductCategoryTree.addProperties([{
-    name: 'id',
-    column: 'id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'categoryId',
-    column: 'category_id',
-    type: 'TEXT'
-  }, {
-    name: 'parentId',
-    column: 'parent_id',
-    type: 'TEXT'
-  }, {
-    name: 'seqNo',
-    column: 'seqno',
-    type: 'NUMERIC'
-  }]);
+  ProductCategoryTree.addProperties([
+    {
+      name: 'id',
+      column: 'id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'categoryId',
+      column: 'category_id',
+      type: 'TEXT'
+    },
+    {
+      name: 'parentId',
+      column: 'parent_id',
+      type: 'TEXT'
+    },
+    {
+      name: 'seqNo',
+      column: 'seqno',
+      type: 'NUMERIC'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(ProductCategoryTree);
-}());
+})();

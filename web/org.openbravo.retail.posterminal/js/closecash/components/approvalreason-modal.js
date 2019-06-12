@@ -13,7 +13,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.Modals.btnModalApprovalReasonAccept',
   i18nContent: 'OBMOBC_LblOk',
-  tap: function () {
+  tap: function() {
     this.model.set('approvals', {
       supervisor: this.owner.owner.args.supervisor,
       message: this.owner.owner.args.message,
@@ -22,7 +22,7 @@ enyo.kind({
     this.owner.owner.args.callback();
     this.doHideThisPopup();
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
   }
 });
@@ -34,14 +34,14 @@ enyo.kind({
   style: 'width: 80%',
   renderLine: enyo.kind({
     kind: 'enyo.Option',
-    initComponents: function () {
+    initComponents: function() {
       this.inherited(arguments);
       this.setValue(this.model.get('id'));
       this.setContent(this.model.get('name'));
     }
   }),
   renderEmpty: 'enyo.Control',
-  initComponents: function () {
+  initComponents: function() {
     this.setCollection(new Backbone.Collection());
   }
 });
@@ -52,37 +52,49 @@ enyo.kind({
   closeOnEscKey: true,
   autoDismiss: true,
   bodyContent: {
-    components: [{
-      name: 'labelApprovalReason',
-      style: 'text-align: right; padding-right:10px; width: 50%; height: 40px; float: left;'
-    }, {
-      style: 'width: 45%; float: left;',
-      kind: 'OB.UI.ModalApprovalReasonList',
-      name: 'approvalReason'
-    }]
+    components: [
+      {
+        name: 'labelApprovalReason',
+        style:
+          'text-align: right; padding-right:10px; width: 50%; height: 40px; float: left;'
+      },
+      {
+        style: 'width: 45%; float: left;',
+        kind: 'OB.UI.ModalApprovalReasonList',
+        name: 'approvalReason'
+      }
+    ]
   },
   i18nHeader: 'OBPOS_ApprovalReason',
   bodyButtons: {
-    components: [{
-      kind: 'OB.UI.Modals.btnModalApprovalReasonAccept'
-    }]
+    components: [
+      {
+        kind: 'OB.UI.Modals.btnModalApprovalReasonAccept'
+      }
+    ]
   },
   events: {
     onApprovalReason: ''
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.$.headerCloseButton.show();
-    this.$.bodyContent.$.labelApprovalReason.setContent(OB.I18N.getLabel('OBPOS_lblApprovalReason'));
+    this.$.bodyContent.$.labelApprovalReason.setContent(
+      OB.I18N.getLabel('OBPOS_lblApprovalReason')
+    );
     var me = this,
-        approvalReasonCollection = [];
-    _.each(OB.POS.modelterminal.get('approvalReason'), function (reason) {
-      approvalReasonCollection.push(new Backbone.Model({
-        id: reason.id,
-        name: reason.name
-      }));
+      approvalReasonCollection = [];
+    _.each(OB.POS.modelterminal.get('approvalReason'), function(reason) {
+      approvalReasonCollection.push(
+        new Backbone.Model({
+          id: reason.id,
+          name: reason.name
+        })
+      );
     });
-    me.$.bodyContent.$.approvalReason.getCollection().reset(approvalReasonCollection);
+    me.$.bodyContent.$.approvalReason
+      .getCollection()
+      .reset(approvalReasonCollection);
   }
 });
 

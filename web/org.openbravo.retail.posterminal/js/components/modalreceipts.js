@@ -21,7 +21,7 @@ enyo.kind({
     kind: 'OB.UI.ListReceipts',
     name: 'listreceipts'
   },
-  receiptsListChanged: function (oldValue) {
+  receiptsListChanged: function(oldValue) {
     this.$.body.$.listreceipts.setReceiptsList(this.receiptsList);
   }
 });
@@ -32,21 +32,28 @@ enyo.kind({
   published: {
     receiptsList: null
   },
-  components: [{
-    classes: 'span12',
-    components: [{
-      style: 'border-bottom: 1px solid #cccccc;'
-    }, {
-      components: [{
-        name: 'receiptslistitemprinter',
-        kind: 'OB.UI.ScrollableTable',
-        scrollAreaMaxHeight: '400px',
-        renderLine: 'OB.UI.ListReceiptLine',
-        renderEmpty: 'OB.UI.RenderEmpty'
-      }]
-    }]
-  }],
-  receiptsListChanged: function (oldValue) {
+  components: [
+    {
+      classes: 'span12',
+      components: [
+        {
+          style: 'border-bottom: 1px solid #cccccc;'
+        },
+        {
+          components: [
+            {
+              name: 'receiptslistitemprinter',
+              kind: 'OB.UI.ScrollableTable',
+              scrollAreaMaxHeight: '400px',
+              renderLine: 'OB.UI.ListReceiptLine',
+              renderEmpty: 'OB.UI.RenderEmpty'
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  receiptsListChanged: function(oldValue) {
     this.$.receiptslistitemprinter.setCollection(this.receiptsList);
   }
 });
@@ -58,7 +65,7 @@ enyo.kind({
     onHideThisPopup: '',
     onChangeCurrentOrder: ''
   },
-  tap: function () {
+  tap: function() {
     var execution = OB.UTIL.ProcessController.start('changeCurrentOrder');
     this.inherited(arguments);
     this.doHideThisPopup();
@@ -67,48 +74,74 @@ enyo.kind({
     });
     OB.UTIL.ProcessController.finish('changeCurrentOrder', execution);
   },
-  components: [{
-    name: 'line',
-    style: 'line-height: 23px; width: 100%;',
-    components: [{
-      style: 'float: left; width: 95px;',
-      components: [{
-        style: 'float: left; width: 100%;',
-        name: 'date'
-      }, {
-        style: 'clear: both;'
-      }, {
-        style: 'float: left; width: 100%;',
-        name: 'time'
-      }]
-    }, {
-      style: 'float: left; width: calc(100% - 185px);',
-      components: [{
-        style: 'float: left; width: 100%;',
-        name: 'orderNo'
-      }, {
-        style: 'clear: both;'
-      }, {
-        style: 'float: left; width: 100%;',
-        name: 'bp'
-      }]
-    }, {
-      name: 'lineTotalContainer',
-      style: 'float: right;',
-      components: [{
-        style: ' font-weight: bold; text-align: right;',
-        name: 'total'
-      }, {
-        style: 'clear: both;'
-      }]
-    }, {
-      style: 'clear: both;'
-    }]
-  }],
-  create: function () {
+  components: [
+    {
+      name: 'line',
+      style: 'line-height: 23px; width: 100%;',
+      components: [
+        {
+          style: 'float: left; width: 95px;',
+          components: [
+            {
+              style: 'float: left; width: 100%;',
+              name: 'date'
+            },
+            {
+              style: 'clear: both;'
+            },
+            {
+              style: 'float: left; width: 100%;',
+              name: 'time'
+            }
+          ]
+        },
+        {
+          style: 'float: left; width: calc(100% - 185px);',
+          components: [
+            {
+              style: 'float: left; width: 100%;',
+              name: 'orderNo'
+            },
+            {
+              style: 'clear: both;'
+            },
+            {
+              style: 'float: left; width: 100%;',
+              name: 'bp'
+            }
+          ]
+        },
+        {
+          name: 'lineTotalContainer',
+          style: 'float: right;',
+          components: [
+            {
+              style: ' font-weight: bold; text-align: right;',
+              name: 'total'
+            },
+            {
+              style: 'clear: both;'
+            }
+          ]
+        },
+        {
+          style: 'clear: both;'
+        }
+      ]
+    }
+  ],
+  create: function() {
     this.inherited(arguments);
-    this.$.date.setContent(OB.I18N.formatDate(new Date(this.model.get('orderDate'))));
-    this.$.time.setContent(OB.I18N.formatHour(OB.I18N.normalizeDate(this.model.get('creationDate') || this.model.get('orderDate'))));
+    this.$.date.setContent(
+      OB.I18N.formatDate(new Date(this.model.get('orderDate')))
+    );
+    this.$.time.setContent(
+      OB.I18N.formatHour(
+        OB.I18N.normalizeDate(
+          this.model.get('creationDate') || this.model.get('orderDate')
+        )
+      )
+    );
     this.$.orderNo.setContent(this.model.get('documentNo'));
     this.$.bp.setContent(this.model.get('bp').get('_identifier'));
     this.$.total.setContent(this.model.printTotal());
@@ -130,18 +163,21 @@ enyo.kind({
     i18nContent: 'OBPOS_MsgConfirmDelete' // TODO: add this as part of the message + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone')
   },
   bodyButtons: {
-    components: [{
-      kind: 'OB.UI.btnModalApplyDelete'
-    }, {
-      kind: 'OB.UI.btnModalCancelDelete'
-    }]
+    components: [
+      {
+        kind: 'OB.UI.btnModalApplyDelete'
+      },
+      {
+        kind: 'OB.UI.btnModalCancelDelete'
+      }
+    ]
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     this.doDisableLeftToolbar({
       status: false
     });
   },
-  initComponents: function () {
+  initComponents: function() {
     this.header = OB.I18N.getLabel('OBPOS_ConfirmDeletion');
     this.inherited(arguments);
   }
@@ -155,7 +191,7 @@ enyo.kind({
   events: {
     onDeleteOrder: ''
   },
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
     this.doDeleteOrder({
       notSavedOrder: true
@@ -167,7 +203,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.btnModalCancelDelete',
   i18nContent: 'OBMOBC_LblCancel',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
   }
 });

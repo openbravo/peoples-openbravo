@@ -21,50 +21,57 @@ enyo.kind({
     onHideInfoPopup: 'hidePopup',
     onShowInfoPopup: 'showPopup'
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     this.line = this.args.line;
     this.waterfall('onShowInfo', {
       line: this.line
     });
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     if (this.args.callback) {
       this.args.callback(this.args.context);
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
   },
-  hidePopup: function (inSender, inEvent) {
+  hidePopup: function(inSender, inEvent) {
     this.hide();
   },
-  showPopup: function (inSender, inEvent) {
+  showPopup: function(inSender, inEvent) {
     this.show();
   }
 });
 
 enyo.kind({
   name: 'OBRDM.UI.OrderLineInfo_body',
-  components: [{
-    name: 'table',
-    kind: 'OBRDM.UI.OrderLineInfoTable'
-  }, {
-    name: 'buttonFooter',
-    classes: 'obrdm-orderlineinfo-buttonfooter',
-    components: [{
-      name: 'infoButtons',
-      classes: 'obrdm-orderlineinfo-infobuttons'
-    }]
-  }],
-  buttons: [{
-    kind: 'OBRDM.UI.OrderLineInfoCloseBtn',
-    name: 'buttoncancel'
-  }],
-  initComponents: function () {
+  components: [
+    {
+      name: 'table',
+      kind: 'OBRDM.UI.OrderLineInfoTable'
+    },
+    {
+      name: 'buttonFooter',
+      classes: 'obrdm-orderlineinfo-buttonfooter',
+      components: [
+        {
+          name: 'infoButtons',
+          classes: 'obrdm-orderlineinfo-infobuttons'
+        }
+      ]
+    }
+  ],
+  buttons: [
+    {
+      kind: 'OBRDM.UI.OrderLineInfoCloseBtn',
+      name: 'buttoncancel'
+    }
+  ],
+  initComponents: function() {
     var me = this;
 
     this.inherited(arguments);
-    _.each(this.buttons, function (button) {
+    _.each(this.buttons, function(button) {
       me.$.infoButtons.createComponent(button, {
         owner: me
       });
@@ -80,7 +87,7 @@ enyo.kind({
   events: {
     onHideInfoPopup: ''
   },
-  tap: function () {
+  tap: function() {
     this.doHideInfoPopup();
   }
 });
@@ -91,18 +98,21 @@ enyo.kind({
   handlers: {
     onShowInfo: 'showInfo'
   },
-  components: [{
-    name: 'label',
-    classes: 'obrdm-orderlineinfo-line-label'
-  }, {
-    name: 'value',
-    classes: 'obrdm-orderlineinfo-line-value'
-  }],
-  initComponents: function () {
+  components: [
+    {
+      name: 'label',
+      classes: 'obrdm-orderlineinfo-line-label'
+    },
+    {
+      name: 'value',
+      classes: 'obrdm-orderlineinfo-line-value'
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     this.$.label.setContent(OB.I18N.getLabel(this.i18nLabel));
   },
-  showInfo: function (inSender, inEvent) {
+  showInfo: function(inSender, inEvent) {
     if (inEvent.line.get(this.modelProperty)) {
       this.$.value.setContent(inEvent.line.get(this.modelProperty));
     }
@@ -115,10 +125,10 @@ enyo.kind({
   classes: 'obrdm-orderlineinfo-table',
   infoTableComponents: [],
   components: [],
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     var me = this;
-    _.each(this.infoTableComponents, function (comp) {
+    _.each(this.infoTableComponents, function(comp) {
       me.createComponent(comp, {
         owner: me
       });

@@ -9,38 +9,55 @@
 
 /*global OB, _*/
 
-(function () {
-
+(function() {
   OB.UTIL = window.OB.UTIL || {};
   OB.UTIL.AttributeUtils = OB.UTIL.AttributeUtils || {};
 
-  OB.UTIL.AttributeUtils.generateDescriptionBasedOnJson = function (jsonStringAttValues) {
-    var key, attributesList = [],
-        jsonAttValues = JSON.parse(jsonStringAttValues),
-        attSetInstanceDescription = '',
-        standardAttributes = ['lot', 'serialno', 'guaranteedate'],
-        objToReturn = {
+  OB.UTIL.AttributeUtils.generateDescriptionBasedOnJson = function(
+    jsonStringAttValues
+  ) {
+    var key,
+      attributesList = [],
+      jsonAttValues = JSON.parse(jsonStringAttValues),
+      attSetInstanceDescription = '',
+      standardAttributes = ['lot', 'serialno', 'guaranteedate'],
+      objToReturn = {
         keyValue: []
-        };
+      };
 
     for (key in jsonAttValues) {
-      if (jsonAttValues.hasOwnProperty(key) && standardAttributes.indexOf(key) === -1) {
+      if (
+        jsonAttValues.hasOwnProperty(key) &&
+        standardAttributes.indexOf(key) === -1
+      ) {
         attributesList.push(jsonAttValues[key]);
       }
     }
-    attributesList.sort(function (a, b) {
+    attributesList.sort(function(a, b) {
       return a.name.localeCompare(b.name);
     });
 
-    _.each(standardAttributes, function (attribute) {
-      if (jsonAttValues.hasOwnProperty(attribute) && jsonAttValues[attribute].label) {
+    _.each(standardAttributes, function(attribute) {
+      if (
+        jsonAttValues.hasOwnProperty(attribute) &&
+        jsonAttValues[attribute].label
+      ) {
         attributesList.push(jsonAttValues[attribute]);
       }
     });
 
-    _.each(attributesList, function (attribute) {
-      if (attribute && attribute.value && _.isString(attribute.value) && attribute.value.length > 0) {
-        objToReturn.keyValue.push((attribute.label ? attribute.label : attribute.name) + ': ' + attribute.value);
+    _.each(attributesList, function(attribute) {
+      if (
+        attribute &&
+        attribute.value &&
+        _.isString(attribute.value) &&
+        attribute.value.length > 0
+      ) {
+        objToReturn.keyValue.push(
+          (attribute.label ? attribute.label : attribute.name) +
+            ': ' +
+            attribute.value
+        );
         attSetInstanceDescription += '_' + attribute.value;
       }
     });
@@ -50,4 +67,4 @@
     }
     return objToReturn;
   };
-}());
+})();

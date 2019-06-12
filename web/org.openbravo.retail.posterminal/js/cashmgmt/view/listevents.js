@@ -23,12 +23,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.ListEvents',
   classes: 'row-fluid',
-  components: [{
-    classes: 'span12',
-    components: [{}]
-  }],
+  components: [
+    {
+      classes: 'span12',
+      components: [{}]
+    }
+  ],
 
-  init: function (model) {
+  init: function(model) {
     this.createComponent({
       name: this.owner.owner.type,
       kind: 'OB.UI.Table',
@@ -37,7 +39,9 @@ enyo.kind({
       renderEmpty: 'OB.UI.RenderEmpty'
     });
     this.model = model;
-    this.$[this.owner.owner.type].setCollection(this.model.get(this.owner.owner.type));
+    this.$[this.owner.owner.type].setCollection(
+      this.model.get(this.owner.owner.type)
+    );
   }
 });
 
@@ -49,17 +53,18 @@ enyo.kind({
   events: {
     onHideThisPopup: ''
   },
-  components: [{
-    name: 'line',
-    style: 'padding: 1px 0px 1px 5px;'
-
-  }],
-  tap: function () {
+  components: [
+    {
+      name: 'line',
+      style: 'padding: 1px 0px 1px 5px;'
+    }
+  ],
+  tap: function() {
     this.inherited(arguments);
     this.doHideThisPopup();
   },
 
-  create: function () {
+  create: function() {
     this.inherited(arguments);
     this.$.line.setContent(this.model.get('name'));
   }

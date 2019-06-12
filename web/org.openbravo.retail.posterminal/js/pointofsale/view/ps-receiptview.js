@@ -24,46 +24,62 @@ enyo.kind({
     onToggleSelectionMode: 'toggleSelectionMode',
     onTableMultiSelectAll: 'tableMultiSelectAll'
   },
-  components: [{
-    style: 'margin: 5px',
-    components: [{
-      style: 'position: relative; background-color: #ffffff; color: black;overflow-y: auto; max-height: 612px',
-      components: [{
-        kind: 'OB.UI.ReceiptsCounter',
-        name: 'receiptcounter'
-      }, {
-        style: 'padding: 5px;',
-        components: [{
-          kind: 'OB.UI.OrderHeader',
-          name: 'receiptheader'
-        }, {
-          style: 'max-height: 536px;',
-          components: [{
-            components: [{
-              kind: 'OB.UI.OrderView',
-              name: 'orderview'
-            }]
-          }]
-        }, {
-          kind: 'OB.UI.OrderFooter',
-          name: 'receiptfooter'
-        }]
-      }]
-    }]
-  }],
-  orderChanged: function (oldValue) {
+  components: [
+    {
+      style: 'margin: 5px',
+      components: [
+        {
+          style:
+            'position: relative; background-color: #ffffff; color: black;overflow-y: auto; max-height: 612px',
+          components: [
+            {
+              kind: 'OB.UI.ReceiptsCounter',
+              name: 'receiptcounter'
+            },
+            {
+              style: 'padding: 5px;',
+              components: [
+                {
+                  kind: 'OB.UI.OrderHeader',
+                  name: 'receiptheader'
+                },
+                {
+                  style: 'max-height: 536px;',
+                  components: [
+                    {
+                      components: [
+                        {
+                          kind: 'OB.UI.OrderView',
+                          name: 'orderview'
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  kind: 'OB.UI.OrderFooter',
+                  name: 'receiptfooter'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  orderChanged: function(oldValue) {
     this.$.receiptheader.setOrder(this.order);
     this.$.orderview.setOrder(this.order);
     this.$.receiptfooter.setOrder(this.order);
   },
-  orderListChanged: function (oldValue) {
+  orderListChanged: function(oldValue) {
     this.$.receiptcounter.setOrderList(this.orderList);
   },
-  toggleSelectionMode: function (inSender, inEvent) {
+  toggleSelectionMode: function(inSender, inEvent) {
     this.waterfall('onToggleSelectionTable', inEvent);
     this.doChangeSelectionMode(inEvent);
   },
-  tableMultiSelectAll: function (inSender, inEvent) {
+  tableMultiSelectAll: function(inSender, inEvent) {
     this.waterfall('onMultiSelectAllTable');
   }
 });

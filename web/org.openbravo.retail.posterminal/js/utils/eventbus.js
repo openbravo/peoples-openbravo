@@ -9,27 +9,29 @@
 
 /*global _, Backbone, OB */
 
-(function () {
-
+(function() {
   // Register global Event Bus
-  OB.POS.EventBus = OB.POS.EventBus || _.extend({
-    callscounter: 0,
-    startProcess: function () {
-      if (this.callscounter === 0) {
-        this.trigger('UI_Enabled', false);
-      }
-      this.callscounter++;
-    },
-    endProcess: function () {
-      this.callscounter--;
-      if (this.callscounter === 0) {
-        this.trigger('UI_Enabled', true);
-      }
-    },
-    isProcessEnabled: function () {
-      return this.callscounter === 0;
-    }
-
-  }, Backbone.Events);
-
-}());
+  OB.POS.EventBus =
+    OB.POS.EventBus ||
+    _.extend(
+      {
+        callscounter: 0,
+        startProcess: function() {
+          if (this.callscounter === 0) {
+            this.trigger('UI_Enabled', false);
+          }
+          this.callscounter++;
+        },
+        endProcess: function() {
+          this.callscounter--;
+          if (this.callscounter === 0) {
+            this.trigger('UI_Enabled', true);
+          }
+        },
+        isProcessEnabled: function() {
+          return this.callscounter === 0;
+        }
+      },
+      Backbone.Events
+    );
+})();

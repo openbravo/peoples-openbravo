@@ -9,8 +9,7 @@
 
 /*global OB, Promise, Uint8Array, DOMParser  */
 
-(function () {
-
+(function() {
   function padStart(txt, length, character) {
     var result = txt.padStart(length, character);
     if (result.length > length) {
@@ -35,10 +34,10 @@
   }
 
   function getImageData(data) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       var img = new Image();
       img.src = data.image;
-      img.onload = function () {
+      img.onload = function() {
         var canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
@@ -52,121 +51,177 @@
     });
   }
 
-  var WEBPrinter = function (printertype, images) {
-      this.webdevice = new printertype.WebDevice(printertype);
-      this.images = images || {};
-      this.escpos = null;
-      };
+  var WEBPrinter = function(printertype, images) {
+    this.webdevice = new printertype.WebDevice(printertype);
+    this.images = images || {};
+    this.escpos = null;
+  };
 
-  WEBPrinter.prototype.connected = function () {
+  WEBPrinter.prototype.connected = function() {
     return this.webdevice.connected();
   };
 
-  WEBPrinter.prototype.request = function () {
-    return this.webdevice.request().then(function (deviceinfo) {
-      this.escpos = deviceinfo.ESCPOS ? new deviceinfo.ESCPOS() : OB.ESCPOS.standardinst;
-    }.bind(this));
+  WEBPrinter.prototype.request = function() {
+    return this.webdevice.request().then(
+      function(deviceinfo) {
+        this.escpos = deviceinfo.ESCPOS
+          ? new deviceinfo.ESCPOS()
+          : OB.ESCPOS.standardinst;
+      }.bind(this)
+    );
   };
 
-  WEBPrinter.prototype.print = function (doc) {
-
+  WEBPrinter.prototype.print = function(doc) {
     var parser = new DOMParser();
-    var dom = parser.parseFromString(doc, "application/xml");
+    var dom = parser.parseFromString(doc, 'application/xml');
 
-    if (dom.documentElement.nodeName === "parsererror") {
-      return Promise.reject("Error while parsing XML template.");
+    if (dom.documentElement.nodeName === 'parsererror') {
+      return Promise.reject('Error while parsing XML template.');
     }
 
     return this.processDOM(dom);
   };
 
-  WEBPrinter.prototype.processDOM = function (dom) {
+  WEBPrinter.prototype.processDOM = function(dom) {
     var result = Promise.resolve();
     var printerdocs;
 
-    Array.from(dom.children).forEach(function (el) {
-      if (el.nodeName === 'output') {
-        result = result.then(function () {
-          return this.processOutput(el);
-        }.bind(this)).then(function (output) {
-          printerdocs = output;
-        }.bind(this));
-      }
-    }.bind(this));
+    Array.from(dom.children).forEach(
+      function(el) {
+        if (el.nodeName === 'output') {
+          result = result
+            .then(
+              function() {
+                return this.processOutput(el);
+              }.bind(this)
+            )
+            .then(
+              function(output) {
+                printerdocs = output;
+              }.bind(this)
+            );
+        }
+      }.bind(this)
+    );
 
-    return result.then(function () {
-      if (printerdocs && printerdocs.length) {
-        return this.webdevice.print(printerdocs);
-      } else {
-        return Promise.resolve(); // Nothing printed
-      }
-    }.bind(this));
+    return result.then(
+      function() {
+        if (printerdocs && printerdocs.length) {
+          return this.webdevice.print(printerdocs);
+        } else {
+          return Promise.resolve(); // Nothing printed
+        }
+      }.bind(this)
+    );
   };
 
-  WEBPrinter.prototype.processOutput = function (dom) {
+  WEBPrinter.prototype.processOutput = function(dom) {
     var result = Promise.resolve();
     var printerdocs = new Uint8Array();
-    Array.from(dom.children).forEach(function (el) {
-      if (el.nodeName === 'ticket') {
-        result = result.then(function () {
-          return this.processTicket(el);
-        }.bind(this)).then(function (output) {
-          printerdocs = OB.ARRAYS.append(printerdocs, output);
-        }.bind(this));
-      } else if (el.nodeName === 'opendrawer') {
-        result = result.then(function () {
-          printerdocs = OB.ARRAYS.append(printerdocs, this.escpos.DRAWER_OPEN);
-        }.bind(this));
-      }
-    }.bind(this));
-    return result.then(function () {
-      return printerdocs;
-    }.bind(this));
+    Array.from(dom.children).forEach(
+      function(el) {
+        if (el.nodeName === 'ticket') {
+          result = result
+            .then(
+              function() {
+                return this.processTicket(el);
+              }.bind(this)
+            )
+            .then(
+              function(output) {
+                printerdocs = OB.ARRAYS.append(printerdocs, output);
+              }.bind(this)
+            );
+        } else if (el.nodeName === 'opendrawer') {
+          result = result.then(
+            function() {
+              printerdocs = OB.ARRAYS.append(
+                printerdocs,
+                this.escpos.DRAWER_OPEN
+              );
+            }.bind(this)
+          );
+        }
+      }.bind(this)
+    );
+    return result.then(
+      function() {
+        return printerdocs;
+      }.bind(this)
+    );
   };
 
-  WEBPrinter.prototype.processTicket = function (dom) {
+  WEBPrinter.prototype.processTicket = function(dom) {
     var result = Promise.resolve();
     var printerdoc = new Uint8Array();
-    Array.from(dom.children).forEach(function (el) {
-      if (el.nodeName === 'line') {
-        result = result.then(function () {
-          return this.processLine(el);
-        }.bind(this)).then(function (output) {
-          printerdoc = OB.ARRAYS.append(printerdoc, output);
-          printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
-        }.bind(this));
-      } else if (el.nodeName === 'barcode') {
-        result = result.then(function () {
-          return this.processBarcode(el);
-        }.bind(this)).then(function (output) {
-          printerdoc = OB.ARRAYS.append(printerdoc, output);
-        }.bind(this));
-      } else if (el.nodeName === 'qr') {
-        result = result.then(function () {
-          return this.processQR(el);
-        }.bind(this)).then(function (output) {
-          printerdoc = OB.ARRAYS.append(printerdoc, output);
-        }.bind(this));
-      } else if (el.nodeName === 'image') {
-        result = result.then(function () {
-          return this.processImage(el);
-        }.bind(this)).then(function (output) {
-          printerdoc = OB.ARRAYS.append(printerdoc, output);
-        }.bind(this));
-      }
-    }.bind(this));
+    Array.from(dom.children).forEach(
+      function(el) {
+        if (el.nodeName === 'line') {
+          result = result
+            .then(
+              function() {
+                return this.processLine(el);
+              }.bind(this)
+            )
+            .then(
+              function(output) {
+                printerdoc = OB.ARRAYS.append(printerdoc, output);
+                printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
+              }.bind(this)
+            );
+        } else if (el.nodeName === 'barcode') {
+          result = result
+            .then(
+              function() {
+                return this.processBarcode(el);
+              }.bind(this)
+            )
+            .then(
+              function(output) {
+                printerdoc = OB.ARRAYS.append(printerdoc, output);
+              }.bind(this)
+            );
+        } else if (el.nodeName === 'qr') {
+          result = result
+            .then(
+              function() {
+                return this.processQR(el);
+              }.bind(this)
+            )
+            .then(
+              function(output) {
+                printerdoc = OB.ARRAYS.append(printerdoc, output);
+              }.bind(this)
+            );
+        } else if (el.nodeName === 'image') {
+          result = result
+            .then(
+              function() {
+                return this.processImage(el);
+              }.bind(this)
+            )
+            .then(
+              function(output) {
+                printerdoc = OB.ARRAYS.append(printerdoc, output);
+              }.bind(this)
+            );
+        }
+      }.bind(this)
+    );
 
-    return result.then(function () {
-      printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
-      printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
-      printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
-      printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
-      printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.PARTIAL_CUT_1);
-      return printerdoc;
-    }.bind(this));
+    return result.then(
+      function() {
+        printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
+        printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
+        printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
+        printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
+        printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.PARTIAL_CUT_1);
+        return printerdoc;
+      }.bind(this)
+    );
   };
 
-  WEBPrinter.prototype.processLine = function (dom) {
+  WEBPrinter.prototype.processLine = function(dom) {
     var line = new Uint8Array();
     var fontsize = dom.getAttribute('size');
     var i, el;
@@ -229,8 +284,7 @@
     return Promise.resolve(line);
   };
 
-  WEBPrinter.prototype.processBarcode = function (el) {
-
+  WEBPrinter.prototype.processBarcode = function(el) {
     var type = el.getAttribute('type');
     var position = el.getAttribute('position');
     var code = el.textContent;
@@ -239,7 +293,8 @@
       return Promise.resolve(this.escpos.transEAN13(code, position));
     } else if (type === 'CODE128') {
       return Promise.resolve(this.escpos.transCODE128(code, position));
-    } else { // Unknown barcode type
+    } else {
+      // Unknown barcode type
       var line = new Uint8Array();
       line = OB.ARRAYS.append(line, this.escpos.CENTER_JUSTIFICATION);
       line = OB.ARRAYS.append(line, this.escpos.NEW_LINE);
@@ -252,28 +307,36 @@
     }
   };
 
-  WEBPrinter.prototype.processQR = function (el) {
+  WEBPrinter.prototype.processQR = function(el) {
     var quality = el.getAttribute('quality') || 'L';
     var size = el.getAttribute('size') || 'M';
     var code = el.textContent;
     return Promise.resolve(this.escpos.transQR(code, quality, size));
   };
 
-  WEBPrinter.prototype.processImage = function (el) {
+  WEBPrinter.prototype.processImage = function(el) {
     var image = el.textContent;
     var imageurl = this.images[image] || image;
 
     return getImageData({
       image: imageurl
-    }).then(function (result) {
-      return this.escpos.transImage(result.imagedata);
-    }.bind(this))['catch'](function (error) {
-      // Log the error and continue printing the receipt
-      OB.warn('Cannot load receipt image \'' + image + '\' -> \'' + imageurl + '\'');
-      return new Uint8Array();
-    }.bind(this));
+    })
+      .then(
+        function(result) {
+          return this.escpos.transImage(result.imagedata);
+        }.bind(this)
+      )
+      ['catch'](
+        function(error) {
+          // Log the error and continue printing the receipt
+          OB.warn(
+            "Cannot load receipt image '" + image + "' -> '" + imageurl + "'"
+          );
+          return new Uint8Array();
+        }.bind(this)
+      );
   };
 
   window.OB = window.OB || {};
   OB.WEBPrinter = WEBPrinter;
-}());
+})();

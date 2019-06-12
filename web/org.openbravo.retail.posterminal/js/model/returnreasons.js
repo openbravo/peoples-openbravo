@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var ReturnReason = OB.Data.ExtensibleModel.extend({
     modelName: 'ReturnReason',
     tableName: 'c_return_reason',
@@ -17,24 +16,29 @@
     dataLimit: OB.Dal.DATALIMIT
   });
 
-  ReturnReason.addProperties([{
-    name: 'id',
-    column: 'c_return_reason_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'searchKey',
-    column: 'searchKey',
-    type: 'TEXT'
-  }, {
-    name: 'name',
-    column: 'name',
-    type: 'TEXT'
-  }, {
-    name: '_identifier',
-    column: '_identifier',
-    type: 'TEXT'
-  }]);
+  ReturnReason.addProperties([
+    {
+      name: 'id',
+      column: 'c_return_reason_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'searchKey',
+      column: 'searchKey',
+      type: 'TEXT'
+    },
+    {
+      name: 'name',
+      column: 'name',
+      type: 'TEXT'
+    },
+    {
+      name: '_identifier',
+      column: '_identifier',
+      type: 'TEXT'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(ReturnReason);
-}());
+})();

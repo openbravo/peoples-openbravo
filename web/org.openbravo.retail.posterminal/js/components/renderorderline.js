@@ -19,7 +19,7 @@ enyo.kind({
     onSetMultiSelected: 'setMultiSelected',
     onkeyup: 'keyupHandler'
   },
-  tap: function () {
+  tap: function() {
     if (OB.MobileApp.model.get('serviceSearchMode')) {
       return;
     }
@@ -30,63 +30,77 @@ enyo.kind({
     onLineChecked: '',
     onShowPopup: ''
   },
-  components: [{
-    name: 'checkBoxColumn',
-    kind: 'OB.UI.CheckboxButton',
-    tag: 'div',
-    tap: function () {
-      var model = this.owner.model;
-      if (this.checked) {
-        model.trigger('uncheck', model);
-      } else {
-        model.trigger('check', model);
-      }
-      return this;
+  components: [
+    {
+      name: 'checkBoxColumn',
+      kind: 'OB.UI.CheckboxButton',
+      tag: 'div',
+      tap: function() {
+        var model = this.owner.model;
+        if (this.checked) {
+          model.trigger('uncheck', model);
+        } else {
+          model.trigger('check', model);
+        }
+        return this;
+      },
+      style: 'float: left; width: 10%;'
     },
-    style: 'float: left; width: 10%;'
-  }, {
-    name: 'nameContainner',
-    tag: 'div',
-    classes: 'orderline-productname',
-    components: [{
-      name: 'serviceIcon',
-      kind: 'Image',
-      src: 'img/iconService_ticketline.png',
-      style: 'float: left; padding-right: 5px; '
-    }, {
-      name: 'product'
-    }]
-  }, {
-    kind: 'OB.UI.FitText',
-    classes: 'orderline-quantity fitText',
-    components: [{
-      tag: 'span',
-      name: 'quantity'
-
-    }]
-  }, {
-    kind: 'OB.UI.FitText',
-    classes: 'orderline-price fitText',
-    components: [{
-      tag: 'span',
-      name: 'price',
-      style: 'padding-left: 8px;'
-
-    }]
-  }, {
-    kind: 'OB.UI.FitText',
-    classes: 'orderline-gross fitText',
-    components: [{
-      tag: 'span',
-      name: 'gross',
-      style: 'padding-left: 8px;'
-    }]
-  }, {
-    style: 'clear: both;'
-  }],
-  initComponents: function () {
+    {
+      name: 'nameContainner',
+      tag: 'div',
+      classes: 'orderline-productname',
+      components: [
+        {
+          name: 'serviceIcon',
+          kind: 'Image',
+          src: 'img/iconService_ticketline.png',
+          style: 'float: left; padding-right: 5px; '
+        },
+        {
+          name: 'product'
+        }
+      ]
+    },
+    {
+      kind: 'OB.UI.FitText',
+      classes: 'orderline-quantity fitText',
+      components: [
+        {
+          tag: 'span',
+          name: 'quantity'
+        }
+      ]
+    },
+    {
+      kind: 'OB.UI.FitText',
+      classes: 'orderline-price fitText',
+      components: [
+        {
+          tag: 'span',
+          name: 'price',
+          style: 'padding-left: 8px;'
+        }
+      ]
+    },
+    {
+      kind: 'OB.UI.FitText',
+      classes: 'orderline-gross fitText',
+      components: [
+        {
+          tag: 'span',
+          name: 'gross',
+          style: 'padding-left: 8px;'
+        }
+      ]
+    },
+    {
+      style: 'clear: both;'
+    }
+  ],
+  initComponents: function() {
     var me = this,
-        order = this.owner.owner.owner.owner.order;
+      order = this.owner.owner.owner.owner.order;
 
     this.inherited(arguments);
     if (this.model.get('product').get('productType') === 'S') {
@@ -105,7 +119,13 @@ enyo.kind({
     } else {
       this.$.gross.setContent(this.model.printNet());
     }
-    if (OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true) && this.model.get('product').get('hasAttributes')) {
+    if (
+      OB.MobileApp.model.hasPermission(
+        'OBPOS_EnableSupportForProductAttributes',
+        true
+      ) &&
+      this.model.get('product').get('hasAttributes')
+    ) {
       var attr_msg = OB.I18N.getLabel('OBPOS_AttributeValue');
       if (this.model.get('attSetInstanceDesc')) {
         attr_msg += this.model.get('attSetInstanceDesc');
@@ -117,15 +137,18 @@ enyo.kind({
 
       this.createComponent({
         style: 'display: block;',
-        components: [{
-          name: 'productAttribute',
-          content: attr_msg,
-          attributes: {
-            style: 'float: left; width: 100%; clear: left;'
+        components: [
+          {
+            name: 'productAttribute',
+            content: attr_msg,
+            attributes: {
+              style: 'float: left; width: 100%; clear: left;'
+            }
+          },
+          {
+            style: 'clear: both;'
           }
-        }, {
-          style: 'clear: both;'
-        }]
+        ]
       });
 
       if (!this.model.get('attributeValue')) {
@@ -136,37 +159,54 @@ enyo.kind({
     if (this.model.get('product').get('characteristicDescription')) {
       this.createComponent({
         style: 'display: block; ',
-        components: [{
-          name: 'characteristicsDescription',
-          content: OB.UTIL.getCharacteristicValues(this.model.get('product').get('characteristicDescription')),
-          classes: 'orderline-characteristicsDescription'
-        }, {
-          style: 'clear: both;'
-        }]
+        components: [
+          {
+            name: 'characteristicsDescription',
+            content: OB.UTIL.getCharacteristicValues(
+              this.model.get('product').get('characteristicDescription')
+            ),
+            classes: 'orderline-characteristicsDescription'
+          },
+          {
+            style: 'clear: both;'
+          }
+        ]
       });
     }
     if (OB.UTIL.isCrossStoreLine(this.model)) {
       this.createComponent({
         classes: 'obpos-display-block',
-        components: [{
-          name: 'storeLine',
-          content: '-- ' + OB.I18N.getLabel('OBPOS_LblStore') + ': ' + this.model.get('organization').name
-        }, {
-          classes: 'obpos-clear-both'
-        }]
+        components: [
+          {
+            name: 'storeLine',
+            content:
+              '-- ' +
+              OB.I18N.getLabel('OBPOS_LblStore') +
+              ': ' +
+              this.model.get('organization').name
+          },
+          {
+            classes: 'obpos-clear-both'
+          }
+        ]
       });
     }
     if (this.model.get('obposSerialNumber')) {
       this.createComponent({
         style: 'display: block;',
-        components: [{
-          content: OB.I18N.getLabel('OBPOS_SerialNumber', [this.model.get('obposSerialNumber')]),
-          attributes: {
-            style: 'float: left; width: 80%;'
+        components: [
+          {
+            content: OB.I18N.getLabel('OBPOS_SerialNumber', [
+              this.model.get('obposSerialNumber')
+            ]),
+            attributes: {
+              style: 'float: left; width: 80%;'
+            }
+          },
+          {
+            style: 'clear: both;'
           }
-        }, {
-          style: 'clear: both;'
-        }]
+        ]
       });
     }
 
@@ -174,80 +214,110 @@ enyo.kind({
       if (this.model.get('shippedQuantity')) {
         this.createComponent({
           style: 'display: block;',
-          components: [{
-            content: '-- ' + OB.I18N.getLabel('OBPOS_DeliveredQuantity') + ': ' + this.model.get('shippedQuantity'),
-            attributes: {
-              style: 'float: left; width: 100%; clear: left;'
+          components: [
+            {
+              content:
+                '-- ' +
+                OB.I18N.getLabel('OBPOS_DeliveredQuantity') +
+                ': ' +
+                this.model.get('shippedQuantity'),
+              attributes: {
+                style: 'float: left; width: 100%; clear: left;'
+              }
+            },
+            {
+              style: 'clear: both;'
             }
-          }, {
-            style: 'clear: both;'
-          }]
+          ]
         });
       } else {
         this.createComponent({
           style: 'display: block;',
-          components: [{
-            content: '-- ' + OB.I18N.getLabel('OBPOS_Cancelled'),
-            attributes: {
-              style: 'float: left; width: 100%; clear: left;'
+          components: [
+            {
+              content: '-- ' + OB.I18N.getLabel('OBPOS_Cancelled'),
+              attributes: {
+                style: 'float: left; width: 100%; clear: left;'
+              }
+            },
+            {
+              style: 'clear: both;'
             }
-          }, {
-            style: 'clear: both;'
-          }]
+          ]
         });
       }
     } else {
       if (this.model.get('deliveredQuantity')) {
         this.createComponent({
           style: 'display: block;',
-          components: [{
-            content: '-- ' + OB.I18N.getLabel('OBPOS_DeliveredQuantity') + ': ' + this.model.get('deliveredQuantity'),
-            attributes: {
-              style: 'float: left; width: 100%; clear: left;'
+          components: [
+            {
+              content:
+                '-- ' +
+                OB.I18N.getLabel('OBPOS_DeliveredQuantity') +
+                ': ' +
+                this.model.get('deliveredQuantity'),
+              attributes: {
+                style: 'float: left; width: 100%; clear: left;'
+              }
+            },
+            {
+              style: 'clear: both;'
             }
-          }, {
-            style: 'clear: both;'
-          }]
+          ]
         });
       } else if (!this.model.get('obposCanbedelivered')) {
         this.createComponent({
           style: 'display: block;',
-          components: [{
-            content: '-- ' + OB.I18N.getLabel('OBPOS_NotDeliverLine'),
-            classes: 'orderline-canbedelivered'
-          }, {
-            style: 'clear: both;'
-          }]
+          components: [
+            {
+              content: '-- ' + OB.I18N.getLabel('OBPOS_NotDeliverLine'),
+              classes: 'orderline-canbedelivered'
+            },
+            {
+              style: 'clear: both;'
+            }
+          ]
         });
       }
     }
 
     if (this.model.get('promotions')) {
-      enyo.forEach(this.model.get('promotions'), function (d) {
-        if (d.hidden) {
-          // continue
-          return;
-        }
-        var identifierName = d.identifier || d.name;
-        var nochunks = d.chunks;
-        this.createComponent({
-          style: 'display: block; padding-top: 4px;',
-          components: [{
-            content: (OB.UTIL.isNullOrUndefined(nochunks) || nochunks === 1) ? '-- ' + identifierName : '-- ' + '(' + nochunks + 'x) ' + identifierName,
-            attributes: {
-              style: 'float: left; width: 80%; clear: left;'
-            }
-          }, {
-            content: OB.I18N.formatCurrency(-d.amt),
-            attributes: {
-              style: 'float: right; width: 20%; text-align: right;'
-            }
-          }, {
-            style: 'clear: both;'
-          }]
-        });
-      }, this);
-
+      enyo.forEach(
+        this.model.get('promotions'),
+        function(d) {
+          if (d.hidden) {
+            // continue
+            return;
+          }
+          var identifierName = d.identifier || d.name;
+          var nochunks = d.chunks;
+          this.createComponent({
+            style: 'display: block; padding-top: 4px;',
+            components: [
+              {
+                content:
+                  OB.UTIL.isNullOrUndefined(nochunks) || nochunks === 1
+                    ? '-- ' + identifierName
+                    : '-- ' + '(' + nochunks + 'x) ' + identifierName,
+                attributes: {
+                  style: 'float: left; width: 80%; clear: left;'
+                }
+              },
+              {
+                content: OB.I18N.formatCurrency(-d.amt),
+                attributes: {
+                  style: 'float: right; width: 20%; text-align: right;'
+                }
+              },
+              {
+                style: 'clear: both;'
+              }
+            ]
+          });
+        },
+        this
+      );
     }
     if (this.model.get('relatedLines')) {
       if (!this.$.relatedLinesContainer) {
@@ -256,16 +326,30 @@ enyo.kind({
           style: 'clear:both; float: left; width: 80%;'
         });
       }
-      enyo.forEach(this.model.get('relatedLines'), function (line) {
-        this.$.relatedLinesContainer.createComponent({
-          components: [{
-            content: line.otherTicket ? OB.I18N.getLabel('OBPOS_lblRelatedLinesOtherTicket', [line.productName, line.orderDocumentNo]) : OB.I18N.getLabel('OBPOS_lblRelatedLines', [line.productName]),
-            attributes: {
-              style: 'font-size: 14px; font-style: italic; text-align: left; padding-left: 25px'
-            }
-          }]
-        });
-      }, this);
+      enyo.forEach(
+        this.model.get('relatedLines'),
+        function(line) {
+          this.$.relatedLinesContainer.createComponent({
+            components: [
+              {
+                content: line.otherTicket
+                  ? OB.I18N.getLabel('OBPOS_lblRelatedLinesOtherTicket', [
+                      line.productName,
+                      line.orderDocumentNo
+                    ])
+                  : OB.I18N.getLabel('OBPOS_lblRelatedLines', [
+                      line.productName
+                    ]),
+                attributes: {
+                  style:
+                    'font-size: 14px; font-style: italic; text-align: left; padding-left: 25px'
+                }
+              }
+            ]
+          });
+        },
+        this
+      );
     }
     if (this.model.get('hasRelatedServices')) {
       me.createComponent({
@@ -273,7 +357,7 @@ enyo.kind({
         name: 'showServicesButton'
       });
     } else if (!this.model.has('hasRelatedServices')) {
-      this.model.on('showServicesButton', function () {
+      this.model.on('showServicesButton', function() {
         me.model.off('showServicesButton');
         me.createComponent({
           kind: 'OB.UI.ShowServicesButton',
@@ -286,16 +370,22 @@ enyo.kind({
       order: order
     });
   },
-  keyupHandler: function (inSender, inEvent) {
+  keyupHandler: function(inSender, inEvent) {
     var keyCode = inEvent.keyCode;
-    if (keyCode === 13 || keyCode === 32) { //Handle ENTER and SPACE keys in buttons
+    if (keyCode === 13 || keyCode === 32) {
+      //Handle ENTER and SPACE keys in buttons
       this.executeTapAction();
       return true;
     }
     OB.MobileApp.view.keypressHandler(inSender, inEvent);
   },
-  setMultiSelected: function (inSender, inEvent) {
-    if (inEvent.models && inEvent.models.length > 0 && inEvent.models[0] instanceof OB.Model.OrderLine && this.$.showServicesButton) {
+  setMultiSelected: function(inSender, inEvent) {
+    if (
+      inEvent.models &&
+      inEvent.models.length > 0 &&
+      inEvent.models[0] instanceof OB.Model.OrderLine &&
+      this.$.showServicesButton
+    ) {
       if (inEvent.models.length > 1) {
         this.$.showServicesButton.hide();
       } else {
@@ -303,13 +393,13 @@ enyo.kind({
       }
     }
   },
-  changeEditMode: function (inSender, inEvent) {
+  changeEditMode: function(inSender, inEvent) {
     this.addRemoveClass('btnselect-orderline-edit', inEvent.edit);
     this.bubble('onShowColumn', {
       colNum: 1
     });
   },
-  checkBoxForTicketLines: function (inSender, inEvent) {
+  checkBoxForTicketLines: function(inSender, inEvent) {
     if (inEvent.status) {
       this.$.gross.hasNode().style.width = '18%';
       this.$.quantity.hasNode().style.width = '16%';
@@ -317,10 +407,14 @@ enyo.kind({
 
       this.$.nameContainner.hasNode().style.width = '38%';
       if (this.$.characteristicsDescription) {
-        this.$.characteristicsDescription.addStyles('padding-left: 10%; clear: both; width: 50.1%; color:grey');
+        this.$.characteristicsDescription.addStyles(
+          'padding-left: 10%; clear: both; width: 50.1%; color:grey'
+        );
       }
       if (this.$.relatedLinesContainer) {
-        this.$.relatedLinesContainer.addStyles('padding-left: 10%; clear: both; float: left; width: 80%;');
+        this.$.relatedLinesContainer.addStyles(
+          'padding-left: 10%; clear: both; float: left; width: 80%;'
+        );
       }
       this.$.checkBoxColumn.show();
       this.changeEditMode(this, inEvent.status);
@@ -330,33 +424,38 @@ enyo.kind({
       this.$.price.hasNode().style.width = '20%';
       this.$.nameContainner.hasNode().style.width = '40%';
       if (this.$.characteristicsDescription) {
-        this.$.characteristicsDescription.addStyles('padding-left: 0%; clear: both; width: 60.1%; color:grey');
+        this.$.characteristicsDescription.addStyles(
+          'padding-left: 0%; clear: both; width: 60.1%; color:grey'
+        );
       }
       if (this.$.relatedLinesContainer) {
-        this.$.relatedLinesContainer.addStyles('padding-left: 0%; clear: both; float: left; width: 80%;');
+        this.$.relatedLinesContainer.addStyles(
+          'padding-left: 0%; clear: both; float: left; width: 80%;'
+        );
       }
       this.$.checkBoxColumn.hide();
       this.changeEditMode(this, false);
     }
   },
-  setIdentifierContent: function () {
+  setIdentifierContent: function() {
     return this.model.get('product').get('_identifier');
   }
-
 });
 
 enyo.kind({
   name: 'OB.UI.RenderOrderLineEmpty',
-  style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
-  initComponents: function () {
+  style:
+    'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+  initComponents: function() {
     this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
   }
 });
 enyo.kind({
   name: 'OB.UI.RenderTaxLineEmpty',
-  style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
-  initComponents: function () {
+  style:
+    'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+  initComponents: function() {
     this.inherited(arguments);
   }
 });
@@ -370,17 +469,19 @@ enyo.kind({
   handlers: {
     onRightToolbarDisabled: 'toggleVisibility'
   },
-  addServicesFilter: function (orderline) {
+  addServicesFilter: function(orderline) {
     var product = orderline.get('product');
     OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
-    OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB.UI.SearchServicesFilter({
-      text: product.get("_identifier"),
-      productId: product.id,
-      productList: null,
-      orderline: orderline,
-      orderlineList: null,
-      extraParams: this.extraParams
-    }));
+    OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(
+      new OB.UI.SearchServicesFilter({
+        text: product.get('_identifier'),
+        productId: product.id,
+        productList: null,
+        orderline: orderline,
+        orderlineList: null,
+        extraParams: this.extraParams
+      })
+    );
     this.bubble('onTabChange', {
       tabPanel: 'searchCharacteristic'
     });
@@ -390,17 +491,17 @@ enyo.kind({
       }
     });
   },
-  tap: function (inSender, inEvent) {
+  tap: function(inSender, inEvent) {
     var product = this.owner.model.get('product'),
-        orderline = this.owner.model;
+      orderline = this.owner.model;
     if (product) {
       this.addServicesFilter(orderline);
-      orderline.set("obposServiceProposed", true);
+      orderline.set('obposServiceProposed', true);
       OB.MobileApp.model.receipt.save();
       return true;
     }
   },
-  toggleVisibility: function (inSender, inEvent) {
+  toggleVisibility: function(inSender, inEvent) {
     this.isVisible = !inEvent.status;
     if (this.isVisible) {
       this.show();
@@ -408,7 +509,7 @@ enyo.kind({
       this.hide();
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     if (this.owner.model.get('obposServiceProposed')) {
       this.addRemoveClass('iconServices_unreviewed', false);
@@ -427,40 +528,49 @@ enyo.kind({
   kind: 'OB.UI.listItemButton',
   name: 'OB.UI.RenderTaxLine',
   classes: 'btnselect-orderline',
-  tap: function () {
+  tap: function() {
     return this;
   },
-  components: [{
-    name: 'tax',
-    classes: 'order-tax-label'
-  }, {
-    kind: 'OB.UI.FitText',
-    classes: 'order-tax-base fitText',
-    components: [{
-      tag: 'span',
-      name: 'base'
-
-    }]
-  }, {
-    kind: 'OB.UI.FitText',
-    classes: 'order-tax-total fitText',
-    components: [{
-      tag: 'span',
-      name: 'totaltax',
-      style: 'padding-left: 8px;'
-
-    }]
-  }, {
-    style: 'clear: both;'
-  }],
-  selected: function () {
+  components: [
+    {
+      name: 'tax',
+      classes: 'order-tax-label'
+    },
+    {
+      kind: 'OB.UI.FitText',
+      classes: 'order-tax-base fitText',
+      components: [
+        {
+          tag: 'span',
+          name: 'base'
+        }
+      ]
+    },
+    {
+      kind: 'OB.UI.FitText',
+      classes: 'order-tax-total fitText',
+      components: [
+        {
+          tag: 'span',
+          name: 'totaltax',
+          style: 'padding-left: 8px;'
+        }
+      ]
+    },
+    {
+      style: 'clear: both;'
+    }
+  ],
+  selected: function() {
     return this;
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.$.tax.setContent(this.model.get('name'));
     this.$.base.setContent(OB.I18N.formatCurrency(this.model.get('net')));
-    this.$.totaltax.setContent(OB.I18N.formatCurrency(this.model.get('amount')));
+    this.$.totaltax.setContent(
+      OB.I18N.formatCurrency(this.model.get('amount'))
+    );
   }
 });
 
@@ -472,50 +582,81 @@ enyo.kind({
   handlers: {
     onRenderPaymentLine: 'renderPaymentLine'
   },
-  tap: function () {
+  tap: function() {
     return this;
   },
-  components: [{
-    name: 'name',
-    attributes: {
-      style: 'float: left; width: 40%; padding: 5px 0px 0px 0px;'
+  components: [
+    {
+      name: 'name',
+      attributes: {
+        style: 'float: left; width: 40%; padding: 5px 0px 0px 0px;'
+      }
+    },
+    {
+      name: 'date',
+      attributes: {
+        style:
+          'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
+      }
+    },
+    {
+      name: 'foreignAmount',
+      attributes: {
+        style:
+          'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
+      }
+    },
+    {
+      name: 'amount',
+      attributes: {
+        style:
+          'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
+      }
+    },
+    {
+      style: 'clear: both;'
     }
-  }, {
-    name: 'date',
-    attributes: {
-      style: 'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
-    }
-  }, {
-    name: 'foreignAmount',
-    attributes: {
-      style: 'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
-    }
-  }, {
-    name: 'amount',
-    attributes: {
-      style: 'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
-    }
-  }, {
-    style: 'clear: both;'
-  }],
-  selected: function () {
+  ],
+  selected: function() {
     return this;
   },
-  renderPaymentLine: function (inSender, inEvent) {
+  renderPaymentLine: function(inSender, inEvent) {
     var paymentDate;
     if (this.model.get('reversedPaymentId')) {
-      this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + OB.I18N.getLabel('OBPOS_ReversedPayment'));
+      this.$.name.setContent(
+        (OB.MobileApp.model.getPaymentName(this.model.get('kind')) ||
+          this.model.get('name')) + OB.I18N.getLabel('OBPOS_ReversedPayment')
+      );
       this.$.amount.setContent(this.model.printAmount());
     } else if (this.model.get('isReversed')) {
-      this.$.name.setContent('*' + (OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')));
+      this.$.name.setContent(
+        '*' +
+          (OB.MobileApp.model.getPaymentName(this.model.get('kind')) ||
+            this.model.get('name'))
+      );
       this.$.amount.setContent(this.model.printAmount());
     } else {
       var receipt = this.owner.owner.owner.owner.order;
-      this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
+      this.$.name.setContent(
+        OB.MobileApp.model.getPaymentName(this.model.get('kind')) ||
+          this.model.get('name')
+      );
       this.$.amount.setContent(this.model.printAmountWithSignum(receipt));
     }
-    if (this && this.model && this.model.get('paymentData') && this.model.get('paymentData').name && this.model.get('paymentData').name.length > 0) {
-      this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + ' (' + this.model.get('paymentData').name + ')');
+    if (
+      this &&
+      this.model &&
+      this.model.get('paymentData') &&
+      this.model.get('paymentData').name &&
+      this.model.get('paymentData').name.length > 0
+    ) {
+      this.$.name.setContent(
+        (OB.MobileApp.model.getPaymentName(this.model.get('kind')) ||
+          this.model.get('name')) +
+          ' (' +
+          this.model.get('paymentData').name +
+          ')'
+      );
     }
     if (!this.model.get('paymentAmount') && this.model.get('isPrePayment')) {
       this.$.name.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
@@ -524,7 +665,7 @@ enyo.kind({
       paymentDate = new Date();
     } else {
       paymentDate = this.model.get('paymentDate');
-      if (typeof (this.model.get('paymentDate')) === 'string') {
+      if (typeof this.model.get('paymentDate') === 'string') {
         paymentDate = new Date(paymentDate);
       }
     }
@@ -535,15 +676,16 @@ enyo.kind({
       this.$.foreignAmount.setContent('');
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.renderPaymentLine();
   }
 });
 enyo.kind({
   name: 'OB.UI.RenderPaymentLineEmpty',
-  style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
-  initComponents: function () {
+  style:
+    'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+  initComponents: function() {
     this.inherited(arguments);
   }
 });

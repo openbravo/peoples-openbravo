@@ -13,7 +13,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationCancel',
   i18nContent: 'OBMOBC_LblCancel',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
   }
 });
@@ -24,7 +24,7 @@ enyo.kind({
   events: {
     onRejectQuotationDone: ''
   },
-  tap: function () {
+  tap: function() {
     this.doRejectQuotationDone();
     this.doHideThisPopup();
   }
@@ -36,40 +36,46 @@ enyo.kind({
   style: 'width: 80%',
   renderLine: enyo.kind({
     kind: 'enyo.Option',
-    initComponents: function () {
+    initComponents: function() {
       this.inherited(arguments);
       this.setValue(this.model.get('id'));
       this.setContent(this.model.get('_identifier'));
     }
   }),
   renderEmpty: 'enyo.Control',
-  initComponents: function () {
+  initComponents: function() {
     this.setCollection(new Backbone.Collection());
   }
 });
-
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalRejectQuotation',
   myId: 'modalRejectQuotation',
   bodyContent: {
-    components: [{
-      name: 'labelRejectReason',
-      style: 'text-align: right; padding-right:10px; width: 40%; height: 40px; float: left;'
-    }, {
-      style: 'width: 50%; float: left;',
-      kind: 'OB.UI.ModalRejectQuotationRejectReason',
-      name: 'rejectReason'
-    }]
+    components: [
+      {
+        name: 'labelRejectReason',
+        style:
+          'text-align: right; padding-right:10px; width: 40%; height: 40px; float: left;'
+      },
+      {
+        style: 'width: 50%; float: left;',
+        kind: 'OB.UI.ModalRejectQuotationRejectReason',
+        name: 'rejectReason'
+      }
+    ]
   },
   i18nHeader: 'OBPOS_RejectQuotation',
   bodyButtons: {
-    components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationAccept'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationCancel'
-    }]
+    components: [
+      {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationAccept'
+      },
+      {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationCancel'
+      }
+    ]
   },
   events: {
     onRejectQuotation: ''
@@ -77,21 +83,27 @@ enyo.kind({
   handlers: {
     onRejectQuotationDone: 'doRejectQuotationDone'
   },
-  doRejectQuotationDone: function () {
+  doRejectQuotationDone: function() {
     this.doRejectQuotation({
       rejectReason: this.$.bodyContent.$.rejectReason.getValue()
     });
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
-    this.$.bodyContent.$.labelRejectReason.setContent(OB.I18N.getLabel('OBPOS_lblRejectReason'));
+    this.$.bodyContent.$.labelRejectReason.setContent(
+      OB.I18N.getLabel('OBPOS_lblRejectReason')
+    );
     var rejectReasonCollection = [];
-    _.each(OB.MobileApp.model.get('rejectReasons'), function (reason) {
-      rejectReasonCollection.push(new Backbone.Model({
-        id: reason.id,
-        _identifier: reason._identifier
-      }));
+    _.each(OB.MobileApp.model.get('rejectReasons'), function(reason) {
+      rejectReasonCollection.push(
+        new Backbone.Model({
+          id: reason.id,
+          _identifier: reason._identifier
+        })
+      );
     });
-    this.$.bodyContent.$.rejectReason.getCollection().reset(rejectReasonCollection);
+    this.$.bodyContent.$.rejectReason
+      .getCollection()
+      .reset(rejectReasonCollection);
   }
 });

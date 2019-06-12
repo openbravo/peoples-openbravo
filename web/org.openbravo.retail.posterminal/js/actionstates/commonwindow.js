@@ -10,11 +10,12 @@
 /*global OB*/
 
 OB.MobileApp.statesRegistry.register(
-new OB.State.BackboneProperty({
-  window: 'retail.pointofsale',
-  name: 'window.currentView',
-  object: function (view) {
-    return view.model.get('leftColumnViewManager');
-  },
-  property: 'currentView'
-}));
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'window.currentView',
+    object: function(view) {
+      return view.model.get('leftColumnViewManager');
+    },
+    property: 'currentView'
+  })
+);

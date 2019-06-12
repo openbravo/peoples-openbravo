@@ -9,21 +9,46 @@
 
 /*global enyo, _*/
 
-OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function (args, callbacks) {
+OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function(
+  args,
+  callbacks
+) {
   if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
     var orderline = args.orderline.model,
-        order = args.order,
-        deliveryDate = orderline.get('obrdmDeliveryDate') ? (orderline.get('obrdmDeliveryDate') instanceof Date ? orderline.get('obrdmDeliveryDate') : new Date(orderline.get('obrdmDeliveryDate'))) : null,
-        deliveryTime = orderline.get('obrdmDeliveryTime') ? (orderline.get('obrdmDeliveryTime') instanceof Date ? orderline.get('obrdmDeliveryTime') : new Date(orderline.get('obrdmDeliveryTime'))) : null,
-        showDate = orderline.get('obrdmDeliveryMode') === 'PickupInStoreDate' || orderline.get('obrdmDeliveryMode') === 'HomeDelivery',
-        showTime = orderline.get('obrdmDeliveryMode') === 'HomeDelivery',
-        deliveryName = orderline.get('nameDelivery') ? orderline.get('nameDelivery') : (orderline.get('obrdmDeliveryMode') ? _.find(OB.MobileApp.model.get('deliveryModes'), function (dm) {
-        return dm.id === orderline.get('obrdmDeliveryMode');
-      }).name : null),
-        isDeliveryService = orderline.get('product').get('productType') === 'S' && orderline.get('product').get('obrdmIsdeliveryservice'),
-        deliveryPaymentMode = OB.MobileApp.model.get('deliveryPaymentMode');
+      order = args.order,
+      deliveryDate = orderline.get('obrdmDeliveryDate')
+        ? orderline.get('obrdmDeliveryDate') instanceof Date
+          ? orderline.get('obrdmDeliveryDate')
+          : new Date(orderline.get('obrdmDeliveryDate'))
+        : null,
+      deliveryTime = orderline.get('obrdmDeliveryTime')
+        ? orderline.get('obrdmDeliveryTime') instanceof Date
+          ? orderline.get('obrdmDeliveryTime')
+          : new Date(orderline.get('obrdmDeliveryTime'))
+        : null,
+      showDate =
+        orderline.get('obrdmDeliveryMode') === 'PickupInStoreDate' ||
+        orderline.get('obrdmDeliveryMode') === 'HomeDelivery',
+      showTime = orderline.get('obrdmDeliveryMode') === 'HomeDelivery',
+      deliveryName = orderline.get('nameDelivery')
+        ? orderline.get('nameDelivery')
+        : orderline.get('obrdmDeliveryMode')
+        ? _.find(OB.MobileApp.model.get('deliveryModes'), function(dm) {
+            return dm.id === orderline.get('obrdmDeliveryMode');
+          }).name
+        : null,
+      isDeliveryService =
+        orderline.get('product').get('productType') === 'S' &&
+        orderline.get('product').get('obrdmIsdeliveryservice'),
+      deliveryPaymentMode = OB.MobileApp.model.get('deliveryPaymentMode');
 
-    if (orderline.get('obrdmDeliveryMode') && deliveryName && (orderline.get('obrdmDeliveryMode') !== order.get('obrdmDeliveryModeProperty') || deliveryDate)) {
+    if (
+      orderline.get('obrdmDeliveryMode') &&
+      deliveryName &&
+      (orderline.get('obrdmDeliveryMode') !==
+        order.get('obrdmDeliveryModeProperty') ||
+        deliveryDate)
+    ) {
       var currentDate, currentTime;
 
       if (!deliveryDate) {
@@ -40,62 +65,105 @@ OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function (args, callba
 
       args.orderline.createComponent({
         style: 'float: left; width: 80%; display: block;',
-        components: [{
-          content: '-- ' + OB.I18N.getLabel('OBRDM_DeliveryMode') + ': ' + deliveryName,
-          attributes: {
-            style: 'clear: left;'
+        components: [
+          {
+            content:
+              '-- ' +
+              OB.I18N.getLabel('OBRDM_DeliveryMode') +
+              ': ' +
+              deliveryName,
+            attributes: {
+              style: 'clear: left;'
+            }
+          },
+          {
+            content: showDate
+              ? '-- ' +
+                OB.I18N.getLabel('OBRDM_DeliveryDate') +
+                ': ' +
+                (deliveryDate
+                  ? OB.I18N.formatDate(deliveryDate)
+                  : OB.I18N.formatDate(currentDate))
+              : '',
+            attributes: {
+              style: 'clear: left;'
+            }
+          },
+          {
+            content: showTime
+              ? '-- ' +
+                OB.I18N.getLabel('OBRDM_DeliveryTime') +
+                ': ' +
+                (deliveryTime
+                  ? OB.I18N.formatHour(deliveryTime)
+                  : OB.I18N.formatHour(currentTime))
+              : '',
+            attributes: {
+              style: 'clear: left;'
+            }
           }
-        }, {
-          content: showDate ? '-- ' + OB.I18N.getLabel('OBRDM_DeliveryDate') + ': ' + (deliveryDate ? OB.I18N.formatDate(deliveryDate) : OB.I18N.formatDate(currentDate)) : '',
-          attributes: {
-            style: 'clear: left;'
-          }
-        }, {
-          content: showTime ? '-- ' + OB.I18N.getLabel('OBRDM_DeliveryTime') + ': ' + (deliveryTime ? OB.I18N.formatHour(deliveryTime) : OB.I18N.formatHour(currentTime)) : '',
-          attributes: {
-            style: 'clear: left;'
-          }
-        }]
+        ]
       });
     }
 
-    order.on('change:obrdmDeliveryModeProperty', function (model) {
+    order.on('change:obrdmDeliveryModeProperty', function(model) {
       orderline.trigger('updateView');
     });
 
-    if (orderline.has('obrdmAmttopayindelivery') && isDeliveryService && deliveryPaymentMode === 'PD') {
+    if (
+      orderline.has('obrdmAmttopayindelivery') &&
+      isDeliveryService &&
+      deliveryPaymentMode === 'PD'
+    ) {
       var symbol = OB.MobileApp.model.get('terminal').symbol,
-          symbolAtTheRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+        symbolAtTheRight = OB.MobileApp.model.get('terminal')
+          .currencySymbolAtTheRight;
       args.orderline.createComponent({
         style: 'float: left; width: 80%; display: block; color: #f8941d;',
-        components: [{
-          content: '-- ' + OB.I18N.getLabel('OBRDM_AmtToPayInDeliveryLbl', [OB.I18N.formatCurrencyWithSymbol(orderline.get('obrdmAmttopayindelivery'), symbol, symbolAtTheRight)]),
-          classes: 'orderline-canbedelivered',
-          attributes: {
-            style: 'clear: left;'
+        components: [
+          {
+            content:
+              '-- ' +
+              OB.I18N.getLabel('OBRDM_AmtToPayInDeliveryLbl', [
+                OB.I18N.formatCurrencyWithSymbol(
+                  orderline.get('obrdmAmttopayindelivery'),
+                  symbol,
+                  symbolAtTheRight
+                )
+              ]),
+            classes: 'orderline-canbedelivered',
+            attributes: {
+              style: 'clear: left;'
+            }
           }
-        }],
-        tap: function () {
+        ],
+        tap: function() {
           if (!OB.MobileApp.model.receipt.get('isEditable')) {
             return;
           }
-          OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBRDM_ChangeDeliveryPaymentApproval', function (approved, supervisor, approvalType) {
-            if (approved) {
-              OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-                popup: 'OBRDM_UI_ModalChangeDeliveryAmount',
-                args: {
-                  orderline: orderline
-                }
-              });
+          OB.UTIL.Approval.requestApproval(
+            OB.MobileApp.view.$.containerWindow.getRoot().model,
+            'OBRDM_ChangeDeliveryPaymentApproval',
+            function(approved, supervisor, approvalType) {
+              if (approved) {
+                OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                  popup: 'OBRDM_UI_ModalChangeDeliveryAmount',
+                  args: {
+                    orderline: orderline
+                  }
+                });
+              }
             }
-          });
+          );
         }
       });
     }
 
     if (isDeliveryService) {
       args.orderline.$.serviceIcon.setSrc('img/iconShippingAddress.svg');
-      args.orderline.$.serviceIcon.setStyle('float: left; padding: 1px 2px 0px 0px; height: 14px;');
+      args.orderline.$.serviceIcon.setStyle(
+        'float: left; padding: 1px 2px 0px 0px; height: 14px;'
+      );
     } else {
       args.orderline.$.serviceIcon.setSrc('img/iconService_ticketline.png');
       args.orderline.$.serviceIcon.setStyle('float: left; padding-right: 5px;');
@@ -119,7 +187,7 @@ enyo.kind({
   handlers: {
     onSetMultiSelected: 'setMultiSelected'
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.removeClass('iconServices_mandatory');
     this.removeClass('iconServices_unreviewed');
@@ -135,9 +203,9 @@ enyo.kind({
       this.hide();
     }
   },
-  tap: function (inSender, inEvent) {
+  tap: function(inSender, inEvent) {
     var orderline = this.owner.model,
-        product = orderline.get('product');
+      product = orderline.get('product');
     if (product) {
       this.addServicesFilter(orderline);
       orderline.set('deliveryServiceProposed', true);
@@ -145,8 +213,12 @@ enyo.kind({
       return true;
     }
   },
-  setMultiSelected: function (inSender, inEvent) {
-    if (inEvent.models && inEvent.models.length > 0 && inEvent.models[0] instanceof OB.Model.OrderLine) {
+  setMultiSelected: function(inSender, inEvent) {
+    if (
+      inEvent.models &&
+      inEvent.models.length > 0 &&
+      inEvent.models[0] instanceof OB.Model.OrderLine
+    ) {
       if (inEvent.models.length > 1) {
         this.hide();
       } else {
@@ -159,21 +231,26 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OBRDM.UI.ModalChangeDeliveryAmount',
-  executeOnShow: function () {
-    this.$.bodyButtons.$.inputNewDeliveryAmount.setValue(this.args.orderline.get('obrdmAmttopayindelivery'));
+  executeOnShow: function() {
+    this.$.bodyButtons.$.inputNewDeliveryAmount.setValue(
+      this.args.orderline.get('obrdmAmttopayindelivery')
+    );
   },
   bodyContent: {
     i18nContent: 'OBRDM_ChangeDeliveryAmountBody'
   },
   bodyButtons: {
-    components: [{
-      name: 'inputNewDeliveryAmount',
-      kind: 'OB.UI.SearchInput'
-    }, {
-      kind: 'OB.UI.ButtonApplyDeliveryAmount'
-    }]
+    components: [
+      {
+        name: 'inputNewDeliveryAmount',
+        kind: 'OB.UI.SearchInput'
+      },
+      {
+        kind: 'OB.UI.ButtonApplyDeliveryAmount'
+      }
+    ]
   },
-  initComponents: function () {
+  initComponents: function() {
     this.header = OB.I18N.getLabel('OBRDM_ChangeDeliveryAmountTitle');
     this.inherited(arguments);
   }
@@ -184,11 +261,15 @@ enyo.kind({
   name: 'OB.UI.ButtonApplyDeliveryAmount',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
-  tap: function () {
-    var amount, tmpAmount = this.owner.$.inputNewDeliveryAmount.getValue();
+  tap: function() {
+    var amount,
+      tmpAmount = this.owner.$.inputNewDeliveryAmount.getValue();
     try {
       if (!OB.I18N.isValidNumber(tmpAmount)) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_notValidInput_header'),
+          OB.I18N.getLabel('OBPOS_notValidQty')
+        );
         return;
       } else {
         while (tmpAmount.indexOf(OB.Format.defaultGroupingSymbol) !== -1) {
@@ -197,19 +278,31 @@ enyo.kind({
         amount = OB.I18N.parseNumber(tmpAmount);
       }
     } catch (ex) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_notValidInput_header'),
+        OB.I18N.getLabel('OBPOS_notValidQty')
+      );
       return;
     }
     if (_.isNaN(amount)) {
       //Reset delivery amount to the backup value stored in the line
-      this.owner.owner.args.orderline.set('obrdmAmttopayindelivery', this.owner.owner.args.orderline.get('baseAmountToPayInDeliver'));
+      this.owner.owner.args.orderline.set(
+        'obrdmAmttopayindelivery',
+        this.owner.owner.args.orderline.get('baseAmountToPayInDeliver')
+      );
       this.doHideThisPopup();
     } else if (amount < 0) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_amtGreaterThanZero'));
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_notValidInput_header'),
+        OB.I18N.getLabel('OBPOS_amtGreaterThanZero')
+      );
     } else {
       var decimalAmount = OB.DEC.toBigDecimal(amount);
       if (decimalAmount.scale() > OB.DEC.getScale()) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [amount]));
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_notValidInput_header'),
+          OB.I18N.getLabel('OBPOS_NotValidCurrencyAmount', [amount])
+        );
         return;
       } else {
         this.owner.owner.args.orderline.set('obrdmAmttopayindelivery', amount);
@@ -217,7 +310,7 @@ enyo.kind({
       }
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
   }
 });

@@ -9,23 +9,25 @@
 
 /*global OB */
 
-(function () {
-
+(function() {
   OB.MobileApp.actionsRegistry.register(
-  new OB.Actions.ViewMethodAction({
-    window: 'retail.pointofsale',
-    name: 'showModalReceiptProperties',
-    permission: 'OBPOS_receipt.properties',
-    properties: {
-      i18nContent: 'OBPOS_LblProperties'
-    },
-    isActive: function (view) {
-      return view.state.readState({
-        name: 'window.currentView'
-      }).name === 'order' && view.state.readState({
-        name: 'receipt.isEditable'
-      });
-    }
-  }));
-
-}());
+    new OB.Actions.ViewMethodAction({
+      window: 'retail.pointofsale',
+      name: 'showModalReceiptProperties',
+      permission: 'OBPOS_receipt.properties',
+      properties: {
+        i18nContent: 'OBPOS_LblProperties'
+      },
+      isActive: function(view) {
+        return (
+          view.state.readState({
+            name: 'window.currentView'
+          }).name === 'order' &&
+          view.state.readState({
+            name: 'receipt.isEditable'
+          })
+        );
+      }
+    })
+  );
+})();

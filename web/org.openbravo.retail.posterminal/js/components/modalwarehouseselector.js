@@ -13,29 +13,35 @@
 enyo.kind({
   name: 'OBRDM.UI.ListWarehouseLine',
   kind: 'OB.UI.listItemButton',
-  components: [{
-    name: 'line',
-    classes: 'obrdm-listwarehouseline-line',
-    components: [{
-      classes: 'obrdm-listwarehouseline-organization',
-      name: 'organization'
-    }, {
-      classes: 'obrdm-listwarehouseline-quantity',
-      name: 'quantity'
-    }, {
-      classes: 'obrdm-clear-both'
-    }]
-  }],
+  components: [
+    {
+      name: 'line',
+      classes: 'obrdm-listwarehouseline-line',
+      components: [
+        {
+          classes: 'obrdm-listwarehouseline-organization',
+          name: 'organization'
+        },
+        {
+          classes: 'obrdm-listwarehouseline-quantity',
+          name: 'quantity'
+        },
+        {
+          classes: 'obrdm-clear-both'
+        }
+      ]
+    }
+  ],
   events: {
     onSelectWarehouse: ''
   },
-  tap: function () {
+  tap: function() {
     this.doSelectWarehouse({
       warehouseId: this.model.get('warehouseid'),
       warehouseName: this.model.get('warehousename')
     });
   },
-  create: function () {
+  create: function() {
     this.inherited(arguments);
     this.$.organization.setContent(this.model.get('warehousename'));
     this.$.quantity.setContent(this.model.get('warehouseqty'));
@@ -46,38 +52,52 @@ enyo.kind({
 enyo.kind({
   name: 'OBRDM.UI.ListWarehouse',
   classes: 'row-fluid',
-  components: [{
-    classes: 'span12',
-    components: [{
-      classes: 'row-fluid obrdm-listwarehouse',
-      components: [{
-        classes: 'span12',
-        components: [{
-          name: 'stWarehouseSelector',
-          kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '420px',
-          renderLine: 'OBRDM.UI.ListWarehouseLine',
-          renderEmpty: 'OB.UI.RenderEmpty'
-        }, {
-          name: 'renderLoading',
-          classes: 'obrdm-listwarehouse obrdm-listwarehouse-rendercomponent',
-          showing: false,
-          initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-          }
-        }, {
-          name: 'renderError',
-          classes: 'obrdm-listwarehouse obrdm-listwarehouse-rendercomponent',
-          showing: false,
-          initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
-          }
-        }]
-      }]
-    }]
-  }],
+  components: [
+    {
+      classes: 'span12',
+      components: [
+        {
+          classes: 'row-fluid obrdm-listwarehouse',
+          components: [
+            {
+              classes: 'span12',
+              components: [
+                {
+                  name: 'stWarehouseSelector',
+                  kind: 'OB.UI.ScrollableTable',
+                  scrollAreaMaxHeight: '420px',
+                  renderLine: 'OBRDM.UI.ListWarehouseLine',
+                  renderEmpty: 'OB.UI.RenderEmpty'
+                },
+                {
+                  name: 'renderLoading',
+                  classes:
+                    'obrdm-listwarehouse obrdm-listwarehouse-rendercomponent',
+                  showing: false,
+                  initComponents: function() {
+                    this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+                  }
+                },
+                {
+                  name: 'renderError',
+                  classes:
+                    'obrdm-listwarehouse obrdm-listwarehouse-rendercomponent',
+                  showing: false,
+                  initComponents: function() {
+                    this.setContent(
+                      OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved')
+                    );
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
 
-  search: function (product) {
+  search: function(product) {
     this.$.stWarehouseSelector.$.tempty.hide();
     this.$.stWarehouseSelector.$.tbody.hide();
     this.$.stWarehouseSelector.$.tlimit.hide();
@@ -85,7 +105,7 @@ enyo.kind({
     this.$.renderLoading.show();
 
     var me = this;
-    OB.UTIL.StockUtils.getReceiptLineStock(product, undefined, function (data) {
+    OB.UTIL.StockUtils.getReceiptLineStock(product, undefined, function(data) {
       me.$.renderLoading.hide();
       if (data && data.exception) {
         me.$.renderError.show();
@@ -97,7 +117,7 @@ enyo.kind({
 
   warehouseList: null,
 
-  init: function (model) {
+  init: function(model) {
     this.warehouseList = new Backbone.Collection();
     this.$.stWarehouseSelector.setCollection(this.warehouseList);
   }
@@ -116,24 +136,28 @@ enyo.kind({
   body: {
     kind: 'OBRDM.UI.ListWarehouse'
   },
-  selectWarehouse: function (inSender, inEvent) {
+  selectWarehouse: function(inSender, inEvent) {
     this.warehouseId = inEvent.warehouseId;
     this.warehouseName = inEvent.warehouseName;
     this.doHideThisPopup();
     return true;
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     this.$.body.$.listWarehouse.search(this.args.product);
     this.warehouseId = null;
     this.warehouseName = null;
     return true;
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     if (this.args.callback) {
-      this.args.callback(this.args.context, this.warehouseId, this.warehouseName);
+      this.args.callback(
+        this.args.context,
+        this.warehouseId,
+        this.warehouseName
+      );
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
   }
 });

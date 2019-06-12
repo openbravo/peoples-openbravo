@@ -9,11 +9,14 @@
 
 /*global _ */
 
-OB.UTIL.HookManager.registerHook('OBPOS_PostUndo_DeleteLine', function (args, c) {
+OB.UTIL.HookManager.registerHook('OBPOS_PostUndo_DeleteLine', function(
+  args,
+  c
+) {
   var undoDeliveryModes = args.order.get('undoDeliveryModes'),
-      lines = args.order.get('lines').models;
-  _.each(undoDeliveryModes, function (delivery) {
-    var line = _.find(lines, function (l) {
+    lines = args.order.get('lines').models;
+  _.each(undoDeliveryModes, function(delivery) {
+    var line = _.find(lines, function(l) {
       return l.get('id') === delivery.id;
     });
     if (line) {

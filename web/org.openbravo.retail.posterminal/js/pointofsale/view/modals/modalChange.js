@@ -21,33 +21,41 @@ enyo.kind({
   },
   bodyContent: {
     name: 'bodyattributes',
-    components: [{
-      kind: 'Scroller',
-      maxHeight: '225px',
-      classes: 'changedialog-properties',
-      thumb: true,
-      horizontal: 'hidden',
-      components: [{
-        name: 'paymentlines'
-      }]
-    }, {
-      name: 'errors',
-      classes: 'changedialog-errors'
-    }]
+    components: [
+      {
+        kind: 'Scroller',
+        maxHeight: '225px',
+        classes: 'changedialog-properties',
+        thumb: true,
+        horizontal: 'hidden',
+        components: [
+          {
+            name: 'paymentlines'
+          }
+        ]
+      },
+      {
+        name: 'errors',
+        classes: 'changedialog-errors'
+      }
+    ]
   },
   bodyButtons: {
-    components: [{
-      kind: 'OB.UI.ModalChangeButtonOK'
-    }, {
-      kind: 'OB.UI.ModalChangeButtonCancel'
-    }]
+    components: [
+      {
+        kind: 'OB.UI.ModalChangeButtonOK'
+      },
+      {
+        kind: 'OB.UI.ModalChangeButtonCancel'
+      }
+    ]
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.$.header.setContent(OB.I18N.getLabel('OBPOS_ChangeSplit'));
 
     var i = 0;
-    OB.MobileApp.model.get('payments').forEach(function (payment) {
+    OB.MobileApp.model.get('payments').forEach(function(payment) {
       if (payment.paymentMethod.iscash) {
         this.$.bodyContent.$.paymentlines.createComponent({
           kind: 'OB.UI.ModalChangeLine',
@@ -58,15 +66,29 @@ enyo.kind({
       }
     }, this);
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     var lines = this.$.bodyContent.$.paymentlines.getComponents();
-    lines.forEach(function (l) {
-      l.executeOnShow(this.args);
-    }.bind(this));
+    lines.forEach(
+      function(l) {
+        l.executeOnShow(this.args);
+      }.bind(this)
+    );
     this.calculateRemaining();
   },
-  calculateRemainingFor: function (selectedLine) {
-    var i, l, lines, amount, precision, roundingto, roundinggap, origamountmin, origamountmax, changemin, changemax, change, changeRounding;
+  calculateRemainingFor: function(selectedLine) {
+    var i,
+      l,
+      lines,
+      amount,
+      precision,
+      roundingto,
+      roundinggap,
+      origamountmin,
+      origamountmax,
+      changemin,
+      changemax,
+      change,
+      changeRounding;
 
     lines = this.$.bodyContent.$.paymentlines.getComponents();
     change = this.args.change;
@@ -80,9 +102,19 @@ enyo.kind({
         if (l.payment.changeRounding) {
           roundingto = l.payment.changeRounding.roundingto;
           roundinggap = l.payment.changeRounding.roundingdownlimit;
-          origamountmin = OB.DEC.div(OB.DEC.sub(amount, OB.DEC.sub(roundingto, roundinggap, precision), precision), l.payment.mulrate);
+          origamountmin = OB.DEC.div(
+            OB.DEC.sub(
+              amount,
+              OB.DEC.sub(roundingto, roundinggap, precision),
+              precision
+            ),
+            l.payment.mulrate
+          );
           origamountmin = Math.max(origamountmin, 0);
-          origamountmax = OB.DEC.div(OB.DEC.add(amount, roundinggap, precision), l.payment.mulrate);
+          origamountmax = OB.DEC.div(
+            OB.DEC.add(amount, roundinggap, precision),
+            l.payment.mulrate
+          );
         } else {
           origamountmin = OB.DEC.div(amount, l.payment.mulrate, precision);
           origamountmax = OB.DEC.div(amount, l.payment.mulrate, precision);
@@ -103,36 +135,49 @@ enyo.kind({
     return changeRounding;
   },
 
-  calculateRemaining: function () {
+  calculateRemaining: function() {
     var changeremaining = this.calculateRemainingFor(),
-        lines = this.$.bodyContent.$.paymentlines.getComponents(),
-        errortext = '',
-        overpayment = false;
+      lines = this.$.bodyContent.$.paymentlines.getComponents(),
+      errortext = '',
+      overpayment = false;
 
-    lines.forEach(function (l) {
-      l.showRemaining(changeremaining, this.calculateRemainingFor(l));
+    lines.forEach(
+      function(l) {
+        l.showRemaining(changeremaining, this.calculateRemainingFor(l));
 
-      if (l.isOverpaid) {
-        overpayment = true;
-      } else if (l.hasErrors) {
-        if (errortext) {
-          errortext = OB.I18N.getLabel('OBPOS_ChangeAmountsNotValid');
-        } else {
-          errortext = l.labelError;
+        if (l.isOverpaid) {
+          overpayment = true;
+        } else if (l.hasErrors) {
+          if (errortext) {
+            errortext = OB.I18N.getLabel('OBPOS_ChangeAmountsNotValid');
+          } else {
+            errortext = l.labelError;
+          }
         }
-      }
-    }.bind(this));
+      }.bind(this)
+    );
 
     // Show the change error, if any
     if (overpayment) {
-      this.$.bodyContent.$.errors.setContent(OB.I18N.getLabel('OBPOS_Overpayment'));
+      this.$.bodyContent.$.errors.setContent(
+        OB.I18N.getLabel('OBPOS_Overpayment')
+      );
     } else {
       this.$.bodyContent.$.errors.setContent(errortext);
     }
   },
 
-  actionOK: function (inSender, inEvent) {
-    var changeRounding, indexRounding, lines, paymentchangemap, paymentchange, amount, origAmount, edited, i, l;
+  actionOK: function(inSender, inEvent) {
+    var changeRounding,
+      indexRounding,
+      lines,
+      paymentchangemap,
+      paymentchange,
+      amount,
+      origAmount,
+      edited,
+      i,
+      l;
 
     changeRounding = this.args.change;
     indexRounding = -1;
@@ -160,7 +205,10 @@ enyo.kind({
       });
 
       changeRounding = OB.DEC.sub(changeRounding, origAmount);
-      if ((l.payment.changeRounding || i === lines.length - 1) && indexRounding < 0) {
+      if (
+        (l.payment.changeRounding || i === lines.length - 1) &&
+        indexRounding < 0
+      ) {
         // Line used for rounding is selected as the first line that does no have *changePaymentType*
         // or in case of all lines have *changePaymentType* then the last line
         // This guaranties *lineRounding* is assigned in case lines.length > 0
@@ -172,9 +220,17 @@ enyo.kind({
       if (OB.DEC.compare(changeRounding)) {
         // The origAmount of the selected change line is adjusted in order to guaranty the change
         // of the receipt is the sum of the origAmount of all change lines
-        paymentchangemap[indexRounding].origAmount = OB.DEC.add(paymentchangemap[indexRounding].origAmount, changeRounding);
-        paymentchangemap[indexRounding].amountRounded = paymentchangemap[indexRounding].amount;
-        paymentchangemap[indexRounding].amount = OB.DEC.mul(paymentchangemap[indexRounding].origAmount, lines[indexRounding].payment.mulrate, lines[indexRounding].payment.obposPosprecision);
+        paymentchangemap[indexRounding].origAmount = OB.DEC.add(
+          paymentchangemap[indexRounding].origAmount,
+          changeRounding
+        );
+        paymentchangemap[indexRounding].amountRounded =
+          paymentchangemap[indexRounding].amount;
+        paymentchangemap[indexRounding].amount = OB.DEC.mul(
+          paymentchangemap[indexRounding].origAmount,
+          lines[indexRounding].payment.mulrate,
+          lines[indexRounding].payment.obposPosprecision
+        );
       }
       paymentchange = new OB.Payments.Change();
       paymentchangemap.forEach(paymentchange.add.bind(paymentchange));
@@ -184,8 +240,14 @@ enyo.kind({
 
     return true;
   },
-  actionInput: function (inSender, inEvent) {
-    var lines, line, originalValue, change, precision, linechange, changeLessThan;
+  actionInput: function(inSender, inEvent) {
+    var lines,
+      line,
+      originalValue,
+      change,
+      precision,
+      linechange,
+      changeLessThan;
 
     lines = this.$.bodyContent.$.paymentlines.getComponents();
 
@@ -197,7 +259,11 @@ enyo.kind({
       linechange = OB.DEC.mul(change, line.payment.mulrate, precision);
       changeLessThan = line.payment.paymentMethod.changeLessThan;
       if (changeLessThan) {
-        linechange = OB.DEC.mul(changeLessThan, Math.round(OB.DEC.div(linechange, changeLessThan, 5)), precision);
+        linechange = OB.DEC.mul(
+          changeLessThan,
+          Math.round(OB.DEC.div(linechange, changeLessThan, 5)),
+          precision
+        );
       } else {
         linechange = OB.Payments.Change.getChangeRounded({
           payment: line.payment,
@@ -220,7 +286,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   i18nContent: 'OBMOBC_LblOk',
   isDefaultAction: true,
-  tap: function () {
+  tap: function() {
     return this.bubble('onActionOK');
   }
 });
@@ -229,7 +295,7 @@ enyo.kind({
   name: 'OB.UI.ModalChangeButtonCancel',
   kind: 'OB.UI.ModalDialogButton',
   i18nContent: 'OBMOBC_LblCancel',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
   }
 });

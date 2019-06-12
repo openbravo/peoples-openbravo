@@ -7,60 +7,84 @@
  ************************************************************************************
  */
 
-(function () {
-
-  var PrintCashMgmt = function () {
-      var terminal = OB.MobileApp.model.get('terminal');
-      this.templatecashmgmt = new OB.DS.HWResource(terminal.printCashMgmTemplate || OB.OBPOSPointOfSale.Print.CashMgmTemplate);
-      this.isRetry = false;
-      this.cashMgmtSuccess = function () {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblDone'), OB.I18N.getLabel('OBPOS_FinishCashMgmtDialog'), [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          isConfirmButton: true,
-          action: function () {
-            OB.POS.navigate('retail.pointofsale');
+(function() {
+  var PrintCashMgmt = function() {
+    var terminal = OB.MobileApp.model.get('terminal');
+    this.templatecashmgmt = new OB.DS.HWResource(
+      terminal.printCashMgmTemplate || OB.OBPOSPointOfSale.Print.CashMgmTemplate
+    );
+    this.isRetry = false;
+    this.cashMgmtSuccess = function() {
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_LblDone'),
+        OB.I18N.getLabel('OBPOS_FinishCashMgmtDialog'),
+        [
+          {
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isConfirmButton: true,
+            action: function() {
+              OB.POS.navigate('retail.pointofsale');
+            }
           }
-        }], {
+        ],
+        {
           autoDismiss: false,
-          onHideFunction: function () {
+          onHideFunction: function() {
             OB.POS.navigate('retail.pointofsale');
           }
-        });
-      };
-      };
+        }
+      );
+    };
+  };
 
-  PrintCashMgmt.prototype.print = function (depsdropstosave) {
+  PrintCashMgmt.prototype.print = function(depsdropstosave) {
     var me = this;
     // callbacks definition
-    var successfunc = function () {
-        var printCashMgmt = new OB.OBPOSCashMgmt.Print.CashMgmt();
-        printCashMgmt.isRetry = true;
-        printCashMgmt.print(depsdropstosave);
-        return true;
-        };
-    var cancelfunc = function () {
-        var printCashMgmt = new OB.OBPOSCashMgmt.Print.CashMgmt();
-        printCashMgmt.cashMgmtSuccess();
-        };
-    var hidefunc = function () {
-        OB.POS.navigate('retail.pointofsale');
-        return true;
-        };
-    var printProcess = function () {
-        OB.POS.hwserver.cleanDisplay();
-        OB.POS.hwserver.print(me.templatecashmgmt, {
+    var successfunc = function() {
+      var printCashMgmt = new OB.OBPOSCashMgmt.Print.CashMgmt();
+      printCashMgmt.isRetry = true;
+      printCashMgmt.print(depsdropstosave);
+      return true;
+    };
+    var cancelfunc = function() {
+      var printCashMgmt = new OB.OBPOSCashMgmt.Print.CashMgmt();
+      printCashMgmt.cashMgmtSuccess();
+    };
+    var hidefunc = function() {
+      OB.POS.navigate('retail.pointofsale');
+      return true;
+    };
+    var printProcess = function() {
+      OB.POS.hwserver.cleanDisplay();
+      OB.POS.hwserver.print(
+        me.templatecashmgmt,
+        {
           cashmgmt: depsdropstosave
-        }, function (result) {
+        },
+        function(result) {
           if (result && result.exception) {
-            OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, cancelfunc, false, 'OBPOS_MsgPrintAgainCashMgmt');
+            OB.OBPOS.showSelectPrinterDialog(
+              successfunc,
+              hidefunc,
+              cancelfunc,
+              false,
+              'OBPOS_MsgPrintAgainCashMgmt'
+            );
           } else {
             var printCashMgmt = new OB.OBPOSCashMgmt.Print.CashMgmt();
             printCashMgmt.cashMgmtSuccess();
           }
-        });
-        };
+        }
+      );
+    };
     if (OB.MobileApp.model.get('terminal').terminalType.selectprinteralways) {
-      OB.OBPOS.showSelectPrintersWindow(printProcess, hidefunc, cancelfunc, false, me.isRetry);
+      OB.OBPOS.showSelectPrintersWindow(
+        printProcess,
+        hidefunc,
+        cancelfunc,
+        false,
+        me.isRetry
+      );
     } else {
       printProcess();
     }
@@ -72,5 +96,4 @@
 
   OB.OBPOSCashMgmt.Print.CashMgmt = PrintCashMgmt;
   OB.OBPOSCashMgmt.Print.CashMgmtTemplate = PrintCashMgmt;
-
-}());
+})();

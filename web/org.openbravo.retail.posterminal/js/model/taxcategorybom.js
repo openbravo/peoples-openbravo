@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var TaxCategoryBOM = OB.Data.ExtensibleModel.extend({
     modelName: 'TaxCategoryBOM',
     tableName: 'c_taxcategory_bom',
@@ -16,12 +15,14 @@
     source: 'org.openbravo.retail.posterminal.master.TaxCategoryBOM'
   });
 
-  TaxCategoryBOM.addProperties([{
-    name: 'id',
-    column: 'id',
-    primaryKey: true,
-    type: 'TEXT'
-  }]);
+  TaxCategoryBOM.addProperties([
+    {
+      name: 'id',
+      column: 'id',
+      primaryKey: true,
+      type: 'TEXT'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(TaxCategoryBOM);
-}());
+})();

@@ -21,151 +21,194 @@ enyo.kind({
     onFiltered: 'searchAction'
   },
   body: {
-    components: [{
-      style: 'padding: 10px 10px 5px 10px;',
-      components: [{
-        style: 'display: table;  width: 100%;',
-        components: [{
-          style: 'display: table-cell; width: 100%;',
-          components: [{
-            kind: 'OB.UI.SearchInputAutoFilter',
-            name: 'paymentname',
-            style: 'width: 100%;',
-            isFirstFocus: true
-          }]
-        }, {
-          style: 'display: table-cell;',
-          components: [{
-            kind: 'OB.UI.SmallButton',
-            classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-            style: 'width: 80px; margin: 0px 5px 8px 19px;',
-            tap: function () {
-              this.owner.$.paymentname.setValue('');
-              this.bubble('onSearchAction');
-            }
-          }]
-        }, {
-          style: 'display: table-cell;',
-          components: [{
-            kind: 'OB.UI.SmallButton',
-            classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-            style: 'width: 80px; margin: 0px 0px 8px 5px;',
-            tap: function () {
-              this.bubble('onSearchAction');
-            }
-          }]
-        }]
-      }, {
-        style: 'margin: 5px 0px 5px 0px; width: 100%; border-bottom: 1px solid #cccccc;'
-      }, {
-        name: 'paymentMethods',
-        kind: 'Scroller',
-        horizontal: 'hidden',
-        maxHeight: '330px; padding-top: 10px;',
-        setItems: function (items) {
-          var i = 0,
-              components = this.getComponents();
-          while (i < components.length) {
-            if (components[i].name !== 'strategy') {
-              components[i++].destroy();
-            } else {
-              i++;
-            }
-          }
-          items.forEach(function (item) {
-            this.createComponent({
-              name: item.payment.payment.searchKey,
-              classes: 'paymentmethoditems',
-              tag: 'div',
-              allowHtml: true,
-              content: '<img class="paymentmethoditemsimage" src="' + (item.image ? item.image : 'img/PMImgNotAvailable.png') + '"/><div class="paymentmethoditemstext">' + item.name + '</div>',
-              payment: item.payment,
-              tap: function () {
-                if (!item.disabled) {
-                  var dialog = this.owner.owner.owner;
-                  dialog.doHideThisPopup();
-                  dialog.selectItem = true;
-                  dialog.bubble('onPaymentChanged', {
-                    payment: this.payment,
-                    status: this.payment.payment.searchKey,
-                    amount: dialog.args.amount
-                  });
-                  if (!dialog.args.cashManagement) {
-                    dialog.bubble('onStatusChanged', {
-                      payment: this.payment,
-                      status: this.payment.payment.searchKey,
-                      amount: dialog.args.amount,
-                      options: dialog.args.options
-                    });
+    components: [
+      {
+        style: 'padding: 10px 10px 5px 10px;',
+        components: [
+          {
+            style: 'display: table;  width: 100%;',
+            components: [
+              {
+                style: 'display: table-cell; width: 100%;',
+                components: [
+                  {
+                    kind: 'OB.UI.SearchInputAutoFilter',
+                    name: 'paymentname',
+                    style: 'width: 100%;',
+                    isFirstFocus: true
                   }
-                }
+                ]
               },
-              initComponents: function () {
-                if (item.disabled) {
-                  this.addClass('paymentmethoditemsdisabled');
+              {
+                style: 'display: table-cell;',
+                components: [
+                  {
+                    kind: 'OB.UI.SmallButton',
+                    classes: 'btnlink-gray btn-icon-small btn-icon-clear',
+                    style: 'width: 80px; margin: 0px 5px 8px 19px;',
+                    tap: function() {
+                      this.owner.$.paymentname.setValue('');
+                      this.bubble('onSearchAction');
+                    }
+                  }
+                ]
+              },
+              {
+                style: 'display: table-cell;',
+                components: [
+                  {
+                    kind: 'OB.UI.SmallButton',
+                    classes: 'btnlink-yellow btn-icon-small btn-icon-search',
+                    style: 'width: 80px; margin: 0px 0px 8px 5px;',
+                    tap: function() {
+                      this.bubble('onSearchAction');
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            style:
+              'margin: 5px 0px 5px 0px; width: 100%; border-bottom: 1px solid #cccccc;'
+          },
+          {
+            name: 'paymentMethods',
+            kind: 'Scroller',
+            horizontal: 'hidden',
+            maxHeight: '330px; padding-top: 10px;',
+            setItems: function(items) {
+              var i = 0,
+                components = this.getComponents();
+              while (i < components.length) {
+                if (components[i].name !== 'strategy') {
+                  components[i++].destroy();
+                } else {
+                  i++;
                 }
               }
-            });
-          }, this);
-          if (items.length === 0) {
-            this.createComponent({
-              tag: 'div',
-              classes: 'paymentmethodnotitems',
-              content: OB.I18N.getLabel('OBPOS_PaymentsNoItems')
-            });
+              items.forEach(function(item) {
+                this.createComponent({
+                  name: item.payment.payment.searchKey,
+                  classes: 'paymentmethoditems',
+                  tag: 'div',
+                  allowHtml: true,
+                  content:
+                    '<img class="paymentmethoditemsimage" src="' +
+                    (item.image ? item.image : 'img/PMImgNotAvailable.png') +
+                    '"/><div class="paymentmethoditemstext">' +
+                    item.name +
+                    '</div>',
+                  payment: item.payment,
+                  tap: function() {
+                    if (!item.disabled) {
+                      var dialog = this.owner.owner.owner;
+                      dialog.doHideThisPopup();
+                      dialog.selectItem = true;
+                      dialog.bubble('onPaymentChanged', {
+                        payment: this.payment,
+                        status: this.payment.payment.searchKey,
+                        amount: dialog.args.amount
+                      });
+                      if (!dialog.args.cashManagement) {
+                        dialog.bubble('onStatusChanged', {
+                          payment: this.payment,
+                          status: this.payment.payment.searchKey,
+                          amount: dialog.args.amount,
+                          options: dialog.args.options
+                        });
+                      }
+                    }
+                  },
+                  initComponents: function() {
+                    if (item.disabled) {
+                      this.addClass('paymentmethoditemsdisabled');
+                    }
+                  }
+                });
+              }, this);
+              if (items.length === 0) {
+                this.createComponent({
+                  tag: 'div',
+                  classes: 'paymentmethodnotitems',
+                  content: OB.I18N.getLabel('OBPOS_PaymentsNoItems')
+                });
+              }
+              this.render();
+            }
           }
-          this.render();
-        }
-      }]
-    }]
+        ]
+      }
+    ]
   },
-  searchAction: function () {
+  searchAction: function() {
     var items = [],
-        payments = OB.POS.modelterminal.get('payments'),
-        filterBy = this.$.body.$.paymentname.getValue().toUpperCase();
+      payments = OB.POS.modelterminal.get('payments'),
+      filterBy = this.$.body.$.paymentname.getValue().toUpperCase();
     if (this.args.availables) {
-      enyo.forEach(this.args.availables, function (sk) {
-        var payment = _.find(payments, function (pay) {
-          return pay.paymentMethod.searchKey === sk;
-        });
-        if (payment) {
-          items.push({
-            name: payment.paymentMethod._identifier,
-            image: payment.image,
-            payment: payment,
-            disabled: false
+      enyo.forEach(
+        this.args.availables,
+        function(sk) {
+          var payment = _.find(payments, function(pay) {
+            return pay.paymentMethod.searchKey === sk;
           });
-        }
-      }, this);
-    } else {
-      enyo.forEach(payments, function (payment) {
-        if (payment.paymentMethod.paymentMethodCategory && payment.paymentMethod.paymentMethodCategory === this.args.idCategory && OB.MobileApp.model.hasPermission(payment.payment.searchKey)) {
-          if (filterBy === '' || payment.paymentMethod._identifier.toUpperCase().indexOf(filterBy) >= 0) {
-            var isDisabled = (OB.MobileApp.model.receipt.getTotal() < 0 ? !payment.paymentMethod.refundable : false);
+          if (payment) {
             items.push({
               name: payment.paymentMethod._identifier,
               image: payment.image,
               payment: payment,
-              disabled: isDisabled
+              disabled: false
             });
           }
-        }
-      }, this);
+        },
+        this
+      );
+    } else {
+      enyo.forEach(
+        payments,
+        function(payment) {
+          if (
+            payment.paymentMethod.paymentMethodCategory &&
+            payment.paymentMethod.paymentMethodCategory ===
+              this.args.idCategory &&
+            OB.MobileApp.model.hasPermission(payment.payment.searchKey)
+          ) {
+            if (
+              filterBy === '' ||
+              payment.paymentMethod._identifier
+                .toUpperCase()
+                .indexOf(filterBy) >= 0
+            ) {
+              var isDisabled =
+                OB.MobileApp.model.receipt.getTotal() < 0
+                  ? !payment.paymentMethod.refundable
+                  : false;
+              items.push({
+                name: payment.paymentMethod._identifier,
+                image: payment.image,
+                payment: payment,
+                disabled: isDisabled
+              });
+            }
+          }
+        },
+        this
+      );
     }
     this.$.body.$.paymentMethods.setItems(items);
     var me = this;
-    setTimeout(function () {
+    setTimeout(function() {
       me.$.body.$.paymentMethods.render();
     }, 1);
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     this.setHeader(OB.I18N.getLabel('OBPOS_PaymentsSelectCaption'));
     this.searchAction();
     this.bubble('onClearPaymentSelect');
     this.bubble('onPaymentChanged');
     this.selectItem = false;
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     if (!this.selectItem) {
       this.bubble('onPaymentChangedCancelled', {
         cashManagement: this.args.cashManagement

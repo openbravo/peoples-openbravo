@@ -14,13 +14,21 @@ enyo.kind({
   myId: 'ModalStockInStoreClickable',
   kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore',
   body: {
-    kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStoreClickable',
+    kind:
+      'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStoreClickable',
     name: 'stockDetailListClickable'
   },
-  stockInfoChanged: function (oldValue) {
+  stockInfoChanged: function(oldValue) {
     if (this.stockInfo) {
-      this.$.header.setContent(this.stockInfo.get('product').get('_identifier') + ' (' + this.stockInfo.get('product').get('uOMsymbol') + ')');
-      this.$.body.$.stockDetailListClickable.setStockValuesPerWarehouse(this.stockInfo.get('warehouses'));
+      this.$.header.setContent(
+        this.stockInfo.get('product').get('_identifier') +
+          ' (' +
+          this.stockInfo.get('product').get('uOMsymbol') +
+          ')'
+      );
+      this.$.body.$.stockDetailListClickable.setStockValuesPerWarehouse(
+        this.stockInfo.get('warehouses')
+      );
     } else {
       this.$.body.$.stockDetailListClickable.setStockValuesPerWarehouse(null);
     }
@@ -28,38 +36,52 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStoreClickable',
-  kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStore',
-  components: [{
-    classes: 'span12',
-    components: [{
-      style: 'border-bottom: 1px solid #cccccc;'
-    }, {
-      components: [{
-        name: 'scrollListStockDetailsClickable',
-        kind: 'OB.UI.ScrollableTable',
-        scrollAreaMaxHeight: '400px',
-        renderLine: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.StockInStoreLineClickable',
-        renderEmpty: 'OB.UI.RenderEmpty'
-      }]
-    }]
-  }],
-  stockValuesPerWarehouseChanged: function (oldValue) {
+  name:
+    'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStoreClickable',
+  kind:
+    'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStore',
+  components: [
+    {
+      classes: 'span12',
+      components: [
+        {
+          style: 'border-bottom: 1px solid #cccccc;'
+        },
+        {
+          components: [
+            {
+              name: 'scrollListStockDetailsClickable',
+              kind: 'OB.UI.ScrollableTable',
+              scrollAreaMaxHeight: '400px',
+              renderLine:
+                'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.StockInStoreLineClickable',
+              renderEmpty: 'OB.UI.RenderEmpty'
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  stockValuesPerWarehouseChanged: function(oldValue) {
     if (this.stockValuesPerWarehouse) {
-      this.$.scrollListStockDetailsClickable.setCollection(this.stockValuesPerWarehouse);
+      this.$.scrollListStockDetailsClickable.setCollection(
+        this.stockValuesPerWarehouse
+      );
     }
   }
 });
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.StockInStoreLineClickable',
-  kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.StockInStoreLine',
+  name:
+    'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.StockInStoreLineClickable',
+  kind:
+    'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.StockInStoreLine',
   classes: 'stockinstorelines',
   events: {
     onHideThisPopup: '',
     onWarehouseSelected: ''
   },
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
     this.doWarehouseSelected({
       warehouseid: this.model.get('warehouseid'),

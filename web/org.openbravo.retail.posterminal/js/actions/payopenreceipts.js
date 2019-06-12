@@ -9,29 +9,30 @@
 
 /*global OB */
 
-(function () {
-
+(function() {
   OB.MobileApp.actionsRegistry.register(
-  new OB.Actions.CommandAction({
-    window: 'retail.pointofsale',
-    name: 'payOpenReceipts',
-    permission: 'OBPOS_retail.multiorders',
-    properties: {
-      i18nContent: 'OBPOS_LblPayOpenTickets'
-    },
-    isActive: function (view) {
-      return OB.MobileApp.model.get('payments').length > 0;
-    },
-    command: function (view) {
-      if (!OB.MobileApp.model.get('connectedToERP')) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-        return;
+    new OB.Actions.CommandAction({
+      window: 'retail.pointofsale',
+      name: 'payOpenReceipts',
+      permission: 'OBPOS_retail.multiorders',
+      properties: {
+        i18nContent: 'OBPOS_LblPayOpenTickets'
+      },
+      isActive: function(view) {
+        return OB.MobileApp.model.get('payments').length > 0;
+      },
+      command: function(view) {
+        if (!OB.MobileApp.model.get('connectedToERP')) {
+          OB.UTIL.showError(
+            OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline')
+          );
+          return;
+        }
+        if (OB.MobileApp.model.hasPermission('OBPOS_retail.multiorders')) {
+          view.model.get('orderList').saveCurrent();
+          view.multiOrders();
+        }
       }
-      if (OB.MobileApp.model.hasPermission('OBPOS_retail.multiorders')) {
-        view.model.get('orderList').saveCurrent();
-        view.multiOrders();
-      }
-    }
-  }));
-
-}());
+    })
+  );
+})();

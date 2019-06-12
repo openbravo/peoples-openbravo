@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var Country = OB.Data.ExtensibleModel.extend({
     modelName: 'Country',
     tableName: 'c_country',
@@ -16,16 +15,19 @@
     source: 'org.openbravo.retail.posterminal.master.Country'
   });
 
-  Country.addProperties([{
-    name: 'id',
-    column: 'c_country_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: '_identifier',
-    column: '_identifier',
-    type: 'TEXT'
-  }]);
+  Country.addProperties([
+    {
+      name: 'id',
+      column: 'c_country_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: '_identifier',
+      column: '_identifier',
+      type: 'TEXT'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(Country);
-}());
+})();

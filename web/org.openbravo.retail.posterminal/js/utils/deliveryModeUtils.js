@@ -12,21 +12,23 @@
 var OBRDM = {};
 OBRDM.UTIL = {};
 
-(function () {
-
+(function() {
   /**
    * Add a NONE condition to data collection
    *
    * @param Collection
    */
 
-  OBRDM.UTIL.addNoneCondition = function (data) {
-    data.add({
-      id: '',
-      name: ''
-    }, {
-      at: 0
-    });
+  OBRDM.UTIL.addNoneCondition = function(data) {
+    data.add(
+      {
+        id: '',
+        name: ''
+      },
+      {
+        at: 0
+      }
+    );
     return data;
   };
 
@@ -37,12 +39,17 @@ OBRDM.UTIL = {};
    * @param args Arguments of function: fetchDataFunction
    */
 
-  OBRDM.UTIL.fillComboCollection = function (combo, args) {
+  OBRDM.UTIL.fillComboCollection = function(combo, args) {
     var deliveryModes = OB.MobileApp.model.get('deliveryModes'),
-        modes = [];
+      modes = [];
     if (deliveryModes && deliveryModes.length > 0) {
-      if (OB.UTIL.isCrossStoreLine(args.model) || (!OB.UTIL.isNullOrUndefined(args.organization) && args.organization.id !== OB.MobileApp.model.get('terminal').organization)) {
-        _.each(deliveryModes, function (delivery) {
+      if (
+        OB.UTIL.isCrossStoreLine(args.model) ||
+        (!OB.UTIL.isNullOrUndefined(args.organization) &&
+          args.organization.id !==
+            OB.MobileApp.model.get('terminal').organization)
+      ) {
+        _.each(deliveryModes, function(delivery) {
           if (delivery.id !== 'PickAndCarry') {
             modes.push(delivery);
           }
@@ -64,9 +71,9 @@ OBRDM.UTIL = {};
    * @param deliveryModes Delivery modes list
    * @return SQL condition
    */
-  OBRDM.UTIL.deliveryModesForFilter = function (deliveryModes) {
+  OBRDM.UTIL.deliveryModesForFilter = function(deliveryModes) {
     var excluded = [];
-    _.each(deliveryModes, function (excl) {
+    _.each(deliveryModes, function(excl) {
       excluded.push("'" + excl + "'");
     });
     return excluded.length > 0 ? excluded.join(',') : '';
@@ -79,18 +86,35 @@ OBRDM.UTIL = {};
    * @return true if the Pick and Carry lines are completely paid
    */
 
-  OBRDM.UTIL.checkPickAndCarryPaidAmount = function (order) {
+  OBRDM.UTIL.checkPickAndCarryPaidAmount = function(order) {
     var pickAndCarryAmount = OB.DEC.Zero;
-    _.each(order.get('lines').models, function (line) {
-      if (line.get('product').get('productType') !== 'S') { //Products
-        if (!line.get('obrdmDeliveryMode') || line.get('obrdmDeliveryMode') === 'PickAndCarry') {
+    _.each(order.get('lines').models, function(line) {
+      if (line.get('product').get('productType') !== 'S') {
+        //Products
+        if (
+          !line.get('obrdmDeliveryMode') ||
+          line.get('obrdmDeliveryMode') === 'PickAndCarry'
+        ) {
           if (line.has('obposLinePrepaymentAmount')) {
-            pickAndCarryAmount = OB.DEC.add(pickAndCarryAmount, line.get('obposLinePrepaymentAmount'));
+            pickAndCarryAmount = OB.DEC.add(
+              pickAndCarryAmount,
+              line.get('obposLinePrepaymentAmount')
+            );
           } else if (line.get('obposCanbedelivered')) {
-            var discountAmt = _.reduce(line.get('promotions'), function (memo, promo) {
-              return OB.DEC.add(memo, OB.UTIL.isNullOrUndefined(promo.amt) ? OB.DEC.Zero : promo.amt);
-            }, 0);
-            pickAndCarryAmount = OB.DEC.add(pickAndCarryAmount, OB.DEC.sub(line.get('gross'), discountAmt));
+            var discountAmt = _.reduce(
+              line.get('promotions'),
+              function(memo, promo) {
+                return OB.DEC.add(
+                  memo,
+                  OB.UTIL.isNullOrUndefined(promo.amt) ? OB.DEC.Zero : promo.amt
+                );
+              },
+              0
+            );
+            pickAndCarryAmount = OB.DEC.add(
+              pickAndCarryAmount,
+              OB.DEC.sub(line.get('gross'), discountAmt)
+            );
           }
         }
       }
@@ -100,5 +124,4 @@ OBRDM.UTIL = {};
       payment: order.getPaymentWithSign()
     };
   };
-
-}());
+})();

@@ -13,12 +13,13 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.RenderProductCh',
   avoidDoubleClick: false,
-  style: 'width: 86%; padding: 0px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;',
+  style:
+    'width: 86%; padding: 0px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;',
   classes: 'btnlink-white-simple',
   events: {
     onShowPopup: ''
   },
-  tap: function () {
+  tap: function() {
     if (!this.disabled) {
       this.doShowPopup({
         popup: 'modalproductcharacteristic',
@@ -28,7 +29,7 @@ enyo.kind({
       });
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     if (this.model.get('_identifier').length < 13) {
       this.setContent(this.model.get('_identifier'));

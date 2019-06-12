@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var OfflinePrinter = OB.Data.ExtensibleModel.extend({
     modelName: 'OfflinePrinter',
     tableName: 'OfflinePrinter',
@@ -17,32 +16,38 @@
     local: true
   });
 
-  OfflinePrinter.addProperties([{
-    name: 'id',
-    column: 'offline_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'data',
-    column: 'data',
-    type: 'TEXT'
-  }, {
-    name: 'sendfunction',
-    column: 'sendfunction',
-    type: 'TEXT'
-  }]);
+  OfflinePrinter.addProperties([
+    {
+      name: 'id',
+      column: 'offline_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'data',
+      column: 'data',
+      type: 'TEXT'
+    },
+    {
+      name: 'sendfunction',
+      column: 'sendfunction',
+      type: 'TEXT'
+    }
+  ]);
 
-  OfflinePrinter.printPendingJobs = function () {
-    OB.Dal.find(OB.Model.OfflinePrinter, {}, function (jobs) {
+  OfflinePrinter.printPendingJobs = function() {
+    OB.Dal.find(OB.Model.OfflinePrinter, {}, function(jobs) {
       OB.Model.OfflinePrinter._printPendingJobs(jobs);
     });
   };
 
-  OfflinePrinter._printPendingJobs = function (jobs) {
+  OfflinePrinter._printPendingJobs = function(jobs) {
     var job;
     if (jobs.length > 0) {
       job = jobs.at(0);
-      OB.POS.hwserver[job.get('sendfunction')](job.get('data'), function (result) {
+      OB.POS.hwserver[job.get('sendfunction')](job.get('data'), function(
+        result
+      ) {
         if (result && result.exception) {
           OB.UTIL.showError(result.exception.message);
         } else {
@@ -56,4 +61,4 @@
   };
 
   OB.Data.Registry.registerModel(OfflinePrinter);
-}());
+})();

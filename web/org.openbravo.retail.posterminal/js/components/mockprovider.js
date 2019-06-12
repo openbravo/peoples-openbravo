@@ -23,7 +23,7 @@ enyo.kind({
     TYPE_REFUND: 1,
     TYPE_VOID: 2
   },
-  processPayment: function (paymentinfo) {
+  processPayment: function(paymentinfo) {
     // This function is invoked to process a payment transaction
     //
     // The parameter paymentinfo is a plain js object with the following fields
@@ -49,19 +49,25 @@ enyo.kind({
     //     message: 'Error from somewhere'
     //   });
     // },
-    return new Promise(function (resolve, reject) {
-      setTimeout(function () {
-        if (paymentinfo.amount === 350.50) { // This value stands for 1 x Expedition tent 4 season 2 person
-          this.resolveTransactionVISA(paymentinfo, resolve, reject);
-        } else if (paymentinfo.amount === 701.00) {
-          this.resolveTransactionMASTER(paymentinfo, resolve, reject);
-        } else {
-          this.rejectTransaction(paymentinfo, resolve, reject);
-        }
-      }.bind(this), 2000);
-    }.bind(this));
+    return new Promise(
+      function(resolve, reject) {
+        setTimeout(
+          function() {
+            if (paymentinfo.amount === 350.5) {
+              // This value stands for 1 x Expedition tent 4 season 2 person
+              this.resolveTransactionVISA(paymentinfo, resolve, reject);
+            } else if (paymentinfo.amount === 701.0) {
+              this.resolveTransactionMASTER(paymentinfo, resolve, reject);
+            } else {
+              this.rejectTransaction(paymentinfo, resolve, reject);
+            }
+          }.bind(this),
+          2000
+        );
+      }.bind(this)
+    );
   },
-  resolveTransactionVISA: function (paymentinfo, resolve, reject) {
+  resolveTransactionVISA: function(paymentinfo, resolve, reject) {
     resolve({
       transaction: paymentinfo.refund ? '0000002' : '0000001',
       authorization: '001',
@@ -73,7 +79,7 @@ enyo.kind({
       }
     });
   },
-  resolveTransactionMASTER: function (paymentinfo, resolve, reject) {
+  resolveTransactionMASTER: function(paymentinfo, resolve, reject) {
     resolve({
       transaction: paymentinfo.refund ? '0000012' : '0000011',
       authorization: '002',
@@ -87,12 +93,12 @@ enyo.kind({
       }
     });
   },
-  rejectTransaction: function (paymentinfo, resolve, reject) {
+  rejectTransaction: function(paymentinfo, resolve, reject) {
     reject({
       message: 'Transaction has been rejected'
     });
   },
-  getErrorMessage: function (exceptioninfo) {
+  getErrorMessage: function(exceptioninfo) {
     // This function is invoked when processInfo function is rejected.
     // It is invoked with the parameter exceptioninfo that contains the exception
     // object of the reject, and must return the error message to display to the cashier

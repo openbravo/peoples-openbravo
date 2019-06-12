@@ -9,7 +9,7 @@
 
 /*global OB, enyo */
 
-(function () {
+(function() {
   enyo.kind({
     name: 'OBRDM.UI.MenuIssueSO',
     kind: 'OB.UI.MenuAction',
@@ -18,10 +18,12 @@
     events: {
       onShowPopup: ''
     },
-    tap: function () {
+    tap: function() {
       this.inherited(arguments);
       if (!OB.MobileApp.model.get('connectedToERP')) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+        OB.UTIL.showError(
+          OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline')
+        );
         return;
       }
       OB.debug('Menu > Issue Sales Order');
@@ -29,7 +31,7 @@
         popup: 'OBRDM_ModalOrderSelector'
       });
     },
-    displayLogic: function () {
+    displayLogic: function() {
       if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
         this.show();
       } else {
@@ -37,7 +39,7 @@
         return;
       }
     },
-    init: function (model) {
+    init: function(model) {
       this.displayLogic();
     }
   });
@@ -45,4 +47,4 @@
   OB.OBPOSPointOfSale.UI.LeftToolbarImpl.prototype.menuEntries.push({
     kind: 'OBRDM.UI.MenuIssueSO'
   });
-}());
+})();

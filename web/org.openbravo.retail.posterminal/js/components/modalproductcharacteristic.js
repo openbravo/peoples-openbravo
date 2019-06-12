@@ -18,7 +18,7 @@ enyo.kind({
   events: {
     onAddToSelected: ''
   },
-  tap: function () {
+  tap: function() {
     this.inherited(arguments);
     var me = this;
     if (!this.parent.model.get('childrenSelected')) {
@@ -30,7 +30,7 @@ enyo.kind({
       selected: !this.parent.model.get('selected')
     });
   },
-  create: function () {
+  create: function() {
     this.inherited(arguments);
     this.setContent(this.parent.model.get('name'));
     if (this.parent.model.get('selected')) {
@@ -53,14 +53,18 @@ enyo.kind({
   events: {
     onSetCollection: ''
   },
-  create: function () {
+  create: function() {
     this.inherited(arguments);
-    if (this.parent.model.get('childrenList') && this.parent.model.get('childrenList').length > 0 && this.parent.model.get('showChildren')) {
+    if (
+      this.parent.model.get('childrenList') &&
+      this.parent.model.get('childrenList').length > 0 &&
+      this.parent.model.get('showChildren')
+    ) {
       this.childrenArray = this.parent.model.get('childrenList');
       this.show();
     }
   },
-  tap: function () {
+  tap: function() {
     this.doSetCollection({
       value: this.childrenArray,
       parentValue: this.parent.model.get('id')
@@ -70,11 +74,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListValuesLine',
   style: 'border-bottom: 1px solid #cccccc',
-  components: [{
-    kind: 'OB.UI.ListValuesLineCheck'
-  }, {
-    kind: 'OB.UI.ListValuesLineChildren'
-  }]
+  components: [
+    {
+      kind: 'OB.UI.ListValuesLineCheck'
+    },
+    {
+      kind: 'OB.UI.ListValuesLineChildren'
+    }
+  ]
 });
 
 /*scrollable table (body of modal)*/
@@ -86,46 +93,72 @@ enyo.kind({
     onClearAction: 'clearAction',
     onSetCollection: 'setCollection'
   },
-  components: [{
-    classes: 'span12',
-    components: [{
-      classes: 'row-fluid',
-      components: [{
-        classes: 'span12',
-        components: [{
-          name: 'valueslistitemprinter',
-          kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '400px',
-          renderLine: 'OB.UI.ListValuesLine',
-          renderEmpty: 'OB.UI.RenderEmpty'
-        }]
-      }]
-    }]
-  }],
+  components: [
+    {
+      classes: 'span12',
+      components: [
+        {
+          classes: 'row-fluid',
+          components: [
+            {
+              classes: 'span12',
+              components: [
+                {
+                  name: 'valueslistitemprinter',
+                  kind: 'OB.UI.ScrollableTable',
+                  scrollAreaMaxHeight: '400px',
+                  renderLine: 'OB.UI.ListValuesLine',
+                  renderEmpty: 'OB.UI.RenderEmpty'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
   productCharacteristicValueFilterQualifier: 'ProductCH_Filter',
-  clearAction: function (inSender, inEvent) {
+  clearAction: function(inSender, inEvent) {
     this.valuesList.reset();
     this.initialValuesList = null;
     return true;
   },
-  searchAction: function (inSender, inEvent) {
+  searchAction: function(inSender, inEvent) {
     var me = this,
-        i, j, params = [],
-        productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent,
-        forceRemote = false;
-    var productFilterText, productCategory, productCharacteristicModel, resetValueList, characteristic = [],
-        crossStoreSearch;
+      i,
+      j,
+      params = [],
+      productCharacteristic =
+        inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$
+          .searchCharacteristic.$.searchCharacteristicTabContent.$
+          .searchProductCharacteristicHeader.parent,
+      forceRemote = false;
+    var productFilterText,
+      productCategory,
+      productCharacteristicModel,
+      resetValueList,
+      characteristic = [],
+      crossStoreSearch;
 
     productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
-    productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
-    crossStoreSearch = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.crossStoreSearch;
+    productCharacteristicModel =
+      inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$
+        .searchCharacteristic.$.searchCharacteristicTabContent.$
+        .searchProductCharacteristicHeader.parent.model;
+    crossStoreSearch =
+      inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$
+        .searchCharacteristic.$.searchCharacteristicTabContent.$
+        .searchProductCharacteristicHeader.$.crossStoreSearch;
     forceRemote = crossStoreSearch && crossStoreSearch.checked;
 
-    productCharacteristic.customFilters.forEach(function (hqlFilter) {
-      if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue) && !_.isUndefined(hqlFilter.forceRemote)) {
+    productCharacteristic.customFilters.forEach(function(hqlFilter) {
+      if (
+        !_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue) &&
+        !_.isUndefined(hqlFilter.forceRemote)
+      ) {
         var hqlCriteriaFilter = hqlFilter.hqlCriteriaCharacteristicsValue();
         if (!_.isUndefined(hqlCriteriaFilter)) {
-          hqlCriteriaFilter.forEach(function (filter) {
+          hqlCriteriaFilter.forEach(function(filter) {
             if (filter && forceRemote === false) {
               forceRemote = hqlFilter.forceRemote;
             }
@@ -134,100 +167,152 @@ enyo.kind({
       }
     });
 
-    resetValueList = function (dataValues) {
+    resetValueList = function(dataValues) {
       if (dataValues && dataValues.length > 0) {
-        var modelsList, initialModelsList = dataValues.models;
+        var modelsList,
+          initialModelsList = dataValues.models;
         // Remove Characteristic Parent with No Child
         me.validateChildrenTree(initialModelsList, '0');
-        initialModelsList = _.filter(initialModelsList, function (model) {
+        initialModelsList = _.filter(initialModelsList, function(model) {
           return model.get('summaryLevel') ? model.get('hasChildren') : true;
         });
         // Set Children List
-        _.each(initialModelsList, function (model) {
-          if (model.get('summaryLevel')) {
-            model.set('childrenList', _.filter(initialModelsList, function (childModel) {
-              return childModel.get('parent') === model.get('id');
-            }));
-            model.set('showChildren', true);
-          }
-          model.unset('hasChildren');
-        }, this);
+        _.each(
+          initialModelsList,
+          function(model) {
+            if (model.get('summaryLevel')) {
+              model.set(
+                'childrenList',
+                _.filter(initialModelsList, function(childModel) {
+                  return childModel.get('parent') === model.get('id');
+                })
+              );
+              model.set('showChildren', true);
+            }
+            model.unset('hasChildren');
+          },
+          this
+        );
         me.initialValuesList = initialModelsList;
         me.updateListSelection(initialModelsList);
 
         // Get First Parent
-        modelsList = _.filter(initialModelsList, function (model) {
+        modelsList = _.filter(initialModelsList, function(model) {
           return model.get('parent') === '0';
         });
         me.hasSelectedChildrenTree(modelsList);
         me.valuesList.reset(modelsList);
       } else {
         me.valuesList.reset();
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) || forceRemote) {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoCharacteriticValue', [me.parent.parent.characteristic.get('_identifier')]));
+        if (
+          OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) ||
+          forceRemote
+        ) {
+          OB.UTIL.showWarning(
+            OB.I18N.getLabel('OBPOS_NoCharacteriticValue', [
+              me.parent.parent.characteristic.get('_identifier')
+            ])
+          );
         }
       }
     };
 
-    productCategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.getProductCategoryFilter(forceRemote);
-    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) && !forceRemote) {
+    productCategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.getProductCategoryFilter(
+      forceRemote
+    );
+    if (
+      !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) &&
+      !forceRemote
+    ) {
       var sql, num, brandStr;
-      sql = "select distinct(id), name, characteristic_id, parent, summaryLevel from m_ch_value chv where  chv.characteristic_id = ?";
-      sql += " and ((chv.summaryLevel = 'false' and (exists (select 1 from M_Product_Ch_Value mpchv, M_Product p where mpchv.M_Product_ID = p.M_Product_ID and chv.id = mpchv.m_ch_value_id";
+      sql =
+        'select distinct(id), name, characteristic_id, parent, summaryLevel from m_ch_value chv where  chv.characteristic_id = ?';
+      sql +=
+        " and ((chv.summaryLevel = 'false' and (exists (select 1 from M_Product_Ch_Value mpchv, M_Product p where mpchv.M_Product_ID = p.M_Product_ID and chv.id = mpchv.m_ch_value_id";
       params.push(this.parent.parent.characteristic.get('id'));
       // brand filter
       if (productCharacteristicModel.get('brandFilter').length > 0) {
         num = 0;
-        brandStr = "";
-        for (i = 0; i < productCharacteristicModel.get('brandFilter').length; i++) {
+        brandStr = '';
+        for (
+          i = 0;
+          i < productCharacteristicModel.get('brandFilter').length;
+          i++
+        ) {
           if (num >= 1) {
             brandStr += ',';
           }
-          brandStr += "'" + productCharacteristicModel.get('brandFilter')[i].id + "'";
+          brandStr +=
+            "'" + productCharacteristicModel.get('brandFilter')[i].id + "'";
           num++;
         }
-        sql += " and (p.brand in (" + brandStr + "))";
+        sql += ' and (p.brand in (' + brandStr + '))';
       }
       // product name and category filter
       if (productFilterText !== undefined && productCategory !== undefined) {
-        if (productFilterText !== "" || productCategory !== "__all__" || productCategory !== "'__all__'") {
-          params.push("%" + productFilterText + "%");
-          if (productCategory === "OBPOS_bestsellercategory") {
-            sql += " AND p.bestseller = 'true' AND ( Upper(p._filter) LIKE Upper(?) )";
-          } else if ((productCategory === "__all__") || productCategory === "'__all__'" || (productCategory === "")) {
-            sql += " AND (Upper(p._filter) LIKE Upper(?))";
+        if (
+          productFilterText !== '' ||
+          productCategory !== '__all__' ||
+          productCategory !== "'__all__'"
+        ) {
+          params.push('%' + productFilterText + '%');
+          if (productCategory === 'OBPOS_bestsellercategory') {
+            sql +=
+              " AND p.bestseller = 'true' AND ( Upper(p._filter) LIKE Upper(?) )";
+          } else if (
+            productCategory === '__all__' ||
+            productCategory === "'__all__'" ||
+            productCategory === ''
+          ) {
+            sql += ' AND (Upper(p._filter) LIKE Upper(?))';
           } else {
-            sql += " AND (Upper(p._filter) LIKE Upper(?)) AND(p.m_product_category_id IN (" + productCategory + "))";
+            sql +=
+              ' AND (Upper(p._filter) LIKE Upper(?)) AND(p.m_product_category_id IN (' +
+              productCategory +
+              '))';
           }
         }
       }
       // characteristics filter
       if (me.parent.parent.model.get('filter').length > 0) {
         for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
-          if (!characteristic.includes(me.parent.parent.model.get('filter')[i].characteristic_id)) {
-            characteristic.push(me.parent.parent.model.get('filter')[i].characteristic_id);
+          if (
+            !characteristic.includes(
+              me.parent.parent.model.get('filter')[i].characteristic_id
+            )
+          ) {
+            characteristic.push(
+              me.parent.parent.model.get('filter')[i].characteristic_id
+            );
           }
         }
 
         for (i = 0; i < characteristic.length; i++) {
           num = 0;
-          var characteristicsValuesStr = "";
+          var characteristicsValuesStr = '';
           for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-            if (characteristic[i] === me.parent.parent.model.get('filter')[j].characteristic_id) {
+            if (
+              characteristic[i] ===
+              me.parent.parent.model.get('filter')[j].characteristic_id
+            ) {
               if (num > 0) {
                 characteristicsValuesStr += ',';
               }
-              characteristicsValuesStr += "'" + me.parent.parent.model.get('filter')[j].id + "'";
+              characteristicsValuesStr +=
+                "'" + me.parent.parent.model.get('filter')[j].id + "'";
               num++;
             }
           }
-          sql += " and (exists (select 1 from M_Product_Ch_Value mpcharv where mpcharv.M_Product_ID = mpchv.M_Product_ID and mpcharv.m_ch_value_id in (" + characteristicsValuesStr + "))) ";
+          sql +=
+            ' and (exists (select 1 from M_Product_Ch_Value mpcharv where mpcharv.M_Product_ID = mpchv.M_Product_ID and mpcharv.m_ch_value_id in (' +
+            characteristicsValuesStr +
+            '))) ';
         }
       }
       sql += "))) or chv.summaryLevel = 'true')";
       //external modules filter
-      var sqlCriteriaFilter = "";
-      productCharacteristic.customFilters.forEach(function (sqlFilter) {
+      var sqlCriteriaFilter = '';
+      productCharacteristic.customFilters.forEach(function(sqlFilter) {
         if (!_.isUndefined(sqlFilter.sqlFilterQueryCharacteristics)) {
           var criteriaFilter = sqlFilter.sqlFilterQueryCharacteristicsValue();
           if (criteriaFilter.query !== null) {
@@ -238,31 +323,41 @@ enyo.kind({
       });
       sql = sql + sqlCriteriaFilter;
       sql = sql + ' order by UPPER(name) asc';
-      OB.Dal.query(OB.Model.CharacteristicValue, sql, params, function (dataValues, me) {
-        resetValueList(dataValues);
-      }, function (tx, error) {
-        OB.UTIL.showError(error);
-      }, this);
+      OB.Dal.query(
+        OB.Model.CharacteristicValue,
+        sql,
+        params,
+        function(dataValues, me) {
+          resetValueList(dataValues);
+        },
+        function(tx, error) {
+          OB.UTIL.showError(error);
+        },
+        this
+      );
       return true;
-
     } else {
-
       var remoteCriteria = [],
-          characteristicParams = "",
-          brandparams = [],
-          characteristicValue = [];
+        characteristicParams = '',
+        brandparams = [],
+        characteristicValue = [];
       var productFilter = {},
-          criteria = {},
-          brandfilter = {},
-          productText, characteristicfilter = {
+        criteria = {},
+        brandfilter = {},
+        productText,
+        characteristicfilter = {
           columns: ['characteristic_id'],
           operator: 'equals',
           value: this.parent.parent.characteristic.get('id'),
           isId: true
-          };
+        };
       // brand filter
       if (productCharacteristicModel.get('brandFilter').length > 0) {
-        for (i = 0; i < productCharacteristicModel.get('brandFilter').length; i++) {
+        for (
+          i = 0;
+          i < productCharacteristicModel.get('brandFilter').length;
+          i++
+        ) {
           brandparams.push(productCharacteristicModel.get('brandFilter')[i].id);
         }
         if (brandparams.length > 0) {
@@ -280,43 +375,76 @@ enyo.kind({
         // characteristic filter
         if (me.parent.parent.model.get('filter').length > 0) {
           for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
-            if (!characteristic.includes(me.parent.parent.model.get('filter')[i].characteristic_id)) {
-              characteristic.push(me.parent.parent.model.get('filter')[i].characteristic_id);
+            if (
+              !characteristic.includes(
+                me.parent.parent.model.get('filter')[i].characteristic_id
+              )
+            ) {
+              characteristic.push(
+                me.parent.parent.model.get('filter')[i].characteristic_id
+              );
             }
           }
           for (i = 0; i < characteristic.length; i++) {
             for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-              if (characteristic[i] === me.parent.parent.model.get('filter')[j].characteristic_id) {
-                characteristicValue.push(me.parent.parent.model.get('filter')[j].id);
+              if (
+                characteristic[i] ===
+                me.parent.parent.model.get('filter')[j].characteristic_id
+              ) {
+                characteristicValue.push(
+                  me.parent.parent.model.get('filter')[j].id
+                );
               }
             }
             if (i > 0) {
-              characteristicParams += ";";
+              characteristicParams += ';';
             }
             characteristicParams += characteristicValue;
             characteristicValue = [];
           }
         }
         var productCat = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.getSelectedCategories(),
-            category = productCat.indexOf('OBPOS_bestsellercategory') >= 0 ? 'OBPOS_bestsellercategory' : (productCat.indexOf('__all__') >= 0 ? '__all__' : [productCategory.value]);
+          category =
+            productCat.indexOf('OBPOS_bestsellercategory') >= 0
+              ? 'OBPOS_bestsellercategory'
+              : productCat.indexOf('__all__') >= 0
+              ? '__all__'
+              : [productCategory.value];
         productFilter.columns = [];
         productFilter.operator = OB.Dal.FILTER;
         productFilter.value = this.productCharacteristicValueFilterQualifier;
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) || (crossStoreSearch && crossStoreSearch.checked)) {
-          productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
+        if (
+          OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) ||
+          (crossStoreSearch && crossStoreSearch.checked)
+        ) {
+          productText =
+            (OB.MobileApp.model.hasPermission(
+              'OBPOS_remote.product' + OB.Dal.USESCONTAINS,
+              true
+            )
+              ? '%'
+              : '') +
+            productFilterText +
+            '%';
         } else {
           productText = '%' + productFilterText + '%';
         }
-        productFilter.params = [productText, productCategory.filter ? productCategory.params[0] : category, characteristicParams, brandparams.join(','), OB.MobileApp.model.get('terminal').id];
+        productFilter.params = [
+          productText,
+          productCategory.filter ? productCategory.params[0] : category,
+          characteristicParams,
+          brandparams.join(','),
+          OB.MobileApp.model.get('terminal').id
+        ];
         remoteCriteria.push(productFilter);
       }
       // external modules filter
       criteria.hqlCriteria = [];
-      productCharacteristic.customFilters.forEach(function (hqlFilter) {
+      productCharacteristic.customFilters.forEach(function(hqlFilter) {
         if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue)) {
           var hqlCriteriaFilter = hqlFilter.hqlCriteriaCharacteristicsValue();
           if (!_.isUndefined(hqlCriteriaFilter)) {
-            hqlCriteriaFilter.forEach(function (filter) {
+            hqlCriteriaFilter.forEach(function(filter) {
               if (filter) {
                 remoteCriteria.push(filter);
               }
@@ -328,28 +456,39 @@ enyo.kind({
       criteria.remoteFilters = remoteCriteria;
       criteria.forceRemote = forceRemote;
       criteria.remoteParams = {};
-      criteria.remoteParams.crossStoreSearch = crossStoreSearch && crossStoreSearch.checked;
-      OB.Dal.find(OB.Model.CharacteristicValue, criteria, function (dataValues) {
-        resetValueList(dataValues);
-      }, function (tx, error) {
-        OB.UTIL.showError(error);
-      }, this);
+      criteria.remoteParams.crossStoreSearch =
+        crossStoreSearch && crossStoreSearch.checked;
+      OB.Dal.find(
+        OB.Model.CharacteristicValue,
+        criteria,
+        function(dataValues) {
+          resetValueList(dataValues);
+        },
+        function(tx, error) {
+          OB.UTIL.showError(error);
+        },
+        this
+      );
       return true;
     }
   },
   parentValue: '0',
-  setCollection: function (inSender, inEvent) {
+  setCollection: function(inSender, inEvent) {
     if (inEvent.parentValue !== '0') {
-      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: visible');
+      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.addStyles(
+        'visibility: visible'
+      );
     }
     this.parentValue = inEvent.parentValue;
     this.updateListSelection(inEvent.value);
     this.hasSelectedChildrenTree(inEvent.value);
     this.valuesList.reset(inEvent.value);
   },
-  updateListSelection: function (modelsList) {
-    var i, j, filterList = this.parent.parent.model.get('filter'),
-        selectedList = this.parent.parent.selected;
+  updateListSelection: function(modelsList) {
+    var i,
+      j,
+      filterList = this.parent.parent.model.get('filter'),
+      selectedList = this.parent.parent.selected;
     for (i = 0; i < modelsList.length; i++) {
       for (j = 0; j < filterList.length; j++) {
         if (modelsList[i].get('id') === filterList[j].id) {
@@ -372,30 +511,38 @@ enyo.kind({
       modelsList[i].set('childrenSelected', null);
     }
   },
-  hasSelectedChildrenTree: function (modelsList) {
+  hasSelectedChildrenTree: function(modelsList) {
     var i;
     if (!modelsList || modelsList.length === 0) {
       return false;
     }
     for (i = 0; i < modelsList.length; i++) {
       if (modelsList[i].get('summaryLevel')) {
-        if (modelsList[i].get('selected') && modelsList[i].get('parent') !== this.parentValue) {
+        if (
+          modelsList[i].get('selected') &&
+          modelsList[i].get('parent') !== this.parentValue
+        ) {
           return true;
         }
         if (this.hasSelectedChildrenTree(modelsList[i].get('childrenList'))) {
           modelsList[i].set('childrenSelected', true);
           return true;
         }
-      } else if (modelsList[i].get('selected') && modelsList[i].get('parent') !== this.parentValue) {
+      } else if (
+        modelsList[i].get('selected') &&
+        modelsList[i].get('parent') !== this.parentValue
+      ) {
         return true;
       }
     }
     return false;
   },
-  validateChildrenTree: function (initialModelsList, parentValue) {
-    var i, modelsList, exists = false;
+  validateChildrenTree: function(initialModelsList, parentValue) {
+    var i,
+      modelsList,
+      exists = false;
 
-    modelsList = _.filter(initialModelsList, function (model) {
+    modelsList = _.filter(initialModelsList, function(model) {
       return model.get('parent') === parentValue;
     });
     if (!modelsList || modelsList.length === 0) {
@@ -403,7 +550,9 @@ enyo.kind({
     }
     for (i = 0; i < modelsList.length; i++) {
       if (modelsList[i].get('summaryLevel')) {
-        if (this.validateChildrenTree(initialModelsList, modelsList[i].get('id'))) {
+        if (
+          this.validateChildrenTree(initialModelsList, modelsList[i].get('id'))
+        ) {
           modelsList[i].set('hasChildren', true);
           exists = true;
         }
@@ -414,7 +563,7 @@ enyo.kind({
     return exists;
   },
   valuesList: null,
-  init: function (model) {
+  init: function(model) {
     this.valuesList = new Backbone.Collection();
     this.$.valueslistitemprinter.setCollection(this.valuesList);
   }
@@ -429,40 +578,55 @@ enyo.kind({
     onSelectCharacteristicValue: '',
     onGetPrevCollection: ''
   },
-  components: [{
-    style: 'display: table;  width: 100%;',
-    components: [{
-      style: 'display: table-cell; ',
-      components: [{
-        classes: 'btnlink-gray',
-        name: 'backChButton',
-        kind: 'OB.UI.SmallButton',
-        ontap: 'backAction'
-      }]
-    }, {
-      style: 'display: table-cell; width: 55%;',
-      components: [{
-        name: 'title',
-        style: 'text-align: center; vertical-align: middle;'
-      }]
-    }, {
-      style: 'display: table-cell; ',
-      components: [{
-        name: 'doneChButton',
-        kind: 'OB.UI.SmallButton',
-        ontap: 'doneAction'
-      }]
-    }, {
-      style: 'display: table-cell;',
-      components: [{
-        classes: 'btnlink-gray',
-        name: 'cancelChButton',
-        kind: 'OB.UI.SmallButton',
-        ontap: 'cancelAction'
-      }]
-    }]
-  }],
-  initComponents: function () {
+  components: [
+    {
+      style: 'display: table;  width: 100%;',
+      components: [
+        {
+          style: 'display: table-cell; ',
+          components: [
+            {
+              classes: 'btnlink-gray',
+              name: 'backChButton',
+              kind: 'OB.UI.SmallButton',
+              ontap: 'backAction'
+            }
+          ]
+        },
+        {
+          style: 'display: table-cell; width: 55%;',
+          components: [
+            {
+              name: 'title',
+              style: 'text-align: center; vertical-align: middle;'
+            }
+          ]
+        },
+        {
+          style: 'display: table-cell; ',
+          components: [
+            {
+              name: 'doneChButton',
+              kind: 'OB.UI.SmallButton',
+              ontap: 'doneAction'
+            }
+          ]
+        },
+        {
+          style: 'display: table-cell;',
+          components: [
+            {
+              classes: 'btnlink-gray',
+              name: 'cancelChButton',
+              kind: 'OB.UI.SmallButton',
+              ontap: 'cancelAction'
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     this.$.backChButton.setContent(OB.I18N.getLabel('OBMOBC_LblBack'));
     this.$.backChButton.addStyles('visibility: hidden');
@@ -471,12 +635,13 @@ enyo.kind({
     this.selectedToSend = [];
     this.parent.parent.parent.selected = [];
   },
-  backAction: function () {
+  backAction: function() {
     this.doGetPrevCollection();
   },
-  doneAction: function () {
+  doneAction: function() {
     var me = this;
-    this.countingValues = this.countingValues + me.parent.parent.parent.selected.length;
+    this.countingValues =
+      this.countingValues + me.parent.parent.parent.selected.length;
     if (me.parent.parent.parent.selected.length > 0) {
       OB.UTIL.showLoading(true);
       this.inspectTree(me.parent.parent.parent.selected);
@@ -484,12 +649,12 @@ enyo.kind({
       this.doHideThisPopup();
     }
   },
-  cancelAction: function () {
+  cancelAction: function() {
     this.parent.parent.parent.selected = [];
     this.parent.parent.parent.countedValues = 0;
     this.doHideThisPopup();
   },
-  checkFinished: function () {
+  checkFinished: function() {
     var me = this;
     if (this.parent.parent.parent.countedValues === this.countingValues) {
       this.doSelectCharacteristicValue({
@@ -504,24 +669,30 @@ enyo.kind({
     }
   },
   countingValues: 0,
-  inspectTree: function (selected, checkedParent) {
+  inspectTree: function(selected, checkedParent) {
     var aux;
     for (aux = 0; aux < selected.length; aux++) {
       this.getChildren(selected, aux, checkedParent, this);
     }
   },
-  getChildren: function (selected, aux, checkedParent, me) {
-    var index, dataValues = selected[aux].get('childrenList');
+  getChildren: function(selected, aux, checkedParent, me) {
+    var index,
+      dataValues = selected[aux].get('childrenList');
     if (dataValues && dataValues.length > 0) {
       if (!_.isUndefined(checkedParent)) {
         selected[aux].set('checked', checkedParent);
       }
-      index = me.selectedToSend.map(function (e) {
-        return e.id;
-      }).indexOf(selected[aux].id);
+      index = me.selectedToSend
+        .map(function(e) {
+          return e.id;
+        })
+        .indexOf(selected[aux].id);
       if (index === -1) {
         me.selectedToSend.push(selected[aux]);
-      } else if (!_.isNull(selected[aux].get('selected')) && !_.isUndefined(selected[aux].get('selected'))) {
+      } else if (
+        !_.isNull(selected[aux].get('selected')) &&
+        !_.isUndefined(selected[aux].get('selected'))
+      ) {
         me.selectedToSend[index] = selected[aux];
       }
       if (!_.isUndefined(checkedParent)) {
@@ -533,12 +704,17 @@ enyo.kind({
       if (!_.isUndefined(checkedParent)) {
         selected[aux].set('checked', checkedParent);
       }
-      index = me.selectedToSend.map(function (e) {
-        return e.id;
-      }).indexOf(selected[aux].id);
+      index = me.selectedToSend
+        .map(function(e) {
+          return e.id;
+        })
+        .indexOf(selected[aux].id);
       if (index === -1) {
         me.selectedToSend.push(selected[aux]);
-      } else if (!_.isNull(selected[aux].get('selected')) && !_.isUndefined(selected[aux].get('selected'))) {
+      } else if (
+        !_.isNull(selected[aux].get('selected')) &&
+        !_.isUndefined(selected[aux].get('selected'))
+      ) {
         me.selectedToSend[index] = selected[aux];
       }
       me.countingValues++;
@@ -563,19 +739,25 @@ enyo.kind({
     onAddToSelected: 'addToSelected',
     onGetPrevCollection: 'getPrevCollection'
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     this.$.body.$.listValues.parentValue = '0';
-    this.$.header.parent.addStyles('padding: 0px; border-bottom: 1px solid #cccccc');
-    this.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: hidden');
+    this.$.header.parent.addStyles(
+      'padding: 0px; border-bottom: 1px solid #cccccc'
+    );
+    this.$.header.$.modalProductChTopHeader.$.backChButton.addStyles(
+      'visibility: hidden'
+    );
     this.characteristic = this.args.model;
-    this.$.header.$.modalProductChTopHeader.$.title.setContent(this.args.model.get('_identifier'));
+    this.$.header.$.modalProductChTopHeader.$.title.setContent(
+      this.args.model.get('_identifier')
+    );
     this.waterfall('onSearchAction');
   },
   i18nHeader: '',
   body: {
     kind: 'OB.UI.ListValues'
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.$.closebutton.hide();
     this.$.header.createComponent({
@@ -583,10 +765,12 @@ enyo.kind({
       style: 'border-bottom: 0px'
     });
   },
-  addToSelected: function (inSender, inEvent) {
-    var index = this.selected.map(function (e) {
-      return e.get('id');
-    }).indexOf(inEvent.value.get('id'));
+  addToSelected: function(inSender, inEvent) {
+    var index = this.selected
+      .map(function(e) {
+        return e.get('id');
+      })
+      .indexOf(inEvent.value.get('id'));
     if (!inEvent.checked) {
       inEvent.value.set('childrenSelected', false);
       this.inspectDeselectTree([inEvent.value], inEvent.value);
@@ -603,16 +787,22 @@ enyo.kind({
       this.inspectCountTree([inEvent.value]);
       this.countedValues++;
     }
-
   },
-  getPrevCollection: function (inSender, inEvent) {
+  getPrevCollection: function(inSender, inEvent) {
     var me = this,
-        dataValues;
-    dataValues = _.filter(this.$.body.$.listValues.initialValuesList, function (model) {
-      return model.get('parent') === _.find(me.$.body.$.listValues.initialValuesList, function (l) {
-        return l.get('id') === me.$.body.$.listValues.parentValue;
-      }).get('parent');
-    }, this);
+      dataValues;
+    dataValues = _.filter(
+      this.$.body.$.listValues.initialValuesList,
+      function(model) {
+        return (
+          model.get('parent') ===
+          _.find(me.$.body.$.listValues.initialValuesList, function(l) {
+            return l.get('id') === me.$.body.$.listValues.parentValue;
+          }).get('parent')
+        );
+      },
+      this
+    );
 
     if (dataValues && dataValues.length > 0) {
       //We take the first to know the parent
@@ -624,18 +814,21 @@ enyo.kind({
       this.$.body.$.listValues.parentValue = '0';
       this.$.body.$.listValues.valuesList.reset();
     }
-    if (this.$.body.$.listValues.parentValue === '0') { //root
-      this.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: hidden');
+    if (this.$.body.$.listValues.parentValue === '0') {
+      //root
+      this.$.header.$.modalProductChTopHeader.$.backChButton.addStyles(
+        'visibility: hidden'
+      );
     }
   },
   countedValues: 0,
-  inspectCountTree: function (selected) {
+  inspectCountTree: function(selected) {
     var aux;
     for (aux = 0; aux < selected.length; aux++) {
       this.countChildren(selected, aux, this);
     }
   },
-  countChildren: function (selected, aux, me) {
+  countChildren: function(selected, aux, me) {
     var dataValues = selected[aux].get('childrenList');
     if (dataValues && dataValues.length > 0) {
       me.inspectCountTree(dataValues);
@@ -643,18 +836,24 @@ enyo.kind({
       me.countedValues++;
     }
   },
-  inspectDeselectTree: function (selected, rootObject) {
+  inspectDeselectTree: function(selected, rootObject) {
     var aux;
     for (aux = 0; aux < selected.length; aux++) {
       this.deselectChildren(selected, aux, rootObject, this);
     }
   },
-  deselectChildren: function (selected, aux, rootObject, me) {
-    var index, dataValues = selected[aux].get('childrenList');
-    index = me.selected.map(function (e) {
-      return e.id;
-    }).indexOf(selected[aux].id);
-    if (!rootObject.get('selected') && rootObject.get('id') !== selected[aux].get('id')) {
+  deselectChildren: function(selected, aux, rootObject, me) {
+    var index,
+      dataValues = selected[aux].get('childrenList');
+    index = me.selected
+      .map(function(e) {
+        return e.id;
+      })
+      .indexOf(selected[aux].id);
+    if (
+      !rootObject.get('selected') &&
+      rootObject.get('id') !== selected[aux].get('id')
+    ) {
       selected[aux].set('selected', rootObject.get('selected'));
       if (index === -1) {
         me.doAddToSelected({
@@ -670,7 +869,7 @@ enyo.kind({
       me.inspectDeselectTree(dataValues, rootObject);
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     this.waterfall('onSetModel', {
       model: this.model

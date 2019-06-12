@@ -9,8 +9,7 @@
 
 /*global OB */
 
-(function () {
-
+(function() {
   var CashUp = OB.Data.ExtensibleModel.extend({
     modelName: 'CashUp',
     tableName: 'cashup',
@@ -19,58 +18,69 @@
     local: true
   });
 
-  CashUp.addProperties([{
-    name: 'id',
-    column: 'cashup_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'netSales',
-    column: 'netSales',
-    type: 'NUMERIC'
-  }, {
-    name: 'grossSales',
-    column: 'grossSales',
-    type: 'NUMERIC'
-  }, {
-    name: 'netReturns',
-    column: 'netReturns',
-    type: 'NUMERIC'
-  }, {
-    name: 'grossReturns',
-    column: 'grossReturns',
-    type: 'NUMERIC'
-  }, {
-    name: 'totalRetailTransactions',
-    column: 'totalRetailTransactions',
-    type: 'NUMERIC'
-  }, {
-    name: 'creationDate',
-    column: 'creationDate',
-    type: 'TEXT'
-  }, {
-    name: 'userId',
-    column: 'userId',
-    type: 'TEXT'
-  }, {
-    name: 'objToSend',
-    column: 'objToSend',
-    type: 'TEXT'
-  }, {
-    name: 'isbeingprocessed',
-    column: 'isbeingprocessed',
-    type: 'TEXT'
-  }, {
-    name: 'isprocessed',
-    column: 'isprocessed',
-    type: 'TEXT'
-  }, {
-    name: 'posterminal',
-    column: 'posterminal',
-    type: 'TEXT'
-  }]);
-
+  CashUp.addProperties([
+    {
+      name: 'id',
+      column: 'cashup_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'netSales',
+      column: 'netSales',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'grossSales',
+      column: 'grossSales',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'netReturns',
+      column: 'netReturns',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'grossReturns',
+      column: 'grossReturns',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'totalRetailTransactions',
+      column: 'totalRetailTransactions',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'creationDate',
+      column: 'creationDate',
+      type: 'TEXT'
+    },
+    {
+      name: 'userId',
+      column: 'userId',
+      type: 'TEXT'
+    },
+    {
+      name: 'objToSend',
+      column: 'objToSend',
+      type: 'TEXT'
+    },
+    {
+      name: 'isbeingprocessed',
+      column: 'isbeingprocessed',
+      type: 'TEXT'
+    },
+    {
+      name: 'isprocessed',
+      column: 'isprocessed',
+      type: 'TEXT'
+    },
+    {
+      name: 'posterminal',
+      column: 'posterminal',
+      type: 'TEXT'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(CashUp);
-
-}());
+})();

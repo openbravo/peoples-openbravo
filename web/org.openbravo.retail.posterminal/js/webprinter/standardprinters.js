@@ -9,8 +9,7 @@
 
 /*global OB */
 
-(function () {
-
+(function() {
   window.OB = window.OB || {};
 
   OB.PRINTERTYPES = {
@@ -28,7 +27,7 @@
     GENERICUSB: {
       WebDevice: OB.USB,
       devices: [],
-      register: function (printerusb) {
+      register: function(printerusb) {
         this.devices.push(printerusb);
       }
     }
@@ -36,16 +35,16 @@
 
   OB.PRINTERIMAGES = {
     imageFunctions: [],
-    getImagesMap: function () {
+    getImagesMap: function() {
       var images = [];
-      this.imageFunctions.forEach(function (f) {
-        f().forEach(function (imagedata) {
+      this.imageFunctions.forEach(function(f) {
+        f().forEach(function(imagedata) {
           images[imagedata.name] = imagedata.url;
         });
       });
       return images;
     },
-    register: function (f) {
+    register: function(f) {
       this.imageFunctions.push(f);
     }
   };
@@ -53,14 +52,18 @@
   // Register default *ticket-image.png* and example of PRINTERIMAGES extensibility:
   // ../../utility/ShowImageLogo?logo=yourcompanymenu
   // yourcompanylogin, youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
-  OB.PRINTERIMAGES.register(function () {
-    return [{
-      name: 'yourcompanybig',
-      url: '../../utility/ShowImageLogo?logo=yourcompanybig&orgId=' + OB.MobileApp.model.get('terminal').organization
-    }, {
-      name: 'ticket-image.png',
-      url: './img/openbravo-logo.png'
-    }];
+  OB.PRINTERIMAGES.register(function() {
+    return [
+      {
+        name: 'yourcompanybig',
+        url:
+          '../../utility/ShowImageLogo?logo=yourcompanybig&orgId=' +
+          OB.MobileApp.model.get('terminal').organization
+      },
+      {
+        name: 'ticket-image.png',
+        url: './img/openbravo-logo.png'
+      }
+    ];
   });
-
-}());
+})();

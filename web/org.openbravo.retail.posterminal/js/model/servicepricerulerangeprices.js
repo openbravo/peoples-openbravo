@@ -7,36 +7,41 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var ServicePriceRuleRangePrices = OB.Data.ExtensibleModel.extend({
     modelName: 'ServicePriceRuleRangePrices',
     tableName: 'm_servicepricerule_rangeprices',
     entityName: 'ServicePriceRuleRangePrices',
-    source: 'org.openbravo.retail.posterminal.master.ServicePriceRuleRangePrices',
+    source:
+      'org.openbravo.retail.posterminal.master.ServicePriceRuleRangePrices',
     dataLimit: 100,
     includeTerminalDate: true,
     remote: 'OBPOS_remote.product'
   });
 
-  ServicePriceRuleRangePrices.addProperties([{
-    name: 'id',
-    column: 'id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'priceList',
-    column: 'priceList',
-    type: 'TEXT'
-  }, {
-    name: 'product',
-    column: 'product',
-    type: 'TEXT'
-  }, {
-    name: 'listPrice',
-    column: 'listPrice',
-    type: 'NUMBER'
-  }]);
+  ServicePriceRuleRangePrices.addProperties([
+    {
+      name: 'id',
+      column: 'id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'priceList',
+      column: 'priceList',
+      type: 'TEXT'
+    },
+    {
+      name: 'product',
+      column: 'product',
+      type: 'TEXT'
+    },
+    {
+      name: 'listPrice',
+      column: 'listPrice',
+      type: 'NUMBER'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(ServicePriceRuleRangePrices);
-}());
+})();

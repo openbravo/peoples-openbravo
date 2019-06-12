@@ -9,8 +9,7 @@
 
 /*global OB */
 
-(function () {
-
+(function() {
   var ProductServiceLinked = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductServiceLinked',
     tableName: 'ProductServiceLinked',
@@ -21,35 +20,45 @@
     remote: 'OBPOS_remote.product'
   });
 
-  ProductServiceLinked.addProperties([{
-    name: 'id',
-    column: 'id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'product',
-    column: 'product',
-    type: 'TEXT'
-  }, {
-    name: 'productCategory',
-    column: 'productCategory',
-    type: 'TEXT'
-  }, {
-    name: 'taxCategory',
-    column: 'taxCategory',
-    type: 'TEXT'
-  }]);
-
-  ProductServiceLinked.addIndex([{
-    name: 'ProductServiceLinked_inx',
-    columns: [{
+  ProductServiceLinked.addProperties([
+    {
+      name: 'id',
+      column: 'id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
       name: 'product',
-      sort: 'asc'
-    }, {
+      column: 'product',
+      type: 'TEXT'
+    },
+    {
       name: 'productCategory',
-      sort: 'asc'
-    }]
-  }]);
+      column: 'productCategory',
+      type: 'TEXT'
+    },
+    {
+      name: 'taxCategory',
+      column: 'taxCategory',
+      type: 'TEXT'
+    }
+  ]);
+
+  ProductServiceLinked.addIndex([
+    {
+      name: 'ProductServiceLinked_inx',
+      columns: [
+        {
+          name: 'product',
+          sort: 'asc'
+        },
+        {
+          name: 'productCategory',
+          sort: 'asc'
+        }
+      ]
+    }
+  ]);
 
   OB.Data.Registry.registerModel(ProductServiceLinked);
-}());
+})();

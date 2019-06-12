@@ -9,27 +9,26 @@
 
 /*global OB*/
 
-(function () {
-
+(function() {
   OB.MobileApp.actionsRegistry.register(
-  new OB.Actions.CommandAction({
-    window: 'retail.pointofsale',
-    name: 'scanCode',
-    properties: {
-      i18nContent: 'OBMOBC_KbCode'
-    },
-    command: function (view) {
-      var editboxvalue = view.state.readCommandState({
-        name: 'editbox'
-      });
+    new OB.Actions.CommandAction({
+      window: 'retail.pointofsale',
+      name: 'scanCode',
+      properties: {
+        i18nContent: 'OBMOBC_KbCode'
+      },
+      command: function(view) {
+        var editboxvalue = view.state.readCommandState({
+          name: 'editbox'
+        });
 
-      if (!editboxvalue) {
-        return;
+        if (!editboxvalue) {
+          return;
+        }
+
+        var barcode = new OB.UI.BarcodeActionHandler();
+        barcode.action(view, editboxvalue);
       }
-
-      var barcode = new OB.UI.BarcodeActionHandler();
-      barcode.action(view, editboxvalue);
-    }
-  }));
-
-}());
+    })
+  );
+})();

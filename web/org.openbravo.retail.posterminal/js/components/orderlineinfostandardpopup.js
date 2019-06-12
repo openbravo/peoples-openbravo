@@ -21,25 +21,25 @@ enyo.kind({
     onHideInfoPopup: 'hidePopup',
     onShowInfoPopup: 'showPopup'
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     this.line = this.args.line;
     this.waterfall('onShowInfo', {
       line: this.line
     });
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     if (this.args.callback) {
       this.args.callback(this.args.context);
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
   },
-  hidePopup: function (inSender, inEvent) {
+  hidePopup: function(inSender, inEvent) {
     this.hide();
     return true;
   },
-  showPopup: function (inSender, inEvent) {
+  showPopup: function(inSender, inEvent) {
     this.show();
     return true;
   }
@@ -47,26 +47,33 @@ enyo.kind({
 
 enyo.kind({
   name: 'OBRDM.UI.OrderLineInfoStandard_body',
-  components: [{
-    name: 'table',
-    kind: 'OBRDM.UI.OrderLineInfoTableStandard'
-  }, {
-    name: 'buttonFooter',
-    classes: 'obrdm-oederlineinfostandard-buttonfooter',
-    components: [{
-      name: 'infoButtons',
-      classes: 'obrdm-oederlineinfostandard-infobuttons'
-    }]
-  }],
-  buttons: [{
-    kind: 'OBRDM.UI.OrderLineInfoCloseBtn',
-    name: 'buttoncancel'
-  }],
-  initComponents: function () {
+  components: [
+    {
+      name: 'table',
+      kind: 'OBRDM.UI.OrderLineInfoTableStandard'
+    },
+    {
+      name: 'buttonFooter',
+      classes: 'obrdm-oederlineinfostandard-buttonfooter',
+      components: [
+        {
+          name: 'infoButtons',
+          classes: 'obrdm-oederlineinfostandard-infobuttons'
+        }
+      ]
+    }
+  ],
+  buttons: [
+    {
+      kind: 'OBRDM.UI.OrderLineInfoCloseBtn',
+      name: 'buttoncancel'
+    }
+  ],
+  initComponents: function() {
     var me = this;
 
     this.inherited(arguments);
-    _.each(this.buttons, function (button) {
+    _.each(this.buttons, function(button) {
       me.$.infoButtons.createComponent(button, {
         owner: me
       });
@@ -79,10 +86,10 @@ enyo.kind({
   classes: 'obrdm-orderineinfotablestandard',
   infoTableComponents: [],
   components: [],
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     var me = this;
-    _.each(this.infoTableComponents, function (comp) {
+    _.each(this.infoTableComponents, function(comp) {
       me.createComponent(comp, {
         owner: me
       });
@@ -100,47 +107,64 @@ enyo.kind({
   handlers: {
     onShowInfo: 'showInfo'
   },
-  components: [{
-    classes: 'obrdm-orderlineinfopopupstandard',
-    components: [{
-      name: 'searchKey',
-      classes: 'obrdm-orderlineinfopopupstandard-searchkey',
-      components: [{
-        name: 'searchKeyLbl',
-        classes: 'obrdm-orderlineinfopopupstandard-searchkey-lbl'
-      }, {
-        name: 'searchKeyValue',
-        classes: 'obrdm-orderlineinfopopupstandard-searchkey-value'
-      }]
-    }, {
-      name: 'name',
-      classes: 'obrdm-orderlineinfopopupstandard-name',
-      components: [{
-        name: 'nameLbl',
-        classes: 'obrdm-orderlineinfopopupstandard-name-lbl'
-      }, {
-        name: 'nameValue',
-        classes: 'obrdm-orderlineinfopopupstandard-name-value'
-      }]
-    }, {
-      name: 'ean',
-      classes: 'obrdm-orderlineinfopopupstandard-ean',
-      components: [{
-        name: 'eanLbl',
-        classes: 'obrdm-orderlineinfopopupstandard-ean-lbl'
-      }, {
-        name: 'eanValue',
-        classes: 'obrdm-orderlineinfopopupstandard-ean-value'
-      }]
-    }]
-  }],
-  initComponents: function () {
+  components: [
+    {
+      classes: 'obrdm-orderlineinfopopupstandard',
+      components: [
+        {
+          name: 'searchKey',
+          classes: 'obrdm-orderlineinfopopupstandard-searchkey',
+          components: [
+            {
+              name: 'searchKeyLbl',
+              classes: 'obrdm-orderlineinfopopupstandard-searchkey-lbl'
+            },
+            {
+              name: 'searchKeyValue',
+              classes: 'obrdm-orderlineinfopopupstandard-searchkey-value'
+            }
+          ]
+        },
+        {
+          name: 'name',
+          classes: 'obrdm-orderlineinfopopupstandard-name',
+          components: [
+            {
+              name: 'nameLbl',
+              classes: 'obrdm-orderlineinfopopupstandard-name-lbl'
+            },
+            {
+              name: 'nameValue',
+              classes: 'obrdm-orderlineinfopopupstandard-name-value'
+            }
+          ]
+        },
+        {
+          name: 'ean',
+          classes: 'obrdm-orderlineinfopopupstandard-ean',
+          components: [
+            {
+              name: 'eanLbl',
+              classes: 'obrdm-orderlineinfopopupstandard-ean-lbl'
+            },
+            {
+              name: 'eanValue',
+              classes: 'obrdm-orderlineinfopopupstandard-ean-value'
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
-    this.$.searchKeyLbl.setContent(OB.I18N.getLabel('OBRDM_LblProductSearchKey'));
+    this.$.searchKeyLbl.setContent(
+      OB.I18N.getLabel('OBRDM_LblProductSearchKey')
+    );
     this.$.nameLbl.setContent(OB.I18N.getLabel('OBRDM_LblProductName'));
     this.$.eanLbl.setContent(OB.I18N.getLabel('OBRDM_LblProductEAN'));
   },
-  showInfo: function (inSender, inEvent) {
+  showInfo: function(inSender, inEvent) {
     this.$.searchKeyValue.setContent(inEvent.line.get('productSearchKey'));
     this.$.nameValue.setContent(inEvent.line.get('productName'));
     this.$.eanValue.setContent(inEvent.line.get('uPCEAN'));

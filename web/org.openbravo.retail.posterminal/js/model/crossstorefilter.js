@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   OB.Model.CrossStoreFilter = OB.Data.ExtensibleModel.extend({
     source: 'org.openbravo.retail.posterminal.master.CrossStoreFilter',
     dataLimit: OB.Dal.DATALIMIT,
@@ -16,37 +15,42 @@
     forceRemoteEntity: true
   });
 
-  OB.Model.CrossStoreFilter.addProperties([{
-    name: 'id',
-    column: 'id',
-    primaryKey: true,
-    filter: false,
-    type: 'TEXT'
-  }, {
-    name: 'name',
-    filter: false,
-    type: 'TEXT'
-  }, {
-    name: 'stock',
-    filter: false,
-    type: 'NUMERIC'
-  }, {
-    name: 'orgName',
-    column: 'orgName',
-    filter: true,
-    type: 'TEXT',
-    caption: 'OBPOS_LblName'
-  }, {
-    name: 'stock',
-    column: 'stock',
-    caption: 'OBPOS_LblStock',
-    text: 'OBPOS_LblStoresStock',
-    filter: true,
-    type: 'BOOL',
-    isSelect: true,
-    remoteEntity: true,
-    applyUIRestrictions: true,
-    disableSorting: true
-  }]);
-
-}());
+  OB.Model.CrossStoreFilter.addProperties([
+    {
+      name: 'id',
+      column: 'id',
+      primaryKey: true,
+      filter: false,
+      type: 'TEXT'
+    },
+    {
+      name: 'name',
+      filter: false,
+      type: 'TEXT'
+    },
+    {
+      name: 'stock',
+      filter: false,
+      type: 'NUMERIC'
+    },
+    {
+      name: 'orgName',
+      column: 'orgName',
+      filter: true,
+      type: 'TEXT',
+      caption: 'OBPOS_LblName'
+    },
+    {
+      name: 'stock',
+      column: 'stock',
+      caption: 'OBPOS_LblStock',
+      text: 'OBPOS_LblStoresStock',
+      filter: true,
+      type: 'BOOL',
+      isSelect: true,
+      remoteEntity: true,
+      applyUIRestrictions: true,
+      disableSorting: true
+    }
+  ]);
+})();

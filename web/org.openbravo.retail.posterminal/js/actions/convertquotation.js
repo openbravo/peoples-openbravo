@@ -9,36 +9,35 @@
 
 /*global OB */
 
-(function () {
-
+(function() {
   OB.MobileApp.actionsRegistry.register(
-  new OB.Actions.CommandAction({
-    window: 'retail.pointofsale',
-    name: 'convertQuotation',
-    permission: 'OBPOS_receipt.createorderfromquotation',
-    properties: {
-      i18nContent: 'OBPOS_CreateOrderFromQuotation'
-    },
-    isActive: function (view) {
-      var currentView = view.state.readState({
-        name: 'window.currentView'
-      }).name;
-      var hasBeenPaid = view.state.readState({
-        name: 'receipt.hasBeenPaid'
-      });
-      var isQuotation = view.state.readState({
-        name: 'receipt.isQuotation'
-      });
+    new OB.Actions.CommandAction({
+      window: 'retail.pointofsale',
+      name: 'convertQuotation',
+      permission: 'OBPOS_receipt.createorderfromquotation',
+      properties: {
+        i18nContent: 'OBPOS_CreateOrderFromQuotation'
+      },
+      isActive: function(view) {
+        var currentView = view.state.readState({
+          name: 'window.currentView'
+        }).name;
+        var hasBeenPaid = view.state.readState({
+          name: 'receipt.hasBeenPaid'
+        });
+        var isQuotation = view.state.readState({
+          name: 'receipt.isQuotation'
+        });
 
-      var active = currentView === 'order';
-      active = active && isQuotation && hasBeenPaid === 'Y';
-      return active;
-    },
-    command: function (view) {
-      view.doShowPopup({
-        popup: 'modalCreateOrderFromQuotation'
-      });
-    }
-  }));
-
-}());
+        var active = currentView === 'order';
+        active = active && isQuotation && hasBeenPaid === 'Y';
+        return active;
+      },
+      command: function(view) {
+        view.doShowPopup({
+          popup: 'modalCreateOrderFromQuotation'
+        });
+      }
+    })
+  );
+})();

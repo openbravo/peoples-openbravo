@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
+(function() {
   var CancelLayaway = OB.Data.ExtensibleModel.extend({
     modelName: 'CancelLayaway',
     tableName: 'cancellayaway',
@@ -16,16 +16,19 @@
     source: ''
   });
 
-  CancelLayaway.addProperties([{
-    name: 'id',
-    column: 'cancellayaway_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'json',
-    column: 'json',
-    type: 'TEXT'
-  }]);
+  CancelLayaway.addProperties([
+    {
+      name: 'id',
+      column: 'cancellayaway_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'json',
+      column: 'json',
+      type: 'TEXT'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(CancelLayaway);
-}());
+})();

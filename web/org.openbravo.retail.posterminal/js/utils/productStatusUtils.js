@@ -9,16 +9,22 @@
 
 /*global OB, _ */
 
-(function () {
+(function() {
   OB.UTIL.ProductStatusUtils = {};
 
-  OB.UTIL.ProductStatusUtils.getProductStatus = function (product) {
-    var productLineStatus = product.get('productAssortmentStatus') ? product.get('productAssortmentStatus') : (product.get('productStatus') ? product.get('productStatus') : null);
+  OB.UTIL.ProductStatusUtils.getProductStatus = function(product) {
+    var productLineStatus = product.get('productAssortmentStatus')
+      ? product.get('productAssortmentStatus')
+      : product.get('productStatus')
+      ? product.get('productStatus')
+      : null;
     if (productLineStatus) {
-      return _.find(OB.MobileApp.model.get('productStatusList'), function (productStatus) {
+      return _.find(OB.MobileApp.model.get('productStatusList'), function(
+        productStatus
+      ) {
         return productLineStatus === productStatus.id;
       });
     }
     return {};
   };
-}());
+})();

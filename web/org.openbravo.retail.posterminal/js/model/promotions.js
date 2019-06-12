@@ -8,8 +8,7 @@
  */
 
 /*global OB, Backbone */
-(function () {
-
+(function() {
   var promotions = Backbone.Model.extend({
     modelName: 'Discount',
     generatedStructure: true,
@@ -21,7 +20,8 @@
     modelName: 'DiscountFilterBusinessPartner',
     generatedStructure: true,
     entityName: 'PricingAdjustmentBusinessPartner',
-    source: 'org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner',
+    source:
+      'org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner',
     remote: 'OBPOS_remote.discount.bp'
   });
 
@@ -29,7 +29,8 @@
     modelName: 'DiscountFilterBusinessPartnerGroup',
     generatedStructure: true,
     entityName: 'PricingAdjustmentBusinessPartnerGroup',
-    source: 'org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup'
+    source:
+      'org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup'
   });
 
   var promotionsProduct = Backbone.Model.extend({
@@ -43,7 +44,8 @@
     modelName: 'DiscountFilterProductCategory',
     generatedStructure: true,
     entityName: 'PricingAdjustmentProductCategory',
-    source: 'org.openbravo.retail.posterminal.master.DiscountFilterProductCategory'
+    source:
+      'org.openbravo.retail.posterminal.master.DiscountFilterProductCategory'
   });
 
   var promotionsRole = Backbone.Model.extend({
@@ -57,7 +59,8 @@
     modelName: 'DiscountFilterCharacteristic',
     generatedStructure: true,
     entityName: 'PricingAdjustmentCharacteristic',
-    source: 'org.openbravo.retail.posterminal.master.DiscountFilterCharacteristic'
+    source:
+      'org.openbravo.retail.posterminal.master.DiscountFilterCharacteristic'
   });
 
   OB.Data.Registry.registerModel(promotions);
@@ -67,4 +70,4 @@
   OB.Data.Registry.registerModel(promotionsProductCategory);
   OB.Data.Registry.registerModel(promotionsRole);
   OB.Data.Registry.registerModel(promotionsCharacteristics);
-}());
+})();

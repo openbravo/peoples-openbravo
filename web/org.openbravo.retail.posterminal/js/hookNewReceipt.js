@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-OB.UTIL.HookManager.registerHook('OBPOS_NewReceipt', function (args, callbacks) {
+OB.UTIL.HookManager.registerHook('OBPOS_NewReceipt', function(args, callbacks) {
   if (!args.newOrder.get('obrdmDeliveryModeProperty')) {
     args.newOrder.set('obrdmDeliveryModeProperty', 'PickAndCarry');
   }
