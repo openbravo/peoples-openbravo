@@ -1509,6 +1509,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
             .eq(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
         remainingPSDCriteria
             .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+        remainingPSDCriteria.setFilterOnReadableOrganization(false);
         final List<FIN_PaymentScheduleDetail> remainingPSDList = remainingPSDCriteria.list();
         for (final FIN_PaymentScheduleDetail currentDetail : remainingPSDList) {
           paymentsRemainingAmt = paymentsRemainingAmt.add(currentDetail.getAmount());

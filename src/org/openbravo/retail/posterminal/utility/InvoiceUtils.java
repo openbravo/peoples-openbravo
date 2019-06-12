@@ -625,6 +625,7 @@ public class InvoiceUtils {
           .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
       remainingPSDCriteria
           .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+      remainingPSDCriteria.setFilterOnReadableOrganization(false);
       remainingPSDCriteria.setMaxResults(1);
       final FIN_PaymentScheduleDetail remainingPSD = (FIN_PaymentScheduleDetail) remainingPSDCriteria
           .uniqueResult();
