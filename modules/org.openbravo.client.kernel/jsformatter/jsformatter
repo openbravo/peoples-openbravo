@@ -45,7 +45,7 @@ it will be executed for each module that has a .prettierignore file in its root.
 # size limit is much lower than the one in bash commands.
 #
 function formatFiles {
-    echo "$@" | xargs --max-args 250 npm run jsformatter -s -- ${FLAGS} || exit 1
+    echo "$@" | xargs --max-args 250 npm run jsformat -s -- ${FLAGS} || exit 1
 }
 
 function getPrettierIgnorePatterns {
@@ -76,7 +76,7 @@ function formatAllFiles {
 function runFormatterInCore {
     IG_PATTERNS=$1
     FORMATTER_FLAGS=$2
-    npm run jsformatter -s -- ${FORMATTER_FLAGS} "modules/**/*.js" ${IG_PATTERNS}
+    npm run jsformat -s -- ${FORMATTER_FLAGS} "modules/**/*.js" ${IG_PATTERNS}
 }
 
 function runFormatterInModule {
@@ -87,7 +87,7 @@ function runFormatterInModule {
         IGNORE_PATH="--ignore-path ${BASE}/.prettierignore"
     fi
     echo "Formatter check for module $(basename ${BASE})"
-    npm run jsformatter -s -- ${FORMATTER_FLAGS} ${IGNORE_PATH} "${BASE}/**/*.js"
+    npm run jsformat -s -- ${FORMATTER_FLAGS} ${IGNORE_PATH} "${BASE}/**/*.js"
 }
 
 #Parse input arguments

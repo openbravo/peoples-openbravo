@@ -4,7 +4,7 @@
   "description": "This contains some utilities used to format and lint Javascript code",
   "scripts": {
     "jslint": "eslint --max-warnings 0",
-    "jsformatter": "prettier"
+    "jsformat": "prettier"
   },
   "repository": "http://code.openbravo.com/",
   "author": "Openbravo SLU",
