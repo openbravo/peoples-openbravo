@@ -369,7 +369,7 @@ enyo.kind({
       this.bodyComponent.$.contextImage.show();
     }
     if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
-      this.bodyComponent.$.productImage.setSrc(OB.UTIL.getImageURL(params.product.get('id')));
+      this.bodyComponent.$.productImage.setImgUrl(OB.UTIL.getImageURL(params.product.get('id')));
       this.bodyComponent.$.productImage.setAttribute('onerror', 'if (this.src != "../org.openbravo.mobile.core/assets/img/box.png") this.src = "../org.openbravo.mobile.core/assets/img/box.png"; ');
     } else {
       this.bodyComponent.$.productImage.setImg(params.product.get('img'));
