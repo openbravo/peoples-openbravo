@@ -730,7 +730,7 @@ enyo.kind({
       this.bodyComponent.$.contextImage.show();
     }
     if (OB.MobileApp.model.get('permissions')['OBPOS_retail.productImages']) {
-      this.bodyComponent.$.productImage.setSrc(
+      this.bodyComponent.$.productImage.setImgUrl(
         OB.UTIL.getImageURL(params.product.get('id'))
       );
       this.bodyComponent.$.productImage.setAttribute(
