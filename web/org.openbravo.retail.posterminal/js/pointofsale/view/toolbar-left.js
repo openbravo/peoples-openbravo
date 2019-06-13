@@ -47,9 +47,11 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ButtonNew',
-  kind: 'OB.UI.ToolbarButton',
+  kind: 'OB.UI.ComplexButton',
+  i18nContent: 'OBMOBC_New',
   classes: 'obUiButtonNew',
-  icon: '',
+  buttonBeforeClass: 'obUiButtonNew-buttonBefore',
+  labelClass: 'obUiButtonNew-buttonLabel',
   events: {
     onAddNewOrder: ''
   },
@@ -68,7 +70,7 @@ enyo.kind({
     this.isLocked = false;
     this.setDisabledIfSynchronized();
   },
-  setDisabled: function (value) {
+  setButtonDisabled: function (value) {
     this.lastDisabledStatus = value;
     this.setDisabledIfSynchronized();
   },
@@ -81,13 +83,13 @@ enyo.kind({
       return true;
     }
     this.disabled = value;
-    this.setAttribute('disabled', value);
+    this.setDisabled(value);
   },
   disabledButton: function (inSender, inEvent) {
     this.updateDisabled(inEvent.disableButtonNew || inEvent.status);
   },
   updateDisabled: function (isDisabled) {
-    this.setDisabled(isDisabled);
+    this.setButtonDisabled(isDisabled);
     if (isDisabled) {
       this.removeClass('obUiButtonNew_iconNew');
     } else {
@@ -132,9 +134,11 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ButtonDelete',
-  kind: 'OB.UI.ToolbarButton',
+  kind: 'OB.UI.ComplexButton',
+  i18nContent: 'OBMOBC_Delete',
   classes: 'obUiButtonDelete',
-  icon: '',
+  buttonBeforeClass: 'obUiButtonDelete-buttonBefore',
+  labelClass: 'obUiButtonDelete-buttonLabel',
   events: {
     onShowPopup: '',
     onDeleteOrder: '',
@@ -155,7 +159,7 @@ enyo.kind({
     this.isLocked = false;
     this.setDisabledIfSynchronized();
   },
-  setDisabled: function (value) {
+  setButtonDisabled: function (value) {
     this.lastDisabledStatus = value;
     this.setDisabledIfSynchronized();
   },
@@ -168,13 +172,13 @@ enyo.kind({
       return true;
     }
     this.disabled = value;
-    this.setAttribute('disabled', value);
+    this.setDisabled(value);
   },
   disabledButton: function (inSender, inEvent) {
     this.updateDisabled(inEvent.status);
   },
   updateDisabled: function (isDisabled) {
-    this.setDisabled(isDisabled);
+    this.setButtonDisabled(isDisabled);
     if (isDisabled) {
       this.removeClass('obUiButtonDelete_iconDelete');
     } else {
@@ -225,17 +229,24 @@ enyo.kind({
       }
     }
   },
+  addPaidTicketClass: function () {
+    this.addClass('paidticket');
+    this.removeSubcomponentsClass();
+  },
+  removePaidTicketClass: function () {
+    this.removeClass('paidticket');
+    this.addSubcomponentsClass();
+  },
   init: function (model) {
     this.model = model;
     this.addClass('obUiButtonDelete_iconDelete');
     this.model.get('leftColumnViewManager').on('multiorder', function () {
-      this.addClass('paidticket');
+      this.addPaidTicketClass();
       return true;
     }, this);
     this.model.get('leftColumnViewManager').on('order', function () {
-      this.removeClass('paidticket');
       if (this.model.get('order').get('isPaid') || this.model.get('order').get('isLayaway') || (this.model.get('order').get('isQuotation') && this.model.get('order').get('hasbeenpaid') === 'Y') || this.model.get('order').get('isModified')) {
-        this.addClass('paidticket');
+        this.addPaidTicketClass();
       }
       this.bubble('onChangeTotal', {
         newTotal: this.model.get('order').getTotal()
@@ -252,10 +263,10 @@ enyo.kind({
     //    }, this);
     this.model.get('order').on('change:isPaid change:isQuotation change:isLayaway change:hasbeenpaid change:isModified', function (changedModel) {
       if (changedModel.get('isPaid') || changedModel.get('isLayaway') || (changedModel.get('isQuotation') && changedModel.get('hasbeenpaid') === 'Y') || changedModel.get('isModified')) {
-        this.addClass('paidticket');
+        this.addPaidTicketClass();
         return;
       }
-      this.removeClass('paidticket');
+      this.removePaidTicketClass();
     }, this);
     this.model.get('order').on('showDiscount', function (model) {
       this.updateDisabled(true);

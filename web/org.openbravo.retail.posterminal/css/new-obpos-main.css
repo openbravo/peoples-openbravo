@@ -7372,14 +7372,21 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 */
 .obUiButtonNew {
   width: 100%;
-  background-repeat: no-repeat;
-  background-position: center center;
 }
 
-.obUiButtonNew_iconNew {
+.obUiButtonNew_iconNew {}
+
+.obUiButtonNew-buttonBefore {
+  background-repeat: no-repeat;
+  background-position: center center;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCreateNew.svg');
   background-size: 19px 19px;
 }
+
+.obUiButtonNew-buttonLabel {
+  color: var(--color-primary-lighter);
+}
+
 
 
 /*
@@ -7388,13 +7395,27 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 */
 .obUiButtonDelete {
   width: 100%;
-  background-repeat: no-repeat;
-  background-position: center center;
 }
 
-.obUiButtonDelete_iconDelete {
+.obUiButtonDelete.paidticket {
+  width: 100%;
+  background-repeat: no-repeat;
+  background-size: 15px 18px;
+  background-position: center;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClearPaidTicket.png');
+}
+
+.obUiButtonDelete_iconDelete {}
+
+.obUiButtonDelete-buttonBefore {
+  background-repeat: no-repeat;
+  background-position: center center;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconDelete.svg');
   background-size: 15px 18px;
+}
+
+.obUiButtonDelete-buttonLabel {
+  color: var(--color-primary-lighter);
 }
 
 
@@ -7587,7 +7608,23 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 # Inherits: [OB.UI.ToolbarButtonTab]
 */
 .obObposPointOfSaleUiButtonTabScan {
-  position: relative;
+  background-color: #e2e2e2;
+}
+
+.obObposPointOfSaleUiButtonTabScan.active {
+  background-color: #7da7d9;
+}
+
+.obObposPointOfSaleUiButtonTabScan.active:hover {
+  opacity: 1;
+}
+
+.obObposPointOfSaleUiButtonTabScan-buttonBefore {
+  /*Inherits: [OB.UI.ComplexButton]*/
+  background-size: 32px 17px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconMainBlack.svg');
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .obObposPointOfSaleUiButtonTabScan-status-rfidIcon_rfidOn {
@@ -7634,21 +7671,75 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 # Component: OB.OBPOSPointOfSale.UI.ButtonTabBrowse
 # Inherits: [OB.UI.ToolbarButtonTab]
 */
-.obObPosPointOfSaleUiButtonTabBrowse {}
+.obObPosPointOfSaleUiButtonTabBrowse {
+  background-color: #e2e2e2;
+}
 
+.obObPosPointOfSaleUiButtonTabBrowse.active {
+  background-color: #b882c6;
+}
+
+.obObPosPointOfSaleUiButtonTabBrowse.active:hover {
+  opacity: 1;
+}
+
+.obObPosPointOfSaleUiButtonTabBrowse-buttonBefore {
+  /*Inherits: [OB.UI.ComplexButton]*/
+  background-size: 32px 17px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconBrowseBlack.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic
 # Inherits: [OB.UI.ToolbarButtonTab]
 */
-.obObPosPointOfSaleUiButtonTabSearchCharacteristic {}
+.obObPosPointOfSaleUiButtonTabSearchCharacteristic {
+  background-color: #e2e2e2;
+}
+
+.obObPosPointOfSaleUiButtonTabSearchCharacteristic.active {
+  background-color: #f8e859;
+}
+
+.obObPosPointOfSaleUiButtonTabSearchCharacteristic.active:hover {
+  opacity: 1;
+}
+
+.obObPosPointOfSaleUiButtonTabSearchCharacteristic-buttonBefore {
+  /*Inherits: [OB.UI.ComplexButton]*/
+  background-size: 32px 17px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSearchBlack.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.ButtonTabEditLine
 # Inherits: [OB.UI.ToolbarButtonTab]
 */
-.obObPosPointOfSaleUiButtonTabEditLine {}
+.obObPosPointOfSaleUiButtonTabEditLine {
+  background-color: #e2e2e2;
+}
+
+.obObPosPointOfSaleUiButtonTabEditLine.active {
+  background-color: #f8941d;
+}
+
+.obObPosPointOfSaleUiButtonTabEditLine.active:hover {
+  opacity: 1;
+}
+.obObPosPointOfSaleUiButtonTabEditLine-buttonBefore {
+  /*Inherits: [OB.UI.ComplexButton]*/
+  background-size: 32px 17px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconEditBlack.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 
 
 /*
