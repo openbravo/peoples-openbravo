@@ -628,7 +628,7 @@ OB.DS.HWServer.prototype._send = function(data, callback, device) {
         callback(inResponse, data);
       }
     })
-    ['catch'](function(error) {
+    .catch(function(error) {
       if (callback) {
         callback({
           data: data,

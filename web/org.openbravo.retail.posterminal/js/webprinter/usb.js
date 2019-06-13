@@ -86,7 +86,7 @@
           return this.device.close();
         }.bind(this)
       )
-      ['catch'](
+      .catch(
         function(error) {
           this.onDisconnected();
           throw error;

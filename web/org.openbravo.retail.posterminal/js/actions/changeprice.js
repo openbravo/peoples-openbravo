@@ -160,7 +160,7 @@
               }
             );
           })
-          ['catch'](function() {
+          .catch(function() {
             // Ignore. User cancelled action
           });
       }

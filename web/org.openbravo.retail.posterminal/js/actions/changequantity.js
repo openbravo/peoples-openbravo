@@ -224,7 +224,7 @@
             });
           }.bind(this)
         )
-        ['catch'](function(error) {
+        .catch(function(error) {
           // Dialog cancelled, finish the action
         });
     };

@@ -1011,7 +1011,7 @@
           }
         );
       })
-      ['catch'](function(reason) {
+      .catch(function(reason) {
         showLineTaxError(receipt, line, reason);
       });
   };
@@ -1613,7 +1613,7 @@
           }
         );
       })
-      ['catch'](function(reason) {
+      .catch(function(reason) {
         showLineTaxError(receipt, line, reason);
       });
   };

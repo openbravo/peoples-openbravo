@@ -326,7 +326,7 @@
           return this.escpos.transImage(result.imagedata);
         }.bind(this)
       )
-      ['catch'](
+      .catch(
         function(error) {
           // Log the error and continue printing the receipt
           OB.warn(
