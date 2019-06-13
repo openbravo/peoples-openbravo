@@ -387,14 +387,24 @@ enyo.kind({
       this.$.generic.setContent(OB.I18N.getLabel('OBMOBC_LblGeneric'));
       this.$.generic.show();
     }
-    OB.UTIL.HookManager.executeHooks('OBPOS_RenderProduct', {
-      model: this
-    }, function (args) {
-      if (args.model.$.icons.children.length) {
-        args.model.$.icons.minWidth = OB.DEC.add(args.model.$.icons.minWidth, OB.DEC.mul(args.model.$.icons.children.length, 20));
-        args.model.$.icons.applyStyle('min-width', args.model.$.icons.minWidth + 'px');
+    OB.UTIL.HookManager.executeHooks(
+      'OBPOS_RenderProduct',
+      {
+        model: this
+      },
+      function(args) {
+        if (args.model.$.icons.children.length) {
+          args.model.$.icons.minWidth = OB.DEC.add(
+            args.model.$.icons.minWidth,
+            OB.DEC.mul(args.model.$.icons.children.length, 20)
+          );
+          args.model.$.icons.applyStyle(
+            'min-width',
+            args.model.$.icons.minWidth + 'px'
+          );
+        }
       }
-    });
+    );
   },
   setIdentifierContent: function() {
     return this.model.get('_identifier');
