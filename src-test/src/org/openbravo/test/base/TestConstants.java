@@ -41,6 +41,7 @@ public class TestConstants {
 
   public static class Roles {
     public static final String ESP_ADMIN = "F3196A30B53A42778727B2852FF90C24";
+    public static final String SYS_ADMIN = "0";
   }
 
   public static class Tables {
@@ -58,6 +59,7 @@ public class TestConstants {
 
   public static class Users {
     public static final String OPENBRAVO = "100";
+    public static final String SYSTEM = "0";
   }
 
   private TestConstants() {

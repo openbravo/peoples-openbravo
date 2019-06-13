@@ -65,7 +65,10 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.test.base.TestConstants.Clients;
 import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.Users;
 import org.openbravo.test.base.mock.OBServletContextMock;
 
 /**
@@ -464,7 +467,7 @@ public class OBBaseTest {
    * Set the current user to the 0 user.
    */
   protected void setSystemAdministratorContext() {
-    OBContext.setOBContext("0");
+    OBContext.setOBContext(Users.SYSTEM);
   }
 
   /**
@@ -475,10 +478,10 @@ public class OBBaseTest {
   }
 
   /**
-   * Sets the current user to the 100 user.
+   * Sets the current user to the 100 user as Sys Admin
    */
   protected void setTestAdminContext() {
-    OBContext.setOBContext("100", "0", TEST_CLIENT_ID, TEST_ORG_ID);
+    OBContext.setOBContext(Users.OPENBRAVO, Roles.SYS_ADMIN, Clients.SYSTEM, Orgs.MAIN);
   }
 
   /**
