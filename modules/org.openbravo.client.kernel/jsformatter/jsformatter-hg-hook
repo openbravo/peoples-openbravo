@@ -31,12 +31,12 @@
 # [hooks]
 # pre-commit = <path_to_this_script>/jsformatter-hg-hook.sh
 #
-if [ -d ./modules/org.openbravo.client.kernel/jsformatter ]; then
+if [[ -d ./modules/org.openbravo.client.kernel/jsformatter ]]; then
   ./modules/org.openbravo.client.kernel/jsformatter/jsformatter-hg
-elif [ -d ../org.openbravo.client.kernel/jsformatter ]; then
+elif [[ -d ../org.openbravo.client.kernel/jsformatter ]]; then
   ../org.openbravo.client.kernel/jsformatter/jsformatter-hg
-elif [ -d ./modules/org.openbravo.client.kernel/jsbeautify ]; then
+elif [[ -d ./modules/org.openbravo.client.kernel/jsbeautify ]]; then
   ./modules/org.openbravo.client.kernel/jsbeautify/jscheck-btfy-hg
-elif [ -d ../org.openbravo.client.kernel/jsbeautify ]; then
+elif [[ -d ../org.openbravo.client.kernel/jsbeautify ]]; then
   ../org.openbravo.client.kernel/jsbeautify/jscheck-btfy-module-hg
 fi

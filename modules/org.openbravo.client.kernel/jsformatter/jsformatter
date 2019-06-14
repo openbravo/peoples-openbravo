@@ -45,7 +45,7 @@ it will be executed for each module that has a .prettierignore file in its root.
 # size limit is much lower than the one in bash commands.
 #
 function formatFiles {
-    echo "$@" | xargs --max-args 250 npm run jsformat -s -- ${FLAGS} || exit 1
+    echo "$@" | xargs -n 250 npm run jsformat -s -- ${FLAGS} || exit 1
 }
 
 function getPrettierIgnorePatterns {

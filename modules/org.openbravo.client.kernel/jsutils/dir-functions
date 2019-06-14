@@ -82,5 +82,5 @@ function convertPathsToAbsolute {
 # Assuming we're in the Openbravo root, find all module folders which contains the file given in its root level
 #
 function getModulesPathWithIgnoreFile {
-    echo $(find modules -type f -name ${1} -printf "%h\n" | sort -u)
+    echo $(find modules -type f -name ${1} -exec dirname {} \; | sort -u)
 }
