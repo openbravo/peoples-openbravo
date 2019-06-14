@@ -62,8 +62,6 @@ import com.google.common.collect.Lists;
  *
  */
 public class CrossOrganizationReference extends BaseDataSourceTestDal {
-  protected static final String QA_ADMIN_ROLE = "4028E6C72959682B01295A071429011E";
-
   protected static final String SPAIN_ORG = "357947E87C284935AD1D783CF6F099A1";
   protected static final String SPAIN_WAREHOUSE = "4D7B97565A024DB7B4C61650FA2B9560";
 
@@ -168,11 +166,7 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
 
   @Before
   public void setRole() {
-    setQAAdminRole();
-  }
-
-  protected static void setQAAdminRole() {
-    OBContext.setOBContext("100", QA_ADMIN_ROLE, QA_TEST_CLIENT_ID, QA_TEST_ORG_ID);
+    setQAAdminContext();
   }
 
   @AfterClass
