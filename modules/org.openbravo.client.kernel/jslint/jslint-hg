@@ -45,8 +45,6 @@ do
   fi
 done
 
-# TODO: Add the --no-warn-ignored flag when this issue is shipped in a ESLint release:
-# https://github.com/eslint/eslint/issues/9977
 if [[ -n "${FILES[*]}" ]]; then
     ${OPENBRAVO_ROOT_PATH}/modules/org.openbravo.client.kernel/jslint/jslint ${FILES[*]} || exit 1
 fi
