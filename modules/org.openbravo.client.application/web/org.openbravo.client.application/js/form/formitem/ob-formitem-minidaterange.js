@@ -823,12 +823,28 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   },
 
   keyPress: function(item, form, keyName, characterValue) {
-    var enterOnEmptyItem;
+    var enterOnEmptyItem,
+      sourceGrid = this.getSourceGrid();
     if (keyName === 'Enter') {
       if (this.singleDateMode) {
         enterOnEmptyItem = !item.getValue() && !item.getEnteredValue();
         this.expandSingleValue();
-        this.form.grid.performAction();
+        if (sourceGrid && sourceGrid.lazyFiltering && sourceGrid.sorter) {
+          if (item.previousLazyFilterValue !== item.mapValueToDisplay()) {
+            sourceGrid.filterHasChanged = true;
+            sourceGrid.sorter.enable();
+            item.previousLazyFilterValue = item.mapValueToDisplay();
+            return false;
+          } else if (!enterOnEmptyItem || item.previousLazyFilterValue !== '') {
+            if (enterOnEmptyItem) {
+              item.previousLazyFilterValue = '';
+            }
+            this.form.grid.performAction();
+            return false;
+          }
+        } else {
+          this.form.grid.performAction();
+        }
         if (!enterOnEmptyItem) {
           return false;
         }
