@@ -3129,7 +3129,10 @@
             l.get('warehouse').id === warehouseId) ||
           (line && l.get('id') === line.get('id'))
         ) {
-          allLinesQty += l.get('qty');
+          allLinesQty = OB.DEC.add(
+            allLinesQty,
+            OB.DEC.sub(l.get('qty'), l.getDeliveredQuantity())
+          );
         }
       });
 
@@ -3140,7 +3143,7 @@
           attrs.warehouse &&
           !OB.UTIL.isNullOrUndefined(attrs.warehouse.warehouseqty)
         ) {
-          OB.UTIL.StockUtils.checkStockSuccessCallback(
+          OB.UTIL.StockUtils.checkStockCallback(
             p,
             line,
             me,
@@ -3151,55 +3154,65 @@
             callback
           );
         } else {
-          OB.UTIL.StockUtils.getReceiptLineStock(
-            p.get('id'),
-            line,
-            function(data) {
-              if (data && data.exception) {
-                OB.UTIL.showConfirmation.display(
-                  OB.I18N.getLabel('OBMOBC_Error'),
-                  OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
-                    data.exception.message
-                );
-                if (callback) {
-                  callback(false);
+          if (!OB.MobileApp.model.get('connectedToERP') || !navigator.onLine) {
+            OB.UTIL.StockUtils.noConnectionCheckStockCallback(
+              p,
+              line,
+              me,
+              allLinesQty,
+              callback
+            );
+          } else {
+            OB.UTIL.StockUtils.getReceiptLineStock(
+              p.get('id'),
+              line,
+              function(data) {
+                if (data && data.exception) {
+                  OB.UTIL.showConfirmation.display(
+                    OB.I18N.getLabel('OBMOBC_Error'),
+                    OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
+                      data.exception.message
+                  );
+                  if (callback) {
+                    callback(false);
+                  }
+                } else {
+                  warehouse = _.find(data.warehouses, function(warehouse) {
+                    return warehouse.warehouseid === warehouseId;
+                  });
+                  if (!warehouse) {
+                    warehouse = {
+                      bins: [],
+                      warehouseid: OB.MobileApp.model.get('warehouses')[0]
+                        .warehouseid,
+                      warehousename: OB.MobileApp.model.get('warehouses')[0]
+                        .warehousename,
+                      warehouseqty: OB.DEC.Zero
+                    };
+                  }
+                  OB.UTIL.StockUtils.checkStockCallback(
+                    p,
+                    line,
+                    me,
+                    attrs,
+                    warehouse,
+                    allLinesQty,
+                    stockScreen,
+                    callback
+                  );
                 }
-              } else {
-                warehouse = _.find(data.warehouses, function(warehouse) {
-                  return warehouse.warehouseid === warehouseId;
-                });
-                if (!warehouse) {
-                  warehouse = {
-                    bins: [],
-                    warehouseid: OB.MobileApp.model.get('warehouses')[0]
-                      .warehouseid,
-                    warehousename: OB.MobileApp.model.get('warehouses')[0]
-                      .warehousename,
-                    warehouseqty: OB.DEC.Zero
-                  };
-                }
-                OB.UTIL.StockUtils.checkStockSuccessCallback(
+              },
+              function(data) {
+                OB.UTIL.StockUtils.noConnectionCheckStockCallback(
                   p,
                   line,
                   me,
-                  attrs,
-                  warehouse,
                   allLinesQty,
-                  stockScreen,
                   callback
                 );
               }
-            },
-            function(data) {
-              OB.UTIL.StockUtils.checkStockErrorCallback(
-                p,
-                line,
-                me,
-                allLinesQty,
-                callback
-              );
-            }
-          );
+            );
+          }
         }
       } else if (callback) {
         callback(true);

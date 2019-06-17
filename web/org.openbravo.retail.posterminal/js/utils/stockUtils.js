@@ -56,7 +56,7 @@
     }
   };
 
-  OB.UTIL.StockUtils.checkStockSuccessCallback = function(
+  OB.UTIL.StockUtils.checkStockCallback = function(
     product,
     line,
     order,
@@ -138,7 +138,8 @@
           order: order,
           line: line,
           product: product,
-          attrs: attrs
+          attrs: attrs,
+          warehouse: warehouse
         },
         function(args) {
           if (args.cancelOperation) {
@@ -248,7 +249,8 @@
         {
           order: order,
           line: line,
-          product: product
+          product: product,
+          warehouse: warehouse
         },
         function(args) {
           if (args.cancelOperation) {
@@ -263,7 +265,7 @@
     }
   };
 
-  OB.UTIL.StockUtils.checkStockErrorCallback = function(
+  OB.UTIL.StockUtils.noConnectionCheckStockCallback = function(
     product,
     line,
     order,
@@ -407,7 +409,7 @@
                 !_.isNull(checkedLine.warehouse) &&
                 !_.isNull(checkedLine.allLinesQty)
               ) {
-                OB.UTIL.StockUtils.checkStockSuccessCallback(
+                OB.UTIL.StockUtils.checkStockCallback(
                   line.get('product'),
                   line,
                   order,
@@ -420,7 +422,7 @@
                   }
                 );
               } else {
-                OB.UTIL.StockUtils.checkStockErrorCallback(
+                OB.UTIL.StockUtils.noConnectionCheckStockCallback(
                   line.get('product'),
                   line,
                   order,
