@@ -7681,7 +7681,8 @@
     serializeToSaveJSON: function() {
       // this.toJSON() generates a collection instance for members like "lines"
       // We need a plain array object
-      var jsonorder = JSON.parse(JSON.stringify(this.toJSON()));
+      var jsonorder = JSON.parse(JSON.stringify(this.toJSON())),
+        jsonOrderLines = jsonorder.lines;
 
       // remove not needed members
       delete jsonorder.undo;
@@ -7693,7 +7694,14 @@
         return !prop.saveToReceipt;
       });
 
-      _.forEach(jsonorder.lines, function(item) {
+      if (
+        !OB.UTIL.isNullOrUndefined(jsonorder.deletedLines) &&
+        jsonorder.deletedLines.length > 0
+      ) {
+        jsonOrderLines = jsonorder.lines.concat(jsonorder.deletedLines);
+      }
+
+      _.forEach(jsonOrderLines, function(item) {
         delete item.sortedTaxCollection;
         if (OB.UTIL.isNullOrUndefined(item.product.saveToReceipt)) {
           _.forEach(productProps, function(prop) {
@@ -8891,7 +8899,6 @@
             approval.approvalType = approval.approvalType.approval;
           }
         });
-        model.set('hasbeenpaid', 'Y');
         OB.Dal.transaction(function(tx) {
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PreSyncReceipt',
@@ -8902,12 +8909,13 @@
             },
             function(args) {
               model.set('json', JSON.stringify(model.serializeToSaveJSON()));
+              model.set('hasbeenpaid', 'Y');
               OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(
                 model.get('documentnoSuffix'),
                 model.get('quotationnoSuffix'),
                 model.get('returnnoSuffix'),
                 function() {
-                  model.save(function() {
+                  OB.Dal.saveInTransaction(tx, model, function() {
                     if (
                       orderList &&
                       model.get('session') === OB.MobileApp.model.get('session')
