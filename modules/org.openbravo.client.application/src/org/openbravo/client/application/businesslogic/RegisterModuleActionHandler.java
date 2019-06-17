@@ -54,7 +54,7 @@ public class RegisterModuleActionHandler extends BaseProcessActionHandler {
         rb.showMsgInProcessView(MessageType.SUCCESS, OBMessageUtils.getI18NMessage("ProcessOK"),
             msg);
         Module module = OBDal.getInstance()
-            .get(Module.class, registationInfo.getJSONObject("module").get("id"));
+            .get(Module.class, registationInfo.getJSONObject("module").get("moduleID"));
         module.setRegisterModule(true);
       } else {
         rb.showMsgInProcessView(MessageType.ERROR, OBMessageUtils.getI18NMessage("Error"), msg,
