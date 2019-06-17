@@ -591,8 +591,8 @@ public class CancelAndReplaceUtils {
       }
       oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
       inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
-      // Cross Store C&R
-      if (jsonorder != null && jsonorder.has("paymentOrganization")) {
+
+      if (jsonorder != null) {
         OBContext.setCrossOrgReferenceAdminMode();
         try {
           OBDal.getInstance().flush();
@@ -1277,21 +1277,10 @@ public class CancelAndReplaceUtils {
           nettingPayment = payOriginalAndInverseOrder(jsonorder, oldOrder, inverseOrder,
               outstandingAmount, negativeAmount, useOrderDocumentNoForRelatedDocs);
 
-          if (jsonorder != null && jsonorder.has("paymentOrganization")) {
-            nettingPayment.setOrganization(
-                OBDal.getInstance().get(Organization.class, jsonorder.get("paymentOrganization")));
-            OBContext.setCrossOrgReferenceAdminMode();
-            try {
-              OBDal.getInstance().flush();
-            } finally {
-              OBContext.restorePreviousCrossOrgReferenceMode();
-            }
-          }
-
           // Pay of the new order the amount already paid in original order
           if (createPayments && paidAmount.compareTo(BigDecimal.ZERO) != 0) {
-            nettingPayment = createOrUdpatePayment(nettingPayment, newOrder, null, paidAmount, null,
-                null, null);
+            nettingPayment = createOrUdpatePayment(jsonorder, nettingPayment, newOrder, null,
+                paidAmount, null, null, null);
             String description = nettingPayment.getDescription() + ": " + newOrder.getDocumentNo();
             String truncatedDescription = (description.length() > 255)
                 ? description.substring(0, 252).concat("...").toString()
@@ -1392,13 +1381,15 @@ public class CancelAndReplaceUtils {
     description += ": " + inverseOrder.getDocumentNo();
 
     // Duplicate payment with negative amount
-    nettingPayment = createOrUdpatePayment(nettingPayment, inverseOrder, paymentPaymentMethod,
-        negativeAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
+    nettingPayment = createOrUdpatePayment(jsonorder, nettingPayment, inverseOrder,
+        paymentPaymentMethod, negativeAmount, paymentDocumentType, financialAccount,
+        paymentDocumentNo);
 
     if (outstandingAmount.compareTo(BigDecimal.ZERO) > 0) {
       // Duplicate payment with positive amount
-      nettingPayment = createOrUdpatePayment(nettingPayment, oldOrder, paymentPaymentMethod,
-          outstandingAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
+      nettingPayment = createOrUdpatePayment(jsonorder, nettingPayment, oldOrder,
+          paymentPaymentMethod, outstandingAmount, paymentDocumentType, financialAccount,
+          paymentDocumentNo);
       description += ": " + oldOrder.getDocumentNo() + "\n";
     }
 
@@ -1418,9 +1409,10 @@ public class CancelAndReplaceUtils {
    * number, it creates a payment for a given Order. Also a payment is passed as parameter, if that
    * payment is null a new payment is created, if not, a new detail is added to the payment.
    */
-  private static FIN_Payment createOrUdpatePayment(FIN_Payment nettingPayment, Order order,
-      FIN_PaymentMethod paymentPaymentMethod, BigDecimal amount, DocumentType paymentDocumentType,
-      FIN_FinancialAccount financialAccount, String paymentDocumentNo) throws Exception {
+  private static FIN_Payment createOrUdpatePayment(JSONObject jsonorder, FIN_Payment nettingPayment,
+      Order order, FIN_PaymentMethod paymentPaymentMethod, BigDecimal amount,
+      DocumentType paymentDocumentType, FIN_FinancialAccount financialAccount,
+      String paymentDocumentNo) throws Exception {
 
     FIN_Payment _nettingPayment = nettingPayment;
     // Get the payment schedule of the order
@@ -1467,9 +1459,14 @@ public class CancelAndReplaceUtils {
       paymentScheduleDetailAmount.put(paymentScheduleDetailId, amount);
 
       // Call to savePayment in order to create a new payment in
+      final Organization paymentOrganization = jsonorder != null
+          && jsonorder.has("paymentOrganization")
+              ? OBDal.getInstance()
+                  .get(Organization.class, jsonorder.getString("paymentOrganization"))
+              : order.getOrganization();
       _nettingPayment = FIN_AddPayment.savePayment(_nettingPayment, true, paymentDocumentType,
           paymentDocumentNo, order.getBusinessPartner(), paymentPaymentMethod, financialAccount,
-          amount.toPlainString(), order.getOrderDate(), order.getOrganization(), null,
+          amount.toPlainString(), order.getOrderDate(), paymentOrganization, null,
           paymentScheduleDetailList, paymentScheduleDetailAmount, false, false, order.getCurrency(),
           BigDecimal.ZERO, BigDecimal.ZERO);
     } else {
@@ -1526,6 +1523,7 @@ public class CancelAndReplaceUtils {
             lastRemainingPSD.getAmount(), false);
       }
     }
+
     return _nettingPayment;
   }
 

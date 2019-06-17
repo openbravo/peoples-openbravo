@@ -28,7 +28,7 @@ isc.OBSectionItem.addProperties({
   // visual state of disabled or non-disabled stays the same now
   showDisabled: false,
 
-  // some defaults, note if this changes then also the 
+  // some defaults, note if this changes then also the
   // field generation logic needs to be checked
   colSpan: 4,
   startRow: true,
@@ -38,16 +38,16 @@ isc.OBSectionItem.addProperties({
 
   alwaysTakeSpace: false,
 
-  click: function () {
+  click: function() {
     this.focusInItem();
 
     var ret = this.Super('click', arguments);
     return ret;
   },
 
-  setSectionItemInContent: function (form) {
+  setSectionItemInContent: function(form) {
     var i = 0,
-        length = this.itemIds.length;
+      length = this.itemIds.length;
     for (i = 0; i < length; i++) {
       if (form.getItem(this.itemIds[i])) {
         form.getItem(this.itemIds[i]).section = this;
@@ -56,15 +56,17 @@ isc.OBSectionItem.addProperties({
   },
 
   // never disable a section item
-  isDisabled: function () {
+  isDisabled: function() {
     return false;
   },
 
   // Update the property alwaysTakeSpace when collapsing/expanding a section
   // Note: The hidden fields are not updated, they always have alwaysTakeSpace to false
-  updateAlwaysTakeSpace: function (flag) {
-    var i, f = this.form,
-        item, length = this.itemIds.length;
+  updateAlwaysTakeSpace: function(flag) {
+    var i,
+      f = this.form,
+      item,
+      length = this.itemIds.length;
 
     for (i = 0; i < length; i++) {
       item = f.getItem(this.itemIds[i]);
@@ -83,14 +85,14 @@ isc.OBSectionItem.addProperties({
     }
   },
 
-  collapseSection: function (preventFocusChange) {
+  collapseSection: function(preventFocusChange) {
     this.updateAlwaysTakeSpace(false);
 
     var ret = this.Super('collapseSection', arguments);
     return ret;
   },
 
-  expandSection: function () {
+  expandSection: function() {
     this.updateAlwaysTakeSpace(true);
 
     // force the focus to be set in this item when it is expanded
@@ -99,10 +101,14 @@ isc.OBSectionItem.addProperties({
     return ret;
   },
 
-  showIf: function (item, value, form, values) {
+  showIf: function(item, value, form, values) {
     var i, field, length;
 
-    if (!this.itemIds || item.hiddenInForm === true || item.displayed === false) {
+    if (
+      !this.itemIds ||
+      item.hiddenInForm === true ||
+      item.displayed === false
+    ) {
       this.updateAlwaysTakeSpace(false); // To avoid an empty space if the section is not shown
       return false;
     }

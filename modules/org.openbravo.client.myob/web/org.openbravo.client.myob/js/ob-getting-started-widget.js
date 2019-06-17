@@ -23,11 +23,25 @@
 //
 isc.defineClass('OBGettingStartedWidget', isc.OBWidget).addProperties({
   contentSource: null,
-  widgetContentUrl: '//butler.openbravo.com/heartbeat-server/org.openbravo.butler.communitybranding/CommunityBranding.html' + '?uimode=gettingStarted&language=' + OB.Application.language_string,
-  createWindowContents: function () {
+  widgetContentUrl:
+    '//butler.openbravo.com/heartbeat-server/org.openbravo.butler.communitybranding/CommunityBranding.html' +
+    '?uimode=gettingStarted&language=' +
+    OB.Application.language_string,
+  createWindowContents: function() {
     var loc = document.location;
 
-    this.contentSource = this.widgetContentUrl + '&appurl=' + encodeURIComponent(loc.protocol + '//' + loc.hostname + (loc.port ? ':' + loc.port : '') + OB.Application.contextUrl) + '&nocache=' + Math.random();
+    this.contentSource =
+      this.widgetContentUrl +
+      '&appurl=' +
+      encodeURIComponent(
+        loc.protocol +
+          '//' +
+          loc.hostname +
+          (loc.port ? ':' + loc.port : '') +
+          OB.Application.contextUrl
+      ) +
+      '&nocache=' +
+      Math.random();
 
     return isc.HTMLFlow.create({
       contentsType: 'page',
@@ -36,7 +50,7 @@ isc.defineClass('OBGettingStartedWidget', isc.OBWidget).addProperties({
       width: '100%'
     });
   },
-  refresh: function () {
+  refresh: function() {
     this.windowContents.setContentsURL(this.contentSource);
   }
 });

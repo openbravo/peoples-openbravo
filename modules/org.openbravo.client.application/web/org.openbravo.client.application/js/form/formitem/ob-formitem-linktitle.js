@@ -26,8 +26,14 @@ isc.OBLinkTitleItem.addInterfaceProperties({
   operator: 'iContains',
   showLinkIcon: true,
 
-  linkButtonClick: function () {
+  linkButtonClick: function() {
     var sourceWindow = this.form.view.standardWindow.windowId;
-    OB.Utilities.openDirectView(sourceWindow, this.refColumnName, this.targetEntity, this.getValue(), this.id);
+    OB.Utilities.openDirectView(
+      sourceWindow,
+      this.refColumnName,
+      this.targetEntity,
+      this.getValue(),
+      this.id
+    );
   }
 });

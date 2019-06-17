@@ -26,7 +26,6 @@ isc.ClassFactory.defineClass('OBQuickRun', isc.ImgButton);
 // click mask concept.
 // The OBQuickRun extends from the Smartclient Button.
 isc.OBQuickRun.addClassProperties({
-
   // ** {{{ currentQuickRun }}} **
   // The current OBQuickRun widget which is expanded (or null if none is
   // expanded).
@@ -35,8 +34,11 @@ isc.OBQuickRun.addClassProperties({
   // ** {{{ hide }}} **
   // Class method which hides the one visible quick run widget layout (if one is
   // expanded).
-  hide: function () {
-    if (isc.OBQuickRun.currentQuickRun && isc.OBQuickRun.currentQuickRun.showing) {
+  hide: function() {
+    if (
+      isc.OBQuickRun.currentQuickRun &&
+      isc.OBQuickRun.currentQuickRun.showing
+    ) {
       var tempQuickRun = isc.OBQuickRun.currentQuickRun;
       this.currentQuickRun = null;
       tempQuickRun.doHide();
@@ -46,7 +48,6 @@ isc.OBQuickRun.addClassProperties({
 
 // = OBQuickRun Properties =
 isc.OBQuickRun.addProperties({
-
   autoFit: true,
   imageType: 'center',
   showRollOver: false,
@@ -72,39 +73,43 @@ isc.OBQuickRun.addProperties({
 
   selectedHideLayout: null,
 
-  draw: function () {
+  draw: function() {
     var me = this,
-        ksAction;
+      ksAction;
 
     if (!this.keyboardShortcutId) {
       return this.Super('draw', arguments);
     }
 
-    ksAction = function () {
+    ksAction = function() {
       me.getLayoutContainer().setStyleName('OBNavBarComponentSelected');
       if (!me.showing) {
         isc.EH.clickMaskClick();
       }
-      setTimeout(function () {
+      setTimeout(function() {
         me.click();
       }, 10); //setTimeout to avoid delayCall function that manages the focus
       return false; //To avoid keyboard shortcut propagation
     };
 
-    OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction);
+    OB.KeyboardManager.Shortcuts.set(
+      this.keyboardShortcutId,
+      'Canvas',
+      ksAction
+    );
     this.Super('draw', arguments);
   },
 
   // ** {{{ initWidget }}} **
   // Creates the layout (invisible as a default).
-  initWidget: function () {
+  initWidget: function() {
     // Always call the superclass implementation when overriding initWidget
     this.Super('initWidget', arguments);
 
     this.computeSetContent();
   },
 
-  computeSetContent: function () {
+  computeSetContent: function() {
     // set some defaults
     var defaultLayoutProperties = {
       styleName: 'OBFlyoutLayout',
@@ -118,7 +123,8 @@ isc.OBQuickRun.addProperties({
     if (this.members) {
       defaultLayoutProperties.members = this.members;
       var computedHeight = 0,
-          i, length = this.members.length;
+        i,
+        length = this.members.length;
       for (i = 0; i < length; i++) {
         if (this.members[i].height) {
           computedHeight = computedHeight + this.members[i].height;
@@ -129,7 +135,11 @@ isc.OBQuickRun.addProperties({
 
     // set the properties which are used, override by user set properties
     var usedLayoutProperties = {};
-    isc.addProperties(usedLayoutProperties, defaultLayoutProperties, this.layoutProperties);
+    isc.addProperties(
+      usedLayoutProperties,
+      defaultLayoutProperties,
+      this.layoutProperties
+    );
 
     // create the layout
     if (!this.layout) {
@@ -139,7 +149,7 @@ isc.OBQuickRun.addProperties({
     // this.showOverCanvas = true;
   },
 
-  resetLayout: function () {
+  resetLayout: function() {
     if (this.layout) {
       this.layout.destroy();
       this.layout = null;
@@ -148,7 +158,7 @@ isc.OBQuickRun.addProperties({
 
   // ** {{{ click }}} **
   // clicking the button shows or hides the layout.
-  click: function () {
+  click: function() {
     if (this.showing) {
       this.doHide();
       return false;
@@ -159,13 +169,13 @@ isc.OBQuickRun.addProperties({
 
   // 16012: Double click and single click on nav bar flyouts are treated the same
   // https://issues.openbravo.com/view.php?id=16012
-  doubleClick: function () {
+  doubleClick: function() {
     this.click();
   },
 
   // ** {{{ keyPress }}} **
   // handle the escape and enter keys, these should hide the layout.
-  keyPress: function () {
+  keyPress: function() {
     var key = isc.EventHandler.getKey();
     if (key === 'Escape' || key === 'Enter') {
       if (isc.OBQuickRun.currentQuickRun) {
@@ -177,7 +187,7 @@ isc.OBQuickRun.addProperties({
 
   // ** {{{ doShow }}} **
   // Called to actually show the layout.
-  doShow: function () {
+  doShow: function() {
     // start with clean form values
     // if (this.layout) {
     // for (var i=0; i < this.layout.members.length; i++) {
@@ -200,7 +210,11 @@ isc.OBQuickRun.addProperties({
 
     this.layout.placeNear(left, top);
 
-    isc.OBQuickRun.clickMask = this.showClickMask('isc.OBQuickRun.hide()', 'soft', [this, this.layout]);
+    isc.OBQuickRun.clickMask = this.showClickMask(
+      'isc.OBQuickRun.hide()',
+      'soft',
+      [this, this.layout]
+    );
 
     this.layout.show();
 
@@ -214,7 +228,8 @@ isc.OBQuickRun.addProperties({
       styleName: 'OBNavBarComponentHideLine',
       height: 3,
       width: layoutContainer.getVisibleWidth() - 2,
-      top: layoutContainer.getPageTop() + layoutContainer.getVisibleHeight() - 1,
+      top:
+        layoutContainer.getPageTop() + layoutContainer.getVisibleHeight() - 1,
       left: this.getLeftPosition() + 1,
       overflow: 'hidden'
     });
@@ -224,11 +239,11 @@ isc.OBQuickRun.addProperties({
     this.showing = true;
   },
 
-  getLayoutContainer: function () {
+  getLayoutContainer: function() {
     return this.parentElement;
   },
 
-  getLeftPosition: function () {
+  getLeftPosition: function() {
     return this.parentElement.getPageLeft();
   },
 
@@ -236,22 +251,22 @@ isc.OBQuickRun.addProperties({
   // Intended to be overridden, is called just before the layout.show()
   // method
   // is called.
-  beforeShow: function () {},
+  beforeShow: function() {},
 
   //** {{{ setExecutingAction }}} **
   // We are opening the quick run or hiding it, remember it during 100ms not
   // to try to open it again at the same time
-  setExecutingAction: function () {
+  setExecutingAction: function() {
     var me = this;
     this.executingAction = true;
-    setTimeout(function () {
+    setTimeout(function() {
       delete me.executingAction;
     }, 100);
   },
 
   // ** {{{ doHide }}} **
   // Hide the expanded layout.
-  doHide: function () {
+  doHide: function() {
     var me = this;
     this.hideClickMask();
     this.layout.hide();
@@ -275,12 +290,14 @@ isc.OBQuickRun.addProperties({
       // working (they do not if focus is in browser). This is needed to be done
       // with some delay in order to prevent enter key on drop down to be triggered
       // on this new element (see issue #25910)
-      setTimeout(function () {
+      setTimeout(function() {
         me.focusOnHide.focus();
       }, 50);
     }
 
-    if (typeof OB.MainView.TabSet.getSelectedTab().pane.tabSelected === 'function') {
+    if (
+      typeof OB.MainView.TabSet.getSelectedTab().pane.tabSelected === 'function'
+    ) {
       OB.MainView.TabSet.getSelectedTab().pane.tabSelected();
     }
   }

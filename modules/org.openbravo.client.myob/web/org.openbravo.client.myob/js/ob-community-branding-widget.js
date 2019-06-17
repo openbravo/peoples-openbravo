@@ -27,12 +27,12 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
   versionText: OB.Application.versionDescription,
   headerLabel: null,
 
-  createWindowContents: function () {
+  createWindowContents: function() {
     var layout = isc.VStack.create({
       height: '100%',
       width: '100%',
       styleName: '',
-      resizeTo: function () {
+      resizeTo: function() {
         var emptySize;
         if (this.separator) {
           emptySize = Math.round((this.width - 155) / 2);
@@ -55,35 +55,41 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
      * The following LAB.wait(callback) call does not reliably call the callout in case no
      * internet connection is present (so schedule timeout to use local fallback content after 10s)
      */
-    var timerNoInternet = setTimeout(function () {
+    var timerNoInternet = setTimeout(function() {
       me.setOBContent(false);
     }, 10000);
-    $LAB.script(document.location.protocol + OB.Application.butlerUtilsUrl).wait(function () {
-      haveInternet = (typeof internetConnection !== 'undefined');
-      // callback did fire so clear timer as its no longer needed
-      clearTimeout(timerNoInternet);
+    $LAB
+      .script(document.location.protocol + OB.Application.butlerUtilsUrl)
+      .wait(function() {
+        haveInternet = typeof internetConnection !== 'undefined';
+        // callback did fire so clear timer as its no longer needed
+        clearTimeout(timerNoInternet);
 
-      if (haveInternet) {
-        var communityBrandingUrl = OB.Application.communityBrandingUrl;
-        me.setOBContent(haveInternet, communityBrandingUrl);
-      } else {
-        me.setOBContent(false);
-      }
-    });
+        if (haveInternet) {
+          var communityBrandingUrl = OB.Application.communityBrandingUrl;
+          me.setOBContent(haveInternet, communityBrandingUrl);
+        } else {
+          me.setOBContent(false);
+        }
+      });
 
     return layout;
   },
 
-  setOBContent: function (haveInternet, communityBrandingUrl) {
-    var url, params = {},
-        emptySize, toolTip, purposeStack;
+  setOBContent: function(haveInternet, communityBrandingUrl) {
+    var url,
+      params = {},
+      emptySize,
+      toolTip,
+      purposeStack;
 
     if (haveInternet) {
       url = document.location.protocol + communityBrandingUrl;
     } else {
-      url = OB.Application.contextUrl + OB.Application.communityBrandingStaticUrl;
+      url =
+        OB.Application.contextUrl + OB.Application.communityBrandingStaticUrl;
       params = {
-        'uimode': 'MyOB'
+        uimode: 'MyOB'
       };
     }
 
@@ -138,7 +144,7 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
     layout.addMember(content);
   },
 
-  update: function () {
+  update: function() {
     //FIXME: too expensive
     OB.MyOB.reloadWidgets();
     //    this.versionLabel.clear();
@@ -147,7 +153,7 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
     //    this.versionLabel.draw();
   },
 
-  getPurposeStyleClass: function () {
+  getPurposeStyleClass: function() {
     var purposeCode = OB.Application.purpose;
     if (purposeCode === 'D') {
       return 'OBWidgetCommunityBrandingDevelopment';
@@ -162,8 +168,7 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
     }
   },
 
-  confirmedClosePortlet: function (ok) {
-
+  confirmedClosePortlet: function(ok) {
     if (!ok) {
       this.Super('confirmedClosePortlet', arguments);
       return;
@@ -174,12 +179,21 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
       return;
     }
 
-    if (OB.Application.licenseType === 'C' || OB.Application.isTrial || OB.Application.isGolden) {
-      isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBKMO_ActivateMessage')]), {
-        isModal: true,
-        showModalMask: true,
-        toolbarButtons: [isc.Dialog.OK]
-      });
+    if (
+      OB.Application.licenseType === 'C' ||
+      OB.Application.isTrial ||
+      OB.Application.isGolden
+    ) {
+      isc.warn(
+        OB.I18N.getLabel('OBUIAPP_ActivateMessage', [
+          OB.I18N.getLabel('OBKMO_ActivateMessage')
+        ]),
+        {
+          isModal: true,
+          showModalMask: true,
+          toolbarButtons: [isc.Dialog.OK]
+        }
+      );
       return;
     }
     this.Super('confirmedClosePortlet', arguments);

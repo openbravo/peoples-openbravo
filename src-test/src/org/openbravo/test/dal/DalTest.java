@@ -206,7 +206,7 @@ public class DalTest extends OBBaseTest {
    */
   @Test
   public void testGUpdateCurrencyByAdmin() {
-    setTestAdminContext();
+    setSystemAdministratorContext();
     Currency c = null;
     String prevDescription = null;
     String newDescription = null;

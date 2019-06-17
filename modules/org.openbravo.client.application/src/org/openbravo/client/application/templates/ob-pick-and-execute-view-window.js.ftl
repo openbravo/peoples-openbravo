@@ -12,14 +12,13 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 -->
 
-/*jslint*/
 <#if !data.popup>
 OB.Layout.ViewManager.loadedWindowClassName = 'processDefinition${data.windowClientClassName?js_string}';
 </#if>

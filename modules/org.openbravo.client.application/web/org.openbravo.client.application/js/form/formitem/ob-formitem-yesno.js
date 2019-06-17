@@ -27,7 +27,7 @@ isc.OBYesNoItem.addProperties({
 
   // solves:
   // https://issues.openbravo.com/view.php?id=18592
-  setValue: function (value) {
+  setValue: function(value) {
     if (value === 'true') {
       this.Super('setValue', [true]);
     } else if (value === 'false') {
@@ -37,7 +37,7 @@ isc.OBYesNoItem.addProperties({
     }
   },
 
-  handleEditorExit: function () {
+  handleEditorExit: function() {
     if (this.isBeingDestroyed) {
       return;
     } else {
@@ -46,8 +46,9 @@ isc.OBYesNoItem.addProperties({
   },
 
   // is needed because addUnknownValues is false
-  isUnknownValue: function (enteredValue) {
-    var i, vm = this.getValueMap();
+  isUnknownValue: function(enteredValue) {
+    var i,
+      vm = this.getValueMap();
     if (vm !== null) {
       for (i = 0; i < vm.length; i++) {
         if (enteredValue === this.mapValueToDisplay(vm[i])) {
@@ -58,18 +59,26 @@ isc.OBYesNoItem.addProperties({
     return this.Super('isUnknownValue', arguments);
   },
 
-  mapValueToDisplay: function (value, a, b, c) {
+  mapValueToDisplay: function(value, a, b, c) {
     return OB.Utilities.getYesNoDisplayValue(value);
   },
-  formatPickListValue: function (value, record, field, rowNum, colNum) {
+  formatPickListValue: function(value, record, field, rowNum, colNum) {
     return OB.Utilities.getYesNoDisplayValue(value);
   },
 
-  getCriterion: function () {
+  getCriterion: function() {
     var criterion = this.Super('getCriterion', arguments);
-    if (criterion && criterion.value && criterion.value === OB.I18N.labels.OBUIAPP_Yes) {
+    if (
+      criterion &&
+      criterion.value &&
+      criterion.value === OB.I18N.labels.OBUIAPP_Yes
+    ) {
       criterion.value = true;
-    } else if (criterion && criterion.value && criterion.value === OB.I18N.labels.OBUIAPP_No) {
+    } else if (
+      criterion &&
+      criterion.value &&
+      criterion.value === OB.I18N.labels.OBUIAPP_No
+    ) {
       criterion.value = false;
     }
     return criterion;

@@ -21,8 +21,7 @@
 //
 // Manages the keyboard shortcuts which are used to open flyouts, menus etc.
 //
-(function (OB, isc) {
-
+(function(OB, isc) {
   if (!OB || !isc) {
     throw {
       name: 'ReferenceError',
@@ -36,12 +35,11 @@
   function KeyboardManager() {}
 
   KeyboardManager.prototype = {
-
     Shortcuts: {
-
-      setPredefinedList: function (RefList) {
-        var i, list = [],
-            length;
+      setPredefinedList: function(RefList) {
+        var i,
+          list = [],
+          length;
 
         list = OB.PropertyStore.get(RefList);
         if (list) {
@@ -52,7 +50,7 @@
         }
       },
 
-      set: function (id, execLevel, action, funcParam, keyComb) {
+      set: function(id, execLevel, action, funcParam, keyComb) {
         if (typeof id === 'undefined' || id === null) {
           return false;
         }
@@ -134,99 +132,99 @@
                 this.list[position].keyComb.text += '+';
               }
               switch (keyComb.key) {
-              case 'f1':
-                keyComb.key = 'F1';
-                break;
-              case 'f2':
-                keyComb.key = 'F2';
-                break;
-              case 'f3':
-                keyComb.key = 'F3';
-                break;
-              case 'f4':
-                keyComb.key = 'F4';
-                break;
-              case 'f5':
-                keyComb.key = 'F5';
-                break;
-              case 'f6':
-                keyComb.key = 'F6';
-                break;
-              case 'f7':
-                keyComb.key = 'F7';
-                break;
-              case 'f8':
-                keyComb.key = 'F8';
-                break;
-              case 'f9':
-                keyComb.key = 'F9';
-                break;
-              case 'f10':
-                keyComb.key = 'F10';
-                break;
-              case 'f11':
-                keyComb.key = 'F11';
-                break;
-              case 'f12':
-                keyComb.key = 'F12';
-                break;
-              case 'I':
-                keyComb.key = 'i';
-                break; //Special case to ensure 'I' is different than 'l'
-              case 'Space':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_SpaceKey');
-                break;
-              case 'Tab':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_TabKey');
-                break;
-              case 'Enter':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_EnterKey');
-                break;
-              case 'Escape':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_EscKey');
-                break;
-              case 'Backspace':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_BackspaceKey');
-                break;
-              case 'Insert':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_InsKey');
-                break;
-              case 'Delete':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_DelKey');
-                break;
-              case 'Arrow_Up':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_ArrowUpKey');
-                break;
-              case 'Arrow_Down':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_ArrowDownKey');
-                break;
-              case 'Arrow_Left':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_ArrowLeftKey');
-                break;
-              case 'Arrow_Right':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_ArrowRightKey');
-                break;
-              case 'Home':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_HomeKey');
-                break;
-              case 'End':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_EndKey');
-                break;
-              case 'Page_Up':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_PgUpKey');
-                break;
-              case 'Page_Down':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_PgDnKey');
-                break;
-              case 'Shift':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_ShiftKey');
-                break;
-              case 'Ctrl':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_CtrlKey');
-                break;
-              case 'Alt':
-                keyComb.key = OB.I18N.getLabel('OBUIAPP_AltKey');
-                break;
+                case 'f1':
+                  keyComb.key = 'F1';
+                  break;
+                case 'f2':
+                  keyComb.key = 'F2';
+                  break;
+                case 'f3':
+                  keyComb.key = 'F3';
+                  break;
+                case 'f4':
+                  keyComb.key = 'F4';
+                  break;
+                case 'f5':
+                  keyComb.key = 'F5';
+                  break;
+                case 'f6':
+                  keyComb.key = 'F6';
+                  break;
+                case 'f7':
+                  keyComb.key = 'F7';
+                  break;
+                case 'f8':
+                  keyComb.key = 'F8';
+                  break;
+                case 'f9':
+                  keyComb.key = 'F9';
+                  break;
+                case 'f10':
+                  keyComb.key = 'F10';
+                  break;
+                case 'f11':
+                  keyComb.key = 'F11';
+                  break;
+                case 'f12':
+                  keyComb.key = 'F12';
+                  break;
+                case 'I':
+                  keyComb.key = 'i';
+                  break; //Special case to ensure 'I' is different than 'l'
+                case 'Space':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_SpaceKey');
+                  break;
+                case 'Tab':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_TabKey');
+                  break;
+                case 'Enter':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_EnterKey');
+                  break;
+                case 'Escape':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_EscKey');
+                  break;
+                case 'Backspace':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_BackspaceKey');
+                  break;
+                case 'Insert':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_InsKey');
+                  break;
+                case 'Delete':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_DelKey');
+                  break;
+                case 'Arrow_Up':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_ArrowUpKey');
+                  break;
+                case 'Arrow_Down':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_ArrowDownKey');
+                  break;
+                case 'Arrow_Left':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_ArrowLeftKey');
+                  break;
+                case 'Arrow_Right':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_ArrowRightKey');
+                  break;
+                case 'Home':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_HomeKey');
+                  break;
+                case 'End':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_EndKey');
+                  break;
+                case 'Page_Up':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_PgUpKey');
+                  break;
+                case 'Page_Down':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_PgDnKey');
+                  break;
+                case 'Shift':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_ShiftKey');
+                  break;
+                case 'Ctrl':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_CtrlKey');
+                  break;
+                case 'Alt':
+                  keyComb.key = OB.I18N.getLabel('OBUIAPP_AltKey');
+                  break;
               }
               this.list[position].keyComb.text += keyComb.key;
             }
@@ -234,7 +232,7 @@
         }
       },
 
-      remove: function (id) {
+      remove: function(id) {
         var position = this.getProperty('position', id, 'id');
         if (position === null) {
           return false;
@@ -242,28 +240,46 @@
         delete this.list[position];
       },
 
-      getProperty: function (property, element, searchPattern) {
-        var i, position = null,
-            length = this.list.length;
+      getProperty: function(property, element, searchPattern) {
+        var i,
+          position = null,
+          length = this.list.length;
         for (i = 0; i < length; i++) {
           if (typeof this.list[i] === 'undefined') {
             break;
           }
           if (searchPattern === 'id' && this.list[i].id === element) {
             position = i;
-          } else if (searchPattern === 'execLevel' && this.list[i].execLevel === element) {
+          } else if (
+            searchPattern === 'execLevel' &&
+            this.list[i].execLevel === element
+          ) {
             position = i;
-          } else if (searchPattern === 'keyComb' && this.list[i].keyComb.ctrl === element.ctrl && this.list[i].keyComb.alt === element.alt && this.list[i].keyComb.shift === element.shift && this.list[i].keyComb.key === element.key) {
+          } else if (
+            searchPattern === 'keyComb' &&
+            this.list[i].keyComb.ctrl === element.ctrl &&
+            this.list[i].keyComb.alt === element.alt &&
+            this.list[i].keyComb.shift === element.shift &&
+            this.list[i].keyComb.key === element.key
+          ) {
             position = i;
-          } else if (searchPattern === 'action' && this.list[i].action === element) {
+          } else if (
+            searchPattern === 'action' &&
+            this.list[i].action === element
+          ) {
             position = i;
           }
         }
         if (position !== null) {
           if (property === 'position') {
             return position;
-          } else if (property.indexOf('keyComb.') === 0 && this.list[position].keyComb[property.substring(8, property.length)]) {
-            return this.list[position].keyComb[property.substring(8, property.length)];
+          } else if (
+            property.indexOf('keyComb.') === 0 &&
+            this.list[position].keyComb[property.substring(8, property.length)]
+          ) {
+            return this.list[position].keyComb[
+              property.substring(8, property.length)
+            ];
           } else if (this.list[position][property]) {
             return this.list[position][property];
           }
@@ -272,24 +288,32 @@
         }
       },
 
-      execute: function (position, caller) {
-        if (this.list[position].action !== null && typeof this.list[position].action === 'function') {
-          return this.list[position].action(caller, this.list[position].funcParam);
+      execute: function(position, caller) {
+        if (
+          this.list[position].action !== null &&
+          typeof this.list[position].action === 'function'
+        ) {
+          return this.list[position].action(
+            caller,
+            this.list[position].funcParam
+          );
         } else {
           return true;
         }
       },
 
-      getList: function () {
+      getList: function() {
         return this.list;
       },
 
       isSpacePressed: false,
 
-      monitor: function (execLevel, caller) {
-        var i, j, length = this.list.length,
-            position = null,
-            pushedKS = {};
+      monitor: function(execLevel, caller) {
+        var i,
+          j,
+          length = this.list.length,
+          position = null,
+          pushedKS = {};
         pushedKS.ctrl = false;
         pushedKS.alt = false;
         pushedKS.shift = false;
@@ -318,7 +342,14 @@
           }
           if (this.list[i].execLevel) {
             for (j = 0; j < this.list[i].execLevel.length; j++) {
-              if (this.list[i].execLevel[j] === execLevel && this.list[i].keyComb.ctrl === pushedKS.ctrl && this.list[i].keyComb.alt === pushedKS.alt && this.list[i].keyComb.shift === pushedKS.shift && this.list[i].keyComb.space === pushedKS.space && this.list[i].keyComb.key === pushedKS.key) {
+              if (
+                this.list[i].execLevel[j] === execLevel &&
+                this.list[i].keyComb.ctrl === pushedKS.ctrl &&
+                this.list[i].keyComb.alt === pushedKS.alt &&
+                this.list[i].keyComb.shift === pushedKS.shift &&
+                this.list[i].keyComb.space === pushedKS.space &&
+                this.list[i].keyComb.key === pushedKS.key
+              ) {
                 position = i;
                 break;
               }
@@ -339,7 +370,6 @@
 
       list: []
     }
-
   };
 
   // Initialize KeyboardManager object
@@ -347,14 +377,18 @@
 
   // To fix issue https://issues.openbravo.com/view.php?id=21786
   isc.ComboBoxItem.getPrototype()._originalKeyDown = isc.ComboBoxItem.getPrototype().keyDown;
-  isc.ComboBoxItem.getPrototype().keyDown = function () {
+  isc.ComboBoxItem.getPrototype().keyDown = function() {
     var actionObject = {
-      target: this,
-      method: this._originalKeyDown,
-      parameters: arguments
-    },
-        response = OB.Utilities.callAction(actionObject),
-        isEscape = isc.EH.getKey() === 'Escape' && !isc.EH.ctrlKeyDown() && !isc.EH.altKeyDown() && !isc.EH.shiftKeyDown();
+        target: this,
+        method: this._originalKeyDown,
+        parameters: arguments
+      },
+      response = OB.Utilities.callAction(actionObject),
+      isEscape =
+        isc.EH.getKey() === 'Escape' &&
+        !isc.EH.ctrlKeyDown() &&
+        !isc.EH.altKeyDown() &&
+        !isc.EH.shiftKeyDown();
 
     if (isEscape && this.isPickListShown()) {
       this.hidePicker();
@@ -369,17 +403,22 @@
 
   /* isc.Page.setEvent('keyPress', 'OB.KeyboardManager.Shortcuts.monitor('Canvas')'); // Discart due to Chrome event propagation problems http://forums.smartclient.com/showthread.php?p=65578 */
   isc.Canvas.getPrototype()._originalKeyDown = isc.Canvas.getPrototype().keyDown;
-  isc.Canvas.getPrototype().keyDown = function () {
+  isc.Canvas.getPrototype().keyDown = function() {
     var actionObject = {
-      target: this,
-      method: this._originalKeyDown,
-      parameters: arguments
-    },
-        response;
+        target: this,
+        method: this._originalKeyDown,
+        parameters: arguments
+      },
+      response;
 
     // Special case to avoid "BACKSPACE" key resulting in a browser shortcut that performs a browser history "Go back".
     // Issue: https://issues.openbravo.com/view.php?id=21776
-    if (isc.EH.getKey() === 'Backspace' && !isc.EH.ctrlKeyDown() && !isc.EH.altKeyDown() && !isc.EH.shiftKeyDown()) {
+    if (
+      isc.EH.getKey() === 'Backspace' &&
+      !isc.EH.ctrlKeyDown() &&
+      !isc.EH.altKeyDown() &&
+      !isc.EH.shiftKeyDown()
+    ) {
       if (!O.KeyboardManager.Shortcuts.isOrigWindowOnKeyDownSet) {
         var avoidBackspace, restoreOriginals;
 
@@ -387,14 +426,23 @@
         O.KeyboardManager.Shortcuts.origWindowOnKeyDown = window.onkeydown;
         O.KeyboardManager.Shortcuts.origWindowOnKeyUp = window.onkeyup;
 
-        avoidBackspace = function (e) {
+        avoidBackspace = function(e) {
           var activeElement;
           if (e.keyCode === 8) {
             activeElement = document.activeElement;
-            if (activeElement && activeElement.getAttribute('contenteditable') && activeElement.getAttribute('contenteditable').toString() === 'true') {
+            if (
+              activeElement &&
+              activeElement.getAttribute('contenteditable') &&
+              activeElement.getAttribute('contenteditable').toString() ===
+                'true'
+            ) {
               // 'contenteditable' is a HTML5 attribute that allows edit the content. Used by RichTextCanvas in some browsers (for example: IE10).
               return true;
-            } else if (activeElement && (activeElement.tagName.toLowerCase() === 'div' || activeElement.tagName.toLowerCase() === 'body')) {
+            } else if (
+              activeElement &&
+              (activeElement.tagName.toLowerCase() === 'div' ||
+                activeElement.tagName.toLowerCase() === 'body')
+            ) {
               return false;
             } else {
               return true;
@@ -404,7 +452,7 @@
           }
         };
 
-        restoreOriginals = function (e) {
+        restoreOriginals = function(e) {
           window.onkeydown = O.KeyboardManager.Shortcuts.origWindowOnKeyDown;
           window.onkeyup = O.KeyboardManager.Shortcuts.origWindowOnKeyUp;
           O.KeyboardManager.Shortcuts.isOrigWindowOnKeyDownSet = false;
@@ -418,14 +466,15 @@
       OB.KeyboardManager.Shortcuts.isSpacePressed = true;
     }
     response = OB.KeyboardManager.Shortcuts.monitor('Canvas', this);
-    if (response !== false) { // To ensure that if a previous keyDown was set in the Canvas it is executed if the action KeyboardManager.action should be propagated
+    if (response !== false) {
+      // To ensure that if a previous keyDown was set in the Canvas it is executed if the action KeyboardManager.action should be propagated
       response = OB.Utilities.callAction(actionObject);
     }
     return response;
   };
 
   isc.Canvas.getPrototype()._originalKeyUp = isc.Canvas.getPrototype().keyUp;
-  isc.Canvas.getPrototype().keyUp = function () {
+  isc.Canvas.getPrototype().keyUp = function() {
     var actionObject = {
       target: this,
       method: this._originalKeyUp,
@@ -436,5 +485,4 @@
     }
     return OB.Utilities.callAction(actionObject);
   };
-
-}(OB, isc));
+})(OB, isc);

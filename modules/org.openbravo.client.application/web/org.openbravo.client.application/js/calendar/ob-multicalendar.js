@@ -38,12 +38,12 @@ isc.OBMultiCalendarLegendGroupElement.addProperties({
   checked: true,
   overflow: 'hidden',
   nodes: [],
-  show: function () {
+  show: function() {
     this.Super('show', arguments);
     this.updateCheckboxValue();
     this.updateChildsVisibility();
   },
-  updateChildsVisibility: function () {
+  updateChildsVisibility: function() {
     var i;
     for (i = 0; i < this.nodes.length; i++) {
       if (this.checked) {
@@ -54,9 +54,9 @@ isc.OBMultiCalendarLegendGroupElement.addProperties({
     }
   },
   // Change action of tree button (opened/closed state)
-  changedTree: function (value) {
+  changedTree: function(value) {
     var calendarData = this.multiCalendar.calendarData,
-        i;
+      i;
     for (i = 0; i < calendarData.calendarGroups.length; i++) {
       if (calendarData.calendarGroups[i].id === this.id) {
         this.checked = value;
@@ -66,9 +66,9 @@ isc.OBMultiCalendarLegendGroupElement.addProperties({
     this.updateChildsVisibility();
   },
   // Refresh the checkbox state based on nodes state
-  updateCheckboxValue: function () {
+  updateCheckboxValue: function() {
     var status = '',
-        i; // true, all nodes are true -- false, all nodes are false -- null, are mixed nodes states -- '' is the starting point
+      i; // true, all nodes are true -- false, all nodes are false -- null, are mixed nodes states -- '' is the starting point
     for (i = 0; i < this.nodes.length; i++) {
       if (this.nodes[i].checked) {
         if (status === '') {
@@ -89,13 +89,18 @@ isc.OBMultiCalendarLegendGroupElement.addProperties({
     }
   },
   // Programatically set the checkbox value
-  setCheckboxValue: function (value, updateParent, refreshCalendar, updateNodes) {
+  setCheckboxValue: function(
+    value,
+    updateParent,
+    refreshCalendar,
+    updateNodes
+  ) {
     this.members[1].items[0].setValue(value);
     this.doAfterCheckboxChange(updateParent, refreshCalendar, updateNodes);
   },
-  doAfterCheckboxChange: function (updateParent, refreshCalendar, updateNodes) {
+  doAfterCheckboxChange: function(updateParent, refreshCalendar, updateNodes) {
     var value = this.members[1].items[0].getValue(),
-        i;
+      i;
     if (updateNodes) {
       for (i = 0; i < this.nodes.length; i++) {
         this.nodes[i].setCheckboxValue(value, false, false);
@@ -109,7 +114,7 @@ isc.OBMultiCalendarLegendGroupElement.addProperties({
     }
   },
   // Checkbox for all/none nodes selected
-  changed: function (form, item, value) {
+  changed: function(form, item, value) {
     if (value === null) {
       // To avoid a "null" state if the user clicks in a "false" state checkbox. It jumps directly to the "true" state
       item.setValue(true);
@@ -119,8 +124,11 @@ isc.OBMultiCalendarLegendGroupElement.addProperties({
     this.Super('changed', [form, item, value]);
     form.parentElement.doAfterCheckboxChange(true, true, true);
   },
-  initWidget: function () {
-    var buttonTree, checkboxGroup, name, me = this;
+  initWidget: function() {
+    var buttonTree,
+      checkboxGroup,
+      name,
+      me = this;
     this.Super('initWidget', arguments);
     if (this.checked === 'true') {
       this.checked = true;
@@ -129,26 +137,35 @@ isc.OBMultiCalendarLegendGroupElement.addProperties({
       this.checked = false;
     }
     if (this.color) {
-      OB.Utilities.Style.addRule('.bgColor_' + this.color, 'background-color: ' + OB.Utilities.getRGBAStringFromOBColor(this.color) + ';' + 'color: ' + (OB.Utilities.getBrightFromOBColor(this.color) > 125 ? 'black' : 'white'));
+      OB.Utilities.Style.addRule(
+        '.bgColor_' + this.color,
+        'background-color: ' +
+          OB.Utilities.getRGBAStringFromOBColor(this.color) +
+          ';' +
+          'color: ' +
+          (OB.Utilities.getBrightFromOBColor(this.color) > 125
+            ? 'black'
+            : 'white')
+      );
     }
     buttonTree = isc.Layout.create({
       width: 15,
       height: 18,
       styleName: 'OBMultiCalendarLegendGroupElementTreeOpened',
       value: null,
-      initWidget: function () {
+      initWidget: function() {
         this.value = me.checked;
         this.updateIcon();
         this.Super('initWidget', arguments);
       },
-      updateIcon: function () {
+      updateIcon: function() {
         if (this.value) {
           this.setStyleName('OBMultiCalendarLegendGroupElementTreeOpened');
         } else {
           this.setStyleName('OBMultiCalendarLegendGroupElementTreeClosed');
         }
       },
-      click: function () {
+      click: function() {
         if (this.value) {
           this.value = false;
         } else {
@@ -161,19 +178,21 @@ isc.OBMultiCalendarLegendGroupElement.addProperties({
     checkboxGroup = isc.DynamicForm.create({
       width: 20,
       checked: this.checked,
-      fields: [{
-        height: 16,
-        width: 20,
-        allowEmptyValue: true,
-        showUnsetImage: true,
-        showTitle: false,
-        value: this.checked,
-        init: function () {
-          this.unsetImage = this.partialSelectedImage;
-        },
-        changed: this.changed,
-        type: 'checkbox'
-      }]
+      fields: [
+        {
+          height: 16,
+          width: 20,
+          allowEmptyValue: true,
+          showUnsetImage: true,
+          showTitle: false,
+          value: this.checked,
+          init: function() {
+            this.unsetImage = this.partialSelectedImage;
+          },
+          changed: this.changed,
+          type: 'checkbox'
+        }
+      ]
     });
     name = isc.Label.create({
       height: 10,
@@ -196,15 +215,15 @@ isc.OBMultiCalendarLegendElement.addProperties({
   checked: true,
   overflow: 'hidden',
   // Programatically set the checkbox value
-  setCheckboxValue: function (value, updateParent, refreshCalendar) {
-    value = !! value;
+  setCheckboxValue: function(value, updateParent, refreshCalendar) {
+    value = !!value;
     this.members[2].items[0].setValue(value);
     this.doAfterCheckboxChange(updateParent, refreshCalendar);
   },
-  doAfterCheckboxChange: function (updateParent, refreshCalendar) {
+  doAfterCheckboxChange: function(updateParent, refreshCalendar) {
     var value = this.members[2].items[0].getValue(),
-        calendarData = this.multiCalendar.calendarData,
-        i;
+      calendarData = this.multiCalendar.calendarData,
+      i;
     for (i = 0; i < calendarData.calendars.length; i++) {
       if (calendarData.calendars[i].id === this.id) {
         this.checked = value;
@@ -218,12 +237,16 @@ isc.OBMultiCalendarLegendElement.addProperties({
       this.multiCalendar.refreshCalendar();
     }
   },
-  changed: function (form, item, value) {
+  changed: function(form, item, value) {
     this.Super('changed', arguments);
     form.parentElement.doAfterCheckboxChange(true, true);
   },
-  initWidget: function () {
-    var leftMargin, checkbox, color, name, me = this;
+  initWidget: function() {
+    var leftMargin,
+      checkbox,
+      color,
+      name,
+      me = this;
     this.Super('initWidget', arguments);
     if (this.checked === 'true') {
       this.checked = true;
@@ -232,23 +255,34 @@ isc.OBMultiCalendarLegendElement.addProperties({
       this.checked = false;
     }
     if (this.color) {
-      OB.Utilities.Style.addRule('.bgColor_' + this.color, 'background-color: ' + OB.Utilities.getRGBAStringFromOBColor(this.color) + ';' + 'color: ' + (OB.Utilities.getBrightFromOBColor(this.color) > 125 ? 'black' : 'white'));
+      OB.Utilities.Style.addRule(
+        '.bgColor_' + this.color,
+        'background-color: ' +
+          OB.Utilities.getRGBAStringFromOBColor(this.color) +
+          ';' +
+          'color: ' +
+          (OB.Utilities.getBrightFromOBColor(this.color) > 125
+            ? 'black'
+            : 'white')
+      );
     }
     leftMargin = isc.Layout.create({
-      width: (me.parentNode ? 20 : 0),
+      width: me.parentNode ? 20 : 0,
       height: 1
     });
     checkbox = isc.DynamicForm.create({
       width: 20,
       checked: this.checked,
-      fields: [{
-        height: 16,
-        width: 20,
-        showTitle: false,
-        value: this.checked,
-        changed: this.changed,
-        type: 'checkbox'
-      }]
+      fields: [
+        {
+          height: 16,
+          width: 20,
+          showTitle: false,
+          value: this.checked,
+          changed: this.changed,
+          type: 'checkbox'
+        }
+      ]
     });
     color = isc.Layout.create({
       width: 15,
@@ -276,14 +310,15 @@ isc.OBMultiCalendarLegend.addProperties({
   overflow: 'auto',
   membersMargin: 5,
 
-  initWidget: function () {
+  initWidget: function() {
     this.multiCalendar.OBMultiCalendarLegend = this;
     this.Super('initWidget', arguments);
   },
 
-  updateMembers: function (newMembers) {
+  updateMembers: function(newMembers) {
     var calendarGroups = [],
-        i, j;
+      i,
+      j;
     if (this.members) {
       for (i = this.members.length - 1; i > -1; i--) {
         this.members[i].destroy();
@@ -292,30 +327,45 @@ isc.OBMultiCalendarLegend.addProperties({
     this.multiCalendar.eventStyles = {};
 
     // Create calendar groups
-    for (i = 0; i < this.multiCalendar.calendarData.calendarGroups.length; i++) {
-      calendarGroups.push(isc.OBMultiCalendarLegendGroupElement.create({
-        multiCalendar: this.multiCalendar,
-        name: this.multiCalendar.calendarData.calendarGroups[i].name,
-        id: this.multiCalendar.calendarData.calendarGroups[i].id,
-        checked: this.multiCalendar.calendarData.calendarGroups[i].checked,
-        nodes: []
-      }));
+    for (
+      i = 0;
+      i < this.multiCalendar.calendarData.calendarGroups.length;
+      i++
+    ) {
+      calendarGroups.push(
+        isc.OBMultiCalendarLegendGroupElement.create({
+          multiCalendar: this.multiCalendar,
+          name: this.multiCalendar.calendarData.calendarGroups[i].name,
+          id: this.multiCalendar.calendarData.calendarGroups[i].id,
+          checked: this.multiCalendar.calendarData.calendarGroups[i].checked,
+          nodes: []
+        })
+      );
     }
 
     // Add nodes to groups
     for (i = 0; i < newMembers.length; i++) {
       if (newMembers[i].calendarGroupId) {
-        for (j = 0; j < this.multiCalendar.calendarData.calendarGroups.length; j++) {
-          if (newMembers[i].calendarGroupId === this.multiCalendar.calendarData.calendarGroups[j].id) {
-            calendarGroups[j].nodes.push(isc.OBMultiCalendarLegendElement.create({
-              multiCalendar: this.multiCalendar,
-              color: newMembers[i].color,
-              name: newMembers[i].name,
-              id: newMembers[i].id,
-              //calendarGroupId: newMembers[i].calendarGroupId,
-              parentNode: calendarGroups[j],
-              checked: newMembers[i].checked
-            }));
+        for (
+          j = 0;
+          j < this.multiCalendar.calendarData.calendarGroups.length;
+          j++
+        ) {
+          if (
+            newMembers[i].calendarGroupId ===
+            this.multiCalendar.calendarData.calendarGroups[j].id
+          ) {
+            calendarGroups[j].nodes.push(
+              isc.OBMultiCalendarLegendElement.create({
+                multiCalendar: this.multiCalendar,
+                color: newMembers[i].color,
+                name: newMembers[i].name,
+                id: newMembers[i].id,
+                //calendarGroupId: newMembers[i].calendarGroupId,
+                parentNode: calendarGroups[j],
+                checked: newMembers[i].checked
+              })
+            );
           }
         }
       }
@@ -324,14 +374,16 @@ isc.OBMultiCalendarLegend.addProperties({
     // Add orphan members
     for (i = 0; i < newMembers.length; i++) {
       if (!newMembers[i].calendarGroupId) {
-        this.addMember(isc.OBMultiCalendarLegendElement.create({
-          multiCalendar: this.multiCalendar,
-          color: newMembers[i].color,
-          name: newMembers[i].name,
-          id: newMembers[i].id,
-          calendarGroupId: newMembers[i].calendarGroupId,
-          checked: newMembers[i].checked
-        }));
+        this.addMember(
+          isc.OBMultiCalendarLegendElement.create({
+            multiCalendar: this.multiCalendar,
+            color: newMembers[i].color,
+            name: newMembers[i].name,
+            id: newMembers[i].id,
+            calendarGroupId: newMembers[i].calendarGroupId,
+            checked: newMembers[i].checked
+          })
+        );
       }
     }
 
@@ -347,7 +399,8 @@ isc.OBMultiCalendarLegend.addProperties({
 
     // Save the colors
     for (i = 0; i < newMembers.length; i++) {
-      this.multiCalendar.eventStyles[newMembers[i].id] = 'bgColor_' + newMembers[i].color;
+      this.multiCalendar.eventStyles[newMembers[i].id] =
+        'bgColor_' + newMembers[i].color;
     }
 
     if (this.multiCalendar.leftControls) {
@@ -368,81 +421,114 @@ isc.OBMultiCalendarLeftControls.addProperties({
   filter: null,
   dateChooser: null,
   legend: null,
-  getFilterValueMap: function () {
+  getFilterValueMap: function() {
     var filterObj = {},
-        calendarData = this.multiCalendar.calendarData,
-        i;
+      calendarData = this.multiCalendar.calendarData,
+      i;
     for (i = 0; i < calendarData.filters.length; i++) {
       filterObj[calendarData.filters[i].id] = calendarData.filters[i].name;
     }
     return filterObj;
   },
-  getLegendValueMap: function () {
+  getLegendValueMap: function() {
     var calendarData = this.multiCalendar.calendarData,
-        legendArray = [],
-        i;
+      legendArray = [],
+      i;
     for (i = 0; i < calendarData.calendars.length; i++) {
-      if (calendarData.hasFilter === false || calendarData.calendars[i].filterId === this.filter.getValue('filter')) {
+      if (
+        calendarData.hasFilter === false ||
+        calendarData.calendars[i].filterId === this.filter.getValue('filter')
+      ) {
         legendArray.push(calendarData.calendars[i]);
       }
     }
     return legendArray;
   },
-  initWidget: function () {
-    var button, label, customFilterObj, leftControls = this,
-        currentFilter = null,
-        i;
+  initWidget: function() {
+    var button,
+      label,
+      customFilterObj,
+      leftControls = this,
+      currentFilter = null,
+      i;
     this.Super('initWidget', arguments);
     if (this.multiCalendar.calendarData.hasFilter) {
-      for (i = 0; i < leftControls.multiCalendar.calendarData.filters.length; i++) {
+      for (
+        i = 0;
+        i < leftControls.multiCalendar.calendarData.filters.length;
+        i++
+      ) {
         if (leftControls.multiCalendar.calendarData.filters[i].checked) {
           currentFilter = leftControls.multiCalendar.calendarData.filters[i].id;
           break;
         }
       }
       this.filter = isc.DynamicForm.create({
-        fields: [{
-          name: 'filter',
-          title: leftControls.multiCalendar.filterName,
-          type: 'comboBox',
-          valueMap: leftControls.getFilterValueMap(),
-          value: currentFilter,
-          width: 180,
-          titleOrientation: 'top',
-          required: true,
-          changed: function (form, item, value) {
-            this.Super('changed', arguments);
-            for (i = 0; i < leftControls.multiCalendar.calendarData.filters.length; i++) {
-              if (leftControls.multiCalendar.calendarData.filters[i].id === value) {
-                leftControls.multiCalendar.calendarData.filters[i].checked = true;
-              } else {
-                leftControls.multiCalendar.calendarData.filters[i].checked = false;
+        fields: [
+          {
+            name: 'filter',
+            title: leftControls.multiCalendar.filterName,
+            type: 'comboBox',
+            valueMap: leftControls.getFilterValueMap(),
+            value: currentFilter,
+            width: 180,
+            titleOrientation: 'top',
+            required: true,
+            changed: function(form, item, value) {
+              this.Super('changed', arguments);
+              for (
+                i = 0;
+                i < leftControls.multiCalendar.calendarData.filters.length;
+                i++
+              ) {
+                if (
+                  leftControls.multiCalendar.calendarData.filters[i].id ===
+                  value
+                ) {
+                  leftControls.multiCalendar.calendarData.filters[
+                    i
+                  ].checked = true;
+                } else {
+                  leftControls.multiCalendar.calendarData.filters[
+                    i
+                  ].checked = false;
+                }
               }
-            }
-            leftControls.legend.updateMembers(leftControls.getLegendValueMap());
-          },
+              leftControls.legend.updateMembers(
+                leftControls.getLegendValueMap()
+              );
+            },
 
-          cellStyle: OB.Styles.OBFormField.DefaultComboBox.cellStyle,
-          titleStyle: OB.Styles.OBFormField.DefaultComboBox.titleStyle,
-          textBoxStyle: OB.Styles.OBFormField.DefaultComboBox.textBoxStyle,
-          pendingTextBoxStyle: OB.Styles.OBFormField.DefaultComboBox.pendingTextBoxStyle,
-          controlStyle: OB.Styles.OBFormField.DefaultComboBox.controlStyle,
-          pickListBaseStyle: OB.Styles.OBFormField.DefaultComboBox.pickListBaseStyle,
-          pickListTallBaseStyle: OB.Styles.OBFormField.DefaultComboBox.pickListTallBaseStyle,
-          pickerIconStyle: OB.Styles.OBFormField.DefaultComboBox.pickerIconStyle,
-          pickerIconSrc: OB.Styles.OBFormField.DefaultComboBox.pickerIconSrc,
-          height: OB.Styles.OBFormField.DefaultComboBox.height,
-          pickerIconWidth: OB.Styles.OBFormField.DefaultComboBox.pickerIconWidth,
-          // fixes issue https://issues.openbravo.com/view.php?id=15105
-          pickListCellHeight: OB.Styles.OBFormField.DefaultComboBox.quickRunPickListCellHeight,
-          recentPropertyName: this.recentPropertyName,
-          pickListProperties: {
-            textMatchStyle: 'substring',
-            selectionType: 'single',
-            bodyStyleName: OB.Styles.OBFormField.DefaultComboBox.pickListProperties.bodyStyleName
-          },
-          pickListHeaderHeight: 0
-        }]
+            cellStyle: OB.Styles.OBFormField.DefaultComboBox.cellStyle,
+            titleStyle: OB.Styles.OBFormField.DefaultComboBox.titleStyle,
+            textBoxStyle: OB.Styles.OBFormField.DefaultComboBox.textBoxStyle,
+            pendingTextBoxStyle:
+              OB.Styles.OBFormField.DefaultComboBox.pendingTextBoxStyle,
+            controlStyle: OB.Styles.OBFormField.DefaultComboBox.controlStyle,
+            pickListBaseStyle:
+              OB.Styles.OBFormField.DefaultComboBox.pickListBaseStyle,
+            pickListTallBaseStyle:
+              OB.Styles.OBFormField.DefaultComboBox.pickListTallBaseStyle,
+            pickerIconStyle:
+              OB.Styles.OBFormField.DefaultComboBox.pickerIconStyle,
+            pickerIconSrc: OB.Styles.OBFormField.DefaultComboBox.pickerIconSrc,
+            height: OB.Styles.OBFormField.DefaultComboBox.height,
+            pickerIconWidth:
+              OB.Styles.OBFormField.DefaultComboBox.pickerIconWidth,
+            // fixes issue https://issues.openbravo.com/view.php?id=15105
+            pickListCellHeight:
+              OB.Styles.OBFormField.DefaultComboBox.quickRunPickListCellHeight,
+            recentPropertyName: this.recentPropertyName,
+            pickListProperties: {
+              textMatchStyle: 'substring',
+              selectionType: 'single',
+              bodyStyleName:
+                OB.Styles.OBFormField.DefaultComboBox.pickListProperties
+                  .bodyStyleName
+            },
+            pickListHeaderHeight: 0
+          }
+        ]
       });
     } else {
       this.filter = isc.VLayout.create({
@@ -452,18 +538,21 @@ isc.OBMultiCalendarLeftControls.addProperties({
     button = isc.OBFormButton.create({
       width: 180,
       title: this.multiCalendar.addEventButtonName,
-      click: function () {
+      click: function() {
         var startDate = OB.Utilities.Date.roundToNextHalfHour(new Date()),
-            endDate = new Date(startDate);
+          endDate = new Date(startDate);
         endDate.setHours(endDate.getHours() + 1);
-        leftControls.multiCalendar.calendar.addEventWithDialog(startDate, endDate);
+        leftControls.multiCalendar.calendar.addEventWithDialog(
+          startDate,
+          endDate
+        );
       }
     });
     this.dateChooser = isc.OBDateChooser.create({
       autoHide: false,
       showCancelButton: false,
       firstDayOfWeek: this.multiCalendar.firstDayOfWeek,
-      dataChanged: function (param) {
+      dataChanged: function(param) {
         this.parentElement.multiCalendar.calendar.setChosenDate(this.getData());
         this.parentElement.multiCalendar.calendar.setCurrentViewName('day');
       }
@@ -475,16 +564,32 @@ isc.OBMultiCalendarLeftControls.addProperties({
     this.customFiltersContainer = isc.VLayout.create({
       width: 1,
       height: 1,
-      initWidget: function () {
+      initWidget: function() {
         var i;
         if (leftControls.multiCalendar.calendarData.hasCustomFilters) {
-          for (i = 0; i < leftControls.multiCalendar.calendarData.customFilters.length; i++) {
-            if (leftControls.multiCalendar.calendarData.customFilters[i].handler.constructor) {
-              customFilterObj = leftControls.multiCalendar.calendarData.customFilters[i].handler.constructor.create({
-                multiCalendar: leftControls.multiCalendar,
-                checked: leftControls.multiCalendar.calendarData.customFilters[i].checked,
-                customFilter: leftControls.multiCalendar.calendarData.customFilters[i]
-              }, leftControls.multiCalendar.calendarData.customFilters[i].handler.constructorProps);
+          for (
+            i = 0;
+            i < leftControls.multiCalendar.calendarData.customFilters.length;
+            i++
+          ) {
+            if (
+              leftControls.multiCalendar.calendarData.customFilters[i].handler
+                .constructor
+            ) {
+              customFilterObj = leftControls.multiCalendar.calendarData.customFilters[
+                i
+              ].handler.constructor.create(
+                {
+                  multiCalendar: leftControls.multiCalendar,
+                  checked:
+                    leftControls.multiCalendar.calendarData.customFilters[i]
+                      .checked,
+                  customFilter:
+                    leftControls.multiCalendar.calendarData.customFilters[i]
+                },
+                leftControls.multiCalendar.calendarData.customFilters[i].handler
+                  .constructorProps
+              );
               this.addMembers([customFilterObj]);
             }
           }
@@ -500,7 +605,12 @@ isc.OBMultiCalendarLeftControls.addProperties({
     if (this.multiCalendar.canCreateEvents) {
       this.addMembers([button]);
     }
-    this.addMembers([this.dateChooser, this.customFiltersContainer, label, this.legend]);
+    this.addMembers([
+      this.dateChooser,
+      this.customFiltersContainer,
+      label,
+      this.legend
+    ]);
   }
 });
 
@@ -515,7 +625,7 @@ isc.OBMultiCalendar.addProperties({
   showLeftControls: true,
   showCustomEventsBgColor: true,
 
-  parseCalendarData: function (calendarData) {
+  parseCalendarData: function(calendarData) {
     var canCreateEvents, cPropAttr, i;
     if (calendarData.filters) {
       calendarData.hasFilter = true;
@@ -539,15 +649,30 @@ isc.OBMultiCalendar.addProperties({
       }
       if (typeof calendarData.calendars[i].color === 'undefined') {
         calendarData.calendars[i].color = OB.Utilities.generateOBColor(
-        null, null, null, 100, calendarData.calendars[i].id);
+          null,
+          null,
+          null,
+          100,
+          calendarData.calendars[i].id
+        );
       }
-      if (i === 0 && typeof calendarData.calendars[i].canCreateEvents !== 'undefined') {
+      if (
+        i === 0 &&
+        typeof calendarData.calendars[i].canCreateEvents !== 'undefined'
+      ) {
         canCreateEvents = false;
       }
-      if (typeof calendarData.calendars[i].canCreateEvents !== 'undefined' && canCreateEvents === false && calendarData.calendars[i].canCreateEvents === true) {
+      if (
+        typeof calendarData.calendars[i].canCreateEvents !== 'undefined' &&
+        canCreateEvents === false &&
+        calendarData.calendars[i].canCreateEvents === true
+      ) {
         canCreateEvents = true;
       }
-      if (canCreateEvents === false && i === calendarData.calendars.length - 1) {
+      if (
+        canCreateEvents === false &&
+        i === calendarData.calendars.length - 1
+      ) {
         this.canCreateEvents = false;
         this.calendarProps.canCreateEvents = false;
       }
@@ -564,11 +689,20 @@ isc.OBMultiCalendar.addProperties({
         if (typeof calendarData.customFilters[i].checked === 'undefined') {
           calendarData.customFilters[i].checked = false;
         }
-        if (typeof calendarData.customFilters[i].handler === 'string' && this.calendarProps[calendarData.customFilters[i].handler]) {
-          calendarData.customFilters[i].handler = this.calendarProps[calendarData.customFilters[i].handler];
+        if (
+          typeof calendarData.customFilters[i].handler === 'string' &&
+          this.calendarProps[calendarData.customFilters[i].handler]
+        ) {
+          calendarData.customFilters[i].handler = this.calendarProps[
+            calendarData.customFilters[i].handler
+          ];
         }
-        if (typeof calendarData.customFilters[i].handler.constructor === 'string') {
-          calendarData.customFilters[i].handler.constructor = new Function('return ' + calendarData.customFilters[i].handler.constructor)();
+        if (
+          typeof calendarData.customFilters[i].handler.constructor === 'string'
+        ) {
+          calendarData.customFilters[i].handler.constructor = new Function(
+            'return ' + calendarData.customFilters[i].handler.constructor
+          )();
         }
       }
     }
@@ -585,7 +719,7 @@ isc.OBMultiCalendar.addProperties({
 
     return calendarData;
   },
-  setLoading: function (value) {
+  setLoading: function(value) {
     if (value !== false) {
       if (this.members[1]) {
         this.members[1].hide();
@@ -608,8 +742,10 @@ isc.OBMultiCalendar.addProperties({
       }
     }
   },
-  initComponents: function () {
-    var callback, i, me = this;
+  initComponents: function() {
+    var callback,
+      i,
+      me = this;
     for (i = this.members.length - 1; i > -1; i--) {
       this.members[i].destroy();
     }
@@ -640,30 +776,42 @@ isc.OBMultiCalendar.addProperties({
       this.calendarProps.showDayLanesToggleControl = false;
     }
     this.addMembers([OB.Utilities.createLoadingLayout()]);
-    callback = function (rpcResponse, data, rpcRequest) {
+    callback = function(rpcResponse, data, rpcRequest) {
       if (data.message) {
-        isc.warn(data.message.text, function () {
-          return true;
-        }, {
-          icon: '[SKINIMG]Dialog/error.png',
-          title: OB.I18N.getLabel('OBUIAPP_Error')
-        });
+        isc.warn(
+          data.message.text,
+          function() {
+            return true;
+          },
+          {
+            icon: '[SKINIMG]Dialog/error.png',
+            title: OB.I18N.getLabel('OBUIAPP_Error')
+          }
+        );
       }
       me.calendarData = me.parseCalendarData(data);
       me.drawComponents();
     };
-    OB.RemoteCallManager.call(this.calendarProps.calendarDataActionHandler, {
-      action: this.calendarProps.calendarDataActionHandler_Action
-    }, {}, callback);
+    OB.RemoteCallManager.call(
+      this.calendarProps.calendarDataActionHandler,
+      {
+        action: this.calendarProps.calendarDataActionHandler_Action
+      },
+      {},
+      callback
+    );
   },
 
-  initWidget: function () {
+  initWidget: function() {
     this.initComponents();
     this.Super('initWidget', arguments);
   },
-  drawComponents: function () {
+  drawComponents: function() {
     var initialLanes;
-    if (this.calendarProps.showDayLanes || this.calendarProps.showDayLanesToggleControl !== false) {
+    if (
+      this.calendarProps.showDayLanes ||
+      this.calendarProps.showDayLanesToggleControl !== false
+    ) {
       //Inside this 'if' statement to avoid extra computational tasks if lanes are not going to be shown
       initialLanes = this.calculateLanes();
     }
@@ -674,26 +822,32 @@ isc.OBMultiCalendar.addProperties({
     this.leftControls = isc.OBMultiCalendarLeftControls.create({
       multiCalendar: this
     });
-    this.calendar = isc.OBMultiCalendarCalendar.create(isc.addProperties(this.calendarProps, {
-      multiCalendar: this,
-      lanes: initialLanes,
-      autoFetchData: false
-    }));
+    this.calendar = isc.OBMultiCalendarCalendar.create(
+      isc.addProperties(this.calendarProps, {
+        multiCalendar: this,
+        lanes: initialLanes,
+        autoFetchData: false
+      })
+    );
 
     this.setLoading(false);
     if (this.showLeftControls) {
       this.addMembers([this.leftControls]);
     }
-    this.addMembers([isc.VLayout.create({
-      members: [this.calendar]
-    })]);
+    this.addMembers([
+      isc.VLayout.create({
+        members: [this.calendar]
+      })
+    ]);
     this.refreshCalendar();
   },
 
-  calculateLanes: function () {
+  calculateLanes: function() {
     var showedLanes = [],
-        laneDefObj = {},
-        selectedOrg, i, calendarData = this.calendarData;
+      laneDefObj = {},
+      selectedOrg,
+      i,
+      calendarData = this.calendarData;
     for (i = 0; i < calendarData.filters.length; i++) {
       if (calendarData.filters[i].checked) {
         selectedOrg = calendarData.filters[i].id;
@@ -701,7 +855,10 @@ isc.OBMultiCalendar.addProperties({
       }
     }
     for (i = 0; i < calendarData.calendars.length; i++) {
-      if (calendarData.calendars[i].filterId === selectedOrg && calendarData.calendars[i].checked) {
+      if (
+        calendarData.calendars[i].filterId === selectedOrg &&
+        calendarData.calendars[i].checked
+      ) {
         laneDefObj = {};
         laneDefObj.name = calendarData.calendars[i].id;
         laneDefObj.title = calendarData.calendars[i].name;
@@ -711,9 +868,12 @@ isc.OBMultiCalendar.addProperties({
     return showedLanes;
   },
 
-  refreshCalendar: function () {
+  refreshCalendar: function() {
     if (this.calendar) {
-      if (this.calendar.showDayLanes || this.calendar.showDayLanesToggleControl !== false) {
+      if (
+        this.calendar.showDayLanes ||
+        this.calendar.showDayLanesToggleControl !== false
+      ) {
         //Inside this 'if' statement to avoid extra computational tasks if lanes are not going to be shown
         this.calendar.setLanes(this.calculateLanes());
       }

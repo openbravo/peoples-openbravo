@@ -25,7 +25,9 @@ isc.OBTreeGrid.addProperties({
   showOpenIcons: true,
   showDropIcons: false,
   showNodeIcons: true,
-  openerImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/tree-grid/iconTree.png',
+  openerImage:
+    OB.Styles.skinsPath +
+    'Default/org.openbravo.client.application/images/tree-grid/iconTree.png',
   openerIconSize: 16,
   showCustomIconOpen: true,
   extraIconGap: 5,
@@ -44,8 +46,7 @@ isc.OBTreeGrid.addProperties({
     openProperty: 'isOpen'
   },
 
-
-  initWidget: function () {
+  initWidget: function() {
     this.sorterDefaults = {};
     this.Super('initWidget', arguments);
   },
@@ -53,7 +54,7 @@ isc.OBTreeGrid.addProperties({
   /**
    * When the grid is filtered, show the records that did not comply with the filter (but were ancestors of nodes that did) in grey
    */
-  getCellCSSText: function (record, rowNum, colNum) {
+  getCellCSSText: function(record, rowNum, colNum) {
     if (record.notFilterHit) {
       return OB.Styles.OBTreeGrid.cellCSSText_notFilterHit;
     } else {
@@ -61,9 +62,10 @@ isc.OBTreeGrid.addProperties({
     }
   },
 
-  clearFilter: function (keepFilterClause, noPerformAction) {
+  clearFilter: function(keepFilterClause, noPerformAction) {
     var i = 0,
-        fld, length;
+      fld,
+      length;
     this.view.messageBar.hide();
     if (!keepFilterClause) {
       delete this.filterClause;
@@ -91,12 +93,19 @@ isc.OBTreeGrid.addProperties({
     }
   },
 
-  createRecordComponent: function (record, colNum) {
+  createRecordComponent: function(record, colNum) {
     var field = this.getField(colNum),
-        rowNum = this.getRecordIndex(record),
-        isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]),
-        isEditRecord = rowNum === this.getEditRow(),
-        canvas, clientClassArray, clientClass, clientClassProps, clientClassIsShownInGridEdit;
+      rowNum = this.getRecordIndex(record),
+      isSummary =
+        record &&
+        (record[this.groupSummaryRecordProperty] ||
+          record[this.gridSummaryRecordProperty]),
+      isEditRecord = rowNum === this.getEditRow(),
+      canvas,
+      clientClassArray,
+      clientClass,
+      clientClassProps,
+      clientClassIsShownInGridEdit;
 
     if (isSummary) {
       return null;
@@ -107,17 +116,24 @@ isc.OBTreeGrid.addProperties({
       clientClass = clientClassArray[0];
       clientClassProps = clientClassArray[1];
 
-      clientClassIsShownInGridEdit = OB.Utilities.getCanvasProp(clientClass, 'isShownInGridEdit');
+      clientClassIsShownInGridEdit = OB.Utilities.getCanvasProp(
+        clientClass,
+        'isShownInGridEdit'
+      );
 
       if (!isEditRecord || clientClassIsShownInGridEdit) {
-        canvas = isc.ClassFactory.newInstance(clientClass, {
-          grid: this,
-          align: this.getCellAlign(record, rowNum, colNum),
-          field: field,
-          record: record,
-          rowNum: rowNum,
-          colNum: colNum
-        }, clientClassProps);
+        canvas = isc.ClassFactory.newInstance(
+          clientClass,
+          {
+            grid: this,
+            align: this.getCellAlign(record, rowNum, colNum),
+            field: field,
+            record: record,
+            rowNum: rowNum,
+            colNum: colNum
+          },
+          clientClassProps
+        );
         if (canvas) {
           if (canvas.setRecord) {
             canvas.setRecord(record);
@@ -129,8 +145,10 @@ isc.OBTreeGrid.addProperties({
     return null;
   },
 
-  handleFilterEditorSubmit: function (criteria, context, callback) {
-    var gridCriteria = isc.isA.Function(this.convertCriteria) ? this.convertCriteria(criteria) : criteria;
+  handleFilterEditorSubmit: function(criteria, context, callback) {
+    var gridCriteria = isc.isA.Function(this.convertCriteria)
+      ? this.convertCriteria(criteria)
+      : criteria;
     if (isc.isA.Tree(this.data) && this.willFetchData(gridCriteria)) {
       // Only reset the open state if the tree already has data and if the filter criteria has changed
       this.setOpenState('[]');
@@ -139,24 +157,46 @@ isc.OBTreeGrid.addProperties({
   },
 
   // No actions should be triggered when clicking a record with the right button
-  cellContextClick: function (record, rowNum, colNum) {
+  cellContextClick: function(record, rowNum, colNum) {
     return false;
   },
 
-  applyCellTypeFormatters: function (value, record, field, rowNum, colNum, isMultipleElement) {
-    if ((field.type === '_id_15' || field.type === '_id_16') && value && !isc.isA.Date(value) && isc.isA.Date(Date.parseSchemaDate(value))) {
+  applyCellTypeFormatters: function(
+    value,
+    record,
+    field,
+    rowNum,
+    colNum,
+    isMultipleElement
+  ) {
+    if (
+      (field.type === '_id_15' || field.type === '_id_16') &&
+      value &&
+      !isc.isA.Date(value) &&
+      isc.isA.Date(Date.parseSchemaDate(value))
+    ) {
       // applyCellTypeFormatters expects a date as value if the field is a date
       // if the original value is not a date, convert it to date before calling applyCellTypeFormatters
       value = Date.parseSchemaDate(value);
     }
-    return this.Super('applyCellTypeFormatters', [value, record, field, rowNum, colNum, isMultipleElement]);
+    return this.Super('applyCellTypeFormatters', [
+      value,
+      record,
+      field,
+      rowNum,
+      colNum,
+      isMultipleElement
+    ]);
   },
 
-
   // converts the date and datetime fields from string to a js date
-  transformData: function (data) {
+  transformData: function(data) {
     var dateFields = [],
-        fieldName, i, j, type, record;
+      fieldName,
+      i,
+      j,
+      type,
+      record;
     for (i = 0; i < this.getFields().length; i++) {
       type = isc.SimpleType.getType(this.getFields()[i].type);
       if (type.inheritsFrom === 'date' || type.inheritsFrom === 'datetime') {
@@ -168,7 +208,11 @@ isc.OBTreeGrid.addProperties({
         record = data[i];
         for (j = 0; j < dateFields.length; j++) {
           fieldName = dateFields[j];
-          if (record[fieldName] && !isc.isA.Date(record[fieldName]) && isc.isA.Date(isc.Date.parseSchemaDate(record[fieldName]))) {
+          if (
+            record[fieldName] &&
+            !isc.isA.Date(record[fieldName]) &&
+            isc.isA.Date(isc.Date.parseSchemaDate(record[fieldName]))
+          ) {
             record[fieldName] = isc.Date.parseSchemaDate(record[fieldName]);
           }
         }

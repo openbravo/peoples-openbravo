@@ -29,7 +29,7 @@ isc.OBDateChooser.addProperties({
   todayButtonTitle: OB.I18N.getLabel('OBUISC_DateChooser.todayButtonTitle'),
   cancelButtonTitle: OB.I18N.getLabel('OBUISC_DateChooser.cancelButtonTitle'),
 
-  initWidget: function () {
+  initWidget: function() {
     this.Super('initWidget', arguments);
 
     // Force associated date text box to have the same enable status as the picker has
@@ -39,8 +39,9 @@ isc.OBDateChooser.addProperties({
   }
 });
 
-if (isc.OBDateChooser) { // To force SC to load OBDateChooser instead of DateChooser
-  isc.DateChooser.getSharedDateChooser = function (properties) {
+if (isc.OBDateChooser) {
+  // To force SC to load OBDateChooser instead of DateChooser
+  isc.DateChooser.getSharedDateChooser = function(properties) {
     return isc.OBDateChooser.create(properties);
   };
 }

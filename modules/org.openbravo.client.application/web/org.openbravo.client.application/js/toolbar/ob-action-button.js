@@ -28,20 +28,26 @@ isc.OBToolbarActionButton.addProperties({
   contextView: null,
   labelValue: {},
 
-  initWidget: function () {
+  initWidget: function() {
     this.originalTitle = this.title;
     this.Super('initWidget', arguments);
   },
 
-  action: function () {
+  action: function() {
     this.runProcess();
   },
 
-  runProcess: function () {
+  runProcess: function() {
     var theView = this.view,
-        record, rowNum, actionObject;
+      record,
+      rowNum,
+      actionObject;
 
-    if (!theView.isShowingForm && theView.viewGrid.getSelectedRecords() && theView.viewGrid.getSelectedRecords().length === 1) {
+    if (
+      !theView.isShowingForm &&
+      theView.viewGrid.getSelectedRecords() &&
+      theView.viewGrid.getSelectedRecords().length === 1
+    ) {
       // Keep current selection that might be lost in autosave
       record = theView.viewGrid.getSelectedRecord();
       rowNum = theView.viewGrid.getRecordIndex(record);
@@ -60,12 +66,18 @@ isc.OBToolbarActionButton.addProperties({
     }
   },
 
-  doAction: function (rowNum) {
+  doAction: function(rowNum) {
     var theView = this.contextView,
-        me = this,
-        standardWindow = this.view.standardWindow,
-        autosaveButton = this.autosave,
-        param, allProperties, sessionProperties, callbackFunction, popupParams, errorCallback, parameters;
+      me = this,
+      standardWindow = this.view.standardWindow,
+      autosaveButton = this.autosave,
+      param,
+      allProperties,
+      sessionProperties,
+      callbackFunction,
+      popupParams,
+      errorCallback,
+      parameters;
     //Modified check from 'rowNum to 'rowNum ! = null' to handle case where rowNum is 0.
     if (rowNum !== null && !theView.viewGrid.getSelectedRecord()) {
       // Current selection was lost, restore it
@@ -75,13 +87,15 @@ isc.OBToolbarActionButton.addProperties({
     allProperties = theView.getContextInfo(false, true, false, true);
     sessionProperties = theView.getContextInfo(true, true, false, true);
 
-
     OB.ActionButton.executingProcess = this;
 
     for (param in allProperties) {
-      // TODO: these transformations shoulnd't be needed here as soon as getContextInfo returns 
+      // TODO: these transformations shoulnd't be needed here as soon as getContextInfo returns
       // the transformed values.
-      if (allProperties.hasOwnProperty(param) && typeof allProperties[param] === 'boolean') {
+      if (
+        allProperties.hasOwnProperty(param) &&
+        typeof allProperties[param] === 'boolean'
+      ) {
         allProperties[param] = allProperties[param] ? 'Y' : 'N';
       }
     }
@@ -104,19 +118,23 @@ isc.OBToolbarActionButton.addProperties({
       if (me.uiPattern === 'M') {
         parameters.buttons = me.labelValue;
       }
-      callbackFunction = function () {
+      callbackFunction = function() {
         standardWindow.openProcess(parameters);
         me.opening = false; // Activate again the button
       };
 
       if (!me.opening) {
         me.opening = true; // To avoid button could be clicked twice
-        // prevent blocking the button by setting me.opening to false if there is a problem in the request done in theView.setContextInfo 
-        errorCallback = function () {
+        // prevent blocking the button by setting me.opening to false if there is a problem in the request done in theView.setContextInfo
+        errorCallback = function() {
           me.opening = false;
         };
-        theView.setContextInfo(sessionProperties, callbackFunction, true, errorCallback);
-
+        theView.setContextInfo(
+          sessionProperties,
+          callbackFunction,
+          true,
+          errorCallback
+        );
       }
       return;
     }
@@ -124,8 +142,19 @@ isc.OBToolbarActionButton.addProperties({
     // ad_process definition handling
     if (this.modal) {
       allProperties.Command = this.command;
-      callbackFunction = function () {
-        var popup = OB.Layout.ClassicOBCompatibility.Popup.open('process', 900, 600, OB.Utilities.applicationUrl(me.obManualURL), '', null, true, true, true, allProperties);
+      callbackFunction = function() {
+        var popup = OB.Layout.ClassicOBCompatibility.Popup.open(
+          'process',
+          900,
+          600,
+          OB.Utilities.applicationUrl(me.obManualURL),
+          '',
+          null,
+          true,
+          true,
+          true,
+          allProperties
+        );
         if (autosaveButton) {
           // Back to header if autosave button
           popup.activeViewWhenClosed = theView;
@@ -144,7 +173,7 @@ isc.OBToolbarActionButton.addProperties({
         height: 600,
         width: 900
       };
-      callbackFunction = function () {
+      callbackFunction = function() {
         OB.Layout.ViewManager.openView('OBPopupClassicWindow', popupParams);
       };
     }
@@ -153,14 +182,16 @@ isc.OBToolbarActionButton.addProperties({
     theView.setContextInfo(sessionProperties, callbackFunction, true);
   },
 
-  closeProcessPopup: function (newWindow, params) {
+  closeProcessPopup: function(newWindow, params) {
     //Keep current view for the callback function. Refresh and look for tab message.
     var contextView = OB.ActionButton.executingProcess.contextView,
-        currentView = this.view,
-        afterRefresh, isAfterRefreshAlreadyExecuted, parsePathPart, parts;
+      currentView = this.view,
+      afterRefresh,
+      isAfterRefreshAlreadyExecuted,
+      parsePathPart,
+      parts;
 
-    afterRefresh = function () {
-
+    afterRefresh = function() {
       if (isAfterRefreshAlreadyExecuted) {
         // To avoid multiple calls to this function when
         // ob-standard-view.js -> refreshCurrentRecord -> this.refreshParentRecord
@@ -173,13 +204,20 @@ isc.OBToolbarActionButton.addProperties({
       contextView.getTabMessage();
       contextView.toolBar.refreshCustomButtons();
 
-      if (contextView && contextView.viewGrid && contextView.viewGrid.discardAllEdits) {
+      if (
+        contextView &&
+        contextView.viewGrid &&
+        contextView.viewGrid.discardAllEdits
+      ) {
         // discard edits coming from FIC as they pollute the state and they're already
         // reloaded
         contextView.viewGrid.discardAllEdits();
       }
 
-      if (contextView !== currentView && currentView.state === isc.OBStandardView.STATE_TOP_MAX) {
+      if (
+        contextView !== currentView &&
+        currentView.state === isc.OBStandardView.STATE_TOP_MAX
+      ) {
         // Executing an action defined in parent tab, current tab is maximized,
         // let's set half for each in order to see the message
         contextView.setHalfSplit();
@@ -215,14 +253,21 @@ isc.OBToolbarActionButton.addProperties({
 
     if (newWindow) {
       // Split path into protocol, server, port part and the rest (pathname, query, etc)
-      parsePathPart = /^((?:[A-Za-z]+:)?\/\/[^\/]+)?(\/.*)$/;
+      parsePathPart = /^((?:[A-Za-z]+:)?\/\/[^/]+)?(\/.*)$/;
       parts = parsePathPart.exec(newWindow);
       if (parts && parts[2]) {
         newWindow = parts[2];
       }
 
-      if (OB.Application.contextUrl && newWindow.indexOf(OB.Application.contextUrl) !== -1) {
-        newWindow = newWindow.substr(newWindow.indexOf(OB.Application.contextUrl) + OB.Application.contextUrl.length - 1);
+      if (
+        OB.Application.contextUrl &&
+        newWindow.indexOf(OB.Application.contextUrl) !== -1
+      ) {
+        newWindow = newWindow.substr(
+          newWindow.indexOf(OB.Application.contextUrl) +
+            OB.Application.contextUrl.length -
+            1
+        );
       }
 
       if (!newWindow.startsWith('/')) {
@@ -251,16 +296,25 @@ isc.OBToolbarActionButton.addProperties({
     }
   },
 
-  updateState: function (record, hide, context, keepNonAutosave) {
-    var currentValues = isc.shallowClone(record || this.contextView.getCurrentValues() || {}),
-        grid, buttonValue, label, buttonValues = [];
+  updateState: function(record, hide, context, keepNonAutosave) {
+    var currentValues = isc.shallowClone(
+        record || this.contextView.getCurrentValues() || {}
+      ),
+      grid,
+      buttonValue,
+      label,
+      buttonValues = [];
     // do not hide non autosave buttons when hidding the rest if keepNonAutosave === true
     var hideButton = hide && (!keepNonAutosave || this.autosave);
 
     var multiSelect = false,
-        readonly, i, selection;
+      readonly,
+      i,
+      selection;
 
-    grid = this.contextView.isShowingTree ? this.contextView.treeGrid : this.contextView.viewGrid;
+    grid = this.contextView.isShowingTree
+      ? this.contextView.treeGrid
+      : this.contextView.viewGrid;
 
     if (hideButton || !record) {
       multiSelect = this.multiRecord && grid.getSelectedRecords().length > 1;
@@ -272,13 +326,18 @@ isc.OBToolbarActionButton.addProperties({
 
     context = context || this.contextView.getContextInfo(false, true, true);
 
-
     if (!multiSelect) {
       OB.Utilities.fixNull250(currentValues);
       OB.Utilities.fixNull250(context);
 
-      this.visible = !this.displayIf || (context && this.displayIf(this.contextView.viewForm, currentValues, context));
-      readonly = this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, currentValues, context);
+      this.visible =
+        !this.displayIf ||
+        (context &&
+          this.displayIf(this.contextView.viewForm, currentValues, context));
+      readonly =
+        this.readOnlyIf &&
+        context &&
+        this.readOnlyIf(this.contextView.viewForm, currentValues, context);
 
       buttonValue = record[this.property];
       if (buttonValue === '--') {
@@ -295,7 +354,6 @@ isc.OBToolbarActionButton.addProperties({
       }
       this.realTitle = label;
       this.setTitle(label);
-
     } else {
       // For multi selection processes:
       //   -Button is displayed in case it should be displayed in ALL selected records
@@ -306,8 +364,20 @@ isc.OBToolbarActionButton.addProperties({
       for (i = 0; i < selection.length; i++) {
         currentValues = isc.shallowClone(selection[i]);
         OB.Utilities.fixNull250(currentValues);
-        this.visible = this.visible && (!this.displayIf || (context && this.displayIf(this.contextView.viewForm, currentValues, context)));
-        readonly = readonly || (this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, currentValues, context));
+        this.visible =
+          this.visible &&
+          (!this.displayIf ||
+            (context &&
+              this.displayIf(
+                this.contextView.viewForm,
+                currentValues,
+                context
+              )));
+        readonly =
+          readonly ||
+          (this.readOnlyIf &&
+            context &&
+            this.readOnlyIf(this.contextView.viewForm, currentValues, context));
         buttonValue = selection[i][this.property];
         if (buttonValue === '--') {
           buttonValue = 'CL';

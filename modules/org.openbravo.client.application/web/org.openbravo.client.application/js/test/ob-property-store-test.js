@@ -21,14 +21,13 @@
 
 QUnit.module('org.openbravo.client.application');
 
-QUnit.test('Property Store Exists', function () {
+QUnit.test('Property Store Exists', function() {
   QUnit.expect(2);
   QUnit.ok(OB.PropertyStore, 'PropertyStore is present');
   QUnit.ok(!OB.PropertyStore.get('abc'), 'Test property is not present (okay)');
 });
 
-QUnit.test('Set/Get Property', function () {
-
+QUnit.test('Set/Get Property', function() {
   QUnit.expect(2);
 
   var propName = 'CCU';
@@ -42,8 +41,7 @@ QUnit.test('Set/Get Property', function () {
   // clear the test property
   // with a short delay to make sure that the previous set does not interfere
   // on the server
-  isc.Timer.setTimeout(function () {
+  isc.Timer.setTimeout(function() {
     OB.PropertyStore.set(propName, 'Y');
   }, 1000);
-
 });

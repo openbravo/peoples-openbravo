@@ -19,16 +19,24 @@
 
 OB.APRM.MatchStatement = {};
 
-OB.APRM.MatchStatement.addPreference = function (view) {
+OB.APRM.MatchStatement.addPreference = function(view) {
   var onLoadCallback;
-  onLoadCallback = function (response, data, request) {};
-  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadPreferenceActionHandler', {}, {}, onLoadCallback);
+  onLoadCallback = function(response, data, request) {};
+  OB.RemoteCallManager.call(
+    'org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadPreferenceActionHandler',
+    {},
+    {},
+    onLoadCallback
+  );
 };
 
-OB.APRM.MatchStatement.onLoad = function (view) {
-  var execute, grid = view.theForm.getItem('match_statement').canvas.viewGrid,
-      buttons = view.popupButtons.members[0].members,
-      i, button, propertyButtonValue = '_buttonValue';
+OB.APRM.MatchStatement.onLoad = function(view) {
+  var execute,
+    grid = view.theForm.getItem('match_statement').canvas.viewGrid,
+    buttons = view.popupButtons.members[0].members,
+    i,
+    button,
+    propertyButtonValue = '_buttonValue';
   view.cancelButton.hide();
   view.parentElement.parentElement.closeButton.hide();
 
@@ -41,71 +49,126 @@ OB.APRM.MatchStatement.onLoad = function (view) {
     }
   }
 
-  button.action = function () {
-    var callback = function (response, data, request) {
-        view.onRefreshFunction(view);
-        if (data && data.message && data.message.severity === 'error') {
-          view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
-        } else if (data && data.message && data.message.severity === 'success') {
-          view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, data.message.title, data.message.text);
-        } else if (data && data.message && data.message.severity === 'warning') {
-          view.messageBar.setMessage(isc.OBMessageBar.TYPE_WARNING, data.message.title, data.message.text);
-        }
-        };
-    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.UnMatchSelectedTransactionsActionHandler', {
-      bankStatementLineIds: grid.getSelectedRecords()
-    }, {}, callback);
+  button.action = function() {
+    var callback = function(response, data, request) {
+      view.onRefreshFunction(view);
+      if (data && data.message && data.message.severity === 'error') {
+        view.messageBar.setMessage(
+          isc.OBMessageBar.TYPE_ERROR,
+          data.message.title,
+          data.message.text
+        );
+      } else if (data && data.message && data.message.severity === 'success') {
+        view.messageBar.setMessage(
+          isc.OBMessageBar.TYPE_SUCCESS,
+          data.message.title,
+          data.message.text
+        );
+      } else if (data && data.message && data.message.severity === 'warning') {
+        view.messageBar.setMessage(
+          isc.OBMessageBar.TYPE_WARNING,
+          data.message.title,
+          data.message.text
+        );
+      }
+    };
+    OB.RemoteCallManager.call(
+      'org.openbravo.advpaymentmngt.actionHandler.UnMatchSelectedTransactionsActionHandler',
+      {
+        bankStatementLineIds: grid.getSelectedRecords()
+      },
+      {},
+      callback
+    );
   };
 
   grid.dataSourceOrig = grid.dataSource;
   grid.dataSource = null;
-  execute = function (ok) {
-    var onLoadCallback, params = {};
+  execute = function(ok) {
+    var onLoadCallback,
+      params = {};
     if (grid.view.sourceView) {
       params.context = grid.view.sourceView.getContextInfo();
     }
     params.executeMatching = ok;
-    onLoadCallback = function (response, data, request) {
+    onLoadCallback = function(response, data, request) {
       if (data.responseActions) {
         OB.Utilities.Action.executeJSON(data.responseActions, null, null, view);
       }
       grid.dataSource = grid.dataSourceOrig;
       grid.filterByEditor();
     };
-    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadActionHandler', {}, params, onLoadCallback);
+    OB.RemoteCallManager.call(
+      'org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadActionHandler',
+      {},
+      params,
+      onLoadCallback
+    );
   };
   if (grid && grid.parentElement && grid.parentElement.messageBar) {
     var onLoadCallback;
-    onLoadCallback = function (response, data, request) {
+    onLoadCallback = function(response, data, request) {
       if (!data.preference) {
-        grid.parentElement.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + OB.I18N.getLabel('APRM_GRID_PERSIST_MESSAGE') + '</div><div class="' + OB.Styles.MessageBar.rightMsgContainerStyle + '"><a href="#" class="' + OB.Styles.MessageBar.rightMsgTextStyle + '" onclick="' + 'window[\'' + grid.parentElement.messageBar.ID + '\'].hide(); OB.APRM.MatchStatement.addPreference();">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
+        grid.parentElement.messageBar.setMessage(
+          isc.OBMessageBar.TYPE_INFO,
+          '<div><div class="' +
+            OB.Styles.MessageBar.leftMsgContainerStyle +
+            '">' +
+            OB.I18N.getLabel('APRM_GRID_PERSIST_MESSAGE') +
+            '</div><div class="' +
+            OB.Styles.MessageBar.rightMsgContainerStyle +
+            '"><a href="#" class="' +
+            OB.Styles.MessageBar.rightMsgTextStyle +
+            '" onclick="' +
+            "window['" +
+            grid.parentElement.messageBar.ID +
+            '\'].hide(); OB.APRM.MatchStatement.addPreference();">' +
+            OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') +
+            '</a></div></div>',
+          ' '
+        );
       }
     };
-    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadGetPreferenceActionHandler', {}, {}, onLoadCallback);
+    OB.RemoteCallManager.call(
+      'org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadGetPreferenceActionHandler',
+      {},
+      {},
+      onLoadCallback
+    );
   }
   isc.confirm(OB.I18N.getLabel('APRM_AlgorithmConfirm'), execute);
 };
 
-OB.APRM.MatchStatement.onRefresh = function (view) {
+OB.APRM.MatchStatement.onRefresh = function(view) {
   var grid = view.theForm.getItem('match_statement').canvas.viewGrid,
-      newCriteria = {};
+    newCriteria = {};
   newCriteria.criteria = [];
   newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
   grid.invalidateCache();
   view.theForm.redraw();
 };
 
-OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall, clientSideValidationFail) {
+OB.APRM.MatchStatement.onProcess = function(
+  view,
+  actionHandlerCall,
+  clientSideValidationFail
+) {
   actionHandlerCall();
 };
 
-OB.APRM.MatchStatement.selectionChanged = function (grid, changedRecord, recordList) {
+OB.APRM.MatchStatement.selectionChanged = function(
+  grid,
+  changedRecord,
+  recordList
+) {
   if (changedRecord.obSelected && changedRecord.cleared) {
     grid.view.unmatchButton.show();
     return;
   } else {
-    var i, record, selection = grid.getSelectedRecords() || [],
-        len = selection.length;
+    var i,
+      record,
+      selection = grid.getSelectedRecords() || [],
+      len = selection.length;
     for (i = 0; i < len; i++) {
       record = grid.getEditedRecord(grid.getRecordIndex(selection[i]));
       if (record && record.obSelected && record.cleared) {
@@ -123,34 +186,43 @@ isc.ClassFactory.defineClass('APRMMatchStatGridButtonsComponent', isc.HLayout);
 isc.APRMMatchStatGridButtonsComponent.addProperties({
   canExpandRecord: true,
 
-  click: function () {
+  click: function() {
     this.grid.selectSingleRecord(this.record);
     return this.Super('click', arguments);
   },
 
-  initWidget: function () {
+  initWidget: function() {
     this.view = this.grid.view;
     var me = this,
-        searchButton, addButton, clearButton, buttonSeparator1, buttonSeparator2;
+      searchButton,
+      addButton,
+      clearButton,
+      buttonSeparator1,
+      buttonSeparator2;
 
     searchButton = isc.OBGridToolStripIcon.create({
       buttonType: 'search',
       showDisabled: true,
       originalPrompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_SEARCH_BUTTON'),
       prompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_SEARCH_BUTTON'),
-      action: function () {
+      action: function() {
         var processId = '154CB4F9274A479CB38A285E16984539',
-            grid = me.grid,
-            record = me.record,
-            standardWindow = grid.view.parentWindow.view.standardWindow,
-            callback, bankStatementLineId = me.record.id,
-            updated = new Date(),
-            view = me.grid.view;
+          grid = me.grid,
+          record = me.record,
+          standardWindow = grid.view.parentWindow.view.standardWindow,
+          callback,
+          bankStatementLineId = me.record.id,
+          updated = new Date(),
+          view = me.grid.view;
         updated.setTime(me.record.bslUpdated.getTime());
-        callback = function (response, data, request) {
+        callback = function(response, data, request) {
           view.onRefreshFunction(view);
           if (data && data.message && data.message.severity === 'error') {
-            view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
+            view.messageBar.setMessage(
+              isc.OBMessageBar.TYPE_ERROR,
+              data.message.title,
+              data.message.text
+            );
           } else {
             standardWindow.openProcess({
               callerField: me,
@@ -161,14 +233,22 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
                 bankStatementLineId: record.id,
                 transactionDate: record.transactionDate
               },
-              windowTitle: OB.I18N.getLabel('APRM_MATCHTRANSACTION_SEARCH_BUTTON', [this.title])
+              windowTitle: OB.I18N.getLabel(
+                'APRM_MATCHTRANSACTION_SEARCH_BUTTON',
+                [this.title]
+              )
             });
           }
         };
-        OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.CheckRecordChangedActionHandler', {
-          bankStatementLineId: bankStatementLineId,
-          updated: updated
-        }, {}, callback);
+        OB.RemoteCallManager.call(
+          'org.openbravo.advpaymentmngt.actionHandler.CheckRecordChangedActionHandler',
+          {
+            bankStatementLineId: bankStatementLineId,
+            updated: updated
+          },
+          {},
+          callback
+        );
       }
     });
     // Disable searchButton button if record is linked to a transaction
@@ -181,18 +261,23 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
       showDisabled: true,
       originalPrompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_ADD_BUTTON'),
       prompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_ADD_BUTTON'),
-      action: function () {
+      action: function() {
         var processId = 'E68790A7B65F4D45AB35E2BAE34C1F39',
-            grid = me.grid,
-            standardWindow = grid.view.parentWindow.view.standardWindow,
-            callback, bankStatementLineId = me.record.id,
-            updated = new Date(),
-            view = me.grid.view;
+          grid = me.grid,
+          standardWindow = grid.view.parentWindow.view.standardWindow,
+          callback,
+          bankStatementLineId = me.record.id,
+          updated = new Date(),
+          view = me.grid.view;
         updated.setTime(me.record.bslUpdated.getTime());
-        callback = function (response, data, request) {
+        callback = function(response, data, request) {
           view.onRefreshFunction(view);
           if (data && data.message && data.message.severity === 'error') {
-            view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
+            view.messageBar.setMessage(
+              isc.OBMessageBar.TYPE_ERROR,
+              data.message.title,
+              data.message.text
+            );
           } else {
             standardWindow.openProcess({
               callerField: me,
@@ -202,14 +287,22 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
               externalParams: {
                 bankStatementLineId: me.record.id
               },
-              windowTitle: OB.I18N.getLabel('APRM_MATCHTRANSACTION_ADD_BUTTON', [this.title])
+              windowTitle: OB.I18N.getLabel(
+                'APRM_MATCHTRANSACTION_ADD_BUTTON',
+                [this.title]
+              )
             });
           }
         };
-        OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.CheckRecordChangedActionHandler', {
-          bankStatementLineId: bankStatementLineId,
-          updated: updated
-        }, {}, callback);
+        OB.RemoteCallManager.call(
+          'org.openbravo.advpaymentmngt.actionHandler.CheckRecordChangedActionHandler',
+          {
+            bankStatementLineId: bankStatementLineId,
+            updated: updated
+          },
+          {},
+          callback
+        );
       }
     });
     // Disable addButton button if record is linked to a transaction
@@ -222,21 +315,31 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
       showDisabled: true,
       originalPrompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_DELETE_BUTTON'),
       prompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_DELETE_BUTTON'),
-      action: function () {
-        var callback, bankStatementLineId = me.record.id,
-            updated = new Date(),
-            view = me.grid.view;
+      action: function() {
+        var callback,
+          bankStatementLineId = me.record.id,
+          updated = new Date(),
+          view = me.grid.view;
         updated.setTime(me.record.bslUpdated.getTime());
-        callback = function (response, data, request) {
+        callback = function(response, data, request) {
           view.onRefreshFunction(view);
           if (data && data.message && data.message.severity === 'error') {
-            view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
+            view.messageBar.setMessage(
+              isc.OBMessageBar.TYPE_ERROR,
+              data.message.title,
+              data.message.text
+            );
           }
         };
-        OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.UnMatchTransactionActionHandler', {
-          bankStatementLineId: bankStatementLineId,
-          updated: updated
-        }, {}, callback);
+        OB.RemoteCallManager.call(
+          'org.openbravo.advpaymentmngt.actionHandler.UnMatchTransactionActionHandler',
+          {
+            bankStatementLineId: bankStatementLineId,
+            updated: updated
+          },
+          {},
+          callback
+        );
       }
     });
 
@@ -248,11 +351,16 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
     clearButton.setDisabled(!me.record.cleared);
     OB.APRM.MatchStatement.selectionChanged(me.grid, me.record);
 
-    this.addMembers([searchButton, buttonSeparator1, addButton, buttonSeparator2, clearButton]);
+    this.addMembers([
+      searchButton,
+      buttonSeparator1,
+      addButton,
+      buttonSeparator2,
+      clearButton
+    ]);
     this.Super('initWidget', arguments);
   }
 });
-
 
 isc.APRMMatchStatGridButtonsComponent.addProperties({
   cellAlign: 'center',

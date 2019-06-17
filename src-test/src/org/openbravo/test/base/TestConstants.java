@@ -37,10 +37,14 @@ public class TestConstants {
 
   public static class Clients {
     public static final String SYSTEM = "0";
+    public static final String FB_GRP = "23C59575B9CF467C9620760EB255B389";
   }
 
   public static class Roles {
+    public static final String FB_GRP_ADMIN = "42D0EEB1C66F497A90DD526DC597E6F0";
     public static final String ESP_ADMIN = "F3196A30B53A42778727B2852FF90C24";
+    public static final String QA_ADMIN_ROLE = "4028E6C72959682B01295A071429011E";
+    public static final String SYS_ADMIN = "0";
   }
 
   public static class Tables {
@@ -58,6 +62,7 @@ public class TestConstants {
 
   public static class Users {
     public static final String OPENBRAVO = "100";
+    public static final String SYSTEM = "0";
   }
 
   private TestConstants() {

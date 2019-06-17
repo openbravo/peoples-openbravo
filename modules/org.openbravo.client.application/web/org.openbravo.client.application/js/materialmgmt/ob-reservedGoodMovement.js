@@ -23,10 +23,19 @@ OB.ReservedGoodMovement = OB.ReservedGoodMovement || {};
  * Check that entered movementqty is not higher than (ReservedQty-releasedQty).
  * Check that entered movementqty is higher than 0
  */
-OB.ReservedGoodMovement.QuantityValidate = function (item, validator, value, record) {
+OB.ReservedGoodMovement.QuantityValidate = function(
+  item,
+  validator,
+  value,
+  record
+) {
   var movementQty = null,
-      releasedQty = isc.isA.Number(record.releasedqty) ? new BigDecimal(String(record.releasedqty)) : BigDecimal.prototype.ZERO,
-      quantity = isc.isA.Number(record.quantity) ? new BigDecimal(String(record.quantity)) : BigDecimal.prototype.ZERO;
+    releasedQty = isc.isA.Number(record.releasedqty)
+      ? new BigDecimal(String(record.releasedqty))
+      : BigDecimal.prototype.ZERO,
+    quantity = isc.isA.Number(record.quantity)
+      ? new BigDecimal(String(record.quantity))
+      : BigDecimal.prototype.ZERO;
   if (!isc.isA.Number(value)) {
     return false;
   }
@@ -45,7 +54,6 @@ OB.ReservedGoodMovement.QuantityValidate = function (item, validator, value, rec
     return false;
   }
 
-
   return true;
 };
 
@@ -54,7 +62,12 @@ OB.ReservedGoodMovement.QuantityValidate = function (item, validator, value, rec
  * Check that entered storageBin is not null
  */
 
-OB.ReservedGoodMovement.StorageValidate = function (item, validator, value, record) {
+OB.ReservedGoodMovement.StorageValidate = function(
+  item,
+  validator,
+  value,
+  record
+) {
   if (value === null) {
     isc.warn(OB.I18N.getLabel('OBUIAPP_DefineStorageBin'));
     return false;

@@ -17,13 +17,11 @@
  ************************************************************************
  */
 
-
 isc.ClassFactory.defineClass('OBApplicationMenuTreeChild', isc.Menu);
 
 isc.OBApplicationMenuTreeChild.addProperties({
   menuConstructor: isc.OBApplicationMenuTreeChild
 });
-
 
 isc.ClassFactory.defineClass('OBApplicationMenuTree', isc.Menu);
 
@@ -31,15 +29,19 @@ isc.OBApplicationMenuTree.addProperties({
   menuConstructor: isc.OBApplicationMenuTreeChild,
 
   // move the menu a few pixels down and a bit to the left
-  placeNear: function (left, top) {
+  placeNear: function(left, top) {
     var parentLeft = this.menuButton.parentElement.getPageLeft();
     if (isc.Page.isRTL()) {
-      parentLeft = parentLeft - this.getVisibleWidth() + this.menuButton.getVisibleWidth() + 1;
+      parentLeft =
+        parentLeft -
+        this.getVisibleWidth() +
+        this.menuButton.getVisibleWidth() +
+        1;
     }
     return this.Super('placeNear', [parentLeft, top - 1]);
   },
 
-  initWidget: function () {
+  initWidget: function() {
     // make sure that the submenus also
     // use the custom getBaseStyle function
     this.submenuInheritanceMask.push('getBaseStyle');
@@ -47,7 +49,7 @@ isc.OBApplicationMenuTree.addProperties({
     this.Super('initWidget', arguments);
   },
 
-  draw: function () {
+  draw: function() {
     if (this.drawStyle) {
       this.drawStyle();
     }
@@ -60,12 +62,17 @@ isc.OBApplicationMenuTree.addProperties({
   //    return superBaseStyle + colNum;
   //},
   // overridden to get reliable custom style name
-  getBaseStyle: function (record, rowNum, colNum) {
+  getBaseStyle: function(record, rowNum, colNum) {
     if (!this.getField(colNum)) {
       return '';
     }
     var name = this.getField(colNum).name;
-    return this.baseStyle + name.substr(0, 1).toUpperCase() + name.substr(1) + 'Field';
+    return (
+      this.baseStyle +
+      name.substr(0, 1).toUpperCase() +
+      name.substr(1) +
+      'Field'
+    );
   },
 
   autoDraw: false,
@@ -76,7 +83,7 @@ isc.OBApplicationMenuTree.addProperties({
 
   showing: false,
 
-  show: function () {
+  show: function() {
     this.showing = true;
     this.Super('show', arguments);
     if (this.showStyle) {
@@ -90,7 +97,8 @@ isc.OBApplicationMenuTree.addProperties({
         styleName: this.hideButtonLineStyle,
         height: 3,
         width: layoutContainer.getVisibleWidth() - 2,
-        top: layoutContainer.getPageTop() + layoutContainer.getVisibleHeight() - 2,
+        top:
+          layoutContainer.getPageTop() + layoutContainer.getVisibleHeight() - 2,
         left: layoutContainer.getPageLeft() + 1,
         overflow: 'hidden'
       });
@@ -99,7 +107,7 @@ isc.OBApplicationMenuTree.addProperties({
     this.selectedHideLayout.moveAbove(this);
   },
 
-  hide: function () {
+  hide: function() {
     this.showing = false;
     this.Super('hide', arguments);
     if (this.selectedHideLayout) {
@@ -111,15 +119,28 @@ isc.OBApplicationMenuTree.addProperties({
       this.hideStyle();
     }
 
-    if (typeof OB.MainView.TabSet.getSelectedTab().pane.tabSelected === 'function') {
+    if (
+      typeof OB.MainView.TabSet.getSelectedTab().pane.tabSelected === 'function'
+    ) {
       OB.MainView.TabSet.getSelectedTab().pane.tabSelected();
     }
   },
 
-  itemClick: function (item, colNum) {
+  itemClick: function(item, colNum) {
     var selectedView = isc.addProperties({}, item);
     if (item.tabId) {
-      selectedView = OB.Utilities.openView(item.windowId, item.tabId, item.title, null, null, item.icon, item.readOnly, item.singleRecord, null, item.editOrDeleteOnly);
+      selectedView = OB.Utilities.openView(
+        item.windowId,
+        item.tabId,
+        item.title,
+        null,
+        null,
+        item.icon,
+        item.readOnly,
+        item.singleRecord,
+        null,
+        item.editOrDeleteOnly
+      );
       selectedView.type = item.type;
       selectedView.icon = item.icon;
       if (selectedView) {
@@ -142,7 +163,9 @@ isc.OBApplicationMenuTree.addProperties({
           tabTitle: item.title
         };
       } else if (item.processId) {
-        var viewName = item.modal ? 'OBClassicPopupModal' : 'OBPopupClassicWindow';
+        var viewName = item.modal
+          ? 'OBClassicPopupModal'
+          : 'OBPopupClassicWindow';
         selectedView = {
           viewId: viewName,
           obManualURL: item.manualUrl,
@@ -193,20 +216,28 @@ isc.OBApplicationMenuTree.addProperties({
     selectedView = isc.addProperties({}, item, selectedView);
 
     OB.RecentUtilities.addRecent('UINAVBA_MenuRecentList', selectedView);
-    if (selectedView.openLinkInBrowser && selectedView.viewId === 'OBExternalPage') {
+    if (
+      selectedView.openLinkInBrowser &&
+      selectedView.viewId === 'OBExternalPage'
+    ) {
       if (selectedView.contentsURL.indexOf('://') === -1) {
         selectedView.contentsURL = 'http://' + selectedView.contentsURL;
       }
-      OB.ViewManager.recentManager.addRecent('OBUIAPP_RecentViewList', isc.addProperties({
-        icon: OB.Styles.OBApplicationMenu.Icons.externalLink
-      }, selectedView));
+      OB.ViewManager.recentManager.addRecent(
+        'OBUIAPP_RecentViewList',
+        isc.addProperties(
+          {
+            icon: OB.Styles.OBApplicationMenu.Icons.externalLink
+          },
+          selectedView
+        )
+      );
       window.open(selectedView.contentsURL);
     } else {
       OB.Layout.ViewManager.openView(selectedView.viewId, selectedView);
     }
   }
 });
-
 
 isc.ClassFactory.defineClass('OBApplicationMenuButton', isc.MenuButton);
 
@@ -215,14 +246,14 @@ isc.OBApplicationMenuButton.addProperties({
 
   keyboardShortcutId: 'NavBar_MenuButton',
 
-  draw: function () {
+  draw: function() {
     var me = this,
-        ksAction;
+      ksAction;
 
-    ksAction = function () {
+    ksAction = function() {
       if (!me.menu.showing) {
         isc.EH.clickMaskClick();
-        setTimeout(function () {
+        setTimeout(function() {
           me.showMenu();
         }, 10); //setTimeout to avoid delayCall function that manages the focus
       } else {
@@ -230,11 +261,15 @@ isc.OBApplicationMenuButton.addProperties({
       }
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction);
+    OB.KeyboardManager.Shortcuts.set(
+      this.keyboardShortcutId,
+      'Canvas',
+      ksAction
+    );
     this.Super('draw', arguments);
   },
 
-  initWidget: function () {
+  initWidget: function() {
     if (this.initWidgetStyle) {
       this.initWidgetStyle();
     }
@@ -243,11 +278,17 @@ isc.OBApplicationMenuButton.addProperties({
     this.menu.menuButton = this;
     this.Super('initWidget', arguments);
 
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.ApplicationMenuButton', this);
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.ApplicationMenu', this.menu);
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.ApplicationMenuButton',
+      this
+    );
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.navigationbarcomponents.ApplicationMenu',
+      this.menu
+    );
   },
 
-  showMenu: function () {
+  showMenu: function() {
     this.setMenuItems();
 
     this.menu.markForRedraw();
@@ -259,7 +300,7 @@ isc.OBApplicationMenuButton.addProperties({
     this.Super('showMenu', arguments);
   },
 
-  getNodeIcon: function (node) {
+  getNodeIcon: function(node) {
     var iconPath;
     if (node.type === 'window') {
       iconPath = this.nodeIcons.Window;
@@ -289,9 +330,10 @@ isc.OBApplicationMenuButton.addProperties({
     return iconPath;
   },
 
-  setNodeIcons: function (node) {
+  setNodeIcons: function(node) {
     if (node) {
-      var i, length = node.length;
+      var i,
+        length = node.length;
       for (i = 0; i < length; i++) {
         if (node[i].type) {
           node[i].icon = this.getNodeIcon(node[i]);
@@ -303,10 +345,10 @@ isc.OBApplicationMenuButton.addProperties({
     }
   },
 
-  setMenuItems: function () {
+  setMenuItems: function() {
     var recent = OB.RecentUtilities.getRecentValue('UINAVBA_MenuRecentList');
     var recentEntries = [],
-        length;
+      length;
     var completeMenuTree, recentIndex;
     if (recent && recent.length > 0) {
       length = recent.length;
@@ -332,18 +374,18 @@ isc.OBApplicationMenuButton.addProperties({
   // is used by selenium, creates a scLocator on the basis of a path passed in
   // as arguments, note that the function does not expect an array as this
   // did not seem to be supported by selenium
-  getSCLocator: function () {
+  getSCLocator: function() {
     var index = 0,
-        path = [],
-        length = arguments.length;
+      path = [],
+      length = arguments.length;
     for (; index < length; index++) {
       path[index] = arguments[index];
     }
     index = 0;
     var pathLength = path.getLength();
     var itemIndex = 0,
-        itemsLength = 0,
-        item = null;
+      itemsLength = 0,
+      item = null;
     var currentMenu = this.menu;
 
     // make sure the data is set
@@ -382,7 +424,15 @@ isc.OBApplicationMenuButton.addProperties({
       }
     }
 
-    return 'scLocator=//' + this.getClassName() + '[ID="' + currentMenu.ID + '"]/body/row[' + searchedIndex + ']/col[1]';
+    return (
+      'scLocator=//' +
+      this.getClassName() +
+      '[ID="' +
+      currentMenu.ID +
+      '"]/body/row[' +
+      searchedIndex +
+      ']/col[1]'
+    );
     //return currentMenu.body.getTableElement(searchedIndex);
   }
 });

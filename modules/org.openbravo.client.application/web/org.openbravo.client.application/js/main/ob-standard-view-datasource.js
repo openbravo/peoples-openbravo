@@ -27,7 +27,7 @@ isc.OBViewDataSource.addProperties({
   additionalProps: null,
   showProgressAfterDelay: false,
 
-  showProgress: function (editedRecord) {
+  showProgress: function(editedRecord) {
     var btn, btn2;
 
     if (!this.showProgressAfterDelay) {
@@ -59,7 +59,7 @@ isc.OBViewDataSource.addProperties({
     }
   },
 
-  hideProgress: function (editedRecord) {
+  hideProgress: function(editedRecord) {
     var btn;
     this.showProgressAfterDelay = false;
     if (editedRecord && editedRecord.editColumnLayout) {
@@ -75,7 +75,12 @@ isc.OBViewDataSource.addProperties({
     }
   },
 
-  performDSOperation: function (operationType, data, callback, requestProperties) {
+  performDSOperation: function(
+    operationType,
+    data,
+    callback,
+    requestProperties
+  ) {
     var currentRecord, isNewRecord;
 
     requestProperties = requestProperties || {};
@@ -85,9 +90,12 @@ isc.OBViewDataSource.addProperties({
     // entity
     if (operationType === 'update' || operationType === 'add') {
       var correctedData = {},
-          prop;
+        prop;
       for (prop in data) {
-        if (data.hasOwnProperty(prop) && !prop.contains(OB.Constants.FIELDSEPARATOR)) {
+        if (
+          data.hasOwnProperty(prop) &&
+          !prop.contains(OB.Constants.FIELDSEPARATOR)
+        ) {
           correctedData[prop] = data[prop];
         }
       }
@@ -101,11 +109,18 @@ isc.OBViewDataSource.addProperties({
         requestProperties.clientContext.progressIndicatorSelectedRecord = currentRecord;
       }
 
-      this.delayCall('showProgress', [requestProperties.clientContext.progressIndicatorSelectedRecord], 200);
+      this.delayCall(
+        'showProgress',
+        [requestProperties.clientContext.progressIndicatorSelectedRecord],
+        200
+      );
     }
 
     // doing row editing
-    if (this.view.viewGrid.getEditRow() || this.view.viewGrid.getEditRow() === 0) {
+    if (
+      this.view.viewGrid.getEditRow() ||
+      this.view.viewGrid.getEditRow() === 0
+    ) {
       if (!requestProperties.clientContext) {
         requestProperties.clientContext = {};
       }
@@ -114,18 +129,27 @@ isc.OBViewDataSource.addProperties({
 
     if (operationType === 'fetch' && this.view.viewGrid.lazyFiltering) {
       // Use the stored sort properties
-      if (this.view.viewGrid.savedSortSpecifiers && this.view.viewGrid.savedSortSpecifiers.length > 0) {
-        if (this.view.viewGrid.savedSortSpecifiers[0].direction === 'ascending') {
+      if (
+        this.view.viewGrid.savedSortSpecifiers &&
+        this.view.viewGrid.savedSortSpecifiers.length > 0
+      ) {
+        if (
+          this.view.viewGrid.savedSortSpecifiers[0].direction === 'ascending'
+        ) {
           requestProperties.sortBy = this.view.viewGrid.savedSortSpecifiers[0].property;
         } else {
-          requestProperties.sortBy = '-' + this.view.viewGrid.savedSortSpecifiers[0].property;
+          requestProperties.sortBy =
+            '-' + this.view.viewGrid.savedSortSpecifiers[0].property;
         }
       } else {
         delete requestProperties.sortBy;
       }
     }
 
-    var newRequestProperties = this.getTabInfoRequestProperties(this.view, requestProperties);
+    var newRequestProperties = this.getTabInfoRequestProperties(
+      this.view,
+      requestProperties
+    );
     // standard update is not sent with operationType
     var additionalPara = {
       _operationType: 'update',
@@ -150,21 +174,34 @@ isc.OBViewDataSource.addProperties({
     }
     // Do not save a new record if it is already being saved
     if (!this.view._savingNewRecord || !isNewRecord) {
-      if (isNewRecord && (operationType === 'update' || operationType === 'add')) {
+      if (
+        isNewRecord &&
+        (operationType === 'update' || operationType === 'add')
+      ) {
         this.view._savingNewRecord = true;
       }
       data = this.deleteNulls(data);
-      this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
+      this.Super('performDSOperation', [
+        operationType,
+        data,
+        callback,
+        newRequestProperties
+      ]);
     }
   },
 
   // delete null values of columns that do not have a field
   // this prevents setting to null the value of a column just because it was not returned by the datasource due to not having an active field
-  deleteNulls: function (data) {
+  deleteNulls: function(data) {
     var column;
     for (column in data) {
       if (data.hasOwnProperty(column)) {
-        if (!data[column] && data[column] !== false && data[column] !== 0 && !this.view.viewForm.getFieldFromFieldName(column)) {
+        if (
+          !data[column] &&
+          data[column] !== false &&
+          data[column] !== 0 &&
+          !this.view.viewForm.getFieldFromFieldName(column)
+        ) {
           delete data[column];
         }
       }
@@ -172,18 +209,18 @@ isc.OBViewDataSource.addProperties({
     return data;
   },
 
-  getAdditionalProps: function () {
+  getAdditionalProps: function() {
     var length, i, fld;
     if (this.additionalProps !== null) {
       return this.additionalProps;
     }
-    this.additionalProps = "";
+    this.additionalProps = '';
     length = this.getFields().length;
     for (i = 0; i < length; i++) {
       fld = this.getFields()[i];
       if (fld.additional) {
         if (this.additionalProps.length > 0) {
-          this.additionalProps += ",";
+          this.additionalProps += ',';
         }
         this.additionalProps += fld.name;
       }
@@ -194,7 +231,7 @@ isc.OBViewDataSource.addProperties({
   // do special id-handling so that we can replace the old if with the new
   // id
   // in the correct way, see the ob-view-grid.js editComplete method
-  validateJSONRecord: function (record) {
+  validateJSONRecord: function(record) {
     record = this.Super('validateJSONRecord', arguments);
     if (record && record._originalId) {
       var newId = record.id;
@@ -204,29 +241,53 @@ isc.OBViewDataSource.addProperties({
     return record;
   },
 
-  transformResponse: function (dsResponse, dsRequest, jsonData) {
+  transformResponse: function(dsResponse, dsRequest, jsonData) {
     var fields, i, field, record;
 
     if (dsRequest.clientContext) {
-      this.hideProgress(dsRequest.clientContext.progressIndicatorSelectedRecord);
+      this.hideProgress(
+        dsRequest.clientContext.progressIndicatorSelectedRecord
+      );
     }
     if (jsonData) {
-      var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
+      var errorStatus =
+        !jsonData.response ||
+        jsonData.response.status === 'undefined' ||
+        jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
       if (errorStatus) {
         var handled = false;
         if (!this.view.destroyed) {
-          handled = this.view.setErrorMessageFromResponse(dsResponse, jsonData, dsRequest);
+          handled = this.view.setErrorMessageFromResponse(
+            dsResponse,
+            jsonData,
+            dsRequest
+          );
         }
 
-        if (!handled && !dsRequest.willHandleError && jsonData.response && jsonData.response.error) {
-          OB.KernelUtilities.handleSystemException(jsonData.response.error.message);
+        if (
+          !handled &&
+          !dsRequest.willHandleError &&
+          jsonData.response &&
+          jsonData.response.error
+        ) {
+          OB.KernelUtilities.handleSystemException(
+            jsonData.response.error.message
+          );
         }
       } else {
         // there are some cases where the jsonData is not passed, in case of
         // errors make it available through the response object
         dsResponse.dataObject = jsonData;
 
-        if ((dsRequest.operationType === 'update' || dsRequest.operationType === 'add') && this.view.viewForm && jsonData.response && jsonData.response.data && jsonData.response.data.length === 1 && dsRequest.isNewDocument !== true) {
+        if (
+          (dsRequest.operationType === 'update' ||
+            dsRequest.operationType === 'add') &&
+          this.view.viewForm &&
+          jsonData.response &&
+          jsonData.response.data &&
+          jsonData.response.data.length === 1 &&
+          dsRequest.isNewDocument !== true
+        ) {
           // adding or updating a single record: at this point it is possible valueMap for
           // some fields not to contain current entry, let's add it now so it is properly
           // displayed
@@ -234,8 +295,23 @@ isc.OBViewDataSource.addProperties({
           fields = this.view.viewForm.getFields();
           for (i = 0; i < fields.length; i++) {
             field = fields[i];
-            if (field.addValueMapEntry && record[field.name] && record[field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]) {
-              field.addValueMapEntry(record[field.name], record[field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
+            if (
+              field.addValueMapEntry &&
+              record[field.name] &&
+              record[
+                field.name +
+                  OB.Constants.FIELDSEPARATOR +
+                  OB.Constants.IDENTIFIER
+              ]
+            ) {
+              field.addValueMapEntry(
+                record[field.name],
+                record[
+                  field.name +
+                    OB.Constants.FIELDSEPARATOR +
+                    OB.Constants.IDENTIFIER
+                ]
+              );
               if (field.invalidateLocalValueMapCache) {
                 // invalidate local cache to force request when the drop down is opened as
                 // current map might have now only actual value
@@ -259,7 +335,7 @@ isc.OBViewDataSource.addProperties({
   // Return:
   // * Original requestProperties including the new module and tab
   // properties.
-  getTabInfoRequestProperties: function (theView, requestProperties) {
+  getTabInfoRequestProperties: function(theView, requestProperties) {
     if (theView && theView.tabId) {
       requestProperties.params = requestProperties.params || {};
       isc.addProperties(requestProperties.params, {

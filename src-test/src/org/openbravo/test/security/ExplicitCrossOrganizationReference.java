@@ -56,6 +56,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.test.base.TestConstants.Roles;
 
 /**
  * Test cases covering special cases for cross organization references, where they are allowed based
@@ -382,7 +383,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
    */
   @Test
   public void orderLineDSShouldShowAllChildren() throws Exception {
-    JSONObject resp = createOrderAndFetchLines(QA_ADMIN_ROLE);
+    JSONObject resp = createOrderAndFetchLines(Roles.QA_ADMIN_ROLE);
     assertThat("number of fetched order lines", resp.getJSONObject("response").getInt("totalRows"),
         is(2));
   }
@@ -481,7 +482,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
 
   /** Creates a role with Org user level, and access to Spain Org */
   static Role createOrgUserLevelRole() {
-    setQAAdminRole();
+    setQAAdminContext();
     Role spainRole = OBProvider.getInstance().get(Role.class);
     spainRole.setName("QA Only Spain - " + System.currentTimeMillis()); // some randomness
     spainRole.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));

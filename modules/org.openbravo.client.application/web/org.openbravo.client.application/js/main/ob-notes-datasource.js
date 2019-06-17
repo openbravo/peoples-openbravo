@@ -21,7 +21,9 @@ OB.Datasource.create({
   createClassName: '',
   ID: '090A37D22E61FE94012E621729090048',
   potentiallyShared: true,
-  dataURL: OB.Utilities.applicationUrl('org.openbravo.service.datasource/090A37D22E61FE94012E621729090048'),
+  dataURL: OB.Utilities.applicationUrl(
+    'org.openbravo.service.datasource/090A37D22E61FE94012E621729090048'
+  ),
   requestProperties: {
     params: {
       _contextUrl: OB.Utilities.getLocationUrlWithoutFragment(),
@@ -30,49 +32,66 @@ OB.Datasource.create({
       Constants_FIELDSEPARATOR: OB.Constants.FIELDSEPARATOR
     }
   },
-  fields: [{
-    name: 'id',
-    type: '_id_13',
-    primaryKey: true
-  }, {
-    name: 'client',
-    type: '_id_19'
-  }, {
-    name: 'client$_identifier'
-  }, {
-    name: 'organization',
-    type: '_id_19'
-  }, {
-    name: 'organization$_identifier'
-  }, {
-    name: 'table',
-    type: '_id_19'
-  }, {
-    name: 'table$_identifier'
-  }, {
-    name: 'record',
-    type: '_id_10'
-  }, {
-    name: 'note',
-    type: '_id_14'
-  }, {
-    name: 'isactive',
-    type: '_id_20'
-  }, {
-    name: 'creationDate',
-    type: '_id_16'
-  }, {
-    name: 'createdBy',
-    type: '_id_30'
-  }, {
-    name: 'createdBy$_identifier'
-  }, {
-    name: 'updated',
-    type: '_id_16'
-  }, {
-    name: 'updatedBy',
-    type: '_id_30'
-  }, {
-    name: 'updatedBy$_identifier'
-  }]
+  fields: [
+    {
+      name: 'id',
+      type: '_id_13',
+      primaryKey: true
+    },
+    {
+      name: 'client',
+      type: '_id_19'
+    },
+    {
+      name: 'client$_identifier'
+    },
+    {
+      name: 'organization',
+      type: '_id_19'
+    },
+    {
+      name: 'organization$_identifier'
+    },
+    {
+      name: 'table',
+      type: '_id_19'
+    },
+    {
+      name: 'table$_identifier'
+    },
+    {
+      name: 'record',
+      type: '_id_10'
+    },
+    {
+      name: 'note',
+      type: '_id_14'
+    },
+    {
+      name: 'isactive',
+      type: '_id_20'
+    },
+    {
+      name: 'creationDate',
+      type: '_id_16'
+    },
+    {
+      name: 'createdBy',
+      type: '_id_30'
+    },
+    {
+      name: 'createdBy$_identifier'
+    },
+    {
+      name: 'updated',
+      type: '_id_16'
+    },
+    {
+      name: 'updatedBy',
+      type: '_id_30'
+    },
+    {
+      name: 'updatedBy$_identifier'
+    }
+  ]
 });

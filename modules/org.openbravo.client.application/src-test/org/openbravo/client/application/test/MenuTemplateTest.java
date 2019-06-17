@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.MainLayoutComponent;
 import org.openbravo.client.kernel.JSCompressor;
-import org.openbravo.client.kernel.JSLintChecker;
 
 /**
  * Tests the generating of the menu through a template, menu is part of the MainLayoutComponent, so
@@ -47,9 +46,6 @@ public class MenuTemplateTest extends WeldBaseTest {
     setTestAdminContext();
     final String javascript = mainLayoutComponent.generate();
     log.debug(javascript);
-
-    // do jslint check
-    JSLintChecker.getInstance().check(mainLayoutComponent.getId(), javascript);
 
     // compress
     final String compressed = JSCompressor.getInstance().compress(javascript);

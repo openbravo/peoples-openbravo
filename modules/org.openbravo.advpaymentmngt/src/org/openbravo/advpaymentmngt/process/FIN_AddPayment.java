@@ -1088,6 +1088,7 @@ public class FIN_AddPayment {
       obc.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE,
           invoicePaymentSchedule));
       obc.addOrderBy(FIN_PaymentScheduleDetail.PROPERTY_CREATIONDATE, false);
+      obc.setFilterOnReadableOrganization(false);
       obc.setMaxResults(1);
       return (FIN_PaymentScheduleDetail) obc.uniqueResult();
     } finally {

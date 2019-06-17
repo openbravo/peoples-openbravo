@@ -33,7 +33,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openbravo.base.model.Column;
 import org.openbravo.base.model.Entity;
@@ -60,14 +60,14 @@ public class RuntimeModelTest extends OBBaseTest {
   private static final Logger log = LogManager.getLogger();
 
   // cached list of all tables & columns as used by several tests
-  private List<Table> allTables;
+  private static List<Table> allTables;
 
   /**
    * This before method is named setUpRmt() to avoid overwriting the super setUp method that is
    * invoke automatically before this one.
    */
-  @Before
-  public void setUpRmt() throws Exception {
+  @BeforeClass
+  public static void setUpRmt() throws Exception {
     allTables = getTables();
   }
 
@@ -379,7 +379,7 @@ public class RuntimeModelTest extends OBBaseTest {
    * primary columns.
    * 
    */
-  private List<Table> getTables() {
+  private static List<Table> getTables() {
     final SessionFactoryController sessionFactoryController = new ModelSessionFactoryController();
     final Session session = sessionFactoryController.getSessionFactory().openSession();
     final Transaction tx = session.beginTransaction();

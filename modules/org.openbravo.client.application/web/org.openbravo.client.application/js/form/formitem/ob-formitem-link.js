@@ -18,31 +18,33 @@
  */
 
 //== OBLinkItem ==
-//Input for normal strings (links) with an added icon to navigate to the link  
+//Input for normal strings (links) with an added icon to navigate to the link
 isc.ClassFactory.defineClass('OBLinkItem', isc.TextItem);
 
 isc.OBLinkItem.addProperties({
   validateOnExit: true,
-  init: function () {
-    this.icons = [{
-      src: this.pickerIconSrc,
-      width: this.pickerIconWidth,
-      height: this.pickerIconHeight,
-      hspace: this.pickerIconHspace,
-      click: function (form, item) {
-        var url = item.getValue();
-        if (!url) {
-          return;
+  init: function() {
+    this.icons = [
+      {
+        src: this.pickerIconSrc,
+        width: this.pickerIconWidth,
+        height: this.pickerIconHeight,
+        hspace: this.pickerIconHspace,
+        click: function(form, item) {
+          var url = item.getValue();
+          if (!url) {
+            return;
+          }
+          if (url.indexOf('://') === -1) {
+            url = 'http://' + url;
+          }
+          window.open(url);
         }
-        if (url.indexOf('://') === -1) {
-          url = 'http://' + url;
-        }
-        window.open(url);
       }
-    }];
+    ];
     return this.Super('init', arguments);
   },
-  validate: function () {
+  validate: function() {
     var url = this.getValue();
     if (!url) {
       return true;

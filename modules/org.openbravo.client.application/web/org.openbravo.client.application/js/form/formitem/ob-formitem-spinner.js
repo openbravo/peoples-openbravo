@@ -17,7 +17,6 @@
  ************************************************************************
  */
 
-
 // == OBSpinnerItem ==
 // Input for spinner number
 isc.ClassFactory.defineClass('OBSpinnerItem', isc.SpinnerItem);

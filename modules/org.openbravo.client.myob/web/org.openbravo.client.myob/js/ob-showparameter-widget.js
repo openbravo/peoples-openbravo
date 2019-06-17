@@ -22,7 +22,7 @@
 // A widget which can be used to show parameter values and content.
 //
 isc.defineClass('OBShowParameterWidget', isc.OBWidget).addProperties({
-  setParameters: function (parameters) {
+  setParameters: function(parameters) {
     this.Super('setParameters', arguments);
     var oldForm = this.displayForm;
     this.windowContents.destroyAndRemoveMembers(this.displayForm);
@@ -30,34 +30,41 @@ isc.defineClass('OBShowParameterWidget', isc.OBWidget).addProperties({
     oldForm.destroy();
   },
 
-  createWindowContents: function () {
+  createWindowContents: function() {
     var layout = isc.VLayout.create({
       width: '100%',
       height: '100%',
       defaultLayoutAlign: 'center'
     });
-    layout.addMember(isc.Label.create({
-      contents: OB.I18N.getLabel('OBKMO_ParameterValues'),
-      height: 1,
-      overflow: 'visible'
-    }));
-    layout.addMember(isc.LayoutSpacer.create({
-      height: 10
-    }));
+    layout.addMember(
+      isc.Label.create({
+        contents: OB.I18N.getLabel('OBKMO_ParameterValues'),
+        height: 1,
+        overflow: 'visible'
+      })
+    );
+    layout.addMember(
+      isc.LayoutSpacer.create({
+        height: 10
+      })
+    );
     layout.addMember(this.createDisplayForm());
     return layout;
   },
 
-  customAction: function () {
+  customAction: function() {
     isc.say('Custom Action!', {
       isModal: true,
       showModalMask: true
     });
   },
 
-  createDisplayForm: function () {
-    var item, i, theForm, items = [],
-        values = {};
+  createDisplayForm: function() {
+    var item,
+      i,
+      theForm,
+      items = [],
+      values = {};
 
     theForm = isc.DynamicForm.create({
       width: '100%',

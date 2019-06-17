@@ -22,12 +22,11 @@
 // - OBAlertIcon: is the alert icon shown in the navigation bar
 // = Alert Manager =
 //
-// The Alert manager calls the server at preset intervals (50 secs) to obtain the current list 
+// The Alert manager calls the server at preset intervals (50 secs) to obtain the current list
 // of alerts and to update the server side session administration.
 // The Alert manager makes use of OB.RemoteCallManager to make these remote calls.
 //
-(function (OB, isc) {
-
+(function(OB, isc) {
   if (!OB || !isc) {
     throw {
       name: 'ReferenceError',
@@ -38,7 +37,6 @@
   function AlertManager() {}
 
   AlertManager.prototype = {
-
     // array of functions which are called when an alert is received
     // from the server.
     listeners: [],
@@ -59,7 +57,7 @@
     // Parameters:
     // * {{{listener}}}: a function which is called when a new alert result is
     // received.
-    addListener: function (listener) {
+    addListener: function(listener) {
       this.listeners[this.listeners.length] = listener;
       if (this.lastResponse) {
         // call the listener once with the last data
@@ -67,8 +65,9 @@
       }
     },
 
-    _notify: function (rpcResponse, data, rpcRequest) {
-      var i, length = OB.AlertManager.listeners.length;
+    _notify: function(rpcResponse, data, rpcRequest) {
+      var i,
+        length = OB.AlertManager.listeners.length;
       // store info for new listeners
       OB.AlertManager.lastResponse = rpcResponse;
       OB.AlertManager.lastData = data;
@@ -79,21 +78,26 @@
       OB.AlertManager.schedule();
     },
 
-    schedule: function () {
+    schedule: function() {
       isc.Timer.setTimeout(OB.AlertManager.call, OB.AlertManager.delay);
     },
 
-    call: function () {
+    call: function() {
       if (OB.User && OB.User.loggingIn) {
         // do not perform requests while logging in
         OB.AlertManager.schedule();
         return;
       }
 
-      OB.RemoteCallManager.call('org.openbravo.client.application.AlertActionHandler', {}, {
-        IsAjaxCall: '1',
-        ignoreForSessionTimeout: '1'
-      }, OB.AlertManager._notify);
+      OB.RemoteCallManager.call(
+        'org.openbravo.client.application.AlertActionHandler',
+        {},
+        {
+          IsAjaxCall: '1',
+          ignoreForSessionTimeout: '1'
+        },
+        OB.AlertManager._notify
+      );
     }
   };
 
@@ -103,7 +107,7 @@
 
   // call it ones to update the pings and start the timer
   OB.AlertManager.call();
-}(OB, isc));
+})(OB, isc);
 
 isc.ClassFactory.defineClass('OBAlertIcon', isc.ImgButton);
 
@@ -116,11 +120,11 @@ isc.ClassFactory.defineClass('OBAlertIcon', isc.ImgButton);
 isc.OBAlertIcon.addProperties({
   showInPortal: false,
 
-  initWidget: function () {
+  initWidget: function() {
     var instance = this,
-        listener;
+      listener;
 
-    listener = function (rpcResponse, data, rpcRequest) {
+    listener = function(rpcResponse, data, rpcRequest) {
       if (data.cnt > 0) {
         OB.I18N.getLabel(instance.alertLabel, [data.cnt], instance, 'setTitle');
         instance.setIcon(instance.alertIcon);
@@ -137,10 +141,13 @@ isc.OBAlertIcon.addProperties({
 
     // call it to update the number of alerts directly after login
     OB.AlertManager.addListener(listener);
-    OB.TestRegistry.register('org.openbravo.client.application.AlertButton', this);
+    OB.TestRegistry.register(
+      'org.openbravo.client.application.AlertButton',
+      this
+    );
   },
 
-  click: function () {
+  click: function() {
     var viewDefinition = {
       i18nTabTitle: 'UINAVBA_AlertManagement'
     };
@@ -149,17 +156,21 @@ isc.OBAlertIcon.addProperties({
 
   keyboardShortcutId: 'NavBar_OBAlertIcon',
 
-  draw: function () {
+  draw: function() {
     var me = this,
-        ksAction;
+      ksAction;
 
-    ksAction = function () {
+    ksAction = function() {
       me.click();
       return false; //To avoid keyboard shortcut propagation
     };
 
     if (this.keyboardShortcutId) {
-      OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction);
+      OB.KeyboardManager.Shortcuts.set(
+        this.keyboardShortcutId,
+        'Canvas',
+        ksAction
+      );
     }
     this.Super('draw', arguments);
   },

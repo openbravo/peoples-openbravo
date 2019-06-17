@@ -17,20 +17,19 @@
  ************************************************************************
  */
 
-
 // == OBCalendar_EventDialogBridge ==
 // Hack to allow the OBCalendar open its own full customizable EventDialog (OBEventEditor)
 isc.ClassFactory.defineClass('OBCalendar_EventDialogBridge', isc.Window);
 
 isc.OBCalendar_EventDialogBridge.addProperties({
-  show: function () {
+  show: function() {
     this.Super('show', arguments);
 
     var calendar = this.creator,
-        currentStart = this.currentStart,
-        currentEnd = this.currentEnd,
-        currentLane = this.currentLane,
-        event = this.event;
+      currentStart = this.currentStart,
+      currentEnd = this.currentEnd,
+      currentLane = this.currentLane,
+      event = this.event;
 
     if (calendar.OBEventEditor) {
       calendar.OBEventEditor.setProperties({
@@ -51,11 +50,9 @@ isc.OBCalendar_EventDialogBridge.addProperties({
 // Hack to allow calendar TabSet style personalization
 isc.ClassFactory.defineClass('OBCalendarTabSet', isc.TabSet);
 
-
 // == OBClientClassCanvasItem ==
 // Extends Calendar, with some customizations (most of them styling related)
 isc.ClassFactory.defineClass('OBCalendar', isc.Calendar);
-
 
 isc.OBCalendar.addProperties({
   autoFetchData: true,
@@ -63,9 +60,9 @@ isc.OBCalendar.addProperties({
   useEventCanvasRolloverControls: false,
   eventDialogConstructor: isc.OBCalendar_EventDialogBridge,
   eventsAdaptationRequired: true,
-  initWidget: function () {
+  initWidget: function() {
     var calendar = this,
-        multiCalendar = this.multiCalendar;
+      multiCalendar = this.multiCalendar;
 
     if (!this.eventIdField) {
       this.eventIdField = 'eventId';
@@ -80,14 +77,18 @@ isc.OBCalendar.addProperties({
       this.OBEventEditor = isc[this.OBEventEditorClass].create({});
     }
 
-    this.adaptEvents = function (events) {
+    this.adaptEvents = function(events) {
       var i, j;
       for (i = 0; i < events.getLength(); i++) {
         if (typeof events[i][calendar.startDateField] === 'string') {
-          events[i][calendar.startDateField] = new Date(events[i][calendar.startDateField]);
+          events[i][calendar.startDateField] = new Date(
+            events[i][calendar.startDateField]
+          );
         }
         if (typeof events[i][calendar.endDateField] === 'string') {
-          events[i][calendar.endDateField] = new Date(events[i][calendar.endDateField]);
+          events[i][calendar.endDateField] = new Date(
+            events[i][calendar.endDateField]
+          );
         }
         if (typeof events[i][calendar.nameField] === 'undefined') {
           //To avoid the event displays 'undefined' when no name has been set
@@ -97,15 +98,31 @@ isc.OBCalendar.addProperties({
           events[i][calendar.descriptionField] = '';
         }
         if (multiCalendar && multiCalendar.showCustomEventsBgColor) {
-          events[i].eventWindowStyle = multiCalendar.eventStyles[events[i][calendar.legendIdField]] + ' ' + calendar.eventWindowStyle;
+          events[i].eventWindowStyle =
+            multiCalendar.eventStyles[events[i][calendar.legendIdField]] +
+            ' ' +
+            calendar.eventWindowStyle;
         }
         if (typeof calendar.customTransformResponse === 'function') {
           events[i] = calendar.customTransformResponse(events[i], calendar);
         }
         if (multiCalendar && multiCalendar.calendarData.hasCustomFilters) {
-          for (j = 0; j < multiCalendar.calendarData.customFilters.length; j++) {
-            if (typeof multiCalendar.calendarData.customFilters[j].handler.transformResponse === 'function') {
-              events[i] = multiCalendar.calendarData.customFilters[j].handler.transformResponse(events[i], calendar, multiCalendar.calendarData.customFilters[j]);
+          for (
+            j = 0;
+            j < multiCalendar.calendarData.customFilters.length;
+            j++
+          ) {
+            if (
+              typeof multiCalendar.calendarData.customFilters[j].handler
+                .transformResponse === 'function'
+            ) {
+              events[i] = multiCalendar.calendarData.customFilters[
+                j
+              ].handler.transformResponse(
+                events[i],
+                calendar,
+                multiCalendar.calendarData.customFilters[j]
+              );
             }
           }
         }
@@ -121,48 +138,63 @@ isc.OBCalendar.addProperties({
     if (this.dataSourceProps) {
       this.dataSource = OB.Datasource.create({
         dataURL: this.dataSourceProps.dataURL,
-        fields: [{
-          name: this.eventIdField,
-          primaryKey: true
-        }, {
-          name: this.nameField
-        }, {
-          name: this.descriptionField
-        }, {
-          name: this.startDateField,
-          type: "datetime"
-        }, {
-          name: this.endDateField,
-          type: "datetime"
-        }],
+        fields: [
+          {
+            name: this.eventIdField,
+            primaryKey: true
+          },
+          {
+            name: this.nameField
+          },
+          {
+            name: this.descriptionField
+          },
+          {
+            name: this.startDateField,
+            type: 'datetime'
+          },
+          {
+            name: this.endDateField,
+            type: 'datetime'
+          }
+        ],
 
         // these are read extra from the server with the events
         additionalProperties: this.dataSourceProps.additionalProperties,
 
         dataSourceProps: this.dataSourceProps,
 
-        transformRequest: function (dsRequest) {
+        transformRequest: function(dsRequest) {
           dsRequest.params = dsRequest.params || {};
           dsRequest.params._extraProperties = this.additionalProperties;
           dsRequest.willHandleError = true;
 
           return this.Super('transformRequest', arguments);
         },
-        transformResponse: function (dsResponse, dsRequest, data) {
-          var showDSAlert, records = data && data.response && data.response.data;
+        transformResponse: function(dsResponse, dsRequest, data) {
+          var showDSAlert,
+            records = data && data.response && data.response.data;
 
-          showDSAlert = function (text) {
+          showDSAlert = function(text) {
             if (calendar.OBEventEditor && calendar.OBEventEditor.messageBar) {
               // Display message in event editor
-              calendar.OBEventEditor.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, OB.I18N.getLabel('OBUIAPP_Error'), text);
+              calendar.OBEventEditor.messageBar.setMessage(
+                isc.OBMessageBar.TYPE_ERROR,
+                OB.I18N.getLabel('OBUIAPP_Error'),
+                text
+              );
             } else {
               // there is no message bar in editor, showing a popup warn
-              isc.warn(text, function () {
-                return true;
-              }, {
-                icon: '[SKINIMG]Dialog/error.png',
-                title: OB.I18N.getLabel('OBUIAPP_Error')
-              });
+              isc.warn(
+                text,
+                function() {
+                  return true;
+                },
+                {
+                  icon: '[SKINIMG]Dialog/error.png',
+                  title: OB.I18N.getLabel('OBUIAPP_Error')
+                }
+              );
             }
             if (calendar.OBEventEditor) {
               // needs to keep the popup open once, because data is refreshed
@@ -192,9 +224,9 @@ isc.OBCalendar.addProperties({
         // override the addData, updateData and removeData to wrap
         // the calendar callback to prevent adding events in cased
         // of errors
-        addData: function (newRecord, callback, requestProperties) {
+        addData: function(newRecord, callback, requestProperties) {
           var dataSourceProps = this.dataSourceProps,
-              newCallBack = function (dsResponse, data, dsRequest) {
+            newCallBack = function(dsResponse, data, dsRequest) {
               // don't call if there is an error
               if (dsResponse.status < 0) {
                 return;
@@ -203,37 +235,54 @@ isc.OBCalendar.addProperties({
               if (dataSourceProps.addEventCallback) {
                 dataSourceProps.addEventCallback(newRecord, requestProperties);
               }
-              };
-          return this.Super('addData', [newRecord, newCallBack, requestProperties]);
+            };
+          return this.Super('addData', [
+            newRecord,
+            newCallBack,
+            requestProperties
+          ]);
         },
-        updateData: function (updatedRecord, callback, requestProperties) {
+        updateData: function(updatedRecord, callback, requestProperties) {
           var dataSourceProps = this.dataSourceProps,
-              newCallBack = function (dsResponse, data, dsRequest) {
+            newCallBack = function(dsResponse, data, dsRequest) {
               // don't call if there is an error
               if (dsResponse.status < 0) {
                 return;
               }
               callback(dsResponse, data, dsRequest);
               if (dataSourceProps.updateEventCallback) {
-                dataSourceProps.updateEventCallback(updatedRecord, requestProperties);
+                dataSourceProps.updateEventCallback(
+                  updatedRecord,
+                  requestProperties
+                );
               }
-              };
+            };
           return this.Super('updateData', [
-          updatedRecord, newCallBack, requestProperties]);
+            updatedRecord,
+            newCallBack,
+            requestProperties
+          ]);
         },
-        removeData: function (recordKeys, callback, requestProperties) {
+        removeData: function(recordKeys, callback, requestProperties) {
           var dataSourceProps = this.dataSourceProps,
-              newCallBack = function (dsResponse, data, dsRequest) {
+            newCallBack = function(dsResponse, data, dsRequest) {
               // don't call if there is an error
               if (dsResponse.status < 0) {
                 return;
               }
               callback(dsResponse, data, dsRequest);
               if (dataSourceProps.removeEventCallback) {
-                dataSourceProps.removeEventCallback(recordKeys, requestProperties);
+                dataSourceProps.removeEventCallback(
+                  recordKeys,
+                  requestProperties
+                );
               }
-              };
-          return this.Super('removeData', [recordKeys, newCallBack, requestProperties]);
+            };
+          return this.Super('removeData', [
+            recordKeys,
+            newCallBack,
+            requestProperties
+          ]);
         }
       });
     }
@@ -243,22 +292,32 @@ isc.OBCalendar.addProperties({
     this.controlsBar.reorderMember(2, 4); // Moves the 'displayed date' to last position
     if (this.showDayView !== false && this.showDayLanesToggleControl) {
       this.controlsBar.addMember(
-      isc.ImgButton.create({
-        prompt: OB.I18N.getLabel('OBUIAPP_CalendarShowHideLanes'),
-        showDown: false,
-        showRollOver: false,
-        action: function () {
-          var calendar = this.parentElement.creator;
-          if (calendar.showDayLanes) {
-            calendar.setShowDayLanes(false);
-          } else {
-            calendar.setShowDayLanes(true);
-          }
-        }
-      }, this.dayLanesToggleButtonDefaults), 2);
+        isc.ImgButton.create(
+          {
+            prompt: OB.I18N.getLabel('OBUIAPP_CalendarShowHideLanes'),
+            showDown: false,
+            showRollOver: false,
+            action: function() {
+              var calendar = this.parentElement.creator;
+              if (calendar.showDayLanes) {
+                calendar.setShowDayLanes(false);
+              } else {
+                calendar.setShowDayLanes(true);
+              }
+            }
+          },
+          this.dayLanesToggleButtonDefaults
+        ),
+        2
+      );
     }
 
-    if (this.defaultViewName && ((this.showDayView !== false && this.showWeekView !== false) || (this.showDayView !== false && this.showMonthView !== false) || (this.showWeekView !== false && this.showMonthView !== false))) {
+    if (
+      this.defaultViewName &&
+      ((this.showDayView !== false && this.showWeekView !== false) ||
+        (this.showDayView !== false && this.showMonthView !== false) ||
+        (this.showWeekView !== false && this.showMonthView !== false))
+    ) {
       this.setCurrentViewName(this.defaultViewName);
     }
     if (!this.showAddEventControl) {
@@ -269,14 +328,16 @@ isc.OBCalendar.addProperties({
     }
   },
 
-  directEventEdit: function (event, popupCallback) {
-    var callback, openEventDialog, calendar = this;
-    callback = function (dsResponse, data, dsRequest) {
+  directEventEdit: function(event, popupCallback) {
+    var callback,
+      openEventDialog,
+      calendar = this;
+    callback = function(dsResponse, data, dsRequest) {
       if (data && data[0]) {
         openEventDialog(data[0]);
       }
     };
-    openEventDialog = function (event) {
+    openEventDialog = function(event) {
       if (event) {
         if (calendar.OBEventEditor) {
           calendar.eventDialog.event = event;
@@ -286,13 +347,20 @@ isc.OBCalendar.addProperties({
           calendar.eventDialog.currentLane = event[calendar.laneNameField];
           calendar.eventDialog.calendar = calendar;
           try {
-            if (event[calendar.canEditField] === false && event[calendar.canRemoveField] === false) {
-              isc.warn(OB.I18N.getLabel('OBUIAPP_CalendarCanNotUpdateEvent'), function () {
-                return true;
-              }, {
-                icon: '[SKINIMG]Dialog/error.png',
-                title: OB.I18N.getLabel('OBUIAPP_Error')
-              });
+            if (
+              event[calendar.canEditField] === false &&
+              event[calendar.canRemoveField] === false
+            ) {
+              isc.warn(
+                OB.I18N.getLabel('OBUIAPP_CalendarCanNotUpdateEvent'),
+                function() {
+                  return true;
+                },
+                {
+                  icon: '[SKINIMG]Dialog/error.png',
+                  title: OB.I18N.getLabel('OBUIAPP_Error')
+                }
+              );
             } else {
               calendar.eventDialog.show();
             }
@@ -310,7 +378,7 @@ isc.OBCalendar.addProperties({
     }
   },
 
-  eventResized: function (newDate, event) {
+  eventResized: function(newDate, event) {
     newDate.setSeconds(0);
     if (this.showEventDialogOnEventResize) {
       this.eventDialog.event = event;
@@ -328,12 +396,12 @@ isc.OBCalendar.addProperties({
       return this.Super('eventResized', arguments);
     }
   },
-  eventMoved: function (newDate, event, newLane) {
+  eventMoved: function(newDate, event, newLane) {
     newDate.setSeconds(0);
     if (this.showEventDialogOnEventMove) {
       //Event duration
       var dateDiff = event[this.endDateField] - event[this.startDateField],
-          newEndDate = newDate.getTime() + dateDiff; //Add the event duration to the new startDate
+        newEndDate = newDate.getTime() + dateDiff; //Add the event duration to the new startDate
       newEndDate = new Date(newEndDate);
       this.eventDialog.event = event;
       this.eventDialog.currentStart = newDate;
@@ -350,7 +418,7 @@ isc.OBCalendar.addProperties({
       return this.Super('eventMoved', arguments);
     }
   },
-  eventRemoveClick: function (event) {
+  eventRemoveClick: function(event) {
     if (this.showEventDialogOnEventDelete) {
       this.eventDialog.event = event;
       this.eventDialog.currentStart = event[this.startDateField];
@@ -367,21 +435,29 @@ isc.OBCalendar.addProperties({
       return this.Super('eventRemoveClick', arguments);
     }
   },
-  showOBEventDialog: function () {
+  showOBEventDialog: function() {
     var dialog = isc.OBPopup.create({});
     dialog.show();
   },
 
-  getCriteria: function (criteria) {
-    var startTime, endTime, legend, i, startDateCriteria, middleDateCriteria, endDateCriteria, dateCriteriaOrPart, orPart = {
-      operator: 'or',
-      criteria: []
-    };
+  getCriteria: function(criteria) {
+    var startTime,
+      endTime,
+      legend,
+      i,
+      startDateCriteria,
+      middleDateCriteria,
+      endDateCriteria,
+      dateCriteriaOrPart,
+      orPart = {
+        operator: 'or',
+        criteria: []
+      };
 
     if (!criteria || !criteria.operator) {
       criteria = {
-        _constructor: "AdvancedCriteria",
-        operator: "and"
+        _constructor: 'AdvancedCriteria',
+        operator: 'and'
       };
     }
     criteria.criteria = criteria.criteria || [];
@@ -407,7 +483,7 @@ isc.OBCalendar.addProperties({
 
     // To show events that starts in the current month
     startDateCriteria = {
-      operator: "and",
+      operator: 'and',
       criteria: []
     };
     startDateCriteria.criteria.push({
@@ -424,7 +500,7 @@ isc.OBCalendar.addProperties({
 
     // To show events that starts before current month and ends after current month
     middleDateCriteria = {
-      operator: "and",
+      operator: 'and',
       criteria: []
     };
     middleDateCriteria.criteria.push({
@@ -441,7 +517,7 @@ isc.OBCalendar.addProperties({
 
     // To show events that ends in the current month
     endDateCriteria = {
-      operator: "and",
+      operator: 'and',
       criteria: []
     };
     endDateCriteria.criteria.push({
@@ -489,10 +565,27 @@ isc.OBCalendar.addProperties({
       criteria.criteria.push(orPart);
     }
 
-    if (this.multiCalendar && this.multiCalendar.calendarData.hasCustomFilters) {
-      for (i = 0; i < this.multiCalendar.calendarData.customFilters.length; i++) {
-        if (typeof this.multiCalendar.calendarData.customFilters[i].handler.filterCriteria === 'function') {
-          criteria.criteria.push(this.multiCalendar.calendarData.customFilters[i].handler.filterCriteria(this, this.multiCalendar.calendarData.customFilters[i]));
+    if (
+      this.multiCalendar &&
+      this.multiCalendar.calendarData.hasCustomFilters
+    ) {
+      for (
+        i = 0;
+        i < this.multiCalendar.calendarData.customFilters.length;
+        i++
+      ) {
+        if (
+          typeof this.multiCalendar.calendarData.customFilters[i].handler
+            .filterCriteria === 'function'
+        ) {
+          criteria.criteria.push(
+            this.multiCalendar.calendarData.customFilters[
+              i
+            ].handler.filterCriteria(
+              this,
+              this.multiCalendar.calendarData.customFilters[i]
+            )
+          );
         }
       }
     }
@@ -511,15 +604,20 @@ isc.OBCalendar.addProperties({
   // or the other way around, we need to set also the initialScroll to this other view.
   isInitialScrollAlreadyBeenSet: false,
 
-  draw: function () {
-    var ret, _originalTabSelected = this.mainView.tabSelected,
-        calendar = this;
+  draw: function() {
+    var ret,
+      _originalTabSelected = this.mainView.tabSelected,
+      calendar = this;
     ret = this.Super('draw', arguments);
 
     // If change filter/legend parameters in day/week view and you switch to the other one,
     // data needs to be refreshed in order to show changes
-    if (this.multiCalendar && this.mainView && typeof this.mainView.selectTab === 'function') {
-      this.mainView.tabSelected = function (tabNum) {
+    if (
+      this.multiCalendar &&
+      this.mainView &&
+      typeof this.mainView.selectTab === 'function'
+    ) {
+      this.mainView.tabSelected = function(tabNum) {
         var actionObject, mvret;
         actionObject = {
           target: this,
@@ -532,7 +630,7 @@ isc.OBCalendar.addProperties({
           calendar.isInitialScrollAlreadyBeenSet = true;
           // Timeout to allow new selected tab grid be fully loaded
           if (calendar.initialScrollTime) {
-            setTimeout(function () {
+            setTimeout(function() {
               try {
                 calendar.scrollToTime(calendar.initialScrollTime);
               } catch (e) {
@@ -546,7 +644,7 @@ isc.OBCalendar.addProperties({
     }
     // Timeout to allow the tab grid be fully loaded
     if (calendar.initialScrollTime) {
-      setTimeout(function () {
+      setTimeout(function() {
         try {
           calendar.scrollToTime(calendar.initialScrollTime);
         } catch (e) {
@@ -557,11 +655,15 @@ isc.OBCalendar.addProperties({
     return ret;
   },
 
-  fetchData: function (criteria, callback, request) {
-    return this.Super('fetchData', [this.getCriteria(criteria), callback, request]);
+  fetchData: function(criteria, callback, request) {
+    return this.Super('fetchData', [
+      this.getCriteria(criteria),
+      callback,
+      request
+    ]);
   },
 
-  filterData: function (criteria) {
+  filterData: function(criteria) {
     var newCriteria, ret;
     newCriteria = this.getCriteria(criteria);
     ret = this.Super('filterData', [newCriteria]);
@@ -572,7 +674,7 @@ isc.OBCalendar.addProperties({
   },
 
   // read the dates for the current month
-  dateChanged: function () {
+  dateChanged: function() {
     if (this.multiCalendar) {
       this.multiCalendar.leftControls.dateChooser.setData(this.chosenDate);
     }
@@ -586,8 +688,15 @@ isc.OBCalendar.addProperties({
     this.filterData();
   },
 
-  addEvent: function (startDate, endDate, name, description, otherFields, laneName, ignoreDataChanged) {
-
+  addEvent: function(
+    startDate,
+    endDate,
+    name,
+    description,
+    otherFields,
+    laneName,
+    ignoreDataChanged
+  ) {
     otherFields = otherFields || {};
 
     // solve bug that otherwise time fields are not passed in
@@ -597,7 +706,7 @@ isc.OBCalendar.addProperties({
     return this.Super('addEvent', arguments);
   },
 
-  addEventWithDialog: function (startDate, endDate) {
+  addEventWithDialog: function(startDate, endDate) {
     if (!startDate) {
       startDate = new Date();
     }
@@ -615,5 +724,4 @@ isc.OBCalendar.addProperties({
       //To avoid js error due to conflicts with Smartclient default EventDialog
     }
   }
-
 });

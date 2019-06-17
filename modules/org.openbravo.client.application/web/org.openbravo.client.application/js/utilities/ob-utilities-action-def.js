@@ -26,10 +26,12 @@
 //    OB.Utilities.Action.execute('custom', { func: function() { alert('Test'); }});
 //    OB.Utilities.Action.execute('custom', { func: function(paramObj) { alert(paramObj.text) }, text: 'Test' });
 //    OB.Utilities.Action.executeJSON( { custom: { func: function(paramObj) { alert(paramObj.text) }, text: 'Test' } });
-OB.Utilities.Action.set('custom', function (paramObj) {
+OB.Utilities.Action.set('custom', function(paramObj) {
   if (Object.prototype.toString.apply(paramObj.func) === '[object Function]') {
     paramObj.func(paramObj);
-  } else if (Object.prototype.toString.apply(paramObj.func) === '[object String]') {
+  } else if (
+    Object.prototype.toString.apply(paramObj.func) === '[object String]'
+  ) {
     var execFunction = new Function(paramObj.func);
     execFunction();
   }
@@ -41,18 +43,27 @@ OB.Utilities.Action.set('custom', function (paramObj) {
 // * {{{msgType}}}: The message type. It can be 'success', 'error', 'info' or 'warning'
 // * {{{msgTitle}}}: The title of the message.
 // * {{{msgText}}}: The text of the message.
-OB.Utilities.Action.set('showMsgInView', function (paramObj) {
+OB.Utilities.Action.set('showMsgInView', function(paramObj) {
   var view = OB.MainView.TabSet.getSelectedTab().pane.activeView;
   if (view && view.messageBar) {
-    view.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
-  } else { // If the window is not loaded, wait and try again
+    view.messageBar.setMessage(
+      paramObj.msgType,
+      paramObj.msgTitle,
+      paramObj.msgText
+    );
+  } else {
+    // If the window is not loaded, wait and try again
     var i = 0,
-        messageInterval;
-    messageInterval = setInterval(function () {
+      messageInterval;
+    messageInterval = setInterval(function() {
       view = OB.MainView.TabSet.getSelectedTab().pane.activeView;
       if (view && view.messageBar) {
         clearInterval(messageInterval);
-        view.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
+        view.messageBar.setMessage(
+          paramObj.msgType,
+          paramObj.msgTitle,
+          paramObj.msgText
+        );
       } else if (i === 5) {
         clearInterval(messageInterval);
       }
@@ -69,17 +80,41 @@ OB.Utilities.Action.set('showMsgInView', function (paramObj) {
 //* {{{msgText}}}: The text of the message.
 //* {{{force}}}: (Optional) If it should force the message to be show in the popup.
 //               Typically it is used in 'error' cases with 'retryExecution' set as 'true'
-OB.Utilities.Action.set('showMsgInProcessView', function (paramObj) {
+OB.Utilities.Action.set('showMsgInProcessView', function(paramObj) {
   var processView = paramObj._processView;
   if (processView.messageBar && paramObj.force === true) {
-    processView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
-  } else if (processView.callerField && processView.callerField.view && processView.callerField.view.messageBar) {
+    processView.messageBar.setMessage(
+      paramObj.msgType,
+      paramObj.msgTitle,
+      paramObj.msgText
+    );
+  } else if (
+    processView.callerField &&
+    processView.callerField.view &&
+    processView.callerField.view.messageBar
+  ) {
     // In the case we are inside a process called from another process we want to show the message inside the caller process instead of the main window.
-    processView.callerField.view.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
-  } else if (processView.popup && processView.buttonOwnerView && processView.buttonOwnerView.messageBar) {
-    processView.buttonOwnerView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
+    processView.callerField.view.messageBar.setMessage(
+      paramObj.msgType,
+      paramObj.msgTitle,
+      paramObj.msgText
+    );
+  } else if (
+    processView.popup &&
+    processView.buttonOwnerView &&
+    processView.buttonOwnerView.messageBar
+  ) {
+    processView.buttonOwnerView.messageBar.setMessage(
+      paramObj.msgType,
+      paramObj.msgTitle,
+      paramObj.msgText
+    );
   } else if (processView.messageBar) {
-    processView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
+    processView.messageBar.setMessage(
+      paramObj.msgType,
+      paramObj.msgTitle,
+      paramObj.msgText
+    );
   }
 });
 
@@ -92,18 +127,23 @@ OB.Utilities.Action.set('showMsgInProcessView', function (paramObj) {
 // * {{{recordId}}}: The record id of the view to be opened
 // * {{{command}}}: The command with which the view to be opened
 // * {{{wait}}}: If true, the thread in which this action was called (if there is any) will be paused until the view be opened.
-OB.Utilities.Action.set('openDirectTab', function (paramObj) {
-  var processIndex, tabPosition, isTabOpened = false;
+OB.Utilities.Action.set('openDirectTab', function(paramObj) {
+  var processIndex,
+    tabPosition,
+    isTabOpened = false;
   if (!paramObj.newTabPosition) {
     tabPosition = OB.Utilities.getTabNumberById(paramObj.tabId); // Search if the tab has been opened before
     if (tabPosition !== -1) {
       paramObj.newTabPosition = tabPosition;
       isTabOpened = true;
     } else {
-      processIndex = OB.Utilities.getProcessTabBarPosition(paramObj._processView);
+      processIndex = OB.Utilities.getProcessTabBarPosition(
+        paramObj._processView
+      );
       if (processIndex === -1) {
         // If the process is not found in the main tab bar, add the new window in the last position
-        paramObj.newTabPosition = OB.MainView.TabSet.paneContainer.members.length;
+        paramObj.newTabPosition =
+          OB.MainView.TabSet.paneContainer.members.length;
       } else {
         // If the process is found in the main tab bar, add the new window in its next position
         paramObj.newTabPosition = processIndex + 1;
@@ -111,10 +151,24 @@ OB.Utilities.Action.set('openDirectTab', function (paramObj) {
     }
   }
   if (!paramObj.isOpening) {
-    OB.Utilities.openDirectTab(paramObj.tabId, paramObj.recordId, paramObj.command, paramObj.newTabPosition, paramObj.criteria);
+    OB.Utilities.openDirectTab(
+      paramObj.tabId,
+      paramObj.recordId,
+      paramObj.command,
+      paramObj.newTabPosition,
+      paramObj.criteria
+    );
   }
-  if ((paramObj.wait === true || paramObj.wait === 'true') && paramObj.threadId) {
-    if (!OB.MainView.TabSet.getTabObject(paramObj.newTabPosition) || OB.MainView.TabSet.getTabObject(paramObj.newTabPosition).pane.isLoadingTab === true || isTabOpened) {
+  if (
+    (paramObj.wait === true || paramObj.wait === 'true') &&
+    paramObj.threadId
+  ) {
+    if (
+      !OB.MainView.TabSet.getTabObject(paramObj.newTabPosition) ||
+      OB.MainView.TabSet.getTabObject(paramObj.newTabPosition).pane
+        .isLoadingTab === true ||
+      isTabOpened
+    ) {
       OB.Utilities.Action.pauseThread(paramObj.threadId);
       paramObj.isOpening = true;
       OB.Utilities.Action.execute('openDirectTab', paramObj, 100); //Call this action again with a 100ms delay
@@ -128,7 +182,7 @@ OB.Utilities.Action.set('openDirectTab', function (paramObj) {
 // It sets a given value in the selector caller field (if it exists)
 // Parameters:
 // * {{{record}}}: The record to be set in the selector
-OB.Utilities.Action.set('setSelectorValueFromRecord', function (paramObj) {
+OB.Utilities.Action.set('setSelectorValueFromRecord', function(paramObj) {
   var callerField = paramObj._processView.callerField;
   if (!callerField) {
     return;
@@ -138,9 +192,13 @@ OB.Utilities.Action.set('setSelectorValueFromRecord', function (paramObj) {
 
 //** {{{ refreshGrid }}} **
 //It refreshes the grid where the process button is defined. Only needed if the process adds or deletes records from this tab
-OB.Utilities.Action.set('refreshGrid', function (paramObj) {
+OB.Utilities.Action.set('refreshGrid', function(paramObj) {
   var processView = paramObj._processView;
-  if (processView && processView.buttonOwnerView && processView.buttonOwnerView.viewGrid) {
+  if (
+    processView &&
+    processView.buttonOwnerView &&
+    processView.buttonOwnerView.viewGrid
+  ) {
     processView.buttonOwnerView.viewGrid.refreshGrid();
   }
 });
@@ -149,11 +207,16 @@ OB.Utilities.Action.set('refreshGrid', function (paramObj) {
 //It refreshes a grid parameter defined within a parameter window
 //Parameters:
 //* {{{gridName}}}: The name of the grid parameter
-OB.Utilities.Action.set('refreshGridParameter', function (paramObj) {
+OB.Utilities.Action.set('refreshGridParameter', function(paramObj) {
   var processView = paramObj._processView,
-      gridName = paramObj.gridName,
-      gridItem;
-  if (processView && processView.theForm && processView.theForm.getItem && gridName) {
+    gridName = paramObj.gridName,
+    gridItem;
+  if (
+    processView &&
+    processView.theForm &&
+    processView.theForm.getItem &&
+    gridName
+  ) {
     gridItem = processView.theForm.getItem(gridName);
     if (gridItem && gridItem.canvas && gridItem.canvas.viewGrid) {
       // force parameter grid refresh by invalidating cache
@@ -170,17 +233,19 @@ OB.Utilities.Action.set('refreshGridParameter', function (paramObj) {
 //* {{{processParameters}}}: The process parameters is an object that includes the action handler implementing the download, the report id that it is being executed and the process definition id.
 //* {{{tmpfileName}}}: Name of the temporary file.
 //* {{{fileName}}}: The name to be used in the file to download.
-OB.Utilities.Action.set('OBUIAPP_downloadReport', function (paramObj) {
+OB.Utilities.Action.set('OBUIAPP_downloadReport', function(paramObj) {
   var processParameters = paramObj.processParameters,
-      params = isc.clone(processParameters);
+    params = isc.clone(processParameters);
   params._action = processParameters.actionHandler;
   params.reportId = processParameters.reportId;
   params.processId = processParameters.processId;
   params.tmpfileName = paramObj.tmpfileName;
   params.fileName = paramObj.fileName;
   params.mode = 'DOWNLOAD';
-  OB.Utilities.postThroughHiddenForm(OB.Application.contextUrl + 'org.openbravo.client.kernel', params);
-
+  OB.Utilities.postThroughHiddenForm(
+    OB.Application.contextUrl + 'org.openbravo.client.kernel',
+    params
+  );
 });
 
 //** {{{ OBUIAPP_browseReport }}} **
@@ -191,13 +256,24 @@ OB.Utilities.Action.set('OBUIAPP_downloadReport', function (paramObj) {
 //* {{{processParameters}}}: The process parameters is an object that includes the action handler implementing the browsing, the report id that it is being executed and the process definition id.
 //* {{{tmpfileName}}}: Name of the temporary file.
 //* {{{fileName}}}: The name to be used in the file to download.
-OB.Utilities.Action.set('OBUIAPP_browseReport', function (paramObj) {
+OB.Utilities.Action.set('OBUIAPP_browseReport', function(paramObj) {
   var processParameters = paramObj.processParameters;
   OB.Layout.ViewManager.openView('OBClassicWindow', {
     tabTitle: paramObj.tabTitle,
     addToRecents: false,
     isProcessDefinitionReport: true,
-    obManualURL: '/org.openbravo.client.kernel?_action=' + processParameters.actionHandler + '&reportId=' + processParameters.reportId + '&processId=' + processParameters.processId + '&tmpfileName=' + paramObj.tmpfileName + '&fileName=' + paramObj.fileName + '&mode=BROWSE&vScroll=auto',
+    obManualURL:
+      '/org.openbravo.client.kernel?_action=' +
+      processParameters.actionHandler +
+      '&reportId=' +
+      processParameters.reportId +
+      '&processId=' +
+      processParameters.processId +
+      '&tmpfileName=' +
+      paramObj.tmpfileName +
+      '&fileName=' +
+      paramObj.fileName +
+      '&mode=BROWSE&vScroll=auto',
     command: 'DEFAULT'
   });
 });

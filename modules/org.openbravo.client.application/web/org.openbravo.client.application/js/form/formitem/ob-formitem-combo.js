@@ -22,16 +22,20 @@
 isc.ClassFactory.defineClass('OBComboBoxItem', isc.ComboBoxItem);
 
 isc.OBComboBoxItem.addProperties({
-
   // ** {{{ filterComplete }}} **
   //
-  // Prevents validation of this item while filtering because real value is not 
+  // Prevents validation of this item while filtering because real value is not
   // set yet.
   // see issues #26189 and #28651
-  filterComplete: function (response, data, request, fromSharedPickList) {
+  filterComplete: function(response, data, request, fromSharedPickList) {
     var ret;
 
-    if (request && request.params && request.params.recordIdInForm && request.params.recordIdInForm !== this.form.recordIdInForm) {
+    if (
+      request &&
+      request.params &&
+      request.params.recordIdInForm &&
+      request.params.recordIdInForm !== this.form.recordIdInForm
+    ) {
       return;
     }
     this.preventValidation = true;
@@ -42,14 +46,14 @@ isc.OBComboBoxItem.addProperties({
 
   // Override showPicker to ensure that we select the text when clicking on the drop-down
   // See issue #31274
-  showPicker: function () {
+  showPicker: function() {
     this.selectValue();
     this.Super('showPicker', arguments);
   },
 
   // Override handleKeyPress to ensure that we select the text when pressing the keyboard shortcut of the drop-down
   // See issue #31377
-  handleKeyPress: function () {
+  handleKeyPress: function() {
     if (this.keyboardShortcutPressed()) {
       this.selectValue();
     }
@@ -57,7 +61,7 @@ isc.OBComboBoxItem.addProperties({
   },
 
   // Checks if the ALT + keyboard down key combination has been pressed on a valid state of the combo box
-  keyboardShortcutPressed: function () {
+  keyboardShortcutPressed: function() {
     if (this.hasFocus && !this.isReadOnly()) {
       var keyName = isc.EH.lastEvent.keyName;
       if (keyName === 'Arrow_Down' && isc.EH.altKeyDown()) {
@@ -68,7 +72,7 @@ isc.OBComboBoxItem.addProperties({
   },
 
   // This function will fall through to filterComplete() when the filter operation returns
-  filterDataBoundPickList: function (requestProperties, dropCache) {
+  filterDataBoundPickList: function(requestProperties, dropCache) {
     if (this.form && this.form.view && this.form.view.isShowingForm) {
       // Identify the record being currently edited in form view and include it in the request.
       // It will be used to avoid problems when a new record is opened in form view before filterComplete() finishes
@@ -76,6 +80,9 @@ isc.OBComboBoxItem.addProperties({
       requestProperties.params = requestProperties.params || {};
       requestProperties.params.recordIdInForm = this.form.recordIdInForm;
     }
-    return this.Super('filterDataBoundPickList', [requestProperties, dropCache]);
+    return this.Super('filterDataBoundPickList', [
+      requestProperties,
+      dropCache
+    ]);
   }
 });
