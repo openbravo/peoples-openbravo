@@ -19,16 +19,14 @@ package org.openbravo.materialmgmt;
 
 import java.util.Map;
 
-import javax.enterprise.context.ApplicationScoped;
-
 /**
  * Allows to define a where clause that will be used in the ProductCharacteristicsDS datasource.
  * 
  * Classes implementing this interfaces with this interface must declare
  * the @ComponentProvider.Qualifier annotation, passing as parameter the ID of the Process
- * Definition this ProductCharacteristicCustomWhereClause must be applied to
+ * Definition this ProductCharacteristicCustomWhereClause must be applied to. Subclasses must also
+ * declare the @ApplicationScoped annotation
  */
-@ApplicationScoped
 public interface ProductCharacteristicCustomWhereClause {
 
   /**
