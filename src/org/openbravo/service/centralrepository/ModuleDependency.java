@@ -62,8 +62,8 @@ public class ModuleDependency {
       String moduleID = jsonDep.getString("moduleID");
       String moduleName = jsonDep.getString("moduleName");
       String moduleVersionDependencyID = jsonDep.getString("moduleVersionDependencyID");
-      String versionEnd = jsonDep.getString("versionEnd");
       String versionStart = jsonDep.getString("versionStart");
+      String versionEnd = jsonDep.isNull("versionEnd") ? null : jsonDep.getString("versionEnd");
       return new ModuleDependency(moduleID, moduleName, moduleVersionDependencyID, versionEnd,
           versionStart);
     } catch (JSONException e) {
