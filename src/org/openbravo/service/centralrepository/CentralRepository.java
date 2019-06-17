@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -170,8 +171,8 @@ public class CentralRepository {
 
       try {
         JSONObject msg = new JSONObject();
-        msg.put("sucess", false);
-        msg.put("responseCode", 500);
+        msg.put("success", false);
+        msg.put("responseCode", HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
         JSONObject r = new JSONObject();
         r.put("msg", e.getMessage());
