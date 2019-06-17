@@ -295,7 +295,6 @@ public class ImportModule implements Serializable {
       HashMap<String, String> maturityLevels) throws Exception {
     // just for remote usage
     errors = new OBError();
-    VersionUtility.setPool(pool);
     final ModuleInstallDetail mid = VersionUtility.checkRemote(vars, installableModules,
         updateableModules, errors, maturityLevels);
     modulesToInstall = mid.getModulesToInstall();
