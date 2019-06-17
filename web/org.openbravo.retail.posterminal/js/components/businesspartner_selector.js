@@ -417,29 +417,43 @@ enyo.kind({
         silent: true
       });
       dialog.owner.owner.hide();
-      OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function(
-        bp
-      ) {
-        me.doShowPopup({
-          popup: 'modalReceiptSelector',
-          args: {
-            multiselect: true,
-            clean: true,
-            advancedFilters: {
-              orderby: null,
-              filters: [
-                {
-                  caption: bp.get('_identifier'),
-                  column: 'businessPartner',
-                  isId: true,
-                  operator: '=',
-                  value: bp.get('id')
-                }
-              ]
+      OB.Dal.get(
+        OB.Model.BusinessPartner,
+        bpartner.get('bpartnerId'),
+        function(bp) {
+          me.doShowPopup({
+            popup: 'modalReceiptSelector',
+            args: {
+              multiselect: true,
+              clean: true,
+              advancedFilters: {
+                orderby: null,
+                filters: [
+                  {
+                    caption: bp.get('_identifier'),
+                    column: 'businessPartner',
+                    isId: true,
+                    operator: '=',
+                    value: bp.get('id')
+                  }
+                ]
+              }
             }
-          }
-        });
-      });
+          });
+        },
+        function() {
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBMOBC_Error'),
+            OB.I18N.getLabel('OBPOS_CustomerNotFound')
+          );
+        },
+        function() {
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBMOBC_Error'),
+            OB.I18N.getLabel('OBPOS_CustomerNotFound')
+          );
+        }
+      );
     } else {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
     }
