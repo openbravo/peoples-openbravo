@@ -136,7 +136,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     } else if (vars.commandIn("SEARCH")) {
       String q = vars.getStringParameter("inpSearchText");
       searchModules(q, response);
-    } else if (vars.commandIn("ADD", "ADD_NOSEARCH", "ADD_SEARCH")) {
+    } else if (vars.commandIn("ADD")) {
       printPageAdd(response, vars);
     } else if (vars.commandIn("HISTORY")) {
       final String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ModuleManagement|DateFrom",
