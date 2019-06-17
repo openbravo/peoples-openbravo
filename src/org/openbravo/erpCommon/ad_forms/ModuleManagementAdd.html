@@ -45,6 +45,7 @@ var baseDirectory = "../../../../../web/";
 
 <script language="JavaScript" type="text/javascript">
   function search() {
+    setProcessingMode('window', true);
     initialize_MessageBox('messageBoxID');
     submitXmlHttpRequest(searchCallback, document.frmMain, "SEARCH", "ModuleManagement.html");
   }
@@ -77,7 +78,7 @@ var baseDirectory = "../../../../../web/";
   
   function viewAll() {
     document.frmMain.inpSearchText.value="";
-    submitCommandForm('ADD_SEARCH', false, null, 'ModuleManagement.html', '_self', null, true);
+    search();
     return false;
   }
   
@@ -311,7 +312,7 @@ var baseDirectory = "../../../../../web/";
                       <button type="button" 
                         id="buttonSearch" 
                         class="ButtonLink" 
-                        onclick="setProcessingMode('window',true); search();return false;" 
+                        onclick="search();return false;" 
                         onfocus="buttonEvent('onfocus', this); window.status='Search'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
