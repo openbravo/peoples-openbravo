@@ -1381,6 +1381,60 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   text-align: center;
 }
 
+@media (max-width: 525px){
+  .obpos-row-store-info {
+    padding-left: 0px !important;
+  }
+  
+  .obpos-row-store-space{
+    width: unset !important;
+  }
+  
+  .obpos-row-store-address{
+    padding-top: 0px !important;
+  } 
+  
+  .obpos-store-information-specialOpenHour{
+    width: unset;
+  }
+  
+  .obpos-store-information-empty1 {
+    width: 13% !important;
+  }
+  
+  .obpos-store-information-openhour{
+    width: 55% !important;
+  }
+  
+  .obpos-row-open-hour{
+    width: 42% !important;
+  }
+  
+  .obpos-row-special-open-hour{
+    width: 65% !important;
+  }
+}
+
+@media (min-width: 490px) and (max-width: 525px){
+  .obpos-store-information-empty1 {
+    width: 20% !important;
+  }
+}
+
+@media (min-width: 345px) and (max-width: 375px){
+  .obpos-row-weekday {
+    width: 27% !important;
+  }
+  
+  .obpos-store-information-empty1{
+    width: 8% !important;
+  }
+  
+  .obpos-store-information-openhour {
+    width: 51% !important;
+  }
+}
+
 .obpos-store-information {
   width: 35px;
   height: 35px;
@@ -1389,6 +1443,10 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconInfo.svg');
   background-size: 35px 35px;
   background-repeat: no-repeat;
+}
+
+.obpos-modal-store-selector {
+  width: 550px !important;
 }
 
 .obpos-list-store {
@@ -1401,6 +1459,27 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   font-weight: bold; 
   font-size: 30px; 
   color: #cccccc;
+}
+
+.obpos-row-store-address {
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+.obpos-row-weekday{
+    touch-action: none;
+    width: 30%;
+}
+
+.obpos-row-open-hour{
+    touch-action: none;
+    width: 30%;
+}
+
+.obpos-row-special-open-hour{
+	float: left;
+    touch-action: none;
+    width: 50%;
 }
 
 .obpos-row-store-name {
@@ -1484,7 +1563,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 .obpos-store-information-openhour {
   display: table-cell; 
   vertical-align: middle; 
-  width: 63%; 
+  width: 68%; 
   text-align: right;
 }
 

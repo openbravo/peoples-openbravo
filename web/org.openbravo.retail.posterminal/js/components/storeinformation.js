@@ -38,7 +38,7 @@ enyo.kind({
       classes: 'obpos-store-line span12',
       components: [
         {
-          classes: 'obpos-icon-address',
+          classes: 'obpos-row-store-address',
           name: 'iconAddress'
         },
         {
@@ -380,11 +380,11 @@ enyo.kind({
       classes: 'obpos-row-store-space'
     },
     {
-      classes: 'obpos-row-store-info span3',
+      classes: 'obpos-row-store-info obpos-row-weekday',
       name: 'weekday'
     },
     {
-      classes: 'obpos-row-store-info span4 obpos-center-text',
+      classes: 'obpos-row-store-info obpos-row-open-hour obpos-center-text',
       name: 'openHour'
     },
     {
@@ -443,7 +443,7 @@ enyo.kind({
       classes: 'obpos-row-store-space'
     },
     {
-      classes: 'obpos-row-store-info span6',
+      classes: 'obpos-row-store-info obpos-row-special-open-hour',
       name: 'openHour'
     },
     {
