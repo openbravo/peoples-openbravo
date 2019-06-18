@@ -628,8 +628,8 @@ enyo.kind({
                 OB.I18N.getLabel('OBPOS_storeStock') + data.qty
               );
             }
-            me.bodyComponent.$.productAddToReceipt.setDisabled(false);
           }
+          me.bodyComponent.$.productAddToReceipt.setDisabled(false);
           if (params.checkStockCallback) {
             params.checkStockCallback();
           }

@@ -29,7 +29,6 @@
           name: 'receipt.isEditable'
         });
         var active = isEditable;
-        active = active && OB.MobileApp.model.get('connectedToERP');
         active =
           active &&
           selectedReceiptLine &&
@@ -47,11 +46,7 @@
         var product = selectedReceiptLine.get('product');
         var warehouse = selectedReceiptLine.get('warehouse');
         //show always or just when the product has been set to show stock screen?
-        if (
-          product.get('productType') === 'I' &&
-          !product.get('ispack') &&
-          OB.MobileApp.model.get('connectedToERP')
-        ) {
+        if (product.get('productType') === 'I' && !product.get('ispack')) {
           view.showLeftSubWindow(this, {
             leftSubWindow:
               OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow,

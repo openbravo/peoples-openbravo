@@ -33,6 +33,8 @@
       function(data) {
         if (errorCallback && errorCallback instanceof Function) {
           errorCallback(data);
+        } else if (successCallback && successCallback instanceof Function) {
+          successCallback(data);
         }
       }
     );
