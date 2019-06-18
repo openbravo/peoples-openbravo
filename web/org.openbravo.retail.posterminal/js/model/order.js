@@ -6554,9 +6554,20 @@
     },
 
     createQuotationFromOrder: function() {
-      this.setQuotationProperties();
-      this.trigger('scan');
-      this.save();
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PreCreateQuotationFromOrder',
+        {
+          order: this
+        },
+        function(args) {
+          if (args && args.cancelOperation && args.cancelOperation === true) {
+            return;
+          }
+          args.order.setQuotationProperties();
+          args.order.trigger('scan');
+          args.order.save();
+        }
+      );
     },
 
     createOrderFromQuotation: function(updatePrices, callback) {
