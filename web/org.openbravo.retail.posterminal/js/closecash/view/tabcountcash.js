@@ -500,7 +500,11 @@ enyo.kind({
               args: {
                 supervisor: supervisor.id,
                 message: serverMsg,
-                callback: callback
+                callback: function(approved) {
+                  if (approved) {
+                    callback();
+                  }
+                }
               }
             });
           } else {
