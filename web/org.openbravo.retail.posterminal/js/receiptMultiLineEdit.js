@@ -813,15 +813,8 @@ enyo.kind({
       // This function is called when the user accepts on the properties dialog,
       // and applies the value selected to the row.
       applyValue: function(row) {
-        var value = this.$.renderCombo.getValue(),
-          deliveryMode = _.find(
-            OB.MobileApp.model.get('deliveryModes'),
-            function(dm) {
-              return dm.id === value;
-            }
-          );
+        var value = this.$.renderCombo.getValue();
         row.set(this.modelProperty, value);
-        row.set('nameDelivery', deliveryMode.name);
 
         if (value !== 'PickupInStoreDate' && value !== 'HomeDelivery') {
           row.unset('obrdmDeliveryDate');
